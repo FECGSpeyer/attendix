@@ -60,7 +60,14 @@ Each entry has a `reason`:
   use or triggers the element in Ionic, then check the same in Flutter (role
   getters, route guards, tenant settings, provider checks). A role that sees
   or can do more or less than in Ionic is a gap; a role that can write data
-  it could not write in Ionic is at least `mittel`.
+  it could not write in Ionic is at least `mittel`. The role or tenant
+  dependence can also sit in a bound attribute (`item.attrs` keys in
+  brackets such as `[disabled]`, `item.bindings`, `item.bindingExprs`). With
+  `via: "ausloeser"` the item is inside an inline modal/popover (or is it)
+  whose opening element depends on role or tenant: judge who can open it.
+- `behoben-ungeprueft`: a fix PR set the item (or the extra finding, entry
+  with `extra` and `fix`) to `ok` in `zz-fixed-*` and no round has looked at
+  it since. Check that the fix really closes the gap, with `v`.
 - `neu`: the item is new in the inventory (`first` is `null`). Give a full
   first verdict; leave out `v`.
 - `geaendert`: the item's content changed since its verdict (a newer Ionic

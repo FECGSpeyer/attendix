@@ -39,9 +39,13 @@ Eine Zeile je Element: Ein `git diff` nach einem neuen Lauf zeigt genau, was
 sich in Ionic geändert hat. `node tool/parity/parity.mjs diff <alt.json>`
 listet neue, entfernte und **geänderte** Elemente (gleiche ID, aber anderer
 Inhalt: Texte, Bedingungen, Bindungen, DB-Spalten und -Filter, Methodenrümpfe
-als Hash) sowie geänderte Übersetzungen. Felder, die erst ein neuerer
-Extraktor liefert, zählen nicht als Änderung (Vergleich nur über die Felder,
-die die alte Liste je Art kennt; Reihenfolge der Felder egal). Mit `--stale`
+als Hash) sowie geänderte Übersetzungen. Verglichen werden je Art nur die
+Felder, die beide Listen kennen: Felder, die ein neuerer Extraktor ergänzt,
+entfernt oder umbenennt, zählen nicht als Änderung (Reihenfolge der Felder
+egal; `attrs` und `bodies` werden als Ganzes verglichen, ihre Schlüssel sind
+Daten). Die Methodennamen eines `logic`-Eintrags werden immer vollständig
+verglichen, eine neue oder entfernte Methode ist also eine Änderung; die
+Rumpf-Hashes zählen, wenn beide Listen `bodies` haben. Mit `--stale`
 kommt ein Schritt `{from, to, ids}` in das fortlaufende Änderungsprotokoll
 `changes.json`: Ein Urteil, das an einer Ionic-Version vor einem Schritt
 gefällt wurde, der sein Element nennt, gilt nicht mehr, und das Element
@@ -49,7 +53,10 @@ steht wieder als offen im Bericht; das gilt über beliebig viele
 Ionic-Versionen hinweg. Zusätzliche Befunde und ihre Rücknahmen auf einer
 seither geänderten Seite werden wieder geöffnet und als „Ionic geändert“
 markiert. Bilder (`media`) und alle gebundenen Attribute (`bindings`, z. B.
-`[src]`, `[buttons]`) sind Teil der Soll-Liste. Datenbankaufrufe, deren
+`[src]`, `[buttons]`) sind Teil der Soll-Liste; bei eingebetteten
+Komponenten (`embed`) stehen die Ausdrücke der Eingaben in `bindingExprs`
+(`[editable]="isAdmin"`), so dass ein Wechsel des Ausdrucks auffällt.
+Datenbankaufrufe, deren
 Tabelle oder Operation nicht auflösbar ist, tragen `unresolved` und gelten
 nie als `ok` (Bericht: `unclear`).
 
@@ -79,33 +86,69 @@ Ergebnisse `zz-verify<N>-*.json`), vollständig statt Stichprobe: jedes neue
 Element und jedes seit `--since` geänderte, jede hoch/mittel-Abweichung ohne
 zweite Prüfung, jeder zusätzliche Befund mit Schwere hoch/mittel ohne
 zweites Urteil oder auf einer seither geänderten Ionic-Seite, jeder nicht
-auflösbare Datenbankaufruf und jedes `ok`/`na`, das von Rolle oder
-Mandanten-Einstellung abhängt: Bedingung im Template, eine Klassen-Eigenschaft
-oder -Methode, die Rolle oder Mandant liest (`unit.roleMembers`), oder eine
-Rollenprüfung in der TypeScript-Methode um das Element (`roleGuarded`). Zusätzliche Befunde haben eine stabile ID
-(`x-<sha1(Baustein|Titel)>`); gleiche Befunde aus mehreren Dateien werden
-zusammengeführt, und eine Prüfung schreibt ihr Urteil unter dieser ID
-(`s` ok/na nimmt den Befund zurück).
+auflösbare Datenbankaufruf, jeder behobene Punkt, den seit dem Fix keine
+Runde gesehen hat (`behoben-ungeprueft`, siehe 4b), und jedes `ok`/`na`, das
+von Rolle oder Mandanten-Einstellung abhängt (`rolle-mandant`): Bedingung im
+Template oder Ausdruck eines gebundenen Attributs (`[disabled]="readOnly"`,
+`[isOpen]`, `[class.x]`, Eingaben in `bindings`/`bindingExprs`; ohne
+Text in Anführungszeichen) mit einem Rollen- oder Mandantennamen (dieselbe
+Liste wie im Extraktor, `tool/parity/roles.mjs`, plus `readOnly`, `can…`,
+`enable_…` u. a.) oder mit einer Klassen-Eigenschaft oder -Methode, die Rolle
+oder Mandant liest (`unit.roleMembers`), eine Rollenprüfung in der
+TypeScript-Methode um das Element (`roleGuarded`), oder ein Inline-Modal bzw.
+-Popover, dessen Auslöser (setzt sein `[isOpen]` auf `true`, trägt die
+`trigger`-ID oder ruft `<ref>.present()`) davon abhängt: Modal und Inhalt
+erben den Bezug (`via: "ausloeser"` im Eintrag). Zusätzliche Befunde haben
+eine stabile ID (`x-<sha1(Baustein|Titel)>`); eine Prüfung schreibt ihr
+Urteil unter dieser ID (`s` ok/na nimmt den Befund zurück).
 
-Lesereihenfolge der Urteile: Erstprüfung (`b*`), dann die Runden
-(`zz-verify-*` = 1, `zz-verifyN-*` = N), Korrekturdateien nach der Runde in
-ihrem Feld `afterRound`, zuletzt `zz-fixed-*`. Ein späteres Urteil mit Status
-ersetzt das frühere ganz (Fundstelle und Notiz bleiben nur, wenn der Status
-gleich bleibt und keine neuen kommen).
+Lesereihenfolge der Urteile (Rang): Erstprüfung (`b*`) 0, dann die Runden
+(`zz-verify-*` = 1, `zz-verifyN-*` = N), Korrekturdateien mit `"afterRound": N`
+N + 0,5, behobene Punkte `zz-fixed-*` N + 0,6 (siehe 4b); bei gleichem Rang
+nach Dateinamen. Dabei gilt:
+
+- Ein späteres Urteil **mit** Status `s` ersetzt das frühere ganz
+  (Fundstelle und Notiz bleiben nur, wenn der Status gleich bleibt und keine
+  neuen kommen) und setzt den Prüfstand neu: Ionic- und Flutter-Commit der
+  Datei. Das gilt auch für Zusatzbefunde unter ihrer `x-`-ID.
+- Ein Nachtrag **ohne** `s` (nur `sev`, `n`, `f`, `v`) ändert nur diese
+  Felder: Status, Prüfstand und eine Rücknahme bleiben, ein zurückgenommener
+  Befund wird nicht wieder geöffnet. Ein Nachtrag zu einem Element ohne
+  Urteil wird ignoriert (Warnung bei `report`).
+- Eine Neudefinition eines Zusatzbefunds (gleiche ID in `extra` einer
+  späteren Datei) ersetzt die alte ganz: offen, ohne altes `v`.
+- Ob ein Urteil nach `changes.json` veraltet ist, richtet sich nach dem
+  Prüfstand des letzten Urteils mit Status (bzw. der letzten Definition).
 
 ### 4b. Behobene Punkte
 
 Ein Fix-PR trägt behobene Punkte in `status/zz-fixed-<bereich>.json` ein
-(Element-ID oder Befund-ID `x-…` mit `s: "ok"` und Verweis auf den PR). Diese
-Dateien werden immer zuletzt gelesen und gelten damit vor jedem früheren
-Urteil.
+(Element-ID oder Befund-ID `x-…` mit `s: "ok"` und Verweis auf den PR in `n`).
+Pflichtfeld ist `"afterRound": N`, die letzte Prüfrunde vor dem Fix: Die
+Datei gilt nach Runde N (und deren Korrekturdateien), aber vor Runde N + 1;
+ein Urteil einer späteren Runde ersetzt den Fix also. Ohne `afterRound`
+bricht das Werkzeug ab.
+
+```json
+{ "batch": "zz-fixed-termine", "afterRound": 3, "ionic": "9f9b82af", "flutter": "<commit>",
+  "items": { "<element-id>": { "s": "ok", "n": "PR #123" } } }
+```
+
+`verify-round` wählt behobene Punkte (Elemente und Zusatzbefunde), die seit
+dem Fix noch keine Runde gesehen hat (weder Urteil noch Nachtrag in einer
+`zz-verify*`-Datei), mit dem Grund `behoben-ungeprueft` aus.
 
 ### 5. Bericht, Tracker und Arbeitslisten
 
 `node tool/parity/parity.mjs report` schreibt `summary.md` und die kompakte
 `tracker-data.json` (nicht versioniert, wird mit veröffentlicht) für die Tracker-Seite (`tracker/index.html`, als
 Artifact veröffentlicht; dort entscheidet Leon je Abweichung „Angleichen“,
-„So lassen“ oder „Später klären“). `node tool/parity/parity.mjs fixlists`
+„So lassen“ oder „Später klären“). In `summary.md` trägt jede Zeile die
+Element-ID (Teil nach `#`) bzw. die Befund-ID `x-…`; `logic`-Einträge, deren
+Befunde einzeln als Zusatzbefunde stehen, zählen in der Status-Tabelle in
+der eigenen Zeile `zusammenfassend` statt unter `diff`/`missing`. Urteile zu
+IDs, die das Inventar nicht kennt, und Urteile zu unbekannten
+Zusatzbefunden meldet `report` als Warnung. `node tool/parity/parity.mjs fixlists`
 schreibt je Bereich eine Arbeitsliste `fixes/<bereich>.md`: hoch/mittel zum
 Angleichen, „Flutter besser“-Fälle zur Entscheidung, Kleinigkeiten.
 

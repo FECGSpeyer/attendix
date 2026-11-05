@@ -32,6 +32,7 @@ import { execSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import ts from 'typescript';
 import * as ng from '@angular/compiler';
+import { ROLE_TEXT } from './roles.mjs';
 
 // ---------------------------------------------------------------- args
 const args = process.argv.slice(2);
@@ -169,8 +170,6 @@ const enclosingMemberHash = (sf, node) => {
   }
   return null;
 };
-// `role: 'cancel'` in alert/action sheet buttons is no role check
-const ROLE_TEXT = /\brole\b(?!\s*:\s*['"`])|\bRole\.|isConductor|isHelper|isAdmin|isPlayer|isViewer|isParent|isApplicant|isVoiceLeader|isResponsible|isTeamLeader|isLeader|isManager|isSuperAdmin|permission|\bperm|tenantData|tenant\(\)\??\.\w|\btenant\.\w|isGeneral|isChoir|isDemo|isMainGroup|hasOrg|organisation\(\)/;
 const enclosingMethod = (node) => {
   let n = node;
   let methodName = null;
@@ -775,6 +774,9 @@ const scanTemplate = (unit, htmlFile, text, baseOffset = 0, baseLine = 0) => {
         cond: condHere,
         tag: name,
         bindings,
+        // expressions of the inputs ([editable]="isAdmin"): a new field, so
+        // diff against an older inventory ignores it (shape projection)
+        bindingExprs: el.inputs.map((i) => clip(slice(i.sourceSpan), 160)),
         events,
         sig: `${name}|${bindings.join(',')}`,
       });

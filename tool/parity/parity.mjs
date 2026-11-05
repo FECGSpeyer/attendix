@@ -10,6 +10,7 @@
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
+import { ROLE_TEXT } from './roles.mjs';
 
 const DIR = 'docs/parity';
 const INVENTORY = join(DIR, 'ionic-inventory.json');
@@ -92,44 +93,60 @@ const changedAfter = (changes, commit) => {
 
 // Reading order of status files: first pass (b*), verification rounds
 // (zz-verify-* = 1, zz-verifyN-* = N), correction files after the round named
-// in their "afterRound", fixed items from fix PRs (zz-fixed-*) last.
+// in their "afterRound" (N + 0.5), fixed items from fix PRs (zz-fixed-*) after
+// the round named in their mandatory "afterRound" (N + 0.6: after that
+// round's corrections, before round N + 1, which may judge them again).
+const isFixed = (f) => f.startsWith('zz-fixed-');
+const isRound = (f) => /^zz-verify\d*-/.test(f);
 const rankOf = (f, s) => {
-  if (f.startsWith('zz-fixed-')) return 1e6;
+  if (isFixed(f)) {
+    if (!Number.isInteger(s.afterRound)) throw new Error(`${f}: zz-fixed-* needs "afterRound": <last verification round before the fix>`);
+    return s.afterRound + 0.6;
+  }
   if (s.afterRound !== undefined) return s.afterRound + 0.5;
   const m = f.match(/^zz-verify(\d*)-/);
   if (m) return m[1] ? Number(m[1]) : 1;
   return 0;
 };
 const readStatuses = () => {
-  const out = { items: {}, extra: [], extraAll: [], extraUnits: new Set(), files: [] };
+  const out = { items: {}, extra: [], extraAll: [], extraUnits: new Set(), files: [], refs: [], warnings: [] };
   if (!existsSync(STATUS_DIR)) return out;
   const files = readdirSync(STATUS_DIR).filter((x) => x.endsWith('.json')).map((f) => ({ f, s: load(join(STATUS_DIR, f)) }));
   files.forEach((x) => { x.rank = rankOf(x.f, x.s); });
   files.sort((a, b) => a.rank - b.rank || (a.f < b.f ? -1 : 1));
   const changes = loadChanges();
   const extras = new Map();
-  for (const { f, s } of files) {
-    out.files.push({ file: f, batch: s.batch, flutter: s.flutter, ionic: s.ionic });
-    // 1. extra findings defined in this file (a later definition re-opens it)
+  for (const { f, s, rank } of files) {
+    out.files.push({ file: f, batch: s.batch, flutter: s.flutter, ionic: s.ionic, rank });
+    // 1. extra findings defined in this file: a later definition replaces the
+    // earlier one completely (re-opens it, no old second verdict v)
     for (const e of s.extra ?? []) {
       const id = extraId(e);
-      extras.set(id, { ...extras.get(id), ...e, id, src: f, ionicAt: s.ionic, flutterAt: s.flutter, withdrawn: false });
+      extras.set(id, { ...e, id, src: f, ionicAt: s.ionic, flutterAt: s.flutter, withdrawn: false });
     }
     // 2. verdicts: a new status replaces the old verdict (f and n are kept
-    // only when the status itself did not change); without s it amends it
+    // only when the status itself did not change) and sets the commits the
+    // check was made at; without s it only amends sev/n/f/v (commits, status
+    // and a withdrawal stay as they are). A verification round touching a
+    // fixed item (full verdict or amendment) counts as its check after the fix.
     for (const [id, st] of Object.entries(s.items ?? {})) {
       if (id.startsWith('x-')) {
         const e = extras.get(id);
-        if (!e) continue;
-        if (st.s === 'ok' || st.s === 'na') extras.set(id, { ...e, withdrawn: true, wsrc: f, wAt: s.ionic, wn: st.n ?? null });
-        else extras.set(id, { ...e, withdrawn: false, sev: st.sev ?? e.sev, n: st.n ?? e.n, f: st.f ?? e.f, v: st.v, vsrc: f, flutterAt: s.flutter ?? e.flutterAt });
+        if (!e) { out.warnings.push(`${f}: verdict for unknown extra finding ${id}`); continue; }
+        const seen = isRound(f) ? { fixed: false } : {};
+        if (st.s === undefined) extras.set(id, { ...e, ...seen, sev: st.sev ?? e.sev, n: st.n ?? e.n, f: st.f ?? e.f, v: st.v ?? e.v, vsrc: st.v ? f : e.vsrc });
+        else if (st.s === 'ok' || st.s === 'na') extras.set(id, { ...e, withdrawn: true, wsrc: f, wAt: s.ionic, wn: st.n ?? null, fixed: isFixed(f) });
+        else extras.set(id, { ...e, withdrawn: false, sev: st.sev ?? e.sev, n: st.n ?? e.n, f: st.f ?? e.f, v: st.v, vsrc: f, ionicAt: s.ionic, flutterAt: s.flutter ?? e.flutterAt, fixed: false });
         continue;
       }
+      out.refs.push([id, f]);
       const prev = out.items[id];
-      if (st.s === undefined) out.items[id] = { ...prev, ...st, src: f, ionicAt: s.ionic ?? prev?.ionicAt, flutterAt: s.flutter ?? prev?.flutterAt };
-      else {
+      if (st.s === undefined) {
+        if (!prev) { out.warnings.push(`${f}: amendment without s for ${id}, which has no verdict yet (ignored)`); continue; }
+        out.items[id] = { ...prev, ...st, asrc: f, ...(isRound(f) ? { fixed: false } : {}) };
+      } else {
         const same = prev?.s === st.s;
-        out.items[id] = { s: st.s, sev: st.sev, f: st.f ?? (same ? prev.f : undefined), n: st.n ?? (same ? prev.n : undefined), v: st.v, src: f, ionicAt: s.ionic, flutterAt: s.flutter };
+        out.items[id] = { s: st.s, sev: st.sev, f: st.f ?? (same ? prev.f : undefined), n: st.n ?? (same ? prev.n : undefined), v: st.v, src: f, ionicAt: s.ionic, flutterAt: s.flutter, fixed: isFixed(f) };
       }
     }
     // 3. older form: withdraw or re-rate an extra by unit + title prefix
@@ -165,21 +182,38 @@ const stable = (v) => {
   if (v && typeof v === 'object') return `{${Object.keys(v).filter((k) => v[k] !== undefined).sort().map((k) => `${JSON.stringify(k)}:${stable(v[k])}`).join(',')}}`;
   return JSON.stringify(v ?? null);
 };
-const fpOf = (i) => {
-  // roleGuarded only steers the selection of a round; it is derived from the method body (mbody)
-  const { id, line, methods, bodies, roleGuarded, ...rest } = i;
-  const body = bodies ?? (i.kind === 'logic' ? methods?.map((m) => m.replace(/:\d+-\d+$/, '')) : undefined);
-  return createHash('sha1').update(stable({ ...rest, body })).digest('hex').slice(0, 12);
+// Fields that are not compared like the others: position (id, line),
+// method lists (compared separately, see fpOf) and roleGuarded, which only
+// steers the selection of a round and is derived from the method body (mbody).
+const OWN = new Set(['id', 'line', 'methods', 'bodies', 'roleGuarded']);
+// Fields whose keys are data (attribute names, method names), not field
+// names of the extractor: compared as a whole, never cut by the projection.
+const DATA_MAPS = new Set(['attrs', 'bodies']);
+const methodNames = (i) => (i.bodies ? Object.keys(i.bodies) : (i.methods ?? []).map((m) => m.replace(/:\d+-\d+$/, ''))).sort();
+// Fingerprint of an item (projected to the fields both inventories know, so
+// body hashes count only if both have `bodies`) plus, for a logic item, the
+// full list of method names taken from the unprojected item: a new or removed
+// method is always a change.
+const fpOf = (projected, original) => {
+  const rest = Object.fromEntries(Object.entries(projected).filter(([k]) => !OWN.has(k) || k === 'bodies'));
+  const names = original.kind === 'logic' ? methodNames(original) : undefined;
+  return createHash('sha1').update(stable({ ...rest, names })).digest('hex').slice(0, 12);
 };
 // Shape (field names, nested) of all items of one kind in an inventory: a
-// newer extractor's extra fields are cut away before comparing.
+// field only one of two inventories knows (newer extractor: added; older:
+// removed or renamed) is cut away on both sides before comparing.
 const shapeAdd = (shape, v) => {
   if (Array.isArray(v)) { v.forEach((x) => { shape.items = shapeAdd(shape.items ?? {}, x); }); return shape; }
   if (v && typeof v === 'object') {
     shape.keys ??= {};
-    for (const [k, x] of Object.entries(v)) shape.keys[k] = shapeAdd(shape.keys[k] ?? {}, x);
+    for (const [k, x] of Object.entries(v)) shape.keys[k] = DATA_MAPS.has(k) ? {} : shapeAdd(shape.keys[k] ?? {}, x);
   }
   return shape;
+};
+const shapesOf = (M) => {
+  const shapes = {};
+  M.forEach(({ i }) => { shapes[i.kind] = shapeAdd(shapes[i.kind] ?? {}, Object.fromEntries(Object.entries(i).filter(([k]) => !OWN.has(k) || k === 'bodies'))); });
+  return shapes;
 };
 const project = (v, shape) => {
   if (!shape) return v;
@@ -190,17 +224,19 @@ const project = (v, shape) => {
 
 // Differences between two inventories: new, removed and changed items (same
 // id, other content: texts, conditions, DB payloads, method bodies), changed
-// translations and the items using them. Fields only a newer extractor emits
-// are cut away (shape of the old inventory per kind), so they are no change.
+// translations and the items using them. Only fields both inventories know
+// per kind are compared (each side cut to the other's shape), so fields a
+// newer extractor adds, removes or renames are no change.
 const diffInv = (a, b) => {
   const ids = (inv) => new Map(inv.units.flatMap((u) => u.items.map((i) => [i.id, { unit: u.id, i }])));
   const A = ids(a);
   const B = ids(b);
   const added = [...B.keys()].filter((k) => !A.has(k));
   const removed = [...A.keys()].filter((k) => !B.has(k));
-  const shapes = {};
-  A.forEach(({ i }) => { const { id, line, methods, ...r } = i; shapes[i.kind] = shapeAdd(shapes[i.kind] ?? {}, r); });
-  const changed = [...B.keys()].filter((k) => A.has(k) && fpOf(A.get(k).i) !== fpOf({ ...project(B.get(k).i, shapes[B.get(k).i.kind]), id: k, line: 0, methods: B.get(k).i.methods }));
+  const shA = shapesOf(A);
+  const shB = shapesOf(B);
+  const fpIn = (i, other) => fpOf(project(i, other[i.kind]), i);
+  const changed = [...B.keys()].filter((k) => A.has(k) && fpIn(A.get(k).i, shB) !== fpIn(B.get(k).i, shA));
   const i18nChanged = Object.keys(b.i18n ?? {}).filter((k) => a.i18n?.[k] && a.i18n[k].de !== b.i18n[k].de);
   const viaText = [...B.keys()].filter((k) => A.has(k) && !changed.includes(k) && i18nChanged.some((key) => JSON.stringify(B.get(k).i).includes(`"${key}"`)));
   return { A, B, added, removed, changed, i18nChanged, viaText };
@@ -325,9 +361,11 @@ if (cmd === 'batches') {
   // the inventory) or changed since the inventory given with --since, every
   // hoch/mittel/missing/unclear verdict without a second check, every ok/na
   // item whose visibility or reachability depends on role or tenant settings
-  // (template conditions, role members of the class, role checks in TS code),
-  // every unresolved DB call, every hoch/mittel extra finding without a
-  // second verdict and every extra whose page changed in Ionic later.
+  // (template conditions, bound attribute expressions, role members of the
+  // class, role checks in TS code, the opener of an inline modal), every
+  // unresolved DB call, every item or extra fixed by a fix PR (zz-fixed-*)
+  // that no round has looked at since, every hoch/mittel extra finding
+  // without a second verdict and every extra whose page changed in Ionic later.
   const since = rest.includes('--since') ? rest[rest.indexOf('--since') + 1] : null;
   const args = rest.filter((x, k) => x !== '--since' && rest[k - 1] !== '--since');
   const [N, outDir, perFile = '40'] = cmd === 'verify2-slices' ? ['2', ...args] : args;
@@ -337,26 +375,73 @@ if (cmd === 'batches') {
   const { batches } = load(join(DIR, 'batches.json'));
   const recheck = new Set();
   if (since) { const d = diffInv(load(since), inv); [...d.changed, ...d.viaText].forEach((id) => recheck.add(id)); }
-  // role and tenant-setting names (template conditions); class members that
-  // read role or tenant data come from the inventory (unit.roleMembers)
-  const ROLE = /\b(isConductor|isHelper|isAdmin|isPlayer|isViewer|isParent|isApplicant|isVoiceLeader|isResponsible|isOrganizer|isManager|isLeader|isTeamLeader|isSuperAdmin|isGeneral|isChoir|isOrchestra|isDemo|isMainGroup|isLoggedIn|hasOrg|readOnly|can[A-Z]\w*|enable_\w+|manage[A-Z]\w*|show(Planning|Team|Beamer|GemeindeApp|Landing))\b|role|Role|tenant|Tenant|permission/;
+  // role and tenant-setting names (template conditions, bound attributes),
+  // plus everything the extractor counts as role code (ROLE_TEXT); class
+  // members that read role or tenant data come from the inventory
+  // (unit.roleMembers)
+  const ROLE = /\b(isConductor|isHelper|isAdmin|isPlayer|isViewer|isParent|isApplicant|isVoiceLeader|isResponsible|isOrganizer|isManager|isLeader|isTeamLeader|isSuperAdmin|isGeneral|isChoir|isOrchestra|isDemo|isMainGroup|isLoggedIn|hasOrg|readOnly|editableByPlayers|organisation|can[A-Z]\w*|enable_\w+|manage[A-Z]\w*|show(Planning|Team|Beamer|GemeindeApp|Landing))\b|role|Role|tenant|Tenant|permission/;
+  const isRoleText = (t) => ROLE.test(t) || ROLE_TEXT.test(t);
   const identsOf = (txt) => new Set(String(txt).match(/[A-Za-z_]\w*/g) ?? []);
   const unitOf = new Map(inv.units.map((u) => [u.id, u]));
   const n = Number(perFile);
   let total = 0;
+  let viaOpener = 0;
   const why = {};
-  const roleDependent = (u, i) => {
+  // expressions of bound attributes ([disabled]="readOnly", [isOpen]=…,
+  // inputs of embedded components): the part after "=", string literals
+  // (translation keys such as 'settings.roles') removed
+  const exprOf = (b) => String(b).replace(/^[^=]*=\s*/, '').replace(/^"|"$/g, '').replace(/'(?:[^'\\]|\\.)*'|`(?:[^`\\]|\\.)*`/g, "''");
+  const boundExprs = (i) => [
+    ...Object.entries(i.attrs ?? {}).filter(([k]) => k.startsWith('[')).map(([, v]) => exprOf(v)),
+    ...[...(i.bindings ?? []), ...(i.bindingExprs ?? [])].filter((b) => /^\[[^\]]+\]\s*=/.test(String(b))).map(exprOf),
+  ];
+  const directlyRoleDependent = (u, i) => {
     const cond = (i.cond ?? []).join(' ');
-    if (ROLE.test(cond)) return true;
+    const bound = boundExprs(i).join(' ');
+    if (isRoleText(cond) || isRoleText(bound)) return true;
     if (i.roleGuarded) return true;
     const members = new Set(u.roleMembers ?? []);
-    return [...identsOf(cond)].some((x) => members.has(x));
+    return [...identsOf(`${cond} ${bound}`)].some((x) => members.has(x));
   };
+  const inherited = new Set();
+  // Inline modals/popovers inherit the role dependence of what opens them:
+  // an element setting their [isOpen] flag to true, their trigger id or a
+  // call of <ref>.present(). Their contents carry "in <ion-modal …>" in cond.
+  const roleItemsOf = (u) => {
+    const set = new Set(u.items.filter((i) => directlyRoleDependent(u, i)).map((i) => i.id));
+    const modals = u.items.filter((i) => i.inline && (i.kind === 'modal' || i.kind === 'popover')).map((m) => {
+      const a = m.attrs ?? {};
+      const flag = a['[isOpen]'] && /^"?\s*([A-Za-z_$][\w$]*)\s*"?$/.exec(a['[isOpen]'])?.[1];
+      const trigger = a.trigger ?? null;
+      const ref = a['#'] ?? null;
+      if (!flag && !trigger && !ref) return null;
+      const marker = `in <${m.tag}${trigger ? ` trigger=${trigger}` : ''}${a['[isOpen]'] ? ` isOpen=${a['[isOpen]']}` : ''}${ref ? ` #${ref}` : ''}>`;
+      const opens = (i) => i.id !== m.id && (
+        (flag && (i.events ?? []).some((e) => new RegExp(`\\b${flag}\\s*=\\s*true\\b`).test(e)))
+        || (trigger && i.attrs?.id === trigger)
+        || (ref && ref.split(',').some((r) => (i.events ?? []).some((e) => new RegExp(`\\b${r}\\.present\\(`).test(e)))));
+      return { m, marker, opens };
+    }).filter(Boolean);
+    for (let changed = true; changed;) {
+      changed = false;
+      for (const { m, marker, opens } of modals) {
+        if (set.has(m.id) && u.items.every((i) => !(i.cond ?? []).includes(marker) || set.has(i.id))) continue;
+        if (!u.items.some((i) => set.has(i.id) && opens(i))) continue;
+        for (const i of u.items) {
+          if ((i.id === m.id || (i.cond ?? []).includes(marker)) && !set.has(i.id)) { set.add(i.id); inherited.add(i.id); changed = true; }
+        }
+      }
+    }
+    return set;
+  };
+  const roleItems = new Set(inv.units.flatMap((u) => [...roleItemsOf(u)]));
   const extraEntry = (e, reason) => {
     const u = unitOf.get(e.unit);
-    return { reason, unit: e.unit, ionic: { ts: u?.ts, html: u?.html }, extra: { id: e.id, title: e.title, n: e.n, sev: e.sev, ionic: e.ionic ?? null, f: e.f ?? [], stale: e.stale ?? false } };
+    return { reason, unit: e.unit, ionic: { ts: u?.ts, html: u?.html }, extra: { id: e.id, title: e.title, n: e.n, sev: e.sev, ionic: e.ionic ?? null, f: e.f ?? [], stale: e.stale ?? false }, ...(e.fixed ? { fix: { src: e.wsrc, n: e.wn } } : {}) };
   };
-  const extraReason = (e) => (e.stale ? 'zusatzbefund-ionic-geaendert' : !e.v && ['hoch', 'mittel'].includes(e.sev) ? 'zusatzbefund' : null);
+  // withdrawn extras only come back when a fix PR withdrew them (not yet re-checked)
+  const extraReason = (e) => (e.withdrawn ? (e.fixed ? 'behoben-ungeprueft' : null)
+    : e.stale ? 'zusatzbefund-ionic-geaendert' : !e.v && ['hoch', 'mittel'].includes(e.sev) ? 'zusatzbefund' : null);
   const write = (name, part) => {
     writeFileSync(join(outDir, `${name}.json`), `${JSON.stringify({ batch: name, ionicCommit: inv.meta.ionicCommit, items: part }, null, 1)}\n`);
     console.log(`${name} ${part.length}`);
@@ -369,16 +454,20 @@ if (cmd === 'batches') {
         let reason = null;
         if (!s0) reason = 'neu';
         else if (recheck.has(i.id)) reason = 'geaendert';
+        else if (s0.fixed) reason = 'behoben-ungeprueft';
         else if (s0.v || s0.src?.startsWith('zz-fixed-')) continue;
         else if (i.unresolved) reason = 'db-unaufgeloest';
         else if (s0.s === 'missing' || s0.s === 'unclear' || (s0.s === 'diff' && s0.sev !== 'niedrig')) reason = 'abweichung-ungeprueft';
-        else if ((s0.s === 'ok' || s0.s === 'na') && roleDependent(u, i)) reason = 'rolle-mandant';
+        else if ((s0.s === 'ok' || s0.s === 'na') && roleItems.has(i.id)) reason = 'rolle-mandant';
         if (!reason) continue;
         why[reason] = (why[reason] ?? 0) + 1;
-        pick.push({ reason, unit: u.id, ionic: { ts: u.ts, html: u.html }, item: i, first: s0 ? { s: s0.s, f: s0.f, n: s0.n, sev: s0.sev, v: s0.v ?? null } : null });
+        // via: the role dependence comes from the element opening the modal/popover
+        const via = reason === 'rolle-mandant' && inherited.has(i.id) ? { via: 'ausloeser' } : {};
+        if (via.via) viaOpener += 1;
+        pick.push({ reason, ...via, unit: u.id, ionic: { ts: u.ts, html: u.html }, item: i, first: s0 ? { s: s0.s, f: s0.f, n: s0.n, sev: s0.sev, v: s0.v ?? null, src: s0.fixed ? s0.src : undefined } : null });
       }
     }
-    for (const e of st.extra) {
+    for (const e of st.extraAll) {
       const reason = b.units.includes(e.unit) && extraReason(e);
       if (!reason) continue;
       why[reason] = (why[reason] ?? 0) + 1;
@@ -388,13 +477,13 @@ if (cmd === 'batches') {
     total += pick.length;
   }
   // native/* findings (store build, permissions, icons) belong to no page batch
-  const orphan = st.extra.filter((e) => !batches.some((b) => b.units.includes(e.unit)) && extraReason(e));
+  const orphan = st.extraAll.filter((e) => !batches.some((b) => b.units.includes(e.unit)) && extraReason(e));
   if (orphan.length) {
     write(`zz-verify${N}-native`, orphan.map((e) => extraEntry(e, extraReason(e))));
     total += orphan.length;
     orphan.forEach((e) => { why[extraReason(e)] = (why[extraReason(e)] ?? 0) + 1; });
   }
-  console.log(`${total} items to verify`, why);
+  console.log(`${total} items to verify`, why, viaOpener ? `(rolle-mandant über Modal-Auslöser: ${viaOpener})` : '');
 } else if (cmd === 'report') {
   const inv = load(INVENTORY);
   const st = readStatuses();
@@ -409,23 +498,31 @@ if (cmd === 'batches') {
       rows.push({ unit: u.id, unitKind: u.kind, routes: u.routes, item: i, status, summary, sev: s?.sev ?? null, flutter: s?.f ?? [], note: s?.n ?? '', verified: s?.v ?? null, flutterAt: s?.flutterAt ?? null });
     }
   }
+  // verdicts for ids the inventory does not know (removed or mistyped)
+  const invIds = new Set(inv.units.flatMap((u) => u.items.map((i) => i.id)));
+  const orphans = st.refs.filter(([id]) => !invIds.has(id));
+  for (const [id, f] of orphans) console.warn(`warning: ${f}: verdict for ${id}, which is not in the inventory`);
+  for (const w of st.warnings) console.warn(`warning: ${w}`);
+  // a logic item that only summarises (its findings are extras) with diff or
+  // missing is counted in a row of its own, not under diff/missing
+  const SUMMARY = 'zusammenfassend';
+  rows.forEach((r) => { r.tableStatus = r.summary && (r.status === 'diff' || r.status === 'missing') ? SUMMARY : r.status; });
   const count = (list, key) => list.reduce((m, r) => { m[r[key]] = (m[r[key]] ?? 0) + 1; return m; }, {});
-  const total = count(rows, 'status');
+  const total = count(rows, 'tableStatus');
   const lines = [];
   lines.push('# Parität Ionic → Flutter (normales Design)', '');
   lines.push(`Ionic ${inv.meta.ionicVersion} (${inv.meta.ionicCommit}), ${inv.meta.items} Punkte in ${inv.meta.units} Bausteinen.`, '');
   lines.push('| Status | Anzahl |', '|---|---|');
   for (const [k, v] of Object.entries(total).sort()) lines.push(`| ${k} | ${v} |`);
-  const summaries = rows.filter((r) => r.summary && (r.status === 'diff' || r.status === 'missing')).length;
+  if (total[SUMMARY]) lines.push('', `\`${SUMMARY}\`: Logik-Einträge mit diff/missing, deren Befunde einzeln als Zusatzbefunde stehen (nicht unter diff/missing gezählt).`);
   lines.push('', `Zusätzliche Befunde: ${st.extra.length}${st.extra.some((e) => e.stale) ? ` (davon ${st.extra.filter((e) => e.stale).length} auf seither geänderten Ionic-Seiten)` : ''}`);
-  if (summaries) lines.push(`Logik-Einträge, die nur zusammenfassen (Befunde stehen einzeln als Zusatzbefunde, hier nicht gezählt): ${summaries}`);
   lines.push('', '## Offene Abweichungen nach Schwere', '');
   for (const sev of ['hoch', 'mittel', 'niedrig']) {
     const list = rows.filter((r) => (r.status === 'diff' || r.status === 'missing') && r.sev === sev && !r.summary);
     const ex = st.extra.filter((e) => e.sev === sev);
     lines.push(`### ${sev} (${list.length + ex.length})`, '');
-    for (const r of list) lines.push(`- **${r.unit}** \`${r.item.kind}\` ${r.item.file}:${r.item.line} – ${r.note}`);
-    for (const e of ex) lines.push(`- **${e.unit}** zusätzlicher Befund${e.stale ? ' (Ionic-Seite seither geändert)' : ''}: ${e.title} – ${e.n}`);
+    for (const r of list) lines.push(`- **${r.unit}** \`${r.item.id.split('#')[1]}\` ${r.item.file}:${r.item.line} – ${r.note}`);
+    for (const e of ex) lines.push(`- **${e.unit}** \`${e.id}\` zusätzlicher Befund${e.stale ? ' (Ionic-Seite seither geändert)' : ''}: ${e.title} – ${e.n}`);
     lines.push('');
   }
   writeFileSync(join(DIR, 'summary.md'), `${lines.join('\n')}\n`);
