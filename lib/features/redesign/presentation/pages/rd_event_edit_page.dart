@@ -10,10 +10,13 @@ import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/services/offline_queue_service.dart';
+import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/attendance_logic_utils.dart' show defaultDeadline;
+import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/event_list_utils.dart';
+import '../../../../core/utils/haptic_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/repositories/attendance_repository.dart';
@@ -38,7 +41,8 @@ import '../widgets/today/rd_today_common.dart';
 /// the page closes) through the same writes: Info-Text, Datum (with the
 /// status question), Beginn/Ende (re-runs the shift computation), Ort,
 /// Abmeldeschluss, Beschreibung & Anhang, Ordner and Notizen. Werke,
-/// Ablauf and Vorbereitung are changed in the Überblick.
+/// Ablauf and Vorbereitung are changed in the Überblick. "Termin löschen"
+/// is at the bottom, like "Werk löschen" (concept "Termin-Bereich neu").
 class RdEventEditPage extends ConsumerStatefulWidget {
   const RdEventEditPage({super.key, required this.attendanceId});
 
@@ -79,6 +83,9 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
   late final OfflineWriteSession _session;
 
   int get _id => widget.attendanceId;
+
+  /// Set once the Termin is deleted: nothing is written any more.
+  bool _deleted = false;
 
   @override
   void initState() {
@@ -131,7 +138,7 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
 
   /// Writes [updates]; reports a failure while the page is open.
   Future<bool> _write(Map<String, dynamic> updates) async {
-    if (!_repo.hasTenantId || !_session.isCurrent()) return false;
+    if (_deleted || !_repo.hasTenantId || !_session.isCurrent()) return false;
     try {
       await _repo.updateAttendance(_id, updates);
       _refresh();
@@ -167,6 +174,43 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
       // Marked as stored only once written, so a failed save is tried again.
       if (await _write({'notes': value.isEmpty ? null : value})) _storedNotes = value;
     });
+  }
+
+  /// "Termin löschen" (old Termine list: Dirigent only, i.e. Admin and
+  /// Verantwortliche): confirm, delete, back to the Termine.
+  Future<void> _delete() async {
+    final l10n = context.l10n;
+    if (DemoGuard.blocked()) return; // DEMO_GUARD
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.attListRemoveConfirm),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.commonCancel)),
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: context.rd.absent),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.attListContinue),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted || !_session.isCurrent()) return;
+    final router = GoRouter.of(context);
+    HapticHelper.medium();
+    try {
+      await _repo.deleteAttendance(_id);
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
+      return;
+    }
+    _deleted = true; // text typed last is not saved any more
+    _container
+      ..invalidate(attendancesProvider)
+      ..invalidate(realtimeAttendanceListProvider)
+      ..invalidate(playerAttendancePercentagesProvider);
+    if (mounted) ToastHelper.showSuccess(context, l10n.redesignEventDeleted);
+    router.go(RedesignRoutes.events);
   }
 
   void _done() {
@@ -409,6 +453,7 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     final attachment = (att.attachmentName ?? '').trim();
     final folder = (att.filesFolder ?? '').trim();
     final canFiles = ref.watch(canAccessFilesProvider);
+    final role = ref.watch(effectiveRoleProvider);
     final days = att.durationDays ?? type?.durationDays ?? 1;
 
     return RdFormBody(children: [
@@ -546,6 +591,19 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
         child: Text(l10n.redesignEventEditHint, style: RdType.meta(p, size: 13)),
       ),
       RdPrimaryButton(label: l10n.redesignCommonDone, onPressed: _done),
+      if (role.isAdmin || role.isResponsible) ...[
+        const SizedBox(height: 28),
+        RdGroupedList(children: [
+          RdListRow(
+            key: const Key('rd-event-delete'),
+            title: l10n.redesignEventDelete,
+            titleColor: p.absent,
+            leading: Icon(Icons.delete_outline, color: p.absent),
+            showChevron: false,
+            onTap: _delete,
+          ),
+        ]),
+      ],
     ]);
   }
 }
