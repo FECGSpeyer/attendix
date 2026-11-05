@@ -315,11 +315,18 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   }
 
   Future<void> _selectSeasonStart() async {
+    // Ionic ion-datetime max = today, no lower bound (field-dd151934).
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final first = DateTime(1900);
+    var initial = _seasonStart ?? today;
+    if (initial.isAfter(today)) initial = today;
+    if (initial.isBefore(first)) initial = first;
     final picked = await showAppDatePicker(
       context: context,
-      initialDate: _seasonStart ?? DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
+      initialDate: initial,
+      firstDate: first,
+      lastDate: today,
       locale: Locale(currentLanguage()), // PARITY_R10: app language
     );
     if (picked != null) {
