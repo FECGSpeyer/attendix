@@ -1,0 +1,2081 @@
+{
+ "batch": "zz-verify5-a-opus-01",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:57-65",
+     "get isLeader:67-69",
+     "get statusLabel:71-73",
+     "get priorityLabel:75-77",
+     "get responsibleName:79-81",
+     "get proposerName:83-85",
+     "get completedTaskCount:87-89",
+     "ngOnInit:91-119",
+     "ionViewWillEnter:122-126",
+     "loadItem:128-136",
+     "loadRelated:138-145",
+     "historyTypeName:147-150",
+     "historyStatus:152-161",
+     "openHistory:163-165",
+     "openTask:167-169",
+     "taskSubtitle:171-177",
+     "createTask:179-188",
+     "planIntoAttendance:191-216",
+     "planIntoNewAttendance:219-222",
+     "insertInto:224-234",
+     "deleteItem:236-259",
+     "save:261-295",
+     "getPriorityColor:297-303",
+     "getStatusColor:305-311"
+    ],
+    "bodies": {
+     "constructor": "6dc65723",
+     "get isLeader": "c3cc14d1",
+     "get statusLabel": "826b6b01",
+     "get priorityLabel": "4e2f2740",
+     "get responsibleName": "5280ad3b",
+     "get proposerName": "f76e2591",
+     "get completedTaskCount": "e1cc8f2b",
+     "ngOnInit": "da8c583f",
+     "ionViewWillEnter": "062d2d52",
+     "loadItem": "74f89c1c",
+     "loadRelated": "3669e41c",
+     "historyTypeName": "d1c720d5",
+     "historyStatus": "f05436ff",
+     "openHistory": "b9077a6e",
+     "openTask": "eff48ea3",
+     "taskSubtitle": "e6b1ce90",
+     "createTask": "9e3581f8",
+     "planIntoAttendance": "f84b5034",
+     "planIntoNewAttendance": "551dae89",
+     "insertInto": "29077692",
+     "deleteItem": "5cfcdbcf",
+     "save": "90eaccbf",
+     "getPriorityColor": "9bd09864",
+     "getStatusColor": "6ba92ea2"
+    },
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#logic-6eb2caff"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart",
+     "lib/features/team_organization/presentation/utils/route_return_reload.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "register/register-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/register",
+    "component": "RegisterPage",
+    "unit": "register/register.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-d98e9634"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "app.component",
+   "ionic": {
+    "ts": "app.component.ts",
+    "html": "app.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "app.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:36-64",
+     "trySsoSignIn:72-90",
+     "ngOnInit:92-95",
+     "initializeApp:97-103",
+     "presentPasswordRecoveryAlert:105-153",
+     "listenToAuthChanges:155-174",
+     "checkForUpdates:176-201",
+     "showNativeAppAd:203-233",
+     "setupDeepLinks:235-255",
+     "handleWebAuthLink:264-274",
+     "handleAuthUrl:289-373",
+     "trackPageViews:375-383"
+    ],
+    "bodies": {
+     "constructor": "97edb612",
+     "trySsoSignIn": "1ffc1a0e",
+     "ngOnInit": "e91a64b9",
+     "initializeApp": "0970746b",
+     "presentPasswordRecoveryAlert": "93fc25e5",
+     "listenToAuthChanges": "50cfbfa4",
+     "checkForUpdates": "201c5f84",
+     "showNativeAppAd": "81991eed",
+     "setupDeepLinks": "69b81aa6",
+     "handleWebAuthLink": "fc813e70",
+     "handleAuthUrl": "17a7738e",
+     "trackPageViews": "051890a1"
+    },
+    "id": "app.component#logic-4a296d90"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_link_listener.dart",
+     "lib/features/auth/presentation/widgets/password_recovery_alert.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "attendance/att-list/att-list.page.ts",
+    "line": 504,
+    "method": "AttListPage.declineMyDuty",
+    "cond": [],
+    "header": {
+     "keys": [
+      "signout.cannot"
+     ],
+     "de": [
+      "Kann nicht"
+     ],
+     "literals": [],
+     "expr": "translate('signout.cannot')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.confirm"
+       ],
+       "de": [
+        "Bestätigen"
+       ],
+       "literals": [],
+       "expr": "translate('common.confirm')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async ({ reason }) => { await this.db.signout([pa.id], reason ?? '', false, false, true); void this.db.dutySvc.notify({ type: 'understaffed', tenantId: this.db.tenant().id, attendanceId: att.id }); Utils.showToast(translate('duty.declinedT…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'reason'",
+      "placeholder": {
+       "keys": [
+        "duty.reasonOptional"
+       ],
+       "de": [
+        "Grund (optional)"
+       ],
+       "literals": [],
+       "expr": "translate('duty.reasonOptional')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "70d33408",
+    "mbody": "72d933c2",
+    "roleGuarded": true,
+    "id": "attendance/att-list/att-list.page#alert-0c061d4b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/widgets/my_duty_requests_section.dart"
+    ],
+    "n": "behoben in #306",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "attendance/att-list/att-list.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "highlightedDates:81-118",
+     "constructor:120-147",
+     "ngOnInit:149-164",
+     "ionViewWillEnter:172-176",
+     "init:178-202",
+     "loadSongData:204-210",
+     "subscribeOnAttChannel:212-240",
+     "ngOnDestroy:242-245",
+     "handleRefresh:247-250",
+     "onTenantChange:252-259",
+     "getAttendance:261-283",
+     "applyAttendances:285-315",
+     "remove:317-338",
+     "onDateChanged:340-348",
+     "addAttendance:350-368",
+     "createAttendances:370-435",
+     "onTypeChange:437-441",
+     "get hasDutyTypes:445-447",
+     "openDutyDistribution:449-456",
+     "isDutyTypeSelected:458-460",
+     "get dutyWeekdays:463-476",
+     "changeDutyRequired:478-482",
+     "get myDutyRequests:485-495",
+     "confirmMyDuty:497-501",
+     "declineMyDuty:503-521",
+     "isDutyAttendance:523-525",
+     "dutyBadge:528-536",
+     "dutyNames:539-543",
+     "isAllDay:545-548",
+     "isPlaceEnabled:550-553",
+     "formatDate:555-557",
+     "onDateClick:559-565",
+     "getReadableDate:567-569",
+     "openAttendance:571-577",
+     "addSong:579-597",
+     "getSongInfo:599-605",
+     "getConductorInfo:607-617",
+     "onConChange:619-642",
+     "showSongsSelection:644-646",
+     "setFilter:648-651",
+     "toggleShowArchived:653-656",
+     "get upcomingGroups:658-663",
+     "get pastList:666-668",
+     "get pastPreview:670-672",
+     "weekday:674-676",
+     "day:678-680",
+     "percColor:682-684",
+     "isRunning:686-688",
+     "getEventTitle:690-696",
+     "getEventMeta:699-709",
+     "hasPlan:711-715",
+     "openPlanViewer:718-741",
+     "getStatusCounts:743-750",
+     "getCountText:752-754",
+     "onSongSearch:756-769",
+     "resetSongSearch:771-774",
+     "toggleSongSelection:776-786"
+    ],
+    "bodies": {
+     "highlightedDates": "26a0aa62",
+     "constructor": "15eb8957",
+     "ngOnInit": "d1493809",
+     "ionViewWillEnter": "1bd706c6",
+     "init": "6bdc0aec",
+     "loadSongData": "4b2804c7",
+     "subscribeOnAttChannel": "4d870500",
+     "ngOnDestroy": "ed06d207",
+     "handleRefresh": "e710b0b3",
+     "onTenantChange": "a99fac6c",
+     "getAttendance": "703f08d9",
+     "applyAttendances": "cd87c2d2",
+     "remove": "0d5f3691",
+     "onDateChanged": "145c3024",
+     "addAttendance": "bada3a35",
+     "createAttendances": "31b60d35",
+     "onTypeChange": "13d3d0c0",
+     "get hasDutyTypes": "e3258e01",
+     "openDutyDistribution": "5f6884b9",
+     "isDutyTypeSelected": "d900b0f9",
+     "get dutyWeekdays": "dbd8472d",
+     "changeDutyRequired": "473f1d04",
+     "get myDutyRequests": "c6e5be57",
+     "confirmMyDuty": "c2300cdd",
+     "declineMyDuty": "72d933c2",
+     "isDutyAttendance": "29b63fd0",
+     "dutyBadge": "71bad408",
+     "dutyNames": "96aca121",
+     "isAllDay": "75ec94a5",
+     "isPlaceEnabled": "f55b32a0",
+     "formatDate": "d70a73a9",
+     "onDateClick": "ac86bd09",
+     "getReadableDate": "729cbb47",
+     "openAttendance": "1ec4c734",
+     "addSong": "dfaadbde",
+     "getSongInfo": "59484e5d",
+     "getConductorInfo": "dca6c407",
+     "onConChange": "a6a41166",
+     "showSongsSelection": "d534c441",
+     "setFilter": "b5bd2ae1",
+     "toggleShowArchived": "29b27c5b",
+     "get upcomingGroups": "a0556b11",
+     "get pastList": "b129501c",
+     "get pastPreview": "856f35b0",
+     "weekday": "f88e8aa0",
+     "day": "e7c6d43d",
+     "percColor": "7758ef15",
+     "isRunning": "91a4c21a",
+     "getEventTitle": "d6295410",
+     "getEventMeta": "347a2a6b",
+     "hasPlan": "331f9e44",
+     "openPlanViewer": "56b23221",
+     "getStatusCounts": "3a997893",
+     "getCountText": "7ceceda5",
+     "onSongSearch": "29d05bd5",
+     "resetSongSearch": "962183ea",
+     "toggleSongSelection": "15288e34"
+    },
+    "id": "attendance/att-list/att-list.page#logic-d52a9296"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:269",
+     "lib/core/providers/attendance_providers.dart:193",
+     "lib/core/providers/attendance_providers.dart:252",
+     "lib/core/providers/realtime_providers.dart:144",
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:817",
+     "lib/features/attendance/presentation/attendance_create_writes.dart:115",
+     "lib/core/providers/duty_providers.dart:77"
+    ],
+    "n": "Grundlogik stimmt (Laden ab Saisonstart mit Offline-Cache, Archiv nur Admin/Verantwortliche via filterArchivedForRole, Typ-/Archiv-Filter, Sortierung, aktueller/kommende/vergangene Termine, Beobachter-Liste, Durchschnitt ohne unbesetzte Dienste, Prozent inkl. shift_excused_as_present, Rollenflags canAddAttendance = Dirigent||Helfer, Löschen, Anlegen mit gleichen Spalten, Personenfilter, Schichten, Abwesenheiten, Verhinderungen, Checkliste, Werken, duty_required). Korrektur sev hoch→mittel: Die hoch- und mittel-Extras des Erstreviewers (Ablaufplan-Viewer ohne Bearbeiten/Zusatzpläne/Werk-Aktionen; Info-Sheet nur Spinner) sind bereits durch modal-c5dfef61, modal-66d0050c und modal-f5836528 abgedeckt und dürfen laut Brief nicht als extra doppelt zählen (die Lücken selbst bleiben dort hoch/mittel). Übrige Erst-Extras (Dienst-Pill vergangen, „Deine Dienste“-Quelle, Meta-Zeit ganztägig, Formular-Zustand, Flutter-besser-Punkte) geprüft, zutreffend, niedrig. Neu: Dienst-Besetzung/-Namen und „Deine Dienste“ aus nicht aufgefrischten Caches (siehe extra, mittel).",
+    "sev": "mittel",
+    "v": "korrigiert",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+    "lib/core/providers/attendance_providers.dart",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart",
+    "lib/features/attendance/presentation/attendance_create_writes.dart",
+    "lib/core/providers/duty_providers.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "attendance/att-list/att-list.page.ts",
+    "line": 734,
+    "method": "AttListPage.openPlanViewer",
+    "cond": [
+     "(role === 'edit')"
+    ],
+    "component": "PlanningPage",
+    "props": [
+     "attendanceId",
+     "initialPlanIndex"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": "'planningModal'",
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "e79d9c8d",
+    "mbody": "56b23221",
+    "roleGuarded": true,
+    "id": "attendance/att-list/att-list.page#modal-66d0050c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+     "lib/features/planning/presentation/attendance_plan_viewer.dart"
+    ],
+    "n": "behoben in #305",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "attendance/att-list/att-list.page.ts",
+    "line": 720,
+    "method": "AttListPage.openPlanViewer",
+    "cond": [],
+    "component": "PlanViewerComponent",
+    "props": [
+     "attendance",
+     "plan",
+     "isPractice",
+     "songs",
+     "defaultLive",
+     "canEdit"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "7665872d",
+    "mbody": "56b23221",
+    "roleGuarded": true,
+    "id": "attendance/att-list/att-list.page#modal-c5dfef61"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+     "lib/features/planning/presentation/attendance_plan_viewer.dart"
+    ],
+    "n": "behoben in #305",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/att-list/att-list.page.ts",
+    "line": 514,
+    "method": "AttListPage.declineMyDuty",
+    "cond": [],
+    "message": {
+     "keys": [
+      "duty.declinedToast"
+     ],
+     "de": [
+      "Abgesagt, das Team wird informiert."
+     ],
+     "literals": [],
+     "expr": "translate('duty.declinedToast')"
+    },
+    "color": "success",
+    "duration": "3000",
+    "src": "bf342131",
+    "mbody": "72d933c2",
+    "roleGuarded": true,
+    "id": "attendance/att-list/att-list.page#toast-a71d4842"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/widgets/my_duty_requests_section.dart"
+    ],
+    "n": "behoben in #306",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "extra": {
+    "id": "x-9616cc8ac2",
+    "title": "Dienst-Besetzung in der Liste veraltet",
+    "n": "Befund real: dutyTermineByIdProvider, upcomingDutyTermineProvider und myDutyOverviewProvider sind nicht-autoDispose und hängen nur an Instanz/Konto/Typen; invalidiert nur von DutyNotifier, SignoutNotifier, SignInOutNotifier. Pull-to-Refresh, Realtime (attendanceRefetchCounter), Rückkehr aus dem Termin und Anlegen erneuern nur realtimeAttendanceListProvider. Ionic rechnet Headset, „x/y“-Pill, Namen („(angefragt)“/„noch niemand eingeteilt“), Heute-Karte „… besetzt“ und „Deine Dienste“ bei jedem getAttendance neu (Pull-to-Refresh, ionViewWillEnter, nach Anlegen). Folge in Flutter: neue Dienst-Termine als normale Termine mit „0%“, Bestätigungen/Selbsteintragungen anderer bleiben bis Dienst-Aktion, Instanzwechsel oder Neustart unsichtbar, auch Pull-to-Refresh hilft nicht. Erstprüfer: Sev zu niedrig – falsche/veraltete Daten in der Liste der Leitung = hoch.",
+    "sev": "hoch",
+    "ionic": "src/app/attendance/att-list/att-list.page.ts:528",
+    "f": [
+     "lib/core/providers/duty_providers.dart:77",
+     "lib/core/providers/duty_providers.dart:148",
+     "lib/core/providers/duty_providers.dart:67",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:369",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:625",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:216",
+     "lib/features/attendance/presentation/attendance_create_writes.dart:158",
+     "lib/core/providers/realtime_providers.dart:276"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-termine.json",
+    "n": "behoben in #306"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1436,
+    "method": "AttendancePage.send",
+    "cond": [
+     "(all || this.planLabels.length)"
+    ],
+    "call": "Utils.exportAttendancePlans",
+    "args": "{ attendance: this.attendance, type: this.db.attendanceTypes().find(type => type.id === this.attendance.type_id), indexes: all ? allPlans(this.attendance).map(…",
+    "src": "a7841a43",
+    "mbody": "268402b5",
+    "id": "attendance/attendance/attendance.page#effect-7cdd0978"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+    ],
+    "n": "behoben in #306",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1275,
+    "method": "AttendancePage.exportPlan",
+    "cond": [
+     "(all || this.planLabels.length)"
+    ],
+    "call": "Utils.exportAttendancePlans",
+    "args": "{ attendance: this.attendance, type: this.db.attendanceTypes().find(type => type.id === this.attendance.type_id), indexes: all ? allPlans(this.attendance).map(…",
+    "src": "931c4504",
+    "mbody": "a9b3af33",
+    "id": "attendance/attendance/attendance.page#effect-839f92ba"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+    ],
+    "n": "behoben in #306",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1963,
+    "method": "AttendancePage.exportToExcel",
+    "cond": [],
+    "call": "Utils.exportAttendanceToExcel",
+    "args": "this.attendance, this.players, this.db.attendanceTypes().find(type => type.id === this.attendance.type_id), this.db.churches()",
+    "src": "641108da",
+    "mbody": "468c36cb",
+    "id": "attendance/attendance/attendance.page#effect-8f43ff82"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+    ],
+    "n": "behoben in #306",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "abweichung-ungeprueft",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "get filteredPlayers:124-141",
+     "applyPlayerStatus:143-151",
+     "savePlayerNotes:154-163",
+     "recalculateGroupHeaders:165-178",
+     "get hasRegFields:180-182",
+     "get isFilterActive:184-186",
+     "toggleStatusFilter:188-195",
+     "clearStatusFilter:197-199",
+     "constructor:223-252",
+     "ngOnInit:256-277",
+     "ngOnDestroy:279-282",
+     "teardown:289-305",
+     "init:307-501",
+     "resolveAttendanceType:511-533",
+     "reloadAttendance:539-552",
+     "subsribeOnChannels:554-575",
+     "userById:577-579",
+     "initializeAttObjects:581-597",
+     "listenOnNetworkChanges:599-614",
+     "openProtocol:629-634",
+     "navigateBack:636-646",
+     "fetchAttendance:655-657",
+     "onAttRealtimeChanges:659-671",
+     "onPersonAttRealtimeChanges:673-698",
+     "onAttChange:700-733",
+     "onAttStaticChange:735-741",
+     "getAttendedPlayers:743-745",
+     "getAttendedPlayersForGroup:747-753",
+     "addNote:755-796",
+     "promptCustomNote:798-820",
+     "getPresetReasons:822-826",
+     "onImageSelect:828-850",
+     "get isDuty:854-856",
+     "get dutyRequiredCount:858-860",
+     "get dutyOccupants:862-864",
+     "get dutyUnavailable:867-869",
+     "get dutyAvailable:871-873",
+     "get dutyPresentUnassigned:876-878",
+     "isPresent:880-882",
+     "get dutyFillColor:884-886",
+     "get canManageDuty:888-890",
+     "isOwnRequestedDuty:893-895",
+     "confirmOwnDuty:897-903",
+     "declineOwnDuty:905-925",
+     "changeDutyRequired:927-931",
+     "openDutyAssign:934-992",
+     "assignDuty:994-1006",
+     "removeDutyAssignment:1008-1028",
+     "onDescriptionChanged:1030-1034",
+     "onPlaceChanged:1036-1040",
+     "onFilesFolderSelected:1042-1047",
+     "removeFilesFolder:1049-1054",
+     "openFilesFolder:1056-1065",
+     "openNavigation:1067-1071",
+     "onAttachmentSelect:1073-1108",
+     "removeAttachment:1110-1123",
+     "openAttachment:1125-1129",
+     "get planIndex:1133-1137",
+     "get shownPlan:1140-1142",
+     "shownPlanDate:1144-1146",
+     "get planLabels:1151-1158",
+     "get todayPlanChip:1160-1163",
+     "selectPlan:1165-1174",
+     "isPlanLiveNow:1176-1187",
+     "togglePlanLive:1189-1197",
+     "stopPlanLive:1199-1203",
+     "updatePlanActiveIndex:1205-1226",
+     "scrollToActiveSlot:1230-1238",
+     "getPlanActiveCountdown:1240-1258",
+     "calculateTime:1260-1271",
+     "exportPlan:1273-1292",
+     "get isTeamLeader:1296-1298",
+     "get planNumbers:1301-1307",
+     "fieldName:1309-1311",
+     "get protocolEditedAfterPublish:1313-1315",
+     "loadTeamOrg:1317-1335",
+     "ionViewWillEnter:1338-1340",
+     "openAgendaPicker:1342-1352",
+     "navigateFromPage:1356-1361",
+     "openPlanField:1363-1367",
+     "openTask:1369-1371",
+     "taskStatusLabel:1373-1379",
+     "sharePlan:1381-1432",
+     "send:1434-1463",
+     "editPlan:1465-1476",
+     "changeDate:1479-1490",
+     "onInfoChanged:1492-1538",
+     "addSongsToHistory:1540-1566",
+     "removeHistoryEntry:1568-1571",
+     "onHistoryEntryClick:1573-1597",
+     "changeConductor:1599-1638",
+     "promptOtherConductor:1640-1668",
+     "getSongInfo:1670-1676",
+     "getConductorInfo:1678-1688",
+     "onConChange:1690-1713",
+     "getMissingGroups:1715-1724",
+     "getTypeName:1726-1728",
+     "toNeutral:1730-1736",
+     "toLateExcused:1738-1744",
+     "removeFromAttendance:1746-1779",
+     "getModifierInfo:1781-1812",
+     "openRegFieldsEditor:1814-1830",
+     "showRegFieldAlert:1832-1867",
+     "saveRegFieldAnswers:1869-1877",
+     "toggleRegFieldMultiSelect:1879-1883",
+     "openMoreSheet:1885-1960",
+     "exportToExcel:1962-1969",
+     "onDeadlineToggleChanged:1971-1988",
+     "switchMode:1990-1994",
+     "toggleShowAvatars:1996-1999",
+     "toggleShowRegFields:2001-2004",
+     "toggleChecklistItem:2011-2016",
+     "addChecklistItem:2021-2080",
+     "canRestoreChecklist:2085-2087",
+     "restoreChecklist:2092-2118",
+     "removeChecklistItem:2123-2148",
+     "getDeadlineStatus:2153-2169",
+     "formatDeadlineRelative:2174-2200",
+     "formatDeadlineAbsolute:2205-2208",
+     "getChecklistProgress:2213-2222",
+     "showStatusInfo:2224-2236",
+     "get churchField:2238-2240",
+     "showChurchOverview:2242-2263",
+     "showLegend:2265-2267",
+     "canToggleArchived:2270-2272",
+     "toggleArchived:2274-2305",
+     "sendAdHocReminder:2307-2371",
+     "openAddPersonModal:2376-2457",
+     "isPersonSelected:2462-2464",
+     "togglePersonSelection:2469-2477",
+     "addPersonsToAttendance:2482-2547",
+     "onSongSearch:2549-2562",
+     "resetSongSearch:2564-2567",
+     "toggleSongSelection:2569-2579",
+     "navigateToSong:2581-2583",
+     "getSortableExtraFields:2585-2592",
+     "getActiveExtraSortLabel:2594-2597",
+     "getExtraFieldValue:2599-2602",
+     "getActiveExtraSortValue:2604-2615",
+     "resolveExtraFieldSortKey:2617-2625",
+     "openSortPicker:2627-2668",
+     "getRegistrationAnswerSummary:2670-2681"
+    ],
+    "bodies": {
+     "get filteredPlayers": "99b841f5",
+     "applyPlayerStatus": "1d325c1c",
+     "savePlayerNotes": "b250e9e5",
+     "recalculateGroupHeaders": "eeddc7ee",
+     "get hasRegFields": "b042e3d8",
+     "get isFilterActive": "eb076477",
+     "toggleStatusFilter": "85b8601b",
+     "clearStatusFilter": "1717db0f",
+     "constructor": "763015e3",
+     "ngOnInit": "16ae6c5b",
+     "ngOnDestroy": "0a617539",
+     "teardown": "07b2d38d",
+     "init": "e4e075e8",
+     "resolveAttendanceType": "9ecd022a",
+     "reloadAttendance": "1289e678",
+     "subsribeOnChannels": "61d7d134",
+     "userById": "002dda96",
+     "initializeAttObjects": "76c25750",
+     "listenOnNetworkChanges": "48d0fa36",
+     "openProtocol": "5256a0ab",
+     "navigateBack": "e9516418",
+     "fetchAttendance": "bcce59e6",
+     "onAttRealtimeChanges": "295c9887",
+     "onPersonAttRealtimeChanges": "def11d9f",
+     "onAttChange": "dc7e12b0",
+     "onAttStaticChange": "016825f2",
+     "getAttendedPlayers": "80abcecb",
+     "getAttendedPlayersForGroup": "f12a12dc",
+     "addNote": "e057a8d0",
+     "promptCustomNote": "f44af55e",
+     "getPresetReasons": "a1e37350",
+     "onImageSelect": "ffd78c13",
+     "get isDuty": "43056d75",
+     "get dutyRequiredCount": "2cb93b38",
+     "get dutyOccupants": "9cb5c234",
+     "get dutyUnavailable": "d822c080",
+     "get dutyAvailable": "541aa546",
+     "get dutyPresentUnassigned": "ec21995f",
+     "isPresent": "ea943f6b",
+     "get dutyFillColor": "dfd3e7f6",
+     "get canManageDuty": "f045e307",
+     "isOwnRequestedDuty": "42c4d8af",
+     "confirmOwnDuty": "6364d12e",
+     "declineOwnDuty": "8aed2fba",
+     "changeDutyRequired": "3c242890",
+     "openDutyAssign": "099cfc69",
+     "assignDuty": "2df9fb2d",
+     "removeDutyAssignment": "ce4fe21d",
+     "onDescriptionChanged": "588108fb",
+     "onPlaceChanged": "fe0ee99f",
+     "onFilesFolderSelected": "4805c2b2",
+     "removeFilesFolder": "15aafe1e",
+     "openFilesFolder": "c01ad622",
+     "openNavigation": "dbadc724",
+     "onAttachmentSelect": "0ed18b25",
+     "removeAttachment": "c533b9e2",
+     "openAttachment": "946ea8a1",
+     "get planIndex": "9ea93379",
+     "get shownPlan": "f744fc77",
+     "shownPlanDate": "1fffe0b1",
+     "get planLabels": "29e58a1f",
+     "get todayPlanChip": "5f2813af",
+     "selectPlan": "ace59f84",
+     "isPlanLiveNow": "e02f5877",
+     "togglePlanLive": "a0ea812e",
+     "stopPlanLive": "46c0c89f",
+     "updatePlanActiveIndex": "bdce28ae",
+     "scrollToActiveSlot": "f5be5677",
+     "getPlanActiveCountdown": "bad0c3b9",
+     "calculateTime": "c3bb93b8",
+     "exportPlan": "a9b3af33",
+     "get isTeamLeader": "e908ecc9",
+     "get planNumbers": "85ff3950",
+     "fieldName": "ee70a12f",
+     "get protocolEditedAfterPublish": "94d5cb65",
+     "loadTeamOrg": "c94e4e84",
+     "ionViewWillEnter": "146fd4ca",
+     "openAgendaPicker": "6700109c",
+     "navigateFromPage": "77f02d4a",
+     "openPlanField": "6c1d8098",
+     "openTask": "fe90b528",
+     "taskStatusLabel": "2a2b8111",
+     "sharePlan": "7cce1f69",
+     "send": "268402b5",
+     "editPlan": "07c613f1",
+     "changeDate": "1350fac5",
+     "onInfoChanged": "4e91c1c8",
+     "addSongsToHistory": "ec7e8f99",
+     "removeHistoryEntry": "2b86d6ca",
+     "onHistoryEntryClick": "9007cef0",
+     "changeConductor": "5b559bfa",
+     "promptOtherConductor": "a546b5ad",
+     "getSongInfo": "59484e5d",
+     "getConductorInfo": "020d538c",
+     "onConChange": "a6a41166",
+     "getMissingGroups": "fe46497d",
+     "getTypeName": "6bc3c1ca",
+     "toNeutral": "03d938d7",
+     "toLateExcused": "f574177d",
+     "removeFromAttendance": "fc4ff18d",
+     "getModifierInfo": "75edb284",
+     "openRegFieldsEditor": "b8a0e523",
+     "showRegFieldAlert": "391d62ed",
+     "saveRegFieldAnswers": "5b2b8787",
+     "toggleRegFieldMultiSelect": "377d88c3",
+     "openMoreSheet": "4afa24ea",
+     "exportToExcel": "468c36cb",
+     "onDeadlineToggleChanged": "50b26e7b",
+     "switchMode": "79f9e630",
+     "toggleShowAvatars": "48edd45d",
+     "toggleShowRegFields": "36e21354",
+     "toggleChecklistItem": "db256edd",
+     "addChecklistItem": "afe9f1e2",
+     "canRestoreChecklist": "fdcd0642",
+     "restoreChecklist": "cfd50b25",
+     "removeChecklistItem": "41c5a6ca",
+     "getDeadlineStatus": "612e00bc",
+     "formatDeadlineRelative": "5fb81e85",
+     "formatDeadlineAbsolute": "1ce94da5",
+     "getChecklistProgress": "698a103e",
+     "showStatusInfo": "abe3de9e",
+     "get churchField": "20e9c8fc",
+     "showChurchOverview": "b0b242e8",
+     "showLegend": "fe35ddee",
+     "canToggleArchived": "420a4aec",
+     "toggleArchived": "5117fd46",
+     "sendAdHocReminder": "de224efc",
+     "openAddPersonModal": "9a6c1d7c",
+     "isPersonSelected": "94bcb46b",
+     "togglePersonSelection": "67ef84c7",
+     "addPersonsToAttendance": "e30cb88e",
+     "onSongSearch": "29d05bd5",
+     "resetSongSearch": "962183ea",
+     "toggleSongSelection": "15288e34",
+     "navigateToSong": "21d527c7",
+     "getSortableExtraFields": "29d0bec7",
+     "getActiveExtraSortLabel": "2449a67b",
+     "getExtraFieldValue": "afa1a03d",
+     "getActiveExtraSortValue": "ebe34e84",
+     "resolveExtraFieldSortKey": "8379c632",
+     "openSortPicker": "781ece21",
+     "getRegistrationAnswerSummary": "c566b4a1"
+    },
+    "id": "attendance/attendance/attendance.page#logic-8c42fa1f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:128",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:239",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:552",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:569",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1072",
+     "lib/core/providers/attendance_detail_providers.dart:159",
+     "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:26"
+    ],
+    "n": "Wie Ionic: paralleles Laden (Termin, Personenzeilen, Typ direkt per id statt Katalog-Refresh), Werke-Nebenladungen unabhängig von der Liste (Fehler → leere Werke), Realtime (ein Kanal statt zwei, gleiche Wirkung) mit Resubscribe beim Wiedersichtbarwerden, Rauswurf bei Mandantenwechsel, Klick-Statuszyklus (gleiche Mappings), Helfer-Gruppenfilter für Liste/Titel/Statusübersicht, Notiz-Maskierung nur HELPER, Gruppen- und Feldsortierung, Statusfilter, Ansicht-Prefs (gleiche Keys), Frist-Default, Checklisten-Fälligkeiten, Schichtneuberechnung bei Zeitänderung, Archivieren. Abweichungen hinter der UI siehe extra: Checkliste wird nicht nachgeladen und überschreibt Fremdänderungen (hoch), Gemeinde-Übersicht und „nur Unentschiedene“ ohne Helfer-Gruppenfilter, „Person hinzufügen“ mit ausstehenden Registrierungen, Feldsortierung bei Gleichstand, zwei „Flutter besser“; dazu x-4dd0cff1ed, x-33b53c7e65, x-5905254b84. Excel ohne Gruppenfilter steht bei effect-8f43ff82, Ablaufplan-Zeilen bei action-0c508800.",
+    "sev": "hoch",
+    "v": null,
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart",
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 589,
+    "cond": [
+     "@if (attendance)",
+     "@if ((!isHelper || canViewChecklist) && attendance.checklist && attendance.checklist.length > 0)",
+     "@for (item of attendance.checklist; track item.id; let i = $index)",
+     "@if (item.dueDate)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "bindings": [
+     "[class.text-danger]=\"!item.completed && getDeadlineStatus(item) === 'overdue'\"",
+     "[class.text-warning]=\"!item.completed && getDeadlineStatus(item) === 'warning'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ formatDeadlineRelative(item) }} · {{ formatDeadlineAbsolute(item) }}"
+    ],
+    "text": "{{ formatDeadlineRelative(item) }} · {{ formatDeadlineAbsolute(item) }}",
+    "id": "attendance/attendance/attendance.page#text-be8be344"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart"
+    ],
+    "n": "behoben in #306",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 410,
+    "method": "AttendancePage.init",
+    "cond": [],
+    "message": {
+     "keys": [
+      "attendance.loadFailedReopen"
+     ],
+     "de": [
+      "Anwesenheit konnte nicht geladen werden — bitte erneut öffnen."
+     ],
+     "literals": [],
+     "expr": "translate('attendance.loadFailedReopen')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "67b78f44",
+    "mbody": "e4e075e8",
+    "roleGuarded": true,
+    "id": "attendance/attendance/attendance.page#toast-821c46bb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:384-397"
+    ],
+    "n": "behoben in #306: Laden fehlgeschlagen → Toast (Fehler) „Anwesenheit konnte nicht geladen werden — bitte erneut öffnen.“ und zurück zur Liste, wie Ionic 4.19.9 (dort nur auf translate umgestellt).",
+    "v": null,
+    "src": "zz-fixed-zz-termine-nachtrag.json",
+    "flutterAt": "4e13f22"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "extra": {
+    "id": "x-01ddfb1bfc",
+    "title": "Gemeinde-Übersicht ohne Helfer-Gruppenfilter",
+    "n": "Ionic: showChurchOverview zählt this.players – bei Helfer/Stimmführer-Helfer ohne attendance_all_groups nur die eigene Gruppe / Flutter: _showChurchOverview übergibt alle Personen des Termins ohne attendanceGroupScope → eingeschränkte Helfer sehen die Anwesenden aller Gruppen je Gemeinde (Menüeintrag in beiden für alle Rollen mit Gemeinde-Feld).",
+    "sev": "mittel",
+    "ionic": "src/app/attendance/attendance/attendance.page.ts:2246",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1360",
+     "lib/features/attendance/presentation/attendance_extra_actions.dart:102"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-termine4.json",
+    "n": "behoben in #323"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "extra": {
+    "id": "x-47702cd6f0",
+    "title": "Erinnerung „nur Unentschiedene“ ohne Gruppenfilter",
+    "n": "Ionic: neutralAppIds (und hasNeutralPersons) aus this.players → ein Stimmführer-Helfer ohne attendance_all_groups erinnert mit „nur Unentschiedene“ nur die eigene Gruppe / Flutter: neutralAppIds aus allen Personen des Termins → Push/E-Mail an Unentschiedene aller Gruppen. HELPER kann in beiden nicht senden.",
+    "sev": "mittel",
+    "ionic": "src/app/attendance/attendance/attendance.page.ts:2321",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1383"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-termine4.json",
+    "n": "behoben in #323"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "extra": {
+    "id": "x-a5bcacc4df",
+    "title": "Checkliste wird nicht nachgeladen – Fremdänderungen werden überschrieben",
+    "n": "Ionic: Realtime-Update (this.attendance = payload.new) und Resume-Refetch zeigen Checklisten-Änderungen anderer sofort; Abhaken/Hinzufügen/Löschen arbeitet auf der aktuellen Liste / Flutter: _localChecklist wird einmal geladen (_checklistLoaded), _onAttendanceUpdated und _onBecameVisible laden nur den Termin neu, die angezeigte Checkliste bleibt alt; das nächste Abhaken/Hinzufügen/Löschen schreibt die ganze alte Liste (_saveChecklist) und macht Häkchen oder Punkte anderer rückgängig; eine von anderen begonnene Checkliste erscheint nicht, „Checkliste starten“ bleibt im Menü.",
+    "sev": "hoch",
+    "ionic": "src/app/attendance/attendance/attendance.page.ts:670",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:156",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:552",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1420",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1673"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-termine4.json",
+    "n": "behoben in #323"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "extra": {
+    "id": "x-e549f975e1",
+    "title": "„Person hinzufügen“ bietet ausstehende Registrierungen an",
+    "n": "Ionic: Kandidaten aus db.getPlayers(true) = player mit pending = false (db.service.ts:1564) / Flutter: allPersonsForAttendanceProvider lädt alle player des Mandanten ohne pending-Filter, computeAddPersonCandidates filtert nur pausiert/ausgetreten → noch nicht freigegebene Anmeldungen stehen in der Liste und können dem Termin hinzugefügt werden.",
+    "sev": "mittel",
+    "ionic": "src/app/attendance/attendance/attendance.page.ts:2385",
+    "f": [
+     "lib/core/providers/attendance_detail_providers.dart:159",
+     "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:33"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-termine4.json",
+    "n": "behoben in #323"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "ngOnInit:45-48",
+     "load:50-58",
+     "typesText:60-63",
+     "untilText:65-67",
+     "add:69-79",
+     "edit:81-83",
+     "toggleWeekday:85-88",
+     "toggleType:90-93",
+     "save:95-109",
+     "offerApplyToFuture:111-136",
+     "remove:138-155",
+     "close:157-159"
+    ],
+    "bodies": {
+     "ngOnInit": "40a69481",
+     "load": "983f23e8",
+     "typesText": "0d5d7f2a",
+     "untilText": "1a2df8e6",
+     "add": "dcde5829",
+     "edit": "b6ae4a7b",
+     "toggleWeekday": "1ef5f64f",
+     "toggleType": "5a9df67f",
+     "save": "8c453e23",
+     "offerApplyToFuture": "c51bcc7d",
+     "remove": "d13ef547",
+     "close": "979e2b34"
+    },
+    "id": "duty/unavailability-modal/unavailability-modal.component#logic-8717ad43"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:65",
+     "lib/features/duty/presentation/pages/unavailability_page.dart:82",
+     "lib/features/duty/presentation/pages/unavailability_page.dart:101",
+     "lib/features/duty/presentation/pages/unavailability_page.dart:122",
+     "lib/features/duty/presentation/pages/unavailability_page.dart:153",
+     "lib/core/providers/duty_providers.dart:90",
+     "lib/core/providers/duty_providers.dart:306",
+     "lib/data/repositories/duty_repository.dart:375"
+    ],
+    "n": "Sichtbare Typen (visible), Laden pro Person + tenant_id, Typen-/Bis-Text, Neu mit Vorauswahl der Dienst-Typen, Bearbeiten als Kopie, Wochentage sortiert, Speichern mit Wochentag-Pflicht (tenant_id, person_id, weekdays, type_ids, reason, valid_until, created_by = aktueller Nutzer), Angebot „Auch geplante“ mit Vorschau (max. 4 Daten „DD.MM.“, „ …“), Vorname bei forOther, Update person_attendances (Entschuldigt, notes, changed_by/at) nur für passende Zeilen, Löschen mit Neuladen wie Ionic; Fehlertexte „Fehler beim Speichern“/„Fehler beim Löschen“ gleich. Abweichungen: Update-Fehler bei „Auch geplante“ meldet grünes „0 Termine angepasst“ (mittel), Ladefehler ohne Button, Typnamen unsichtbarer Typen (siehe extra Erstprüfer). Flutter trimmt zusätzlich den Grund.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart",
+    "lib/core/providers/duty_providers.dart",
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "home-dashboard/components/absences-card/absences-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/absences-card/absences-card.component.ts",
+    "html": "home-dashboard/components/absences-card/absences-card.component.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "home-dashboard/components/absences-card/absences-card.component.ts",
+    "line": 99,
+    "method": "AbsencesCardComponent.openPerson",
+    "cond": [],
+    "component": "PersonPage",
+    "props": [
+     "existingPlayer",
+     "readOnly"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "188eecbd",
+    "mbody": "3f1aaa4a",
+    "roleGuarded": true,
+    "id": "home-dashboard/components/absences-card/absences-card.component#modal-6daf3e85"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/people_cards.dart",
+     "lib/shared/widgets/dialogs/ion_modal.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "home-dashboard/components/birthdays-card/birthdays-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/birthdays-card/birthdays-card.component.ts",
+    "html": "home-dashboard/components/birthdays-card/birthdays-card.component.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "home-dashboard/components/birthdays-card/birthdays-card.component.ts",
+    "line": 99,
+    "method": "BirthdaysCardComponent.openPerson",
+    "cond": [],
+    "component": "PersonPage",
+    "props": [
+     "existingPlayer",
+     "readOnly"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "188eecbd",
+    "mbody": "34805141",
+    "roleGuarded": true,
+    "id": "home-dashboard/components/birthdays-card/birthdays-card.component#modal-388a556f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/people_cards.dart",
+     "lib/shared/widgets/dialogs/ion_modal.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "home-dashboard/components/critical-persons-card/critical-persons-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/critical-persons-card/critical-persons-card.component.ts",
+    "html": "home-dashboard/components/critical-persons-card/critical-persons-card.component.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "home-dashboard/components/critical-persons-card/critical-persons-card.component.ts",
+    "line": 49,
+    "method": "CriticalPersonsCardComponent.openPerson",
+    "cond": [],
+    "component": "PersonPage",
+    "props": [
+     "existingPlayer",
+     "readOnly"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "188eecbd",
+    "mbody": "c67ff69b",
+    "roleGuarded": true,
+    "id": "home-dashboard/components/critical-persons-card/critical-persons-card.component#modal-160799e3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/people_cards.dart",
+     "lib/shared/widgets/dialogs/ion_modal.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "home-dashboard/components/member-changes-card/member-changes-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/member-changes-card/member-changes-card.component.ts",
+    "html": "home-dashboard/components/member-changes-card/member-changes-card.component.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "home-dashboard/components/member-changes-card/member-changes-card.component.ts",
+    "line": 67,
+    "method": "MemberChangesCardComponent.openPerson",
+    "cond": [],
+    "component": "PersonPage",
+    "props": [
+     "existingPlayer",
+     "readOnly"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "188eecbd",
+    "mbody": "34805141",
+    "roleGuarded": true,
+    "id": "home-dashboard/components/member-changes-card/member-changes-card.component#modal-04f3c3d5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/people_cards.dart",
+     "lib/shared/widgets/dialogs/ion_modal.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "home-dashboard/home-dashboard.page.ts",
+    "line": 79,
+    "method": "HomeDashboardPage.onTenantChange",
+    "cond": [],
+    "call": "Utils.getUrl",
+    "args": "this.db.tenantUser().role",
+    "src": "599c2113",
+    "mbody": "a99fac6c",
+    "roleGuarded": true,
+    "id": "home-dashboard/home-dashboard.page#effect-e221ccc5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:190"
+    ],
+    "n": "behoben in #298",
+    "v": null,
+    "src": "zz-fixed-uebersicht.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "home-dashboard/home-dashboard.page.ts",
+    "line": 79,
+    "method": "HomeDashboardPage.onTenantChange",
+    "cond": [],
+    "via": "router.navigateByUrl",
+    "to": "Utils.getUrl(this.db.tenantUser().role)",
+    "src": "0f9aa057",
+    "mbody": "a99fac6c",
+    "roleGuarded": true,
+    "id": "home-dashboard/home-dashboard.page#nav-1c9dc137"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:190"
+    ],
+    "n": "behoben in #298",
+    "v": null,
+    "src": "zz-fixed-uebersicht.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "instruments/instrument/instrument.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:23-28",
+     "ngOnInit:30-35",
+     "generateSynonyms:37-56",
+     "update:58-79",
+     "delete:81-108",
+     "dismiss:110-112"
+    ],
+    "bodies": {
+     "constructor": "a923c84d",
+     "ngOnInit": "84a8f116",
+     "generateSynonyms": "3dbb0af3",
+     "update": "eee6f5b0",
+     "delete": "4e1e52a5",
+     "dismiss": "e67be770"
+    },
+    "id": "instruments/instrument/instrument.page#logic-2c2cd89a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:437",
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:517",
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:730",
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:755"
+    ],
+    "n": "Felder und Sichtbarkeiten (Chor/Allgemein/Hauptgruppe), Synonym-Generierung (Name-Pflicht, Erfolg/Fehler-Toast), Aktualisieren mit Erfolgs-Toast und Löschen vorhanden. Abweichungen: Speichern/Löschen erst nach dem Schließen in der Liste (Eingaben bei Fehler verloren, mittel), geschriebene Werte (Trimmen, null statt '', tuning/clefs immer), Löschprüfung nach statt vor der Bestätigung (toast-39c411aa) – siehe extra Erstprüfer und Items.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "messages/message-detail/message-detail.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "ngOnInit:68-70",
+     "handleRefresh:72-75",
+     "load:77-120",
+     "loadOwnCopy:123-152",
+     "respond:154-166",
+     "statusKey:168-170",
+     "openTermin:172-176",
+     "get backHref:178-180",
+     "get filtered:182-189",
+     "onFilterChange:191-193",
+     "onBodyClick:196-203",
+     "remove:205-228",
+     "openMessage:230-232",
+     "loadRecipients:234-263",
+     "chipsFor:265-303",
+     "time:305-310"
+    ],
+    "bodies": {
+     "ngOnInit": "7bb8c822",
+     "handleRefresh": "9c0e8492",
+     "load": "b7b3902c",
+     "loadOwnCopy": "867c89b7",
+     "respond": "38b8f528",
+     "statusKey": "c0df0637",
+     "openTermin": "0a11720f",
+     "get backHref": "a3e8d323",
+     "get filtered": "e88396cb",
+     "onFilterChange": "ed616c8b",
+     "onBodyClick": "a78d413c",
+     "remove": "8066b4d1",
+     "openMessage": "5f667422",
+     "loadRecipients": "a007391c",
+     "chipsFor": "0568c9e8",
+     "time": "54f04fdb"
+    },
+    "id": "messages/message-detail/message-detail.page#logic-9a7e9461"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/messages/presentation/pages/message_detail_page.dart:56",
+     "lib/features/messages/presentation/pages/message_detail_page.dart:78",
+     "lib/features/messages/presentation/pages/message_detail_page.dart:116",
+     "lib/features/messages/presentation/pages/message_detail_page.dart:247",
+     "lib/core/providers/message_providers.dart:58",
+     "lib/data/repositories/message_repository.dart:48",
+     "lib/data/repositories/auto_message_repository.dart:241",
+     "lib/features/messages/presentation/widgets/message_termin_section.dart:62"
+    ],
+    "n": "Kernlogik gleich (Instanzwechsel zur Mitteilung, Manager = Admin/Verantwortlicher der aktuellen Instanz, Inhalt eingeklappt für Manager, markRead mit ignorierten Fehlern, Personalisierung, Zähler/Chips/Filter, Termin-Karte und canRespond, frühere Mitteilungen max. 5, Löschen → /settings/messages). Nachgeprüft: getMessageById filtert auf aktuelle + eigene Instanzen (Ionic getMessage ohne Filter) und getAttendanceInfo verwirft archivierte Termine für Nicht-Admins (Ionic ohne Archiv-Filter) – beide extra-Befunde der Erstprüfung (mittel) treffen zu.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart",
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "messages/message-detail/message-detail.page.ts",
+    "line": 116,
+    "method": "MessageDetailPage.load",
+    "cond": [],
+    "message": {
+     "keys": [
+      "messages.loadFailed"
+     ],
+     "de": [
+      "Mitteilung konnte nicht geladen werden"
+     ],
+     "literals": [],
+     "expr": "translate('messages.loadFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "33f955b5",
+    "mbody": "b7b3902c",
+    "roleGuarded": true,
+    "id": "messages/message-detail/message-detail.page#toast-264998c7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_detail_page.dart:54"
+    ],
+    "n": "behoben in #298",
+    "v": null,
+    "src": "zz-fixed-uebersicht.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "extra": {
+    "id": "x-ad6a974bce",
+    "title": "Archivierter Termin: keine Termin-Karte/Antwort für Mitglieder",
+    "n": "Real: Ionic AutoMessageService.getAttendanceInfo ohne Archiv-Filter (RLS auf attendance nicht aktiv, add_attendance_archived.sql) → Mitglieder sehen Termin-Karte, Status und 'Grund nachtragen'/'Ich war doch da' auch bei archiviertem Termin. Flutter verwirft archivierte Termine für alle außer Admin/Verantwortlich; da die Karte nur Nicht-Managern gezeigt wird, fehlt sie bei archivierten Terminen immer. Betrifft Archivierung innerhalb der 8-Tage-Antwortfrist.",
+    "sev": "mittel",
+    "ionic": "src/app/services/auto-message/auto-message.service.ts:181",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:241-256",
+     "lib/features/messages/presentation/widgets/message_termin_section.dart:69-74",
+     "lib/features/messages/presentation/widgets/message_termin_section.dart:116"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-uebersicht.json",
+    "n": "behoben in #298"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "extra": {
+    "id": "x-b5f5a215de",
+    "title": "Mitteilung aus verlassener Instanz nicht mehr abrufbar",
+    "n": "Real: Ionic getMessage ohne Instanzfilter; RLS 'recipient can read messages' (add_messages.sql) lässt die eigene Kopie auch nach Austritt lesen (alter Push-/E-Mail-Link, Glocke 'Alle Instanzen'), Ionic zeigt dann die Mitgliederansicht. Flutter getMessageById filtert auf aktuelle + eigene Instanzen → 'Diese Mitteilung gibt es nicht mehr oder du hast keinen Zugriff darauf.' Seltener Fall, mittel passt.",
+    "sev": "mittel",
+    "ionic": "src/app/services/message/message.service.ts:46",
+    "f": [
+     "lib/data/repositories/message_repository.dart:48-66",
+     "lib/core/providers/message_providers.dart:58-68",
+     "lib/features/messages/presentation/pages/message_detail_page.dart:145-161"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "native/android",
+   "ionic": {},
+   "extra": {
+    "id": "x-3340d46ef9",
+    "title": "launchMode singleTop statt singleTask",
+    "n": "Befund echt, Folge vom Erstprüfer falsch beschrieben und unterschätzt. Ionic singleTask (AndroidManifest.xml:17): Links landen immer in der einen Instanz (onNewIntent → appUrlOpen). Flutter singleTop + taskAffinity=\"\": Starts mit FLAG_ACTIVITY_NEW_TASK (Launcher, Push-Tap, Ablaufplan-Benachrichtigung) bleiben ok, aber Links aus Apps ohne NEW_TASK (z. B. jede App mit Standard-TextView-Links/URLSpan; Auth-Links https://attendix.de/login|resetPassword aus Mail-Apps, geteilte Termin-Links in Messengern) erzeugen eine zweite MainActivity im Task der fremden App. Keine zweite Engine: MainActivity erbt von AudioServiceActivity und nutzt die gecachte Engine 'audio_service_engine'; die neue Activity entzieht der alten die Engine (FlutterEngineConnectionRegistry.attachToActivity → FlutterActivity.detachFromFlutterEngine „evicted by another attaching activity“, delegate.onDetach). Öffnet der Nutzer danach Attendix über das Homescreen-Icon, kommt der alte Task mit der abgehängten Activity nach vorn → leerer Bildschirm, bis die App in „Zuletzt verwendet“ geschlossen wird. Auf Gerät prüfen (Link aus Gmail/WhatsApp/SMS öffnen, dann Icon tippen); Abhilfe singleTask wie Ionic.",
+    "sev": "hoch",
+    "ionic": "android/app/src/main/AndroidManifest.xml:17",
+    "f": [
+     "android/app/src/main/AndroidManifest.xml:14",
+     "android/app/src/main/AndroidManifest.xml:15",
+     "android/app/src/main/kotlin/de/attendix/attendix/MainActivity.kt:14"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-nativ.json",
+    "n": "behoben in #285: launchMode singleTask wie Ionic; Gerätetest (Link aus Gmail/WhatsApp, dann Icon) steht in device-checklist.md Zeile 36."
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/android",
+   "ionic": {},
+   "extra": {
+    "id": "x-4beeb3b857",
+    "title": "versionCode/versionName unter Ionic-Stand",
+    "n": "Echt, Stand 2157fa0: pubspec 0.39.0+108 → versionCode 108 / versionName 0.39.0; Ionic build.gradle:10-11 versionCode 228 / '4.19.7'. Play nimmt keinen versionCode ≤ 228 an (Geräte updaten nur auf höheren Code) → nötig --build-number ≥ 229 und --build-name ≥ 5.0.0, sonst steht im Store/App-Info 0.39.0. docs/push-setup.md:23-24 nennt veraltet Ionic 4.19.6/227 und empfiehlt --build-number 228 – mit Ionic 4.19.7 schon vergeben, Upload würde abgelehnt. Kein Skript/CI setzt die Werte (ci.yml, deploy-cloudflare.yml ohne build-name/-number). Nebenbei: In-App-Anzeige (Einstellungen-Badge, Login) nutzt AppConstants.appVersion 0.39.0 unabhängig vom Build-Flag (Ionic 4.19.7 aus package.json).",
+    "sev": "hoch",
+    "ionic": "android/app/build.gradle:10",
+    "f": [
+     "pubspec.yaml:4",
+     "android/app/build.gradle.kts:40",
+     "android/app/build.gradle.kts:41",
+     "docs/push-setup.md:23"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "pubspec.yaml"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/config",
+   "ionic": {},
+   "extra": {
+    "id": "x-6d9a24bfe2",
+    "title": "Anmeldung und lokale Daten gehen beim Update verloren",
+    "n": "Teilweise behoben in #285: Beim ersten Start liest eine unsichtbare WebView die Ionic-Sitzung (sb-<ref>-auth-token) und currentTenantId aus dem localStorage und meldet per Refresh-Token an, Gruppe wird übernommen, Push registriert sofort. Weiter nicht übernommen: Ionic-Offline-Warteschlange (offline_writes_v1, noch nicht synchronisierte Änderungen gehen beim Update verloren), Sortier-/Ansichtsoptionen aus Ionic Storage, push_prompt_shown (wer in Ionic „Später“ gewählt hat, wird erneut gefragt). Auf Gerät prüfen: device-checklist.md Zeilen 1, 2, 21, 66.",
+    "sev": "mittel",
+    "ionic": "src/app/services/base/supabase.ts:8",
+    "f": [
+     "lib/core/services/native/ionic_session_takeover.dart:114",
+     "ios/Runner/AppDelegate.swift:188",
+     "android/app/src/main/kotlin/de/attendix/attendix/ionic/IonicSessionPlugin.kt:126"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/services/native/ionic_session_takeover.dart",
+    "ios/Runner/AppDelegate.swift",
+    "android/app/src/main/kotlin/de/attendix/attendix/ionic/IonicSessionPlugin.kt"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/ios",
+   "ionic": {},
+   "extra": {
+    "id": "x-cb1c5c9d93",
+    "title": "CFBundleShortVersionString/CFBundleVersion unter Ionic-Stand",
+    "n": "Echt, Stand 2157fa0: CFBundleShortVersionString/CFBundleVersion = $(FLUTTER_BUILD_NAME)/$(FLUTTER_BUILD_NUMBER) → ohne Flags 0.39.0 (108); Ionic Release MARKETING_VERSION 4.19.7 / CURRENT_PROJECT_VERSION 237 (project.pbxproj:457/465). App Store Connect lehnt eine Version unter der freigegebenen 4.19.7 ab → erst --build-name ≥ 5.0.0 macht den Upload möglich (Build-Nummer muss nur je Version eindeutig sein). native_platform.dart:58 setzt 5.0.0 als Store-Version voraus, aber kein Skript/CI übergibt sie; Live-Activity-Extension folgt denselben Variablen.",
+    "sev": "hoch",
+    "ionic": "ios/App/App.xcodeproj/project.pbxproj:465",
+    "f": [
+     "ios/Runner/Info.plist:37",
+     "ios/Runner/Info.plist:41",
+     "ios/Runner.xcodeproj/project.pbxproj:615",
+     "pubspec.yaml:4"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "pubspec.yaml"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "native",
+    "file": "org-plan-public/org-plan-public.page.ts",
+    "line": 357,
+    "method": "OrgPlanPublicPage.showCalendarAlert",
+    "cond": [],
+    "plugin": "Browser",
+    "call": "open",
+    "args": "{ url: isPlatform('ios') ? 'https://support.apple.com/de-de/102301' : 'https://support.google.com/calendar/answer/37100?hl=de&co=GENIE.Platform%3DAndroid' }",
+    "src": "d8825ab2",
+    "mbody": "36822c19",
+    "id": "org-plan-public/org-plan-public.page#native-c9096ded"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+    ],
+    "n": "behoben in #307",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "line": 62,
+    "method": "OrgPersonFieldsPage.addField",
+    "cond": [
+     "(this.fields.some(field => field.id === id))"
+    ],
+    "message": {
+     "keys": [
+      "orgFields.nameExists"
+     ],
+     "de": [
+      "Ein Zusatzfeld mit diesem Namen existiert bereits."
+     ],
+     "literals": [],
+     "expr": "translate('orgFields.nameExists')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "235ec636",
+    "mbody": "a559d72d",
+    "roleGuarded": true,
+    "id": "org-settings/org-person-fields/org-person-fields.page#toast-a15cd8e0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+    ],
+    "n": "behoben in #307",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 192,
+    "method": "OrgSettingsPage.renameOrg",
+    "cond": [],
+    "header": {
+     "keys": [
+      "org.rename"
+     ],
+     "de": [
+      "Organisation umbenennen"
+     ],
+     "literals": [],
+     "expr": "translate('org.rename')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (data: { name: string }) => { const name = data.name?.trim(); if (!name) { alert.message = translate('org.validName'); return false; } try { await this.db.updateOrgName(name); Utils.showToast(translate('org.renamed'), 'success'); } c…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "text",
+      "label": null,
+      "name": "'name'",
+      "placeholder": {
+       "keys": [
+        "org.namePh"
+       ],
+       "de": [
+        "Name eingeben..."
+       ],
+       "literals": [],
+       "expr": "translate('org.namePh')"
+      },
+      "value": "org.name",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "c261cba7",
+    "mbody": "76b2378e",
+    "roleGuarded": true,
+    "id": "org-settings/org-settings.page#alert-14d3ff8c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart",
+     "lib/features/planning/presentation/widgets/plan_field_dialogs.dart"
+    ],
+    "n": "behoben in #307",
+    "v": null,
+    "src": "zz-fixed-termine.json",
+    "flutterAt": "4e13f22"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "people/bulk-edit/bulk-edit.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:42-45",
+     "ngOnInit:47-49",
+     "buildFieldOptions:51-69",
+     "onFieldSelected:71-84",
+     "getPlayerFieldValue:86-96",
+     "getEditedValue:98-100",
+     "setEditedValue:102-104",
+     "getDefaultBulkValue:106-126",
+     "applyToAll:128-132",
+     "get changedCount:134-142",
+     "getGroupName:144-146",
+     "save:148-228",
+     "dismiss:230-232"
+    ],
+    "bodies": {
+     "constructor": "3bb3aef5",
+     "ngOnInit": "1890d1ac",
+     "buildFieldOptions": "ecdc1d1a",
+     "onFieldSelected": "728a7961",
+     "getPlayerFieldValue": "54299dcb",
+     "getEditedValue": "a815d6d9",
+     "setEditedValue": "4b6fe1dd",
+     "getDefaultBulkValue": "fc095534",
+     "applyToAll": "976fba84",
+     "get changedCount": "69f19ce5",
+     "getGroupName": "d8656bba",
+     "save": "9efcf3b8",
+     "dismiss": "69a7489b"
+    },
+    "id": "people/bulk-edit/bulk-edit.page#logic-84c1649d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:77",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:115",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:136",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:166",
+     "lib/features/people/presentation/pages/people_list_page.dart:1280"
+    ],
+    "n": "Feldliste, Wertermittlung, changedCount, Speichern (player-Update bzw. tenant_group_person_fields für Org-Felder) und Termin-Sync wie Ionic. Abweichungen: Startwert 'Für alle setzen', Sichtbarkeit Zusatzfelder, Zahlentyp, Org-Fehler-Toast (extra der Erstprüfung) sowie zusätzlich: Personenwerte ohne aufgefüllte Defaults (siehe extra).",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart",
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "people/import/import.page.ts",
+    "line": 275,
+    "method": "ImportPage.downloadTemplate",
+    "cond": [],
+    "call": "Utils.saveWorkbook",
+    "args": "wb, 'Personen_Import_Vorlage.xlsx'",
+    "src": "a347a6f4",
+    "mbody": "9bf491f9",
+    "id": "people/import/import.page#effect-31a0aedd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart"
+    ],
+    "n": "behoben in #325",
+    "v": null,
+    "src": "zz-fixed-personen-import.json",
+    "flutterAt": "40d2b43"
+   }
+  }
+ ]
+}

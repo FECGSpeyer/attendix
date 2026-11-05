@@ -1,0 +1,2135 @@
+{
+ "batch": "zz-verify5-b-sonnet-03",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plans/org-plans.page.html",
+    "line": 110,
+    "cond": [
+     "@if (publicKey)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "plans.publicLinkActive"
+    ],
+    "de": [
+     "Öffentlicher Link aktiv. Alle Org-Pläne sind für jeden mit dem Link einsehbar."
+    ],
+    "literals": [],
+    "text": "{{ 'plans.publicLinkActive' | transloco }}",
+    "id": "org-plans/org-plans.page#text-65b70e40"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:294"
+    ],
+    "n": "„Öffentlicher Link aktiv. …“ mit Globus-Icon (grün)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plans/org-plans.page.html",
+    "line": 123,
+    "cond": [
+     "in <ion-modal isOpen=\"showHistory\">"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "plans.pastPlans"
+    ],
+    "de": [
+     "Vergangene Pläne"
+    ],
+    "literals": [],
+    "text": "{{ 'plans.pastPlans' | transloco }}",
+    "id": "org-plans/org-plans.page#text-bac34896"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:150"
+    ],
+    "n": "Titel „Vergangene Pläne“; Auslöser (Eintrag „Vergangene Pläne“) nur bei past.isNotEmpty, wie Ionic. Präsentation (Push-Seite statt Modal) ist in modal-e1461116 erfasst.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 206,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditModalOpen\">",
+     "@if (editingField)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=closeEditFieldModal(true)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "orgFields.applyChanges"
+    ],
+    "de": [
+     "Änderungen übernehmen"
+    ],
+    "literals": [],
+    "text": "{{ 'orgFields.applyChanges' | transloco }}",
+    "id": "org-settings/org-person-fields/org-person-fields.page#action-08983ea4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:436"
+    ],
+    "n": "„Änderungen übernehmen“; Auswahl: Optionen getrimmt, erste = Standardwert",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 118,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=addField(addOrgFieldModal)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "typeSettings.addField"
+    ],
+    "de": [
+     "Feld hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.addField' | transloco }}",
+    "id": "org-settings/org-person-fields/org-person-fields.page#action-ca7f0f1f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:436",
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:302"
+    ],
+    "n": "„Feld hinzufügen“ (FilledButton statt primärem Listeneintrag); Namens-/Optionsprüfung im Sheet wie Ionic. Doppelte-ID-Prüfung erst nach dem Schließen ist in toast-a15cd8e0 erfasst, Standardwert beim Typwechsel in field-64695ee6.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "line": 87,
+    "method": "OrgPersonFieldsPage.removeField",
+    "cond": [],
+    "header": {
+     "keys": [
+      "extraFields.deleteField"
+     ],
+     "de": [
+      "Zusatzfeld löschen?"
+     ],
+     "literals": [],
+     "expr": "translate('extraFields.deleteField')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "extraFields.deleteFieldMessage"
+     ],
+     "de": [
+      "Möchtest du das Zusatzfeld „{name}“ wirklich löschen?"
+     ],
+     "literals": [],
+     "expr": "translate('extraFields.deleteFieldMessage', { name: this.fields[index].name })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.delete"
+       ],
+       "de": [
+        "Löschen"
+       ],
+       "literals": [],
+       "expr": "translate('common.delete')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => this.fields.splice(index, 1)"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "2188b9c5",
+    "mbody": "5a4ef672",
+    "id": "org-settings/org-person-fields/org-person-fields.page#alert-81661d54"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:83",
+     "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:369"
+    ],
+    "n": "Löschen-Button nur für Admin aktiv (beide). „Zusatzfeld löschen?“, „Möchtest du das Zusatzfeld „{name}“ wirklich löschen?“, „Abbrechen“ / „Löschen“ (destruktiv) → nur lokal entfernt, gespeichert erst mit Haken.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 150,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditModalOpen\">",
+     "@if (editingField)"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editingField.displayMode\"",
+    "bindings": [
+     "[label]=\"'extraFields.display' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "chip",
+      "keys": [
+       "extraFields.asChip"
+      ],
+      "de": [
+       "Als Chip"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.asChip' | transloco }}\"chip\""
+     },
+     {
+      "value": "underneath",
+      "keys": [
+       "extraFields.underName"
+      ],
+      "de": [
+       "Unter dem Namen"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.underName' | transloco }}\"underneath\""
+     }
+    ],
+    "keys": [
+     "extraFields.display",
+     "extraFields.asChip",
+     "extraFields.underName"
+    ],
+    "de": [
+     "Anzeige in Listen",
+     "Als Chip",
+     "Unter dem Namen"
+    ],
+    "literals": [],
+    "text": "[label]=\"'extraFields.display' | transloco\" \"chip\" {{ 'extraFields.asChip' | transloco }} \"underneath\" {{ 'extraFields.underName' | transloco }}",
+    "id": "org-settings/org-person-fields/org-person-fields.page#field-0f91184f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:367"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 62,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newField.displayMode\"",
+    "bindings": [
+     "[label]=\"'extraFields.display' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "chip",
+      "keys": [
+       "extraFields.asChip"
+      ],
+      "de": [
+       "Als Chip"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.asChip' | transloco }}\"chip\""
+     },
+     {
+      "value": "underneath",
+      "keys": [
+       "extraFields.underName"
+      ],
+      "de": [
+       "Unter dem Namen"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.underName' | transloco }}\"underneath\""
+     }
+    ],
+    "keys": [
+     "extraFields.display",
+     "extraFields.asChip",
+     "extraFields.underName"
+    ],
+    "de": [
+     "Anzeige in Listen",
+     "Als Chip",
+     "Unter dem Namen"
+    ],
+    "literals": [],
+    "text": "[label]=\"'extraFields.display' | transloco\" \"chip\" {{ 'extraFields.asChip' | transloco }} \"underneath\" {{ 'extraFields.underName' | transloco }}",
+    "id": "org-settings/org-person-fields/org-person-fields.page#field-520a069e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:367"
+    ],
+    "n": "„Anzeige in Listen“: „Als Chip“ / „Unter dem Namen“, Standard Chip; nur für Admin erreichbar.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 59,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newField.name\"",
+    "bindings": [
+     "[label]=\"'typeSettings.name' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.name"
+    ],
+    "de": [
+     "Name"
+    ],
+    "literals": [],
+    "text": "[label]=\"'typeSettings.name' | transloco\"",
+    "id": "org-settings/org-person-fields/org-person-fields.page#field-a8961219"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:362"
+    ],
+    "n": "„Name“, Großschreibung am Satzanfang; nur für Admin erreichbar.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 195,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditModalOpen\">",
+     "@if (editingField)",
+     "@else (not editingField.type === fieldTypes.SELECT)",
+     "@if (editingField.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {
+     "slot": "end"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editingField.defaultValue\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "org-settings/org-person-fields/org-person-fields.page#field-b8cf354d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:286",
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:423"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 107,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>",
+     "@else (not newField.type === fieldTypes.SELECT)",
+     "@if (newField.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {
+     "slot": "end"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newField.defaultValue\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "org-settings/org-person-fields/org-person-fields.page#field-ca3e38af"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:423"
+    ],
+    "n": "Schalter Standardwert, Standard aus (Ionic setzt beim Wechsel auf Ja/Nein false).",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 127,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"isEditModalOpen\""
+    },
+    "events": [
+     "(ionModalDidDismiss)=closeEditFieldModal()"
+    ],
+    "bindings": [
+     "[isOpen]=\"isEditModalOpen\"",
+     "[breakpoints]=\"[0, 1]\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "org-settings/org-person-fields/org-person-fields.page#modal-1fbef7b1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:68"
+    ],
+    "n": "Bottom-Sheet mit aktuellem Feld; Verwerfen beim Wegwischen wie Ionic",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 144,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditModalOpen\">",
+     "@if (editingField)"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getFieldTypeName(editingField.type) }}"
+    ],
+    "text": "{{ getFieldTypeName(editingField.type) }}",
+    "id": "org-settings/org-person-fields/org-person-fields.page#text-8be14847"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:350"
+    ],
+    "n": "Typname rechts",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 106,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>",
+     "@else (not newField.type === fieldTypes.SELECT)",
+     "@if (newField.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "extraFields.defaultValue"
+    ],
+    "de": [
+     "Standardwert"
+    ],
+    "literals": [],
+    "text": "{{ 'extraFields.defaultValue' | transloco }}",
+    "id": "org-settings/org-person-fields/org-person-fields.page#text-8e53f70a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:425"
+    ],
+    "n": "„Standardwert“ bei Typ Ja/Nein.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 194,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditModalOpen\">",
+     "@if (editingField)",
+     "@else (not editingField.type === fieldTypes.SELECT)",
+     "@if (editingField.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "extraFields.defaultValue"
+    ],
+    "de": [
+     "Standardwert"
+    ],
+    "literals": [],
+    "text": "{{ 'extraFields.defaultValue' | transloco }}",
+    "id": "org-settings/org-person-fields/org-person-fields.page#text-8e53f70a-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:425"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "line": 112,
+    "method": "OrgPersonFieldsPage.closeEditFieldModal",
+    "cond": [
+     "(!options.length)",
+     "(this.editingField.type === FieldType.SELECT)",
+     "(saveChanges && this.editingField && this.editingFieldIndex >= 0)"
+    ],
+    "message": {
+     "keys": [
+      "orgFields.addOption"
+     ],
+     "de": [
+      "Bitte füge mindestens eine Auswahloption hinzu."
+     ],
+     "literals": [],
+     "expr": "translate('orgFields.addOption')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "b6fa6750",
+    "mbody": "d7ab81b3",
+    "id": "org-settings/org-person-fields/org-person-fields.page#toast-c77d8a1e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:309"
+    ],
+    "n": "gleiche Prüfung beim Übernehmen im Bearbeiten-Sheet",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-planning-templates/org-planning-templates.page.html",
+    "line": 35,
+    "cond": [
+     "in <ion-reorder-group>"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "events": [
+     "(click)=changeDefaultField(field, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ field.name }} {{ field.conductor }}",
+    "id": "org-settings/org-planning-templates/org-planning-templates.page#action-3b2a1c77"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:380"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-planning-templates/org-planning-templates.page.html",
+    "line": 156,
+    "cond": [
+     "@for (tpl of templates; track trackByIndex(i); let i = $index)",
+     "@if (selectedTemplateIndex === i)",
+     "in <ion-popover #addTplPopover>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=addExtraField(tpl, i, addTplPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "typeSettings.addField"
+    ],
+    "de": [
+     "Feld hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.addField' | transloco }}",
+    "id": "org-settings/org-planning-templates/org-planning-templates.page#action-628489c1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:198"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-planning-templates/org-planning-templates.page.html",
+    "line": 163,
+    "cond": [
+     "@for (tpl of templates; track trackByIndex(i); let i = $index)",
+     "@if (selectedTemplateIndex === i)",
+     "in <ion-popover #addTplPopover>",
+     "@if (!isGeneral)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=addSongPlaceholder(tpl, i, addTplPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "orgTemplates.songPlaceholder"
+    ],
+    "de": [
+     "Werk-Platzhalter"
+    ],
+    "literals": [],
+    "text": "{{ 'orgTemplates.songPlaceholder' | transloco }}",
+    "id": "org-settings/org-planning-templates/org-planning-templates.page#action-7562664a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:200",
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:241"
+    ],
+    "n": "Im „Feld hinzufügen“-Menü des aufgeklappten Templates nur bei Instanztyp ≠ general (beide über tenant.type); legt song-placeholder-{n} „Werk-Platzhalter {n}“ mit 20 min an und speichert. Seite in beiden nur Admin/Verantwortlich mit Organisation.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-planning-templates/org-planning-templates.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-back-button",
+    "attrs": {
+     "defaultHref": "/tabs/settings/org-settings"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "\"\"",
+    "id": "org-settings/org-planning-templates/org-planning-templates.page#action-82bc5cc2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:330"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-planning-templates/org-planning-templates.page.html",
+    "line": 173,
+    "cond": [
+     "@for (tpl of templates; track trackByIndex(i); let i = $index)",
+     "@if (selectedTemplateIndex === i)",
+     "in <ion-popover #addTplPopover>",
+     "@if (defaultFields.length)",
+     "@for (f of defaultFields; track f.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=addOrgDefaultField(f, tpl, i, addTplPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "planning.minShort"
+    ],
+    "de": [
+     "{min} min"
+    ],
+    "literals": [],
+    "text": "{{ f.name }} {{ 'planning.minShort' | transloco: { min: f.time } }}",
+    "id": "org-settings/org-planning-templates/org-planning-templates.page#action-dd2c64eb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:202",
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:208"
+    ],
+    "n": "Ionic: „Name  20 min“ (ion-note) / Flutter: „Name (20 min)“; Kopie mit neuer UUID gleich.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-planning-templates/org-planning-templates.page.html",
+    "line": 159,
+    "cond": [
+     "@for (tpl of templates; track trackByIndex(i); let i = $index)",
+     "@if (selectedTemplateIndex === i)",
+     "in <ion-popover #addTplPopover>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=addNoteField(tpl, i, addTplPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "typeSettings.addNoteField"
+    ],
+    "de": [
+     "Notizfeld hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.addNoteField' | transloco }}",
+    "id": "org-settings/org-planning-templates/org-planning-templates.page#action-f38fd15e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:199"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "line": 226,
+    "method": "OrgPlanningTemplatesPage.addExtraField",
+    "cond": [],
+    "header": {
+     "keys": [
+      "typeSettings.addField"
+     ],
+     "de": [
+      "Feld hinzufügen"
+     ],
+     "literals": [],
+     "expr": "translate('typeSettings.addField')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.add"
+       ],
+       "de": [
+        "Hinzufügen"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.add')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (evt: any) => { tpl.fields.push({ id: evt.field || crypto.randomUUID(), name: evt.field || '', conductor: evt.conductor ?? '', info: evt.info?.trim() || undefined, time: evt.time ? String(evt.time) : '20', }); this.updateTemplateEnd(…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'field'",
+      "placeholder": {
+       "keys": [
+        "typeSettings.freeTextPh"
+       ],
+       "de": [
+        "Freitext eingeben..."
+       ],
+       "literals": [],
+       "expr": "translate('typeSettings.freeTextPh')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'conductor'",
+      "placeholder": {
+       "keys": [
+        "typeSettings.performerPh"
+       ],
+       "de": [
+        "Ausführenden eingeben..."
+       ],
+       "literals": [],
+       "expr": "translate('typeSettings.performerPh')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'info'",
+      "placeholder": {
+       "keys": [
+        "typeSettings.infoOptional"
+       ],
+       "de": [
+        "Info-Text (optional)"
+       ],
+       "literals": [],
+       "expr": "translate('typeSettings.infoOptional')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "number",
+      "label": {
+       "keys": [
+        "orgTemplates.minutes"
+       ],
+       "de": [
+        "Minuten"
+       ],
+       "literals": [],
+       "expr": "translate('orgTemplates.minutes')"
+      },
+      "name": "'time'",
+      "placeholder": null,
+      "value": "20",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "33c207f2",
+    "mbody": "c70c737a",
+    "id": "org-settings/org-planning-templates/org-planning-templates.page#alert-894e27e7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:209"
+    ],
+    "n": "Platzhalter „Freitext eingeben...“, „Ausführenden eingeben...“, „Info-Text (optional)“, Minuten 20, kein Pflichtfeld, id = Name bzw. UUID gleich; Flutter mit Feld-Labels und getrimmtem Text.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-planning-templates/org-planning-templates.page.html",
+    "line": 185,
+    "cond": [
+     "@for (tpl of templates; track trackByIndex(i); let i = $index)",
+     "@if (selectedTemplateIndex === i)",
+     "@if (templateEnds[i])"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "color": "medium"
+    },
+    "keys": [
+     "orgTemplates.endApprox"
+    ],
+    "de": [
+     "Ende ca. {time}"
+    ],
+    "literals": [],
+    "text": "{{ 'orgTemplates.endApprox' | transloco: { time: (templateEnds[i] | date:'HH:mm') } }}",
+    "id": "org-settings/org-planning-templates/org-planning-templates.page#text-2a29f1b0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:471"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-planning-templates/org-planning-templates.page.html",
+    "line": 150,
+    "cond": [
+     "@for (tpl of templates; track trackByIndex(i); let i = $index)",
+     "@if (selectedTemplateIndex === i)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small"
+    },
+    "bindings": [
+     "[id]=\"'add-tpl-' + i\""
+    ],
+    "keys": [
+     "typeSettings.addField"
+    ],
+    "de": [
+     "Feld hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.addField' | transloco }}",
+    "id": "org-settings/org-planning-templates/org-planning-templates.page#text-5b4524e2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:466"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-planning-templates/org-planning-templates.page.html",
+    "line": 60,
+    "cond": [],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "orgTemplates.defaultFieldsHint"
+    ],
+    "de": [
+     "Standardfelder erscheinen im Planungs-Menü als schnell hinzufügbare Felder für alle Instanzen der Organisation."
+    ],
+    "literals": [],
+    "text": "{{ 'orgTemplates.defaultFieldsHint' | transloco }}",
+    "id": "org-settings/org-planning-templates/org-planning-templates.page#text-f76ccd6f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:394"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-planning-templates/org-planning-templates.page.html",
+    "line": 6,
+    "cond": [],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "orgTemplates.title"
+    ],
+    "de": [
+     "Planvorlagen & Felder"
+    ],
+    "literals": [],
+    "text": "{{ 'orgTemplates.title' | transloco }}",
+    "id": "org-settings/org-planning-templates/org-planning-templates.page#text-fb7c6e3c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:330"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 144,
+    "cond": [
+     "@if (selectedField)",
+     "@for (player of players; track player.id)",
+     "@else if (selectedField.fieldType === FieldType.SELECT)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [
+     "(ionChange)=setEditedValue(player.id, $event.detail.value)"
+    ],
+    "link": null,
+    "model": "[ngModel]=\"getEditedValue(player.id)\"",
+    "bindings": [
+     "[placeholder]=\"selectedField.label\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"option\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ option }}"
+     }
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[placeholder]=\"selectedField.label\" {{ option }}",
+    "id": "people/bulk-edit/bulk-edit.page#field-0e4833d3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:542-545"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 157,
+    "cond": [
+     "@if (selectedField)",
+     "@for (player of players; track player.id)",
+     "@else if (selectedField.fieldType === FieldType.BFECG_CHURCH)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [
+     "(ionChange)=setEditedValue(player.id, $event.detail.value)"
+    ],
+    "link": null,
+    "model": "[ngModel]=\"getEditedValue(player.id)\"",
+    "bindings": [
+     "[placeholder]=\"selectedField.label\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"church.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ church.name }}"
+     }
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[placeholder]=\"selectedField.label\" {{ church.name }}",
+    "id": "people/bulk-edit/bulk-edit.page#field-0e4833d3-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:546-551"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 140,
+    "cond": [
+     "@if (selectedField)",
+     "@for (player of players; track player.id)",
+     "@else if (selectedField.fieldType === FieldType.BOOLEAN)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=setEditedValue(player.id, $event.detail.checked)"
+    ],
+    "link": null,
+    "model": "[ngModel]=\"getEditedValue(player.id)\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/bulk-edit/bulk-edit.page#field-40247d7a-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:537-541"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 47,
+    "cond": [
+     "@if (selectedField)",
+     "@if (selectedField.key === 'instrument')"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"bulkValue\"",
+    "bindings": [
+     "[placeholder]=\"'people.chooseGroupPlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"group.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ group.name }}"
+     }
+    ],
+    "keys": [
+     "people.chooseGroupPlaceholder"
+    ],
+    "de": [
+     "Gruppe wählen..."
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'people.chooseGroupPlaceholder' | transloco\" {{ group.name }}",
+    "id": "people/bulk-edit/bulk-edit.page#field-90ab5ff6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:504-513",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:115-121"
+    ],
+    "n": "Gruppen-Dropdown, Platzhalter 'Gruppe wählen...', Startwert erste Gruppe.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/import/import.page.html",
+    "line": 22,
+    "cond": [
+     "@if (step === 'file')"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=triggerFilePicker(fileInput)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "cloud-upload-outline"
+    ],
+    "keys": [
+     "people.chooseFile"
+    ],
+    "de": [
+     "Datei auswählen"
+    ],
+    "literals": [],
+    "text": "{{ 'people.chooseFile' | transloco }}",
+    "id": "people/import/import.page#action-d036dd10"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/import_widgets.dart:35-40",
+     "lib/features/people/presentation/pages/person_import_page.dart:78-80"
+    ],
+    "n": "cloud_upload-Icon und Text in Primärfarbe.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/import/import.page.html",
+    "line": 97,
+    "cond": [
+     "@if (step === 'preview')",
+     "@for (row of mappedRows; track row.rowIndex)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ row.player.firstName }} {{ row.player.lastName }}"
+    ],
+    "text": "{{ row.player.firstName }} {{ row.player.lastName }}",
+    "id": "people/import/import.page#text-2d988dd6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:359"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/import/import.page.html",
+    "line": 3,
+    "cond": [],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "people.importPeople"
+    ],
+    "de": [
+     "Personen importieren"
+    ],
+    "literals": [],
+    "text": "{{ 'people.importPeople' | transloco }}",
+    "id": "people/import/import.page#text-e0a87666"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:232"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/import/import.page.ts",
+    "line": 119,
+    "method": "ImportPage.onFileSelect",
+    "cond": [],
+    "message": {
+     "keys": [
+      "people.fileUnreadable"
+     ],
+     "de": [
+      "Die Datei konnte nicht gelesen werden."
+     ],
+     "literals": [],
+     "expr": "translate('people.fileUnreadable')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "bf66a74f",
+    "mbody": "f6e57fc8",
+    "id": "people/import/import.page#toast-1363216a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:99-103",
+     "lib/core/utils/spreadsheet_reader.dart:155-161"
+    ],
+    "n": "Gleicher Text, rot. Für .xls kommt stattdessen ein eigener Text (siehe field-bdcf25e7).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart",
+    "lib/core/utils/spreadsheet_reader.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/import/import.page.ts",
+    "line": 107,
+    "method": "ImportPage.onFileSelect",
+    "cond": [
+     "(!rows.length)"
+    ],
+    "message": {
+     "keys": [
+      "people.fileEmpty"
+     ],
+     "de": [
+      "Die Datei enthält keine Daten."
+     ],
+     "literals": [],
+     "expr": "translate('people.fileEmpty')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "fcb0faf9",
+    "mbody": "f6e57fc8",
+    "id": "people/import/import.page#toast-18af3f0b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:85-87"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "people/import/import.page.ts",
+    "line": 144,
+    "method": "ImportPage.proceedToPreview",
+    "cond": [],
+    "message": {
+     "keys": [
+      "people.previewFailed"
+     ],
+     "de": [
+      "Fehler bei der Vorschau."
+     ],
+     "literals": [],
+     "expr": "translate('people.previewFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "d96d47e6",
+    "mbody": "7b21b3cd",
+    "id": "people/import/import.page#toast-775db1e9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:146-148"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 339,
+    "cond": [
+     "@if (players.length && playersFiltered?.length)",
+     "@else (not sortOpt === 'instrument')"
+    ],
+    "tag": "ion-reorder-group",
+    "attrs": {
+     "[disabled]": "\"true\""
+    },
+    "events": [
+     "(ionItemReorder)=$event.detail.complete(true)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash",
+     "pause",
+     "play"
+    ],
+    "keys": [
+     "people.teacherName",
+     "people.noTeacher",
+     "people.voiceLeader",
+     "people.new",
+     "people.problemCase",
+     "people.paused",
+     "people.candidate"
+    ],
+    "de": [
+     "Lehrer: {name}",
+     "Kein Lehrer",
+     "Stimmführer",
+     "Neu",
+     "Problemfall",
+     "Pausiert",
+     "Prüfling"
+    ],
+    "literals": [],
+    "text": "{{ player.firstName }} {{ player.lastName }} {{ player.text }} {{ player.groupName }} {{ 'people.teacherName' | transloco: { name: getTeacherName(player.teacher) } }} {{ 'people.noTeacher' | transloc…",
+    "id": "people/list/list.page#action-846fa8d2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:629",
+     "lib/features/people/presentation/pages/people_list_page.dart:605"
+    ],
+    "n": "Sortierung ≠ Gruppe: flache Liste ohne Trenner und ohne Reorder. Wischaktionen (Papierkorb, Pause/Play) nur Admin/Verantwortlicher, Beobachter ohne – wie Ionic. Zeileninhalt siehe action-0df20264.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/list/list.page.html",
+    "line": 202,
+    "cond": [
+     "@if (loaded && todaysBirthdays.length)",
+     "@for (player of todaysBirthdays; track player.id)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "type": "button",
+     "class": "birthday-banner__entry"
+    },
+    "events": [
+     "(click)=openModal(player)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "people.ageYears"
+    ],
+    "de": [
+     "{count, plural, one {# Jahr} other {# Jahre}}"
+    ],
+    "literals": [],
+    "text": "\"🎂\" {{ player.firstName }} {{ player.lastName }} {{ 'people.ageYears' | transloco: { count: getBirthdayAge(player) } }}",
+    "id": "people/list/list.page#action-f9b0c465"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:527",
+     "lib/features/people/presentation/pages/people_list_page.dart:529",
+     "lib/features/people/presentation/pages/people_list_page.dart:1768",
+     "lib/features/people/presentation/pages/people_list_page.dart:1814"
+    ],
+    "n": "Banner mit Name und 'n Jahre', Tipp öffnet die Person (Darstellung als Seite statt Modal siehe modal-38ba21ec).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "people/list/list.page.ts",
+    "line": 773,
+    "method": "ListPage.remove",
+    "cond": [],
+    "header": null,
+    "subHeader": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "people.archive"
+       ],
+       "de": [
+        "Archivieren"
+       ],
+       "literals": [],
+       "expr": "translate('people.archive')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(): void => { this.playerToArchive = player as Player; this.isArchiveModalOpen = true; slider.close(); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "common.remove"
+       ],
+       "de": [
+        "Entfernen"
+       ],
+       "literals": [],
+       "expr": "translate('common.remove')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(): void => { this.removePlayer(player); slider.close(); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { slider.close(); }"
+     }
+    ],
+    "src": "d53789f4",
+    "mbody": "3ce6729d",
+    "id": "people/list/list.page#actionsheet-95b42378"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1366",
+     "lib/features/people/presentation/pages/people_list_page.dart:607",
+     "lib/shared/widgets/adaptive/app_action_sheet.dart:59"
+    ],
+    "n": "Nur Admin/Verantwortlicher (Wisch-Option nur bei isAdmin, Beobachter ohne Wischaktionen) wie Ionic. Eigene Person (appId = Auth-User) → roter Toast statt Sheet wie Ionic. Sheet ohne Titel: 'Archivieren' / 'Entfernen' / 'Abbrechen'; Archivieren öffnet den Archiv-Dialog, Entfernen die Bestätigung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/list/list.page",
+   "ionic": {
+    "ts": "people/list/list.page.ts",
+    "html": "people/list/list.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/list/list.page.html",
+    "line": 514,
+    "cond": [
+     "in <ion-modal isOpen=\"isArchiveModalOpen\">"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "date"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"archiveDate\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/list/list.page#field-1802f7a0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart:1399",
+     "lib/features/people/presentation/pages/people_list_page.dart:1404"
+    ],
+    "n": "Datum per Picker-Zeile (dd.MM.yyyy) statt nativer Datumseingabe; Vorgabe heute.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ]
+  }
+ ]
+}

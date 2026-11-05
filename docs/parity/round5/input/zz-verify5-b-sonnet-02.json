@@ -1,0 +1,2043 @@
+{
+ "batch": "zz-verify5-b-sonnet-02",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.html",
+    "line": 60,
+    "cond": [
+     "@if (isManager && attendance && started)",
+     "@if (responses.length > 0)",
+     "@for (r of responses; track r.id)",
+     "@else (not r.kind === 'was_present')"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ 'autoMessages.reason.' + (r.reason_code || 'other') | transloco }}{{ r.text ? ': ' + r.text : '' }}"
+    ],
+    "text": "{{ 'autoMessages.reason.' + (r.reason_code || 'other') | transloco }}{{ r.text ? ': ' + r.text : '' }}",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#text-241dd21d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:425",
+     "lib/features/messages/presentation/auto_message_texts.dart:68"
+    ],
+    "n": "Grund (fehlend/unbekannt → „Sonstiges“) + „: Text“.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.html",
+    "line": 18,
+    "cond": [
+     "@if (isManager && attendance && started)",
+     "@for (s of rules; track s.rule.id)",
+     "@else (not !s.run)",
+     "@switch (s.run.status) case 'sent'"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [
+     ", HH:mm"
+    ],
+    "text": "{{ s.run.created_at | date: ('common.ngDate' | transloco) + ', HH:mm' }}",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#text-38f24a5a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:282",
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:305"
+    ],
+    "n": "„dd.MM.yyyy, HH:mm“ lokal.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.html",
+    "line": 28,
+    "cond": [
+     "@if (isManager && attendance && started)",
+     "@for (s of rules; track s.rule.id)",
+     "@else (not !s.run)",
+     "@switch (s.run.status) case 'not_recorded'"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [
+     "autoMessages.panelNotRecorded"
+    ],
+    "de": [
+     "„{rule}“ nicht verschickt: Anwesenheit wurde nicht erfasst"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.panelNotRecorded' | transloco: { rule: s.rule.name } }}",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#text-4bfd5861"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:298"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.html",
+    "line": 17,
+    "cond": [
+     "@if (isManager && attendance && started)",
+     "@for (s of rules; track s.rule.id)",
+     "@else (not !s.run)",
+     "@switch (s.run.status) case 'sent'"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [
+     "autoMessages.panelSent"
+    ],
+    "de": [
+     "„{rule}“ ging an {count, plural, one {# Person} other {# Personen}}"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.panelSent' | transloco: { rule: s.rule.name, count: s.run.recipient_count } }}",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#text-5b92afdf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:296"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.html",
+    "line": 56,
+    "cond": [
+     "@if (isManager && attendance && started)",
+     "@if (responses.length > 0)",
+     "@for (r of responses; track r.id)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "common.unknown"
+    ],
+    "de": [
+     "Unbekannt"
+    ],
+    "literals": [],
+    "text": "{{ nameOf(r) || ('common.unknown' | transloco) }}",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#text-5dd3621d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:442",
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:161"
+    ],
+    "n": "Name über person_attendance_id aus den Personen des Termins, sonst „Unbekannt“.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.html",
+    "line": 58,
+    "cond": [
+     "@if (isManager && attendance && started)",
+     "@if (responses.length > 0)",
+     "@for (r of responses; track r.id)",
+     "@if (r.kind === 'was_present')"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "autoMessages.panelSaysPresent"
+    ],
+    "de": [
+     "Sagt: „Ich war doch da“"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.panelSaysPresent' | transloco }}",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#text-71044245"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:424"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.html",
+    "line": 68,
+    "cond": [
+     "@if (isManager && attendance && started)",
+     "@if (responses.length > 0)",
+     "@for (r of responses; track r.id)",
+     "@else (not r.state === 'pending')"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "decided"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ ('autoMessages.respState.' + r.state) | transloco }}{{ r.decided_by_name ? ' · ' + r.decided_by_name : '' }}"
+    ],
+    "text": "{{ ('autoMessages.respState.' + r.state) | transloco }}{{ r.decided_by_name ? ' · ' + r.decided_by_name : '' }}",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#text-7f432be1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:476",
+     "lib/features/messages/presentation/auto_message_texts.dart:76"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.html",
+    "line": 49,
+    "cond": [
+     "@if (isManager && attendance && started)",
+     "@if (responses.length > 0)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "autoMessages.panelResponses"
+    ],
+    "de": [
+     "Rückmeldungen ({count} offen)"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.panelResponses' | transloco: { count: pending.length } }}",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#text-bb9383cc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:322"
+    ],
+    "n": "Zählt offene Rückmeldungen inkl. lokal entschiedener wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.html",
+    "line": 21,
+    "cond": [
+     "@if (isManager && attendance && started)",
+     "@for (s of rules; track s.rule.id)",
+     "@else (not !s.run)",
+     "@switch (s.run.status) case 'suspended'"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [
+     "autoMessages.panelSuspended"
+    ],
+    "de": [
+     "„{rule}“ ist für diesen Termin ausgesetzt"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.panelSuspended' | transloco: { rule: s.rule.name } }}",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#text-bdda8e46"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:297"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.html",
+    "line": 11,
+    "cond": [
+     "@if (isManager && attendance && started)",
+     "@for (s of rules; track s.rule.id)",
+     "@if (!s.run)",
+     "@else (not isFuture(s))"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [
+     "autoMessages.panelPending"
+    ],
+    "de": [
+     "„{rule}“ wird gleich geprüft"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.panelPending' | transloco: { rule: s.rule.name } }}",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#text-cbe9ec72"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:295"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.html",
+    "line": 8,
+    "cond": [
+     "@if (isManager && attendance && started)",
+     "@for (s of rules; track s.rule.id)",
+     "@if (!s.run)",
+     "@if (isFuture(s))"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [
+     "autoMessages.panelWillSend"
+    ],
+    "de": [
+     "„{rule}“ geht um {time} raus"
+    ],
+    "literals": [],
+    "text": "{{ 'autoMessages.panelWillSend' | transloco: { rule: s.rule.name, time: (s.sendAt | date: 'HH:mm') } }}",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#text-f9dc6cea"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:291",
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:249"
+    ],
+    "n": "Panel nur Admin/Verantwortliche und ab Terminbeginn (isManager && started); Uhrzeit HH:mm = Terminende + Verzögerung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "line": 205,
+    "method": "DutyDistributeModalComponent.change",
+    "cond": [],
+    "header": {
+     "keys": [
+      "duty.swap",
+      "duty.choosePerson"
+     ],
+     "de": [
+      "{name} tauschen",
+      "Person wählen"
+     ],
+     "literals": [],
+     "expr": "current ? translate('duty.swap', { name: this.firstName(current) }) : translate('duty.choosePerson')"
+    },
+    "subHeader": {
+     "keys": [],
+     "de": [],
+     "literals": [
+      "${this.title(row.termin)} · ${this.dateLabel(row.termin)}"
+     ],
+     "expr": "`${this.title(row.termin)} · ${this.dateLabel(row.termin)}`"
+    },
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.apply"
+       ],
+       "de": [
+        "Übernehmen"
+       ],
+       "literals": [],
+       "expr": "translate('common.apply')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(value: string) => { if (!value) return; const next = value === '__none' ? null : options.find(o => o.id === value); row.picked = row.picked.filter(p => p !== current); if (next) row.picked.push(next); row.missing = Math.max(0, row.termin.…"
+     }
+    ],
+    "inputs": [
+     {
+      "expr": "inputs",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "11b7c96a",
+    "mbody": "94170a94",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#alert-500b3722"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:238",
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:249",
+     "lib/shared/widgets/adaptive/app_dialog.dart:927"
+    ],
+    "n": "Behebung bestätigt: jetzt Alert mit Radio-Liste, Titel „{Vorname} tauschen“ / „Person wählen“, Untertitel „{Titel} · {Datum}“, „Niemand (Platz offen lassen)“ zuerst nur beim Tauschen, Einträge „Name (Anzahl)“ aufsteigend nach Anzahl, dann Name; „Abbrechen“ / „Übernehmen“, Auswahl gilt erst mit „Übernehmen“ (ohne Auswahl keine Änderung), offene Plätze neu berechnet; Toast „Niemand sonst …“ wenn keine Option. Datumsformat ohne führende Null bleibt eigenes Item (text-e73248fa).",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/adaptive/app_dialog.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "line": 202,
+    "method": "DutyDistributeModalComponent.change",
+    "cond": [
+     "(!inputs.length)"
+    ],
+    "message": {
+     "keys": [
+      "duty.nobodyElse"
+     ],
+     "de": [
+      "Niemand sonst ist für diesen Termin verfügbar"
+     ],
+     "literals": [],
+     "expr": "translate('duty.nobodyElse')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "d0036dad",
+    "mbody": "94170a94",
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#toast-fb615d29"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:231"
+    ],
+    "n": "Gelber Toast „Niemand sonst ist für diesen Termin verfügbar“ nur bei leerer Auswahl ohne aktuelle Person (Ionic: inputs leer). Rolle: Modal in beiden nur für Admin/Verantwortlicher bei vorhandenen Dienst-Typen (Ionic att-list isConductor && hasDutyTypes / Flutter attendance_list_page:314), im Modal keine weitere Prüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "line": 139,
+    "method": "UnavailabilityModalComponent.remove",
+    "cond": [],
+    "header": {
+     "keys": [
+      "duty.deleteRuleConfirm"
+     ],
+     "de": [
+      "Regel löschen?"
+     ],
+     "literals": [],
+     "expr": "translate('duty.deleteRuleConfirm')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "duty.deleteRuleMessage"
+     ],
+     "de": [
+      "Bereits eingetragene Abmeldungen bleiben bestehen."
+     ],
+     "literals": [],
+     "expr": "translate('duty.deleteRuleMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.delete"
+       ],
+       "de": [
+        "Löschen"
+       ],
+       "literals": [],
+       "expr": "translate('common.delete')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { await this.db.dutySvc.deleteUnavailability(rule.id); await this.load(); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "ea6c5da3",
+    "mbody": "d13ef547",
+    "id": "duty/unavailability-modal/unavailability-modal.component#alert-7cb35beb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:153",
+     "lib/data/repositories/duty_repository.dart:407"
+    ],
+    "n": "„Regel löschen?“ / „Bereits eingetragene Abmeldungen bleiben bestehen.“, „Abbrechen“ / „Löschen“ (rot); löscht person_unavailability (Flutter zusätzlich mit tenant_id-Filter) und lädt neu. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "history/history.page.html",
+    "line": 206,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block"
+    },
+    "events": [
+     "(click)=addHistoryEntry(addHisModal)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "attendance.add"
+    ],
+    "de": [
+     "Hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.add' | transloco }}",
+    "id": "history/history.page#action-a6f939ed"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:443",
+     "lib/features/history/presentation/pages/history_page.dart:538",
+     "lib/data/repositories/attendance_repository.dart:897"
+    ],
+    "n": "Block-Button 'Hinzufügen': Prüfung mind. ein Werk, ein history-Eintrag je Werk (songId, person_id bzw. otherConductor, date, visible=true, tenantId), Sheet schließt, Liste lädt neu. Datum in Flutter als YYYY-MM-DD statt ISO-Zeitstempel (gleicher Tag).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "history/history.page.ts",
+    "line": 189,
+    "method": "HistoryPage.onConChange",
+    "cond": [
+     "(this.historyEntry.person_id === this.otherConductor)"
+    ],
+    "header": {
+     "keys": [
+      "attList.enterConductor"
+     ],
+     "de": [
+      "Dirigent eingeben"
+     ],
+     "literals": [],
+     "expr": "translate('attList.enterConductor')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "expr": "translate('common.cancel')",
+      "keys": [
+       "common.cancel"
+      ],
+      "de": [
+       "Abbrechen"
+      ],
+      "literals": []
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(data: any) => { this.historyEntry.otherConductor = data.conductor; }"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "text",
+      "label": null,
+      "name": "'conductor'",
+      "placeholder": {
+       "keys": [
+        "attList.conductor"
+       ],
+       "de": [
+        "Dirigent"
+       ],
+       "literals": [],
+       "expr": "translate('attList.conductor')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "bc77dd5f",
+    "mbody": "a6a41166",
+    "id": "history/history.page#alert-6e1a25c4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:367",
+     "lib/features/history/presentation/pages/history_page.dart:479"
+    ],
+    "n": "Titel 'Dirigent eingeben', Textfeld 'Dirigent' (Flutter als Label statt Platzhalter), 'Abbrechen'/'Speichern'. Randfälle: leerer Name bzw. Abbrechen lässt in Flutter die vorige Auswahl stehen (Ionic: 'Anderer Dirigent' ohne Namen).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "history/history.page.html",
+    "line": 3,
+    "cond": [],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "history.title"
+    ],
+    "de": [
+     "Werkhistorie"
+    ],
+    "literals": [],
+    "text": "{{ 'history.title' | transloco }}",
+    "id": "history/history.page#text-4ca684b5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:80"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 23,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "class": "dash-row",
+     "[button]": "\"canOpenAttendance\"",
+     "[detail]": "\"false\""
+    },
+    "events": [
+     "(click)=canOpenAttendance && openAttendance(nextEvent.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "attendance.timeOClock"
+    ],
+    "de": [
+     "{time} Uhr"
+    ],
+    "literals": [],
+    "text": "{{ tileDay(nextEvent.date) }} {{ tileMonth(nextEvent.date) }} {{ nextEvent.typeInfo }} {{ formatDate(nextEvent.date, 'dddd') }} · {{ 'attendance.timeOClock' | transloco: { time: nextEvent.start_time …",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#action-057151b4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:43",
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:121",
+     "lib/core/router/app_router.dart:199"
+    ],
+    "n": "canOpen-Rollen identisch (Admin, Verantwortlich, Helfer, Stimmführer & Helfer); die Startseite selbst ist in beiden nur für Admin/Verantwortlich erreichbar (Ionic Tab/Side-Nav/isUrlAccessAllowed, Flutter Route-Guard), daher tippbar für genau diese Rollen. Zeile: blaue Datumskachel (solid wenn heute), Typinfo, 'Wochentag · {start – end} Uhr', relative Tage; Tap öffnet den Termin, danach Neuladen.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 6,
+    "cond": [],
+    "tag": "div",
+    "attrs": {
+     "class": "card-subtitle"
+    },
+    "keys": [
+     "homeDashboard.nextAndLast"
+    ],
+    "de": [
+     "Nächster & letzter Termin"
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.nextAndLast' | transloco }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-31fc2b8a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:57"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 5,
+    "cond": [],
+    "tag": "div",
+    "attrs": {
+     "class": "card-title"
+    },
+    "keys": [
+     "homeDashboard.events"
+    ],
+    "de": [
+     "Termine"
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.events' | transloco }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-ce89ab63"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:56"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "instruments/instrument-list/instrument-list.page.ts",
+    "line": 413,
+    "method": "InstrumentListPage.saveOrder",
+    "cond": [],
+    "message": {
+     "keys": [
+      "instruments.orderFailed"
+     ],
+     "de": [
+      "Fehler beim Speichern der Reihenfolge"
+     ],
+     "literals": [],
+     "expr": "translate('instruments.orderFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "4f347adb",
+    "mbody": "bdada5a3",
+    "id": "instruments/instrument-list/instrument-list.page#toast-a428ffb5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:58"
+    ],
+    "n": "Roter Toast „Fehler beim Speichern der Reihenfolge“ bei Fehler (auch Demo-Sperre). Ionic zeigt davor zusätzlich den Service-Toast „Fehler beim updaten des Instruments“ (Service-Batch).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 97,
+    "cond": [
+     "@if (instrument)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block"
+    },
+    "events": [
+     "(click)=update()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "instruments.update"
+    ],
+    "de": [
+     "Aktualisieren"
+    ],
+    "literals": [],
+    "text": "{{ 'instruments.update' | transloco }}",
+    "id": "instruments/instrument/instrument.page#action-2c9f44ea"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:712"
+    ],
+    "n": "Button „Aktualisieren“; Ablauf beim Speichern siehe extra.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 99,
+    "cond": [
+     "@if (instrument)",
+     "@if (!instrument.maingroup)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "color": "danger",
+     "expand": "block"
+    },
+    "events": [
+     "(click)=delete()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.remove"
+    ],
+    "de": [
+     "Entfernen"
+    ],
+    "literals": [],
+    "text": "{{ 'common.remove' | transloco }}",
+    "id": "instruments/instrument/instrument.page#action-82db5bdd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:716"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "instruments/instrument/instrument.page.html",
+    "line": 91,
+    "cond": [
+     "@if (instrument)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.notes"
+    ],
+    "de": [
+     "Notizen"
+    ],
+    "literals": [],
+    "text": "{{ 'people.notes' | transloco }}",
+    "id": "instruments/instrument/instrument.page#text-7f650816"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:704"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "instruments/instrument/instrument.page.ts",
+    "line": 75,
+    "method": "InstrumentPage.update",
+    "cond": [],
+    "message": {
+     "keys": [
+      "instruments.updated"
+     ],
+     "de": [
+      "{name} wurde erfolgreich aktualisiert"
+     ],
+     "literals": [],
+     "expr": "translate('instruments.updated', { name: this.instrument.name })"
+    },
+    "color": null,
+    "duration": null,
+    "src": "3fb27394",
+    "mbody": "eee6f5b0",
+    "id": "instruments/instrument/instrument.page#toast-e997b3c4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:474"
+    ],
+    "n": "Grüner Toast „{Name} wurde erfolgreich aktualisiert“, in Flutter nach dem Schließen aus der Liste.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "login/login.page.ts",
+    "line": 260,
+    "method": "LoginPage.promptRegister",
+    "cond": [],
+    "header": {
+     "keys": [
+      "login.noAccount.header"
+     ],
+     "de": [
+      "Kein Konto gefunden"
+     ],
+     "literals": [],
+     "expr": "translate('login.noAccount.header')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "login.noAccount.message"
+     ],
+     "de": [
+      "Für diese E-Mail-Adresse existiert noch kein Konto. Möchtest du dich jetzt registrieren?"
+     ],
+     "literals": [],
+     "expr": "translate('login.noAccount.message')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "login.register"
+       ],
+       "de": [
+        "Registrieren"
+       ],
+       "literals": [],
+       "expr": "translate('login.register')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { this.register(); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "7e43e1b8",
+    "mbody": "ded5a609",
+    "id": "login/login.page#alert-6409ac1a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:401-409",
+     "lib/features/auth/presentation/pages/login_page.dart:214",
+     "lib/features/auth/presentation/pages/login_page.dart:280"
+    ],
+    "n": "\"Kein Konto gefunden\", Abbrechen / Registrieren → Registrieren-Modal; Auslöser user_not_found beim Login und kein Konto bei \"Code senden\" wie Ionic. Im Teams-Modus käme er nur über user_not_found (liefert signInWithPassword praktisch nicht) oder den Code-Weg (siehe Extra).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "login/login.page.ts",
+    "line": 99,
+    "method": "LoginPage.login",
+    "cond": [
+     "(ok)",
+     "(this.linkMode)"
+    ],
+    "message": {
+     "keys": [
+      "login.toast.msLinked"
+     ],
+     "de": [
+      "Microsoft-Konto verknüpft. Du wirst künftig automatisch angemeldet."
+     ],
+     "literals": [],
+     "expr": "translate('login.toast.msLinked')"
+    },
+    "color": "success",
+    "duration": "4000",
+    "src": "08834c66",
+    "mbody": "7c1f97ed",
+    "id": "login/login.page#toast-30a11df6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:233-259"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-compose/message-compose.component",
+   "ionic": {
+    "ts": "messages/message-compose/message-compose.component.ts",
+    "html": "messages/message-compose/message-compose.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "messages/message-compose/message-compose.component.html",
+    "line": 26,
+    "cond": [],
+    "tag": "app-message-editor",
+    "attrs": {},
+    "events": [
+     "(contentChange)=onContentChange($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[content]=\"initialContent\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "messages/message-compose/message-compose.component#action-0994f764"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_compose_page.dart:382"
+    ],
+    "n": "Quill-Editor mit Toolbar statt Tiptap-Komponente; Änderung speichert Entwurf und prüft canSend. Editor selbst wird in eigener Unit geprüft.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "messages/message-detail/message-detail.page.html",
+    "line": 9,
+    "cond": [
+     "@if (isManager && message)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=remove()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'messages.deleteMessage' | transloco\""
+    ],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "messages/message-detail/message-detail.page#action-27ae197e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_detail_page.dart:131-138",
+     "lib/features/messages/presentation/pages/message_detail_page.dart:92-108",
+     "lib/data/repositories/message_repository.dart:254-260"
+    ],
+    "n": "Papierkorb rot. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich. Dialog 'Mitteilung löschen?' + Hinweistext, Abbrechen/Löschen (destruktiv); DELETE messages per id (Flutter zusätzlich tenantId), danach /settings/messages, Fehler-Toast 'Fehler beim Löschen'.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "messages/message-detail/message-detail.page.html",
+    "line": 19,
+    "cond": [
+     "@if (isManager)"
+    ],
+    "tag": "ion-refresher",
+    "attrs": {
+     "slot": "fixed"
+    },
+    "events": [
+     "(ionRefresh)=handleRefresh($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "messages/message-detail/message-detail.page#action-91d55a5f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_detail_page.dart:110-114",
+     "lib/features/messages/presentation/pages/message_detail_page.dart:206"
+    ],
+    "n": "Pull-to-refresh lädt Mitteilung und Empfänger neu. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "messages/message-detail/message-detail.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-back-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[defaultHref]=\"backHref\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "\"\"",
+    "id": "messages/message-detail/message-detail.page#action-df113b87"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_detail_page.dart:82",
+     "lib/features/messages/presentation/pages/message_detail_page.dart:127",
+     "lib/core/constants/enums.dart:137"
+    ],
+    "n": "Zurück mit Verlauf = pop; ohne Verlauf Admin/Verantwortlich → /settings/messages, sonst Startseite der Rolle (Dirigent/Verantwortlich/Beobachter → Personen, Eltern → /parents, übrige → /signout) wie Ionic backHref/Utils.getUrl.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "messages/message-detail/message-detail.page.ts",
+    "line": 207,
+    "method": "MessageDetailPage.remove",
+    "cond": [],
+    "header": {
+     "keys": [
+      "messages.deleteConfirm"
+     ],
+     "de": [
+      "Mitteilung löschen?"
+     ],
+     "literals": [],
+     "expr": "translate('messages.deleteConfirm')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "messages.deleteHint"
+     ],
+     "de": [
+      "Die Mitteilung verschwindet auch bei allen Empfängern aus der App. Bereits versendete E-Mails bleiben bestehen."
+     ],
+     "literals": [],
+     "expr": "translate('messages.deleteHint')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.delete"
+       ],
+       "de": [
+        "Löschen"
+       ],
+       "literals": [],
+       "expr": "translate('common.delete')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { try { await this.messageService.deleteMessage(this.message!.id); await this.router.navigateByUrl('/tabs/settings/messages'); } catch (e) { console.error('[message-detail] delete failed:', e); Utils.showToast(translate('messag…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "437fbfeb",
+    "mbody": "8066b4d1",
+    "id": "messages/message-detail/message-detail.page#alert-183a4e8d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_detail_page.dart:92",
+     "lib/features/messages/presentation/pages/message_detail_page.dart:131",
+     "lib/core/utils/dialog_helper.dart:12"
+    ],
+    "n": "'Mitteilung löschen?' + Hinweistext, 'Abbrechen' / 'Löschen' (rot); danach Löschen (messages, eq id + tenantId) und Navigation. Papierkorb nur bei isManager && message in beiden; Rollen: isManager = Admin/Verantwortlich UND Mitteilung gehört zur aktuellen Instanz (Ionic message-detail.page.ts:95, Flutter _isManager + tenantId-Vergleich).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "messages/message-detail/message-detail.page.ts",
+    "line": 218,
+    "method": "MessageDetailPage.remove",
+    "cond": [],
+    "via": "router.navigateByUrl",
+    "to": "'/tabs/settings/messages'",
+    "src": "9cf54a30",
+    "mbody": "8066b4d1",
+    "id": "messages/message-detail/message-detail.page#nav-9c26e0e5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_detail_page.dart:104"
+    ],
+    "n": "context.go('/settings/messages') statt navigateByUrl('/tabs/settings/messages'); gleiches Ziel, Liste lädt neu (messagesProvider invalidiert). Nur Manager wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "messages/message-detail/message-detail.page.html",
+    "line": 6,
+    "cond": [],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "messages.message"
+    ],
+    "de": [
+     "Mitteilung"
+    ],
+    "literals": [],
+    "text": "{{ 'messages.message' | transloco }}",
+    "id": "messages/message-detail/message-detail.page#text-330ba71f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_detail_page.dart:128"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "messages/message-detail/message-detail.page.ts",
+    "line": 221,
+    "method": "MessageDetailPage.remove",
+    "cond": [],
+    "message": {
+     "keys": [
+      "messages.deleteFailed"
+     ],
+     "de": [
+      "Fehler beim Löschen"
+     ],
+     "literals": [],
+     "expr": "translate('messages.deleteFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "ab6cb444",
+    "mbody": "8066b4d1",
+    "id": "messages/message-detail/message-detail.page#toast-fac5b4e7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_detail_page.dart:106"
+    ],
+    "n": "Fehler-Toast 'Fehler beim Löschen' (danger), Seite bleibt. Nur Manager wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "notifications/notifications.page.html",
+    "line": 47,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (isNative)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=togglePush()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"notificationConfig.push_enabled\"",
+    "bindings": [
+     "[attr.label]=\"'notif.push' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "notif.push"
+    ],
+    "de": [
+     "Push-Benachrichtigungen"
+    ],
+    "literals": [],
+    "text": "[attr.label]=\"'notif.push' | transloco\" {{ 'notif.push' | transloco }}",
+    "id": "notifications/notifications.page#field-0dddd55e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:215",
+     "lib/features/notifications/presentation/pages/notifications_page.dart:125",
+     "lib/core/providers/push_providers.dart:34"
+    ],
+    "n": "Nur native App (iOS/Android) wie Capacitor.isNativePlatform.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "notifications/notifications.page.html",
+    "line": 62,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (notificationConfig.push_enabled && notificationConfig.telegram_chat_id)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=updateNotificationConfig()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"notificationConfig.push_and_telegram\"",
+    "bindings": [
+     "[attr.label]=\"'notif.bothChannels' | transloco\"",
+     "[helperText]=\"'notif.bothChannelsHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "notif.bothChannels",
+     "notif.bothChannelsHelper"
+    ],
+    "de": [
+     "Beide Kanäle gleichzeitig",
+     "Push und Telegram werden parallel gesendet, nicht nur als Fallback."
+    ],
+    "literals": [],
+    "text": "[attr.label]=\"'notif.bothChannels' | transloco\" [helperText]=\"'notif.bothChannelsHelper' | transloco\" {{ 'notif.bothChannels' | transloco }}",
+    "id": "notifications/notifications.page#field-12e883c7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:232"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 101,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@for (entry of upcomingPlans; track trackByPlan($index, entry); let i = $index)",
+     "@for (field of entry.fields; track trackByField($index, field); let fi = $index)",
+     "@if (field.info && !field.id.includes('noteFld'))"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "field-info"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.info }}"
+    ],
+    "text": "{{ field.info }}",
+    "id": "org-plan-public/org-plan-public.page#text-cf5a89a8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:138"
+    ],
+    "n": "Info kursiv grau, nicht bei Notizfeldern",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-plans/org-plans.page.html",
+    "line": 112,
+    "cond": [
+     "@if (publicKey)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=managePublicLink()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "plans.manage"
+    ],
+    "de": [
+     "Verwalten"
+    ],
+    "literals": [],
+    "text": "{{ 'plans.manage' | transloco }}",
+    "id": "org-plans/org-plans.page#action-0ad682ab"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:298"
+    ],
+    "n": "„Verwalten“ → _managePublicLink",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-plans/org-plans.page.html",
+    "line": 97,
+    "cond": [
+     "@if (pastPlans.length > 0 || db.organisation())",
+     "@if (pastPlans.length > 0)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=showHistory = true"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "time-outline"
+    ],
+    "keys": [
+     "plans.pastPlans"
+    ],
+    "de": [
+     "Vergangene Pläne"
+    ],
+    "literals": [],
+    "text": "{{ 'plans.pastPlans' | transloco }}",
+    "id": "org-plans/org-plans.page#action-3a0eef49"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:287"
+    ],
+    "n": "„Vergangene Pläne“ grau, ohne Chevron, nur bei vergangenen Plänen; keine Rollenabhängigkeit über den Seitenzugang hinaus.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart"
+   ]
+  }
+ ]
+}

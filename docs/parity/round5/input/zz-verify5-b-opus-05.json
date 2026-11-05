@@ -1,0 +1,1851 @@
+{
+ "batch": "zz-verify5-b-opus-05",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 99,
+    "cond": [
+     "@if (tenantData)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "tenantRegister.personalData"
+    ],
+    "de": [
+     "Persönliche Daten"
+    ],
+    "literals": [],
+    "text": "{{ 'tenantRegister.personalData' | transloco }}",
+    "id": "register/tenant-register/tenant-register.page#text-9b17d1d9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:278"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "register/tenant-register/tenant-register.page.html",
+    "line": 32,
+    "cond": [
+     "@if (tenantData)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "tenantRegister.account"
+    ],
+    "de": [
+     "Account"
+    ],
+    "literals": [],
+    "text": "{{ 'tenantRegister.account' | transloco }}",
+    "id": "register/tenant-register/tenant-register.page#text-fecdb4cb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:274"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 460,
+    "method": "TenantRegisterPage.validate",
+    "cond": [
+     "(field.value === false && field.name.toLowerCase().includes('einverständnis'))",
+     "(field.type === FieldType.BOOLEAN)",
+     "!(field.type === FieldType.DATE)",
+     "!(field.type === FieldType.NUMBER)"
+    ],
+    "message": {
+     "keys": [
+      "tenantRegister.fieldAccept"
+     ],
+     "de": [
+      "Sie müssen dem Feld \"{field}\" zustimmen, um fortzufahren."
+     ],
+     "literals": [],
+     "expr": "translate('tenantRegister.fieldAccept', { field: field.name })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "8c483db0",
+    "mbody": "167c118b",
+    "roleGuarded": true,
+    "id": "register/tenant-register/tenant-register.page#toast-2f09fbd9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:1093-1100"
+    ],
+    "n": "Ja/Nein-Feld mit „einverständnis“ im Namen und Wert false → Toast. Ohne gesetzten Wert wertet Flutter den Schalter als false (Ionic zeigt dort den fieldValue-Toast) – betrifft jenen Toast.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 433,
+    "method": "TenantRegisterPage.validate",
+    "cond": [
+     "(!Utils.validatePhoneNumber(this.phone.replace(/\\s+/g, '')))",
+     "(this.tenantData.registration_fields?.includes('phone'))"
+    ],
+    "message": {
+     "keys": [
+      "tenantRegister.phoneRequired"
+     ],
+     "de": [
+      "Bitte geben Sie eine gültige Telefonnummer an."
+     ],
+     "literals": [],
+     "expr": "translate('tenantRegister.phoneRequired')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "6bf65f88",
+    "mbody": "167c118b",
+    "roleGuarded": true,
+    "id": "register/tenant-register/tenant-register.page#toast-33d6e4ed"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:1070",
+     "lib/features/auth/data/auth_flow_service.dart:28"
+    ],
+    "n": "Gleiche Bedingung (registration_fields enthält 'phone'), gleiche Regex /^(\\+?[1-9]\\d{1,14}|0\\d+)$/ nach Entfernen der Leerzeichen, Text gleich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 108,
+    "method": "TenantRegisterPage.checkExistent",
+    "cond": [
+     "(tenant)"
+    ],
+    "message": {
+     "keys": [
+      "tenantRegister.alreadyRegistered"
+     ],
+     "de": [
+      "Sie sind bereits in dieser Instanz registriert."
+     ],
+     "literals": [],
+     "expr": "translate('tenantRegister.alreadyRegistered')"
+    },
+    "color": "warning",
+    "duration": "5000",
+    "src": "7624e18e",
+    "mbody": "2a874fb0",
+    "roleGuarded": true,
+    "id": "register/tenant-register/tenant-register.page#toast-51ea8218"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:704",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:688",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:195"
+    ],
+    "n": "Öffentliche Seite ohne Rollenprüfung (Ionic wie Flutter); gleiche Bedingung: tenantUsers-Zeile für tenantId+userId (jede Rolle, auch Bewerber); Prüfung beim Laden (angemeldet), nach Login-Dialog (:789) und nach Codebestätigung (:1002) wie Ionic. Text gleich, Farbe warning; Anzeigedauer 3–4 s statt 5 s.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 426,
+    "method": "TenantRegisterPage.validate",
+    "cond": [
+     "(!birthDateObj.isValid())",
+     "(this.tenantData.registration_fields?.includes('birthDate'))"
+    ],
+    "message": {
+     "keys": [
+      "tenantRegister.birthDateRequired"
+     ],
+     "de": [
+      "Bitte geben Sie ein gültiges Geburtsdatum an."
+     ],
+     "literals": [],
+     "expr": "translate('tenantRegister.birthDateRequired')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "a0398ccb",
+    "mbody": "167c118b",
+    "roleGuarded": true,
+    "id": "register/tenant-register/tenant-register.page#toast-9de040da"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:1067",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:79"
+    ],
+    "n": "Gleiche Bedingung (registration_fields enthält 'birthDate'); in beiden praktisch unerreichbar, da Geburtsdatum mit heute-18 Jahre vorbelegt ist.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 469,
+    "method": "TenantRegisterPage.validate",
+    "cond": [
+     "(field.value === '' && (!this.customChurchName || this.customChurchName.trim().length < 5))",
+     "(field.type === FieldType.BFECG_CHURCH)",
+     "!(field.type === FieldType.BOOLEAN)",
+     "!(field.type === FieldType.DATE)"
+    ],
+    "message": {
+     "keys": [
+      "tenantRegister.churchNameRequired"
+     ],
+     "de": [
+      "Bitte geben Sie den Namen Ihrer Gemeinde ein."
+     ],
+     "literals": [],
+     "expr": "translate('tenantRegister.churchNameRequired')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "8af6329e",
+    "mbody": "167c118b",
+    "roleGuarded": true,
+    "id": "register/tenant-register/tenant-register.page#toast-cad3c644"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:1103-1107",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:680-682"
+    ],
+    "n": "„Nicht gelistet“ (leerer Wert) und eigener Name getrimmt < 5 Zeichen → Toast, wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 465,
+    "method": "TenantRegisterPage.validate",
+    "cond": [
+     "(typeof field.value !== 'string')",
+     "(field.type === FieldType.BFECG_CHURCH)",
+     "!(field.type === FieldType.BOOLEAN)",
+     "!(field.type === FieldType.DATE)"
+    ],
+    "message": {
+     "keys": [
+      "tenantRegister.churchRequired"
+     ],
+     "de": [
+      "Bitte wählen Sie eine Gemeinde aus."
+     ],
+     "literals": [],
+     "expr": "translate('tenantRegister.churchRequired')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "725a9095",
+    "mbody": "167c118b",
+    "roleGuarded": true,
+    "id": "register/tenant-register/tenant-register.page#toast-f6feb7fb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:1101-1102"
+    ],
+    "n": "Gemeinde nicht gewählt (Wert kein String) → „Bitte wählen Sie eine Gemeinde aus.“; nur wenn bfecg_church in registration_fields.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/overview/overview.page",
+   "ionic": {
+    "ts": "selfService/overview/overview.page.ts",
+    "html": "selfService/overview/overview.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/overview/overview.page.html",
+    "line": 203,
+    "cond": [
+     "@if (groupingMode === 'chronological' && !db.crossTenantAttendancesLoading())",
+     "@if (currentAttendance)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "class": "ev-more-link"
+    },
+    "events": [
+     "(click)=presentActionSheetForChoice(currentAttendance, true)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "signout.moreOptions"
+    ],
+    "de": [
+     "Weitere Optionen"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.moreOptions' | transloco }}",
+    "id": "selfService/overview/overview.page#action-71931241"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/self_service_overview_page.dart:312",
+     "lib/shared/widgets/event_list/event_list_widgets.dart:794-808",
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:375-425"
+    ],
+    "n": "Immer sichtbar, öffnet Aktionsblatt ohne Schnellaktionen/Chips; Inhaltsunterschiede siehe actionsheet-1394033e bzw. x-9e43a66882.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "selfService/parents/parents.page.ts",
+    "line": 412,
+    "method": "ParentsPage.openActionSheet",
+    "cond": [
+     "(attendance.place)"
+    ],
+    "call": "Utils.openNavigation",
+    "args": "attendance.place",
+    "src": "4f2524e1",
+    "mbody": "a925d9d0",
+    "roleGuarded": true,
+    "id": "selfService/parents/parents.page#effect-11be3cc2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:438",
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:456-457",
+     "lib/shared/widgets/event_list/event_list_widgets.dart:1108-1137",
+     "lib/data/repositories/attendance_repository.dart:394"
+    ],
+    "n": "place wird geladen; Eintrag nur bei Ort; iOS Auswahl Apple Karten/Google Maps, sonst direkt.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart",
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "native",
+    "file": "selfService/parents/parents.page.ts",
+    "line": 265,
+    "method": "ParentsPage.openAttachment",
+    "cond": [
+     "(attendance?.attachment_url)"
+    ],
+    "plugin": "Browser",
+    "call": "open",
+    "args": "{ url: attendance.attachment_url }",
+    "src": "e8297c02",
+    "mbody": "ba6d7173",
+    "id": "selfService/parents/parents.page#native-6ab3c266"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:127-132",
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:454-455",
+     "lib/shared/widgets/event_list/event_list_widgets.dart:1140-1149"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/signout/signout.page.html",
+    "line": 159,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@else if (upcomingSongs.length > 0 || canPlannedAbsence || inDutyCircle)",
+     "@if (canPlannedAbsence)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "class": "greet-tile"
+    },
+    "events": [
+     "(click)=isAbsenceModalOpen = true"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "calendar-outline"
+    ],
+    "keys": [
+     "signout.absenceTileTitle",
+     "signout.absenceTileSub"
+    ],
+    "de": [
+     "Abwesenheit",
+     "melden"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.absenceTileTitle' | transloco }} {{ 'signout.absenceTileSub' | transloco }}",
+    "id": "selfService/signout/signout.page#action-5c9afb25"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:441",
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:40",
+     "lib/core/providers/player_absence_providers.dart:69"
+    ],
+    "n": "canSelfReportAbsenceProvider = player_planned_absence der eigenen Rolle (Ionic getPermissionForRole(tenantUser.role)); ohne Zeile (z. B. Rolle 99) aus, wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/signout/signout.page.html",
+    "line": 312,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (canPlannedAbsence && playerAbsences.length)",
+     "@for (absence of playerAbsences; track absence.id)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "slot": "end",
+     "color": "danger"
+    },
+    "events": [
+     "(click)=deleteAbsence(absence)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "selfService/signout/signout.page#action-6edb2695"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:293",
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:183",
+     "lib/features/people/presentation/widgets/planned_absences.dart:248"
+    ],
+    "n": "Gleiche Rollenbedingung; Alert \"Abwesenheit löschen\" mit gleichem Text, Löschen/Abbrechen, Toast \"Abwesenheit gelöscht\". Welche Termine zurückgesetzt werden, weicht in Randfällen ab – bereits Zusatzbefund Runde 1 (hoch).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart",
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/signout/signout.page.html",
+    "line": 516,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (!useDutyView || showOtherTermine)",
+     "@if (currentAttendance)",
+     "@if (quickActions(currentAttendance); as qa)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "class": "ev-more-link"
+    },
+    "events": [
+     "(click)=presentActionSheetForChoice(currentAttendance, true)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "signout.moreOptions"
+    ],
+    "de": [
+     "Weitere Optionen"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.moreOptions' | transloco }}",
+    "id": "selfService/signout/signout.page#action-7d0a5a99"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:507",
+     "lib/shared/widgets/event_list/event_list_widgets.dart:794",
+     "lib/core/router/route_access.dart:73"
+    ],
+    "n": "„Weitere Optionen“ nur bei quickActions (eigener Termin mit PA-id), öffnet Aktionsblatt ohne Schnellaktionen/Chips. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/signout/signout.page.html",
+    "line": 16,
+    "cond": [
+     "@if ((db.tenants()?.length ?? 0) > 1)",
+     "in <ion-popover trigger=tenant-switcher-signout>",
+     "@for (tenant of db.tenants(); track tenant.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=onTenantChange(tenant.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "signout.current"
+    ],
+    "de": [
+     "Aktuell"
+    ],
+    "literals": [],
+    "text": "{{ tenant.longName }} {{ 'signout.current' | transloco }}",
+    "id": "selfService/signout/signout.page#action-9d141753"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:95",
+     "lib/shared/widgets/tenant/tenant_switcher_title.dart:126",
+     "lib/shared/widgets/tenant/tenant_switcher_title.dart:332"
+    ],
+    "n": "Gleiche Instanz → nichts; sonst Rolle der Zielinstanz laden, setzen, go(role.defaultRoute) = Utils.getUrl(role). Fehlendes Lade-Overlay gehört zum loading-Item.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/signout/signout.page.html",
+    "line": 357,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "<ng-template #eventChips>",
+     "@if (showDeadlineInfo(att) || att.notes || att.attendance?.description || att.attendance?.attachment_url || hasFilesFolder(att) || hasPlan(att) || att.attendance?.place || songsOf(att).length)",
+     "@if (att.attendance?.description)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "class": "ev-chip"
+    },
+    "events": [
+     "(click)=$event.stopPropagation(); openDescription(att)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "information-circle-outline"
+    ],
+    "keys": [
+     "signout.infos"
+    ],
+    "de": [
+     "Infos"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.infos' | transloco }}",
+    "id": "selfService/signout/signout.page#action-9e318750"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:217",
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:425",
+     "lib/core/router/route_access.dart:73"
+    ],
+    "n": "Chip „Infos“ bei description, öffnet Beschreibung (Darstellung siehe modal-819b10ac). Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 682,
+    "method": "SignoutPage.presentActionSheetForChoice",
+    "cond": [],
+    "header": {
+     "keys": [
+      "signout.editNote"
+     ],
+     "de": [
+      "Notiz anpassen"
+     ],
+     "literals": [],
+     "expr": "translate('signout.editNote')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (data) => { note = data.note; await this.db.updateAttendanceNote(attendance.id, note); Utils.showToast(translate('signout.noteUpdated'), 'success', 4000); await this.getAttendances(); }"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'note'",
+      "placeholder": {
+       "keys": [
+        "signout.enterNote"
+       ],
+       "de": [
+        "Gib hier deine Notiz ein"
+       ],
+       "literals": [],
+       "expr": "translate('signout.enterNote')"
+      },
+      "value": "note",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "7fe10c6f",
+    "mbody": "b194e193",
+    "roleGuarded": true,
+    "id": "selfService/signout/signout.page#alert-4cca859e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:355-370",
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:451-480"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 644,
+    "method": "SignoutPage.presentActionSheetForChoice",
+    "cond": [
+     "(attendance.attendance?.place)",
+     "!(attendance.attendance?.attachment_url)",
+     "!(attendance.attendance?.share_plan && attendance.attendance?.plan)",
+     "!(attendance.attendance?.description)"
+    ],
+    "call": "Utils.openNavigation",
+    "args": "attendance.attendance.place",
+    "src": "742e7771",
+    "mbody": "b194e193",
+    "roleGuarded": true,
+    "id": "selfService/signout/signout.page#effect-1e56ad93"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:437-452"
+    ],
+    "n": "Nur im Mandanten-Modus „Alle Termine“ (show_all_attendances) für fremde Termine ohne id; Reihenfolge Beschreibung → Ablaufplan → Anhang → Ort → Dateien gleich (Plan ohne Felder: Ionic öffnet leeren Plan, Flutter springt weiter – Randfall).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 805,
+    "method": "SignoutPage.presentActionSheetForChoice",
+    "cond": [
+     "(attendance.attendance?.place && !hideQuickActions)"
+    ],
+    "call": "Utils.openNavigation",
+    "args": "attendance.attendance.place",
+    "src": "742e7771",
+    "mbody": "b194e193",
+    "roleGuarded": true,
+    "id": "selfService/signout/signout.page#effect-1e56ad93-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:421-423",
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:508-509"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 129,
+    "method": "SignoutPage.onTenantChange",
+    "cond": [],
+    "call": "Utils.getUrl",
+    "args": "this.db.tenantUser().role",
+    "src": "599c2113",
+    "mbody": "a99fac6c",
+    "roleGuarded": true,
+    "id": "selfService/signout/signout.page#effect-8c8a4f8d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/constants/enums.dart:137-141",
+     "lib/features/self_service/presentation/pages/signout_page.dart:104"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 619,
+    "method": "SignoutPage.openRoute",
+    "cond": [
+     "(attendance.attendance?.place)"
+    ],
+    "call": "Utils.openNavigation",
+    "args": "attendance.attendance.place",
+    "src": "742e7771",
+    "mbody": "5e1601da",
+    "id": "selfService/signout/signout.page#effect-d259dd3f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/event_list_widgets.dart:1108",
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:239"
+    ],
+    "n": "Gleiche Logik: iOS (auch iOS-Browser) Auswahl Apple Karten / Google Maps, sonst Google Maps.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "selfService/signout/signout.page.html",
+    "line": 661,
+    "cond": [
+     "@else (not isApplicant)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"isAbsenceModalOpen\""
+    },
+    "events": [
+     "(ionModalDidDismiss)=dismissAbsenceModal()"
+    ],
+    "bindings": [
+     "[breakpoints]=\"[0, 0.92, 1]\"",
+     "[initialBreakpoint]=\"0.92\"",
+     "[isOpen]=\"isAbsenceModalOpen\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "selfService/signout/signout.page#modal-40e4838d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:46",
+     "lib/features/self_service/presentation/pages/signout_page.dart:441",
+     "lib/features/self_service/presentation/pages/signout_page.dart:299",
+     "lib/core/providers/player_absence_providers.dart:69"
+    ],
+    "n": "Öffnung über Kachel (ohne Dienstplan-Ansicht) bzw. Zeile \"Abwesenheit melden\" (Dienstplan-Ansicht), beide nur mit player_planned_absence der eigenen Rolle – Flutter canSelfReportAbsenceProvider (currentRole) gleich für alle Rollen der Seite. Ionic Sheet 0.92 / Flutter Bottom-Sheet in Inhaltshöhe.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "native",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 613,
+    "method": "SignoutPage.openAttachment",
+    "cond": [
+     "(attendance?.attachment_url)"
+    ],
+    "plugin": "Browser",
+    "call": "open",
+    "args": "{ url: attendance.attachment_url }",
+    "src": "e8297c02",
+    "mbody": "ba6d7173",
+    "id": "selfService/signout/signout.page#native-90a9db81"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/event_list_widgets.dart:1140",
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:227"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "native",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 1108,
+    "method": "SignoutPage.openSongLink",
+    "cond": [
+     "(link)"
+    ],
+    "plugin": "Browser",
+    "call": "open",
+    "args": "{ url: link }",
+    "src": "8c32a81c",
+    "mbody": "cdf6bdd3",
+    "id": "selfService/signout/signout.page#native-f179cb3a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:252",
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:18"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 129,
+    "method": "SignoutPage.onTenantChange",
+    "cond": [],
+    "via": "router.navigateByUrl",
+    "to": "Utils.getUrl(this.db.tenantUser().role)",
+    "src": "0f9aa057",
+    "mbody": "a99fac6c",
+    "roleGuarded": true,
+    "id": "selfService/signout/signout.page#nav-abe2527f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:92-115",
+     "lib/core/constants/enums.dart:137-141"
+    ],
+    "n": "Ionic Utils.getUrl(role) → /tabs/player | /tabs/parents | /tabs/signout; Flutter liest die Rolle der Ziel-Instanz (getTenantUserRole) und geht zu /people | /parents | /signout – gleiche Ziele je Rolle. Unbekannte Rolle: Ionic /register, Flutter /signout (Randfall).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 524,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (!useDutyView || showOtherTermine)",
+     "@if (actualAttendances?.length)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-section__count"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ actualAttendances.length }}"
+    ],
+    "text": "{{ actualAttendances.length }}",
+    "id": "selfService/signout/signout.page#text-037f4b7e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:518",
+     "lib/core/router/route_access.dart:73"
+    ],
+    "n": "Anzahl ohne aktuellen Termin. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 488,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (!useDutyView || showOtherTermine)",
+     "@if (currentAttendance)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "ev-today__meta"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getEventMeta(currentAttendance, true, false) }}"
+    ],
+    "text": "{{ getEventMeta(currentAttendance, true, false) }}",
+    "id": "selfService/signout/signout.page#text-12426941"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:499",
+     "lib/data/repositories/sign_in_out_repository.dart:876",
+     "lib/core/router/route_access.dart:73"
+    ],
+    "n": "eventMeta(withDate: true, withPlace: false) wie getEventMeta(att, true, false). Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 479,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (!useDutyView || showOtherTermine)",
+     "@if (currentAttendance)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "ev-month"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Heute",
+     "Nächster Termin"
+    ],
+    "bound": [
+     "{{ isAttToday(currentAttendance) ? 'Heute' : 'Nächster Termin' }}"
+    ],
+    "text": "{{ isAttToday(currentAttendance) ? 'Heute' : 'Nächster Termin' }}",
+    "id": "selfService/signout/signout.page#text-14a391d6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:492",
+     "lib/core/utils/event_list_utils.dart:75",
+     "lib/core/router/route_access.dart:73"
+    ],
+    "n": "„Heute“ bei laufendem Termin (tagesbasiert inkl. mehrtägig), sonst „Nächster Termin“. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 327,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "in <ion-modal #descriptionModal>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "signout.description"
+    ],
+    "de": [
+     "Beschreibung"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.description' | transloco }}",
+    "id": "selfService/signout/signout.page#text-24cd62e0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:439",
+     "lib/core/router/route_access.dart:73"
+    ],
+    "n": "Titel „Beschreibung“ des Beschreibungs-Sheets (Infos-Chip/Aktion). Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte. Darstellungsabweichung (HTML gestrippt, kein X) gehört zu modal-819b10ac.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 487,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (!useDutyView || showOtherTermine)",
+     "@if (currentAttendance)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "ev-today__title"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getEventTitle(currentAttendance) }}"
+    ],
+    "text": "{{ getEventTitle(currentAttendance) }}",
+    "id": "selfService/signout/signout.page#text-321ae3a4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:498",
+     "lib/data/repositories/sign_in_out_repository.dart:868",
+     "lib/core/router/route_access.dart:73"
+    ],
+    "n": "eventTitle = typeInfo || Typname || Lesedatum wie getEventTitle. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 523,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (!useDutyView || showOtherTermine)",
+     "@if (actualAttendances?.length)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "signout.upcoming"
+    ],
+    "de": [
+     "Anstehend"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.upcoming' | transloco }}",
+    "id": "selfService/signout/signout.page#text-3822774c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:518",
+     "lib/core/router/route_access.dart:73"
+    ],
+    "n": "„Anstehend“ bei weiteren Terminen (ohne aktuellen), nicht zugeteilte Dienste ausgeblendet wie Ionic. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 484,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (!useDutyView || showOtherTermine)",
+     "@if (currentAttendance)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-tile__day"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ day(currentAttendance.date) }}"
+    ],
+    "text": "{{ day(currentAttendance.date) }}",
+    "id": "selfService/signout/signout.page#text-3ec229f3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:497",
+     "lib/shared/widgets/event_list/event_list_widgets.dart:696",
+     "lib/core/router/route_access.dart:73"
+    ],
+    "n": "Tag zweistellig wie dayjs DD. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 497,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (!useDutyView || showOtherTermine)",
+     "@if (currentAttendance)",
+     "@if (currentAttendance.attendance?.place)"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ currentAttendance.attendance?.place }}"
+    ],
+    "text": "{{ currentAttendance.attendance?.place }}",
+    "id": "selfService/signout/signout.page#text-6f78d5d8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:502",
+     "lib/shared/widgets/event_list/event_list_widgets.dart:732",
+     "lib/core/router/route_access.dart:73"
+    ],
+    "n": "Ort mit location-Icon bei place. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 527,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (!useDutyView || showOtherTermine)",
+     "@if (actualAttendances?.length)",
+     "@for (group of upcomingGroups; track group.key)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "ev-month"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ group.label }}"
+    ],
+    "text": "{{ group.label }}",
+    "id": "selfService/signout/signout.page#text-8bc5216f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:520",
+     "lib/core/utils/event_list_utils.dart:136",
+     "lib/core/router/route_access.dart:73"
+    ],
+    "n": "Monatsgruppen „MMMM yyyy“ lokalisiert. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 492,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (!useDutyView || showOtherTermine)",
+     "@if (currentAttendance)",
+     "@else (not isOwnAttendance(currentAttendance))"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-pill ev-today__status not-invited-pill"
+    },
+    "keys": [
+     "signout.notInvited"
+    ],
+    "de": [
+     "Nicht eingeladen"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.notInvited' | transloco }}",
+    "id": "selfService/signout/signout.page#text-d89e83ec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:501",
+     "lib/shared/widgets/event_list/event_list_widgets.dart:227",
+     "lib/core/router/route_access.dart:73"
+    ],
+    "n": "Pill „Nicht eingeladen“ mit Auge-Icon bei show_all_attendances && !isMember, sonst Status – gleich. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 483,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (!useDutyView || showOtherTermine)",
+     "@if (currentAttendance)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-tile__wd"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ weekday(currentAttendance.date) }}"
+    ],
+    "text": "{{ weekday(currentAttendance.date) }}",
+    "id": "selfService/signout/signout.page#text-f3fe22c1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:497",
+     "lib/shared/widgets/event_list/event_list_widgets.dart:696",
+     "lib/core/router/route_access.dart:73"
+    ],
+    "n": "Wochentag „Mo“… wie dayjs dd. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 1280,
+    "method": "SignoutPage.confirmAbsence",
+    "cond": [],
+    "message": {
+     "keys": [
+      "signout.absenceEnteredCount",
+      "signout.absenceEntered"
+     ],
+     "de": [
+      "Abwesenheit eingetragen ({count, plural, one {# Termin} other {# Termine}} entschuldigt)",
+      "Abwesenheit eingetragen"
+     ],
+     "literals": [],
+     "expr": "toExcuse.length > 0 ? translate('signout.absenceEnteredCount', { count: toExcuse.length }) : translate('signout.absenceEntered')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "568c1e1b",
+    "mbody": "cc9dce7b",
+    "roleGuarded": true,
+    "id": "selfService/signout/signout.page#toast-94e9b1fc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:59-79",
+     "lib/features/people/presentation/widgets/planned_absences.dart:25-28"
+    ],
+    "n": "Nur mit player_planned_absence der eigenen Rolle (beide). Text/Plural gleich; welche Termine entschuldigt (und damit gezählt) werden, weicht bei Dienst-Terminen/„Alle Termine“ ab → x-1962646a5f.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/agenda-item/agenda-item.service",
+   "ionic": {
+    "ts": "services/agenda-item/agenda-item.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/agenda-item/agenda-item.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function toAgendaItemWrite:12-15",
+     "getAgendaItems:23-31",
+     "getAgendaItem:33-41",
+     "getAgendaItemsByIds:43-51",
+     "addAgendaItem:53-62",
+     "proposeAgendaItem:65-77",
+     "updateAgendaItem:79-89",
+     "deleteAgendaItem:91-100",
+     "getHistory:102-106"
+    ],
+    "bodies": {
+     "function toAgendaItemWrite": "7ad70627",
+     "getAgendaItems": "af39f759",
+     "getAgendaItem": "ff774fb3",
+     "getAgendaItemsByIds": "5fc2a9f7",
+     "addAgendaItem": "7339e6df",
+     "proposeAgendaItem": "28f14c60",
+     "updateAgendaItem": "7607f0a2",
+     "deleteAgendaItem": "0be1ad0c",
+     "getHistory": "8e027c0a"
+    },
+    "id": "services/agenda-item/agenda-item.service#logic-b353b264"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/agenda_item_repository.dart:24",
+     "lib/data/repositories/agenda_item_repository.dart:77",
+     "lib/data/repositories/agenda_item_repository.dart:100",
+     "lib/data/repositories/agenda_item_repository.dart:123",
+     "lib/data/repositories/agenda_item_repository.dart:148",
+     "lib/data/repositories/agenda_item_repository.dart:174",
+     "lib/core/providers/team_org_providers.dart:348"
+    ],
+    "n": "Alle Methoden portiert (gleicher Select inkl. responsible_person/proposer, gleiche Sortierung, Fehler 'svc.noDeletePermission' bei 0 gelöschten Zeilen). Flutter filtert zusätzlich nach tenant_id und prüft vor get_agenda_item_history die Mandantenzugehörigkeit – gleiche Daten unter RLS.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/team_org_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance-type/attendance-type.service",
+   "ionic": {
+    "ts": "services/attendance-type/attendance-type.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance-type/attendance-type.service.ts",
+    "line": 62,
+    "method": "AttendanceTypeService.addAttendanceType",
+    "cond": [],
+    "table": "attendance_types",
+    "op": "insert",
+    "payload": "attType as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "e88ea6c8",
+    "mbody": "e7d5eb48",
+    "id": "services/attendance-type/attendance-type.service#db-3dfb8b0f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_type_repository.dart:107",
+     "lib/data/repositories/attendance_type_repository.dart:67"
+    ],
+    "n": "Insert attendance_types mit tenant_id; Spaltenumfang der Neuanlage gehört zur type.page-Unit.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_type_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance-type/attendance-type.service",
+   "ionic": {
+    "ts": "services/attendance-type/attendance-type.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance-type/attendance-type.service.ts",
+    "line": 31,
+    "method": "AttendanceTypeService.getAttendanceType",
+    "cond": [],
+    "table": "attendance_types",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('id', id)",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "29b7c3b0",
+    "mbody": "f84684b7",
+    "id": "services/attendance-type/attendance-type.service#db-5bb313a7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_type_repository.dart:46"
+    ],
+    "n": "Flutter zusätzlich .eq('tenant_id').",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_type_repository.dart"
+   ]
+  }
+ ]
+}

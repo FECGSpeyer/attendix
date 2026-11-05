@@ -1,0 +1,1820 @@
+{
+ "batch": "zz-verify5-b-sonnet-10",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 46,
+    "cond": [
+     "@if (type)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "typeSettings.availableStatus"
+    ],
+    "de": [
+     "Verfügbare Anwesenheitsstatus"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.availableStatus' | transloco }}",
+    "id": "settings/general/type/type.page#text-71ea0fce"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:299-307"
+    ],
+    "n": "Label gleich (Optionen/Reihenfolge der Auswahl separat in field-1e46173e). Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 408,
+    "cond": [
+     "@if (type)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "typeSettings.appearance"
+    ],
+    "de": [
+     "Darstellung"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.appearance' | transloco }}",
+    "id": "settings/general/type/type.page#text-77016ef0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:509-510",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "Abschnitt „Darstellung“. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 311,
+    "cond": [
+     "@if (type)",
+     "@if (type.notification)",
+     "in <ion-modal trigger=reminders-modal-trigger>"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "bindings": [
+     "[innerHTML]=\"'typeSettings.howMax' | transloco\""
+    ],
+    "keys": [
+     "typeSettings.howMax"
+    ],
+    "de": [
+     "Maximal <strong>3 Erinnerungen</strong> pro Termintyp möglich."
+    ],
+    "literals": [],
+    "text": "[innerHTML]=\"'typeSettings.howMax' | transloco\"",
+    "id": "settings/general/type/type.page#text-79b4c15e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/type_reminders_editor.dart:96",
+     "lib/features/settings/presentation/widgets/type_reminders_editor.dart:189",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:493"
+    ],
+    "n": "„Maximal 3 Erinnerungen pro Termintyp möglich.“ mit fettem Teil, Glocken-Icon, nur bei notification. Rolle wie Seite (Admin/Verantwortlich).",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 30,
+    "cond": [
+     "@if (type)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "typeSettings.name"
+    ],
+    "de": [
+     "Name"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.name' | transloco }}",
+    "id": "settings/general/type/type.page#text-bcc05107"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:840-869"
+    ],
+    "n": "iOS: gestapeltes Label „Name“; Android/Web: „Name *“ (Stern = Satzzeichen-Nuance, Platzhalter siehe field-519cd48e). Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 305,
+    "cond": [
+     "@if (type)",
+     "@if (type.notification)",
+     "in <ion-modal trigger=reminders-modal-trigger>"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "bindings": [
+     "[innerHTML]=\"'typeSettings.howRemaining' | transloco\""
+    ],
+    "keys": [
+     "typeSettings.howRemaining"
+    ],
+    "de": [
+     "Die Erinnerung wird versendet, sobald die <strong>verbleibende Zeit</strong> dem konfigurierten Wert entspricht."
+    ],
+    "literals": [],
+    "text": "[innerHTML]=\"'typeSettings.howRemaining' | transloco\"",
+    "id": "settings/general/type/type.page#text-c9c25629"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/type_reminders_editor.dart:93",
+     "lib/features/settings/presentation/widgets/type_reminders_editor.dart:189",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:493"
+    ],
+    "n": "„Die Erinnerung wird versendet, sobald die verbleibende Zeit dem konfigurierten Wert entspricht.“ mit fettem Teil, Rechner-Icon, nur bei notification. Rolle wie Seite (Admin/Verantwortlich).",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 299,
+    "cond": [
+     "@if (type)",
+     "@if (type.notification)",
+     "in <ion-modal trigger=reminders-modal-trigger>"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "bindings": [
+     "[innerHTML]=\"'typeSettings.howEvery5' | transloco\""
+    ],
+    "keys": [
+     "typeSettings.howEvery5"
+    ],
+    "de": [
+     "Erinnerungen werden <strong>alle 5 Minuten</strong> geprüft und versendet."
+    ],
+    "literals": [],
+    "text": "[innerHTML]=\"'typeSettings.howEvery5' | transloco\"",
+    "id": "settings/general/type/type.page#text-d58b9b25"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/type_reminders_editor.dart:91",
+     "lib/features/settings/presentation/widgets/type_reminders_editor.dart:189",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:493"
+    ],
+    "n": "„Erinnerungen werden alle 5 Minuten geprüft und versendet.“ mit fettem Teil (StrongHtmlText), Uhr-Icon in Primärfarbe, nur bei aktivem „Terminerinnerung“ (type.notification bzw. _notification). Sheet→inline ist bei modal-0895b1d0 erfasst. Seite nur Admin/Verantwortlich (beide).",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 412,
+    "cond": [
+     "@if (type)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "typeSettings.color"
+    ],
+    "de": [
+     "Farbe"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.color' | transloco }}",
+    "id": "settings/general/type/type.page#text-d9788b1c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:513",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "„Farbe“. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/type/type.page.ts",
+    "line": 212,
+    "method": "TypePage.createType",
+    "cond": [],
+    "message": {
+     "keys": [
+      "typeSettings.created"
+     ],
+     "de": [
+      "Anwesenheitstyp erfolgreich erstellt"
+     ],
+     "literals": [],
+     "expr": "translate('typeSettings.created')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "681850b0",
+    "mbody": "6571dfbe",
+    "id": "settings/general/type/type.page#toast-69addb3f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_types_page.dart:230-231"
+    ],
+    "n": "Toast im Flutter-Anlegeablauf (Namensdialog auf der Typenliste).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/type/type.page.ts",
+    "line": 232,
+    "method": "TypePage.validate",
+    "cond": [
+     "(this.type.available_statuses.length === 1)",
+     "!(!this.type.name || this.type.name.trim().length === 0)"
+    ],
+    "message": {
+     "keys": [
+      "typeSettings.twoStatus"
+     ],
+     "de": [
+      "Bitte mindestens zwei verfügbare Anwesenheitsstatus auswählen."
+     ],
+     "literals": [],
+     "expr": "translate('typeSettings.twoStatus')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "feba29ac",
+    "mbody": "62326bd9",
+    "id": "settings/general/type/type.page#toast-6ffc1cbe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1460-1467"
+    ],
+    "n": "Gleicher Text, rot; Flutter prüft < 2 (fängt auch 0), Reihenfolge Name → Status wie Ionic. Im Status-Dialog bleibt Anwesend gesperrt, Abwählen bis auf 1 möglich → Toast erreichbar wie in Ionic. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/type/type.page.ts",
+    "line": 251,
+    "method": "TypePage.deleteType",
+    "cond": [],
+    "message": {
+     "keys": [
+      "typeSettings.deleted"
+     ],
+     "de": [
+      "Anwesenheitstyp erfolgreich gelöscht"
+     ],
+     "literals": [],
+     "expr": "translate('typeSettings.deleted')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "4f97f55d",
+    "mbody": "05167abe",
+    "id": "settings/general/type/type.page#toast-bfb92172"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1554-1556"
+    ],
+    "n": "Gleicher Text, grün, nach erfolgreichem Löschen; Demo-Konto: in beiden kein Erfolg. Bei verwendeten Typen löscht Flutter nicht (siehe alert-57a11ee0, dort hoch). roleGuarded kommt nur vom Alert-Button-Schlüssel „role:“, keine Rollenprüfung in der Methode. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/type/type.page.ts",
+    "line": 197,
+    "method": "TypePage.save",
+    "cond": [],
+    "message": {
+     "keys": [
+      "typeSettings.updated"
+     ],
+     "de": [
+      "Anwesenheitstyp erfolgreich aktualisiert"
+     ],
+     "literals": [],
+     "expr": "translate('typeSettings.updated')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "cedaae31",
+    "mbody": "545e2258",
+    "id": "settings/general/type/type.page#toast-ccbc1d13"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1525-1527"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/type/type.page.ts",
+    "line": 199,
+    "method": "TypePage.save",
+    "cond": [],
+    "message": {
+     "keys": [
+      "typeSettings.updateFailed"
+     ],
+     "de": [
+      "Fehler beim Aktualisieren des Anwesenheitstyps"
+     ],
+     "literals": [],
+     "expr": "translate('typeSettings.updateFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "95332f02",
+    "mbody": "545e2258",
+    "id": "settings/general/type/type.page#toast-d47c0363"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1518-1523",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1533-1536"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/type/type.page.ts",
+    "line": 216,
+    "method": "TypePage.createType",
+    "cond": [],
+    "message": {
+     "keys": [
+      "typeSettings.createFailed"
+     ],
+     "de": [
+      "Fehler beim Erstellen des Anwesenheitstyps"
+     ],
+     "literals": [],
+     "expr": "translate('typeSettings.createFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "d2545aef",
+    "mbody": "6571dfbe",
+    "id": "settings/general/type/type.page#toast-f110531e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_types_page.dart:237-240"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/types/types.page",
+   "ionic": {
+    "ts": "settings/general/types/types.page.ts",
+    "html": "settings/general/types/types.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/types/types.page.html",
+    "line": 45,
+    "cond": [
+     "@if (!reorder)",
+     "@for (type of db.attendanceTypes(); track type)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "[routerLink]": "\"['/tabs/settings/general/types', type.id]\""
+    },
+    "events": [],
+    "link": "\"['/tabs/settings/general/types', type.id]\"",
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ type.name }}",
+    "id": "settings/general/types/types.page#action-86cf2354"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_types_page.dart:114-119",
+     "lib/features/settings/presentation/pages/attendance_types_page.dart:176-178"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/handover/handover.page",
+   "ionic": {
+    "ts": "settings/handover/handover.page.ts",
+    "html": "settings/handover/handover.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/handover/handover.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=goBack()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "arrow-back"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/handover/handover.page#action-1fedb4c4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/handover_page.dart:130"
+    ],
+    "n": "Automatischer AppBar-Zurück-Button statt eigenem ion-button mit arrow-back.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/handover_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/handover/handover.page",
+   "ionic": {
+    "ts": "settings/handover/handover.page.ts",
+    "html": "settings/handover/handover.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/handover/handover.page.ts",
+    "line": 139,
+    "method": "HandoverPage.goBack",
+    "cond": [],
+    "via": "navCtrl.navigateBack",
+    "to": "'/tabs/settings'",
+    "src": "8dc34d31",
+    "mbody": "cd1360e7",
+    "id": "settings/handover/handover.page#nav-42b92fe4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/handover_page.dart:130",
+     "lib/core/router/app_router.dart:1248"
+    ],
+    "n": "Ionic: navigateBack('/tabs/settings') / Flutter: AppBar-Zurück poppt; Route ist Unterroute von /settings, darunter liegt immer die Einstellungsseite.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/handover_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/handover/handover.page",
+   "ionic": {
+    "ts": "settings/handover/handover.page.ts",
+    "html": "settings/handover/handover.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/handover/handover.page.html",
+    "line": 8,
+    "cond": [],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "handover.title"
+    ],
+    "de": [
+     "Personenübergabe"
+    ],
+    "literals": [],
+    "text": "{{ 'handover.title' | transloco }}",
+    "id": "settings/handover/handover.page#text-00d1539c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/handover_page.dart:130"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/handover_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/help/article/help-article.page",
+   "ionic": {
+    "ts": "settings/help/article/help-article.page.ts",
+    "html": "settings/help/article/help-article.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/help/article/help-article.page.html",
+    "line": 14,
+    "cond": [
+     "@if (article)"
+    ],
+    "tag": "div",
+    "attrs": {},
+    "events": [
+     "(click)=onBodyClick($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[innerHTML]=\"bodyHtml\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[innerHTML]=\"bodyHtml\"",
+    "id": "settings/help/article/help-article.page#action-bb7dd385"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/help/presentation/pages/help_article_page.dart:50-60",
+     "lib/features/help/presentation/widgets/help_markdown.dart:54-92",
+     "lib/features/help/presentation/widgets/help_markdown.dart:107-125",
+     "lib/features/help/data/help_content_service.dart:51-60"
+    ],
+    "n": "Neu bewertet mit Inhalt: Artikeltext als Markdown (Absätze mit Zeilenumbrüchen, -/1.-Listen, fett/kursiv) – die Artikel nutzen nur diese Syntax (keine Überschriften, Links, Tabellen, Code), Darstellung daher gleich. [[Begriff]] als antippbarer Link (Primärfarbe, gepunktet unterstrichen wie .glossary-term); Tippen sucht Begriff per Name/Alias (trim, klein), unbekannt → nichts. Keine Rollenbedingung. Popover vs. Dialog siehe popover-c1b18c0d.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/help/presentation/pages/help_article_page.dart",
+    "lib/features/help/presentation/widgets/help_markdown.dart",
+    "lib/features/help/data/help_content_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/help/glossary-popover/help-glossary-popover.component",
+   "ionic": {
+    "ts": "settings/help/glossary-popover/help-glossary-popover.component.ts",
+    "html": "settings/help/glossary-popover/help-glossary-popover.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/help/glossary-popover/help-glossary-popover.component.html",
+    "line": 3,
+    "cond": [],
+    "tag": "ion-card-title",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ term.term }}"
+    ],
+    "text": "{{ term.term }}",
+    "id": "settings/help/glossary-popover/help-glossary-popover.component#text-038f5429"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/help/presentation/widgets/glossary_term_dialog.dart:13"
+    ],
+    "n": "Begriff als Titel; Darstellung als Dialog statt Popover-Karte siehe help-article popover-c1b18c0d.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/help/presentation/widgets/glossary_term_dialog.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/help/glossary/help-glossary.page",
+   "ionic": {
+    "ts": "settings/help/glossary/help-glossary.page.ts",
+    "html": "settings/help/glossary/help-glossary.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/help/glossary/help-glossary.page.html",
+    "line": 29,
+    "cond": [
+     "@for (term of filteredTerms; track term.id)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "slot": "content",
+     "class": "ion-padding"
+    },
+    "bindings": [
+     "[innerHTML]=\"definitionHtml(term)\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "definitionHtml(term)"
+    ],
+    "text": "[innerHTML]=\"definitionHtml(term)\"",
+    "id": "settings/help/glossary/help-glossary.page#text-b394e1ee"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/help/presentation/pages/help_glossary_page.dart:72-94",
+     "lib/features/help/presentation/widgets/help_markdown.dart:108-112",
+     "lib/features/help/data/help_content.dart"
+    ],
+    "n": "Aufgeklappte Definition als Markdown, [[Begriff]] darin kursiv und nicht verlinkt wie renderGlossaryDefinitionHtml; alle 34 Definitionen wortgleich übernommen. Innenabstand 16 (oben 0) statt ion-padding – unerheblich.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/help/presentation/widgets/help_markdown.dart",
+    "lib/features/help/data/help_content.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/settings/settings.page.html",
+    "line": 939,
+    "cond": [
+     "in <ion-modal isOpen=\"isInstancesModalOpen\" #instancesModal>"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=openCreateInstanceModal(instancesModal)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/settings/settings.page#action-da0472bf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:389",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:392",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:405"
+    ],
+    "n": "'+' links; Ziel/Darstellung siehe modal-2d9ef553.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/settings/settings.page.html",
+    "line": 203,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@if (field.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {
+     "slot": "end"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"userData.additional_fields[field.id]\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/settings/settings.page#field-09a32184"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:372",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:85"
+    ],
+    "n": "Schalter an bei Wert true, Vorbelegung mit defaultValue wie Ionic, gespeichert über „Speichern“ (Org-Felder als geteilte Werte). Rollen/Mandant wie Ionic: Stammdaten-Karte für jede Rolle mit eigener player-Zeile (aktive bevorzugt), Felder nach visibleToPlayers gefiltert, bearbeitbar nur bei editableByPlayers – gilt auch für Admins (profile_providers.dart:108, master_data_sheet.dart:360).",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/settings/settings.page.html",
+    "line": 254,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else if (field.type === fieldTypes.NUMBER)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "number"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"userData.additional_fields[field.id]\"",
+    "bindings": [
+     "[label]=\"field.name\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[label]=\"field.name\"",
+    "id": "settings/settings/settings.page#field-509e17fd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:406",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:413",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:235"
+    ],
+    "n": "Typ number: Label oben, Zahlentastatur, gespeichert als Zahl, leer → null (Ionic NumericValueAccessor gleich). Rollen/Mandant wie Ionic: Stammdaten-Karte für jede Rolle mit eigener player-Zeile (aktive bevorzugt), Felder nach visibleToPlayers gefiltert, bearbeitbar nur bei editableByPlayers – gilt auch für Admins (profile_providers.dart:108, master_data_sheet.dart:360).",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/settings/settings.page.html",
+    "line": 948,
+    "cond": [
+     "in <ion-modal isOpen=\"isInstancesModalOpen\" #instancesModal>"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "instance-settings-button"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, .2]\"",
+     "[initialBreakpoint]=\".2\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/settings/settings.page#modal-1225d656"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:210",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:211"
+    ],
+    "n": "Kleines Bottom-Sheet mit dem Schalter.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/settings/settings.page.html",
+    "line": 280,
+    "cond": [
+     "@if (userData?.img && userData.img !== 'https://ionicframework.com/docs/img/demos/avatar.svg')"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "class": "image-viewer-modal",
+     "[isOpen]": "\"isImageViewerOpen\""
+    },
+    "events": [
+     "(ionModalDidDismiss)=closePassImageViewer()"
+    ],
+    "bindings": [
+     "[isOpen]=\"isImageViewerOpen\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/settings/settings.page#modal-2a88fd25"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:149",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:150",
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:382"
+    ],
+    "n": "Vollbild-Bildbetrachter über 'Passbild ansehen', ohne ?quality=20.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 159,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "settings.myData"
+    ],
+    "de": [
+     "Meine Stammdaten"
+    ],
+    "literals": [],
+    "text": "{{ 'settings.myData' | transloco }}",
+    "id": "settings/settings/settings.page#text-2182762d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:281"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 943,
+    "cond": [
+     "in <ion-modal isOpen=\"isInstancesModalOpen\" #instancesModal>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "settings.tenantsCount"
+    ],
+    "de": [
+     "Instanzen ({count})"
+    ],
+    "literals": [],
+    "text": "{{ 'settings.tenantsCount' | transloco: { count: db.tenants()?.length } }}",
+    "id": "settings/settings/settings.page#text-d6dc4517"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:386",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:388"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared-plan/shared-plan.page.html",
+    "line": 64,
+    "cond": [
+     "@if (!loading && !notFound)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "[button]": "\"isEditMode\"",
+     "[detail]": "\"false\""
+    },
+    "events": [
+     "(click)=editStartTime()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "attendance.startLabel",
+     "attendance.timeOClock"
+    ],
+    "de": [
+     "Start",
+     "{time} Uhr"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.startLabel' | transloco }} {{ 'attendance.timeOClock' | transloco: { time: getStartTime() } }}",
+    "id": "shared-plan/shared-plan.page#action-32fa8823"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:817-821",
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:96-104"
+    ],
+    "n": "„Start“ + „{time} Uhr“; nur im Bearbeitungsmodus antippbar → Startzeit bearbeiten",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared-plan/shared-plan.page.html",
+    "line": 41,
+    "cond": [
+     "@if (!loading && !notFound)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "events": [
+     "(click)=editTitle()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[style.cursor]=\"isEditMode ? 'pointer' : ''\""
+    ],
+    "icons": [
+     "create-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ planTitle }}",
+    "id": "shared-plan/shared-plan.page#action-5e0affc3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:799-812"
+    ],
+    "n": "Titel als Listenkopf; im Bearbeitungsmodus Stift-Icon und Tippen → „Titel bearbeiten“",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "shared-plan/shared-plan.page.ts",
+    "line": 330,
+    "method": "SharedPlanPage.editTitle",
+    "cond": [],
+    "header": {
+     "keys": [
+      "plans.editTitle"
+     ],
+     "de": [
+      "Titel bearbeiten"
+     ],
+     "literals": [],
+     "expr": "translate('plans.editTitle')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(evt: any) => { if (!evt.title?.trim()) { return false; } this.planTitle = evt.title.trim(); this.saveEdits(); }"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "text",
+      "label": null,
+      "name": "'title'",
+      "placeholder": {
+       "keys": [
+        "plans.title"
+       ],
+       "de": [
+        "Titel"
+       ],
+       "literals": [],
+       "expr": "translate('plans.title')"
+      },
+      "value": "this.planTitle",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "e8cc4000",
+    "mbody": "ae7f9d1e",
+    "id": "shared-plan/shared-plan.page#alert-cbcf9904"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:637",
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:800",
+     "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:326"
+    ],
+    "n": "Nur im Bearbeitungsmodus (gültiger Bearbeitungsschlüssel) in beiden – Titel nur dann antippbar. „Titel bearbeiten“, Feld mit aktuellem Titel, Platzhalter „Titel“, „Abbrechen“/„Speichern“, leer → bleibt offen; getrimmt gespeichert (Spalten siehe db-64fc7972/db-4e980eb4).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "shared-plan/shared-plan.page.html",
+    "line": 3,
+    "cond": [],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getDateFormatted() }}"
+    ],
+    "text": "{{ getDateFormatted() }}",
+    "id": "shared-plan/shared-plan.page#text-aa963fc4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:746",
+     "lib/core/utils/plan_utils.dart:508-515"
+    ],
+    "n": "„Wochentag, TT.MM.JJJJ“, ohne Datum der Titel",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/utils/plan_utils.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "shared-plan/shared-plan.page.html",
+    "line": 108,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@if (end)"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [
+     "attendance.timeOClock"
+    ],
+    "de": [
+     "{time} Uhr"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.timeOClock' | transloco: { time: getEndTime() } }}",
+    "id": "shared-plan/shared-plan.page#text-d2f87d03"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:833",
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:214"
+    ],
+    "n": "„{time} Uhr“ mit HH:mm",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/audio-player/audio-player.component",
+   "ionic": {
+    "ts": "shared/audio-player/audio-player.component.ts",
+    "html": "shared/audio-player/audio-player.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/audio-player/audio-player.component.html",
+    "line": 5,
+    "cond": [
+     "@if (audioPlayer.currentFile())",
+     "@if (audioPlayer.hasQueue())"
+    ],
+    "tag": "ion-icon",
+    "attrs": {
+     "class": "skip-btn"
+    },
+    "events": [
+     "(click)=onPrevious()"
+    ],
+    "link": null,
+    "model": "name=play-skip-back",
+    "bindings": [],
+    "icons": [
+     "play-skip-back"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/audio-player/audio-player.component#action-79c00bc9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/audio_player/audio_player_widget.dart:71"
+    ],
+    "n": "nur bei Queue (>1 Titel), primary, 22px",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/audio-player/audio-player.component",
+   "ionic": {
+    "ts": "shared/audio-player/audio-player.component.ts",
+    "html": "shared/audio-player/audio-player.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/audio-player/audio-player.component.html",
+    "line": 12,
+    "cond": [
+     "@if (audioPlayer.currentFile())"
+    ],
+    "tag": "ion-icon",
+    "attrs": {
+     "class": "play-btn"
+    },
+    "events": [
+     "(click)=audioPlayer.togglePlayPause()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[name]=\"audioPlayer.isPlaying() ? 'pause-circle' : 'play-circle'\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/audio-player/audio-player.component#action-9bbdb2ac"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/audio_player/audio_player_widget.dart:76"
+    ],
+    "n": "Play/Pause-Kreis-Icon 36px primary, schaltet Wiedergabe",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/audio-player/audio-player.component",
+   "ionic": {
+    "ts": "shared/audio-player/audio-player.component.ts",
+    "html": "shared/audio-player/audio-player.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/audio-player/audio-player.component.html",
+    "line": 19,
+    "cond": [
+     "@if (audioPlayer.currentFile())",
+     "@if (audioPlayer.hasQueue())"
+    ],
+    "tag": "ion-icon",
+    "attrs": {
+     "class": "skip-btn",
+     "[disabled]": "\"!audioPlayer.hasNext()\""
+    },
+    "events": [
+     "(click)=onNext()"
+    ],
+    "link": null,
+    "model": "name=play-skip-forward",
+    "bindings": [],
+    "icons": [
+     "play-skip-forward"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/audio-player/audio-player.component#action-c346ccde"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/audio_player/audio_player_widget.dart:82"
+    ],
+    "n": "nur bei Queue; ohne nächsten Titel ausgegraut (35 %) und nicht tippbar",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/files-folder-picker/files-folder-picker.component",
+   "ionic": {
+    "ts": "shared/files-folder-picker/files-folder-picker.component.ts",
+    "html": "shared/files-folder-picker/files-folder-picker.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/files-folder-picker/files-folder-picker.component.html",
+    "line": 35,
+    "cond": [
+     "in <ion-modal #modal>",
+     "@if (currentPath)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=goUp()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "arrow-up-outline"
+    ],
+    "keys": [
+     "folderPicker.parent"
+    ],
+    "de": [
+     "Übergeordneter Ordner"
+    ],
+    "literals": [],
+    "text": "{{ 'folderPicker.parent' | transloco }}",
+    "id": "shared/files-folder-picker/files-folder-picker.component#action-630a0002"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:302"
+    ],
+    "n": "nur außerhalb des Hauptordners; Flutter blendet die Zeile während des Ladens mit aus (Spinner ersetzt die ganze Liste)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/files-folder-picker/files-folder-picker.component",
+   "ionic": {
+    "ts": "shared/files-folder-picker/files-folder-picker.component.ts",
+    "html": "shared/files-folder-picker/files-folder-picker.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/files-folder-picker/files-folder-picker.component.html",
+    "line": 19,
+    "cond": [
+     "in <ion-modal #modal>"
+    ],
+    "tag": "ion-breadcrumb",
+    "attrs": {},
+    "events": [
+     "(click)=navigate('')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "home-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared/files-folder-picker/files-folder-picker.component#action-7349d8ea"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:276"
+    ],
+    "n": "Home-Icon springt zum Hauptordner; Breadcrumb-Zeile horizontal scrollbar statt Ionic-Einklappen ab 4 Einträgen",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/files-folder-picker/files-folder-picker.component",
+   "ionic": {
+    "ts": "shared/files-folder-picker/files-folder-picker.component.ts",
+    "html": "shared/files-folder-picker/files-folder-picker.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/files-folder-picker/files-folder-picker.component.html",
+    "line": 23,
+    "cond": [
+     "in <ion-modal #modal>",
+     "@for (segment of pathSegments; track $index)"
+    ],
+    "tag": "ion-breadcrumb",
+    "attrs": {},
+    "events": [
+     "(click)=goToSegment($index)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ segment }}",
+    "id": "shared/files-folder-picker/files-folder-picker.component#action-c1e8afee"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:280"
+    ],
+    "n": "Segmente mit Chevron getrennt, Tippen navigiert zu diesem Pfad",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/files-folder-picker/files-folder-picker.component",
+   "ionic": {
+    "ts": "shared/files-folder-picker/files-folder-picker.component.ts",
+    "html": "shared/files-folder-picker/files-folder-picker.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared/files-folder-picker/files-folder-picker.component.html",
+    "line": 49,
+    "cond": [
+     "in <ion-modal #modal>",
+     "@else (not isLoading)",
+     "@for (folder of folders; track folder.path)",
+     "in <ion-item>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=onSelect(folder.path); $event.stopPropagation()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "folderPicker.choose"
+    ],
+    "de": [
+     "Wählen"
+    ],
+    "literals": [],
+    "text": "{{ 'folderPicker.choose' | transloco }}",
+    "id": "shared/files-folder-picker/files-folder-picker.component#action-d009a6e6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:312"
+    ],
+    "n": "Text-Button „Wählen“ rechts wählt den Unterordner direkt und schließt",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/files-folder-picker/files-folder-picker.component",
+   "ionic": {
+    "ts": "shared/files-folder-picker/files-folder-picker.component.ts",
+    "html": "shared/files-folder-picker/files-folder-picker.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "shared/files-folder-picker/files-folder-picker.component.html",
+    "line": 53,
+    "cond": [
+     "in <ion-modal #modal>",
+     "@else (not isLoading)",
+     "@empty of folders"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "color": "medium"
+    },
+    "keys": [
+     "folderPicker.noSubfolders"
+    ],
+    "de": [
+     "Keine Unterordner vorhanden."
+    ],
+    "literals": [],
+    "text": "{{ 'folderPicker.noSubfolders' | transloco }}",
+    "id": "shared/files-folder-picker/files-folder-picker.component#text-ba5048f6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:325"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart"
+   ]
+  }
+ ]
+}

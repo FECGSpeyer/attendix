@@ -1,0 +1,2067 @@
+{
+ "batch": "zz-verify5-b-sonnet-07",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 217,
+    "cond": [
+     "@else (not isLoading)",
+     "@else (not !entries.length / !filteredEntries.length)",
+     "@for (entry of filteredEntries; track entry.path; let last = $last; let i = $index)",
+     "in <ion-item>",
+     "in <ion-popover #actionPopover>",
+     "@if (!entry.isFolder)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=handleEntryAction('download', entry, actionPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "download-outline"
+    ],
+    "keys": [
+     "files.download"
+    ],
+    "de": [
+     "Datei herunterladen"
+    ],
+    "literals": [],
+    "text": "{{ 'files.download' | transloco }}",
+    "id": "settings/files/files.page#action-484a5ba9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:897-902"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 222,
+    "cond": [
+     "@else (not isLoading)",
+     "@else (not !entries.length / !filteredEntries.length)",
+     "@for (entry of filteredEntries; track entry.path; let last = $last; let i = $index)",
+     "in <ion-item>",
+     "in <ion-popover #actionPopover>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=handleEntryAction('share', entry, actionPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "link-outline"
+    ],
+    "keys": [
+     "files.shareLink"
+    ],
+    "de": [
+     "Link teilen"
+    ],
+    "literals": [],
+    "text": "{{ 'files.shareLink' | transloco }}",
+    "id": "settings/files/files.page#action-a4a98ab3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:903-907"
+    ],
+    "n": "Teilen-Verhalten siehe effect-c39ff4df.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 127,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "id": "files-search-help-trigger",
+     "class": "search-help-button",
+     "fill": "clear",
+     "color": "medium"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "help-circle-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/files/files.page#action-b50a0922"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1236-1244"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 153,
+    "cond": [
+     "@if (hasSearchTerm)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "class": "clear-search-button",
+     "size": "small",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=clearSearch()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "files.resetSearch"
+    ],
+    "de": [
+     "Suche zurücksetzen"
+    ],
+    "literals": [],
+    "text": "{{ 'files.resetSearch' | transloco }}",
+    "id": "settings/files/files.page#action-e5256591"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1248-1252"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 204,
+    "cond": [
+     "@else (not isLoading)",
+     "@else (not !entries.length / !filteredEntries.length)",
+     "@for (entry of filteredEntries; track entry.path; let last = $last; let i = $index)",
+     "in <ion-item>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear",
+     "color": "medium"
+    },
+    "events": [
+     "(click)=$event.stopPropagation()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[id]=\"'file-actions-trigger-' + i\"",
+     "[class.ion-hide]=\"selectionMode\""
+    ],
+    "icons": [
+     "ellipsis-horizontal"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/files/files.page#action-fc7ea012"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1351-1356"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/files/files.page.html",
+    "line": 184,
+    "cond": [
+     "@else (not isLoading)",
+     "@else (not !entries.length / !filteredEntries.length)",
+     "@for (entry of filteredEntries; track entry.path; let last = $last; let i = $index)",
+     "in <ion-item>",
+     "@if (selectionMode)"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {
+     "slot": "start",
+     "class": "entry-checkbox"
+    },
+    "events": [],
+    "link": null,
+    "model": "[checked]=\"isSelected(entry)\"",
+    "bindings": [
+     "[checked]=\"isSelected(entry)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/files/files.page#field-5fd06a31"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1336-1345"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/files/files.page.html",
+    "line": 261,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "class": "image-viewer-modal",
+     "[isOpen]": "\"isImagePreviewOpen\""
+    },
+    "events": [
+     "(ionModalDidDismiss)=closeImagePreview()"
+    ],
+    "bindings": [
+     "[isOpen]=\"isImagePreviewOpen\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/files/files.page#modal-5e3c0523"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:345-358",
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:382-397"
+    ],
+    "n": "Vollbild-Bildbetrachter (transparente Route).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/files/files.page.html",
+    "line": 138,
+    "cond": [
+     "in <ion-popover trigger=files-search-help-trigger>"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "files.searchHelp"
+    ],
+    "de": [
+     "Freitext durchsucht den Dateinamen/Ordnernamen."
+    ],
+    "literals": [],
+    "text": "{{ 'files.searchHelp' | transloco }}",
+    "id": "settings/files/files.page#text-73b58f50"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:874"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/files/files.page.html",
+    "line": 137,
+    "cond": [
+     "in <ion-popover trigger=files-search-help-trigger>"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "files.search"
+    ],
+    "de": [
+     "Suche"
+    ],
+    "literals": [],
+    "text": "{{ 'files.search' | transloco }}",
+    "id": "settings/files/files.page#text-af5c84ef"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:872"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 28,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "id": "addExtraFieldBtn",
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#action-05925936"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:656-660",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:678-682"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 246,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "id": "addSongFieldBtn",
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#action-05925936-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:656-660",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:678-682"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 177,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditExtraFieldModalOpen\" #editPersonFieldModal>",
+     "@if (editingExtraField)",
+     "@if (editingExtraField.type === fieldTypes.SELECT)",
+     "@else (not !editingExtraField.options?.length)",
+     "@for (option of editingExtraField.options; track option; let i = $index)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=removeEditExtraOption(i, 'person')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#action-09e7d9fd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:440-443",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:240-264"
+    ],
+    "n": "Bestehende Option → Dialog (siehe alert-bc12427a), neue Option sofort entfernt",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 360,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditSongExtraFieldModalOpen\" #editSongFieldModal>",
+     "@if (editingSongExtraField)",
+     "@if (editingSongExtraField.type === fieldTypes.SELECT)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [
+     "(click)=editingSongExtraField.options.push('')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#action-15722e77"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:418-421"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 111,
+    "cond": [
+     "in <ion-modal trigger=addExtraFieldBtn #addPersonFieldModal>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=addExtraField(addPersonFieldModal, 'person')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "typeSettings.addField"
+    ],
+    "de": [
+     "Feld hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.addField' | transloco }}",
+    "id": "settings/general/extra-fields/extra-fields.page#action-160105ff"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:474-477",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:113-130"
+    ],
+    "n": "Validierungsabweichungen siehe toast-924f922c / toast-918527db",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 77,
+    "cond": [
+     "in <ion-modal trigger=addExtraFieldBtn #addPersonFieldModal>",
+     "@if (newExtraField.type === fieldTypes.SELECT)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [
+     "(click)=newExtraField.options.push('')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#action-1f091cde"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:418-421"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 199,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditExtraFieldModalOpen\" #editPersonFieldModal>",
+     "@if (editingExtraField)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=resetExtraFieldValues('person')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "extraFields.resetAll"
+    ],
+    "de": [
+     "Alle Werte auf Standard zurücksetzen"
+    ],
+    "literals": [],
+    "text": "{{ 'extraFields.resetAll' | transloco }}",
+    "id": "settings/general/extra-fields/extra-fields.page#action-25b7b1ff"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:465-472"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 89,
+    "cond": [
+     "in <ion-modal trigger=addExtraFieldBtn #addPersonFieldModal>",
+     "@if (newExtraField.type === fieldTypes.SELECT)",
+     "@else (not !newExtraField.options?.length)",
+     "@for (option of newExtraField.options; track option; let i = $index)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=newExtraField.options.splice(i, 1)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#action-3dcbfc66"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:440-443",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:263"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 282,
+    "cond": [
+     "in <ion-modal trigger=addSongFieldBtn #addSongFieldModal>",
+     "@if (newSongExtraField.type === fieldTypes.SELECT)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [
+     "(click)=newSongExtraField.options.push('')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#action-74da4c50"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:418-421"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 165,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditExtraFieldModalOpen\" #editPersonFieldModal>",
+     "@if (editingExtraField)",
+     "@if (editingExtraField.type === fieldTypes.SELECT)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [
+     "(click)=editingExtraField.options.push('')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#action-91f38a72"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:418-421"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 316,
+    "cond": [
+     "in <ion-modal trigger=addSongFieldBtn #addSongFieldModal>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=addExtraField(addSongFieldModal, 'song')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "typeSettings.addField"
+    ],
+    "de": [
+     "Feld hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.addField' | transloco }}",
+    "id": "settings/general/extra-fields/extra-fields.page#action-a3856866"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:474-477",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:113-130"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 294,
+    "cond": [
+     "in <ion-modal trigger=addSongFieldBtn #addSongFieldModal>",
+     "@if (newSongExtraField.type === fieldTypes.SELECT)",
+     "@else (not !newSongExtraField.options?.length)",
+     "@for (option of newSongExtraField.options; track option; let i = $index)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=newSongExtraField.options.splice(i, 1)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#action-ca6c05f6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:440-443",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:263"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 10,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=save()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#action-e8512bfd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:541-546",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:165-208"
+    ],
+    "n": "Häkchen rechts oben → Speichern mit gleicher Validierung, Overlay, Toasts; Bereinigungsunterschiede siehe logic-27aa04c0.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/general/extra-fields/extra-fields.page.ts",
+    "line": 133,
+    "method": "ExtraFieldsPage.removeExtraField",
+    "cond": [],
+    "header": {
+     "keys": [
+      "extraFields.deleteField"
+     ],
+     "de": [
+      "Zusatzfeld löschen?"
+     ],
+     "literals": [],
+     "expr": "translate('extraFields.deleteField')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "extraFields.deleteFieldMessage"
+     ],
+     "de": [
+      "Möchtest du das Zusatzfeld „{name}“ wirklich löschen?"
+     ],
+     "literals": [],
+     "expr": "translate('extraFields.deleteFieldMessage', { name: fields[index].name })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.delete"
+       ],
+       "de": [
+        "Löschen"
+       ],
+       "literals": [],
+       "expr": "translate('common.delete')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { fields.splice(index, 1); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "76f9fe92",
+    "mbody": "28ddf6b1",
+    "id": "settings/general/extra-fields/extra-fields.page#alert-34f8d44b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:142-154"
+    ],
+    "n": "Titel, Text mit Feldname, Abbrechen/Löschen gleich; Löschen-Button rot",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 157,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditExtraFieldModalOpen\" #editPersonFieldModal>",
+     "@if (editingExtraField)",
+     "@if (editingExtraField.visibleToPlayers)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editingExtraField.editableByPlayers\"",
+    "bindings": [
+     "[helperText]=\"'extraFields.editableHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "extraFields.editableHelper",
+     "extraFields.editable"
+    ],
+    "de": [
+     "Aktivieren, damit Mitglieder den Wert selbst ändern können.",
+     "Von Mitgliedern bearbeitbar"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'extraFields.editableHelper' | transloco\" {{ 'extraFields.editable' | transloco }}",
+    "id": "settings/general/extra-fields/extra-fields.page#field-0722d457"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:404-411"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 175,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditExtraFieldModalOpen\" #editPersonFieldModal>",
+     "@if (editingExtraField)",
+     "@if (editingExtraField.type === fieldTypes.SELECT)",
+     "@else (not !editingExtraField.options?.length)",
+     "@for (option of editingExtraField.options; track option; let i = $index)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "[value]": "\"option\""
+    },
+    "events": [
+     "(ionChange)=onEditExtraOptionChanged($event, i, 'person')"
+    ],
+    "link": null,
+    "model": "[value]=\"option\"",
+    "bindings": [
+     "[helperText]=\"i === 0 ? 'Erste Option ist der Standardwert' : undefined\"",
+     "[placeholder]=\"'extraFields.valuePh' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "extraFields.valuePh"
+    ],
+    "de": [
+     "Wert eingeben..."
+    ],
+    "literals": [
+     "i === 0 ? 'Erste Option ist der Standardwert' : undefined"
+    ],
+    "text": "[helperText]=\"i === 0 ? 'Erste Option ist der Standardwert' : undefined\" [placeholder]=\"'extraFields.valuePh' | transloco\"",
+    "id": "settings/general/extra-fields/extra-fields.page#field-42c419ec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:427-439"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 270,
+    "cond": [
+     "in <ion-modal trigger=addSongFieldBtn #addSongFieldModal>"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newSongExtraField.name\"",
+    "bindings": [
+     "[label]=\"'typeSettings.name' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.name"
+    ],
+    "de": [
+     "Name"
+    ],
+    "literals": [],
+    "text": "[label]=\"'typeSettings.name' | transloco\"",
+    "id": "settings/general/extra-fields/extra-fields.page#field-477aff7b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:381-385"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 262,
+    "cond": [
+     "in <ion-modal trigger=addSongFieldBtn #addSongFieldModal>"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [
+     "(ionChange)=setDefaultValue('song')"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"newSongExtraField.type\"",
+    "bindings": [
+     "[label]=\"'typeSettings.type' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"fieldTypes.TEXT\"",
+      "keys": [
+       "typeSettings.text"
+      ],
+      "de": [
+       "Text"
+      ],
+      "literals": [],
+      "text": "{{ 'typeSettings.text' | transloco }}"
+     },
+     {
+      "value": "\"fieldTypes.NUMBER\"",
+      "keys": [
+       "extraFields.number"
+      ],
+      "de": [
+       "Zahl"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.number' | transloco }}"
+     },
+     {
+      "value": "\"fieldTypes.BOOLEAN\"",
+      "keys": [
+       "extraFields.yesNo"
+      ],
+      "de": [
+       "Ja/Nein"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.yesNo' | transloco }}"
+     },
+     {
+      "value": "\"fieldTypes.SELECT\"",
+      "keys": [
+       "extraFields.select"
+      ],
+      "de": [
+       "Auswahl"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.select' | transloco }}"
+     }
+    ],
+    "keys": [
+     "typeSettings.type",
+     "typeSettings.text",
+     "extraFields.number",
+     "extraFields.yesNo",
+     "extraFields.select"
+    ],
+    "de": [
+     "Typ",
+     "Text",
+     "Zahl",
+     "Ja/Nein",
+     "Auswahl"
+    ],
+    "literals": [],
+    "text": "[label]=\"'typeSettings.type' | transloco\" {{ 'typeSettings.text' | transloco }} {{ 'extraFields.number' | transloco }} {{ 'extraFields.yesNo' | transloco }} {{ 'extraFields.select' | transloco }}",
+    "id": "settings/general/extra-fields/extra-fields.page#field-4c447044"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:363-380"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 55,
+    "cond": [
+     "in <ion-modal trigger=addExtraFieldBtn #addPersonFieldModal>"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newExtraField.name\"",
+    "bindings": [
+     "[label]=\"'typeSettings.name' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.name"
+    ],
+    "de": [
+     "Name"
+    ],
+    "literals": [],
+    "text": "[label]=\"'typeSettings.name' | transloco\"",
+    "id": "settings/general/extra-fields/extra-fields.page#field-4dafe561"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:381-385"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 307,
+    "cond": [
+     "in <ion-modal trigger=addSongFieldBtn #addSongFieldModal>",
+     "@if (newSongExtraField.type !== fieldTypes.SELECT)",
+     "@if (newSongExtraField.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {
+     "slot": "end"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newSongExtraField.defaultValue\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#field-5d3c4fca"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 385,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditSongExtraFieldModalOpen\" #editSongFieldModal>",
+     "@if (editingSongExtraField)",
+     "@if (editingSongExtraField.type !== fieldTypes.SELECT)",
+     "@if (editingSongExtraField.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {
+     "slot": "end"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editingSongExtraField.defaultValue\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#field-60338e3d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 190,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditExtraFieldModalOpen\" #editPersonFieldModal>",
+     "@if (editingExtraField)",
+     "@if (editingExtraField.type !== fieldTypes.BFECG_CHURCH && editingExtraField.type !== fieldTypes.SELECT)",
+     "@if (editingExtraField.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {
+     "slot": "end"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editingExtraField.defaultValue\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#field-6546f130"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 370,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditSongExtraFieldModalOpen\" #editSongFieldModal>",
+     "@if (editingSongExtraField)",
+     "@if (editingSongExtraField.type === fieldTypes.SELECT)",
+     "@else (not !editingSongExtraField.options?.length)",
+     "@for (option of editingSongExtraField.options; track option; let i = $index)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "[value]": "\"option\""
+    },
+    "events": [
+     "(ionChange)=onEditExtraOptionChanged($event, i, 'song')"
+    ],
+    "link": null,
+    "model": "[value]=\"option\"",
+    "bindings": [
+     "[helperText]=\"i === 0 ? 'Erste Option ist der Standardwert' : undefined\"",
+     "[placeholder]=\"'extraFields.valuePh' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "extraFields.valuePh"
+    ],
+    "de": [
+     "Wert eingeben..."
+    ],
+    "literals": [
+     "i === 0 ? 'Erste Option ist der Standardwert' : undefined"
+    ],
+    "text": "[helperText]=\"i === 0 ? 'Erste Option ist der Standardwert' : undefined\" [placeholder]=\"'extraFields.valuePh' | transloco\"",
+    "id": "settings/general/extra-fields/extra-fields.page#field-9589321d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:427-439"
+    ],
+    "n": "Platzhalter 'Wert eingeben...', Hilfetext 'Erste Option ist der Standardwert' bei der ersten Option.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 64,
+    "cond": [
+     "in <ion-modal trigger=addExtraFieldBtn #addPersonFieldModal>"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newExtraField.visibleToPlayers\"",
+    "bindings": [
+     "[helperText]=\"'extraFields.visibleHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "extraFields.visibleHelper",
+     "extraFields.visible"
+    ],
+    "de": [
+     "Aktivieren, damit Mitglieder dieses Feld in ihren Stammdaten sehen können.",
+     "Für Mitglieder sichtbar"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'extraFields.visibleHelper' | transloco\" {{ 'extraFields.visible' | transloco }}",
+    "id": "settings/general/extra-fields/extra-fields.page#field-99c184df"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:396-403"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 143,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditExtraFieldModalOpen\" #editPersonFieldModal>",
+     "@if (editingExtraField)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editingExtraField.name\"",
+    "bindings": [
+     "[label]=\"'typeSettings.name' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.name"
+    ],
+    "de": [
+     "Name"
+    ],
+    "literals": [],
+    "text": "[label]=\"'typeSettings.name' | transloco\"",
+    "id": "settings/general/extra-fields/extra-fields.page#field-9a759f2f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:381-385"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 348,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditSongExtraFieldModalOpen\" #editSongFieldModal>",
+     "@if (editingSongExtraField)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editingSongExtraField.name\"",
+    "bindings": [
+     "[label]=\"'typeSettings.name' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.name"
+    ],
+    "de": [
+     "Name"
+    ],
+    "literals": [],
+    "text": "[label]=\"'typeSettings.name' | transloco\"",
+    "id": "settings/general/extra-fields/extra-fields.page#field-9eea7996"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:381-385"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 292,
+    "cond": [
+     "in <ion-modal trigger=addSongFieldBtn #addSongFieldModal>",
+     "@if (newSongExtraField.type === fieldTypes.SELECT)",
+     "@else (not !newSongExtraField.options?.length)",
+     "@for (option of newSongExtraField.options; track option; let i = $index)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "[value]": "\"option\""
+    },
+    "events": [
+     "(ionChange)=onExtraOptionChanged($event, i, 'song')"
+    ],
+    "link": null,
+    "model": "[value]=\"option\"",
+    "bindings": [
+     "[helperText]=\"i === 0 ? 'Erste Option ist der Standardwert' : undefined\"",
+     "[placeholder]=\"'extraFields.valuePh' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "extraFields.valuePh"
+    ],
+    "de": [
+     "Wert eingeben..."
+    ],
+    "literals": [
+     "i === 0 ? 'Erste Option ist der Standardwert' : undefined"
+    ],
+    "text": "[helperText]=\"i === 0 ? 'Erste Option ist der Standardwert' : undefined\" [placeholder]=\"'extraFields.valuePh' | transloco\"",
+    "id": "settings/general/extra-fields/extra-fields.page#field-c084e95b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:427-439"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 351,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditSongExtraFieldModalOpen\" #editSongFieldModal>",
+     "@if (editingSongExtraField)"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editingSongExtraField.displayMode\"",
+    "bindings": [
+     "[label]=\"'extraFields.display' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "chip",
+      "keys": [
+       "extraFields.asChip"
+      ],
+      "de": [
+       "Als Chip"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.asChip' | transloco }}\"chip\""
+     },
+     {
+      "value": "underneath",
+      "keys": [
+       "extraFields.underName"
+      ],
+      "de": [
+       "Unter dem Namen"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.underName' | transloco }}\"underneath\""
+     }
+    ],
+    "keys": [
+     "extraFields.display",
+     "extraFields.asChip",
+     "extraFields.underName"
+    ],
+    "de": [
+     "Anzeige in Listen",
+     "Als Chip",
+     "Unter dem Namen"
+    ],
+    "literals": [],
+    "text": "[label]=\"'extraFields.display' | transloco\" \"chip\" {{ 'extraFields.asChip' | transloco }} \"underneath\" {{ 'extraFields.underName' | transloco }}",
+    "id": "settings/general/extra-fields/extra-fields.page#field-d5ae8d41"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:386-395"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 58,
+    "cond": [
+     "in <ion-modal trigger=addExtraFieldBtn #addPersonFieldModal>"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newExtraField.displayMode\"",
+    "bindings": [
+     "[label]=\"'extraFields.display' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "chip",
+      "keys": [
+       "extraFields.asChip"
+      ],
+      "de": [
+       "Als Chip"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.asChip' | transloco }}\"chip\""
+     },
+     {
+      "value": "underneath",
+      "keys": [
+       "extraFields.underName"
+      ],
+      "de": [
+       "Unter dem Namen"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.underName' | transloco }}\"underneath\""
+     }
+    ],
+    "keys": [
+     "extraFields.display",
+     "extraFields.asChip",
+     "extraFields.underName"
+    ],
+    "de": [
+     "Anzeige in Listen",
+     "Als Chip",
+     "Unter dem Namen"
+    ],
+    "literals": [],
+    "text": "[label]=\"'extraFields.display' | transloco\" \"chip\" {{ 'extraFields.asChip' | transloco }} \"underneath\" {{ 'extraFields.underName' | transloco }}",
+    "id": "settings/general/extra-fields/extra-fields.page#field-d84509fd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:386-395"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 69,
+    "cond": [
+     "in <ion-modal trigger=addExtraFieldBtn #addPersonFieldModal>",
+     "@if (newExtraField.visibleToPlayers)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newExtraField.editableByPlayers\"",
+    "bindings": [
+     "[helperText]=\"'extraFields.editableHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "extraFields.editableHelper",
+     "extraFields.editable"
+    ],
+    "de": [
+     "Aktivieren, damit Mitglieder den Wert selbst ändern können.",
+     "Von Mitgliedern bearbeitbar"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'extraFields.editableHelper' | transloco\" {{ 'extraFields.editable' | transloco }}",
+    "id": "settings/general/extra-fields/extra-fields.page#field-da097b90"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:404-411"
+    ],
+    "n": "Flutter speichert editableByPlayers=false, wenn nicht sichtbar (Ionic behält den Wert) – ohne sichtbare Wirkung",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 102,
+    "cond": [
+     "in <ion-modal trigger=addExtraFieldBtn #addPersonFieldModal>",
+     "@if (newExtraField.type !== fieldTypes.BFECG_CHURCH && newExtraField.type !== fieldTypes.SELECT)",
+     "@if (newExtraField.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {
+     "slot": "end"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newExtraField.defaultValue\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#field-dc17c391"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  }
+ ]
+}
