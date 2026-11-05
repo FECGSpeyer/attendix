@@ -282,20 +282,14 @@ void main() {
   });
 
   group('item 3: successful writes count as changes', () {
-    testWidgets('auto-created default plan invalidates the plan caches on close', (tester) async {
+    testWidgets('without Werke history the start field is not written (Ionic)', (tester) async {
       await openPage(tester, attendance(withPlan: false));
       expect(attendanceLoads, 1);
-      expect(orgPlanLoads, 1);
       await tapClose(tester);
       await tester.pumpAndSettle();
       expect(popped, isTrue);
-      expect(popResult, isTrue);
-      expect(db.calls, hasLength(1));
-      expect(db.calls.single.containsKey('plan'), isTrue);
-      await container.read(planAttendancesProvider.future);
-      await container.read(orgPlansProvider.future);
-      expect(attendanceLoads, 2);
-      expect(orgPlanLoads, 2);
+      // Ionic keeps „Wort“ unsaved until the user edits the plan.
+      expect(db.calls, isEmpty);
     });
   });
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -380,12 +382,17 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     // (settings.page.html): "+" (Neue Instanz) left, title "Instanzen (n)",
     // cog (Instanzauswahl) right; inset list with short/long name, "Aktuell"
     // badge, favorite star and swipe actions Löschen / Favorit.
-    // IOS_SETTINGS2: Ionic openCreateInstanceModal dismisses the sheet first.
-    void createInstance() {
+    // IOS_SETTINGS2: Ionic openCreateInstanceModal dismisses the sheet and
+    // presents RegisterPage as a card modal over the settings page.
+    Future<void> createInstance() async {
       if (widget.sheet) {
-        final router = GoRouter.of(context);
-        Navigator.of(context).pop();
-        router.push('/tenants/new');
+        final navigator = Navigator.of(context);
+        final sheetRoute = ModalRoute.of(context);
+        navigator.pop();
+        // The card modal scales the page behind it: wait until the sheet
+        // is gone so it is not part of that picture.
+        await _untilDismissed(sheetRoute);
+        if (navigator.mounted) await showTenantCreateModal(navigator.context);
       } else {
         context.push('/tenants/new');
       }
@@ -592,4 +599,21 @@ class _TenantTile extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Completes once [route]'s exit transition has finished (at the latest
+/// after a short timeout, or right away without a running transition).
+Future<void> _untilDismissed(ModalRoute<dynamic>? route) {
+  final animation = route?.animation;
+  if (animation == null || animation.isDismissed) return Future.value();
+  final done = Completer<void>();
+  void listener(AnimationStatus status) {
+    if (status != AnimationStatus.dismissed) return;
+    animation.removeStatusListener(listener);
+    if (!done.isCompleted) done.complete();
+  }
+
+  animation.addStatusListener(listener);
+  return done.future
+      .timeout(const Duration(milliseconds: 600), onTimeout: () {});
 }
