@@ -285,8 +285,11 @@ bool _rdEventOver(RdNextEvent event, Attendance? att, List<AttendanceType> types
   final type = att?.typeId == null ? null : types.where((t) => t.id == att!.typeId).firstOrNull;
   final days = (att?.durationDays ?? 1) < 1 ? 1 : (att?.durationDays ?? 1);
   final lastDay = rdAddDays(date, days - 1);
-  final start = _rdClock(att?.startTime ?? type?.startTime);
-  final end = _rdClock(att?.endTime ?? type?.endTime);
+  // Start and end from one source: the Termin's own times, else its type's
+  // (a Termin at 19:00 with a type ending at 12:00 is not overnight).
+  final own = _rdClock(att?.startTime) != null || _rdClock(att?.endTime) != null;
+  final start = _rdClock(own ? att?.startTime : type?.startTime);
+  final end = _rdClock(own ? att?.endTime : type?.endTime);
   final time = end ?? start;
   if (time == null) return !now.isBefore(rdAddDays(lastDay, 1));
   // An end before the start (e.g. 20:00–01:00) is on the next day.

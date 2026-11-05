@@ -454,7 +454,7 @@ void main() {
       final now = DateTime(2026, 11, 4, 20);
       RdNextEvent event(int id, {int day = 4}) =>
           RdNextEvent(date: DateTime(2026, 11, day), type: '', attendanceId: id, songs: const [_ave]);
-      final events = [event(1), event(2), event(3), event(4), event(5), event(6, day: 5)];
+      final events = [event(1), event(2), event(3), event(4), event(5), event(6, day: 5), event(7)];
       const types = [AttendanceType(id: 't', name: 'Probe', startTime: '10:00', endTime: '12:00')];
       final left = rdWithoutEndedEvents(
         events,
@@ -467,6 +467,8 @@ void main() {
           Attendance(id: 4, date: '2026-11-04', typeId: 't'), // type 10–12: over
           // 5: no Termin loaded, date only: stays until midnight.
           Attendance(id: 6, date: '2026-11-05', startTime: '09:00', endTime: '10:00'),
+          // Own start, the type's end (12:00) does not make it overnight: over.
+          Attendance(id: 7, date: '2026-11-04', startTime: '19:00', typeId: 't'),
         ],
       );
       expect(left.map((e) => e.attendanceId), [2, 5, 6]);
