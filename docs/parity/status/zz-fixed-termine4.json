@@ -1,0 +1,35 @@
+{
+  "batch": "zz-fixed-termine4",
+  "afterRound": 4,
+  "ionic": "1923d203",
+  "items": {
+    "x-a5bcacc4df": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+      ],
+      "n": "behoben in #PR"
+    },
+    "x-01ddfb1bfc": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+      ],
+      "n": "behoben in #PR"
+    },
+    "x-47702cd6f0": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+      ],
+      "n": "behoben in #PR"
+    },
+    "x-e549f975e1": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart"
+      ],
+      "n": "behoben in #PR"
+    }
+  }
+}

@@ -106,6 +106,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   List<ChecklistItem> _localChecklist = [];
   bool _checklistLoaded = false;
 
+  /// Checklist writes in flight: a reload of the Termin meanwhile may still
+  /// carry the previous list and must not replace the local edit.
+  int _checklistSaving = 0;
+
   // Click mode: tap cycles status instead of opening picker
   // UX_ATT: Ionic default AttendanceViewMode.CLICK (tap cycles the status)
   bool _clickMode = true;
@@ -391,6 +395,16 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       } else {
         ToastHelper.showError(context, context.l10n.attendanceNoConnection);
       }
+    });
+
+    // Ionic onAttRealtimeChanges / resume refetch: `this.attendance` is
+    // replaced, so the checklist always shows (and edits) the current list,
+    // including changes by others.
+    ref.listen<AsyncValue<Attendance?>>(attendanceDetailProvider(widget.attendanceId), (prev, next) {
+      final att = next.valueOrNull;
+      if (att == null || identical(att, prev?.valueOrNull) || !_checklistLoaded) return;
+      if (_checklistSaving > 0) return;
+      setState(() => _localChecklist = List.from(att.checklist ?? const []));
     });
 
     final attendanceAsync = ref.watch(attendanceDetailProvider(widget.attendanceId));
@@ -1356,12 +1370,22 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         currentPersonIds: _personAttendanceIds.keys.toSet(),
       );
 
+  /// Persons of the Termin the user sees in the list (Ionic `this.players`):
+  /// helpers without `attendance_all_groups` only their own group.
+  List<Person> _scopedPersonsInAttendance() {
+    final inAttendance = _personsInAttendance(
+        ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull ?? const []);
+    final groupScope = resolvedGroupScope(ref.read(attendanceGroupScopeProvider));
+    return groupScope.isAll
+        ? inAttendance
+        : inAttendance.where((p) => groupScope.allowsGroup(p.instrument)).toList();
+  }
+
   /// "Gemeinde-Übersicht" of the present persons.
   Future<void> _showChurchOverview() => showAttendanceChurchOverview(
         context,
         ref,
-        persons: _personsInAttendance(
-            ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull ?? const []),
+        persons: _scopedPersonsInAttendance(),
         statusOf: (p) => _localStatuses[p.id],
       );
 
@@ -1380,8 +1404,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       typeInfo: attendance.typeInfo,
       tenantLongName: tenant?.longName,
     );
-    final persons = _personsInAttendance(
-        ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull ?? const []);
+    // Ionic neutralAppIds from `this.players` (own group for restricted helpers).
+    final persons = _scopedPersonsInAttendance();
     final neutralAppIds = persons
         .where((p) =>
             (_localStatuses[p.id] ?? AttendanceStatus.neutral) == AttendanceStatus.neutral &&
@@ -1671,22 +1695,24 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   Future<void> _saveChecklist() async {
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    if (!repo.hasTenantId) return;
+    final checklistJson = _localChecklist.map((item) => item.toJson()).toList();
+    _checklistSaving++;
     try {
-      final repo = ref.read(attendanceRepositoryWithTenantProvider);
-      if (!repo.hasTenantId) return;
-      final checklistJson = _localChecklist.map((item) => item.toJson()).toList();
-
       await repo.updateAttendance(
         widget.attendanceId,
         {'checklist': checklistJson},
       );
-
-      ref.invalidate(attendanceDetailProvider(widget.attendanceId));
     } catch (e) {
       if (mounted) {
         ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
       }
+    } finally {
+      _checklistSaving--;
     }
+    // Reload either way: after a failure the list falls back to the stored one.
+    if (mounted) ref.invalidate(attendanceDetailProvider(widget.attendanceId));
   }
 
   DeadlineStatus _getDeadlineStatus(ChecklistItem item) {

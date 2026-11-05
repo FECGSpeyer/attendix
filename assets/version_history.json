@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.41.8",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Termin: Die Checkliste zeigt Änderungen anderer sofort (auch nach Rückkehr in die App); Abhaken, Hinzufügen und Löschen überschreiben sie nicht mehr",
+        "🐛 Termin: Gemeinde-Übersicht und Erinnerung „nur Unentschiedene“ berücksichtigen bei Helfern ohne Zugriff auf alle Gruppen nur die eigene Gruppe",
+        "🐛 Termin: „Person hinzufügen“ bietet noch nicht freigegebene Registrierungen nicht mehr an"
+      ]
+    },
+    {
       "version": "0.41.0",
       "date": "4.11.2026",
       "changes": [
