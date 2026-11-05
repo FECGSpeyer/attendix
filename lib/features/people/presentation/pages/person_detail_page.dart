@@ -343,12 +343,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   /// instance of the organisation.
   bool _sharedFieldsLoadFailed = false;
 
+  /// The latest shared-values load; saving waits for it. Older loads
+  /// (superseded by a reload) are ignored via [_sharedLoadGeneration].
+  Future<void>? _sharedFieldsLoad;
+  int _sharedLoadGeneration = 0;
+
   @override
   void initState() {
     super.initState();
     _initDraft();
     _loadUserRole();
-    _loadSharedFieldValues();
+    _sharedFieldsLoad = _loadSharedFieldValues();
     _fillChurchDefaultsWhenLoaded();
   }
 
@@ -363,7 +368,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     if (old == next) return;
     if (!_hasChanges) {
       _initDraft();
-      _loadSharedFieldValues();
+      _sharedFieldsLoad = _loadSharedFieldValues();
     } else {
       // Keep the unsaved edits; every field the user did not touch takes
       // over the new value so saving does not write stale data back.
@@ -502,21 +507,32 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   /// Ionic getSharedPersonFieldValues: organisation field values are shared
   /// across the tenants of an organisation.
   Future<void> _loadSharedFieldValues() async {
+    final generation = ++_sharedLoadGeneration;
+    bool current() => mounted && generation == _sharedLoadGeneration;
     final repo = ref.read(profileRepositoryWithTenantProvider);
-    _sharedFieldsLoadFailed = false;
     try {
       final fields = await ref.read(personExtraFieldsProvider.future);
+      if (!current()) return;
       _orgFieldIds = fields
           .where((f) => f.isOrganisationField)
           .map((f) => f.id)
           .toSet();
-      if (_orgFieldIds.isEmpty) return;
-      _orgId = await repo.getOrganisationId();
+      if (_orgFieldIds.isEmpty) {
+        _sharedFieldsLoadFailed = false;
+        return;
+      }
+      final orgId = await repo.getOrganisationId();
+      if (!current()) return;
+      _orgId = orgId;
       final key = _personKey;
-      if (_orgId == null || key == null) return;
-      final shared = await repo.getSharedFieldValues(_orgId!, key);
-      if (!mounted || shared.isEmpty) return;
+      if (orgId == null || key == null) {
+        _sharedFieldsLoadFailed = false;
+        return;
+      }
+      final shared = await repo.getSharedFieldValues(orgId, key);
+      if (!current()) return;
       setState(() {
+        _sharedFieldsLoadFailed = false;
         for (final e in shared.entries) {
           if (_orgFieldIds.contains(e.key) &&
               !_changedFields.contains('additionalFields.${e.key}')) {
@@ -527,14 +543,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         }
       });
     } catch (_) {
-      if (!mounted) return;
+      if (!current()) return;
       setState(() => _sharedFieldsLoadFailed = true);
       ToastHelper.showError(context, context.l10n.svcLoadSharedFieldsFailed);
     }
   }
 
-  /// True (with Ionic's toast) when the shared values could not be loaded.
-  bool _blockedBySharedFieldsLoadError() {
+  /// Waits for the running shared-values load; true (with Ionic's toast)
+  /// when it failed, so nothing is saved.
+  Future<bool> _blockedBySharedFieldsLoadError() async {
+    await _sharedFieldsLoad;
+    if (!mounted) return true;
     if (!_sharedFieldsLoadFailed) return false;
     ToastHelper.showError(context, context.l10n.svcLoadSharedFieldsFailed);
     return true;
@@ -543,6 +562,13 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   /// Ionic continueUpdatingPlayer: organisation field values go to
   /// tenant_group_person_fields, the rest stays in additional_fields.
   Future<Map<String, dynamic>> _splitAndSaveSharedFields() async {
+    final repo = ref.read(profileRepositoryWithTenantProvider);
+    // A reload may have started or failed since the check before the
+    // dialogs: never write shown defaults over unknown shared values.
+    await _sharedFieldsLoad;
+    if (_sharedFieldsLoadFailed) {
+      throw StateError(l10nWithoutContext.svcLoadSharedFieldsFailed);
+    }
     final local = Map<String, dynamic>.from(_additionalFieldValues);
     final key = _personKey;
     if (_orgFieldIds.isEmpty || _orgId == null || key == null) return local;
@@ -550,9 +576,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       for (final id in _orgFieldIds)
         if (local.containsKey(id)) id: local.remove(id),
     };
-    await ref
-        .read(profileRepositoryWithTenantProvider)
-        .updateSharedFieldValues(_orgId!, key, shared);
+    await repo.updateSharedFieldValues(_orgId!, key, shared);
     return local;
   }
 
@@ -743,7 +767,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       return;
     }
 
-    if (_blockedBySharedFieldsLoadError()) return;
+    if (await _blockedBySharedFieldsLoadError()) return;
 
     // STATS_PEOPLE_FIXES: Ionic updatePlayer() pre-save dialogs
     final tenantType = ref.read(currentTenantProvider)?.type;
@@ -1391,7 +1415,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final repo = ref.read(playerRepositoryWithTenantProvider);
     final personId = widget.person.id;
     if (personId == null || !repo.hasTenantId) return;
-    if (_blockedBySharedFieldsLoadError()) return;
+    if (await _blockedBySharedFieldsLoadError()) return;
     try {
       final solved = _problemSolved;
       if (_changedFields.isNotEmpty || solved) {

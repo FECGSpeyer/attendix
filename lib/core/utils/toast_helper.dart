@@ -241,7 +241,19 @@ class _IonMdToastState extends State<IonMdToast>
   void initState() {
     super.initState();
     _controller.forward();
-    _timer = Timer(widget.duration, _dismiss);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // With assistive technology (VoiceOver/TalkBack) the toast stays longer,
+    // like a SnackBar, so the announcement can be heard and re-read.
+    _timer ??= Timer(
+      MediaQuery.maybeAccessibleNavigationOf(context) ?? false
+          ? widget.duration * 4
+          : widget.duration,
+      _dismiss,
+    );
   }
 
   Future<void> _dismiss() async {
@@ -291,7 +303,11 @@ class _IonMdToastState extends State<IonMdToast>
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 700),
-            child: FadeTransition(
+            // Announced by VoiceOver/TalkBack like the SnackBar it replaces.
+            child: Semantics(
+              container: true,
+              liveRegion: true,
+              child: FadeTransition(
               opacity: curved,
               child: SlideTransition(
                 position: Tween<Offset>(
@@ -315,6 +331,7 @@ class _IonMdToastState extends State<IonMdToast>
                     ),
                   ),
                 ),
+              ),
               ),
             ),
           ),
