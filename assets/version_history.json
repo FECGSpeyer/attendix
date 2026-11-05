@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.41.14",
+      "version": "0.41.17",
       "date": "5.11.2026",
       "changes": [
         "🐛 Problemfall-Regeln: Neue Regeln gelten ohne Auswahl für alle Anwesenheits-Typen; Typen und Status werden wie gewohnt per Auswahlliste gewählt, auch „Anwesend“ und „Entschuldigt“",
@@ -10,6 +10,56 @@
         "🐛 Einstellungen: Probenbeginn/-ende werden nicht mehr angezeigt (wie in der bisherigen App)",
         "🐛 Gemeinde hinzufügen: Ohne Namen bleibt der Dialog mit Hinweis offen, beim Speichern erscheint eine Ladeanzeige",
         "🐛 Automatische Nachrichten: Ladefehler werden als Meldung angezeigt, die Seite bleibt bedienbar"
+      ]
+    },
+    {
+      "version": "0.41.13",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Termin: Die Checkliste zeigt Änderungen anderer sofort (auch nach Rückkehr in die App); Abhaken, Hinzufügen und Löschen überschreiben sie nicht mehr",
+        "🐛 Termin: Gemeinde-Übersicht und Erinnerung „nur Unentschiedene“ berücksichtigen bei Helfern ohne Zugriff auf alle Gruppen nur die eigene Gruppe",
+        "🐛 Termin: „Person hinzufügen“ bietet noch nicht freigegebene Registrierungen nicht mehr an"
+      ]
+    },
+    {
+      "version": "0.41.12",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Organisation: Leere Namen beim Anlegen oder Umbenennen von Organisation und Vorlagen zeigen wieder einen Hinweis im Dialog",
+        "🐛 Organisation: Beim Anlegen einer Organisation erscheint ein Ladehinweis",
+        "🐛 Planungsvorlagen: Minuten der Standardfelder direkt in der Zeile änderbar, „Feld hinzufügen“ öffnet ein Menü am Button mit eigener Rubrik für Standardfelder",
+        "🐛 Personenfelder: Doppelte Namen werden vor dem Schließen gemeldet, Standardwert passt sich dem Feldtyp an (inkl. Datumsauswahl)",
+        "🐛 Org-Pläne: Verlauf aktualisiert sich, öffentlicher Plan bietet wieder „Anleitung öffnen“"
+      ]
+    },
+    {
+      "version": "0.41.11",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ Archivierte/ausstehende Personen und neue Instanz öffnen wie in Ionic als Karte"
+      ]
+    },
+    {
+      "version": "0.41.10",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Zusatzfelder: Schließen des Bearbeiten-Fensters (X, Wischen, Tippen daneben) übernimmt die Änderungen wie bisher, der zusätzliche Button „Übernehmen“ entfällt",
+        "🐛 Zusatzfelder: Beim Hinzufügen bleibt das Fenster bei Fehlern (z. B. Feld existiert schon) mit allen Eingaben offen",
+        "🐛 Zusatzfelder: „Werte zurücksetzen“ setzt beim Gemeinde-Feld wieder die Gemeinde und überspringt einzelne fehlgeschlagene Personen statt abzubrechen",
+        "🐛 Zusatzfelder: Leerer Standardwert älterer Felder wird nicht mehr als „false“ angezeigt oder gespeichert",
+        "🐛 Zusatzfelder: Löschen einer gespeicherten Option eines Werkfeldes fragt wie bei Personenfeldern nach",
+        "🐛 Zusatzfelder: Beim Speichern werden aktive Personen und Werke der eigenen Bibliothek angepasst"
+      ]
+    },
+    {
+      "version": "0.41.9",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Personenliste: Zusatzfelder ohne Wert zeigen, filtern und zählen (Gemeinde-Übersicht) mit ihrem Standardwert wie bisher; Zahl 0 erscheint nicht mehr als Badge",
+        "🐛 Personenliste: Ansicht „Lehrer“ zeigt wieder den Namen des Lehrers, Prozent-Badge auch bei 0 %",
+        "🐛 Personenliste: Sortierung nach Gruppe und Nachname mit Umlauten wie bisher, Reihenfolge speichern ändert nur verschobene Gruppen",
+        "🐛 Personenliste: Zusatzfeld-Filter mit Auswahl und „Filtern“/„Abbrechen“",
+        "🐛 Massenbearbeitung und Mitglieder-Filter: Startwerte und Personen ohne Wert wie bisher"
       ]
     },
     {

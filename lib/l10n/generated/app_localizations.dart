@@ -6623,6 +6623,12 @@ abstract class AppLocalizations {
   /// **'Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?'**
   String get extraFieldsFlutterLeaveMessage;
 
+  /// extraFields.flutter.updatingPersons
+  ///
+  /// In de, this message translates to:
+  /// **'Personen werden aktualisiert...'**
+  String get extraFieldsFlutterUpdatingPersons;
+
   /// extraFields.forPersons
   ///
   /// In de, this message translates to:
@@ -10204,6 +10210,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Änderungen übernehmen'**
   String get orgFieldsApplyChanges;
+
+  /// orgFields.flutter.clearDefault
+  ///
+  /// In de, this message translates to:
+  /// **'Standardwert entfernen'**
+  String get orgFieldsFlutterClearDefault;
 
   /// orgFields.flutter.firstOptionDefault
   ///

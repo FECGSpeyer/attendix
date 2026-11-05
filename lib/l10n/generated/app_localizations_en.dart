@@ -3967,6 +3967,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'You have unsaved changes. Do you want to leave the page anyway?';
 
   @override
+  String get extraFieldsFlutterUpdatingPersons => 'Updating persons...';
+
+  @override
   String get extraFieldsForPersons => 'Additional fields for people';
 
   @override
@@ -6154,6 +6157,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orgFieldsApplyChanges => 'Apply changes';
+
+  @override
+  String get orgFieldsFlutterClearDefault => 'Remove default value';
 
   @override
   String get orgFieldsFlutterFirstOptionDefault =>

@@ -148,7 +148,8 @@
     "extraFields": {
       "flutter": {
         "firstOptionDefault": "Erste Option ist der Standardwert",
-        "leaveMessage": "Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?"
+        "leaveMessage": "Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?",
+        "updatingPersons": "Personen werden aktualisiert..."
       }
     },
     "files": {
@@ -313,7 +314,8 @@
     "extraFields": {
       "flutter": {
         "firstOptionDefault": "The first option is the default value",
-        "leaveMessage": "You have unsaved changes. Do you want to leave the page anyway?"
+        "leaveMessage": "You have unsaved changes. Do you want to leave the page anyway?",
+        "updatingPersons": "Updating persons..."
       }
     },
     "files": {

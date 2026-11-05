@@ -4974,6 +4974,10 @@
   "@extraFieldsFlutterLeaveMessage": {
     "description": "extraFields.flutter.leaveMessage"
   },
+  "extraFieldsFlutterUpdatingPersons": "Personen werden aktualisiert...",
+  "@extraFieldsFlutterUpdatingPersons": {
+    "description": "extraFields.flutter.updatingPersons"
+  },
   "extraFieldsForPersons": "Zusätzliche Felder für Personen",
   "@extraFieldsForPersons": {
     "description": "extraFields.forPersons"
@@ -7705,6 +7709,10 @@
   "orgFieldsApplyChanges": "Änderungen übernehmen",
   "@orgFieldsApplyChanges": {
     "description": "orgFields.applyChanges"
+  },
+  "orgFieldsFlutterClearDefault": "Standardwert entfernen",
+  "@orgFieldsFlutterClearDefault": {
+    "description": "orgFields.flutter.clearDefault"
   },
   "orgFieldsFlutterFirstOptionDefault": "Erste Option ist der Standardwert",
   "@orgFieldsFlutterFirstOptionDefault": {

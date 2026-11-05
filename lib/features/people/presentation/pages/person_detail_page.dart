@@ -43,6 +43,7 @@ import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/utils/people_shift_status.dart' show shiftAssignmentChanged;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
 
 /// Provider for single person with group name
 final personProvider =
@@ -199,11 +200,49 @@ final personHistoryProvider =
   return allHistory;
 });
 
+/// How a person modal ([showPersonModal]) was closed (Ionic PersonPage
+/// dismiss data `{ activated }` / `{ approved }`).
+enum PersonModalResult {
+  /// An archived person was reactivated ("Person reaktivieren").
+  activated,
+
+  /// A pending registration was approved.
+  approved,
+
+  /// A pending registration was declined.
+  declined,
+}
+
+/// Ionic settings `openPlayerModal` / `openApprovePersonModal`:
+/// `modalController.create({ component: PersonPage, presentingElement })`.
+/// On iOS a card modal ([showIosCardModal]), in md mode a regular
+/// `ion-modal` ([showIonModal]: full screen on phones, centred card on
+/// desktop). Archived persons are read-only with "Person reaktivieren",
+/// pending ones offer approve / decline (both follow from the person).
+Future<PersonModalResult?> showPersonModal(
+    BuildContext context, int personId) {
+  Widget build(BuildContext _) =>
+      PersonDetailPage(personId: personId, asModal: true);
+  if (useIosLook(context)) {
+    return showIosCardModal<PersonModalResult>(
+      context,
+      backgroundColor: ionContentBackground(context),
+      builder: build,
+    );
+  }
+  return showIonModal<PersonModalResult>(context, builder: build);
+}
+
 /// Person detail page - with inline editing
 class PersonDetailPage extends ConsumerWidget {
-  const PersonDetailPage({super.key, required this.personId});
+  const PersonDetailPage(
+      {super.key, required this.personId, this.asModal = false});
 
   final int personId;
+
+  /// Shown via [showPersonModal]: closing pops the modal route (with a
+  /// [PersonModalResult]) instead of the go_router page.
+  final bool asModal;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -239,17 +278,20 @@ class PersonDetailPage extends ConsumerWidget {
             body: Center(child: Text(context.l10n.personFlutterNotFound)),
           );
         }
-        return _PersonDetailContent(person: person, personId: personId);
+        return _PersonDetailContent(
+            person: person, personId: personId, asModal: asModal);
       },
     );
   }
 }
 
 class _PersonDetailContent extends ConsumerStatefulWidget {
-  const _PersonDetailContent({required this.person, required this.personId});
+  const _PersonDetailContent(
+      {required this.person, required this.personId, this.asModal = false});
 
   final Person person;
   final int personId;
+  final bool asModal;
 
   @override
   ConsumerState<_PersonDetailContent> createState() =>
@@ -296,6 +338,16 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     _initDraft();
     _loadUserRole();
     _loadSharedFieldValues();
+  }
+
+  /// Closes the page: the modal route ([showPersonModal], with [result])
+  /// or, opened via its route, the go_router page as before.
+  void _close([PersonModalResult? result]) {
+    if (widget.asModal) {
+      Navigator.of(context).pop(result);
+    } else {
+      context.pop();
+    }
   }
 
   /// Ionic getOrganisationPersonKey
@@ -1137,7 +1189,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(context.l10n.personArchived), backgroundColor: AppColors.success),
         );
-        context.pop();
+        _close();
       }
     } catch (e) {
       if (mounted) {
@@ -1242,7 +1294,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             backgroundColor: AppColors.success,
           ),
         );
-        context.pop();
+        _close(PersonModalResult.approved);
       }
     } catch (e) {
       if (mounted) {
@@ -1314,7 +1366,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             backgroundColor: AppColors.success,
           ),
         );
-        context.pop();
+        _close(PersonModalResult.declined);
       }
     } catch (e) {
       if (mounted) {
@@ -1414,7 +1466,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       // The sheet can switch between copy and transfer, so look at the
       // result: a transferred person is archived (`left` set).
       final updated = await ref.read(personProvider(widget.personId).future);
-      if (mounted && (updated == null || updated.left != null)) context.pop();
+      if (mounted && (updated == null || updated.left != null)) _close();
     }
   }
 
@@ -1447,7 +1499,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       if (widget.person.id != null) ref.invalidate(personProvider(widget.person.id!));
       if (!mounted) return;
       ToastHelper.showSuccess(context, context.l10n.personReactivated);
-      context.pop();
+      _close(PersonModalResult.activated);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
     }
@@ -1482,7 +1534,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           );
       if (mounted) {
         ToastHelper.showSuccess(context, context.l10n.personRemoved);
-        context.pop();
+        _close();
       }
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
@@ -1831,7 +1883,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                 onMerged: () {
                   ref.invalidate(realtimePlayersProvider);
                   ref.invalidate(pendingPlayersProvider);
-                  if (mounted) context.pop();
+                  if (mounted) _close();
                 },
               ),
 
