@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../data/help_content_service.dart';
-import '../widgets/glossary_term_dialog.dart';
+import '../widgets/glossary_term_popover.dart';
 import '../widgets/help_markdown.dart';
 import '../../../../l10n/l10n.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
@@ -52,9 +52,15 @@ class HelpArticlePage extends ConsumerWidget {
                   constraints: const BoxConstraints(maxWidth: 720),
                   child: HelpMarkdown(
                     data: article.body,
-                    onGlossaryTap: (name) {
+                    onGlossaryTap: (name, position) {
                       final term = service.findGlossaryTermByName(name);
-                      if (term != null) showGlossaryTermDialog(context, term);
+                      if (term == null) return;
+                      // Ionic: popover at the tapped link (one text line).
+                      showGlossaryTermPopover(
+                        context,
+                        term,
+                        anchor: Rect.fromCenter(center: position, width: 1, height: 22),
+                      );
                     },
                   ),
                 ),
