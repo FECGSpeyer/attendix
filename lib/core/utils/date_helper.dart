@@ -159,6 +159,19 @@ class DateHelper {
   static String isoDay(DateTime d) =>
       '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
+  /// Local start of the day of [value] as UTC ISO string, like Ionic
+  /// `dayjs(value).startOf('day').toISOString()`.
+  ///
+  /// [value] may be a calendar day ("2026-11-10", read as local) or a full
+  /// ISO timestamp ("2026-11-09T23:00:00.000Z", converted to local first).
+  /// Null when [value] can't be parsed.
+  static String? localDayStartUtcIso(String value) {
+    final parsed = DateTime.tryParse(value);
+    if (parsed == null) return null;
+    final local = parsed.toLocal();
+    return DateTime(local.year, local.month, local.day).toUtc().toIso8601String();
+  }
+
   /// "19:00" from a DB time like "19:00:00" (shorter values unchanged).
   static String hhmm(String time) =>
       time.length >= 5 ? time.substring(0, 5) : time;

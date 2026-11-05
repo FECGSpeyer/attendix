@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' show FileOptions;
 import '../../core/constants/enums.dart';
 import '../../core/constants/table_names.dart' show SupabaseBuckets;
 import '../../core/utils/archived_attendance.dart';
+import '../../core/utils/date_helper.dart';
 import '../../core/utils/profile_image_path.dart';
 import '../models/person/person.dart';
 import '../models/instrument/instrument.dart';
@@ -647,9 +648,14 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .eq('id', player.id!)
           .eq('tenantId', currentTenantId);
 
-      // Ionic removePlayerFromUpcomingAttendances(id, left): drop the person
-      // from every Termin after the leave date.
-      await removeFromUpcomingAttendances(player.id!, from: leftDate);
+      // Ionic removePlayerFromUpcomingAttendances(id, left) →
+      // getAttendancesByDate(left): drop the person from every Termin after
+      // the local start of the leave day (date > startOf('day'), exclusive).
+      await removeFromUpcomingAttendances(
+        player.id!,
+        from: leftDate,
+        inclusive: false,
+      );
     } catch (e, stack) {
       handleError(e, stack, 'archivePlayer');
       rethrow;
@@ -919,22 +925,33 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   /// Remove player from all upcoming (future) attendances.
   ///
-  /// With [from] (YYYY-MM-DD) the player is removed from every attendance
-  /// on/after that date, including past ones (Ionic
-  /// removePlayerFromUpcomingAttendances with `from`).
-  Future<void> removeFromUpcomingAttendances(int playerId, {String? from}) async {
+  /// With [from] (YYYY-MM-DD or ISO timestamp) the player is removed from
+  /// every attendance since the *local* start of that day, including past
+  /// ones (Ionic removePlayerFromUpcomingAttendances with `from`): `date >=`
+  /// the day start, or `date >` it with [inclusive] false (archive, Ionic
+  /// getAttendancesByDate). The day is taken in local time so a UTC string
+  /// of local midnight ("2026-11-09T23:00Z" for 10.11.) doesn't reach back
+  /// into the previous day.
+  Future<void> removeFromUpcomingAttendances(
+    int playerId, {
+    String? from,
+    bool inclusive = true,
+  }) async {
     try {
-      final today = DateTime.now().toIso8601String().substring(0, 10);
-      final since = (from != null && from.length >= 10)
-          ? from.substring(0, 10)
-          : today;
+      final fromStart =
+          from != null ? DateHelper.localDayStartUtcIso(from) : null;
 
       // Get attendance IDs (since the given date) for this tenant
-      final upcomingAttendances = await supabase
+      final query = supabase
           .from('attendance')
           .select('id')
-          .eq('tenantId', currentTenantId)
-          .gte('date', since);
+          .eq('tenantId', currentTenantId);
+      final upcomingAttendances = fromStart == null
+          ? await query.gte(
+              'date', DateTime.now().toIso8601String().substring(0, 10))
+          : inclusive
+              ? await query.gte('date', fromStart)
+              : await query.gt('date', fromStart);
 
       final attendanceIds = (upcomingAttendances as List)
           .map((a) => a['id']) // Can be int or String (UUID)
