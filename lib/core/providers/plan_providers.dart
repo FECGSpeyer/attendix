@@ -6,6 +6,7 @@ import '../../data/models/plan/plan.dart';
 import '../../data/repositories/org_plan_repository.dart';
 import '../../data/repositories/plan_repository.dart';
 import '../utils/attendance_percentage_utils.dart' show attendanceListStartDate;
+import '../utils/archived_attendance.dart';
 import '../utils/plan_utils.dart';
 import 'organisation_providers.dart';
 import 'tenant_providers.dart';
@@ -44,18 +45,19 @@ final _planRepositoryForAccountProvider =
 /// Termine of the current season with their plans (newest first)
 final planAttendancesProvider = FutureProvider<List<PlanAttendance>>((ref) async {
   final repo = ref.watch(planRepositoryWithTenantProvider);
-  // Archived Termine are filtered by role in the repository: reload when the
-  // role is known / changes.
-  ref.watch(currentRoleProvider);
   if (!repo.hasTenantId) return [];
   final seasonStart = ref.watch(currentTenantProvider.select((t) => t?.seasonStart));
-  return repo.getPlanAttendances(since: attendanceListStartDate(seasonStart));
+  // Ionic getAttendance → filterArchivedForRole (only admin/responsible
+  // see archived Termine in the Ablaufplan editor).
+  final includeArchived = canSeeArchivedAttendances(ref.watch(currentRoleProvider));
+  return repo.getPlanAttendances(since: attendanceListStartDate(seasonStart), includeArchived: includeArchived);
 });
 
 /// One Termin with its plans
 final planAttendanceByIdProvider = FutureProvider.family<PlanAttendance?, int>((ref, id) async {
   final repo = ref.watch(planRepositoryWithTenantProvider);
-  ref.watch(currentRoleProvider); // archived filter (see above)
+  // Archived Termine only for admin/responsible (repository check by role).
+  ref.watch(currentRoleProvider);
   if (!repo.hasTenantId) return null;
   return repo.getPlanAttendanceById(id);
 });

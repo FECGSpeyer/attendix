@@ -30,22 +30,57 @@ final tenantByRegisterIdProvider = FutureProvider.family<Tenant?, String>((ref, 
   return Tenant.fromJson(response);
 });
 
-/// Provider for loading groups for a tenant
+/// Provider for loading groups for a tenant (Ionic GroupService.getGroups:
+/// category, sort_order (nulls last), name; then `maingroup !== true`, so
+/// groups without a maingroup value stay in the list).
 final registrationGroupsProvider = FutureProvider.family<List<Map<String, dynamic>>, int>((ref, tenantId) async {
   final supabase = ref.watch(supabaseClientProvider);
 
   final response = await supabase
       .from('instruments')
-      .select('id, name')
+      .select('id, name, maingroup')
       .eq('tenantId', tenantId)
-      .eq('maingroup', false)
-      .order('name');
+      .order('category', ascending: true)
+      .order('sort_order', ascending: true)
+      .order('name', ascending: true);
 
-  return (response as List).map((g) => {
-    'id': g['id'] as int,
-    'name': g['name'] as String,
-  }).toList();
+  return (response as List)
+      .where((g) => g['maingroup'] != true)
+      .map((g) => {
+            'id': g['id'] as int,
+            'name': g['name'] as String,
+          })
+      .toList();
 });
+
+/// Ionic tenant-register ngOnInit: the extra fields of the registration in
+/// the order of `registration_fields`.
+List<ExtraField> orderedRegistrationFields(
+  List<String> registrationFields,
+  List<ExtraField> additionalFields,
+) {
+  final fields = <ExtraField>[];
+  for (final id in registrationFields) {
+    final field = additionalFields.where((f) => f.id == id).firstOrNull;
+    if (field != null) fields.add(field);
+  }
+  return fields;
+}
+
+/// Ionic tenant-register ngOnInit: every registration field starts with its
+/// `defaultValue` (church: none) and register() stores each field value in
+/// `additional_fields`, so an untouched select keeps its default.
+Map<String, dynamic> registrationFieldDefaults(
+  List<String> registrationFields,
+  List<ExtraField> additionalFields,
+) {
+  return {
+    for (final field
+        in orderedRegistrationFields(registrationFields, additionalFields))
+      if (field.id != 'bfecg_church' && field.defaultValue != null)
+        field.id: field.defaultValue,
+  };
+}
 
 /// Model for registration form data
 class RegistrationFormData {
@@ -60,6 +95,9 @@ class RegistrationFormData {
   String? notes;
   Map<String, dynamic> additionalFields;
   Uint8List? profileImageBytes;
+
+  /// Content type of [profileImageBytes] (as picked, not re-encoded).
+  String? profileImageMimeType;
 
   RegistrationFormData({
     this.email = '',
@@ -229,8 +267,8 @@ class RegistrationService {
           await supabase.storage.from(SupabaseBuckets.profiles).uploadBinary(
                 storagePath,
                 formData.profileImageBytes!,
-                fileOptions: const FileOptions(
-                  contentType: 'image/jpeg',
+                fileOptions: FileOptions(
+                  contentType: formData.profileImageMimeType ?? 'image/jpeg',
                   upsert: true,
                 ),
               );

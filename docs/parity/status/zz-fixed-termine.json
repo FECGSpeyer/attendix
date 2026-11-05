@@ -1,0 +1,274 @@
+{
+  "batch": "zz-fixed-termine",
+  "afterRound": 4,
+  "ionic": "9f9b82af",
+  "items": {
+    "attendance/attendance/attendance.page#field-7e76e2fd": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1774",
+        "lib/shared/widgets/adaptive/app_pickers.dart:79"
+      ],
+      "n": "behoben in #291"
+    },
+    "attendance/att-list/att-list.page#modal-c5dfef61": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+        "lib/features/planning/presentation/attendance_plan_viewer.dart"
+      ],
+      "n": "behoben in #305"
+    },
+    "attendance/att-list/att-list.page#modal-66d0050c": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+        "lib/features/planning/presentation/attendance_plan_viewer.dart"
+      ],
+      "n": "behoben in #305"
+    },
+    "planning/plan-viewer/plan-viewer.component#action-705fc86e": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+        "lib/features/planning/presentation/attendance_plan_viewer.dart"
+      ],
+      "n": "behoben in #305"
+    },
+    "planning/plan-viewer/plan-viewer.component#action-a5b1e6d4": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+        "lib/features/planning/presentation/attendance_plan_viewer.dart"
+      ],
+      "n": "behoben in #305"
+    },
+    "planning/plan-viewer/plan-viewer.component#x-de53b1e39b": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+        "lib/features/planning/presentation/attendance_plan_viewer.dart"
+      ],
+      "n": "Terminliste behoben in #305, Selbstservice in #298"
+    },
+    "public-planning/public-planning.page#effect-73ff88d2": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/public_brandings.dart:1",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
+      ],
+      "n": "behoben in #300"
+    },
+    "public-planning/public-planning.page#effect-6021ff44": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/public_brandings.dart:1",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
+      ],
+      "n": "behoben in #300"
+    },
+    "public-planning/public-planning.page#effect-1ad39a4e": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/public_brandings.dart:1",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
+      ],
+      "n": "behoben in #300"
+    },
+    "public-planning/public-planning.page#db-b17aa9e7": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/plan_repository.dart:234"
+      ],
+      "n": "behoben in #300"
+    },
+    "public-planning/public-planning.page#field-2ffcb596": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/public_brandings.dart:1",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
+      ],
+      "n": "behoben in #300"
+    },
+    "shared-plan/shared-plan.page#effect-228109d7": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/public_brandings.dart:1",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
+      ],
+      "n": "behoben in #300"
+    },
+    "planning/planning.page#actionsheet-0c53b41c": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart"
+      ],
+      "n": "behoben in #301"
+    },
+    "planning/planning.page#alert-75ab0ccf": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart",
+        "lib/shared/widgets/adaptive/app_select.dart"
+      ],
+      "n": "behoben in #301"
+    },
+    "planning/planning.page#x-7d55a70233": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart"
+      ],
+      "n": "behoben in #301"
+    },
+    "planning/planning.page#x-9b169a1078": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart"
+      ],
+      "n": "behoben in #301"
+    },
+    "planning/planning.page#x-5e1a396117": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/plan_repository.dart",
+        "lib/core/providers/plan_providers.dart",
+        "lib/features/planning/presentation/pages/planning_page.dart"
+      ],
+      "n": "behoben in #301"
+    },
+    "attendance/att-list/att-list.page#alert-c973a254": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/att-list/att-list.page#modal-f5836528": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#toast-821c46bb": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#actionsheet-19467990": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#alert-aadedcba": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#alert-9b3e485d": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart",
+        "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#text-be8be344": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#effect-8f43ff82": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/att-list/att-list.page#alert-0c061d4b": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/my_duty_requests_section.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/att-list/att-list.page#toast-a71d4842": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/my_duty_requests_section.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#effect-839f92ba": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#effect-7cdd0978": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/att-list/att-list.page#x-9616cc8ac2": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "shared-plan/shared-plan.page#action-ec0c1511": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/shared_plan_page.dart",
+        "lib/features/planning/presentation/widgets/shared_plan_edit_list.dart",
+        "lib/features/planning/presentation/widgets/plan_view_list.dart"
+      ],
+      "n": "behoben in #309"
+    },
+    "shared-plan/shared-plan.page#action-a9ede0e6": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/widgets/shared_plan_edit_list.dart"
+      ],
+      "n": "behoben in #309"
+    },
+    "public-planning/public-planning.page#alert-53b00c7b": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/widgets/plan_fields_editor.dart",
+        "lib/features/planning/presentation/pages/public_planning_page.dart"
+      ],
+      "n": "behoben in #309"
+    },
+    "public-planning/public-planning.page#effect-9082e8f4": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart",
+        "lib/core/services/web_window_web.dart"
+      ],
+      "n": "behoben in #309"
+    },
+    "public-planning/public-planning.page#effect-9082e8f4-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart",
+        "lib/core/services/web_window_web.dart"
+      ],
+      "n": "behoben in #309"
+    }
+  }
+}

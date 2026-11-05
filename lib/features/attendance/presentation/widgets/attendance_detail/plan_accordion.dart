@@ -14,7 +14,6 @@ import '../../../../../core/utils/plan_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/plan/plan.dart';
 import '../../../../planning/presentation/widgets/plan_export_actions.dart';
-import '../../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../planning/presentation/widgets/plan_view_list.dart';
 import '../../../../songs/presentation/utils/song_utils.dart';
 import '../../../../team_organization/presentation/widgets/attendance_protocol_section.dart';
@@ -113,21 +112,25 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
     );
   }
 
-  /// Ionic `exportAttendancePlans` titleOf: plan title, else
-  /// `Utils.getPlanningTitle(type, typeInfo)`.
+  /// Ionic export title: `plan.title`, else `Utils.getPlanningTitle` (the
+  /// type's planning_title, with typeInfo in brackets), else typeInfo, else
+  /// the type name.
   String _title(PlanAttendance att, Plan plan, AttendanceType? type) {
     final t = plan.title?.trim();
     if (t != null && t.isNotEmpty) return t;
-    return PlanUtils.planningTitle(
-      planningTitle: type?.planningTitle,
-      typeName: type?.name,
-      typeInfo: att.typeInfo,
-    );
+    final pt = type?.planningTitle?.trim() ?? '';
+    final info = att.typeInfo?.trim() ?? '';
+    if (pt.isNotEmpty) return info.isNotEmpty ? '$pt ($info)' : pt;
+    if (info.isNotEmpty) return info;
+    final name = type?.name.trim() ?? '';
+    return name.isNotEmpty ? name : context.l10n.plansRunSheet;
   }
 
   Future<void> _export(PlanAttendance att, List<Plan> plans, int index) async {
-    // Resolved before the sheet: titles and file names use the same type.
-    final type = await resolvePlanAttendanceType(ref, att);
+    // Resolved before the sheet (awaits the types; an org plan's type is
+    // read in its own tenant): titles and file names use the same type.
+    final type = await resolvePlanAttendanceType(
+        ref, att.typeId != null ? att : att.copyWith(typeId: widget.attendance.typeId));
     if (!mounted) return;
     PlanExportPage page(int i) {
       final p = plans[i];
@@ -141,25 +144,44 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
       );
     }
 
-    final d = DateTime.tryParse(att.date);
+    // Ionic file name: `<Titel>_DD_MM_YYYY`, `_alle` for all plans, `_2x`
+    // for 2x A5 (added by runPlanExport).
+    final d = DateTime.tryParse(att.date)?.toLocal();
     final date = d == null ? '' : '_${d.day.toString().padLeft(2, '0')}_${d.month.toString().padLeft(2, '0')}_${d.year}';
+    final fileName = '${_title(att, plans[index], type)}$date';
+    if (plans.length > 1) {
+      // Ionic sharePlan with several plans: openPlanShareSheet (this plan /
+      // all plans: PDF, PDF 2x A5, Telegram PDF / 2x A5; Bild only for one).
+      final choice = await showPlanShareSheet(
+        context,
+        ref,
+        currentLabel: PlanUtils.planLabel(att, index, plans),
+        planCount: plans.length,
+      );
+      if (choice == null || !mounted) return;
+      await runPlanExport(
+        context,
+        ref,
+        choice.action,
+        pages: choice.all ? [for (var i = 0; i < plans.length; i++) page(i)] : [page(index)],
+        fileName: choice.all ? '${fileName}_alle' : fileName,
+        pdf2xSuffix: true,
+      );
+      return;
+    }
+    // Ionic sharePlan with one plan: „Ablaufplan teilen“ with „Exportieren
+    // (PDF)“, „Exportieren (PDF 2x A5)“ and always the three Telegram entries.
     await showPlanExportSheet(
       context,
       ref,
+      title: context.l10n.attendanceShareRunSheet,
       pages: () => [page(index)],
-      fileName: '${_title(att, plans[index], type)}$date',
-      extraActions: [
-        if (plans.length > 1)
-          PlanSheetAction('all', context.l10n.planningExportPdfAll, icon: Icons.picture_as_pdf),
-      ],
-      onExtraAction: (_) => runPlanExport(
-        context,
-        ref,
-        PlanExportAction.pdf,
-        pages: [for (var i = 0; i < plans.length; i++) page(i)],
-        // Ionic: title of the first plan + "_alle".
-        fileName: '${_title(att, plans.first, type)}${date}_alle',
-      ),
+      fileName: fileName,
+      pdfLabel: context.l10n.attendanceExportPdf,
+      pdf2xLabel: context.l10n.attendanceExportPdfA5,
+      withImage: false,
+      alwaysTelegram: true,
+      pdf2xSuffix: true,
     );
   }
 
@@ -183,7 +205,6 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
   Widget build(BuildContext context) {
     // P10_ATTENDANCE: keep the data of the missing-groups line loaded
     ref.watch(songsProvider);
-    ref.watch(attendanceTypesProvider); // export title (getPlanningTitle)
     ref.watch(groupCategoriesProvider);
     ref.watch(missingGroupsPlayerCountsProvider);
     final att = _planAttendance();

@@ -50,6 +50,33 @@ class PlanUtils {
   /// Minutes a field takes in the running total (heads take none).
   static int fieldMinutes(PlanField f) => isGroupHead(f) ? 0 : minutesOf(f);
 
+  /// Index of [field] in [fields] after the list may have changed (e.g. a
+  /// Realtime update while a dialog was open): the same object, otherwise
+  /// the row with the same `uid`, otherwise (no uid) the row with the same
+  /// `id`. -1 when the row is gone or the match is not unique (a song or
+  /// org field inserted twice shares its id), so nothing is written to the
+  /// wrong row. [openedIn] is the list the field was taken from: the `id`
+  /// fallback needs the id to have been unique there too (otherwise deleting
+  /// the edited duplicate would leave the other one as a "unique" match).
+  static int indexOfField(List<PlanField> fields, PlanField field, {List<PlanField>? openedIn}) {
+    int unique(List<PlanField> list, bool Function(PlanField f) test) {
+      var found = -1;
+      for (var i = 0; i < list.length; i++) {
+        if (!test(list[i])) continue;
+        if (found != -1) return -1;
+        found = i;
+      }
+      return found;
+    }
+
+    final same = unique(fields, (f) => identical(f, field));
+    if (same != -1) return same;
+    final uid = field.uid;
+    if (uid != null && uid.isNotEmpty) return unique(fields, (f) => f.uid == uid);
+    if (openedIn != null && unique(openedIn, (f) => f.id == field.id) == -1) return -1;
+    return unique(fields, (f) => f.id == field.id);
+  }
+
   // ---------------------------------------------------------------------------
   // Programmblöcke
   // ---------------------------------------------------------------------------

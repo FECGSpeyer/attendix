@@ -43,42 +43,47 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
   /// Termine of the instance since [since] (newest first), like Ionic
   /// `db.getAttendance()` (`gt('date', getCurrentAttDate())`: season start,
   /// fallback 2023-01-01).
-  Future<List<PlanAttendance>> getPlanAttendances({required String since}) async {
+  ///
+  /// Ionic `filterArchivedForRole`: without [includeArchived] (every role but
+  /// admin/responsible) archived Termine are left out.
+  Future<List<PlanAttendance>> getPlanAttendances({required String since, bool includeArchived = true}) async {
     try {
       // SOL_FIX1: paged (PostgREST max-rows 1000), stable order date+id;
       // tenant captured once for all pages.
       final tenantId = currentTenantId;
-      final response = await fetchAllPages<dynamic>((from, to) async =>
-          await supabase
-              .from('attendance')
-              .select(planAttendanceColumns)
-              .eq('tenantId', tenantId)
-              .gt('date', since)
+      final response = await fetchAllPages<dynamic>((from, to) async {
+        var query = supabase
+            .from('attendance')
+            .select(planAttendanceColumns)
+            .eq('tenantId', tenantId)
+            .gt('date', since);
+        // `not.is.true` keeps rows where archived is null.
+        if (!includeArchived) query = query.not('archived', 'is', true);
+        return await query
               .order('date', ascending: false)
               .order('id', ascending: false)
-              .range(from, to) as List);
+              .range(from, to) as List;
+      });
 
-      // Ionic `getAttendance()` → `filterArchivedForRole`.
-      return filterArchivedForRole(
-        response.cast<Map<String, dynamic>>(),
-        currentUserRole,
-        isArchivedRow,
-      ).map(PlanAttendance.fromJson).toList();
+      return response
+          .map((e) => PlanAttendance.fromJson(e as Map<String, dynamic>))
+          .toList();
     } catch (e, stack) {
       handleError(e, stack, 'getPlanAttendances');
       rethrow;
     }
   }
 
-  /// One Termin with its plans.
-  Future<PlanAttendance?> getPlanAttendanceById(int id) async {
+  /// One Termin with its plans ([includeArchived] as in [getPlanAttendances]).
+  Future<PlanAttendance?> getPlanAttendanceById(int id, {bool includeArchived = true}) async {
     try {
-      final response = await supabase
+      var query = supabase
           .from('attendance')
           .select(planAttendanceColumns)
           .eq('id', id)
-          .eq('tenantId', currentTenantId)
-          .maybeSingle();
+          .eq('tenantId', currentTenantId);
+      if (!includeArchived) query = query.not('archived', 'is', true);
+      final response = await query.maybeSingle();
 
       if (response == null) return null;
       // Archived Termine only for admins/responsible, also by id (like
@@ -278,7 +283,10 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
       }
       final data = plan.copyWith(creatorUserId: userId).toJson()
         ..remove('created_at')
-        ..remove('org_id');
+        ..remove('org_id')
+        // Ionic sends branding_id: null for „Kein Branding“; toJson drops
+        // nulls, which would keep an earlier branding in the row.
+        ..['branding_id'] = plan.brandingId;
       await supabase.from('shared_plans').upsert(data, onConflict: 'id');
     } catch (e, stack) {
       handleError(e, stack, 'upsertMySharedPlan');

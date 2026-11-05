@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -8,6 +10,10 @@ import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
+import '../../../../core/providers/plan_providers.dart';
+import '../../../../core/providers/song_providers.dart';
+import '../../../../data/models/plan/plan.dart';
+import '../../../../data/models/song/song.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/archived_attendance.dart';
 import '../../../../core/utils/color_utils.dart';
@@ -49,8 +55,21 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   // UX_ATT: iOS large title (Ionic ion-header collapse="condense")
   final _condense = CondenseHeaderController();
 
+  /// Debounced refresh of the duty providers after a list reload.
+  Timer? _dutyRefreshTimer;
+
+  /// Tenant seen by the previous list-reload callback.
+  int? _dutyRefreshTenantId;
+
+  @override
+  void initState() {
+    super.initState();
+    _dutyRefreshTenantId = ref.read(currentTenantIdProvider);
+  }
+
   @override
   void dispose() {
+    _dutyRefreshTimer?.cancel();
     _condense.dispose();
     super.dispose();
   }
@@ -100,7 +119,43 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   }
 
   /// Opens the Ablaufplan read-only; a Termin running today starts in live mode.
-  Future<void> _openPlanViewer(Attendance att) => openAttendancePlanViewer(context, att);
+  /// Ionic: with the Termin's further plans (`extra_plans` → day chips), the
+  /// Werke (rows open the score options) and, for Dirigent/Helfer (canEdit),
+  /// a pencil that opens the editor on the shown plan.
+  Future<void> _openPlanViewer(Attendance att) async {
+    final canEdit = ref.read(effectiveRoleProvider).canAddAttendance;
+    // Werke and the further plans load in parallel; a slow or failed load
+    // only drops the score actions / extra plans.
+    final cachedSongs = ref.read(songsProvider).valueOrNull ?? const <Song>[];
+    final songsFuture = ref
+        .read(songsProvider.future)
+        .timeout(const Duration(seconds: 5))
+        .catchError((_) => cachedSongs);
+    // The list rows carry only `plan`; the further plans are read with the
+    // Termin (tenant-scoped). Offline / on failure only the main plan shows.
+    var extra = const <Plan>[];
+    final id = att.id;
+    if (id != null) {
+      try {
+        final repo = ref.read(planRepositoryWithTenantProvider);
+        if (repo.hasTenantId) {
+          final full = await repo.getPlanAttendanceById(id).timeout(const Duration(seconds: 5));
+          extra = full?.extraPlans ?? const [];
+        }
+      } catch (_) {}
+    }
+    final songs = await songsFuture;
+    if (!mounted) return;
+    await openAttendancePlanViewer(
+      context,
+      att,
+      songs: songs,
+      extraPlans: extra,
+      onEdit: canEdit && id != null
+          ? (i) => context.push<bool>('/planning?attendanceId=$id${i > 0 ? '&plan=$i' : ''}')
+          : null,
+    );
+  }
 
   /// Termintyp filter popover (Ionic att-list "options" popover).
   Widget _buildTypeFilterButton(List<AttendanceType> types) {
@@ -269,6 +324,32 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   Widget build(BuildContext context) {
     final ref = this.ref;
     final attendanceAsync = ref.watch(realtimeAttendanceListProvider);
+    // Ionic getAttendance recomputes the duty badge/names and „Deine
+    // Dienste“ from the freshly loaded Termine on every reload (realtime,
+    // pull-to-refresh, after creating). The duty data are separate cached
+    // providers here, so refresh them whenever the list reloads.
+    ref.listen<AsyncValue<List<Attendance>>>(realtimeAttendanceListProvider, (prev, next) {
+      // A tenant switch reloads the duty providers on its own; don't
+      // invalidate them with the previous tenant's list.
+      final tenantId = ref.read(currentTenantIdProvider);
+      final tenantChanged = tenantId != _dutyRefreshTenantId;
+      _dutyRefreshTenantId = tenantId;
+      if (tenantChanged) {
+        _dutyRefreshTimer?.cancel();
+        return;
+      }
+      if (prev?.hasValue == true && next.hasValue && !next.isLoading && !identical(prev!.value, next.value)) {
+        // Bundle bursts of reloads (realtime) into one refresh.
+        _dutyRefreshTimer?.cancel();
+        _dutyRefreshTimer = Timer(const Duration(seconds: 1), () {
+          if (!mounted || ref.read(currentTenantIdProvider) != tenantId) return;
+          ref.invalidate(dutyTermineByIdProvider);
+          ref.invalidate(upcomingDutyTermineProvider);
+          // "Deine Dienste" (Ionic recomputes it with every getAttendance).
+          ref.invalidate(myDutyOverviewProvider);
+        });
+      }
+    });
     // Use effectiveRoleProvider to support debug role override
     final role = ref.watch(effectiveRoleProvider);
     // UX_ATT: Ionic shows the large "Termine" title (iOS) only with one tenant;
