@@ -19,5 +19,9 @@ Fix-PRs). Keine `niedrig`-Abweichung wird mehr ausgelassen.
 | `sonnet` | übrige Elemente (Texte, Felder, Aktionen, Dialoge, Toasts …) | 1.944 | Sonnet |
 
 Jedes Paket `input/<name>.json` wird nach `tool/parity/verify-brief.md`
-geprüft; das Ergebnis kommt nach `docs/parity/status/<name>.json`
-(`"ionic": "1923d203"`, `"flutter": "0f74333"`).
+geprüft; das Ergebnis liegt als Runde 6 in `docs/parity/status/zz-verify6-<gruppe>-<nr>.json`
+(`"ionic": "1923d203"`, `"flutter": "0f74333"`). Als eigene Runde 6, weil
+sie nach den Fix-Dateien mit `afterRound: 5` (Rang 5,6) zählen muss; ein Name
+`zz-verify5c-*` würde vom Werkzeug nicht als Runde erkannt. Abgleich der
+Schwere-Regeln in `status/zz-r6-korrekturen.json`. Fixes, die nach `0f74333`
+gemergt werden, tragen `"afterRound": 6`.

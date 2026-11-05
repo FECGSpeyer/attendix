@@ -1,0 +1,422 @@
+{
+ "batch": "zz-verify6-opus-27",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "settings/help/help.page#nav-b922e3ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_page.dart:54",
+    "lib/core/router/app_router.dart:1216-1232",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:127"
+   ],
+   "n": "Ionic navigateBack('/tabs/settings') / Flutter Zurück = maybePop; /settings/help ist Unterroute von /settings, Aufruf per push aus Einstellungen oder per go aus der Seitennavigation → landet immer auf Einstellungen. Router-Zeile aktualisiert (Route jetzt :1216).",
+   "v": "bestätigt"
+  },
+  "settings/role-permissions/role-permissions.page#toast-e9051e56": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/role_permissions_page.dart:73-93",
+    "lib/core/providers/role_permission_providers.dart:279-311",
+    "lib/core/router/app_router.dart:174",
+    "lib/features/settings/presentation/pages/settings_page.dart:212-237"
+   ],
+   "n": "„Rollenberechtigungen gespeichert“ grün nach Speichern, Fehler → „rolePerm.saveFailed“ rot (beide). Seite nur Admin/Verantwortliche (Route-Guard :174 = Ionic isUrlAccessAllowed + isAdmin-Eintrag); files_shared nur für Rolle ADMIN geschrieben (beide). Flutter schreibt nur geänderte Zeilen – gleiche Werte.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-03eef951": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/viewers_page.dart:88-92",
+    "lib/features/settings/presentation/pages/viewers_page.dart:204-237",
+    "lib/features/settings/presentation/pages/viewers_page.dart:253-259",
+    "lib/data/repositories/viewer_repository.dart:19-26"
+   ],
+   "n": "Flutter besser: Liste nach Nachname, Vorname sortiert (viewer_repository .order lastName/firstName ascending: true) / Ionic getViewers ohne ORDER BY (DB-Reihenfolge). Sonst gleich: Name + E-Mail, kein Chevron (detail=false), Tippen → „Beobachter entfernen?“ mit Abbrechen/Ja; Rollen gleich (Admin/Verantwortliche). Flutter zusätzlich Erfolgs-Toast.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-0b6bb97b": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:546-553",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:260-274",
+    "lib/core/providers/tenant_providers.dart:400-416"
+   ],
+   "n": "Instanzliste für alle Rollen; voller Wisch nach links (DismissiblePane.confirmDismiss) toggelt den Favoriten: tenantUsers.favorite gefiltert auf tenantId + userId wie Ionic setFavoriteTenant. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-23b43f46": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:247-257",
+    "lib/core/router/app_router.dart:177",
+    "lib/core/router/app_router.dart:1042"
+   ],
+   "n": "Nur Admin/Verantwortliche (isAdmin = isAdmin||isResponsible, settings_page.dart:73) und nur ohne Seitenpanel (!sp); Titel „Mitteilungen“ + Hinweis „Nachrichten senden und automatisch nachfassen“, Ziel /settings/messages (Guard Admin/Verantwortliche). Router-Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-25aed01a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:573-602",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:202-243",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:604-614",
+    "lib/features/tenant_selection/presentation/pages/tenant_detail_page.dart:55"
+   ],
+   "n": "Kurzname, Langname, Badge „Aktuell“, Favoriten-Stern; Tippen: aktuelle Instanz → nichts, sonst Wechsel, Sheet zu, Start-URL der Rolle (role.defaultRoute) wie Ionic. Flutter zusätzlich: Info-Button je Instanz → Flutter-only Detailseite (Mitgliederzahl, Rolle; Löschen nur Rolle Admin, Demo durch deleteTenant gesperrt) – keine Rolle darf mehr als in Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-2ec504ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:305-316",
+    "lib/core/router/app_router.dart:986"
+   ],
+   "n": "Block !general && !Bewerber && (!sp || isAdmin || isHelper), Eintrag nur ohne Seitenpanel (beide); Ziel /settings/songs ohne Rollen-Gate wie Ionic (isUrlAccessAllowed true). Router-Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-4e6845f9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:233-237",
+    "lib/core/router/app_router.dart:174",
+    "lib/core/router/app_router.dart:1248"
+   ],
+   "n": "Nur Admin und Verantwortliche (Ionic isAdmin; Flutter isAdmin = role.isAdmin || role.isResponsible, settings_page.dart:73); übrige Rollen sehen es in beiden nicht. Ziel /settings/role-permissions, Guard Admin/Verantwortliche. Router-Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-5bb3e6ac": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/parents_page.dart:88-92",
+    "lib/features/settings/presentation/pages/parents_page.dart:204",
+    "lib/features/settings/presentation/pages/parents_page.dart:253-259",
+    "lib/data/repositories/parent_repository.dart:19-26"
+   ],
+   "n": "Rollen/Mandant gleich (Admin/Verantwortliche, tenant.parents); Tippen → Entfernen-Dialog. Ionic: ion-item button ohne detail=\"false\" → auf iOS Chevron; Liste ohne ORDER BY / Flutter: kein Chevron, Liste nach Nachname, Vorname sortiert (eher besser).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-853e8c3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:217-221",
+    "lib/core/router/app_router.dart:166",
+    "lib/core/router/app_router.dart:1097"
+   ],
+   "n": "Nur Admin und Verantwortliche (beide isAdmin); Ziel /settings/general, Guard Admin/Verantwortliche wie Ionic isUrlAccessAllowed. Router-Zeilen aktualisiert (Guard jetzt :166).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-a5717533": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:238-242",
+    "lib/core/router/app_router.dart:198",
+    "lib/core/router/app_router.dart:1269"
+   ],
+   "n": "Nur Admin und Verantwortliche; „Dashboard konfigurieren“ → /settings/dashboard, Guard Admin/Verantwortliche wie Ionic. Router-Zeilen aktualisiert (Guard jetzt :198).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-aa4cba95": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:227-232",
+    "lib/core/router/app_router.dart:187",
+    "lib/core/router/app_router.dart:1023"
+   ],
+   "n": "Admin/Verantwortliche und nur bei tenant.maintainTeachers – gleich; Ziel /settings/teachers (Guard isConductor = Ionic ADMIN/RESPONSIBLE/VIEWER). Router-Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-bfcc1d8c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:222-226",
+    "lib/core/router/app_router.dart:168",
+    "lib/core/router/app_router.dart:1018"
+   ],
+   "n": "Nur Admin und Verantwortliche; „Gruppen“ → /settings/instruments, Guard Admin/Verantwortliche wie Ionic. Router-Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-c5e57298": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/left_players_page.dart:206-210",
+    "lib/features/settings/presentation/pages/left_players_page.dart:126-139",
+    "lib/features/settings/presentation/pages/left_players_page.dart:211-215",
+    "lib/features/settings/presentation/pages/left_players_page.dart:148-184"
+   ],
+   "n": "Zeile „Vorname Nachname (Gruppe)“ + „Ausgetreten: dd.MM.yyyy“, Tippen öffnet die Person (Modal, Liste neu bei Reaktivierung) wie Ionic. Flutter zusätzlich: grüner Reaktivieren-Button je Zeile mit eigenem Dialog und Toast; nutzt dieselbe reactivatePlayer-Logik wie die Personenseite (Konto, Historie, left=null, kommende Termine), Rollen gleich (nur Archiv-Sheet für Admin/Verantwortliche).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-d97dcdca": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:556-558",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:278-283"
+   ],
+   "n": "Rote Lösch-Aktion in der Wischleiste für alle Rollen; Handler prüft wie Ionic canDeleteTenant die Rolle ADMIN in genau dieser Instanz (tenantUsers.role) und !Demo, sonst Toast „Du kannst diese Instanz nicht löschen.“. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#alert-7157049d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:286-337",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:344-365",
+    "lib/core/providers/tenant_providers.dart:420-446",
+    "lib/core/utils/dashboard_logic.dart:56-61"
+   ],
+   "n": "Titel „Instanz löschen?“, Nachricht mit Name, Platzhalter „Name der Instanz eingeben...“, Abbrechen/Löschen, falscher Name → Meldung „Der eingegebene Name ist nicht korrekt.“ (Dialog bleibt) gleich; DB-Löschen tenants.id wie Ionic. Note der Erstprüfung veraltet: Flutter navigiert jetzt nach jedem Löschen (aktuelle Instanz → /tenants mit Auto-Auswahl, sonst Startseite der Rolle). Rest: Ionic Utils.getUrl(role) / Flutter homeRouteFor → bei aktivem Dashboard-Start /home-dashboard statt /people; Ladeoverlay fehlt (eigenes Item).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#effect-19f49e82": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:53-57",
+    "lib/core/services/certificate_service.dart:31-113",
+    "lib/core/services/native/native_file_service.dart:167-176"
+   ],
+   "n": "PDF gleich (A4 je Person mit Hintergrund, Name Times fett-kursiv 48 pt, „hat die Vorkursprüfung / erfolgreich bestanden“, „Speyer, den D.M.YYYY“), Dateiname Urkunden_Vorkurs_YYYY-MM-DD.pdf, nativ Cache + Dateiansicht wie Ionic. Ionic mobiles Web: Teilen-Dialog (navigator.share) / Flutter Web: immer Anker-Download (Printing.sharePdf, pub-cache printing 5.15.1). Kleinigkeit: Flutter verkleinert sehr lange Namen per FittedBox unter 28 pt. Gleicher Befund wie utilities/Utils#effect-c485f21b.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#loading-050c9fa4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:202-243"
+   ],
+   "n": "Ionic: blockierendes Loading (3 s) beim Instanzwechsel, Sheet sofort zu / Flutter: kein Ladeoverlay; das Sheet bleibt während Rollenabfrage und Tenant-Setzen offen (nicht gesperrt) und schließt erst danach (Erstnotiz „Sheet sofort geschlossen“ und Referenz tenant_switcher_title.dart betrafen nicht diesen Pfad).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#loading-48280d26": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:358"
+   ],
+   "n": "Ionic: blockierendes Loading „Instanz wird entfernt...“ / Flutter: kein Ladeoverlay während deleteTenant; danach Toast „Instanz wurde erfolgreich gelöscht!“ bzw. Fehler-Toast.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#loading-bfd0a3e6": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:260-274"
+   ],
+   "n": "Ionic: blockierendes Loading (5 s) beim Favorit setzen / Flutter: kein Ladeoverlay.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#logic-377d0a85": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:73-110",
+    "lib/features/settings/presentation/pages/settings_page.dart:162-173",
+    "lib/features/profile/presentation/widgets/profile_hero_card.dart:29",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:77-95",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:258-311",
+    "lib/core/providers/profile_providers.dart:142-210"
+   ],
+   "n": "Nach Änderung von master_data_sheet.dart weiter gleich: Default-Vorbelegung editierbarer Zusatzfelder, Speichern trennt Org-Felder (shared values) von Instanzfeldern, correctBirthday nur bei geänderter Geburtstag, Gemeinde-Sync nur bei Änderung, Sheet bleibt offen + Toast „profileUpdated“; Bild ersetzen/ansehen/entfernen mit Bestätigung und 2-MB-Grenze. Rollenflags, Datenquellen, getRoleName, canDeleteTenant usw. wie Ionic. Abweichungen siehe extra (Pull-to-Refresh, Flutter-only Beta-Zeile) und Einzel-Items.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#nav-64addfe6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/language_picker_tile.dart:82",
+    "lib/features/settings/presentation/widgets/language_picker_tile.dart:98",
+    "lib/core/providers/locale_provider.dart:80-91",
+    "lib/main.dart:265"
+   ],
+   "n": "Ionic: Sprache lokal + am Konto speichern, dann window.location.reload() / Flutter: setLanguage speichert lokal + am Konto, MaterialApp.locale (main.dart:265) wechselt sofort, Seite bleibt – gleiche Wirkung ohne Neuladen. Gleiche Sprache gewählt: nichts (beide). main.dart-Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#nav-78b78dd3": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:209",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:231-243",
+    "lib/core/constants/enums.dart:137-141",
+    "lib/core/router/go_replace.dart:9"
+   ],
+   "n": "Ziel nach Rolle in der neuen Instanz wie Utils.getUrl: Admin/Verantwortlich/Beobachter → /people, Eltern → /parents, übrige → /signout (role.defaultRoute, kein Dashboard-Start wie Ionic onTenantChange); aktuelle Instanz angetippt: nichts.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-14ba6220": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/left_players_page.dart:60",
+    "lib/features/settings/presentation/pages/left_players_page.dart:39-44"
+   ],
+   "n": "Sheet-Titel „Archiv“ (Sheet 0.5 initial wie Ionic). Zeile aktualisiert (:58 → :60).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-5bc1738e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:287",
+    "lib/data/repositories/viewer_repository.dart:19-26"
+   ],
+   "n": "Nur Admin/Verantwortliche; Zähler = viewers der Instanz (tenantId-Filter); Sortierung ändert die Anzahl nicht.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-d9253696": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:275-280",
+    "lib/data/repositories/parent_repository.dart:19-26"
+   ],
+   "n": "Nur Admin/Verantwortliche und nur bei tenant.parents – gleich; Zähler = parents der Instanz.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-e74671e3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/left_players_page.dart:86-101"
+   ],
+   "n": "Zentrierter grauer Text „Keine archivierten Personen“ bei leerem Archiv. Zeilen aktualisiert (:77/:83 → :95).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-e8ef8ce5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:458-466",
+    "lib/features/settings/presentation/pages/left_players_page.dart:23-35",
+    "lib/data/repositories/player_repository.dart:178-186"
+   ],
+   "n": "Gleiche Menge (player: tenantId, pending=false, left not null), Badge nur bei > 0, Farbe medium, nur Admin/Verantwortliche (nicht Bewerber). Zeilen aktualisiert (getArchivedPlayers jetzt :178).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#toast-05890c58": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:260-274",
+    "lib/core/providers/tenant_providers.dart:400-416"
+   ],
+   "n": "Erfolgs-Toast gleich: „Die Instanz „…“ wurde als Favorit gesetzt/entfernt.“, success, 3 s; Wischaktion für alle Rollen. Das „Flutter besser“ der Vorrunde stimmt nicht: Ionic zeigt bei Fehler ebenfalls einen roten Toast (db.setFavoriteTenant → „Fehler beim Setzen des Favoriten…“, Service-Batch); nur der Fehlertext unterscheidet sich („Fehler beim Speichern“).",
+   "v": "korrigiert"
+  },
+  "settings/settings/settings.page#toast-83e46be4": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:278-283",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:557",
+    "lib/core/providers/tenant_providers.dart:303-334"
+   ],
+   "n": "Wischaktion „Löschen“ für alle Rollen; Toast „Du kannst diese Instanz nicht löschen.“ (danger), wenn die eigene Rolle in der gewischten Instanz nicht Admin ist (auch Verantwortliche) oder Demo. Rolle aus tenantUsers.role (userTenantsProvider) wie Ionic getUserRolesForTenants. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "settings/voice-leader/voice-leader.page#logic-767b1744": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:62-121",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:140-145",
+    "lib/data/repositories/attendance_repository.dart:351-379",
+    "lib/data/repositories/player_repository.dart:200-219"
+   ],
+   "n": "Aktive Mitglieder der eigenen Gruppe (tenantId, instrument, left null, pending false), Abwesenheiten Status 2/4/5 tenant-gefiltert ab gestern + genaue Prüfung „nach heute 0 Uhr“, Sortierung je Person nach Datum, Titel typeInfo/Typname (hide_name), Mitglieder nach Nachname/Vorname mit localeCompareDe, Einteilung nur mit Feld, Pull-to-Refresh – wie Ionic. Übrig nur niedrig-Extras (archivierte Termine ungefiltert ohne praktische Wirkung; ohne Spielerprofil Leerzustand statt Toast + Zurück).",
+   "v": "bestätigt"
+  },
+  "settings/voice-leader/voice-leader.page#nav-70357302": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:39",
+    "lib/core/router/app_router.dart:1139-1143",
+    "lib/features/settings/presentation/pages/settings_page.dart:206"
+   ],
+   "n": "AppBar-Zurück (maybePop); /settings/voice-leader ist Unterroute von /settings (Normal-Design VoiceLeaderPage) → zurück zu Einstellungen, auch aus der Seitennavigation (go). Router-Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "x-9036fc723e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:363",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:86-110"
+   ],
+   "n": "Bestätigt: Ionic getPersonAttendances blendet archivierte Termine für Stimmführer aus / Flutter lädt archived nicht und filtert nicht. Keine Rolle sieht praktisch mehr: archivierbar sind nur Termine, deren Endtag vor heute liegt (canArchiveAttendance/attendanceHasEnded), die Seite zeigt nur Termine nach heute 0 Uhr.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#db-4e980eb4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:591-620",
+    "lib/data/repositories/public_plan_repository.dart:97-126"
+   ],
+   "n": "Flutter besser: gleiche Spalten (plan bzw. plan + extra_plans über splitPlans) mit time, fields, title (leer → null/entfernt). Ionic: schreibt das alte end weiter, Startzeit als „${date}T${HH:mm}“, Filter nur id / Flutter: end neu berechnet, Startzeit „HH:mm“ wie der Haupt-Planer, Filter zusätzlich share_key, share_edit_key, archived=false; keine getroffene Zeile → Fehler-Toast „plans.saveFailed“. Abweichende Werte nur als Korrektur von Ionic-Fehlern.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#db-64fc7972": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:621-627",
+    "lib/data/repositories/public_plan_repository.dart:168-205"
+   ],
+   "n": "Flutter besser: Ionic schreibt nur fields + plan_title (geänderte Startzeit eines Ad-hoc-Plans geht still verloren, end_time bleibt alt) / Flutter schreibt fields, plan_title, time und neu berechnetes end_time; Filter id + edit_key, 0 Zeilen → Fehler-Toast. Mehr DB-Werte nur, weil Ionic die Bearbeitung nicht speichert.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#logic-fdf3f44b": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:274-300",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:355-391",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:447-470",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:511-537",
+    "lib/core/utils/plan_utils.dart:471-516"
+   ],
+   "n": "Laden (Termin per id + share_key + archived=false, Ad-hoc-Plan per id), Titel-Fallback (plan.title → typeInfo bzw. „Ablaufplan“), mehrere Pläne mit Chips und heutigem Plan, Bearbeitungsmodus nur mit passendem Schlüssel (serverseitig geprüft), Realtime nur im Bearbeitungsmodus, Live-Fenster −5 min … Ende+15 min, Auto-Live beim Laden und Planwechsel, Countdown-Format gleich. Abweichungen siehe extra (alle niedrig).",
+   "v": "bestätigt"
+  },
+  "x-165ef614cc": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/utils/plan_utils.dart:482-494",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:116-119",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:196-208"
+   ],
+   "n": "Bestätigt: Ionic: Block-Köpfe (time '0') zählen als normale Zeilen (vor dem aktiven Feld ausgegraut, vor Start ggf. selbst aktiv) / Flutter: activeIndex überspringt Köpfe, Kopf des laufenden Blocks bleibt voll sichtbar mit blauem linken Rand. Nur Darstellung.",
+   "v": "bestätigt"
+  },
+  "x-5d0d5aa900": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/utils/plan_utils.dart:482-487",
+    "lib/core/utils/plan_utils.dart:518-535",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:91-107"
+   ],
+   "n": "Bestätigt: Ionic: in den 5 min vor Start ist das erste Feld aktiv (hervorgehoben, Countdown bis Ende des ersten Feldes) / Flutter: vor Start kein aktives Feld (activeIndex −1), stattdessen „beginnt in X Min.“ unter „Beginn“. Gleiche Information.",
+   "v": "bestätigt"
+  },
+  "x-b4914284ac": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:311-352",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:396-401"
+   ],
+   "n": "Bestätigt, Flutter besser: Ionic: ohne Bearbeitungsschlüssel kein Realtime – Änderungen erst nach Neuladen, gelöschter/widerrufener Plan bleibt sichtbar; Archivieren während der Bearbeitung nicht erkannt / Flutter: Abruf der öffentlichen Spalten alle 15 s (pausiert im Hintergrund), weg → „Plan nicht gefunden…“; Termin archiviert → Bearbeitungsansicht geschlossen.",
+   "v": "bestätigt"
+  },
+  "x-f05948c5cf": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:85-237",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:843"
+   ],
+   "n": "Bestätigt: Ionic scrollToActive scrollt im Live-Modus einmal das aktive Feld in die Bildschirmmitte / Flutter: kein ScrollController/ensureVisible, kein Scrollen.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

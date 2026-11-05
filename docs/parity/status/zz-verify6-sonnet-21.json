@@ -1,0 +1,413 @@
+{
+ "batch": "zz-verify6-sonnet-21",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "protocols/protocol/protocol.page#text-400180d3-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2041"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-44846e73": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1288"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-483ee402": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1262"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-483ee402-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1274"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-4a3daba9": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1477"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-4e8966c7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:910"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-5405ec76": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1170"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-57aa283b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1467"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-5bf58122": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1175"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-5c862955": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1911"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-5fe903eb": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2084"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-66d72cf0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:904"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-69a5ef32": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1759"
+   ],
+   "v": "bestätigt",
+   "n": "„Ablaufplan“ wie Ionic (dort auch Großbuchstaben per CSS). Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-7068fef6": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1083",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1133",
+    "lib/features/team_organization/protocol_layout.dart:7",
+    "lib/shared/widgets/layout/main_shell.dart:407"
+   ],
+   "n": "Text/Rolle gleich (nur Leitung, Handy-Layout; „Speichert …“/„Automatisch gespeichert · HH:mm“/„Änderungen werden automatisch gespeichert“/„Wird automatisch gespeichert“ wie Ionic). Ionic isWide = Fensterbreite >=900 px; Flutter misst die Seitenbreite nach Abzug des festen Seitenpanels (main_shell MediaQuery-Override), daher bei 900 bis ca. 1170 px mit Panel Handy-Layout samt Fußleiste statt 3 Spalten. Gleiche Funktionen in beiden Layouts: nur Layout, niedrig. Zeilenverweise aus first waren verschoben und sind korrigiert.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-7100878c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1846"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-7395f79f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1939"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-742f1877": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1103"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-774289cc": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1556"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-7951a5bf": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1460"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-7951a5bf-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1755"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-7951a5bf-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2048"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-7a0cc62b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:983"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-7b76c77f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1578"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-7db64e18": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1251"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-7e6739e4": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1828"
+   ],
+   "v": "bestätigt",
+   "n": "Kicker „TOP n · Start · min“; Flutter lässt leere Segmente weg (nur Trennzeichen). Text aus ARB identisch zu Ionic. Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-820d5e3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:930"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-83236a9b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1170"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-89a4bcae": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2106"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-8e387a42": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:937"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-92a4ce8b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2058"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-a1e4d9fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1276"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-a2f3759b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2087",
+    "lib/features/team_organization/team_org_utils.dart:27"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-a9cc96a7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:937"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-b3a7fb57": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1887"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-bc3b2a50": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:925"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-be302879": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:919"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-c2ffd91d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:971"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-ca7b19f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:942"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-cc185098": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1963"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-d27515ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:934"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-d33d41aa": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1890"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-d73fe6b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:915"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-dada2a79": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1577"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-dada2a79-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1909"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-dbdd6514": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1961"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-dc5c1762": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:926"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-ea70e797": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1947"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-ed19b34b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:956"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-efc615ca": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:931"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  },
+  "protocols/protocol/protocol.page#text-fb5e077d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:970"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Code geprüft: Element, Bedingung und Text (ARB = de.json) wie Ionic; Zeilenverweis korrigiert (alte Zeile war verschoben)."
+  }
+ },
+ "extra": []
+}

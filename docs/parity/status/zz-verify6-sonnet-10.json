@@ -1,0 +1,428 @@
+{
+ "batch": "zz-verify6-sonnet-10",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "notifications/notifications.page#field-1c9e3397": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:284",
+    "lib/core/providers/notification_settings_providers.dart:38"
+   ],
+   "v": "bestätigt",
+   "n": "Nur wenn ein Termintyp duty_mode hat; null zählt als an."
+  },
+  "notifications/notifications.page#field-23dab456": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:205"
+   ],
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#field-55a1dea9": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:259"
+   ],
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#field-71fbcd82": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:302"
+   ],
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#field-7eec9958": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:265"
+   ],
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#field-832701e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:271"
+   ],
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#field-92991b01": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:308"
+   ],
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#field-cb78f4aa": {
+   "s": "diff",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:209",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:413"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Flutter besser: Material-Darstellung mit zusätzlichem Kopieren-Button (Toast 'Benutzer-Id kopiert') und Monospace-Wert; iOS wie Ionic (Label + markierbarer Wert). Sichtbar nur ohne Telegram-Verknüpfung wie Ionic."
+  },
+  "notifications/notifications.page#field-d5e44720": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:314"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic [attr.label]='Abmeldungen' ist nur ein wirkungsloses HTML-Attribut; sichtbarer Text 'Neue Problemfälle' + Helfertext gleich."
+  },
+  "notifications/notifications.page#field-fc9454f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:290"
+   ],
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#text-709edc1e": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:205"
+   ],
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#text-72de2ce1": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:254"
+   ],
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#text-9e4486a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:497"
+   ],
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#text-b0255cc9": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:247"
+   ],
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#text-bd81b782": {
+   "s": "diff",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:488",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:535"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Text 'Telegramverknüpfung' gleich. Material: zusätzliches Telegram-Icon vor dem Titel (grün wenn verknüpft); Ionic ohne Icon. iOS wie Ionic."
+  },
+  "notifications/notifications.page#text-c3c6e93d": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:433",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:442"
+   ],
+   "v": "bestätigt"
+  },
+  "open-file/open-file.page#toast-d3c8175b": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:98"
+   ],
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#action-610d3d65": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:233"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Live-Schalter nur bei isLiveNow, Farbe danger/primary, toggelt Live-Modus ohne das Akkordeon zu schalten – gleich. Ionic: Icon radio/radio-outline (Funkwellen) neben dem Akkordeon-Pfeil / Flutter: radio_button_checked/unchecked, ersetzt den Aufklapp-Pfeil (ExpansionTile.trailing), Tooltip „Live“ Auto-Live bei Laden wie Ionic (_live in _loadPlans)."
+  },
+  "org-plan-public/org-plan-public.page#action-62549630": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:267"
+   ],
+   "v": "bestätigt",
+   "n": "Schließen-Icon close"
+  },
+  "org-plan-public/org-plan-public.page#action-905ad3b9": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:244"
+   ],
+   "v": "bestätigt",
+   "n": "„Exportieren“ mit Teilen-Icon in Primärfarbe → Export-Sheet"
+  },
+  "org-plan-public/org-plan-public.page#action-905ad3b9-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:244"
+   ],
+   "v": "bestätigt",
+   "n": "„Exportieren“ auch in vergangenen Plänen"
+  },
+  "org-plan-public/org-plan-public.page#action-b3c45e32": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:156",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:299"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Kalender-Button (calendar_month_outlined, Tooltip „Kalender abonnieren“) immer sichtbar wie Ionic. Ionic: ohne key in der URL tut der Button nichts (`if (!this.publicKey) return`) / Flutter: öffnet trotzdem das Sheet mit Link „…?key=null“ (Ionic: bei fehlendem key passiert nichts; Flutter öffnet Sheet mit key=null, Seite zeigt dann ohnehin Link-ungültig)"
+  },
+  "org-plan-public/org-plan-public.page#action-cd29a676": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:333"
+   ],
+   "v": "bestätigt",
+   "n": "IonRefresher → _loadPlans (nur sichtbar, wenn geladen und Link gültig)"
+  },
+  "org-plan-public/org-plan-public.page#action-cf309d5a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:303"
+   ],
+   "v": "bestätigt",
+   "n": "nur bei vergangenen Plänen; Icon schedule statt time-outline, Tooltip „Vergangene Pläne“"
+  },
+  "org-plan-public/org-plan-public.page#actionsheet-4c267725": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:195",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:71"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Header „Exportieren“, „PDF (A4)“, „PDF (2x A5)“, „Abbrechen“ gleich (kein Bild/Telegram). Ionic: ohne Icons / Flutter: mit Icons (picture_as_pdf, content_copy)"
+  },
+  "org-plan-public/org-plan-public.page#actionsheet-876a0d5b": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:160",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:413"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Header „Kalender abonnieren“, Buttons „Einfach (1 Termin je Plan)“, „Detailliert (je Programmpunkt)“, „Abbrechen“ und Links (…/functions/v1/ical-org-plans?key=…[&lang=xx][&detailed=true]) gleich. Ionic: Buttons ohne Icons / Flutter: zusätzlich Icons (event, event_note)"
+  },
+  "org-plan-public/org-plan-public.page#modal-a0d38218": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:257"
+   ],
+   "v": "bestätigt",
+   "n": "Vollbild-Modal (rootNavigator, fullscreenDialog) über Uhr-Button, nur bei vergangenen Plänen; Pläne zugeklappt wie Ionic."
+  },
+  "org-plan-public/org-plan-public.page#text-07043320": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:103"
+   ],
+   "v": "bestätigt",
+   "n": "„Start“"
+  },
+  "org-plan-public/org-plan-public.page#text-07043320-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:103"
+   ],
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#text-092b2e71": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:328"
+   ],
+   "v": "bestätigt",
+   "n": "„Link ungültig oder abgelaufen.“ (Karte statt Inset-Liste)"
+  },
+  "org-plan-public/org-plan-public.page#text-188d296f": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:213"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Ionic: Zeile „Ende“ nur wenn plan.end gesetzt / Flutter: ohne plan.end wird Ende aus Start + Summe der Dauern berechnet und angezeigt"
+  },
+  "org-plan-public/org-plan-public.page#text-188d296f-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:213"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "wie text-188d296f: Flutter zeigt berechnetes Ende auch ohne plan.end"
+  },
+  "org-plan-public/org-plan-public.page#text-24593650": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:107"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "„{time} Uhr“ mit HH:mm gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts"
+  },
+  "org-plan-public/org-plan-public.page#text-24593650-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:219"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "„{time} Uhr“ gleich. Ionic: ion-badge (gefüllte Plakette), Zeile nur wenn plan.end gesetzt / Flutter: graue Text-Notiz rechts; bei leerem end berechnet Flutter das Ende aus Start + Minuten und zeigt die Zeile trotzdem (Randfall, Ionic-Planung speichert end immer)."
+  },
+  "org-plan-public/org-plan-public.page#text-24593650-3": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:107"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "„{time} Uhr“ gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts"
+  },
+  "org-plan-public/org-plan-public.page#text-24593650-4": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:219"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "„{time} Uhr“ gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts"
+  },
+  "org-plan-public/org-plan-public.page#text-370bc016": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:263"
+   ],
+   "v": "bestätigt",
+   "n": "„Vergangene Pläne“"
+  },
+  "org-plan-public/org-plan-public.page#text-4841bd3c": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:154"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "„{min} min“ (Block-Kopf = Summe der Unterpunkte) gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts"
+  },
+  "org-plan-public/org-plan-public.page#text-4841bd3c-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:154"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "„{min} min“ gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts"
+  },
+  "org-plan-public/org-plan-public.page#text-48b8a885": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:342"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Text „Keine bevorstehenden Org-Pläne vorhanden.“ gleich. Ionic: grauer p-Text in Inset-Liste / Flutter: ListTile mit zusätzlichem Icon event_outlined, normale Textfarbe"
+  },
+  "org-plan-public/org-plan-public.page#text-80d2f3fd": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:231",
+    "lib/core/utils/plan_utils.dart:547"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Format „Wochentag, TT.MM.JJJJ“ gleich. Ionic: ohne Datum (Ad-hoc-Plan ohne date) wird der Titel angezeigt / Flutter: leere Zeile (longDate(null) = '')"
+  },
+  "org-plan-public/org-plan-public.page#text-80d2f3fd-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:231",
+    "lib/core/utils/plan_utils.dart:547"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "wie text-80d2f3fd: ohne Datum Ionic Titel / Flutter leer"
+  },
+  "org-plan-public/org-plan-public.page#text-8367e2d0": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:135",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:137"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Startzeit + „ | Dirigent“ gleich. Ionic: Programmblock-Kopf zeigt nur Startzeit / Flutter: Zeitspanne „10:37 – 10:55“"
+  },
+  "org-plan-public/org-plan-public.page#text-8367e2d0-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:135",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:137"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "wie text-8367e2d0: Block-Kopf Zeitspanne statt Startzeit"
+  },
+  "org-plan-public/org-plan-public.page#text-8d2c4133": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:283",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:295"
+   ],
+   "v": "bestätigt",
+   "n": "orgName bzw. Fallback „Organisationspläne“ (plansFlutterOrgPlansTitle)"
+  },
+  "org-plan-public/org-plan-public.page#text-8d2c4133-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:285"
+   ],
+   "v": "bestätigt",
+   "n": "IonLargeTitle (iOS-Look) mit gleichem Titel"
+  },
+  "org-plan-public/org-plan-public.page#text-902a9ead": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:150",
+    "lib/core/utils/plan_utils.dart:470"
+   ],
+   "v": "bestätigt",
+   "n": "Countdown „mm:ss“/„h:mm:ss“ in primärer Plakette (IonBadge) beim aktiven Feld"
+  },
+  "org-plan-public/org-plan-public.page#text-9bfc6bc4": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:250",
+    "lib/core/providers/plan_providers.dart:113"
+   ],
+   "v": "bestätigt",
+   "n": "Titel: plan.title || typeInfo || „Plan“ bzw. plan_title || „Plan“"
+  },
+  "org-plan-public/org-plan-public.page#text-9bfc6bc4-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:250",
+    "lib/core/providers/plan_providers.dart:113"
+   ],
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#text-e42e4358": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:172"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Ionic: field.name / Flutter: PlanUtils.fieldDisplayName → bei Tagesordnungs-Feldern „TOP n · Titel“; Agenda-Platzhalter-Feld wird in Flutter ausgeblendet, in Ionic als Zeile angezeigt"
+  }
+ },
+ "extra": []
+}

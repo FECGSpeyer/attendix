@@ -1,0 +1,415 @@
+{
+ "batch": "zz-verify6-opus-14",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "selfService/overview/overview.page#text-6562636b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:306",
+    "lib/data/repositories/sign_in_out_repository.dart:888-899",
+    "lib/data/repositories/sign_in_out_repository.dart:865-869"
+   ],
+   "n": "Unverändert gleich: Datum (außer wenn = Titel) + Zeitspanne (Termin- vor Typzeit), ohne Ort wie Ionic getEventMeta(att, true) der Übersicht; Übersicht lädt ohnehin kein place (kOverviewAttendanceColumns). Zeilenangaben aktualisiert.",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#text-d21b10c5": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:305",
+    "lib/data/repositories/sign_in_out_repository.dart:872-880"
+   ],
+   "n": "typeInfo, sonst Typname (hide_name beachtet – Ionic lädt die Typen der Übersicht mit select *), sonst lesbares Datum – gleich. Zeilenangaben aktualisiert.",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#text-f5f8878b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:354",
+    "lib/core/providers/self_service_providers.dart:106-127",
+    "lib/data/repositories/sign_in_out_repository.dart:623-626",
+    "lib/data/repositories/sign_in_out_repository.dart:646-650",
+    "lib/core/router/route_access.dart:77-81"
+   ],
+   "n": "Gruppenkopf = longName || shortName || „Unbekannt“ je Mitgliedschaft, Gruppen in Reihenfolge des ersten (aufsteigend sortierten) Termins wie Ionic groupByTenant; Rollen-Gate /overview unverändert. Archiv-Filter siehe x-ef8455052e. Zeilenangaben aktualisiert.",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#text-fdfa7967": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:307",
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:227-259",
+    "lib/data/repositories/sign_in_out_repository.dart:623-626",
+    "lib/data/repositories/sign_in_out_repository.dart:646-650"
+   ],
+   "n": "Punkt in Instanzfarbe + longName || shortName || „Unbekannt“ je Mitgliedschaft – gleich. Zeilenangaben aktualisiert.",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#toast-7a8e1bcd": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:461-465",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:373-436"
+   ],
+   "n": "Warn-Toast „Für diesen Termin sind keine Aktionen verfügbar.“, wenn buildActions leer ist (Ionic: nur Abbrechen übrig, warning 4 s); in den Normalfällen (Frist abgelaufen ohne Zusage, „Weitere Optionen“ ohne Restaktionen) identisch. Abweichende Typfilter siehe x-68b090e7ef.",
+   "v": "bestätigt"
+  },
+  "x-300001854a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:603-610",
+    "lib/core/services/cross_tenant_service.dart:64-70"
+   ],
+   "n": "Flutter besser: Ionic getPersonIdForTenant mit .single() → bei mehreren verknüpften player-Zeilen in einer Instanz fehlen deren Termine ganz / Flutter lädt alle Zeilen (tenantId + appId) und nimmt die aktive (nicht pending/left), sonst die erste. Weiterhin so.",
+   "v": "bestätigt"
+  },
+  "x-393643e049": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:169-179",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:274-283",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:336-342",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:362-369"
+   ],
+   "n": "Flutter besser: Ionic zeigt bei Fehlern beim Laden/Anmelden/Abmelden/Notiz nichts (Service wirft, kein globaler ErrorHandler, kein Toast) / Flutter zeigt Fehleransicht mit „Erneut versuchen“ bzw. Toasts „Anmeldung fehlgeschlagen…“, „Abmeldung fehlgeschlagen…“, „Notiz konnte nicht gespeichert werden.“. Weiterhin so.",
+   "v": "bestätigt"
+  },
+  "x-5cc345ba99": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:141-161",
+    "lib/data/repositories/sign_in_out_repository.dart:184-191"
+   ],
+   "n": "Flutter besser: Ionic syncDutyWithStatus kennt nur die Dienst-Typen der aktuellen Instanz (getDutyTypeIds) → Zusage zu einem angefragten Dienst einer anderen Instanz bestätigt ihn nicht / Flutter liest duty_mode des Termintyps per Join und schreibt duty_state=confirmed (+duty_reminder_sent) im selben Update auch dort. Abmeldung ändert duty_state in beiden nicht.",
+   "v": "bestätigt"
+  },
+  "x-68b090e7ef": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:146-150",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:401-406"
+   ],
+   "n": "Flutter besser: Ionic prüft available_statuses nur in einer else-if-Kette (nur wenn Anmelden möglich; „Verspätung“ ungeprüft, wenn „Entschuldigt“ fehlt; bei Zugesagt oder abgelaufener Frist gar nicht; in „Weitere Optionen“ bleibt „Abmelden“, wenn der Typ „Entschuldigt“ nicht erlaubt) → zeigt gesperrte Status-Aktionen / Flutter filtert immer nach den erlaubten Status des Typs. Weiterhin so.",
+   "v": "bestätigt"
+  },
+  "x-97aaedb765": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:45-69"
+   ],
+   "n": "Ionic: 16 Farben inkl. #FFB300 (Amber) / Flutter: 15 Farben → ab der 16. Mitgliedschaft andere Farbe (Modulo 15 statt 16). Reine Optik, weiterhin so.",
+   "v": "bestätigt"
+  },
+  "x-b53add21cb": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:104-113",
+    "lib/data/repositories/sign_in_out_repository.dart:226-229"
+   ],
+   "n": "Flutter besser: Ionic signout übergibt keine userId → changed_by = null / Flutter schreibt bei jeder Statusänderung changed_by = aktueller Nutzer (+ changed_at wie Ionic). Weiterhin so.",
+   "v": "bestätigt"
+  },
+  "x-ef8455052e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:29-32",
+    "lib/data/repositories/sign_in_out_repository.dart:578",
+    "lib/data/repositories/sign_in_out_repository.dart:630-631"
+   ],
+   "n": "Flutter besser: Ionic getPersonAttendancesForTenant lädt `archived` nicht mit, der Rollenfilter canSeeArchivedAttendances greift daher nie → archivierte Termine für alle Rollen sichtbar und im Prozentwert / Flutter lädt archived (kOverviewAttendanceColumns) und blendet sie je Mitgliedschaftsrolle aus (Absicht des Ionic-Codes). Weiterhin so.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#action-4d01e523": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:34-81",
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:85-106",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:150",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:166-174"
+   ],
+   "n": "Nur Eltern-Rolle (Route /parents) und mehr als eine Instanz (tenantUsers, alle Rollen) in beiden; Langname + Pfeil nach unten, Liste mit Badge „Aktuell“; Wechsel setzt Instanz und öffnet die Startseite der neuen Rolle. Zeilenangaben aktualisiert.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#actionsheet-da064539": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:399-459"
+   ],
+   "n": "Einträge, Reihenfolge und Bedingungen gleich (Anmelden/Abmelden/Verspätung eintragen je Kindstatus Present/Absent/Late in else-if-Kette und Typ-Late, Ablaufplan anzeigen bei share_plan && plan, Beschreibung, Anhang, Navigation öffnen, rotes Abbrechen); Wirkung gleich (signin Typ „signin“, signout isParents, Toasts). Ionic: ohne Header und Icons / Flutter: Header „Vorname · Titel“ bzw. Titel plus Datum/Zeit/Ort, Icons.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#effect-11be3cc2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:438",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:456-457",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1108-1137",
+    "lib/data/repositories/attendance_repository.dart:399-405"
+   ],
+   "n": "place wird weiterhin mitgeladen; Eintrag „Navigation öffnen“ nur bei Ort, nach Ablaufplan/Beschreibung/Anhang; iOS (auch iOS-Browser) Auswahl Apple Karten/Google Maps, sonst direkt Google Maps – wie Utils.openNavigation.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#modal-0f0e45d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:101-111",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:447-470",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:367-369"
+   ],
+   "n": "Nur Eltern-Seite; Sheet 0.75 mit Titel, Datum, Werken (nur Links, linkOnly) und „Ablaufplan öffnen“ bei hasPlan wie Ionic openAttendanceSongs. Titel bei hide_name siehe x-4d33ddc0eb.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-ae69766a": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:32",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:166"
+   ],
+   "n": "Bei höchstens einer Instanz Titel = longName der Instanz. Zeilenangaben aktualisiert.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-ae69766a-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:249"
+   ],
+   "n": "Großer Titel (longName) nur bei höchstens einer Instanz.",
+   "v": "bestätigt"
+  },
+  "x-00d4ebd018": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/parents/data/providers/parents_providers.dart:368-371",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:148"
+   ],
+   "n": "Ionic: bei mehreren gleichzeitig laufenden Terminen der zuletzt begonnene (Liste nach Datum absteigend) / Flutter: der früheste; die übrigen laufenden fehlen in beiden. Nur Sonderfall, weiterhin so.",
+   "v": "bestätigt"
+  },
+  "x-4d33ddc0eb": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:58-63",
+    "lib/features/parents/data/providers/parents_providers.dart:410-415"
+   ],
+   "n": "Ionic: Titel = typeInfo oder Typname auch bei hide_name (attType-Join in getPersonAttendances ohne hide_name) / Flutter: bei hide_name ohne typeInfo das Datum (z. B. „So., 20.10.2026“); betrifft Heute-Karte, anstehende/vergangene Termine, Werke-Sheet, Aktionsblatt-Kopf und „Aktuelle Werke“. Weiterhin so.",
+   "v": "bestätigt"
+  },
+  "x-624a9ec520": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:104-113",
+    "lib/features/parents/data/providers/parents_providers.dart:512-526"
+   ],
+   "n": "Flutter besser: Ionic signout (Eltern) übergibt keine userId → changed_by = null / Flutter schreibt changed_by = aktueller Nutzer. Weiterhin so.",
+   "v": "bestätigt"
+  },
+  "x-afb9c7a207": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:266-268",
+    "lib/features/parents/data/providers/parents_providers.dart:294-316"
+   ],
+   "n": "Fix wirksam: getChildrenForParent sortiert jetzt .order('instrument', ascending: true), .order('isLeader', ascending: false), .order('lastName', ascending: true) = Ionic getPlayers (PARENT); childOrder übernimmt diese Reihenfolge für die Kind-Zeilen je Termin.",
+   "v": "bestätigt"
+  },
+  "x-ca932f307d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:392-416"
+   ],
+   "n": "Ionic: nur Termine nach dem 01.01.2020 (getPersonAttendances all=true) / Flutter getPersonAttendancesForPersons ohne Untergrenze (ältere Termine zählen in „Vergangen“ und im Prozentwert). Wirkt nur bei Daten vor 2020; weiterhin so.",
+   "v": "bestätigt"
+  },
+  "x-d0a0a6c0b4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:200-219",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:364-372"
+   ],
+   "n": "Ionic: ohne Kinder bzw. ohne Termine einfach leere Seite / Flutter: „Keine Kinder gefunden“ + „Es wurden keine Kinder mit Ihrem Eltern-Account verknüpft.“ bzw. „Keine Termine gefunden“. Weiterhin so.",
+   "v": "bestätigt"
+  },
+  "x-e6cab2d2c9": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:466-475",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:490-494",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:532-551",
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:100-104"
+   ],
+   "n": "Flutter besser: Ionic bricht beim An-/Abmelden und Instanzwechsel bei Fehlern ohne Rückmeldung ab (nur beim Laden der Kinder Toast „Fehler beim Laden der Kinder“) / Flutter zeigt „Anmeldung fehlgeschlagen…“/„Abmeldung fehlgeschlagen…“, Fehleransicht mit „Erneut versuchen“ beim Laden, Instanzwechsel-Fehler als Toast. Weiterhin so.",
+   "v": "bestätigt"
+  },
+  "x-fa926ddb86": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:435",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:505-508"
+   ],
+   "n": "Ionic: „Ablaufplan anzeigen“ im Aktionsblatt (share_plan && plan) öffnet den Viewer auch bei Plan ohne Felder / Flutter: gleicher Eintrag, dann Toast „Kein Ablaufplan verfügbar.“. Weiterhin so.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-031946f4": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:189-194",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:155-169",
+    "lib/data/repositories/player_repository.dart:882-918"
+   ],
+   "n": "Play-Knopf im Kopf bei canSelfPause (Recht der Spieler-Rolle) && Person && pausiert; Alert „Pausierung beenden“ / „Möchtest du deine Pausierung wirklich beenden…“ / Abbrechen + „Reaktivieren“; schreibt paused=false, paused_until=null, Historie „Selbst reaktiviert“ (UNPAUSED) und trägt in kommende Termine ein; Fehler als Toast.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-0547ed34": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:205-210",
+    "lib/features/self_service/presentation/pages/signout_page.dart:777-791",
+    "lib/core/router/route_access.dart:72-75"
+   ],
+   "n": "Chip „♪ n Werke“ bei Werken des Termins (Heute-Karte, Anstehend), öffnet Werke-Sheet (0.75) mit Titel, Datum, Instrument und Ablaufplan-Sprung bei hasPlan wie Ionic openAttendanceSongs. Rollen: /signout für !Dirigent && !Eltern, Bewerber nur Wartekarte – gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-0547ed34-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:637-644",
+    "lib/features/self_service/presentation/pages/signout_page.dart:778-791"
+   ],
+   "n": "„♪ n Werke“ in vergangenen Terminen nur wenn Werke vorhanden; öffnet dasselbe Werke-Sheet. Keine Rollenbedingung.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-07592d89": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:245-250",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:21-31",
+    "lib/core/providers/duty_providers.dart:131"
+   ],
+   "n": "„Regelmäßig verhindert“ in der Dienstplan-Ansicht öffnet Vollbild-Seite für die eigene Person wie Ionic UnavailabilityModal; Übernehmen in geplante Termine aktualisiert die Listen. useDutyView = tenant.duty_view && im Dienstkreis in beiden; Icon event_busy statt calendar-clear (Optik).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-0ad28852": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:354-364",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:21-31"
+   ],
+   "n": "Im Sheet „Offene Dienste“: Titel + Hinweis „z. B. jeden Mittwoch wegen der Kinderstunde“; schließt Sheet, öffnet „Regelmäßig verhindert“ als Vollbild für die eigene Person; Icon event_busy statt calendar-clear (Optik).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-1351f460": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:191-194",
+    "lib/core/theme/app_theme.dart:166",
+    "lib/features/duty/presentation/widgets/duty_actions.dart:157-170",
+    "lib/data/repositories/duty_repository.dart:175-202"
+   ],
+   "n": "Wirkung gleich (Mandant geprüft, RPC duty_take, bei ok duty-notify filled, Toasts „Danke, du bist eingetragen 🙂“/voll/nicht erlaubt, Fehler-Toast), Bedingungen gleich (Vorschau max. 3, dringende zuerst). Nur Farbe: Ionic ion-button small solid primary / Flutter FilledButton.tonal (secondaryContainer hellblau).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-1978eaee": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:105-109",
+    "lib/features/duty/presentation/widgets/duty_actions.dart:70-84",
+    "lib/data/repositories/duty_repository.dart:154-172"
+   ],
+   "n": "Gleicher Write: person_attendances duty_state confirmed, status Anwesend, notes '', changed_by/changed_at (id vorher per attendance.tenantId geprüft); Toast „Danke, dein Dienst ist bestätigt 🙂“, Listen neu geladen.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-21c846cb": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:280-284",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:329-333"
+   ],
+   "n": "Nur bei gewähltem Start und Ende; setzt beide zurück (Flutter baut den Kalender neu).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-22f32baf": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:171-176",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:858-868"
+   ],
+   "n": "Bedingungen/Wirkung gleich (handleSigninWithFields, gesperrt nach Frist). Ionic: bei Zugesagt gefüllt grün, aber disabled (halbe Deckkraft) / Flutter: gefüllt grün in voller Deckkraft, Tippen ohne Wirkung. Nur Optik.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-299b3a28": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:317",
+    "lib/features/self_service/presentation/pages/signout_page.dart:493-499",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:268-270",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:317-370"
+   ],
+   "n": "Kachel nur ohne Dienstplan-Ansicht und im Dienstkreis; Untertitel „alles besetzt“ / „1 offen“ / „n offen“; öffnet Sheet „Offene Dienste“ (0.75).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-2c096895": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:183-188",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:117-152",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:414-519",
+    "lib/core/providers/role_permission_providers.dart:252-254"
+   ],
+   "n": "Bedingung canSelfPause (player_self_pause der Spieler-Rolle) && Person && nicht pausiert; Bewerber ohne Knopf (beide). Sheet mit Grund (Pflicht, Toast „Bitte gib einen Grund an!“), optional „Pausiert bis“, Knopf warning; schreibt paused/paused_until/Historie „Grund (bis TT.MM.JJJJ)“, entfernt aus kommenden Terminen, Telegram-Hinweis.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-313d3830": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:454",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:433",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:170",
+    "lib/core/providers/duty_providers.dart:176"
+   ],
+   "n": "Nur Dienstplan-Ansicht; zählt offene Dienste (duty_self_signup ≠ false, nicht zugeteilt, nicht abgesagt, nicht voll) und scrollt zu duty-open.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-39d272cd": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:174",
+    "lib/features/self_service/presentation/pages/signout_page.dart:139-159",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:45-50",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:61-76",
+    "lib/core/router/route_access.dart:72-75"
+   ],
+   "n": "Seite für Spieler/ohne Rolle, Helfer, Stimmführer(+Helfer), Bewerber (Admin/Verantw./Beobachter → /people, Eltern → /parents). Schalter bei >1 Instanz für alle diese Rollen inkl. Bewerber, Text longName + Chevron; Wechsel öffnet Startseite der Rolle in der neuen Instanz.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-3dbfcf11": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:229-234",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:128-129",
+    "lib/core/providers/role_permission_providers.dart:116-120",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:25-37",
+    "lib/features/self_service/presentation/pages/signout_page.dart:793"
+   ],
+   "n": "hasFilesFolder = files_folder && canAccessFiles; canAccessFiles identisch (files_shared: alle außer Bewerber/NONE, sonst nur Admin/Verantw./Helfer/SF-Helfer → Spieler/Stimmführer sehen den Chip nur bei files_shared). Öffnet /settings/files?path=… wie Ionic /tabs/settings/files.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

@@ -1,0 +1,477 @@
+{
+ "batch": "zz-verify6-sonnet-25",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "services/auth/auth.service#toast-c252a214-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:211",
+    "lib/features/auth/data/auth_flow_service.dart:76"
+   ],
+   "v": "korrigiert",
+   "n": "Korrigiert: Flutter zeigt im Teams-Verknüpfungsmodus für invalid_credentials jetzt authInvalidCredentials = \"Ungültige Anmeldedaten\" (wie Ionic AuthService.login); der frühere Textunterschied besteht nicht mehr."
+  },
+  "services/auth/auth.service#toast-d3b70253": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:217",
+    "lib/features/auth/data/auth_flow_service.dart:103"
+   ],
+   "v": "bestätigt",
+   "n": "Nur Teams-Verknüpfungsmodus. Ionic: \"Benutzer nicht gefunden\" / Flutter: dbNoAccount \"Kein Konto mit dieser E-Mail-Adresse gefunden. Bitte registriere dich zuerst.\" Gleiche Bedeutung; im Link-Modus folgt in Flutter kein Registrieren-Dialog (return vor dem switch), Ionic auch nicht.",
+   "sev": "niedrig"
+  },
+  "services/auth/auth.service#toast-fe3978a5": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:211",
+    "lib/features/auth/data/auth_flow_service.dart:108"
+   ],
+   "v": "korrigiert",
+   "n": "Nur Teams-Verknüpfungsmodus. Ionic: Toast \"Bitte bestätige zuerst deine E-Mail-Adresse.\" / Flutter: failure.message ist null, daher wird im Link-Modus authInvalidCredentials \"Ungültige Anmeldedaten\" gezeigt (login_page.dart:211-214); authConfirmEmailFirst wird dort nicht genutzt. Der Nutzer erfährt nicht, dass die E-Mail unbestätigt ist (Text mit anderer Bedeutung). Der frühere Erneut-senden-Dialog im Link-Modus existiert nicht mehr.",
+   "sev": "mittel"
+  },
+  "services/church/church.service#toast-014c9654": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:115",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1195"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: Service-Toast \"Fehler beim Erstellen der Kirche\" + Seiten-Toast mit error.message / Flutter Administration: Toast mit friendlyErrorMessage(Fehler) (Fehlergrund sichtbar), Registrierung: \"Fehler beim Erstellen der Gemeinde.\" Nutzer erfährt das Scheitern in beiden.",
+   "sev": "niedrig"
+  },
+  "services/church/church.service#toast-a0b536b6": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:144"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: Service-Toast \"Fehler beim Aktualisieren der Gemeinde\" + Seiten-Toast / Flutter: ein Toast adminRenameFailed \"Fehler beim Umbenennen\".",
+   "sev": "niedrig"
+  },
+  "services/db.service#loading-3aae5e12": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:121",
+    "lib/features/auth/data/auth_flow_service.dart:426"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: blockierendes Loading-Overlay (max. 3 s) beim Passwort-Zurücksetzen / Flutter: kein Overlay, Ergebnis-Toast kommt trotzdem.",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-04641214": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:181",
+    "lib/features/auth/presentation/pages/login_page.dart:305"
+   ],
+   "v": "bestätigt",
+   "n": "mapVerifyOtpError liefert denselben Text je Code; Toast rot über _showError."
+  },
+  "services/db.service#toast-322b828c": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:181",
+    "lib/features/auth/presentation/pages/login_page.dart:305"
+   ],
+   "v": "bestätigt",
+   "n": "mapVerifyOtpError liefert denselben Text je Code; Toast rot über _showError."
+  },
+  "services/db.service#toast-5053953a": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:181",
+    "lib/features/auth/presentation/pages/login_page.dart:305"
+   ],
+   "v": "bestätigt",
+   "n": "mapVerifyOtpError liefert denselben Text je Code; Toast rot über _showError."
+  },
+  "services/db.service#toast-0f5651ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:76",
+    "lib/features/auth/presentation/pages/login_page.dart:217"
+   ],
+   "v": "bestätigt",
+   "n": "mapLoginError default -> dbLoginFailed, Toast rot."
+  },
+  "services/db.service#toast-0f56a005": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:152",
+    "lib/features/auth/presentation/pages/login_page.dart:290"
+   ],
+   "v": "bestätigt",
+   "n": "mapSendOtpError: gleicher Text je Fehlercode (allowCreate=false auf Login-Seite wie Ionic); Toast rot."
+  },
+  "services/db.service#toast-328fdcac": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:152",
+    "lib/features/auth/presentation/pages/login_page.dart:290"
+   ],
+   "v": "bestätigt",
+   "n": "mapSendOtpError: gleicher Text je Fehlercode (allowCreate=false auf Login-Seite wie Ionic); Toast rot."
+  },
+  "services/db.service#toast-5a318fd2": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:152",
+    "lib/features/auth/presentation/pages/login_page.dart:290"
+   ],
+   "v": "bestätigt",
+   "n": "mapSendOtpError: gleicher Text je Fehlercode (allowCreate=false auf Login-Seite wie Ionic); Toast rot."
+  },
+  "services/db.service#toast-7ff478f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:152",
+    "lib/features/auth/presentation/pages/login_page.dart:290"
+   ],
+   "v": "bestätigt",
+   "n": "mapSendOtpError: gleicher Text je Fehlercode (allowCreate=false auf Login-Seite wie Ionic); Toast rot."
+  },
+  "services/db.service#toast-11486c7a": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:272"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: \"Fehler beim Setzen des Favoriten, bitte versuche es später erneut.\" / Flutter: \"Fehler beim Speichern\". Gleiche Aussage, Schreibvorgang gleich (tenantUsers favorite, userId+tenantId).",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-137537bd": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/parent_repository.dart:110",
+    "lib/features/settings/presentation/pages/parents_page.dart:234"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: \"Fehler beim Löschen des Elternteils\" / Flutter: \"Fehler: Fehler beim Löschen des Elternteils\" (Präfix). Löschen mit tenantId-Filter, wie Ionic zuerst Zugang entziehen.",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-1fe396ca": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:614",
+    "lib/data/repositories/tenant_create_repository.dart:63"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: Service-Toast \"Fehler beim Hinzufügen der Standard Anwesenheitstypen\" + Seiten-Toast \"Fehler beim Erstellen der Instanz: {error}\" / Flutter: nur der zweite Toast mit Fehlergrund.",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-3cbc9139": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:438",
+    "lib/features/auth/presentation/pages/login_page.dart:131"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: \"Fehler beim Zurücksetzen des Passworts. Versuche es später erneut\" / Flutter: \"Fehler beim Zurücksetzen des Passworts\" (authResetFailed). Gleiche Bedeutung.",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-4ca4cded": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/viewer_repository.dart:93",
+    "lib/features/settings/presentation/pages/viewers_page.dart:234"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: \"Fehler beim Löschen des Beobachters\" / Flutter: mit Präfix \"Fehler: \".",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-6a8168f4": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/viewer_repository.dart:83",
+    "lib/features/settings/presentation/pages/viewers_page.dart:234"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: \"Fehler beim Entfernen der E-Mail aus der Authentifizierung\" / Flutter: gleicher Text mit Präfix \"Fehler: \"; Abbruch vor dem Löschen der Zeile wie Ionic.",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-6e31e7d2": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:430",
+    "lib/features/auth/presentation/pages/login_page.dart:128"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: \"Eine E-Mail mit weiteren Anweisungen wurde dir zugesandt\" (4 s) / Flutter: \"E-Mail zum Zurücksetzen des Passworts wurde gesendet\". Gleiche Bedeutung.",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-79f266ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:76",
+    "lib/features/auth/presentation/pages/login_page.dart:217"
+   ],
+   "v": "bestätigt",
+   "n": "Gleicher Text und Toast rot (mapLoginError / signInWithPassword)."
+  },
+  "services/db.service#toast-7a069dcd": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:76",
+    "lib/features/auth/presentation/pages/login_page.dart:217"
+   ],
+   "v": "bestätigt",
+   "n": "Gleicher Text und Toast rot (mapLoginError / signInWithPassword)."
+  },
+  "services/db.service#toast-93dda176": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:76",
+    "lib/features/auth/presentation/pages/login_page.dart:217"
+   ],
+   "v": "bestätigt",
+   "n": "Gleicher Text und Toast rot (mapLoginError / signInWithPassword)."
+  },
+  "services/db.service#toast-bdbdd56a": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:76",
+    "lib/features/auth/presentation/pages/login_page.dart:217"
+   ],
+   "v": "bestätigt",
+   "n": "Gleicher Text und Toast rot (mapLoginError / signInWithPassword)."
+  },
+  "services/db.service#toast-bdede9c9": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:334",
+    "lib/features/auth/presentation/pages/login_page.dart:217"
+   ],
+   "v": "bestätigt",
+   "n": "Gleicher Text und Toast rot (mapLoginError / signInWithPassword)."
+  },
+  "services/db.service#toast-c31e6f3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:76",
+    "lib/features/auth/presentation/pages/login_page.dart:217"
+   ],
+   "v": "bestätigt",
+   "n": "Gleicher Text und Toast rot (mapLoginError / signInWithPassword)."
+  },
+  "services/db.service#toast-a9895a84": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:152",
+    "lib/features/auth/presentation/pages/login_page.dart:290"
+   ],
+   "v": "bestätigt",
+   "n": "Text gleich; Dauer Ionic 5 s / Flutter 3-4 s (reines Aussehen).",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-a9895a84-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:171",
+    "lib/features/auth/presentation/pages/login_page.dart:290"
+   ],
+   "v": "bestätigt",
+   "n": "Text gleich; Dauer Ionic 5 s / Flutter 3-4 s (reines Aussehen).",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-a9895a84-3": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:174",
+    "lib/features/auth/presentation/pages/login_page.dart:290"
+   ],
+   "v": "bestätigt",
+   "n": "Text gleich; Dauer Ionic 5 s / Flutter 3-4 s (reines Aussehen).",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-c7143ae5": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:96",
+    "lib/features/auth/presentation/pages/login_page.dart:217"
+   ],
+   "v": "bestätigt",
+   "n": "Text gleich; Dauer Ionic 5 s / Flutter 3-4 s (reines Aussehen).",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-c8873abd": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:76",
+    "lib/features/auth/presentation/pages/login_page.dart:217"
+   ],
+   "v": "bestätigt",
+   "n": "Text gleich; Dauer Ionic 5 s / Flutter 3-4 s (reines Aussehen).",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-c8873abd-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:76",
+    "lib/features/auth/presentation/pages/login_page.dart:217"
+   ],
+   "v": "bestätigt",
+   "n": "Text gleich; Dauer Ionic 5 s / Flutter 3-4 s (reines Aussehen).",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-ca28f528": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:311",
+    "lib/data/repositories/profile_repository.dart:413"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: \"Fehler beim Aktualisieren der Kirchenzuordnung\" bei Fehler der Kirchen-Synchronisierung / Flutter: allgemeines \"Fehler beim Aktualisieren des Profils\". Schreibvorgang gleich (mit zusätzlichem tenantId-Filter).",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-dcde7a3a": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/parent_repository.dart:100",
+    "lib/features/settings/presentation/pages/parents_page.dart:234"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: \"Fehler beim Entfernen der E-Mail aus der Authentifizierung\" / Flutter: gleicher Text mit Präfix \"Fehler: \".",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-f7183302": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:368",
+    "lib/features/auth/presentation/pages/login_page.dart:288"
+   ],
+   "v": "bestätigt",
+   "n": "dbCodeSent als Erfolgs-Toast."
+  },
+  "services/duty/duty.service#toast-0685f722": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:115"
+   ],
+   "v": "bestätigt",
+   "n": "extraFieldsSaveFailed = \"Fehler beim Speichern\", rot."
+  },
+  "services/duty/duty.service#toast-14e51b33": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:233"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: Toast \"Fehler beim Laden der Verfügbarkeit\" + leere Liste / Flutter: kein Toast, Seite zeigt inline \"Fehler: {Fehler}\". Nutzer erfährt den Fehler.",
+   "sev": "niedrig"
+  },
+  "services/duty/duty.service#toast-6d512f3f-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:280"
+   ],
+   "v": "bestätigt",
+   "n": "svcAssignFailed \"Fehler beim Einteilen\", rot."
+  },
+  "services/duty/duty.service#toast-6ffa5539": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:167"
+   ],
+   "v": "bestätigt",
+   "n": "dutyFlutterDeleteFailed = \"Fehler beim Löschen\", rot."
+  },
+  "services/feedback/feedback.service#toast-1a78dc16": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:103",
+    "lib/features/settings/presentation/pages/files_page.dart:730"
+   ],
+   "v": "bestätigt",
+   "n": "Feedback-Sheet: gleicher Toast \"Fehler beim Senden der Frage\". Dateien-Anfrage: Ionic zwei Toasts (Service + \"Fehler beim Senden der Anfrage: {error}\") / Flutter nur der zweite (Fehlertext evtl. technisch, error.toString()). Flutter besser/gleichwertig.",
+   "sev": "niedrig"
+  },
+  "services/group-category/group-category.service#toast-e1869ba2": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:151",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:77"
+   ],
+   "v": "korrigiert",
+   "n": "Ionic: roter Toast \"Fehler beim Laden der Kategorien\" überall (Instrumenten-Liste, Instrument, Planung, Lieder). Flutter: Fehler nur im Kategorien-Sheet inline; Instrumentenliste, Planung, Anwesenheit/Plan nutzen valueOrNull ?? [] ohne jede Meldung (Instrumentenliste zeigt dann ungruppiert, Umsortieren möglich). Fehlende Fehlermeldung, daher nicht niedrig (Randfall, selten).",
+   "sev": "mittel"
+  },
+  "services/group-category/group-category.service#toast-ec60df9e": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:62"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: Service-Toast + Seiten-Toast \"Fehler beim Speichern der Reihenfolge\" / Flutter: ein Toast instrumentsOrderFailed. Schreibvorgang (group_categories sort_order mit tenant_id) gleich.",
+   "sev": "niedrig"
+  },
+  "services/group/group.service#toast-0fbc7e49": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:748",
+    "lib/data/repositories/group_repository.dart:158"
+   ],
+   "v": "korrigiert",
+   "n": "Korrigiert: Repository wirft bei 23505 RepositoryException(code 23505), Instrument-Edit-Dialog zeigt dann svcOnlyOneMainGroup \"Es kann nur eine Hauptgruppe existieren\" wie Ionic."
+  },
+  "services/group/group.service#toast-eff6b54e": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:749"
+   ],
+   "v": "korrigiert",
+   "n": "Korrigiert: sonstiger Fehler zeigt svcUpdateGroupFailed \"Fehler beim updaten des Instruments\", identisch zu Ionic."
+  },
+  "services/history/history.service#toast-2c4284b3": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2194",
+    "lib/features/attendance/presentation/attendance_song_history.dart:85"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: \"Fehler beim Updaten des Eintrags\" beim Ändern des Dirigenten eines History-Eintrags / Flutter: \"Fehler beim Speichern: {Fehler}\" (Referenz :2102 war falsch). Gleiche Funktion, Update mit tenantId-Filter. Der Ionic-Abgleich history.visible = save_in_history entfällt, da save_in_history in Ionic nie geändert wird.",
+   "sev": "niedrig"
+  },
+  "services/live-activity/live-activity.service#modal-e1ddab08": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/live_activity_service.dart:939",
+    "lib/data/repositories/org_plan_repository.dart:157"
+   ],
+   "v": "korrigiert",
+   "n": "Ionic: shared_plans nur per id gelesen (RLS) / Flutter: zusätzlich org_id der aktuellen Organisation, und ohne aktuelle Organisation passiert nichts. Anzeige (Plan-Viewer live, Datum, Zeit, Felder, Titel) gleich. Nur Randfall (Instanzwechsel in andere Organisation).",
+   "sev": "niedrig"
+  },
+  "services/notification/notification.service#toast-29a202cf": {
+   "s": "diff",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:114"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: \"...bitte versuche es später erneut.\" / Flutter: \"Fehler beim Aktualisieren der Konfiguration\"; Schalter wird zurückgesetzt.",
+   "sev": "niedrig"
+  },
+  "services/organisation/organisation.service#toast-1f659229": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:141"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: \"Fehler beim Erstellen des öffentlichen Links\" / Flutter: \"Fehler beim Erstellen des Links\".",
+   "sev": "niedrig"
+  },
+  "services/organisation/organisation.service#toast-46c2798a": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:118",
+    "lib/core/providers/plan_providers.dart:291"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: \"Fehler beim Löschen der gemeinsamen Zusatzfeldwerte\" / Flutter: \"Fehler beim Speichern\" (gleiche Reihenfolge: Felder speichern, dann Werte löschen).",
+   "sev": "niedrig"
+  }
+ },
+ "extra": []
+}

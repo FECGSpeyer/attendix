@@ -3,215 +3,224 @@
 Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 1
+## Angleichen (hoch/mittel): 9
 
-- [ ] **mittel** `people/person/person.page` `alert-97cf5262` [people/person/person.page.ts:1354](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1354) (2. Prüfung: korrigiert)
-  Dialog „Person kopieren/übertragen“ mit Ionic-Texten und Abbrechen/Ja gleich. Rollen-Abweichung: Flutter handoverPlayer vergibt RESPONSIBLE, wenn die Zielgruppe die Hauptgruppe der Zielinstanz ist (player_repository.dart:1716-1718). Ionic person.page.ts:1365 übergibt als mainGroup die Gruppe der QUELLE (isMainGroup ? player.instrument : null), db.service.ts:3824 vergleicht die Zielgruppe damit → praktisch immer PLAYER. Nur die Übergabe-Seite (handover-detail) vergibt in Ionic RESPONSIBLE für die Hauptgruppe. Die übertragene Person bekommt in Flutter also mehr Rechte als in Ionic (mittel statt niedrig wegen Rollenrechten; Leon entscheidet, ob wie Ionic PLAYER oder wie die Übergabe-Seite).
+- [ ] **hoch** `people/list/list.page` `modal-11a551b4` [people/list/list.page.html:499](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L499) (2. Prüfung: korrigiert)
+  Modal selbst gleich (Titel "{Name} Archivieren", Austrittsdatum Default heute, Notiz, FAB; left = lokale Mitternacht als ISO; Historie "Kein Grund angegeben"; Zugang entziehen). ABER Termine entfernen: Ionic löscht die Person aus Terminen mit date > lokaler Tagesbeginn des Austrittsdatums (getAttendancesByDate). Flutter übergibt den UTC-String (toUtc().toIso8601String()) und removeFromUpcomingAttendances schneidet substring(0,10): in Deutschland (UTC+1/+2) ergibt lokale Mitternacht den VORTAG (z.B. 2026-11-09T23:00Z -> "2026-11-09") und filtert gte -> Person wird auch aus Terminen des Vortags (Austrittstag minus 1) gelöscht. Falsche DB-Löschung (person_attendances), vergangene Statistik ändert sich. Fix: Datum lokal bilden (Tag aus lokalem left) und gt Tagesbeginn. Zusätzlich Flutter besser: appId wird auch ohne E-Mail geleert (Ionic nur mit E-Mail).
+  Flutter: lib/features/people/presentation/widgets/archive_person_modal.dart:79, lib/data/repositories/player_repository.dart:605, lib/data/repositories/player_repository.dart:939
+- [ ] **hoch** `people/person/person.page` `alert-97cf5262` [people/person/person.page.ts:1354](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1354) (2. Prüfung: korrigiert)
+  Dialog gleich, aber die übertragene Person wird in Flutter Verantwortlich, wenn die Zielgruppe die Hauptgruppe der Zielinstanz ist (player_repository.dart handoverPlayer); Ionic person.page.ts:1365 vergibt praktisch immer Spieler. Rolle bekommt mehr Rechte als in Ionic → hoch (Sol-Review). Fix: wie Ionic immer PLAYER.
   Flutter: lib/features/people/presentation/widgets/person_transfer_sheet.dart, lib/data/repositories/player_repository.dart:1714-1724
+- [ ] **mittel** `instruments/instrument-list/instrument-list.page` `action-13fe6ace` [instruments/instrument-list/instrument-list.page.html:9](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L9) (2. Prüfung: korrigiert)
+  Rolle (nur Admin/Verantwortlicher, Route-Guard jetzt app_router.dart:168), Icon swap_vert ↔ Häkchen, Ziehen innerhalb der Kategorie und Toasts „Reihenfolge gespeichert“/„Fehler…“ wie Ionic. Erstprüfer übersah beim Handler: Häkchen ohne Verschieben – Ionic saveOrder schreibt nur vorhandene sort_order unverändert (null bleibt null) / Flutter _toggleReorder → computeGlobalSortOrder schreibt immer 1..n an alle Gruppen (gleiche Abweichung wie x-d0c116c654). Andere DB-Werte → mittel (sichtbare Reihenfolge bleibt gleich, Badges erscheinen/ändern sich).
+  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:101, lib/features/instruments/presentation/pages/instruments_list_page.dart:38, lib/features/instruments/presentation/pages/instruments_list_page.dart:49, lib/core/router/app_router.dart:168
+- [ ] **mittel** `instruments/instrument-list/instrument-list.page` `action-b5b9e69f` [instruments/instrument-list/instrument-list.page.html:20](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L20) (2. Prüfung: korrigiert)
+  Icon swap_vert ↔ Häkchen, Beenden speichert Kategorie-sort_order und daraus die globale Gruppen-sort_order (1..n, wie Ionic saveCategoryOrder), Toast „Reihenfolge gespeichert“ bzw. „Fehler beim Speichern der Reihenfolge“. Erstprüfer übersah: Häkchen ohne Verschieben – Ionic schreibt nur vorhandene Kategorie-sort_order unverändert (null bleibt null) / Flutter vergibt immer 1..n an alle Kategorien (Z. 43–49). Andere DB-Werte → mittel; sichtbare Reihenfolge bleibt gleich, später neu angelegte Kategorien landen dann aber hinter statt alphabetisch zwischen den bisher unnummerierten.
+  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:112, lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:28, lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:43
+- [ ] **mittel** `instruments/instrument-list/instrument-list.page` `x-d0c116c654` **Sortiermodus ohne Verschieben nummeriert neu** [src/app/instruments/instrument-list/instrument-list.page.ts:401](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L401) (2. Prüfung: korrigiert)
+  Besteht weiter: Ionic saveOrder schreibt beim Häkchen ohne Verschieben nur vorhandene sort_order unverändert (null bleibt null) / Flutter computeGlobalSortOrder schreibt beim Verlassen immer 1..n an alle Gruppen. Bewertung korrigiert: abweichende DB-Werte sind nie niedrig → mittel (sichtbare Reihenfolge bleibt, Badges ändern sich, unnummerierte Gruppen bekommen Werte, später neue Gruppen sortieren dann ans Ende statt alphabetisch).
+  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:49
+- [ ] **mittel** `instruments/instrument/instrument.page` `x-718f3b20d0` **Geschriebene Werte beim Aktualisieren** [src/app/instruments/instrument/instrument.page.ts:64](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument/instrument.page.ts#L64) (2. Prüfung: korrigiert)
+  Besteht weiter (_save): Ionic schreibt notes, range, tuning, clefs, name, maingroup, category, synonyms wie geladen/eingegeben ('' bleibt '', versteckte Felder unverändert) / Flutter trimmt, schreibt leere range/synonyms/notes als null und tuning/clefs immer – bei Chor/Allgemein/Hauptgruppe (Felder versteckt) wird tuning null zu „C“ und clefs null/[] zu [g]. Bewertung korrigiert: andere DB-Werte, teils in Feldern, die der Nutzer nicht sieht → mittel.
+  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:720, lib/features/instruments/presentation/pages/instruments_list_page.dart:729
+- [ ] **mittel** `people/list/list.page` `x-dac55a9bd1` **Anwesenheits-Badge / Prozentbasis** [src/app/utilities/Utils.ts:129](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/utilities/Utils.ts#L129) (2. Prüfung: korrigiert)
+  Teilweise behoben: 0%-Badge ohne gezählte Termine, bis jetzt+24 h und archivierte Termine nur für Admin/Verantwortliche jetzt wie Ionic. Verbleibend: Ionic zählt nur Termine nach seasonStart bzw. – ohne Saisonstart – nach 2023-01-01 (getCurrentAttDate) / Flutter-Liste hat keinen 2023-Fallback (gte seasonStart nur wenn gesetzt) → bei Instanzen ohne Saisonstart mit älteren Terminen andere Prozentwerte im Badge und bei Sortierung nach Anwesenheit (Personendetail nutzt den Fallback). Anderer angezeigter Wert → nicht nur Optik.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:663, lib/core/providers/attendance_providers.dart:292, lib/core/providers/attendance_providers.dart:309
+- [ ] **mittel** `people/person/person.page` `field-016207ea` [people/person/person.page.html:462](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L462) (2. Prüfung: korrigiert)
+  Ionic: Schicht-Auswahl (Unterschicht) ohne Leer-Option / Flutter: zusätzliche Option 'Keine Schicht zugewiesen' (noneLabel) und Anzeige 'Nicht ausgewählt'; Nutzer kann shift_name auf null setzen, was Ionic nicht schreibt. Fix: noneLabel entfernen.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:552, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:576
+- [ ] **mittel** `people/person/person.page` `x-78e8317eac` **Datenübernahme (E-Mail vergeben) ohne Passbild** [src/app/people/person/person.page.ts:813](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L813) (2. Prüfung: korrigiert)
+  Lage hat sich umgedreht: Flutter übernimmt das Passbild jetzt in den Entwurf (Header-Vorschau wie Ionic) und otherExercise/range wie Ionic auch wenn leer. Neu: Flutter schreibt img beim Speichern in player (_changedFields enthält „img“), Ionic speichert img beim Aktualisieren nie (pickPersonFields ohne img, Bild nur bis zum Schließen sichtbar). Folge: die Bild-URL der Person aus der anderen Instanz wird dauerhaft gesetzt (späteres „Entfernen“ löscht deren Storage-Datei mit), hat der Treffer kein Bild, wird img=null geschrieben und das bisherige Passbild geht verloren. Anderer DB-Wert → nicht niedrig.
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1114, lib/features/people/presentation/pages/person_detail_page.dart:962, lib/features/people/presentation/widgets/person_detail/person_header.dart:290
 
-## Flutter besser – Leon entscheidet: 28
+## Flutter besser – Leon entscheidet: 25
 
-- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `action-7bb1a2ef` [duty/duty-distribute-modal/duty-distribute-modal.component.html:69](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.html#L69)
-  Flutter besser: Ionic: Plus-Button bleibt bei 10 aktiv, Tippen wirkungslos (Math.min 10) / Flutter: Button bei 10 ausgegraut. Maximum 10 gleich.
-  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:420
-- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `action-09922adb` [instruments/instrument-list/instrument-list.page.html:152](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L152) (2. Prüfung: korrigiert)
-  Flutter besser: Rolle gleich (nur Admin/Verantwortlicher); Insert name, maingroup false, tuning C, clefs [g], tenantId, category (nur wenn gesetzt) gleich; leerer Name → „Bitte gib einem Namen an“. Erstprüfer übersah: Ionic speichert den Namen ungetrimmt (nur Leerzeichen wird angelegt) und prüft den Insert-Fehler nicht (group.service.ts:34, Modal schließt still) / Flutter trimmt und zeigt bei Fehler „Fehler beim Hinzufügen“.
-  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:427, lib/features/instruments/presentation/pages/instruments_list_page.dart:371, lib/features/instruments/presentation/pages/instruments_list_page.dart:347, lib/data/repositories/group_repository.dart:94
-- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `action-5c670508` [people/bulk-edit/bulk-edit.page.html:5](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L5)
-  Flutter besser: Ionic: X schließt das Modal immer (auch während Speichern) / Flutter: X während _isSaving deaktiviert.
-  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:268-271
-- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `field-3f70cbe7` [people/bulk-edit/bulk-edit.page.html:16](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L16)
-  Flutter besser: Label 'Feld auswählen', Platzhalter 'Feld wählen...', 'Standard-Felder' (deaktiviert) + Gruppe/Stimmführer/Notizen/Telefon, 'Zusatzfelder' + Felder gleich. Ionic: Zusatzfeld-Block nur wenn db.tenant().additional_fields.length > 0 (Org-Felder fehlen also, wenn der Tenant keine eigenen Felder hat) / Flutter: sobald irgendein Zusatzfeld (Org oder Tenant) existiert (hasExtra).
-  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:282-322
-- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `field-4964deb8-2` [people/bulk-edit/bulk-edit.page.html:135](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L135)
-  Flutter besser: Ionic: (ionChange) $event.detail.value liefert bei ion-input einen String → Zusatzfeld wird als "5" gespeichert (laut Ionic-Core; @ionic/angular nicht im Container) / Flutter: parst zu num (Komma erlaubt), leer → null. Ionic übernimmt erst bei Blur, Flutter bei jedem Tastendruck.
-  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:398-406, lib/features/people/presentation/pages/bulk_edit_page.dart:531-536, lib/features/people/presentation/pages/bulk_edit_page.dart:475-479
-- [ ] **niedrig** `people/list/list.page` `toast-9a849d38` [people/list/list.page.ts:390](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L390) (2. Prüfung: korrigiert)
-  Flutter besser: Ionic prüft das {error} der Supabase-Updates nicht; postgrest-js wirft ohne throwOnError auch bei Netzfehlern nicht (geprüft an @supabase/postgrest-js 2.x im npx-Cache, Ionic-Version selbst nicht im Container) → der Catch mit 'Fehler beim Speichern der Reihenfolge' ist praktisch unerreichbar, Ionic meldet auch bei Fehlschlag 'Reihenfolge gespeichert'. Flutter zeigt den roten Fehler-Toast, wenn ein Update scheitert. Erstprüfung: ok.
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1176
-- [ ] **niedrig** `people/list/list.page` `alert-eeaa4fb8` [people/list/list.page.ts:489](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L489) (2. Prüfung: korrigiert)
-  Flutter besser: Für Zahlenfelder der Instanz gleich (Titel = Feldname, Zahlenfeld 'Wert eingeben', 'Abbrechen' → Alle, 'Filtern', leer → Alle; sichtbar für alle Rollen der Personenliste = Admin/Verantwortlicher/Beobachter, in beiden). Erstprüfer übersah den Mandanten-Fall Organisationsfelder: Ionic listet Org-Zahlenfelder im Filter (getPersonExtraFields), öffnet den Alert aber nur für tenant().additional_fields (list.page.ts:474) → kein Dialog, Filter wirkungslos (alle Personen, Icon trotzdem farbig) / Flutter: Dialog und Filter auch für Org-Zahlenfelder (personListExtraFieldsProvider). Vorbelegung: Ionic letzter gespeicherter Zusatzwert, Flutter nur bei gleichem aktivem Filter (kosmetisch). Treffer für Personen ohne Wert (Ionic-Default 0) siehe x-122934c2b4.
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:986, lib/features/people/presentation/pages/people_list_page.dart:1002, lib/features/people/presentation/pages/people_list_page.dart:1013, lib/features/people/presentation/pages/people_list_page.dart:1016, lib/features/people/presentation/pages/people_list_page.dart:1019, lib/core/providers/profile_providers.dart:67
-- [ ] **niedrig** `people/list/list.page` `alert-86b4fbec` [people/list/list.page.ts:909](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L909)
-  Flutter besser: Titel, Text, Checkboxen (Instanzname), 'Überspringen'/'Pausieren' gleich; Ionic bietet aber alle verknüpften Instanzen an, in denen die Person (nicht als Betrachter) Mitglied ist, Flutter nur jene, in denen der angemeldete Nutzer Admin/Verantwortlicher ist (Ionic scheitert dort sonst mit 'Fehler bei …').
-  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:229, lib/features/people/presentation/widgets/pause_person_sheet.dart:236, lib/features/people/presentation/widgets/pause_person_sheet.dart:284
-- [ ] **niedrig** `people/list/list.page` `field-27abe29e` [people/list/list.page.html:58](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L58)
-  Flutter besser: Platzhalter 'Person suchen...' und Suchfelder (Vor-/Nachname, Gruppe, Text-/Zahl-Zusatzfelder) gleich; Ionic verwirft bei der Suche aber den aktiven Filter und die gewählte Sortierung (Ergebnis in Gruppenreihenfolge), Flutter kombiniert Suche, Filter und Sortierung.
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:510, lib/features/people/presentation/pages/people_list_page.dart:514, lib/features/people/presentation/pages/people_list_page.dart:309, lib/features/people/people_list_utils.dart:8
-- [ ] **niedrig** `people/list/list.page` `action-de48c2e0` [people/list/list.page.html:451](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L451)
-  Flutter besser: Ionic clearFilters leert nur filterOptAdd und zeigt alle Personen, Filterauswahl (Icon bleibt farbig) und Suchtext bleiben stehen / Flutter setzt Filter auf 'Alle Anzeigen', leert die Suche und speichert das.
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:582, lib/features/people/presentation/pages/people_list_page.dart:1243
-- [ ] **niedrig** `people/person/person.page` `alert-40883a4d` [people/person/person.page.ts:503](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L503) (2. Prüfung: korrigiert)
-  Flutter besser: Detailseite gleich ('Änderungen verwerfen?' / Text, 'Abbrechen' / 'Ja'; Änderungen nur für Admin/Verantwortliche möglich wie Ionic !readOnly). Erstprüfer übersah: Ionic onChange setzt hasChanges nur bei existingPlayer, das Neu-Modal schließt daher immer ohne Rückfrage / Flutter fragt auf der Neu-Seite bei jeder Eingabe (Name, E-Mail, Bild …) ebenfalls nach.
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1742, lib/features/people/presentation/pages/person_create_page.dart:123
+- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `action-7bb1a2ef` [duty/duty-distribute-modal/duty-distribute-modal.component.html:69](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.html#L69) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic Plus bei 10 aktiv aber wirkungslos (Math.min 10) / Flutter Button bei 10 deaktiviert; Maximum 10 gleich. Gleicher Wert, rein optisch.
+  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:413
+- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `action-09922adb` [instruments/instrument-list/instrument-list.page.html:152](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L152) (2. Prüfung: bestätigt)
+  Flutter besser: Rolle gleich (FAB nur Admin/Verantwortlicher). Insert in instruments: name, maingroup false, category nur wenn gesetzt, tenantId, tuning „C“, clefs [g] (createGroup putIfAbsent) wie Ionic group.service addGroup; leerer Name → „Bitte gib einem Namen an“. Ionic speichert den Namen ungetrimmt (nur Leerzeichen wird angelegt) und prüft den Insert-Fehler nicht / Flutter trimmt, lehnt Leerzeichen-Namen ab und zeigt bei Fehler „Fehler beim Hinzufügen“ (x-5824d283fc). f-Zeilen aktualisiert.
+  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:429, lib/features/instruments/presentation/pages/instruments_list_page.dart:374, lib/features/instruments/presentation/pages/instruments_list_page.dart:349, lib/data/repositories/group_repository.dart:94
+- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `action-5c670508` [people/bulk-edit/bulk-edit.page.html:5](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L5) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic: X schließt das Modal immer, auch während Speichern / Flutter: X während _isSaving deaktiviert.
+  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:271-274
+- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `field-3f70cbe7` [people/bulk-edit/bulk-edit.page.html:16](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L16) (2. Prüfung: bestätigt)
+  Flutter besser: Label, Platzhalter, „Standard-Felder“/„Zusatzfelder“ und Optionen gleich. Ionic zeigt Zusatzfelder nur wenn db.tenant().additional_fields nicht leer (Organisationsfelder fehlen sonst) / Flutter sobald irgendein Zusatzfeld (Org oder Instanz) existiert.
+  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:285-325
+- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `field-4964deb8-2` [people/bulk-edit/bulk-edit.page.html:135](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L135) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic: (ionChange) liefert bei ion-input einen String (laut Ionic-Core; @ionic/angular nicht im Container geprüft), Zusatzfeld wird evtl. als "5" gespeichert / Flutter: speichert num (Komma erlaubt), leer → null. Zahl-Tastatur gleich. Ionic übernimmt bei Blur, Flutter bei jedem Tastendruck.
+  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:534-539, lib/features/people/presentation/pages/bulk_edit_page.dart:478-482
+- [ ] **niedrig** `people/list/list.page` `toast-9a849d38` [people/list/list.page.ts:390](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L390) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic prüft {error} der Updates nicht und meldet praktisch immer 'Reihenfolge gespeichert'; Flutter zeigt bei Fehlschlag roten Toast 'Fehler beim Speichern der Reihenfolge'. Flutter schreibt sort_order nur für verschobene Gruppen (mit tenantId-Filter), Ionic für alle Personen mit sort_order (ohne tenantId).
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1239, lib/data/repositories/player_repository.dart:1884
+- [ ] **niedrig** `people/list/list.page` `alert-eeaa4fb8` [people/list/list.page.ts:489](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L489) (2. Prüfung: bestätigt)
+  Flutter besser: Für Zahlenfelder der Instanz gleich (Titel = Feldname, Zahlenfeld „Wert eingeben“, „Abbrechen“ → Alle, „Filtern“, leer → Alle; alle Rollen der Personenliste). Ionic öffnet den Alert nur für tenant().additional_fields, ein Org-Zahlenfeld im Filter filtert nicht (alle Personen, Icon farbig) / Flutter: Dialog und Filter auch für Org-Felder. Vorbelegung: Ionic letzter gespeicherter Zusatzwert, Flutter nur bei gleichem aktivem Filter. Personen ohne Wert treffen jetzt in beiden „0“ (withExtraFieldDefaults).
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1059, lib/features/people/presentation/pages/people_list_page.dart:1062, lib/features/people/presentation/pages/people_list_page.dart:1077, lib/features/people/presentation/pages/people_list_page.dart:1116, lib/features/people/presentation/pages/people_list_page.dart:305, lib/core/providers/profile_providers.dart:67
+- [ ] **niedrig** `people/list/list.page` `alert-86b4fbec` [people/list/list.page.ts:909](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L909) (2. Prüfung: bestätigt)
+  Flutter besser: Titel, Text, Checkboxen (Instanzname), „Überspringen“/„Pausieren“ gleich; Ionic bietet alle verknüpften Instanzen an, in denen die Person (nicht als Beobachter) Mitglied ist, Flutter nur jene, in denen der angemeldete Nutzer Admin/Verantwortlicher ist. In den übrigen bewirkt Ionics Update wegen RLS (admins_manage_player) nichts. Flutter hängt den Eintrag an die eigene Historie der anderen Instanz an statt sie mit der Quell-Historie zu überschreiben.
+  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:235, lib/features/people/presentation/widgets/pause_person_sheet.dart:240, lib/features/people/presentation/widgets/pause_person_sheet.dart:288, lib/data/repositories/cross_tenant_person_repository.dart:360
+- [ ] **niedrig** `people/list/list.page` `field-27abe29e` [people/list/list.page.html:58](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L58) (2. Prüfung: bestätigt)
+  Flutter besser: Platzhalter "Person suchen..." und Suchfelder (Vor-/Nachname, Gruppe, Text-/Zahl-Zusatzfelder) gleich; Ionic verwirft bei Suche den Filter und die Sortierung, Flutter kombiniert Suche, Filter und Sortierung.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:564, lib/features/people/presentation/pages/people_list_page.dart:322, lib/features/people/people_list_utils.dart:8
+- [ ] **niedrig** `people/list/list.page` `action-de48c2e0` [people/list/list.page.html:451](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L451) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic clearFilters leert nur filterOptAdd und zeigt alle Personen; Filterauswahl und Suchtext bleiben stehen / Flutter setzt Filter auf "Alle Anzeigen", leert Suche und speichert. Leon entscheidet.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:634, lib/features/people/presentation/pages/people_list_page.dart:1308
 - [ ] **niedrig** `people/person/person.page` `alert-01934766` [people/person/person.page.ts:1343](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1343) (2. Prüfung: korrigiert)
   Flutter besser: Titel 'Kopieren/Übertragen nicht möglich', Text mit Instanz und E-Mail bzw. Name, 'OK' gleich. Ionic prüft keine Rechte in der Zielinstanz und zeigt den Hinweis für jede eigene Ziel-Rolle / Flutter prüft vorher canEdit in der Zielinstanz und zeigt sonst den roten Toast 'Keine Berechtigung in der Ziel-Instanz' statt des Hinweises (Ionic-Übertragung scheitert dann später). Andere Ziel-Instanzliste: field-0a2daf88.
   Flutter: lib/features/people/presentation/widgets/handover_sheet.dart:723, lib/features/people/presentation/widgets/handover_sheet.dart:763
-- [ ] **niedrig** `people/person/person.page` `field-9f6c9acb` [people/person/person.page.html:237](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L237)
-  Flutter besser: Ionic-Input ohne ionChange (Änderung allein aktiviert Speichern nicht) / Flutter markiert Änderung. Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; leer + nicht bearbeitbar ausgeblendet
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:829
 - [ ] **niedrig** `teachers/teachers.page` `field-8a21ddb5` [teachers/teachers.page.html:49](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/teachers/teachers.page.html#L49) (2. Prüfung: bestätigt)
-  Flutter besser: Ionic: addTeacher bekommt private.value der ion-toggle (Formularwert, Standard „on“), pri === 'true' ist nie wahr → neue Lehrer immer private = false (Ionic-Paket nicht im Container, Standardwert laut Ionic-API) / Flutter: speichert den Schalterzustand.
-  Flutter: lib/features/teachers/presentation/pages/teachers_list_page.dart:392, lib/data/repositories/teacher_repository.dart:57
-- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `x-a485e4b055` **Zusatzfelder-Abschnitt Sichtbarkeit** [src/app/people/bulk-edit/bulk-edit.page.html:24](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L24)
-  Flutter besser: Ionic: Zusatzfelder (inkl. Org-Felder) nur im Auswahlfeld, wenn der Tenant selbst additional_fields hat / Flutter: immer, wenn Org- oder Tenant-Felder existieren.
-  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:255, lib/features/people/presentation/pages/bulk_edit_page.dart:306-319
-- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `x-1aab272cf3` **Zahlen-Zusatzfeld pro Person als String** [src/app/people/bulk-edit/bulk-edit.page.html:135-138](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L135-L138)
-  Flutter besser: Ionic: Einzelwert aus ionChange ist String ("5"), Sammelwert über NumericValueAccessor Zahl; changedCount vergleicht strikt / Flutter: immer num (oder null).
-  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:475-479
-- [ ] **niedrig** `people/import/import.page` `x-281b9c9094` **Liste wird auch ohne Import neu geladen** [src/app/people/import/import.page.ts:236-238](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.ts#L236-L238)
-  Flutter besser: Ionic: Personenliste nur neu geladen, wenn mindestens eine Person importiert wurde / Flutter: invalidiert playersProvider immer (auch teilweise gespeicherte, fehlgeschlagene Zeilen erscheinen).
-  Flutter: lib/features/people/presentation/pages/person_import_page.dart:207-210
-- [ ] **niedrig** `people/list/list.page` `x-5d4cb428e1` **Flutter besser: Suche/Filter/Sortierung kombiniert** [src/app/people/list/list.page.ts:714](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L714)
-  Ionic: search() setzt die Liste auf alle Personen zurück (aktiver Filter verloren) und sortiert nach Gruppe; onFilterChanged sortiert ebenfalls nach Gruppe trotz anderer Sortierung; ein gespeicherter Filter wird beim Laden nur bei Sortierung 'Gruppe' angewendet / Flutter: Filter, Suche und Sortierung werden immer zusammen angewendet.
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:250, lib/features/people/presentation/pages/people_list_page.dart:316
-- [ ] **niedrig** `people/list/list.page` `x-c1c5493cd5` **Flutter besser: schmalere Pausen-Schreibvorgänge** [src/app/services/db.service.ts:2219](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/db.service.ts#L2219)
-  Ionic: Pausieren/Aktivieren über updatePlayer schreibt den ganzen Listen-Datensatz zurück (inkl. mit Defaults aufgefüllter additional_fields); Pausieren in anderen Instanzen überschreibt dort die Historie mit der Quell-Historie / Flutter: schreibt nur paused, paused_until, history (+ tenantId-Filter); in anderen Instanzen wird der Eintrag an deren Historie angehängt.
-  Flutter: lib/data/repositories/player_repository.dart:816, lib/data/repositories/player_repository.dart:861, lib/data/repositories/cross_tenant_person_repository.dart:288
-- [ ] **niedrig** `people/person/person.page` `x-5c4108ee61` **Pausieren in anderen Instanzen: Historie** [src/app/people/person/person.page.ts:1453](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1453)
-  Flutter besser: Ionic überschreibt die Historie der Person in der anderen Instanz mit der kompletten Historie dieser Instanz (pausePlayerInOtherTenant(..., history)) / Flutter hängt nur einen Pausiert-Eintrag an
-  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:247
-- [ ] **niedrig** `people/person/person.page` `x-e0dc1b2b62` **Verspätungszähler zurücksetzen schreibt nur lastSolve** [src/app/people/person/person.page.ts:396](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L396)
-  Flutter besser: Ionic resetLateCount speichert den ganzen Spieler (db.updatePlayer(this.player)) inkl. noch ungespeicherter Änderungen / Flutter schreibt nur lastSolve
-  Flutter: lib/data/repositories/player_repository.dart:1391
-- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `x-d3edffbcbe` **Gleicher-Tag-Sperre zählt mehr Termine** [src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:111](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts#L111)
-  Flutter besser: Ionic: lädt nur die gewählten Termintypen und filtert voll besetzte Termine vor distributeDuties heraus, deren Eingeteilte blockieren den Tag daher nicht / Flutter: lädt alle Dienst-Typen und gibt voll besetzte und nicht gewählte Termine mit open 0 mit, deren Eingeteilte blockieren bei „Nicht zweimal am selben Tag“ den Tag. Der Vorschlag kann sich dadurch unterscheiden.
-  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:123, lib/features/duty/presentation/pages/duty_distribute_page.dart:164
-- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `x-9bddce3977` **Ladefehler beim Berechnen** [src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:79](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts#L79)
-  Flutter besser: Ionic: kein catch, getUpcomingDutyTermine verschluckt Fehler und liefert [], dann Vorschau „Im Zeitraum gibt es keine Termine mit Dienst-Modus.“ / Flutter: roter Toast „Fehler: …“, bleibt im Regeln-Schritt.
-  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:145
-- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `x-a43d5a3f61` **Pull-to-Refresh nur in Flutter** [src/app/instruments/instrument-list/instrument-list.page.html:70](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L70)
-  Flutter besser: Ionic: kein ion-refresher auf der Gruppenliste / Flutter: Herunterziehen lädt Gruppen, Kategorien und Personenanzahlen neu.
-  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:82
-- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `x-5824d283fc` **Fehler beim Hinzufügen einer Gruppe** [src/app/instruments/instrument-list/instrument-list.page.ts:178](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L178)
-  Flutter besser: Ionic: groupSvc.addGroup prüft den Fehler nicht, Sheet schließt ohne Meldung / Flutter: Sheet schließt, roter Toast „Fehler beim Hinzufügen“.
-  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:346
-- [ ] **niedrig** `teachers/teachers.page` `x-42f2057e70` **Pull-to-Refresh nur in Flutter** [src/app/teachers/teachers.page.html:10](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/teachers/teachers.page.html#L10)
-  Flutter besser: Ionic: kein ion-refresher / Flutter: Herunterziehen lädt Lehrer und Schüleranzahlen neu.
-  Flutter: lib/features/teachers/presentation/pages/teachers_list_page.dart:49
+  Flutter besser: Ionic: addTeacher bekommt private.value der ion-toggle (Formularwert, standardmäßig „on“), pri === 'true' ist nie wahr → neue Lehrer immer private=false / Flutter speichert den Schalterzustand. Leon entscheidet, ob so bleiben soll.
+  Flutter: lib/features/teachers/presentation/pages/teachers_list_page.dart:362, lib/data/repositories/teacher_repository.dart:57
+- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `x-a485e4b055` **Zusatzfelder-Abschnitt Sichtbarkeit** [src/app/people/bulk-edit/bulk-edit.page.html:24](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L24) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic zeigt die Zusatzfelder (inkl. Org-Felder) im Feld-Auswahlmenü nur, wenn die Instanz selbst additional_fields hat / Flutter: immer, wenn Org- oder Instanz-Felder existieren. Admin/Verantwortlich kann diese Felder ohnehin pro Person bearbeiten; kein Rechtezuwachs.
+  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:258, lib/features/people/presentation/pages/bulk_edit_page.dart:309, lib/features/people/presentation/pages/bulk_edit_page.dart:320
+- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `x-1aab272cf3` **Zahlen-Zusatzfeld pro Person als String** [src/app/people/bulk-edit/bulk-edit.page.html:135-138](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L135-L138) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic speichert Einzelwerte eines Zahlenfeldes aus ionChange als String ("5"), Sammelwert und Personenseite (NumericValueAccessor) als Zahl / Flutter immer Zahl oder null. Der JSON-Typ in additional_fields weicht nur vom Ionic-Fehlerpfad ab (Ionic schreibt sonst selbst Zahlen); Filter/Suche vergleichen per String(), Anzeige gleich. Leon entscheidet.
+  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:478, lib/features/people/presentation/pages/bulk_edit_page.dart:481, lib/features/people/presentation/pages/bulk_edit_page.dart:534
+- [ ] **niedrig** `people/list/list.page` `x-5d4cb428e1` **Flutter besser: Suche/Filter/Sortierung kombiniert** [src/app/people/list/list.page.ts:714](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L714) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic search() setzt auf alle Personen zurück (aktiver Filter verloren) und onFilterChanged sortiert nach Gruppe trotz anderer Sortierung; gespeicherter Filter wird beim Laden nur bei Sortierung 'Gruppe' angewendet / Flutter: _filterPeople (Filter + Suche) und _sortPeople werden immer kombiniert angewendet, gespeicherter Filter immer.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:262, lib/features/people/presentation/pages/people_list_page.dart:352, lib/features/people/presentation/pages/people_list_page.dart:155
+- [ ] **niedrig** `people/list/list.page` `x-c1c5493cd5` **Flutter besser: schmalere Pausen-Schreibvorgänge** [src/app/services/db.service.ts:2219](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/db.service.ts#L2219) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic schreibt beim Pausieren/Aktivieren per updatePlayer den ganzen Listen-Datensatz (inkl. mit Defaults aufgefüllter additional_fields) und überschreibt in anderen Instanzen deren Historie mit der Quell-Historie / Flutter schreibt nur paused, paused_until, history (id + tenantId) und hängt in anderen Instanzen den Eintrag an deren eigene Historie an. Sichtbares Ergebnis (pausiert/aktiv, Historieneintrag, Terminlisten) gleich.
+  Flutter: lib/data/repositories/player_repository.dart:837, lib/data/repositories/player_repository.dart:882, lib/data/repositories/cross_tenant_person_repository.dart:288
+- [ ] **niedrig** `people/person/person.page` `x-5c4108ee61` **Pausieren in anderen Instanzen: Historie** [src/app/people/person/person.page.ts:1453](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1453) (2. Prüfung: bestätigt)
+  Flutter besser: weiterhin – Ionic überschreibt die Historie der Person in der anderen Instanz mit der kompletten Historie dieser Instanz (pausePlayerInOtherTenant(..., history)) / Flutter liest die Historie dort und hängt nur den Pausiert-Eintrag an. Nebenbei: Flutter bietet nur Instanzen an, in denen der Nutzer Admin/Verantwortlich ist (Ionic alle Instanzen der Person, Schreiben dort scheitert sonst an RLS).
+  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:251, lib/features/people/presentation/widgets/pause_person_sheet.dart:264, lib/data/repositories/cross_tenant_person_repository.dart:322
+- [ ] **niedrig** `people/person/person.page` `x-e0dc1b2b62` **Verspätungszähler zurücksetzen schreibt nur lastSolve** [src/app/people/person/person.page.ts:396](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L396) (2. Prüfung: bestätigt)
+  Flutter besser: weiterhin – Ionic resetLateCount speichert den ganzen Spieler (db.updatePlayer(this.player)) inkl. noch ungespeicherter Formularänderungen / Flutter schreibt nur lastSolve (id + tenantId), ungespeicherte Änderungen bleiben im Entwurf.
+  Flutter: lib/data/repositories/player_repository.dart:1424, lib/features/people/presentation/pages/person_detail_page.dart:1343
+- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `x-d3edffbcbe` **Gleicher-Tag-Sperre zählt mehr Termine** [src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:111](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts#L111) (2. Prüfung: bestätigt)
+  Flutter besser, weiter real: Flutter lädt alle Dienst-Typen und gibt voll besetzte sowie nicht gewählte Termine mit open 0 mit, deren Eingeteilte blockieren bei „Nicht zweimal am selben Tag“ den Tag; Ionic filtert sie vorher heraus. Vorschlag kann abweichen, Vorschau bleibt änderbar.
+  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:124, lib/features/duty/presentation/pages/duty_distribute_page.dart:174
+- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `x-9bddce3977` **Ladefehler beim Berechnen** [src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:79](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts#L79) (2. Prüfung: bestätigt)
+  Flutter besser, weiter real: Ionic verschluckt Ladefehler (getUpcomingDutyTermine → [], getDutyCounts → leere Map) und zeigt „Im Zeitraum gibt es keine Termine mit Dienst-Modus.“ bzw. verteilt ohne Basiszählung; Flutter zeigt roten Toast „Fehler: …“ und bleibt im Regeln-Schritt.
+  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:146
+- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `x-a43d5a3f61` **Pull-to-Refresh nur in Flutter** [src/app/instruments/instrument-list/instrument-list.page.html:70](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L70) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic kein ion-refresher auf der Gruppenliste / Flutter: onRefresh lädt Gruppen, Kategorien und Personenanzahlen neu.
+  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:85, lib/features/instruments/presentation/pages/instruments_list_page.dart:120
+- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `x-5824d283fc` **Fehler beim Hinzufügen einer Gruppe** [src/app/instruments/instrument-list/instrument-list.page.ts:178](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L178) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic groupSvc.addGroup prüft den Insert-Fehler nicht, Sheet schließt ohne Meldung / Flutter: createGroup → null, Sheet schließt, roter Toast „Fehler beim Hinzufügen“. f-Zeile aktualisiert.
+  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:349
+- [ ] **niedrig** `teachers/teachers.page` `x-42f2057e70` **Pull-to-Refresh nur in Flutter** [src/app/teachers/teachers.page.html:10](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/teachers/teachers.page.html#L10) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic: kein ion-refresher / Flutter: IonPage onRefresh lädt Lehrer, Schüleranzahlen und Liste neu. Weiter vorhanden.
+  Flutter: lib/features/teachers/presentation/pages/teachers_list_page.dart:48-59
 - [ ] **niedrig** `teachers/teachers.page` `x-c00bd9fd3a` **Gelöschte Gruppe in Lehrer-Instrumenten** [src/app/teachers/teachers.page.ts:41](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/teachers/teachers.page.ts#L41)
   Flutter besser: Ionic: getTeachers liest .name einer nicht mehr existierenden Gruppe → TypeError, die Lehrerliste bleibt leer / Flutter: unbekannte Gruppen-IDs werden übersprungen.
   Flutter: lib/core/providers/teacher_providers.dart:75
-- [ ] **niedrig** `people/person/person.page` `x-4b8b68cee9` **Neu-Seite: zusätzliche Duplikat-Rückfrage** [src/app/people/person/person.page.ts:525](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L525)
-  Flutter besser: Ionic addPerson legt ohne Namensprüfung an / Flutter fragt bei gleichem Vor- und Nachnamen in der Instanz (auch archivierte/ausstehende) „Mögliches Duplikat“ – „Eine Person mit dem Namen "{name}" existiert bereits ({count}x). Trotzdem erstellen?“ mit Abbrechen/„Trotzdem erstellen“.
-  Flutter: lib/features/people/presentation/pages/person_create_page.dart:997, lib/features/people/presentation/pages/person_create_page.dart:999
+- [ ] **niedrig** `people/person/person.page` `x-4b8b68cee9` **Neu-Seite: zusätzliche Duplikat-Rückfrage** [src/app/people/person/person.page.ts:525](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L525) (2. Prüfung: bestätigt)
+  Flutter besser: weiterhin – Ionic addPerson legt ohne Namensprüfung an / Flutter fragt bei gleichem Vor- und Nachnamen (ilike, Instanz inkl. archivierter/ausstehender, tenantId-Filter) „Mögliches Duplikat“ – „Eine Person mit dem Namen "{name}" existiert bereits ({count}x). Trotzdem erstellen?“ mit Abbrechen/„Trotzdem erstellen“.
+  Flutter: lib/features/people/presentation/pages/person_create_page.dart:962, lib/features/people/presentation/pages/person_create_page.dart:966, lib/data/repositories/player_repository.dart:302
 
-## Kleinigkeiten (niedrig): 166
+## Kleinigkeiten (niedrig): 147
 
-- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `loading-e612daf1` [duty/duty-distribute-modal/duty-distribute-modal.component.ts:77](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts#L77)
-  Ionic: blockierendes Overlay „Verteile Dienste…“ / Flutter: Body durch Spinner mit gleichem Text ersetzt, das X in der AppBar bleibt bedienbar.
-  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:326
-- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `loading-ef16b6da` [duty/duty-distribute-modal/duty-distribute-modal.component.ts:232](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts#L232)
-  Ionic: blockierendes Overlay „Teile ein…“ / Flutter: Body durch Spinner mit gleichem Text ersetzt, Speichern-Button deaktiviert, aber „Zurück“ und „Neu verteilen“ in der AppBar bleiben während des Speicherns bedienbar.
-  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:326, lib/features/duty/presentation/pages/duty_distribute_page.dart:347
-- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `field-b28d8f3e` [duty/duty-distribute-modal/duty-distribute-modal.component.html:29](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.html#L29)
-  Anzeigeformat: Ionic ion-datetime-button zeigt das Intl-Kurzformat (z. B. „1. Dez. 2026“, Ionic-Paket nicht im Container) / Flutter IonDatetimeChip „01.12.2026“ (dateFmt()).
-  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:375
-- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `field-71fefb63` [duty/duty-distribute-modal/duty-distribute-modal.component.html:32](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.html#L32)
-  Ionic: Kalender (Montag zuerst) mit Buttons „Fertig“/„Abbrechen“, Wert erst mit „Fertig“, unbegrenzter Bereich / Flutter: md showDatePicker mit „OK“/„Abbrechen“ bzw. iOS-Look Kalenderkarte ohne Buttons (Tipp übernimmt sofort), Bereich 2020–2100.
+- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `loading-e612daf1` [duty/duty-distribute-modal/duty-distribute-modal.component.ts:77](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts#L77) (2. Prüfung: bestätigt)
+  Weiter so: Ionic blockierendes Overlay „Verteile Dienste…“ / Flutter ersetzt den Body durch Spinner mit gleichem Text, das X in der AppBar bleibt bedienbar. Nur Ladeanzeige.
+  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:319, lib/features/duty/presentation/pages/duty_distribute_page.dart:305
+- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `loading-ef16b6da` [duty/duty-distribute-modal/duty-distribute-modal.component.ts:232](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts#L232) (2. Prüfung: bestätigt)
+  Weiter so: Ionic blockierendes Overlay „Teile ein…“ / Flutter Body-Spinner mit gleichem Text, Speichern-Button deaktiviert, „Zurück“ und „Neu verteilen“ bleiben während des Speicherns bedienbar (Speicherschleife läuft über die alte Zeilenliste weiter). Nur Ladeanzeige.
+  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:319, lib/features/duty/presentation/pages/duty_distribute_page.dart:340, lib/features/duty/presentation/pages/duty_distribute_page.dart:299, lib/features/duty/presentation/pages/duty_distribute_page.dart:311
+- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `field-b28d8f3e` [duty/duty-distribute-modal/duty-distribute-modal.component.html:29](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.html#L29) (2. Prüfung: bestätigt)
+  Anzeigeformat des Von-Datums (Ionic Intl-Kurzformat / Flutter dateFmt()); Startwert Monatsanfang Folgemonat gleich. Nur Optik.
+  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:366, lib/features/duty/presentation/pages/duty_distribute_page.dart:86
+- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `field-71fefb63` [duty/duty-distribute-modal/duty-distribute-modal.component.html:32](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.html#L32) (2. Prüfung: bestätigt)
+  Ionic: Kalender mit „Fertig“/„Abbrechen“, Wert erst nach „Fertig“ / Flutter: Plattform-Datumsdialog (OK/Abbrechen bzw. iOS-Look), Bereich 2020–2100. Gleiche Funktion, nur Optik.
   Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:96
-- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `field-b28d8f3e-2` [duty/duty-distribute-modal/duty-distribute-modal.component.html:39](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.html#L39)
-  Anzeigeformat: Ionic ion-datetime-button Intl-Kurzformat (z. B. „31. Dez. 2026“, Ionic-Paket nicht im Container) / Flutter IonDatetimeChip „31.12.2026“.
-  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:379
-- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `field-bca25190` [duty/duty-distribute-modal/duty-distribute-modal.component.html:42](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.html#L42)
-  Ionic: Kalender mit „Fertig“/„Abbrechen“, unbegrenzter Bereich / Flutter: md showDatePicker mit „OK“/„Abbrechen“ bzw. iOS-Look Kalenderkarte ohne Buttons, Bereich 2020–2100. Keine Prüfung Von ≤ Bis in beiden.
+- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `field-b28d8f3e-2` [duty/duty-distribute-modal/duty-distribute-modal.component.html:39](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.html#L39) (2. Prüfung: bestätigt)
+  Anzeigeformat des Bis-Datums (Ionic Intl-Kurzformat / Flutter dateFmt()); Startwert Monatsende Folgemonat gleich. Nur Optik.
+  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:370, lib/features/duty/presentation/pages/duty_distribute_page.dart:86
+- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `field-bca25190` [duty/duty-distribute-modal/duty-distribute-modal.component.html:42](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.html#L42) (2. Prüfung: bestätigt)
+  Ionic: Kalender mit „Fertig“/„Abbrechen“ / Flutter: Plattform-Datumsdialog, Bereich 2020–2100. Gleiche Funktion, nur Optik.
   Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:96
-- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `text-e73248fa` [duty/duty-distribute-modal/duty-distribute-modal.component.html:96](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.html#L96)
-  Ionic: dayjs „dd, DD.MM.“ + „ · HH:mm“, z. B. „Mo, 03.02. · 19:00“ / Flutter: Tag und Monat ohne führende Null, „Mo, 3.2. · 19:00“ (auch im Untertitel des Tausch-Dialogs).
+- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `text-e73248fa` [duty/duty-distribute-modal/duty-distribute-modal.component.html:96](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.html#L96) (2. Prüfung: bestätigt)
+  Ionic: dayjs „dd, DD.MM. · HH:mm“ (mit führender Null, sprachabhängiges dayMonth-Format) / Flutter: „Mo, 3.2. · 19:00“ ohne führende Null. Gleiche Information, nur Format.
   Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:88
-- [ ] **niedrig** `duty/unavailability-modal/unavailability-modal.component` `field-bb90d03c` [duty/unavailability-modal/unavailability-modal.component.html:57](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/unavailability-modal/unavailability-modal.component.html#L57)
-  Ionic: natives Datumsfeld (ion-input type=date) mit gestapeltem Label „Gültig bis (optional)“, zeigt das Datum im Browser-Format bzw. leer / Flutter: Zeile mit Label, Wert „bis 31.12.2026“ bzw. „unbefristet“, Tipp öffnet Datumsauswahl (Vorjahr bis +10 Jahre), X-Button zum Leeren. Gespeichert wird in beiden YYYY-MM-DD oder null.
-  Flutter: lib/features/duty/presentation/pages/unavailability_page.dart:350, lib/features/duty/presentation/pages/unavailability_page.dart:166
-- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `modal-1bead9c9` [instruments/instrument-list/instrument-list.page.ts:159](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L159)
-  Nur für Admin/Verantwortliche, übergibt die Gruppe (plus Kategorien). Ionic: iOS Karten-Modal (presentingElement), md Vollbild / Flutter: Vollbild-Dialog (fullscreenDialog) auf allen Plattformen. Neuladen nach Änderung in beiden.
-  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:437
-- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `alert-eeb83d29` [instruments/instrument-list/instrument-list.page.ts:191](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L191)
-  Titel „Neue Kategorie“, Buttons „Abbrechen“/„Hinzufügen“, legt Kategorie an. Ionic: Platzhalter „Name der Kategorie“, „Abbrechen“ mit role destructive (iOS rot) / Flutter: schwebendes Label „Name der Kategorie“, „Abbrechen“ neutral; Name wird getrimmt.
+- [ ] **niedrig** `duty/unavailability-modal/unavailability-modal.component` `field-bb90d03c` [duty/unavailability-modal/unavailability-modal.component.html:57](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/unavailability-modal/unavailability-modal.component.html#L57) (2. Prüfung: bestätigt)
+  Ionic: natives Datumsfeld, leer = unbefristet / Flutter: Zeile „Gültig bis (optional)“ mit Plattform-Datumsdialog und Löschen-X, zeigt „unbefristet“; gleicher gespeicherter Wert (YYYY-MM-DD bzw. null). Nur Optik.
+  Flutter: lib/features/duty/presentation/pages/unavailability_page.dart:354, lib/features/duty/presentation/pages/unavailability_page.dart:170
+- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `modal-1bead9c9` [instruments/instrument-list/instrument-list.page.ts:159](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L159) (2. Prüfung: bestätigt)
+  Nur für Admin/Verantwortliche (onEdit null sonst; im Sortiermodus kein Öffnen wie Ionic), übergibt die Gruppe (plus Kategorien, Tenant-Typ). Ionic: iOS Karten-Modal (presentingElement), md Vollbild / Flutter: Vollbild-Dialog (fullscreenDialog) überall. Neuladen nach Speichern/Löschen in beiden (Notifier invalidiert groupsProvider, Seite die Personenanzahl). f-Zeile aktualisiert.
+  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:447, lib/features/instruments/presentation/pages/instruments_list_page.dart:156
+- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `alert-eeb83d29` [instruments/instrument-list/instrument-list.page.ts:191](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L191) (2. Prüfung: bestätigt)
+  Gleiche Eingabe/Buttons/Anlegen; Flutter trimmt Namen, Label statt Placeholder; zusätzlich Fehlertoast. Nur Look.
   Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:260
-- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `alert-415386f9` [instruments/instrument-list/instrument-list.page.ts:223](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L223)
-  Titel „Bestätigen“, Text „Kategorie wirklich löschen? …“, Buttons „Abbrechen“/„Ja“, löscht. Ionic: „Abbrechen“ mit role destructive (iOS rot), „Ja“ normal / Flutter: „Abbrechen“ neutral, „Ja“ rot gefüllt.
-  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:339
-- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `alert-bd4338b7` [instruments/instrument-list/instrument-list.page.ts:249](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L249)
-  Titel „Kategorie bearbeiten“, vorbelegter Name, Buttons „Abbrechen“/„Speichern“, speichert Namen. Ionic: Platzhalter „Name der Kategorie“, „Abbrechen“ role destructive (iOS rot) / Flutter: schwebendes Label, „Abbrechen“ neutral; Name getrimmt.
-  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:298
-- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `loading-c2ec3077` [instruments/instrument-list/instrument-list.page.ts:314](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L314)
-  Ionic: blockierendes Overlay „Reihenfolge wird gespeichert...“ / Flutter: nur LinearProgressIndicator im Sheet-Kopf, ohne Text, nicht blockierend.
-  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:135
+- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `alert-415386f9` [instruments/instrument-list/instrument-list.page.ts:223](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L223) (2. Prüfung: bestätigt)
+  Titel „Bestätigen“, Text „Kategorie wirklich löschen?…“, „Abbrechen“/„Ja“, löscht. Nur Look: Ionic Abbrechen role destructive, Flutter „Ja“ rot. Flutter besser: zeigt Fehlertoast bei Löschfehler.
+  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:354
+- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `alert-bd4338b7` [instruments/instrument-list/instrument-list.page.ts:249](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L249) (2. Prüfung: bestätigt)
+  Gleiche Eingabe/Buttons/Speichern; Flutter trimmt Namen, schwebendes Label statt Placeholder; Leerer Name → Toast. Nur Look.
+  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:305
+- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `loading-c2ec3077` [instruments/instrument-list/instrument-list.page.ts:314](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L314) (2. Prüfung: bestätigt)
+  Ionic: blockierendes Overlay / Flutter: nur LinearProgressIndicator im Sheet-Kopf; Speichern der Kategorien- und Instrumentenreihenfolge + Toasts vorhanden.
+  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:135, lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:55
 - [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `loading-7d7ff756` [instruments/instrument-list/instrument-list.page.ts:396](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L396) (2. Prüfung: bestätigt)
-  Ionic: blockierendes Overlay „Reihenfolge wird gespeichert...“ (max. 5 s) / Flutter: kein Ladehinweis, Liste bleibt bedienbar; zudem springt die Liste nach dem Häkchen bis zum Ende von Speichern + Neuladen auf die alte Reihenfolge zurück (_reorderSections = null vor dem await).
-  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:54
-- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `action-3f2a74e6` [instruments/instrument-list/instrument-list.page.html:23](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L23)
-  Ionic: Plus-Button immer sichtbar, auch im Sortiermodus / Flutter: im Sortiermodus ausgeblendet.
-  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:122
-- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `text-49ad7035` [instruments/instrument-list/instrument-list.page.html:33](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L33)
-  Gleicher Text „Ziehe die Kategorien …“. Ionic: ion-item mit primary-Hintergrund und weißem Info-Icon / Flutter: normale ListTile mit blauem Info-Icon.
+  Ionic: blockierendes Overlay „Reihenfolge wird gespeichert...“ / Flutter: kein Overlay; Speichern + Erfolg/Fehlertoast funktionieren (groupNotifier.saveGroupOrder). Reine Darstellung.
+  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:55
+- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `action-3f2a74e6` [instruments/instrument-list/instrument-list.page.html:23](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L23) (2. Prüfung: bestätigt)
+  Besteht weiter: Ionic Plus-Button auch im Sortiermodus / Flutter blendet ihn im Sortiermodus aus (if (!_isReordering)). Dialog „Neue Kategorie“ (Kategoriename, Abbrechen/Hinzufügen, leer → Toast, Dialog bleibt offen), Insert group_categories name+tenant_id, Fehler-Toast wie Ionic; Flutter trimmt den Namen (Flutter besser).
+  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:122, lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:260
+- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `text-49ad7035` [instruments/instrument-list/instrument-list.page.html:33](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L33) (2. Prüfung: bestätigt)
+  Gleicher Text „Ziehe die Kategorien, um die Reihenfolge anzupassen. …“ nur im Sortiermodus. Ionic: ion-item mit primary-Hintergrund und weißem Info-Icon / Flutter: normale ListTile mit primary-farbenem Info-Icon.
   Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:191
-- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `action-a01ef8cf` [instruments/instrument-list/instrument-list.page.html:38](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L38)
-  Sortieren per Ziehen und Speichern wie Ionic. Ionic: Zeile mit Griff-Icon (im Sortiermodus) und Badge der gespeicherten sort_order (immer, auch außerhalb des Sortiermodus) / Flutter: Karten; außerhalb des Sortiermodus Kategorie-Icon statt sort_order-Badge, im Sortiermodus Positionsnummer im Kreis, Ziehen per Long-Press (Standard-Griff).
-  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:197, lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:384
+- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `action-a01ef8cf` [instruments/instrument-list/instrument-list.page.html:38](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L38) (2. Prüfung: bestätigt)
+  Sortieren per Ziehen und Speichern beim Häkchen wie Ionic. Ionic: Zeile mit Griff-Icon im Sortiermodus und Badge der gespeicherten sort_order (immer) / Flutter: Karten; außerhalb des Sortiermodus Kategorie-Icon statt sort_order-Badge, im Sortiermodus Positionsnummer im Kreis, Ziehen per Long-Press (Standard-Griff). Reihenfolge selbst sichtbar → niedrig. f-Zeile korrigiert (384 → 400).
+  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:197, lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:400
 - [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `action-623e8e94` [instruments/instrument-list/instrument-list.page.html:51](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L51) (2. Prüfung: bestätigt)
-  Nur Admin/Verantwortliche (Sheet-Button), nur außerhalb des Sortiermodus, öffnet „Kategorie bearbeiten“ wie Ionic. Ionic: Stift-Icon in warning-Farbe (orange) / Flutter: Icons.edit in Standardfarbe.
-  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:392
-- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `text-1d015e65` [instruments/instrument-list/instrument-list.page.html:89](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L89)
-  Text „Kategorie (n)“ in primary gleich. Ionic: ion-item-divider sticky (bleibt beim Scrollen oben stehen) / Flutter: IonItemDivider in einer Column, scrollt mit.
-  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:243
-- [ ] **niedrig** `instruments/instrument/instrument.page` `loading-2112917a` [instruments/instrument/instrument.page.ts:43](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument/instrument.page.ts#L43)
-  Ionic: blockierendes Overlay „Synonyme werden generiert...“ / Flutter: kleiner Spinner statt Funken-Button im Synonym-Feld, ohne Text, Seite bleibt bedienbar.
-  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:683
+  Nur im Kategorien-Sheet (Admin/Verantwortliche), nur außerhalb des Sortiermodus; öffnet „Kategorie bearbeiten“ mit Name vorbefüllt, Abbrechen/Speichern, leer → Toast, Update name mit id + tenant_id, Fehler-Toast wie Ionic. Ionic: Stift-Icon orange (warning) / Flutter: Icons.edit in Standardfarbe. f-Zeile korrigiert (392 → 408).
+  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:408, lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:305
+- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `text-1d015e65` [instruments/instrument-list/instrument-list.page.html:89](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L89) (2. Prüfung: bestätigt)
+  Text „Kategorie (n)“ gleich. Ionic: sticky Divider / Flutter: scrollt mit. Nur Look.
+  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:254
+- [ ] **niedrig** `instruments/instrument/instrument.page` `loading-2112917a` [instruments/instrument/instrument.page.ts:43](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument/instrument.page.ts#L43) (2. Prüfung: bestätigt)
+  Ionic: blockierendes Overlay „Synonyme werden generiert...“ / Flutter: Spinner im Synonymfeld statt Funken-Button, kein Text, Seite bedienbar.
+  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:683-694
 - [ ] **niedrig** `instruments/instrument/instrument.page` `toast-283b4da3` [instruments/instrument/instrument.page.ts:60](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument/instrument.page.ts#L60) (2. Prüfung: bestätigt)
-  Gleicher Text „Bitte gib einen Namen an!“, Seite bleibt offen. Ionic: roter Toast / Flutter: roter Validierungstext unter dem Namensfeld; Flutter wertet reine Leerzeichen ebenfalls als leer.
-  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:604
+  Gleicher Text „Bitte gib einen Namen an!“, Speichern wird abgebrochen. Ionic: roter Toast / Flutter: Validierungstext am Feld; Flutter trimmt (nur Leerzeichen = leer).
+  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:604-609
 - [ ] **niedrig** `instruments/instrument/instrument.page` `alert-cb09ce26` [instruments/instrument/instrument.page.ts:88](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument/instrument.page.ts#L88) (2. Prüfung: bestätigt)
-  Titel „Bestätigen“, Text „Gruppe wirklich löschen?“, „Abbrechen“/„Ja“, „Ja“ löscht und schließt. Ionic: „Abbrechen“ mit role destructive (iOS rot) / Flutter: beide neutral. Zeitpunkt (Dialog auch bei zugeordneten Personen) siehe toast-39c411aa.
-  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:755
-- [ ] **niedrig** `instruments/instrument/instrument.page` `text-60ebf1b1` [instruments/instrument/instrument.page.html:4](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument/instrument.page.html#L4)
-  Ionic: Titel an instrument.name gebunden, ändert sich beim Tippen im Namensfeld / Flutter: fester Titel mit dem ursprünglichen Namen.
+  Titel „Bestätigen“, Text „Gruppe wirklich löschen?“, Abbrechen/Ja, Ja löscht (deleteGroup) und schließt. Ionic: „Abbrechen“ role destructive (nur iOS rot) / Flutter beide neutral. Gleiche Auswahl und Wirkung.
+  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:779-806
+- [ ] **niedrig** `instruments/instrument/instrument.page` `text-60ebf1b1` [instruments/instrument/instrument.page.html:4](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument/instrument.page.html#L4) (2. Prüfung: bestätigt)
+  Ionic: Titel an instrument.name gebunden (ändert sich beim Tippen) / Flutter: fester Titel mit ursprünglichem Namen.
   Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:585
-- [ ] **niedrig** `instruments/instrument/instrument.page` `field-679fa215` [instruments/instrument/instrument.page.html:42](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument/instrument.page.html#L42)
-  Label „Stimmung“, Optionen C, Es, B, F, Sichtbarkeit gleich. Ionic: Popover-Auswahl, leerer Wert bleibt leer / Flutter: Dropdown, leerer (oder unbekannter) Wert wird als „C“ angezeigt, leerer Wert wird beim Speichern zu „C“.
-  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:628
-- [ ] **niedrig** `instruments/instrument/instrument.page` `field-ae69e131` [instruments/instrument/instrument.page.html:66](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument/instrument.page.html#L66)
-  Optionen Violinschlüssel (G), Bassschlüssel (F), Altschlüssel (C), Mehrfachauswahl. Ionic: Popover-Mehrfachauswahl mit (fehlerhaftem) Label „Stimmung“, alle abwählbar / Flutter: Überschrift „Notenschlüssel“ mit FilterChips, mindestens ein Schlüssel bleibt gewählt.
-  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:646
-- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `field-9dd7902a` [people/bulk-edit/bulk-edit.page.html:53](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L53)
-  Ionic: ion-toggle mit Beschriftung 'Stimmführer' / Flutter: nur Switch rechts ohne Beschriftung. Startwert false in beiden.
-  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:514-518
-- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `field-523de84f` [people/bulk-edit/bulk-edit.page.html:61](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L61)
-  Eingabefeld mit Platzhalter = Feldname gleich. Startwert: Ionic immer '' (getFieldTypeDefaultValue ohne defaultValue) / Flutter: konfigurierter Standardwert des Feldes, sonst ''.
-  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:573-574, lib/features/people/presentation/pages/bulk_edit_page.dart:123-133
-- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `field-fc367be8` [people/bulk-edit/bulk-edit.page.html:67](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L67)
-  Dropdown mit Optionen in Reihenfolge, Platzhalter = Feldname gleich. Startwert: Ionic immer erste Option / Flutter: Standardwert des Feldes, sonst erste Option.
-  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:542-545, lib/features/people/presentation/pages/bulk_edit_page.dart:126-130
-- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `field-d2bdf3b7` [people/bulk-edit/bulk-edit.page.html:73](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L73)
-  Ionic: ion-textarea mit autoGrow (mehrzeilig) / Flutter: einzeiliges TextFormField (default-Zweig). Startwert Ionic '' / Flutter Standardwert des Feldes oder ''.
-  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:573-574, lib/features/people/presentation/pages/bulk_edit_page.dart:469-485
+- [ ] **niedrig** `instruments/instrument/instrument.page` `field-679fa215` [instruments/instrument/instrument.page.html:42](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument/instrument.page.html#L42) (2. Prüfung: bestätigt)
+  Stimmung C/Es/B/F, gleiche Sichtbarkeit. Ionic: Popover, leerer Wert bleibt leer / Flutter: Dropdown, leerer Wert wird als „C“ angezeigt und beim Speichern „C“. Neue Gruppen haben in Ionic immer tuning „C“ (group.service:39), leer nur bei Altdaten → Randfall, niedrig.
+  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:628-639
+- [ ] **niedrig** `instruments/instrument/instrument.page` `field-ae69e131` [instruments/instrument/instrument.page.html:66](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument/instrument.page.html#L66) (2. Prüfung: bestätigt)
+  Violin-/Bass-/Altschlüssel Mehrfachauswahl. Ionic: Popover, alle abwählbar (leeres Array möglich), Label „Stimmung“ / Flutter: FilterChips „Notenschlüssel“, mindestens einer bleibt gewählt. Neue Gruppen haben immer [g]; niedrig.
+  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:646-672
+- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `field-9dd7902a` [people/bulk-edit/bulk-edit.page.html:53](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L53) (2. Prüfung: bestätigt)
+  Ionic: Sammel-Toggle mit Beschriftung „Stimmführer“ / Flutter: nur Switch ohne Text (Feld steht bereits im Dropdown). Startwert false in beiden.
+  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:517-521
+- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `field-d2bdf3b7` [people/bulk-edit/bulk-edit.page.html:73](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L73) (2. Prüfung: bestätigt)
+  Ionic: ion-textarea mit autoGrow (mehrzeilig) / Flutter: einzeiliges Textfeld, Zeilenumbrüche im Sammelwert nicht eingebbar. Startwert jetzt gleich (). 
+  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:585-586, lib/features/people/presentation/pages/bulk_edit_page.dart:129-136
 - [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `field-523de84f-3` [people/bulk-edit/bulk-edit.page.html:81](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L81) (2. Prüfung: bestätigt)
-  Ionic: natives input type=date (leerbar), Startwert new Date().toISOString() (nicht angezeigt, aber von 'Für alle setzen' geschrieben) / Flutter: Button mit Datumsdialog ('Kein Datum gewählt'), nicht leerbar, Startwert Standardwert oder '' → schreibt ''.
-  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:552, lib/features/people/presentation/pages/bulk_edit_page.dart:115
-- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `field-4964deb8-4` [people/bulk-edit/bulk-edit.page.html:165](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L165)
-  Ionic: natives input type=date (Wert leerbar) / Flutter: Button mit Datumsauswahl, zeigt 'Kein Datum gewählt' bzw. Datum, Wert kann nicht geleert werden. Format yyyy-MM-dd gleich.
-  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:398-406, lib/features/people/presentation/pages/bulk_edit_page.dart:552-572
+  Startwert jetzt gleich (heutiges Datum als ISO, „Für alle setzen“ schreibt es wie Ionic). Ionic: natives Datumsfeld, zeigt den ISO-Startwert nicht an, leerbar / Flutter: Button zeigt das Datum, nicht leerbar.
+  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:564-584, lib/features/people/presentation/pages/bulk_edit_page.dart:129-136
+- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `field-4964deb8-4` [people/bulk-edit/bulk-edit.page.html:165](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L165) (2. Prüfung: bestätigt)
+  Ionic: natives input type=date (Wert leerbar) / Flutter: Button mit Datumsdialog, zeigt „Kein Datum gewählt“ bzw. Datum; Wert nicht leerbar. Format yyyy-MM-dd gleich.
+  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:564-584
 - [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `action-a2a2fcd3` [people/bulk-edit/bulk-edit.page.html:176](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/bulk-edit/bulk-edit.page.html#L176) (2. Prüfung: bestätigt)
-  Texte 'Speichern...' / '# Änderung(en) speichern' / 'Keine Änderungen' und Deaktivierung gleich. Ionic: Spinner vor 'Speichern...' / Flutter: nur Text.
-  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:433
-- [ ] **niedrig** `people/import/import.page` `loading-3194637c` [people/import/import.page.ts:97](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.ts#L97)
-  Flutter blockiert mit Overlay (Spinner) und deaktiviertem X, aber ohne Text 'Datei wird gelesen...' (peopleReadingFile ungenutzt).
-  Flutter: lib/features/people/presentation/pages/person_import_page.dart:82, lib/features/people/presentation/pages/person_import_page.dart:262-284
-- [ ] **niedrig** `people/import/import.page` `loading-b32cfbfa` [people/import/import.page.ts:135](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.ts#L135)
-  Ionic: blockierendes Overlay 'Daten werden geprüft...' / Flutter: Overlay nur mit Spinner (peopleCheckingData ungenutzt), 'Zurück' in der unteren Leiste bleibt bedienbar.
-  Flutter: lib/features/people/presentation/pages/person_import_page.dart:137, lib/features/people/presentation/pages/person_import_page.dart:262-284
-- [ ] **niedrig** `people/import/import.page` `loading-bab0752f` [people/import/import.page.ts:213](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.ts#L213)
-  Fortschritt '{done} / {total} importiert...' wird angezeigt und aktualisiert, aber Ionic blockiert den ganzen Bildschirm / Flutter: Overlay nur über dem Inhalt, 'Zurück' in der unteren Leiste bleibt während des Imports bedienbar.
-  Flutter: lib/features/people/presentation/pages/person_import_page.dart:174-177, lib/features/people/presentation/pages/person_import_page.dart:200-202, lib/features/people/presentation/pages/person_import_page.dart:262-284
-- [ ] **niedrig** `people/import/import.page` `alert-3b9d1c7b` [people/import/import.page.ts:254](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.ts#L254)
-  Titel 'Nicht importierte Personen', max. 10 Zeilen '• Vorname Nachname: Grund', '… und N weitere', Button 'OK' gleich. Grund: Ionic error.message / Flutter '$e' (z. B. 'RepositoryException: … (operation: …, code: …)').
-  Flutter: lib/features/people/presentation/pages/person_import_page.dart:198, lib/features/people/presentation/pages/person_import_page.dart:220, lib/features/people/presentation/widgets/import_widgets.dart:226-243
+  Texte „Speichern...“ / „# Änderung(en) speichern“ / „Keine Änderungen“ und Deaktivierung (changedCount==0 oder isSaving) gleich. Ionic: Spinner vor „Speichern...“ / Flutter: nur Text. Schreiben: player-Update mit id+tenantId-Filter, Extrafelder wie Ionic (Org-Felder in Shared-Tabelle), Demo-Sperre, Attendance-Sync: gleich.
+  Flutter: lib/features/people/presentation/pages/bulk_edit_page.dart:428-443
+- [ ] **niedrig** `people/import/import.page` `loading-3194637c` [people/import/import.page.ts:97](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.ts#L97) (2. Prüfung: bestätigt)
+  Flutter blockiert mit Overlay (Spinner), aber ohne Text „Datei wird gelesen...“ (peopleReadingFile ungenutzt).
+  Flutter: lib/features/people/presentation/pages/person_import_page.dart:95-121, lib/features/people/presentation/pages/person_import_page.dart:319-341
+- [ ] **niedrig** `people/import/import.page` `loading-b32cfbfa` [people/import/import.page.ts:135](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.ts#L135) (2. Prüfung: bestätigt)
+  Ionic: blockierendes Overlay „Daten werden geprüft...“ / Flutter: Overlay nur Spinner (peopleCheckingData ungenutzt); „Zurück“ in der Leiste bleibt bedienbar.
+  Flutter: lib/features/people/presentation/pages/person_import_page.dart:170-182, lib/features/people/presentation/pages/person_import_page.dart:319-341
+- [ ] **niedrig** `people/import/import.page` `loading-bab0752f` [people/import/import.page.ts:213](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.ts#L213) (2. Prüfung: bestätigt)
+  Fortschritt „{done} / {total} importiert...“ wird angezeigt und hochgezählt; Ionic blockiert den ganzen Bildschirm / Flutter: Overlay nur über dem Inhalt, Schließen-X gesperrt, aber „Zurück“ in der unteren Leiste bleibt während des Imports bedienbar (Import läuft weiter).
+  Flutter: lib/features/people/presentation/pages/person_import_page.dart:213, lib/features/people/presentation/pages/person_import_page.dart:254, lib/features/people/presentation/pages/person_import_page.dart:319, lib/features/people/presentation/pages/person_import_page.dart:351
+- [ ] **niedrig** `people/import/import.page` `alert-3b9d1c7b` [people/import/import.page.ts:254](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.ts#L254) (2. Prüfung: bestätigt)
+  Titel „Nicht importierte Personen“, max. 10 Zeilen „• Vorname Nachname: Grund“, „… und N weitere“, Button „OK“ gleich. Grund: Ionic error.message / Flutter „$e“ (kann technischen Präfix wie „RepositoryException:“ enthalten); Information bleibt erhalten.
+  Flutter: lib/features/people/presentation/pages/person_import_page.dart:273, lib/features/people/presentation/pages/person_import_page.dart:250-251, lib/features/people/presentation/widgets/import_widgets.dart:226-243
 - [ ] **niedrig** `people/import/import.page` `effect-31a0aedd` [people/import/import.page.ts:275](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.ts#L275) (2. Prüfung: korrigiert)
   hoch-Lücke behoben (#325): nativ (auch iPad) Datei im Cache + Systemviewer (OpenFilex) wie Ionic, kein Teilen-Popover mehr; Vorlage mit Org- und Instanz-Zusatzfeldern, Name/Blatt/Kopf/Beispiel gleich. Rest niedrig: mobiler Browser bekommt einen Anker-Download (printing sharePdf, Blob-Typ application/pdf) statt des Web-Share-Sheets (Ionic downloadFileNative); auf iPhone-Safari/PWA prüfen – lässt sich die .xlsx dort nicht speichern, wäre es mittel.
   Flutter: lib/features/people/presentation/pages/person_import_page.dart:137, lib/core/services/native/native_file_service.dart:167, lib/core/services/native/native_file_io.dart:14
 - [ ] **niedrig** `people/import/import.page` `text-da6273ad` [people/import/import.page.html:16](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.html#L16) (2. Prüfung: bestätigt)
-  Text gleich. Ionic: grau (.intro medium, 0.9rem) / Flutter: normale Textfarbe. Der Text nennt .xls, das Flutter ablehnt (siehe field-bdcf25e7).
-  Flutter: lib/features/people/presentation/pages/person_import_page.dart:245, lib/features/people/presentation/widgets/import_widgets.dart:30
+  Text gleich. Ionic: grau (.intro medium) / Flutter: normale Textfarbe. Frühere Notiz zu .xls ist überholt: Flutter-Picker und Reader unterstützen .xlsx/.xls/.csv (import_file_io.dart:13).
+  Flutter: lib/features/people/presentation/pages/person_import_page.dart:302, lib/features/people/presentation/widgets/import_widgets.dart:30
 - [ ] **niedrig** `people/import/import.page` `text-ac3c014f` [people/import/import.page.html:37](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.html#L37)
   '— N Zeilen' gleich. Ionic: grau (medium) / Flutter: normale Textfarbe.
   Flutter: lib/features/people/presentation/widgets/import_widgets.dart:85-88
@@ -221,377 +230,326 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `people/import/import.page` `text-9a34d1ef` [people/import/import.page.html:38](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.html#L38)
   Text gleich. Ionic: grau (medium, 0.9rem) / Flutter: normale Textfarbe.
   Flutter: lib/features/people/presentation/widgets/import_widgets.dart:90
-- [ ] **niedrig** `people/import/import.page` `field-018f6a18` [people/import/import.page.html:102](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.html#L102)
-  Gruppen-Dropdown pro Zeile (nicht bei Fehlern), Auswahl setzt groupResolved, gleich. Ionic: Label 'Gruppe' immer über dem Wert, ungeklärte Gruppe mit orangem Rahmen / Flutter: 'Gruppe' nur als Hinweis bei leerem Wert, ungeklärte Gruppe als orange Schrift.
-  Flutter: lib/features/people/presentation/pages/person_import_page.dart:364-385
+- [ ] **niedrig** `people/import/import.page` `field-018f6a18` [people/import/import.page.html:102](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.html#L102) (2. Prüfung: bestätigt)
+  Gruppen-Dropdown je Zeile (nicht bei Fehlerzeilen), Auswahl setzt groupResolved, gleich. Ionic: Label „Gruppe“ immer über dem Wert, ungeklärte Gruppe mit orangem Rahmen / Flutter: „Gruppe“ nur als Hinweis bei leerem Wert, ungeklärte Gruppe als orange Schrift.
+  Flutter: lib/features/people/presentation/pages/person_import_page.dart:423-445
 - [ ] **niedrig** `people/list/list.page` `loading-a2fa55fe` [people/list/list.page.ts:97](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L97)
   Ionic: blockierendes Loading-Overlay (ohne Text, 3 s) beim Instanzwechsel über das Header-Popover / Flutter: switchTenant ohne Overlay.
   Flutter: lib/shared/widgets/tenant/tenant_switcher_title.dart:389
-- [ ] **niedrig** `people/list/list.page` `loading-275de79e` [people/list/list.page.ts:377](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L377)
-  Ionic: blockierendes Overlay 'Reihenfolge wird gespeichert...' / Flutter: nur Spinner im Häkchen-Button, kein Overlay (X-Abbrechen und Ziehen bleiben bedienbar).
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:463, lib/features/people/presentation/pages/people_list_page.dart:1169
-- [ ] **niedrig** `people/list/list.page` `alert-0eb34b23` [people/list/list.page.ts:437](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L437)
-  Ionic: Alert 'Instanz wählen' mit Radio-Liste (gespeicherte Instanz vorausgewählt) und Buttons 'Abbrechen' (setzt Filter auf Alle) / 'Filtern' / Flutter: Auswahl-Dialog 'Instanz wählen' ohne Buttons, Tipp auf eine Instanz filtert sofort, Schließen lässt den bisherigen Filter stehen. Gefilterte Daten gleich (Nicht-Betrachter-Konten der Instanz).
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1084, lib/features/people/presentation/pages/people_list_page.dart:1095
-- [ ] **niedrig** `people/list/list.page` `alert-1081984d` [people/list/list.page.ts:538](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L538)
-  Ionic: Alert mit Radio 'Ja'/'Nein' (Ja bzw. gespeicherter Wert vorausgewählt) und 'Abbrechen' (→ Alle) / 'Filtern' / Flutter: einfacher Auswahl-Dialog 'Ja'/'Nein' ohne Buttons, Tipp filtert sofort, Schließen → Alle. Default true für leere Werte gleich.
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1027, lib/features/people/presentation/pages/people_list_page.dart:1029, lib/features/people/presentation/pages/people_list_page.dart:1036
-- [ ] **niedrig** `people/list/list.page` `loading-5e1535fb` [people/list/list.page.ts:821](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L821)
-  Ionic: blockierendes Overlay 'Person wird entfernt...' / Flutter: kein Overlay.
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1480
+- [ ] **niedrig** `people/list/list.page` `loading-275de79e` [people/list/list.page.ts:377](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L377) (2. Prüfung: bestätigt)
+  Ionic: blockierendes Overlay "Reihenfolge wird gespeichert..." / Flutter: Spinner im Häkchen-Button (Button gesperrt), Fehler/Erfolg-Toast wie Ionic.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:516, lib/features/people/presentation/pages/people_list_page.dart:1232
+- [ ] **niedrig** `people/list/list.page` `alert-0eb34b23` [people/list/list.page.ts:437](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L437) (2. Prüfung: bestätigt)
+  Ionic: Alert „Instanz wählen“ mit Radio-Liste (nichts vorausgewählt – `selected` kennt ion-alert nicht), „Abbrechen“ → Filter „Alle“, „Filtern“ ohne Auswahl → „Alle“ / Flutter: Auswahl-Dialog „Instanz wählen“ ohne Buttons, Tipp filtert sofort, Schließen lässt den bisherigen Filter stehen. Gefilterte Daten gleich (Nicht-Beobachter-Konten der Instanz).
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1144, lib/features/people/presentation/pages/people_list_page.dart:1152, lib/features/people/presentation/pages/people_list_page.dart:1165, lib/features/people/presentation/pages/people_list_page.dart:1168
+- [ ] **niedrig** `people/list/list.page` `alert-1081984d` [people/list/list.page.ts:538](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L538) (2. Prüfung: korrigiert)
+  Erstprüfer-Unterschied behoben: Flutter zeigt jetzt wie Ionic einen Radio-Alert (Titel = Feldname, „Ja“ vorausgewählt bzw. „Nein“ bei gespeichertem Nein, „Abbrechen“ → Alle, „Filtern“), Leerwerte = Default true. Rest: Flutter besser: Ionic öffnet den Alert nur für Ja/Nein-Felder der Instanz (tenant().additional_fields), ein Org-Ja/Nein-Feld im Filter filtert gar nicht (alle Personen) / Flutter: Dialog und Filter auch für Org-Felder. Backdrop-Schließen: Flutter → Alle.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1084, lib/features/people/presentation/pages/people_list_page.dart:1104, lib/features/people/presentation/pages/people_list_page.dart:1116, lib/features/people/presentation/pages/people_list_page.dart:312, lib/shared/widgets/adaptive/app_dialog.dart:1253
+- [ ] **niedrig** `people/list/list.page` `loading-5e1535fb` [people/list/list.page.ts:821](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L821) (2. Prüfung: bestätigt)
+  Ionic: blockierendes Overlay "Person wird entfernt..." / Flutter: kein Overlay, Toast bei Erfolg/Fehler.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1485
 - [ ] **niedrig** `people/list/list.page` `loading-93ed0021` [people/list/list.page.ts:872](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L872) (2. Prüfung: bestätigt)
-  Ionic: blockierendes Overlay 'Wird pausiert...' / Flutter: kein Overlay; danach zusätzlich grüne Snackbar '<Vorname> wurde pausiert' (Ionic: keine Meldung).
+  Ionic: blockierendes Overlay "Wird pausiert..." / Flutter: kein Overlay; zusätzlich grüne Snackbar "<Vorname> wurde pausiert" (Ionic: keine) und Fehler-Snackbar.
   Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:211, lib/features/people/presentation/widgets/pause_person_sheet.dart:221
-- [ ] **niedrig** `people/list/list.page` `loading-8b3a6dad` [people/list/list.page.ts:969](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L969)
-  Ionic: blockierendes Overlay 'Wird aktiviert...' / Flutter: kein Overlay.
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1357
-- [ ] **niedrig** `people/list/list.page` `modal-a495856e` [people/list/list.page.ts:1036](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L1036) (2. Prüfung: korrigiert)
-  Gefilterte Personen übergeben, Neuladen bei Rückgabe true gleich. Ionic: Modal mit presentingElement → auf iOS Karten-Modal (Seite dahinter sichtbar, Wischen schließt), md Vollbild / Flutter: Vollbild-Dialog (fullscreenDialog) auf allen Plattformen. Erstprüfung: ok – Darstellung auf iOS weicht ab (wie instrument-list modal-1bead9c9 bewertet).
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1280, lib/features/people/presentation/pages/people_list_page.dart:1289
+- [ ] **niedrig** `people/list/list.page` `loading-8b3a6dad` [people/list/list.page.ts:969](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L969) (2. Prüfung: bestätigt)
+  Ionic: blockierendes Overlay "Wird aktiviert..." / Flutter: kein Overlay; Fehler-Toast.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1411
+- [ ] **niedrig** `people/list/list.page` `modal-a495856e` [people/list/list.page.ts:1036](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L1036) (2. Prüfung: bestätigt)
+  Gefilterte, sortierte Personen übergeben, Neuladen bei Rückgabe true. Ionic: Modal mit presentingElement (iOS Karte, Wischen schließt), backdropDismiss false / Flutter: Vollbild-Dialog auf allen Plattformen. Nur Darstellung.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1345, lib/features/people/presentation/pages/people_list_page.dart:1348
+- [ ] **niedrig** `people/list/list.page` `modal-b8ba8673` [people/list/list.page.ts:1078](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L1078) (2. Prüfung: korrigiert)
+  Import-Seite mit Rückgabe imported -> Neuladen gleich. Ionic: iOS-Karten-Modal / Flutter: Vollbild-Dialog (wie modal-a495856e); Korrektur ok->diff niedrig der Konsistenz wegen, nur Darstellung.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1361, lib/features/people/presentation/pages/people_list_page.dart:1363
 - [ ] **niedrig** `people/list/list.page` `action-15041222` [people/list/list.page.html:47](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L47) (2. Prüfung: bestätigt)
-  Ionic: Pull-to-Refresh lädt Personen und Termine (Prozente) neu und wartet / Flutter: invalidiert nur realtimePlayersProvider, Spinner endet sofort; Prozente kommen aus playerAttendancePercentagesProvider (nur per Realtime-Zähler aktualisiert).
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:503, lib/features/people/presentation/pages/people_list_page.dart:648, lib/features/people/presentation/pages/people_list_page.dart:670
-- [ ] **niedrig** `people/list/list.page` `text-ccf5d7d7` [people/list/list.page.html:228](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L228)
-  Normalfall gleich ('<Gruppe> (n)', primärer Trenner). Sonderfälle: Personen ohne bekannte Gruppe – Ionic Trenner ' (n)' ohne Namen / Flutter 'Keine Gruppe (n)'; Flutter gruppiert nach Gruppenname statt Gruppen-ID (gleichnamige Gruppen würden zusammengelegt).
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:404, lib/features/people/presentation/pages/people_list_page.dart:622
+  Ionic: Pull-to-Refresh lädt Personen und Termine neu und wartet / Flutter: _refresh invalidiert nur realtimePlayersProvider, Spinner endet sofort; Prozente kommen aus playerAttendancePercentagesProvider (Realtime-Zähler). Gleiche Funktion, Daten bleiben per Realtime aktuell.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:553, lib/features/people/presentation/pages/people_list_page.dart:706, lib/features/people/presentation/pages/people_list_page.dart:728
+- [ ] **niedrig** `people/list/list.page` `text-ccf5d7d7` [people/list/list.page.html:228](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L228) (2. Prüfung: bestätigt)
+  Normalfall gleich. Ionic: ohne Gruppe Trenner ' (n)' ohne Namen, Gruppierung nach Gruppen-ID / Flutter: 'Keine Gruppe (n)', Gruppierung nach Gruppenname. Nur Randfall, gleiche Funktion.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:440, lib/features/people/presentation/pages/people_list_page.dart:678
 - [ ] **niedrig** `people/list/list.page` `action-e7b7f732` [people/list/list.page.html:230](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L230) (2. Prüfung: bestätigt)
-  Ionic: Reihenfolge direkt in der normalen Liste (ion-reorder-Griffe in den vollen Zeilen, Gruppen-Trenner) / Flutter: eigene vereinfachte Liste (Karten nur mit Name + Ziehgriff, Gruppentitel als Text) plus X zum Verwerfen. Zeileninhalt siehe action-982a1154.
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1189, lib/features/people/presentation/pages/people_list_page.dart:1147
-- [ ] **niedrig** `people/list/list.page` `action-6ccc25e4` [people/list/list.page.html:505](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L505)
-  Ionic: X-Icon in der Modal-Toolbar / Flutter: Textbutton 'Abbrechen' im Dialog.
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1426
-- [ ] **niedrig** `people/list/list.page` `action-64a96898` [people/list/list.page.html:521](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L521) (2. Prüfung: bestätigt)
-  Ionic: FAB mit Archiv-Icon unten rechts im Modal / Flutter: Button 'Archivieren' mit Archiv-Icon in der Dialog-Aktionsleiste.
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1430
-- [ ] **niedrig** `people/list/list.page` `field-c1d3a82f` [people/list/list.page.html:545](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L545)
-  Platzhalter Ionic 'Bitte gib einen Grund an...' / Flutter 'Gib einen Grund für die Pause an...' (personPauseReasonPlaceholder); sonst gleich (mehrzeilig, Satzanfang groß).
-  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:112, lib/features/people/presentation/widgets/pause_person_sheet.dart:116
-- [ ] **niedrig** `people/list/list.page` `field-187f6bb7` [people/list/list.page.html:567](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L567)
-  Ionic: Inline-Kalender im Akkordeon (max heute, keine Untergrenze) / Flutter: Datumspicker-Dialog beim Tippen auf die Zeile (max heute, frühestens vor 5 Jahren).
-  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:131, lib/features/people/presentation/widgets/pause_person_sheet.dart:135
+  Ionic: Reihenfolge direkt in der normalen Liste (ion-reorder-Griffe, volle Zeilen) / Flutter: eigene vereinfachte Liste (Karten nur mit Name + Ziehgriff, Gruppentitel als Text) plus X zum Verwerfen. Nur Admin/Verantwortlicher und nur bei Sortierung Gruppe wie Ionic; sortiert pro Gruppe sort_order 1..n.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1018, lib/features/people/presentation/pages/people_list_page.dart:1207, lib/features/people/presentation/pages/people_list_page.dart:1252
+- [ ] **niedrig** `people/list/list.page` `field-c1d3a82f` [people/list/list.page.html:545](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L545) (2. Prüfung: bestätigt)
+  Platzhalter Ionic "Bitte gib einen Grund an..." / Flutter "Gib einen Grund für die Pause an..."; sonst gleich (mehrzeilig, Satzanfang groß).
+  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:113, lib/features/people/presentation/widgets/pause_person_sheet.dart:116
+- [ ] **niedrig** `people/list/list.page` `field-187f6bb7` [people/list/list.page.html:567](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L567) (2. Prüfung: bestätigt)
+  Ionic: Inline-Kalender (max heute) / Flutter: Datumspicker-Dialog (max heute, frühestens vor 5 Jahren). Gleiche Funktion.
+  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:132, lib/features/people/presentation/widgets/pause_person_sheet.dart:137
 - [ ] **niedrig** `people/list/list.page` `field-315040b9` [people/list/list.page.html:594](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L594) (2. Prüfung: bestätigt)
-  Ionic: Inline-Kalender im Akkordeon (ab heute, ohne Obergrenze, keine Vorauswahl) / Flutter: Datumsdialog (ab heute, bis +3 Jahre, Start heute + 30 Tage).
-  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:141, lib/features/people/presentation/widgets/pause_person_sheet.dart:150
-- [ ] **niedrig** `people/list/list.page` `text-63b77c8c` [people/list/list.page.html:606](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L606)
-  Ionic: '… Wenn ein Enddatum angegeben wird, wird die Person automatisch reaktiviert.' / Flutter: '… Wenn ein Enddatum angegeben ist, wird die Person danach automatisch wieder aktiviert.' (gleiche Bedeutung).
-  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:157
-- [ ] **niedrig** `people/list/list.page` `action-32a9bf9f` [people/list/list.page.html:610](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L610)
-  Ionic: Block-Button in Primärfarbe / Flutter: gelber (warning) Button; sonst gleich (Pause-Icon, 'Pausieren', ohne Grund deaktiviert).
-  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:163, lib/features/people/presentation/widgets/pause_person_sheet.dart:177
+  Ionic: Inline-Kalender (ab heute, ohne Obergrenze, keine Vorauswahl) / Flutter: Datumsdialog (ab heute, bis +3 Jahre, Start heute+30 Tage). Beim Bestätigen wird dann ein Enddatum gesetzt, wie bei Ionic nach Auswahl.
+  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:142, lib/features/people/presentation/widgets/pause_person_sheet.dart:150
+- [ ] **niedrig** `people/list/list.page` `text-63b77c8c` [people/list/list.page.html:606](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L606) (2. Prüfung: bestätigt)
+  Ionic: "… Wenn ein Enddatum angegeben wird, wird die Person automatisch reaktiviert." / Flutter: "… Wenn ein Enddatum angegeben ist, wird die Person danach automatisch wieder aktiviert." (gleiche Bedeutung).
+  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:158
+- [ ] **niedrig** `people/list/list.page` `action-32a9bf9f` [people/list/list.page.html:610](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L610) (2. Prüfung: bestätigt)
+  Ionic: Block-Button Primärfarbe / Flutter: gelber (warning) Button mit Pause-Icon; "Pausieren", ohne Grund deaktiviert (trim). Gleiche Funktion.
+  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:163
 - [ ] **niedrig** `people/members/members.page` `toast-d347f87a` [people/members/members.page.ts:72](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/members/members.page.ts#L72)
   Ionic: roter Toast 'Fehler beim Laden der Mitglieder.' + darunter 'Keine Mitglieder gefunden.' / Flutter: kein Toast, Text 'Fehler beim Laden der Mitglieder.' inline mit Personen-Icon.
   Flutter: lib/features/members/presentation/pages/members_page.dart:98, lib/features/members/presentation/pages/members_page.dart:99
-- [ ] **niedrig** `people/person/person.page` `loading-be5cc2f1` [people/person/person.page.ts:389](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L389)
-  Ionic: blockierendes Loading „Wird zurückgesetzt...“ / Flutter: kein Ladeindikator beim Zurücksetzen
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1151, lib/features/people/presentation/widgets/person_detail/late_warning_card.dart
-- [ ] **niedrig** `people/person/person.page` `toast-9348bff8` [people/person/person.page.ts:528](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L528)
-  Ionic: Toast „Bitte gib den Vornamen und Nachnamen an.“ / Flutter: Inline-Validierung unter den Feldern „Vorname ist erforderlich“/„Nachname ist erforderlich“, Labels mit „*“
-  Flutter: lib/features/people/presentation/pages/person_create_page.dart:370, lib/features/people/presentation/pages/person_create_page.dart:389
-- [ ] **niedrig** `people/person/person.page` `loading-b5454ced` [people/person/person.page.ts:532](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L532)
-  Ionic: blockierendes Loading (3 s) beim Hinzufügen / Flutter: nur Speichern-Button deaktiviert, kein Overlay
-  Flutter: lib/features/people/presentation/pages/person_create_page.dart:334, lib/features/people/presentation/pages/person_create_page.dart:989
-- [ ] **niedrig** `people/person/person.page` `loading-d68742ec` [people/person/person.page.ts:553](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L553)
-  Ionic: blockierendes Loading beim Speichern / Flutter: nur Speichern-FAB deaktiviert (_isSaving), kein Overlay
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:587, lib/features/people/presentation/pages/person_detail_page.dart:1733
-- [ ] **niedrig** `people/person/person.page` `toast-cee56561` [people/person/person.page.ts:738](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L738)
-  Ionic: „Der Benutzer wurde erfolgreich entfernt“ / Flutter: „Account-Verknüpfung aufgehoben“
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1582
-- [ ] **niedrig** `people/person/person.page` `toast-f55609ac` [people/person/person.page.ts:740](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L740) (2. Prüfung: bestätigt)
-  Ionic: „Fehler beim Entfernen des Benutzers“ (danger) / Flutter: „Fehler: {error}“ (danger).
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1590
+- [ ] **niedrig** `people/members/members.page` `field-f68af1a6` [people/members/members.page.html:23](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/members/members.page.html#L23) (2. Prüfung: korrigiert)
+  Platzhalter 'Person suchen...' und Suche in Vor-/Nachname/Gruppenname gleich. Flutter vergleicht auch gegen den Ersatztext 'Ohne Gruppe' (Ionic filtert vor dem Ersatznamen), Suche 'ohne' findet dort nur in Flutter Personen ohne Gruppe.
+  Flutter: lib/features/members/presentation/pages/members_page.dart:59, lib/features/members/data/providers/members_providers.dart:133
+- [ ] **niedrig** `people/person/person.page` `loading-be5cc2f1` [people/person/person.page.ts:389](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L389) (2. Prüfung: bestätigt)
+  Ionic: blockierendes Loading 'Wird zurückgesetzt...' / Flutter: kein Ladeindikator; Erfolgs-/Fehler-Toast vorhanden.
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1343, lib/features/people/presentation/pages/person_detail_page.dart:1351
+- [ ] **niedrig** `people/person/person.page` `alert-40883a4d` [people/person/person.page.ts:503](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L503) (2. Prüfung: bestätigt)
+  Detailseite gleich ('Änderungen verwerfen?', Abbrechen / Ja; nicht im Genehmigen-Modus). Flutter besser: Neu-Seite fragt bei jeder Eingabe nach, Ionic schließt das Neu-Modal immer ohne Rückfrage.
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1922, lib/features/people/presentation/pages/person_create_page.dart:140
+- [ ] **niedrig** `people/person/person.page` `toast-9348bff8` [people/person/person.page.ts:528](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L528) (2. Prüfung: bestätigt)
+  Ionic: Toast „Bitte gib den Vornamen und Nachnamen an.“ / Flutter: Inline-Fehler unter den Feldern „Vorname ist erforderlich“ / „Nachname ist erforderlich“ (Labels mit „*“, nur Leerzeichen zählt als leer). Meldung vorhanden, Nutzer erfährt dasselbe.
+  Flutter: lib/features/people/presentation/pages/person_create_page.dart:392, lib/features/people/presentation/pages/person_create_page.dart:411
+- [ ] **niedrig** `people/person/person.page` `loading-b5454ced` [people/person/person.page.ts:532](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L532) (2. Prüfung: bestätigt)
+  Ionic: blockierendes Loading (3 s) beim Hinzufügen / Flutter: nur Speichern-FAB deaktiviert (_isLoading), kein Overlay.
+  Flutter: lib/features/people/presentation/pages/person_create_page.dart:346, lib/features/people/presentation/pages/person_create_page.dart:955
+- [ ] **niedrig** `people/person/person.page` `loading-d68742ec` [people/person/person.page.ts:553](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L553) (2. Prüfung: bestätigt)
+  Ionic: blockierendes Loading beim Speichern / Flutter: nur Speichern-FAB deaktiviert (_isSaving), kein Overlay.
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:788, lib/features/people/presentation/pages/person_detail_page.dart:1913
 - [ ] **niedrig** `people/person/person.page` `alert-cd59453f` [people/person/person.page.ts:848](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L848)
   1 Treffer: gleich (Abbrechen/Ja). Mehrere Treffer: Ionic Alert mit Radio-Liste (erster vorausgewählt) + Abbrechen/Ja / Flutter: SimpleDialog, Tippen auf Eintrag übernimmt sofort, nur „Abbrechen“
   Flutter: lib/features/people/presentation/widgets/person_match_suggestions.dart:120, lib/features/people/presentation/widgets/person_match_suggestions.dart:148
 - [ ] **niedrig** `people/person/person.page` `loading-ae31ca18` [people/person/person.page.ts:903](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L903)
   Ionic: blockierendes Loading „Die Personen werden zusammengeführt...“ / Flutter: nur LinearProgressIndicator in der Karte, nicht blockierend, ohne Text
   Flutter: lib/features/people/presentation/widgets/duplicate_candidates_card.dart:81, lib/features/people/presentation/widgets/duplicate_candidates_card.dart:132
-- [ ] **niedrig** `people/person/person.page` `loading-9ba0a7e4` [people/person/person.page.ts:1013](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1013)
-  Ionic: blockierendes Loading beim Account anlegen / Flutter: kein Ladeindikator
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1596
-- [ ] **niedrig** `people/person/person.page` `toast-8807fdd9` [people/person/person.page.ts:1019](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1019) (2. Prüfung: bestätigt)
-  Ionic: „Account wurde erfolgreich angelegt“ / Flutter: „Account erstellt. Passwort-E-Mail wurde gesendet.“
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1655
-- [ ] **niedrig** `people/person/person.page` `toast-fc0e45e2` [people/person/person.page.ts:1022](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1022)
-  Ionic: Roh-Fehlermeldung error.message / Flutter: „{name} - Fehler beim Erstellen des Accounts: {error}“
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1664
-- [ ] **niedrig** `people/person/person.page` `loading-b96f785a` [people/person/person.page.ts:1090](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1090)
-  Ionic: blockierendes Loading beim Bildupload / Flutter: nur Info-Toast „Lade Passbild hoch...“, nicht blockierend
-  Flutter: lib/features/people/presentation/widgets/person_detail/person_header.dart:225
-- [ ] **niedrig** `people/person/person.page` `toast-7e0a2ff5` [people/person/person.page.ts:1119](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1119)
-  Ionic: Roh-Fehler / Flutter: „Fehler beim Hochladen: {error}“
-  Flutter: lib/features/people/presentation/widgets/person_detail/person_header.dart:274
+- [ ] **niedrig** `people/person/person.page` `loading-9ba0a7e4` [people/person/person.page.ts:1013](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1013) (2. Prüfung: bestätigt)
+  Ionic: blockierendes Loading beim Account anlegen / Flutter: kein Ladeindikator (Erfolgs-/Fehler-Toast vorhanden).
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1747, lib/features/people/presentation/pages/person_detail_page.dart:1799
+- [ ] **niedrig** `people/person/person.page` `toast-fc0e45e2` [people/person/person.page.ts:1022](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1022) (2. Prüfung: bestätigt)
+  Ionic: Roh-Fehlermeldung error.message / Flutter: „{Name} - Fehler beim Erstellen des Accounts: {error}“ (danger). Gleiche Information.
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1825
+- [ ] **niedrig** `people/person/person.page` `loading-b96f785a` [people/person/person.page.ts:1090](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1090) (2. Prüfung: bestätigt)
+  Ionic: blockierendes Loading beim Bildupload / Flutter: nur Info-Toast 'Lade Passbild hoch...', nicht blockierend; Größenfehler-Toast vorhanden.
+  Flutter: lib/features/people/presentation/widgets/person_detail/person_header.dart:200
+- [ ] **niedrig** `people/person/person.page` `toast-7e0a2ff5` [people/person/person.page.ts:1119](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1119) (2. Prüfung: bestätigt)
+  Ionic: Roh-Fehler beim Bild-Upload / Flutter: „Fehler beim Hochladen: {error}“ (danger). Gleiche Information.
+  Flutter: lib/features/people/presentation/widgets/person_detail/person_header.dart:250
 - [ ] **niedrig** `people/person/person.page` `loading-fc02b5d4` [people/person/person.page.ts:1203](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1203) (2. Prüfung: bestätigt)
-  Ionic: blockierendes Loading während „Meinen Benutzer zuweisen“ / Flutter: kein Ladeindikator.
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:962
-- [ ] **niedrig** `people/person/person.page` `toast-968501f7` [people/person/person.page.ts:1213](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1213)
-  Ionic: Roh-Fehler error.message / Flutter: „Fehler: {error}“
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:988
-- [ ] **niedrig** `people/person/person.page` `toast-f74ad707` [people/person/person.page.ts:1251](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1251)
-  Ionic: Roh-Fehler / Flutter: „Fehler: {error}“
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1044
-- [ ] **niedrig** `people/person/person.page` `toast-f74ad707-2` [people/person/person.page.ts:1312](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1312)
-  Ionic: Roh-Fehler / Flutter: „Fehler: {error}“
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1488
+  Ionic: blockierendes Loading während 'Meinen Benutzer zuweisen' / Flutter: kein Ladeindikator; Ergebnis und Toasts gleich.
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1212
+- [ ] **niedrig** `people/person/person.page` `toast-f74ad707` [people/person/person.page.ts:1251](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1251) (2. Prüfung: bestätigt)
+  Wieder aktivieren (Mehr-Menü, pausierte Person): Ionic Roh-Fehler (error-Objekt) / Flutter „Fehler: {error}“ rot. Fehler wird in beiden gemeldet.
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1291
+- [ ] **niedrig** `people/person/person.page` `toast-f74ad707-2` [people/person/person.page.ts:1312](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1312) (2. Prüfung: bestätigt)
+  Entfernen: Ionic schließt die Seite vor dem Löschen, Fehler roh / Flutter löscht erst, dann „Die Person wurde erfolgreich entfernt“ bzw. „Fehler: {error}“ rot. Fehler wird in beiden gemeldet.
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1634
 - [ ] **niedrig** `people/person/person.page` `toast-d7c9e86c` [people/person/person.page.ts:1371](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1371) (2. Prüfung: bestätigt)
   Ionic: „Die Person wurde erfolgreich kopiert/übertragen“ / Flutter: „1 Spieler erfolgreich kopiert/übertragen“.
   Flutter: lib/features/people/presentation/widgets/handover_sheet.dart:819
 - [ ] **niedrig** `people/person/person.page` `toast-b4300d3e` [people/person/person.page.ts:1373](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1373)
   Ionic: Roh-Fehler / Flutter: „Fehler: {error}“
   Flutter: lib/features/people/presentation/widgets/handover_sheet.dart:830
-- [ ] **niedrig** `people/person/person.page` `toast-f4e0ab31` [people/person/person.page.ts:1433](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1433)
-  Ionic: Roh-Fehler / Flutter: „Fehler: {error}“
-  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:212
-- [ ] **niedrig** `people/person/person.page` `alert-71956f19` [people/person/person.page.ts:1439](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1439)
-  Texte/Buttons gleich (Überspringen/Pausieren, Checkboxen). Flutter besser: bietet nur Instanzen an, in denen der Nutzer Personen verwalten darf; Ionic listet alle verknüpften Instanzen
-  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:236, lib/features/people/presentation/widgets/pause_person_sheet.dart:284
-- [ ] **niedrig** `people/person/person.page` `loading-cd6c7935` [people/person/person.page.ts:1496](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1496)
-  Ionic: blockierendes Loading beim Eintragen der Abwesenheit / Flutter: kein Ladeindikator
-  Flutter: lib/features/people/presentation/widgets/planned_absences.dart:230
-- [ ] **niedrig** `people/person/person.page` `loading-6f0c380f` [people/person/person.page.ts:1546](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1546)
-  Ionic: blockierendes Loading beim Löschen der Abwesenheit / Flutter: kein Ladeindikator
-  Flutter: lib/features/people/presentation/widgets/planned_absences.dart:248
-- [ ] **niedrig** `people/person/person.page` `actionsheet-eadcf3f0` [people/person/person.page.ts:1641](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1641) (2. Prüfung: korrigiert)
-  Bedingung gleich (ausstehende Person, Admin/Verantwortliche), Texte, Reihenfolge und Wirkung gleich. Ionic: keine Icons, 'Abbrechen' mit role destructive (rot, in der Button-Gruppe) / Flutter: grünes Haken-Icon und grüne Schrift bei 'Person genehmigen', Icon bei 'Person ablehnen', 'Abbrechen' als normaler separater Abbrechen-Button (cancelDestructive fehlt, anders als im '…'-Menü).
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1330
-- [ ] **niedrig** `people/person/person.page` `loading-58ec291d` [people/person/person.page.ts:1680](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1680)
-  Ionic: blockierendes Loading „Die Person wird abgelehnt...“ / Flutter: kein Ladeindikator
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1300
-- [ ] **niedrig** `people/person/person.page` `toast-55836540` [people/person/person.page.ts:1702](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1702)
-  Ionic: „Die Spielerdaten wurden erfolgreich aktualisiert.“ / Flutter: „Person wurde abgelehnt“
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1313
-- [ ] **niedrig** `people/person/person.page` `toast-26c7e22c` [people/person/person.page.ts:1705](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1705)
-  Ionic: „Fehler beim aktualisieren des Spielers“ / Flutter: „Fehler: {error}“
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1322
+- [ ] **niedrig** `people/person/person.page` `toast-f4e0ab31` [people/person/person.page.ts:1433](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1433) (2. Prüfung: bestätigt)
+  Ionic: Roh-Fehler (danger) / Flutter: „Fehler: {error}“ (danger). Gleiche Information.
+  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:216
+- [ ] **niedrig** `people/person/person.page` `alert-71956f19` [people/person/person.page.ts:1439](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1439) (2. Prüfung: bestätigt)
+  Texte/Buttons gleich ('Auch in anderen Instanzen pausieren?', Name-Text, Checkboxen, Überspringen/Pausieren). Flutter besser: bietet nur verknüpfte Instanzen an, in denen der Nutzer Admin/Verantwortlicher ist (Ionic listet alle, dort greift RLS ohne Fehlermeldung); übergibt 'Pausiert bis' an die anderen Instanzen, während Ionic person.page pauseUntil durch dismissPauseModal schon geleert hat (paused_until null).
+  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:240, lib/features/people/presentation/widgets/pause_person_sheet.dart:288, lib/features/people/presentation/widgets/pause_person_sheet.dart:305, lib/features/people/presentation/pages/person_detail_page.dart:1254
+- [ ] **niedrig** `people/person/person.page` `loading-cd6c7935` [people/person/person.page.ts:1496](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1496) (2. Prüfung: bestätigt)
+  Ionic: blockierendes Loading beim Eintragen der Abwesenheit / Flutter: Sheet schließt, Speichern ohne Ladeindikator; Ergebnis-Toast gleich.
+  Flutter: lib/features/people/presentation/widgets/planned_absences.dart:232
+- [ ] **niedrig** `people/person/person.page` `loading-6f0c380f` [people/person/person.page.ts:1546](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1546) (2. Prüfung: bestätigt)
+  Ionic: blockierendes Loading beim Löschen der Abwesenheit / Flutter: kein Ladeindikator; Bestätigung und Erfolg-/Fehler-Toast vorhanden.
+  Flutter: lib/features/people/presentation/widgets/planned_absences.dart:249, lib/features/people/presentation/widgets/planned_absences.dart:287
+- [ ] **niedrig** `people/person/person.page` `actionsheet-eadcf3f0` [people/person/person.page.ts:1641](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1641) (2. Prüfung: bestätigt)
+  Bedingung/Texte/Reihenfolge/Wirkung gleich. Ionic: keine Icons, 'Abbrechen' destructive / Flutter: Icons (grün/rot), 'Abbrechen' normal.
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1484
+- [ ] **niedrig** `people/person/person.page` `loading-58ec291d` [people/person/person.page.ts:1680](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1680) (2. Prüfung: bestätigt)
+  Ionic: blockierendes Loading 'Die Person wird abgelehnt...' / Flutter: kein Ladeindikator (Fehler-Toast vorhanden).
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1423, lib/features/people/presentation/pages/person_detail_page.dart:1467
 - [ ] **niedrig** `people/person/person.page` `loading-00357310` [people/person/person.page.ts:1717](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1717) (2. Prüfung: bestätigt)
-  Ionic: blockierendes Loading „Die Person wird genehmigt...“ / Flutter: kein Ladeindikator (vorher zusätzlicher Bestätigungsdialog „Person genehmigen?“).
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1210, lib/features/people/presentation/pages/person_detail_page.dart:1233
-- [ ] **niedrig** `people/person/person.page` `toast-c09ff9ac` [people/person/person.page.ts:1741](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1741)
-  Ionic: „Die Spielerdaten wurden erfolgreich aktualisiert.“ / Flutter: „Person wurde genehmigt“
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1241
-- [ ] **niedrig** `people/person/person.page` `toast-1b04b6d6` [people/person/person.page.ts:1744](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1744)
-  Ionic: „Fehler beim aktualisieren des Spielers“ / Flutter: „Fehler: {error}“
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1250
-- [ ] **niedrig** `people/person/person.page` `action-5615e0d7` [people/person/person.page.html:49](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L49)
-  Ionic: Viewer-Titel „Passbild“, Bild in voller Qualität (ohne ?quality=20) / Flutter: Titel „{Vorname Nachname}.jpg“, Bild-URL unverändert, keine Aktionen im Viewer
-  Flutter: lib/features/people/presentation/widgets/person_detail/person_header.dart:205, lib/shared/widgets/sheets/image_viewer_sheet.dart:276
-- [ ] **niedrig** `people/person/person.page` `text-e915fb37` [people/person/person.page.html:74](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L74)
-  Detail: Label „Vorname“ gleich; Neu-Seite: „Vorname *“
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:236, lib/features/people/presentation/pages/person_create_page.dart:365
-- [ ] **niedrig** `people/person/person.page` `field-4b77b853` [people/person/person.page.html:75](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L75)
-  Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe (Detail, mit Pflicht-Validierung); Neu-Seite: TextFormField mit Pflicht-Validierung, Namensvorschläge wie Ionic
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:233, lib/features/people/presentation/pages/person_create_page.dart:362
-- [ ] **niedrig** `people/person/person.page` `text-c4ad9070` [people/person/person.page.html:82](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L82)
-  Detail: Label „Nachname“ gleich; Neu-Seite: „Nachname *“
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:252, lib/features/people/presentation/pages/person_create_page.dart:384
-- [ ] **niedrig** `people/person/person.page` `field-6e1a9b00` [people/person/person.page.html:83](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L83)
-  Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe (Detail, mit Pflicht-Validierung); Neu-Seite: TextFormField mit Pflicht-Validierung
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:249, lib/features/people/presentation/pages/person_create_page.dart:381
+  Ionic: blockierendes Loading 'Die Person wird genehmigt...' / Flutter: kein Ladeindikator während der Genehmigung (zusätzlicher Bestätigungsdialog inzwischen entfernt, Aktionsblatt → direkt genehmigen). Ergebnis und Toasts gleich.
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1372, lib/features/people/presentation/pages/person_detail_page.dart:1484
+- [ ] **niedrig** `people/person/person.page` `action-5615e0d7` [people/person/person.page.html:49](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L49) (2. Prüfung: bestätigt)
+  Viewer hat jetzt 'Ersetzen' und 'Entfernen' (nur canEdit) wie Ionic. Unterschied: Viewer-Titel '<Vorname Nachname>.jpg' statt 'Passbild'; Bild-URL ohne ?quality=20-Entfernung (Flutter-URLs enthalten es nicht).
+  Flutter: lib/features/people/presentation/widgets/person_detail/person_header.dart:164, lib/features/people/presentation/widgets/person_detail/person_header.dart:179, lib/shared/widgets/sheets/image_viewer_sheet.dart:19
+- [ ] **niedrig** `people/person/person.page` `text-e915fb37` [people/person/person.page.html:74](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L74) (2. Prüfung: bestätigt)
+  Detail: „Vorname“ gleich; Neu-Seite: „Vorname *“. Reine Darstellung.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:236, lib/features/people/presentation/pages/person_create_page.dart:385
+- [ ] **niedrig** `people/person/person.page` `field-4b77b853` [people/person/person.page.html:75](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L75) (2. Prüfung: bestätigt)
+  Detail: Tipp → Editor-Sheet mit Pflicht-Validierung statt Inline-Eingabe (Fertig-Button vorhanden); Neu-Seite: Textfelder mit Namensvorschlägen wie Ionic; nur canEdit.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:232, lib/features/people/presentation/pages/person_create_page.dart:382
+- [ ] **niedrig** `people/person/person.page` `text-c4ad9070` [people/person/person.page.html:82](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L82) (2. Prüfung: bestätigt)
+  Detail: „Nachname“ gleich; Neu-Seite: „Nachname *“. Reine Darstellung.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:252, lib/features/people/presentation/pages/person_create_page.dart:404
+- [ ] **niedrig** `people/person/person.page` `field-6e1a9b00` [people/person/person.page.html:83](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L83) (2. Prüfung: bestätigt)
+  Ionic: Inline-Nachname (nur neue Person oder nach Stift-Tipp, Button 'Fertig'; Namensvorschläge nur bei neuer Person) / Flutter: Detail: Stift -> Zeile mit Editor-Sheet + Pflicht-Validierung, 'Fertig'-Button vorhanden; Neu-Seite TextFormField mit Pflicht. Nur Bedienung.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:254, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:238, lib/features/people/presentation/pages/person_create_page.dart:404
 - [ ] **niedrig** `people/person/person.page` `text-5dbfd756` [people/person/person.page.html:116](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L116) (2. Prüfung: bestätigt)
   Prozent-Badge (Score) der Duplikat-Kandidaten fehlt in der Flutter-Karte (lib/features/people/presentation/widgets/duplicate_candidates_card.dart:133).
 - [ ] **niedrig** `people/person/person.page` `action-c72e602e` [people/person/person.page.html:131](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L131)
   Schließen-Button gleich; Flutter zeigt zusätzlich Überschrift „Person in anderer Instanz gefunden?“ über den Vorschlägen (Ionic ohne Überschrift)
   Flutter: lib/features/people/presentation/widgets/person_match_suggestions.dart:40, lib/features/people/presentation/widgets/person_match_suggestions.dart:46
 - [ ] **niedrig** `people/person/person.page` `field-05790430` [people/person/person.page.html:164](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L164) (2. Prüfung: bestätigt)
-  Ionic: Inline-Textarea (autoGrow) / Flutter: Zeile („Keine Notizen“ wenn leer), Tipp öffnet Editor-Sheet; leere Notiz wird als null gespeichert.
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:273, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:278
-- [ ] **niedrig** `people/person/person.page` `field-4bf62b27` [people/person/person.page.html:221](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L221)
-  Ionic: Label „Gruppe“, Modal-Select / Flutter: Label je Instanztyp „Stimme“/„Instrument“/„Gruppe“, Auswahl-Sheet; Wechsel setzt Stimmführer zurück wie Ionic
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:289, lib/features/people/presentation/pages/person_detail_page.dart:444
-- [ ] **niedrig** `people/person/person.page` `text-bb66373a` [people/person/person.page.html:245](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L245)
-  Ionic: „Telefon-/Handynummer“ / Flutter: „Telefon“
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:336
+  Ionic: Inline-Textarea (autoGrow), für Admins auch bei archivierten Personen (dann deaktiviert, auch leer) / Flutter: Zeile ('Keine Notizen' wenn leer), Tipp öffnet Editor-Sheet, bei archivierten Personen ohne Notiz ausgeblendet; leere Notiz als null gespeichert; Historien-Eintrag bei Änderung gleich.
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:2021, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:271, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:280
+- [ ] **niedrig** `people/person/person.page` `field-4bf62b27` [people/person/person.page.html:221](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L221) (2. Prüfung: bestätigt)
+  Ionic: Label 'Gruppe', Modal-Select / Flutter: Label je Mandantentyp 'Stimme'/'Instrument'/'Gruppe', Auswahl-Sheet; Wechsel setzt Stimmführer zurück wie Ionic; nur canEdit.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:291, lib/features/people/presentation/pages/person_detail_page.dart:639
+- [ ] **niedrig** `people/person/person.page` `field-9f6c9acb` [people/person/person.page.html:237](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L237) (2. Prüfung: bestätigt)
+  Stimmumfang (Chor): Ionic-Input ohne ionChange / Flutter besser: Änderung aktiviert Speichern. Bearbeiten per Editor-Sheet; leer + nicht bearbeitbar ausgeblendet. Ionic disabled bei readOnly||!isAdmin = Flutter canEdit (Admin/Verantwortlicher).
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:862, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:868
+- [ ] **niedrig** `people/person/person.page` `text-bb66373a` [people/person/person.page.html:245](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L245) (2. Prüfung: bestätigt)
+  Ionic: „Telefon-/Handynummer“ (immer sichtbar, bei readOnly deaktiviert) / Flutter: „Telefon“, ohne Nummer und ohne Bearbeitungsrecht ausgeblendet. Gleiche Funktion.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:338
 - [ ] **niedrig** `people/person/person.page` `field-84804c14` [people/person/person.page.html:246](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L246) (2. Prüfung: bestätigt)
-  Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; zusätzlich Anruf-Button; leer + nicht bearbeitbar ausgeblendet (Ionic: leeres deaktiviertes Feld).
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:330
-- [ ] **niedrig** `people/person/person.page` `action-02594b69` [people/person/person.page.html:259](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L259)
-  Ionic: separater Kalender-Button am Feld / Flutter: kein eigener Button, Tipp auf die Zeile öffnet die Datumsauswahl
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371
-- [ ] **niedrig** `people/person/person.page` `modal-9c171caa` [people/person/person.page.html:266](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L266)
-  Ionic: Modal mit Rad-Datumsauswahl (preferWheel) / Flutter: Material-DatePicker-Dialog bzw. Kalender-Karte (iOS-Look)
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371, lib/shared/widgets/adaptive/app_pickers.dart:12
-- [ ] **niedrig** `people/person/person.page` `field-946f7994` [people/person/person.page.html:268](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L268)
-  Ionic: ion-datetime Rad, max = heute / Flutter: Kalender, lastDate = heute; Speichern als Datum wie Ionic; setzt correctBirthday beim Speichern
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371, lib/features/people/presentation/pages/person_detail_page.dart:643
-- [ ] **niedrig** `people/person/person.page` `action-02594b69-2` [people/person/person.page.html:291](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L291)
-  Ionic: separater Kalender-Button am Feld / Flutter: kein eigener Button, Tipp auf die Zeile öffnet die Datumsauswahl
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371
-- [ ] **niedrig** `people/person/person.page` `modal-637d2f88` [people/person/person.page.html:298](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L298)
-  Ionic: Modal mit Rad-Datumsauswahl (preferWheel) / Flutter: Material-DatePicker-Dialog bzw. Kalender-Karte (iOS-Look)
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371
-- [ ] **niedrig** `people/person/person.page` `field-6cfcad0a` [people/person/person.page.html:300](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L300)
-  Ionic: ion-datetime Rad, max = heute / Flutter: Kalender, lastDate = heute; Speichern als Datum wie Ionic
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371
-- [ ] **niedrig** `people/person/person.page` `action-02594b69-3` [people/person/person.page.html:323](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L323) (2. Prüfung: bestätigt)
-  Ionic: separater Kalender-Button am Feld „Beigetreten am“ / Flutter: kein eigener Button, Tipp auf die Zeile öffnet die Datumsauswahl.
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:184, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:377
-- [ ] **niedrig** `people/person/person.page` `modal-5e3cc20f` [people/person/person.page.html:330](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L330)
-  Ionic: Modal mit Rad-Datumsauswahl (preferWheel) / Flutter: Material-DatePicker-Dialog bzw. Kalender-Karte (iOS-Look)
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371
-- [ ] **niedrig** `people/person/person.page` `field-8c59f281` [people/person/person.page.html:332](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L332)
-  Ionic: ion-datetime Rad, max = heute / Flutter: Kalender, lastDate = heute; Speichern als Datum wie Ionic
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371
-- [ ] **niedrig** `people/person/person.page` `text-c617e6c6` [people/person/person.page.html:349](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L349)
-  Label „Eltern“ gleich; Flutter-Bedingung ohne „!isParent“ (Ionic blendet das Feld für Benutzer mit Rolle Elternteil aus)
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:194, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:599
-- [ ] **niedrig** `people/person/person.page` `field-06ab1bbe` [people/person/person.page.html:350](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L350)
-  Ionic: Modal-Select, ohne Auswahl „Nicht festgelegt“ / Flutter: Auswahl-Sheet mit Option „Nicht festgelegt“, Anzeige ohne Auswahl aber „Nicht zugewiesen“
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:599
-- [ ] **niedrig** `people/person/person.page` `field-6acc513f` [people/person/person.page.html:402](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L402)
-  Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; leer + nicht bearbeitbar ausgeblendet
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:848
-- [ ] **niedrig** `people/person/person.page` `field-7662f2a7` [people/person/person.page.html:435](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L435)
-  Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; leer + nicht bearbeitbar ausgeblendet (Ionic: immer sichtbar)
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:877
-- [ ] **niedrig** `people/person/person.page` `field-016207ea` [people/person/person.page.html:462](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L462)
-  Flutter: zusätzliche Leer-Option „Keine Schicht zugewiesen“, Anzeige „Nicht ausgewählt“ (Ionic: keine Leer-Option, vorbelegt mit erster Schicht)
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:529
-- [ ] **niedrig** `people/person/person.page` `field-ea337733` [people/person/person.page.html:474](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L474)
-  Ionic: ion-datetime-button / Flutter: Zeile mit Datum, leer „Nicht angegeben“, Tipp öffnet Datumsauswahl
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:568
-- [ ] **niedrig** `people/person/person.page` `modal-ac91c261` [people/person/person.page.html:475](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L475)
-  Ionic: Modal mit ion-datetime / Flutter: DatePicker-Dialog bzw. Kalender-Karte
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:583
-- [ ] **niedrig** `people/person/person.page` `text-79d104bf` [people/person/person.page.html:490](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L490) (2. Prüfung: korrigiert)
-  Bedingung nicht ganz gleich. Ionic: !readOnly || otherExercise (leerer String gilt als leer) / Flutter: otherExercise != null || canEdit → Beobachter und archivierte Personen sehen bei gespeichertem '' eine leere Zeile „Sonstige Dienste“.
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:223, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:644
-- [ ] **niedrig** `people/person/person.page` `field-eb1656da` [people/person/person.page.html:491](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L491)
-  Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:641
-- [ ] **niedrig** `people/person/person.page` `field-d1e5b0ca` [people/person/person.page.html:510](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L510)
-  Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; Prüfung im Sheet nur auf „@“; Suche in anderen Instanzen nach Änderung statt bei Blur; gesperrt wenn appId wie Ionic
-  Flutter: lib/features/people/presentation/widgets/person_detail/account_accordion.dart:84, lib/features/people/presentation/pages/person_detail_page.dart:852
-- [ ] **niedrig** `people/person/person.page` `action-06c55240` [people/person/person.page.html:514](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L514)
-  Ionic: Lupen-Icon-Button rechts im E-Mail-Feld, deaktiviert ohne E-Mail / Flutter: Textbutton „In anderer Instanz suchen“ unter dem Feld, nur sichtbar mit E-Mail
-  Flutter: lib/features/people/presentation/widgets/person_detail/account_accordion.dart:94
-- [ ] **niedrig** `people/person/person.page` `action-0de62271` [people/person/person.page.html:519](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L519)
-  Ionic: roter Papierkorb-Icon-Button rechts im E-Mail-Feld / Flutter: Outlined-Button „Account-Verknüpfung aufheben“ unter der Rollenauswahl
-  Flutter: lib/features/people/presentation/widgets/person_detail/account_accordion.dart:127
+  Telefon: Bearbeiten per Editor-Sheet statt Inline; zusätzlich Anruf-Button; leer + nicht bearbeitbar ausgeblendet. Gleiche Funktion, Rollen gleich (canEdit = Admin/Verantwortlicher, nicht ausgetreten).
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:332, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:338
+- [ ] **niedrig** `people/person/person.page` `modal-9c171caa` [people/person/person.page.html:266](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L266) (2. Prüfung: bestätigt)
+  Ionic: Modal mit Rad-Datumsauswahl / Flutter: Kalender-Dialog (DateEditorSheet) neben Tipp-Eingabe; gleiche Funktion, Optik.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:164, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:372, lib/features/people/presentation/widgets/person_detail/date_input_row.dart:113
+- [ ] **niedrig** `people/person/person.page` `field-946f7994` [people/person/person.page.html:268](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L268) (2. Prüfung: bestätigt)
+  Ionic: ion-datetime Rad (max heute) neben Tipp-Eingabe TT.MM.JJJJ / Flutter: DateInputRow mit Tipp-Eingabe (Übernahme bei Blur, ungültig wird zurückgesetzt) + Kalender-Dialog, lastDate heute; speichert UTC-Mitternacht-ISO wie Ionic. Nur Optik. correctBirthday=true sofort bei Änderung (Warnfarbe verschwindet) und beim Speichern, wie Ionic.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:164, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:372, lib/features/people/presentation/widgets/person_detail/date_input_row.dart:51, lib/features/people/presentation/pages/person_detail_page.dart:631, lib/features/people/presentation/pages/person_detail_page.dart:954
+- [ ] **niedrig** `people/person/person.page` `modal-637d2f88` [people/person/person.page.html:298](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L298) (2. Prüfung: bestätigt)
+  Ionic: Modal mit Rad-Datumsauswahl / Flutter: Kalender-Dialog (DateEditorSheet) neben Tipp-Eingabe; gleiche Funktion, Optik. Bedingung !general && !choir && !mainGroup wie Ionic.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:179, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:372
+- [ ] **niedrig** `people/person/person.page` `field-6cfcad0a` [people/person/person.page.html:300](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L300) (2. Prüfung: bestätigt)
+  Ionic: ion-datetime Rad, max = heute / Flutter: Datumsauswahl, lastDate = heute; zusätzlich Texteingabe TT.MM.JJJJ.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:372, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:392
+- [ ] **niedrig** `people/person/person.page` `modal-5e3cc20f` [people/person/person.page.html:330](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L330) (2. Prüfung: bestätigt)
+  Ionic: Modal mit Rad-Datumsauswahl / Flutter: Kalender-Dialog (DateEditorSheet) neben Tipp-Eingabe; gleiche Funktion, Optik.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:189, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:372
+- [ ] **niedrig** `people/person/person.page` `field-8c59f281` [people/person/person.page.html:332](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L332) (2. Prüfung: bestätigt)
+  Ionic: ion-datetime (Beigetreten am) Rad (max heute) neben Tipp-Eingabe TT.MM.JJJJ / Flutter: DateInputRow mit Tipp-Eingabe (Übernahme bei Blur, ungültig wird zurückgesetzt) + Kalender-Dialog, lastDate heute; speichert UTC-Mitternacht-ISO wie Ionic. Nur Optik.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:189, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:372, lib/features/people/presentation/widgets/person_detail/date_input_row.dart:51
+- [ ] **niedrig** `people/person/person.page` `field-06ab1bbe` [people/person/person.page.html:350](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L350) (2. Prüfung: bestätigt)
+  Ionic: Modal-Select, ohne Auswahl 'Nicht festgelegt' / Flutter: Auswahl-Sheet mit Option 'Nicht festgelegt' (setzt parent_id null), Anzeige ohne Auswahl aber 'Nicht zugewiesen' – gleiche Bedeutung.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:196, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:631, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:648
+- [ ] **niedrig** `people/person/person.page` `field-6acc513f` [people/person/person.page.html:402](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L402) (2. Prüfung: bestätigt)
+  Bedingung (Chor && !Hauptgruppe) und Bearbeitung nur Admin/Verantwortlich gleich; Tipp → Editor-Sheet statt Inline-Eingabe; leer + nicht bearbeitbar ausgeblendet.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:881, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:206
+- [ ] **niedrig** `people/person/person.page` `field-7662f2a7` [people/person/person.page.html:435](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L435) (2. Prüfung: bestätigt)
+  Testergebnis (VoS, nicht Hauptgruppe): Ionic immer sichtbar, bei Flutter leer + nicht bearbeitbar ausgeblendet; Bearbeiten per Editor-Sheet, speichert testResult (leer -> null). Gleiche Funktion.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:910, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:916
+- [ ] **niedrig** `people/person/person.page` `field-ea337733` [people/person/person.page.html:474](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L474) (2. Prüfung: bestätigt)
+  Ionic: ion-datetime-button 'Anfangsdatum' / Flutter: Zeile mit Datum, Tipp öffnet Kalender (2000-2100), leer 'Nicht angegeben'. Nur bei Plan ohne benannte Schichten. Nur Optik.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:591, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:607
+- [ ] **niedrig** `people/person/person.page` `modal-ac91c261` [people/person/person.page.html:475](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L475) (2. Prüfung: bestätigt)
+  Ionic: Modal mit ion-datetime / Flutter: Kalender-Dialog. Nur Optik.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:607
+- [ ] **niedrig** `people/person/person.page` `text-79d104bf` [people/person/person.page.html:490](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L490) (2. Prüfung: bestätigt)
+  Bedingung nicht ganz gleich. Ionic: !readOnly || otherExercise (leerer String gilt als leer) / Flutter: otherExercise != null || canEdit → Beobachter und archivierte Personen sehen bei gespeichertem '' eine leere Zeile 'Sonstige Dienste'. Label gleich.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:225, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:669
+- [ ] **niedrig** `people/person/person.page` `field-eb1656da` [people/person/person.page.html:491](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L491) (2. Prüfung: bestätigt)
+  Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; Leeren speichert null statt '' (beides leer). Bedingung otherExercise != null || canEdit (siehe text-79d104bf).
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:225, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:664, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:672
+- [ ] **niedrig** `people/person/person.page` `text-e65374d2` [people/person/person.page.html:503](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L503) (2. Prüfung: korrigiert)
+  Bearbeiten-Seite gleich: Akkordeon „Account“ nur canEdit (Admin/Verantwortliche) && !pending, also ohne Eltern/Beobachter/Bewerbungsmodus wie Ionic (!isParent && !readOnly && !approveMode). Erstreviewer hat die Neu-Seite übersehen: Ionic zeigt das Akkordeon „Account“ auch beim Anlegen (E-Mail, Suche, Hilfe darin) / Flutter-Neu-Seite: E-Mail-Feld und Hilfetext ohne Überschrift „Account“ direkt im Formular. Nur Anordnung.
+  Flutter: lib/features/people/presentation/widgets/person_detail/account_accordion.dart:66, lib/features/people/presentation/pages/person_detail_page.dart:2053, lib/features/people/presentation/pages/person_create_page.dart:475, lib/features/people/presentation/pages/person_create_page.dart:506
+- [ ] **niedrig** `people/person/person.page` `field-d1e5b0ca` [people/person/person.page.html:510](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L510) (2. Prüfung: bestätigt)
+  Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe (Sheet prüft nur auf '@', volle Prüfung 'Ungültige E-Mail' beim Speichern wie Ionic); Suche nach gleicher E-Mail in anderen Instanzen nach Übernahme aus dem Sheet statt bei Blur, Dialog/Übernahme gleich; gesperrt wenn appId wie Ionic.
+  Flutter: lib/features/people/presentation/widgets/person_detail/account_accordion.dart:88, lib/features/people/presentation/widgets/person_detail/account_accordion.dart:92, lib/features/people/presentation/widgets/person_detail/account_accordion.dart:340, lib/features/people/presentation/pages/person_detail_page.dart:1080
+- [ ] **niedrig** `people/person/person.page` `action-06c55240` [people/person/person.page.html:514](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L514) (2. Prüfung: bestätigt)
+  Ionic: Lupen-Icon-Button rechts im E-Mail-Feld, sichtbar ohne Konto, deaktiviert ohne E-Mail / Flutter: Textbutton 'In anderer Instanz suchen' unter dem Feld, nur sichtbar mit E-Mail. Funktion gleich (Namenssuche in verknüpften Instanzen, Toast 'keine Treffer', Aktionsblatt 'Eintrag auswählen', schreibt email + global_person_id mit tenantId, Kandidat bekommt global_person_id, Toast 'E-Mail aktualisiert'). Flutter schreibt nur diese Felder statt des ganzen Entwurfs.
+  Flutter: lib/features/people/presentation/widgets/person_detail/account_accordion.dart:103, lib/features/people/presentation/pages/person_detail_page.dart:1130
+- [ ] **niedrig** `people/person/person.page` `action-0de62271` [people/person/person.page.html:519](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L519) (2. Prüfung: bestätigt)
+  Ionic: roter Papierkorb-Icon-Button rechts im E-Mail-Feld / Flutter: Outlined-Button 'Account-Verknüpfung aufheben' unter der Rollenauswahl (canEdit && appId). Ablauf gleich: Alert 'Account entfernen' Abbrechen/Ja, removeUserFromTenant (Admins/weitere aktive Person behalten Zugang), email + appId = null, Seite schließt, Toasts gleich.
+  Flutter: lib/features/people/presentation/widgets/person_detail/account_accordion.dart:131, lib/features/people/presentation/pages/person_detail_page.dart:1678
 - [ ] **niedrig** `people/person/person.page` `field-280cafd6` [people/person/person.page.html:530](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L530) (2. Prüfung: bestätigt)
-  Optionen/Reihenfolge, Stimmführer-Optionen nur bei isLeader, Sperre bei Hauptgruppe, sofortiges Schreiben + Toast „Die Rolle wurde erfolgreich aktualisiert.“ gleich. Flutter besser: aktuelle Rolle außerhalb der Liste (z. B. Admin) wird angezeigt statt leerem Select; Bedingung nur appId (Ionic email && appId).
-  Flutter: lib/features/people/presentation/widgets/person_detail/account_accordion.dart:211, lib/features/people/presentation/widgets/person_detail/account_accordion.dart:225, lib/features/people/presentation/pages/person_detail_page.dart:1492
-- [ ] **niedrig** `people/person/person.page` `action-36a985b0` [people/person/person.page.html:554](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L554)
-  Ionic: X-Icon in der Toolbar / Flutter: Textbutton „Schließen“
-  Flutter: lib/features/people/presentation/widgets/person_detail/account_accordion.dart:296
-- [ ] **niedrig** `people/person/person.page` `field-247f92a0` [people/person/person.page.html:585](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L585)
-  Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:766
-- [ ] **niedrig** `people/person/person.page` `modal-9dba127a` [people/person/person.page.html:608](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L608)
-  Ionic: Modal mit Rad-Datumsauswahl / Flutter: DatePicker-Dialog bzw. Kalender-Karte
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:795
-- [ ] **niedrig** `people/person/person.page` `field-e423e2ec` [people/person/person.page.html:610](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L610)
-  Ionic: max = heute / Flutter: Kalender 1900–2100 (kein Maximum heute)
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:795, lib/shared/widgets/sheets/field_editor_sheet.dart:213
-- [ ] **niedrig** `people/person/person.page` `field-50c752ee` [people/person/person.page.html:621](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L621)
-  Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe (Auswahl-Sheet); fehlender Wert in Ionic mit erster Option vorbelegt, Flutter „Nicht angegeben“
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:808
-- [ ] **niedrig** `people/person/person.page` `field-049486aa` [people/person/person.page.html:628](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L628)
-  Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe (4 Zeilen)
-  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:766
+  Optionen/Reihenfolge (Mitglied, Verantwortlicher, Helfer, bei Stimmführer + Stimmführer & Helfer, Stimmführer), Sperre bei Hauptgruppe, sofortiges Schreiben (tenantUsers.role) + Toast 'Die Rolle wurde erfolgreich aktualisiert.' gleich. Flutter besser: Rolle außerhalb der Liste (z. B. Admin) wird angezeigt statt leerem Select; Bedingung nur appId (Ionic email && appId, Konto ohne E-Mail praktisch nicht vorhanden).
+  Flutter: lib/features/people/presentation/widgets/person_detail/account_accordion.dart:122, lib/features/people/presentation/widgets/person_detail/account_accordion.dart:211, lib/features/people/presentation/widgets/person_detail/account_accordion.dart:266, lib/features/people/presentation/pages/person_detail_page.dart:1638
+- [ ] **niedrig** `people/person/person.page` `field-247f92a0` [people/person/person.page.html:585](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L585) (2. Prüfung: bestätigt)
+  Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; nur canEdit.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:793, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:797
+- [ ] **niedrig** `people/person/person.page` `modal-9dba127a` [people/person/person.page.html:608](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L608) (2. Prüfung: bestätigt)
+  Ionic: Modal mit Rad-Datumsauswahl / Flutter: Kalender-Dialog (DateEditorSheet) neben Tipp-Eingabe; gleiche Funktion, Optik.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:770, lib/features/people/presentation/widgets/person_detail/date_input_row.dart:113
+- [ ] **niedrig** `people/person/person.page` `field-e423e2ec` [people/person/person.page.html:610](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L610) (2. Prüfung: bestätigt)
+  Ionic: Datums-Zusatzfeld mit Tipp-Eingabe + Rad, max = heute, speichert UTC-Mitternacht-ISO / Flutter: DateInputRow (canEdit), lastDate heute, gleicher ISO-Wert; (alter Befund 'kein Maximum' ist behoben). Nur Optik.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:770, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:772, lib/features/people/presentation/widgets/person_detail/date_input_row.dart:51
+- [ ] **niedrig** `people/person/person.page` `field-50c752ee` [people/person/person.page.html:621](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L621) (2. Prüfung: bestätigt)
+  Bearbeiten per Tipp → Auswahl-Sheet statt Inline-Select; fehlende Werte werden wie in Ionic mit Standard/erster Option vorbelegt (_withExtraDefaults).
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:841
+- [ ] **niedrig** `people/person/person.page` `field-049486aa` [people/person/person.page.html:628](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L628) (2. Prüfung: bestätigt)
+  Bearbeiten per Tipp → Editor-Sheet (4 Zeilen) statt Inline-Textarea; nur canEdit.
+  Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:793, lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:797
 - [ ] **niedrig** `people/person/person.page` `modal-cc0c1d20` [people/person/person.page.html:635](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L635)
   Ionic: Vollbild-Modal / Flutter: Bottom-Sheet mit 85 % Höhe
   Flutter: lib/features/people/presentation/widgets/church_picker_sheet.dart:26
 - [ ] **niedrig** `people/person/person.page` `text-4ba50278` [people/person/person.page.html:707](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L707) (2. Prüfung: bestätigt)
-  Ionic: Bereich „Historie“ nur sichtbar, wenn Einträge vorhanden (personAttendance wird nie befüllt, also history.length) / Flutter: immer sichtbar, leer mit „Keine Historie vorhanden“ (Durchschnitt 0 %), zusätzlicher Umschalter „Alle anzeigen“ (alle Saisons).
-  Flutter: lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:49, lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:76, lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:102
+  Ionic: Bereich 'Historie' nur sichtbar, wenn Einträge vorhanden / Flutter: immer sichtbar, leer mit 'Keine Historie vorhanden' (ohne Durchschnitt); zusätzlich Umschalter 'Alle anzeigen' (alle Saisons). Nicht-Admins sehen nur Gruppenwechsel/Pausen wie Ionic.
+  Flutter: lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:50, lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:76, lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:126
 - [ ] **niedrig** `people/person/person.page` `text-0f8281df` [people/person/person.page.html:803](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L803)
   Text gleich; Flutter zählt Termine ab heute (gte heute), Ionic nur Termine nach jetzt — heutige Termine erscheinen in Flutter zusätzlich hier und in der Historie
   Flutter: lib/features/people/presentation/widgets/person_detail/upcoming_appointments_accordion.dart:20, lib/features/people/presentation/widgets/person_detail/upcoming_appointments_accordion.dart:121
 - [ ] **niedrig** `people/person/person.page` `text-9bed7686` [people/person/person.page.html:811](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L811) (2. Prüfung: bestätigt)
   Format „dd.MM.yyyy | Titel“ gleich; Flutter ignoriert hide_name der Terminart (Ionic zeigt dann nur das Datum).
   Flutter: lib/features/people/presentation/widgets/person_detail/upcoming_appointments_accordion.dart:41, lib/features/people/presentation/widgets/person_detail/upcoming_appointments_accordion.dart:142
-- [ ] **niedrig** `people/person/person.page` `field-31cb4e6e` [people/person/person.page.html:954](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L954)
-  Ionic: Inline-Kalender im aufklappbaren Bereich, max = heute / Flutter: Datumsdialog beim Tipp, lastDate heute, frühestens vor 5 Jahren
+- [ ] **niedrig** `people/person/person.page` `field-31cb4e6e` [people/person/person.page.html:954](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L954) (2. Prüfung: bestätigt)
+  Ionic: Inline-Kalender im Aufklapp-Bereich, max = heute / Flutter: Datumsdialog beim Tipp, lastDate heute, frühestens vor 5 Jahren.
   Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:131
-- [ ] **niedrig** `people/person/person.page` `field-932fcf9d` [people/person/person.page.html:976](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L976)
-  Ionic: Inline-Kalender im aufklappbaren Bereich, min = heute / Flutter: Datumsdialog, firstDate heute, bis +3 Jahre, Start +30 Tage
-  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:145
+- [ ] **niedrig** `people/person/person.page` `field-932fcf9d` [people/person/person.page.html:976](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L976) (2. Prüfung: bestätigt)
+  Ionic: Inline-Kalender in Akkordeon 'Pausiert bis', min = heute / Flutter: Kalender-Dialog je Zeile, firstDate heute, lastDate +3 Jahre (Ionic unbegrenzt), Start +30 Tage; 'Pausiert ab' max heute wie Ionic. Löschen-X vorhanden. Nur Optik/Grenze.
+  Flutter: lib/features/people/presentation/widgets/pause_person_sheet.dart:132, lib/features/people/presentation/widgets/pause_person_sheet.dart:146
 - [ ] **niedrig** `people/person/person.page` `action-35f05e9d` [people/person/person.page.html:1029](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L1029) (2. Prüfung: bestätigt)
-  Ionic: eigener Löschen-Button am „Von“-Datum (löscht nur Von) / Flutter: kein Button an „Von“, ein Button an „Bis“ löscht beide Daten (Datumsbereichs-Auswahl).
-  Flutter: lib/features/people/presentation/widgets/planned_absences.dart:172
-- [ ] **niedrig** `people/person/person.page` `field-3c608429` [people/person/person.page.html:1035](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L1035)
-  Ionic: zwei Inline-Kalender (Von/Bis) ohne Grenzen / Flutter: ein Zeitraum-Dialog (showDateRangePicker) für Von und Bis, Vorjahr bis +3 Jahre
+  Ionic: eigener Löschen-Button am 'Von'-Datum (nur Von) / Flutter: kein Button an 'Von', Button an 'Bis' löscht beide. Gleiche Funktion.
+  Flutter: lib/features/people/presentation/widgets/planned_absences.dart:171, lib/features/people/presentation/widgets/planned_absences.dart:181
+- [ ] **niedrig** `people/person/person.page` `field-3c608429` [people/person/person.page.html:1035](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L1035) (2. Prüfung: bestätigt)
+  Ionic: zwei Inline-Kalender (Von/Bis) / Flutter: ein Zeitraum-Dialog (showDateRangePicker) für Von und Bis, Vorjahr bis +3 Jahre.
   Flutter: lib/features/people/presentation/widgets/planned_absences.dart:96
-- [ ] **niedrig** `people/person/person.page` `action-227003e4` [people/person/person.page.html:1051](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L1051)
-  Ionic: löscht nur „Bis“ / Flutter: löscht „Von“ und „Bis“
-  Flutter: lib/features/people/presentation/widgets/planned_absences.dart:180
-- [ ] **niedrig** `people/person/person.page` `field-e2731760` [people/person/person.page.html:1057](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L1057)
-  Ionic: Inline-Kalender, min = Von / Flutter: gemeinsamer Zeitraum-Dialog
-  Flutter: lib/features/people/presentation/widgets/planned_absences.dart:96
-- [ ] **niedrig** `people/person/person.page` `action-22e55c57` [people/person/person.page.html:1083](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L1083)
-  Ionic: X-Button in der Toolbar / Flutter: Textbutton „Abbrechen“
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1092
+- [ ] **niedrig** `people/person/person.page` `action-227003e4` [people/person/person.page.html:1051](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L1051) (2. Prüfung: bestätigt)
+  Ionic: löscht nur 'Bis' / Flutter: Button an 'Bis' löscht Von und Bis (Zeitraum-Auswahl). Gleiche Funktion (neu wählen).
+  Flutter: lib/features/people/presentation/widgets/planned_absences.dart:181
+- [ ] **niedrig** `people/person/person.page` `field-e2731760` [people/person/person.page.html:1057](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L1057) (2. Prüfung: bestätigt)
+  Ionic: zwei Inline-Kalender (Bis min = Von) / Flutter: gemeinsamer Zeitraum-Dialog (Von<=Bis erzwungen), Auswahl auf Vorjahr..+3 Jahre begrenzt (Ionic unbegrenzt). Pflicht Grund+Von+Bis wie Ionic (Button deaktiviert). Nur Optik.
+  Flutter: lib/features/people/presentation/widgets/planned_absences.dart:96, lib/features/people/presentation/widgets/planned_absences.dart:166, lib/features/people/presentation/widgets/planned_absences.dart:175
 - [ ] **niedrig** `people/person/person.page` `field-03332121` [people/person/person.page.html:1092](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L1092) (2. Prüfung: bestätigt)
-  Ionic: natives Datumsfeld (type=date), keine Grenze / Flutter: Zeile mit Datum, Tipp öffnet Datumsauswahl, lastDate heute.
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1063, lib/features/people/presentation/pages/person_detail_page.dart:1069
-- [ ] **niedrig** `people/person/person.page` `text-b8f39c05` [people/person/person.page.html:1095](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L1095)
-  Ionic: Label „Notiz“ / Flutter: „Grund (optional)“ mit Hinweistext
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1084
-- [ ] **niedrig** `people/person/person.page` `action-7114e66d` [people/person/person.page.html:1099](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L1099) (2. Prüfung: bestätigt)
-  Ionic: FAB mit Archiv-Icon / Flutter: roter Button „Archivieren“ im Dialog.
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1093
+  Ionic: natives Datumsfeld (type=date) / Flutter: Zeile mit Datum + Datumsauswahl 2000-2100, Standard heute.
+  Flutter: lib/features/people/presentation/widgets/archive_person_modal.dart:83
 - [ ] **niedrig** `people/person/person.page` `text-0f2b968d` [people/person/person.page.html:1112](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L1112)
   Ionic: „Kopieren von {name}“/„Übertragen von {name}“ / Flutter: „Spieler kopieren“/„Spieler übertragen“
   Flutter: lib/features/people/presentation/widgets/handover_sheet.dart:114
 - [ ] **niedrig** `people/person/person.page` `action-cf8fa6af` [people/person/person.page.html:1141](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.html#L1141)
   Ionic: Button „Kopieren“/„Übertragen“, deaktiviert ohne Instanz/Gruppe / Flutter: Button „Kopieren“/„Übertragen“ des Massen-Sheets mit Fortschritt
   Flutter: lib/features/people/presentation/widgets/handover_sheet.dart:200
-- [ ] **niedrig** `teacher/teacher.page` `field-fc1d0925` [teacher/teacher.page.html:18](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/teacher/teacher.page.html#L18) (2. Prüfung: korrigiert)
-  Ladefehler behoben: _openTeacherPage wartet jetzt auf groupsProvider (_loadGroups), Namen und Auswahl immer gefüllt; Mehrfachauswahl aller Gruppen inkl. Hauptgruppe, Label „Instrumente“. Nicht behoben, aber schon vorher als niedrig vermerkt: Ionic ion-select interface=modal (eigene Vollbild-Auswahlseite) / Flutter Dialog mit Checkboxen und „Abbrechen“/„OK“. Der Fix setzte „ok“, die Darstellungsabweichung besteht weiter → diff niedrig.
-  Flutter: lib/features/teachers/presentation/pages/teachers_list_page.dart:151, lib/features/teachers/presentation/pages/teachers_list_page.dart:308, lib/features/teachers/presentation/pages/teachers_list_page.dart:313
-- [ ] **niedrig** `teachers/teachers.page` `modal-81bd0046` [teachers/teachers.page.ts:67](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/teachers/teachers.page.ts#L67)
-  Nur für Admin/Verantwortliche, übergibt den Lehrer (Schüler aus playersProvider). Ionic: iOS Karten-Modal (presentingElement), md Vollbild / Flutter: Vollbild-Dialog (fullscreenDialog) auf allen Plattformen; Liste wird danach neu geladen.
-  Flutter: lib/features/teachers/presentation/pages/teachers_list_page.dart:135
-- [ ] **niedrig** `teachers/teachers.page` `field-cfeef758` [teachers/teachers.page.html:41](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/teachers/teachers.page.html#L41)
-  Label „Instrumente“, Gruppen ohne Hauptgruppe, Mehrfachauswahl. Ionic: ion-select interface=modal (Vollbild-Auswahlliste), Auswahl bleibt nach dem Anlegen für das nächste Öffnen erhalten (selInstruments) / Flutter: Dialog mit Checkboxen und „Abbrechen“/„OK“, Formular startet jedes Mal leer.
-  Flutter: lib/features/teachers/presentation/pages/teachers_list_page.dart:385, lib/features/teachers/presentation/pages/teachers_list_page.dart:113
-- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `x-5b376c7a36` **Fehler beim Org-Feld-Speichern: zusätzlicher Toast** [src/app/services/organisation/organisation.service.ts:88-91](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/organisation/organisation.service.ts#L88-L91)
-  Ionic: orgSvc.updatePersonFieldValues zeigt bei Fehler zusätzlich 'Fehler beim Speichern der gemeinsamen Zusatzfelder' (danger), danach 'Fehler beim Speichern' / Flutter: nur 'Fehler beim Speichern'.
-  Flutter: lib/data/repositories/profile_repository.dart:281-319, lib/features/people/presentation/pages/bulk_edit_page.dart:240-243
-- [ ] **niedrig** `people/import/import.page` `x-ab5b4f49ad` **Fehlergrund im Fehlerdialog technisch** [src/app/services/db.service.ts:3638-3640](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/db.service.ts#L3638-L3640)
-  Ionic: reason = error.message ?? 'Unbekannter Fehler' / Flutter: '$e' inkl. Klassenname/Operation/Code (z. B. 'RepositoryException: … (operation: createPlayer, code: 23505)').
-  Flutter: lib/features/people/presentation/pages/person_import_page.dart:197-199
-- [ ] **niedrig** `people/list/list.page` `x-dac55a9bd1` **Anwesenheits-Badge / Prozentbasis** [src/app/utilities/Utils.ts:129](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/utilities/Utils.ts#L129)
-  Ionic: Personen ohne gezählte Termine zeigen roten '0%'-Badge; Basis ab seasonStart bzw. 2023-01-01 bis jetzt+24 h, für Nicht-Admins ohne archivierte Termine / Flutter: kein Badge, wenn keine gezählten Termine; Basis ab seasonStart (ohne Fallback) bis jetzt, archivierte Termine mitgezählt.
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1629, lib/core/providers/attendance_providers.dart:286
-- [ ] **niedrig** `people/list/list.page` `x-325647b4ef` **Reorder-Modus** [src/app/people/list/list.page.ts:324](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L324)
-  Ionic: Griffe in der normalen Liste, kein Abbrechen, Overlay beim Speichern, schreibt nur Personen mit sort_order / Flutter: separate Kartenliste, zusätzliches X zum Verwerfen, kein Overlay, schreibt sort_order für alle gefilterten Personen aller Gruppen (mit tenantId).
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:448, lib/features/people/presentation/pages/people_list_page.dart:1148, lib/features/people/presentation/pages/people_list_page.dart:1189, lib/data/repositories/player_repository.dart:1844
-- [ ] **niedrig** `people/list/list.page` `x-f6927de895` **Auto-Entpausieren nur beim ersten Öffnen** [src/app/people/list/list.page.ts:140](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L140)
-  Ionic: checkAndUnpausePlayers (Admin/Verantwortlicher) in jedem initializeData, also auch nach Instanzwechsel, vor dem Laden der Liste / Flutter: nur im initState per Post-Frame-Callback; ein Instanzwechsel bei offener Seite löst es nicht erneut aus.
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:125, lib/features/people/presentation/pages/people_list_page.dart:128
-- [ ] **niedrig** `people/list/list.page` `x-56b7f726f5` **Flutter-Zusatz: Personen übertragen** [src/app/people/list/list.page.html:166](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L166)
-  Ionic: kein Mehrfachauswahl-Modus in der Personenliste / Flutter: Optionsmenü-Eintrag 'Personen übertragen' (Admin/Verantwortlicher) mit Auswahlmodus, AppBar 'n ausgewählt' und Übergabe-Sheet.
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:963, lib/features/people/presentation/pages/people_list_page.dart:651, lib/features/people/presentation/pages/people_list_page.dart:1255
+- [ ] **niedrig** `teacher/teacher.page` `field-fc1d0925` [teacher/teacher.page.html:18](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/teacher/teacher.page.html#L18) (2. Prüfung: bestätigt)
+  Ionic: ion-select interface=modal, alle Gruppen inkl. Hauptgruppe, Mehrfachauswahl, keine Validierung beim Bearbeiten / Flutter: Dialog mit Checkboxen und Abbrechen/OK, gleiche Optionen (alle Gruppen), Label „Instrumente“, Validierung nur beim Anlegen. Nur Darstellung.
+  Flutter: lib/features/teachers/presentation/pages/teachers_list_page.dart:147, lib/features/teachers/presentation/pages/teachers_list_page.dart:265, lib/features/teachers/presentation/pages/teachers_list_page.dart:356
+- [ ] **niedrig** `teachers/teachers.page` `modal-81bd0046` [teachers/teachers.page.ts:67](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/teachers/teachers.page.ts#L67) (2. Prüfung: bestätigt)
+  Nur für Admin/Verantwortliche (onTap null sonst), übergibt den Lehrer, Schüler aus playersProvider, alle Gruppen zur Auswahl; nach Speichern Toast „teachers.updated“ und Liste neu geladen. Ionic: iOS Karten-Modal (presentingElement), md Vollbild / Flutter: Vollbild-Dialog (fullscreenDialog) auf allen Plattformen.
+  Flutter: lib/features/teachers/presentation/pages/teachers_list_page.dart:142-178, lib/features/teachers/presentation/pages/teachers_list_page.dart:404-439
+- [ ] **niedrig** `teachers/teachers.page` `field-cfeef758` [teachers/teachers.page.html:41](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/teachers/teachers.page.html#L41) (2. Prüfung: bestätigt)
+  Gruppen ohne Hauptgruppe (Zeile 119), Label „Instrumente“, Mehrfachauswahl. Ionic: ion-select interface=modal, Auswahl bleibt nach dem Anlegen für das nächste Öffnen (selInstruments) / Flutter: Dialog Checkboxen Abbrechen/OK, Formular startet jedes Mal leer. Nur Komfort/Darstellung.
+  Flutter: lib/features/teachers/presentation/pages/teachers_list_page.dart:116, lib/features/teachers/presentation/pages/teachers_list_page.dart:265, lib/features/teachers/presentation/pages/teachers_list_page.dart:356
+- [ ] **niedrig** `people/bulk-edit/bulk-edit.page` `x-5b376c7a36` **Fehler beim Org-Feld-Speichern: zusätzlicher Toast** [src/app/services/organisation/organisation.service.ts:88-91](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/organisation/organisation.service.ts#L88-L91) (2. Prüfung: bestätigt)
+  Ionic: orgSvc.updatePersonFieldValues zeigt bei Fehler zusätzlich „Fehler beim Speichern der gemeinsamen Zusatzfelder“ (danger), danach „Fehler beim Speichern“ / Flutter: nur „Fehler beim Speichern“. Fehler wird gemeldet. Schreibweg gleich (upsert tenant_group_person_fields, onConflict tenant_group,person_key,field_id).
+  Flutter: lib/data/repositories/profile_repository.dart:310, lib/data/repositories/profile_repository.dart:345, lib/features/people/presentation/pages/bulk_edit_page.dart:243, lib/features/people/presentation/pages/bulk_edit_page.dart:245
+- [ ] **niedrig** `people/import/import.page` `x-ab5b4f49ad` **Fehlergrund im Fehlerdialog technisch** [src/app/services/db.service.ts:3638-3640](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/db.service.ts#L3638-L3640) (2. Prüfung: bestätigt)
+  Ionic: Grund = error.message ?? „Unbekannter Fehler“ / Flutter: '$e' mit Klassenname/Operation/Code (z. B. „RepositoryException: … (operation: …, code: 23505)“). Zeile und Fehlschlag werden in beiden gezeigt.
+  Flutter: lib/features/people/presentation/pages/person_import_page.dart:250, lib/features/people/presentation/pages/person_import_page.dart:251, lib/data/repositories/base_repository.dart:170
+- [ ] **niedrig** `people/list/list.page` `x-325647b4ef` **Reorder-Modus** [src/app/people/list/list.page.ts:324](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L324) (2. Prüfung: bestätigt)
+  Ionic: Griffe in der normalen Liste, kein Abbrechen, Lade-Overlay 'Reihenfolge wird gespeichert' / Flutter: eigene Kartenliste je Gruppe, zusätzliches X zum Verwerfen, nur Spinner im Häkchen-Button. DB-Schreiben jetzt wie Ionic: sort_order 1..n nur für die verschobenen Gruppen (gefilterte Personen), je Zeile id + tenantId; Toasts gespeichert/fehlgeschlagen gleich. Nur Darstellung.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:498, lib/features/people/presentation/pages/people_list_page.dart:506, lib/features/people/presentation/pages/people_list_page.dart:1207, lib/features/people/presentation/pages/people_list_page.dart:1234, lib/features/people/presentation/pages/people_list_page.dart:1252, lib/data/repositories/player_repository.dart:1883
+- [ ] **niedrig** `people/list/list.page` `x-f6927de895` **Auto-Entpausieren nur beim ersten Öffnen** [src/app/people/list/list.page.ts:140](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L140) (2. Prüfung: bestätigt)
+  Ionic: checkAndUnpausePlayers (Admin/Verantwortlicher) in jedem initializeData, auch nach Instanzwechsel, vor dem Laden / Flutter: nur einmal im initState (Post-Frame); ref.listen auf Instanzwechsel setzt nur Filter zurück, löst kein Entpausieren aus. Abgelaufene Pausen der neuen Instanz werden erst beim nächsten Neuaufbau der Seite aufgehoben (verzögert, nicht anders).
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:132, lib/features/people/presentation/pages/people_list_page.dart:135, lib/features/people/presentation/pages/people_list_page.dart:454
+- [ ] **niedrig** `people/list/list.page` `x-56b7f726f5` **Flutter-Zusatz: Personen übertragen** [src/app/people/list/list.page.html:166](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L166) (2. Prüfung: bestätigt)
+  Flutter-Zusatz: Optionsmenü 'Personen übertragen' (nur Admin/Verantwortlicher) mit Auswahlmodus, AppBar 'n ausgewählt' und Übergabe-Sheet. Ionic hat die Personenübergabe nur in den Einstellungen (/tabs/settings/handover, ebenfalls nur Admin/Verantwortlicher) – keine Rolle erhält mehr Rechte.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1025, lib/features/people/presentation/pages/people_list_page.dart:752, lib/features/people/presentation/pages/people_list_page.dart:1373
 - [ ] **niedrig** `people/members/members.page` `x-1730d62932` **Ladefehler inline statt Toast** [src/app/people/members/members.page.ts:72](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/members/members.page.ts#L72)
   Ionic: roter Toast und leere Liste / Flutter: Fehlertext inline, kein Toast.
   Flutter: lib/features/members/presentation/pages/members_page.dart:98
-- [ ] **niedrig** `people/person/person.page` `x-78e8317eac` **Datenübernahme (E-Mail vergeben) ohne Passbild** [src/app/people/person/person.page.ts:813](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L813) (2. Prüfung: korrigiert)
-  Zu hoch bewertet: Ionic speichert img beim Aktualisieren nie (pickPersonFields ohne img, db-helpers.ts:86) – das übernommene Passbild ist dort nur bis zum Schließen im Header sichtbar. Bleibt: fehlende Header-Vorschau; Ionic überschreibt otherExercise/range mit den Werten des Treffers auch wenn null (leert vorhandene Werte), Flutter nur wenn gesetzt (hier Flutter besser).
-  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:866, lib/features/people/presentation/pages/person_detail_page.dart:873, lib/features/people/presentation/pages/person_detail_page.dart:874
 - [ ] **niedrig** `duty/duty-assign-modal/duty-assign-modal.component` `x-9cfbd56a81` **Namens-Tiebreak nicht locale-aware** [src/app/duty/duty-assign-modal/duty-assign-modal.component.ts:41](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-assign-modal/duty-assign-modal.component.ts#L41)
   Ionic: bei gleicher Dienstanzahl a.name.localeCompare(b.name) (Umlaute bei Grundbuchstaben, Groß/Klein egal) / Flutter: a.name.compareTo(b.name) (Code-Unit-Reihenfolge, z. B. „Özil“ nach „Zoe“, Kleinbuchstaben nach Großbuchstaben).
   Flutter: lib/features/duty/presentation/widgets/duty_assign_sheet.dart:95
-- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `x-41b22d1e2d` **Speichern bei Fehler** [src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:236](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts#L236)
-  Ionic: dutySvc.assign zeigt „Fehler beim Einteilen“ und wirft, die Schleife bricht beim ersten fehlerhaften Termin ab, übrige Termine werden nicht eingeteilt / Flutter: Fehler pro Termin abgefangen, alle übrigen Termine werden trotzdem eingeteilt, danach ein Toast „Fehler beim Einteilen“; Seite bleibt in beiden offen.
-  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:277
-- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `x-3829883249` **Namens-Tiebreak nicht locale-aware** [src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:174](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts#L174)
-  Ionic: „Dienste pro Person“ und Tausch-Optionen bei Gleichstand mit localeCompare sortiert / Flutter: String.compareTo (Umlaute nach Z, Kleinbuchstaben nach Großbuchstaben).
-  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:229, lib/features/duty/presentation/pages/duty_distribute_page.dart:469
-- [ ] **niedrig** `duty/unavailability-modal/unavailability-modal.component` `x-1017c7460d` **Ladefehler der Regeln** [src/app/duty/unavailability-modal/unavailability-modal.component.ts:54](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/unavailability-modal/unavailability-modal.component.ts#L54)
-  Ionic: Toast „Fehler beim Laden der Verfügbarkeit“, dann leere Liste mit „Noch keine Regel…“ und Button „Regel hinzufügen“ / Flutter: nur Text „Fehler: …“ im Body, kein Button „Regel hinzufügen“.
-  Flutter: lib/features/duty/presentation/pages/unavailability_page.dart:233
-- [ ] **niedrig** `duty/unavailability-modal/unavailability-modal.component` `x-21dc916f43` **Typnamen in der Regel-Liste** [src/app/duty/unavailability-modal/unavailability-modal.component.ts:62](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/unavailability-modal/unavailability-modal.component.ts#L62)
-  Ionic: typesText sucht nur in den sichtbaren Typen (visible !== false), unsichtbare Typen fehlen im Text / Flutter: Liste nutzt alle Typen, Namen unsichtbarer Typen erscheinen.
-  Flutter: lib/features/duty/presentation/pages/unavailability_page.dart:230
-- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `x-d0c116c654` **Sortiermodus ohne Verschieben nummeriert neu** [src/app/instruments/instrument-list/instrument-list.page.ts:401](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L401)
-  Ionic: Häkchen ohne Verschieben speichert nur vorhandene sort_order-Werte unverändert (null bleibt null) / Flutter: computeGlobalSortOrder vergibt beim Verlassen immer 1..n an alle Gruppen und schreibt sie (Badges ändern sich, Gruppen ohne sort_order bekommen eine).
-  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:49
+- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `x-41b22d1e2d` **Speichern bei Fehler** [src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:236](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts#L236) (2. Prüfung: bestätigt)
+  Weiter real: Ionic bricht beim ersten fehlerhaften Termin ab (assign zeigt „Fehler beim Einteilen“ und wirft), Flutter teilt die übrigen Termine trotzdem ein und zeigt danach einmal „Fehler beim Einteilen“; Seite bleibt in beiden offen. Geschrieben werden nur die in der Vorschau bestätigten Einteilungen mit gleichen Werten, nur im Fehlerfall mehr davon → niedrig.
+  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:271, lib/features/duty/presentation/pages/duty_distribute_page.dart:280
+- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `x-3829883249` **Namens-Tiebreak nicht locale-aware** [src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:174](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts#L174) (2. Prüfung: bestätigt)
+  Weiter real: Tausch-Optionen und „Dienste pro Person“ bei Gleichstand mit String.compareTo statt localeCompare (Umlaute nach Z, Kleinbuchstaben nach Großbuchstaben). Nur Reihenfolge.
+  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:229, lib/features/duty/presentation/pages/duty_distribute_page.dart:462
+- [ ] **niedrig** `duty/unavailability-modal/unavailability-modal.component` `x-1017c7460d` **Ladefehler der Regeln** [src/app/duty/unavailability-modal/unavailability-modal.component.ts:54](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/unavailability-modal/unavailability-modal.component.ts#L54) (2. Prüfung: bestätigt)
+  Weiter real: Ionic Toast „Fehler beim Laden der Verfügbarkeit“, dann leere Liste mit Button „Regel hinzufügen“ / Flutter nur „Fehler: …“ im Body, ohne Button. Fehler wird in beiden gemeldet.
+  Flutter: lib/features/duty/presentation/pages/unavailability_page.dart:237
+- [ ] **niedrig** `duty/unavailability-modal/unavailability-modal.component` `x-21dc916f43` **Typnamen in der Regel-Liste** [src/app/duty/unavailability-modal/unavailability-modal.component.ts:62](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/unavailability-modal/unavailability-modal.component.ts#L62) (2. Prüfung: bestätigt)
+  Weiter real: Regel-Liste nutzt alle Termintypen (attendanceTypesProvider), Ionic typesText nur sichtbare → Namen unsichtbarer Typen erscheinen in Flutter zusätzlich.
+  Flutter: lib/features/duty/presentation/pages/unavailability_page.dart:234, lib/features/duty/presentation/pages/unavailability_page.dart:260
 - [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `x-353ca926f3` **Namens-Tiebreak der Kategorien** [src/app/instruments/instrument-list/instrument-list.page.ts:150](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L150)
   Ionic: Kategorien ohne sort_order per localeCompare sortiert / Flutter: toLowerCase().compareTo (Umlaute nach Z).
   Flutter: lib/core/utils/instrument_sort.dart:79
-- [ ] **niedrig** `instruments/instrument/instrument.page` `x-718f3b20d0` **Geschriebene Werte beim Aktualisieren** [src/app/instruments/instrument/instrument.page.ts:64](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument/instrument.page.ts#L64)
-  Ionic: schreibt notes, range, tuning, clefs, name, maingroup, category, synonyms so wie sie sind ('' bleibt '', versteckte Felder unverändert) / Flutter: trimmt, schreibt leere range/synonyms/notes als null, maingroup nicht, und schreibt tuning/clefs immer – bei Chor/Allgemein/Hauptgruppe (Felder versteckt) wird ein leerer Wert zu „C“ bzw. [g].
-  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:730
-- [ ] **niedrig** `teachers/teachers.page` `x-791ebfa771` **Löschen von Lehrern nur in Flutter** [src/app/teachers/teachers.page.html:18](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/teachers/teachers.page.html#L18)
-  Ionic: keine Löschfunktion für Lehrer / Flutter: Wischen nach links (Admin/Verantwortliche) → Dialog „Lehrer löschen“ / „Möchtest du "{Name}" wirklich löschen?“ mit „Abbrechen“/„Löschen“, löscht den Lehrer und zeigt „Lehrer gelöscht“ (auch wenn das Löschen fehlschlägt, da deleteTeacher den Fehler verschluckt).
-  Flutter: lib/features/teachers/presentation/pages/teachers_list_page.dart:172, lib/features/teachers/presentation/pages/teachers_list_page.dart:211
+- [ ] **niedrig** `instruments/instrument-list/instrument-list.page` `x-1f38b1bd07` **Sektionen ohne sort_order: Namensvergleich** [src/app/instruments/instrument-list/instrument-list.page.ts:150](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L150)
+  Ionic: Kategorie-Sektionen ohne sort_order nach a.name.localeCompare(b.name) (Umlaut Ü bei U) / Flutter groupInstrumentsByCategory: toLowerCase().compareTo (Code-Einheiten, „Übrige“ hinter „Z…“). Nur bei unnummerierten Kategorien mit Umlaut am Anfang.
+  Flutter: lib/core/utils/instrument_sort.dart:79
+- [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `x-5b0a6b0909` **Verteilung zählt voll besetzte Termine und andere Dienst-Typen für „Nicht zweimal am selben Tag“** [src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:run](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:run)
+  Ionic: run() filtert Termine mit occupied>=required vor distributeDuties heraus und lädt nur gewählte Typen / Flutter (SOL_FIX2): voll besetzte und nicht gewählte Dienst-Typen gehen als Slots mit open 0 ein, damit deren Personen am selben Tag nicht nochmal eingeteilt werden. Flutter besser, Vorschlag kann daher von Ionic abweichen; Leon entscheidet.
+  Flutter: lib/features/duty/presentation/pages/duty_distribute_page.dart:161

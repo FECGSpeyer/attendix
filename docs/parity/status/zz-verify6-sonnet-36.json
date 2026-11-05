@@ -1,0 +1,485 @@
+{
+ "batch": "zz-verify6-sonnet-36",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "songs/songs.page#action-dc1e2c52": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:536"
+   ],
+   "v": "bestätigt",
+   "n": "SliverList über alle gefilterten Werke (Lazy-Rendering), alle erreichbar; keine Rolle."
+  },
+  "songs/songs.page#action-dd312053": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:99",
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:143",
+    "lib/core/providers/song_providers.dart:649"
+   ],
+   "v": "bestätigt",
+   "n": "Reorder per Drag-Handle, schreibt je Kategorie index=i; gleiches Ergebnis. Nur Admin/Verantwortlich (RLS erlaubt Schreiben nur denen)."
+  },
+  "songs/songs.page#action-e5aa1038": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_files_sheet.dart:114",
+    "lib/core/providers/song_providers.dart:696",
+    "lib/core/providers/song_providers.dart:721"
+   ],
+   "n": "Aufbau gleich (Dirigenten, Chor (alle), Gruppen mit Dateien). Sortierung: Ionic localeCompare / Flutter toLowerCase().compareTo (Umlaute ans Ende) – nur Reihenfolge.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-f4c583da": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:425",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:453"
+   ],
+   "n": "Öffnet Filter-/Ansicht-Sheet; Icon tune statt options, Flutter zusätzlich Punkt-Badge bei aktiven Filtern.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-fe98ea36": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:358"
+   ],
+   "v": "bestätigt",
+   "n": "PDF-Menüeintrag immer sichtbar, auch öffentlich; ruft _exportPdf (Z. 138)."
+  },
+  "songs/songs.page#alert-5ae7adcc": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:195",
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:201",
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:233",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:304"
+   ],
+   "n": "Flutter besser: Titel „Kategorie bearbeiten“, vorbelegter Name, Platzhalter, Abbrechen/Speichern, getrimmter Name gleich. Ionic: Menüpunkt „Werk-Kategorien“ ohne Rollenprüfung (alle Rollen sehen Sheet/Dialoge), Schreiben erlaubt RLS admins_manage_song_categories nur Rolle 1/5 (ionic/supabase/sql/enable_rls_all_tables.sql:337); für andere Rollen bleibt es wirkungslos / Flutter: Sheet nur Admin/Verantwortlich, nicht öffentlich (lib/features/songs/presentation/pages/songs_list_page.dart:161,304). Kein Schreibrecht verloren.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#alert-aba0e0bf": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:240",
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:244",
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:267",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:304"
+   ],
+   "n": "Flutter besser: Titel „Kategorie löschen“, Text, Abbrechen/Löschen gleich (Löschen rot). Ionic: Menüpunkt „Werk-Kategorien“ ohne Rollenprüfung (alle Rollen sehen Sheet/Dialoge), Schreiben erlaubt RLS admins_manage_song_categories nur Rolle 1/5 (ionic/supabase/sql/enable_rls_all_tables.sql:337); für andere Rollen bleibt es wirkungslos / Flutter: Sheet nur Admin/Verantwortlich, nicht öffentlich (lib/features/songs/presentation/pages/songs_list_page.dart:161,304). Kein Schreibrecht verloren.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#alert-f19b0ff1": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:151",
+    "lib/core/providers/song_providers.dart:598",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:304"
+   ],
+   "n": "Flutter besser: Titel, Platzhalter, Abbrechen/Hinzufügen, leer → Dialog zu + roter Toast gleich. Ionic: index = Anzahl Kategorien (nach Löschen doppelte Indizes möglich) / Flutter: höchster Index + 1. Ionic: Menüpunkt „Werk-Kategorien“ ohne Rollenprüfung (alle Rollen sehen Sheet/Dialoge), Schreiben erlaubt RLS admins_manage_song_categories nur Rolle 1/5 (ionic/supabase/sql/enable_rls_all_tables.sql:337); für andere Rollen bleibt es wirkungslos / Flutter: Sheet nur Admin/Verantwortlich, nicht öffentlich (lib/features/songs/presentation/pages/songs_list_page.dart:161,304). Kein Schreibrecht verloren.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#field-2c010447": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:108",
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:113",
+    "lib/core/providers/song_filter_providers.dart:172"
+   ],
+   "v": "bestätigt",
+   "n": "Schalter „Solo“ für alle Rollen, Logik (mit Chor UND) und Speicherung je Tenant gleich."
+  },
+  "songs/songs.page#field-4e8c4d24": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:101",
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:106",
+    "lib/core/providers/song_filter_providers.dart:172"
+   ],
+   "v": "bestätigt",
+   "n": "Schalter „Chor & Orchester“, Logik und Speicherung gleich."
+  },
+  "songs/songs.page#field-6acb3577": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:88",
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:98"
+   ],
+   "v": "bestätigt",
+   "n": "Alle / 1 - Leicht / 2 - Mittel / 3 - Schwer, Default Alle, nicht wiederhergestellt (wie Ionic)."
+  },
+  "songs/songs.page#field-8b94b50e": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:27",
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:74",
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:85",
+    "lib/data/models/song/song_filter.dart:19"
+   ],
+   "v": "bestätigt",
+   "n": "Nummer/Name ↑↓, „Zuletzt gespielt/gesungen“ ↑↓ nur nicht-öffentlich, Default Nummer ↑, je Tenant gespeichert."
+  },
+  "songs/songs.page#field-d23661dc": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:32",
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:171"
+   ],
+   "n": "Optionen/Reihenfolge gleich (Link, Schwierigkeitsgrad, Chor & Orchester, Solo, Fehlende Instrumente, Zuletzt gespielt/gesungen nur nicht-öffentlich, Zusatzfelder). Ionic: Mehrfach-Select im Popover / Flutter: Checkbox-Liste im Sheet.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#field-de9835a0": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:116"
+   ],
+   "n": "Logik, Bedingung (nur mit Kategorien) und Speicherung gleich. Ionic: Mehrfach-Select / Flutter: FilterChips unter „Kategorien“.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#field-f67e3253": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:391",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:575"
+   ],
+   "v": "bestätigt",
+   "n": "Scrollbares md-Segment „Alle“ + Kategorien, nur wenn Kategorien vorhanden, Auswahl je Tenant gespeichert."
+  },
+  "songs/songs.page#modal-6574191a": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:99"
+   ],
+   "v": "bestätigt",
+   "n": "Vollbild-Import (SongImportPage), Liste nur bei imported neu geladen; Menüpunkt nur Admin/Verantwortlich wie Ionic."
+  },
+  "songs/songs.page#popover-27f2ff4c": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:276",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:304"
+   ],
+   "v": "bestätigt",
+   "n": "Menü am ⋮-Button, Reihenfolge Kategorien, Link, Tab, Import, Org-Suche, PDF wie Ionic. Kategorien-Eintrag nur Admin/Verantwortlich (Ionic alle Rollen, Schreiben nur per RLS 1/5; siehe alert-Einträge); Tab-Eintrag nur bei erlaubtem Werke-Tab (Ionic-Tabs-Regel)."
+  },
+  "songs/songs.page#text-94263118": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:499"
+   ],
+   "v": "bestätigt",
+   "n": "„Werke ({count})“ mit gefilterter Anzahl."
+  },
+  "songs/songs.page#toast-0b939d73": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:229",
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:230",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:304"
+   ],
+   "n": "Flutter besser: Roter Toast „Der Name der Kategorie darf nicht leer sein“ beim Bearbeiten mit leerem Namen. Ionic: Menüpunkt „Werk-Kategorien“ ohne Rollenprüfung (alle Rollen sehen Sheet/Dialoge), Schreiben erlaubt RLS admins_manage_song_categories nur Rolle 1/5 (ionic/supabase/sql/enable_rls_all_tables.sql:337); für andere Rollen bleibt es wirkungslos / Flutter: Sheet nur Admin/Verantwortlich, nicht öffentlich (lib/features/songs/presentation/pages/songs_list_page.dart:161,304). Kein Schreibrecht verloren.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#toast-1a24aa1c": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:187",
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:190",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:304"
+   ],
+   "n": "Flutter besser: Grüner Toast „Kategorie hinzugefügt“ nach erfolgreichem Insert. Ionic: Menüpunkt „Werk-Kategorien“ ohne Rollenprüfung (alle Rollen sehen Sheet/Dialoge), Schreiben erlaubt RLS admins_manage_song_categories nur Rolle 1/5 (ionic/supabase/sql/enable_rls_all_tables.sql:337); für andere Rollen bleibt es wirkungslos / Flutter: Sheet nur Admin/Verantwortlich, nicht öffentlich (lib/features/songs/presentation/pages/songs_list_page.dart:161,304). Kein Schreibrecht verloren.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#toast-1b92e36e": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:133",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:135"
+   ],
+   "v": "bestätigt",
+   "n": "Grüner Toast „Link kopiert“, Link https://attendix.de/<sharing_id>."
+  },
+  "songs/songs.page#toast-5b825f48": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:234",
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:236",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:304"
+   ],
+   "n": "Flutter besser: Grüner Toast „Kategorie gespeichert“; Ionic zeigt ihn auch bei verworfenem/fehlgeschlagenem Update, Flutter nur bei Erfolg. Ionic: Menüpunkt „Werk-Kategorien“ ohne Rollenprüfung (alle Rollen sehen Sheet/Dialoge), Schreiben erlaubt RLS admins_manage_song_categories nur Rolle 1/5 (ionic/supabase/sql/enable_rls_all_tables.sql:337); für andere Rollen bleibt es wirkungslos / Flutter: Sheet nur Admin/Verantwortlich, nicht öffentlich (lib/features/songs/presentation/pages/songs_list_page.dart:161,304). Kein Schreibrecht verloren.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#toast-b63ac699": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:183",
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:184",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:304"
+   ],
+   "n": "Flutter besser: Roter Toast nach leerem Namen (Dialog schließt). Ionic: Menüpunkt „Werk-Kategorien“ ohne Rollenprüfung (alle Rollen sehen Sheet/Dialoge), Schreiben erlaubt RLS admins_manage_song_categories nur Rolle 1/5 (ionic/supabase/sql/enable_rls_all_tables.sql:337); für andere Rollen bleibt es wirkungslos / Flutter: Sheet nur Admin/Verantwortlich, nicht öffentlich (lib/features/songs/presentation/pages/songs_list_page.dart:161,304). Kein Schreibrecht verloren.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#toast-e880762a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:266",
+    "lib/features/songs/presentation/widgets/song_categories_sheet.dart:267",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:304"
+   ],
+   "n": "Flutter besser: Grüner Toast „Kategorie gelöscht“; Ionic auch bei Fehler, Flutter nur bei Erfolg. Ionic: Menüpunkt „Werk-Kategorien“ ohne Rollenprüfung (alle Rollen sehen Sheet/Dialoge), Schreiben erlaubt RLS admins_manage_song_categories nur Rolle 1/5 (ionic/supabase/sql/enable_rls_all_tables.sql:337); für andere Rollen bleibt es wirkungslos / Flutter: Sheet nur Admin/Verantwortlich, nicht öffentlich (lib/features/songs/presentation/pages/songs_list_page.dart:161,304). Kein Schreibrecht verloren.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#action-063ee465": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:152"
+   ],
+   "v": "bestätigt",
+   "n": "✕ schließt Modal/Seite."
+  },
+  "stats/stats.page#action-1729e009": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1125",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1127"
+   ],
+   "v": "bestätigt",
+   "n": "Zeile „Instanzen“ mit Badge „Alle (N)“ bzw. Anzahl gewählter Instanzen; Tap zeigt Alert. Org-Bedingung gleich, keine Rollenprüfung in beiden. Frühere f-Zeilen (1349…) lagen hinter Dateiende, korrigiert."
+  },
+  "stats/stats.page#alert-7c50ef8f": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1129",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1131",
+    "lib/core/utils/dialog_helper.dart:51"
+   ],
+   "v": "bestätigt",
+   "n": "Titel „Instanzen der Organisation“, Langnamen kommagetrennt, Button OK."
+  },
+  "stats/stats.page#field-0fc2d09f": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:326",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:334",
+    "lib/core/providers/statistics_providers.dart:43"
+   ],
+   "n": "Flutter besser: „Von“ auf ≤ „Bis“ begrenzt (Ionic jedes Datum, ggf. leerer Zeitraum). Übernahme bei Auswahl und Neuberechnung wie onDateFilterChange.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#field-d9134dd8": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:349",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:351"
+   ],
+   "n": "Ionic ion-datetime-button (Intl-Kurzformat, z. B. „1. Sept. 2025“) / Flutter „01.09.2025“ – nur Anzeigeformat.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#field-d9134dd8-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:349",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:351"
+   ],
+   "n": "Wie field-d9134dd8: Anzeigeformat des Datums.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#field-e8b28445": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:326",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:334",
+    "lib/core/providers/statistics_providers.dart:43"
+   ],
+   "n": "Flutter besser: „Bis“ auf ≥ „Von“ begrenzt (Obergrenze heute + 2 Jahre), Ionic ohne Grenzen. Datumsdialog statt Inline-Kalender; Neuberechnung bei Auswahl gleich.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#media-542fed8c": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:613",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:641"
+   ],
+   "n": "Zählung gleich (Verspätet inkl. verspätet entschuldigt, gerundete Prozente). Titel „Statusverteilung (in %)“ jetzt auch in Flutter (Z. 641). Ionic: Legende mit „Anwesend (x%)“ / Flutter: Ring mit Prozent auf den Segmenten, Legende nur Statusnamen – gleiche Information.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#media-c58a7f02": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:818",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:839",
+    "lib/core/providers/statistics_providers.dart:500"
+   ],
+   "n": "Senkrechte Balken je 3-Jahres-Gruppe, aktive Personen mit Geburtstag, Titel „Altersverteilung 🎂“ jetzt auch in Flutter (Z. 839). Ohne Geburtstage: Ionic leeres Diagramm / Flutter Hinweis „Keine Geburtsdaten vorhanden“.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#modal-54866a37": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1193",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1140"
+   ],
+   "v": "bestätigt",
+   "n": "Bottom-Sheet in voller Höhe (Breakpoint 1) aus der Zeile „Personen über alle Instanzen“; gleiche Org-Bedingung."
+  },
+  "stats/stats.page#modal-7a053185": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:334"
+   ],
+   "v": "bestätigt",
+   "n": "Datumsauswahl als Plattform-Datepicker statt Inline-ion-modal."
+  },
+  "stats/stats.page#modal-7a053185-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:334"
+   ],
+   "v": "bestätigt",
+   "n": "Datumsauswahl als Plattform-Datepicker statt Inline-ion-modal."
+  },
+  "stats/stats.page#text-0a14e583": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:87",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:236",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:238"
+   ],
+   "n": "Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen entfallen die Anwesenheits-Abschnitte, stattdessen „Keine Daten im ausgewählten Zeitraum“.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#text-0a6c856c": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:508"
+   ],
+   "v": "bestätigt",
+   "n": "Badge Pausierend (warning), Anzahl pausierter, nicht ausgetretener Personen."
+  },
+  "stats/stats.page#text-0d669f08": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:271"
+   ],
+   "v": "bestätigt",
+   "n": "Überschrift „🎂 Altersverteilung“ (Flutter zeigt sie auch bei 0 Terminen)."
+  },
+  "stats/stats.page#text-11de0c3e": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:439",
+    "lib/core/providers/statistics_providers.dart:298"
+   ],
+   "v": "bestätigt",
+   "n": "Badge Anzahl Termine im Zeitraum."
+  },
+  "stats/stats.page#text-237885aa": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:462"
+   ],
+   "v": "bestätigt",
+   "n": "„Schlechteste Anwesenheit“ mit Datum, nur wenn vorhanden."
+  },
+  "stats/stats.page#text-35abd623": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:449",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:439",
+    "lib/core/utils/statistics_utils.dart:9"
+   ],
+   "v": "bestätigt",
+   "n": "Ø Anwesenheit in %, Farbe ≥70 success, ≥50 warning, sonst danger; nur Typen mit include_in_average, gerundet."
+  },
+  "stats/stats.page#text-40bebb12": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:509"
+   ],
+   "v": "bestätigt",
+   "n": "Badge Ausgetreten (medium), Anzahl ausgetretener Personen."
+  },
+  "stats/stats.page#text-4d5d9eb5": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1203"
+   ],
+   "v": "bestätigt",
+   "n": "Sheet-Titel „Personen ({count})“."
+  },
+  "stats/stats.page#text-55a6afe8": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:457",
+    "lib/core/providers/statistics_providers.dart:298"
+   ],
+   "v": "bestätigt",
+   "n": "Badge Beste Anwesenheit in %, success."
+  },
+  "stats/stats.page#text-5740d423": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:274",
+    "lib/features/statistics/presentation/widgets/field_stats_section.dart:44"
+   ],
+   "v": "bestätigt",
+   "n": "Überschrift „🧩 Zusatzfelder“, nur bei passenden Feldern."
+  },
+  "stats/stats.page#text-5acf85be": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:87",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:236",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:238"
+   ],
+   "n": "Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen Leerzustand „Keine Daten im ausgewählten Zeitraum“ statt Abschnitt.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#text-666d20ee": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1136"
+   ],
+   "v": "bestätigt",
+   "n": "„Personen über alle Instanzen“ mit Badge; gleiche Org-Bedingung."
+  },
+  "stats/stats.page#text-6cd906f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:466"
+   ],
+   "v": "bestätigt",
+   "n": "Badge Schlechteste Anwesenheit in %, danger."
+  },
+  "stats/stats.page#text-70364d9b": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1226"
+   ],
+   "v": "bestätigt",
+   "n": "Badge = Anzahl Instanzen je Person (nach Filter). Randfall: Flutter zählt Instanznamen als Set (praktisch ohne Bedeutung); Sortierung bei gleicher Instanzzahl in Flutter zusätzlich nach Nachname."
+  }
+ },
+ "extra": []
+}

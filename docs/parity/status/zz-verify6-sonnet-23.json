@@ -1,0 +1,426 @@
+{
+ "batch": "zz-verify6-sonnet-23",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "public-planning/public-planning.page#modal-419a4f08-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:816-827"
+   ],
+   "v": "bestätigt",
+   "n": "Zeitwahl 24 h per Picker, speichert über _changed(); Ende wird neu berechnet."
+  },
+  "public-planning/public-planning.page#text-4ae11dda": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:466-468",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:502-503"
+   ],
+   "v": "bestätigt",
+   "n": "Org nur bei Login gelesen (org = loggedIn ? ... : null); Abschnitt „Felder“ nur bei nicht leeren Org-Standardfeldern."
+  },
+  "public-planning/public-planning.page#text-aefaf1bb": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:993-998"
+   ],
+   "n": "Ionic: „Ende“ sichtbar sobald end gesetzt (auch bei leerem Ablauf, dann = Start). Flutter: nur wenn mindestens ein Feld existiert. Gleiche Funktion, keine Information geht verloren.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#toast-44b64ac5": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:442-447"
+   ],
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#toast-4f1670a7": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:686-690"
+   ],
+   "n": "Flutter besser: „Fehler beim Speichern des Plans“ (danger) gleich. Ionic nur ohne Plan-ID; Flutter bei jedem fehlgeschlagenen Speichern (Plan wird nicht mehr der Org zugeordnet, wenn Speichern scheitert).",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#toast-51c4a8ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:706-710"
+   ],
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#toast-59c04720": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:680-682"
+   ],
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#toast-798244e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:679"
+   ],
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#toast-7e4f62bb": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:772-780",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:183-205"
+   ],
+   "n": "Flutter besser: Text „Fehler beim Erstellen des Links“ (danger) gleich. Ionic nur wenn nach persistToDb keine Plan-ID existiert; Flutter speichert vor dem Teilen immer und meldet auch Speicherfehler.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#toast-7e4f62bb-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:787-791"
+   ],
+   "v": "bestätigt",
+   "n": "Insert-Fehler beim anonymen Teilen -> „Fehler beim Erstellen des Links“ (danger)."
+  },
+  "public-planning/public-planning.page#toast-88e9eba9": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:711-714"
+   ],
+   "v": "bestätigt",
+   "n": "„Bitte alle Dauern ausfüllen.“ (warning); Notizen und Block-Köpfe ausgenommen."
+  },
+  "public-planning/public-planning.page#toast-c76fea2d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:183-205"
+   ],
+   "n": "„Link in Zwischenablage kopiert“ (success) gleich. Flutter kopiert auch, wenn der Share-Dialog nicht verfügbar ist (Web); Ionic nur ohne navigator.share. Gleiche Wirkung.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#toast-c76fea2d-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:183-205"
+   ],
+   "n": "„Link in Zwischenablage kopiert“ (success) gleich. Flutter kopiert auch, wenn der Share-Dialog nicht verfügbar ist (Web); Ionic nur ohne navigator.share. Gleiche Wirkung.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#toast-d3dbfed3": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:696"
+   ],
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#toast-e01820b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:697-699"
+   ],
+   "v": "bestätigt"
+  },
+  "register/register.page#field-5641b587": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:285-300",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:493-515"
+   ],
+   "v": "bestätigt",
+   "n": "Action-Sheet „Was beschreibt deine Gruppe am besten?“ mit Allgemein/Chor/Orchester (gleiche Reihenfolge), Default general, Hilfetext je Typ."
+  },
+  "register/register.page#field-98af382f": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:336-350"
+   ],
+   "v": "bestätigt",
+   "n": "Label „Vollständiger Name“, Platzhalter je Typ, Zähler (maxLength 50), Helfertext."
+  },
+  "register/register.page#loading-14fb6abb": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:547"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay „Konto wird gelöscht…“ / Flutter: nur Info-Toast, Seite bleibt bedienbar. Ergebnis gleich.",
+   "v": "bestätigt"
+  },
+  "register/register.page#text-51a59c27": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:228-236"
+   ],
+   "v": "bestätigt",
+   "n": "Introtext mit fettem „Instanz“ (Inline-HTML) in der Intro-Karte."
+  },
+  "register/register.page#toast-243480af": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:553-562",
+    "lib/data/repositories/account_repository.dart:27-42"
+   ],
+   "n": "Vorlage „Fehler beim Löschen: {error}“ gleich; Fehlerdetail technisch in beiden (Ionic „Edge Function returned a non-2xx status code“, Flutter Repository-/FunctionException-Text). Nutzer erfährt gleichermaßen, dass es fehlschlug.",
+   "v": "bestätigt"
+  },
+  "register/register.page#toast-aed4ea59": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:547-551"
+   ],
+   "v": "bestätigt",
+   "n": "Info-Toast bzw. Erfolgs-Toast „Konto gelöscht“ danach Weiterleitung /login."
+  },
+  "register/tenant-register/tenant-register.page#action-5bd78b6a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:430-440"
+   ],
+   "n": "Ionic: nur bei fehlenden Gruppen deaktiviert. Flutter zusätzlich deaktiviert im Code-Modus vor Anmeldung und während des Ladens (Ionic: Klick ergäbe dort nur eine Validierungs-Toast „Passwort zu kurz“, ohne Account nicht registrierbar). Gleiche Funktion.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#action-7a63a66c": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:161-170"
+   ],
+   "v": "bestätigt",
+   "n": "Home-Button: eingeloggt mit Instanz und Rolle -> Startseite der Rolle, sonst /login."
+  },
+  "register/tenant-register/tenant-register.page#alert-d3091b10": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:773-845"
+   ],
+   "n": "Gleicher Titel „Anmelden“, Buttons „Abbrechen“/„Anmelden“, danach Prüfung auf bestehende Registrierung + Profil-Prefill. Unterschiede: zusätzlicher Hinweistext, Label „E-Mail“, Fehler inline im Dialog statt Toast (Ionic: Dialog schließt nicht).",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#loading-19c310bc": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:628-690"
+   ],
+   "n": "Ionic: Loading-Overlay beim Einlesen des Bildes / Flutter: kein Ladeindikator. Funktion gleich.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#loading-54fa6693": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1043-1065"
+   ],
+   "n": "Ionic: blockierendes Overlay beim Code-Bestätigen / Flutter: _isLoading deaktiviert Buttons/Feld, kein Overlay.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#loading-ba12bb0b": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1015-1040"
+   ],
+   "n": "Ionic: blockierendes Overlay beim Code-Anfordern / Flutter: _isLoading deaktiviert Buttons, Spinner unter dem Formular.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#modal-c3de19e4": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:985-988",
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:139-162"
+   ],
+   "v": "bestätigt",
+   "n": "Datenschutz-Link öffnet Legal-Modal (Titel, Schließen, Inhalt)."
+  },
+  "register/tenant-register/tenant-register.page#toast-2a68da3c": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:657-666"
+   ],
+   "v": "bestätigt",
+   "n": "Geändert seit Erstprüfung: Flutter prüft jetzt die Originalgröße (bytes.length > 15 MB) vor jeder Verarbeitung, Text „Bild zu groß“ (danger) wie Ionic. Frühere Abweichung entfällt."
+  },
+  "register/tenant-register/tenant-register.page#toast-9ab09d16": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1021-1024"
+   ],
+   "v": "bestätigt",
+   "n": "Datenschutz nicht akzeptiert -> Toast (danger), Reihenfolge nach E-Mail-Prüfung wie Ionic."
+  },
+  "register/tenant-register/tenant-register.page#toast-fa4a46f9": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1017-1019"
+   ],
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#action-203e5c71": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:223-228"
+   ],
+   "v": "bestätigt",
+   "n": "Chip mit Anhangsname oder „Anhang“, öffnet URL im In-App-Browser."
+  },
+  "selfService/overview/overview.page#action-2e23edd6": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:217-222",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:431"
+   ],
+   "v": "bestätigt",
+   "n": "Chip „Infos“ öffnet Beschreibungs-Sheet (0.6, schließbar)."
+  },
+  "selfService/overview/overview.page#action-96db2113": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:229-234",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:133-142",
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:69-76"
+   ],
+   "v": "bestätigt",
+   "n": "Chip „Dateien“ nur mit files_folder und Dateizugriff der Termin-Instanz (Rollenlogik wie DbService.canAccessFiles); andere Instanz über /open-file, eigene Instanz direkt /settings/files (gleiches Ziel)."
+  },
+  "selfService/overview/overview.page#action-f60f8ec5": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:50",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:245-262",
+    "lib/core/utils/event_list_utils.dart:39"
+   ],
+   "v": "bestätigt",
+   "n": "Grund-Picker mit Instanz-Gründen bzw. Standardgründen; isToday = att.isRunning (attendanceIsRunning). Keine Rollenbedingung."
+  },
+  "selfService/overview/overview.page#alert-855b4ce2": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:355-370",
+    "lib/core/providers/self_service_providers.dart:210-220"
+   ],
+   "v": "bestätigt",
+   "n": "„Notiz bearbeiten“ nur bei Status Anwesend (text X), vorbelegt, Speichern + Toast „Notiz aktualisiert“; Flutter zeigt zusätzlich Fehler-Toast."
+  },
+  "selfService/overview/overview.page#text-62906ae5": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:113-123",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:201-202"
+   ],
+   "v": "bestätigt",
+   "n": "Anmeldefrist-Chip nur in den 3 Tagen vor der Frist (overviewMode)."
+  },
+  "selfService/overview/overview.page#text-ce67106b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:203-204"
+   ],
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#toast-7a36c603": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:265-284"
+   ],
+   "v": "bestätigt",
+   "n": "Dank-Toast Abmeldung/Verspätung; Flutter zusätzlich Fehler-Toast."
+  },
+  "selfService/overview/overview.page#toast-8236dcaf": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:335-343"
+   ],
+   "v": "bestätigt",
+   "n": "„Schön, dass du kommst“ nach Anmeldung (success)."
+  },
+  "selfService/overview/overview.page#toast-b3e96f73": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:363-367"
+   ],
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#action-12dc0660": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:124-130"
+   ],
+   "v": "bestätigt",
+   "n": "Chip „Anhang“ öffnet URL."
+  },
+  "selfService/parents/parents.page#action-136ed4ac": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:297-303"
+   ],
+   "v": "bestätigt",
+   "n": "Button „Alle“ nur bei Kinderzahl != 1, öffnet Sheet für alle Kinder."
+  },
+  "selfService/parents/parents.page#action-3ea4d6a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:88-98",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:114"
+   ],
+   "v": "bestätigt",
+   "n": "Werke-Chip mit Plural, öffnet Werke-Sheet (nur Links)."
+  },
+  "selfService/parents/parents.page#action-3ea4d6a0-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:343"
+   ],
+   "v": "bestätigt",
+   "n": "Werke-Chip auch in Vergangenheitszeilen."
+  },
+  "selfService/parents/parents.page#action-4094e62c": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:238-246"
+   ],
+   "v": "bestätigt",
+   "n": "Pull-to-refresh lädt Kinder, Termine, Werke neu."
+  },
+  "selfService/parents/parents.page#action-4d01e523-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:181-187"
+   ],
+   "v": "bestätigt",
+   "n": "Legende-Button (Info) öffnet Legenden-Sheet."
+  },
+  "selfService/parents/parents.page#action-6939adbb": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:354-362"
+   ],
+   "v": "bestätigt",
+   "n": "„Alle n anzeigen“/„Weniger anzeigen“ bei mehr als 3 Einträgen (Vergangenheit auf 10 begrenzt wie Ionic)."
+  },
+  "selfService/parents/parents.page#action-b0f208df": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:265-270",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:310-322",
+    "lib/features/parents/data/providers/parents_providers.dart:291-317"
+   ],
+   "v": "bestätigt",
+   "n": "Geändert seit Erstprüfung: Kinder je Termin werden jetzt nach Kinderreihenfolge (Instrument, isLeader, Nachname; wie Ionic getPlayers) sortiert (PARITY_SELF). Chip „Vorname · Status“ öffnet Aktionsblatt des Kindes."
+  },
+  "selfService/parents/parents.page#action-c596d047": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:169-177"
+   ],
+   "v": "bestätigt",
+   "n": "Menü-Button des Side-Panels."
+  }
+ },
+ "extra": []
+}

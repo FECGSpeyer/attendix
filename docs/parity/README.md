@@ -153,8 +153,8 @@ Befund-IDs stehen als reines `x-…` im Schlüssel, nie als `<baustein>#x-…`
 1923d203 = 4.19.9): Hat sich ein Punkt in Ionic danach geändert, verwirft das
 Werkzeug das Urteil und meldet es als Warnung.
 Pflichtfeld ist `"afterRound": N`, die letzte Prüfrunde, deren
-Flutter-Stand vor dem Fix lag (Runde 3: b218510, Runde 4: 8004a44; ein Fix,
-der nach 8004a44 gemergt wurde, trägt also 4): Die Datei gilt nach Runde N
+Flutter-Stand vor dem Fix lag (Runde 3: b218510, Runde 4: 8004a44, Runde 5:
+57bb011, Runde 6: 0f74333; ein Fix, der nach 0f74333 gemergt wurde, trägt also 6): Die Datei gilt nach Runde N
 (und deren Korrekturdateien), aber vor Runde N + 1; ein Urteil einer späteren
 Runde ersetzt den Fix also. Ein zu kleines N lässt eine Runde, die den Punkt
 noch vor dem Fix gesehen hat, den Fix überschreiben. Ohne `afterRound` bricht

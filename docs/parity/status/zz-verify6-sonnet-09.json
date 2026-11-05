@@ -1,0 +1,419 @@
+{
+ "batch": "zz-verify6-sonnet-09",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "login/login.page#toast-852af94c": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:357-360"
+   ],
+   "n": "Success-Toast nach Registrierung (outcome registered), Texte gleich; signedIn routet wie Login.",
+   "v": "bestätigt"
+  },
+  "login/login.page#toast-a452fd30": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:390-396"
+   ],
+   "n": "Warnung bei leerem Feld, Dialog bleibt offen.",
+   "v": "bestätigt"
+  },
+  "login/login.page#toast-ea20099d": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:274-278"
+   ],
+   "n": "Fehler-Toast bei ungueltiger E-Mail (gleiche Regex); Zeilenverweis korrigiert (262-267 war MS-Link).",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#action-2fb6390f": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:477-484",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:180-186"
+   ],
+   "n": "Senden-Button, deaktiviert wie canSend (Titel, Text, Kanal, Gruppe, Empfaenger>0, nicht sendend).",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#action-4a9be03d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:409-425"
+   ],
+   "n": "Gruppen-Chips nur bei Gruppenauswahl, Umschalten laedt Zaehler neu.",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#action-55d9747b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:521-524"
+   ],
+   "n": "Erneut versuchen bei Zaehlerfehler ruft loadCounts.",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#action-c07a1f03": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:306-309"
+   ],
+   "n": "Abbrechen schliesst ohne Senden, Entwurf bleibt.",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#alert-5fc2a15e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:214-244"
+   ],
+   "n": "Bestaetigung Titel/Text/Abbrechen/Senden, nur bei canSend und geladenen Zaehlern; Senden mit Lade-Overlay, Toast, Rueckgabe der ID.",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#field-0f120e43": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:450-461"
+   ],
+   "n": "E-Mail-Schalter, Standard an, Untertitel nur mit Zaehler und an.",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#field-2ce7f8ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:438-449"
+   ],
+   "n": "Push/Telegram-Schalter, Standard an, Untertitel nur mit Zaehler und an.",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#field-4725efbf": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:384-396"
+   ],
+   "n": "Radio Alle aktiven (inkl. Hauptgruppe) / Nur bestimmte Gruppen, nur ohne Preset.",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#field-a300171b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:325-339"
+   ],
+   "n": "Titel, Platzhalter, max 200, Satzanfang gross, Entwurf wird gespeichert.",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#text-22d7bff9": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:538-543"
+   ],
+   "n": "Fettgedruckte Personenzahl, nur ohne Fehler und mit Zaehler.",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#text-70022f65": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:513-526"
+   ],
+   "n": "Fehlertext in Fehlerfarbe plus Erneut versuchen.",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#text-8dac5e4d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:365-371"
+   ],
+   "n": "Nur bei Preset, Personen-Icon plus recipientsLabel.",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#text-9f6ee6e3": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:544-550"
+   ],
+   "n": "Nicht erreichbar-Zeile nur bei unreachable>0.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#action-312b066f": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:583-588",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:619-626"
+   ],
+   "n": "Link im Text oeffnet extern/In-App-Browser (onLaunchUrl).",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#action-3e529376": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:666-671"
+   ],
+   "n": "Fruehere Mitteilung oeffnet /messages/:id.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#action-6e9d8cde": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:241-250"
+   ],
+   "n": "Zum Termin nur Manager mit Termin-Bezug, Ziel /attendance/:id.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#action-f228d859": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:268-290"
+   ],
+   "n": "Manager-Kopf, Tippen klappt Inhalt auf/zu, Start zugeklappt.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#field-daef3c09": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:361-370",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:311-316"
+   ],
+   "n": "Segment Alle/Gelesen/Offen/Probleme gleich gefiltert.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-0831ef43": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:329-343"
+   ],
+   "n": "Ueberschrift Uebersicht, nur Manager (Admin/Verantwortlich, Mandant der Mitteilung = aktuell).",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-17551393": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:354"
+   ],
+   "n": "Kachel E-Mail zugestellt.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-1c7f5885": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:348-350"
+   ],
+   "n": "Kachel Push/Telegram zugestellt.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-1f52bc34": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:144-174",
+    "lib/features/messages/presentation/auto_message_texts.dart:68"
+   ],
+   "n": "Antwort-Hinweis mit Grund/War-da, nur Nicht-Manager bei vorhandenem Termin.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-301d7e0b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:497-502"
+   ],
+   "n": "Gruppenname hinter dem Namen.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-38a4bb6c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:355"
+   ],
+   "n": "Kachel E-Mail geoeffnet (ungefaehr).",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-4920b42c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:115-142"
+   ],
+   "n": "Termin-Karte typeInfo/Typ plus Datum, nur Nicht-Manager.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-564442b5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:662-664"
+   ],
+   "n": "Ueberschrift Fruehere Mitteilungen, nur bei Eintraegen.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-742d6e9a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:374-375"
+   ],
+   "n": "Keine Personen in dieser Ansicht.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-76fc0593": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:348-349",
+    "lib/features/messages/presentation/message_format.dart:126-155"
+   ],
+   "n": "Push-Kachel Zaehler gleich (push_sent oder telegram_sent / push_enabled).",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-7e52a06c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:357"
+   ],
+   "n": "Hinweis Geoeffnet ist Schaetzwert.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-8939c3f4": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:346",
+    "lib/features/messages/presentation/message_format.dart:126-155"
+   ],
+   "n": "Gelesen-Kachel read/total.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-8cb3a397": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:611-616"
+   ],
+   "n": "Von Absender/Unbekannt, Datum, nur Nicht-Manager.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-979626ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:603-609"
+   ],
+   "n": "Titel-Ueberschrift nur Nicht-Manager (showTitle).",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-98080bcc": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:354"
+   ],
+   "n": "Kachel E-Mail zugestellt-Zaehler.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-b9117b34": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:355"
+   ],
+   "n": "Kachel geoeffnet-Zaehler mit Tilde.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-be3895d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:510-522",
+    "lib/features/messages/presentation/message_format.dart:54-109"
+   ],
+   "n": "Chips Reihenfolge/Texte/Toene wie chipsFor.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-d6a206b1": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:493-496"
+   ],
+   "n": "Name bzw. Unbekannt.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-dbb40a45": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:201-217"
+   ],
+   "n": "Nicht verfuegbar-Zustand mit Megafon-Icon; Zeilenverweis korrigiert.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-dc8412d2": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:328"
+   ],
+   "n": "Versand laeuft noch, nur Manager und status sending.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-fffffa33": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:346"
+   ],
+   "n": "Label in der App gelesen.",
+   "v": "bestätigt"
+  },
+  "messages/message-list/message-list.page#alert-04a6d14c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:39-52",
+    "lib/core/utils/dialog_helper.dart:12",
+    "lib/features/messages/presentation/pages/message_list_page.dart:161-175"
+   ],
+   "n": "Wischaktion Loeschen, Dialog Mitteilung loeschen?/Hinweis, Abbrechen/Loeschen, Fehler-Toast; Liste wird neu geladen. Seite nur Admin/Verantwortlich (Route-Guard).",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#action-3757cd90": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:519-523",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:542-550"
+   ],
+   "n": "Trennen-Button nur bei verknuepftem Telegram, loest Bestaetigungsdialog aus.",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#action-859c154e": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:190"
+   ],
+   "n": "Zurueck-Pfeil der AppBar (Route unter /settings).",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#action-d9956aed": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:519-523",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:131-140"
+   ],
+   "n": "Verbinden-Button nur ohne Telegram, oeffnet https://t.me/attendix_bot?start=<userId> extern.",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#alert-301e4134": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:142-154"
+   ],
+   "n": "Dialog Titel/Hinweis, Abbrechen/Ja, setzt telegram_chat_id auf leer.",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#field-00fac5bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:276-281"
+   ],
+   "n": "Schalter Terminerinnerungen ohne Hilfetext, nur bei enabled; Fehler setzt zurueck mit Toast (Ionic Toast im Service).",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#field-094611bf": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:295-300"
+   ],
+   "n": "Schalter Aufgaben mit Hilfetext, nur bei enabled.",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#field-1278e9dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:319-324"
+   ],
+   "n": "Neu-Registrierungen mit Hilfetext Nur Verantwortliche, nur bei enabled.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

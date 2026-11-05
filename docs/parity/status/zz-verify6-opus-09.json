@@ -1,0 +1,422 @@
+{
+ "batch": "zz-verify6-opus-09",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "people/list/list.page#text-93340ccf": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:703",
+    "lib/features/people/presentation/pages/people_list_page.dart:806",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:47",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:52",
+    "lib/features/people/presentation/pages/people_list_page.dart:545",
+    "lib/features/people/presentation/widgets/ion/ion_widgets.dart:540"
+   ],
+   "n": "≤1 Instanz: Material-AppBar-Titel über TenantSwitcherTitle = longName (Fallback shortName); iOS: kleiner Titel (middle) des Condense-Headers beim Scrollen. Seite wie Ionic nur Admin/Verantwortlich/Beobachter.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#text-93340ccf-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:541",
+    "lib/features/people/presentation/pages/people_list_page.dart:545",
+    "lib/features/people/presentation/pages/people_list_page.dart:547",
+    "lib/features/people/presentation/widgets/ion/ion_widgets.dart:534"
+   ],
+   "n": "iOS + ≤1 Instanz (und kein Auswahlmodus): großer Condense-Titel mit longName (CupertinoSliverNavigationBar largeTitle).",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#toast-1106dfab": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1430",
+    "lib/features/people/presentation/pages/people_list_page.dart:1432",
+    "lib/features/people/presentation/pages/people_list_page.dart:1722",
+    "lib/features/people/presentation/pages/people_list_page.dart:661"
+   ],
+   "n": "Nur über die Wisch-Option Papierkorb (isAdmin = Admin/Verantwortlicher); appId == eigene Auth-User-ID → roter Toast 'Du kannst dich nicht selbst entfernen!', kein Aktionsblatt; Slidable schließt (autoClose).",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#toast-f68d8cd2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:275",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:244"
+   ],
+   "n": "Je fehlgeschlagener Instanz roter Toast 'Fehler bei {Kurzname}: {Fehler}' (shortName, Fallback Name). Angebotene Instanzen nur verwaltbare (siehe alert-71956f19).",
+   "v": "bestätigt"
+  },
+  "x-325647b4ef": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:498",
+    "lib/features/people/presentation/pages/people_list_page.dart:506",
+    "lib/features/people/presentation/pages/people_list_page.dart:1207",
+    "lib/features/people/presentation/pages/people_list_page.dart:1234",
+    "lib/features/people/presentation/pages/people_list_page.dart:1252",
+    "lib/data/repositories/player_repository.dart:1883"
+   ],
+   "n": "Ionic: Griffe in der normalen Liste, kein Abbrechen, Lade-Overlay 'Reihenfolge wird gespeichert' / Flutter: eigene Kartenliste je Gruppe, zusätzliches X zum Verwerfen, nur Spinner im Häkchen-Button. DB-Schreiben jetzt wie Ionic: sort_order 1..n nur für die verschobenen Gruppen (gefilterte Personen), je Zeile id + tenantId; Toasts gespeichert/fehlgeschlagen gleich. Nur Darstellung.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-56b7f726f5": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1025",
+    "lib/features/people/presentation/pages/people_list_page.dart:752",
+    "lib/features/people/presentation/pages/people_list_page.dart:1373"
+   ],
+   "n": "Flutter-Zusatz: Optionsmenü 'Personen übertragen' (nur Admin/Verantwortlicher) mit Auswahlmodus, AppBar 'n ausgewählt' und Übergabe-Sheet. Ionic hat die Personenübergabe nur in den Einstellungen (/tabs/settings/handover, ebenfalls nur Admin/Verantwortlicher) – keine Rolle erhält mehr Rechte.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-5d4cb428e1": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:262",
+    "lib/features/people/presentation/pages/people_list_page.dart:352",
+    "lib/features/people/presentation/pages/people_list_page.dart:155"
+   ],
+   "n": "Flutter besser: Ionic search() setzt auf alle Personen zurück (aktiver Filter verloren) und onFilterChanged sortiert nach Gruppe trotz anderer Sortierung; gespeicherter Filter wird beim Laden nur bei Sortierung 'Gruppe' angewendet / Flutter: _filterPeople (Filter + Suche) und _sortPeople werden immer kombiniert angewendet, gespeicherter Filter immer.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-c1c5493cd5": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/player_repository.dart:837",
+    "lib/data/repositories/player_repository.dart:882",
+    "lib/data/repositories/cross_tenant_person_repository.dart:288"
+   ],
+   "n": "Flutter besser: Ionic schreibt beim Pausieren/Aktivieren per updatePlayer den ganzen Listen-Datensatz (inkl. mit Defaults aufgefüllter additional_fields) und überschreibt in anderen Instanzen deren Historie mit der Quell-Historie / Flutter schreibt nur paused, paused_until, history (id + tenantId) und hängt in anderen Instanzen den Eintrag an deren eigene Historie an. Sichtbares Ergebnis (pausiert/aktiv, Historieneintrag, Terminlisten) gleich.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-dac55a9bd1": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:663",
+    "lib/core/providers/attendance_providers.dart:292",
+    "lib/core/providers/attendance_providers.dart:309"
+   ],
+   "n": "Teilweise behoben: 0%-Badge ohne gezählte Termine, bis jetzt+24 h und archivierte Termine nur für Admin/Verantwortliche jetzt wie Ionic. Verbleibend: Ionic zählt nur Termine nach seasonStart bzw. – ohne Saisonstart – nach 2023-01-01 (getCurrentAttDate) / Flutter-Liste hat keinen 2023-Fallback (gte seasonStart nur wenn gesetzt) → bei Instanzen ohne Saisonstart mit älteren Terminen andere Prozentwerte im Badge und bei Sortierung nach Anwesenheit (Personendetail nutzt den Fallback). Anderer angezeigter Wert → nicht nur Optik.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "x-f6927de895": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:132",
+    "lib/features/people/presentation/pages/people_list_page.dart:135",
+    "lib/features/people/presentation/pages/people_list_page.dart:454"
+   ],
+   "n": "Ionic: checkAndUnpausePlayers (Admin/Verantwortlicher) in jedem initializeData, auch nach Instanzwechsel, vor dem Laden / Flutter: nur einmal im initState (Post-Frame); ref.listen auf Instanzwechsel setzt nur Filter zurück, löst kein Entpausieren aus. Abgelaufene Pausen der neuen Instanz werden erst beim nächsten Neuaufbau der Seite aufgehoben (verzögert, nicht anders).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#action-06c55240": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:103",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1130"
+   ],
+   "n": "Ionic: Lupen-Icon-Button rechts im E-Mail-Feld, sichtbar ohne Konto, deaktiviert ohne E-Mail / Flutter: Textbutton 'In anderer Instanz suchen' unter dem Feld, nur sichtbar mit E-Mail. Funktion gleich (Namenssuche in verknüpften Instanzen, Toast 'keine Treffer', Aktionsblatt 'Eintrag auswählen', schreibt email + global_person_id mit tenantId, Kandidat bekommt global_person_id, Toast 'E-Mail aktualisiert'). Flutter schreibt nur diese Felder statt des ganzen Entwurfs.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#action-0de19419": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:2041",
+    "lib/features/people/presentation/widgets/person_detail/late_warning_card.dart:76",
+    "lib/features/people/presentation/widgets/person_detail/late_warning_card.dart:78",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1343"
+   ],
+   "n": "Karte nur canEdit (Admin/Verantwortlicher, nicht archiviert; auch Genehmigungsmodus wie Ionic) und lateCount ≥ Schwelle; Button 'Zurücksetzen (Gespräch geführt)' mit Häkchen-Icon setzt lastSolve (id + tenantId), Toast 'Verspätungszähler zurückgesetzt', Statistik neu → Karte verschwindet; Fehler-Toast gleich. Loading und schmalerer Schreibumfang separat erfasst.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-0de62271": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:131",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1678"
+   ],
+   "n": "Ionic: roter Papierkorb-Icon-Button rechts im E-Mail-Feld / Flutter: Outlined-Button 'Account-Verknüpfung aufheben' unter der Rollenauswahl (canEdit && appId). Ablauf gleich: Alert 'Account entfernen' Abbrechen/Ja, removeUserFromTenant (Admins/weitere aktive Person behalten Zugang), email + appId = null, Seite schließt, Toasts gleich.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#action-36a985b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:312"
+   ],
+   "n": "Erste Bewertung veraltet: das Hilfe-Sheet (min. halbe Höhe) hat jetzt wie Ionic ein X-Icon rechts in der Kopfzeile 'Hilfe', das das Sheet schließt (kein Textbutton 'Schließen' mehr).",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#action-9ebb72e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:380",
+    "lib/features/people/presentation/widgets/planned_absences.dart:383",
+    "lib/features/people/presentation/widgets/planned_absences.dart:218"
+   ],
+   "n": "Eintrag 'Abwesenheit hinzufügen' mit Plus-Icon (primär) im Abwesenheiten-Bereich (canEdit + canManagePlannedAbsences) öffnet 'Abwesenheit eintragen' für die Person mit Hinweis für andere Person (personLongAbsenceHint).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-a6446ca3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:227",
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:264",
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:276",
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:328"
+   ],
+   "n": "Wischaktion Papierkorb (rot) nur canEdit und kein Termin-Eintrag (Ionic type !== 4 && !readOnly); Alert 'Eintrag unwiderruflich entfernen?' Abbrechen/Ja; schreibt history ohne den Eintrag (id + tenantId; Abgleich Datum+Typ+Text statt nur Datum), Toasts entfernt/fehlgeschlagen gleich.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-c210ff08": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:2103",
+    "lib/features/people/presentation/pages/person_detail_page.dart:2108"
+   ],
+   "n": "Nur wenn Termin-Typen mit duty_mode existieren, letzter Eintrag im Abwesenheiten-Bereich (canEdit + canManagePlannedAbsences); öffnet 'Regelmäßig verhindert' (personId, Name, forOther) als Vollbild-Dialog wie Ionic-Modal.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-eec7f233": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:180",
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:182"
+   ],
+   "n": "Button 'Hilfe' mit Hilfe-Icon im Account-Bereich (Account nur canEdit && nicht ausstehend = Ionic !readOnly && !approveMode), öffnet Hilfe-Sheet mit accountHelp (ohne Konto) + existingUserHint.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-f2320b9a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:137",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:147",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1990"
+   ],
+   "n": "Stift nur bei canEdit && !editingName (Ionic existingPlayer && !readOnly && !editingName); öffnet Vor-/Nachname + 'Fertig'. Icon edit_note statt create-outline.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#alert-71956f19": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:240",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:288",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:305",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1254"
+   ],
+   "n": "Texte/Buttons gleich ('Auch in anderen Instanzen pausieren?', Name-Text, Checkboxen, Überspringen/Pausieren). Flutter besser: bietet nur verknüpfte Instanzen an, in denen der Nutzer Admin/Verantwortlicher ist (Ionic listet alle, dort greift RLS ohne Fehlermeldung); übergibt 'Pausiert bis' an die anderen Instanzen, während Ionic person.page pauseUntil durch dismissPauseModal schon geleert hat (paused_until null).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#alert-b55317e3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1550",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1603",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1625",
+    "lib/data/repositories/player_repository.dart:814"
+   ],
+   "n": "'Entfernen' im Aktionsblatt (FAB nur Admin/Verantwortliche, nicht archiviert) nur wenn Person nicht der eigene Account; Alert 'Person entfernen', Text gleich, Abbrechen/Ja; löscht player (id + tenantId) und entzieht Konto-Zugang wie db.removePlayer, Toast 'Person entfernt', Fehler-Toast. Ionic schließt vor dem Löschen, Flutter danach – Ergebnis gleich.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-05790430": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:2021",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:271",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:280"
+   ],
+   "n": "Ionic: Inline-Textarea (autoGrow), für Admins auch bei archivierten Personen (dann deaktiviert, auch leer) / Flutter: Zeile ('Keine Notizen' wenn leer), Tipp öffnet Editor-Sheet, bei archivierten Personen ohne Notiz ausgeblendet; leere Notiz als null gespeichert; Historien-Eintrag bei Änderung gleich.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-06ab1bbe": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:196",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:631",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:648"
+   ],
+   "n": "Ionic: Modal-Select, ohne Auswahl 'Nicht festgelegt' / Flutter: Auswahl-Sheet mit Option 'Nicht festgelegt' (setzt parent_id null), Anzeige ohne Auswahl aber 'Nicht zugewiesen' – gleiche Bedeutung.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-280cafd6": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:122",
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:211",
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:266",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1638"
+   ],
+   "n": "Optionen/Reihenfolge (Mitglied, Verantwortlicher, Helfer, bei Stimmführer + Stimmführer & Helfer, Stimmführer), Sperre bei Hauptgruppe, sofortiges Schreiben (tenantUsers.role) + Toast 'Die Rolle wurde erfolgreich aktualisiert.' gleich. Flutter besser: Rolle außerhalb der Liste (z. B. Admin) wird angezeigt statt leerem Select; Bedingung nur appId (Ionic email && appId, Konto ohne E-Mail praktisch nicht vorhanden).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-8d1cf99a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:209",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:212",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:682"
+   ],
+   "n": "Bedingung gleich (VoS, nicht Hauptgruppe, bearbeitbar oder Wert vorhanden); Mehrfachauswahl SoS/GoS/BoS per Checkbox-Dialog, markiert Änderung, gespeichert in otherOrchestras; leer 'Keine'.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-be17a89b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:215",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:216",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:900"
+   ],
+   "n": "Bedingung gleich (VoS, nicht Hauptgruppe, canEdit oder examinee); Schalter 'Prüfling' markiert Änderung, nur bei canEdit änderbar.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-d1e5b0ca": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:88",
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:92",
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:340",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1080"
+   ],
+   "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe (Sheet prüft nur auf '@', volle Prüfung 'Ungültige E-Mail' beim Speichern wie Ionic); Suche nach gleicher E-Mail in anderen Instanzen nach Übernahme aus dem Sheet statt bei Blur, Dialog/Übernahme gleich; gesperrt wenn appId wie Ionic.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-eb1656da": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:225",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:664",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:672"
+   ],
+   "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; Leeren speichert null statt '' (beides leer). Bedingung otherExercise != null || canEdit (siehe text-79d104bf).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#loading-00357310": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1372",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1484"
+   ],
+   "n": "Ionic: blockierendes Loading 'Die Person wird genehmigt...' / Flutter: kein Ladeindikator während der Genehmigung (zusätzlicher Bestätigungsdialog inzwischen entfernt, Aktionsblatt → direkt genehmigen). Ergebnis und Toasts gleich.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#loading-b5454ced": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:346",
+    "lib/features/people/presentation/pages/person_create_page.dart:955"
+   ],
+   "n": "Ionic: blockierendes Loading (3 s) beim Hinzufügen / Flutter: nur Speichern-FAB deaktiviert (_isLoading), kein Overlay.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#loading-cd6c7935": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:232"
+   ],
+   "n": "Ionic: blockierendes Loading beim Eintragen der Abwesenheit / Flutter: Sheet schließt, Speichern ohne Ladeindikator; Ergebnis-Toast gleich.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#loading-d68742ec": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:788",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1913"
+   ],
+   "n": "Ionic: blockierendes Loading beim Speichern / Flutter: nur Speichern-FAB deaktiviert (_isSaving), kein Overlay.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#loading-fc02b5d4": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1212"
+   ],
+   "n": "Ionic: blockierendes Loading während 'Meinen Benutzer zuweisen' / Flutter: kein Ladeindikator; Ergebnis und Toasts gleich.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-79d104bf": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:225",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:669"
+   ],
+   "n": "Bedingung nicht ganz gleich. Ionic: !readOnly || otherExercise (leerer String gilt als leer) / Flutter: otherExercise != null || canEdit → Beobachter und archivierte Personen sehen bei gespeichertem '' eine leere Zeile 'Sonstige Dienste'. Label gleich.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-9102c4ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:2099",
+    "lib/features/people/presentation/widgets/planned_absences.dart:349",
+    "lib/features/people/presentation/widgets/planned_absences.dart:358"
+   ],
+   "n": "Nur canEdit und canManagePlannedAbsences (Admin/Verantwortliche oder Rechte-Flag; canEdit ⇒ Admin/Verantwortlich wie Ionic !readOnly); 'Abwesenheiten ({n})' bzw. 'Abwesenheiten'.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-9bed7686-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:312",
+    "lib/data/repositories/player_absence_repository.dart:28"
+   ],
+   "n": "'dd.MM.yyyy – dd.MM.yyyy', gleiche Datenquelle (player_absences der Person, tenant_id, order from_date aufsteigend).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-a6284510": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:86"
+   ],
+   "n": "Label 'E-Mail' im Account-Bereich (canEdit && nicht ausstehend).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-ac60eb1f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:184",
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:150",
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:42",
+    "lib/features/people/presentation/pages/person_detail_page.dart:2076"
+   ],
+   "n": "'Andere Instanzen' nur bei nicht leerer Liste, für alle Rollen der Seite; Liste wie Ionic getTenantsFromUser: nur verknüpfte Instanzen, ohne aktuelle, ohne Rolle Beobachter.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-c617e6c6": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:195",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:635"
+   ],
+   "n": "Label 'Eltern' gleich, Bedingung parents && !Hauptgruppe gleich. Das fehlende !isParent wirkt nicht: Benutzer mit Rolle Elternteil erreichen die Personenseite in keiner App (Ionic nur über Personenliste/Dashboard/Einstellungen für Admin/Verantwortlich/Beobachter; Flutter /people canSeePeopleTab = isConductor). Erste Bewertung korrigiert.",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#text-d7650994": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:373"
+   ],
+   "n": "'Keine Abwesenheiten eingetragen' (grau) bei leerer Liste.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

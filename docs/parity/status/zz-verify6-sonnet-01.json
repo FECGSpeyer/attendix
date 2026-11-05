@@ -1,0 +1,446 @@
+{
+ "batch": "zz-verify6-sonnet-01",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-6584c187": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:552-567"
+   ],
+   "n": "Zeile für alle Rollen: Icon, Titel (durchgestrichen wenn erledigt), Untertitel, Tap öffnet /settings/tasks/:id. Zeilen im Code verschoben (_TasksSection), Verhalten wie Ionic.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-6d6140de": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:352-360",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:209-216"
+   ],
+   "n": "Rollen gleich (nur Admin/Verantwortlich, nur offen, nur bestehend). Ionic: Bedingung/Planung nutzt das ungespeicherte item (Status/Titel live) / Flutter: gespeicherter Stand (item?.status). Randfall, gleiche Funktion.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-7ec0a004": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:489-512",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:293-298"
+   ],
+   "n": "Zeile „Typ · Datum“ + Status-Badge, Tap öffnet das Protokoll, Sortierung aufsteigend (Provider) wie Ionic. Ionic: Ergebnis „Besprochen“ grau (medium) / Flutter: primary (blau). Nur Farbe.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-991adfdd": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:569-579"
+   ],
+   "n": "Nur Leitung, öffnet Aufgaben-Sheet mit agendaItemId, Kontext-Titel und verantwortlicher Person; Liste wird per tasksForAgendaItemProvider-Invalidierung aktualisiert.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#actionsheet-d593da5c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:209-286",
+    "lib/core/providers/team_org_providers.dart:255-264"
+   ],
+   "n": "Action-Sheet „In welchen Termin einplanen?“ / „Noch kein Termin mit Tagesordnung geplant“, max. 6 Termine, bereits eingeplant deaktiviert, „Neuen Termin anlegen“, Abbrechen (showAppActionSheet). Termine bei jedem Tap neu geladen. Nur Leitung.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#field-219c0bba": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:382"
+   ],
+   "n": "Nur Leitung (isTeamLeaderProvider), Label „Titel“, Platzhalter „Worum geht es?“.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#field-2f9c0ed7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:394-401"
+   ],
+   "n": "Nur Leitung, Offen/Erledigt/Verworfen, Werte open/completed/dropped.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#field-39a93a68": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:383-389"
+   ],
+   "n": "Nur Leitung, Label/Platzhalter gleich, mehrzeilig (3-10 Zeilen statt autoGrow).",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#field-3a89b9b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:402-409"
+   ],
+   "n": "Nur Leitung, Hoch/Mittel/Niedrig, Werte high/medium/low.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#field-42aad74c": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:371-375",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:410-418"
+   ],
+   "n": "Optionen „Niemand“ + aktive, nicht ausstehende Personen gleich. Ionic: Modal mit „Abbrechen“, localeCompare(de) / Flutter: Dropdown ohne Abbrechen, Sortierung per toLowerCase (Umlaute hinten). Gespeicherter Wert gleich.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#field-75815c26": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:154-156",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:419-424"
+   ],
+   "n": "Korrigiert: Flutter rundet jetzt wie Ionic (num.tryParse(...).round(), >0 sonst null; „12.5“ wird 13, gespeichert default_duration). Label „Dauer pro Sitzung (Min.)“, Platzhalter „Standard“, nur Leitung. Nur Dezimalkomma bleibt null (Randfall).",
+   "v": "korrigiert"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-048e6c66": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:455-459"
+   ],
+   "n": "Nur-Lese-Ansicht (Nicht-Leitung): „Verantwortlich“ nur mit Namen.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-073edee5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:460-464"
+   ],
+   "n": "Beschreibung grau, nur wenn gesetzt, Nicht-Leitung.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-24277623": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:458"
+   ],
+   "n": "Name rechts als Note, Nicht-Leitung.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-440e3b32": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:545-549"
+   ],
+   "n": "„{done} von {total} erledigt“ im Kopf, nur bei Aufgaben, alle Rollen.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-8b87f4b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:442-449"
+   ],
+   "n": "Status-Badge Offen/Erledigt/Verworfen, Farben primary/success/medium wie getStatusColor, Nicht-Leitung.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-935a7b7b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:470-490"
+   ],
+   "n": "„Verlauf“ für alle Rollen bei bestehendem Thema; Nicht-Leitung bekommt serverseitig keine Einträge (beide zeigen Leertext).",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-a7db4909": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:543-545"
+   ],
+   "n": "„Aufgaben“ für alle Rollen bei bestehendem Thema.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-c1d2d5c0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:450"
+   ],
+   "n": "Prioritäts-Badge Hoch/Mittel/Niedrig, Farben danger/warning/medium, Nicht-Leitung.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-dc327713": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:341-351"
+   ],
+   "n": "decision_note unter „Vorschlag von …“, alle Rollen, nur wenn gesetzt.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-ee00217d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:513-516"
+   ],
+   "n": "„Noch in keinem Termin besprochen.“ grau bei leerem Verlauf.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-f4245346": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:568"
+   ],
+   "n": "„Keine Aufgaben“ grau, alle Rollen.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-06ae98b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:190-206"
+   ],
+   "n": "Toast „Gelöscht“ grün, danach Rückkehr zu /settings/team-organization?tab=topics; Löschen nur Leitung (Papierkorb in AppBar nur für Leitung bei bestehendem Thema), Bestätigungsdialog + Fehlertoast wie Ionic.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-f79a99f3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:275-281"
+   ],
+   "n": "Grüner Toast „Eingeplant für {dd.MM.}“ nach erfolgreichem Einplanen, bei Fehler roter Toast „Thema konnte nicht eingeplant werden“; Verlauf wird neu geladen.",
+   "v": "bestätigt"
+  },
+  "app.component#toast-499d9f2d": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:125-135",
+    "lib/features/auth/data/auth_link_listener.dart:155-166",
+    "lib/features/auth/data/auth_flow_service.dart:471-472"
+   ],
+   "n": "Flutter besser: Ionic zeigt error_description der Link-URL roh (englisch, roter Toast, dann /login) / Flutter zeigt deutschen Text (abgelaufen/ungültig, Zugriff verweigert, sonst allgemeiner Linkfehler), roter Toast, dann /login. Gleiche Bedingung (nur Auth-Links), Nutzer erfährt dasselbe.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#action-0ad7d998": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:329-337"
+   ],
+   "n": "„+“ erhöht Bedarf je Wochentag, nur bei Dienst-Typ (dutyMode), kein Maximum wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-3436fb43": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:422-426"
+   ],
+   "n": "„{prefix}{number} {name}“ + Komponist als Unterzeile, Tippen schaltet Auswahl (CheckboxListTile).",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-4c70a5da": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:61-64",
+    "lib/features/duty/presentation/widgets/duty_actions.dart:87-122",
+    "lib/core/providers/duty_providers.dart:252-267"
+   ],
+   "n": "„Kann nicht“: Alert mit optionalem Grund, Abbrechen/Bestätigen, signOut(isSelf) + duty-notify understaffed, Erfolgstoast; Abschnitt nur für Admin/Verantwortlich/Helfer(-Stimmführer) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-4ef97afb": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:207-222",
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:275-285",
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:312-318"
+   ],
+   "n": "Flutter besser: „Werk(e) hinzufügen“ erst aktiv mit ≥1 Werk und Dirigent/Name; Ionic immer aktiv und schreibt bei „Anderer Dirigent“ ohne Namen person_id 9999999999. Randfall: ohne aktive Dirigenten kann Flutter Werke nur mit „Anderer Dirigent“ + Name anlegen (Ionic: ohne Dirigent).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#action-4fff8ad6": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:229-272"
+   ],
+   "n": "Flutter besser: Button „Termin hinzufügen“ im Leerzustand nur mit canCreateAttendanceProvider (wie der FAB) / Ionic zeigt ihn allen Rollen der Seite, der FAB ist dort für Nicht-Anleger unsichtbar. Rolle sieht weniger, aber Ionic-Inkonsistenz; Leon entscheidet.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#action-558f18b9-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:188-194",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:538-546",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:725-795"
+   ],
+   "n": "Info-Button neben Datum öffnet Sheet (0,5 Höhe): Terminarten, Feiertage/Ferien-Legende, Schulferien- und Feiertagslisten (nur künftige).",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-558f18b9-4": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:379-396",
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:63-76",
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:162-164"
+   ],
+   "n": "„+“ neben „Werke“ (nur bei manage_songs, nicht allgemein) öffnet Sheet „Werk(e) hinzufügen“ (max. 70 %).",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-562aaa0e": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:477-486"
+   ],
+   "n": "X entfernt den Eintrag aus der Liste.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-56ed352d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:181-194",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:173-178"
+   ],
+   "n": "„Alle anzeigen“ setzt Filter zurück (null), Haken + Primärfarbe bei Aktiv.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-5affa11e": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:66-70",
+    "lib/features/duty/presentation/widgets/duty_actions.dart:65-80",
+    "lib/data/repositories/duty_repository.dart:150-170"
+   ],
+   "n": "duty_state confirmed, status Anwesend, notes \"\", changed_by/changed_at; Erfolgstoast, Fehlertoast; Tenant per Attendance-Join geprüft.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-6e0d681b": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:198-205",
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:296-310"
+   ],
+   "n": "„Werk(e)“ mit „{count} Werk(e) ausgewählt“ / „Keine Werke ausgewählt“, öffnet „Werke auswählen“.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-9cfb5a90": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:320-328"
+   ],
+   "n": "„−“ verringert Bedarf, deaktiviert bei ≤1 wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-be681377": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:196-213",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:173-178"
+   ],
+   "n": "Pro Termintyp Punkt in Typfarbe, Name, Haken bei Aktiv; setzt Filter auf die Typ-ID.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-c404e4de": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:164-167",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:429-475",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:829-913"
+   ],
+   "n": "„Termin hinzufügen“/„Termine hinzufügen“, gesperrt ohne Datum oder während des Speicherns, Doppeltipp-Schutz, Berechtigungsprüfung, Erfolgstoast, Sheet schließt und Liste lädt neu.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-d02e9e23": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:42-58",
+    "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:79-85",
+    "lib/data/repositories/duty_repository.dart:41-45"
+   ],
+   "n": "Ionic: Titel getEventTitle (typeInfo / Typname außer hide_name / Datum), Meta „Di., 20.10.2026 · 19:00–21:00“ / Flutter: typeInfo / Typname / „Dienst“ (hide_name ignoriert), Meta „Di, 20.10. · 19:00“ (ohne Jahr/Endzeit). Tap öffnet Termin; Ionic-Rollenprüfung ist hier wirkungslos, da der Abschnitt nur Admin/Verantwortlich/Helfer sehen. Nur Anzeige.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#action-e400eac1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:376"
+   ],
+   "n": "Menü-Button des Sidepanels (Tablet hochkant) über SideNavMenuButton.maybe.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-f0f69b82": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:382-387"
+   ],
+   "n": "Haken übernimmt die Auswahl und schließt. Abweichung nur beim Schließen ohne Haken (Zurück): Flutter verwirft, Ionic behält die live gebundene Auswahl.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-f97565d6": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:702-707"
+   ],
+   "n": "Pull-to-refresh lädt die Terminliste neu (Provider-Invalidierung).",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#alert-c140caf7": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:90-112",
+    "lib/core/providers/attendance_providers.dart:405-414",
+    "lib/data/repositories/attendance_repository.dart:295-306"
+   ],
+   "n": "Header „Möchtest du den Termin wirklich entfernen?“, Abbrechen/Fortfahren, Haptik; Löschen mit id + tenantId (Ionic nur id), danach Liste neu. Kein Fehlertoast, wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#embed-d876cfe4": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:404"
+   ],
+   "n": "Benachrichtigungsglocke in der Toolbar rechts.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#field-098f8ed3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:392-396",
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:405-411"
+   ],
+   "n": "Platzhalter „Werk suchen...“, Suche in „{prefix}{number} {name}“ (klein), ohne Debounce.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#field-0e2e617a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:168-195",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:665-673",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:683-691"
+   ],
+   "n": "Anzeige dd.MM.yyyy / „{n} Termine ausgewählt“ / „Kein Datum ausgewählt“; Tap mit nur heute → abwählen + Toast, dann Kalender.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#field-283fff29": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:286-309"
+   ],
+   "n": "Label „Infotext“, Hilfetext „Dieser Text wird anstelle des Typs angezeigt.“, Satzanfang groß.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#field-aa8f98a9": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:198-258",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:149-156",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:675-690"
+   ],
+   "n": "Label „Typ“, nur sichtbare Typen, Vorauswahl erster sichtbarer Typ; Wechsel setzt Dauer (Ganztag) und Dienst-Bedarf zurück; gespeicherte Dauer 1 bei Nicht-Ganztag wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#field-acdfacba": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:422-426"
+   ],
+   "n": "Checkbox links, zeigt die Auswahl.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

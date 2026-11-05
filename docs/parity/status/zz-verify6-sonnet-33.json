@@ -1,0 +1,498 @@
+{
+ "batch": "zz-verify6-sonnet-33",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "settings/handover/handover.page#text-9ab2f207": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:231"
+   ],
+   "v": "bestätigt",
+   "n": "„Jünger als“ (handoverYoungerThan) bei Filter younger, Bedingung gleich."
+  },
+  "settings/help/article/help-article.page#action-40c0f47e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:33",
+    "lib/features/help/presentation/pages/help_article_page.dart:34"
+   ],
+   "n": "Pfeil-Button gleich. Ionic navigiert immer zur Hilfe-Übersicht / Flutter maybePop zur aufrufenden Seite (Artikel wird nur per push aus Hilfe, Dienst-Typ-Seiten geöffnet; Hilfe-Route ist Eltern-Route). Gleiche Funktion, niedrig.",
+   "v": "bestätigt"
+  },
+  "settings/help/article/help-article.page#text-6bc16511": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:36"
+   ],
+   "v": "bestätigt",
+   "n": "Artikeltitel, sonst „Hilfe“."
+  },
+  "settings/help/article/help-article.page#text-f416d4a2": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart:43"
+   ],
+   "v": "bestätigt",
+   "n": "„Dieser Artikel wurde nicht gefunden.“ bei fehlendem Artikel."
+  },
+  "settings/settings/settings.page#action-2226c143": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:462",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:465",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:467",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:557",
+    "lib/features/profile/presentation/widgets/church_picker.dart:16"
+   ],
+   "v": "bestätigt",
+   "n": "Text-Button mit „Bitte auswählen“/„Nicht gelistet“/Gemeindename wie getChurchLabel, öffnet Gemeinde-Auswahl (Suche leer). Zusatzfelder/Rollen: Flutter filtert visibleToPlayers, bearbeitbar nur editableByPlayers, Sheet nur mit eigenem Profil – wie Ionic (userData)."
+  },
+  "settings/settings/settings.page#action-46a45423": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:154",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:294"
+   ],
+   "n": "Ionic setzt nur title-Attribut „Passbild“ am Viewer (Tooltip) / Flutter zeigt „Passbild.jpg“ als Titel in der Kopfzeile. Nur Optik.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-de860e09-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:358",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:361",
+    "lib/shared/widgets/display/avatar.dart:21"
+   ],
+   "v": "bestätigt",
+   "n": "Passbild-Avatar rechts; ohne Bild oder bei Ladefehler Platzhalter-Avatar."
+  },
+  "settings/settings/settings.page#action-ed6b5ba6": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/church_picker.dart:133",
+    "lib/features/profile/presentation/widgets/church_picker.dart:134",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:565"
+   ],
+   "v": "bestätigt",
+   "n": "„Nicht gelistet“ immer zuerst, Haken bei Wert '', setzt '' und schließt."
+  },
+  "settings/settings/settings.page#action-f029eaa1-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:251",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:432",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:628"
+   ],
+   "v": "bestätigt",
+   "n": "Zahnrad in der Kopfzeile des Instanz-Sheets öffnet kleines Sheet mit Schalter „Instanzauswahl aktivieren“ + Hilfetext; speichert wantInstanceSelection (user metadata) wie onTenantSelectionChange."
+  },
+  "settings/settings/settings.page#action-faf7c001": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:358",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:360",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:361"
+   ],
+   "v": "bestätigt",
+   "n": "Zeile „Passbild“ mit Avatar rechts öffnet das Aktionsblatt."
+  },
+  "settings/settings/settings.page#actionsheet-0d48212e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:122",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:125",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:130",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:136",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:141"
+   ],
+   "n": "Buttons „Passbild ersetzen“, bei echtem Bild „Passbild ansehen“ + „Passbild entfernen“ (destruktiv), „Abbrechen“ gleiche Reihenfolge. Flutter zusätzlich Icons; „ersetzen“ bietet auf Handy Galerie/Kamera, im Web Dateiauswahl.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#alert-311384de": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:236",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:239",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:240",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:242"
+   ],
+   "v": "bestätigt",
+   "n": "Bestätigung „Passbild entfernen“ mit Nachricht, Abbrechen / Entfernen (destruktiv); nur im Passbild-Aktionsblatt bei eigenem Bild."
+  },
+  "settings/settings/settings.page#embed-ea4c4538": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:148",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:26"
+   ],
+   "v": "bestätigt",
+   "n": "Glocke rechts in Toolbar; mit Sidepanel ausgeblendet wie Ionic."
+  },
+  "settings/settings/settings.page#field-2ea6e874": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:383",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:386"
+   ],
+   "v": "bestätigt",
+   "n": "Telefon-Tastatur."
+  },
+  "settings/settings/settings.page#field-3a03c0eb": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:389",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:391",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:395",
+    "lib/features/profile/presentation/widgets/profile_helpers.dart:41"
+   ],
+   "n": "Datums-Button im Format „16. Feb. 2002“. Ohne Geburtsdatum: Ionic zeigt heutiges Datum / Flutter „Auswählen“.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#field-3b74f121": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:105",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:107",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:108",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:113"
+   ],
+   "v": "bestätigt",
+   "n": "Nur Datum, max. heute, App-Sprache; gespeichert als yyyy-MM-dd."
+  },
+  "settings/settings/settings.page#field-3e74ed2d": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:370",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:374"
+   ],
+   "v": "bestätigt",
+   "n": "Text, Wortanfang groß; Flutter trimmt beim Speichern."
+  },
+  "settings/settings/settings.page#field-509e17fd-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:471",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:478",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:480"
+   ],
+   "n": "Flutter besser: textarea als dreizeiliges Feld (Ionic einzeilig). Zahl: eigene Zifferntastatur, Speichern als Zahl (Ionic type=number). Unberührte leere Textfelder speichert Flutter als '', Ionic lässt den Schlüssel weg (Anzeige gleich).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#field-62eaf0c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:376",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:380"
+   ],
+   "v": "bestätigt",
+   "n": "Nachname-Feld."
+  },
+  "settings/settings/settings.page#field-b5ead18a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:441",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:447",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:458"
+   ],
+   "n": "Auswahl mit Feldname und allen Optionen in Reihenfolge. Ohne Wert: Ionic leer / Flutter Platzhalter „Bitte auswählen“.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#loading-f3f08e9f": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:198",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:210"
+   ],
+   "n": "Ionic: blockierendes Loading beim Passbild-Upload / Flutter: kein Ladeindikator (Notifier setzt nur state=loading, nichts in der UI). Nur Optik.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-574f5f7c": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:360",
+    "lib/core/router/app_router.dart:935"
+   ],
+   "n": "Ablaufpläne öffnen als Seite (context.push /planning) statt Karten-Modal; gleiche Funktion, Bedingung (Admin/Verantwortlich, kein Bewerber) gleich. Nur Optik (Leon 05.11.2026).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-6205e9c6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:443",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:45"
+   ],
+   "v": "bestätigt",
+   "n": "Statistik als Modal (iOS Karten-Modal, sonst Ion-Modal) nur Admin/Verantwortlich und ohne Sidepanel – wie Ionic."
+  },
+  "settings/settings/settings.page#modal-712205ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:119",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:35",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:37"
+   ],
+   "v": "bestätigt",
+   "n": "Instanz-Sheet, Start halbe Höhe, auf volle Höhe ziehbar."
+  },
+  "settings/settings/settings.page#modal-889ed29c": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:105",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:107"
+   ],
+   "v": "bestätigt",
+   "n": "Plattform-Datumsdialog statt Modal mit ion-datetime."
+  },
+  "settings/settings/settings.page#modal-8e265ba0": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:323",
+    "lib/features/history/presentation/pages/history_page.dart:32",
+    "lib/features/history/presentation/pages/history_page.dart:39"
+   ],
+   "n": "Verlauf: iOS Karten-Modal wie Ionic; sonst (Android/Web/Desktop) context.push(/history) als Seite statt Modal. Bedingung isAdmin||isHelper gleich. Nur Optik.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-b0fe3226": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:569",
+    "lib/features/profile/presentation/widgets/church_picker.dart:16",
+    "lib/features/profile/presentation/widgets/church_picker.dart:31"
+   ],
+   "n": "Ionic: Vollbild-Modal / Flutter: Bottom-Sheet 95 % Höhe; Inhalt (Titel Feldname, Schließen, Suche, „Nicht gelistet“, Haken, Leer-Text) gleich.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-d69db991": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/profile_hero_card.dart:76",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:25",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:36"
+   ],
+   "v": "bestätigt",
+   "n": "Sheet 90 % Höhe, Titel „Meine Stammdaten“, öffnet über Profilkarte."
+  },
+  "settings/settings/settings.page#text-2eb08111": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/church_picker.dart:83",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:569"
+   ],
+   "v": "bestätigt",
+   "n": "Titel der Gemeinde-Auswahl = Feldname."
+  },
+  "settings/settings/settings.page#text-3f284c53": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:377"
+   ],
+   "v": "bestätigt",
+   "n": "Label „Nachname“."
+  },
+  "settings/settings/settings.page#text-7b00fe14": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:427",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:428"
+   ],
+   "v": "bestätigt",
+   "n": "Nicht editierbares Zusatzfeld: Feldname + Anzeigewert."
+  },
+  "settings/settings/settings.page#text-88aeecc7": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:428",
+    "lib/features/profile/presentation/widgets/profile_helpers.dart:49",
+    "lib/features/profile/presentation/widgets/profile_helpers.dart:67"
+   ],
+   "n": "Anzeige wie getExtraFieldDisplayValue, außer: Datum Ionic Rohwert (yyyy-MM-dd) / Flutter dd.MM.yyyy; Ja/Nein ohne gespeicherten Wert Ionic „Nein“ / Flutter Default-Wert. Flutter besser, Randfall.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-ae364b7b": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:401"
+   ],
+   "v": "bestätigt",
+   "n": "Überschrift „Zusatzfelder“ nur bei sichtbaren Feldern."
+  },
+  "settings/settings/settings.page#text-cc31d22d": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:389"
+   ],
+   "v": "bestätigt",
+   "n": "Label „Geburtsdatum“."
+  },
+  "settings/settings/settings.page#text-cded50f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:371"
+   ],
+   "v": "bestätigt",
+   "n": "Label „Vorname“."
+  },
+  "settings/settings/settings.page#text-d57cbb48": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:383"
+   ],
+   "v": "bestätigt",
+   "n": "Label „Handynummer“."
+  },
+  "settings/settings/settings.page#text-f17f7f72": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:434",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:435"
+   ],
+   "v": "bestätigt",
+   "n": "Feldname als Label vor dem Schalter (boolean, editableByPlayers)."
+  },
+  "settings/settings/settings.page#text-f17f7f72-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:463",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:464"
+   ],
+   "v": "bestätigt",
+   "n": "Feldname als Label der Gemeinde-Zeile."
+  },
+  "settings/settings/settings.page#toast-3f7aaa6b": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:219",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:226"
+   ],
+   "v": "bestätigt",
+   "n": "Nicht-Bild: Flutter-Picker erlaubt nur Bilder; Text „Fehler beim ändern des Passbildes, versuche es später erneut“ bei Fehlschlag."
+  },
+  "settings/settings/settings.page#toast-453ee9ac": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:196",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:206"
+   ],
+   "n": "Flutter besser: gleicher Text „Das Bild darf maximal 2MB groß sein.“, aber Prüfung erst nach Verkleinern (maxWidth/Height 1200, Qualität 85); große Fotos werden verkleinert statt abgelehnt.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#toast-629827a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:249"
+   ],
+   "v": "bestätigt",
+   "n": "Erfolgs-Toast „Passbild entfernt“."
+  },
+  "settings/settings/settings.page#toast-a9658903": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:219",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:226"
+   ],
+   "n": "Ionic: Upload-Fehler zeigt rohe Fehlermeldung (z. B. Demo-Hinweis) / Flutter: fester Text „Fehler beim ändern des Passbildes…“. Nutzer erfährt weiterhin, dass es fehlschlug.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#toast-b5f2fce2": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:217"
+   ],
+   "v": "bestätigt",
+   "n": "Erfolgs-Toast „Passbild geändert“."
+  },
+  "settings/settings/settings.page#toast-c11515af": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:251",
+    "lib/core/providers/profile_providers.dart:245",
+    "lib/data/repositories/profile_repository.dart:484"
+   ],
+   "v": "bestätigt",
+   "n": "Fehler-Toast „Fehler beim Entfernen des Passbildes“; auch im Demo-Modus gleich (ensureNotDemo wirft → Toast)."
+  },
+  "settings/voice-leader/voice-leader.page#text-2c67af35": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:296",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:297",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:100",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:127"
+   ],
+   "n": "Datum dd.MM., Typname/typeInfo, Farben (Entschuldigt/Verspätet entschuldigt gelb, Abwesend rot) gleich; Filter Status 2/4/5, nur nach heute. Ionic lädt attType ohne hide_name → Typname auch bei „Name ausblenden“ / Flutter beachtet hide_name. Zusatz: Ionic blendet archivierte Termine für Nicht-Admins aus (getPersonAttendances), Flutter-Abfrage filtert archived nicht – praktisch ohne Wirkung, da nur beendete Termine archivierbar sind.",
+   "v": "bestätigt"
+  },
+  "settings/voice-leader/voice-leader.page#text-b3aad9b6": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:255",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:256"
+   ],
+   "v": "bestätigt",
+   "n": "Badge „Sf“ (primary) bei isLeader; Seite nur Stimmführer/Stf.-Helfer (route_access.dart:96)."
+  },
+  "settings/voice-leader/voice-leader.page#text-e0cad10d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:84",
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:85",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:49"
+   ],
+   "n": "Gruppenname gleich. Fallback ohne Gruppe: Ionic „Meine Stimme“ / Flutter „Stimmgruppe“; Flutter zeigt Fallback auch kurz während des Ladens.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#action-3a3d613f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:795",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:801",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:669",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:674",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:675"
+   ],
+   "v": "bestätigt",
+   "n": "„+“ nur im Bearbeitungsmodus, Popover „Feld hinzufügen“ / „Notiz hinzufügen“; Dialoge und neues Feld (time 20 bzw. noteFld, 0) wie Ionic, danach Speichern."
+  },
+  "shared-plan/shared-plan.page#action-3bb4b647": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:108",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:155",
+    "lib/features/planning/presentation/widgets/shared_plan_edit_list.dart:119",
+    "lib/features/planning/presentation/widgets/shared_plan_edit_list.dart:134",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:829",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:843"
+   ],
+   "n": "Jetzt gleich: Ansicht mit Name, „HH:mm | Ausführender“ (Blockkopf nur Startzeit, groupRange:false), Info, „{min} min“ / Countdown-Plakette; Tippen nur im Bearbeitungsmodus → Feld-Dialog (mit Dauer), Papierkorb + Reorder. Rest: Ansicht zeigt „TOP n · Titel“ bei Tagesordnungsfeldern und blendet den Agenda-Platzhalter aus (Ionic: nur field.name). Randfall (Team-Organisation).",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#action-3d7a5ead": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:765",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:714"
+   ],
+   "v": "bestätigt",
+   "n": "Teilen-Icon nur wenn geladen und gefunden → Export-Sheet „Exportieren“ mit „PDF (A4)“ / „PDF (2x A5)“, Abbrechen; kein Bild/Telegram, Dateiname und Branding wie Ionic."
+  }
+ },
+ "extra": []
+}

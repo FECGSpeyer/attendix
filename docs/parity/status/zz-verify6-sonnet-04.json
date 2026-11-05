@@ -1,0 +1,439 @@
+{
+ "batch": "zz-verify6-sonnet-04",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "attendance/attendance/attendance.page#modal-80e7e739": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:79",
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:86"
+   ],
+   "n": "Bottom-Sheet, Start 0.8 (zieh-/skalierbar 0.4-0.95) wie Ionic [0,0.8,1]. Kein X im Kopf (Ionic hat X), Schließen per Wischen/Tippen daneben: nur Optik. Referenz war ungültig (72/77), korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#modal-8e3ed7fa": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:299"
+   ],
+   "n": "Ionic: Vollseiten-Modal \"Werke auswählen\" aus dem Hinzufügen-Sheet; Flutter: fullscreenDialog-Route (Zeile 299) mit Häkchen zum Übernehmen und Suche. Gleiche Auswahl-Rückgabe.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#modal-a9aad035": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:163",
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:180"
+   ],
+   "n": "Sheet ca. 0.7 Höhe wie Ionic [0,0.7]; Flutter hat zusätzlich ein X oben (Ionic nur Wischen/Backdrop): nur Optik. Hinweis: Flutter deaktiviert \"Werk(e) hinzufügen\" bis Werke und Dirigent gewählt sind (Ionic fügt immer ein) - gehört zum Inhalt der Sheet-Einheit, hier nicht bewertet.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#popover-0b27f205": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1163",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1365"
+   ],
+   "n": "Untermenü \"Ansicht\": Bilder anzeigen, Anmeldefelder anzeigen (nur wenn Typ Anmeldefelder hat), Explizite Statusauswahl (+Hinweis); Zustand wird gespeichert wie Ionic. Referenz 1314 war ungültig, korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#popover-99a14383": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:576",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1123"
+   ],
+   "n": "Optionsmenü (⋮) mit Filter-Badge; Einträge und Reihenfolge wie Ionic: Statusfilter, Sortierung (nur bei sortierbaren Feldern), Ansicht, Person hinzufügen, Checkliste starten/zurücksetzen, Status-/Gemeinde-Übersicht, Legende, Erinnerung, Unentschuldigte anschreiben (Admin/Verantwortliche, gestartet, >0), Archivieren. Rollen: Flutter blendet die mutierenden Einträge für Helfer (wie Ionic !isHelper) UND Beobachter (Viewer) aus; Ionic zeigt sie dem Viewer, dort wären sie wegen RLS (Viewer read-only, enable_rls_all_tables.sql:676) nicht nutzbar. Kein Funktionsverlust.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#popover-e3d9c11a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1254",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1123"
+   ],
+   "n": "Untermenü Statusfilter: Checkbox je Status (Neutral, Anwesend, Entschuldigt, Verspätet, Verspätet entschuldigt [an Verspätet gekoppelt], Abwesend) nach available_statuses, \"Filter zurücksetzen\" nur bei aktivem Filter. Flutter zeigt ohne aufgelösten Typ alle Status (Ionic keine) - nicht erreichbar im Normalfall.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-07fede6f": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:120",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2310",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:821"
+   ],
+   "n": "Anmeldefeld-Zusammenfassung \"Label: Wert · …\" unter dem Namen, nur bei \"Anmeldefelder anzeigen\"; Ja/Nein, Mehrfachauswahl mit \", \". Rand: leerer Text zeigt Flutter \"–\", Ionic leer. Referenz 2218 war ungültig, korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-22c2052b": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:127",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:642"
+   ],
+   "n": "Bei aktiver Sortierung \"<Wert> · <Gruppe>\" (leer = \"–\", Bool Ja/Nein, Liste mit \", \", Gemeinde-Name). Referenz 592 war ungültig, korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-25ce998f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:116",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:761"
+   ],
+   "n": "Karte \"Protokoll\" bei type.enable_protocol, ohne Rollenprüfung wie Ionic; Inhalt/Buttons nach Teamleiter. Referenz 712 war ungültig, korrigiert (761).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-346c2e34": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1536"
+   ],
+   "n": "\"Bitte versuche es erneut.\" im Neu-laden-Banner. Referenz 1475 war ungültig, korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-4e8f7d2c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:178"
+   ],
+   "n": "Zähler-Badge (primary) = Anzahl passender Personen neben \"Passende Personen\".",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-5c344678": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:414"
+   ],
+   "n": "Ionic: \"Keine Werke gefunden\" nur bei Suchbegriff ohne Treffer / Flutter: auch ohne Suchbegriff, wenn keine Werke existieren (leere Liste zeigt dann den Text statt leerer Fläche). Reiner Hinweistext.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-7001ac88": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1533",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:789"
+   ],
+   "n": "Banner \"Anwesenheitsliste konnte nicht geladen werden\" + \"Neu laden\" nur wenn keine Personenzeilen und keine Gruppenbeschränkung (Ionic helperGroupId==null). Flutter-Bedingung zusätzlich bei komplett leerer Personenliste des Mandanten - Randfall. Referenzen korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-79b0837f": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:320"
+   ],
+   "n": "Boolean-Anmeldefeld: Label + Schalter im Bearbeiten-Sheet (ab 2 Feldern; 1 Feld über Alert).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-79b0837f-2": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:345"
+   ],
+   "n": "Mehrfachauswahl-Anmeldefeld: Label + Checkbox je Option, wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-7a75323d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2751",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:675"
+   ],
+   "n": "Hinweistext \"Für Mitglieder unsichtbar. Nur Admins und Verantwortliche sehen diesen Termin.\" im Archiv-Banner (für alle sichtbar wie Ionic). Referenz 2603 war ungültig, korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-7abb2645": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:393"
+   ],
+   "n": "Titel \"Anmeldefelder\" im Bearbeiten-Sheet (editMode).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-820294e1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:184"
+   ],
+   "n": "Zähler-Badge (medium) = Anzahl \"Andere Personen\" (nur nicht passende, wie Ionic).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-828d786f": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:549"
+   ],
+   "n": "Offline-Chip (Warnfarbe, Wolken-Icon) zeigt \"Offline\", wenn nichts aussteht.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-860f54c8": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:168"
+   ],
+   "n": "\"Alle Personen sind bereits in dieser Anwesenheit enthalten.\" wenn beide Listen leer.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-8a34dabe": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:159"
+   ],
+   "n": "Titel \"Person hinzufügen\" im Sheet.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-904249c9": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:175"
+   ],
+   "n": "Titel \"Werk(e) hinzufügen\" im Sheet (und Aktionszeile Zeile 278).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-a90978d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:100",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:757"
+   ],
+   "n": "Block \"Besetzung\" bei Dienst-Typ (duty_mode) mit Füllstand-Pill. Referenz 705 war ungültig, korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-ba04e59c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:178"
+   ],
+   "n": "Überschrift \"Passende Personen\".",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-bbc3b99a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:380"
+   ],
+   "n": "Titel \"Werke auswählen\" im Auswahl-Modal.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-bd06fd9a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2749",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:675"
+   ],
+   "n": "Archiv-Banner \"Archiviert\" für alle Rollen bei archivierter Anwesenheit. Referenzen 2603/624 waren ungültig, korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-c838c3fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/songs_history_accordion.dart:31",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:737"
+   ],
+   "n": "Akkordeon \"Werke (n)\" bei manage_songs und Mandant != general, ohne Rollenbedingung wie Ionic. Referenz 683 war ungültig, korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-dd2e2f27": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:182",
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:186"
+   ],
+   "n": "Flutter besser: \"Andere Personen\" ist aufgeklappt, wenn es keine passenden Personen gibt / Ionic: immer eingeklappt (Akkordeon-Startwert nur \"matching\"). Gleiche Daten und Auswahl.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-f0a03b1c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:549"
+   ],
+   "n": "Offline-Chip \"{count} ausstehend\" aus der Offline-Queue (offlinePendingCountProvider), alle Rollen.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#toast-010be423": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1620"
+   ],
+   "n": "Warnung \"Bitte einen Text eingeben\", Dialog bleibt offen (kein Pop). Referenz 1559 war ungültig, korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#toast-37612561": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1696"
+   ],
+   "n": "Warnung \"Keine Standard-Checkliste…\" in _restoreChecklist wenn Typ keine Checkliste hat. Referenz 1630 war ungültig, korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#toast-66ebc374": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:927"
+   ],
+   "n": "Warnung \"Status wurde nicht geändert\" wenn changed_by fehlt. Referenz 876 war ungültig, korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#toast-68ebef24": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2627"
+   ],
+   "n": "Erfolgs-Toast \"Person entfernt\" nach Bestätigungsdialog und Löschen. Referenz 2503 war ungültig (Endzeit-Toast), korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#toast-87a629e9": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1541",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:395",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:452"
+   ],
+   "n": "Ionic: Toast (danger) \"Neu laden fehlgeschlagen — bitte erneut versuchen.\" und Seite bleibt. Flutter: \"Neu laden\" invalidiert nur die Provider. Schlägt das Laden des Termins fehl, kommt der andere Toast \"…bitte erneut öffnen\" und die Seite wird verlassen (Z. 395); schlägt nur die Personenliste fehl, kommt gar kein Toast, nur das Banner bleibt. Fehlermeldung fehlt/ist anders, daher mind. mittel statt niedrig.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "attendance/attendance/attendance.page#toast-961d3c4c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1496",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1490"
+   ],
+   "n": "Realtime: eigene gezeigte Person-Zeile von anderem gelöscht → Toast \"von anderem gelöscht\" + zurück. Flutter unterdrückt zusätzlich das Echo der eigenen Löschung (besser). Referenz 1436 war ungültig, korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#toast-af8f3320": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1512",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1507"
+   ],
+   "n": "Realtime: Termin gelöscht → Toast \"von anderem gelöscht\" + zurück. Referenz 1451 war ungültig, korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#toast-d1c36dcb": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2630"
+   ],
+   "n": "Fehler-Toast \"Person konnte nicht entfernt werden\" im catch. Referenz 2506 war ungültig (Endzeit-Toast), korrigiert.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#action-32eb1cf7": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:395",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:241",
+    "lib/data/repositories/auto_message_repository.dart:206"
+   ],
+   "n": "Button \"Diesmal aussetzen\" nur für Admin/Verantwortliche, gestarteter Termin, Regel ohne Run und Sendezeit in der Zukunft; Insert in auto_message_runs (rule_id, tenantId, attendance_id, status suspended, created_by, created_by_name) wie Ionic. Nur created_by_name: Ionic db.teamPerson() (nur nach Einstellungen/Teamorga geladen), Flutter ownProfileProvider (nur geladen nach Profil/Einstellungen/Seitenleiste), sonst jeweils E-Mail; Anzeige \"Ausgesetzt von …\" Name oder E-Mail, in beiden Apps zustandsabhängig. Kein Funktionsverlust, daher niedrig. unsuspend filtert in Flutter zusätzlich auf tenantId (besser).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-40b5ed17": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:384"
+   ],
+   "n": "\"Bis dahin kannst du die Anwesenheit noch korrigieren.\" wenn Sendezeit in der Zukunft.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-552f8f68": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:385"
+   ],
+   "n": "\"Die Nachricht geht nur raus, wenn die Anwesenheit erfasst ist.\" wenn Sendezeit vorbei und kein Run.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-604d5e9c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:381"
+   ],
+   "n": "\"„{rule}“: niemand passte\" bei Run-Status none (Fallback-Zweig).",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-9a24a550": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:388"
+   ],
+   "n": "\"Ausgesetzt von {name}\" mit Fallback \"Unbekannt\". Rand: leerer created_by_name zeigt Ionic \"Unbekannt\", Flutter (nur bei null) \"Ausgesetzt von \" - praktisch nie.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#toast-14f8cca5": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:260"
+   ],
+   "n": "Fehler-Toast \"Speichern fehlgeschlagen\" bei unsuspend.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#toast-68e701d5": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:251"
+   ],
+   "n": "Fehler-Toast \"Speichern fehlgeschlagen\" bei suspend.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#toast-6d42c5cf": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:313"
+   ],
+   "n": "Erfolgs-Toast \"Bestätigt\"/\"Abgelehnt\" nach Entscheidung (decideResponse).",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#toast-cd2bb0ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:316"
+   ],
+   "n": "Fehler-Toast \"Speichern fehlgeschlagen\" bei Entscheidung.",
+   "v": "bestätigt"
+  },
+  "dashboard/dashboard.page#action-ebca8aeb": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:56",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:266"
+   ],
+   "n": "Zurück-Pfeil ohne Text; Seite wird per push aus der Administration geöffnet (Ionic defaultHref /tabs/settings, Einstieg dort ebenfalls über Administration). Nur für Super-Developer erreichbar (Eintrag + Route-Redirect).",
+   "v": "bestätigt"
+  },
+  "dashboard/dashboard.page#media-236b1c5b": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:182",
+    "lib/core/router/app_router.dart:1312",
+    "lib/core/providers/dashboard_providers.dart:31"
+   ],
+   "n": "Balkendiagramm \"Top Mandanten\": senkrecht, Top 10, Label \"#<tenant_id>\", gleiche Palette, ohne Legende; Höhe 280 statt 360 px (Optik). Zugriff: Super-Developer (E-Mail developer@attendix.de) per Route-Redirect (/settings statt Ionic /tabs/player).",
+   "v": "bestätigt"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-167c9b56": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:433",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:137"
+   ],
+   "n": "\"Vorschlag berechnen\" im Regel-Schritt: Warnung \"mind. 1 Typ\" bei leerer Auswahl, Ladeanzeige \"Verteile Dienste…\", Termine/Abwesenheiten laden, Vorschau. Referenz 440 war ungültig, korrigiert. Hinweis: Flutter lädt auch die anderen Dienst-Typen für die Sperre \"nicht zweimal am selben Tag\" (bewusst, nicht Teil dieses Items).",
+   "v": "bestätigt"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-17a84369": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:494",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:289"
+   ],
+   "n": "Chip \"offen\" (danger, outline) je freiem Platz öffnet die Personenwahl (Radio-Alert, Abbrechen/Übernehmen, sortiert nach Anzahl, Toast \"niemand sonst\" ohne Kandidaten). Referenz 499 war leicht verschoben, korrigiert.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

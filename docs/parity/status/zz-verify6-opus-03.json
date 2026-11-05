@@ -1,0 +1,393 @@
+{
+ "batch": "zz-verify6-opus-03",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "x-ca6698be06": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:30",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:157"
+   ],
+   "n": "Weiterhin so: Ionic-Inline-Modal bindet an Seiten-Properties (notes, dates, typeInfo, place, historyEntries), zurückgesetzt nur nach erfolgreichem Anlegen / Flutter baut das Sheet bei jedem Öffnen neu auf (heute, erster sichtbarer Typ, leere Felder). Kein Funktionsverlust, nur Komfort. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "x-faa1356e28": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:157"
+   ],
+   "n": "Flutter besser: Ionic applyAttendances (att-list.page.ts:311) setzt type_id bei jedem Neuladen (Realtime) auf den ersten sichtbaren Typ, ohne onTypeChange (Dauer passt dann nicht) / Flutter wählt den ersten Typ nur, solange _selectedType null ist. Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-0c508800": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:271",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:166",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:154"
+   ],
+   "n": "Tap auf TOP öffnet /settings/agenda-items/:id nur für Admin/Verantwortliche (openPlanFieldTopic, isTeamLeader) wie Ionic openPlanField. Ionic: list-circle-Icon vor TOP-Feldern, Minuten als ion-badge / Flutter: kein Icon, Minuten als graue Notiz; Programmblock-Kopf zeigt in Flutter „HH:mm – HH:mm“ statt nur Startzeit, Notizfelder kursiv ohne Zeit, info-Zeile zusätzlich (Plan-Viewer-Darstellung). Randfall: Flutter macht TOPs nur bei enable_protocol des Typs antippbar, Ionic auch ohne. Alles Darstellung.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-292b5b5a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:230",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:275"
+   ],
+   "n": "Nur enable_protocol (protocolTypeByIdProvider) + Admin/Verantwortliche (isTeamLeaderProvider = Ionic isTeamLeaderRole) + erster Plan (_planIndex == 0); Helfer/Stimmführer-Helfer nicht. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-292b5b5a-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:251",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:230"
+   ],
+   "n": "Ohne Plan: gleiche Bedingung (enable_protocol + Admin/Verantwortliche; _planIndex ist ohne Pläne 0), vor „Ablaufplan erstellen“. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-2f4b32ed": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:143",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1638",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1662"
+   ],
+   "n": "Dialog gleich (Header „To-Do hinzufügen“, Text + Stunden, Abbrechen/Hinzufügen, Warnung „enterText“ ohne Text, dueDate = Terminbeginn bzw. 19:00 minus Stunden), gleiche Rollen (alle mit sichtbarer Checkliste). Flutter zeigt danach zusätzlich Toast „To-Do hinzugefügt“ (Ionic keiner) – Ergebnis ist ohnehin sichtbar.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-2ffbbc70": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:252",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:215",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:767"
+   ],
+   "n": "Für alle Nicht-Beobachter (PlanAccordion nur bei !isViewer), öffnet /planning?attendanceId=… Flutter wertet einen Plan ohne Felder als „kein Plan“; Ionic speichert keinen leeren Plan, daher praktisch gleich. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-33a93547": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:258",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:212",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:266"
+   ],
+   "n": "Chips nur bei > 1 Plan (Ionic planLabels leer bei einem Plan), Vorauswahl todayPlanIndex, „Heute“-Markierung am heutigen Plan; für alle Nicht-Beobachter. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-3afb4fa9": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:363",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2308"
+   ],
+   "n": "Rotes Entfernen-Icon nur bei canAccessFiles und gesetztem Ordner; entfernt ohne Rückfrage, files_folder = null über updateAttendance (id + tenantId) wie Ionic. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-525fcc66": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:276",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:777",
+    "lib/core/router/route_access.dart:110"
+   ],
+   "n": "Für alle Nicht-Beobachter (auch Helfer/Stimmführer-Helfer): /planning?attendanceId=…&plan=<index> ist für canAddAttendance freigegeben; Planindex wird wie Ionic initialPlanIndex übergeben. Seite statt Modal. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-9cb015ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1183",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1198"
+   ],
+   "n": "„Archivieren“/„Wiederherstellen“ nur Admin/Verantwortliche und beendete oder archivierte Termine (canArchiveAttendance = Ionic); schreibt archived/archived_at/archived_by (id + tenantId, Repo prüft Rolle zusätzlich). Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-9dea2cd5": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1174",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:955",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2712"
+   ],
+   "n": "Flutter besser: Ionic zeigt den Eintrag allen Rollen außer HELPER (isHelper = role === HELPER), also auch Beobachtern; Flutter nur Admin/Verantwortliche/Stimmführer-Helfer (canMutateAttendanceDetail = canEdit && != helper, Menü + _handleMenuAction). Beobachter sind lesende Rolle und erreichen die Ionic-Detailseite nur per Direktlink (Liste openAttendance, Push und Dashboard öffnen sie für VIEWER nicht), daher kein echter Funktionsverlust – Leon entscheidet.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-ab758e8d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1165",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1638",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2712"
+   ],
+   "n": "Flutter besser: Ionic zeigt den Eintrag allen Rollen außer HELPER (isHelper = role === HELPER), also auch Beobachtern; Flutter nur Admin/Verantwortliche/Stimmführer-Helfer (canMutateAttendanceDetail = canEdit && != helper, Menü + _handleMenuAction). Beobachter sind lesende Rolle und erreichen die Ionic-Detailseite nur per Direktlink (Liste openAttendance, Push und Dashboard öffnen sie für VIEWER nicht), daher kein echter Funktionsverlust – Leon entscheidet. Bedingung „Checkliste leer“ gleich; öffnet denselben To-Do-Dialog (Flutter mit Zusatz-Toast „To-Do hinzugefügt“, siehe action-2f4b32ed).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-d5ac7ad9": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1164",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1403",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2712"
+   ],
+   "n": "Flutter besser: Ionic zeigt den Eintrag allen Rollen außer HELPER (isHelper = role === HELPER), also auch Beobachtern; Flutter nur Admin/Verantwortliche/Stimmführer-Helfer (canMutateAttendanceDetail = canEdit && != helper, Menü + _handleMenuAction). Beobachter sind lesende Rolle und erreichen die Ionic-Detailseite nur per Direktlink (Liste openAttendance, Push und Dashboard öffnen sie für VIEWER nicht), daher kein echter Funktionsverlust – Leon entscheidet.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-eb230380": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1167",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1693",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2712"
+   ],
+   "n": "Flutter besser: Ionic zeigt den Eintrag allen Rollen außer HELPER (isHelper = role === HELPER), also auch Beobachtern; Flutter nur Admin/Verantwortliche/Stimmführer-Helfer (canMutateAttendanceDetail = canEdit && != helper, Menü + _handleMenuAction). Beobachter sind lesende Rolle und erreichen die Ionic-Detailseite nur per Direktlink (Liste openAttendance, Push und Dashboard öffnen sie für VIEWER nicht), daher kein echter Funktionsverlust – Leon entscheidet. Bedingung (Typ hat Checkliste, Termin-Checkliste leer) gleich; Wiederherstellen ohne Rückfrage (confirm: false) mit Toast „checklistRestored“ wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-eea3b09d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:350",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:720",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:25"
+   ],
+   "n": "Chip mit Ordnername nur bei canAccessFiles und gesetztem Ordner; öffnet /settings/files?path=… (Ionic /tabs/settings/files). Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-eeca698c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2295",
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:173"
+   ],
+   "n": "Ordnerauswahl mit Tenant-ID und Startpfad (bei Ändern der aktuelle Ordner); Auswahl schreibt files_folder = Pfad (id + tenantId), leerer Pfad wird wie Ionic onSelect ignoriert. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-f16184a4": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:281"
+   ],
+   "n": "„Teilen“ mit Teilen-Icon für alle Nicht-Beobachter; Sheet-Inhalt siehe actionsheet-19467990. Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#actionsheet-1aaa2155": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:207",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:826"
+   ],
+   "n": "Header Vor-/Nachname, Reihenfolge und Bedingungen gleich (Neutral bei Status ≠ neutral, Verspätet entschuldigt nur Klickmodus + Status 3, Anmeldefelder, „Wer hat geändert“/„Entfernen“ nur ohne HELPER, Erinnerung für alle, Abbrechen). Flutter besser: „Erinnerung“ für eine Person ohne Account zeigt Warnung „Die Person hat keinen Account“; Ionic sendet dann (playerAppId undefined) an alle Personen des Termins.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#alert-742e0a0f": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1218",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1237"
+   ],
+   "n": "Nur Admin/Verantwortliche und beendete/archivierte Termine; „Termin archivieren?“, Hinweistext, Abbrechen/Archivieren; Wiederherstellen ohne Rückfrage; Erfolg-/Fehler-Toast wie Ionic. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#db-4914fe1c": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:1078",
+    "lib/data/repositories/attendance_repository.dart:1084",
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:115"
+   ],
+   "n": "Bucket attendances, Pfad <id>/attachment/<bereinigter Name> (gleiche Regex), upsert, Content-Type aus Endung; danach attachment_url/attachment_name (Originalname) mit id + tenantId; Toasts „hochgeladen“/„Upload fehlgeschlagen“. Hochladen nur ohne Anhang angeboten (wie Ionic). Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#db-4d232055": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:1081",
+    "lib/data/repositories/attendance_repository.dart:1084"
+   ],
+   "n": "getPublicUrl(path), danach Update attachment_url/attachment_name mit id- und tenantId-Filter.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#db-633099eb": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:1024",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1431"
+   ],
+   "n": "send-ad-hoc-reminder mit attendanceId, tenantId (aktueller Mandant, vorher Mandanten-Prüfung des Termins), title/message nur wenn gesetzt, playerAppId, playerAppIds = neutrale Personen mit appId (Gruppen-Scope wie Ionic players) nur bei „nur ohne Rückmeldung“ ohne Einzelperson. Menü für Admin/Verantw./Stimmführer-Helfer (Beobachter siehe action-9dea2cd5), pro Person für alle.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#db-f3ad3394": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:1131",
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:135"
+   ],
+   "n": "Flutter besser: Ionic löscht <id>/attachment/<attachment_name> mit dem Originalnamen, hochgeladen wurde aber unter dem bereinigten Namen → bei Leer-/Sonderzeichen bleibt die Datei im Bucket / Flutter löscht den bereinigten Pfad (attachmentPath). DB-Update attachment_url/attachment_name = null (id + tenantId) gleich, ohne Rückfrage wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#loading-b675baf2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1462"
+   ],
+   "n": "Ionic: blockierendes Loading „Wird versendet...“ / Flutter: kein Overlay und kein Spinner, nur Doppelversand-Sperre (_isSendingReminder) und danach Erfolg-/Fehler-Toast.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#modal-9d951002": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:239",
+    "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:44",
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:18"
+   ],
+   "n": "Nur enable_protocol && Admin/Verantwortliche, bei vorhandenem Plan nur für Plan 1 – wie Ionic. Sheet mit 90 % Höhe statt Vollbild-Modal; Termin wird frisch geladen (schlägt das fehl, öffnet sich nichts – Ionic nutzt den Speicherstand), Plan danach neu geladen. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#native-248ec156": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/services/offline_queue_service.dart:540",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:404"
+   ],
+   "n": "Flutter besser: Ionic teardown ruft Network.removeAllListeners() und entfernt damit auch den globalen Reconnect-Listener der OfflineQueue (offline-queue.service.ts:44) → offline erfasste Status werden danach bei Reconnect nicht mehr automatisch gesendet. Flutter: Seiten-Listener (ref.listen connectivity) endet mit dem Widget, OfflineQueueNotifier flusht weiter global bei jedem Reconnect.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#nav-560ce93a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:399",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1501",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1517"
+   ],
+   "n": "Ladefehler, Termin oder Personenzeile von anderem gelöscht: pop, ohne Back-Stack go('/attendance') wie Ionic navigateBack. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#nav-a37ce0ce": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:720",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:25"
+   ],
+   "n": "push /settings/files?path=<Ordner> (Ionic /tabs/settings/files mit path; t ist nur Cache-Buster).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#nav-be608956": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2236"
+   ],
+   "n": "„Zum Werk“ im Werk-Sheet: push /settings/songs/:id. Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-1956196d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:248",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:767"
+   ],
+   "n": "„Ablaufplan & Tagesordnung“ bei enable_protocol des Typs, sonst „Ablaufplan“; Admin/Verantwortliche/Helfer/Stimmführer-Helfer sehen es, Beobachter nicht (beide !isViewer). Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-1ffb6841": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:107"
+   ],
+   "n": "Ionic: „19:00 Uhr“ als ion-badge / Flutter: gleicher Text als graue Notiz.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-1ffb6841-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:219"
+   ],
+   "n": "Ionic: Endzeit „HH:mm Uhr“ als ion-badge / Flutter: gleicher Text als graue Notiz (end lokal ohne Z gespeichert, daher gleiche Uhrzeit).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-39e7db32": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:103",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:93",
+    "lib/core/utils/plan_utils.dart:482",
+    "lib/core/utils/plan_utils.dart:518"
+   ],
+   "n": "Label „Start“ und Rollen gleich. Live-Modus in den 5 Min vor Beginn: Ionic markiert schon das erste Feld als aktiv (Countdown-Badge bis Feldende), unter „Start“ nichts / Flutter: kein aktives Feld vor Beginn (activeIndex -1), dafür Flutter-eigene Zeile „beginnt in X Min.“ unter „Start“. f korrigiert (plan_utils.dart:459 ist nur ein Kommentar).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-4e772282": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:54",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:659",
+    "lib/core/providers/role_permission_providers.dart:105"
+   ],
+   "n": "„erledigt/gesamt“, grün wenn alles erledigt, sonst primary. Sichtbarkeit gleich: alle außer HELPER immer, HELPER nur mit checklist_view, nur mit Einträgen. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-880e7fa9": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:331",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:663",
+    "lib/core/providers/role_permission_providers.dart:116"
+   ],
+   "n": "canAccessFiles wie Ionic (files_shared: alle außer Bewerber/none, sonst Admin/Verantwortlich/Helfer/Stimmführer-Helfer). Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-8f5d1834": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:49",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:659",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:743"
+   ],
+   "n": "Sichtbar für alle außer HELPER bzw. HELPER mit checklist_view und nur mit Einträgen. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-c40504a2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:651",
+    "lib/core/providers/role_permission_providers.dart:97"
+   ],
+   "n": "Nur Rolle HELPER ohne player_notes_view sieht „Notiz hinzugefügt“ statt der Notiz (beide Ansichtsmodi); Stimmführer-Helfer und Leitung sehen die Notiz wie Ionic. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-e7f02a78-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:218"
+   ],
+   "n": "„Ende“ mit Uhrzeit; Badge vs. Notiz siehe text-1ffb6841-2. Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-ed6ba539": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:114"
+   ],
+   "n": "Text, bei erledigt durchgestrichen (Flutter zusätzlich grau); gleiche Rollenbedingung wie die Checkliste. Zeile aktualisiert.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

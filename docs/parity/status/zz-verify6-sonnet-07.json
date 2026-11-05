@@ -1,0 +1,411 @@
+{
+ "batch": "zz-verify6-sonnet-07",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "home-dashboard/components/next-event-card/next-event-card.component#text-077f6830": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:109"
+   ],
+   "v": "bestätigt",
+   "n": "Referenzzeile aktualisiert."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-120492fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:260"
+   ],
+   "v": "bestätigt",
+   "n": "Referenzzeile aktualisiert."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-224308fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:213",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:225"
+   ],
+   "v": "bestätigt",
+   "n": "Zeile korrigiert (213); Prozent + Fortschrittsbalken wie Ionic."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-260e2887": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:264"
+   ],
+   "v": "bestätigt",
+   "n": "Referenzzeile aktualisiert."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-273be980": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:179"
+   ],
+   "v": "bestätigt",
+   "n": "Zeile korrigiert; Text „Abgemeldet“ in orange Kachel, Tipp öffnet Abmeldungen-Sheet nur bei >0."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-4bf876ff": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:179",
+    "lib/core/utils/dashboard_logic.dart:149"
+   ],
+   "v": "bestätigt",
+   "n": "Zeilen korrigiert; „{n} Schicht“ nur bei nextShiftWorkers>0 (nur entschuldigt/verspätet entschuldigt mit Schichtnotiz), wie Ionic."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-50f2f871": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:195"
+   ],
+   "v": "bestätigt",
+   "n": "Referenzzeile aktualisiert."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-559e61e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:209"
+   ],
+   "v": "bestätigt",
+   "n": "Referenzzeile aktualisiert."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-609ece15": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:275"
+   ],
+   "v": "bestätigt",
+   "n": "Chip: „Entsch. verspätet“ (warning) bzw. „Entschuldigt“ (primary), wie Ionic statusLabel. Referenzzeile aktualisiert."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-8ba43bc8": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:96"
+   ],
+   "v": "bestätigt",
+   "n": "Referenzzeile aktualisiert."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-8cbc8076": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:190"
+   ],
+   "v": "bestätigt",
+   "n": "Referenzzeile aktualisiert."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-932c96fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:252"
+   ],
+   "v": "bestätigt",
+   "n": "Sheet-Titel „Abmeldungen“, 75 % Starthöhe. Referenzzeile aktualisiert."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-9ddee8d1": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:186"
+   ],
+   "v": "bestätigt",
+   "n": "Referenzzeile aktualisiert."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-a4c222ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:276"
+   ],
+   "v": "bestätigt",
+   "n": "„ · Schicht“ bei Schichtnotiz, gleich. Referenzzeile aktualisiert."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-a6df82bc": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:265"
+   ],
+   "v": "bestätigt",
+   "n": "Referenzzeile aktualisiert."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-a7ec96b8": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:186"
+   ],
+   "v": "bestätigt",
+   "n": "Referenzzeile aktualisiert."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-af42f222": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:195"
+   ],
+   "v": "bestätigt",
+   "n": "„Offen“ via protocolOpen, gleicher Text. Referenzzeile aktualisiert."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-bd37369c": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:77"
+   ],
+   "v": "bestätigt",
+   "n": "Zeile korrigiert; Leerzustand „Keine Termine gefunden.“ nur ohne letzten und nächsten Termin."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-c6804cc8": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:216"
+   ],
+   "v": "bestätigt",
+   "n": "Referenzzeile aktualisiert."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-f908c92b": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:84"
+   ],
+   "v": "bestätigt",
+   "n": "Referenzzeile aktualisiert."
+  },
+  "home-dashboard/home-dashboard.page#action-1e2f7a30": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:95"
+   ],
+   "v": "bestätigt",
+   "n": "Nur iOS-Look, FAB mit Zahnrad → /settings/dashboard (Admin/Verantwortlich per Route-Guard wie Ionic-Tab)."
+  },
+  "home-dashboard/home-dashboard.page#action-246718b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:124"
+   ],
+   "v": "bestätigt"
+  },
+  "home-dashboard/home-dashboard.page#action-3ea00e0d": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:68"
+   ],
+   "v": "bestätigt"
+  },
+  "home-dashboard/home-dashboard.page#action-85616b63": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:83"
+   ],
+   "v": "bestätigt",
+   "n": "Nur nicht-iOS, Zahnrad → /settings/dashboard."
+  },
+  "home-dashboard/home-dashboard.page#action-89d4cfdd": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:105",
+    "lib/core/providers/dashboard_providers.dart:298"
+   ],
+   "v": "bestätigt",
+   "n": "Pull-to-Refresh lädt Karten neu (Provider invalidiert), wie refreshAllCards."
+  },
+  "home-dashboard/home-dashboard.page#embed-07ebeab6": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:36"
+   ],
+   "v": "bestätigt"
+  },
+  "home-dashboard/home-dashboard.page#embed-0a79b8bc": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:31"
+   ],
+   "v": "bestätigt"
+  },
+  "home-dashboard/home-dashboard.page#embed-0bb4d324": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:89"
+   ],
+   "v": "bestätigt",
+   "n": "Glocke in beiden Zweigen vorhanden."
+  },
+  "home-dashboard/home-dashboard.page#embed-0bb4d324-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:89"
+   ],
+   "v": "bestätigt",
+   "n": "Glocke auch auf iOS (ohne Zahnrad)."
+  },
+  "home-dashboard/home-dashboard.page#embed-4c48c398": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:32"
+   ],
+   "v": "bestätigt"
+  },
+  "home-dashboard/home-dashboard.page#embed-7bf0df2f": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:37",
+    "lib/core/providers/dashboard_providers.dart:218"
+   ],
+   "v": "bestätigt",
+   "n": "Nur mit Teamorganisation (configurableDashboardCards), wie visibleCards."
+  },
+  "home-dashboard/home-dashboard.page#embed-95fa8dc1": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:35"
+   ],
+   "v": "bestätigt"
+  },
+  "home-dashboard/home-dashboard.page#embed-a500e2c5": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:30"
+   ],
+   "v": "bestätigt"
+  },
+  "home-dashboard/home-dashboard.page#embed-ba02fb2d": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:34"
+   ],
+   "v": "bestätigt"
+  },
+  "home-dashboard/home-dashboard.page#embed-dae20206": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:33"
+   ],
+   "v": "bestätigt"
+  },
+  "home-dashboard/home-dashboard.page#text-fad17522": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:119"
+   ],
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#action-4c33cd05": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:96"
+   ],
+   "v": "bestätigt",
+   "n": "Zurück ohne Text → /settings. Referenzzeile aktualisiert."
+  },
+  "instruments/instrument-list/instrument-list.page#action-7fdb0a4f": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:233",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:213"
+   ],
+   "v": "bestätigt",
+   "n": "Zeile/Reorder je Kategorie mit Griff, nur innerhalb der Kategorie; Zeilentitel/Hauptgruppe/Stimmung/Clefs wie Ionic."
+  },
+  "instruments/instrument-list/instrument-list.page#action-d2efa7e3": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:294",
+    "lib/data/repositories/group_repository.dart:218"
+   ],
+   "v": "bestätigt",
+   "n": "Personenzahl nur left=null und pending=false (wie db.getPlayers), Badge rot bei 0; Tippen öffnet Bearbeiten nur für Admin/Verantwortlich, im Reorder-Modus nicht. Referenzzeile aktualisiert."
+  },
+  "instruments/instrument-list/instrument-list.page#alert-415386f9": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:354"
+   ],
+   "n": "Titel „Bestätigen“, Text „Kategorie wirklich löschen?…“, „Abbrechen“/„Ja“, löscht. Nur Look: Ionic Abbrechen role destructive, Flutter „Ja“ rot. Flutter besser: zeigt Fehlertoast bei Löschfehler.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#alert-bd4338b7": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:305"
+   ],
+   "n": "Gleiche Eingabe/Buttons/Speichern; Flutter trimmt Namen, schwebendes Label statt Placeholder; Leerer Name → Toast. Nur Look.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#alert-eeb83d29": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:260"
+   ],
+   "n": "Gleiche Eingabe/Buttons/Anlegen; Flutter trimmt Namen, Label statt Placeholder; zusätzlich Fehlertoast. Nur Look.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#loading-7d7ff756": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:55"
+   ],
+   "n": "Ionic: blockierendes Overlay „Reihenfolge wird gespeichert...“ / Flutter: kein Overlay; Speichern + Erfolg/Fehlertoast funktionieren (groupNotifier.saveGroupOrder). Reine Darstellung.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#loading-c2ec3077": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:135",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:55"
+   ],
+   "n": "Ionic: blockierendes Overlay / Flutter: nur LinearProgressIndicator im Sheet-Kopf; Speichern der Kategorien- und Instrumentenreihenfolge + Toasts vorhanden.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#text-1d015e65": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:254"
+   ],
+   "n": "Text „Kategorie (n)“ gleich. Ionic: sticky Divider / Flutter: scrollt mit. Nur Look.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#text-5f0475fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:206"
+   ],
+   "v": "bestätigt",
+   "n": "Referenzzeile aktualisiert."
+  },
+  "instruments/instrument-list/instrument-list.page#toast-0702bdec": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:62"
+   ],
+   "v": "bestätigt",
+   "n": "Roter Toast „Fehler beim Speichern der Reihenfolge“ bei Fehler."
+  },
+  "instruments/instrument-list/instrument-list.page#toast-30c6ec59": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:331"
+   ],
+   "v": "bestätigt",
+   "n": "Leerer Name → roter Toast „Bitte gib einem Namen an“, Dialog bleibt offen. Flutter trimmt. Referenzzeile aktualisiert."
+  },
+  "instruments/instrument-list/instrument-list.page#toast-4c623e8a": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:285"
+   ],
+   "v": "bestätigt",
+   "n": "Leerer Name → roter Toast „Bitte gib einem Namen an“, Dialog bleibt offen. Flutter trimmt (nur Leerzeichen → Toast). Referenzzeile aktualisiert."
+  },
+  "instruments/instrument-list/instrument-list.page#toast-c1848ce1": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:60"
+   ],
+   "v": "bestätigt",
+   "n": "Erfolgstoast „Reihenfolge gespeichert“ nach Speichern der Kategoriereihenfolge (inkl. Gruppen-Sortierung)."
+  }
+ },
+ "extra": []
+}

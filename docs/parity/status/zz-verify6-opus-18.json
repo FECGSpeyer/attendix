@@ -1,0 +1,447 @@
+{
+ "batch": "zz-verify6-opus-18",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "services/attendance/attendance.service#db-0be3b674": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:554",
+    "lib/data/repositories/attendance_repository.dart:566",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2613"
+   ],
+   "n": "Delete person_attendances per id wie Ionic deletePersonAttendanceById; Flutter prüft vorher den Mandanten über den Termin (validatePersonAttendanceTenant). Aufrufer: Bestätigung 'Person entfernen' / 'Entfernen', danach Erfolgs- bzw. Fehler-Toast wie Ionic removeFromAttendance.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-10ae6c21": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2330",
+    "lib/data/repositories/player_repository.dart:2333",
+    "lib/data/repositories/player_repository.dart:1986"
+   ],
+   "n": "Gleiche Löschung der Konfliktzeilen (in id); Flutter in 200er-Blöcken und zusätzlich .eq('person_id', fromId). Aufrufer mergePendingPlayerIntoExisting prüft vorher, dass beide Personen zum Mandanten gehören.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-171db1c8": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2313",
+    "lib/data/repositories/player_repository.dart:2347"
+   ],
+   "n": "Gleicher Select (id, attendance_id; person_id = fromId); Flutter lädt alle Seiten (order id, range) statt max. 1000 Zeilen, leere Liste → Abbruch wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-171db1c8-2": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2316",
+    "lib/data/repositories/player_repository.dart:2347"
+   ],
+   "n": "Gleicher Select (person_id = toId); Flutter liest zusätzlich id und alle Seiten – gleiche Menge der attendance_ids.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-47905dba": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2337",
+    "lib/data/repositories/player_repository.dart:2340"
+   ],
+   "n": "Gleiches Update {person_id: toId} (in id); Flutter in Blöcken und zusätzlich .eq('person_id', fromId).",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-5d15bc79": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:251",
+    "lib/data/repositories/attendance_repository.dart:273"
+   ],
+   "n": "Update attendance per id + tenantId; entfernt id/created_at/tenantId/persons, liefert die Zeile zurück. Archiv-Spalten nur für Admin/Verantwortlich – in Ionic ebenso nur über toggleArchived (canArchiveAttendance) erreichbar. Fehler werden wie in Ionic weitergeworfen.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-8bef7f4d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:653",
+    "lib/data/repositories/attendance_repository.dart:722",
+    "lib/core/utils/duty_utils.dart:51",
+    "lib/core/services/offline_queue_service.dart:445"
+   ],
+   "n": "Gleiche Felder + changed_by/changed_at (Autor der Offline-Schreibung); Dienststatus (syncDutyWithStatus: confirmed/requested, duty_reminder_sent, duty_assigned_by/_at) im selben Update statt zweitem Update – gleiches Ergebnis; zusätzlich Mandantenprüfung über den Termin.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-9d206b1f": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:295",
+    "lib/data/repositories/attendance_repository.dart:300",
+    "lib/core/providers/attendance_providers.dart:414",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:109"
+   ],
+   "n": "Delete attendance per id, Flutter zusätzlich .eq('tenantId'). Ionic ignoriert Fehler, Flutter-Notifier fängt sie ohne Hinweis ab – gleiches Verhalten; Alert 'Abbrechen'/'Fortfahren', danach Liste neu geladen.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-a93f1d01": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:576",
+    "lib/data/repositories/attendance_repository.dart:636",
+    "lib/features/attendance/presentation/attendance_create_writes.dart:409",
+    "lib/features/attendance/presentation/attendance_add_persons.dart:88"
+   ],
+   "n": "Gleiche Spalten (attendance_id, person_id, status, notes); Flutter verwirft vorher Termine/Personen anderer Mandanten. Duplikat-Fehler 23505: Ionic still, Flutter Fehler – als extra x-644f0a317b erfasst.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-d97eeb61": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:149",
+    "lib/data/repositories/attendance_repository.dart:152"
+   ],
+   "n": "Gleicher Select (persons mit person:firstName,lastName,img,instrument(id,name),joined,appId,additional_fields; registration_answers über *), Flutter zusätzlich .eq('tenantId') und maybeSingle; order date bei single irrelevant.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-f66ab5d4": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:948",
+    "lib/data/repositories/player_repository.dart:2270"
+   ],
+   "n": "Gleiche Löschung (person_id + attendance_id in …) beim Entfernen aus kommenden/ab Datum liegenden Terminen und beim Gruppen-/Feld-Abgleich; Termin-Ids nur des Mandanten.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#logic-5d9a8b40": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:149",
+    "lib/data/repositories/attendance_repository.dart:251",
+    "lib/data/repositories/attendance_repository.dart:295",
+    "lib/data/repositories/attendance_repository.dart:554",
+    "lib/data/repositories/attendance_repository.dart:576",
+    "lib/data/repositories/attendance_repository.dart:653",
+    "lib/data/repositories/player_repository.dart:2312",
+    "lib/core/providers/attendance_detail_providers.dart:37",
+    "lib/core/providers/attendance_detail_providers.dart:100",
+    "lib/features/attendance/presentation/person_attendance_writes.dart:97",
+    "lib/core/services/offline_queue_service.dart:445"
+   ],
+   "n": "Lebendige Methoden portiert (Anlegen, Personen hinzufügen/entfernen, Zusammenführen, Laden mit Offline-Cache statt Robust-Retry, Update mit changed_by/changed_at + Dienst-Sync, Offline-Queue). Abweichungen nur bei Zusammenführen >1000 Zeilen und Duplikat-Fehler (beide Flutter besser, extras). getCurrentAttDate/setCurrentAttDate/getAttendance/getUpcomingAttendances/getAttendancesByDate/getPersonAttendances/getParentAttendances/signIn/signOut werden über diesen Service nicht aufgerufen (toter Code).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-62d961e0c5": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2312",
+    "lib/data/repositories/player_repository.dart:2347",
+    "lib/data/repositories/player_repository.dart:2371"
+   ],
+   "n": "Flutter besser: Ionic reassignPersonAttendances liest je Person nur die ersten 1000 Zeilen (PostgREST-Limit) / Flutter liest alle Seiten, schreibt in 200er-Blöcken und bricht das Zusammenführen ab, wenn noch Zeilen der Ausgangsperson übrig sind (_ensureNothingLeftToTransfer).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-644f0a317b": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:636",
+    "lib/features/attendance/presentation/attendance_add_persons.dart:93"
+   ],
+   "n": "Flutter besser: Ionic addPersonAttendances behandelt Fehler 23505 als Erfolg (der ganze Insert ist dann gescheitert, trotzdem Erfolgsmeldung) / Flutter wirft den Fehler, Aufrufer zeigen den Fehler-Toast. Die Personenauswahl bietet nur Personen ohne Eintrag an, der Fall tritt praktisch nur bei Gleichzeitigkeit auf.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/audio-player/audio-player.service#logic-3ca5bbf3": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/audio_player/audio_player_service.dart:170",
+    "lib/core/services/audio_player/audio_player_service.dart:182",
+    "lib/core/services/audio_player/audio_player_service.dart:192",
+    "lib/core/services/audio_player/audio_player_service.dart:201",
+    "lib/core/services/audio_player/audio_player_service.dart:279",
+    "lib/core/services/audio_player/audio_player_service.dart:334",
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:89"
+   ],
+   "n": "Kernverhalten gleich (ein Titel zur Zeit, Warteschlange mit Auto-Weiter, 'Zurück' >3 s = Neustart, m:ss, Lockscreen-Handler, Seek-Schutz beim Ziehen). Erstprüfer übersah: nach dem Ende eines Titels lässt sich die Wiedergabe über die Leiste nicht neu starten (just_audio lässt playing=true, play() kehrt sofort zurück) – neues extra, mittel. Weitere Abweichungen (kein URL-Vorladen, Fehlerfall, Audio-Erkennung, Leiste verschwindet beim Titelwechsel) niedrig, siehe extras.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "x-355fd327ba": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/audio_player/audio_player_service.dart:201",
+    "lib/core/services/audio_player/audio_player_service.dart:209"
+   ],
+   "n": "Ionic: löst die signierte URL des nächsten Warteschlangen-Titels vorab auf und cacht URLs 30 min (Weiterschalten ohne Netzrundlauf, z. B. bei gesperrtem Bildschirm) / Flutter: item.resolveUrl() erst beim Weiterschalten, kein Vorladen, kein Cache.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-917da3618f": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/audio_player/audio_player_service.dart:224",
+    "lib/core/services/audio_player/audio_player_service.dart:366",
+    "lib/core/services/audio_player/audio_player_state.dart:25"
+   ],
+   "n": "Ionic: startPlayback setzt currentFile sofort, die Leiste bleibt beim Laden des nächsten Titels sichtbar (0:00) / Flutter: _load ruft zuerst _stopInternal(keepQueue: true) → state = AudioPlayerState() (currentUrl null, hasFile false); die Leiste verschwindet, bis setUrl den neuen Titel geladen hat (auch beim ersten Abspielen erst nach dem Laden).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-9b9565055f": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/audio_player/audio_player_service.dart:269",
+    "lib/core/services/audio_player/audio_player_service.dart:273",
+    "lib/core/services/audio_player/audio_player_service.dart:210"
+   ],
+   "n": "Ionic: schlägt audio.play() fehl (Autoplay/Netz), bleibt der Titel pausiert in der Leiste / Flutter: bei setUrl-/play-Fehler wird der Player geschlossen (Leiste verschwindet) und der Fehler weitergeworfen. Der zweite Teil des Erstbefunds ist überholt: ein URL-Fehler eines Warteschlangen-Titels setzt den Player jetzt wie Ionic zurück (_stopInternal).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-dd0f22a1dd": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/audio_player/audio_player_service.dart:78",
+    "lib/features/songs/presentation/utils/song_utils.dart:40",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:409",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1267"
+   ],
+   "n": "Ionic isAudioFile prüft MIME (audio/*) und Endung inkl. .webm/.opus / Flutter AudioPlayerService.isAudioFile nur die Endung; die Werk-Seite nutzt SongUtils.isAudio (MIME + Endungen ohne webm/opus) – Datei-Aktionen kombinieren beide, die Aufnahme-Schaltfläche nur SongUtils.isAudio (z. B. .opus ohne audio/-MIME fehlt). Dateien-Seite in beiden Apps nur per Name.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/auth.guard#logic-377dcf4f": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:215",
+    "lib/core/router/app_router.dart:277",
+    "lib/core/router/app_router.dart:329",
+    "lib/core/router/app_router.dart:406",
+    "lib/core/router/app_router.dart:438",
+    "lib/core/router/route_access.dart:68"
+   ],
+   "n": "Flutter besser: Ionic AuthGuard hängt an der /tabs-Elternroute und prüft nur beim Eintritt (Reload/Direktaufruf); Default-Zweig erlaubt nur Admin/Verantwortl./Beobachter (z. B. Reload auf /tabs/members als Spieler wird blockiert) / Flutter prüft jede Navigation per roleRouteRedirect (AuthGuard- + TabsPage-Regeln) und leitet auf die Startseite der Rolle um statt abzubrechen. Einzelrouten: Routing-Batch.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/auth.guard#nav-ae1f9a67": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:329",
+    "lib/core/router/app_router.dart:406"
+   ],
+   "n": "Ohne Session in beiden Apps /login. Ionic: mit Session, aber ohne tenantUser (keine Instanz) → /login (LoginGuard lässt das Formular stehen) / Flutter: mit Session und noch ladender Rolle bzw. ohne Instanz → /tenants (Instanzauswahl bzw. 'Instanz anlegen'). Gleiches Ziel, Flutter spart den Umweg.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/auth/auth.service#logic-9ee33b52": {
+   "s": "diff",
+   "f": [
+    "lib/core/config/supabase_config.dart:50",
+    "lib/core/config/supabase_config.dart:81",
+    "lib/features/auth/data/auth_flow_service.dart:76",
+    "lib/features/auth/data/auth_flow_service.dart:334",
+    "lib/features/auth/data/auth_flow_service.dart:416",
+    "lib/features/auth/presentation/pages/login_page.dart:196",
+    "lib/features/auth/presentation/pages/login_page.dart:207",
+    "lib/features/profile/presentation/widgets/account_dialogs.dart:74"
+   ],
+   "n": "Lebendig sind nur Session-Beobachtung/checkToken, login (Teams-Verknüpfung), resendConfirmationEmail und changePassword; register/logout/resetPassword/updatePassword/registerUser/informUserAbout* sind toter Code. Teams-Verknüpfung: falsches Passwort → 'Ungültige Anmeldedaten' wie Ionic, sonst Texte von db.login (z. B. 'Kein Konto …' statt 'Benutzer nicht gefunden'); unbestätigte E-Mail zeigt ebenfalls 'Ungültige Anmeldedaten' statt 'Bitte bestätige zuerst deine E-Mail-Adresse.' – das bewerten die Toast-Items dieser Einheit.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/auto-message/auto-message.service#db-c24634de": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:240",
+    "lib/data/repositories/auto_message_repository.dart:243",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:69"
+   ],
+   "n": "Inzwischen behoben (PARITY_UEBERSICHT): select id, date, typeInfo, type_id (+archived, ungenutzt) in ids + tenantId, kein Archiv-Filter mehr – Termin-Karte und Antwort auch bei archivierten Terminen wie Ionic.",
+   "v": "korrigiert"
+  },
+  "services/auto-message/auto-message.service#logic-ca4e54c4": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:30",
+    "lib/data/repositories/auto_message_repository.dart:64",
+    "lib/data/repositories/auto_message_repository.dart:131",
+    "lib/data/repositories/auto_message_repository.dart:205",
+    "lib/data/repositories/auto_message_repository.dart:240",
+    "lib/data/repositories/auto_message_repository.dart:402",
+    "lib/data/models/auto_message/auto_message.dart:400",
+    "lib/core/providers/auto_message_providers.dart:128"
+   ],
+   "n": "Alle Methoden und Hilfsfunktionen portiert (gleiche Defaults, enabled_at-Logik, Platzhalter, HTML-Escape, Tiptap-Dokument), Flutter filtert zusätzlich überall tenantId. Archiv-Abweichung bei getAttendanceInfo ist behoben; offen bleibt nur das extra 'Termindatum aus Zeitstempel' (niedrig).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-b947f0c25e": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:243",
+    "lib/data/repositories/auto_message_repository.dart:248"
+   ],
+   "n": "Zurückgezogen: getAttendanceInfo filtert archivierte Termine nicht mehr (nur noch select archived, keine Filterung) – Mitglieder sehen Termin-Karte und Antwortmöglichkeit wie in Ionic.",
+   "v": "korrigiert"
+  },
+  "services/church/church.service#db-2c27320f": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/church_repository.dart:101"
+   ],
+   "n": "Gleiches Update {additional_fields} mit umgestellter bfecg_church, Flutter zusätzlich .eq('tenantId', Zeilen-tenantId) und Ergebnisprüfung.",
+   "v": "bestätigt"
+  },
+  "services/church/church.service#db-3cb26f5e": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/church_repository.dart:148",
+    "lib/data/repositories/church_repository.dart:151"
+   ],
+   "n": "Ionic lädt alle Personen mit additional_fields (max. 1000 Zeilen) und filtert im Client auf das Duplikat / Flutter filtert serverseitig additional_fields->>bfecg_church = Duplikat, alle Seiten – gleiche Treffermenge (Limit siehe extra x-77d6c21aca).",
+   "v": "bestätigt"
+  },
+  "services/church/church.service#db-ab01b0b0": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/church_repository.dart:59",
+    "lib/core/providers/dashboard_providers.dart:373"
+   ],
+   "n": "update churches {name} .eq('id') – globale Tabelle ohne tenantId (wie Ionic).",
+   "v": "bestätigt"
+  },
+  "services/church/church.service#db-bccbac64": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/church_repository.dart:20",
+    "lib/core/providers/church_providers.dart:10"
+   ],
+   "n": "select * from churches order name aufsteigend wie Ionic; Fehler-Toast 'svc.loadChurchesFailed' im Provider.",
+   "v": "bestätigt"
+  },
+  "services/church/church.service#db-dd2888cc": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/church_repository.dart:38",
+    "lib/core/providers/church_providers.dart:34"
+   ],
+   "n": "Insert churches {name, created_from: aktueller Nutzer} mit select('id').single() – gleich (Registrierung und Verwaltung über churchNotifier).",
+   "v": "bestätigt"
+  },
+  "services/church/church.service#db-e51e3c81": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/church_repository.dart:117",
+    "lib/data/repositories/church_repository.dart:131"
+   ],
+   "n": "Flutter besser: Ionic löscht die doppelte Gemeinde immer, auch wenn Personen-Updates fehlschlugen / Flutter löscht nur, wenn alle Personen umgestellt sind und keine Referenz mehr existiert, sonst Fehler (ChurchMergeIncompleteException).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/church/church.service#logic-d50e1210": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/church_repository.dart:18",
+    "lib/data/repositories/church_repository.dart:35",
+    "lib/data/repositories/church_repository.dart:56",
+    "lib/data/repositories/church_repository.dart:87",
+    "lib/core/providers/church_providers.dart:10",
+    "lib/core/providers/dashboard_providers.dart:373"
+   ],
+   "n": "Laden/Anlegen/Umbenennen gleich. Zusammenführen in Flutter robuster (alle betroffenen Personen, Löschen nur bei vollständiger Umstellung) – siehe extra.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-77d6c21aca": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/church_repository.dart:87",
+    "lib/data/repositories/church_repository.dart:148"
+   ],
+   "n": "Flutter besser: Ionic liest nur die ersten 1000 Personen mit Zusatzfeldern (PostgREST-Limit) und löscht das Duplikat auch bei Teilfehlern – Personen können auf eine gelöschte Gemeinde zeigen / Flutter liest alle referenzierenden Personen seitenweise und löscht nur bei vollständiger Umstellung.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/conductor/conductor.service#db-36e64412": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:223",
+    "lib/data/repositories/player_repository.dart:236",
+    "lib/core/providers/conductor_providers.dart:29"
+   ],
+   "n": "Fix bestätigt: player instrument = Hauptgruppe, pending=false, tenantId, .order('lastName', ascending: true) wie Ionic; Ausgetretene per includeLeft: true wie getConductors(true).",
+   "v": "bestätigt"
+  },
+  "services/conductor/conductor.service#logic-f1c154da": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:223",
+    "lib/core/providers/conductor_providers.dart:12"
+   ],
+   "n": "Fix bestätigt: Sortierung A→Z wie Ionic; Filter, Offline-Cache (letzte geladene Liste), Ausgetretene und Fehler-Toast 'Fehler beim Laden der Hauptgruppen-Personen' gleich.",
+   "v": "bestätigt"
+  },
+  "services/cross-tenant/cross-tenant.service#toast-2e9148a8": {
+   "s": "diff",
+   "f": [
+    "lib/core/providers/tenant_providers.dart:303",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:464"
+   ],
+   "n": "Ionic: Toast 'Fehler beim Laden der Mandanten' (danger) beim Öffnen der Einstellungen, alle Rollen / Flutter: kein Toast; die Rollen je Instanz kommen aus userTenantsProvider, die Instanzliste zeigt bei Fehler 'Fehler beim Laden' mit Fehlertext und 'Erneut versuchen'. Nutzer erfährt den Fehler dort, wo die Daten gebraucht werden.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/db.service#db-01e8ff41": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/player_repository.dart:387",
+    "lib/data/repositories/player_repository.dart:392",
+    "lib/data/repositories/player_repository.dart:533",
+    "lib/features/people/presentation/pages/person_create_page.dart:244"
+   ],
+   "n": "Ionic: Reaktivierung mit pickPersonFields (ohne img) – das vorhandene Bild der reaktivierten Zeile bleibt, ein übernommenes Bild eines Treffers aus anderer Instanz wird nie gespeichert / Flutter: _personInsertData schreibt eine Nicht-data:-URL (übernommenes Treffer-Bild, _adoptedImg) mit und überschreibt das Bild der reaktivierten Zeile (geteilte Datei profiles/<andere id>). Sonst gleich: left = null, Filter id + tenantId, danach Termine ab Eintritt. Erstbewertung niedrig zu mild: anderer DB-Wert (img) → mittel.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "services/db.service#db-09697835": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:1600"
+   ],
+   "n": "playerExistsInTenant: player.id nach Ziel-tenantId + ilike(email, getrimmt), limit 1; danach Namens-Fallback wie Ionic. Flutter maskiert LIKE-Platzhalter (% _) – exakter Treffer statt Muster, praktisch gleich.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-0d132f59": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/parent_repository.dart:81",
+    "lib/data/repositories/parent_repository.dart:105"
+   ],
+   "n": "Wie Ionic: erst Zugang entziehen (tenantUsers-Zeile außer Admin; Fehler → 'db.removeAuthEmailFailed', Abbruch), dann parents per id + tenantId (Fehler → 'db.deleteParentFailed').",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-1c4d7b0d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:63",
+    "lib/data/repositories/player_repository.dart:69"
+   ],
+   "n": "getPlayers(all: true): tenantId + pending=false inkl. Ausgetretener, für alle Rollen; Flutter-Aufrufer laden teils mit eigenen tenantId-Abfragen (z. B. getPlayersByShift, add_persons_sheet). Zusätzliche Sortierung ohne Auswirkung (Ionic ohne order).",
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "services/audio-player/audio-player.service",
+   "title": "Wiedergabe nach Titelende nicht neu startbar",
+   "n": "Ionic: nach 'ended' zeigt die Leiste Play; Tippen (oder Lockscreen-Play) startet den Titel von vorn (HTMLAudio play() nach Ende). Flutter: der Completed-Listener setzt nur state.isPlaying=false, just_audio lässt player.playing aber true (just_audio 0.9.46: play() 'if (playing) return;'). togglePlayPause ruft play() → keine Wirkung, der Play-Button bleibt tot; Ziehen des Reglers startet die Wiedergabe, die Leiste zeigt dann weiter Play und kann nicht pausieren. Neu abspielen nur über Schließen und erneutes Öffnen der Aufnahme.",
+   "sev": "mittel",
+   "ionic": "src/app/services/audio-player/audio-player.service.ts:102",
+   "f": [
+    "lib/core/services/audio_player/audio_player_service.dart:279",
+    "lib/core/services/audio_player/audio_player_service.dart:334",
+    "lib/core/services/audio_player/audio_player_service.dart:341"
+   ]
+  }
+ ]
+}

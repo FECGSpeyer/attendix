@@ -1,0 +1,420 @@
+{
+ "batch": "zz-verify6-opus-30",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "tabs/tabs.page#nav-0ccaf6f8": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:215-245",
+    "lib/core/router/app_router.dart:195",
+    "lib/core/router/app_router.dart:436-449",
+    "lib/core/router/route_access.dart:68-88",
+    "lib/core/router/attendance_detail_guard.dart:23-28",
+    "lib/core/constants/enums.dart:137-141"
+   ],
+   "n": "Flutter besser (Erstbefund gilt im aktuellen Code weiter, Zeilen verschoben): Ziel bei nicht erlaubter URL = Startseite der Rolle (Role.defaultRoute = Utils.getUrl). Ionic prüft nur beim Laden/Rollenwechsel mit isUrlAccessAllowed (Lücken: '/tabs/attendance' nur Admin/Verantw./Beobachter, '/tabs/overview' fehlt) -> Helfer verlieren beim Neuladen 'Termine', Spieler/Helfer die 'Übersicht'; Flutter prüft bei jeder Navigation passend zu den sichtbaren Tabs. Strenger: Beobachter bei Direkt-URL /attendance/<id> -> /people, /members verlangt showMembersList. Lockerer: z. B. /settings/notifications ohne Rollenprüfung (Ionic zeigt den Eintrag aber allen Rollen).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "tasks/my-tasks/my-tasks.component#logic-91cfedd0": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:34-48",
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:51-68",
+    "lib/core/providers/team_org_providers.dart:151-160",
+    "lib/core/providers/team_org_providers.dart:275-281",
+    "lib/core/providers/dashboard_providers.dart:298-305",
+    "lib/features/self_service/presentation/pages/signout_page.dart:122-136"
+   ],
+   "n": "Unverändert: Sichtbarkeit (Teamorganisation an + offene Aufgaben), Quelle (tasks der eigenen Person, tenant_id), groupTasksByDue, Limit 5, Untertitel „n offen · n überfällig“, Fälligkeitstexte, optimistisches Erledigen (status completed, updateTask mit id + tenant_id) mit Rücknahme und Toasts gleich. Einziger Unterschied weiter: kein Neuladen bei Rückkehr (siehe x-40d089cd76). Referenz signout_page.dart:91 war verschoben -> _refresh jetzt Z. 122-136.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-40d089cd76": {
+   "s": "diff",
+   "f": [
+    "lib/core/providers/team_org_providers.dart:151-160",
+    "lib/core/providers/team_org_providers.dart:275-281",
+    "lib/core/providers/dashboard_providers.dart:298-305",
+    "lib/features/self_service/presentation/pages/signout_page.dart:122-136"
+   ],
+   "n": "Weiter zutreffend. Ionic: Dashboard (home-dashboard.page.ts:48-52) und „Meine Termine“ (signout.page.ts:1062-1067) laden die Karte bei jeder Rückkehr (ionViewWillEnter) und per Pull-to-Refresh neu / Flutter: myTasksProvider (nicht autoDispose) wird nur nach eigenen Aufgaben-Änderungen (TeamTaskNotifier._invalidate) und per Pull-to-Refresh (refreshDashboardCards, signout _refresh) invalidiert; von der Leitung neu zugewiesene Aufgaben erscheinen erst nach Pull-to-Refresh.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "tasks/task-detail/task-detail.page#nav-6c8e01ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:64-81",
+    "lib/core/router/app_router.dart:1063-1068"
+   ],
+   "n": "Nach Bestätigung „Aufgabe löschen?“ und erfolgreichem Löschen Toast „tasks.deleted“ und context.go('/settings/team-organization') = Ionic navigateBack('/tabs/settings/team-organization'); Fehler -> deleteFailed ohne Navigation.",
+   "v": "bestätigt"
+  },
+  "teachers/teachers.page#logic-9d258dde": {
+   "s": "diff",
+   "f": [
+    "lib/core/providers/teacher_providers.dart:68-87",
+    "lib/data/repositories/teacher_repository.dart:14-29",
+    "lib/data/repositories/teacher_repository.dart:49-72",
+    "lib/data/repositories/teacher_repository.dart:115-139",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:20-33",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:42-103",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:116-178"
+   ],
+   "n": "isAdmin = Admin/Verantwortlicher (FAB, Tippen), Lehrer nach name aufsteigend (tenantId), Instrumentnamen, Schüleranzahl aktiver Personen, Anlegen mit gleicher Validierung (Name ≥ 3, mind. ein Instrument, Auswahl ohne Hauptgruppe), Bearbeiten ohne Validierung mit allen Gruppen. Löschen gibt es in Flutter nicht mehr (x-791ebfa771 erledigt). Verbleibend nur Flutter besser: Pull-to-Refresh (x-42f2057e70), Lade-Fehleranzeige mit „Erneut versuchen“, und „Privatlehrer“ wird beim Anlegen gespeichert (Ionic: private.value des ion-toggle ist dessen value 'on' -> pri === 'true' immer false, private immer false). Hinweis: der fillAll-Toast im Anlege-Sheet ist im iOS-Look verdeckt (x-7da97d6aac).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "teachers/teachers.page#modal-81bd0046": {
+   "s": "diff",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:142-178",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:404-439"
+   ],
+   "n": "Nur für Admin/Verantwortliche (onTap null sonst), übergibt den Lehrer, Schüler aus playersProvider, alle Gruppen zur Auswahl; nach Speichern Toast „teachers.updated“ und Liste neu geladen. Ionic: iOS Karten-Modal (presentingElement), md Vollbild / Flutter: Vollbild-Dialog (fullscreenDialog) auf allen Plattformen.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-42f2057e70": {
+   "s": "diff",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:48-59"
+   ],
+   "n": "Flutter besser: Ionic: kein ion-refresher / Flutter: IonPage onRefresh lädt Lehrer, Schüleranzahlen und Liste neu. Weiter vorhanden.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-791ebfa771": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:181-190"
+   ],
+   "n": "Zurückgezogen: Flutter hat die Wisch-Löschaktion entfernt; _TeacherTile bietet wie Ionic kein Löschen (Kommentar Z. 185-186), deleteTeacher hat im normalen Design keinen Aufrufer mehr. Der Befund ist damit behoben.",
+   "v": "korrigiert"
+  },
+  "team-organization/topics-tab/topics-tab.component#alert-07626e40": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:160-192",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:226-238",
+    "lib/core/providers/team_org_providers.dart:373-378",
+    "lib/data/repositories/agenda_item_repository.dart:123-146"
+   ],
+   "n": "„Vorschlag übernehmen“, „Mit welcher Priorität kommt das Thema in den Themenspeicher?“, Radios Hoch/Mittel/Niedrig vorbelegt mit item.priority (Modell-Default 'medium'), Abbrechen/Übernehmen; schreibt agenda_items proposal_status=accepted, priority, decision_note=null (id + tenant_id), danach team-notify proposal_decided und Erfolgstoast. Nur Leitung (Sheet „Vorschläge“).",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#alert-f13f91ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:194-224",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:312"
+   ],
+   "n": "Nur Leitung im Sheet „Vorschläge“. „Vorschlag ablehnen“, „{Name} wird informiert. Eine kurze Begründung hilft.“ bzw. „Die Person“, Textfeld „Begründung (optional)“; Abbrechen / Ablehnen -> proposal_status rejected + decision_note (getrimmt, leer -> null) + team-notify proposal_decided.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#logic-5ba0ad22": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:24-41",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:69-158",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:160-238",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:352-376",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:688-706"
+   ],
+   "n": "Rollen-/Kreis-Weiche (Leitung = Admin/Verantw., Kreis wie inTeamCircle), Terminwahl (max. 8, ✓), Datum ändern, Termin anlegen, TOP öffnen/entfernen, Annehmen/Ablehnen, Vorschlagen gleich. Abweichungen niedrig: Anzeige vor vollständigem Laden (x-59f60cb213); Toast „removedStays“ als Info statt grün; Vorschlags-Sheet schließt nicht automatisch, wenn alles entschieden ist (zeigt Hinweis).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "team-organization/topics-tab/topics-tab.component#modal-54dabea2": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:434-440",
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:18-33",
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:195-219"
+   ],
+   "n": "Übergabe Termin + Typ gleich, Plan danach aktualisiert (Picker invalidiert upcomingProtocolAttendances). Ionic: Vollbild-Modal ohne Breakpoints / Flutter: Bottom-Sheet mit 90 % Höhe.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "team-organization/topics-tab/topics-tab.component#nav-78aeaedf": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:418"
+   ],
+   "n": "Tippen auf den Termin -> context.push('/attendance/<id>') = navigateForward(['/tabs/attendance', id]); nur Leitung (Admin/Verantw.), die den Detail-Guard (canAddAttendance) passiert.",
+   "v": "bestätigt"
+  },
+  "x-59f60cb213": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:353-356",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:444-458",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:643-649"
+   ],
+   "n": "Weiter zutreffend. Ionic: loadLeader wartet per Promise.all auf Themen, Protokolle und kommende Termine, bis dahin Skeleton / Flutter: Inhalt sobald agendaItems geladen; protocols/upcoming per valueOrNull ?? [] -> kurz „Kein Termin mit Protokoll & Tagesordnung geplant.“ mit „Termin anlegen“ und fehlende „vertagt“-Badges. Mitglieder: Vorschlagskarte sofort, Liste mit Spinner statt Skeleton.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "terms/terms.page#effect-1f50895e": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:365-381",
+    "lib/features/legal/presentation/pages/terms_page.dart:43-50",
+    "lib/features/legal/presentation/pages/terms_page.dart:59-77",
+    "lib/core/utils/dashboard_logic.dart:56-61"
+   ],
+   "n": "Erstnotiz veraltet, Bewertung bleibt: Flutter berechnet das Rollenziel jetzt selbst (Router bzw. _goHome: ohne Instanz '/register', sonst homeRouteFor = Role.defaultRoute wie Utils.getUrl). Rest-Unterschied: Admin/Verantw. mit Dashboard als Startseite landen auf /home-dashboard statt Ionic /tabs/player; gemerkter Link wird zuerst fortgesetzt (Flutter besser).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "terms/terms.page#effect-9680384f": {
+   "s": "diff",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:79-103",
+    "lib/features/legal/presentation/pages/terms_page.dart:59-77",
+    "lib/core/router/app_router.dart:365-381"
+   ],
+   "n": "Nach dem Akzeptieren: gemerkter Link, sonst ohne Instanz '/register', sonst homeRouteFor (Role.defaultRoute = Utils.getUrl). Unterschied nur: Dashboard-Startseite für Admin/Verantw. mit aktivem Dashboard (Ionic immer /tabs/player).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "terms/terms.page#nav-4d7988a7": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:365-381",
+    "lib/features/legal/presentation/pages/terms_page.dart:43-50"
+   ],
+   "n": "Erstnotiz veraltet (Instanzauswahl statt Startseite trifft nicht mehr zu): Bereits akzeptiert -> Router leitet auf gemerkten Link, ohne Instanz '/register' (-> Login -> Instanzauswahl/Anlegen wie RegisterGuard), sonst homeRouteFor; lädt die Rolle noch, navigiert die Seite selbst (_goHome). Rest: Dashboard-Startseite statt /tabs/player für Admin/Verantw. mit Dashboard.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "utilities/Utils#effect-1a09a2fb": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_file_opener.dart:72-83",
+    "lib/core/services/native/native_file_service.dart:77-87",
+    "lib/core/services/web_window_web.dart:53-60"
+   ],
+   "n": "Unverändert: In-App-Dateiansicht der installierten Web-App, „Datei herunterladen“. Ionic Mobile-Web (iOS/Android): System-Teilen-Dialog mit der Datei (navigator.share), Fallback Download / Flutter: immer Anchor-Download (downloadBytesInBrowser), kein Teilen-Dialog; Fehler -> „fileViewer.downloadFailed“ gleich.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "utilities/Utils#effect-44054f10": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/export_service.dart:709-711",
+    "lib/core/services/native/native_file_service.dart:167-176"
+   ],
+   "n": "Nativ gleich (Cache + Systemansicht, open_filex). Mobile-Web: Ionic Teilen-Dialog (navigator.share) mit Fallback Download / Flutter: Printing.sharePdf = Anchor-Download (Blob-Typ application/pdf), kein Teilen-Dialog. Desktop-Web: Download wie Ionic.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "utilities/Utils#effect-ac49a0f3": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/export_service.dart:661-712",
+    "lib/core/services/native/native_file_service.dart:167-176",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2517-2567"
+   ],
+   "n": "Excel „{Info|Typ}_{TT_MM_JJJJ}_Anwesenheit.xlsx“, Spalten Nachname/Vorname/Gruppe/[Gemeinde]/Status/Bemerkung, Blatt „Anwesenheit“. Nativ und Desktop-Browser wie Ionic; Mobile-Web: Ionic Teilen-Dialog / Flutter Anchor-Download über Printing.sharePdf (Blob-Typ application/pdf). Flutter zeigt zusätzlich Info-Toast beim Erstellen.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-7da97d6aac": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/toast_helper.dart:106-148"
+   ],
+   "n": "Bestätigt: ToastHelper._showToast nutzt im iOS-Look (Theme.platform iOS) ScaffoldMessenger.showSnackBar; Flutter zeigt die SnackBar nur in registrierten Root-Scaffolds (scaffold.dart _isRoot), also im Scaffold der Seite unter der Route des per showModalBottomSheet (useRootNavigator) geöffneten Sheets. MaterialApp.builder (main.dart:249-262) legt keinen eigenen Scaffold/Overlay-Toast darüber. Folge auf iPhone/iPad: Validierungs- und Fehlermeldungen aus offenen Sheets (z. B. Lehrer hinzufügen „teachers.fillAll“, Thema vorschlagen Fehler) unsichtbar. md (Android/Desktop) nutzt das Root-Overlay und ist nicht betroffen. Bewertung hoch bleibt: plattformweit auf der Hauptplattform fehlen sämtliche Fehlermeldungen in Sheets.",
+   "v": "bestätigt",
+   "sev": "hoch"
+  },
+  "utilities/attendance-create#logic-4ea5fabc": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/attendance_create_writes.dart:117-168",
+    "lib/features/attendance/presentation/attendance_create_writes.dart:173-270",
+    "lib/features/attendance/presentation/attendance_create_writes.dart:304-405",
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:40-62",
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:69-107",
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:113-164",
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:36-39",
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:139-214",
+    "lib/core/utils/attendance_logic_utils.dart:35-53"
+   ],
+   "n": "personsForAttendanceType (nicht pausiert/ausgetreten/pending, Gruppen, Zusatzfeld-Filter mit Default, Feld fehlt -> alle), createAttendanceForType (Datum 12:00 lokal als UTC, Checkliste mit dueDate, typeInfo/notes '', Zeiten des Typs, duration_days, is_org_plan, duty_required nur bei Abweichung; Status Neutral bei Dienst, Schicht, Abwesenheit, „Regelmäßig verhindert“) und hasNonDefaultStatus in beiden Anlege-Wegen gleich. changeAttendanceDate gleich (Datum, deadline/Checkliste um Kalendertage verschoben, History-Daten, Abwesenheiten/Reset, Schicht-Neuberechnung) bis auf Abwesenheiten-Ladefehler (x-89addaf6ae, Flutter besser).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-89addaf6ae": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:139-150"
+   ],
+   "n": "Flutter besser, weiter zutreffend: Ionic changeAttendanceDate schreibt bei Fehler von getPlayerAbsencesForTenant trotzdem (ohne Abwesenheitsprüfung, ggf. Reset entschuldigter Personen) / Flutter lädt die Abwesenheiten vor dem ersten Schreiben und bricht mit „dateDialog.loadFailed“ ohne Änderung ab.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "utilities/attendance-date-dialog#alert-222957a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:190-219"
+   ],
+   "n": "„Welcher Termintyp?“ als Radio-Liste (sichtbare Protokoll-Typen nach index), erster vorausgewählt, Abbrechen/Weiter; nur bei mehreren Typen. Aufrufer nur Leitung.",
+   "v": "bestätigt"
+  },
+  "utilities/attendance-date-dialog#alert-9dc8e8c5": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:119-137"
+   ],
+   "n": "„Status zurücksetzen?“, Text mit Standardstatus (ionicStatusLabel), Buttons Abbrechen/Behalten/Zurücksetzen; Bedingung hasNonDefaultStatus über alle person_attendances (Detailseite: _localStatuses aller Zeilen, Themen-Tab frisch geladen). Rollen wie Aufrufer.",
+   "v": "bestätigt"
+  },
+  "utilities/attendance-date-dialog#loading-191f06e1": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:240-303",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:115-126"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay beim Anlegen / Flutter: kein Overlay, nur „Termin anlegen“ gesperrt bzw. Doppelaufruf verhindert (_creatingAttendance).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "utilities/attendance-date-dialog#loading-7398625d": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:78-90",
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:106-117"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay beim Laden des Termins nach der Datumswahl / Flutter: Termin/Typ vor dem Dialog, Status danach ohne Overlay geladen.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "utilities/attendance-date-dialog#loading-7398625d-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:151-214"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay während changeAttendanceDate / Flutter: kein Overlay oder Indikator während der Schreibvorgänge, Seite bleibt bedienbar.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "utilities/attendance-date-dialog#toast-0f4733be": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:297-301"
+   ],
+   "n": "Grüner Toast „Termin am {TT.MM.} angelegt“ (dateFmt dayMonth). Rollen wie toast-2ca18d28.",
+   "v": "bestätigt"
+  },
+  "utilities/attendance-date-dialog#toast-2ca18d28": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:184-188"
+   ],
+   "n": "Gelber Toast „Kein Termintyp mit Protokoll & Tagesordnung vorhanden“ (keine sichtbaren Protokoll-Typen). Aufrufer in beiden Apps nur Leitung (Admin/Verantwortlich).",
+   "v": "bestätigt"
+  },
+  "utilities/attendance-date-dialog#toast-45a99bdc": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:223-225"
+   ],
+   "n": "Roter Toast „Datum konnte nicht geändert werden“ bei Fehler beim Schreiben. Rollen wie Aufrufer.",
+   "v": "bestätigt"
+  },
+  "utilities/attendance-date-dialog#toast-552c3214": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:304-306"
+   ],
+   "n": "Roter Toast „Termin konnte nicht angelegt werden“ bei Fehler beim Laden der Personen/Sperrzeiten oder beim Anlegen.",
+   "v": "bestätigt"
+  },
+  "utilities/attendance-date-dialog#toast-8b40658d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:216-220"
+   ],
+   "n": "Grüner Toast „Termin auf {Datum} verschoben“; Wochentag Flutter „Mo.“ (EE) statt Ionic „Mo“ (dd) – nur Punkt. Rollen wie Aufrufer.",
+   "v": "bestätigt"
+  },
+  "utilities/db-helpers#db-2d9892ee": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:661-666",
+    "lib/data/repositories/sign_in_out_repository.dart:141-158"
+   ],
+   "n": "Liest per id duty_state und attendance(tenantId, type_id, attType.duty_mode) – deckt Ionic id/duty_state/type_id + Dienst-Typ-Prüfung ab, zusätzlich Mandantenprüfung. duty_assigned_at liest Ionic, nutzt es aber nicht.",
+   "v": "bestätigt"
+  },
+  "utilities/db-helpers#logic-19bf1565": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/db_helpers.dart:78",
+    "lib/core/utils/db_helpers.dart:111-115",
+    "lib/core/utils/duty_utils.dart:51-69",
+    "lib/data/repositories/attendance_repository.dart:682-712",
+    "lib/data/repositories/sign_in_out_repository.dart:141-190",
+    "lib/data/repositories/player_repository.dart:480",
+    "lib/data/repositories/player_repository.dart:532"
+   ],
+   "n": "pick*-Helfer durch explizite Payloads/pickPersonFields/pickGroupFields ersetzt (updatePersonAttendance entfernt berechnete Felder), sanitizeImg = data:-Prüfung in player_repository, syncDutyWithStatus = dutySyncFieldsForStatus in updatePersonAttendance/signIn (gleiche Werte duty_state, duty_reminder_sent, duty_assigned_by/at).",
+   "v": "bestätigt"
+  },
+  "x-18ecc6c8c4": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/instrument_matcher.dart:217-236",
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:164-171"
+   ],
+   "n": "Weiter zutreffend: Ionic addFiles prüft erst matchInstrument (Gruppenname/Synonym), dann detectSpecialFileType – „Sopran Text.pdf“ -> Sopran / Flutter InstrumentMatcher.detect prüft zuerst lyricsKeywords (und bei Nicht-PDF recordingKeywords) -> Liedtext. Niedrig: Kategorie steht vor dem Hochladen pro Datei im Dropdown und ist änderbar.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "utilities/organisation-person-key#logic-285eabcd": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/shared_person_fields.dart:20-26",
+    "lib/data/repositories/shared_person_fields.dart:50-56"
+   ],
+   "n": "„global:<id>“ vor „app:<uuid>“, sonst null – wie getOrganisationPersonKey (auch für rohe player-Zeilen).",
+   "v": "bestätigt"
+  },
+  "utilities/plan-days#logic-c1a9c827": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/plan_utils.dart:359-459",
+    "lib/core/utils/event_list_utils.dart:59-80"
+   ],
+   "n": "allPlans, isMultiDay, planDay, dayLabel, planLabel, planDate, todayPlanIndex, dayOptions, nextFreeDay, splitPlans sowie Ende/läuft (EventListUtils.endDate/hasEnded/isRunning) portiert; planSubtitle fehlt (x-828dda5f34).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-828dda5f34": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:136-139",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:91-94",
+    "lib/features/planning/presentation/pages/planning_page.dart:1965-1969"
+   ],
+   "n": "Weiter zutreffend: Ionic planSubtitle = Datum, Name nur wenn eigenes Label oder kein Tag / Flutter: bei mehreren Plänen immer longDate + ' · ' + planLabel, z. B. doppelt „Samstag, 18.10.2025 · Sa 18.10.“ (PDF-Untertitel).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-fe9face194": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/spreadsheet_reader.dart:38-49",
+    "lib/core/utils/import_mapper.dart:156-200"
+   ],
+   "n": "Flutter besser, weiter zutreffend: Ionic SheetJS (cellDates) kann CSV „01/02/2020“ als MM/DD lesen / Flutter liefert CSV-Zellen als Text, parseGermanDate liest DD/MM/YYYY, DD.MM.YYYY, YYYY-MM-DD.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  }
+ },
+ "extra": []
+}

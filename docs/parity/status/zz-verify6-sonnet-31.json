@@ -1,0 +1,418 @@
+{
+ "batch": "zz-verify6-sonnet-31",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "settings/general/shifts/shift/shift.page#field-71ac18b1-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:616-624"
+   ],
+   "v": "bestätigt",
+   "n": "Datum-Chip bei isUsed deaktiviert (onTap null, Opacity 0.5)."
+  },
+  "settings/general/shifts/shift/shift.page#field-82623a70": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:304-309"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#field-82f253e2": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:600-607"
+   ],
+   "v": "bestätigt",
+   "n": "Name bei isUsed deaktiviert, Löschen-Button ebenso."
+  },
+  "settings/general/shifts/shift/shift.page#field-d445039d": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:234-238"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter speichert Name/Beschreibung getrimmt, Ionic unverändert (belanglos)."
+  },
+  "settings/general/shifts/shift/shift.page#field-f5fdf890": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:331-341"
+   ],
+   "n": "Label/Hilfetext gleich. Flutter besser: nur ganze Zahlen 1-365, ungültige/leere Eingabe wird ignoriert (Ionic speichert beliebigen Wert, auch 0/leer). Dauer wird zusätzlich auf 0-24 begrenzt. Nur Randwerte betroffen.",
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#loading-b3201582": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:499-512"
+   ],
+   "n": "Ionic: blockierendes Overlay „Schichtplan wird gelöscht...“ / Flutter: kein Overlay beim Löschen; Ergebnis per Toast.",
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#loading-dbd1d573": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:117-126"
+   ],
+   "n": "Flutter blockiert jetzt mit nicht schließbarem Spinner-Dialog (wie Ionic-Overlay), aber ohne Text „Schichtplan wird kopiert...“. Nur Look.",
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#modal-13ae628e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:346-360"
+   ],
+   "n": "Native Zeitwahl statt ion-modal; Ionic bietet nur 5-Minuten-Raster (minuteValues 0,5,...), Flutter showAppTimePicker ohne minuteInterval (beliebige Minute). Funktion gleich, Flutter flexibler.",
+   "v": "korrigiert"
+  },
+  "settings/general/shifts/shift/shift.page#modal-13ae628e-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:635-647"
+   ],
+   "v": "bestätigt",
+   "n": "Native Datumsauswahl statt ion-modal (Bereich 2020-2030, Locale gesetzt)."
+  },
+  "settings/general/shifts/shift/shift.page#text-1ea608fa": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:259-262"
+   ],
+   "v": "bestätigt",
+   "n": "shiftsFixedIntro identischer Text."
+  },
+  "settings/general/shifts/shift/shift.page#text-2a567938": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:331-335"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#text-328e10a4": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:244-246"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#text-328e10a4-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:264-265"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#text-393107a4": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:601-604"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#text-4238e588": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:257-258"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#text-7f82663a": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:303-304"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#text-8efb67c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:227"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#text-910fd42c": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:228-230"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#text-9f1098eb": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:234-236"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#text-b7af2be7": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:292-294"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#text-d0304ee7": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:616-618"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#text-d0887e24": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:318-321"
+   ],
+   "v": "bestätigt",
+   "n": "nur bei !free."
+  },
+  "settings/general/shifts/shift/shift.page#text-f01d51ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:242-243"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#text-f61fcafb": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:311-313"
+   ],
+   "v": "bestätigt",
+   "n": "nur bei !free."
+  },
+  "settings/general/shifts/shift/shift.page#toast-0db7cc2f": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:458-471"
+   ],
+   "n": "Ionic: „Fehler beim Speichern des Schichtplans“ / Flutter: „Fehler: {Meldung}“ (zeigt konkreten Grund). Fehler wird in beiden gemeldet.",
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#toast-1274dfe5": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:442-445"
+   ],
+   "v": "bestätigt",
+   "n": "shiftsEnterName als Fehler-Toast, kein Speichern."
+  },
+  "settings/general/shifts/shift/shift.page#toast-9ec80392": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:507-509"
+   ],
+   "v": "bestätigt",
+   "n": "deleteFailed."
+  },
+  "settings/general/shifts/shift/shift.page#toast-eaabb540": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:504-506"
+   ],
+   "v": "bestätigt",
+   "n": "deleted + zurück zur Liste."
+  },
+  "settings/general/shifts/shift/shift.page#toast-ee0000ac": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:150-151"
+   ],
+   "v": "korrigiert",
+   "n": "Jetzt Warn-Toast mit gleichem Text und gleicher Bedingung (copyAssignments, 0 zugewiesen, Personen vorhanden). Randfall: Personen ohne appId werden bereits in der Abfrage ausgeschlossen (dann einfache Meldung wie Ionic)."
+  },
+  "settings/general/shifts/shift/shift.page#toast-f5a8f9ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:137-140"
+   ],
+   "v": "korrigiert",
+   "n": "Text jetzt identisch „Fehler beim Kopieren des Schichtplans.“ (shiftsCopyFailed), Fehler-Toast."
+  },
+  "settings/general/type/type.page#action-5917fc85": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:116-127",
+    "lib/core/router/app_router.dart:167"
+   ],
+   "v": "bestätigt",
+   "n": "Wisch-Option Papierkorb entfernt Erinnerung lokal, gespeichert beim Speichern. Rolle: Seite nur Admin/Verantwortlich in beiden (Route-Guard /settings/types prefix-Match _isAdminOrResponsible)."
+  },
+  "settings/general/type/type.page#action-b172177a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1479-1487",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1557-1564"
+   ],
+   "v": "korrigiert",
+   "n": "Popover-Eintrag „Tagesordnung Platzhalter“ (Icon, nur bei enable_protocol) ist jetzt vorhanden; Warn-Toast „agendaExists“ bei Doppel, Zeit '0'. Erste Bewertung (missing) überholt."
+  },
+  "settings/general/type/type.page#action-e05c70b9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1601-1621",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1716-1735",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1738-1744"
+   ],
+   "v": "korrigiert",
+   "n": "Eintrag zeigt Text + Fristtext; Tippen öffnet Bearbeiten-Dialog nur mit Text (wie Ionic). Frist-Feld im Dialog entfällt."
+  },
+  "settings/general/type/type.page#action-f6f5a988": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:121-127",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:564"
+   ],
+   "v": "bestätigt",
+   "n": "„Mehr erfahren“ nur bei !isNew, öffnet Hilfe team-activate. Rolle: Seite nur Admin/Verantwortlich in beiden (Route-Guard /settings/types prefix-Match _isAdminOrResponsible)."
+  },
+  "settings/general/type/type.page#action-fd011cb6": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:355-358"
+   ],
+   "n": "Ionic: Speichern-FAB immer aktiv / Flutter: FAB erst nach einer Änderung aktiv; ohne Änderung gäbe es nichts zu speichern.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#alert-0ec2acf8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1716-1735"
+   ],
+   "v": "korrigiert",
+   "n": "Dialog „To-Do bearbeiten“ nur mit Text-Feld, Platzhalter, Abbrechen/Speichern; leerer Text ändert nichts (wie Ionic)."
+  },
+  "settings/general/type/type.page#field-02b039dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:425-450",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1233-1262"
+   ],
+   "v": "korrigiert",
+   "n": "Reihenfolge Neutral, Anwesend, Abwesend, Entschuldigt, Verspätet wie Ionic; Text „Verspätet anwesend“; nur verfügbare Status."
+  },
+  "settings/general/type/type.page#field-32a15191": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:516-521",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1266-1272"
+   ],
+   "n": "Ionic: Minuten nur in 5er-Schritten / Flutter: showAppTimePicker ohne minuteInterval, beliebige Minute. Flutter flexibler, Funktion gleich.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-43531b7a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/registration_fields_editor.dart:128-138"
+   ],
+   "v": "bestätigt",
+   "n": "„Optionen (kommagetrennt)“, Platzhalter „Option A, Option B, Option C“ nur bei Einzel-/Mehrfachauswahl. Rolle: Seite nur Admin/Verantwortlich in beiden (Route-Guard /settings/types prefix-Match _isAdminOrResponsible)."
+  },
+  "settings/general/type/type.page#field-4a2fa59b": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:477-504",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1905"
+   ],
+   "n": "Ionic: gestapeltes Label, Feld leer wenn nicht gesetzt, jeder Wert gespeichert / Flutter: Label links, 60px-Feld, zeigt 1 bei nicht gesetzt, übernimmt nur Werte > 0 (sonst bleibt letzter gültiger Wert). Nur Randfälle (leer/0).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-519cd48e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:802-830"
+   ],
+   "n": "iOS gleich. Android/Web: Ionic gestapeltes „Name“ ohne Platzhalter / Flutter: Label „Name *“ mit Platzhalter, ohne Satzanfang-Großschreibung; leerer Name als Feldfehler (typeSettingsEnterName) statt Toast, Nutzer erfährt es trotzdem.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-5ad22e0e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1636-1677",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1692-1713"
+   ],
+   "v": "korrigiert",
+   "n": "Stunden-Feld „Stunden vor Termin“ (z.B. 12) nur bei Auswahl „Benutzerdefiniert...“, wie Ionic; 0/ungültig = keine Frist."
+  },
+  "settings/general/type/type.page#field-621715ef": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:114-120",
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:30-36",
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:47-51"
+   ],
+   "v": "bestätigt",
+   "n": "Schalter mit Hilfetext; Einschalten setzt Dauer 10 wenn leer; schreibt enable_protocol. Rolle: Seite nur Admin/Verantwortlich in beiden (Route-Guard /settings/types prefix-Match _isAdminOrResponsible)."
+  },
+  "settings/general/type/type.page#field-63d333de": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:465-476"
+   ],
+   "v": "bestätigt",
+   "n": "Schalter „Ganztägig“ mit Hilfetext, schreibt all_day. Rolle: Seite nur Admin/Verantwortlich in beiden (Route-Guard /settings/types prefix-Match _isAdminOrResponsible)."
+  },
+  "settings/general/type/type.page#field-740d3e37": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:524-535"
+   ],
+   "v": "bestätigt",
+   "n": "Schalter Name verbergen mit Hilfetext, schreibt hide_name. Rolle: Seite nur Admin/Verantwortlich in beiden (Route-Guard /settings/types prefix-Match _isAdminOrResponsible)."
+  },
+  "settings/general/type/type.page#field-9786b85d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:506-515"
+   ],
+   "v": "bestätigt",
+   "n": "Start-Zeit HH:mm, nur bei !all_day, Tippen öffnet Zeitwahl. Rolle: Seite nur Admin/Verantwortlich in beiden (Route-Guard /settings/types prefix-Match _isAdminOrResponsible)."
+  },
+  "settings/general/type/type.page#field-9786b85d-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:516-522"
+   ],
+   "v": "bestätigt",
+   "n": "Ende-Zeit HH:mm, nur bei !all_day. Rolle: Seite nur Admin/Verantwortlich in beiden (Route-Guard /settings/types prefix-Match _isAdminOrResponsible)."
+  },
+  "settings/general/type/type.page#field-af0bc58e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:536-547"
+   ],
+   "v": "bestätigt",
+   "n": "Schalter Hervorheben mit Hilfetext, schreibt highlight. Rolle: Seite nur Admin/Verantwortlich in beiden (Route-Guard /settings/types prefix-Match _isAdminOrResponsible)."
+  },
+  "settings/general/type/type.page#field-c6f43718": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1114-1132",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1084-1093"
+   ],
+   "v": "korrigiert",
+   "n": "Label jetzt „Option“, Optionen des Zusatzfelds, Vorauswahl erste Option, wie Ionic."
+  },
+  "settings/general/type/type.page#field-ea19d7e9": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:506-515",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1266-1272"
+   ],
+   "n": "Ionic: Minuten nur in 5er-Schritten (minuteValues) / Flutter: Zeitwahl ohne 5-Minuten-Raster. Funktion gleich.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

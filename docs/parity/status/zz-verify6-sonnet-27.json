@@ -1,0 +1,557 @@
+{
+ "batch": "zz-verify6-sonnet-27",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "settings/administration/administration.page#loading-cf07fdc8": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:147",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:156",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:340",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:358"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: blockierendes Overlay \"Gemeinden werden zusammengeführt...\" beim Zusammenführen / Flutter: kein Overlay, nur Zusammenführen-/Umbenennen-Buttons während saving deaktiviert (Hinzufügen hat inzwischen ein Overlay). Gleiche Funktion, nur Ladeanzeige.",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#text-20db3e5c": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:328"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#text-45ab2e3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:320"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#text-ab5ef6e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:374",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:380"
+   ],
+   "v": "bestätigt",
+   "n": "Gemeindenamen im Akkordeon \"Alle Gemeinden anzeigen\"."
+  },
+  "settings/administration/administration.page#text-af90065a": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:20",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:25",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:291"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: number-Pipe ohne LOCALE_ID (en-US) -> \"1.5 GB\" / Flutter: Dezimalkomma \"1,5 GB\". Nur Zahlenformat.",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#text-afa4f9f7": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:287",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:289"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#text-ca681383": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:327"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#text-d38cc1b6": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:297",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:316"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#toast-200705ff": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:158",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:159"
+   ],
+   "v": "bestätigt",
+   "n": "Fehlertoast \"Fehler beim Zusammenführen\" bei count==null."
+  },
+  "settings/administration/administration.page#toast-32957c22": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:160",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:161",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:163",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:165",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:166"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: \"Alle zusammenführen\" zeigt immer \"{updated} Person(en) aktualisiert, {total} Duplikat(e) entfernt\" / Flutter: bei genau 1 Duplikat (pairs.length==1) stattdessen \"Zusammengeführt: {count} Person(en) aktualisiert\". Gleiche Info, anderer Text.",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#toast-485cc32a": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:142",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:143"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#toast-96d13755": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:158",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:159",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:209"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#toast-97519bf6": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:142",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:144"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#toast-bde9f729": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:165",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:166"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#toast-cf3b95c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:158",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:159"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#toast-da425369": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:115",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:118",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:121",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:122",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:123"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: roter Toast mit roher Fehlermeldung (error.message) / Flutter: roter Toast mit friendlyErrorMessage(Fehler) (Meldung bleibt sichtbar, nur bereinigt; Netzwerkfehler -> \"Keine Internetverbindung\"). Leerer Name: Dialog bleibt offen mit \"Bitte gib gültige Werte ein.\". Nutzer erfährt weiterhin den Grund.",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#toast-f4fcfa29": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:165",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:166",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:209"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-10a37b5c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:878",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:879",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:880",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:881",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:893",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:894",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:897",
+    "lib/core/router/app_router.dart:966"
+   ],
+   "v": "bestätigt",
+   "n": "Zeile mit Titel · Datum und Status-Text, Tap nur mit messageId zum Nachrichten-Detail (/messages/:id)."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-1335b5e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:435",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:439",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:929",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:933"
+   ],
+   "v": "bestätigt",
+   "n": "Weniger-Button \"Ab wie vielen Malen\": -1, Minimum 2, nur bei frequency != each, Vorschau wird zurückgesetzt."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-2ba38d74": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:455",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:459",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:935",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:939"
+   ],
+   "v": "bestätigt",
+   "n": "Mehr-Button Tage: +7, Maximum 365, nur bei window."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-490549d0": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:301"
+   ],
+   "v": "bestätigt",
+   "n": "AppBar mit automatischer Zurück-Taste (Route unter /settings/auto-messages)."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-51800515": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:250",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:319",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:324",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:327"
+   ],
+   "v": "bestätigt",
+   "n": "Speichern-FAB nur wenn nicht loading und Tab Regel, deaktiviert bei saving; Validierung (erster Fehler als Warn-Toast), Speichern, Toast \"Gespeichert\", zurück; Fehlschlag Toast \"saveFailed\". Schreibt gleiche Spalten (auto_message_rules, tenantId-Filter, created_by bei Neu, enabled_at)."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-534cc13a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:750",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:754",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:759",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:273",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:278"
+   ],
+   "v": "bestätigt",
+   "n": "Nur bei bestehender Regel, danger-Textbutton."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-5ab0462f": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:636",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:637",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:165",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:173",
+    "lib/features/messages/presentation/auto_message_texts.dart:156"
+   ],
+   "v": "bestätigt",
+   "n": "Gleiche Platzhalter {vorname}...{anzahl} in gleicher Reihenfolge, Einfügen an Cursorposition (bzw. Ende). Ionic: Chips outline / Flutter: gefüllt hell-primary (AutoMessageChip selected:true). Nur Optik.",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-7600b17d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:640",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:646",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:157",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:162"
+   ],
+   "v": "bestätigt",
+   "n": "Link \"Auf Vorlage zurücksetzen\" setzt Titel und Text auf Vorlagentext, nur im eigenen-Text-Modus."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-9b2e8e42": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:440",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:444",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:935",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:939"
+   ],
+   "v": "bestätigt",
+   "n": "Mehr-Button Anzahl: +1, Maximum 50."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-9ccfb60b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:489",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:492",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:495",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:499"
+   ],
+   "v": "bestätigt",
+   "n": "Gruppen-Chips Toggle; leere Auswahl -> null (alle)."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-a0e778a3": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:450",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:454",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:929",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:933"
+   ],
+   "v": "bestätigt",
+   "n": "Weniger-Button Tage: -7, Minimum 1, nur bei window."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-a6c6d396": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:349",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:352",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:467",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:477"
+   ],
+   "v": "bestätigt",
+   "n": "Termintyp-Chips (nur sichtbare Typen) Toggle; leere Auswahl -> null (alle)."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-cab12068": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:735",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:738",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:741",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:742",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:743",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:200"
+   ],
+   "v": "bestätigt",
+   "n": "Gleicher Text \"Vorschau mit den letzten Terminen\", outline, volle Breite, bei Laden deaktiviert mit Spinner, Dry-Run-Vorschau. Ionic: ohne Icon / Flutter: zusätzliches Auge-Icon. Nur Optik.",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-efce6677": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:614",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:618",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:623",
+    "lib/features/messages/presentation/widgets/message_editor_toolbar.dart:18",
+    "lib/features/messages/presentation/widgets/message_editor_toolbar.dart:49"
+   ],
+   "v": "korrigiert",
+   "n": "Editor an gleicher Stelle, Inhalt wird in body_json übernommen (Tiptap-Konverter, Überschrift h2/h3). Toolbar jetzt: B, I, U, S, Überschrift-Dropdown (Ionic: H-Umschalter h2), Listen, Link (mit Ionic-Link-Dialog) und Rückgängig-Button (neu seit erstem Verdikt). Einzig Unterschied: Überschrift als Auswahl statt Umschalter.",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#alert-9c3672dd": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:273",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:278",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:279",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:280",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:281",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:282",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:750",
+    "lib/core/router/app_router.dart:179"
+   ],
+   "v": "bestätigt",
+   "n": "Nur bei bestehender Regel. Titel \"Regel löschen?\", Hinweis, Abbrechen/Löschen (destruktiv); bei Fehler Toast \"saveFailed\", danach zurück zur Liste. Rollen: Einstieg in Ionic nur Admin/Verantwortlich (Panel/Einstellungen); Flutter-Route-Guard /settings/auto-messages Admin/Verantwortlich (Prefix gilt auch für :id)."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-1943755d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:661",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:662",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:665",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:666",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:668",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:673"
+   ],
+   "v": "bestätigt",
+   "n": "Push-Schalter."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-21530294": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:513",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:514",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:516",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:517",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:519",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:520"
+   ],
+   "v": "bestätigt",
+   "n": "Wartezeit-Auswahl mit Optionen 0,30,60,120,180,360,720,1440,2880 und gleichen Labels (Direkt nach Ende / X Std. danach / X Min. danach)."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-6087954c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:412",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:413",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:414",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:415",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:419",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:424",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:425"
+   ],
+   "v": "bestätigt",
+   "n": "Segment Jeder/Fehlt-hintereinander/Zeitraum, setzt Vorschau zurück."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-6f78a8d5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:717",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:718",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:720",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:721"
+   ],
+   "v": "bestätigt",
+   "n": "Checkbox \"Verantwortliche in Kopie\"."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-821c7006": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:145",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:154",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:551",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:553",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:554",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:557"
+   ],
+   "v": "bestätigt",
+   "n": "Segment Vorlage/Eigener Text; Wechsel auf Eigenen Text füllt Titel+Text aus Vorlage wenn body_json leer."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-86d54e18": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:376",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:377",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:378",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:379"
+   ],
+   "v": "bestätigt",
+   "n": "Schalter \"Aktiv\" (enabled)."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-87563a8e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:390",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:391",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:394",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:395",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:397",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:405"
+   ],
+   "v": "bestätigt",
+   "n": "Checkboxen für Status 4, 3, 0 in dieser Reihenfolge mit Hinweistext; Vorschau zurückgesetzt."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-9e34c1e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:303",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:310",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:311",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:314"
+   ],
+   "v": "bestätigt",
+   "n": "Segment Regel/Verlauf nur bei bestehender Regel."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-bfacb04a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:599",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:602",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:605",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:606",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:607"
+   ],
+   "v": "bestätigt",
+   "n": "Titelfeld (max 200) nur im eigenen-Text-Modus."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-c03e8960": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:661",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:663",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:665",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:666",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:668",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:673"
+   ],
+   "v": "bestätigt",
+   "n": "E-Mail-Schalter."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-cb3ce0f1": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:686",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:687",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:688",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:689",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:690",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:692",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:694",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:695",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:705"
+   ],
+   "v": "bestätigt",
+   "n": "Schalter \"Antworten erlauben\" mit Hinweis; bei an die Optionen \"Nach Bestätigung entschuldigt\"/\"Sofort entschuldigt\"."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-d1817d01": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:686",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:687",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:688",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:689",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:692",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:698",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:701",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:705"
+   ],
+   "v": "bestätigt",
+   "n": "Radiogruppe instant_excuse (false/true)."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-dcc8d540": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:363",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:366",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:367",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:370",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:371"
+   ],
+   "v": "bestätigt",
+   "n": "Namensfeld max 100, getrimmt beim Speichern; Pflicht (errName)."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-e5ef0cbd": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:723",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:724",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:726",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:727"
+   ],
+   "v": "bestätigt",
+   "n": "Checkbox \"Stimmführer in Kopie\"."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-f07aa849": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:564",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:565",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:566",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:568",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:569",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:571"
+   ],
+   "v": "bestätigt",
+   "n": "Vorlagenauswahl (absent, late, noAnswer, streak) nur im Vorlagen-Modus."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-01954ff0": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:432",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:433"
+   ],
+   "v": "bestätigt",
+   "n": "Label \"Ab wie vielen Malen\" nur bei frequency != each."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-0428f12c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:747"
+   ],
+   "v": "bestätigt",
+   "n": "\"Vorschau konnte nicht geladen werden\" bei Fehler."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-0819182b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:463",
+    "lib/features/messages/presentation/auto_message_texts.dart:82"
+   ],
+   "v": "bestätigt",
+   "n": "Hinweistext je Häufigkeit mit count/days."
+  }
+ },
+ "extra": []
+}

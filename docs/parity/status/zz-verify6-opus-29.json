@@ -1,0 +1,408 @@
+{
+ "batch": "zz-verify6-opus-29",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "songs/songs.page#action-380a0b3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:345-356",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:293-298",
+    "lib/core/router/app_router.dart:1203-1210"
+   ],
+   "n": "Zeilen aktualisiert (alte :338/:282 zeigten auf Import bzw. Kategorien). „In der Organisation suchen“ (search-Icon) nur isAdmin (Admin/Verantwortlich, enthält !_isPublic) && nicht öffentlich && currentOrganisationProvider ≠ null = Ionic !tenantData && isAdmin && db.organisation(). Push /settings/org-settings/songs, Suchbegriff als ?q= (getrimmt), Route-Guard Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-3f72e6db": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:84-90",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:478-483",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:161"
+   ],
+   "n": "Flutter besser: Druck-Knopf im Sheet „Aktuelle Werke“ nur bei canPrint = isAdmin (Admin/Verantwortlich, nie öffentliche Seite). Ionic: isAdmin = Rolle des eingeloggten Tenants, daher auch auf einer Freigabe-Seite sichtbar (druckt dann Noten des eigenen Tenants aus db.groups()/getCurrentSongs()). Normale Seite: gleiche Rollen.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#action-684cb018": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:335-344",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:288-289",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:99-110",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:161"
+   ],
+   "n": "Zeilen aktualisiert. „Werke importieren“ (cloud-upload) nur Admin/Verantwortlich, nicht öffentlich (Ionic !tenantData && isAdmin); übrige Rollen ohne Eintrag wie Ionic. Öffnet den Import als Vollbild-Dialog (Ionic Karten-Modal, backdropDismiss false), nach Import Neuladen (invalidate songsProvider/songsListDataProvider = Ionic getSongs).",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-761fe550": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:58-59",
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:61-98",
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:218-227",
+    "lib/data/repositories/song_repository.dart:243-280"
+   ],
+   "n": "Korrektur niedrig→mittel (anderer DB-Wert ist nie niedrig). Gleich: „Hinzufügen“ nur mit Nummer und Name aktiv, Duplikat- („Nummer vergeben“) und Link-Prüfung, insert songs {number,name,withChoir,withSolo,instrument_ids (Orchester: alle Gruppen-Ids inkl. Hauptgruppe, sonst []),prefix,tenantId = effektiver Werke-Tenant}, danach Navigation zum neuen Werk. Abweichende Schreibwerte: Ionic schreibt link = '' bei leerem Feld und Name/Präfix ungetrimmt / Flutter lässt link weg (NULL) und trimmt Name/Präfix. Funktional ohne Folge (alle Leser prüfen link nur auf truthy), Fix trivial. Flutter besser: Fehler → „Werk konnte nicht erstellt werden“, Sheet bleibt offen (Ionic schließt still ohne Navigation); Nummer als Zahl verglichen (Ionic „007“ ≠ „7“ → Duplikat möglich). Randfall: nicht ganzzahlige Nummer (Web) → Flutter tut still nichts, Ionic Insert scheitert still.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "songs/songs.page#action-ed429618": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:320-334",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:123-131",
+    "lib/core/providers/optional_tabs_providers.dart:83-98",
+    "lib/core/router/route_access.dart:42-46"
+   ],
+   "n": "Korrektur niedrig→mittel (Rolle sieht/kann weniger). Gleich: Text „Tab ausblenden“/„Als Tab anzeigen“, Bookmark-Icon, Speichern in user_metadata showSongsTab_<tenantId>, nicht auf der öffentlichen Seite, Allgemein-Instanzen/Bewerber erreichen die Seite in beiden nicht. Ionic: Eltern erreichen am Handy Werke über Einstellungen (settings.page.html:522 ohne Eltern-Ausschluss), sehen den Eintrag und bekommen danach einen funktionierenden Werke-Tab (tabs.page.ts:49 ohne Eltern-Ausschluss; isUrlAccessAllowed sperrt /tabs/songs-tab nur beim Neuladen/Instanzwechsel) / Flutter: songsTabAllowedProvider (canOpenSongsTab) blendet Eintrag und Tab für Eltern aus, Werke bleiben über „Mehr“ erreichbar. Bewusst (SOL_FIX22, an Ionics Routen-Regel angelehnt) – Leon entscheidet. Flutter zusätzlich: Fehler-Toast „Fehler beim Speichern“ mit Rücknahme.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "songs/songs.page#alert-4b046a4c": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:27-68",
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:84-90",
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:141-180",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:478-483"
+   ],
+   "n": "Zeilen aktualisiert. Druck-Knopf nur Admin/Verantwortlich (canPrint = isAdmin; Freigabe-Seite siehe action-3f72e6db). „Gruppe wählen“, Radio-Liste aller Nicht-Hauptgruppen des Tenants, „Abbrechen“/„Noten drucken“; ohne Auswahl Warn-Toast „chooseGroupPlease“, Dialog bleibt offen; Datei je Gruppe, im Chor Fallback „Chor (alle)“; keine Noten → Warn-Toast noScoresCurrent; Noten_<Gruppe>_<yyyy-MM-dd>.pdf. Flutter nutzt die geladenen aktuellen Werke (Ionic lädt neu) und schließt den Dialog vor dem Druck.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#effect-97c69a71": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/data/song_print_service.dart:193-196",
+    "lib/core/services/native/native_file_service.dart:35-36",
+    "lib/core/services/native/native_file_service.dart:167-176"
+   ],
+   "n": "Zeilen aktualisiert. Menüpunkt für alle Rollen und auf der Freigabe-Seite (beide); Dateiname <Kurzname>_Werkverzeichnis_<dd-MM-yyyy>.pdf gleich; nativ Datei in Cache + Viewer, Desktop-Browser Anker-Download wie Ionic. Ionic downloadFileNative im mobilen Browser (iOS/Android, auch PWA) → Web-Share-Sheet / Flutter → Anker-Download (Printing.sharePdf web, printing-5.15.1 printing_web.dart:249-275).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#effect-cd42ffa6": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/data/song_print_service.dart:128-196",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:138-154"
+   ],
+   "n": "Inhalt gleich: Kopf „Werkverzeichnis …“/„Stand: …“ mit Branding, Spalten Nr./Name, ggf. Zuletzt gespielt/gesungen (nicht öffentlich), Schwierigkeit, Chor/Orch., Solo, sichtbare Zusatzfelder (Ja/Nein); Zeilen = gefilterte, sortierte, durchsuchte Liste; Schrift jetzt wie Ionic NotoSans (PdfFonts). Ionic: 11 pt mit automatischer Verkleinerung (Padding 2 → 9 pt → 8 pt), damit die Liste möglichst auf eine Seite passt / Flutter: feste 9 pt (Kopf 10 pt). Flutter besser: Fehler als Toast. Öffentliche Seite: Ionic nimmt Zusatzfelder/Branding des eingeloggten Tenants (anonym keine), Flutter Felder des freigebenden, kein Branding.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#modal-b27e7f62": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:372-382",
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:238-246"
+   ],
+   "n": "Zeilen aktualisiert. FAB „+“ nur Admin/Verantwortlich, öffnet „Werk hinzufügen“. Ionic: Sheet in voller Höhe (breakpoints [0,1]) / Flutter: Bottom-Sheet in Inhaltshöhe. Flutter besser: auf der öffentlichen Seite nie (Ionic zeigt den FAB einem eingeloggten Admin auch dort und legt dann im eigenen Tenant an).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#nav-3b77363a": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:293-298",
+    "lib/core/router/app_router.dart:1203-1210"
+   ],
+   "n": "Zeilen aktualisiert. Push auf /settings/org-settings/songs, Suchbegriff als ?q= (Flutter getrimmt; Ionic verliert q nach Filterwechsel, siehe x-3ea3047248).",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#nav-4756a104": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:112-121",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:375-378"
+   ],
+   "n": "Zeilen aktualisiert. Nach Anlegen im Werke-Tab → push /songs-tab/<id> (Route vorhanden, Tab bleibt gewählt).",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#nav-48b97106": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:111-116",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:112-121",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:478-483"
+   ],
+   "n": "Flutter besser: Ionic öffnet ein Werk aus „Aktuelle Werke“ (nicht öffentlich) immer unter /tabs/settings/songs/<id>, auch im Werke-Tab (Wechsel in den Einstellungen-Kontext) / Flutter: Sheet schließen, im Werke-Tab /songs-tab/<id>, sonst /settings/songs/<id>.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "songs/songs.page#nav-bb5caed5": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:112-114",
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:111-116"
+   ],
+   "n": "Zeilen aktualisiert. Auf der Freigabe-Seite: Sheet schließen und push /<sharing_id>/<songId> wie Ionic; sonst siehe nav-48b97106.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#nav-ecc8ff90": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:118-120",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:375-378"
+   ],
+   "n": "Zeilen aktualisiert. Nach Anlegen außerhalb des Werke-Tabs → push /settings/songs/<id>.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#text-5ecb67ec-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:250-252",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:388"
+   ],
+   "n": "Zeilen aktualisiert. Großer Titel (nur iOS, IonLargeTitle) = longName des freigebenden Tenants beim öffentlichen Link, wie Ionic collapse=condense.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#text-b8539fda-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:250-252",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:388"
+   ],
+   "n": "Zeilen aktualisiert. „Werke ({count})“ mit Anzahl aller Werke (data.songs.length = Ionic songs.length); großer Titel nur iOS.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#text-c364c614": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:156",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:372-382"
+   ],
+   "n": "Zeilen aktualisiert. „Werk hinzufügen“ als Sheet-Titel. FAB/Sheet nur Admin/Verantwortlich; Freigabe-Seite siehe modal-b27e7f62.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#toast-9ab6d68a": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:176-205"
+   ],
+   "n": "Zeilen aktualisiert. Text „Ungültiger Freigabe-Link.“ gleich, einmal pro Seite. Ionic: Toast in Standardfarbe success (grün); Seite bleibt mit Titel „Werke (0)“, ⋮-Menü, Suchleiste und dauerhaftem Skeleton / Flutter: neutraler Info-Toast; Seite mit Titel „Werke“, Zurück-Button (→ /login) und leerem Inhalt.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-0d67592c4c": {
+   "s": "diff",
+   "f": [
+    "lib/core/providers/song_providers.dart:109-113",
+    "lib/data/repositories/song_repository.dart:520-536",
+    "lib/data/repositories/song_repository.dart:701-710"
+   ],
+   "n": "Besteht weiter, Zeilen aktualisiert. Ionic: Name nur, wenn person_id ein Mitglied der Hauptgruppe ist (getConductors(true) inkl. Ausgetretene), sonst otherConductor; ohne Hauptgruppe wirft getConductors und die Seite lädt nicht / Flutter: Name jeder verknüpften Person (Join person:person_id), sonst otherConductor; keine Hauptgruppe nötig. Wirkt auch auf die Suche nach Dirigent. Randfall (Dirigent später aus Hauptgruppe entfernt).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-33fec24313": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:502-525"
+   ],
+   "n": "Besteht weiter, Zeile aktualisiert. Ionic: bei 0 Treffern nur Kopf „Werke (0)“ / Flutter: Icon + „Keine Werke vorhanden“ bzw. „Keine Werke gefunden“ und bei aktiven Filtern „Filter zurücksetzen“.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-3ea3047248": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:232-237",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:81-97"
+   ],
+   "n": "Besteht weiter. Flutter besser: Ionic setzt bei Filter-/Sortier-/Segmentwechsel, Pull-to-Refresh und Realtime-Reload searchTerm = \"\" (onFilterChanged/onCategoryChanged) und zeigt die Liste ohne Suche, obwohl der Text in der Suchleiste stehen bleibt (auch „In der Organisation suchen“ übergibt dann kein q) / Flutter: _search bleibt in applySongFilter, solange Text in der Leiste steht.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-7853e7d520": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:232-237"
+   ],
+   "n": "Besteht weiter (Duplikat zu x-3ea3047248). Flutter besser: Ionic setzt bei Filter-/Kategorie-/Sortierwechsel searchTerm = '' und filtert ohne Suche, obwohl der Suchtext im Feld stehen bleibt / Flutter: Suchbegriff bleibt angewendet.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-bb07f924d9": {
+   "s": "diff",
+   "f": [
+    "lib/core/providers/song_providers.dart:109-113",
+    "lib/data/repositories/song_repository.dart:520-536",
+    "lib/data/repositories/song_repository.dart:701-710"
+   ],
+   "n": "Besteht weiter (Duplikat zu x-0d67592c4c). Ionic: Name nur, wenn person_id in getConductors(true) der Hauptgruppe ist, sonst otherConductor / Flutter: Name jeder verknüpften Person (Join person:person_id), sonst otherConductor.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-d7e836d454": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:169-174",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:207-214"
+   ],
+   "n": "Besteht weiter, präzisiert. Ionic: beim Laden volle Toolbar (Titel „Werke (0)“ bzw. Langname, ⋮-Menü bedienbar), Suchleiste, Refresher und Skeleton-Inset-Liste (Kopf + 10 zweizeilige Einträge); Ladefehler → Skeleton bleibt dauerhaft / Flutter: nur AppBar „Werke“ (öffentlich leer) und 10 zweizeilige Skeleton-Zeilen ohne Menü/Suche; Ladefehler → ErrorStateView mit „Erneut versuchen“ (Flutter besser).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-ee1abf09a6": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:169-174",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:502-525",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:464-465"
+   ],
+   "n": "Besteht weiter (überschneidet sich mit x-33fec24313/x-d7e836d454). Ionic: nur Skeleton beim Laden, kein Fehler- oder Leerzustand / Flutter: Fehleransicht mit „Erneut versuchen“, Leerzustand mit Icon und „Keine Werke vorhanden“ bzw. „Keine Werke gefunden“ + „Filter zurücksetzen“, Lade-Balken beim Aktualisieren.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "stats/stats.page#text-445b00dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1193-1238",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1153-1187",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1015-1022"
+   ],
+   "n": "Zeilen aktualisiert (alte 1374-1450 außerhalb der Datei). Personen-Sheet der Organisation: je Instanz eine Zeile mit Langname (subtitle tenantNames.join('\\n')), Badge Anzahl. Statistik nur Admin/Verantwortlich (Ionic settings isAdmin, Flutter Guard '/statistics'), Abschnitt nur bei Organisation – gleich. Randfall: Flutter sammelt Instanznamen als Set (doppelte Zeilen derselben Person in einer Instanz nur einmal, Ionic zweimal).",
+   "v": "bestätigt"
+  },
+  "x-82cbaeffb4": {
+   "s": "diff",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:164-169"
+   ],
+   "n": "Besteht weiter, Zeile aktualisiert. Flutter besser: Herunterziehen lädt Termine und Personen neu / Ionic: kein Refresher (stats.page.html ohne ion-refresher), nur erneutes Öffnen.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-c78a5253ee": {
+   "s": "diff",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:613-722"
+   ],
+   "n": "Besteht weiter. Ionic: Legende „Anwesend (x%)“, „Entschuldigt (x%)“, „Verspätet (x%)“, „Abwesend (x%)“ über dem Kreisdiagramm (stats.pieLabel) / Flutter: gleiche gerundete Prozente auf den Segmenten, Legende rechts nur mit Statusnamen, Ring statt voller Kreis.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-d30471180e": {
+   "s": "diff",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:971-996",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:626",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:826",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:924",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:953"
+   ],
+   "n": "Besteht weiter, Zeilen aktualisiert (alte 1112/1197 ungültig). Ionic: leeres Diagramm (mit Titel), wenn keine Daten / Flutter: Platzhalter „Keine Daten verfügbar“, „Keine Geburtsdaten vorhanden“ bzw. „Keine unentschuldigten Abwesenheiten“.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "tabs/side-nav/side-nav.component#action-58669ad9": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:666-704",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:131-134",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:386-407"
+   ],
+   "n": "Zeilen aktualisiert. Nur bei mehr als einer Instanz (alle Instanzen des Nutzers, jede Rolle) in beiden; Einträge longName + Badge „Aktuell“; aktuelle Instanz → nichts; sonst Wechsel und Startseite der neuen Rolle (role.defaultRoute = Utils.getUrl). Fehlendes Loading siehe loading-e9133cc5.",
+   "v": "bestätigt"
+  },
+  "tabs/side-nav/side-nav.component#loading-e9133cc5": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:131-134",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:386-407"
+   ],
+   "n": "Besteht weiter, Zeilen aktualisiert. Ionic: Lade-Overlay (Utils.getLoadingElement) während des Instanzwechsels / Flutter: switchTenant ohne Ladeanzeige.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "tabs/side-nav/side-nav.component#logic-4d49612e": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:68-91",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:104-145",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:147-183",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:299-384",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:617-629"
+   ],
+   "n": "Gleich: Gruppen (buildNavGroups, hasOrganisation nur Admin wie nav-items.ts:104), aktiver Eintrag, Badges offene Personen (Admin/Verantw.) und offene Aufgaben (Flutter live statt 60-s-Drosselung), Profilname/Avatar (sonst E-Mail), Rollenlabel (roleKey), Strg/⌘+B nicht in Textfeldern, Overlay schließen, Profil → /settings, Instanzwechsel (gleiche Instanz nichts), Ablaufpläne/Statistik als Modal (jetzt showPlanningModal, frühere Notiz „Seite statt Modal“ überholt), Logout → /login (Flutter entfernt zusätzlich Push-/Live-Activity-Token, beim Einstellungen-Logout geprüft). Abweichungen: Instanzlogo logo_url nie gezeigt (x-20bbe67ad6) und kein Loading beim Instanzwechsel (loading-e9133cc5).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "tabs/side-nav/side-nav.component#media-8fae1184": {
+   "s": "missing",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:617-629"
+   ],
+   "n": "Besteht weiter, Zeilen aktualisiert. Ionic: mit tenants.logo_url zeigt der Instanz-Knopf im Sidepanel das Logo-Bild / Flutter: Tenant-Modell hat kein logo_url, immer Initialen. Nur Tablet/Desktop, alle Rollen.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "tabs/side-nav/side-nav.component#nav-8a63e2cc": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:131-134",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:386-407",
+    "lib/core/constants/enums.dart:137-141"
+   ],
+   "n": "Zeilen aktualisiert. Nach Instanzwechsel Startseite der Rolle in der neuen Instanz: Admin/Verantwortlich/Beobachter → /people (≙ /tabs/player, auch bei aktivem Dashboard-Tab), Eltern → /parents, alle anderen (Helfer, Stimmführer, Spieler, Bewerber) → /signout. Gleiche Instanz: nichts. Ionic zeigt dabei ein Lade-Overlay (loading-e9133cc5).",
+   "v": "bestätigt"
+  },
+  "tabs/side-nav/side-nav.component#nav-9b5ddf8f": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:319-326",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:124-129"
+   ],
+   "n": "Zeilen aktualisiert. Profil-Knopf im Fuß → go('/settings') (≙ /tabs/settings), Overlay schließt; Flutter fragt vorher ggf. Verlassen-Schutz ab.",
+   "v": "bestätigt"
+  },
+  "tabs/side-nav/side-nav.component#popover-bfa8543b": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:663-704"
+   ],
+   "n": "Zeilen aktualisiert. Nur bei mehreren Instanzen: Liste aller Instanzen, aktuelle mit Badge „Aktuell“, Breite 240, eingeklappt seitlich versetzt. Rollenunabhängig.",
+   "v": "bestätigt"
+  },
+  "tabs/side-nav/side-nav.component#text-2e5c2fe9": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:617-629",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:745-753"
+   ],
+   "n": "Zeilen aktualisiert. Initialen gleich (shortName, sonst longName; ein Wort → 2 Buchstaben, sonst erster+letzter Anfangsbuchstabe), alle Rollen. Flutter zeigt sie auch bei gesetztem logo_url, siehe media-8fae1184.",
+   "v": "bestätigt"
+  },
+  "tabs/side-nav/side-nav.component#text-9e2fb11a": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:653-655"
+   ],
+   "n": "Zeilen aktualisiert. „# Instanz/Instanzen“ (navInstances) nur bei mehr als einer Instanz und ausgeklapptem Panel; rollenunabhängig in beiden.",
+   "v": "bestätigt"
+  },
+  "x-20bbe67ad6": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:617-629"
+   ],
+   "n": "Besteht weiter (gleicher Befund wie media-8fae1184). Ionic: tenants.logo_url gesetzt → Logo-Bild statt Initialen im Instanz-Knopf / Flutter: Tenant-Modell kennt logo_url nicht, immer Initialen.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "tabs/tabs.page#effect-179a0567": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:211-243",
+    "lib/core/router/app_router.dart:436-449",
+    "lib/core/router/route_access.dart:124-139",
+    "lib/core/constants/enums.dart:137-141"
+   ],
+   "n": "Zeilen aktualisiert. Flutter besser: Ziel gleich (defaultRoute = Utils.getUrl je Rolle), gleiches Urteil wie nav-0ccaf6f8. Ionic leitet nur beim Laden/bei Signaländerung per isUrlAccessAllowed um, dessen Liste Lücken hat: Helfer/Helfer-Stimmführer landen beim Neuladen von /tabs/attendance auf „Meine Termine“, Spieler/Helfer beim Neuladen von /tabs/overview, ebenso alle nicht gelisteten Unterseiten (z. B. /tabs/settings/org-settings/songs) / Flutter prüft bei jeder Navigation und lässt Seiten passend zu den sichtbaren Tabs/Einträgen zu.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  }
+ },
+ "extra": []
+}

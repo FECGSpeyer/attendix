@@ -1,0 +1,441 @@
+{
+ "batch": "zz-verify6-opus-08",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "org-settings/org-settings.page#text-5a3b837f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:256",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:257",
+    "lib/core/router/app_router.dart:184"
+   ],
+   "n": "Abschnitt „Übergabe“ nur Admin + Verantwortlich (Ionic isAdmin / Flutter role.isAdmin || role.isResponsible; effectiveRoleProvider = echte Rolle im Release); Seite selbst nur Admin/Verantwortlich (Ionic isUrlAccessAllowed, Flutter Route-Guard). f-Zeile auf den Abschnittstitel korrigiert.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-8614316a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:286",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:290"
+   ],
+   "n": "longName jeder verknüpften Instanz als Untertitel; gleiche Bedingung (Org vorhanden, andere Instanzen der Org ohne aktuelle).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-874018a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:286",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:289"
+   ],
+   "n": "shortName jeder verknüpften Instanz als Titel; für alle, die die Seite öffnen (Admin/Verantwortlich), sobald weitere Instanzen verknüpft sind.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-9f03cb0c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:279",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:280",
+    "lib/core/providers/organisation_providers.dart:39"
+   ],
+   "n": "„Instanzen“ für Admin/Verantwortlich bei weiteren Instanzen der Org (linkedTenantsProvider = tenant_group_tenants der Org ohne aktuelle Instanz, wie Ionic getLinkedTenants gefiltert).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-b41bd762": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:283",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:284"
+   ],
+   "n": "shortName der aktuellen Instanz mit „Diese Instanz“; gleiche Bedingung.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-bbfd5f0d": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:266",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:267",
+    "lib/core/providers/organisation_providers.dart:39"
+   ],
+   "n": "„Werke“ nur Admin + Verantwortlich und mindestens eine andere Instanz der Org (eigene ausgeschlossen) – gleich.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#toast-2193dd25": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:65",
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:68",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:277",
+    "lib/data/repositories/song_repository.dart:402"
+   ],
+   "n": "Nur Admin (isSuperAdmin) + weitere Instanzen; Deaktivieren mit Bestätigungsdialog; schreibt tenants.song_source_tenant_id (eq id = aktuelle Instanz), dann „Werk-Synchronisierung gespeichert.“ (success). Ionic-Lade-Overlay vs. Spinner im Feld ist ein eigenes Lade-Thema.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#toast-89e49671": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:109",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:209"
+   ],
+   "n": "„Schlüssel kopiert“ (success), Dialog bleibt offen; nur Admin + fecg_link_enabled (PlanBeamer.gemeindeAppLinked). Flutter zeigt den Toast nur, wenn die Zwischenablage klappt (sonst bleibt der Schlüssel sichtbar).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#toast-9381748b": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:52",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:56"
+   ],
+   "n": "„Die Organisation wurde erfolgreich von der Instanz getrennt.“ (success) nur nach erfolgreichem Löschen von tenant_group_tenants (tenant_id + tenant_group); nur Admin. Fehlerfall siehe x-6ff50ffb32.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#toast-eaca6962": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:70",
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:75"
+   ],
+   "n": "Ionic: Service-Toast „Fehler beim Verknüpfen der Organisation“ und danach zweiter Toast mit der technischen error.message (danger) / Flutter: nur „Fehler beim Verknüpfen der Organisation“ (danger). Fehler wird in beiden gemeldet, nur der technische Zusatztext fehlt.",
+   "v": "bestätigt"
+  },
+  "x-6ff50ffb32": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:41",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:57",
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:70"
+   ],
+   "n": "Ionic: „Fehler beim Umbenennen der Organisation“, „Fehler beim Entfernen der Organisation“, „Fehler beim Aktualisieren der Einstellungen“ (Service-Toasts, danger) / Flutter: „Fehler beim Speichern“ (Umbenennen, Werk-Sync) bzw. „Fehler beim Trennen“ (danger). Fehler wird gemeldet, nur andere Worte. f-Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-songs/org-songs.page#text-8eba480d": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:224",
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:227",
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:243",
+    "lib/core/router/app_router.dart:184"
+   ],
+   "n": "Text bei !isAdmin || keine Organisation gleich (isAdmin = Admin/Verantwortlich). Andere Rollen kommen in Flutter nicht hin (Guard '/settings/org-settings' gilt auch für /songs), Einstiege in Ionic nur für isAdmin. Router-Zeile korrigiert (181 → 184).",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#toast-2d9620c7": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:243",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:245",
+    "lib/features/people/presentation/pages/people_list_page.dart:1000",
+    "lib/features/people/presentation/pages/people_list_page.dart:1004"
+   ],
+   "n": "„Fehler beim Speichern“ (danger), Seite bleibt offen. Einstieg nur Admin/Verantwortlich (Ionic list.page isAdmin, Flutter Optionsmenü isAdmin = admin||responsible).",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#toast-797d2d80": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:236",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:238",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:242",
+    "lib/features/people/presentation/pages/people_list_page.dart:1355"
+   ],
+   "n": "„{n} Person(en) aktualisiert“ (success), dann schließen und Liste neu laden. Nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#toast-a80bef04": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:173",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:174",
+    "lib/core/utils/toast_helper.dart:65"
+   ],
+   "n": "Warn-Toast „Diese Funktion ist im Demo-Modus nicht verfügbar.“ (orange), nichts gespeichert; Demo = Konto-E-Mail ist die Demo-Mail. Nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "x-1aab272cf3": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:478",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:481",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:534"
+   ],
+   "n": "Flutter besser: Ionic speichert Einzelwerte eines Zahlenfeldes aus ionChange als String (\"5\"), Sammelwert und Personenseite (NumericValueAccessor) als Zahl / Flutter immer Zahl oder null. Der JSON-Typ in additional_fields weicht nur vom Ionic-Fehlerpfad ab (Ionic schreibt sonst selbst Zahlen); Filter/Suche vergleichen per String(), Anzeige gleich. Leon entscheidet.",
+   "v": "bestätigt"
+  },
+  "x-5b376c7a36": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/profile_repository.dart:310",
+    "lib/data/repositories/profile_repository.dart:345",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:243",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:245"
+   ],
+   "n": "Ionic: orgSvc.updatePersonFieldValues zeigt bei Fehler zusätzlich „Fehler beim Speichern der gemeinsamen Zusatzfelder“ (danger), danach „Fehler beim Speichern“ / Flutter: nur „Fehler beim Speichern“. Fehler wird gemeldet. Schreibweg gleich (upsert tenant_group_person_fields, onConflict tenant_group,person_key,field_id).",
+   "v": "bestätigt"
+  },
+  "x-a485e4b055": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:258",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:309",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:320"
+   ],
+   "n": "Flutter besser: Ionic zeigt die Zusatzfelder (inkl. Org-Felder) im Feld-Auswahlmenü nur, wenn die Instanz selbst additional_fields hat / Flutter: immer, wenn Org- oder Instanz-Felder existieren. Admin/Verantwortlich kann diese Felder ohnehin pro Person bearbeiten; kein Rechtezuwachs.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#loading-bab0752f": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:213",
+    "lib/features/people/presentation/pages/person_import_page.dart:254",
+    "lib/features/people/presentation/pages/person_import_page.dart:319",
+    "lib/features/people/presentation/pages/person_import_page.dart:351"
+   ],
+   "n": "Fortschritt „{done} / {total} importiert...“ wird angezeigt und hochgezählt; Ionic blockiert den ganzen Bildschirm / Flutter: Overlay nur über dem Inhalt, Schließen-X gesperrt, aber „Zurück“ in der unteren Leiste bleibt während des Imports bedienbar (Import läuft weiter).",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#toast-9635ec11": {
+   "s": "na",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:166",
+    "lib/features/people/presentation/pages/person_import_page.dart:167",
+    "lib/features/people/presentation/pages/person_import_page.dart:349"
+   ],
+   "n": "toter Code: „Weiter“ ist bei !canProceedFromMapping deaktiviert (import.page.html:128), der Warn-Zweig in proceedToPreview läuft nie. Flutter: gleicher Guard (Button deaktiviert, Toast-Zweig ebenso unerreichbar). f-Zeilen korrigiert.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#toast-b3bb9f9f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:197",
+    "lib/features/people/presentation/pages/person_import_page.dart:202",
+    "lib/features/people/presentation/pages/person_import_page.dart:203",
+    "lib/core/utils/toast_helper.dart:65"
+   ],
+   "n": "Warn-Toast „Diese Funktion ist im Demo-Modus nicht verfügbar.“ vor dem Import, nach der Prüfung „nichts zu importieren“ wie Ionic. Nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#toast-e3036216": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:265",
+    "lib/features/people/presentation/pages/person_import_page.dart:270",
+    "lib/features/people/presentation/pages/person_import_page.dart:272",
+    "lib/features/people/presentation/pages/person_import_page.dart:273"
+   ],
+   "n": "„N Person(en) importiert.“ + ggf. „M fehlgeschlagen.“, grün bzw. orange, danach Fehlerliste. Nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "x-281b9c9094": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:263",
+    "lib/core/providers/realtime_providers.dart:32"
+   ],
+   "n": "Zurückgezogen: Ionic lädt die Liste nicht nur bei imported>0 neu – der Realtime-Kanal 'player-changes' der Personenliste (list.page.ts:172-185) ruft bei jedem INSERT in player getPlayers() auf, auch teilweise gespeicherte Zeilen erscheinen. Flutter aktualisiert ebenfalls per realtimePlayersProvider; das zusätzliche invalidate(playersProvider) ändert nichts Sichtbares.",
+   "v": "korrigiert"
+  },
+  "x-ab5b4f49ad": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:250",
+    "lib/features/people/presentation/pages/person_import_page.dart:251",
+    "lib/data/repositories/base_repository.dart:170"
+   ],
+   "n": "Ionic: Grund = error.message ?? „Unbekannter Fehler“ / Flutter: '$e' mit Klassenname/Operation/Code (z. B. „RepositoryException: … (operation: …, code: 23505)“). Zeile und Fehlschlag werden in beiden gezeigt.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-09d8ea9a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1000",
+    "lib/features/people/presentation/pages/people_list_page.dart:1007",
+    "lib/features/people/presentation/pages/people_list_page.dart:1010",
+    "lib/features/people/presentation/pages/people_list_page.dart:1361",
+    "lib/features/people/presentation/pages/people_list_page.dart:1368"
+   ],
+   "n": "Nur Admin/Verantwortlicher; Upload-Icon, „Personen importieren“ im Optionsmenü → Import (Vollbild), Neuladen bei Erfolg.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-49667e4f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:535",
+    "lib/features/people/presentation/pages/people_list_page.dart:779",
+    "lib/features/people/presentation/pages/people_list_page.dart:795",
+    "lib/features/people/presentation/pages/people_list_page.dart:806",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:51",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:61",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:389"
+   ],
+   "n": "Bei >1 Instanz (userTenantsProvider wie db.tenants()) für alle Rollen der Personenliste „<longName> ⌄“ links statt Titel; Menü mit allen Instanzen und Badge „Aktuell“; Wechsel setzt Instanz und springt zur Startseite der Rolle (Ionic onTenantChange). Lade-Overlay fehlt (Lade-Thema).",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-4e3685b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:659",
+    "lib/features/people/presentation/pages/people_list_page.dart:1727",
+    "lib/features/people/presentation/pages/people_list_page.dart:1729",
+    "lib/features/people/presentation/pages/people_list_page.dart:1394"
+   ],
+   "n": "Nur Admin/Verantwortlicher, nicht pausierte Person; gelb, Pause-Icon → Haptik leicht + Pausieren-Sheet.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-4e3685b7-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:659",
+    "lib/features/people/presentation/pages/people_list_page.dart:1727",
+    "lib/features/people/presentation/pages/people_list_page.dart:1729"
+   ],
+   "n": "Wie action-4e3685b7 (Sortierung ≠ Gruppe, gleiche Zeile).",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-7d1d1666": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:661",
+    "lib/features/people/presentation/pages/people_list_page.dart:1720",
+    "lib/features/people/presentation/pages/people_list_page.dart:1722",
+    "lib/features/people/presentation/pages/people_list_page.dart:1429"
+   ],
+   "n": "Nur Admin/Verantwortlicher; rot, Papierkorb → _remove (Selbst-Check „cannotRemoveSelf“ danger, Aktionsblatt Archivieren/Entfernen/Abbrechen).",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-7d1d1666-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:661",
+    "lib/features/people/presentation/pages/people_list_page.dart:1720",
+    "lib/features/people/presentation/pages/people_list_page.dart:1722"
+   ],
+   "n": "Wie action-7d1d1666.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-8a40dbb1-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1703",
+    "lib/features/people/presentation/pages/people_list_page.dart:1709",
+    "lib/features/people/presentation/pages/people_list_page.dart:1714"
+   ],
+   "n": "Nur Admin/Verantwortlicher: voller Wisch pausiert bzw. aktiviert wieder (paused ? unpause : pause) wie Ionic ionSwipe auf der expandable-Option.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-c9c70280": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:660",
+    "lib/features/people/presentation/pages/people_list_page.dart:1727",
+    "lib/features/people/presentation/pages/people_list_page.dart:1733",
+    "lib/features/people/presentation/pages/people_list_page.dart:1400"
+   ],
+   "n": "Nur Admin/Verantwortlicher, pausierte Person; grün, Play-Icon → „Person wieder aktivieren?“ Abbrechen/Aktivieren; schreibt paused=false, paused_until=null, Historie „Wieder aktiv“, fügt zu kommenden Terminen hinzu.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-c9c70280-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:660",
+    "lib/features/people/presentation/pages/people_list_page.dart:1727",
+    "lib/features/people/presentation/pages/people_list_page.dart:1733"
+   ],
+   "n": "Wie action-c9c70280.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-d74a8ace": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1013",
+    "lib/features/people/presentation/pages/people_list_page.dart:1018",
+    "lib/features/people/presentation/pages/people_list_page.dart:1207"
+   ],
+   "n": "Nur Admin/Verantwortlicher und Sortierung „Gruppe“; „Reihenfolge anpassen“ startet den Umsortier-Modus (Ionic-Variante „Reihenfolge speichern“ unerreichbar, Popover im Reorder-Modus ausgeblendet).",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#alert-0eb34b23": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1144",
+    "lib/features/people/presentation/pages/people_list_page.dart:1152",
+    "lib/features/people/presentation/pages/people_list_page.dart:1165",
+    "lib/features/people/presentation/pages/people_list_page.dart:1168"
+   ],
+   "n": "Ionic: Alert „Instanz wählen“ mit Radio-Liste (nichts vorausgewählt – `selected` kennt ion-alert nicht), „Abbrechen“ → Filter „Alle“, „Filtern“ ohne Auswahl → „Alle“ / Flutter: Auswahl-Dialog „Instanz wählen“ ohne Buttons, Tipp filtert sofort, Schließen lässt den bisherigen Filter stehen. Gefilterte Daten gleich (Nicht-Beobachter-Konten der Instanz).",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#alert-1081984d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1084",
+    "lib/features/people/presentation/pages/people_list_page.dart:1104",
+    "lib/features/people/presentation/pages/people_list_page.dart:1116",
+    "lib/features/people/presentation/pages/people_list_page.dart:312",
+    "lib/shared/widgets/adaptive/app_dialog.dart:1253"
+   ],
+   "n": "Erstprüfer-Unterschied behoben: Flutter zeigt jetzt wie Ionic einen Radio-Alert (Titel = Feldname, „Ja“ vorausgewählt bzw. „Nein“ bei gespeichertem Nein, „Abbrechen“ → Alle, „Filtern“), Leerwerte = Default true. Rest: Flutter besser: Ionic öffnet den Alert nur für Ja/Nein-Felder der Instanz (tenant().additional_fields), ein Org-Ja/Nein-Feld im Filter filtert gar nicht (alle Personen) / Flutter: Dialog und Filter auch für Org-Felder. Backdrop-Schließen: Flutter → Alle.",
+   "v": "korrigiert"
+  },
+  "people/list/list.page#alert-86b4fbec": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:235",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:240",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:288",
+    "lib/data/repositories/cross_tenant_person_repository.dart:360"
+   ],
+   "n": "Flutter besser: Titel, Text, Checkboxen (Instanzname), „Überspringen“/„Pausieren“ gleich; Ionic bietet alle verknüpften Instanzen an, in denen die Person (nicht als Beobachter) Mitglied ist, Flutter nur jene, in denen der angemeldete Nutzer Admin/Verantwortlicher ist. In den übrigen bewirkt Ionics Update wegen RLS (admins_manage_player) nichts. Flutter hängt den Eintrag an die eigene Historie der anderen Instanz an statt sie mit der Quell-Historie zu überschreiben.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#alert-eeaa4fb8": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1059",
+    "lib/features/people/presentation/pages/people_list_page.dart:1062",
+    "lib/features/people/presentation/pages/people_list_page.dart:1077",
+    "lib/features/people/presentation/pages/people_list_page.dart:1116",
+    "lib/features/people/presentation/pages/people_list_page.dart:305",
+    "lib/core/providers/profile_providers.dart:67"
+   ],
+   "n": "Flutter besser: Für Zahlenfelder der Instanz gleich (Titel = Feldname, Zahlenfeld „Wert eingeben“, „Abbrechen“ → Alle, „Filtern“, leer → Alle; alle Rollen der Personenliste). Ionic öffnet den Alert nur für tenant().additional_fields, ein Org-Zahlenfeld im Filter filtert nicht (alle Personen, Icon farbig) / Flutter: Dialog und Filter auch für Org-Felder. Vorbelegung: Ionic letzter gespeicherter Zusatzwert, Flutter nur bei gleichem aktivem Filter. Personen ohne Wert treffen jetzt in beiden „0“ (withExtraFieldDefaults).",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#db-a9ead6a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1222",
+    "lib/features/people/presentation/pages/people_list_page.dart:1234",
+    "lib/data/repositories/player_repository.dart:1883",
+    "lib/data/repositories/player_repository.dart:1891"
+   ],
+   "n": "Tabelle player, update sort_order nur für umsortierte Gruppen (1..n), Filter id + tenantId. Ionic schreibt zusätzlich unveränderte sort_order-Werte der anderen Personen erneut (Endzustand gleich).",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#logic-9183f2d4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:331",
+    "lib/features/people/presentation/pages/people_list_page.dart:337",
+    "lib/features/people/presentation/pages/people_list_page.dart:474",
+    "lib/features/people/people_list_utils.dart:60",
+    "lib/features/people/people_list_utils.dart:114",
+    "lib/core/providers/attendance_providers.dart:275"
+   ],
+   "n": "Frühere hoch/mittel-Punkte weiter behoben: Zusatzfeld-Defaults (withExtraFieldDefaults), Gruppen-Sortierung mit localeCompareDe, Lehrernamen aus teachersProvider, Umsortieren speichert nur geänderte Gruppen, 0%-Badge, archivierte Termine nur für Admin/Verantwortlich. Verbleibend niedrig: Prozentbasis ohne 2023-01-01-Fallback, Auto-Entpausieren nur im initState, Reorder-Darstellung, kombinierte Suche/Filter (Flutter besser), schmalere Pausen-Schreibvorgänge, Zusatz „Personen übertragen“. f: people_list_utils.dart liegt jetzt unter lib/features/people/.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

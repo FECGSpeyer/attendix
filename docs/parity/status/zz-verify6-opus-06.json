@@ -1,0 +1,439 @@
+{
+ "batch": "zz-verify6-opus-06",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "x-4beeb3b857": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "pubspec.yaml:4",
+    "android/app/build.gradle.kts:40",
+    "android/app/build.gradle.kts:41",
+    "docs/push-setup.md:23"
+   ],
+   "n": "Weiter real auf 0f74333: pubspec version 0.41.26+138 → versionCode 138 / versionName 0.41.26 (flutter.versionCode/versionName, build.gradle.kts:40-41); Ionic 4.19.9 versionCode 230 / „4.19.9“ (build.gradle:10-11). Play nimmt nur Codes > 230 an → --build-number ≥ 231 und --build-name ≥ 5.0.0 nötig; kein Skript/CI (scripts/, .github/workflows) setzt sie. docs/push-setup.md:23-24 nennt weiter veraltet 4.19.6/227 → „--build-number 228“ (würde abgelehnt). f korrigiert: docs/parity/device-checklist.md existiert auf 0f74333 nicht mehr.",
+   "v": "bestätigt"
+  },
+  "x-5da3efae62": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "android/app/src/main/AndroidManifest.xml:4",
+    "android/app/src/debug/AndroidManifest.xml:6"
+   ],
+   "n": "Weiter so: Ionic android.permission.INTERNET explizit im App-Manifest (Zeile 56) / Flutter: im main-Manifest nur WAKE_LOCK, FOREGROUND_SERVICE*, POST_NOTIFICATIONS, POST_PROMOTED_NOTIFICATIONS; INTERNET nur im debug-/profile-Manifest. Release erhält sie per Manifest-Merge aus firebase_messaging-15.2.10 (android/src/main/AndroidManifest.xml:3) → für Nutzer ohne Wirkung.",
+   "v": "bestätigt"
+  },
+  "x-6afce27e8e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "pubspec.yaml:104",
+    "lib/features/attendance/presentation/attendance_extra_actions.dart:35"
+   ],
+   "n": "Bestätigt: mobile_scanner 7.4.3 (pubspec.yaml:104) bringt CAMERA + uses-feature camera required=false → keine Geräte-Filterung. Neu ggü. Ionic: CAMERA im Store-Eintrag; image_picker_android 0.8.13+1 fragt deshalb vor „Kamera“ (Foto zum Termin, Profil-/Spielerbild) die Laufzeitberechtigung ab (ImagePickerDelegate.java:368, ImagePickerUtils.needRequestCameraPermission). QR-Scan selbst nur Beta (rd_qr_scan_page.dart).",
+   "v": "bestätigt"
+  },
+  "x-8140fe9e0d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "android/app/src/main/kotlin/io/stephanus/attendix/MainActivity.kt:58",
+    "android/app/src/main/kotlin/io/stephanus/attendix/MainActivity.kt:66",
+    "android/app/src/main/AndroidManifest.xml:82"
+   ],
+   "n": "Weiter real, Pfad korrigiert: MainActivity liegt auf 0f74333 unter kotlin/io/stephanus/attendix/ (Ionic-Klassenname beibehalten). Ionic legt keinen Kanal 'default' an (nur live_plan, LivePlanNotifications.java:55) → FCM-Fallback-Kanal IMPORTANCE_DEFAULT. Flutter: createDefaultNotificationChannel() im onCreate, Kanal 'default' „Benachrichtigungen“ IMPORTANCE_HIGH + default_notification_channel_id im Manifest → Pushes als Heads-up-Banner. Laut Leon nur Optik.",
+   "v": "bestätigt"
+  },
+  "x-839700db13": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "android/app/src/main/AndroidManifest.xml:62",
+    "android/app/src/main/AndroidManifest.xml:69",
+    "lib/core/services/audio_player/media_session_native.dart:41"
+   ],
+   "n": "Weiter so: Ionic @capgo/capacitor-media-session (package.json:55) / Flutter audio_service: AudioService (exported, MediaBrowserService, mediaPlayback) + MediaButtonReceiver (exported), Benachrichtigungskanal 'de.attendix.attendix.audio' „Audio“ (media_session_native.dart:41-42). Gleiche Sperrbildschirm-Steuerung, Medientasten/Bluetooth können fortsetzen.",
+   "v": "bestätigt"
+  },
+  "x-a1c35481e4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "android/app/src/main/AndroidManifest.xml:10"
+   ],
+   "n": "Weiter so: Ionic android:roundIcon=@mipmap/ic_launcher_round / Flutter nur android:icon=@mipmap/ic_launcher (Zeile 10), kein roundIcon → nur Launcher auf Android 7.1 mit runden Icons zeigen das eckige Icon; ab Android 8 adaptives Icon.",
+   "v": "bestätigt"
+  },
+  "x-bc26763c9d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml:7",
+    "pubspec.yaml:181"
+   ],
+   "n": "Nachgemessen auf 0f74333, unverändert: Flutter drawable-xxxhdpi/ic_launcher_foreground.png 432 px, Logo-Höhe 251 px (bbox 91–342) = 58 % plus inset 16 % (ic_launcher.xml:7) → Logo ≈ ¼ kleiner als Ionic (192-px-Vordergrund voll, inset 16,7 %). Hintergrund #3EA5AE gleich. Laut Leon nur Optik. f korrigiert: adaptive_icon_foreground steht jetzt in pubspec.yaml:181 (177 = web background_color), inset in ic_launcher.xml:7.",
+   "v": "bestätigt"
+  },
+  "x-c131a10604": {
+   "s": "ok",
+   "f": [
+    "android/app/src/main/AndroidManifest.xml:8"
+   ],
+   "n": "Behoben: android:label=\"Attendix\" (Zeile 8) wie Ionic @string/app_name = „Attendix“; die Activity hat kein eigenes Label und erbt es (Ionic title_activity_main ebenfalls „Attendix“). Homescreen, Drawer, Benachrichtigungen und Berechtigungsdialoge zeigen „Attendix“. Befund zurückgezogen.",
+   "v": "korrigiert"
+  },
+  "x-d7a83d946f": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "android/app/src/main/AndroidManifest.xml:7"
+   ],
+   "n": "Weiter so: Ionic androidx FileProvider ${applicationId}.fileprovider (Manifest 45-51) / Flutter kein Provider im App-Manifest; share_plus, open_filex, image_picker bringen eigene Provider mit. Für Nutzer unsichtbar.",
+   "v": "bestätigt"
+  },
+  "x-ab62bd7676": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "pubspec.yaml:99"
+   ],
+   "n": "Weiter so: Ionic @capawesome/capacitor-live-update (Kanal 'production', Info.plist/resValue) / Flutter keine OTA-Bundles; nur Store-Updates (in_app_update, pubspec.yaml:99, + Store-Versionscheck). Für Nutzer kaum sichtbar, Fixes brauchen einen Store-Release.",
+   "v": "bestätigt"
+  },
+  "x-02f00abb78": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "ios/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json:1",
+    "pubspec.yaml:169",
+    "pubspec.yaml:179"
+   ],
+   "n": "Nachgemessen: Ionic AppIcon-512@2x.png (1024) vs. Flutter Icon-App-1024x1024@1x.png – gleiches Motiv/Farbe, mittlere Pixeldifferenz ca. 1,5–3 % je Kanal. Nur Optik. f korrigiert: pubspec.yaml:175 ist jetzt web.generate; iOS-Konfiguration ios: true (169) / image_path (179).",
+   "v": "bestätigt"
+  },
+  "x-5df7b898da": {
+   "s": "ok",
+   "f": [
+    "ios/Runner.xcodeproj/project.pbxproj:611",
+    "ios/Runner/AppDelegate.swift:46",
+    "lib/main.dart:165",
+    "lib/core/providers/redesign_providers.dart:51"
+   ],
+   "n": "Zurückgezogen: die vier alternativen Icons sind nur im Beta wählbar (rd_appearance_page.dart:104). redesignSettings.appIconName ist ohne Beta null (redesign_providers.dart:51), main.dart:165 setzt beim Start das Standard-Icon (AppIconPlugin überspringt den No-op ohne Systemhinweis) → im normalen Design immer das AppIcon wie Ionic. Nur-Beta-Funktion, keine Abweichung des normalen Designs.",
+   "v": "korrigiert"
+  },
+  "x-cb1c5c9d93": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "ios/Runner/Info.plist:37",
+    "ios/Runner/Info.plist:41",
+    "pubspec.yaml:4"
+   ],
+   "n": "Weiter real auf 0f74333: CFBundleShortVersionString/CFBundleVersion = $(FLUTTER_BUILD_NAME)/$(FLUTTER_BUILD_NUMBER) → ohne Flags 0.41.26 (138); Ionic Release MARKETING_VERSION 4.19.9 / CURRENT_PROJECT_VERSION 239 (project.pbxproj:457/465). App Store Connect lehnt eine kleinere Version als 4.19.9 ab → --build-name ≥ 5.0.0 nötig; kein Skript/CI übergibt es. Zusätzlich liest der Store-Update-Check (AppDelegate.swift:93) diese Version.",
+   "v": "bestätigt"
+  },
+  "x-cb4b199ab5": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "ios/Runner/Info.plist:32",
+    "ios/Runner/Info.plist:57",
+    "ios/Runner/Info.plist:78",
+    "ios/Runner/AppDelegate.swift:106"
+   ],
+   "n": "Weiter so: Ionic CFBundleName $(PRODUCT_NAME), UIRequiredDeviceCapabilities armv7, Scene mit UISceneStoryboardFile Main / Flutter CFBundleName 'attendix', keine UIRequiredDeviceCapabilities (Entfernen bei Updates erlaubt), CADisableMinimumFrameDurationOnPhone, UIApplicationSupportsIndirectInputEvents, Scene-Manifest ohne Storyboard, Fenster per SceneDelegate (AppDelegate.swift:106). CFBundleDisplayName beide „Attendix“. Ohne sichtbare Wirkung.",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#logic-4cbdd102": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:61",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:80",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:104",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:120",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:126",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:142",
+    "lib/core/services/telegram_service.dart:181",
+    "lib/core/services/telegram_service.dart:207"
+   ],
+   "n": "Gegen 0f74333 geprüft, unverändert gleich: Konfiguration per Auth-User-Id (fehlende Zeile mit denselben Defaults angelegt, telegram_chat_id ''), Realtime auf notifications (Flutter mit Filter id=eq), jede Änderung schreibt die ganze Zeile .eq('id'), Telegram trennen nach Bestätigung → telegram_chat_id '', enabled_tenants als Zahlen, Live Activity speichern + setEnabled, Push über togglePush (push_enabled + initPush), Dienste-Schalter nur bei duty_mode-Terminart der aktuellen Instanz, Instanzliste = alle eigenen tenantUsers-Instanzen. Abweichungen nur bei Fehlern/Laden (x-1957eb8534, x-87f20645a2): Flutter dreht den Schalter zurück; bei Speicherfehler ruft Flutter liveActivity.setEnabled trotzdem auf (Ionic bricht nach dem Fehler ab).",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#native-1f2aa2b5": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:131",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:136",
+    "lib/core/services/telegram_service.dart:176"
+   ],
+   "n": "Gleicher Link https://t.me/attendix_bot?start=<userId>. Ionic: Capacitor Browser.open (In-App-Browser in der App, neuer Tab im Web) / Flutter: launchUrl externalApplication (öffnet direkt Telegram bzw. externen Browser); bei Exception Toast „Konnte Telegram nicht öffnen“. Gleiches Ziel, nur andere Darstellung.",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#text-68264c2e": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:253",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:327-328"
+   ],
+   "n": "„Instanz-Einstellungen“ nur bei aktivierten Benachrichtigungen und vorhandenen Instanzen (userTenantsProvider = alle tenantUsers-Zeilen des Nutzers, wie db.tenants()). Seiteneintrag in beiden für alle Rollen ohne Bedingung (settings.page.html:756 / settings_page.dart:519). Nur Zeilen verschoben.",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#text-809405e4": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:335-337"
+   ],
+   "n": "tenant.longName; Flutter fällt nur bei leerem longName auf shortName zurück. Reihenfolge wie Ionic (Favoriten zuerst, dann longName).",
+   "v": "bestätigt"
+  },
+  "x-1957eb8534": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:104",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:110-115",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:120-122"
+   ],
+   "n": "Weiter so: Ionic Toast „Fehler beim Updaten der Konfiguration, bitte versuche es später erneut.“ (danger), Schalter bleibt im neuen, nicht gespeicherten Zustand / Flutter Toast „Fehler beim Aktualisieren der Konfiguration“, Schalter springt zurück. Fehlermeldung in beiden vorhanden → niedrig. Zusatz: beim Live-Activity-Schalter ruft Flutter setEnabled auch nach fehlgeschlagenem Speichern auf.",
+   "v": "bestätigt"
+  },
+  "x-87f20645a2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:61",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:159-166"
+   ],
+   "n": "Flutter besser: Ionic zeigt während des Ladens nur den Titel; bei Ladefehler liefert getNotificationConfig (supabase-js wirft nicht) die Standardwerte einer neu angelegten Zeile, ohne Hinweis / Flutter Spinner, bei Fehler Toast „Fehler beim Laden: …“ und Text „Konfiguration nicht gefunden“.",
+   "v": "bestätigt"
+  },
+  "open-attendance/open-attendance.page#nav-e5a2e051-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/open_attendance_page.dart:38-43",
+    "lib/core/router/app_router.dart:332-350"
+   ],
+   "n": "Nicht-numerische id → context.go('/login') für alle Rollen (Ionic vor checkToken, also auch abgemeldet). Eingeloggt leitet /login wie Ionic LoginGuard auf die Startseite der Rolle weiter (homeRouteFor inkl. Dashboard; Terms-Gate davor); abgemeldet bleibt Login. f-Zeilen des Routers aktualisiert.",
+   "v": "bestätigt"
+  },
+  "x-6584f621dd": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/router/app_router.dart:311-316",
+    "lib/core/router/app_router.dart:335-342",
+    "lib/features/planning/presentation/pages/open_attendance_page.dart:69-91"
+   ],
+   "n": "Flutter besser: Ionic merkt sich abgemeldet nur pendingAttendanceId im Speicher (geht bei Reload/SSO verloren; nach dem Login öffnen nur Spieler/Eltern-Seiten das Aktionsblatt, kein Instanzwechsel, kein Gelesen-Markieren) / Flutter speichert den ganzen /open-attendance-Link (PendingFileLink, auch persistent) und setzt ihn nach Login/Terms fort: Instanzwechsel, Gelesen-Markieren, Dirigent/Helfer öffnen den Termin.",
+   "v": "bestätigt"
+  },
+  "open-file/open-file.page#nav-034261c8": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:150-159"
+   ],
+   "n": "Gleiches Ziel (Dateiablage im Ordner, Datei per ?open= geöffnet). Ionic: router.navigate(..., replaceUrl: true) – Zurück führt nicht auf /open-file / Flutter: context.go('/settings/files?…') ohne goReplacingHistory → im Web legt der Browser einen neuen Verlaufseintrag an, Browser-Zurück öffnet /open-file und leitet erneut weiter. In den Apps ersetzt go den Stack (kein Unterschied).",
+   "v": "bestätigt"
+  },
+  "open-file/open-file.page#nav-c403b48f": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:93-100"
+   ],
+   "n": "Fehler beim Auflösen → Toast „Der Link konnte nicht geöffnet werden.“ (danger) + /login, wie Ionic ngOnInit-catch.",
+   "v": "bestätigt"
+  },
+  "open-file/open-file.page#nav-e132ddd2": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:104-108",
+    "lib/core/router/app_router.dart:1363-1370"
+   ],
+   "n": "Fehlende/ungültige tenantId (Route: int.tryParse) → /login in beiden; angemeldet leitet /login auf die Startseite weiter; rollenunabhängig. Negative Id: Flutter /login, Ionic Toast „kein Zugriff“ (praktisch irrelevant). f-Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "open-file/open-file.page#toast-0367da77": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:122-131"
+   ],
+   "n": "Link-Instanz nicht unter den eigenen tenantUsers (userTenantsProvider liest alle Zeilen, jede Rolle inkl. Bewerber/Beobachter): roter Toast „Du hast keinen Zugriff auf diese Instanz.“, dann Startseite der aktuellen Instanz (homeRouteFor, Ionic routeAfterAuth(undefined, tenant.id)); ohne aktuelle Instanz /tenants. f-Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "open-file/open-file.page#toast-c088ac66": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:159",
+    "lib/core/router/app_router.dart:359-364"
+   ],
+   "n": "Flutter besser: Ionic: Navigation zur Dateiablage scheitert praktisch nur am TermsGuard (AuthGuard-canAccessFiles ist vorher geprüft) → Toast „Der Link konnte nicht geöffnet werden.“ + routeAfterAuth (→ /terms), Link verloren / Flutter: kein navigated-Ergebnis; Terms-Gate im Router leitet still auf /terms, ein vor dem Login gemerkter Link wird nach Zustimmung fortgesetzt. Nur angemeldet ohne Terms (Sonderfall) fehlt Flutter der Toast, Ziel ist dann in beiden /terms.",
+   "v": "bestätigt"
+  },
+  "open-file/open-file.page#toast-ef87d2b8": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:142-147",
+    "lib/core/providers/role_permission_providers.dart:116-120",
+    "lib/core/providers/role_permission_providers.dart:262-266"
+   ],
+   "n": "Nach dem Instanzwechsel (Flutter wartet bis 5 s auf die Rolle): canAccessFilesFor = Ionic canAccessFiles – files_shared → alle außer Bewerber/none; sonst Admin, Verantwortlich, Helfer, Stimmführer-Helfer (nicht Spieler, Stimmführer, Eltern, Beobachter). Toast „Du hast keinen Zugriff auf Dateien.“ (danger) + Startseite der Rolle in der Link-Instanz.",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#db-2f01c860": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:48",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:122",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:127",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:356"
+   ],
+   "n": "Ionic: Realtime-Abo je kommendem Ad-hoc-Plan (UPDATE shared_plans, id=eq), Änderungen sofort / Flutter: bewusst kein Realtime (SOL_FIX7: Payload enthielte edit_key für anonyme Betrachter); stattdessen alle 15 s dieselben öffentlichen Selects (getPublicOrgPlans), nur bereits angezeigte kommende Einträge werden ersetzt → Änderungen bis zu 15 s später. Gleiche Daten.",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#db-508eb016": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:48",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:122"
+   ],
+   "n": "Ionic: Kanal `org-adhoc-${id}` / Flutter: kein Kanal, Polling alle 15 s (siehe db-2f01c860).",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#db-b7046159": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:48",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:122",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:127",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:356"
+   ],
+   "n": "Ionic: je kommendem Termin-Plan Realtime-Kanal (UPDATE attendance, id=eq), Titel/Zeit/Ende/Felder sofort aktualisiert / Flutter: bewusst kein Realtime (SOL_FIX7, Payload enthielte share_edit_key), stattdessen alle 15 s dieselben öffentlichen Selects; nur bereits angezeigte kommende Einträge werden ersetzt (mergeOrgPlanUpdates) → Änderungen bis zu 15 s verzögert.",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#db-b99f855a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:48",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:122"
+   ],
+   "n": "Ionic: Kanal `org-att-${id}` / Flutter: kein Kanal, Polling alle 15 s (siehe db-b7046159).",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#effect-45237c25": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:194-210",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:136-146",
+    "lib/core/providers/branding_providers.dart:40"
+   ],
+   "n": "A4: PDF wird erzeugt und gespeichert/geteilt. Unterschiede: (1) Flutter fügt das Branding der aktuell gewählten Instanz ein, wenn der Betrachter eingeloggt ist (showPlanExportSheet includeBranding=true ohne branding-Override → resolvePdfBranding), Ionic exportiert hier ohne Branding; (2) Untertitel: Ionic Datum aus plan.time (bei „HH:mm“ das heutige Datum) / Flutter Plandatum (PlanUtils.longDate); (3) Dateiname: Ionic „<Titel>_<Wochentag, Datum>.pdf“ / Flutter „<Titel>.pdf“; (4) Flutter besser: Plan ohne Felder → Warn-Toast statt leerem PDF. Inhalt der Tabelle gleich.",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#effect-b996f803": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:194-210",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:131",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:145-146",
+    "lib/core/services/plan_export_service.dart:134"
+   ],
+   "n": "2x A5 (sideBySide): PDF wird erzeugt und gespeichert/geteilt. Unterschiede: (1) Flutter fügt das Branding der aktuell gewählten Instanz ein, wenn der Betrachter eingeloggt ist (showPlanExportSheet includeBranding=true ohne branding-Override → resolvePdfBranding), Ionic exportiert hier ohne Branding; (2) Untertitel: Ionic Datum aus plan.time (bei „HH:mm“ das heutige Datum) / Flutter Plandatum (PlanUtils.longDate); (3) Dateiname: Ionic „<Titel>_<Wochentag, Datum>_2x.pdf“ / Flutter „<Titel>_2x.pdf“; (4) Flutter besser: Plan ohne Felder → Warn-Toast statt leerem PDF. Inhalt der Tabelle gleich.",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#effect-c4281c2a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:156-159",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:175",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:208-210"
+   ],
+   "n": "Mit Key gleich (Clipboard.setData(link) + Toast „Link kopiert“, Dialog bleibt offen wie Ionic return false). Weiter real: Ionic subscribeCalendar bricht ohne publicKey ab (/org-plan ohne ?key=, Button tut nichts) / Flutter _subscribeCalendar ohne Key-Guard → Sheet + Dialog mit „…/ical-org-plans?key=null“, „Link kopieren“ kopiert diesen kaputten Link. Nur auf der ohnehin „Link ungültig“ zeigenden Seite.",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#logic-7396311f": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:71",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:102",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:127",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:149",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:91",
+    "lib/core/utils/plan_utils.dart:471",
+    "lib/core/utils/plan_utils.dart:482",
+    "lib/core/providers/plan_providers.dart:135"
+   ],
+   "n": "Gleich: Org per public_plan_key, Instanzen über tenant_group_tenants, Termine is_org_plan/archived=false/plan not null + shared_plans je .order('date', ascending: true), Sortierung, Aufteilung kommend/vergangen (vergangen absteigend), Titel-Fallback plan.title → typeInfo → „Plan“, Live-Fenster (−5 min … Ende+15 min, nur heute), Auto-Live beim Laden, Countdown-Format, erster Plan aufgeklappt, Pull-to-Refresh. Abweichungen (alle niedrig): Live-Modus vor Beginn (Ionic erstes Feld aktiv mit Countdown, Flutter „beginnt in …“ unter Start), Block-Köpfe im Live-Modus (x-0f1bb03f8d), kein Auto-Scroll zum aktiven Punkt, Vergangene-Pläne-Darstellung (x-5eddb5c43b), Lade-Spinner statt Skeleton, Plan ohne Datum: Ionic zeigt den Titel als Kopf, Flutter leer; Ladefehler beim Öffnen: Flutter „Link ungültig“, Ionic leere Liste; Fehler beim Pull-to-Refresh siehe extra. Realtime→Polling: siehe db-Items.",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#text-278f4c08": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:229-230",
+    "lib/core/providers/plan_providers.dart:125-126"
+   ],
+   "n": "Ionic: Instanzname nur bei Termin-Plänen mit tenantName, Stil GROSSBUCHSTABEN/fett 0.75rem grau / Flutter: tenantLabel – Instanzname bei Termin-Plänen, bei Ad-hoc-Plänen zusätzlich „Org-Plan“; 12px grau, nicht uppercase/fett.",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#text-278f4c08-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:229-230",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:274",
+    "lib/core/providers/plan_providers.dart:125-126"
+   ],
+   "n": "Verlauf: Ionic Instanzname nur bei Termin-Plänen, klein/fett/uppercase grau / Flutter: gleicher _planCard wie oben – bei Ad-hoc-Plänen zusätzlich „Org-Plan“, Stil 12 px grau ohne uppercase/fett.",
+   "v": "bestätigt"
+  },
+  "x-0f1bb03f8d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:118-119",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:196-205"
+   ],
+   "n": "Weiter so: Ionic: im Live-Modus bekommen alle Zeilen vor dem aktiven Feld done-slot (opacity .4), auch der Kopf des laufenden Blocks; kein Block-Rahmen / Flutter: isActiveGroup → Kopf des laufenden Blocks bleibt voll sichtbar und erhält 3px-Rand links; Köpfe werden nie aktiv (activeIndex überspringt sie). Nur Darstellung.",
+   "v": "bestätigt"
+  },
+  "x-5eddb5c43b": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:251",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:274",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:143-145"
+   ],
+   "n": "Weiter so: Ionic Verlauf: alle Felder class done-slot (opacity .4), keine Info-Zeile / Flutter: _planCard(past: true) → PlanViewList ohne Live-Modus, Felder voll sichtbar, kursive Info-Zeile wird angezeigt.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "org-plan-public/org-plan-public.page",
+   "title": "Pull-to-Refresh bei Ladefehler",
+   "n": "Ionic: handleRefresh → loadPlans; supabase-js wirft nicht, Fehler ergibt leere Liste „Keine kommenden Pläne“, erneutes Ziehen möglich / Flutter: _loadPlans setzt _loading=true und ruft getPublicOrgPlans ohne try/catch (Repository wirft); IonRefresher fängt nicht → Seite bleibt dauerhaft auf dem Spinner (Refresher weg), nur Neuladen der Seite hilft. In beiden kein Fehlerhinweis.",
+   "sev": "niedrig",
+   "ionic": "src/app/org-plan-public/org-plan-public.page.ts:97",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:102-106",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:333-334"
+   ]
+  }
+ ]
+}

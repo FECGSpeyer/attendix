@@ -1,0 +1,385 @@
+{
+ "batch": "zz-verify6-opus-15",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "selfService/signout/signout.page#action-51be7392": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:452"
+   ],
+   "n": "Kachel „N zu bestätigen“ nur in Dienstplan-Ansicht, Warnfarbe bei >0 Anfragen, scrollt zu „Bitte bestätigen“ (Anker duty-requests nur bei Anfragen, wie Ionic). Zählung = eigene angefragte, nicht abgesagte Dienste ab heute. f-Zeile aktualisiert (446 → 452).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-58742e6e": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:235",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1108",
+    "lib/core/router/route_access.dart:73"
+   ],
+   "n": "Chip „Route“ bei place; iOS (auch iOS-Browser) Auswahl Apple Maps/Google Maps, sonst Google Maps wie Utils.openNavigation. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + canSeeSelfServiceTab (isPlayerRole||isHelperRole) dieselbe Menge.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-5aeab82c": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:450",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:221"
+   ],
+   "n": "Behoben: showEventDescriptionSheet hat jetzt Kopf „Beschreibung“ mit X-Button rechts (pop), wie Ionic descriptionModal.dismiss(). Erstbefund „kein Schließen-Button“ trifft nicht mehr zu.",
+   "v": "korrigiert"
+  },
+  "selfService/signout/signout.page#action-5e305659": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:348"
+   ],
+   "n": "Mehrfachauswahl: ganze Zeile (CheckboxListTile) schaltet die Option um wie toggleMultiSelectOption. f-Zeile 346 → 348.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-5f654a29": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:356"
+   ],
+   "n": "X im Kopf „Abwesenheit melden“ schließt ohne Speichern (pop → null), Eingaben verworfen wie dismissAbsenceModal. f-Zeile 316 → 356.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-6dcae27f": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:173",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:317",
+    "lib/core/providers/duty_providers.dart:131"
+   ],
+   "n": "„Alle {count}“ erst ab >3 offenen Diensten, öffnet Sheet „Offene Dienste“ (initial 0.75). Offene Dienste wie Ionic: duty_self_signup (Default true), kein duty_state, nicht abgesagt, occupied<required. Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + canSeeSelfServiceTab (isPlayerRole||isHelperRole) dieselbe Menge.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-6edb2695": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:201-237",
+    "lib/features/people/presentation/widgets/planned_absences.dart:249-296",
+    "lib/data/repositories/player_absence_repository.dart:244-295"
+   ],
+   "n": "Liste „Geplante Abwesenheiten“ nur mit player_planned_absence der eigenen Rolle und Einträgen (from_date aufsteigend); Papierkorb → Bestätigung „Abwesenheit löschen“ + signout.deleteAbsenceMessage, Abbrechen/Löschen (destruktiv). Löschen player_absences (id + tenant_id), Rücksetzen nur Kandidaten (aktueller + anstehende Termine nach Dienst-Filter, onlyIds), Status Entschuldigt und notes == Grund → default_status des Typs bzw. Neutral, notes '' (+ changed_at/by, Dienst-Sync wie updatePersonAttendance). Toast „Abwesenheit gelöscht“.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-81c2bdec": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:211",
+    "lib/data/repositories/sign_in_out_repository.dart:849",
+    "lib/core/router/route_access.dart:73"
+   ],
+   "n": "Chip „Ablaufplan“ bei hasPlan = share_plan && plan.fields nicht leer wie Ionic hasPlan; öffnet Plan-Viewer. f-Zeile hasPlan 837 → 849. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + canSeeSelfServiceTab (isPlayerRole||isHelperRole) dieselbe Menge.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-82c6a8f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:245",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:20",
+    "lib/features/self_service/presentation/pages/signout_page.dart:765",
+    "lib/core/providers/signout_providers.dart:294"
+   ],
+   "n": "Grund-Sheet wie ExcuseReasonPicker: Titel Abmeldung/Verspätung, X links, Häkchen rechts, Gründe der Instanz bzw. Standardgründe + „Sonstiger Grund“ (Vorauswahl frei bei laufendem Termin, sonst erster Grund, frei ab 5 Zeichen). signOut isSelf=true (Entschuldigt/Verspätung gemeldet), understaffed für abgesagte zugeteilte Dienste, Dank-Toast. f aktualisiert (signout_page 698 → 765, sheet 18 → 20).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-89fbd54f": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:400",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:49",
+    "lib/data/repositories/player_absence_repository.dart:204"
+   ],
+   "n": "Button nur aktiv mit Grund + Von + Bis. Insert player_absences (tenant_id, person_id, from/until, reason), danach nur Kandidaten-Termine (aktueller + anstehende nach Dienst-Filter/Dienstplan-Ansicht) im Zeitraum mit Status ≠ Entschuldigt → Entschuldigt + notes = Grund; Toast mit/ohne Anzahl wie Ionic. f-Zeile 398 → 400.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-8cc3cbd4": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:111",
+    "lib/features/duty/presentation/widgets/duty_actions.dart:129",
+    "lib/core/providers/duty_providers.dart:256"
+   ],
+   "n": "„Kann nicht“: Absagegrund-Sheet, signOut([pa.id], Grund, isLate=false, isSelf=true) → Entschuldigt + duty-notify understaffed (angefragt zählt auch in Ionic als occupiesDuty), Toast „Vielen Dank für deine rechtzeitige Abmeldung …“.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-8fd5a983": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:335"
+   ],
+   "n": "„Schließen“ rechts im Kopf des Sheets „Offene Dienste“, schließt.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-92b10fb3": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:237",
+    "lib/features/self_service/presentation/pages/signout_page.dart:339",
+    "lib/core/providers/signout_providers.dart:168",
+    "lib/core/providers/duty_providers.dart:131"
+   ],
+   "n": "„Weitere Termine“ mit „n · Titel1, Titel2“ (aktuelle + anstehende ohne nicht zugeteilte Dienste und ohne eigene Dienste, max. 2 verschiedene Titel) und Chevron-Toggle, blendet Heute/Anstehend ein. f-Zeile signout_page 295 → 339. Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + canSeeSelfServiceTab (isPlayerRole||isHelperRole) dieselbe Menge.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-95ff56f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:504",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:117",
+    "lib/data/repositories/player_repository.dart:837"
+   ],
+   "n": "Rollen wie Pausieren-Button (canSelfPause). Ohne Grund Warn-Toast „Bitte gib einen Grund an!“; player paused=true, paused_until, Historie PAUSED mit „Grund (bis dd.MM.yyyy)“, aus kommenden Terminen entfernt, Telegram-Hinweis; Fehler als roter Toast (Flutter zusätzlich tenantId-Filter). Kleinigkeit: Flutter schließt das Sheet vor dem Speichern. f aktualisiert (464 → 504, 82 → 117, 786 → 837).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-a3f4a02c": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:486"
+   ],
+   "n": "Nur bei gewähltem Datum; leert das Enddatum, ohne den Kalender auf-/zuzuklappen. f-Zeile 446 → 486.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-afccefe5": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:211",
+    "lib/features/self_service/presentation/pages/signout_page.dart:349"
+   ],
+   "n": "Tippen → Aktionsblatt des Termins und Pill „bestätigt“ gleich, „ · mit {names}“ gleich. Ionic: Datumskachel, Meta „19:00–21:00 · Ort“ / Flutter: ohne Kachel, „Di, 05.11. · 19:00 Uhr · mit …“ (ohne Endzeit und Ort; beides steht im Kopf des Aktionsblatts). f-Zeile signout_page 305 → 349.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-b5878c89": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:157",
+    "lib/features/duty/presentation/widgets/duty_actions.dart:129",
+    "lib/core/providers/duty_providers.dart:256",
+    "lib/core/providers/duty_providers.dart:131"
+   ],
+   "n": "„Kann doch nicht“ auf „Nächster Dienst“: Absagegrund-Sheet, signOut([pa.id], Grund, isLate=false, isSelf=true) + duty-notify understaffed, Toast signout.thanksSignout wie quickSignout/onExcuseConfirm. Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + canSeeSelfServiceTab (isPlayerRole||isHelperRole) dieselbe Menge.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-b6ce9099": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:184",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:858"
+   ],
+   "n": "Bedingung (allowExcuse) und Wirkung (Grund-Sheet → Entschuldigt) gleich. Ionic: bei Entschuldigt gefüllt orange + disabled (halbe Deckkraft) / Flutter: gefüllt orange in voller Deckkraft, Tippen ohne Wirkung (onPressed ?? () {}).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-c1386577": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:223",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1140",
+    "lib/core/router/route_access.dart:73"
+   ],
+   "n": "Label attachment_name oder „Anhang“, öffnet In-App-Browser (Ionic Browser.open). Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + canSeeSelfServiceTab (isPlayerRole||isHelperRole) dieselbe Menge.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-c24f2cc3": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:451",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:131"
+   ],
+   "n": "Flutter besser: Ionic hat bei genau einem bestätigten Dienst (nur „Nächster Dienst“, keine „Meine Dienste“) keinen Anker duty-mine, Tippen auf „N Dienste diesen Monat“ bewirkt dann nichts / Flutter setzt den Anker auf „Nächster Dienst“ und scrollt dorthin. Sonst gleich: nur in Dienstplan-Ansicht, Zähler inkl. angefragter, nicht abgesagter Dienste im laufenden Monat.",
+   "v": "korrigiert"
+  },
+  "selfService/signout/signout.page#action-c9b28995": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:177",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:858"
+   ],
+   "n": "Bedingung (allowLate) und Wirkung (Grund-Sheet → Verspätung gemeldet) gleich. Ionic: bei „Verspätung gemeldet“ gefüllt rosa + disabled (halbe Deckkraft) / Flutter: gefüllt rosa in voller Deckkraft, Tippen ohne Wirkung.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-cbdd0bb5": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:401"
+   ],
+   "n": "Ionic: Bild lädt nicht → Platzhalter-Avatar (onerror) / Flutter: Platzhalter nur bei leerem img; bei kaputter URL bleibt der Kreis leer (CircleAvatar ohne onBackgroundImageError). f-Zeile 357 → 401.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-d2d1b707": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:410",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:314",
+    "lib/data/repositories/sign_in_out_repository.dart:272"
+   ],
+   "n": "„Speichern“ / „Anmelden“ mit Häkchen-Icon; Pflichttextprüfung, speichert registration_answers (+ changed_at/by, id gegen Instanz geprüft), danach Anmelden (zugeteilter Dienst → bestätigen) bzw. Toast „Anmeldefelder gespeichert“. Pflichttext-Hinweis als roter Text statt Toast ist bei toast-36f88117 erfasst. Keine Rollenbedingung.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-dd3099f2": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:251",
+    "lib/features/self_service/presentation/pages/signout_page.dart:343",
+    "lib/core/providers/player_absence_providers.dart:69",
+    "lib/core/providers/duty_providers.dart:131"
+   ],
+   "n": "canPlannedAbsence = player_planned_absence der eigenen Rolle in beiden (canSelfReportAbsenceProvider); öffnet Abwesenheits-Sheet. f-Zeile signout_page 299 → 343. Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + canSeeSelfServiceTab (isPlayerRole||isHelperRole) dieselbe Menge.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-e5b8dd6d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:396"
+   ],
+   "n": "Im Bearbeiten-Modus gleich („Abbrechen“ rechts, schließt ohne Speichern). Ionic: „Abbrechen“ nur im Bearbeiten-Modus / Flutter: „Abbrechen“ auch im Anmelde-Modus (Ionic dort nur Wischen). f-Zeile 393 → 396.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-e63e1734": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:454"
+   ],
+   "n": "X im Kopf „Pausieren“ schließt ohne Speichern (Eingaben verworfen). f-Zeile 414 → 454.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-e7fbeddd": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:348",
+    "lib/features/duty/presentation/widgets/duty_actions.dart:157",
+    "lib/data/repositories/duty_repository.dart:175"
+   ],
+   "n": "RPC duty_take (Termin vorher gegen tenantId geprüft), bei ok duty-notify filled; Toasts ok/voll/nicht erlaubt und Fehler „Fehler beim Eintragen“ gleich. Sheet bleibt nach letzter Übernahme offen – bereits Zusatzbefund Runde 1 (niedrig). f-Zeile Repo 174 → 175.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-eaedcf38": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:629",
+    "lib/features/self_service/presentation/pages/signout_page.dart:637",
+    "lib/features/self_service/presentation/pages/signout_page.dart:646"
+   ],
+   "n": "Zeile mit Kachel (Vergangenheit, Highlight), Titel, lesbarem Datum, Werke-Chip, Ordner-Button, Vergangenheits-Pill; tippbar nur bei Entschuldigt/Verspätung gemeldet (isExcusedStatus) → Aktionsblatt. Keine Rollenunterschiede. f-Zeilen aktualisiert (574/592/600 → 629/637/646).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-f143d5dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:657"
+   ],
+   "n": "„Alle N anzeigen“ / „Weniger anzeigen“ ab mehr als 3 vergangenen Terminen (pastPreviewCount = PAST_PREVIEW_COUNT = 3). f-Zeile 603 → 657.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-fbc3e42a": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:648",
+    "lib/core/providers/role_permission_providers.dart:116",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:25"
+   ],
+   "n": "Sichtbar bei files_folder && canAccessFiles: Helfer/SF-Helfer immer, Spieler/Stimmführer nur mit files_shared, NONE/Bewerber nie – Flutter canAccessFilesFor identisch. Ziel /settings/files?path=… (Ionic zusätzlich Zeitstempel t), Tooltip „Dateiablage öffnen“. f-Zeile 594 → 648.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-ff28907b": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:478",
+    "lib/features/self_service/data/providers/upcoming_songs_provider.dart:63",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:299"
+   ],
+   "n": "Kachel, Text und Bedingung (nur ohne Dienstplan-Ansicht, Werke ab heute, kein Rollenfilter) gleich, aber anderer Filter: Ionic berechnet upcomingSongs nach applyDutyView aus personAttendances ohne nicht zugeteilte Dienst-Termine (isUnassignedDuty) / Flutter upcomingSongsProvider nimmt die Rohdaten (signoutDataProvider) ohne applySignoutDutyView – Werke von Dienst-Terminen, für die die Person nur Ersatz ist (bzw. bei show_all_attendances nicht eingeteilt), zählen in „N Termine“, erscheinen im Sheet „Aktuelle Werke“ und werden beim Drucken mitgenommen; die Kachel kann allein dadurch erscheinen. Erstprüfung hat den Dienst-Filter übersehen.",
+   "v": "korrigiert"
+  },
+  "selfService/signout/signout.page#actionsheet-6737d9dc": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:373",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:467"
+   ],
+   "n": "Einträge, Reihenfolge und Filterregeln (Anmelden/Abmeldung zurücknehmen, Anmelden mit Notiz, Abmelden, Verspätung eintragen, Anmeldefelder anpassen, Notiz anpassen, Werke/Ablaufplan/Beschreibung/Anhang/Navigation/Dateiablage, hideQuickActions, „Keine Aktionen“-Toast, „Abbrechen“ rot) gleich. Ionic: Aktionsblatt ohne Kopf und ohne Icons / Flutter: Kopf mit Termin-Titel + Meta-Zeile und Icons je Eintrag. Randfall: „Ablaufplan anzeigen“ Ionic bei share_plan && plan, Flutter nur wenn der Plan Felder hat.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#embed-c2ceeb43": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:322",
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:52",
+    "lib/core/providers/team_org_providers.dart:123"
+   ],
+   "n": "„Meine Aufgaben“ nach „Bitte bestätigen“ und vor „Geplante Abwesenheiten“, nur bei Teamorganisation (Typ mit enable_protocol) wie Ionic teamOrgEnabled; Aufgaben der eigenen Person, Reload bei Pull-to-Refresh. f-Zeile signout_page 278 → 322.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#field-10c68b6f": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:325"
+   ],
+   "n": "Auswahl mit Feldname als Label, Optionen in Reihenfolge, iOS als Alert wie ion-select; vorhandene Antwort vorausgewählt.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#field-21e89f82": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:367"
+   ],
+   "n": "Mitwachsendes Textfeld (1–4 Zeilen), Label „Grund *“, Platzhalter „z.B. Urlaub, Krankheit...“, Großschreibung Satzanfang. f-Zeile 327 → 367.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#field-4434ae39": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:496"
+   ],
+   "n": "Flutter besser: Kalender erst ab heute (vergangene Daten nicht wählbar, max. +5 Jahre) / Ionic ion-datetime ohne min, vergangene „bis“-Daten möglich (führen zur sofortigen Auto-Reaktivierung). f-Zeile 455 → 496.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#field-4af21fc3": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:348"
+   ],
+   "n": "Checkbox links (controlAffinity leading), gesetzt bei gewählter Option. f-Zeile 346 → 348.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#field-4c957531": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:383",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:301"
+   ],
+   "n": "Erster/zweiter Tipp mit Tausch und Bereichstext im Kopf gleich. Ionic: gewählter Zeitraum im Kalender farbig hervorgehoben, keine Datumsgrenzen / Flutter CalendarDatePicker: nur ein markierter Tag, keine Bereichs-Hervorhebung, Auswahl nur Vorjahr bis +5 Jahre. f-Zeilen 343/226 → 383/301.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#field-778b0d8d": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:319"
+   ],
+   "n": "Schalter mit Feldname, Standard aus bzw. vorhandene Antwort. f-Zeile 317 → 319.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#field-b8a7d60e": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:463"
+   ],
+   "n": "Mehrzeilig (3–5), Label „Grund“, Platzhalter „Warum möchtest du pausieren?“, Großschreibung Satzanfang. f-Zeile 423 → 463.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

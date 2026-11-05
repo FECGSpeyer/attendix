@@ -1,0 +1,444 @@
+{
+ "batch": "zz-verify6-sonnet-16",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "people/person/person.page#field-6e1a9b00": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:254",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:238",
+    "lib/features/people/presentation/pages/person_create_page.dart:404"
+   ],
+   "n": "Ionic: Inline-Nachname (nur neue Person oder nach Stift-Tipp, Button 'Fertig'; Namensvorschläge nur bei neuer Person) / Flutter: Detail: Stift -> Zeile mit Editor-Sheet + Pflicht-Validierung, 'Fertig'-Button vorhanden; Neu-Seite TextFormField mit Pflicht. Nur Bedienung.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-7662f2a7": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:910",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:916"
+   ],
+   "n": "Testergebnis (VoS, nicht Hauptgruppe): Ionic immer sichtbar, bei Flutter leer + nicht bearbeitbar ausgeblendet; Bearbeiten per Editor-Sheet, speichert testResult (leer -> null). Gleiche Funktion.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-84804c14": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:332",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:338"
+   ],
+   "n": "Telefon: Bearbeiten per Editor-Sheet statt Inline; zusätzlich Anruf-Button; leer + nicht bearbeitbar ausgeblendet. Gleiche Funktion, Rollen gleich (canEdit = Admin/Verantwortlicher, nicht ausgetreten).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-8c59f281": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:189",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:372",
+    "lib/features/people/presentation/widgets/person_detail/date_input_row.dart:51"
+   ],
+   "n": "Ionic: ion-datetime (Beigetreten am) Rad (max heute) neben Tipp-Eingabe TT.MM.JJJJ / Flutter: DateInputRow mit Tipp-Eingabe (Übernahme bei Blur, ungültig wird zurückgesetzt) + Kalender-Dialog, lastDate heute; speichert UTC-Mitternacht-ISO wie Ionic. Nur Optik.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-932fcf9d": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:132",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:146"
+   ],
+   "n": "Ionic: Inline-Kalender in Akkordeon 'Pausiert bis', min = heute / Flutter: Kalender-Dialog je Zeile, firstDate heute, lastDate +3 Jahre (Ionic unbegrenzt), Start +30 Tage; 'Pausiert ab' max heute wie Ionic. Löschen-X vorhanden. Nur Optik/Grenze.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-946f7994": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:164",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:372",
+    "lib/features/people/presentation/widgets/person_detail/date_input_row.dart:51",
+    "lib/features/people/presentation/pages/person_detail_page.dart:631",
+    "lib/features/people/presentation/pages/person_detail_page.dart:954"
+   ],
+   "n": "Ionic: ion-datetime Rad (max heute) neben Tipp-Eingabe TT.MM.JJJJ / Flutter: DateInputRow mit Tipp-Eingabe (Übernahme bei Blur, ungültig wird zurückgesetzt) + Kalender-Dialog, lastDate heute; speichert UTC-Mitternacht-ISO wie Ionic. Nur Optik. correctBirthday=true sofort bei Änderung (Warnfarbe verschwindet) und beim Speichern, wie Ionic.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-9f6c9acb": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:862",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:868"
+   ],
+   "n": "Stimmumfang (Chor): Ionic-Input ohne ionChange / Flutter besser: Änderung aktiviert Speichern. Bearbeiten per Editor-Sheet; leer + nicht bearbeitbar ausgeblendet. Ionic disabled bei readOnly||!isAdmin = Flutter canEdit (Admin/Verantwortlicher).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-e2731760": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:96",
+    "lib/features/people/presentation/widgets/planned_absences.dart:166",
+    "lib/features/people/presentation/widgets/planned_absences.dart:175"
+   ],
+   "n": "Ionic: zwei Inline-Kalender (Bis min = Von) / Flutter: gemeinsamer Zeitraum-Dialog (Von<=Bis erzwungen), Auswahl auf Vorjahr..+3 Jahre begrenzt (Ionic unbegrenzt). Pflicht Grund+Von+Bis wie Ionic (Button deaktiviert). Nur Optik.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-e423e2ec": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:770",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:772",
+    "lib/features/people/presentation/widgets/person_detail/date_input_row.dart:51"
+   ],
+   "n": "Ionic: Datums-Zusatzfeld mit Tipp-Eingabe + Rad, max = heute, speichert UTC-Mitternacht-ISO / Flutter: DateInputRow (canEdit), lastDate heute, gleicher ISO-Wert; (alter Befund 'kein Maximum' ist behoben). Nur Optik.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-ea337733": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:591",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:607"
+   ],
+   "n": "Ionic: ion-datetime-button 'Anfangsdatum' / Flutter: Zeile mit Datum, Tipp öffnet Kalender (2000-2100), leer 'Nicht angegeben'. Nur bei Plan ohne benannte Schichten. Nur Optik.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#loading-58ec291d": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1423",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1467"
+   ],
+   "n": "Ionic: blockierendes Loading 'Die Person wird abgelehnt...' / Flutter: kein Ladeindikator (Fehler-Toast vorhanden).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#loading-6f0c380f": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:249",
+    "lib/features/people/presentation/widgets/planned_absences.dart:287"
+   ],
+   "n": "Ionic: blockierendes Loading beim Löschen der Abwesenheit / Flutter: kein Ladeindikator; Bestätigung und Erfolg-/Fehler-Toast vorhanden.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#loading-9ba0a7e4": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1747",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1799"
+   ],
+   "n": "Ionic: blockierendes Loading beim Account anlegen / Flutter: kein Ladeindikator (Erfolgs-/Fehler-Toast vorhanden).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#loading-b96f785a": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:200"
+   ],
+   "n": "Ionic: blockierendes Loading beim Bildupload / Flutter: nur Info-Toast 'Lade Passbild hoch...', nicht blockierend; Größenfehler-Toast vorhanden.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#loading-be5cc2f1": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1343",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1351"
+   ],
+   "n": "Ionic: blockierendes Loading 'Wird zurückgesetzt...' / Flutter: kein Ladeindikator; Erfolgs-/Fehler-Toast vorhanden.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#modal-38ca9858": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:2108",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:21"
+   ],
+   "n": "Flutter: openUnavailabilityPage (Vollbild) mit personId, personName, forOther=true; sichtbar nur bei Dienst-Typen (hasDutyTypes) und canEdit wie Ionic (!readOnly).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#modal-5e3cc20f": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:189",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:372"
+   ],
+   "n": "Ionic: Modal mit Rad-Datumsauswahl / Flutter: Kalender-Dialog (DateEditorSheet) neben Tipp-Eingabe; gleiche Funktion, Optik.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#modal-637d2f88": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:179",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:372"
+   ],
+   "n": "Ionic: Modal mit Rad-Datumsauswahl / Flutter: Kalender-Dialog (DateEditorSheet) neben Tipp-Eingabe; gleiche Funktion, Optik. Bedingung !general && !choir && !mainGroup wie Ionic.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#modal-9c171caa": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:164",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:372",
+    "lib/features/people/presentation/widgets/person_detail/date_input_row.dart:113"
+   ],
+   "n": "Ionic: Modal mit Rad-Datumsauswahl / Flutter: Kalender-Dialog (DateEditorSheet) neben Tipp-Eingabe; gleiche Funktion, Optik.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#modal-9dba127a": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:770",
+    "lib/features/people/presentation/widgets/person_detail/date_input_row.dart:113"
+   ],
+   "n": "Ionic: Modal mit Rad-Datumsauswahl / Flutter: Kalender-Dialog (DateEditorSheet) neben Tipp-Eingabe; gleiche Funktion, Optik.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#modal-ac91c261": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:607"
+   ],
+   "n": "Ionic: Modal mit ion-datetime / Flutter: Kalender-Dialog. Nur Optik.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#modal-b29d5620": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:54",
+    "lib/features/people/presentation/widgets/planned_absences.dart:140"
+   ],
+   "n": "Flutter: Bottom-Sheet 'Abwesenheit eintragen' mit X; Zugang nur canEdit && Berechtigung (Ionic !readOnly && canManagePlannedAbsences).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#modal-cc46e7c5": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:44",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:98"
+   ],
+   "n": "Flutter: Bottom-Sheet '{name} Pausieren' mit X, Grund Pflicht (Button deaktiviert), Datumszeilen mit Löschen-X.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-13da27cf": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:144"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-1819de6e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:862",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:868"
+   ],
+   "n": "'Stimmumfang' nur Chor (isChoir), alle Rollen; leer + nicht bearbeitbar ausgeblendet.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-22fb03ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:164"
+   ],
+   "n": "Flutter: Feld ausgeblendet, wenn leer und nicht bearbeitbar.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-2ef5c47d-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:770",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:781"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-2ef5c47d-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:743",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:749"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-46e0984b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:168"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-4ba50278": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:50",
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:76",
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:126"
+   ],
+   "n": "Ionic: Bereich 'Historie' nur sichtbar, wenn Einträge vorhanden / Flutter: immer sichtbar, leer mit 'Keine Historie vorhanden' (ohne Durchschnitt); zusätzlich Umschalter 'Alle anzeigen' (alle Saisons). Nicht-Admins sehen nur Gruppenwechsel/Pausen wie Ionic.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-524d02fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:164"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-56eeae57": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:128"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-57a6ff94": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:143"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-6e3272f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:158"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-71d08f8a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:129"
+   ],
+   "n": "Datum dd.MM.yyyy",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-71d08f8a-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:143"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-71d08f8a-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:169"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-71d08f8a-4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:177"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-74cc549e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:98"
+   ],
+   "n": "'{name} Pausieren' (Großschreibung)",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-75ad9b8b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:128"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-79695a55": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:167"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-79d17c2c": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:603"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-828f38de": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:189"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-887c6524": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:170"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-887c6524-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:178"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-8b8fdf3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:167"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-98061078": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:142"
+   ],
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-a507dbf9": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:881",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:887"
+   ],
+   "n": "'Instrumente' bei Chor && !Hauptgruppe; leer + nicht bearbeitbar ausgeblendet.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-a939a284": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:179"
+   ],
+   "n": "Flutter: Feld zusätzlich ausgeblendet, wenn leer und nicht bearbeitbar.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-ac9e7aae": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:175"
+   ],
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}
