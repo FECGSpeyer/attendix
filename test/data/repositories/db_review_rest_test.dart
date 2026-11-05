@@ -83,6 +83,15 @@ void main() {
       expect(profileImagePathFromUrl('https://attendix.de/assets/default.png'), isNull);
     });
 
+    test('only own files count as deletable (adopted pictures of others not)', () {
+      expect(isOwnProfileImagePath('42', 42), isTrue);
+      expect(isOwnProfileImagePath('7/42.jpg', 42), isTrue);
+      expect(isOwnProfileImagePath('99', 42), isFalse);
+      expect(isOwnProfileImagePath('7/142.jpg', 42), isFalse);
+      final header = read('lib/features/people/presentation/widgets/person_detail/person_header.dart');
+      expect('isOwnProfileImagePath('.allMatches(header).length, 2);
+    });
+
     test('person header and registration use the Ionic key and img ""', () {
       final header = read('lib/features/people/presentation/widgets/person_detail/person_header.dart');
       expect(header, isNot(contains(r"'${tenant.id}/$personId.jpg'")));
