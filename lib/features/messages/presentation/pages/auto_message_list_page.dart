@@ -102,7 +102,8 @@ class _AutoMessageListPageState extends ConsumerState<AutoMessageListPage> {
       saved.enabled ? context.l10n.autoMessagesEnabledToast : context.l10n.autoMessagesDisabledToast,
     );
     // Background reload for the count on Mitteilungen; the switch keeps the
-    // saved state even if it fails.
+    // saved state even if it fails. A new load gets its own error toast.
+    _loadFailedShown = false;
     ref.invalidate(autoMessageRulesProvider);
   }
 

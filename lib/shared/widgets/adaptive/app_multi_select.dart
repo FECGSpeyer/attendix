@@ -60,8 +60,10 @@ Future<List<T>?> showAppMultiSelect<T>({
 /// Form field for an Ionic `ion-select multiple`: the [decoration] label,
 /// the selected labels comma separated (Ionic's display text) or the
 /// [placeholder], and the select icon (iOS `chevron-expand`, Material ▾ –
-/// like [AppDropdownFormField]). Tapping opens [showAppMultiSelect].
-class AppMultiSelectFormField<T> extends StatelessWidget {
+/// like [AppDropdownFormField]). Tapping opens [showAppMultiSelect]; the
+/// field is focusable with Tab and opens with Enter / Space (keyboard focus
+/// shows the focused border of the decoration, no ripple).
+class AppMultiSelectFormField<T> extends StatefulWidget {
   const AppMultiSelectFormField({
     super.key,
     required this.options,
@@ -84,29 +86,47 @@ class AppMultiSelectFormField<T> extends StatelessWidget {
   final String? header;
 
   @override
+  State<AppMultiSelectFormField<T>> createState() => _AppMultiSelectFormFieldState<T>();
+}
+
+class _AppMultiSelectFormFieldState<T> extends State<AppMultiSelectFormField<T>> {
+  bool _focused = false;
+
+  Future<void> _open() async {
+    final picked = await showAppMultiSelect<T>(
+      context: context,
+      options: widget.options,
+      values: widget.values,
+      header: widget.header ?? widget.decoration.labelText,
+    );
+    if (picked != null) widget.onChanged(picked);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final ios = useIosLook(context);
     final text = [
-      for (final o in options)
-        if (values.contains(o.value)) o.textOr(''),
+      for (final o in widget.options)
+        if (widget.values.contains(o.value)) o.textOr(''),
     ].join(', ');
+    final placeholder = widget.placeholder;
     final style = (theme.textTheme.titleMedium ?? const TextStyle()).copyWith(fontSize: 16);
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () async {
-        final picked = await showAppMultiSelect<T>(
-          context: context,
-          options: options,
-          values: values,
-          header: header ?? decoration.labelText,
-        );
-        if (picked != null) onChanged(picked);
-      },
-      child: Semantics(
-        button: true,
+    // InkWell for keyboard focus (Tab) and activation (Enter / Space); the
+    // ink effects stay off so tapping looks like before.
+    return Semantics(
+      button: true,
+      child: InkWell(
+        onTap: _open,
+        onFocusChange: (focused) => setState(() => _focused = focused),
+        splashFactory: NoSplash.splashFactory,
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+        focusColor: Colors.transparent,
         child: InputDecorator(
-          decoration: decoration.applyDefaults(theme.inputDecorationTheme),
+          decoration: widget.decoration.applyDefaults(theme.inputDecorationTheme),
+          isFocused: _focused,
           isEmpty: text.isEmpty && placeholder == null,
           child: Row(
             children: [
