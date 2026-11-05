@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.41.18",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ iPhone- und Android-App: Nach dem Update von der bisherigen App bleibt man angemeldet und landet in derselben Gruppe – kein erneutes Einloggen nötig",
+        "🐛 Android: Nach dem Öffnen eines Attendix-Links aus einer anderen App (Mail, Messenger) bleibt die App beim nächsten Start über das Symbol nicht mehr leer"
+      ]
+    },
+    {
       "version": "0.41.17",
       "date": "5.11.2026",
       "changes": [
