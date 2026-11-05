@@ -102,6 +102,20 @@ erben den Bezug (`via: "ausloeser"` im Eintrag). Zusätzliche Befunde haben
 eine stabile ID (`x-<sha1(Baustein|Titel)>`); eine Prüfung schreibt ihr
 Urteil unter dieser ID (`s` ok/na nimmt den Befund zurück).
 
+Zuletzt prüft `verify-round` per `git`, ob sich eine im Urteil referenzierte
+Flutter-Datei (`f`, Zeilenangaben abgeschnitten) seit dem Flutter-Commit des
+Urteils (`flutterAt`) bis `HEAD` geändert hat (geändert, umbenannt oder
+gelöscht; ein `git diff --name-status` je Commit). Solche Elemente (jeder
+Status, auch `ok`/`na`) und offene Zusatzbefunde kommen mit dem Grund
+`flutter-geaendert` dazu, sofern kein anderer Grund greift; jeder
+ausgewählte Eintrag nennt die geänderten Dateien in `flutterChanged`.
+`--flutter <pfad>` wählt den Flutter-Checkout (Standard `.`),
+`--no-flutter-check` schaltet die Prüfung ab. Commits, die der Checkout
+nicht kennt, werden einmal gemeldet und nicht markiert. Grenze: Wandert das
+Verhalten in eine Datei, die das Urteil nicht nennt (neues Widget, anderer
+Provider), oder ändert sich nur eine von dort benutzte Datei, wird das nicht
+erkannt.
+
 Lesereihenfolge der Urteile (Rang): Erstprüfung (`b*`) 0, dann die Runden
 (`zz-verify-*` = 1, `zz-verifyN-*` = N), Korrekturdateien mit `"afterRound": N`
 N + 0,5, behobene Punkte `zz-fixed-*` N + 0,6 (siehe 4b); bei gleichem Rang
@@ -146,7 +160,11 @@ Artifact veröffentlicht; dort entscheidet Leon je Abweichung „Angleichen“,
 „So lassen“ oder „Später klären“). In `summary.md` trägt jede Zeile die
 Element-ID (Teil nach `#`) bzw. die Befund-ID `x-…`; `logic`-Einträge, deren
 Befunde einzeln als Zusatzbefunde stehen, zählen in der Status-Tabelle in
-der eigenen Zeile `zusammenfassend` statt unter `diff`/`missing`. Urteile zu
+der eigenen Zeile `zusammenfassend` statt unter `diff`/`missing`. Oben steht,
+wie viele Urteile seit ihrem Flutter-Commit geänderte Dateien referenzieren
+(„Flutter seit Urteil geändert“, gleiche Prüfung wie `flutter-geaendert`,
+ebenfalls mit `--flutter`/`--no-flutter-check`); der Tracker zeigt sie mit
+dem Tag „Flutter geändert“. Urteile zu
 IDs, die das Inventar nicht kennt, und Urteile zu unbekannten
 Zusatzbefunden meldet `report` als Warnung. `node tool/parity/parity.mjs fixlists`
 schreibt je Bereich eine Arbeitsliste `fixes/<bereich>.md`: hoch/mittel zum
