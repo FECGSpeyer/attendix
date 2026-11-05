@@ -1,16 +1,10 @@
 # Fix-Paket „nativ“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 525a06f, ed511da (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 525a06f, ed511da, 43a315b (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 4
+## Angleichen (hoch/mittel): 2
 
-- [ ] **hoch** `native/android` `x-4beeb3b857` **versionCode/versionName unter Ionic-Stand** [android/app/build.gradle:10](https://github.com/FECGSpeyer/attendance/blob/1923d203/android/app/build.gradle#L10) (2. Prüfung: bestätigt)
-  Weiter real auf 0f74333: pubspec version 0.41.26+138 → versionCode 138 / versionName 0.41.26 (flutter.versionCode/versionName, build.gradle.kts:40-41); Ionic 4.19.9 versionCode 230 / „4.19.9“ (build.gradle:10-11). Play nimmt nur Codes > 230 an → --build-number ≥ 231 und --build-name ≥ 5.0.0 nötig; kein Skript/CI (scripts/, .github/workflows) setzt sie. docs/push-setup.md:23-24 nennt weiter veraltet 4.19.6/227 → „--build-number 228“ (würde abgelehnt). f korrigiert: docs/parity/device-checklist.md existiert auf 0f74333 nicht mehr.
-  Flutter: pubspec.yaml:4, android/app/build.gradle.kts:40, android/app/build.gradle.kts:41, docs/push-setup.md:23
-- [ ] **hoch** `native/ios` `x-cb1c5c9d93` **CFBundleShortVersionString/CFBundleVersion unter Ionic-Stand** [ios/App/App.xcodeproj/project.pbxproj:465](https://github.com/FECGSpeyer/attendance/blob/1923d203/ios/App/App.xcodeproj/project.pbxproj#L465) (2. Prüfung: bestätigt)
-  Weiter real auf 0f74333: CFBundleShortVersionString/CFBundleVersion = $(FLUTTER_BUILD_NAME)/$(FLUTTER_BUILD_NUMBER) → ohne Flags 0.41.26 (138); Ionic Release MARKETING_VERSION 4.19.9 / CURRENT_PROJECT_VERSION 239 (project.pbxproj:457/465). App Store Connect lehnt eine kleinere Version als 4.19.9 ab → --build-name ≥ 5.0.0 nötig; kein Skript/CI übergibt es. Zusätzlich liest der Store-Update-Check (AppDelegate.swift:93) diese Version.
-  Flutter: ios/Runner/Info.plist:37, ios/Runner/Info.plist:41, pubspec.yaml:4
 - [ ] **mittel** `native/config` `x-6d9a24bfe2` **Anmeldung und lokale Daten gehen beim Update verloren** [src/app/services/base/supabase.ts:8](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/base/supabase.ts#L8) (2. Prüfung: bestätigt)
   Weiter teilweise real: Übernahme liest nur Sitzung (sb-…-auth-token) und currentTenantId aus dem Ionic-localStorage. Nicht übernommen: Offline-Warteschlange offline_writes_v1 (nicht synchronisierte Änderungen gehen beim Update verloren), Ansichts-/Sortieroptionen aus Ionic Storage, push_prompt_shown. mittel passt; Gerätetest laut device-checklist.md offen.
   Flutter: lib/core/services/native/ionic_session_takeover.dart:114, ios/Runner/AppDelegate.swift:188, android/app/src/main/kotlin/de/attendix/attendix/ionic/IonicSessionPlugin.kt:126

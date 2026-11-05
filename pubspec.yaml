@@ -103,6 +103,7 @@ dependencies:
   qr_flutter: ^4.1.0
   mobile_scanner: ^7.4.3
   flutter_secure_storage: ^10.0.0
+  shorebird_code_push: ^2.0.7
 
 dev_dependencies:
   flutter_test:
@@ -139,6 +140,8 @@ flutter:
     - assets/fonts/NotoSans-Bold.ttf
     - assets/fonts/NotoSans-Italic.ttf
     - .env.app
+    # Shorebird Code Push (OTA, iOS/Android): config must be bundled
+    - shorebird.yaml
 
   # WEB_FONTS: Roboto with real 400/500/600/700 weights (+ 400 italic), as
   # Ionic md renders it. Flutter web (CanvasKit) otherwise downloads Roboto

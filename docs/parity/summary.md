@@ -2,7 +2,7 @@
 
 Ionic 4.19.9 (1923d203), 5684 Punkte in 213 Bausteinen.
 
-Flutter seit Urteil geändert: 689 Punkte (davon ok 511, Abweichungen 178), verglichen mit HEAD 98630e18.
+Flutter seit Urteil geändert: 687 Punkte (davon ok 511, Abweichungen 176), verglichen mit HEAD cb5d2138.
 
 | Status | Anzahl |
 |---|---|
@@ -14,14 +14,12 @@ Flutter seit Urteil geändert: 689 Punkte (davon ok 511, Abweichungen 178), verg
 
 `zusammenfassend`: Logik-Einträge mit diff/missing, deren Befunde einzeln als Zusatzbefunde stehen (nicht unter diff/missing gezählt).
 
-Zusätzliche Befunde: 291
+Zusätzliche Befunde: 289
 
 ## Offene Abweichungen nach Schwere
 
-### hoch (2)
+### hoch (0)
 
-- **native/android** `x-4beeb3b857` zusätzlicher Befund: versionCode/versionName unter Ionic-Stand – Weiter real auf 0f74333: pubspec version 0.41.26+138 → versionCode 138 / versionName 0.41.26 (flutter.versionCode/versionName, build.gradle.kts:40-41); Ionic 4.19.9 versionCode 230 / „4.19.9“ (build.gradle:10-11). Play nimmt nur Codes > 230 an → --build-number ≥ 231 und --build-name ≥ 5.0.0 nötig; kein Skript/CI (scripts/, .github/workflows) setzt sie. docs/push-setup.md:23-24 nennt weiter veraltet 4.19.6/227 → „--build-number 228“ (würde abgelehnt). f korrigiert: docs/parity/device-checklist.md existiert auf 0f74333 nicht mehr.
-- **native/ios** `x-cb1c5c9d93` zusätzlicher Befund: CFBundleShortVersionString/CFBundleVersion unter Ionic-Stand – Weiter real auf 0f74333: CFBundleShortVersionString/CFBundleVersion = $(FLUTTER_BUILD_NAME)/$(FLUTTER_BUILD_NUMBER) → ohne Flags 0.41.26 (138); Ionic Release MARKETING_VERSION 4.19.9 / CURRENT_PROJECT_VERSION 239 (project.pbxproj:457/465). App Store Connect lehnt eine kleinere Version als 4.19.9 ab → --build-name ≥ 5.0.0 nötig; kein Skript/CI übergibt es. Zusätzlich liest der Store-Update-Check (AppDelegate.swift:93) diese Version.
 
 ### mittel (46)
 

@@ -19,6 +19,7 @@ import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/self_service_providers.dart';
+import '../../../../core/providers/shorebird_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/services/app_update_service.dart';
@@ -204,7 +205,8 @@ class RdMePage extends ConsumerWidget {
             RdListRow(
               leading: const RdRowIcon(Icons.new_releases_outlined),
               title: l10n.redesignMeWhatsNew,
-              value: AppConstants.displayVersion,
+              // SHOREBIRD: "5.0.0 (Patch 2)" while a code push patch runs
+              value: ref.watch(appVersionLabelProvider),
               onTap: () => showVersionHistorySheet(context),
             ),
             // Like the old settings: "Update installieren" while a new web
