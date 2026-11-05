@@ -1628,6 +1628,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   Future<void> _removeChecklistItem(int index) async {
     if (index < 0 || index >= _localChecklist.length) return;
+    // The list may be replaced (Realtime/reload) while the dialog is open:
+    // delete by id, not by the old index.
+    final id = _localChecklist[index].id;
 
     final confirmed = await DialogHelper.showConfirmation(
       context,
@@ -1638,8 +1641,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     );
 
     if (confirmed == true && mounted) {
+      final i = _localChecklist.indexWhere((e) => e.id == id);
+      if (i < 0) return;
       setState(() {
-        _localChecklist.removeAt(index);
+        _localChecklist.removeAt(i);
       });
 
       await _saveChecklist();
@@ -1698,12 +1703,19 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final repo = ref.read(attendanceRepositoryWithTenantProvider);
     if (!repo.hasTenantId) return;
     final checklistJson = _localChecklist.map((item) => item.toJson()).toList();
+    final tenantId = ref.read(currentTenantProvider)?.id;
+    final cacheKey = tenantId == null
+        ? null
+        : attendanceDetailCacheKey(ref.read(offlineQueueUserIdProvider)(), tenantId, widget.attendanceId);
     _checklistSaving++;
     try {
       await repo.updateAttendance(
         widget.attendanceId,
         {'checklist': checklistJson},
       );
+      // A reload without network falls back to the offline copy: keep it
+      // current, or it would bring back the list from before this save.
+      await patchCachedAttendanceDetail(cacheKey, {'checklist': checklistJson});
     } catch (e) {
       if (mounted) {
         ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
