@@ -355,20 +355,11 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
     final upcoming = ref.watch(upcomingProtocolAttendancesProvider).valueOrNull ?? const <ProtocolAttendance>[];
     final types = ref.watch(protocolTypesProvider).valueOrNull ?? const <ProtocolType>[];
     final l10n = context.l10n;
+    ref.listen(agendaItemsProvider, (_, next) {
+      if (next is AsyncError && !next.isLoading) ToastHelper.showError(context, l10n.agendaLoadFailed);
+    });
 
-    return Scaffold(
-      // PARITY_R5: page colour of the team-org page shows through.
-      backgroundColor: Colors.transparent,
-      floatingActionButton: TabBarFab.wrap(FloatingActionButton(
-        heroTag: 'team-org-add-topic',
-        tooltip: l10n.teamOrgCreateTopic,
-        onPressed: () => context.push('/settings/agenda-items/new'),
-        child: const Icon(Icons.add),
-      )),
-      body: itemsAsync.when(
-        loading: () => const TeamOrgListSkeleton(), // Ionic ion-skeleton-text (3 rows)
-        error: (_, __) => Center(child: Text(l10n.agendaLoadFailed)),
-        data: (items) {
+    Widget content(List<AgendaItem> items) {
           final postponed = postponedAgendaItemIds(protocols);
           final buckets = splitTopics(items);
           final openTopics = sortTopicsForPlanning(buckets.open, postponed);
@@ -383,11 +374,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
           final nextAgendaIds = tops.tops.map(fieldAgendaItemId).toSet();
 
           return RefreshIndicator.adaptive(
-            onRefresh: () async {
-              ref.invalidate(agendaItemsProvider);
-              ref.invalidate(protocolsProvider);
-              ref.invalidate(upcomingProtocolAttendancesProvider);
-            },
+            onRefresh: () => reloadTeamOrgTab(ref, 'topics'),
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 72)),
@@ -541,7 +528,24 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
               ],
             ),
           );
-        },
+    }
+
+    return Scaffold(
+      // PARITY_R5: page colour of the team-org page shows through.
+      backgroundColor: Colors.transparent,
+      floatingActionButton: TabBarFab.wrap(FloatingActionButton(
+        heroTag: 'team-org-add-topic',
+        tooltip: l10n.teamOrgCreateTopic,
+        onPressed: () => context.push('/settings/agenda-items/new'),
+        child: const Icon(Icons.add),
+      )),
+      // Ionic reload(): after a failed load the content stays (none →
+      // empty), a red toast reports it, pull-to-refresh keeps working.
+      body: itemsAsync.when(
+        skipError: true,
+        loading: () => const TeamOrgListSkeleton(), // Ionic ion-skeleton-text (3 rows)
+        error: (_, __) => content(const []),
+        data: content,
       ),
     );
   }
@@ -568,37 +572,11 @@ class _MemberTopics extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final itemsAsync = ref.watch(agendaItemsProvider);
     final l10n = context.l10n;
-    return RefreshIndicator.adaptive(
-      onRefresh: () async => ref.invalidate(agendaItemsProvider),
-      child: ListView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.only(bottom: 32),
-        children: [
-          // Ionic: inset list with the hint item and a block button.
-          IonInsetList(
-            dividerIndent: null,
-            children: [
-              ListTile(
-                title: Text(l10n.teamOrgSuggestTopic),
-                subtitle: Text(l10n.teamOrgSuggestHint, style: const TextStyle(color: AppColors.medium)),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                child: FilledButton.icon(
-                  onPressed: () => _suggest(context, ref),
-                  icon: const Icon(Icons.lightbulb_outline),
-                  label: IonButtonLabel(l10n.teamOrgSuggestTopic),
-                ),
-              ),
-            ],
-          ),
-          itemsAsync.when(
-            loading: () => const Padding(
-              padding: EdgeInsets.all(24),
-              child: Center(child: AppSpinner()),
-            ),
-            error: (_, __) => Padding(padding: const EdgeInsets.all(16), child: Text(l10n.agendaLoadFailed)),
-            data: (items) {
+    ref.listen(agendaItemsProvider, (_, next) {
+      if (next is AsyncError && !next.isLoading) ToastHelper.showError(context, l10n.agendaLoadFailed);
+    });
+
+    Widget content(List<AgendaItem> items) {
               final sorted = [...items]..sort((a, b) => (b.createdAt ?? '').compareTo(a.createdAt ?? ''));
               return IonInsetList(
                 header: l10n.teamOrgMySuggestions,
@@ -635,7 +613,41 @@ class _MemberTopics extends ConsumerWidget {
                     ),
                 ],
               );
-            },
+    }
+
+    return RefreshIndicator.adaptive(
+      onRefresh: () => reloadTeamOrgTab(ref, 'topics'),
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.only(bottom: 32),
+        children: [
+          // Ionic: inset list with the hint item and a block button.
+          IonInsetList(
+            dividerIndent: null,
+            children: [
+              ListTile(
+                title: Text(l10n.teamOrgSuggestTopic),
+                subtitle: Text(l10n.teamOrgSuggestHint, style: const TextStyle(color: AppColors.medium)),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: FilledButton.icon(
+                  onPressed: () => _suggest(context, ref),
+                  icon: const Icon(Icons.lightbulb_outline),
+                  label: IonButtonLabel(l10n.teamOrgSuggestTopic),
+                ),
+              ),
+            ],
+          ),
+          // Ionic: on an error a red toast, the list stays (none → empty).
+          itemsAsync.when(
+            skipError: true,
+            loading: () => const Padding(
+              padding: EdgeInsets.all(24),
+              child: Center(child: AppSpinner()),
+            ),
+            error: (_, __) => content(const []),
+            data: content,
           ),
         ],
       ),

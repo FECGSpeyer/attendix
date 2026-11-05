@@ -11,15 +11,13 @@ import '../../../core/config/supabase_config.dart';
 import '../../../core/services/offline_queue_service.dart'
     show rootScaffoldMessengerKey;
 import '../../../core/theme/app_colors.dart';
+import '../presentation/widgets/password_recovery_alert.dart';
 import 'auth_flow_service.dart';
 import 'browser_url.dart';
 import '../../../l10n/l10n.dart';
 
-/// Route of the "Neues Passwort" page.
-const String kNewPasswordRoute = '/new-password';
-
 /// AUTH: wires up the Ionic auth-link handling (app.component.ts):
-/// * `PASSWORD_RECOVERY` auth events → "Neues Passwort" page
+/// * `PASSWORD_RECOVERY` auth events → alert "Neues Passwort" over /login
 /// * on web, the initial URL is checked for recovery / signup-confirmation
 ///   links (`?token_hash&type`, `?code`, `#access_token`).
 ///
@@ -28,7 +26,8 @@ void initAuthLinkHandling(WidgetRef ref, GoRouter router) {
   ref.listenManual<AsyncValue<AuthState>>(authStateProvider, (_, next) {
     final event = next.valueOrNull?.event;
     if (event == AuthChangeEvent.passwordRecovery) {
-      router.go(kNewPasswordRoute);
+      unawaited(presentPasswordRecoveryAlert(
+          ref.read(authFlowServiceProvider), router));
     }
   });
 
@@ -117,7 +116,9 @@ Future<void> _processLink(WidgetRef ref, GoRouter router, AuthLink link) async {
     case AuthLinkOutcome.none:
       return;
     case AuthLinkOutcome.recovery:
-      router.go(kNewPasswordRoute);
+      // Ionic: /login as host page, then the alert "Neues Passwort".
+      unawaited(presentPasswordRecoveryAlert(
+          ref.read(authFlowServiceProvider), router));
     case AuthLinkOutcome.signupConfirmed:
       _toast(l10nWithoutContext.appEmailConfirmed, AppColors.success);
       router.go('/tenants');
