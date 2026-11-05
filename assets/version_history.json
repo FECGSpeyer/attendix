@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.41.22",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Person: „Meinen Benutzer zuweisen“ legt das Konto wie bisher über die Kontoanlage an und lehnt ein schon verknüpftes Konto ab"
+      ]
+    },
+    {
       "version": "0.41.21",
       "date": "5.11.2026",
       "changes": [
