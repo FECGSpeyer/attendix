@@ -565,6 +565,7 @@ class _DefaultMinutesInputState extends State<_DefaultMinutesInput> {
   /// retry it.
   bool _failed = false;
   int _seq = 0;
+  int _inFlight = 0;
 
   @override
   void initState() {
@@ -588,16 +589,23 @@ class _DefaultMinutesInputState extends State<_DefaultMinutesInput> {
 
   /// Saves the current text unless it is already saved or being saved.
   /// Only the newest submission counts (the page writes the whole list).
-  Future<void> _commit() async {
+  /// [force] re-sends even an already submitted value (used when leaving
+  /// while a save is still pending, so its failure can't be lost).
+  Future<void> _commit({bool force = false}) async {
     _debounce?.cancel();
     _debounce = null;
     final v = _controller.text.trim();
-    if (v == _submitted && !_failed) return;
+    if (!force && v == _submitted && !_failed) return;
     _submitted = v;
     _failed = false;
     final seq = ++_seq;
-    final ok = await widget.onSubmitted(widget.fieldId, v);
-    if (!ok && seq == _seq) _failed = true;
+    _inFlight++;
+    try {
+      final ok = await widget.onSubmitted(widget.fieldId, v);
+      if (!ok && seq == _seq) _failed = true;
+    } finally {
+      _inFlight--;
+    }
   }
 
   void _onChanged(String _) {
@@ -607,7 +615,8 @@ class _DefaultMinutesInputState extends State<_DefaultMinutesInput> {
 
   @override
   void dispose() {
-    _commit();
+    // Writes are coalesced, so re-sending a pending value is harmless.
+    _commit(force: _inFlight > 0 || _failed);
     _controller.dispose();
     _focus.dispose();
     super.dispose();

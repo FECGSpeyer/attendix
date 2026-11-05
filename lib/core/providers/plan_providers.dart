@@ -251,19 +251,22 @@ class PlanSettingsNotifier extends Notifier<AsyncValue<void>> {
     final running = _defaultFieldsRunning[orgId];
     if (running == null) return _writeDefaultFields(orgId, fields);
     _defaultFieldsNext[orgId] = fields;
-    return _defaultFieldsQueued[orgId] ??= running.then((_) {
+    // A failed write never blocks the queue.
+    return _defaultFieldsQueued[orgId] ??= running.catchError((_) => false).then((_) {
       _defaultFieldsQueued.remove(orgId);
       return _writeDefaultFields(orgId, _defaultFieldsNext.remove(orgId)!);
     });
   }
 
   Future<bool> _writeDefaultFields(int orgId, List<PlanField> fields) {
-    final write = _run(
-      () => ref.read(orgPlanRepositoryProvider).updateDefaultFields(orgId, fields),
-      invalidate: [currentOrganisationProvider],
-    );
+    // Started on the next event-loop turn: callers may be in a widget's
+    // `dispose()`, where changing provider state synchronously is not allowed.
+    final write = Future<bool>(() => _run(
+          () => ref.read(orgPlanRepositoryProvider).updateDefaultFields(orgId, fields),
+          invalidate: [currentOrganisationProvider],
+        )).catchError((Object _) => false);
     _defaultFieldsRunning[orgId] = write;
-    write.then((_) {
+    write.whenComplete(() {
       if (identical(_defaultFieldsRunning[orgId], write)) _defaultFieldsRunning.remove(orgId);
     });
     return write;
