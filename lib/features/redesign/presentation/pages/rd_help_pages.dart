@@ -17,8 +17,21 @@ import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 /// design. Same content and search as the old pages (help_content_service),
 /// same routes under /settings/help.
 
-void _back(BuildContext context, String fallback) =>
-    context.canPop() ? context.pop() : context.go(fallback);
+void _back(BuildContext context, String fallback) => rdHelpBack(context, fallback);
+
+/// Back from a help page: pop only when the page was pushed on top of
+/// another page. On a direct call (link, reload) the nested route
+/// `/settings/help` has `/settings` below it, so `canPop()` would lead
+/// there; go to [fallback] instead.
+@visibleForTesting
+void rdHelpBack(BuildContext context, String fallback) {
+  final matches = GoRouter.of(context).routerDelegate.currentConfiguration.matches;
+  if (matches.isNotEmpty && matches.last is ImperativeRouteMatch && context.canPop()) {
+    context.pop();
+  } else {
+    context.go(fallback);
+  }
+}
 
 /// Search field like on the Verwaltung page.
 class _RdSearchField extends StatelessWidget {
