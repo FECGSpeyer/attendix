@@ -106,7 +106,7 @@ as $$
             join tenants t on t.id = p."tenantId"
             join instruments own on own.id = p.instrument
             join instruments g on g.id = any (c.group_ids)
-            where p."appId" = auth.uid()::text
+            where p."appId" = auth.uid()
               and p."left" is null
               and (p."tenantId" = c.tenant_id or t.song_source_tenant_id = c.tenant_id)
               and lower(trim(own.name)) = lower(trim(g.name))
