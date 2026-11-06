@@ -196,13 +196,13 @@ class RdChurchOverviewView extends StatelessWidget {
             RdListRow(
               title: subtitle,
               leading: const RdRowIcon(Icons.people_outline),
-              trailing: RdCountBadge(data.total),
+              value: '${data.total}',
               showChevron: false,
             ),
             RdListRow(
               title: l10n.churchOverviewChurches,
               leading: const RdRowIcon(Icons.business_outlined),
-              trailing: RdCountBadge(data.churchCounts.length),
+              value: '${data.churchCounts.length}',
               showChevron: false,
             ),
           ],
@@ -213,12 +213,12 @@ class RdChurchOverviewView extends StatelessWidget {
           RdGroupedList(
             children: [
               for (final c in data.churchCounts)
-                RdListRow(title: c.name, trailing: RdCountBadge(c.count), showChevron: false),
+                RdListRow(title: c.name, value: '${c.count}', showChevron: false),
               if (data.withoutChurch > 0)
                 RdListRow(
                   title: l10n.churchOverviewNoChurch,
                   titleColor: p.text2,
-                  trailing: RdCountBadge(data.withoutChurch, tone: RdTone.excused),
+                  value: '${data.withoutChurch}',
                   showChevron: false,
                 ),
             ],
