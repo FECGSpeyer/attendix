@@ -109,6 +109,21 @@ const Map<String, String> _accents = {
 /// and accents folded, Cyrillic written in Latin letters and spellings of
 /// the same sound made equal ("Мой Господь" = "Moj Gospod'" = "Moy Gospod").
 List<String> rdImportTitleWords(String text) {
+  final cached = _titleWordsCache[text];
+  if (cached != null) return cached;
+  if (_titleWordsCache.length > 20000) _titleWordsCache.clear();
+  return _titleWordsCache[text] = List.unmodifiable(_titleWords(text));
+}
+
+/// [rdImportTitleWords] of titles seen before: every folder is compared
+/// with every Werk.
+final Map<String, List<String>> _titleWordsCache = {};
+
+final RegExp _combiningMarks = RegExp('[̀-ͯ]');
+final RegExp _doubledLetters = RegExp(r'(\p{L})\1+', unicode: true);
+final RegExp _titleWord = RegExp(r'[\p{L}\p{N}]+', unicode: true);
+
+List<String> _titleWords(String text) {
   var s = text.toLowerCase();
   // macOS / Drive spell ä as a + U+0308.
   s = s
@@ -126,7 +141,7 @@ List<String> rdImportTitleWords(String text) {
     final ch = String.fromCharCode(rune);
     out.write(_cyrillic[ch] ?? _accents[ch] ?? ch);
   }
-  s = out.toString().replaceAll(RegExp('[̀-ͯ]'), '');
+  s = out.toString().replaceAll(_combiningMarks, '');
   s = s
       .replaceAll('tsch', 'ch')
       .replaceAll('sch', 'sh')
@@ -138,17 +153,37 @@ List<String> rdImportTitleWords(String text) {
       .replaceAll('j', 'i')
       .replaceAll('y', 'i')
       .replaceAll('w', 'v')
-      .replaceAllMapped(RegExp(r'(\p{L})\1+', unicode: true), (m) => m[1]!);
-  return [for (final m in RegExp(r'[\p{L}\p{N}]+', unicode: true).allMatches(s)) m[0]!];
+      .replaceAllMapped(_doubledLetters, (m) => m[1]!);
+  return [for (final m in _titleWord.allMatches(s)) m[0]!];
 }
 
-/// How alike two titles are, 0 to 1 (shared words, Dice).
+/// How alike two titles are, 0 to 1: shared words or, for typos and other
+/// spellings ("Hallelujah" / "Haleluja"), shared groups of three letters
+/// (Dice), whichever is higher.
 double rdImportTitleSimilarity(String a, String b) {
-  final wa = rdImportTitleWords(a).toSet();
-  final wb = rdImportTitleWords(b).toSet();
+  final wa = rdImportTitleWords(a);
+  final wb = rdImportTitleWords(b);
   if (wa.isEmpty || wb.isEmpty) return 0;
-  return 2 * wa.intersection(wb).length / (wa.length + wb.length);
+  final sa = wa.toSet();
+  final sb = wb.toSet();
+  final words = 2 * sa.intersection(sb).length / (sa.length + sb.length);
+  final ta = _trigrams(wa);
+  final tb = _trigrams(wb);
+  final letters = ta.isEmpty || tb.isEmpty ? 0.0 : 2 * ta.intersection(tb).length / (ta.length + tb.length);
+  return words > letters ? words : letters;
 }
+
+/// Groups of three letters of a title's words (" ha", "hal", …, "ja ").
+Set<String> _trigrams(List<String> words) {
+  final key = words.join(' ');
+  final cached = _trigramCache[key];
+  if (cached != null) return cached;
+  if (_trigramCache.length > 20000) _trigramCache.clear();
+  final padded = ' $key ';
+  return _trigramCache[key] = {for (var i = 0; i + 3 <= padded.length; i++) padded.substring(i, i + 3)};
+}
+
+final Map<String, Set<String>> _trigramCache = {};
 
 /// Number and title of a Werk folder ("120 Wie wunderbar", "HZ 1 Die wahre
 /// Liebe", "07_Мой Господь").
@@ -173,6 +208,9 @@ enum RdMatchKind {
   /// Several Werke fit equally well ("A1 Stille Nacht", "B1 Stille Nacht"
   /// for the folder "1 Stille Nacht").
   ambiguous,
+
+  /// The KI named this Werk (other spelling, translation): to be checked.
+  byAi,
 
   /// No Werk fits: a new one is created.
   none,
@@ -701,6 +739,7 @@ Set<String> rdImportPathsToDate(RdImportPlan plan) => {
 /// changes the rest, so the plan is made again in a moment.
 class RdImportPlanCache {
   Map<String, String?>? _folders;
+  final Map<String, RdWorkMatch> _matches = {};
   final Map<String, ({FileCategoryGuess guess, String? newGroup})> _files = {};
 }
 
@@ -748,6 +787,7 @@ RdImportPlan rdBuildImportPlan(
   int junk = 0,
   Map<String, RdImportCategory> answers = const {},
   Map<String, RdImportCategory> categories = const {},
+  Map<String, int> aiWorks = const {},
   RdImportPlanCache? cache,
 }) {
   final folderOf = cache == null
@@ -764,7 +804,16 @@ RdImportPlan rdBuildImportPlan(
   final groups = <String, ({List<String> folders, RdWorkMatch match, ({String? prefix, int? number, String title}) parsed})>{};
   for (final folder in byFolder.keys) {
     final name = folder.isEmpty ? '' : folder.split('/').last;
-    final match = folder.isEmpty ? RdWorkMatch.none : rdMatchWork(name, songs);
+    var match = folder.isEmpty
+        ? RdWorkMatch.none
+        : cache == null
+            ? rdMatchWork(name, songs)
+            : cache._matches.putIfAbsent(name, () => rdMatchWork(name, songs));
+    // The Werk the KI named when the comparison is not sure.
+    final hint = aiWorks[name];
+    if (hint != null && match.kind != RdMatchKind.sure && songs.any((s) => s.id == hint)) {
+      match = RdWorkMatch(RdMatchKind.byAi, hint);
+    }
     final parsed = rdParseWorkName(name);
     // Only sure folders of the same Werk are put together; an unsure one
     // ("120 Anderes Lied" next to "120 Wie wunderbar") stays a Werk of its
@@ -1434,6 +1483,16 @@ List<RdUploadItem> rdImportUploads(RdImportPlan plan, RdImportDecisions d) => [
 List<String> rdImportNewGroups(List<RdUploadItem> items) => {
       for (final i in items)
         if (i.category.newGroup != null) i.category.newGroup!,
+    }.toList();
+
+/// The folder names of Werke the comparison is not sure about (new, only
+/// the number fits, several fit), to ask the KI about ([rdBuildImportPlan]
+/// `aiWorks`).
+List<String> rdImportWorksToAsk(RdImportPlan plan) => {
+      for (final w in plan.works)
+        if (w.match.kind != RdMatchKind.sure && w.match.kind != RdMatchKind.byAi && plan.songs.isNotEmpty)
+          for (final f in w.folders)
+            if (f.isNotEmpty) f.split('/').last,
     }.toList();
 
 /// The new groups the files go to as decided so far, to pick them for other

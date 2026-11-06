@@ -3120,6 +3120,7 @@
   "redesignImportKeepOpen": "Keep this page open until everything is uploaded. What is already up stays there if it stops.",
   "redesignImportLearnFailed": "The part names could not be saved. The next import will ask again.",
   "redesignImportMatchAmbiguous": "Several works in Attendix fit. Please check that this is the right one.",
+  "redesignImportMatchByAi": "The AI takes the folder for this work, e.g. because of another spelling or a translation. Please check it.",
   "redesignImportMatchNumberOnly": "The number fits, the title differs.",
   "redesignImportMatchTitleOnly": "The title fits, the number differs.",
   "redesignImportMenuHint": "Folder from Google Drive, Dropbox or your computer",

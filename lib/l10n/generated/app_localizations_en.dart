@@ -11532,6 +11532,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Several works in Attendix fit. Please check that this is the right one.';
 
   @override
+  String get redesignImportMatchByAi =>
+      'The AI takes the folder for this work, e.g. because of another spelling or a translation. Please check it.';
+
+  @override
   String get redesignImportMatchNumberOnly =>
       'The number fits, the title differs.';
 

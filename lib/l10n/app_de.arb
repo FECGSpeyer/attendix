@@ -14418,6 +14418,10 @@
   "@redesignImportMatchAmbiguous": {
     "description": "redesign.import.matchAmbiguous"
   },
+  "redesignImportMatchByAi": "Die KI hält den Ordner für dieses Werk, etwa wegen anderer Schreibweise oder Übersetzung. Bitte prüfe es.",
+  "@redesignImportMatchByAi": {
+    "description": "redesign.import.matchByAi"
+  },
   "redesignImportMatchNumberOnly": "Die Nummer passt, der Titel weicht ab.",
   "@redesignImportMatchNumberOnly": {
     "description": "redesign.import.matchNumberOnly"

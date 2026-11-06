@@ -11652,6 +11652,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Mehrere Werke in Attendix passen. Bitte prüfe, ob es das richtige ist.';
 
   @override
+  String get redesignImportMatchByAi =>
+      'Die KI hält den Ordner für dieses Werk, etwa wegen anderer Schreibweise oder Übersetzung. Bitte prüfe es.';
+
+  @override
   String get redesignImportMatchNumberOnly =>
       'Die Nummer passt, der Titel weicht ab.';
 

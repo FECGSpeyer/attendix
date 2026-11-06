@@ -73,6 +73,26 @@ void main() {
       expect(rdMatchWork('157 Jesus ruft dich', songs).kind, RdMatchKind.none);
     });
 
+    test('typos and other spellings count by their letters', () {
+      const more = [...songs, RdImportSong(id: 5, number: 30, name: 'Hallelujah')];
+      final m = rdMatchWork('12 Halleluja', more);
+      expect(m.kind, RdMatchKind.titleOnly);
+      expect(m.songId, 5);
+    });
+
+    test('the Werk the KI names for an unsure folder is to be checked', () {
+      final entries = [_e('Noten/157 Jesus ruft dich/Viola.pdf'), _e('Noten/120 Wie wunderbar/Viola.pdf')];
+      expect(rdImportWorksToAsk(_plan(entries, songs: songs)), ['157 Jesus ruft dich']);
+      final plan = rdBuildImportPlan(entries,
+          songs: songs, instruments: _instruments, isChoir: false, aiWorks: {'157 Jesus ruft dich': 2, '120 Wie wunderbar': 1});
+      final byAi = plan.works.firstWhere((w) => w.folderName == '157 Jesus ruft dich');
+      expect(byAi.match.kind, RdMatchKind.byAi);
+      expect(byAi.match.songId, 2);
+      expect(rdWorkState(plan, const RdImportDecisions(), byAi).flags, contains(RdWorkFlag.unsureMatch));
+      // A sure match stays.
+      expect(plan.works.firstWhere((w) => w.folderName == '120 Wie wunderbar').match.songId, 3);
+    });
+
     test('several Werke fit as well: to check, not the first one', () {
       const twice = [
         RdImportSong(id: 1, number: 1, prefix: 'A', name: 'Stille Nacht'),
