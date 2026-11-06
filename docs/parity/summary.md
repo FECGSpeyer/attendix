@@ -2,7 +2,7 @@
 
 Ionic 4.19.9 (1923d203), 5684 Punkte in 213 Bausteinen.
 
-Flutter seit Urteil geändert: 1779 Punkte (davon ok 1310, Abweichungen 467), verglichen mit HEAD b279a7f5.
+Flutter seit Urteil geändert: 1787 Punkte (davon ok 1315, Abweichungen 470), verglichen mit HEAD 440fc379.
 
 | Status | Anzahl |
 |---|---|
@@ -21,11 +21,10 @@ Zusätzliche Befunde: 273
 ### hoch (0)
 
 
-### mittel (1)
+### mittel (0)
 
-- **native/config** `x-6d9a24bfe2` zusätzlicher Befund: Anmeldung und lokale Daten gehen beim Update verloren – Weiter teilweise real: Übernahme liest nur Sitzung (sb-…-auth-token) und currentTenantId aus dem Ionic-localStorage. Nicht übernommen: Offline-Warteschlange offline_writes_v1 (nicht synchronisierte Änderungen gehen beim Update verloren), Ansichts-/Sortieroptionen aus Ionic Storage, push_prompt_shown. mittel passt; Gerätetest laut device-checklist.md offen.
 
-### niedrig (1247)
+### niedrig (1248)
 
 - **agenda-items/agenda-item-detail/agenda-item-detail.page** `loading-ff407ba2` agenda-items/agenda-item-detail/agenda-item-detail.page.ts:275 – Ionic: blockierendes Lade-Overlay (Utils.getLoadingElement, max. 3 s) beim Speichern / Flutter: kein Overlay, nur der Speichern-FAB ist während _saving deaktiviert, Formular bleibt bedienbar. Rolle gleich (nur Leitung = ADMIN/RESPONSIBLE). Zeilenverweise aktualisiert (78/233 zeigten nach Dateiänderung auf Laden/Plan).
 - **agenda-items/agenda-item-detail/agenda-item-detail.page** `field-42aad74c` agenda-items/agenda-item-detail/agenda-item-detail.page.html:52 – Optionen „Niemand“ + aktive, nicht ausstehende Personen gleich. Ionic: Modal mit „Abbrechen“, localeCompare(de) / Flutter: Dropdown ohne Abbrechen, Sortierung per toLowerCase (Umlaute hinten). Gespeicherter Wert gleich.
@@ -1214,6 +1213,7 @@ Zusätzliche Befunde: 273
 - **tasks/task-form/task-form.component** `x-a889399c18` zusätzlicher Befund: Sortierung der Personenauswahl – Ionic: personName.localeCompare(…, 'de') / Flutter: fullName.toLowerCase().compareTo → Namen mit Umlaut/Akzent am Anfang (Ä, Ö, Ü, É …) stehen am Ende statt alphabetisch eingeordnet.
 - **team-organization/tasks-tab/tasks-tab.utils** `x-08ec2e7461` zusätzlicher Befund: Sortierung der Personen-Chips – Ionic: name.localeCompare(…, currentLanguage()) / Flutter: toLowerCase().compareTo (Codepunkte) → Chips von Personen mit Umlaut-/Akzent-Anfang stehen am Ende.
 - **team-organization/team-org.utils** `x-6d83ca9638` zusätzlicher Befund: Titelsortierung Themen/Aufgaben – Ionic: title.localeCompare (sortTopicsForPlanning, groupTasksByDue: Gleichstand und Gruppe „Ohne Datum“) / Flutter: String.compareTo – Großbuchstaben vor Kleinbuchstaben, Umlaute ans Ende (z. B. „Zeitplan“ vor „abstimmen“, „Ölwechsel“ hinter „Zoom“).
+- **native/config** `x-6d9a24bfe2` zusätzlicher Befund: Anmeldung und lokale Daten gehen beim Update verloren – Weitgehend behoben: Anmeldung und gewählte Instanz seit PR #285, ungesendete Offline-Änderungen (offline_writes_v1) seit PR #358 (einmalig, nur Instanzen des Nutzers, keine Duplikate, nur person_attendances-Spalten). Übrig: Sortier- und Ansichtsoptionen aus Ionic Storage und push_prompt_shown werden nicht übernommen; nach dem Update einmal neu einstellen bzw. einmal erneut nach Push gefragt → niedrig. Swift/Kotlin nicht in CI gebaut, Gerätetest offen (Checkliste Nr. 66).
 - **native/android** `x-bc26763c9d` zusätzlicher Befund: Adaptives Icon: Logo deutlich kleiner – Nachgemessen auf 0f74333, unverändert: Flutter drawable-xxxhdpi/ic_launcher_foreground.png 432 px, Logo-Höhe 251 px (bbox 91–342) = 58 % plus inset 16 % (ic_launcher.xml:7) → Logo ≈ ¼ kleiner als Ionic (192-px-Vordergrund voll, inset 16,7 %). Hintergrund #3EA5AE gleich. Laut Leon nur Optik. f korrigiert: adaptive_icon_foreground steht jetzt in pubspec.yaml:181 (177 = web background_color), inset in ic_launcher.xml:7.
 - **native/android** `x-876683295e` zusätzlicher Befund: Startbildschirm ohne Logo – Unterschied echt, Schwere zu hoch. Ionic: windowBackground splash_screen (Weiß + splash_icon) bis die WebView zeichnet. Flutter: launch_background ohne Bild (?android:colorBackground, nachts schwarz). Ab Android 12 zeigen beide zuerst den System-Splash mit Launcher-Icon, Flutter hält ihn bis zum ersten Frame (delayFirstAndroidViewDraw); Ionic zeigt danach noch kurz Weiß+Logo. Leere Fläche nur auf Android 8–11 für die Zeit bis runApp. Rein kosmetischer Start-/Ladebildschirm → niedrig.
 - **native/ios** `x-faf61c6382` zusätzlicher Befund: Launch Screen ohne Logo und ohne Dark Mode – Unterschied echt (geprüft: Ionic Splash.imageset Logo auf #FFFFFF bzw. dunkel #1E1E1E; Flutter LaunchImage 1×1 transparent, Hintergrund fest Weiß → im Dark Mode weißer Blitz). Sichtbar nur beim Kaltstart bis zum ersten Flutter-Frame (main() ohne Netzwerkwarten); kosmetischer Startbildschirm, keine Funktions- oder Ablaufänderung → niedrig statt mittel.

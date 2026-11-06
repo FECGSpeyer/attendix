@@ -30,6 +30,7 @@ Diese Punkte entscheiden, ob Play und App Store den Build überhaupt annehmen.
 
 - ☐ Android: mit `scripts/store_build.sh appbundle` bauen. Das ist ein Shorebird-Release (sonst kommen keine OTA-Patches an, siehe `docs/release/shorebird.md`) und setzt `versionName` = 5.0.0 und `versionCode` = pubspec-Build + 100 (bricht ab, wenn ≤ Ionic 230). Nach dem Build in „App-Info“ bzw. in der Play Console prüfen. (x-4beeb3b857, x-6fc37335ce)
 - ☐ iOS: mit `scripts/store_build.sh ipa` bauen (Shorebird-Release), **kein** Xcode-Archiv für den Store, das wäre ohne Shorebird. In App Store Connect Version 5.0.0 und Build ≥ 241 prüfen (Ionic 4.19.9 steht bei 239). (x-cb1c5c9d93, x-6fc37335ce)
+- ☐ Der erste Store-Build mit `scripts/store_build.sh ipa` und `appbundle` läuft ohne Compile-Fehler: Swift und Kotlin aus PR #358 (Ionic-Offline-Warteschlange) wurden in der CI nicht gebaut. (x-6d9a24bfe2)
 - ☐ Die Versionsanzeige in der App (Einstellungen-Badge, Anmeldeseite) zeigt dieselbe Version wie der Store. Sie kommt aus `AppConstants.displayVersion`, nicht aus dem Build-Flag. (x-4beeb3b857)
 - ☐ Bundle-ID `io.stephanus.attendix` auf iOS und Android, iOS-Team `MXM3YWAKPL`. Die `apple-app-site-association` darf nicht nach dem veralteten Kommentar in `Runner.entitlements` geändert werden. (x-49efd91be0)
 - ☐ Android: Release-Bundle (nicht Debug) meldet sich an und lädt Daten. `INTERNET` steht im Release-Manifest nur über Plugin-Manifeste. (x-5da3efae62)
@@ -40,7 +41,7 @@ Diese Punkte entscheiden, ob Play und App Store den Build überhaupt annehmen.
 | # | Prüfung | iPhone | iPad | Android | Web |
 |---|---|---|---|---|---|
 | 1 | Ionic-App installiert, angemeldet, Gruppe gewählt. Store-Update auf 5.0.0 einspielen. Ionic: bleibt angemeldet, kein erneutes Anmelden, gleiche Gruppe (x-6d9a24bfe2, PR #285) | ☐ | ☐ | ☐ | – |
-| 2 | Nach dem Update: Sortierung und Ansichtsoptionen (Personen, Werke, Termine) sind noch wie in Ionic gesetzt (x-6d9a24bfe2) | ☐ | ☐ | ☐ | – |
+| 2 | Nach dem Update: Sortierung und Ansichtsoptionen (Personen, Werke, Termine) stehen auf Standard (werden bewusst nicht übernommen, niedrig), einmal neu einstellen bleibt erhalten (x-6d9a24bfe2) | ☐ | ☐ | ☐ | – |
 | 3 | Dasselbe Konto auf zwei Geräten mit verschiedenen Gruppen. App neu starten. Ionic: jedes Gerät öffnet seine eigene Gruppe (x-48f72edd36) | ☐ | ☐ | ☐ | ☐ |
 | 4 | App-Name „Attendix“ (groß geschrieben) unter dem Icon, im App-Drawer, in der Benachrichtigungs-Kopfzeile und in Berechtigungsdialogen (x-c131a10604) | ☐ | ☐ | ☐ | – |
 | 5 | Icon auf dem Homescreen: gleiche Größe und Farbe des Logos wie Ionic, auch als rundes Icon (Android 7.1) und adaptives Icon (x-bc26763c9d, x-a1c35481e4, x-2f444d5285, x-02f00abb78) | ☐ | ☐ | ☐ | – |
@@ -124,7 +125,7 @@ Diese Punkte entscheiden, ob Play und App Store den Build überhaupt annehmen.
 | 63 | Flugmodus an, Termin öffnen und Status setzen. Flugmodus aus: Änderung wird gespeichert (Ionic `Network`, Offline-Warteschlange) (native-584a56f5, native-77b25811, native-66b35f3e) | ☐ | ☐ | ☐ | ☐ |
 | 64 | Termin offen, WLAN zu Mobilfunk wechseln. Kein falscher Offline-Hinweis, nichts geht verloren (native-7db6296b, native-1dcfca94) | ☐ | ☐ | ☐ | – |
 | 65 | Flugmodus an: Personen, Werke, Gruppen und Termine zeigen die zuletzt geladenen Daten (native-20d780b6, native-2dd86017, native-d88b5602, native-81587c7a) | ☐ | ☐ | ☐ | ☐ |
-| 66 | In Ionic offline einen Status setzen und nicht synchronisieren. Dann auf 5.0.0 updaten und online gehen. Ionic hat die Änderung später gespeichert, Flutter übernimmt die alte Warteschlange nicht (x-6d9a24bfe2) | ☐ | ☐ | ☐ | – |
+| 66 | In Ionic offline einen Status setzen, App schließen, nicht synchronisieren. Dann auf 5.0.0 updaten und online starten: die Änderung kommt genau einmal an, zwei Änderungen an derselben Person ergeben den letzten Stand, Daten anderer Konten bleiben unberührt (x-6d9a24bfe2, PR #358) | ☐ | ☐ | ☐ | – |
 | 67 | Offline Status setzen, abmelden, mit anderem Konto anmelden, online gehen. Flutter hängt die Warteschlange an den Benutzer, Ionic nicht (Flutter besser) (x-138490bdaf) | ☐ | ☐ | ☐ | ☐ |
 
 ## Konto

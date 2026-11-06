@@ -1,19 +1,19 @@
 # Fix-Paket „nativ“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 2acb693, 5ddaa2a, 4de3564, 96b8284, 525a06f, ed511da, 359f15d, 43a315b, 0e6c255 (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 2acb693, 447c007, 5ddaa2a, 4de3564, 96b8284, 525a06f, ed511da, 359f15d, 43a315b, 0e6c255 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 1
+## Angleichen (hoch/mittel): 0
 
-- [ ] **mittel** `native/config` `x-6d9a24bfe2` **Anmeldung und lokale Daten gehen beim Update verloren** [src/app/services/base/supabase.ts:8](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/base/supabase.ts#L8) (2. Prüfung: bestätigt)
-  Weiter teilweise real: Übernahme liest nur Sitzung (sb-…-auth-token) und currentTenantId aus dem Ionic-localStorage. Nicht übernommen: Offline-Warteschlange offline_writes_v1 (nicht synchronisierte Änderungen gehen beim Update verloren), Ansichts-/Sortieroptionen aus Ionic Storage, push_prompt_shown. mittel passt; Gerätetest laut device-checklist.md offen.
-  Flutter: lib/core/services/native/ionic_session_takeover.dart:114, ios/Runner/AppDelegate.swift:188, android/app/src/main/kotlin/de/attendix/attendix/ionic/IonicSessionPlugin.kt:126
 
 ## Flutter besser – Leon entscheidet: 0
 
 
-## Kleinigkeiten (niedrig): 22
+## Kleinigkeiten (niedrig): 23
 
+- [ ] **niedrig** `native/config` `x-6d9a24bfe2` **Anmeldung und lokale Daten gehen beim Update verloren** [src/app/services/base/supabase.ts:8](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/base/supabase.ts#L8)
+  Weitgehend behoben: Anmeldung und gewählte Instanz seit PR #285, ungesendete Offline-Änderungen (offline_writes_v1) seit PR #358 (einmalig, nur Instanzen des Nutzers, keine Duplikate, nur person_attendances-Spalten). Übrig: Sortier- und Ansichtsoptionen aus Ionic Storage und push_prompt_shown werden nicht übernommen; nach dem Update einmal neu einstellen bzw. einmal erneut nach Push gefragt → niedrig. Swift/Kotlin nicht in CI gebaut, Gerätetest offen (Checkliste Nr. 66).
+  Flutter: lib/core/services/native/ionic_offline_queue_takeover.dart, lib/core/services/offline_queue_service.dart, ios/Runner/AppDelegate.swift, android/app/src/main/kotlin/de/attendix/attendix/ionic/IonicOfflineQueueReader.kt
 - [ ] **niedrig** `native/android` `x-bc26763c9d` **Adaptives Icon: Logo deutlich kleiner** [android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml:7](https://github.com/FECGSpeyer/attendance/blob/1923d203/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml#L7) (2. Prüfung: bestätigt)
   Nachgemessen auf 0f74333, unverändert: Flutter drawable-xxxhdpi/ic_launcher_foreground.png 432 px, Logo-Höhe 251 px (bbox 91–342) = 58 % plus inset 16 % (ic_launcher.xml:7) → Logo ≈ ¼ kleiner als Ionic (192-px-Vordergrund voll, inset 16,7 %). Hintergrund #3EA5AE gleich. Laut Leon nur Optik. f korrigiert: adaptive_icon_foreground steht jetzt in pubspec.yaml:181 (177 = web background_color), inset in ic_launcher.xml:7.
   Flutter: android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml:7, pubspec.yaml:181
