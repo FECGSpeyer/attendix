@@ -860,24 +860,48 @@ extension _PlanningBeta on _PlanningPageState {
     ].join(' · ');
     final canIndent = PlanUtils.canIndent(_fields, index);
     final isAgenda = PlanUtils.isAgendaPlaceholder(field);
+    final org = ref.read(currentOrganisationProvider).valueOrNull;
+    final showBeamer = PlanBeamer.active(org, _isOrgPlan) && !isNote;
     final loadGen = _loadGen;
+    // Fields are edited right in the sheet (no second dialog) and saved when
+    // the sheet closes.
+    PlanFieldInput? edit;
     final action = await _rdSheet<String>(
       title: isAgenda ? l10n.planningAgendaInsertPos : field.name,
       subtitle: meta.isEmpty ? null : meta,
       builder:
           (ctx, pop) => [
+            if (!isAgenda) ...[
+              RdPlanFieldForm(
+                key: const Key('rd-plan-item-form'),
+                labels: RdPlanFieldLabels(
+                  name: isNote ? l10n.planningNote : l10n.planningItem,
+                  nameHint: isNote ? l10n.planningEnterNote : l10n.planningEnterItem,
+                  infoHint: l10n.planningInfoOptionalEllipsis,
+                ),
+                initialName: field.name,
+                initialConductor: field.conductor,
+                initialInfo: field.info,
+                initialMinutes: int.tryParse(field.time) ?? 20,
+                withConductor: !isNote,
+                withInfo: !isNote,
+                withMinutes: !isNote,
+                beamer:
+                    showBeamer
+                        ? PlanFieldBeamerOptions(
+                          manual: field.needsBeamer,
+                          songId: field.songId,
+                          file: _beamerFileOf(field),
+                        )
+                        : null,
+                onChanged: (v) => edit = v,
+                onSubmitted: () => Navigator.of(ctx).pop(),
+              ),
+              const SizedBox(height: 16),
+            ],
             RdGroupedList(
               children: [
-                if (!isAgenda) ...[
-                  _rdSheetRow(
-                    Icons.edit_outlined,
-                    l10n.redesignPlanEdit,
-                    isNote ? null : l10n.redesignPlanEditHint,
-                    () => pop('edit'),
-                    key: const Key('rd-plan-item-edit'),
-                  ),
-                  _rdSheetRow(Icons.add, l10n.redesignPlanInsertAfter, null, () => pop('insert')),
-                ],
+                if (!isAgenda) _rdSheetRow(Icons.add, l10n.redesignPlanInsertAfter, null, () => pop('insert')),
                 if (index > 0) _rdSheetRow(Icons.arrow_upward, l10n.redesignPlanMoveUp, null, () => pop('up')),
                 if (index < _fields.length - 1)
                   _rdSheetRow(Icons.arrow_downward, l10n.redesignPlanMoveDown, null, () => pop('down')),
@@ -907,12 +931,30 @@ extension _PlanningBeta on _PlanningPageState {
           ],
     );
     // The plan may have changed meanwhile (draft restored, reload).
-    if (action == null || !mounted || !_rdStill(loadGen, index, field)) return;
+    if (!mounted || !_rdStill(loadGen, index, field)) return;
+    var current = field;
+    if (edit != null) {
+      final e = edit!;
+      final name = e.name.isEmpty ? field.name : e.name;
+      final updated =
+          isNote
+              ? field.copyWith(name: name)
+              : field.copyWith(
+                name: name,
+                conductor: e.conductor,
+                info: e.info,
+                time: e.minutes?.toString() ?? field.time,
+                needsBeamer: showBeamer ? e.needsBeamer : field.needsBeamer,
+              );
+      if (!_rdSame(updated, field)) {
+        _rdApply([..._fields]..[index] = updated);
+        current = updated;
+      }
+    }
+    if (action == null || !_rdStill(loadGen, index, current)) return;
     switch (action) {
-      case 'edit':
-        await _rdEditField(index);
       case 'insert':
-        await _rdAdd(after: index, group: field.groupId);
+        await _rdAdd(after: index, group: current.groupId);
       case 'up':
         _rdMove(index, -1);
       case 'down':
@@ -923,49 +965,8 @@ extension _PlanningBeta on _PlanningPageState {
         if (joined != null) _rdCollapsed.remove(joined);
         _rdApply(result);
       case 'delete':
-        _rdRemove([..._fields]..removeAt(index), field.name);
+        _rdRemove([..._fields]..removeAt(index), current.name);
     }
-  }
-
-  /// Classic edit dialog of an item (name, conductor, info, minutes, Beamer).
-  Future<void> _rdEditField(int index) async {
-    final field = _fields[index];
-    final isNote = PlanUtils.isNote(field);
-    final org = ref.read(currentOrganisationProvider).valueOrNull;
-    final showBeamer = PlanBeamer.active(org, _isOrgPlan) && !isNote;
-    final loadGen = _loadGen;
-    final result = await showPlanFieldDialog(
-      context,
-      title: context.l10n.planningEditField,
-      nameLabel: isNote ? context.l10n.planningNote : context.l10n.planningItem,
-      nameHint: isNote ? context.l10n.planningEnterNote : context.l10n.planningEnterItem,
-      infoHint: context.l10n.planningInfoOptionalEllipsis,
-      confirmText: context.l10n.planningUpdate,
-      initialName: field.name,
-      initialConductor: field.conductor,
-      initialInfo: field.info,
-      initialMinutes: int.tryParse(field.time) ?? 20,
-      withConductor: !isNote,
-      withInfo: !isNote,
-      withMinutes: !isNote,
-      beamer:
-          showBeamer
-              ? PlanFieldBeamerOptions(manual: field.needsBeamer, songId: field.songId, file: _beamerFileOf(field))
-              : null,
-    );
-    if (result == null || !mounted || !_rdStill(loadGen, index, field)) return;
-    final updated = [..._fields];
-    updated[index] =
-        isNote
-            ? field.copyWith(name: result.name)
-            : field.copyWith(
-              name: result.name,
-              conductor: result.conductor,
-              info: result.info,
-              time: result.minutes?.toString() ?? field.time,
-              needsBeamer: showBeamer ? result.needsBeamer : field.needsBeamer,
-            );
-    _rdApply(updated);
   }
 
   /// Tap on a block: bearbeiten, Unterpunkt, Vorlage (Admins), Punkt
@@ -981,6 +982,7 @@ extension _PlanningBeta on _PlanningPageState {
     );
     final end = PlanUtils.lastIndexOfGroup(_fields, head.id);
     final loadGen = _loadGen;
+    PlanFieldInput? edit;
     final action = await _rdSheet<String>(
       title: head.name,
       subtitle: [
@@ -989,9 +991,24 @@ extension _PlanningBeta on _PlanningPageState {
       ].join(' · '),
       builder:
           (ctx, pop) => [
+            RdPlanFieldForm(
+              key: const Key('rd-plan-block-form'),
+              labels: RdPlanFieldLabels(
+                name: l10n.planningName,
+                nameHint: l10n.planningName,
+                conductor: l10n.planningPerformance,
+                conductorHint: l10n.planningPerformanceOptional,
+              ),
+              initialName: head.name,
+              initialConductor: head.conductor,
+              initialInfo: head.info,
+              withMinutes: false,
+              onChanged: (v) => edit = v,
+              onSubmitted: () => Navigator.of(ctx).pop(),
+            ),
+            const SizedBox(height: 16),
             RdGroupedList(
               children: [
-                _rdSheetRow(Icons.edit_outlined, l10n.planningEditBlock, null, () => pop('edit')),
                 _rdSheetRow(
                   Icons.subdirectory_arrow_right,
                   l10n.planningAddSubItem,
@@ -1028,37 +1045,28 @@ extension _PlanningBeta on _PlanningPageState {
             ),
           ],
     );
-    if (action == null || !mounted || !_rdStill(loadGen, index, head)) return;
+    if (!mounted || !_rdStill(loadGen, index, head)) return;
+    var current = head;
+    if (edit != null) {
+      final e = edit!;
+      final updated = head.copyWith(name: e.name.isEmpty ? head.name : e.name, conductor: e.conductor, info: e.info);
+      if (!_rdSame(updated, head)) {
+        _rdApply([for (final f in _fields) f.id == head.id ? updated : f]);
+        current = updated;
+      }
+    }
+    if (action == null || !_rdStill(loadGen, index, current)) return;
     switch (action) {
-      case 'edit':
-        final r = await showPlanFieldDialog(
-          context,
-          title: context.l10n.planningEditBlock,
-          nameLabel: context.l10n.planningName,
-          nameHint: context.l10n.planningName,
-          conductorLabel: context.l10n.planningPerformance,
-          conductorHint: context.l10n.planningPerformanceOptional,
-          confirmText: context.l10n.commonSave,
-          emptyNameMessage: context.l10n.planningEnterNamePlease,
-          initialName: head.name,
-          initialConductor: head.conductor,
-          initialInfo: head.info,
-          withMinutes: false,
-        );
-        if (r == null || !mounted || !_rdStill(loadGen, index, head)) return;
-        _rdApply([
-          for (final f in _fields) f.id == head.id ? f.copyWith(name: r.name, conductor: r.conductor, info: r.info) : f,
-        ]);
       case 'sub':
         final r = await showPlanFieldDialog(
           context,
           title: context.l10n.planningAddSubItem,
-          subtitle: head.name,
+          subtitle: current.name,
           nameHint: context.l10n.planningSubItemPlaceholder,
           infoHint: context.l10n.planningSubItemInfoPlaceholder,
           initialMinutes: 5,
         );
-        if (r == null || !mounted || !_rdStill(loadGen, index, head)) return;
+        if (r == null || !mounted || !_rdStill(loadGen, index, current)) return;
         _rdCollapsed.remove(head.id);
         _rdApply(
           PlanUtils.addSubItem(
@@ -1086,7 +1094,7 @@ extension _PlanningBeta on _PlanningPageState {
         _rdApply(PlanUtils.dissolveGroup(_fields, head.id));
       case 'delete':
         if (children.isEmpty) {
-          _rdRemove(_fields.where((f) => f.id != head.id).toList(), head.name);
+          _rdRemove(_fields.where((f) => f.id != head.id).toList(), current.name);
           return;
         }
         final choice = await showAppDialog<String>(
@@ -1094,7 +1102,7 @@ extension _PlanningBeta on _PlanningPageState {
           builder:
               (ctx) => AppAlertDialog(
                 title: Text(ctx.l10n.planningDeleteBlockConfirm),
-                content: Text(ctx.l10n.planningBlockHasItems(head.name, children.length)),
+                content: Text(ctx.l10n.planningBlockHasItems(current.name, children.length)),
                 actions: [
                   TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonCancel)),
                   TextButton(
@@ -1109,12 +1117,12 @@ extension _PlanningBeta on _PlanningPageState {
                 ],
               ),
         );
-        if (!mounted || !_rdStill(loadGen, index, head)) return;
+        if (!mounted || !_rdStill(loadGen, index, current)) return;
         _rdCollapsed.remove(head.id);
         if (choice == 'dissolve') {
           _rdApply(PlanUtils.dissolveGroup(_fields, head.id));
         } else if (choice == 'all') {
-          _rdRemove(PlanUtils.deleteGroup(_fields, head.id), head.name);
+          _rdRemove(PlanUtils.deleteGroup(_fields, head.id), current.name);
         }
     }
   }
@@ -1432,23 +1440,26 @@ extension _PlanningBeta on _PlanningPageState {
     backgroundColor: context.rd.bg,
     builder: (ctx) {
       final p = ctx.rd;
-      return SafeArea(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(ctx).height * 0.85),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Semantics(header: true, child: Text(title, style: RdType.cardTitle(p))),
-                if (subtitle != null && subtitle.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Text(subtitle, style: RdType.meta(p, size: 15)),
+      return Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(ctx).bottom),
+        child: SafeArea(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(ctx).height * 0.85),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Semantics(header: true, child: Text(title, style: RdType.cardTitle(p))),
+                  if (subtitle != null && subtitle.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(subtitle, style: RdType.meta(p, size: 15)),
+                  ],
+                  const SizedBox(height: 16),
+                  ...builder(ctx, (value) => Navigator.of(ctx).pop(value)),
                 ],
-                const SizedBox(height: 16),
-                ...builder(ctx, (value) => Navigator.of(ctx).pop(value)),
-              ],
+              ),
             ),
           ),
         ),

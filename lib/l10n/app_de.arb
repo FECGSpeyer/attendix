@@ -15255,6 +15255,55 @@
   "@redesignPlanAddBlockHint": {
     "description": "redesign.plan.addBlockHint"
   },
+  "redesignPlanSongInPlan": "im Ablauf",
+  "@redesignPlanSongInPlan": {
+    "description": "redesign.plan.songInPlan"
+  },
+  "redesignPlanNewPlan": "Neuer Plan",
+  "@redesignPlanNewPlan": {
+    "description": "redesign.plan.newPlan"
+  },
+  "redesignPlanCreatePlan": "Plan anlegen",
+  "@redesignPlanCreatePlan": {
+    "description": "redesign.plan.createPlan"
+  },
+  "redesignPlanDay": "Tag",
+  "@redesignPlanDay": {
+    "description": "redesign.plan.day"
+  },
+  "redesignPlanContent": "Inhalt",
+  "@redesignPlanContent": {
+    "description": "redesign.plan.content"
+  },
+  "redesignPlanCopyOf": "Kopie von „{name}“",
+  "@redesignPlanCopyOf": {
+    "description": "redesign.plan.copyOf",
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "redesignPlanNameHint": "Name (optional)",
+  "@redesignPlanNameHint": {
+    "description": "redesign.plan.nameHint"
+  },
+  "redesignPlanViewWhole": "Ganzer Ablauf",
+  "@redesignPlanViewWhole": {
+    "description": "redesign.plan.viewWhole"
+  },
+  "redesignPlanViewNow": "Jetzt",
+  "@redesignPlanViewNow": {
+    "description": "redesign.plan.viewNow"
+  },
+  "redesignPlanViewWhich": "Welcher Plan",
+  "@redesignPlanViewWhich": {
+    "description": "redesign.plan.viewWhich"
+  },
+  "redesignPlanDownload": "Herunterladen",
+  "@redesignPlanDownload": {
+    "description": "redesign.plan.download"
+  },
+  "redesignPlanTelegram": "Per Telegram",
+  "@redesignPlanTelegram": {
+    "description": "redesign.plan.telegram"
+  },
   "redesignPlanAddCurrent": "Aktuelle Werke",
   "@redesignPlanAddCurrent": {
     "description": "redesign.plan.addCurrent"

@@ -12333,6 +12333,44 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanAddBlockHint => 'Fasst mehrere Punkte zusammen';
 
   @override
+  String get redesignPlanSongInPlan => 'im Ablauf';
+
+  @override
+  String get redesignPlanNewPlan => 'Neuer Plan';
+
+  @override
+  String get redesignPlanCreatePlan => 'Plan anlegen';
+
+  @override
+  String get redesignPlanDay => 'Tag';
+
+  @override
+  String get redesignPlanContent => 'Inhalt';
+
+  @override
+  String redesignPlanCopyOf(String name) {
+    return 'Kopie von „$name“';
+  }
+
+  @override
+  String get redesignPlanNameHint => 'Name (optional)';
+
+  @override
+  String get redesignPlanViewWhole => 'Ganzer Ablauf';
+
+  @override
+  String get redesignPlanViewNow => 'Jetzt';
+
+  @override
+  String get redesignPlanViewWhich => 'Welcher Plan';
+
+  @override
+  String get redesignPlanDownload => 'Herunterladen';
+
+  @override
+  String get redesignPlanTelegram => 'Per Telegram';
+
+  @override
   String get redesignPlanAddCurrent => 'Aktuelle Werke';
 
   @override
