@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../tenant_selection/presentation/pages/tenant_create_page.dart'
+    show confirmDeleteAccountWithoutGroup;
 import '../rd_actions.dart';
 import '../widgets/join/rd_join_sheet.dart';
 import '../widgets/rd_widgets.dart';
@@ -49,6 +51,19 @@ class RdNoGroupPage extends ConsumerWidget {
           icon: Icons.logout,
           color: p.absent,
           onPressed: () => rdLogout(context, ref),
+        ),
+        // Like the old "Neue Instanz" page (and required by the App Store):
+        // the account can be deleted without being in a group.
+        const SizedBox(height: 8),
+        Center(
+          child: TextButton(
+            onPressed: () => confirmDeleteAccountWithoutGroup(context, ref),
+            style: TextButton.styleFrom(foregroundColor: p.text2),
+            child: Text(
+              l10n.redesignTenantsDeleteAccount,
+              style: const TextStyle(fontSize: 13, decoration: TextDecoration.underline),
+            ),
+          ),
         ),
       ],
     );

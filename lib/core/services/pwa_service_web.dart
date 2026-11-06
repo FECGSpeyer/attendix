@@ -46,6 +46,19 @@ class PwaService {
     }
   }
 
+  /// Whether the browser opens Android `intent://` links (Chromium on
+  /// Android, not in an in-app WebView), falling back to their page when
+  /// the app is missing.
+  bool opensAndroidIntents() {
+    if (!kIsWeb) return false;
+    try {
+      final ua = web.window.navigator.userAgent.toLowerCase();
+      return ua.contains('android') && ua.contains('chrome/') && !ua.contains('; wv)') && !ua.contains('firefox');
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// Detect platform for showing appropriate install instructions
   PwaPlatform getPlatform() {
     if (!kIsWeb) return PwaPlatform.unknown;
