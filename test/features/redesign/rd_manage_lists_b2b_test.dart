@@ -17,6 +17,7 @@ import 'package:attendix/features/redesign/presentation/pages/rd_admins_page.dar
 import 'package:attendix/features/redesign/presentation/pages/rd_archive_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_parents_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_pending_page.dart';
+import 'package:attendix/features/redesign/presentation/widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import 'package:attendix/features/settings/presentation/pages/left_players_page.dart' show leftPlayersProvider;
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
@@ -189,6 +190,100 @@ void main() {
     controller.add(const []);
     await _settle(tester);
     expect(find.text('Verwaltung-Start'), findsOneWidget);
+    expect(find.byType(RdPendingPage), findsNothing);
+  });
+
+  test('rdLoadedValue: no value of the old group while reloading after a switch', () {
+    const data = AsyncData<List<int>>([1]);
+    expect(rdLoadedValue(data), [1]);
+    // Pull-to-refresh / invalidate of the same list: the list stays.
+    expect(rdLoadedValue(const AsyncLoading<List<int>>().copyWithPrevious(data)), [1]);
+    // Rebuild after a dependency change (group/account switch): hidden.
+    expect(rdLoadedValue(const AsyncLoading<List<int>>().copyWithPrevious(data, isRefresh: false)), isNull);
+    // An error may carry the old value: hidden as well.
+    expect(rdLoadedValue(AsyncError<List<int>>('x', StackTrace.empty).copyWithPrevious(data)), isNull);
+    expect(rdLoadedValue(const AsyncLoading<List<int>>()), isNull);
+  });
+
+  testWidgets('Eltern: after a group switch no list and no "+" until the new group is loaded', (tester) async {
+    _phone(tester);
+    final tenant = StateProvider<int>((_) => 1);
+    final second = Completer<List<ParentModel>>();
+    await tester.pumpWidget(
+      _app(const RdParentsPage(), [
+        parentsProvider.overrideWith((ref) async {
+          if (ref.watch(tenant) == 1) {
+            return const [ParentModel(id: 1, appId: 'a', email: 'eva@test.de', firstName: 'Eva', lastName: 'Alt')];
+          }
+          return second.future;
+        }),
+      ]),
+    );
+    await _settle(tester);
+    expect(find.text('Eva Alt'), findsOneWidget);
+    expect(find.byKey(const Key('rd-manage-list-add')), findsOneWidget);
+
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdParentsPage)));
+    container.read(tenant.notifier).state = 2;
+    await _settle(tester);
+    expect(find.text('Eva Alt'), findsNothing);
+    expect(find.byKey(const Key('rd-manage-list-add')), findsNothing);
+
+    second.complete(const [ParentModel(id: 2, appId: 'b', email: 'neu@test.de', firstName: 'Nina', lastName: 'Neu')]);
+    await _settle(tester);
+    expect(find.text('Nina Neu'), findsOneWidget);
+    expect(find.byKey(const Key('rd-manage-list-add')), findsOneWidget);
+  });
+
+  testWidgets('Freigaben: leaving does not close a sheet of the root navigator', (tester) async {
+    _phone(tester);
+    final controller = StreamController<List<Person>>();
+    addTearDown(controller.close);
+    final rootKey = GlobalKey<NavigatorState>();
+    final router = GoRouter(
+      navigatorKey: rootKey,
+      initialLocation: RedesignRoutes.manage,
+      routes: [
+        ShellRoute(
+          builder: (_, _, child) => child,
+          routes: [
+            GoRoute(
+              path: RedesignRoutes.manage,
+              builder: (_, _) => const Scaffold(body: Text('Verwaltung-Start')),
+              routes: [GoRoute(path: 'freigaben', builder: (_, _) => const RdPendingPage())],
+            ),
+          ],
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [realtimePendingPlayersProvider.overrideWith((ref) => controller.stream)],
+        child: MaterialApp.router(
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+          routerConfig: router,
+        ),
+      ),
+    );
+    router.push(RedesignRoutes.approvals);
+    await _settle(tester);
+    controller.add(const [Person(id: 3, firstName: 'Neu', lastName: 'Ling')]);
+    await _settle(tester);
+    expect(find.text('Neu Ling'), findsOneWidget);
+
+    // E.g. the group switcher, above the shell.
+    showModalBottomSheet<void>(
+      context: rootKey.currentContext!,
+      builder: (_) => const SizedBox(height: 200, child: Text('Gruppenwechsler')),
+    );
+    await _settle(tester);
+    controller.add(const []);
+    await _settle(tester);
+    expect(find.text('Gruppenwechsler'), findsOneWidget);
     expect(find.byType(RdPendingPage), findsNothing);
   });
 }

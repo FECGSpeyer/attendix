@@ -33,14 +33,24 @@ class _RdPendingPageState extends ConsumerState<RdPendingPage> {
 
   void _leaveIfDone() {
     if (!mounted || !_hadPersons) return;
-    final persons = ref.read(realtimePendingPlayersProvider).valueOrNull;
+    final persons = rdLoadedValue(ref.read(realtimePendingPlayersProvider));
     if (persons == null || persons.isNotEmpty) return;
-    if (ModalRoute.of(context)?.isCurrent == false) {
+    final route = ModalRoute.of(context);
+    if (route?.isCurrent == false) {
       _leaveWhenBack = true;
       return;
     }
     _leaveWhenBack = false;
-    context.canPop() ? context.pop() : context.go(RedesignRoutes.manage);
+    // Leave exactly this route through its own (shell) navigator, where it is
+    // the top route (checked above), never `context.pop()`: that pops the
+    // topmost route of the app and would close a sheet of the root navigator
+    // (e.g. the group switcher) instead.
+    final navigator = Navigator.of(context);
+    if (route != null && navigator.canPop()) {
+      navigator.pop();
+    } else {
+      GoRouter.of(context).go(RedesignRoutes.manage);
+    }
   }
 
   Future<void> _open(int id) async {
@@ -54,10 +64,11 @@ class _RdPendingPageState extends ConsumerState<RdPendingPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final async = ref.watch(realtimePendingPlayersProvider);
-    final persons = async.valueOrNull;
+    // TENANT: never the old group's list after a group or account switch.
+    final persons = rdLoadedValue(async);
     if (persons != null && persons.isNotEmpty) _hadPersons = true;
     ref.listen(realtimePendingPlayersProvider, (_, next) {
-      final list = next.valueOrNull;
+      final list = rdLoadedValue(next);
       if (list == null) return;
       if (list.isNotEmpty) {
         _hadPersons = true;

@@ -57,7 +57,8 @@ class RdPersonPage extends ConsumerWidget {
                   onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.members),
                 ),
         ),
-        if (person != null && role.canEdit)
+        // A person who left is only restored (below), not edited.
+        if (person != null && person.left == null && role.canEdit)
           RdTextLink(label: l10n.redesignPersonEdit, onTap: () => context.push('/people/$personId')),
       ],
     );
