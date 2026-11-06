@@ -54,8 +54,9 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
   int? _savedTenantId;
 
   /// Stores logo and text together (the repository writes both columns),
-  /// keeps the returned organisation and refreshes the cached ones.
-  Future<void> _store(
+  /// keeps the returned organisation and refreshes the cached ones. Returns
+  /// whether it was stored for the group the change started in.
+  Future<bool> _store(
     ProviderContainer container,
     OrganisationSettingsRepository repo, {
     required int? tenantId,
@@ -63,17 +64,17 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
     required String text,
   }) async {
     // Started in another group than the current one: write nothing.
-    if (tenantId == null || container.read(currentTenantIdProvider) != tenantId) return;
+    if (tenantId == null || container.read(currentTenantIdProvider) != tenantId) return false;
     final saved = await repo.updateBranding(logoUrl: logoUrl, brandingText: text);
-    if (mounted && ref.read(currentTenantIdProvider) == tenantId) {
-      setState(() {
-        _saved = saved;
-        _savedTenantId = tenantId;
-      });
-    }
     container.invalidate(brandingOrganisationProvider);
     container.invalidate(brandingSourceProvider);
     container.invalidate(currentOrganisationProvider);
+    if (!mounted || container.read(currentTenantIdProvider) != tenantId) return false;
+    setState(() {
+      _saved = saved;
+      _savedTenantId = tenantId;
+    });
+    return true;
   }
 
   Future<void> _run(Future<void> Function() action) async {
@@ -113,8 +114,8 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
         file.bytes!,
         contentType: ext == 'svg' ? 'image/svg+xml' : 'image/${ext == 'jpg' ? 'jpeg' : ext}',
       );
-      await _store(container, repo, tenantId: tenantId, logoUrl: url, text: org.brandingText ?? '');
-      if (mounted) ToastHelper.showSuccess(context, l10n.rdSettingsBrandingLogoSaved);
+      final ok = await _store(container, repo, tenantId: tenantId, logoUrl: url, text: org.brandingText ?? '');
+      if (ok && mounted) ToastHelper.showSuccess(context, l10n.rdSettingsBrandingLogoSaved);
     });
   }
 
@@ -133,8 +134,8 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
     await _run(() async {
       if (container.read(currentTenantIdProvider) != tenantId) return;
       await repo.removeLogo();
-      await _store(container, repo, tenantId: tenantId, logoUrl: '', text: org.brandingText ?? '');
-      if (mounted) ToastHelper.showSuccess(context, l10n.rdSettingsBrandingLogoRemoved);
+      final ok = await _store(container, repo, tenantId: tenantId, logoUrl: '', text: org.brandingText ?? '');
+      if (ok && mounted) ToastHelper.showSuccess(context, l10n.rdSettingsBrandingLogoRemoved);
     });
   }
 
@@ -152,8 +153,8 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
     );
     if (value == null || !mounted) return;
     await _run(() async {
-      await _store(container, repo, tenantId: tenantId, logoUrl: org.logoUrl ?? '', text: value);
-      if (mounted) ToastHelper.showSuccess(context, l10n.brandingSaved);
+      final ok = await _store(container, repo, tenantId: tenantId, logoUrl: org.logoUrl ?? '', text: value);
+      if (ok && mounted) ToastHelper.showSuccess(context, l10n.brandingSaved);
     });
   }
 
@@ -169,7 +170,12 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
       const SizedBox(height: 8),
     ];
     final tenantId = ref.watch(currentTenantIdProvider);
-    final org = (_saved != null && _savedTenantId == tenantId ? _saved : null) ?? orgAsync.valueOrNull;
+    // Only data of the current group is shown and edited: our own saved
+    // result for this group, else the provider's value once it finished
+    // (re)loading. While it reloads after a group switch it may still hold
+    // the previous group's organisation, so nothing is offered then.
+    final saved = _saved != null && _savedTenantId == tenantId ? _saved : null;
+    final org = saved ?? (orgAsync.isLoading || orgAsync.hasError ? null : orgAsync.valueOrNull);
     if (orgAsync.isLoading && org == null) {
       return RdPage(
         children: [

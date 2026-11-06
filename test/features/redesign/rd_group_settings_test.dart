@@ -12,6 +12,8 @@ import 'package:attendix/features/redesign/presentation/pages/rd_general_setting
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../factories/test_factories.dart';
@@ -58,6 +60,40 @@ void main() {
     await tester.pump(const Duration(milliseconds: 200));
     expect(tester.takeException(), isNull);
     expect(find.text('Zur Organisation'), findsOneWidget);
+  });
+
+  testWidgets('Branding offers nothing to edit while another group reloads', (tester) async {
+    final slowB = Completer<Organisation?>();
+    late _TenantNotifier tenants;
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        currentTenantProvider.overrideWith((ref) => tenants = _TenantNotifier(ref)),
+        brandingOrganisationProvider.overrideWith((ref) async {
+          if (ref.watch(currentTenantIdProvider) == 7) {
+            return const Organisation(id: 1, name: 'Org A', brandingText: 'Text A');
+          }
+          return slowB.future;
+        }),
+      ],
+      child: MaterialApp(
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+        home: const RdBrandingPage(),
+      ),
+    ));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.text('Text A'), findsOneWidget);
+
+    tenants.state = TestFactories.createTenant(id: 8, shortName: 'B', longName: 'Gruppe B');
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.text('Text A'), findsNothing);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+    slowB.complete(const Organisation(id: 2, name: 'Org B', brandingText: 'Text B'));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.text('Text B'), findsOneWidget);
   });
 
   test('"Dashboard konfigurieren" is not listed in the Beta Verwaltung', () {
