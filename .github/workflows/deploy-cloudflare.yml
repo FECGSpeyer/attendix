@@ -9,11 +9,13 @@ on:
       - master
   workflow_dispatch:
 
-# PR previews: a new push cancels the running preview build.
-# master: runs queue up one after another (never cancelled), so the version
-# job below never races itself.
+# PR previews (group per PR number): a new push cancels the running preview.
+# master: a running deploy is never cancelled, so the version job below never
+# races itself. GitHub keeps only the newest WAITING run of a group; that is
+# intended: the waiting run checks out the latest master, so it releases all
+# pending fragments and deploys every commit the replaced run would have.
 concurrency:
-  group: deploy-${{ github.head_ref || github.ref_name }}
+  group: deploy-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.ref_name }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
