@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../l10n/l10n.dart';
@@ -66,6 +72,7 @@ class _TeamOrganizationPageState extends ConsumerState<TeamOrganizationPage>
     // Keep the context providers alive while the page is shown.
     ref.watch(protocolTypesProvider);
     ref.watch(teamPersonProvider);
+    if (ref.watch(redesignEnabledProvider)) return _buildBeta(context);
 
     return Scaffold(
       // PARITY_R5: team-organization.page.html `<ion-content>` without
@@ -76,20 +83,57 @@ class _TeamOrganizationPageState extends ConsumerState<TeamOrganizationPage>
         // Ionic: ion-segment in a second toolbar (iOS segmented control).
         bottom: IonSegmentBar(
           controller: _controller,
-          labels: [
-            context.l10n.teamOrgTabTasks,
-            context.l10n.teamOrgTabTopics,
-            context.l10n.teamOrgTabProtocols,
-          ],
+          labels: [context.l10n.teamOrgTabTasks, context.l10n.teamOrgTabTopics, context.l10n.teamOrgTabProtocols],
         ),
       ),
-      body: TabBarView(
-        controller: _controller,
-        children: const [
-          TasksTab(),
-          TopicsTab(),
-          ProtocolsTab(),
-        ],
+      body: TabBarView(controller: _controller, children: const [TasksTab(), TopicsTab(), ProtocolsTab()]),
+    );
+  }
+
+  /// Beta: same tabs, Beta frame (back link, large title, segment).
+  Widget _buildBeta(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final labels = [l10n.teamOrgTabTasks, l10n.teamOrgTabTopics, l10n.teamOrgTabProtocols];
+    return Scaffold(
+      backgroundColor: p.bg,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  RdBackLink(
+                    label: l10n.redesignManageAreaCommunication,
+                    onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.manage),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(l10n.teamOrgTitle, style: RdType.largeTitle(p)),
+                  const SizedBox(height: 12),
+                  AnimatedBuilder(
+                    animation: _controller.animation!,
+                    builder:
+                        (context, _) => RdSegmented<int>(
+                          values: const [0, 1, 2],
+                          selected: _controller.index,
+                          position: _controller.animation!.value,
+                          labelOf: (i) => labels[i],
+                          onChanged: _controller.animateTo,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              ),
+            ),
+            Expanded(
+              child: TabBarView(controller: _controller, children: const [TasksTab(), TopicsTab(), ProtocolsTab()]),
+            ),
+          ],
+        ),
       ),
     );
   }

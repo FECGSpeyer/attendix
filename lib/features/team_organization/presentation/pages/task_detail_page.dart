@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
@@ -152,7 +153,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                   action: TextButton(
                     onPressed: () => context.canPop()
                         ? context.pop()
-                        : context.go(isLeader ? '/settings/team-organization' : '/signout'),
+                        : context.go(isLeader ? '/settings/team-organization' : RedesignRoutes.betaTarget('/signout')),
                     child: IonButtonLabel(l10n.commonBack),
                   ),
                       ),
