@@ -302,7 +302,9 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
     // switch) shows loading instead of acting on the previous message.
     if (messageAsync.isLoading && (message == null || messageAsync.isReloading)) {
       body = [RdInfoCard(text: l10n.redesignTodayLoading, loading: true)];
-    } else if (message == null && messageAsync.hasError) {
+    } else if (messageAsync.hasError && !messageAsync.isLoading) {
+      // A failed reload keeps the previous message in `valueOrNull`; like
+      // `when`, show the error instead of acting on that stale message.
       body = [
         RdInfoCard(
           icon: Icons.cloud_off_outlined,

@@ -86,7 +86,7 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
   void _onChange() {
     if (!mounted) return;
     setState(() {});
-    unawaited(_saveDraft());
+    if (!_sending) unawaited(_saveDraft());
   }
 
   Future<void> _restoreDraft() async {
@@ -119,6 +119,15 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
         _draftKey,
         jsonEncode({'title': _subject.text, 'ops': _body.document.toDelta().toJson()}),
       );
+    } catch (_) {
+      // ignore
+    }
+  }
+
+  Future<void> _restoreDraftIfFree(String draft) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.getString(_draftKey) == null) await prefs.setString(_draftKey, draft);
     } catch (_) {
       // ignore
     }
@@ -192,6 +201,11 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
     );
     if (ok != true || !mounted) return;
     setState(() => _sending = true);
+    // The draft goes before sending: the page can be left meanwhile (browser
+    // back, tab switch), and a compose page opened then must neither show
+    // this message as a draft nor lose its own draft to a late clear.
+    final draft = jsonEncode({'title': _subject.text, 'ops': _body.document.toDelta().toJson()});
+    await _clearDraft();
     final id = await ref.read(messageNotifierProvider.notifier).send(
           title: title,
           content: _content,
@@ -199,8 +213,8 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
           push: _push,
           email: _email,
         );
-    // Sent: the draft goes, also if the page is gone by now.
-    if (id != null) await _clearDraft();
+    // Failed: the draft comes back, unless a new one was started meanwhile.
+    if (id == null) await _restoreDraftIfFree(draft);
     if (!mounted) return;
     setState(() => _sending = false);
     if (id == null) {
