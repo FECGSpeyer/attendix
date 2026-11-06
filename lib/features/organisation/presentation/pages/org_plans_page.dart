@@ -209,9 +209,15 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
       title: l10n.plansOrgPlans,
       intro: org != null ? l10n.redesignPlanOrgPlansIntro(org.name) : (orgReady ? l10n.plansNoOrg : ''),
       notice: key != null ? l10n.plansPublicLinkActive : null,
-      loadFailed: plansAsync.hasError && entries == null,
-      onRetry: () => ref.invalidate(orgPlansProvider),
+      loadFailed: (orgAsync.hasError && org == null) || (plansAsync.hasError && entries == null),
+      // The plans read the Organisation; a stored Organisation error must be
+      // retried too, or the plans get the same error again.
+      onRetry: () {
+        if (orgAsync.hasError) ref.invalidate(currentOrganisationProvider);
+        ref.invalidate(orgPlansProvider);
+      },
       onRefresh: () async {
+        if (orgAsync.hasError) ref.invalidate(currentOrganisationProvider);
         ref.invalidate(orgPlansProvider);
         await ref.read(orgPlansProvider.future).catchError((_) => <OrgPlanEntry>[]);
       },
