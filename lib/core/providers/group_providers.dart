@@ -9,6 +9,10 @@ import 'tenant_providers.dart';
 import '../services/tracking/tracking_event.dart';
 import '../services/tracking/tracking_service.dart';
 import '../services/offline_list_cache.dart';
+import '../services/attendance_detail_cache.dart' show isOfflineFallbackError;
+import '../services/offline_queue_service.dart' show connectivityCheckProvider;
+import '../../data/models/person/person.dart';
+import 'player_providers.dart' show playersProvider;
 import '../utils/global_toast.dart';
 import '../../l10n/l10n.dart';
 
@@ -127,8 +131,29 @@ final playerCountsForGroupsProvider = FutureProvider<Map<int, int>>((ref) async 
 
   if (!repo.hasTenantId) return {};
 
-  return repo.getPlayerCountsForGroups();
+  // #384: offline (or on a network error) counted from the last loaded
+  // people list, like Ionic instrument-list counts db.getPlayers().
+  if (await ref.read(connectivityCheckProvider)()) {
+    try {
+      return await repo.getPlayerCountsForGroups();
+    } catch (e) {
+      if (!isOfflineFallbackError(e)) rethrow;
+    }
+  }
+  return countPlayersPerGroup(await ref.read(playersProvider.future));
 });
+
+/// Active persons per group (instrument); persons without a group are not
+/// counted (same as [GroupRepository.getPlayerCountsForGroups]).
+Map<int, int> countPlayersPerGroup(Iterable<Person> players) {
+  final counts = <int, int>{};
+  for (final p in players) {
+    final groupId = p.instrument;
+    if (groupId == null) continue;
+    counts[groupId] = (counts[groupId] ?? 0) + 1;
+  }
+  return counts;
+}
 
 /// Notifier for group mutations
 class GroupNotifier extends Notifier<AsyncValue<void>> {

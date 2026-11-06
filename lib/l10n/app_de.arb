@@ -14610,7 +14610,7 @@
   "@redesignJoinWelcomeNoName": {
     "description": "redesign.join.welcomeNoName"
   },
-  "redesignManageAnnouncementsHint": "Gesendete Mitteilungen ansehen",
+  "redesignManageAnnouncementsHint": "Schreiben, Gesendetes, Automatik",
   "@redesignManageAnnouncementsHint": {
     "description": "redesign.manage.announcementsHint"
   },
@@ -14939,6 +14939,30 @@
       }
     }
   },
+  "redesignMessagesBellAllGroups": "Alle Gruppen",
+  "@redesignMessagesBellAllGroups": {
+    "description": "redesign.messages.bellAllGroups"
+  },
+  "redesignMessagesBellEarlier": "Früher",
+  "@redesignMessagesBellEarlier": {
+    "description": "redesign.messages.bellEarlier"
+  },
+  "redesignMessagesBellNew": "Neu",
+  "@redesignMessagesBellNew": {
+    "description": "redesign.messages.bellNew"
+  },
+  "redesignMessagesBellThisGroup": "Diese Gruppe",
+  "@redesignMessagesBellThisGroup": {
+    "description": "redesign.messages.bellThisGroup"
+  },
+  "redesignMessagesDelivery": "Zustellung",
+  "@redesignMessagesDelivery": {
+    "description": "redesign.messages.delivery"
+  },
+  "redesignMessagesIntro": "Alles, was an die Gruppe ging, mit Lesestatus.",
+  "@redesignMessagesIntro": {
+    "description": "redesign.messages.intro"
+  },
   "redesignNotifForMe": "Für mich",
   "@redesignNotifForMe": {
     "description": "redesign.notif.forMe"
@@ -15258,6 +15282,55 @@
   "redesignPlanAddBlockHint": "Fasst mehrere Punkte zusammen",
   "@redesignPlanAddBlockHint": {
     "description": "redesign.plan.addBlockHint"
+  },
+  "redesignPlanSongInPlan": "im Ablauf",
+  "@redesignPlanSongInPlan": {
+    "description": "redesign.plan.songInPlan"
+  },
+  "redesignPlanNewPlan": "Neuer Plan",
+  "@redesignPlanNewPlan": {
+    "description": "redesign.plan.newPlan"
+  },
+  "redesignPlanCreatePlan": "Plan anlegen",
+  "@redesignPlanCreatePlan": {
+    "description": "redesign.plan.createPlan"
+  },
+  "redesignPlanDay": "Tag",
+  "@redesignPlanDay": {
+    "description": "redesign.plan.day"
+  },
+  "redesignPlanContent": "Inhalt",
+  "@redesignPlanContent": {
+    "description": "redesign.plan.content"
+  },
+  "redesignPlanCopyOf": "Kopie von „{name}“",
+  "@redesignPlanCopyOf": {
+    "description": "redesign.plan.copyOf",
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "redesignPlanNameHint": "Name (optional)",
+  "@redesignPlanNameHint": {
+    "description": "redesign.plan.nameHint"
+  },
+  "redesignPlanViewWhole": "Ganzer Ablauf",
+  "@redesignPlanViewWhole": {
+    "description": "redesign.plan.viewWhole"
+  },
+  "redesignPlanViewNow": "Jetzt",
+  "@redesignPlanViewNow": {
+    "description": "redesign.plan.viewNow"
+  },
+  "redesignPlanViewWhich": "Welcher Plan",
+  "@redesignPlanViewWhich": {
+    "description": "redesign.plan.viewWhich"
+  },
+  "redesignPlanDownload": "Herunterladen",
+  "@redesignPlanDownload": {
+    "description": "redesign.plan.download"
+  },
+  "redesignPlanTelegram": "Per Telegram",
+  "@redesignPlanTelegram": {
+    "description": "redesign.plan.telegram"
   },
   "redesignPlanAddCurrent": "Aktuelle Werke",
   "@redesignPlanAddCurrent": {

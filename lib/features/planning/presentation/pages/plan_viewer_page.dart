@@ -13,6 +13,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosLook;
 import '../../../../shared/widgets/adaptive/app_toolbar.dart' show ToolbarButtonGroup;
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 
 /// Read-only Ablaufplan with chips for several plans, live mode and export
 /// (Ionic `PlanViewerComponent`). Opened as full screen dialog.
@@ -151,8 +153,104 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
     );
   }
 
+  void _select(int i) => setState(() {
+    _index = i;
+    _live = _isLiveNow();
+  });
+
+  /// REDESIGN (Termin-Werkzeuge T1): Beta detail page. "Ganzer Ablauf /
+  /// Jetzt" replaces the live button, plans are chips, ••• exports.
+  Widget _buildBeta(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final date = _date;
+    final startMin = PlanUtils.parseTimeToMinutes(_plan.time);
+    final meta = [
+      if (date != null) PlanUtils.longDate(date),
+      if (startMin != null && _plan.fields.isNotEmpty)
+        '${PlanUtils.formatMinutes(startMin)}–${PlanUtils.formatMinutes(startMin + PlanUtils.totalMinutes(_plan.fields))}',
+    ].join(' · ');
+    final liveNow = _isLiveNow();
+    return RdPage(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: RdBackLink(label: l10n.redesignPlanBack, onTap: () => Navigator.of(context).maybePop()),
+            ),
+            if (widget.onEdit != null) ...[
+              RdCircleButton(
+                key: const Key('rd-plan-view-edit'),
+                icon: Icons.edit_outlined,
+                label: l10n.attendanceEditRunSheet,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  widget.onEdit!(_index);
+                },
+              ),
+              const SizedBox(width: 8),
+            ],
+            RdCircleButton(
+              key: const Key('rd-plan-view-more'),
+              icon: Icons.more_horiz,
+              label: l10n.planningExport,
+              onPressed: _export,
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Semantics(header: true, child: Text(_title, style: RdType.title(p))),
+        if (meta.isNotEmpty) ...[
+          const SizedBox(height: 4),
+          Text(meta, style: RdType.meta(p, size: 15)),
+        ],
+        if (_labels.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (var i = 0; i < _labels.length; i++)
+                RdChoiceChip(
+                  label: i == _todayIndex ? '${_labels[i]} · ${l10n.redesignEventPlanNowPill}' : _labels[i],
+                  selected: i == _index,
+                  onTap: () => _select(i),
+                ),
+            ],
+          ),
+        ],
+        if (liveNow) ...[
+          const SizedBox(height: 16),
+          RdSegmented<bool>(
+            values: const [true, false],
+            selected: _live,
+            labelOf: (v) => v ? l10n.redesignPlanViewNow : l10n.redesignPlanViewWhole,
+            onChanged: (v) => setState(() => _live = v),
+          ),
+        ],
+        const SizedBox(height: 16),
+        if (_plan.fields.isEmpty)
+          RdCard(
+            child: Text(l10n.planningNoPlanAvailable, textAlign: TextAlign.center, style: RdType.body(p)),
+          )
+        else
+          RdCard(
+            padding: EdgeInsets.zero,
+            child: PlanViewList(
+              plan: _plan,
+              date: date,
+              liveMode: _live,
+              fieldWarning: widget.fieldWarning,
+              songAction: widget.songAction,
+            ),
+          ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (context.rdSkin != null) return _buildBeta(context);
     final date = _date;
     return Scaffold(
       appBar: AppBar(
