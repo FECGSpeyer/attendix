@@ -233,6 +233,27 @@ void main() {
       expect(InstrumentMatcher.partTerm('Air - Clairon.pdf', workName: 'Air'), 'Clairon');
       expect(InstrumentMatcher.partTerm('Ave Verum.pdf', workName: 'Ave Verum'), isNull);
     });
+
+    test('takes the last part of the name that names an instrument', () {
+      expect(InstrumentMatcher.partTerm('SoS - Slava bearbeitet - Alto Saxophone.pdf', workName: 'Slava'), 'Alto Saxophone');
+      expect(InstrumentMatcher.partTerm('Violine 1 - alt.pdf'), 'Violine 1');
+      // The part keeps its number; an abbreviation beats a title word.
+      expect(InstrumentMatcher.partTerm('SoS - 2. Kl.pdf'), '2. Kl');
+      expect(InstrumentMatcher.partTerm('Le viole - Vl II.pdf', workName: 'Anderes'), 'Vl II');
+    });
+  });
+
+  test('knownGroup names instruments that have no group yet', () {
+    expect(InstrumentMatcher.knownGroup('Alto Saxophone 2.pdf'), 'Altsaxophon');
+    expect(InstrumentMatcher.knownGroup('Clarinet in Bb.pdf'), 'Klarinette');
+    expect(InstrumentMatcher.knownGroup('Violin II.pdf'), 'Violine 2');
+    // Voice or instrument: not clear.
+    expect(InstrumentMatcher.knownGroup('Bariton.pdf'), isNull);
+    // Two instruments: no single group.
+    expect(InstrumentMatcher.knownGroup('Oboe - Englischhorn.pdf'), isNull);
+    // Voices only for choirs.
+    expect(InstrumentMatcher.knownGroup('Tenor.pdf'), isNull);
+    expect(InstrumentMatcher.knownGroup('Tenor.pdf', isChoir: true), 'Tenor');
   });
 
   group('learning synonyms', () {

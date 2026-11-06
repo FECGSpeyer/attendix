@@ -11198,6 +11198,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignGroupsTitle => 'Gruppe wechseln';
 
   @override
+  String redesignHelpArticles(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Artikel',
+      one: '1 Artikel',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignHelpGlossaryHint => 'Begriffe der App erklärt';
+
+  @override
+  String get redesignHelpSearch => 'Frage oder Stichwort suchen';
+
+  @override
   String get redesignImportAiConfirmButton => 'Übernehmen';
 
   @override
@@ -11694,6 +11711,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportPickTitle => 'Werk wählen';
+
+  @override
+  String get redesignImportPreparing => 'Wird vorbereitet …';
 
   @override
   String redesignImportQuestionTitle(Object name) {
