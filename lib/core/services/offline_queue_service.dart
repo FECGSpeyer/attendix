@@ -10,6 +10,8 @@ import 'package:uuid/uuid.dart';
 
 import '../../data/repositories/attendance_repository.dart';
 import 'attendance_detail_cache.dart';
+import 'native/ionic_offline_queue_takeover.dart'
+    show ionicOfflineQueueImportProvider;
 import '../providers/attendance_providers.dart';
 import '../providers/connectivity_provider.dart';
 import '../providers/tenant_providers.dart';
@@ -566,6 +568,7 @@ class OfflineQueueNotifier extends Notifier<int> {
   Future<void> onUserChanged() async {
     // SOL_FIX9: (synchronously) end a replay of the previous session.
     _sessionGeneration++;
+    await _importIonicQueue();
     final List<QueuedWrite> stored;
     try {
       stored = await _store.load();
@@ -578,6 +581,16 @@ class OfflineQueueNotifier extends Notifier<int> {
     state = own.length;
     if (own.isNotEmpty && await ref.read(connectivityCheckProvider)()) {
       await flush();
+    }
+  }
+
+  /// IONIC_QUEUE: takes over the Ionic app's unsent offline writes once
+  /// (native app, signed in, online); they are replayed like own writes.
+  Future<void> _importIonicQueue() async {
+    try {
+      await ref.read(ionicOfflineQueueImportProvider)();
+    } catch (e) {
+      debugPrint('[OfflineQueue] Ionic queue import failed: $e');
     }
   }
 
@@ -742,6 +755,8 @@ class OfflineQueueNotifier extends Notifier<int> {
     }
     _flushing = true;
     try {
+      // IONIC_QUEUE: e.g. back online after a start without connection.
+      await _importIonicQueue();
       do {
         _flushRequested = false;
         await _flushOnce();
