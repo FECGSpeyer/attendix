@@ -9,8 +9,62 @@ on:
       - master
   workflow_dispatch:
 
+# PR previews: a new push cancels the running preview build.
+# master: runs queue up one after another (never cancelled), so the version
+# job below never races itself.
+concurrency:
+  group: deploy-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
+  version:
+    # Version at merge time: PRs only add changelog/unreleased/*.json; this
+    # job turns all pending fragments on master into one version bump commit
+    # (tool/release/release_version.py). A push with GITHUB_TOKEN starts no
+    # new workflow run, so the build below deploys that commit directly.
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.release.outputs.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Release version from changelog fragments
+        id: release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            git fetch origin master
+            git reset --hard origin/master
+            version=$(python3 tool/release/release_version.py)
+            if [ -z "$version" ]; then
+              echo "No changelog fragments, version unchanged"
+              break
+            fi
+            git add -A pubspec.yaml lib/core/constants/app_constants.dart \
+              assets/version_history.json changelog/unreleased
+            git commit -m "Version $version"
+            if git push origin HEAD:master; then
+              echo "Released $version"
+              break
+            fi
+            if [ "$attempt" = 3 ]; then
+              echo "Push of version $version failed three times" >&2
+              exit 1
+            fi
+          done
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
   build-and-deploy:
+    needs: version
+    # Runs when the version job succeeded or was skipped (PRs, other branches).
+    if: ${{ !cancelled() && needs.version.result != 'failure' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -19,6 +73,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # master: the commit with the new version; otherwise the default.
+          ref: ${{ needs.version.outputs.sha }}
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -52,6 +109,8 @@ jobs:
           DEMO_PASSWORD: ${{ secrets.DEMO_PASSWORD || secrets.DEMOPASSWORD }}
 
       - name: Run tests
+        # PRs: the CI workflow already runs the tests; the preview only builds.
+        if: github.event_name != 'pull_request'
         run: flutter test
 
       - name: Build web
