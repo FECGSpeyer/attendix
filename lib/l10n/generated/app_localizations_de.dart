@@ -11822,7 +11822,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignManageAnnouncementsHint =>
-      'Gesendete Mitteilungen ansehen';
+      'Schreiben, Gesendetes, Automatik';
 
   @override
   String get redesignManageAreaCommunication => 'Kommunikation';
@@ -12121,6 +12121,25 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignMessagesBellAllGroups => 'Alle Gruppen';
+
+  @override
+  String get redesignMessagesBellEarlier => 'Früher';
+
+  @override
+  String get redesignMessagesBellNew => 'Neu';
+
+  @override
+  String get redesignMessagesBellThisGroup => 'Diese Gruppe';
+
+  @override
+  String get redesignMessagesDelivery => 'Zustellung';
+
+  @override
+  String get redesignMessagesIntro =>
+      'Alles, was an die Gruppe ging, mit Lesestatus.';
+
+  @override
   String get redesignNotifForMe => 'Für mich';
 
   @override
@@ -12366,6 +12385,44 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPlanAddBlockHint => 'Fasst mehrere Punkte zusammen';
+
+  @override
+  String get redesignPlanSongInPlan => 'im Ablauf';
+
+  @override
+  String get redesignPlanNewPlan => 'Neuer Plan';
+
+  @override
+  String get redesignPlanCreatePlan => 'Plan anlegen';
+
+  @override
+  String get redesignPlanDay => 'Tag';
+
+  @override
+  String get redesignPlanContent => 'Inhalt';
+
+  @override
+  String redesignPlanCopyOf(String name) {
+    return 'Kopie von „$name“';
+  }
+
+  @override
+  String get redesignPlanNameHint => 'Name (optional)';
+
+  @override
+  String get redesignPlanViewWhole => 'Ganzer Ablauf';
+
+  @override
+  String get redesignPlanViewNow => 'Jetzt';
+
+  @override
+  String get redesignPlanViewWhich => 'Welcher Plan';
+
+  @override
+  String get redesignPlanDownload => 'Herunterladen';
+
+  @override
+  String get redesignPlanTelegram => 'Per Telegram';
 
   @override
   String get redesignPlanAddCurrent => 'Aktuelle Werke';
