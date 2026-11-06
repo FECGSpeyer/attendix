@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.62.0",
+      "date": "6.11.2026",
+      "changes": [
+        "💄 Beta: „Konto löschen“ und die Administration im neuen Design, Ablauf und Bestätigungscode bleiben gleich"
+      ]
+    },
+    {
       "version": "0.61.0",
       "date": "6.11.2026",
       "changes": [
