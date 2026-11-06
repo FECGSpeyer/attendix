@@ -122,6 +122,8 @@ import '../../features/redesign/presentation/pages/rd_members_page.dart';
 import '../../features/redesign/presentation/pages/rd_voice_leader_page.dart';
 import '../../features/redesign/presentation/pages/rd_own_event_page.dart';
 import '../../features/redesign/presentation/pages/rd_person_page.dart';
+import '../../features/redesign/presentation/pages/rd_person_create_page.dart';
+import '../../features/redesign/presentation/pages/rd_person_edit_page.dart';
 import '../../features/redesign/presentation/pages/rd_person_history_page.dart';
 import '../../features/redesign/presentation/pages/rd_appearance_page.dart';
 import '../../features/redesign/presentation/pages/rd_bulk_members_page.dart';
@@ -681,6 +683,22 @@ final routerProvider = Provider<GoRouter>((ref) {
               state: state,
             ),
             routes: [
+              // Before ':id': "neu" is no person id.
+              GoRoute(
+                path: 'neu',
+                name: 'redesignPersonCreate',
+                builder: (context, state) => const RdPersonCreatePage(),
+              ),
+              GoRoute(
+                path: ':id/bearbeiten',
+                name: 'redesignPersonEdit',
+                builder: (context, state) {
+                  final id = int.tryParse(state.pathParameters['id'] ?? '');
+                  return id == null
+                      ? const RdMembersPage()
+                      : RdPersonEditPage(key: ValueKey('rd-person-edit-$id'), personId: id);
+                },
+              ),
               GoRoute(
                 path: ':id',
                 name: 'redesignPerson',

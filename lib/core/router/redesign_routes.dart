@@ -37,6 +37,12 @@ class RedesignRoutes {
   /// A person of the new design.
   static String person(int id) => '$members/$id';
 
+  /// "Neue Person" of the new design (replaces `/people/new` in the Beta).
+  static const String personNew = '$members/neu';
+
+  /// "Person bearbeiten" of the new design (replaces `/people/:id`).
+  static String personEdit(int id) => '$members/$id/bearbeiten';
+
   /// "Verlauf" of a person (coming Termine and history).
   static String personHistory(int id) => '$members/$id/verlauf';
 
