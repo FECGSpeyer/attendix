@@ -216,7 +216,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
               const SizedBox(height: 8),
               RdOutlineButton(
                 label: l10n.redesignInviteAddPerson,
-                onPressed: () => context.push('/people/new'),
+                onPressed: () => context.push(RedesignRoutes.personNew),
               ),
             ],
           ],
@@ -282,7 +282,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
               backgroundColor: p.primary,
               foregroundColor: p.onPrimary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-              onPressed: () => context.push('/people/new'),
+              onPressed: () => context.push(RedesignRoutes.personNew),
               child: const Icon(Icons.person_add_alt_1_outlined, size: 26),
             )
           : null,

@@ -7,7 +7,7 @@ import '../constants/enums.dart' show Role;
 import '../../data/models/parent/parent_model.dart';
 import '../../data/repositories/parent_repository.dart';
 import '../../data/repositories/user_registration_repository.dart'
-    show AccountFlowException;
+    show AccountFlowException, UserRegistrationRepository;
 import '../../l10n/l10n.dart';
 import 'tenant_providers.dart';
 import 'user_registration_providers.dart';
@@ -96,21 +96,28 @@ class ParentNotifier extends Notifier<AsyncValue<void>> {
   /// it throws [AccountFlowException] with `db.addParentFailed` so the page
   /// reports it instead of leaving a silent orphan. Other errors are
   /// rethrown unchanged.
+  ///
+  /// [repo] / [registration]: repositories bound by the caller before its
+  /// own first await (e.g. before the invite dialog); default the current
+  /// tenant's.
   Future<ParentModel> invite({
     required String email,
     required String firstName,
     required String lastName,
+    ParentRepository? repo,
+    UserRegistrationRepository? registration,
   }) async {
     final trimmedEmail = email.trim();
     // SOL_FIX7: bind both tenant repositories before the first await.
-    final repo = _repo;
-    final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
-    final appId = await registration.registerUser(
+    final parentRepo = repo ?? _repo;
+    final UserRegistrationRepository registrationRepo =
+        registration ?? ref.read(userRegistrationRepositoryWithTenantProvider);
+    final appId = await registrationRepo.registerUser(
       email: trimmedEmail,
       name: firstName.trim(),
       role: Role.parent,
     );
-    final created = await _createParentWith(repo, ParentModel(
+    final created = await _createParentWith(parentRepo, ParentModel(
       appId: appId,
       email: trimmedEmail,
       firstName: firstName.trim(),
@@ -120,16 +127,18 @@ class ParentNotifier extends Notifier<AsyncValue<void>> {
     if (parentId == null) {
       throw AccountFlowException(l10nWithoutContext.dbAddParentFailed);
     }
-    await registration.linkParentToTenantUser(appId, parentId);
+    await registrationRepo.linkParentToTenantUser(appId, parentId);
     return created!;
   }
 
   /// Delete a parent
   /// Throws on failure (LOGIC_PEOPLE: pages must not show success toasts).
-  Future<bool> deleteParent(int id, {String? appId}) async {
+  /// [repo]: bound by the caller before its first await (see [invite]).
+  Future<bool> deleteParent(int id, {String? appId, ParentRepository? repo}) async {
+    final bound = repo ?? _repo;
     state = const AsyncValue.loading();
     try {
-      await _repo.deleteParent(id, appId: appId);
+      await bound.deleteParent(id, appId: appId);
       state = const AsyncValue.data(null);
       ref.invalidate(parentsProvider);
       return true;

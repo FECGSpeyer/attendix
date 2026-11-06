@@ -88,12 +88,13 @@ void main() {
       expect(isOwnProfileImagePath('7/42.jpg', 42), isTrue);
       expect(isOwnProfileImagePath('99', 42), isFalse);
       expect(isOwnProfileImagePath('7/142.jpg', 42), isFalse);
-      final header = read('lib/features/people/presentation/widgets/person_detail/person_header.dart');
+      // Upload / removal of the person header live in person_photo_actions.
+      final header = read('lib/features/people/presentation/widgets/person_detail/person_photo_actions.dart');
       expect('isOwnProfileImagePath('.allMatches(header).length, 2);
     });
 
     test('person header and registration use the Ionic key and img ""', () {
-      final header = read('lib/features/people/presentation/widgets/person_detail/person_header.dart');
+      final header = read('lib/features/people/presentation/widgets/person_detail/person_photo_actions.dart');
       expect(header, isNot(contains(r"'${tenant.id}/$personId.jpg'")));
       expect(header, contains('profileImageStoragePath(personId)'));
       expect(header, contains("'img': ''"));

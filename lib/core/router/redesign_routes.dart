@@ -37,6 +37,12 @@ class RedesignRoutes {
   /// A person of the new design.
   static String person(int id) => '$members/$id';
 
+  /// "Neue Person" of the new design (replaces `/people/new` in the Beta).
+  static const String personNew = '$members/neu';
+
+  /// "Person bearbeiten" of the new design (replaces `/people/:id`).
+  static String personEdit(int id) => '$members/$id/bearbeiten';
+
   /// "Verlauf" of a person (coming Termine and history).
   static String personHistory(int id) => '$members/$id/verlauf';
 
@@ -95,16 +101,65 @@ class RedesignRoutes {
   /// Verwaltung › Rollen und Rechte (replaces `/settings/role-permissions`).
   static const String rolePermissions = '$manage/rollen';
 
+  /// Verwaltung › Admins (replaces the old admins sheet; super admins only).
+  static const String admins = '$manage/admins';
+
+  /// Verwaltung › Eltern (replaces the old parents sheet).
+  static const String parents = '$manage/eltern';
+
+  /// Verwaltung › Beobachter (replaces the old viewers sheet).
+  static const String viewers = '$manage/beobachter';
+
+  /// Verwaltung › Archiv: persons who left (replaces the old archive sheet).
+  static const String archive = '$manage/archiv';
+
+  /// Verwaltung › Freigaben: persons waiting for approval (replaces the old
+  /// pending sheet; a person still opens the old review page).
+  static const String approvals = '$manage/freigaben';
+
+  /// Verwaltung › Lehrer (replaces `/settings/teachers` in the Beta).
+  static const String teachers = '$manage/lehrer';
+
+  /// "Lehrer bearbeiten" of the new design.
+  static String teacherEdit(int id) => '$teachers/$id';
+
+  /// Verwaltung › Zusatzfelder (replaces `/settings/general/extra-fields`).
+  static const String extraFields = '$manage/zusatzfelder';
+
+  /// "Zusatzfeld bearbeiten": field ids are unique per list only, so the
+  /// list (persons or works) is part of the path.
+  static String extraFieldEdit({required bool song, required String id}) =>
+      '$extraFields/${song ? 'werke' : 'personen'}/${Uri.encodeComponent(id)}';
+
   /// Ich › Benachrichtigungen.
   static const String notifications = '$me/benachrichtigungen';
 
   /// Pages for leads only (Admins and Verantwortliche, like the old
-  /// statistics, messages and archive entries and the old group, type and
-  /// shift pages); their sub pages too.
-  static const _leadOnly = {stats, compose, bulkMembers, groups, attendanceTypes, shiftPlans, rolePermissions};
+  /// statistics, messages and archive entries, the old group, type and
+  /// shift pages and `/settings/parents|viewers|pending|left`); their sub
+  /// pages too.
+  static const _leadOnly = {
+    stats,
+    compose,
+    bulkMembers,
+    groups,
+    attendanceTypes,
+    shiftPlans,
+    parents,
+    viewers,
+    archive,
+    approvals,
+    rolePermissions,
+    extraFields,
+  };
 
-  static bool _isLeadOnly(String location) =>
-      _leadOnly.any((route) => location == route || location.startsWith('$route/'));
+  /// Pages for super admins only (the old admins sheet: `role.isAdmin`).
+  static const _adminOnly = {admins};
+
+  static bool _matches(Set<String> routes, String location) =>
+      routes.any((route) => location == route || location.startsWith('$route/'));
+
+  static bool _isLeadOnly(String location) => _matches(_leadOnly, location);
 
   /// True while the new design is switched on (set by
   /// `RedesignSettingsNotifier`).
@@ -169,18 +224,34 @@ class RedesignRoutes {
   ///   (`Role.canAddAttendance`, like `/attendance/:id`); an own Termin
   ///   (`/termine/meine/…`) for everyone else too.
   /// * Mitglieder and its persons only for roles with the old people tab
-  ///   (`Role.canSeePeopleTab`, like `/people`).
+  ///   (`Role.canSeePeopleTab`, like `/people`); "Neue Person" and "Person
+  ///   bearbeiten" only for Admins and Verantwortliche.
   /// * Werke like `/songs-tab` (not for parents and applicants).
   /// * Verwaltung not for applicants and parents (nothing to manage there);
   ///   each entry keeps the guard of the page it opens.
+  /// * Lehrer like `/settings/teachers` (`Role.isConductor`: Admins,
+  ///   Verantwortliche and Beobachter see the list); a teacher opens only
+  ///   for Admins and Verantwortliche, like on the old page.
   static String? roleRedirect(String location, Role role) {
     if (location == manage || location.startsWith('$manage/')) {
       if (role.isApplicant || role.isParent) return me;
       if (_isLeadOnly(location) && !(role.isAdmin || role.isResponsible)) return manage;
+      if (_matches(_adminOnly, location) && !role.isAdmin) return manage;
+      if (location == teachers || location.startsWith('$teachers/')) {
+        if (!role.isConductor) return manage;
+        if (location != teachers && !(role.isAdmin || role.isResponsible)) return teachers;
+      }
       return null;
     }
     if (location == members || location.startsWith('$members/')) {
-      return role.canSeePeopleTab ? null : today;
+      if (!role.canSeePeopleTab) return today;
+      // "Neue Person" and "Person bearbeiten" like the old person form:
+      // Admins and Verantwortliche.
+      final lead = role.isAdmin || role.isResponsible;
+      if (location == personNew && !lead) return members;
+      final edit = RegExp('^$members/(\\d+)/bearbeiten\$').firstMatch(location);
+      if (edit != null && !lead) return person(int.parse(edit.group(1)!));
+      return null;
     }
     if (location == works || location.startsWith('$works/')) {
       if (!canOpenSongsTab(role)) return today;
