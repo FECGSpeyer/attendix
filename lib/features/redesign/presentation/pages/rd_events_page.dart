@@ -36,6 +36,7 @@ import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart';
 import '../../data/rd_dates.dart';
+import '../../data/rd_event_phase.dart' show rdEffectiveDurationDays;
 import '../widgets/today/rd_duty_section.dart';
 
 /// REDESIGN: tab "Termine" (canvas D2 for Dirigent/Helfer/Beobachter, S2
@@ -218,9 +219,11 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
         .where((t) => t.visible)
         .toList();
     final typeById = {for (final t in types) t.id: t};
-    final past = rdPast(all);
+    // All types (hidden ones too) for the length of all-day Termine.
+    final allTypes = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
+    final past = rdPast(all, types: allTypes);
     final average = rdAveragePercentage(past);
-    final source = _past ? past : rdUpcoming(all);
+    final source = _past ? past : rdUpcoming(all, types: allTypes);
     final list = source.where((a) {
       if (_type != null && a.typeId != _type) return false;
       final info = rdEventInfo(a, typeById[a.typeId]);
@@ -670,7 +673,9 @@ class _LeaderEventCard extends StatelessWidget {
     final p = context.rd;
     final l10n = context.l10n;
     final info = rdEventInfo(attendance, type);
-    final today = !past && _isToday(attendance.date, attendance.durationDays);
+    final days = rdEffectiveDurationDays(attendance.durationDays,
+        typeAllDay: type?.allDay ?? false, typeDurationDays: type?.durationDays);
+    final today = !past && _isToday(attendance.date, days);
     final day = info.start == null || past ? '' : _dayWord(l10n, info.start!);
     final meta = [
       [day, info.timeRange].where((s) => s.isNotEmpty).join(' '),
@@ -686,7 +691,7 @@ class _LeaderEventCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          RdEventDateBox(date: attendance.date, durationDays: attendance.durationDays, highlight: today),
+          RdEventDateBox(date: attendance.date, durationDays: days, highlight: today),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
