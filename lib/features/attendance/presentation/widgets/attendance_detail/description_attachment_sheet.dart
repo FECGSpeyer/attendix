@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../../core/providers/attendance_providers.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/quill_utils.dart';
 import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/attendance/attendance.dart';
@@ -13,41 +14,35 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../../core/services/native/native_file_service.dart';
+import '../../../../redesign/presentation/widgets/rd_widgets.dart';
 
 /// "Beschreibung & Anhang" editor of a Termin (Ionic descriptionModal):
 /// rich text description (stored as HTML like the Ionic quill editor) and
 /// one file attachment (upload, open, remove).
-Future<void> showDescriptionAttachmentSheet(
-  BuildContext context, {
-  required Attendance attendance,
-}) {
+Future<void> showDescriptionAttachmentSheet(BuildContext context, {required Attendance attendance}) {
   return showModalBottomSheet<void>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     showDragHandle: true,
-    builder: (ctx) => Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-      child: DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: 0.8,
-        minChildSize: 0.4,
-        maxChildSize: 0.95,
-        builder: (ctx, controller) => DescriptionAttachmentEditor(
-          attendance: attendance,
-          scrollController: controller,
+    backgroundColor: context.rdSkin != null ? context.rd.bg : null,
+    builder:
+        (ctx) => Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+          child: DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: 0.8,
+            minChildSize: 0.4,
+            maxChildSize: 0.95,
+            builder:
+                (ctx, controller) => DescriptionAttachmentEditor(attendance: attendance, scrollController: controller),
+          ),
         ),
-      ),
-    ),
   );
 }
 
 class DescriptionAttachmentEditor extends ConsumerStatefulWidget {
-  const DescriptionAttachmentEditor({
-    super.key,
-    required this.attendance,
-    this.scrollController,
-  });
+  const DescriptionAttachmentEditor({super.key, required this.attendance, this.scrollController});
 
   final Attendance attendance;
   final ScrollController? scrollController;
@@ -101,7 +96,9 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
       await repo.updateAttendance(_id, {'description': html});
       _container.invalidate(attendanceDetailProvider(_id));
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
+      if (mounted) {
+        ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
+      }
     }
   }
 
@@ -112,8 +109,7 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
     if (file == null || file.bytes == null) return;
     setState(() => _busy = true);
     try {
-      final uploaded = await repo.uploadAttachment(_id, file.bytes!, file.name,
-          previousFileName: _attachmentName);
+      final uploaded = await repo.uploadAttachment(_id, file.bytes!, file.name, previousFileName: _attachmentName);
       if (!mounted) return;
       setState(() {
         _attachmentUrl = uploaded.url;
@@ -155,8 +151,109 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
     await NativeFileService.openLinkInApp(uri);
   }
 
+  Widget _toolbar() => QuillSimpleToolbar(
+    controller: _quill,
+    config: const QuillSimpleToolbarConfig(
+      multiRowsDisplay: false,
+      showBoldButton: true,
+      showItalicButton: true,
+      showUnderLineButton: true,
+      showListBullets: true,
+      showListNumbers: true,
+      showLink: true,
+      showStrikeThrough: false,
+      showHeaderStyle: false,
+      showListCheck: false,
+      showColorButton: false,
+      showBackgroundColorButton: false,
+      showClearFormat: false,
+      showInlineCode: false,
+      showCodeBlock: false,
+      showQuote: false,
+      showIndent: false,
+      showSearchButton: false,
+      showSubscript: false,
+      showSuperscript: false,
+      showFontFamily: false,
+      showFontSize: false,
+      showAlignmentButtons: false,
+      showDirection: false,
+      showSmallButton: false,
+      showUndo: false,
+      showRedo: false,
+    ),
+  );
+
+  Widget _editor() => QuillEditor.basic(
+    controller: _quill,
+    focusNode: _focus,
+    config: QuillEditorConfig(scrollable: false, placeholder: context.l10n.attendanceDescriptionPlaceholder),
+  );
+
+  /// Beta (redesign) layout: editor in a card, attachment as a list row.
+  Widget _buildBeta(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final name = _attachmentName ?? l10n.selfServiceAttachment;
+    return ListView(
+      controller: widget.scrollController,
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+      children: [
+        Semantics(header: true, child: Text(l10n.attendanceDescriptionAttachment, style: RdType.cardTitle(p))),
+        const SizedBox(height: 16),
+        RdCard(
+          padding: EdgeInsets.zero,
+          child: Column(
+            children: [
+              _toolbar(),
+              Divider(height: 1, thickness: 1, color: p.line),
+              ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: 200),
+                child: Padding(padding: const EdgeInsets.all(14), child: _editor()),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        RdGroupLabel(l10n.selfServiceAttachment),
+        RdGroupedList(
+          children: [
+            if (_busy)
+              RdListRow(
+                title: _attachmentUrl == null ? l10n.attendanceFlutterAddAttachment : name,
+                leading: const RdRowIcon(Icons.attach_file),
+                trailing: const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2)),
+                showChevron: false,
+              )
+            else if (_attachmentUrl == null)
+              RdListRow(
+                key: const Key('rd-desc-add-attachment'),
+                title: l10n.attendanceFlutterAddAttachment,
+                titleColor: p.link,
+                leading: const RdRowIcon(Icons.attach_file),
+                showChevron: false,
+                onTap: _upload,
+              )
+            else ...[
+              RdListRow(title: name, leading: const RdRowIcon(Icons.description_outlined), onTap: _open),
+              RdListRow(
+                key: const Key('rd-desc-remove-attachment'),
+                title: l10n.attendanceFlutterRemoveAttachment,
+                titleColor: p.absent,
+                leading: RdRowIcon(Icons.delete_outline, color: p.absent, background: p.absentSoft),
+                showChevron: false,
+                onTap: _remove,
+              ),
+            ],
+          ],
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (context.rdSkin != null) return _buildBeta(context);
     return ListView(
       controller: widget.scrollController,
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
@@ -168,52 +265,11 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
           clipBehavior: Clip.antiAlias,
           child: Column(
             children: [
-              QuillSimpleToolbar(
-                controller: _quill,
-                config: const QuillSimpleToolbarConfig(
-                  multiRowsDisplay: false,
-                  showBoldButton: true,
-                  showItalicButton: true,
-                  showUnderLineButton: true,
-                  showListBullets: true,
-                  showListNumbers: true,
-                  showLink: true,
-                  showStrikeThrough: false,
-                  showHeaderStyle: false,
-                  showListCheck: false,
-                  showColorButton: false,
-                  showBackgroundColorButton: false,
-                  showClearFormat: false,
-                  showInlineCode: false,
-                  showCodeBlock: false,
-                  showQuote: false,
-                  showIndent: false,
-                  showSearchButton: false,
-                  showSubscript: false,
-                  showSuperscript: false,
-                  showFontFamily: false,
-                  showFontSize: false,
-                  showAlignmentButtons: false,
-                  showDirection: false,
-                  showSmallButton: false,
-                  showUndo: false,
-                  showRedo: false,
-                ),
-              ),
+              _toolbar(),
               const Divider(height: 1),
               ConstrainedBox(
                 constraints: const BoxConstraints(minHeight: 200),
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: QuillEditor.basic(
-                    controller: _quill,
-                    focusNode: _focus,
-                    config: QuillEditorConfig(
-                      scrollable: false,
-                      placeholder: context.l10n.attendanceDescriptionPlaceholder,
-                    ),
-                  ),
-                ),
+                child: Padding(padding: const EdgeInsets.all(12), child: _editor()),
               ),
             ],
           ),
@@ -221,7 +277,9 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
         const SizedBox(height: 16),
         Row(
           children: [
-            Expanded(child: Text(context.l10n.selfServiceAttachment, style: const TextStyle(fontWeight: FontWeight.w500))),
+            Expanded(
+              child: Text(context.l10n.selfServiceAttachment, style: const TextStyle(fontWeight: FontWeight.w500)),
+            ),
             if (_busy)
               const SizedBox(width: 24, height: 24, child: AppSpinner(strokeWidth: 2))
             else if (_attachmentUrl == null)

@@ -14218,7 +14218,7 @@
   "@redesignImportAiOption": {
     "description": "redesign.import.aiOption"
   },
-  "redesignImportAiOptionDetail": "Die unbekannten Stimmnamen und einige Dateinamen gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.",
+  "redesignImportAiOptionDetail": "Unbekannte Stimmnamen, einige Dateinamen und die Namen unsicherer Werk-Ordner gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.",
   "@redesignImportAiOptionDetail": {
     "description": "redesign.import.aiOptionDetail"
   },
@@ -14630,6 +14630,10 @@
   "redesignImportMatchAmbiguous": "Mehrere Werke in Attendix passen. Bitte prüfe, ob es das richtige ist.",
   "@redesignImportMatchAmbiguous": {
     "description": "redesign.import.matchAmbiguous"
+  },
+  "redesignImportMatchByAi": "Die KI hält den Ordner für dieses Werk, etwa wegen anderer Schreibweise oder Übersetzung. Bitte prüfe es.",
+  "@redesignImportMatchByAi": {
+    "description": "redesign.import.matchByAi"
   },
   "redesignImportMatchNumberOnly": "Die Nummer passt, der Titel weicht ab.",
   "@redesignImportMatchNumberOnly": {
