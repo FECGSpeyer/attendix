@@ -284,7 +284,7 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
     final notifier = ref.read(attendanceTypeNotifierProvider.notifier);
     final data = _buildTypeData();
     final json = _rdJson();
-    if (json == _rdSavedJson) {
+    if (json == (_rdQueuedJson ?? _rdSavedJson)) {
       _hasChanges = false;
       return;
     }
@@ -297,7 +297,13 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
       final id = widget.typeId!;
       final save = _rdChain.then((_) => notifier.updateType(id, data));
       _rdChain = save.then((_) {}, onError: (_) {});
-      final updated = await save;
+      _rdQueuedJson = json;
+      final AttendanceType? updated;
+      try {
+        updated = await save;
+      } finally {
+        if (_rdQueuedJson == json) _rdQueuedJson = null;
+      }
       if (updated != null) _rdInvalidateCaches();
       if (!mounted) return;
       if (updated == null) {

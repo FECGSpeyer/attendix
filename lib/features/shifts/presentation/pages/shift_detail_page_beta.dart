@@ -200,7 +200,8 @@ extension _ShiftDetailBeta on _ShiftDetailPageState {
       _isLoading = true;
       _hasChanges = false;
     });
-    final save = _rdChain.then((_) => notifier.updateShift(_rdPlan()));
+    final plan = _rdPlan();
+    final save = _rdChain.then((_) => notifier.updateShift(plan));
     _rdChain = save.then((_) {}, onError: (_) {});
     final result = await save;
     if (!mounted) return;

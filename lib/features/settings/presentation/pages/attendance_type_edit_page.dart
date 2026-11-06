@@ -174,6 +174,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   /// is not retried in a loop; any further change is saved again.
   String? _rdSavedJson;
   String? _rdFailedJson;
+  // REDESIGN: the state of the save last put on [_rdChain] (null when none
+  // is pending); a change back to the stored state is still saved after it.
+  String? _rdQueuedJson;
   bool _rdListening = false;
 
   /// Saves run one after another, also the flush on dispose, so an older
@@ -336,7 +339,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         _nameController.text.trim().isNotEmpty &&
         _availableStatuses.length >= 2) {
       final json = _rdJson();
-      if (json != _rdSavedJson && json != _rdFailedJson) {
+      if (json != (_rdQueuedJson ?? _rdSavedJson) && json != _rdFailedJson) {
         final data = _buildTypeData();
         final id = widget.typeId!;
         final invalidate = _rdInvalidateCaches;
