@@ -19,6 +19,7 @@ import '../../../../l10n/l10n.dart';
 import '../../data/providers/rd_members_providers.dart';
 import '../../data/rd_members_logic.dart';
 import '../../../members/data/providers/members_providers.dart' show membersEinteilungOptionsProvider;
+import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
 import '../widgets/members/rd_invite_sheet.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
@@ -85,6 +86,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
     if (!role.canSeePeopleTab) return _readOnly(context);
     final p = context.rd;
     final l10n = context.l10n;
+    final inSplit = RdSplitScope.of(context) != null;
     final canApprove = role.isAdmin || role.isResponsible;
     final peopleAsync = ref.watch(realtimePlayersProvider);
     final people = peopleAsync.valueOrNull ?? const <Person>[];
@@ -139,8 +141,9 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
               child: Text(l10n.redesignTabMembers, style: RdType.largeTitle(p)),
             ),
           ),
-          // UX D1: invite right here (Dirigent, Verantwortlich).
-          if (canApprove) ...[
+          // UX D1: invite right here (Dirigent, Verantwortlich). On desktop
+          // it is part of the one "+" in the header.
+          if (canApprove && !inSplit) ...[
             RdPillButton(
               icon: Icons.person_add_alt_outlined,
               label: l10n.redesignInviteButton,
@@ -154,6 +157,18 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
               label: l10n.redesignMembersStats,
               onPressed: () => context.push(RedesignRoutes.stats),
             ),
+          if (inSplit && (role.canEdit || canApprove)) ...[
+            const SizedBox(width: 8),
+            Builder(
+              builder: (button) => RdCircleButton(
+                key: const Key('rd-members-add'),
+                icon: Icons.add,
+                label: l10n.redesignMembersAdd,
+                primary: true,
+                onPressed: () => _add(button, canCreate: role.canEdit, canInvite: canApprove),
+              ),
+            ),
+          ],
         ],
       ),
       const SizedBox(height: 12),
@@ -276,7 +291,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
         ref.invalidate(playerAbsencesProvider);
         if (canApprove) ref.invalidate(realtimePendingPlayersProvider);
       },
-      floatingActionButton: role.canEdit
+      floatingActionButton: role.canEdit && !inSplit
           ? FloatingActionButton(
               tooltip: l10n.redesignMembersAdd,
               backgroundColor: p.primary,
@@ -288,6 +303,36 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
           : null,
       children: children,
     );
+  }
+
+  /// Desktop "+": a new person or an invitation link, as a menu at the
+  /// button (one entry: straight to it).
+  Future<void> _add(BuildContext anchor, {required bool canCreate, required bool canInvite}) async {
+    final l10n = context.l10n;
+    if (!canInvite) {
+      await context.push(RedesignRoutes.personNew);
+      return;
+    }
+    if (!canCreate) {
+      await showRdInviteSheet(context);
+      return;
+    }
+    final action = await showAppActionSheet<String>(
+      context,
+      title: l10n.redesignMembersAdd,
+      anchor: anchor,
+      actions: [
+        AppActionSheetAction(value: 'new', icon: Icons.person_add_alt_1_outlined, label: l10n.redesignMembersAdd),
+        AppActionSheetAction(value: 'invite', icon: Icons.link, label: l10n.redesignInviteButton),
+      ],
+    );
+    if (!mounted) return;
+    switch (action) {
+      case 'new':
+        await context.push(RedesignRoutes.personNew);
+      case 'invite':
+        await showRdInviteSheet(context);
+    }
   }
 
   Widget _searchField(BuildContext context) {

@@ -291,6 +291,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     Map<String, String> hashes,
     Map<String, DateTime> dates,
     int junk,
+    RdImportPlanCache cache,
   })? _input;
 
   @override
@@ -444,7 +445,9 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     final toHash = rdImportPathsToHash(source.entries).toList();
     final hashes = <String, String>{};
     final dates = <String, DateTime>{};
-    final toDate = rdImportPathsToDate(rdBuildImportPlan(source.entries, songs: songs, instruments: instruments, isChoir: isChoir));
+    final cache = RdImportPlanCache();
+    final toDate =
+        rdImportPathsToDate(rdBuildImportPlan(source.entries, songs: songs, instruments: instruments, isChoir: isChoir, cache: cache));
     final hashing = toHash.toSet();
     final dating = toDate.toSet();
     final work = {...hashing, ...dating}.toList()..sort();
@@ -455,14 +458,14 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     if (_disposed) return null;
     // Dates of Werke that only show Fassungen once duplicates are known.
     var plan = rdBuildImportPlan(source.entries,
-        songs: songs, instruments: instruments, isChoir: isChoir, hashes: hashes, dates: dates, junk: source.junk);
+        songs: songs, instruments: instruments, isChoir: isChoir, hashes: hashes, dates: dates, junk: source.junk, cache: cache);
     final missing = rdImportPathsToDate(plan).where((p) => !dates.containsKey(p) && !_dated.contains(p)).toList();
     if (missing.isNotEmpty) {
       _dated.addAll(missing);
       await _inspect(source, missing, hashes, dates, hash: (_) => false, date: (_) => true);
       if (_disposed) return null;
       plan = rdBuildImportPlan(source.entries,
-          songs: songs, instruments: instruments, isChoir: isChoir, hashes: hashes, dates: dates, junk: source.junk);
+          songs: songs, instruments: instruments, isChoir: isChoir, hashes: hashes, dates: dates, junk: source.junk, cache: cache);
     }
     if (_disposed) return null;
     _input = (
@@ -473,6 +476,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       hashes: hashes,
       dates: dates,
       junk: source.junk,
+      cache: cache,
     );
     _confirmedAs.clear();
     state = state.copyWith(
@@ -624,14 +628,21 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   void _applyAi() {
     final answers = {...state.decisions.answers};
     final filled = {...state.aiFilled};
+    final proposed = {for (final q in state.plan?.questions ?? const <RdImportQuestion>[]) q.key: q.proposed};
     for (final e in state.ai.entries) {
       if (!e.value.sure || answers.containsKey(e.key)) continue;
+      // The KI says what the known instrument already proposes: nothing to
+      // confirm.
+      if (proposed[e.key] != null && _sameGroupName(proposed[e.key]!, e.value.category)) continue;
       answers[e.key] = e.value.category;
       filled.add(e.key);
     }
     state = state.copyWith(decisions: state.decisions.copyWith(answers: answers), aiFilled: filled);
     _dropStaleConfirmations();
   }
+
+  static bool _sameGroupName(RdImportCategory a, RdImportCategory b) =>
+      a.newGroup != null && b.newGroup != null && a.newGroup!.trim().toLowerCase() == b.newGroup!.trim().toLowerCase();
 
   /// Switches the KI suggestions; off takes back the answers it filled in.
   void setUseAi(bool value) {
@@ -675,6 +686,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         junk: input.junk,
         answers: d.answers,
         categories: d.categories,
+        cache: input.cache,
       ),
     );
     _dropStaleConfirmations();

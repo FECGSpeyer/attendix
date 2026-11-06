@@ -14487,6 +14487,10 @@
   "@redesignImportPickTitle": {
     "description": "redesign.import.pickTitle"
   },
+  "redesignImportPreparing": "Wird vorbereitet …",
+  "@redesignImportPreparing": {
+    "description": "redesign.import.preparing"
+  },
   "redesignImportQuestionTitle": "„{name}“ gehört zu …",
   "@redesignImportQuestionTitle": {
     "description": "redesign.import.questionTitle",

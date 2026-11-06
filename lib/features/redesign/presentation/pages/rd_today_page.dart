@@ -18,6 +18,7 @@ import '../../../messages/presentation/widgets/notification_bell.dart';
 import '../../../parents/data/providers/parents_providers.dart';
 import '../../../team_organization/presentation/widgets/my_tasks_card.dart';
 import '../widgets/rd_group_switch.dart';
+import '../widgets/rd_desktop.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_applicant_today.dart';
 import '../widgets/today/rd_leader_today.dart';
@@ -74,12 +75,17 @@ class RdTodayPage extends ConsumerWidget {
         : ref.watch(currentSelfServicePlayerProvider).valueOrNull?.firstName;
     final dateLine = DateFormat.MMMMEEEEd(currentIntlLocale()).format(DateTime.now());
 
+    // Desktop: the leaders' Heute uses the width in two columns; the group
+    // already sits at the top of the sidebar.
+    final columns = !role.isParent && role.canSeeAttendanceTab && rdTodayColumns(context);
+    final sidebar = MediaQuery.sizeOf(context).width >= rdSidebarBreakpoint;
     return RdPage(
       onRefresh: () => _refresh(ref, role),
+      maxWidth: columns ? 1240 : 720,
       children: [
         Row(
           children: [
-            const Flexible(child: Align(alignment: Alignment.centerLeft, child: RdGroupChip())),
+            if (sidebar) const Spacer() else const Flexible(child: Align(alignment: Alignment.centerLeft, child: RdGroupChip())),
             const SizedBox(width: 12),
             const _RdBell(),
           ],
