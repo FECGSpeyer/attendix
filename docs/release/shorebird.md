@@ -33,34 +33,52 @@ und `android/local.properties` sind gitignored und werden dabei erzeugt.
 ## Store-Release bauen
 
 Der Store-Build **muss** mit `shorebird release` gebaut sein, sonst kommen
-keine Patches an. Build-Argumente und Dart-Defines wie bisher beim
-`flutter build` mitgeben (nach `--`).
+keine Patches an. Immer über `scripts/store_build.sh` bauen: Das Skript setzt
+die Store-Nummern (`--build-name` = `displayVersion`, `--build-number` =
+pubspec-Build + 100, siehe `docs/push-setup.md`) und ruft `shorebird release`
+mit der Flutter-Version aus `.github/workflows/ci.yml` auf (überschreibbar per
+`SHOREBIRD_FLUTTER_VERSION`). Weitere Argumente und Dart-Defines werden nach
+`--` an `flutter build` durchgereicht.
 
 ```bash
 # Android → AAB (build/app/outputs/bundle/release/app-release.aab)
-shorebird release android --flutter-version=3.47.9 -- <bisherige Build-Argumente>
+scripts/store_build.sh appbundle <Dart-Defines …>
+#   = shorebird release android --flutter-version=3.47.9 -- --build-name 5.0.0 --build-number 241 …
 
 # iOS → IPA (build/ios/ipa/)
-shorebird release ios --flutter-version=3.47.9 -- <bisherige Build-Argumente>
+scripts/store_build.sh ipa <Dart-Defines …>
+#   = shorebird release ios --flutter-version=3.47.9 -- --build-name 5.0.0 --build-number 241 …
+
+# Android → APK (nur für Tests außerhalb des Play Store)
+scripts/store_build.sh apk <Dart-Defines …>
 ```
 
 Danach AAB bzw. IPA wie gewohnt in Play Console / App Store Connect hochladen.
+**Kein Xcode-Archiv** für den Store: Das wäre kein Shorebird-Release.
+`scripts/store_build.sh ios|macos` baut weiter mit `flutter build` (z. B.
+`ios --config-only`) und warnt, dass daraus kein Shorebird-Release entsteht.
 
 ## Patch ausliefern
 
 Nur für Änderungen an Dart-Code und Assets (siehe Grenzen).
 
 ```bash
-shorebird patch android
-shorebird patch ios
-# gezielt für einen bestimmten Release-Build:
-shorebird patch android --release-version=5.0.0+<build>
-shorebird patch ios --release-version=5.0.0+<build>
+scripts/store_build.sh patch-android <Dart-Defines wie beim Release>
+#   = shorebird patch android --release-version=5.0.0+241 -- --build-name 5.0.0 --build-number 241 …
+scripts/store_build.sh patch-ios <Dart-Defines wie beim Release>
+#   = shorebird patch ios --release-version=5.0.0+241 -- --build-name 5.0.0 --build-number 241 …
 ```
 
-Gleiche Build-Argumente/Dart-Defines wie beim Release verwenden. Version und
-Build-Nummer in `pubspec.yaml` nicht ändern, sonst passt der Patch nicht zum
-Release.
+Ohne Angabe patcht das Skript den Release mit den aktuellen Store-Nummern
+(`scripts/store_build.sh --print`). Sobald `pubspec.yaml` oder `displayVersion`
+seit dem Store-Release erhöht wurden (bei jeder Feature-Änderung), den
+Release ausdrücklich angeben, sonst findet Shorebird ihn nicht:
+
+```bash
+RELEASE_VERSION=5.0.0+241 scripts/store_build.sh patch-ios <Dart-Defines wie beim Release>
+```
+
+Gleiche Dart-Defines wie beim Release verwenden.
 
 ## Grenzen
 

@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.42.3",
+      "date": "6.11.2026",
+      "changes": [
+        "🔐 Passwort-Vorschläge beim Anmelden: gespeicherte Zugangsdaten werden angeboten und nach der Anmeldung gesichert"
+      ]
+    },
+    {
       "version": "0.42.2",
       "date": "6.11.2026",
       "changes": [

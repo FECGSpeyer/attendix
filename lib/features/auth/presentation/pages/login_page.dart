@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -169,6 +170,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     }
   }
 
+  /// AUTOFILL: after a successful password login, let iOS / Android / the
+  /// browser offer to save the typed credentials (password suggestions).
+  /// Not after the demo login: it does not use the form fields.
+  void _saveCredentialsForAutofill() {
+    try {
+      TextInput.finishAutofillContext();
+    } catch (e) {
+      debugPrint('finishAutofillContext failed: $e');
+    }
+  }
+
   void _setMode(AuthMode mode) {
     setState(() {
       _mode = mode;
@@ -201,6 +213,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             _emailController.text.trim(),
             _passwordController.text,
           );
+      _saveCredentialsForAutofill();
       if (mounted) await _routeAfterAuth(user);
     } on LoginFailure catch (failure) {
       if (!mounted) return;
@@ -255,6 +268,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             _emailController.text.trim(),
             _passwordController.text,
           );
+      // Credentials are valid even if the Microsoft link fails afterwards.
+      _saveCredentialsForAutofill();
     });
     final message = result.ok
         ? l10n.loginToastMsLinked
@@ -620,7 +635,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                     RdSavedAccountsOnLogin(onPickEmail: _pickSavedEmail),
                                   KeyedSubtree(
                                     key: _formBoxKey,
-                                    child: _buildForm(context),
+                                    // AUTOFILL: e-mail + password form one
+                                    // autofill context, so iOS / Web offer
+                                    // saved passwords and to save them after
+                                    // a login. Leaving the page without a
+                                    // successful login must not offer that.
+                                    child: AutofillGroup(
+                                      onDisposeAction:
+                                          AutofillContextAction.cancel,
+                                      child: _buildForm(context),
+                                    ),
                                   ),
                                 ],
                               ),
