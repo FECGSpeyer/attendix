@@ -19721,11 +19721,29 @@ abstract class AppLocalizations {
   /// **'Kalender abonnieren'**
   String get redesignMeCalendar;
 
+  /// redesign.me.calendarIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Mit diesem Link zeigt deine Kalender-App alle Termine an und bleibt aktuell.'**
+  String get redesignMeCalendarIntro;
+
   /// redesign.me.feedback
   ///
   /// In de, this message translates to:
   /// **'Feedback geben'**
   String get redesignMeFeedback;
+
+  /// redesign.me.feedbackSend
+  ///
+  /// In de, this message translates to:
+  /// **'Senden'**
+  String get redesignMeFeedbackSend;
+
+  /// redesign.me.feedbackTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Feedback geben'**
+  String get redesignMeFeedbackTitle;
 
   /// redesign.me.forMe
   ///
@@ -19762,6 +19780,48 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Benachrichtigungen'**
   String get redesignMeNotifications;
+
+  /// redesign.me.passwordHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mindestens 6 Zeichen.'**
+  String get redesignMePasswordHint;
+
+  /// redesign.me.passwordNew
+  ///
+  /// In de, this message translates to:
+  /// **'Neues Passwort'**
+  String get redesignMePasswordNew;
+
+  /// redesign.me.passwordRepeat
+  ///
+  /// In de, this message translates to:
+  /// **'Wiederholen'**
+  String get redesignMePasswordRepeat;
+
+  /// redesign.me.photoChange
+  ///
+  /// In de, this message translates to:
+  /// **'Passbild ändern'**
+  String get redesignMePhotoChange;
+
+  /// redesign.me.saved
+  ///
+  /// In de, this message translates to:
+  /// **'Gespeichert ✓'**
+  String get redesignMeSaved;
+
+  /// redesign.me.savesItself
+  ///
+  /// In de, this message translates to:
+  /// **'Änderungen werden sofort gespeichert.'**
+  String get redesignMeSavesItself;
+
+  /// redesign.me.saving
+  ///
+  /// In de, this message translates to:
+  /// **'Wird gespeichert …'**
+  String get redesignMeSaving;
 
   /// redesign.me.whatsNew
   ///

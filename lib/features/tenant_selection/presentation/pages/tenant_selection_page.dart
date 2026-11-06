@@ -91,6 +91,8 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     // the widget was disposed"): use the captured container and router.
     final container = ProviderScope.containerOf(context, listen: false);
     final router = GoRouter.of(context);
+    final route = ModalRoute.of(context);
+    final userId = container.read(supabaseAuthProvider).currentUser?.id;
 
     try {
       // Wait for tenants to load
@@ -130,6 +132,21 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
 
       if (!mounted) return;
 
+      // An account switch opens this page from inside the tab shell: going
+      // back into the shell before this page is fully shown left "Heute"
+      // blank (old and new shell shared their navigator key). Nothing is
+      // changed before that; if the page was left meanwhile (back, link,
+      // another sign-in) the other navigation wins.
+      final shown = await untilRouteShown(route);
+      if (!mounted) return;
+      bool stillWanted() =>
+          route?.isCurrent == true &&
+          container.read(supabaseAuthProvider).currentUser?.id == userId;
+      if (!shown || !stillWanted()) {
+        setState(() => _isAutoNavigating = false);
+        return;
+      }
+
       // Set tenant locally WITHOUT triggering auth sync
       await container
           .read(currentTenantProvider.notifier)
@@ -138,11 +155,19 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       // Wait for currentTenantUserProvider to load so router doesn't redirect back
       await container.read(currentTenantUserProvider.future);
 
+      // Same checks again after the loads above: the page, the account and
+      // the group must still be the ones this run started for.
+      if (!stillWanted() ||
+          container.read(currentTenantProvider)?.id != savedTenant.id) {
+        if (mounted) setState(() => _isAutoNavigating = false);
+        return;
+      }
+
       // Get notifier BEFORE navigation (widget may be disposed after go())
       final prefsNotifier =
           container.read(userPreferencesNotifierProvider.notifier);
 
-      // Navigate FIRST (also when the router already replaced this page)
+      // Navigate FIRST, before the auth sync below
       goReplacingHistory(
         router,
         homeRouteFor(

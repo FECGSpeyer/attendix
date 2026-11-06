@@ -15084,9 +15084,21 @@
   "@redesignMeCalendar": {
     "description": "redesign.me.calendar"
   },
+  "redesignMeCalendarIntro": "Mit diesem Link zeigt deine Kalender-App alle Termine an und bleibt aktuell.",
+  "@redesignMeCalendarIntro": {
+    "description": "redesign.me.calendarIntro"
+  },
   "redesignMeFeedback": "Feedback geben",
   "@redesignMeFeedback": {
     "description": "redesign.me.feedback"
+  },
+  "redesignMeFeedbackSend": "Senden",
+  "@redesignMeFeedbackSend": {
+    "description": "redesign.me.feedbackSend"
+  },
+  "redesignMeFeedbackTitle": "Feedback geben",
+  "@redesignMeFeedbackTitle": {
+    "description": "redesign.me.feedbackTitle"
   },
   "redesignMeForMe": "Für mich",
   "@redesignMeForMe": {
@@ -15114,6 +15126,34 @@
   "redesignMeNotifications": "Benachrichtigungen",
   "@redesignMeNotifications": {
     "description": "redesign.me.notifications"
+  },
+  "redesignMePasswordHint": "Mindestens 6 Zeichen.",
+  "@redesignMePasswordHint": {
+    "description": "redesign.me.passwordHint"
+  },
+  "redesignMePasswordNew": "Neues Passwort",
+  "@redesignMePasswordNew": {
+    "description": "redesign.me.passwordNew"
+  },
+  "redesignMePasswordRepeat": "Wiederholen",
+  "@redesignMePasswordRepeat": {
+    "description": "redesign.me.passwordRepeat"
+  },
+  "redesignMePhotoChange": "Passbild ändern",
+  "@redesignMePhotoChange": {
+    "description": "redesign.me.photoChange"
+  },
+  "redesignMeSaved": "Gespeichert ✓",
+  "@redesignMeSaved": {
+    "description": "redesign.me.saved"
+  },
+  "redesignMeSavesItself": "Änderungen werden sofort gespeichert.",
+  "@redesignMeSavesItself": {
+    "description": "redesign.me.savesItself"
+  },
+  "redesignMeSaving": "Wird gespeichert …",
+  "@redesignMeSaving": {
+    "description": "redesign.me.saving"
   },
   "redesignMeWhatsNew": "Neu in dieser Version",
   "@redesignMeWhatsNew": {

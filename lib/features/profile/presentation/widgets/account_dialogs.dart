@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
@@ -11,10 +15,14 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Shows the "Passwort ändern" dialog (Ionic settings changePassword alert).
 Future<void> showChangePasswordDialog(BuildContext context) async {
-  final changed = await showAppDialog<bool>(
-    context: context,
-    builder: (_) => const ChangePasswordDialog(),
-  );
+  // REDESIGN (E2): in the Beta a sheet from below, same checks and write.
+  final beta = ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider);
+  final changed = beta
+      ? await showRdSheet<bool>(context, const ChangePasswordDialog(beta: true))
+      : await showAppDialog<bool>(
+          context: context,
+          builder: (_) => const ChangePasswordDialog(),
+        );
   if (changed == true && context.mounted) {
     ToastHelper.showSuccess(context, context.l10n.settingsPasswordChanged);
   }
@@ -36,7 +44,10 @@ Future<void> showChangeEmailDialog(BuildContext context) async {
 
 /// Dialog for changing the own password
 class ChangePasswordDialog extends ConsumerStatefulWidget {
-  const ChangePasswordDialog({super.key});
+  const ChangePasswordDialog({super.key, this.beta = false});
+
+  /// Beta look (content of an [showRdSheet] sheet).
+  final bool beta;
 
   @override
   ConsumerState<ChangePasswordDialog> createState() =>
@@ -88,6 +99,7 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.beta) return _buildBeta(context);
     if (useIosLook(context)) return _buildIos(context);
     // IOS_FORMS1 (md): Ionic md alert – underlined inputs without icons and
     // the uppercase text buttons "ABBRECHEN  ÄNDERN" right-aligned.
@@ -145,6 +157,66 @@ class _ChangePasswordDialogState extends ConsumerState<ChangePasswordDialog> {
               : Text(context.l10n.settingsChange.toUpperCase()),
         ),
       ],
+    );
+  }
+}
+
+/// REDESIGN (E2): "Passwort ändern" as a Beta sheet.
+extension on _ChangePasswordDialogState {
+  Widget _buildBeta(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: AutofillGroup(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Semantics(header: true, child: Text(l10n.settingsChangePassword, style: RdType.section(p))),
+              const SizedBox(height: 12),
+              RdGroupedList(
+                children: [
+                  RdFieldRow(
+                    label: l10n.redesignMePasswordNew,
+                    child: TextField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      autofocus: true,
+                      autofillHints: const [AutofillHints.newPassword],
+                      textInputAction: TextInputAction.next,
+                      decoration: rdInputDecoration(p, l10n.settingsNewPasswordPh),
+                    ),
+                  ),
+                  RdFieldRow(
+                    label: l10n.redesignMePasswordRepeat,
+                    child: TextField(
+                      controller: _confirmController,
+                      obscureText: true,
+                      autofillHints: const [AutofillHints.newPassword],
+                      decoration: rdInputDecoration(p, l10n.settingsRepeatPasswordPh),
+                      onSubmitted: (_) => _submit(),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Text(l10n.redesignMePasswordHint, style: RdType.meta(p, size: 13)),
+              ),
+              const SizedBox(height: 16),
+              RdPrimaryButton(
+                label: l10n.settingsChangePassword,
+                loading: _isLoading,
+                onPressed: _isLoading ? null : _submit,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
