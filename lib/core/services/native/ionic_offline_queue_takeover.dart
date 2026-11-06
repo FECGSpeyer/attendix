@@ -52,6 +52,19 @@ const _sessionTakeoverKeys = [
 /// from Flutter's uuids; the same Ionic entry is never added twice).
 const ionicQueueIdPrefix = 'ionic:';
 
+/// person_attendances columns an Ionic replay writes (Ionic db-helpers.ts
+/// pickPersonAttendanceFields), without id, changed_by/changed_at (set by the
+/// replay) and attendance_id/person_id (a queued write never moves a row).
+const _ionicPayloadColumns = {
+  'status',
+  'notes',
+  'registration_answers',
+  'duty_state',
+  'duty_assigned_by',
+  'duty_assigned_at',
+  'duty_reminder_sent',
+};
+
 /// One entry of the Ionic OfflineQueueService (`QueuedWrite`).
 @immutable
 class IonicQueuedWrite {
@@ -286,10 +299,15 @@ Future<int> _import({
             '${e.personAttendanceId} not found in an instance of the user');
         continue;
       }
+      final payload = {
+        for (final MapEntry(:key, :value) in e.payload.entries)
+          if (_ionicPayloadColumns.contains(key)) key: value,
+      };
+      if (payload.isEmpty) continue;
       writes.add(QueuedWrite(
         id: '$ionicQueueIdPrefix${e.id}',
         personAttendanceId: e.personAttendanceId,
-        payload: e.payload,
+        payload: payload,
         tenantId: target.tenantId,
         attendanceId: target.attendanceId,
         userId: userId,

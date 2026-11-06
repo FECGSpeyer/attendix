@@ -78,7 +78,10 @@ void main() {
         () async {
       setPending([
         _ionic('1', 'pa-1', {'status': 2}, userId: 'u1'),
-        _ionic('2', 'pa-2', {'status': 3, 'notes': 'krank'}),
+        // Only person_attendances columns are replayed (Ionic
+        // pickPersonAttendanceFields).
+        _ionic('2', 'pa-2',
+            {'status': 3, 'notes': 'krank', 'firstName': 'Anna', 'person_id': 9}),
         _ionic('3', 'pa-3', {'status': 1}),
         _ionic('4', 'pa-4', {'status': 1}, userId: 'other'),
       ]);
