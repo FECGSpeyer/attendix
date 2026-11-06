@@ -15,6 +15,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart';
 import '../../../parents/data/providers/parents_providers.dart';
+import '../../../team_organization/presentation/widgets/my_tasks_card.dart';
 import '../widgets/rd_group_switch.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_applicant_today.dart';
@@ -93,6 +94,8 @@ class RdTodayPage extends ConsumerWidget {
           child: Text(l10n.redesignTabToday, style: RdType.largeTitle(p)),
         ),
         const SizedBox(height: 18),
+        // Open tasks of the Teamorganisation (renders nothing when none).
+        if (!role.isParent) const MyTasksCard(),
         if (role.isParent)
           const RdParentToday()
         else if (role.canSeeAttendanceTab)
