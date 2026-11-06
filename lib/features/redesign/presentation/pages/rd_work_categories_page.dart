@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
@@ -58,7 +60,7 @@ class _RdWorkCategoriesPageState extends ConsumerState<RdWorkCategoriesPage> {
     final notifier = ref.read(songCategoryNotifierProvider.notifier);
     final name = await _askName(title: l10n.songsAddCategory);
     if (name == null || !_stillIn(tenantId)) return;
-    final created = await notifier.add(name);
+    final created = await notifier.add(name, stillValid: () => _stillIn(tenantId));
     if (created != null && mounted) ToastHelper.showSuccess(context, l10n.songsCategoryAdded);
   }
 
@@ -100,9 +102,8 @@ class _RdWorkCategoriesPageState extends ConsumerState<RdWorkCategoriesPage> {
   }
 
   /// Old sheet: the categories in the new order (`reorder`).
-  Future<bool> _saveOrder(List<SongCategory> categories, List<RdManageListSection> sections) async {
+  Future<bool> _saveOrder(int? tenantId, List<SongCategory> categories, List<RdManageListSection> sections) async {
     final l10n = context.l10n;
-    final tenantId = ref.read(currentTenantIdProvider);
     final byId = {
       for (final c in categories)
         if (c.id != null) c.id!: c,
@@ -113,7 +114,9 @@ class _RdWorkCategoriesPageState extends ConsumerState<RdWorkCategoriesPage> {
           if (byId[item.id] != null) byId[item.id]!,
     ];
     if (!_stillIn(tenantId)) return false;
-    final ok = await ref.read(songCategoryNotifierProvider.notifier).reorder(ordered);
+    final ok = await ref
+        .read(songCategoryNotifierProvider.notifier)
+        .reorder(ordered, stillValid: () => _stillIn(tenantId));
     if (!mounted) return ok;
     if (ok) {
       ToastHelper.showSuccess(context, l10n.typeSettingsOrderSaved);
@@ -126,6 +129,16 @@ class _RdWorkCategoriesPageState extends ConsumerState<RdWorkCategoriesPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    // Like the old entry: not in general groups (open by URL → Verwaltung).
+    if (ref.watch(currentTenantProvider.select((t) => t?.type == 'general'))) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) context.go(RedesignRoutes.manage);
+      });
+      return const SizedBox.shrink();
+    }
+    // The origin group of the list; keys the list so a sort started in one
+    // group is dropped on a switch and saved only into that group.
+    final tenantId = ref.watch(currentTenantIdProvider);
     final async = ref.watch(songCategoriesProvider);
     // Only lists that surely belong to the current group (no stale values
     // while reloading after a group switch).
@@ -135,6 +148,7 @@ class _RdWorkCategoriesPageState extends ConsumerState<RdWorkCategoriesPage> {
         songs == null || id == null ? null : songs.where((s) => s.categoryIds?.contains(id) ?? false).length;
 
     return RdManageListPage(
+      key: ValueKey(tenantId),
       title: rdManageTitle(l10n, RdManageEntry.workCategories),
       intro: l10n.rdWmCategoriesIntro,
       sections:
@@ -159,7 +173,7 @@ class _RdWorkCategoriesPageState extends ConsumerState<RdWorkCategoriesPage> {
       emptyIcon: Icons.sell_outlined,
       addLabel: l10n.songsAddCategory,
       onAdd: _add,
-      onReorder: categories == null ? null : (sections) => _saveOrder(categories, sections),
+      onReorder: categories == null ? null : (sections) => _saveOrder(tenantId, categories, sections),
       onRefresh: _refresh,
     );
   }

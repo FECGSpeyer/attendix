@@ -157,6 +157,7 @@ class RedesignRoutes {
     approvals,
     rolePermissions,
     extraFields,
+    workCategories,
   };
 
   /// Pages for super admins only (the old admins sheet: `role.isAdmin`).
@@ -243,6 +244,10 @@ class RedesignRoutes {
       if (role.isApplicant || role.isParent) return me;
       if (_isLeadOnly(location) && !(role.isAdmin || role.isResponsible)) return manage;
       if (_matches(_adminOnly, location) && !role.isAdmin) return manage;
+      // Werkhistorie like the old entry: leads and helpers.
+      if (_matches({workHistory}, location) && !(role.isAdmin || role.isResponsible || role.isHelperRole)) {
+        return manage;
+      }
       if (location == teachers || location.startsWith('$teachers/')) {
         if (!role.isConductor) return manage;
         if (location != teachers && !(role.isAdmin || role.isResponsible)) return teachers;

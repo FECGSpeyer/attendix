@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -7,6 +8,7 @@ import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/conductor_providers.dart';
 import '../../../../core/providers/history_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/error_message.dart';
@@ -143,6 +145,13 @@ class _RdWorkHistoryPageState extends ConsumerState<RdWorkHistoryPage> {
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
+    // Like the old entry: not in general groups (open by URL → Verwaltung).
+    if (ref.watch(currentTenantProvider.select((t) => t?.type == 'general'))) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) context.go(RedesignRoutes.manage);
+      });
+      return const SizedBox.shrink();
+    }
     final async = ref.watch(performanceHistoryProvider);
     // Old page: works are loaded on open so "+" is quick.
     ref.watch(planSongsProviderHistory);

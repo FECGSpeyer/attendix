@@ -595,11 +595,18 @@ class SongCategoryNotifier extends Notifier<AsyncValue<void>> {
   SongRepository get _repo => ref.read(songRepositoryWithTenantProvider);
 
   /// Add a new song category
-  Future<SongCategory?> add(String name) async {
+  ///
+  /// [stillValid] (optional) is asked right before the write; when it says
+  /// no (e.g. the group was switched meanwhile) nothing is written.
+  Future<SongCategory?> add(String name, {bool Function()? stillValid}) async {
     final repo = _repo; // SOL_FIX4: bind the tenant repository before the first await.
     state = const AsyncValue.loading();
     try {
       final categories = await repo.getSongCategories();
+      if (stillValid != null && !stillValid()) {
+        state = const AsyncValue.data(null);
+        return null;
+      }
       final result = await repo.addSongCategory(
         name: name,
         // Sol review: deleting no longer renumbers, so continue after the
@@ -646,13 +653,21 @@ class SongCategoryNotifier extends Notifier<AsyncValue<void>> {
   }
 
   /// Reorder categories
-  Future<bool> reorder(List<SongCategory> categories) async {
+  ///
+  /// [stillValid] (optional) is asked before each write; when it says no
+  /// the remaining writes are skipped and false is returned.
+  Future<bool> reorder(List<SongCategory> categories, {bool Function()? stillValid}) async {
     state = const AsyncValue.loading();
     // SOL_FIX3: bind the per-tenant repository once for the whole loop.
     final repo = _repo;
     try {
       for (int i = 0; i < categories.length; i++) {
         final category = categories[i];
+        if (stillValid != null && !stillValid()) {
+          state = const AsyncValue.data(null);
+          ref.invalidate(songCategoriesProvider);
+          return false;
+        }
         if (category.id != null) {
           await repo.updateSongCategory(category.id!, {'index': i});
         }
