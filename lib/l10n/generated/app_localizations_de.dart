@@ -11381,6 +11381,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Ordner aus Google Drive, Dropbox oder vom Rechner';
 
   @override
+  String get redesignImportNewGroupMessage =>
+      'Attendix legt die Gruppe erst beim Hochladen an.';
+
+  @override
   String get redesignImportNewGroupTitle => 'Neue Gruppe anlegen';
 
   @override
@@ -12910,6 +12914,149 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignTabWorks => 'Werke';
+
+  @override
+  String get redesignTenantsAnother => 'Weitere Gruppe';
+
+  @override
+  String get redesignTenantsAskOnStart => 'Gruppe nach der Anmeldung wählen';
+
+  @override
+  String get redesignTenantsAskOnStartHint =>
+      'Fragt nach jeder Anmeldung, welche Gruppe du öffnen möchtest.';
+
+  @override
+  String get redesignTenantsCannotDelete =>
+      'Nur Admins der Gruppe können sie löschen.';
+
+  @override
+  String get redesignTenantsCreate => 'Neue Gruppe gründen';
+
+  @override
+  String get redesignTenantsCreated => 'Angelegt am';
+
+  @override
+  String get redesignTenantsCurrent => 'Aktuell';
+
+  @override
+  String get redesignTenantsDelete => 'Gruppe löschen';
+
+  @override
+  String get redesignTenantsDeleteAccount => 'Konto löschen';
+
+  @override
+  String get redesignTenantsDeleteDone => 'Die Gruppe wurde gelöscht.';
+
+  @override
+  String get redesignTenantsDeleteFailed =>
+      'Die Gruppe konnte nicht gelöscht werden.';
+
+  @override
+  String redesignTenantsDeleteMessage(Object name) {
+    return '„$name“ wird mit allen Daten gelöscht. Das kann nicht rückgängig gemacht werden. Gib zur Bestätigung den Namen der Gruppe ein:';
+  }
+
+  @override
+  String get redesignTenantsDeleteNamePh => 'Name der Gruppe';
+
+  @override
+  String get redesignTenantsDeleteTitle => 'Gruppe löschen?';
+
+  @override
+  String get redesignTenantsDeleteWrongName => 'Der Name stimmt nicht.';
+
+  @override
+  String get redesignTenantsDetailTitle => 'Gruppe';
+
+  @override
+  String get redesignTenantsDetails => 'Details';
+
+  @override
+  String get redesignTenantsFavorite => 'Als Favorit markieren';
+
+  @override
+  String redesignTenantsFavoriteRemoved(Object name) {
+    return '„$name“ ist kein Favorit mehr.';
+  }
+
+  @override
+  String redesignTenantsFavoriteSet(Object name) {
+    return '„$name“ ist jetzt Favorit.';
+  }
+
+  @override
+  String get redesignTenantsIntro => 'Tippe auf eine Gruppe, um sie zu öffnen.';
+
+  @override
+  String get redesignTenantsJoin => 'Einer Gruppe beitreten';
+
+  @override
+  String get redesignTenantsMembers => 'Mitglieder';
+
+  @override
+  String redesignTenantsMore(Object name) {
+    return 'Mehr zu $name';
+  }
+
+  @override
+  String get redesignTenantsNewCreated => 'Die Gruppe wurde gegründet.';
+
+  @override
+  String get redesignTenantsNewMain => 'Hauptgruppe';
+
+  @override
+  String get redesignTenantsNewMainHint =>
+      'Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. Weitere Gruppen wie Sopran oder Geigen legst du später in der Verwaltung an.';
+
+  @override
+  String get redesignTenantsNewMainName => 'Name der Hauptgruppe';
+
+  @override
+  String get redesignTenantsNewMissing =>
+      'Bitte fülle Name, Kürzel und Hauptgruppe aus.';
+
+  @override
+  String get redesignTenantsNewName => 'Name';
+
+  @override
+  String get redesignTenantsNewNameHint => 'Wird in der App angezeigt.';
+
+  @override
+  String get redesignTenantsNewShort => 'Kürzel';
+
+  @override
+  String get redesignTenantsNewShortHint =>
+      'Für kurze Anzeigen, z. B. in der Gruppenauswahl.';
+
+  @override
+  String get redesignTenantsNewSubmit => 'Gründen';
+
+  @override
+  String get redesignTenantsNewTitle => 'Neue Gruppe';
+
+  @override
+  String get redesignTenantsNewType => 'Art der Gruppe';
+
+  @override
+  String get redesignTenantsNotFound => 'Diese Gruppe gibt es nicht mehr.';
+
+  @override
+  String get redesignTenantsRegion => 'Region';
+
+  @override
+  String get redesignTenantsRole => 'Deine Rolle';
+
+  @override
+  String get redesignTenantsStart => 'Nach der Anmeldung';
+
+  @override
+  String get redesignTenantsTitle => 'Gruppen';
+
+  @override
+  String get redesignTenantsTypeGeneral => 'Allgemein';
+
+  @override
+  String get redesignTenantsUnfavorite => 'Kein Favorit mehr';
 
   @override
   String get redesignTodayAllEvents => 'Alle Termine';

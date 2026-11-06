@@ -1,10 +1,26 @@
 {
   "versions": [
     {
-      "version": "0.45.0",
+      "version": "0.48.0",
       "date": "6.11.2026",
       "changes": [
         "✨ Beta: Verwaltung › Rollen und Rechte als Beta-Seite, jeder Schalter speichert sofort"
+      ]
+    },
+    {
+      "version": "0.47.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Gruppenauswahl, Gruppen-Details und „Neue Gruppe“ im neuen Design, Beitreten und Gründen direkt im Blatt „Gruppe wechseln“",
+        "✨ Beta: „Konto löschen“ auch ohne Gruppe"
+      ]
+    },
+    {
+      "version": "0.44.1",
+      "date": "6.11.2026",
+      "changes": [
+        "🐛 Noten importieren: Die Antwort-Knöpfe bei unbekannten Stimmen lassen sich nicht mehr versehentlich abwählen; Tippen auf einen Vorschlag der KI übernimmt ihn (das ✦ verschwindet), und „Neue Gruppe“ sagt, dass die Gruppe erst beim Hochladen angelegt wird",
+        "✨ Noten importieren: „Google Drive öffnen“ öffnet auf dem Handy die Drive-App, wenn sie installiert ist (in der Android-Web-App auch aus dem Browser)"
       ]
     },
     {

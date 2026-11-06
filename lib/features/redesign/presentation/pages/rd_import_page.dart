@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/providers/pwa_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -229,11 +230,16 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     _pick();
   }
 
+  /// Google Drive (or the shared folder), in the Drive app when it is on
+  /// the phone, else in the browser.
   Future<void> _openDrive([RdDriveRef? folder]) async {
-    final uri = folder == null ? Uri.https('drive.google.com', '/') : rdDriveFolderUrl(folder);
-    try {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (_) {}
+    final page = folder == null ? Uri.https('drive.google.com', '/drive/my-drive') : rdDriveFolderUrl(folder);
+    final intents = ref.read(pwaServiceProvider).opensAndroidIntents();
+    for (final (uri, mode) in rdDriveLaunches(page, platform: defaultTargetPlatform, web: kIsWeb, intents: intents)) {
+      try {
+        if (await launchUrl(uri, mode: mode)) return;
+      } catch (_) {}
+    }
   }
 
   Future<void> _pick() async {
@@ -719,6 +725,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
               question: q,
               answer: d.answers[q.key],
               ai: state.useAi ? state.ai[q.key]?.category : null,
+              filled: state.aiFilled.contains(q.key),
               onAnswer: (a) => _controller.answer(q.key, a),
             ),
             const SizedBox(height: 10),
@@ -1034,11 +1041,54 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   }
 }
 
+/// The ways to open the Drive [page], best first. On a phone the Drive app
+/// comes first: the app by its own link on iOS, an app-only launch of the
+/// page in the app, and in Chrome on Android ([intents]) an intent link that
+/// falls back to the page itself. Otherwise the browser.
+@visibleForTesting
+List<(Uri, LaunchMode)> rdDriveLaunches(
+  Uri page, {
+  required TargetPlatform platform,
+  required bool web,
+  bool intents = false,
+}) {
+  final browser = (page, LaunchMode.externalApplication);
+  final phone = platform == TargetPlatform.iOS || platform == TargetPlatform.android;
+  if (!phone) return [browser];
+  if (web) {
+    // iOS and other browsers have no way to the app without an error page
+    // when it is missing; Drive's page offers the app itself.
+    if (platform != TargetPlatform.android || !intents) return [browser];
+    final fallback = Uri.encodeComponent(page.toString());
+    final rest = page.hasQuery ? '${page.path}?${page.query}' : page.path;
+    return [
+      (
+        Uri.parse('intent://${page.host}$rest#Intent;scheme=https;package=com.google.android.apps.docs;S.browser_fallback_url=$fallback;end'),
+        LaunchMode.externalApplication,
+      ),
+    ];
+  }
+  return [
+    if (platform == TargetPlatform.iOS && page.path == '/drive/my-drive') (Uri.parse('googledrive://'), LaunchMode.externalApplication),
+    (page, LaunchMode.externalNonBrowserApplication),
+    browser,
+  ];
+}
+
 /// A question about an unknown part name with its answers as chips, always
 /// in the same order: suggestion (✦ from the KI), the own pick, "Neue
-/// Gruppe", "Ohne Zuordnung", "Andere …" last.
+/// Gruppe", "Ohne Zuordnung", "Andere …" last. They work like radio
+/// buttons: tapping the chosen answer keeps it, and tapping the one the KI
+/// filled in takes it as the person's own (the ✦ goes).
 class _QuestionCard extends StatelessWidget {
-  const _QuestionCard({required this.plan, required this.question, required this.answer, required this.onAnswer, this.ai});
+  const _QuestionCard({
+    required this.plan,
+    required this.question,
+    required this.answer,
+    required this.onAnswer,
+    this.ai,
+    this.filled = false,
+  });
 
   final RdImportPlan plan;
   final RdImportQuestion question;
@@ -1047,6 +1097,9 @@ class _QuestionCard extends StatelessWidget {
 
   /// The KI's guess (marked ✦).
   final RdImportCategory? ai;
+
+  /// Whether [answer] was filled in by the KI and not taken yet.
+  final bool filled;
 
   @override
   Widget build(BuildContext context) {
@@ -1066,14 +1119,26 @@ class _QuestionCard extends StatelessWidget {
         : null;
     // The KI's guess gets its own chip unless one of the fixed ones is it.
     final aiChip = ai != null && ai != suggestion && ai != RdImportCategory.other && ai != newGroup;
-    void toggle(RdImportCategory c) => onAnswer(answer == c ? null : c);
-    RdChoiceChip chip(RdImportCategory c, String text, {VoidCallback? onTap}) => RdChoiceChip(
-          label: text,
-          icon: c == ai ? Icons.auto_awesome : null,
-          semanticLabel: c == ai ? l10n.redesignImportAiMark(text) : null,
-          selected: answer == c,
-          onTap: onTap ?? () => toggle(c),
-        );
+    Future<void> pickOther() async {
+      final c = await rdPickImportCategory(context, plan, current: answer, title: l10n.redesignImportQuestionTitle(label));
+      if (c != null) onAnswer(c);
+    }
+
+    RdChoiceChip chip(RdImportCategory c, String text, {VoidCallback? onTap}) {
+      // The ✦ marks the KI's guess until the person has taken it.
+      final mark = c == ai && (answer != c || filled);
+      return RdChoiceChip(
+        label: text,
+        icon: mark ? Icons.auto_awesome : null,
+        semanticLabel: mark ? l10n.redesignImportAiMark(text) : null,
+        selected: answer == c,
+        onTap: onTap ??
+            () {
+              if (answer != c || filled) onAnswer(c);
+            },
+      );
+    }
+
     return RdCard(
       padding: const EdgeInsets.all(14),
       child: Column(
@@ -1091,31 +1156,27 @@ class _QuestionCard extends StatelessWidget {
               if (aiChip)
                 chip(ai, ai.newGroup != null ? l10n.redesignImportAnswerNewGroup(ai.newGroup!) : rdImportCategoryLabel(context, plan, ai)),
               if (picked != null)
-                RdChoiceChip(label: rdImportCategoryLabel(context, plan, picked), selected: true, onTap: () => onAnswer(null)),
+                RdChoiceChip(label: rdImportCategoryLabel(context, plan, picked), selected: true, onTap: pickOther),
               if (newName.isNotEmpty)
                 chip(
                   newGroup,
                   l10n.redesignImportAnswerNewGroup(newGroup.newGroup!),
                   onTap: () async {
-                    if (answer == newGroup) return onAnswer(null);
+                    // The KI's new group is taken as it is; a chosen one
+                    // opens the name again to rename it.
+                    if (answer == newGroup && filled) return onAnswer(newGroup);
                     final name = await showAppPrompt(
                       context,
                       title: l10n.redesignImportNewGroupTitle,
-                      initialValue: newName,
+                      message: l10n.redesignImportNewGroupMessage,
+                      initialValue: newGroup.newGroup,
                       confirmText: l10n.redesignImportNewGroupTitle,
                     );
                     if (name != null && name.trim().isNotEmpty) onAnswer(RdImportCategory(newGroup: name.trim()));
                   },
                 ),
               chip(RdImportCategory.other, l10n.redesignImportAnswerNone),
-              RdChoiceChip(
-                label: l10n.redesignImportAnswerOther,
-                selected: false,
-                onTap: () async {
-                  final c = await rdPickImportCategory(context, plan, current: answer, title: l10n.redesignImportQuestionTitle(label));
-                  if (c != null) onAnswer(c);
-                },
-              ),
+              RdChoiceChip(label: l10n.redesignImportAnswerOther, selected: false, onTap: pickOther),
             ],
           ),
         ],

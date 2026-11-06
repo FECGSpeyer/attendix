@@ -18,6 +18,11 @@ import '../../../auth/presentation/widgets/ion_form_list.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
 
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 /// Ionic settings `openCreateInstanceModal`:
 /// `modalController.create({ component: RegisterPage, presentingElement })`.
 /// On iOS a card modal ([showIosCardModal]), in md mode a regular
@@ -146,6 +151,8 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
 
   @override
   Widget build(BuildContext context) {
+    // REDESIGN (Ich und Einstieg, E1): "Neue Gruppe" as one Beta form page.
+    if (ref.watch(redesignEnabledProvider)) return _buildBeta(context);
     final l10n = context.l10n;
     final texts = TenantTypeTexts.of(_selectedType, l10n);
     final theme = Theme.of(context);
@@ -513,6 +520,107 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
   }
 
   /// Ionic register.page logout(): sign out and back to the login page.
+  void _close() {
+    if (widget.isModal) {
+      Navigator.of(context).pop();
+    } else if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/tenants');
+    }
+  }
+
+  /// REDESIGN (E1): same fields, checks and [_createTenant] as the wizard,
+  /// on one page: "Abbrechen · Neue Gruppe · Gründen".
+  Widget _buildBeta(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final texts = TenantTypeTexts.of(_selectedType, l10n);
+    final textStyle = TextStyle(fontSize: 17, color: p.text);
+    Widget hint(String text) => Padding(
+          padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+          child: Text(text, style: RdType.meta(p, size: 13)),
+        );
+    Widget field(String label, TextEditingController controller, String placeholder, {int? maxLength, String? key}) =>
+        RdFieldRow(
+          label: label,
+          child: TextField(
+            key: key == null ? null : Key(key),
+            controller: controller,
+            enabled: !_isLoading,
+            maxLength: maxLength,
+            textCapitalization: TextCapitalization.sentences,
+            textInputAction: TextInputAction.next,
+            style: textStyle,
+            decoration: rdInputDecoration(p, placeholder).copyWith(counterText: ''),
+          ),
+        );
+    return PopScope(
+      canPop: _canDismiss && !_isLoading,
+      child: Scaffold(
+        backgroundColor: p.bg,
+        body: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              RdFormTopBar(
+                title: l10n.redesignTenantsNewTitle,
+                cancel: l10n.redesignCommonCancel,
+                submit: l10n.redesignTenantsNewSubmit,
+                saving: _isLoading,
+                onCancel: _canDismiss && !_isLoading ? _close : null,
+                onSubmit: _isLoading
+                    ? null
+                    : () => _isComplete
+                        ? _createTenant()
+                        : ToastHelper.showError(context, l10n.redesignTenantsNewMissing),
+              ),
+              Expanded(
+                child: RdFormBody(
+                  children: [
+                    RdGroupLabel(l10n.redesignTenantsNewType),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final type in const ['choir', 'orchestra', 'general'])
+                          RdChoiceChip(
+                            label: type == 'general' ? l10n.redesignTenantsTypeGeneral : TenantTypeTexts.of(type, l10n).label,
+                            selected: _selectedType == type,
+                            onTap: _isLoading ? null : () => setState(() => _selectedType = type),
+                          ),
+                      ],
+                    ),
+                    hint(texts.help),
+                    const SizedBox(height: 20),
+                    RdGroupedList(
+                      children: [
+                        field(l10n.redesignTenantsNewName, _longNameController, texts.namePlaceholder,
+                            maxLength: 50, key: 'rd-tenant-new-name'),
+                        field(l10n.redesignTenantsNewShort, _shortNameController, texts.shortPlaceholder,
+                            key: 'rd-tenant-new-short'),
+                      ],
+                    ),
+                    hint('${l10n.redesignTenantsNewNameHint} ${l10n.redesignTenantsNewShortHint}'),
+                    const SizedBox(height: 20),
+                    RdGroupLabel(l10n.redesignTenantsNewMain),
+                    RdGroupedList(
+                      children: [
+                        field(l10n.redesignTenantsNewMainName, _mainGroupNameController, texts.mainGroupPlaceholder,
+                            key: 'rd-tenant-new-main'),
+                      ],
+                    ),
+                    hint(l10n.redesignTenantsNewMainHint),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _logout() async {
     final supabase = ref.read(supabaseClientProvider);
     await ref.read(currentTenantProvider.notifier).clearTenant();
@@ -522,44 +630,8 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
   }
 
   /// DB_REVIEW_REST (F4): Ionic register.page confirmDeleteAccount.
-  Future<void> _confirmDeleteAccount() async {
-    final l10n = context.l10n;
-    final confirmed = await showAppDialog<bool>(
-      context: context,
-      builder: (dialogContext) => AppAlertDialog(
-        title: Text(l10n.registerDeleteHeader),
-        content: Text(l10n.registerDeleteMessage),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(l10n.commonCancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-            child: Text(l10n.registerDeleteConfirm),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true || !mounted) return;
+  Future<void> _confirmDeleteAccount() => confirmDeleteAccountWithoutGroup(context, ref);
 
-    ToastHelper.showInfo(context, l10n.registerDeleteRunning);
-    try {
-      await ref.read(accountNotifierProvider.notifier).deleteAccount();
-      if (!mounted) return;
-      ToastHelper.showSuccess(context, l10n.registerDeleteDone);
-      context.go('/login');
-    } catch (e) {
-      if (!mounted) return;
-      final message = e is RepositoryException ? e.message : e.toString();
-      ToastHelper.showError(
-        context,
-        l10n.registerDeleteFailed(
-            message.isEmpty ? l10n.commonUnknown : message),
-      );
-    }
-  }
 
   /// Ionic main-group info `ion-popover` at the help button
   /// (register.mainGroupInfoHtml); a tap outside closes it.
@@ -591,7 +663,13 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                 timezone: deviceTimezone(),
               );
 
-      if (mounted) ToastHelper.showSuccess(context, context.l10n.dbInstanceCreated);
+      final beta = ref.read(redesignEnabledProvider);
+      if (mounted) {
+        ToastHelper.showSuccess(
+          context,
+          beta ? context.l10n.redesignTenantsNewCreated : context.l10n.dbInstanceCreated,
+        );
+      }
 
       // Refresh the tenants list
       ref.invalidate(userTenantsProvider);
@@ -607,7 +685,11 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
       if (mounted) {
         final router = GoRouter.of(context);
         if (widget.isModal) Navigator.of(context).pop();
-        router.go(Role.admin.defaultRoute);
+        if (beta) {
+          router.go(RedesignRoutes.today);
+        } else {
+          router.go(Role.admin.defaultRoute);
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -741,6 +823,48 @@ class _IonCard extends StatelessWidget {
         padding: padding ?? const EdgeInsets.fromLTRB(20, 20, 20, 8),
         child: child,
       ),
+    );
+  }
+}
+
+/// Ionic register-account-menu "Konto löschen" (user without any group):
+/// confirm, delete the account, back to the login. Also used by the Beta
+/// page "Ohne Gruppe" ([RdNoGroupPage]).
+Future<void> confirmDeleteAccountWithoutGroup(BuildContext context, WidgetRef ref) async {
+  final l10n = context.l10n;
+  final confirmed = await showAppDialog<bool>(
+    context: context,
+    builder: (dialogContext) => AppAlertDialog(
+      title: Text(l10n.registerDeleteHeader),
+      content: Text(l10n.registerDeleteMessage),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(false),
+          child: Text(l10n.commonCancel),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(dialogContext).pop(true),
+          style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+          child: Text(l10n.registerDeleteConfirm),
+        ),
+      ],
+    ),
+  );
+  if (confirmed != true || !context.mounted) return;
+
+  ToastHelper.showInfo(context, l10n.registerDeleteRunning);
+  try {
+    await ref.read(accountNotifierProvider.notifier).deleteAccount();
+    if (!context.mounted) return;
+    ToastHelper.showSuccess(context, l10n.registerDeleteDone);
+    context.go('/login');
+  } catch (e) {
+    if (!context.mounted) return;
+    final message = e is RepositoryException ? e.message : e.toString();
+    ToastHelper.showError(
+      context,
+      l10n.registerDeleteFailed(
+          message.isEmpty ? l10n.commonUnknown : message),
     );
   }
 }
