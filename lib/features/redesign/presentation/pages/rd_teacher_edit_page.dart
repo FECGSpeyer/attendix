@@ -106,8 +106,9 @@ class _RdTeacherEditPageState extends ConsumerState<RdTeacherEditPage> {
     _instruments = [...teacher.instruments];
   }
 
+  /// A failing task never blocks the writes after it.
   void _enqueue(Future<void> Function() task) {
-    _queue = _queue.then((_) => task());
+    _queue = _queue.then((_) => task()).catchError((Object _) {});
   }
 
   /// Writes [updates]; reports a failure while the page is open.

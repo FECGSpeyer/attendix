@@ -20,7 +20,7 @@ import '../../../settings/presentation/pages/extra_fields_page.dart' show extraF
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
-import 'rd_extra_fields_page.dart' show rdSaveExtraFields;
+import 'rd_extra_fields_page.dart' show rdSaveExtraFields, rdSerialExtraFieldWrite;
 
 /// The text the old page shows in the default field: a boolean has none, a
 /// legacy default `false` (Ionic emptyField) shows as empty.
@@ -155,8 +155,9 @@ class _RdExtraFieldEditPageState extends ConsumerState<RdExtraFieldEditPage> {
     return option;
   }
 
+  /// A failing task never blocks the writes after it.
   void _enqueue(Future<void> Function() task) {
-    _queue = _queue.then((_) => task());
+    _queue = _queue.then((_) => task()).catchError((Object _) {});
   }
 
   /// Applies [change] to the field as stored now and saves both lists (like
@@ -166,22 +167,25 @@ class _RdExtraFieldEditPageState extends ConsumerState<RdExtraFieldEditPage> {
     final repo = _repo;
     if (_deleted || repo == null || !repo.hasTenantId || !_session.isCurrent()) return false;
     final read = _container.read;
-    final tenant = read(currentTenantProvider);
-    if (tenant?.id != repo.currentTenantId) return false;
-    final list = _listOf(tenant, _song);
-    final index = list.indexWhere((f) => f.id == _fieldId);
-    if (index < 0) return false;
-    final next = change(list[index]);
-    if (_sameField(next, list[index])) return true;
-    final updated = [...list]..[index] = next;
     try {
-      final ok = await rdSaveExtraFields(
-        read,
-        repo,
-        persons: _song ? _listOf(tenant, false) : updated,
-        songs: _song ? updated : _listOf(tenant, true),
-      );
-      if (!ok) throw StateError('tenant changed');
+      final ok = await rdSerialExtraFieldWrite(() async {
+        // Both lists as stored now (after every earlier write).
+        final tenant = read(currentTenantProvider);
+        if (tenant?.id != repo.currentTenantId) return false;
+        final list = _listOf(tenant, _song);
+        final index = list.indexWhere((f) => f.id == _fieldId);
+        if (index < 0) return false;
+        final next = change(list[index]);
+        if (_sameField(next, list[index])) return true;
+        final updated = [...list]..[index] = next;
+        return rdSaveExtraFields(
+          read,
+          repo,
+          persons: _song ? _listOf(tenant, false) : updated,
+          songs: _song ? updated : _listOf(tenant, true),
+        );
+      });
+      if (!ok) throw StateError('field or tenant gone');
       return true;
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
@@ -290,6 +294,13 @@ class _RdExtraFieldEditPageState extends ConsumerState<RdExtraFieldEditPage> {
     final l10n = context.l10n;
     final repo = _repo;
     final value = option.controller.text;
+    // A selection keeps one option: removing the last one would move every
+    // person to an empty value while the stored field keeps the option.
+    if (value.trim().isNotEmpty &&
+        !_options.any((o) => !identical(o, option) && o.controller.text.trim().isNotEmpty)) {
+      ToastHelper.showError(context, l10n.redesignExtraFieldEditOptionsNeeded);
+      return;
+    }
     final stored = _listOf(ref.read(currentTenantProvider), _song).where((f) => f.id == _fieldId).firstOrNull;
     if (repo != null && value.isNotEmpty && (stored?.options ?? const []).contains(value)) {
       final ok = await DialogHelper.showConfirmation(
@@ -403,10 +414,15 @@ class _RdExtraFieldEditPageState extends ConsumerState<RdExtraFieldEditPage> {
       if (!mounted) return;
       _deleted = true;
       var ok = false;
+      final read = ref.read;
       try {
-        final tenant = ref.read(currentTenantProvider);
-        List<ExtraField> without(bool song) => [..._listOf(tenant, song).where((f) => song != _song || f.id != _fieldId)];
-        ok = await rdSaveExtraFields(ref.read, repo, persons: without(false), songs: without(true));
+        ok = await rdSerialExtraFieldWrite(() async {
+          final tenant = read(currentTenantProvider);
+          List<ExtraField> without(bool song) => [
+            ..._listOf(tenant, song).where((f) => song != _song || f.id != _fieldId),
+          ];
+          return rdSaveExtraFields(read, repo, persons: without(false), songs: without(true));
+        });
       } catch (_) {
         ok = false;
       }

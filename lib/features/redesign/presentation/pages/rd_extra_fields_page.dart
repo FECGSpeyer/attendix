@@ -17,6 +17,18 @@ import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
 
+Future<void> _extraFieldWrites = Future.value();
+
+/// Runs [task] after every earlier write of the extra fields from the Beta
+/// pages (list and edit page), so each one builds both lists from the state
+/// the previous one left (a save still running from a closed edit page is
+/// never overwritten by a reorder or a new field).
+Future<T> rdSerialExtraFieldWrite<T>(Future<T> Function() task) {
+  final result = _extraFieldWrites.then((_) => task());
+  _extraFieldWrites = result.then((_) {}, onError: (Object _) {});
+  return result;
+}
+
 /// Saves the person and work fields of [repo]'s tenant like "Speichern" of
 /// the old page (definitions, then the values are cleaned). Returns false
 /// without writing when that tenant is no longer the current one (the lists
@@ -58,8 +70,7 @@ class _RdExtraFieldsPageState extends ConsumerState<RdExtraFieldsPage> {
   Future<bool> _saveOrder(List<RdManageListSection> sections) async {
     final l10n = context.l10n;
     final repo = ref.read(extraFieldsRepositoryWithTenantProvider);
-    final tenant = ref.read(currentTenantProvider);
-    if (tenant == null) return false;
+    final read = ref.read;
     List<ExtraField> ordered(Object key, List<ExtraField> fields) {
       final byId = {for (final f in fields) f.id: f};
       final items = sections.where((s) => s.key == key).firstOrNull?.items ?? const <RdManageListItem>[];
@@ -70,12 +81,17 @@ class _RdExtraFieldsPageState extends ConsumerState<RdExtraFieldsPage> {
 
     var ok = false;
     try {
-      ok = await rdSaveExtraFields(
-        ref.read,
-        repo,
-        persons: ordered(ExtraFieldTarget.person, tenant.additionalFields ?? const []),
-        songs: ordered(ExtraFieldTarget.song, tenant.songAdditionalFields ?? const []),
-      );
+      ok = await rdSerialExtraFieldWrite(() async {
+        // The fields as stored now (after earlier writes).
+        final tenant = read(currentTenantProvider);
+        if (tenant == null) return false;
+        return rdSaveExtraFields(
+          read,
+          repo,
+          persons: ordered(ExtraFieldTarget.person, tenant.additionalFields ?? const []),
+          songs: ordered(ExtraFieldTarget.song, tenant.songAdditionalFields ?? const []),
+        );
+      });
     } catch (_) {
       ok = false;
     }
@@ -120,16 +136,21 @@ class _RdExtraFieldsPageState extends ConsumerState<RdExtraFieldsPage> {
       fields: () => fieldsOf(ref.read(currentTenantProvider)),
     );
     if (field == null || !mounted) return;
-    final tenant = ref.read(currentTenantProvider);
+    final read = ref.read;
     setState(() => _adding = true);
     var ok = false;
     try {
-      ok = await rdSaveExtraFields(
-        ref.read,
-        repo,
-        persons: song ? (tenant?.additionalFields ?? const []) : [...?tenant?.additionalFields, field],
-        songs: song ? [...?tenant?.songAdditionalFields, field] : (tenant?.songAdditionalFields ?? const []),
-      );
+      ok = await rdSerialExtraFieldWrite(() async {
+        final tenant = read(currentTenantProvider);
+        // Same id added meanwhile (old sheet checks when it closes).
+        if (fieldsOf(tenant).any((f) => f.id == field.id)) return false;
+        return rdSaveExtraFields(
+          read,
+          repo,
+          persons: song ? (tenant?.additionalFields ?? const []) : [...?tenant?.additionalFields, field],
+          songs: song ? [...?tenant?.songAdditionalFields, field] : (tenant?.songAdditionalFields ?? const []),
+        );
+      });
     } catch (_) {
       ok = false;
     }
