@@ -118,7 +118,7 @@ case "$target" in
     # internal version bump the current numbers no longer match the store
     # release: then pass it explicitly, e.g. RELEASE_VERSION=5.0.0+241.
     release=${RELEASE_VERSION:-$name+$number}
-    if [[ ! "$release" =~ ^[0-9][0-9.]*\+[0-9]+$ ]]; then
+    if [[ ! "$release" =~ ^[0-9]+\.[0-9]+\.[0-9]+\+[0-9]+$ ]]; then
       echo "store_build: RELEASE_VERSION must look like 5.0.0+241, got '$release'" >&2
       exit 1
     fi
