@@ -85,7 +85,7 @@ Diese Punkte entscheiden, ob Play und App Store den Build überhaupt annehmen.
 | # | Prüfung | iPhone | iPad | Android | Web |
 |---|---|---|---|---|---|
 | 35 | attendix.de-Link aus Mail/Telegram öffnet die App auf der richtigen Seite (Universal/App Links). Auch bei laufender App in dieselbe Instanz (native-f45e9256, x-49efd91be0) | ☐ | ☐ | ☐ | – |
-| 36 | Android: Link in Gmail, WhatsApp und SMS antippen (App war beendet und im Hintergrund), danach das Homescreen-Icon tippen. Kein leerer Bildschirm. Ionic: `singleTask`, Flutter `singleTop` (x-3340d46ef9) | – | – | ☐ | – |
+| 36 | Android: Link in Gmail, WhatsApp und SMS antippen (App war beendet und im Hintergrund), danach das Homescreen-Icon tippen. Kein leerer Bildschirm. Beide nutzen `singleTask` (seit PR #285) (x-3340d46ef9) | – | – | ☐ | – |
 | 37 | Passwort-zurücksetzen- und Bestätigungslink aus der Mail funktioniert, auch auf einem anderen Gerät als dem, das ihn angefordert hat | ☐ | ☐ | ☐ | ☐ |
 | 38 | Ablaufplan-Link teilen. Ionic öffnet das System-Teilen-Menü (auch iPad als Popover), sonst Zwischenablage. Flutter fällt auf dem iPad auf „Link kopiert“ zurück (effect-cc0f301b, effect-af3bb049, effect-9082e8f4) | ☐ | ☐ | ☐ | ☐ |
 | 39 | Werk-Datei oder ZIP teilen bzw. herunterladen. Auf dem iPad darf kein Fehler erscheinen (share_plus ohne `sharePositionOrigin`) (x-562b23ba0c, effect-8cf392b2) | ☐ | ☐ | ☐ | ☐ |
