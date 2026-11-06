@@ -15592,12 +15592,31 @@
   "@redesignPlanCollapsed": {
     "description": "redesign.plan.collapsed"
   },
+  "redesignPlanContent": "Inhalt",
+  "@redesignPlanContent": {
+    "description": "redesign.plan.content"
+  },
   "redesignPlanCopied": "Ablauf vom {date} übernommen",
   "@redesignPlanCopied": {
     "description": "redesign.plan.copied",
     "placeholders": {
       "date": {}
     }
+  },
+  "redesignPlanCopyOf": "Kopie von „{name}“",
+  "@redesignPlanCopyOf": {
+    "description": "redesign.plan.copyOf",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPlanCreatePlan": "Plan anlegen",
+  "@redesignPlanCreatePlan": {
+    "description": "redesign.plan.createPlan"
+  },
+  "redesignPlanDay": "Tag",
+  "@redesignPlanDay": {
+    "description": "redesign.plan.day"
   },
   "redesignPlanDelete": "Löschen",
   "@redesignPlanDelete": {
@@ -15606,6 +15625,10 @@
   "redesignPlanDeleteHint": "Mit Rückgängig",
   "@redesignPlanDeleteHint": {
     "description": "redesign.plan.deleteHint"
+  },
+  "redesignPlanDownload": "Herunterladen",
+  "@redesignPlanDownload": {
+    "description": "redesign.plan.download"
   },
   "redesignPlanDrag": "Ziehen zum Sortieren",
   "@redesignPlanDrag": {
@@ -15749,6 +15772,14 @@
   "@redesignPlanMoveUp": {
     "description": "redesign.plan.moveUp"
   },
+  "redesignPlanNameHint": "Name (optional)",
+  "@redesignPlanNameHint": {
+    "description": "redesign.plan.nameHint"
+  },
+  "redesignPlanNewPlan": "Neuer Plan",
+  "@redesignPlanNewPlan": {
+    "description": "redesign.plan.newPlan"
+  },
   "redesignPlanNext": "Nächster Termin",
   "@redesignPlanNext": {
     "description": "redesign.plan.next"
@@ -15830,9 +15861,17 @@
   "@redesignPlanShareHint": {
     "description": "redesign.plan.shareHint"
   },
+  "redesignPlanSongInPlan": "im Ablauf",
+  "@redesignPlanSongInPlan": {
+    "description": "redesign.plan.songInPlan"
+  },
   "redesignPlanStart": "Beginn",
   "@redesignPlanStart": {
     "description": "redesign.plan.start"
+  },
+  "redesignPlanTelegram": "Per Telegram",
+  "@redesignPlanTelegram": {
+    "description": "redesign.plan.telegram"
   },
   "redesignPlanTemplateDelete": "Vorlage löschen",
   "@redesignPlanTemplateDelete": {
@@ -15856,6 +15895,18 @@
     "placeholders": {
       "time": {}
     }
+  },
+  "redesignPlanViewNow": "Jetzt",
+  "@redesignPlanViewNow": {
+    "description": "redesign.plan.viewNow"
+  },
+  "redesignPlanViewWhich": "Welcher Plan",
+  "@redesignPlanViewWhich": {
+    "description": "redesign.plan.viewWhich"
+  },
+  "redesignPlanViewWhole": "Ganzer Ablauf",
+  "@redesignPlanViewWhole": {
+    "description": "redesign.plan.viewWhole"
   },
   "redesignPultAllOpen": "Alle Offenen da",
   "@redesignPultAllOpen": {

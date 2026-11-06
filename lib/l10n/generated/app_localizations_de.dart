@@ -12608,15 +12608,32 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanCollapsed => 'eingeklappt';
 
   @override
+  String get redesignPlanContent => 'Inhalt';
+
+  @override
   String redesignPlanCopied(Object date) {
     return 'Ablauf vom $date übernommen';
   }
+
+  @override
+  String redesignPlanCopyOf(Object name) {
+    return 'Kopie von „$name“';
+  }
+
+  @override
+  String get redesignPlanCreatePlan => 'Plan anlegen';
+
+  @override
+  String get redesignPlanDay => 'Tag';
 
   @override
   String get redesignPlanDelete => 'Löschen';
 
   @override
   String get redesignPlanDeleteHint => 'Mit Rückgängig';
+
+  @override
+  String get redesignPlanDownload => 'Herunterladen';
 
   @override
   String get redesignPlanDrag => 'Ziehen zum Sortieren';
@@ -12729,6 +12746,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanMoveUp => 'Nach oben';
 
   @override
+  String get redesignPlanNameHint => 'Name (optional)';
+
+  @override
+  String get redesignPlanNewPlan => 'Neuer Plan';
+
+  @override
   String get redesignPlanNext => 'Nächster Termin';
 
   @override
@@ -12791,7 +12814,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanShareHint => 'Mitglieder sehen den Ablauf im Termin';
 
   @override
+  String get redesignPlanSongInPlan => 'im Ablauf';
+
+  @override
   String get redesignPlanStart => 'Beginn';
+
+  @override
+  String get redesignPlanTelegram => 'Per Telegram';
 
   @override
   String get redesignPlanTemplateDelete => 'Vorlage löschen';
@@ -12809,6 +12838,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignPlanUntil(Object time) {
     return 'bis $time';
   }
+
+  @override
+  String get redesignPlanViewNow => 'Jetzt';
+
+  @override
+  String get redesignPlanViewWhich => 'Welcher Plan';
+
+  @override
+  String get redesignPlanViewWhole => 'Ganzer Ablauf';
 
   @override
   String get redesignPultAllOpen => 'Alle Offenen da';

@@ -12484,15 +12484,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanCollapsed => 'collapsed';
 
   @override
+  String get redesignPlanContent => 'Content';
+
+  @override
   String redesignPlanCopied(Object date) {
     return 'Run sheet of $date copied';
   }
+
+  @override
+  String redesignPlanCopyOf(Object name) {
+    return 'Copy of “$name”';
+  }
+
+  @override
+  String get redesignPlanCreatePlan => 'Create plan';
+
+  @override
+  String get redesignPlanDay => 'Day';
 
   @override
   String get redesignPlanDelete => 'Delete';
 
   @override
   String get redesignPlanDeleteHint => 'Can be undone';
+
+  @override
+  String get redesignPlanDownload => 'Download';
 
   @override
   String get redesignPlanDrag => 'Drag to reorder';
@@ -12604,6 +12621,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanMoveUp => 'Move up';
 
   @override
+  String get redesignPlanNameHint => 'Name (optional)';
+
+  @override
+  String get redesignPlanNewPlan => 'New plan';
+
+  @override
   String get redesignPlanNext => 'Next event';
 
   @override
@@ -12664,7 +12687,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanShareHint => 'Members see the run sheet in the event';
 
   @override
+  String get redesignPlanSongInPlan => 'in plan';
+
+  @override
   String get redesignPlanStart => 'Start';
+
+  @override
+  String get redesignPlanTelegram => 'Via Telegram';
 
   @override
   String get redesignPlanTemplateDelete => 'Delete template';
@@ -12683,6 +12712,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String redesignPlanUntil(Object time) {
     return 'until $time';
   }
+
+  @override
+  String get redesignPlanViewNow => 'Now';
+
+  @override
+  String get redesignPlanViewWhich => 'Which plan';
+
+  @override
+  String get redesignPlanViewWhole => 'Whole plan';
 
   @override
   String get redesignPultAllOpen => 'All open present';

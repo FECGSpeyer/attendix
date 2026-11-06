@@ -1294,7 +1294,19 @@
         "hours": "{count} Std.",
         "hoursMinutes": "{hours} Std. {minutes} Min",
         "less": "5 Minuten weniger",
-        "more5": "5 Minuten mehr"
+        "more5": "5 Minuten mehr",
+        "songInPlan": "im Ablauf",
+        "newPlan": "Neuer Plan",
+        "createPlan": "Plan anlegen",
+        "day": "Tag",
+        "content": "Inhalt",
+        "copyOf": "Kopie von „{name}“",
+        "nameHint": "Name (optional)",
+        "viewWhole": "Ganzer Ablauf",
+        "viewNow": "Jetzt",
+        "viewWhich": "Welcher Plan",
+        "download": "Herunterladen",
+        "telegram": "Per Telegram"
       },
       "messages": {
         "intro": "Alles, was an die Gruppe ging, mit Lesestatus.",
@@ -2646,7 +2658,19 @@
         "hours": "{count} h",
         "hoursMinutes": "{hours} h {minutes} min",
         "less": "5 minutes less",
-        "more5": "5 minutes more"
+        "more5": "5 minutes more",
+        "songInPlan": "in plan",
+        "newPlan": "New plan",
+        "createPlan": "Create plan",
+        "day": "Day",
+        "content": "Content",
+        "copyOf": "Copy of “{name}”",
+        "nameHint": "Name (optional)",
+        "viewWhole": "Whole plan",
+        "viewNow": "Now",
+        "viewWhich": "Which plan",
+        "download": "Download",
+        "telegram": "Via Telegram"
       },
       "messages": {
         "intro": "Everything sent to the group, with read status.",

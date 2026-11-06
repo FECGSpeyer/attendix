@@ -19,6 +19,8 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'ion_items.dart';
 import 'plan_field_dialogs.dart';
+import 'rd_plan_widgets.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -234,6 +236,9 @@ Future<PlanShareChoice?> showPlanShareSheet(
   required int planCount,
 }) {
   final hasChatId = planTelegramChatId(ref) != null;
+  if (context.rdSkin != null) {
+    return showRdPlanShareSheet(context, currentLabel: currentLabel, planCount: planCount, hasChatId: hasChatId);
+  }
   return showModalBottomSheet<PlanShareChoice>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar

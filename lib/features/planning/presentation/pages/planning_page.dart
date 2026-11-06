@@ -31,6 +31,7 @@ import '../widgets/plan_field_dialogs.dart';
 import '../widgets/plan_fields_editor.dart';
 import '../widgets/plan_song_helper.dart';
 import '../widgets/plan_view_list.dart';
+import '../widgets/rd_plan_widgets.dart';
 import '../widgets/ion_items.dart';
 import '../widgets/register_plan_sheet.dart';
 import '../../../../l10n/l10n.dart';
@@ -1300,7 +1301,20 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     // The start plan becomes the first plan, the new one the second.
     _markStartPlanPending();
     if (!await _flushSaves() || !mounted) return;
-    final choice = await showAppDialog<String>(
+    // Beta: one sheet with name, day and empty / copy.
+    RdNewPlanChoice? beta;
+    if (context.rdSkin != null) {
+      final att = _att!;
+      final plans = PlanUtils.allPlans(att);
+      beta = await showRdNewPlanSheet(
+        context,
+        days: PlanUtils.dayOptions(att),
+        initialDay: PlanUtils.nextFreeDay(att, plans),
+        copyOf: PlanUtils.planLabel(att, _planIndex.clamp(0, plans.isEmpty ? 0 : plans.length - 1), plans),
+      );
+      if (beta == null || !mounted) return;
+    }
+    final choice = beta != null ? (beta.copy ? 'copy' : 'empty') : await showAppDialog<String>(
       context: context,
       builder: (ctx) => AppAlertDialog(
         title: Text(ctx.l10n.planningAddAnotherPlan),
@@ -1335,7 +1349,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         // SOL_FIX29: appended to the newest stored plan list (day: the next
         // free day there).
         final open = await _writePlanOp(attId, null, (att, plans, _) {
-          plans.add(newPlan.copyWith(day: PlanUtils.nextFreeDay(att, plans)));
+          final day = PlanUtils.dayOptions(att).any((d) => d.day == beta?.day)
+              ? beta!.day
+              : PlanUtils.nextFreeDay(att, plans);
+          final label = beta?.label ?? '';
+          plans.add(newPlan.copyWith(day: day, label: label.isEmpty ? null : label));
           return (plans: plans, open: plans.length - 1);
         });
         if (open == null || !mounted || _att == null) return;
@@ -1413,14 +1431,31 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         case 'day':
           final options = PlanUtils.dayOptions(current);
           // Ionic: radio alert „Tag zuordnen“ with Abbrechen / Speichern.
-          final picked = await showAppRadioAlert<int>(
-            context,
-            title: context.l10n.planningAssignDay,
-            options: [for (final o in options) (o.day, o.label)],
-            initialValue: list[index].day,
-            confirmText: context.l10n.commonSave,
-          );
-          final day = picked?.value;
+          // Beta: a sheet, one tap picks the day.
+          final int? day;
+          if (context.rdSkin != null) {
+            day = await showPlanActionSheet<int>(
+              context,
+              title: context.l10n.planningAssignDay,
+              actions: [
+                for (final o in options)
+                  PlanSheetAction(
+                    o.day,
+                    o.label,
+                    icon: o.day == list[index].day ? Icons.check_circle : Icons.event_outlined,
+                  ),
+              ],
+            );
+          } else {
+            final picked = await showAppRadioAlert<int>(
+              context,
+              title: context.l10n.planningAssignDay,
+              options: [for (final o in options) (o.day, o.label)],
+              initialValue: list[index].day,
+              confirmText: context.l10n.commonSave,
+            );
+            day = picked?.value;
+          }
           if (day == null || day == list[index].day || !mounted) return;
           await _whileBusy(() async {
             final open = await _writePlanOp(attId, planKey, (att, plans, i) {
@@ -1587,7 +1622,12 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
   Future<void> _addSong() async {
     final loadGen = _loadGen;
-    final song = await showPlanSongPicker(context, _songs);
+    final song = await showPlanSongPicker(
+      context,
+      _songs,
+      currentIds: _history.map((h) => h.songId).whereType<int>().toSet(),
+      inPlanIds: _fields.map((f) => f.songId).whereType<int>().toSet(),
+    );
     if (song == null || !_samePlan(loadGen)) return;
     setState(() => _fields = [
           ..._fields,
