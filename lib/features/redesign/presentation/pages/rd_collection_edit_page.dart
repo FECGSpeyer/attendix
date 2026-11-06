@@ -47,6 +47,10 @@ class _RdCollectionEditPageState extends ConsumerState<RdCollectionEditPage> {
   String _storedName = '';
   String _storedPrefix = '';
 
+  /// The chosen groups as last tapped (two taps before the reload must not
+  /// start from the same stored list).
+  List<int> _groupIds = const [];
+
   /// Writes run one after another, so the last change wins.
   Future<void> _queue = Future.value();
 
@@ -86,6 +90,7 @@ class _RdCollectionEditPageState extends ConsumerState<RdCollectionEditPage> {
     _prefix.text = c.prefix;
     _storedName = c.name;
     _storedPrefix = c.prefix;
+    _groupIds = [...c.groupIds];
   }
 
   void _enqueue(Future<void> Function() task) => _queue = _queue.then((_) => task());
@@ -237,14 +242,15 @@ class _RdCollectionEditPageState extends ConsumerState<RdCollectionEditPage> {
     );
 
     void toggleGroup(Group g) {
-      final ids = {...c.groupIds};
+      final ids = {..._groupIds};
       ids.contains(g.id) ? ids.remove(g.id) : ids.add(g.id!);
-      _write({
-        'group_ids': [
-          for (final x in groups)
-            if (ids.contains(x.id)) x.id,
-        ],
-      });
+      // Ids of groups no longer listed stay out, like before.
+      final next = [
+        for (final x in groups)
+          if (ids.contains(x.id)) x.id!,
+      ];
+      setState(() => _groupIds = next);
+      _write({'group_ids': next});
     }
 
     final prefix = _prefix.text.trim();
@@ -301,12 +307,12 @@ class _RdCollectionEditPageState extends ConsumerState<RdCollectionEditPage> {
                 RdChoiceChip(
                   key: Key('rd-collection-group-${g.id}'),
                   label: g.name,
-                  selected: c.groupIds.contains(g.id),
+                  selected: _groupIds.contains(g.id),
                   onTap: () => toggleGroup(g),
                 ),
             ],
           ),
-          if (c.groupIds.isEmpty) hint(l10n.collectionsGroupsNone, color: p.late),
+          if (_groupIds.isEmpty) hint(l10n.collectionsGroupsNone, color: p.late),
         ],
         hint(l10n.collectionsLeadsSeeAll),
         const SizedBox(height: 20),

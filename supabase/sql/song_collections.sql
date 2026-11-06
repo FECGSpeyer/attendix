@@ -61,7 +61,7 @@ returns boolean
 language sql
 stable
 security definer
-set search_path = public
+set search_path = public, pg_temp
 as $$
   select p_collection_id is null or exists (
     select 1
@@ -184,7 +184,7 @@ create or replace function public.songs_collection_same_tenant()
 returns trigger
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, pg_temp
 as $$
 begin
   if new.collection_id is not null and not exists (
@@ -206,7 +206,7 @@ create trigger songs_collection_same_tenant
 create or replace function public.song_collections_tenant_fixed()
 returns trigger
 language plpgsql
-set search_path = public
+set search_path = public, pg_temp
 as $$
 begin
   if new.tenant_id is distinct from old.tenant_id then
@@ -237,7 +237,7 @@ create or replace function public.rename_song_collection_prefix(
 returns void
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, pg_temp
 as $$
 declare
   v_old text;
