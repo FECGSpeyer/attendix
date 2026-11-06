@@ -22,6 +22,7 @@ import '../../../../shared/widgets/adaptive/adaptive.dart' show showAppDatePicke
 import '../../../people/presentation/pages/person_detail_page.dart'
     show personProvider, personAttendanceStatsProvider, personHistoryProvider;
 import '../../../people/presentation/widgets/pause_person_sheet.dart' show pausePersonFlow;
+import '../../../settings/presentation/pages/left_players_page.dart' show LeftPlayersPage;
 import '../../data/rd_members_logic.dart';
 import '../widgets/event/rd_record_widgets.dart' show rdStatusLook;
 import '../widgets/rd_split_view.dart';
@@ -137,13 +138,37 @@ class RdPersonPage extends ConsumerWidget {
           const SizedBox(height: 12),
         ],
         _InfoList(person: person),
-        if (role.canEdit && !person.pending) ...[
+        // Archived (opened from Verwaltung › Archiv): read-only like the old
+        // person page of an archived person, only "Wiederherstellen".
+        if (person.left != null) ...[
+          const SizedBox(height: 12),
+          RdInfoCard(
+            icon: Icons.archive_outlined,
+            text: l10n.settingsLeftOn(_formatLeft(person.left!)),
+            action: role.isAdmin || role.isResponsible
+                ? RdOutlineButton(
+                    icon: Icons.restore,
+                    label: l10n.redesignArchiveListRestore,
+                    onPressed: () async {
+                      await LeftPlayersPage.reactivateWithConfirmation(context, ref, person);
+                      if (context.mounted) ref.invalidate(personProvider(personId));
+                    },
+                  )
+                : null,
+          ),
+        ] else if (role.canEdit && !person.pending) ...[
           const SizedBox(height: 12),
           _Actions(person: person),
         ],
       ],
     );
   }
+}
+
+/// "Ausgetreten am …" like the old archive list.
+String _formatLeft(String left) {
+  final date = DateTime.tryParse(left);
+  return date == null ? left : DateFormat(dateFmt()).format(date);
 }
 
 /// Anrufen · WhatsApp · Telegram · E-Mail as white tiles (only the ones
