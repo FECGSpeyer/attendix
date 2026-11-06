@@ -14,6 +14,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/date_helper.dart';
 import '../../../../core/utils/dialog_helper.dart';
+import '../../../../core/utils/global_toast.dart';
 import '../../../../core/utils/person_matcher.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
@@ -119,6 +120,34 @@ class StatisticsPage extends ConsumerStatefulWidget {
 
 class _StatisticsPageState extends ConsumerState<StatisticsPage> {
   bool _dateRangeInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Ionic db.getPlayers: "Fehler beim Laden der Personen" instead of an
+    // empty "Mitglieder" / "Zusatzfelder" without a hint. Listener (not
+    // build) → once per failed load; activePlayersForStatsProvider toasts
+    // its own failure, so the same failure is not shown twice.
+    ref.listenManual<AsyncValue<List<Person>>>(playersProvider, (prev, next) {
+      if (!next.hasError || next.isLoading) return;
+      if (prev != null && prev.hasError && !prev.isLoading) return;
+      _showPeopleLoadFailedAfterFrame();
+    }, fireImmediately: true);
+  }
+
+  /// fireImmediately reports an already stored failure synchronously in
+  /// initState, i.e. while the tree builds; inserting the toast overlay then
+  /// throws "setState() called during build". So the toast follows the frame.
+  void _showPeopleLoadFailedAfterFrame() {
+    WidgetsBinding.instance
+      ..addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (ref.read(activePlayersForStatsProvider).hasError) return;
+        GlobalToast.error(l10nWithoutContext.dbLoadPeopleFailed);
+      })
+      // A later failure (provider refresh) may arrive between frames.
+      ..ensureVisualUpdate();
+  }
 
   @override
   Widget build(BuildContext context) {

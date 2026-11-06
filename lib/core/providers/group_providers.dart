@@ -9,6 +9,8 @@ import 'tenant_providers.dart';
 import '../services/tracking/tracking_event.dart';
 import '../services/tracking/tracking_service.dart';
 import '../services/offline_list_cache.dart';
+import '../utils/global_toast.dart';
+import '../../l10n/l10n.dart';
 
 /// Initialized group repository with tenant context
 final groupRepositoryWithTenantProvider = Provider<GroupRepository>((ref) {
@@ -101,14 +103,22 @@ final groupCategoriesProvider = FutureProvider<List<GroupCategory>>((ref) async 
   if (!repo.hasTenantId) return [];
 
   // Ionic GroupCategoryService: offline the cached categories.
-  return OfflineListCache.read<GroupCategory>(
-    ref,
-    tenantId: repo.currentTenantId,
-    part: 'group_categories',
-    fetch: repo.getGroupCategories,
-    toJson: (c) => c.toJson(),
-    fromJson: GroupCategory.fromJson,
-  );
+  try {
+    return await OfflineListCache.read<GroupCategory>(
+      ref,
+      tenantId: repo.currentTenantId,
+      part: 'group_categories',
+      fetch: repo.getGroupCategories,
+      toJson: (c) => c.toJson(),
+      fromJson: GroupCategory.fromJson,
+    );
+  } catch (_) {
+    // Ionic GroupCategoryService: toast wherever the categories fail
+    // (Instrumente, Planung, Anwesenheit/Plan, Lieder) – once per failed
+    // load, not on every rebuild of the callers.
+    GlobalToast.error(l10nWithoutContext.svcLoadCategoriesFailed);
+    rethrow;
+  }
 });
 
 /// Provider for player counts per group (instrument)
