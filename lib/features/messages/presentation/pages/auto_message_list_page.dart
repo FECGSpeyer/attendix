@@ -5,10 +5,14 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/auto_message_providers.dart';
+import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/auto_message/auto_message.dart';
+import '../../../redesign/presentation/widgets/manage/rd_manage_list.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/presentation/widgets/settings_list.dart';
@@ -137,6 +141,10 @@ class _AutoMessageListPageState extends ConsumerState<AutoMessageListPage> {
     final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const [];
     final lastWeek = _lastWeekTenantId == tenantId ? lastWeekAsync.valueOrNull : null;
 
+    if (ref.watch(redesignEnabledProvider)) {
+      return _buildBeta(firstLoad: firstLoad, failed: rulesAsync.hasError, rules: rules, types: types, lastWeek: lastWeek);
+    }
+
     return Scaffold(
       appBar: AppBar(title: Text(l10n.autoMessagesTitle)),
       body: RefreshIndicator.adaptive(
@@ -206,6 +214,77 @@ class _AutoMessageListPageState extends ConsumerState<AutoMessageListPage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+extension on _AutoMessageListPageState {
+  /// REDESIGN (canvas K2 "Automatische Nachrichten"): page type
+  /// "Verwaltungsliste". The rules with a switch each, the templates as a
+  /// second section, "+" for a new rule. Loading, toggling and the toasts
+  /// are the same as above.
+  Widget _buildBeta({
+    required bool firstLoad,
+    required bool failed,
+    required List<AutoMessageRule> rules,
+    required List<AttendanceType> types,
+    required ({int sent, int people})? lastWeek,
+  }) {
+    final l10n = context.l10n;
+    final p = context.rd;
+    final notes = [
+      if (rules.isNotEmpty && (lastWeek?.sent ?? 0) > 0) l10n.autoMessagesLastWeek(lastWeek!.people),
+      l10n.autoMessagesWhoCanUse,
+    ];
+    return RdManageListPage(
+      title: l10n.autoMessagesTitle,
+      intro: l10n.autoMessagesIntro,
+      notice: notes.join('\n\n'),
+      backLabel: l10n.messagesMessages,
+      sections: firstLoad && !failed
+          ? null
+          : [
+              RdManageListSection(
+                key: 'rules',
+                title: rules.isEmpty ? null : l10n.autoMessagesRules,
+                items: [
+                  for (final rule in rules)
+                    RdManageListItem(
+                      id: rule.id ?? rule.name,
+                      title: rule.name,
+                      icon: Icons.timer_outlined,
+                      subtitle: [l10n.autoMessageRuleSummary(rule, types), ...l10n.autoMessageRuleChips(rule)].join(' · '),
+                      trailing: Semantics(
+                        label: l10n.autoMessagesActive,
+                        child: Switch.adaptive(
+                          value: _toggling[rule.id] ?? _saved[rule.id] ?? rule.enabled,
+                          activeTrackColor: p.primary,
+                          onChanged: _toggling.containsKey(rule.id) ? null : (v) => _toggle(rule, v),
+                        ),
+                      ),
+                      onTap: () => _open(rule),
+                    ),
+                ],
+              ),
+              RdManageListSection(
+                key: 'templates',
+                title: l10n.autoMessagesStartFromTemplate,
+                items: [
+                  for (final tpl in autoMessageTemplates)
+                    RdManageListItem(
+                      id: 'tpl-$tpl',
+                      title: l10n.autoMessageTemplateName(tpl),
+                      subtitle: l10n.autoMessageTemplateHint(tpl),
+                      icon: Icons.auto_awesome_outlined,
+                      onTap: () => _create(tpl),
+                    ),
+                ],
+              ),
+            ],
+      emptyText: l10n.autoMessagesIntro,
+      addLabel: l10n.autoMessagesNewRule,
+      onAdd: () => _create(),
+      onRefresh: _refresh,
     );
   }
 }
