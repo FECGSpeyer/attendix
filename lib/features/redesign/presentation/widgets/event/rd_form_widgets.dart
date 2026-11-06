@@ -44,11 +44,14 @@ class RdFormBody extends StatelessWidget {
 /// Gruppe, Person bearbeiten): the title in the middle, "Fertig" on the
 /// right, no "Abbrechen" (nothing to discard).
 class RdEditTopBar extends StatelessWidget {
-  const RdEditTopBar({super.key, required this.title, required this.onDone, this.doneKey});
+  const RdEditTopBar({super.key, required this.title, required this.onDone, this.doneKey, this.leading});
 
   final String title;
   final VoidCallback onDone;
   final Key? doneKey;
+
+  /// Optional status on the left (e.g. "Gespeichert"), at most 88 wide.
+  final Widget? leading;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +60,7 @@ class RdEditTopBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(8, 4, 8, 6),
       child: Row(
         children: [
-          const SizedBox(width: 88),
+          SizedBox(width: 88, child: leading),
           Expanded(
             child: Semantics(
               header: true,

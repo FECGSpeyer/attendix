@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.46.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: „Neue Person“ und „Person bearbeiten“ als Beta-Seiten, Änderungen werden sofort gespeichert",
+        "✨ Beta: Person bearbeiten fragt bei neuer E-Mail wie bisher nach dem Konto; Daten aus einem E-Mail-Treffer werden erst nach „Ja“ übernommen",
+        "💄 Beta: Alle Bearbeiten-Seiten (Termin, Werk, Gruppe, Person) haben dieselbe Kopfzeile mit „Fertig“"
+      ]
+    },
+    {
       "version": "0.45.0",
       "date": "6.11.2026",
       "changes": [

@@ -1058,47 +1058,23 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
         bottom: false,
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 4, 8, 6),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 88,
-                    child: AnimatedOpacity(
-                      opacity: _saved ? 1 : 0,
-                      duration: const Duration(milliseconds: 200),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: Text(
-                          l10n.redesignPersonFormSaved,
-                          key: const Key('rd-person-edit-saved'),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: RdType.meta(p, size: 13).copyWith(color: p.present),
-                        ),
-                      ),
-                    ),
+            RdEditTopBar(
+              title: name.isEmpty ? l10n.personEditPerson : l10n.redesignPersonFormEditTitle(name),
+              doneKey: const Key('rd-person-edit-done'),
+              onDone: _done,
+              leading: AnimatedOpacity(
+                opacity: _saved ? 1 : 0,
+                duration: const Duration(milliseconds: 200),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Text(
+                    l10n.redesignPersonFormSaved,
+                    key: const Key('rd-person-edit-saved'),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: RdType.meta(p, size: 13).copyWith(color: p.present),
                   ),
-                  Expanded(
-                    child: Semantics(
-                      header: true,
-                      child: Text(
-                        name.isEmpty ? l10n.personEditPerson : l10n.redesignPersonFormEditTitle(name),
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: p.text),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 88,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: RdTextLink(key: const Key('rd-person-edit-done'), label: l10n.redesignCommonDone, onTap: _done),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
             Expanded(child: body),
