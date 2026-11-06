@@ -1544,7 +1544,7 @@ mixin _$CriticalRule {
   CriticalRuleThresholdType get thresholdType =>
       throw _privateConstructorUsedError;
   @JsonKey(name: 'threshold_value')
-  int get thresholdValue => throw _privateConstructorUsedError;
+  num get thresholdValue => throw _privateConstructorUsedError;
   @JsonKey(name: 'period_type')
   CriticalRulePeriodType? get periodType => throw _privateConstructorUsedError;
   @JsonKey(name: 'period_days')
@@ -1575,7 +1575,7 @@ abstract class $CriticalRuleCopyWith<$Res> {
     @JsonKey(name: 'attendance_type_ids') List<String> attendanceTypeIds,
     List<int> statuses,
     @JsonKey(name: 'threshold_type') CriticalRuleThresholdType thresholdType,
-    @JsonKey(name: 'threshold_value') int thresholdValue,
+    @JsonKey(name: 'threshold_value') num thresholdValue,
     @JsonKey(name: 'period_type') CriticalRulePeriodType? periodType,
     @JsonKey(name: 'period_days') int? periodDays,
     CriticalRuleOperator operator,
@@ -1640,7 +1640,7 @@ class _$CriticalRuleCopyWithImpl<$Res, $Val extends CriticalRule>
                 null == thresholdValue
                     ? _value.thresholdValue
                     : thresholdValue // ignore: cast_nullable_to_non_nullable
-                        as int,
+                        as num,
             periodType:
                 freezed == periodType
                     ? _value.periodType
@@ -1682,7 +1682,7 @@ abstract class _$$CriticalRuleImplCopyWith<$Res>
     @JsonKey(name: 'attendance_type_ids') List<String> attendanceTypeIds,
     List<int> statuses,
     @JsonKey(name: 'threshold_type') CriticalRuleThresholdType thresholdType,
-    @JsonKey(name: 'threshold_value') int thresholdValue,
+    @JsonKey(name: 'threshold_value') num thresholdValue,
     @JsonKey(name: 'period_type') CriticalRulePeriodType? periodType,
     @JsonKey(name: 'period_days') int? periodDays,
     CriticalRuleOperator operator,
@@ -1746,7 +1746,7 @@ class __$$CriticalRuleImplCopyWithImpl<$Res>
             null == thresholdValue
                 ? _value.thresholdValue
                 : thresholdValue // ignore: cast_nullable_to_non_nullable
-                    as int,
+                    as num,
         periodType:
             freezed == periodType
                 ? _value.periodType
@@ -1820,7 +1820,7 @@ class _$CriticalRuleImpl implements _CriticalRule {
   final CriticalRuleThresholdType thresholdType;
   @override
   @JsonKey(name: 'threshold_value')
-  final int thresholdValue;
+  final num thresholdValue;
   @override
   @JsonKey(name: 'period_type')
   final CriticalRulePeriodType? periodType;
@@ -1902,7 +1902,7 @@ abstract class _CriticalRule implements CriticalRule {
     required final List<int> statuses,
     @JsonKey(name: 'threshold_type')
     required final CriticalRuleThresholdType thresholdType,
-    @JsonKey(name: 'threshold_value') required final int thresholdValue,
+    @JsonKey(name: 'threshold_value') required final num thresholdValue,
     @JsonKey(name: 'period_type') final CriticalRulePeriodType? periodType,
     @JsonKey(name: 'period_days') final int? periodDays,
     required final CriticalRuleOperator operator,
@@ -1926,7 +1926,7 @@ abstract class _CriticalRule implements CriticalRule {
   CriticalRuleThresholdType get thresholdType;
   @override
   @JsonKey(name: 'threshold_value')
-  int get thresholdValue;
+  num get thresholdValue;
   @override
   @JsonKey(name: 'period_type')
   CriticalRulePeriodType? get periodType;

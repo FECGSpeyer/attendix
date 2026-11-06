@@ -1882,6 +1882,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         }
         return;
       }
+      // The saved type is the new baseline for the null-keeping rules of
+      // _buildTypeData (end_time, duration_days, planning_title, default_plan).
+      _originalType = updated;
 
       if (mounted) {
         ToastHelper.showSuccess(context, context.l10n.typeSettingsUpdated);
@@ -1905,7 +1908,14 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         'name': _nameController.text.trim(),
         // SETTINGS2: for all-day types start_time is the plan start (Ionic)
         'start_time': _formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0)),
-        'end_time': _allDay ? null : _formatTime(_endTime ?? const TimeOfDay(hour: 20, minute: 30)),
+        // Ionic keeps end_time for all-day types too (new attendances take
+        // type.end_time); only an untouched null stays null.
+        'end_time': _allDay &&
+                _originalType != null &&
+                _originalType!.endTime == null &&
+                _endTime == const TimeOfDay(hour: 20, minute: 30)
+            ? null
+            : _formatTime(_endTime ?? const TimeOfDay(hour: 20, minute: 30)),
         'default_status': _defaultStatus.value,
         'available_statuses': _availableStatuses.map((s) => s.value).toList(),
         'manage_songs': _manageSongs,
@@ -1915,10 +1925,16 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         'include_in_average': _includeInAverage,
         'color': _color,
         'all_day': _allDay,
-        'duration_days': _allDay ? _durationDays : null,
+        // Ionic keeps duration_days when "ganztägig" is off; only an untouched
+        // null (shown as 1) stays null.
+        'duration_days': !_allDay &&
+                _originalType?.durationDays == null &&
+                _durationDays == 1
+            ? null
+            : _durationDays,
         'notification': _notification,
-        // Ionic isNew starts with reminders [] (insert keeps the list).
-        'reminders': _isNew || _reminders.isNotEmpty ? _reminders : null,
+        // Ionic writes the reminder list as is, also [] (never null).
+        'reminders': _reminders,
         // Ionic: "Checkliste aktivieren" off = null, on = list (also []).
         'checklist': _checklistEnabled
             ? _checklist.map((item) => item.toJson()).toList()
