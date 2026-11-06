@@ -12273,6 +12273,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanTelegram => 'Via Telegram';
 
   @override
+  String redesignPlanOrgPlansIntro(String org) {
+    return 'Run sheets of all groups in “$org”';
+  }
+
+  @override
+  String redesignPlanTemplatesIntro(String org) {
+    return 'Apply to all groups of the organisation “$org”.';
+  }
+
+  @override
+  String get redesignPlanOrgPlansUpcoming => 'Upcoming';
+
+  @override
+  String get redesignPlanAddDefaultField => 'Add default field';
+
+  @override
+  String get redesignPlanTemplateHint => 'Template · saved right away';
+
+  @override
   String get redesignPlanAddCurrent => 'Current works';
 
   @override

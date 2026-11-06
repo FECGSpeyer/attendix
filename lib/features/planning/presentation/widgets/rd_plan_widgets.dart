@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/plan_beamer.dart';
+import '../../../../core/utils/plan_utils.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
@@ -923,6 +924,96 @@ class _RdShareBodyState extends State<_RdShareBody> {
           ),
         ],
       ],
+    );
+  }
+}
+
+/// "Beginn 19:00 · 1 Std. 20 Min · Ende 20:20" like the Termin's Ablauf
+/// editor; a tap on Beginn changes the start.
+class RdPlanSummaryBar extends StatelessWidget {
+  const RdPlanSummaryBar({super.key, required this.time, required this.totalMinutes, this.onPickTime});
+
+  final String time;
+  final int totalMinutes;
+  final VoidCallback? onPickTime;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final start = PlanUtils.parseTimeToMinutes(time);
+    final end = start == null ? '' : PlanUtils.formatMinutes(start + totalMinutes);
+    final rest = totalMinutes % 60;
+    final duration =
+        totalMinutes < 60
+            ? l10n.redesignPlanMinutes(totalMinutes)
+            : rest == 0
+            ? l10n.redesignPlanHours(totalMinutes ~/ 60)
+            : l10n.redesignPlanHoursMinutes(totalMinutes ~/ 60, rest);
+    Widget part(String label, String value) => Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(text: '$label '),
+          TextSpan(text: value, style: const TextStyle(fontWeight: FontWeight.w700)),
+        ],
+      ),
+      style: TextStyle(fontSize: 15, color: p.text),
+    );
+    return RdCard(
+      padding: EdgeInsets.zero,
+      child: Row(
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: onPickTime,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 12, 8, 12),
+                child: Row(
+                  children: [
+                    Flexible(child: part(l10n.redesignPlanStart, PlanUtils.formatTime(time))),
+                    if (onPickTime != null) ...[
+                      const SizedBox(width: 4),
+                      Icon(Icons.edit_outlined, size: 16, color: p.link),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Text(duration, style: RdType.meta(p, size: 15)),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 12, 14, 12),
+              child: Align(alignment: Alignment.centerRight, child: part(l10n.redesignPlanEnd, end)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Text row of a Beta settings card that saves on every change.
+class RdPlanTextRow extends StatelessWidget {
+  const RdPlanTextRow({super.key, required this.label, required this.controller, this.hint, this.onChanged});
+
+  final String label;
+  final TextEditingController controller;
+  final String? hint;
+  final ValueChanged<String>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return RdFieldRow(
+      label: label,
+      child: TextField(
+        controller: controller,
+        textCapitalization: TextCapitalization.sentences,
+        style: TextStyle(fontSize: 17, color: p.text),
+        decoration: rdInputDecoration(p, hint ?? ''),
+        onChanged: onChanged,
+      ),
     );
   }
 }

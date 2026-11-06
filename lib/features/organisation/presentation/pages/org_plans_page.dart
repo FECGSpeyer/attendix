@@ -22,6 +22,10 @@ import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTransluce
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart' show scrollEndPadding, TabBarFab;
 import '../../../../core/services/native/native_file_service.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
+import '../../../redesign/presentation/widgets/manage/rd_manage_list.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 
 /// Short date "Mo, 03.11.2026" (Ionic dayjs `dd, ${dateFmt()}`).
 String orgPlanDate(String date) {
@@ -186,8 +190,125 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
     );
   }
 
+  /// REDESIGN (Termin-Werkzeuge T2): Org-Pläne as a Verwaltungsliste. Tap
+  /// opens "Ablauf ansehen", "+" the Ablaufplanung, calendar, public link,
+  /// past plans and the tab switch sit behind •••.
+  Widget _buildBeta(BuildContext context) {
+    final l10n = context.l10n;
+    final orgAsync = ref.watch(currentOrganisationProvider);
+    final org = orgAsync.valueOrNull;
+    final plansAsync = ref.watch(orgPlansProvider);
+    final key = org?.publicPlanKey;
+    final entries = plansAsync.valueOrNull;
+    final split = entries == null ? null : splitOrgPlanEntries(entries);
+    final showTab = ref.watch(optionalTabsNotifierProvider).orgPlans;
+    return RdManageListPage(
+      title: l10n.plansOrgPlans,
+      intro: org == null ? l10n.plansNoOrg : l10n.redesignPlanOrgPlansIntro(org.name),
+      notice: key != null ? l10n.plansPublicLinkActive : null,
+      loadFailed: plansAsync.hasError && entries == null,
+      onRetry: () => ref.invalidate(orgPlansProvider),
+      onRefresh: () async {
+        ref.invalidate(orgPlansProvider);
+        await ref.read(orgPlansProvider.future).catchError((_) => <OrgPlanEntry>[]);
+      },
+      emptyText: l10n.plansNoUpcomingOrgPlans,
+      emptyIcon: Icons.event_note_outlined,
+      sections: org == null
+          ? const []
+          : split == null
+          ? null
+          : [
+              if (split.upcoming.isNotEmpty)
+                RdManageListSection(
+                  title: l10n.redesignPlanOrgPlansUpcoming,
+                  items: [for (final e in split.upcoming) _rdItem(e)],
+                ),
+            ],
+      addLabel: org == null ? null : l10n.plansOpenPlanning,
+      onAdd: org == null ? null : () => context.push(_planningRoute(context)),
+      actions: [
+        if (split != null && split.past.isNotEmpty)
+          RdManageListAction(label: l10n.plansPastPlans, icon: Icons.history, onSelected: _rdShowHistory),
+        if (key != null)
+          RdManageListAction(
+            label: l10n.plansSubscribeCalendar,
+            icon: Icons.calendar_month_outlined,
+            onSelected: () => _subscribeCalendar(key),
+          ),
+        if (org != null)
+          RdManageListAction(
+            label: l10n.plansPublicLink,
+            icon: key != null ? Icons.link : Icons.add_link,
+            onSelected: () => _managePublicLink(key),
+          ),
+        RdManageListAction(
+          label: showTab ? l10n.plansFlutterHideTab : l10n.plansFlutterShowAsTab,
+          icon: showTab ? Icons.bookmark : Icons.bookmark_outline,
+          onSelected: () async {
+            try {
+              await ref.read(optionalTabsNotifierProvider.notifier).setShowOrgPlansTab(!showTab);
+            } catch (_) {
+              if (context.mounted) ToastHelper.showError(context, context.l10n.plansSaveFailed);
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  RdManageListItem _rdItem(OrgPlanEntry e) {
+    final count = e.fieldCount;
+    final sub = [
+      orgPlanDate(e.date),
+      if (count > 0) orgPlanPoints(count),
+      if (e.tenantLabel.isNotEmpty) e.tenantLabel,
+    ].join(' · ');
+    return RdManageListItem(
+      id: e.sharedPlan?.id ?? '${e.attendance?.id}-${e.date}-${e.title}',
+      title: e.title,
+      subtitle: sub,
+      icon: e.isAdHoc ? Icons.edit_note : Icons.event_note_outlined,
+      trailing: e.isAdHoc
+          ? IconButton(
+              tooltip: context.l10n.redesignPlanMore,
+              icon: Icon(Icons.more_horiz, color: context.rd.text2),
+              onPressed: () => _deleteAdHoc(e),
+            )
+          : null,
+      onTap: () => openOrgPlanEntry(context, e),
+    );
+  }
+
+  void _rdShowHistory() {
+    showRdPlanSheet<void>(
+      context,
+      title: context.l10n.plansPastPlans,
+      builder: (ctx, pop) => [
+        Consumer(
+          builder: (context, ref, _) {
+            final entries = ref.watch(orgPlansProvider).valueOrNull;
+            final past = entries == null ? const <OrgPlanEntry>[] : splitOrgPlanEntries(entries).past;
+            return RdGroupedList(
+              children: [
+                for (final e in past)
+                  RdListRow(
+                    leading: const RdRowIcon(Icons.history),
+                    title: e.title,
+                    subtitle: [orgPlanDate(e.date), if (e.tenantLabel.isNotEmpty) e.tenantLabel].join(' · '),
+                    onTap: () => openOrgPlanEntry(context, e),
+                  ),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (context.rdSkin != null) return _buildBeta(context);
     final orgAsync = ref.watch(currentOrganisationProvider);
     final org = orgAsync.valueOrNull;
     final plansAsync = ref.watch(orgPlansProvider);

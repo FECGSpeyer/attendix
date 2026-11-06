@@ -19967,6 +19967,36 @@ abstract class AppLocalizations {
   /// **'Per Telegram'**
   String get redesignPlanTelegram;
 
+  /// redesign.plan.orgPlansIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Abläufe aller Gruppen in „{org}“'**
+  String redesignPlanOrgPlansIntro(String org);
+
+  /// redesign.plan.templatesIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Gelten für alle Gruppen der Organisation „{org}“.'**
+  String redesignPlanTemplatesIntro(String org);
+
+  /// redesign.plan.orgPlansUpcoming
+  ///
+  /// In de, this message translates to:
+  /// **'Anstehend'**
+  String get redesignPlanOrgPlansUpcoming;
+
+  /// redesign.plan.addDefaultField
+  ///
+  /// In de, this message translates to:
+  /// **'Standardfeld hinzufügen'**
+  String get redesignPlanAddDefaultField;
+
+  /// redesign.plan.templateHint
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage · sofort gespeichert'**
+  String get redesignPlanTemplateHint;
+
   /// redesign.plan.addCurrent
   ///
   /// In de, this message translates to:

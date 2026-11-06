@@ -39,7 +39,14 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../data/models/organisation/organisation.dart' show Organisation;
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../widgets/rd_plan_widgets.dart';
+
 export '../widgets/ion_items.dart' show IonDatetimeChip;
+
+part 'public_planning_page_beta.dart';
 
 /// Predefined template of the public planning page (Ionic `PUBLIC_PLANNING_TEMPLATES`).
 class PublicPlanningTemplate {
@@ -200,6 +207,9 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       '${_date.year}-${_date.month.toString().padLeft(2, '0')}-${_date.day.toString().padLeft(2, '0')}';
 
   String get _end => PlanUtils.computeEnd(_time, _fields);
+
+  /// setState for the Beta extension (part file).
+  void _update(VoidCallback fn) => setState(fn);
 
   String get _title => _titleController.text.trim().isEmpty ? l10nWithoutContext.plansRunSheet : _titleController.text.trim();
 
@@ -484,11 +494,40 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
               style: TextStyle(
                   fontSize: 12, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyMedium?.color)),
         );
+    final String? action;
+    if (context.rdSkin != null) {
+      // Beta: one sheet instead of the popover.
+      action = await showPlanActionSheet<String>(
+        context,
+        title: l10n.redesignPlanAddTitle,
+        actions: [
+          PlanSheetAction('field', l10n.planningAddField, icon: Icons.add),
+          PlanSheetAction('group', l10n.planningAddBlock, icon: Icons.folder_outlined),
+          PlanSheetAction('note', l10n.planningAddNoteField, icon: Icons.sticky_note_2_outlined),
+          if (loggedIn && !isGeneral) ...[
+            PlanSheetAction('current', l10n.planningAddCurrentSongs, icon: Icons.queue_music),
+            if (_songs.isNotEmpty) PlanSheetAction('song', l10n.planningAddSong, icon: Icons.music_note_outlined),
+          ],
+          for (var i = 0; i < orgFields.length; i++)
+            PlanSheetAction(
+              'orgfield:$i',
+              '${orgFields[i].name} · ${l10n.planningMinShort(orgFields[i].time)}',
+              icon: Icons.business_outlined,
+            ),
+          for (final tpl in blockTemplates)
+            PlanSheetAction(
+              'block:${tpl.id}',
+              '${tpl.name} · ${l10n.planningMinShort(PlanUtils.templateMinutes(tpl))}',
+              icon: Icons.bookmark_outline,
+            ),
+        ],
+      );
+    } else {
     final box = anchorContext.findRenderObject() as RenderBox;
     final overlay = Navigator.of(anchorContext).overlay!.context.findRenderObject() as RenderBox;
     final topLeft = box.localToGlobal(Offset(0, box.size.height), ancestor: overlay);
     final bottomRight = box.localToGlobal(box.size.bottomRight(Offset.zero), ancestor: overlay);
-    final action = await showMenu<String>(
+    action = await showMenu<String>(
       context: anchorContext,
       position: RelativeRect.fromRect(Rect.fromPoints(topLeft, bottomRight), Offset.zero & overlay.size),
       items: [
@@ -513,6 +552,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
         ],
       ],
     );
+    }
     if (action == null || !mounted) return;
     if (action.startsWith('orgfield:')) {
       // Every inserted occurrence is its own row (own uid), so editing or
@@ -523,7 +563,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       return;
     }
     if (action.startsWith('block:')) {
-      final tpl = blockTemplates.where((t) => t.id == action.substring(6)).firstOrNull;
+      final tpl = blockTemplates.where((t) => t.id == action!.substring(6)).firstOrNull;
       if (tpl == null) return;
       setState(() => _fields = [..._fields, ...PlanUtils.cloneBlock(tpl.fields)]);
       _changed();
@@ -561,7 +601,12 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
             history: _history, songs: _songs, prefix: _numberPrefix);
         setState(() => _fields = [..._fields, ...added]);
       case 'song':
-        final song = await showPlanSongPicker(context, _songs);
+        final song = await showPlanSongPicker(
+          context,
+          _songs,
+          currentIds: _history.map((h) => h.songId).whereType<int>().toSet(),
+          inPlanIds: _fields.map((f) => f.songId).whereType<int>().toSet(),
+        );
         if (song == null) return;
         setState(() => _fields = [
               ..._fields,
@@ -657,6 +702,11 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
   }
 
   Future<void> _openMyPlans() async {
+    if (context.rdSkin != null) {
+      final plan = await _rdMyPlansSheet();
+      if (plan != null && mounted) _loadPlan(plan);
+      return;
+    }
     // Ionic: full ion-modal (MyPlansComponent).
     final plan = await Navigator.of(context, rootNavigator: true).push<SharedPlan>(MaterialPageRoute(
       fullscreenDialog: true,
@@ -845,6 +895,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       }
     }
     final orgTemplates = org?.planningTemplates ?? const <Plan>[];
+    if (context.rdSkin != null) return _rdBuild(context, loggedIn: loggedIn, org: org);
 
     // Ionic: ion-header + `collapse="condense"` large title (iOS).
     return IonCondenseScaffold(

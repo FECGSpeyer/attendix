@@ -15332,6 +15332,28 @@
   "@redesignPlanTelegram": {
     "description": "redesign.plan.telegram"
   },
+  "redesignPlanOrgPlansIntro": "Abläufe aller Gruppen in „{org}“",
+  "@redesignPlanOrgPlansIntro": {
+    "description": "redesign.plan.orgPlansIntro",
+    "placeholders": {"org": {"type": "String"}}
+  },
+  "redesignPlanTemplatesIntro": "Gelten für alle Gruppen der Organisation „{org}“.",
+  "@redesignPlanTemplatesIntro": {
+    "description": "redesign.plan.templatesIntro",
+    "placeholders": {"org": {"type": "String"}}
+  },
+  "redesignPlanOrgPlansUpcoming": "Anstehend",
+  "@redesignPlanOrgPlansUpcoming": {
+    "description": "redesign.plan.orgPlansUpcoming"
+  },
+  "redesignPlanAddDefaultField": "Standardfeld hinzufügen",
+  "@redesignPlanAddDefaultField": {
+    "description": "redesign.plan.addDefaultField"
+  },
+  "redesignPlanTemplateHint": "Vorlage · sofort gespeichert",
+  "@redesignPlanTemplateHint": {
+    "description": "redesign.plan.templateHint"
+  },
   "redesignPlanAddCurrent": "Aktuelle Werke",
   "@redesignPlanAddCurrent": {
     "description": "redesign.plan.addCurrent"

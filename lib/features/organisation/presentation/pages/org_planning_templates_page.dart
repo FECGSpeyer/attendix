@@ -20,6 +20,12 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/presentation/widgets/ion_condense.dart';
 import '../../../settings/presentation/widgets/settings_list.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
+import '../../../redesign/presentation/widgets/manage/rd_manage_list.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
+
+part 'org_planning_templates_page_beta.dart';
 
 /// "Planvorlagen & Felder" of the organisation (Ionic `OrgPlanningTemplatesPage`).
 ///
@@ -48,6 +54,9 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     super.initState();
     _notifier = ref.read(planSettingsNotifierProvider.notifier);
   }
+
+  /// setState for the Beta extension (part file).
+  void _update(VoidCallback fn) => setState(fn);
 
   /// Saves the current Standardfelder; `true` once the write is confirmed.
   /// Uses no `ref`/`context` unless the page is still mounted.
@@ -226,7 +235,26 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
   Future<void> _addToTemplate(int index, BuildContext buttonContext) async {
     final tpl = _templates![index];
     final isGeneral = ref.read(currentTenantProvider)?.type == 'general';
-    final action = await showAppPopoverMenu<String>(
+    final String? action;
+    if (context.rdSkin != null) {
+      action = await showPlanActionSheet<String>(
+        context,
+        title: context.l10n.redesignPlanAddTitle,
+        actions: [
+          PlanSheetAction('field', context.l10n.typeSettingsAddField, icon: Icons.add),
+          PlanSheetAction('note', context.l10n.typeSettingsAddNoteField, icon: Icons.sticky_note_2_outlined),
+          if (!isGeneral)
+            PlanSheetAction('song', context.l10n.orgTemplatesSongPlaceholder, icon: Icons.music_note_outlined),
+          for (var i = 0; i < _defaultFields.length; i++)
+            PlanSheetAction(
+              'default:$i',
+              '${_defaultFields[i].name} · ${context.l10n.planningMinShort(_defaultFields[i].time)}',
+              icon: Icons.short_text,
+            ),
+        ],
+      );
+    } else {
+    action = await showAppPopoverMenu<String>(
       context: buttonContext,
       items: [
         AppPopoverMenuItem(value: 'field', label: context.l10n.typeSettingsAddField),
@@ -241,6 +269,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
           ),
       ],
     );
+    }
     if (action == null || !mounted) return;
     PlanField? field;
     if (action.startsWith('default:')) {
@@ -364,6 +393,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       _defaultFields = [...?org?.defaultFields];
       _orgId = org?.id;
     }
+    if (context.rdSkin != null) return _rdBuild(context);
 
     return IonCondense(builder: (context, collapsed) => Scaffold(
       // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
