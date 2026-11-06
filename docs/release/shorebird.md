@@ -69,12 +69,16 @@ scripts/store_build.sh patch-ios <Dart-Defines wie beim Release>
 #   = shorebird patch ios --release-version=5.0.0+241 -- --build-name 5.0.0 --build-number 241 …
 ```
 
-Das Skript patcht genau den Release mit den aktuellen Store-Nummern
-(`scripts/store_build.sh --print`). Gleiche Dart-Defines wie beim Release
-verwenden. `displayVersion` und Build-Nummer in `pubspec.yaml` zwischen
-Release und Patch nicht ändern, sonst passt der Patch nicht zum Release.
-Für einen älteren Release-Build direkt
-`shorebird patch android|ios --release-version=<name>+<nr> -- …` aufrufen.
+Ohne Angabe patcht das Skript den Release mit den aktuellen Store-Nummern
+(`scripts/store_build.sh --print`). Sobald `pubspec.yaml` oder `displayVersion`
+seit dem Store-Release erhöht wurden (bei jeder Feature-Änderung), den
+Release ausdrücklich angeben, sonst findet Shorebird ihn nicht:
+
+```bash
+RELEASE_VERSION=5.0.0+241 scripts/store_build.sh patch-ios <Dart-Defines wie beim Release>
+```
+
+Gleiche Dart-Defines wie beim Release verwenden.
 
 ## Grenzen
 

@@ -19,6 +19,7 @@
 #   apk            shorebird release android --artifact apk
 #   patch-ios      shorebird patch ios     --release-version=<name>+<number>
 #   patch-android  shorebird patch android --release-version=<name>+<number>
+#                  (RELEASE_VERSION=<name>+<number> patches an earlier release)
 #   ios, macos     plain flutter build (e.g. --config-only), NO Shorebird release
 # The Flutter version for releases is read from .github/workflows/ci.yml and
 # can be overridden with SHOREBIRD_FLUTTER_VERSION.
@@ -113,9 +114,17 @@ case "$target" in
     ;;
   patch-android|patch-ios)
     # A patch only applies to the exact release build (name + number); the
-    # Flutter version is taken from that release by shorebird itself.
+    # Flutter version is taken from that release by shorebird itself. After an
+    # internal version bump the current numbers no longer match the store
+    # release: then pass it explicitly, e.g. RELEASE_VERSION=5.0.0+241.
+    release=${RELEASE_VERSION:-$name+$number}
+    if [[ ! "$release" =~ ^[0-9][0-9.]*\+[0-9]+$ ]]; then
+      echo "store_build: RELEASE_VERSION must look like 5.0.0+241, got '$release'" >&2
+      exit 1
+    fi
     find_shorebird
-    run "$shorebird" patch "${target#patch-}" "--release-version=$name+$number" -- "${build_args[@]}" "$@"
+    run "$shorebird" patch "${target#patch-}" "--release-version=$release" -- \
+      --build-name "${release%+*}" --build-number "${release##*+}" "$@"
     ;;
   ios|macos)
     echo "store_build: WARNING: plain 'flutter build $target' is NOT a Shorebird release," >&2
