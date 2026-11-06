@@ -177,7 +177,7 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
       ],
       floatingActionButton: TabBarFab.wrap(isAdmin
           ? IonFabButton(
-              onPressed: () => _showAddGroupSheet(
+              onPressed: () => showAddGroupSheet(
                   context, ref, categoriesAsync.valueOrNull ?? const []),
             )
           : null),
@@ -301,7 +301,7 @@ class _GroupListItem extends StatelessWidget {
       title = group.name;
     }
     final clefText =
-        (group.clefs ?? const <String>[]).map((c) => _clefLabel(context.l10n, c)).join(', ');
+        (group.clefs ?? const <String>[]).map((c) => groupClefLabel(context.l10n, c)).join(', ');
 
     final hasStart = dragIndex != null || group.sortOrder != null;
     return IonItem(
@@ -346,7 +346,8 @@ class _GroupListItem extends StatelessWidget {
 }
 
 /// Ionic "Gruppe hinzufügen" sheet (FAB): Gruppe + Kategorie → Hinzufügen.
-Future<void> _showAddGroupSheet(
+/// Also used by the Beta list "Gruppen" (rd_groups_page.dart).
+Future<void> showAddGroupSheet(
   BuildContext context,
   WidgetRef ref,
   List<GroupCategory> categories,
@@ -474,13 +475,13 @@ Future<void> _openInstrumentPage(
 }
 
 /// Tuning options for instruments
-const _tuningOptions = ['C', 'Es', 'B', 'F'];
+const groupTuningOptions = ['C', 'Es', 'B', 'F'];
 
 /// Clef options
-const _clefOptions = ['G', 'F', 'C'];
+const groupClefOptions = ['G', 'F', 'C'];
 
 /// MISC2: localized clef names (Ionic common.clef.*)
-String _clefLabel(AppLocalizations l10n, String clef) => switch (clef.toUpperCase()) {
+String groupClefLabel(AppLocalizations l10n, String clef) => switch (clef.toUpperCase()) {
       'G' => l10n.commonClefG,
       'F' => l10n.commonClefF,
       'C' => l10n.commonClefC,
@@ -619,11 +620,11 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
             const SizedBox(height: AppDimensions.paddingM),
             if (showMusicFields) ...[
               AppDropdownFormField<String>(
-                value: _tuningOptions.contains(_selectedTuning)
+                value: groupTuningOptions.contains(_selectedTuning)
                     ? _selectedTuning
                     : 'C',
                 decoration: InputDecoration(labelText: context.l10n.instrumentsTuning),
-                items: _tuningOptions
+                items: groupTuningOptions
                     .map((t) => DropdownMenuItem(value: t, child: Text(t)))
                     .toList(),
                 onChanged: (value) {
@@ -646,10 +647,10 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
               const SizedBox(height: AppDimensions.paddingXS),
               Wrap(
                 spacing: AppDimensions.paddingS,
-                children: _clefOptions.map((clef) {
+                children: groupClefOptions.map((clef) {
                   final isSelected = _selectedClefs.contains(clef);
                   return FilterChip(
-                    label: Text('${_clefLabel(context.l10n, clef)} ($clef)'),
+                    label: Text('${groupClefLabel(context.l10n, clef)} ($clef)'),
                     selected: isSelected,
                     onSelected: (selected) {
                       setState(() {

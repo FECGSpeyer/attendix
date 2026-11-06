@@ -37,7 +37,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
         onPressed: () => context.pop(),
       ),
       floatingActionButton: TabBarFab.wrap(FloatingActionButton(
-        onPressed: () => _showCreateDialog(context),
+        onPressed: () => showCreateShiftPlanSheet(context, ref),
         child: const Icon(Icons.add),
       )),
       bodyBuilder: (context, largeTitle) => ListView(
@@ -107,104 +107,106 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
       context.push('/settings/shifts/${shift.id}');
     }
   }
+}
 
-  /// Ionic: ion-modal sheet (breakpoint 0.7) "Schichtplan erstellen" with
-  /// stacked name/description inputs and a block "Erstellen" button.
-  Future<void> _showCreateDialog(BuildContext context) async {
-    final nameController = TextEditingController();
-    final descriptionController = TextEditingController();
+/// Ionic: ion-modal sheet (breakpoint 0.7) "Schichtplan erstellen" with
+/// stacked name/description inputs and a block "Erstellen" button; creates
+/// the plan and opens its detail page. Also used by the Beta list
+/// "Schichtpläne" (rd_shift_plans_page.dart).
+Future<void> showCreateShiftPlanSheet(BuildContext context, WidgetRef ref) async {
+  final nameController = TextEditingController();
+  final descriptionController = TextEditingController();
 
-    try {
-      final result = await showModalBottomSheet<Map<String, String>?>(
-        context: context,
-        useRootNavigator: true, // IOS_SHELL2: above the tab bar
-        isScrollControlled: true,
-        useSafeArea: true,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        builder: (sheetContext) => Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(sheetContext).viewInsets.bottom),
-          child: FractionallySizedBox(
-            heightFactor: 0.7,
-            child: Column(
-              children: [
-                AppBar(
-                  toolbarHeight: ionModalToolbarHeight(context),
-                  automaticallyImplyLeading: false,
-                  primary: false,
-                  title: Text(sheetContext.l10n.shiftsCreate),
-                ),
-                Expanded(
-                  child: ListView(
-                    children: [
-                      IonInsetList(
-                        children: [
-                          IonStackedInput(
-                            controller: nameController,
-                            label: sheetContext.l10n.typeSettingsName,
-                            autofocus: true,
-                          ),
-                          IonStackedInput(
-                            controller: descriptionController,
-                            label: sheetContext.l10n.tasksDescription,
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-                        child: FilledButton(
-                          onPressed: () => Navigator.pop(sheetContext, {
-                            'name': nameController.text,
-                            'description': descriptionController.text,
-                          }),
-                          child: IonButtonLabel(sheetContext.l10n.filesCreate),
+  try {
+    final result = await showModalBottomSheet<Map<String, String>?>(
+      context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      builder: (sheetContext) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(sheetContext).viewInsets.bottom),
+        child: FractionallySizedBox(
+          heightFactor: 0.7,
+          child: Column(
+            children: [
+              AppBar(
+                toolbarHeight: ionModalToolbarHeight(context),
+                automaticallyImplyLeading: false,
+                primary: false,
+                title: Text(sheetContext.l10n.shiftsCreate),
+              ),
+              Expanded(
+                child: ListView(
+                  children: [
+                    IonInsetList(
+                      children: [
+                        IonStackedInput(
+                          controller: nameController,
+                          label: sheetContext.l10n.typeSettingsName,
+                          autofocus: true,
                         ),
+                        IonStackedInput(
+                          controller: descriptionController,
+                          label: sheetContext.l10n.tasksDescription,
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+                      child: FilledButton(
+                        onPressed: () => Navigator.pop(sheetContext, {
+                          'name': nameController.text,
+                          'description': descriptionController.text,
+                        }),
+                        child: IonButtonLabel(sheetContext.l10n.filesCreate),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      );
-
-      if (result == null || !context.mounted) return;
-      // Ionic: dismiss first, then validate with a danger toast.
-      final name = result['name']?.trim() ?? '';
-      if (name.isEmpty) {
-        ToastHelper.showError(context, context.l10n.shiftsEnterName);
-        return;
-      }
-      await _createShift(name, result['description']?.trim() ?? '');
-    } finally {
-      // FN-001: Dispose controllers
-      nameController.dispose();
-      descriptionController.dispose();
-    }
-  }
-
-  Future<void> _createShift(String name, String description) async {
-    final notifier = ref.read(shiftNotifierProvider.notifier);
-
-    final plan = ShiftPlan(
-      name: name,
-      description: description,
+      ),
     );
 
-    final result = await notifier.createShift(plan);
+    if (result == null || !context.mounted) return;
+    // Ionic: dismiss first, then validate with a danger toast.
+    final name = result['name']?.trim() ?? '';
+    if (name.isEmpty) {
+      ToastHelper.showError(context, context.l10n.shiftsEnterName);
+      return;
+    }
+    await _createShift(context, ref, name, result['description']?.trim() ?? '');
+  } finally {
+    // FN-001: Dispose controllers
+    nameController.dispose();
+    descriptionController.dispose();
+  }
+}
 
-    if (mounted) {
-      if (result != null) {
-        ToastHelper.showSuccess(context, context.l10n.shiftsFlutterCreated(name));
-        // Navigate to detail page
-        if (result.id != null) {
-          context.push('/settings/shifts/${result.id}');
-        }
-      } else {
-        final error = ref.read(shiftNotifierProvider);
-        if (error.hasError) {
-          ToastHelper.showError(context, context.l10n.shiftsFlutterCreateFailed(friendlyErrorMessage(error.error)));
-        }
+Future<void> _createShift(BuildContext context, WidgetRef ref, String name, String description) async {
+  final notifier = ref.read(shiftNotifierProvider.notifier);
+
+  final plan = ShiftPlan(
+    name: name,
+    description: description,
+  );
+
+  final result = await notifier.createShift(plan);
+
+  if (context.mounted) {
+    if (result != null) {
+      ToastHelper.showSuccess(context, context.l10n.shiftsFlutterCreated(name));
+      // Navigate to detail page
+      if (result.id != null) {
+        context.push('/settings/shifts/${result.id}');
+      }
+    } else {
+      final error = ref.read(shiftNotifierProvider);
+      if (error.hasError) {
+        ToastHelper.showError(context, context.l10n.shiftsFlutterCreateFailed(friendlyErrorMessage(error.error)));
       }
     }
   }

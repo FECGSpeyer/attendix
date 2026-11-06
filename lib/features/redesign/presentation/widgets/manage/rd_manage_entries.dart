@@ -257,10 +257,12 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
       showArchiveSheet(context);
     case RdManageEntry.myVoice:
       push('/settings/voice-leader');
+    // Lists in the template "Verwaltungsliste" (rd_manage_list.dart); the
+    // old pages stay under /settings/….
     case RdManageEntry.attendanceTypes:
-      push('/settings/types');
+      push(RedesignRoutes.attendanceTypes);
     case RdManageEntry.shiftPlans:
-      push('/settings/shifts');
+      push(RedesignRoutes.shiftPlans);
     case RdManageEntry.extraFields:
       push('/settings/general/extra-fields');
     case RdManageEntry.runSheets:
@@ -276,7 +278,7 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
     case RdManageEntry.workCategories:
       showSongCategoriesSheet(context);
     case RdManageEntry.groups:
-      push('/settings/instruments');
+      push(RedesignRoutes.groups);
     case RdManageEntry.fileStorage:
       push('/settings/files');
     case RdManageEntry.statistics:

@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.43.0",
+      "version": "0.44.0",
       "date": "6.11.2026",
       "changes": [
         "✨ Beta-Design, Werke: „Noten importieren“ liest ganze Notenordner ein und ordnet Werke und Stimmen zu: per Google-Drive-Link (Dateien werden direkt kopiert, nichts aufs Handy) oder als ZIP-Datei aus Dropbox, OneDrive oder vom Rechner",
@@ -13,6 +13,14 @@
         "⚡ KI-Stimmerkennung nutzt das neuere Modell GPT-6 Luna, für Stimmnamen beim Import und zum Lesen der ersten Notenseite beim Hochladen",
         "💄 Noten importieren: eigene Seite unter Werke im Stil der Beta, Rückfrage beim Verlassen und Fehler mit Ausweg (z. B. ZIP statt Link)",
         "💄 Ohne Beta-Schalter bleibt alles wie in der Ionic-App"
+      ]
+    },
+    {
+      "version": "0.43.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Verwaltung › Gruppen, Anwesenheits-Typen und Schichtpläne als einheitliche Verwaltungslisten mit „Reihenfolge ändern“ im •••-Menü",
+        "✨ Beta: Neue Seite „Gruppe bearbeiten“ mit sofortigem Speichern"
       ]
     },
     {

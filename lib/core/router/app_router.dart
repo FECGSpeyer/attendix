@@ -130,6 +130,10 @@ import '../../features/redesign/presentation/pages/rd_bulk_members_page.dart';
 import '../../features/redesign/presentation/pages/rd_message_compose_page.dart';
 import '../../features/redesign/presentation/pages/rd_notifications_page.dart';
 import '../../features/redesign/presentation/pages/rd_stats_page.dart';
+import '../../features/redesign/presentation/pages/rd_attendance_types_page.dart';
+import '../../features/redesign/presentation/pages/rd_group_edit_page.dart';
+import '../../features/redesign/presentation/pages/rd_groups_page.dart';
+import '../../features/redesign/presentation/pages/rd_shift_plans_page.dart';
 import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea;
 import '../../features/redesign/presentation/pages/rd_manage_page.dart';
 import '../../features/redesign/presentation/widgets/rd_split_view.dart';
@@ -825,6 +829,30 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'mitglieder-bearbeiten',
                     builder: (context, state) => const RdBulkMembersPage(),
+                  ),
+                  // Verwaltungslisten (RedesignRoutes.groups etc.).
+                  GoRoute(
+                    path: 'gruppen',
+                    builder: (context, state) => const RdGroupsPage(),
+                    routes: [
+                      GoRoute(
+                        path: ':id',
+                        builder: (context, state) {
+                          final id = int.tryParse(state.pathParameters['id'] ?? '');
+                          return id == null
+                              ? const RdGroupsPage()
+                              : RdGroupEditPage(key: ValueKey('rd-group-edit-$id'), groupId: id);
+                        },
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'terminarten',
+                    builder: (context, state) => const RdAttendanceTypesPage(),
+                  ),
+                  GoRoute(
+                    path: 'schichtplaene',
+                    builder: (context, state) => const RdShiftPlansPage(),
                   ),
                   GoRoute(
                     path: ':area',

@@ -717,6 +717,61 @@
         "announcementsHint": "Gesendete Mitteilungen ansehen",
         "extraFieldsHint": "Eigene Felder für Personen und Werke"
       },
+      "manageList": {
+        "more": "Weitere Aktionen",
+        "reorder": "Reihenfolge ändern",
+        "reorderHint": "Halte einen Griff gedrückt und ziehe die Einträge an ihre Stelle. „Fertig“ speichert die Reihenfolge.",
+        "orderFailed": "Die Reihenfolge konnte nicht gespeichert werden. Bitte versuche es erneut."
+      },
+      "groupsList": {
+        "intro": "Gruppen ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.",
+        "empty": "Noch keine Gruppen angelegt.",
+        "mainGroup": "Hauptgruppe",
+        "add": "Gruppe hinzufügen",
+        "manageCategories": "Kategorien verwalten"
+      },
+      "groupEdit": {
+        "title": "Gruppe bearbeiten",
+        "name": "Name",
+        "nameEmpty": "Ein leerer Name wird nicht gespeichert.",
+        "category": "Kategorie",
+        "categoryNone": "Keine",
+        "manageCategories": "Kategorien verwalten",
+        "mainGroupHint": "Das ist die Hauptgruppe (die Leitung). Stimmung, Notenschlüssel und Synonyme gibt es für sie nicht, löschen lässt sie sich nicht.",
+        "instrument": "Instrument",
+        "tuning": "Stimmung",
+        "range": "Tonumfang",
+        "clefs": "Notenschlüssel",
+        "clefsHint": "Mindestens ein Notenschlüssel bleibt ausgewählt.",
+        "synonyms": "Synonyme",
+        "synonymsLabel": "Andere Namen, mit Komma getrennt",
+        "synonymsHint": "Über die Synonyme ordnet die App hochgeladene Noten automatisch dieser Gruppe zu.",
+        "generate": "Synonyme generieren",
+        "notes": "Notizen",
+        "hint": "Änderungen werden sofort gespeichert.",
+        "delete": "Gruppe löschen",
+        "deleteMain": "Die Hauptgruppe lässt sich nicht löschen.",
+        "deleteMembers": "{count, plural, one {In der Gruppe ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.} other {In der Gruppe sind oder waren noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.}}",
+        "deleteConfirm": "Gruppe „{name}“ wirklich löschen?",
+        "deleteFailed": "Die Gruppe konnte nicht gelöscht werden.",
+        "notFound": "Diese Gruppe gibt es nicht mehr."
+      },
+      "typesList": {
+        "intro": "Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.",
+        "empty": "Noch keine Anwesenheits-Typen angelegt.",
+        "add": "Anwesenheits-Typ hinzufügen",
+        "allDayDays": "{count, plural, one {Ganztägig} other {Ganztägig · {count} Tage}}",
+        "defaultStatus": "Standard: {status}",
+        "hidden": "Ausgeblendet"
+      },
+      "shiftsList": {
+        "intro": "Schichtpläne entschuldigen Personen automatisch, wenn sie zur Zeit eines Termins Schicht haben. Den Plan weist du bei der Person zu.",
+        "important": "Die Anwesenheiten werden beim Anlegen eines Termins und beim Zuweisen eines Plans aktualisiert.",
+        "empty": "Noch keine Schichtpläne angelegt.",
+        "add": "Schichtplan anlegen",
+        "shifts": "{count, plural, one {1 Schicht} other {{count} Schichten}}",
+        "cycle": "{count, plural, one {Zyklus 1 Tag} other {Zyklus {count} Tage}}"
+      },
       "pult": {
         "open": "Pultmodus",
         "openHint": "Große Kacheln zum Antippen, gut für das Tablet am Pult",
@@ -1857,6 +1912,61 @@
         "missingHint": "Members with an e-mail but no access",
         "announcementsHint": "View sent messages",
         "extraFieldsHint": "Custom fields for people and works"
+      },
+      "manageList": {
+        "more": "More actions",
+        "reorder": "Change order",
+        "reorderHint": "Hold a handle and drag the entries into place. “Done” saves the order.",
+        "orderFailed": "The order could not be saved. Please try again."
+      },
+      "groupsList": {
+        "intro": "Groups sort the members, for example by instrument or voice. Their order also applies to lists and parts.",
+        "empty": "No groups yet.",
+        "mainGroup": "Main group",
+        "add": "Add group",
+        "manageCategories": "Manage categories"
+      },
+      "groupEdit": {
+        "title": "Edit group",
+        "name": "Name",
+        "nameEmpty": "An empty name is not saved.",
+        "category": "Category",
+        "categoryNone": "None",
+        "manageCategories": "Manage categories",
+        "mainGroupHint": "This is the main group (the leads). It has no tuning, clefs or synonyms and cannot be deleted.",
+        "instrument": "Instrument",
+        "tuning": "Tuning",
+        "range": "Range",
+        "clefs": "Clefs",
+        "clefsHint": "At least one clef stays selected.",
+        "synonyms": "Synonyms",
+        "synonymsLabel": "Other names, separated by commas",
+        "synonymsHint": "With synonyms the app assigns uploaded parts to this group automatically.",
+        "generate": "Generate synonyms",
+        "notes": "Notes",
+        "hint": "Changes are saved right away.",
+        "delete": "Delete group",
+        "deleteMain": "The main group cannot be deleted.",
+        "deleteMembers": "{count, plural, one {1 person is (or was) in this group, archived ones included. Move them to another group first.} other {{count} people are (or were) in this group, archived ones included. Move them to another group first.}}",
+        "deleteConfirm": "Really delete the group “{name}”?",
+        "deleteFailed": "The group could not be deleted.",
+        "notFound": "This group no longer exists."
+      },
+      "typesList": {
+        "intro": "Attendance types set the name, time, default status and other defaults of new events.",
+        "empty": "No attendance types yet.",
+        "add": "Add attendance type",
+        "allDayDays": "{count, plural, one {All day} other {All day · {count} days}}",
+        "defaultStatus": "Default: {status}",
+        "hidden": "Hidden"
+      },
+      "shiftsList": {
+        "intro": "Shift plans excuse people automatically when they work a shift at the time of an event. Assign a plan on the person.",
+        "important": "Attendances are updated when a new event is created and when a plan is assigned to a person.",
+        "empty": "No shift plans yet.",
+        "add": "Add shift plan",
+        "shifts": "{count, plural, one {1 shift} other {{count} shifts}}",
+        "cycle": "{count, plural, one {Cycle of 1 day} other {Cycle of {count} days}}"
       },
       "pult": {
         "open": "Stand mode",
