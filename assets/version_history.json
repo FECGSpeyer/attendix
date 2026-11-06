@@ -12,6 +12,15 @@
       ]
     },
     {
+      "version": "0.59.1",
+      "date": "6.11.2026",
+      "changes": [
+        "⚡ Noten-Import: Neuberechnung bei großen Ordnern in Sekundenbruchteilen statt 15 Sekunden, „Zur Prüfung“ zeigt sofort „Wird vorbereitet …“",
+        "✨ Noten-Import: bekannte Instrumente ohne eigene Gruppe (z. B. Oboe, Altsaxophon) werden erkannt und als neue Gruppe vorgeschlagen",
+        "✨ Noten-Import: Stimmname aus dem letzten Namensteil („SoS - … bearbeitet - Oboe“ = „Oboe“), neue Gruppen sind in Schritt 3 wählbar"
+      ]
+    },
+    {
       "version": "0.59.0",
       "date": "6.11.2026",
       "changes": [

@@ -72,7 +72,13 @@ class RdImportWorkPage extends ConsumerWidget {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
                         onTap: () async {
-                          final picked = await rdPickImportCategory(context, plan, current: fs.category, title: f.name);
+                          final picked = await rdPickImportCategory(
+                            context,
+                            plan,
+                            current: fs.category,
+                            title: f.name,
+                            newGroups: rdImportPendingGroups(plan, d),
+                          );
                           if (picked != null) controller.setCategory(f.path, picked);
                         },
                         // 44 px to tap, like the other links of the new design.
