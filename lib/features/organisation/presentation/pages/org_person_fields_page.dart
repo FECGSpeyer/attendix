@@ -268,15 +268,22 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
   }
 }
 
-/// Add / edit sheet of one org extra field.
-/// Ionic `ion-input type=number` binds a number; empty or invalid input
-/// (the browser rejects text, NaN and Infinity) binds null. Non-finite values
-/// would also break the JSON of the whole field list.
+/// Edited number default of an org extra field (add and edit sheet).
+///
+/// Ionic binds the input type dynamically (`[type]="… ? 'number' : …"`), so
+/// Angular uses the TextValueAccessor and stores the edited value as a
+/// string: „5“, or „“ when cleared (the browser number input also yields „“
+/// for text, NaN and Infinity). An empty string keeps persons without a value
+/// empty instead of showing 0 (getFieldTypeDefaultValue only falls back for
+/// null). Readers accept string and number (old data).
 @visibleForTesting
-num? parseNumberFieldDefault(String text) {
-  final value = num.tryParse(text.trim());
-  return value != null && value.isFinite ? value : null;
+String numberFieldDefaultText(String text) {
+  final trimmed = text.trim();
+  final value = num.tryParse(trimmed);
+  return value != null && value.isFinite ? trimmed : '';
 }
+
+/// Add / edit sheet of one org extra field.
 
 class _FieldEditorSheet extends StatefulWidget {
   const _FieldEditorSheet({this.initial, this.nameExists});
@@ -373,7 +380,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
       'date' => _defaultValue,
       // Unchanged input keeps the bound value (e.g. the number 0).
       _ when _default.text == _defaultText(_defaultValue) => _defaultValue,
-      'number' => parseNumberFieldDefault(_default.text),
+      'number' => numberFieldDefaultText(_default.text),
       _ => _default.text,
     };
     Navigator.pop(
