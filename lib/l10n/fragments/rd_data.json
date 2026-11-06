@@ -1,0 +1,46 @@
+{
+  "de": {
+    "rdData": {
+      "back": "Auswertung & Daten",
+      "exportTitle": "Export",
+      "what": "Was",
+      "members": "Mitgliederliste",
+      "attendance": "Anwesenheit",
+      "columns": "Spalten",
+      "columnsCount": "{count} Spalten",
+      "sort": "Sortieren nach",
+      "format": "Format",
+      "file": "Datei: {name}",
+      "addColumn": "Spalte hinzufügen",
+      "addOwn": "Eigene Spalte hinzufügen",
+      "ownEmpty": "Eigene Spalte, bleibt leer",
+      "columnsHint": "Ziehen zum Sortieren. Eigene Spalten bleiben leer, etwa zum Ausfüllen auf Papier.",
+      "certificates": "Urkunden",
+      "certificatesFor": "Für welche Gruppen sollen Urkunden erstellt werden?",
+      "certificatesCreate": "Urkunden für {count} Personen erstellen",
+      "groupCount": "{count} Personen"
+    }
+  },
+  "en": {
+    "rdData": {
+      "back": "Statistics & data",
+      "exportTitle": "Export",
+      "what": "What",
+      "members": "Member list",
+      "attendance": "Attendance",
+      "columns": "Columns",
+      "columnsCount": "{count} columns",
+      "sort": "Sort by",
+      "format": "Format",
+      "file": "File: {name}",
+      "addColumn": "Add column",
+      "addOwn": "Add own column",
+      "ownEmpty": "Own column, stays empty",
+      "columnsHint": "Drag to sort. Own columns stay empty, e.g. to fill in on paper.",
+      "certificates": "Certificates",
+      "certificatesFor": "For which groups should certificates be created?",
+      "certificatesCreate": "Create certificates for {count} people",
+      "groupCount": "{count} people"
+    }
+  }
+}

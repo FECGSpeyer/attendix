@@ -11726,6 +11726,90 @@
       "count": {}
     }
   },
+  "rdDataAddColumn": "Spalte hinzufügen",
+  "@rdDataAddColumn": {
+    "description": "rdData.addColumn"
+  },
+  "rdDataAddOwn": "Eigene Spalte hinzufügen",
+  "@rdDataAddOwn": {
+    "description": "rdData.addOwn"
+  },
+  "rdDataAttendance": "Anwesenheit",
+  "@rdDataAttendance": {
+    "description": "rdData.attendance"
+  },
+  "rdDataBack": "Auswertung & Daten",
+  "@rdDataBack": {
+    "description": "rdData.back"
+  },
+  "rdDataCertificates": "Urkunden",
+  "@rdDataCertificates": {
+    "description": "rdData.certificates"
+  },
+  "rdDataCertificatesCreate": "Urkunden für {count} Personen erstellen",
+  "@rdDataCertificatesCreate": {
+    "description": "rdData.certificatesCreate",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdDataCertificatesFor": "Für welche Gruppen sollen Urkunden erstellt werden?",
+  "@rdDataCertificatesFor": {
+    "description": "rdData.certificatesFor"
+  },
+  "rdDataColumns": "Spalten",
+  "@rdDataColumns": {
+    "description": "rdData.columns"
+  },
+  "rdDataColumnsCount": "{count} Spalten",
+  "@rdDataColumnsCount": {
+    "description": "rdData.columnsCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdDataColumnsHint": "Ziehen zum Sortieren. Eigene Spalten bleiben leer, etwa zum Ausfüllen auf Papier.",
+  "@rdDataColumnsHint": {
+    "description": "rdData.columnsHint"
+  },
+  "rdDataExportTitle": "Export",
+  "@rdDataExportTitle": {
+    "description": "rdData.exportTitle"
+  },
+  "rdDataFile": "Datei: {name}",
+  "@rdDataFile": {
+    "description": "rdData.file",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdDataFormat": "Format",
+  "@rdDataFormat": {
+    "description": "rdData.format"
+  },
+  "rdDataGroupCount": "{count} Personen",
+  "@rdDataGroupCount": {
+    "description": "rdData.groupCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdDataMembers": "Mitgliederliste",
+  "@rdDataMembers": {
+    "description": "rdData.members"
+  },
+  "rdDataOwnEmpty": "Eigene Spalte, bleibt leer",
+  "@rdDataOwnEmpty": {
+    "description": "rdData.ownEmpty"
+  },
+  "rdDataSort": "Sortieren nach",
+  "@rdDataSort": {
+    "description": "rdData.sort"
+  },
+  "rdDataWhat": "Was",
+  "@rdDataWhat": {
+    "description": "rdData.what"
+  },
   "rdOrgArchiveNote": "Die Personen werden hier archiviert. Wer ein Konto hat, bekommt eine Nachricht.",
   "@rdOrgArchiveNote": {
     "description": "rdOrg.archiveNote"

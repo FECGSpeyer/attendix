@@ -9392,6 +9392,70 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get rdDataAddColumn => 'Spalte hinzufügen';
+
+  @override
+  String get rdDataAddOwn => 'Eigene Spalte hinzufügen';
+
+  @override
+  String get rdDataAttendance => 'Anwesenheit';
+
+  @override
+  String get rdDataBack => 'Auswertung & Daten';
+
+  @override
+  String get rdDataCertificates => 'Urkunden';
+
+  @override
+  String rdDataCertificatesCreate(Object count) {
+    return 'Urkunden für $count Personen erstellen';
+  }
+
+  @override
+  String get rdDataCertificatesFor =>
+      'Für welche Gruppen sollen Urkunden erstellt werden?';
+
+  @override
+  String get rdDataColumns => 'Spalten';
+
+  @override
+  String rdDataColumnsCount(Object count) {
+    return '$count Spalten';
+  }
+
+  @override
+  String get rdDataColumnsHint =>
+      'Ziehen zum Sortieren. Eigene Spalten bleiben leer, etwa zum Ausfüllen auf Papier.';
+
+  @override
+  String get rdDataExportTitle => 'Export';
+
+  @override
+  String rdDataFile(Object name) {
+    return 'Datei: $name';
+  }
+
+  @override
+  String get rdDataFormat => 'Format';
+
+  @override
+  String rdDataGroupCount(Object count) {
+    return '$count Personen';
+  }
+
+  @override
+  String get rdDataMembers => 'Mitgliederliste';
+
+  @override
+  String get rdDataOwnEmpty => 'Eigene Spalte, bleibt leer';
+
+  @override
+  String get rdDataSort => 'Sortieren nach';
+
+  @override
+  String get rdDataWhat => 'Was';
+
+  @override
   String get rdOrgArchiveNote =>
       'Die Personen werden hier archiviert. Wer ein Konto hat, bekommt eine Nachricht.';
 
