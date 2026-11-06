@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.63.0",
+      "date": "6.11.2026",
+      "changes": [
+        "💄 Beta: Anmelden mit Beta-Karte über dem gewohnten Foto und Logo, „Passwort vergessen?“ als Blatt, Registrierung per Beitrittslink in derselben Karte; Felder, Autofill und Ablauf bleiben gleich"
+      ]
+    },
+    {
       "version": "0.62.0",
       "date": "6.11.2026",
       "changes": [

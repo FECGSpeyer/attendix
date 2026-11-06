@@ -11986,6 +11986,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignJoinWelcomeNoName => 'Welcome';
 
   @override
+  String get redesignLoginForgot => 'Forgot password?';
+
+  @override
+  String get redesignLoginResetIntro =>
+      'We will send you a link to set a new password.';
+
+  @override
+  String get redesignLoginResetSend => 'Send link';
+
+  @override
   String get redesignManageAnnouncementsHint =>
       'Write, sent messages, automation';
 

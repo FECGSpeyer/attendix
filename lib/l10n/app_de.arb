@@ -14958,6 +14958,18 @@
   "@redesignJoinWelcomeNoName": {
     "description": "redesign.join.welcomeNoName"
   },
+  "redesignLoginForgot": "Passwort vergessen?",
+  "@redesignLoginForgot": {
+    "description": "redesign.login.forgot"
+  },
+  "redesignLoginResetIntro": "Wir schicken dir einen Link, mit dem du ein neues Passwort setzt.",
+  "@redesignLoginResetIntro": {
+    "description": "redesign.login.resetIntro"
+  },
+  "redesignLoginResetSend": "Link senden",
+  "@redesignLoginResetSend": {
+    "description": "redesign.login.resetSend"
+  },
   "redesignManageAnnouncementsHint": "Schreiben, Gesendetes, Automatik",
   "@redesignManageAnnouncementsHint": {
     "description": "redesign.manage.announcementsHint"

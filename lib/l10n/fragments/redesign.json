@@ -1415,6 +1415,11 @@
       },
       "admin": {
         "limitGb": "Höchstens (GB)"
+      },
+      "login": {
+        "forgot": "Passwort vergessen?",
+        "resetIntro": "Wir schicken dir einen Link, mit dem du ein neues Passwort setzt.",
+        "resetSend": "Link senden"
       }
     }
   },
@@ -2834,6 +2839,11 @@
       },
       "admin": {
         "limitGb": "Maximum (GB)"
+      },
+      "login": {
+        "forgot": "Forgot password?",
+        "resetIntro": "We will send you a link to set a new password.",
+        "resetSend": "Send link"
       }
     }
   }
