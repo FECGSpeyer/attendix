@@ -32,6 +32,10 @@ class IonicSessionPlugin(
     private var webView: WebView? = null
     private var pending: MethodChannel.Result? = null
 
+    // IONIC_QUEUE: separate reader (own WebView, handler and timeout), never
+    // shared with the session read.
+    private val queueReader = IonicOfflineQueueReader(context)
+
     init {
         channel.setMethodCallHandler(this)
     }
@@ -39,9 +43,14 @@ class IonicSessionPlugin(
     fun dispose() {
         channel.setMethodCallHandler(null)
         fail("disposed")
+        queueReader.dispose()
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+        if (call.method == "readOfflineQueue") {
+            queueReader.read(result)
+            return
+        }
         if (call.method != "read") {
             result.notImplemented()
             return

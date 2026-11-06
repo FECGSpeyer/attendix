@@ -27,6 +27,7 @@ import 'core/services/public_plan_draft_storage.dart'
     show clearPublicPlanDrafts;
 import 'core/services/planning_draft_store.dart' show clearPlanningDrafts;
 import 'core/services/live_activity_service.dart';
+import 'core/services/native/ionic_offline_queue_takeover.dart';
 import 'core/services/native/ionic_session_takeover.dart';
 import 'core/services/native/shorebird_patch_service.dart';
 import 'core/theme/app_theme.dart';
@@ -106,11 +107,16 @@ void main() async {
 
   // Initialize Supabase
   await SupabaseConfig.initialize();
+  // IONIC_QUEUE: decided before the session takeover writes its keys
+  await prepareIonicOfflineQueueTakeover();
   // IONIC_SESSION: keep the Ionic login after the store update (once, native)
   await takeOverIonicSession(
     supabaseUrl: SupabaseConfig.supabaseUrl,
     anonKey: SupabaseConfig.supabaseAnonKey,
   );
+  // IONIC_QUEUE: unsent Ionic offline writes (once, native, not awaited);
+  // imported and replayed by the offline queue.
+  startIonicOfflineQueueRead();
 
   // LINKS_STARTUP: path links (/tabs/..., /open-attendance?..) → #/... so the
   // hash-based router sees them (after Supabase read auth params from the URL)

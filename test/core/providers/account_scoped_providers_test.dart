@@ -24,6 +24,8 @@ const _allowed = <String, String>{
   'offlineQueueSessionIdProvider': 'callback read at call time',
   'offlineQueueAuthEventsProvider': 'auth event stream',
   'offlineFlushFnProvider': 'replay callback; guarded per queued entry',
+  'ionicOfflineQueueImportProvider':
+      'one-time Ionic queue import; user id read at call time, guarded by isCurrent',
   // ACCOUNT_SWITCH: auth event listener; entries are keyed by user id.
   'accountSwitchBootstrapProvider': 'auth event listener, per-user entries',
   // Global / public data, identical for every account.

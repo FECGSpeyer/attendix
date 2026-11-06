@@ -154,6 +154,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 // lib/core/services/native/ionic_session_takeover.dart.
 public class IonicSessionPlugin: NSObject, FlutterPlugin {
   private var reader: IonicStorageReader?
+  // IONIC_QUEUE: separate reader (own hidden WebView), never shared with the
+  // session read above.
+  private var queueReader: IonicOfflineQueueReader?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(
@@ -162,6 +165,10 @@ public class IonicSessionPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    if call.method == "readOfflineQueue" {
+      readOfflineQueue(result: result)
+      return
+    }
     guard call.method == "read" else {
       result(FlutterMethodNotImplemented)
       return
@@ -176,6 +183,19 @@ public class IonicSessionPlugin: NSObject, FlutterPlugin {
     self.reader = reader
     reader.read { [weak self] value in
       self?.reader = nil
+      result(value)
+    }
+  }
+
+  private func readOfflineQueue(result: @escaping FlutterResult) {
+    guard queueReader == nil else {
+      result(FlutterError(code: "busy", message: "read already running", details: nil))
+      return
+    }
+    let reader = IonicOfflineQueueReader()
+    queueReader = reader
+    reader.read { [weak self] value in
+      self?.queueReader = nil
       result(value)
     }
   }
@@ -260,3 +280,122 @@ final class IonicStorageReader: NSObject, WKNavigationDelegate, WKURLSchemeHandl
   func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {}
 }
 // IONIC_SESSION end
+
+// IONIC_QUEUE: the Ionic app's unsent offline writes (OfflineQueueService,
+// @ionic/storage-angular via localforage: IndexedDB `_ionicstorage`, object
+// store `_ionickv`, key `offline_writes_v1`). Read once in a hidden WKWebView
+// of its own on capacitor://localhost, after (and independent of) the session
+// read. Channel de.attendix/ionic_session, method "readOfflineQueue" -> JSON
+// string `{"value": <stored value or null>}`; a missing database or key is
+// `null`, not an error. The Ionic data is only read, never changed. Dart
+// side: lib/core/services/native/ionic_offline_queue_takeover.dart.
+final class IonicOfflineQueueReader: NSObject, WKNavigationDelegate, WKURLSchemeHandler {
+  // Body of an async function (callAsyncJavaScript awaits the promise).
+  private static let script = "return (\(ionicOfflineQueueReadFunction))();"
+
+  private var webView: WKWebView?
+  private var completion: ((Any?) -> Void)?
+
+  func read(completion: @escaping (Any?) -> Void) {
+    self.completion = completion
+    let config = WKWebViewConfiguration()
+    config.websiteDataStore = WKWebsiteDataStore.default()
+    config.setURLSchemeHandler(self, forURLScheme: "capacitor")
+    let webView = WKWebView(frame: .zero, configuration: config)
+    webView.navigationDelegate = self
+    self.webView = webView
+    webView.load(URLRequest(url: URL(string: "capacitor://localhost/")!))
+    DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+      self?.finish(Self.unavailable("timeout"))
+    }
+  }
+
+  private static func unavailable(_ reason: String) -> FlutterError {
+    FlutterError(code: "unavailable", message: reason, details: nil)
+  }
+
+  private func finish(_ value: Any?) {
+    guard let completion = completion else { return }
+    self.completion = nil
+    webView?.navigationDelegate = nil
+    webView?.stopLoading()
+    webView = nil
+    completion(value)
+  }
+
+  func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    webView.callAsyncJavaScript(Self.script, arguments: [:], in: nil, in: .page) {
+      [weak self] result in
+      switch result {
+      case .success(let value):
+        self?.finish((value as? String) ?? Self.unavailable("script"))
+      case .failure(let error):
+        self?.finish(Self.unavailable(error.localizedDescription))
+      }
+    }
+  }
+
+  func webView(
+    _ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error
+  ) {
+    finish(Self.unavailable(error.localizedDescription))
+  }
+
+  func webView(
+    _ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!,
+    withError error: Error
+  ) {
+    finish(Self.unavailable(error.localizedDescription))
+  }
+
+  func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
+    let data = Data("<!doctype html><html><body></body></html>".utf8)
+    let response = URLResponse(
+      url: urlSchemeTask.request.url ?? URL(string: "capacitor://localhost/")!,
+      mimeType: "text/html", expectedContentLength: data.count, textEncodingName: "utf-8")
+    urlSchemeTask.didReceive(response)
+    urlSchemeTask.didReceive(data)
+    urlSchemeTask.didFinish()
+  }
+
+  func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {}
+}
+
+// JS function returning a promise of the JSON string. Opening a database that
+// does not exist would create it: the upgrade is aborted instead (nothing is
+// created, the result is null). Falls back to localforage's localStorage
+// driver key.
+let ionicOfflineQueueReadFunction = """
+  function () {
+    var KEY = 'offline_writes_v1';
+    function local() {
+      try { return localStorage.getItem('_ionicstorage/_ionickv/' + KEY); } catch (e) { return null; }
+    }
+    function idb() {
+      return new Promise(function (resolve, reject) {
+        if (!window.indexedDB) { resolve(null); return; }
+        var created = false;
+        var req = indexedDB.open('_ionicstorage');
+        req.onupgradeneeded = function () { created = true; req.transaction.abort(); };
+        req.onerror = function (event) {
+          if (event && event.preventDefault) event.preventDefault();
+          if (created) resolve(null); else reject(new Error('open: ' + req.error));
+        };
+        req.onsuccess = function () {
+          var db = req.result;
+          try {
+            if (!db.objectStoreNames.contains('_ionickv')) { db.close(); resolve(null); return; }
+            var get = db.transaction('_ionickv', 'readonly').objectStore('_ionickv').get(KEY);
+            get.onsuccess = function () { db.close(); resolve(get.result === undefined ? null : get.result); };
+            get.onerror = function () { db.close(); reject(new Error('get: ' + get.error)); };
+          } catch (e) { db.close(); reject(e); }
+        };
+      });
+    }
+    return idb().then(function (value) {
+      if (value === null || value === undefined) value = local();
+      return JSON.stringify({ value: value === undefined ? null : value });
+    });
+  }
+  """
+// IONIC_QUEUE end
