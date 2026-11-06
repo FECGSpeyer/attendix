@@ -129,8 +129,12 @@ import '../../features/redesign/presentation/pages/rd_message_compose_page.dart'
 import '../../features/redesign/presentation/pages/rd_notifications_page.dart';
 import '../../features/redesign/presentation/pages/rd_stats_page.dart';
 import '../../features/redesign/presentation/pages/rd_attendance_types_page.dart';
+import '../../features/redesign/presentation/pages/rd_extra_field_edit_page.dart';
+import '../../features/redesign/presentation/pages/rd_extra_fields_page.dart';
 import '../../features/redesign/presentation/pages/rd_group_edit_page.dart';
 import '../../features/redesign/presentation/pages/rd_groups_page.dart';
+import '../../features/redesign/presentation/pages/rd_teacher_edit_page.dart';
+import '../../features/redesign/presentation/pages/rd_teachers_page.dart';
 import '../../features/redesign/presentation/pages/rd_shift_plans_page.dart';
 import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea;
 import '../../features/redesign/presentation/pages/rd_manage_page.dart';
@@ -831,6 +835,42 @@ final routerProvider = Provider<GoRouter>((ref) {
                           return id == null
                               ? const RdGroupsPage()
                               : RdGroupEditPage(key: ValueKey('rd-group-edit-$id'), groupId: id);
+                        },
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'lehrer',
+                    builder: (context, state) => const RdTeachersPage(),
+                    routes: [
+                      GoRoute(
+                        path: ':id',
+                        builder: (context, state) {
+                          final id = int.tryParse(state.pathParameters['id'] ?? '');
+                          return id == null
+                              ? const RdTeachersPage()
+                              : RdTeacherEditPage(key: ValueKey('rd-teacher-edit-$id'), teacherId: id);
+                        },
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'zusatzfelder',
+                    builder: (context, state) => const RdExtraFieldsPage(),
+                    routes: [
+                      GoRoute(
+                        path: ':list/:id',
+                        builder: (context, state) {
+                          final list = state.pathParameters['list'];
+                          final id = state.pathParameters['id'] ?? '';
+                          if ((list != 'personen' && list != 'werke') || id.isEmpty) {
+                            return const RdExtraFieldsPage();
+                          }
+                          return RdExtraFieldEditPage(
+                            key: ValueKey('rd-extra-field-edit-$list-$id'),
+                            song: list == 'werke',
+                            fieldId: id,
+                          );
                         },
                       ),
                     ],
