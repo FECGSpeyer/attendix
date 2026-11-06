@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,4 +15,42 @@ void goReplacingHistory(GoRouter router, String location) {
     return;
   }
   Router.neglect(ctx, () => router.go(location));
+}
+
+/// Waits until [route] has finished its push transition. True once it
+/// has (at once when it already had); false when the route is being
+/// removed instead (transition runs backwards) or [timeout] passes first –
+/// the caller then must not navigate.
+///
+/// A page that leaves the tab shell (e.g. the group selection after an
+/// account switch) and navigates back into it right away must wait for
+/// this: until the push is done the old shell page is still in the tree,
+/// and the new shell would share its navigator key with it (duplicate
+/// GlobalKey) – the tab content then stays blank until the next tab change.
+Future<bool> untilRouteShown(
+  ModalRoute<dynamic>? route, {
+  Duration timeout = const Duration(seconds: 10),
+}) {
+  final animation = route?.animation;
+  if (animation == null) return Future.value(route != null);
+  switch (animation.status) {
+    case AnimationStatus.completed:
+      return Future.value(true);
+    case AnimationStatus.reverse || AnimationStatus.dismissed:
+      return Future.value(false);
+    case AnimationStatus.forward:
+      break;
+  }
+  final done = Completer<bool>();
+  void listener(AnimationStatus status) {
+    if (status == AnimationStatus.forward) return;
+    animation.removeStatusListener(listener);
+    if (!done.isCompleted) done.complete(status == AnimationStatus.completed);
+  }
+
+  animation.addStatusListener(listener);
+  return done.future.timeout(timeout, onTimeout: () {
+    animation.removeStatusListener(listener);
+    return false;
+  });
 }
