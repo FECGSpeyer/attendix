@@ -131,7 +131,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
               : _feedbackController.text.trim(),
           rating: _rating,
           anonymous: _anonymous,
-          phone: _phoneController.text.trim().isNotEmpty
+          phone: !_anonymous && _phoneController.text.trim().isNotEmpty
               ? _phoneController.text.trim()
               : null,
         );

@@ -37,6 +37,9 @@ Future<void> showMasterDataSheet(BuildContext context) {
       useRootNavigator: true,
       isScrollControlled: true,
       useSafeArea: true,
+      // Closing only via "Fertig"/back/barrier, so open changes get saved
+      // first (pulling down would pop past PopScope).
+      enableDrag: false,
       backgroundColor: context.rd.bg,
       builder: (_) => const FractionallySizedBox(
         heightFactor: 0.95,
@@ -91,6 +94,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
   // one runs, the pause timer and whether something was saved already.
   bool _dirty = false;
   bool _again = false;
+  bool _closing = false;
   bool _saved = false;
   Timer? _pause;
   List<ProfileExtraField> _visibleFields = const [];
@@ -320,23 +324,30 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     }
   }
 
-  /// "Fertig": saves what is still open, then closes.
+  /// "Fertig": saves until nothing is open any more, then closes. Fields are
+  /// locked meanwhile; a failed save keeps the sheet open.
   Future<void> _done() async {
+    if (_closing) return;
     final navigator = Navigator.of(context);
-    if (_dirty || _saving) {
-      _again = false;
-      while (_saving) {
+    _pause?.cancel();
+    _again = false;
+    FocusScope.of(context).unfocus();
+    setState(() => _closing = true);
+    while (_saving || _dirty) {
+      if (_saving) {
         await Future<void>.delayed(const Duration(milliseconds: 50));
         if (!mounted) return;
+        continue;
       }
-      if (_dirty) {
-        _dirty = false;
-        final ok = await _save(_visibleFields, quiet: true);
-        if (!mounted) return;
-        if (!ok) {
+      _dirty = false;
+      final ok = await _save(_visibleFields, quiet: true);
+      if (!mounted) return;
+      if (!ok) {
+        setState(() {
           _dirty = true;
-          return;
-        }
+          _closing = false;
+        });
+        return;
       }
     }
     if (navigator.canPop()) navigator.pop();
@@ -605,18 +616,22 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _done();
       },
-      child: Column(
-        children: [
-          RdFormTopBar(
-            title: l10n.settingsMyData,
-            cancel: '',
-            submit: l10n.redesignCommonDone,
-            saving: false,
-            onCancel: null,
-            onSubmit: _done,
-          ),
-          Expanded(child: body),
-        ],
+      child: Padding(
+        // Keep the lower fields above the keyboard.
+        padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+        child: Column(
+          children: [
+            RdFormTopBar(
+              title: l10n.settingsMyData,
+              cancel: '',
+              submit: l10n.redesignCommonDone,
+              saving: _closing,
+              onCancel: null,
+              onSubmit: _done,
+            ),
+            Expanded(child: IgnorePointer(ignoring: _closing, child: body)),
+          ],
+        ),
       ),
     );
   }

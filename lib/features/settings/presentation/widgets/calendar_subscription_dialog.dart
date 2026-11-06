@@ -94,7 +94,7 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
 
   // REDESIGN (E2): Beta sheet – short sentence, the link in a card, "Link
   // kopieren" as main button, "Anleitung öffnen" as second.
-  if (ref.read(redesignEnabledProvider)) {
+  if (ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider)) {
     await showRdSheet<void>(
       context,
       StatefulBuilder(
