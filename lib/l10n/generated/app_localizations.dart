@@ -18371,6 +18371,12 @@ abstract class AppLocalizations {
   /// **'Ordner aus Google Drive, Dropbox oder vom Rechner'**
   String get redesignImportMenuHint;
 
+  /// redesign.import.newGroupMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Attendix legt die Gruppe erst beim Hochladen an.'**
+  String get redesignImportNewGroupMessage;
+
   /// redesign.import.newGroupTitle
   ///
   /// In de, this message translates to:

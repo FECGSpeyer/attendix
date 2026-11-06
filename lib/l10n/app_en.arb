@@ -3040,6 +3040,7 @@
   "redesignImportMatchNumberOnly": "The number fits, the title differs.",
   "redesignImportMatchTitleOnly": "The title fits, the number differs.",
   "redesignImportMenuHint": "Folder from Google Drive, Dropbox or your computer",
+  "redesignImportNewGroupMessage": "Attendix creates the group only when uploading.",
   "redesignImportNewGroupTitle": "Create new group",
   "redesignImportOpenHint": "{count, plural, one {1 work is not reviewed yet and will not be uploaded.} other {{count} works are not reviewed yet and will not be uploaded.}}",
   "redesignImportOptionFassung": "Suggest the newest version",

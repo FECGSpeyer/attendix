@@ -11381,6 +11381,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Ordner aus Google Drive, Dropbox oder vom Rechner';
 
   @override
+  String get redesignImportNewGroupMessage =>
+      'Attendix legt die Gruppe erst beim Hochladen an.';
+
+  @override
   String get redesignImportNewGroupTitle => 'Neue Gruppe anlegen';
 
   @override
