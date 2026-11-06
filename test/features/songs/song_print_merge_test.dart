@@ -40,6 +40,26 @@ Uint8List _brokenClassicPdf() {
   return Uint8List.fromList(latin1.encode(s));
 }
 
+/// Classic PDF with correct xref; [objects] are the bodies of objects 1..n,
+/// object 1 is the catalog.
+Uint8List _pdf(List<String> objects) {
+  final s = StringBuffer('%PDF-1.4\n');
+  final offsets = <int>[];
+  for (var i = 0; i < objects.length; i++) {
+    offsets.add(s.length);
+    s.write('${i + 1} 0 obj ${objects[i]} endobj\n');
+  }
+  final xref = s.length;
+  s.write('xref\n0 ${objects.length + 1}\n0000000000 65535 f \n');
+  for (final o in offsets) {
+    s.write('${o.toString().padLeft(10, '0')} 00000 n \n');
+  }
+  s.write('trailer << /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n$xref\n%%EOF\n');
+  return Uint8List.fromList(latin1.encode(s.toString()));
+}
+
+const _page = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 200 100] >>';
+
 int _count(String haystack, Pattern p) => p.allMatches(haystack).length;
 
 void main() {
@@ -81,6 +101,49 @@ void main() {
           throwsA(isA<PdfMergeException>()));
       expect(merger.pageCount, 1);
       expect(PdfPageMerger().addPdf(merger.save()), 1);
+    });
+
+    test('rejects layers and forms in the catalog (raster fallback)', () {
+      for (final extra in ['/OCProperties << /OCGs [] >>', '/AcroForm << /Fields [] >>']) {
+        final pdf = _pdf([
+          '<< /Type /Catalog /Pages 2 0 R $extra >>',
+          '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+          _page,
+        ]);
+        expect(() => PdfPageMerger().addPdf(pdf), throwsA(isA<PdfMergeException>()),
+            reason: extra);
+      }
+    });
+
+    test('rejects missing page and content objects instead of dropping them', () {
+      final missingPage = _pdf([
+        '<< /Type /Catalog /Pages 2 0 R >>',
+        '<< /Type /Pages /Kids [3 0 R 99 0 R] /Count 2 >>',
+        _page,
+      ]);
+      final missingContent = _pdf([
+        '<< /Type /Catalog /Pages 2 0 R >>',
+        '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+        '<< /Type /Page /Parent 2 0 R /Contents 98 0 R >>',
+      ]);
+      for (final pdf in [missingPage, missingContent]) {
+        expect(() => PdfPageMerger().addPdf(pdf), throwsA(isA<PdfMergeException>()));
+      }
+    });
+
+    test('decodes #xx in names and escapes them on write', () {
+      final merger = PdfPageMerger();
+      merger.addPdf(_pdf([
+        '<< /Type /Catalog /Pages 2 0 R >>',
+        '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+        '<< /Type /Page /Parent 2 0 R /Media#42ox [0 0 200 100] /X /A#20B >>',
+      ]));
+      final out = merger.save();
+      final text = latin1.decode(out);
+      expect(_count(text, '/MediaBox'), 1);
+      expect(text, contains('/MediaBox [0 0 200 100]'));
+      expect(text, contains('/X /A#20B'));
+      expect(PdfPageMerger().addPdf(out), 1);
     });
   });
 

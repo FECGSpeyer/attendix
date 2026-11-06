@@ -14,6 +14,11 @@ class PdfMergeException implements Exception {
   String toString() => 'PdfMergeException: $message';
 }
 
+/// Page tree incomplete: retried once after an xref rebuild.
+class _IncompleteTree extends PdfMergeException {
+  _IncompleteTree(super.message);
+}
+
 /// Merges existing PDF documents page by page into one new PDF without
 /// re-rendering them – the counterpart of pdf-lib `copyPages` that Ionic
 /// `PrintService.mergeEntries` uses. Pages keep their content streams, fonts,
@@ -125,7 +130,8 @@ final class _Num extends _V {
   int? get asInt => int.tryParse(raw) ?? double.tryParse(raw)?.toInt();
 }
 
-/// Name incl. leading slash, raw (escapes kept).
+/// Name incl. leading slash, decoded (`/Media#42ox` → `/MediaBox`), so
+/// comparisons and dictionary keys see the real name. Re-escaped on write.
 final class _Name extends _V {
   const _Name(this.raw);
   final String raw;
@@ -182,6 +188,51 @@ bool _isRegular(int c) => !_isWs(c) && !_isDelim(c);
 bool _isDigit(int c) => c >= 0x30 && c <= 0x39;
 
 bool _isNumChar(int c) => _isDigit(c) || c == 0x2B || c == 0x2D || c == 0x2E;
+
+int _hexVal(int c) {
+  if (c >= 0x30 && c <= 0x39) return c - 0x30;
+  if (c >= 0x41 && c <= 0x46) return c - 0x37;
+  if (c >= 0x61 && c <= 0x66) return c - 0x57;
+  return -1;
+}
+
+/// Decodes `#xx` escapes of a name token (incl. leading slash). A `#` not
+/// followed by two hex digits stays literal (PDF 1.1 names).
+String _decodeName(Uint8List raw) {
+  if (!raw.contains(0x23)) return latin1.decode(raw);
+  final out = <int>[];
+  for (var i = 0; i < raw.length; i++) {
+    final c = raw[i];
+    if (c == 0x23 && i + 2 < raw.length) {
+      final hi = _hexVal(raw[i + 1]);
+      final lo = _hexVal(raw[i + 2]);
+      if (hi >= 0 && lo >= 0) {
+        out.add(hi * 16 + lo);
+        i += 2;
+        continue;
+      }
+    }
+    out.add(c);
+  }
+  return latin1.decode(out);
+}
+
+/// Serialises a decoded name: `#`, delimiters, whitespace and non-printable
+/// bytes become `#xx`.
+Uint8List _encodeName(String name) {
+  final out = <int>[0x2F];
+  for (var i = 1; i < name.length; i++) {
+    final c = name.codeUnitAt(i);
+    if (c < 0x21 || c > 0x7E || c == 0x23 || _isDelim(c)) {
+      out
+        ..add(0x23)
+        ..addAll(_ascii(c.toRadixString(16).toUpperCase().padLeft(2, '0')));
+    } else {
+      out.add(c);
+    }
+  }
+  return Uint8List.fromList(out);
+}
 
 class _Lexer {
   _Lexer(this.b, this.pos);
@@ -242,7 +293,7 @@ class _Lexer {
       while (pos < b.length && _isRegular(b[pos])) {
         pos++;
       }
-      return _Name(latin1.decode(Uint8List.sublistView(b, start, pos)));
+      return _Name(_decodeName(Uint8List.sublistView(b, start, pos)));
     }
     if (c == 0x28) return _literal();
     if (c == 0x3C) {
@@ -685,6 +736,17 @@ class _PdfReader {
 
   _V? deref(_V? v) => v is _Ref ? object(v.num) : v;
 
+  /// Object [num] that must exist (page tree, content, resources). A missing
+  /// object triggers one xref rebuild by scanning, then throws.
+  _V requireObject(int num) {
+    var v = object(num);
+    if (v == null && !_reconstructed) {
+      _reconstruct();
+      v = object(num);
+    }
+    return v ?? (throw PdfMergeException('object $num missing'));
+  }
+
   _ObjStm _objStm(int num) {
     final cached = _objStms[num];
     if (cached != null) return cached;
@@ -779,21 +841,42 @@ class _PdfReader {
 
   // --- pages ---------------------------------------------------------------
 
+  /// All pages in order. An incomplete page tree (missing node, `/Count`
+  /// mismatch) is retried once after an xref rebuild, then throws – never
+  /// returns a shortened document.
   List<_PageInfo> pages() {
+    try {
+      return _walkPages();
+    } on _IncompleteTree {
+      if (_reconstructed) rethrow;
+      _reconstruct();
+      return _walkPages();
+    }
+  }
+
+  List<_PageInfo> _walkPages() {
     final root = deref(_trailer['/Root']);
-    if (root is! _Dict) throw PdfMergeException('no catalog');
+    if (root is! _Dict) throw _IncompleteTree('no catalog');
+    // Layers and form fields live in the catalog and are not carried over
+    // (hidden layers would show, fields lack their fonts): rasterise instead.
+    for (final key in const ['/OCProperties', '/AcroForm']) {
+      final v = root[key];
+      if (v != null && v is! _Null) throw PdfMergeException('catalog has $key');
+    }
     final treeRef = root['/Pages'];
-    if (treeRef is! _Ref) throw PdfMergeException('no page tree');
+    if (treeRef is! _Ref) throw _IncompleteTree('no page tree');
     final result = <_PageInfo>[];
     final visited = <int>{treeRef.num};
+    _Dict? treeRoot;
     void walk(int num, Map<String, _V> inherited, int depth) {
       if (depth > 64) throw PdfMergeException('page tree too deep');
       final node = object(num);
-      if (node is! _Dict) return;
+      if (node is! _Dict) throw _IncompleteTree('page tree node $num missing');
+      treeRoot ??= node;
       final kids = deref(node['/Kids']);
       final type = node['/Type'];
       if (_isName(type, '/Pages') || (!_isName(type, '/Page') && kids is _Arr)) {
-        if (kids is! _Arr) return;
+        if (kids is! _Arr) throw _IncompleteTree('/Kids of $num missing');
         final inh = {...inherited};
         for (final k in _inheritable) {
           final v = node[k];
@@ -810,6 +893,12 @@ class _PdfReader {
     }
 
     walk(treeRef.num, const {}, 0);
+    // `/Pages` pointing straight at a single page has no /Count.
+    if (result.length == 1 && identical(result.first.dict, treeRoot)) return result;
+    final count = deref(treeRoot!['/Count']);
+    if (count is! _Num || count.asInt != result.length) {
+      throw _IncompleteTree('/Count does not match ${result.length} pages');
+    }
     return result;
   }
 }
@@ -844,8 +933,20 @@ class _Copier {
   /// Bodies of allocated objects (new number → bytes).
   final Map<int, Uint8List> out = {};
   final Map<int, int> _map = {};
-  final Set<int> _nulled = {};
+
+  /// Page tree / catalog / foreign pages: written as `null`.
+  final Set<int> _dropped = {};
+
+  /// Source objects copied via [_ref] (not the reserved pages).
+  final Set<int> _copied = {};
+
+  /// Source objects reached from page content or resources: every reference
+  /// inside them must resolve, otherwise the page would render incomplete.
+  final Set<int> _required = {};
   final List<int> _queue = [];
+
+  /// Page keys whose referenced objects must exist.
+  static const _requiredPageKeys = {'/Contents', '/Resources', '/Group'};
 
   /// Reserves the merged object number of source page [oldNum] so that
   /// references to it (links, annotation /P) point to the copy.
@@ -870,14 +971,15 @@ class _Copier {
     m.putIfAbsent('/Resources', () => const _Dict({}));
     m['/Parent'] = const _Raw('2 0 R');
     final o = BytesBuilder(copy: false);
-    _write(o, _Dict(m));
+    _writeDict(o, m, _requiredPageKeys.contains);
     return o.takeBytes();
   }
 
   void drain() {
     while (_queue.isNotEmpty) {
       final old = _queue.removeLast();
-      final obj = reader.object(old)!;
+      final required = _required.contains(old);
+      final obj = reader.requireObject(old);
       final o = BytesBuilder(copy: false);
       if (obj is _Stream) {
         final d = <String, _V>{};
@@ -887,42 +989,63 @@ class _Copier {
           }
         });
         d['/Length'] = _Num('${obj.data.length}');
-        _write(o, _Dict(d));
+        _writeDict(o, d, (_) => required);
         o.add(_ascii('\nstream\n'));
         o.add(obj.data);
         o.add(_ascii('\nendstream'));
       } else {
-        _write(o, obj);
+        _write(o, obj, required);
       }
       out[_map[old]!] = o.takeBytes();
     }
   }
 
   /// New number for source object [oldNum], or null when the reference must
-  /// become `null` (missing object, or a page tree / catalog / foreign page
-  /// that would drag the whole source document along).
-  int? _ref(int oldNum) {
+  /// become `null`: a page tree / catalog / foreign page that would drag the
+  /// whole source document along, or a missing object on an optional path
+  /// (annotations, metadata – the PDF spec reads it as null). A missing
+  /// [required] object rebuilds the xref once, then throws.
+  int? _ref(int oldNum, bool required) {
     final mapped = _map[oldNum];
-    if (mapped != null) return mapped;
-    if (_nulled.contains(oldNum)) return null;
-    final obj = reader.object(oldNum);
+    if (mapped != null) {
+      // First reached optionally, now required: copy again with checks.
+      if (required && _copied.contains(oldNum) && _required.add(oldNum)) {
+        _queue.add(oldNum);
+      }
+      return mapped;
+    }
+    if (_dropped.contains(oldNum)) return null;
+    final obj = required ? reader.requireObject(oldNum) : reader.object(oldNum);
+    if (obj == null) return null;
     final dict = obj is _Dict ? obj : null;
-    if (obj == null ||
-        _isName(dict?['/Type'], '/Pages') ||
+    if (_isName(dict?['/Type'], '/Pages') ||
         _isName(dict?['/Type'], '/Page') ||
         _isName(dict?['/Type'], '/Catalog')) {
-      _nulled.add(oldNum);
+      _dropped.add(oldNum);
       return null;
     }
     final n = next++;
     _map[oldNum] = n;
+    _copied.add(oldNum);
+    if (required) _required.add(oldNum);
     _queue.add(oldNum);
     return n;
   }
 
   static final _space = _ascii(' ');
 
-  void _write(BytesBuilder o, _V v) {
+  void _writeDict(BytesBuilder o, Map<String, _V> map, bool Function(String key) required) {
+    o.add(_ascii('<<'));
+    map.forEach((k, value) {
+      o.add(_space);
+      o.add(_encodeName(k));
+      o.add(_space);
+      _write(o, value, required(k));
+    });
+    o.add(_ascii(' >>'));
+  }
+
+  void _write(BytesBuilder o, _V v, bool required) {
     switch (v) {
       case _Null():
         o.add(_ascii('null'));
@@ -931,30 +1054,23 @@ class _Copier {
       case _Num(:final raw):
         o.add(_ascii(raw));
       case _Name(:final raw):
-        o.add(_ascii(raw));
+        o.add(_encodeName(raw));
       case _Str(:final raw):
         o.add(raw);
       case _Raw(:final text):
         o.add(_ascii(text));
       case _Ref(:final num):
-        final n = _ref(num);
+        final n = _ref(num, required);
         o.add(_ascii(n == null ? 'null' : '$n 0 R'));
       case _Arr(:final items):
         o.add(_ascii('['));
         for (var i = 0; i < items.length; i++) {
           if (i > 0) o.add(_space);
-          _write(o, items[i]);
+          _write(o, items[i], required);
         }
         o.add(_ascii(']'));
       case _Dict(:final map):
-        o.add(_ascii('<<'));
-        map.forEach((k, value) {
-          o.add(_space);
-          o.add(_ascii(k));
-          o.add(_space);
-          _write(o, value);
-        });
-        o.add(_ascii(' >>'));
+        _writeDict(o, map, (_) => required);
       case _Stream():
         throw PdfMergeException('direct stream');
     }
