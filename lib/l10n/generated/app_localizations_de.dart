@@ -9867,6 +9867,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAccountsTitle => 'Konto wechseln';
 
   @override
+  String get redesignAdminLimitGb => 'Höchstens (GB)';
+
+  @override
   String get redesignAdminTitle => 'Verwaltung';
 
   @override

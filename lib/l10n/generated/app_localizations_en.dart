@@ -9764,6 +9764,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignAccountsTitle => 'Switch account';
 
   @override
+  String get redesignAdminLimitGb => 'Maximum (GB)';
+
+  @override
   String get redesignAdminTitle => 'Administration';
 
   @override
