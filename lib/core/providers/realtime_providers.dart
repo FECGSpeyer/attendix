@@ -53,17 +53,20 @@ final realtimePlayersProvider = StreamProvider.autoDispose<List<Person>>((ref) a
     }).toList();
   }
 
-  // Initial data. Offline (or on a network error) the last loaded list,
-  // shared with playersProvider: the provider is disposed on a tab switch,
-  // and Ionic people/list keeps showing the list it loaded once (#384).
-  final initialData = await OfflineListCache.read<Person>(
-    ref,
-    tenantId: tenantId,
-    part: 'players',
-    fetch: playerRepo.getPlayers,
-    toJson: (p) => p.toJson(),
-    fromJson: Person.fromJson,
-  );
+  // Loads the list with the offline fallback, shared with playersProvider:
+  // stored after every successful load, the last loaded list while offline
+  // or on a network error. The provider is disposed on a tab switch, and
+  // Ionic people/list keeps showing the list it loaded once (#384).
+  Future<List<Person>> loadPlayers() => OfflineListCache.read<Person>(
+        ref,
+        tenantId: tenantId,
+        part: 'players',
+        fetch: playerRepo.getPlayers,
+        toJson: (p) => p.toJson(),
+        fromJson: Person.fromJson,
+      );
+
+  final initialData = await loadPlayers();
   yield enrichPlayers(initialData);
 
   // Create a stream controller to manage updates
@@ -71,9 +74,11 @@ final realtimePlayersProvider = StreamProvider.autoDispose<List<Person>>((ref) a
   var knownIds = initialData.map((p) => p.id).whereType<int>().toSet();
 
   Future<void> refetchPlayers() async {
-    // Fetch fresh data when changes occur
+    // Fetch fresh data when changes occur. Same cache as the initial data,
+    // so a later rebuild does not fall back to an older list; offline the
+    // cache answers, only real errors reach the error page.
     try {
-      final freshData = await playerRepo.getPlayers();
+      final freshData = await loadPlayers();
       knownIds = freshData.map((p) => p.id).whereType<int>().toSet();
       if (!controller.isClosed) {
         controller.add(enrichPlayers(freshData));
