@@ -12570,6 +12570,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignRolePermIntro =>
+      'Choose what helpers and members may do in this group. Each switch is saved right away.';
+
+  @override
   String get redesignShiftsListAdd => 'Add shift plan';
 
   @override

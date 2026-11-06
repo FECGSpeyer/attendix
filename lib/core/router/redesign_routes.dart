@@ -92,13 +92,16 @@ class RedesignRoutes {
   /// Verwaltung › Schichtpläne (list; a plan opens the old page).
   static const String shiftPlans = '$manage/schichtplaene';
 
+  /// Verwaltung › Rollen und Rechte (replaces `/settings/role-permissions`).
+  static const String rolePermissions = '$manage/rollen';
+
   /// Ich › Benachrichtigungen.
   static const String notifications = '$me/benachrichtigungen';
 
   /// Pages for leads only (Admins and Verantwortliche, like the old
   /// statistics, messages and archive entries and the old group, type and
   /// shift pages); their sub pages too.
-  static const _leadOnly = {stats, compose, bulkMembers, groups, attendanceTypes, shiftPlans};
+  static const _leadOnly = {stats, compose, bulkMembers, groups, attendanceTypes, shiftPlans, rolePermissions};
 
   static bool _isLeadOnly(String location) =>
       _leadOnly.any((route) => location == route || location.startsWith('$route/'));

@@ -20429,6 +20429,12 @@ abstract class AppLocalizations {
   /// **'{count} noch offen'**
   String redesignRemindTitle(Object count);
 
+  /// redesign.rolePerm.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Lege fest, was Helfer und Mitglieder in dieser Gruppe dürfen. Jeder Schalter wird sofort gespeichert.'**
+  String get redesignRolePermIntro;
+
   /// redesign.shiftsList.add
   ///
   /// In de, this message translates to:

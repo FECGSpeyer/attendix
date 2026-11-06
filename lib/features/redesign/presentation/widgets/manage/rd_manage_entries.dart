@@ -242,7 +242,7 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
     case RdManageEntry.bulkMembers:
       push(RedesignRoutes.bulkMembers);
     case RdManageEntry.rolesPermissions:
-      push('/settings/role-permissions');
+      push(RedesignRoutes.rolePermissions);
     case RdManageEntry.admins:
       showAdminsSheet(context);
     case RdManageEntry.parents:

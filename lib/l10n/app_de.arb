@@ -15721,6 +15721,10 @@
       "count": {}
     }
   },
+  "redesignRolePermIntro": "Lege fest, was Helfer und Mitglieder in dieser Gruppe dürfen. Jeder Schalter wird sofort gespeichert.",
+  "@redesignRolePermIntro": {
+    "description": "redesign.rolePerm.intro"
+  },
   "redesignShiftsListAdd": "Schichtplan anlegen",
   "@redesignShiftsListAdd": {
     "description": "redesign.shiftsList.add"

@@ -3383,6 +3383,7 @@
   "redesignRemindShare": "Share as text",
   "redesignRemindShareText": "Hi all, we still need your answer for \"{event}\" on {when}. Please answer briefly in Attendix. Thanks!",
   "redesignRemindTitle": "{count} still open",
+  "redesignRolePermIntro": "Choose what helpers and members may do in this group. Each switch is saved right away.",
   "redesignShiftsListAdd": "Add shift plan",
   "redesignShiftsListCycle": "{count, plural, one {Cycle of 1 day} other {Cycle of {count} days}}",
   "redesignShiftsListEmpty": "No shift plans yet.",

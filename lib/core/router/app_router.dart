@@ -134,6 +134,7 @@ import '../../features/redesign/presentation/pages/rd_attendance_types_page.dart
 import '../../features/redesign/presentation/pages/rd_group_edit_page.dart';
 import '../../features/redesign/presentation/pages/rd_groups_page.dart';
 import '../../features/redesign/presentation/pages/rd_shift_plans_page.dart';
+import '../../features/redesign/presentation/pages/rd_role_permissions_page.dart';
 import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea;
 import '../../features/redesign/presentation/pages/rd_manage_page.dart';
 import '../../features/redesign/presentation/widgets/rd_split_view.dart';
@@ -853,6 +854,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'schichtplaene',
                     builder: (context, state) => const RdShiftPlansPage(),
+                  ),
+                  GoRoute(
+                    path: 'rollen',
+                    builder: (context, state) => const RdRolePermissionsPage(),
                   ),
                   GoRoute(
                     path: ':area',

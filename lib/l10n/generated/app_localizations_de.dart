@@ -12694,6 +12694,10 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignRolePermIntro =>
+      'Lege fest, was Helfer und Mitglieder in dieser Gruppe dürfen. Jeder Schalter wird sofort gespeichert.';
+
+  @override
   String get redesignShiftsListAdd => 'Schichtplan anlegen';
 
   @override
