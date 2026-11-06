@@ -64,61 +64,6 @@ class OrgSettingsPage extends ConsumerWidget {
     if (!ok && context.mounted) ToastHelper.showError(context, context.l10n.svcSaveGemeindeAppFailed);
   }
 
-  /// Ionic 4.17.10 `createGemeindeAppKey`: only the hash is stored, so the
-  /// key is shown once. A new key cuts the old link.
-  Future<void> _createGemeindeAppKey(BuildContext context, WidgetRef ref, Organisation org) async {
-    final l10n = context.l10n;
-    if (org.gemeindeAppKeyHash != null) {
-      final ok = await showPlanConfirm(
-        context,
-        title: l10n.orgGaRenewKey,
-        message: l10n.orgGaRenewMessage,
-        confirmText: l10n.orgGaRenewButton,
-        destructive: true,
-      );
-      if (!ok || !context.mounted) return;
-    }
-    final created = PlanBeamer.newGemeindeAppKey();
-    final saved = await ref.read(planSettingsNotifierProvider.notifier).updateOrgGemeindeApp({
-      'gemeinde_app_key_hash': created.hash,
-      'gemeinde_app_key_hint': created.hint,
-    });
-    if (!context.mounted) return;
-    if (!saved) {
-      ToastHelper.showError(context, l10n.svcSaveGemeindeAppFailed);
-      return;
-    }
-    await showAppDialog<void>(
-      context: context,
-      builder: (ctx) => AppAlertDialog(
-        title: Text(ctx.l10n.orgGaKeyHeader),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SelectableText(created.key, style: const TextStyle(fontFamily: 'monospace', fontWeight: FontWeight.w600)),
-            const SizedBox(height: 8),
-            Text(ctx.l10n.orgGaKeyMessage),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              try {
-                await Clipboard.setData(ClipboardData(text: created.key));
-                if (ctx.mounted) ToastHelper.showSuccess(ctx, ctx.l10n.orgGaCopied);
-              } catch (_) {
-                // Clipboard not available (PWA without permission): key stays visible.
-              }
-            },
-            child: Text(ctx.l10n.orgGaCopy),
-          ),
-          FilledButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonClose)),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final role = ref.watch(effectiveRoleProvider);
@@ -225,7 +170,7 @@ class OrgSettingsPage extends ConsumerWidget {
                     subtitle: Text(org.gemeindeAppKeyHash != null
                         ? context.l10n.orgGaKeyActive(org.gemeindeAppKeyHint ?? '')
                         : context.l10n.orgGaNoKey),
-                    onTap: () => _createGemeindeAppKey(context, ref, org),
+                    onTap: () => createGemeindeAppKey(context, ref, org),
                   ),
                 ]),
                 Padding(
@@ -336,4 +281,59 @@ class _Section extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Ionic 4.17.10 `createGemeindeAppKey`: only the hash is stored, so the
+/// key is shown once. A new key cuts the old link.
+Future<void> createGemeindeAppKey(BuildContext context, WidgetRef ref, Organisation org) async {
+  final l10n = context.l10n;
+  if (org.gemeindeAppKeyHash != null) {
+    final ok = await showPlanConfirm(
+      context,
+      title: l10n.orgGaRenewKey,
+      message: l10n.orgGaRenewMessage,
+      confirmText: l10n.orgGaRenewButton,
+      destructive: true,
+    );
+    if (!ok || !context.mounted) return;
+  }
+  final created = PlanBeamer.newGemeindeAppKey();
+  final saved = await ref.read(planSettingsNotifierProvider.notifier).updateOrgGemeindeApp({
+    'gemeinde_app_key_hash': created.hash,
+    'gemeinde_app_key_hint': created.hint,
+  });
+  if (!context.mounted) return;
+  if (!saved) {
+    ToastHelper.showError(context, l10n.svcSaveGemeindeAppFailed);
+    return;
+  }
+  await showAppDialog<void>(
+    context: context,
+    builder: (ctx) => AppAlertDialog(
+      title: Text(ctx.l10n.orgGaKeyHeader),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SelectableText(created.key, style: const TextStyle(fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
+          Text(ctx.l10n.orgGaKeyMessage),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            try {
+              await Clipboard.setData(ClipboardData(text: created.key));
+              if (ctx.mounted) ToastHelper.showSuccess(ctx, ctx.l10n.orgGaCopied);
+            } catch (_) {
+              // Clipboard not available (PWA without permission): key stays visible.
+            }
+          },
+          child: Text(ctx.l10n.orgGaCopy),
+        ),
+        FilledButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonClose)),
+      ],
+    ),
+  );
 }

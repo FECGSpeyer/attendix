@@ -41,7 +41,7 @@ PersonLike _toPersonLike(Person p) => PersonLike(
 
 /// Localized label of a [MatchReason] (Ionic `linkPersons.reason.*`).
 // MatchReason values are already localized (core l10n).
-String _reasonLabel(AppLocalizations l10n, String reason) => reason;
+String linkReasonLabel(AppLocalizations l10n, String reason) => reason;
 
 /// Ionic `[a.id, b.id].sort().join('-')`: JS sorts the ids as strings
 /// (PARITY_R10: e.g. 9 and 10 → "10-9").
@@ -88,14 +88,16 @@ class LinkPersonsPage extends ConsumerStatefulWidget {
   ConsumerState<LinkPersonsPage> createState() => _LinkPersonsPageState();
 }
 
-class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
+/// Loading, linking and ignoring of the suggestions, shared by the old page
+/// and the Beta page (`RdLinkPersonsPage`).
+mixin LinkPersonsLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
   static const _storageKey = 'link-persons-ignored';
 
-  List<PersonLinkGroup> _groups = [];
-  List<Tenant> _tenants = [];
+  List<PersonLinkGroup> groups = [];
+  List<Tenant> tenants = [];
   final Set<String> _ignoredKeys = {};
-  bool _loading = true;
-  int _linkedCount = 0;
+  bool loading = true;
+  int linkedCount = 0;
 
   @override
   void initState() {
@@ -114,26 +116,26 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
       final org = await organisationSettingsRepo.getCurrentOrganisation();
       if (org?.id == null) return;
       final orgRepo = ref.read(organisationRepositoryProvider);
-      _tenants = await orgRepo.getInstancesOfOrganisation(org!.id!);
-      final persons = await orgRepo.getAllPersonsFromOrganisation(_tenants);
-      _groups = buildPersonLinkGroups(persons, _ignoredKeys);
+      tenants = await orgRepo.getInstancesOfOrganisation(org!.id!);
+      final persons = await orgRepo.getAllPersonsFromOrganisation(tenants);
+      groups = buildPersonLinkGroups(persons, _ignoredKeys);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.settingsFlutterLoadFailed(friendlyErrorMessage(e)));
     } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted) setState(() => loading = false);
     }
   }
 
-  String _tenantName(int? tenantId) =>
-      _tenants.where((t) => t.id == tenantId).firstOrNull?.shortName ?? '${tenantId ?? ''}';
+  String tenantName(int? tenantId) =>
+      tenants.where((t) => t.id == tenantId).firstOrNull?.shortName ?? '${tenantId ?? ''}';
 
-  String _formatBirthday(String? birthday) {
+  String formatBirthday(String? birthday) {
     if (birthday == null || birthday.isEmpty) return '–';
     final d = DateTime.tryParse(birthday);
     return d == null ? '–' : DateFormat(dateFmt()).format(d);
   }
 
-  Future<void> _link(PersonLinkGroup group) async {
+  Future<void> link(PersonLinkGroup group) async {
     final selected = group.matches.where((m) => m.selected).map((m) => m.match.candidate).toList();
     if (selected.isEmpty) {
       ToastHelper.showWarning(context, context.l10n.linkPersonsSelectOne);
@@ -147,8 +149,8 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
       await ref.read(organisationSettingsRepositoryWithTenantProvider).setGlobalPersonId(ids, globalId);
       if (!mounted) return;
       setState(() {
-        _linkedCount += ids.length;
-        _groups.remove(group);
+        linkedCount += ids.length;
+        groups.remove(group);
       });
       ToastHelper.showSuccess(context, context.l10n.linkPersonsLinked(ids.length));
     } catch (_) {
@@ -156,22 +158,24 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
     }
   }
 
-  Future<void> _ignore(PersonLinkGroup group) async {
+  Future<void> ignore(PersonLinkGroup group) async {
     _ignoredKeys.add(linkGroupKey(group.representative.id!, group.matches.first.match.candidate.id!));
-    setState(() => _groups.remove(group));
+    setState(() => groups.remove(group));
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setStringList(_storageKey, _ignoredKeys.toList());
     } catch (_) {}
   }
+}
 
+class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> with LinkPersonsLogic {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.linkPersonsTitle)),
-      body: _loading
+      body: loading
           ? const Center(child: AppSpinner())
-          : _groups.isEmpty
+          : groups.isEmpty
               ? Center(
                   child: Padding(
                     padding: const EdgeInsets.all(AppDimensions.paddingL),
@@ -181,8 +185,8 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
                         const Icon(Icons.check_circle_outline, color: AppColors.success, size: 48),
                         const SizedBox(height: AppDimensions.paddingS),
                         Text(context.l10n.linkPersonsNoMore),
-                        if (_linkedCount > 0)
-                          Text(context.l10n.linkPersonsLinkedCount(_linkedCount),
+                        if (linkedCount > 0)
+                          Text(context.l10n.linkPersonsLinkedCount(linkedCount),
                               style: const TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
@@ -198,7 +202,7 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
                         style: const TextStyle(color: AppColors.medium),
                       ),
                     ),
-                    for (final group in [..._groups]) _buildGroupCard(group),
+                    for (final group in [...groups]) _buildGroupCard(group),
                   ],
                 ),
     );
@@ -214,7 +218,7 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('${rep.firstName} ${rep.lastName}', style: const TextStyle(fontWeight: FontWeight.bold)),
-            Text('${_tenantName(rep.tenantId)} · ${_formatBirthday(rep.birthday)}',
+            Text('${tenantName(rep.tenantId)} · ${formatBirthday(rep.birthday)}',
                 style: const TextStyle(color: AppColors.medium)),
             const Padding(
               padding: EdgeInsets.symmetric(vertical: AppDimensions.paddingXS),
@@ -230,10 +234,10 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('${_tenantName(m.match.candidate.tenantId)} · ${_formatBirthday(m.match.candidate.birthday)}'),
+                    Text('${tenantName(m.match.candidate.tenantId)} · ${formatBirthday(m.match.candidate.birthday)}'),
                     const SizedBox(height: 2),
                     Chip(
-                      label: Text(_reasonLabel(context.l10n, m.match.reason), style: const TextStyle(fontSize: 11)),
+                      label: Text(linkReasonLabel(context.l10n, m.match.reason), style: const TextStyle(fontSize: 11)),
                       visualDensity: VisualDensity.compact,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
@@ -243,9 +247,9 @@ class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                OutlinedButton(onPressed: () => _ignore(group), child: IonButtonLabel(context.l10n.linkPersonsIgnore)),
+                OutlinedButton(onPressed: () => ignore(group), child: IonButtonLabel(context.l10n.linkPersonsIgnore)),
                 const SizedBox(width: AppDimensions.paddingS),
-                ElevatedButton(onPressed: () => _link(group), child: IonButtonLabel(context.l10n.linkPersonsLink)),
+                ElevatedButton(onPressed: () => link(group), child: IonButtonLabel(context.l10n.linkPersonsLink)),
               ],
             ),
           ],

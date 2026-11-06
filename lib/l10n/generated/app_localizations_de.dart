@@ -9392,6 +9392,158 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get rdOrgArchiveNote =>
+      'Die Personen werden hier archiviert. Wer ein Konto hat, bekommt eine Nachricht.';
+
+  @override
+  String get rdOrgBack => 'Organisation';
+
+  @override
+  String get rdOrgBackSelection => 'Auswahl';
+
+  @override
+  String get rdOrgCreate => 'Organisation erstellen oder verknüpfen';
+
+  @override
+  String get rdOrgFilter => 'Filter';
+
+  @override
+  String rdOrgFilterGroup(Object group) {
+    return 'In $group';
+  }
+
+  @override
+  String rdOrgFilterOlder(Object date) {
+    return 'Älter als $date';
+  }
+
+  @override
+  String rdOrgFilterYounger(Object date) {
+    return 'Jünger als $date';
+  }
+
+  @override
+  String get rdOrgGaKey => 'Verbindungsschlüssel';
+
+  @override
+  String rdOrgGaKeyActive(Object hint) {
+    return 'Aktiv, endet auf …$hint';
+  }
+
+  @override
+  String get rdOrgGaNoKey => 'Noch nicht verbunden';
+
+  @override
+  String get rdOrgHandover => 'Personen übergeben';
+
+  @override
+  String rdOrgHandoverConfirm(Object count, Object tenant, Object note) {
+    return 'Möchtest du $count Personen wirklich an „$tenant“ übergeben? $note';
+  }
+
+  @override
+  String get rdOrgHandoverIntro =>
+      'Personen an eine andere Gruppe der Organisation weitergeben. Wer ein Konto hat, wird informiert.';
+
+  @override
+  String get rdOrgHandoverTarget => 'Ziel-Gruppe';
+
+  @override
+  String rdOrgHere(Object group) {
+    return 'Hier: $group';
+  }
+
+  @override
+  String get rdOrgKeepActive => 'Hier weiter aktiv lassen';
+
+  @override
+  String get rdOrgKeepActiveHint => 'Sonst werden sie hier archiviert';
+
+  @override
+  String get rdOrgLinkIntro =>
+      'Verknüpfte Personen gleichen Name, Geburtstag, E-Mail und Telefon über alle Gruppen ab.';
+
+  @override
+  String get rdOrgLinkPersonsHint => 'Dieselbe Person in mehreren Gruppen';
+
+  @override
+  String get rdOrgMainGroup => 'Hauptgruppe einbeziehen';
+
+  @override
+  String get rdOrgMainGroupHint => 'Zeigt auch Personen aus der Hauptgruppe';
+
+  @override
+  String get rdOrgName => 'Name';
+
+  @override
+  String rdOrgNext(Object count) {
+    return 'Weiter ($count)';
+  }
+
+  @override
+  String get rdOrgNoOtherGroups => 'Die Organisation hat keine weitere Gruppe.';
+
+  @override
+  String get rdOrgNoneAdminOnly =>
+      'Diese Gruppe gehört zu keiner Organisation. Nur Admins können Organisationen verwalten.';
+
+  @override
+  String get rdOrgNoneIntro =>
+      'Erstelle eine Organisation oder verknüpfe diese Gruppe mit einer bestehenden. Dann kannst du Personen über alle Gruppen verbinden und Pläne gemeinsam nutzen.';
+
+  @override
+  String get rdOrgNoneTitle => 'Keine Organisation';
+
+  @override
+  String rdOrgPeopleCount(Object count) {
+    return '$count Personen';
+  }
+
+  @override
+  String get rdOrgPersonFields => 'Gemeinsame Zusatzfelder';
+
+  @override
+  String get rdOrgSectionGroups => 'Gruppen';
+
+  @override
+  String get rdOrgSectionPlansWorks => 'Pläne und Werke';
+
+  @override
+  String get rdOrgSongSource => 'Werke aus';
+
+  @override
+  String get rdOrgSongSyncIntro =>
+      'Werke einer anderen Gruppe verwenden. Alle Änderungen werden dort gespeichert.';
+
+  @override
+  String get rdOrgStayNote => 'Die Personen bleiben hier aktiv.';
+
+  @override
+  String rdOrgStep2Sub(Object tenant, Object count) {
+    return '$tenant · $count Personen';
+  }
+
+  @override
+  String get rdOrgStep2Title => 'Gruppen im Ziel';
+
+  @override
+  String get rdOrgThisGroup => 'Diese Gruppe';
+
+  @override
+  String rdOrgTransfer(Object count) {
+    return 'Übergeben ($count)';
+  }
+
+  @override
+  String get rdOrgUnlink => 'Von Organisation trennen';
+
+  @override
+  String get rdOrgWorks => 'Werke der Organisation';
+
+  @override
+  String get rdOrgWorksHint => 'Werke anderer Gruppen finden und übernehmen';
+
+  @override
   String get rdSettingsAddRule => 'Regel hinzufügen';
 
   @override

@@ -1159,6 +1159,7 @@ class RdPage extends StatelessWidget {
     this.padding = const EdgeInsets.fromLTRB(20, 12, 20, 32),
     this.maxWidth = 720,
     this.floatingActionButton,
+    this.floatingActionButtonLocation,
   });
 
   final List<Widget> children;
@@ -1167,6 +1168,9 @@ class RdPage extends StatelessWidget {
 
   /// "Neuer Termin" etc.
   final Widget? floatingActionButton;
+
+  /// E.g. `centerFloat` for a wide step button ("Weiter", "Übergeben").
+  final FloatingActionButtonLocation? floatingActionButtonLocation;
 
   /// Content width on tablets and desktops.
   final double maxWidth;
@@ -1201,6 +1205,7 @@ class RdPage extends StatelessWidget {
       backgroundColor: p.bg,
       body: SafeArea(bottom: false, child: list),
       floatingActionButton: floatingActionButton,
+      floatingActionButtonLocation: floatingActionButtonLocation,
     );
   }
 }
