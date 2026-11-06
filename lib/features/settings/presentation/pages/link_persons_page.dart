@@ -196,6 +196,10 @@ mixin LinkPersonsLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
 class _LinkPersonsPageState extends ConsumerState<LinkPersonsPage> with LinkPersonsLogic {
   @override
   Widget build(BuildContext context) {
+    // Suggestions belong to one group: reload them after a group switch.
+    ref.listen(currentTenantIdProvider, (prev, next) {
+      if (prev != next) reload();
+    });
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.linkPersonsTitle)),
       body: loading
