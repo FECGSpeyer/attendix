@@ -62,6 +62,19 @@ h1 { font-size: 1.55rem; line-height: 1.2; margin: 0; font-weight: 700; text-wra
 .bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--open); }
 .bar i { display: block; height: 100%; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.8rem; color: var(--muted); }
+.device { border: 1px solid var(--line); border-radius: 10px; background: var(--bg); min-width: 0; max-width: 100%; }
+.device > summary { cursor: pointer; padding: 8px 12px; font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; }
+.device > summary b { font-weight: 600; }
+.device .dk { font-variant-numeric: tabular-nums; color: var(--muted); }
+.device .dk.ok { color: var(--ok); } .device .dk.bad { color: var(--hoch); } .device .dk.me { color: var(--mittel); }
+.device .tbl { overflow-x: auto; border-top: 1px solid var(--line); }
+.device table { border-collapse: collapse; width: 100%; font-size: 0.82rem; }
+.device th, .device td { padding: 4px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.device th { color: var(--muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.device td.c { text-align: center; white-space: nowrap; width: 4.5em; }
+.device td.c.ok { color: var(--ok); } .device td.c.bad { color: var(--hoch); background: var(--hoch-soft); } .device td.c.me { color: var(--mittel); } .device td.c.na { color: var(--na); }
+.device td.t { min-width: 16em; }
+.device .dfilter { display: flex; gap: 6px; padding: 8px 12px; flex-wrap: wrap; }
 .legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; background: var(--c); vertical-align: -1px; }
 
 .filters { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
@@ -131,6 +144,7 @@ main .wrap { padding-block: 18px 40px; display: grid; grid-template-columns: 260
       <span style="--c: var(--na)">entfällt</span>
       <span style="--c: var(--open)">noch nicht geprüft</span>
     </div>
+    <details class="device" id="device" hidden></details>
   </div>
 </header>
 
@@ -362,11 +376,39 @@ async function connectDb() {
   }, () => { /* read-only view */ });
 }
 
+let deviceFilter = 'open';
+function renderDevice() {
+  const el = document.getElementById('device');
+  const dv = data.device;
+  if (!dv || !dv.rows?.length) { el.hidden = true; return; }
+  el.hidden = false;
+  const cls = (v) => (v === '✓' ? 'ok' : v === '✗' ? 'bad' : v === 'Leon' ? 'me' : v === '–' ? 'na' : '');
+  const n = { ok: 0, bad: 0, me: 0, open: 0 };
+  dv.rows.forEach(([, , cells]) => cells.forEach((v) => { const c = cls(v); if (c === 'ok' || c === 'bad' || c === 'me') n[c]++; else if (c === '') n.open++; }));
+  const pick = {
+    open: (cells) => cells.some((v) => cls(v) !== 'ok' && cls(v) !== 'na'),
+    bad: (cells) => cells.includes('✗'),
+    me: (cells) => cells.includes('Leon'),
+    all: () => true,
+  };
+  const shown = dv.rows.filter(([, , cells]) => pick[deviceFilter](cells));
+  const chip = (k, label) => `<button type="button" class="chip" data-dev="${k}" aria-pressed="${deviceFilter === k}">${label}</button>`;
+  const open = el.open;
+  el.innerHTML = `<summary><b>Gerätetest</b><span class="dk ok">${n.ok} ✓</span><span class="dk bad">${n.bad} ✗</span><span class="dk me">${n.me} bei Leon</span><span class="dk">${n.open} offen</span><span class="dk">${dv.rows.length} Zeilen × iPhone, iPad, Android, Web${dv.asOf ? ` · Stand ${esc(dv.asOf)}` : ''}</span></summary>` +
+    `<div class="dfilter">${chip('open', 'Nicht alles ✓')}${chip('bad', 'Nur ✗')}${chip('me', 'Bei Leon')}${chip('all', 'Alle')}</div>` +
+    `<div class="tbl"><table><thead><tr><th>#</th><th>Prüfung</th>${dv.cols.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>` +
+    shown.map(([num, text, cells]) => `<tr><td>${num}</td><td class="t">${esc(text)}</td>${cells.map((v) => `<td class="c ${cls(v)}">${esc(v)}</td>`).join('')}</tr>`).join('') +
+    '</tbody></table></div>';
+  el.open = open;
+  el.querySelectorAll('[data-dev]').forEach((b) => b.addEventListener('click', () => { deviceFilter = b.dataset.dev; renderDevice(); }));
+}
+
 fetch('tracker-data.json').then((r) => r.json()).then((d) => {
   data = d;
   build();
   setupFilters();
   renderSummary();
+  renderDevice();
   renderRail();
   renderList();
   connectDb();

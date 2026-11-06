@@ -22,6 +22,21 @@ const STATUS_DIR = join(DIR, 'status');
 const load = (f) => JSON.parse(readFileSync(f, 'utf8'));
 const [cmd, ...rest] = process.argv.slice(2);
 
+// Device test results (docs/parity/device-checklist.md): table rows
+// "| n | check | iPhone | iPad | Android | Web |" and the date of the newest
+// "## Ergebnisse <date>" section, for the tracker's device panel.
+function deviceChecklistOf(file) {
+  if (!existsSync(file)) return null;
+  const md = readFileSync(file, 'utf8');
+  const rows = [];
+  for (const line of md.split('\n')) {
+    const m = line.match(/^\| (\d+) \| (.*) \| ([^|]+) \| ([^|]+) \| ([^|]+) \| ([^|]+) \|$/);
+    if (m) rows.push([Number(m[1]), m[2].trim(), [m[3], m[4], m[5], m[6]].map((c) => c.trim())]);
+  }
+  const asOf = md.match(/^## Ergebnisse (\S+)/m)?.[1] ?? null;
+  return { asOf, cols: ['iPhone', 'iPad', 'Android', 'Web'], rows };
+}
+
 const weight = (u) => u.items.length + Math.ceil((u.items.find((i) => i.kind === 'logic')?.methods.length ?? 0) / 4);
 const family = (id) => {
   const p = id.split('/');
@@ -754,6 +769,7 @@ if (cmd === 'batches') {
   const allIds = [...tracker.rows.map((r) => r[0]), ...tracker.extra.map((e) => e[0])].map(docId);
   const dupIds = allIds.filter((id, k) => allIds.indexOf(id) !== k);
   if (dupIds.length) throw new Error(`tracker ids not unique: ${dupIds.slice(0, 5).join(', ')}`);
+  tracker.device = deviceChecklistOf(join(DIR, 'device-checklist.md'));
   writeFileSync(join(DIR, 'tracker-data.json'), `${JSON.stringify(tracker)}\n`);
   console.log(total, `extra ${st.extra.length}`);
 } else if (cmd === 'fixlists') {
