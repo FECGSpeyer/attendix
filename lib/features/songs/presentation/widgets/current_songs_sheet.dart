@@ -3,11 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/song_providers.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/choir_file_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../data/song_print_service.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../planning/presentation/widgets/plan_field_dialogs.dart' show PlanSheetAction;
+import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 
@@ -26,10 +30,14 @@ class CurrentSongsSheet extends ConsumerWidget {
 
   Future<void> _printNotesForGroup(BuildContext context, WidgetRef ref) async {
     final groups = data.instruments;
-    final group = await showAppDialog<Group>(
-      context: context,
-      builder: (ctx) => _GroupChoiceDialog(groups: groups),
-    );
+    final group =
+        context.rdSkin != null
+            ? await showRdPlanActionSheet<Group>(
+              context,
+              title: context.l10n.songsChooseGroup,
+              actions: [for (final g in groups) PlanSheetAction(g, g.name)],
+            )
+            : await showAppDialog<Group>(context: context, builder: (ctx) => _GroupChoiceDialog(groups: groups));
     if (group == null || !context.mounted) return;
 
     final entries = <SongPrintEntry>[];
@@ -108,12 +116,13 @@ class CurrentSongsSheet extends ConsumerWidget {
                                   '${his.song!.prefix ?? ''}${his.song!.number ?? ''} ${his.song!.name}',
                                 ),
                                 detail: true,
-                                onTap: his.song!.id == null
-                                    ? null
-                                    : () {
-                                        Navigator.of(context).pop();
-                                        onOpenSong(his.song!.id!);
-                                      },
+                                onTap:
+                                    his.song!.id == null
+                                        ? null
+                                        : () {
+                                          Navigator.of(context).pop();
+                                          onOpenSong(his.song!.id!);
+                                        },
                               ),
                         ],
                       ),
@@ -186,6 +195,51 @@ Future<void> showCurrentSongsSheet(
   required bool canPrint,
   required void Function(int songId) onOpenSong,
 }) {
+  if (context.rdSkin != null) {
+    return showRdPlanSheet<void>(
+      context,
+      title: context.l10n.songsCurrent,
+      action:
+          canPrint
+              ? Consumer(
+                builder:
+                    (ctx, ref, _) => RdCircleButton(
+                      icon: Icons.print_outlined,
+                      label: ctx.l10n.songsPrintScores,
+                      onPressed:
+                          () => CurrentSongsSheet(
+                            data: data,
+                            canPrint: canPrint,
+                            onOpenSong: onOpenSong,
+                          )._printNotesForGroup(ctx, ref),
+                    ),
+              )
+              : null,
+      builder:
+          (ctx, _) => [
+            for (final group in data.currentSongs) ...[
+              RdGroupLabel(group.date),
+              RdGroupedList(
+                children: [
+                  for (final his in group.history)
+                    if (his.song != null)
+                      RdListRow(
+                        title: '${his.song!.prefix ?? ''}${his.song!.number ?? ''} ${his.song!.name}'.trim(),
+                        onTap:
+                            his.song!.id == null
+                                ? null
+                                : () {
+                                  Navigator.of(ctx).pop();
+                                  onOpenSong(his.song!.id!);
+                                },
+                      ),
+                ],
+              ),
+              const SizedBox(height: 16),
+            ],
+          ],
+    );
+  }
   return showModalBottomSheet(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar

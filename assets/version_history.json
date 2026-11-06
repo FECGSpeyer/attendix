@@ -1,13 +1,20 @@
 {
   "versions": [
     {
-      "version": "0.65.0",
+      "version": "0.66.0",
       "date": "6.11.2026",
       "changes": [
         "✨ Beta: Sammlungen im Noten-Bereich (Repertoire, z. B. Einspielen, Streicher, In Vorbereitung) mit eigenem Kürzel, Sichtbarkeit (alle, nur Leitung, bestimmte Gruppen) und „planbar“",
         "✨ Beta: Werke-Liste mit Sammlungs-Chips, Suche über alle Sammlungen, Kategorie im Filter; Werke in eine andere Sammlung verschieben",
         "✨ Beta: „Meine Mappe“ heißt jetzt „Meine Noten“ (Leitung: „Nach Stimme“), „Alle“ ist nach Sammlung gruppiert",
         "🗄️ Sammlungen erscheinen erst, wenn die Datenbank-Migration angewendet ist (nach dem Store-Release)"
+      ]
+    },
+    {
+      "version": "0.65.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Die übrigen Termin-Blätter im Beta-Design: Gemeinde-Übersicht, Aktuelle Werke, Rückmeldung, Beschreibung und Anhang, Dirigent ändern, Ordner wählen, Werke hinzufügen und Offene Dienste"
       ]
     },
     {

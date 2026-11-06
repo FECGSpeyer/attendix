@@ -6,16 +6,22 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/conductor_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
 import '../../../redesign/data/rd_collections_logic.dart';
+import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../redesign/presentation/widgets/today/rd_today_common.dart';
 
 part 'songs_selection_sheet.freezed.dart';
 part 'songs_selection_sheet.g.dart';
+part 'songs_selection_sheet_beta.dart';
 
 /// Entry representing a song-conductor pair to be saved with attendance
 @freezed
@@ -28,8 +34,7 @@ class SongHistoryEntry with _$SongHistoryEntry {
     String? otherConductor,
   }) = _SongHistoryEntry;
 
-  factory SongHistoryEntry.fromJson(Map<String, dynamic> json) =>
-      _$SongHistoryEntryFromJson(json);
+  factory SongHistoryEntry.fromJson(Map<String, dynamic> json) => _$SongHistoryEntryFromJson(json);
 }
 
 /// Extension for SongHistoryEntry
@@ -48,11 +53,7 @@ class SongsSelectionSheet extends ConsumerStatefulWidget {
   final List<SongHistoryEntry> existingEntries;
   final ValueChanged<List<SongHistoryEntry>> onEntriesChanged;
 
-  const SongsSelectionSheet({
-    super.key,
-    required this.existingEntries,
-    required this.onEntriesChanged,
-  });
+  const SongsSelectionSheet({super.key, required this.existingEntries, required this.onEntriesChanged});
 
   /// Show the bottom sheet and return updated entries
   static Future<List<SongHistoryEntry>?> show(
@@ -65,15 +66,16 @@ class SongsSelectionSheet extends ConsumerStatefulWidget {
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) => SongsSelectionSheet(
-        existingEntries: existingEntries,
-        onEntriesChanged: (entries) {
-          result = entries;
-        },
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
+      showDragHandle: context.rdSkin != null,
+      backgroundColor: context.rdSkin != null ? context.rd.bg : null,
+      builder:
+          (context) => SongsSelectionSheet(
+            existingEntries: existingEntries,
+            onEntriesChanged: (entries) {
+              result = entries;
+            },
+          ),
     );
 
     return result;
@@ -110,13 +112,19 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
     required String? previousName,
     required bool previousSaved,
   }) async {
-    final name = (await DialogHelper.showTextInput(
-      context,
-      title: context.l10n.attListEnterConductor,
-      hint: context.l10n.attListConductor,
-      confirmText: context.l10n.commonSave,
-    ))
-        ?.trim();
+    final l10n = context.l10n;
+    final String? raw;
+    if (context.rdSkin != null) {
+      raw = await showRdPlanTextSheet(context, title: l10n.attListEnterConductor, hint: l10n.attListConductor);
+    } else {
+      raw = await DialogHelper.showTextInput(
+        context,
+        title: l10n.attListEnterConductor,
+        hint: l10n.attListConductor,
+        confirmText: l10n.commonSave,
+      );
+    }
+    final name = raw?.trim();
     if (!mounted || !_useOtherConductor) return;
     if (name == null || name.isEmpty) {
       setState(() {
@@ -149,20 +157,48 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
     });
   }
 
+  void _update(VoidCallback fn) => setState(fn);
+
+  void _onConductorChanged(int? v) {
+    const otherValue = -1;
+    if (v == otherValue) {
+      final previousConductorId = _selectedConductorId;
+      final previousUseOther = _useOtherConductor;
+      final previousName = _otherConductorName;
+      final previousSaved = _otherConductorSaved;
+      setState(() {
+        _useOtherConductor = true;
+        _selectedConductorId = null;
+      });
+      _askOtherConductor(
+        previousConductorId: previousConductorId,
+        previousUseOther: previousUseOther,
+        previousName: previousName,
+        previousSaved: previousSaved,
+      );
+    } else {
+      setState(() {
+        _useOtherConductor = false;
+        _otherConductorSaved = false;
+        _selectedConductorId = v;
+        _otherConductorName = null;
+      });
+    }
+  }
+
   // UX_ATT: Ionic addHisModal: inset group with the "Werk(e)" picker row
   // (opens "Werke auswählen" with search) and the "Dirigent" select
   // (+ "Anderer Dirigent" input), then the primary "Werk(e) hinzufügen" row.
   @override
   Widget build(BuildContext context) {
+    if (context.rdSkin != null) return _rdBuild(context);
     final conductorsAsync = ref.watch(activeConductorsProvider);
     final conductors = conductorsAsync.valueOrNull ?? const <Person>[];
     const otherValue = -1;
     final conductorValue = _useOtherConductor ? otherValue : _selectedConductorId;
 
     return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.7,
-      ),
+      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.7),
       color: Theme.of(context).brightness == Brightness.dark ? null : AppColors.light,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -198,9 +234,11 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
                       children: [
                         ListTile(
                           title: Text(context.l10n.attListSongsLabel),
-                          subtitle: Text(_selectedSongIds.isEmpty
-                              ? context.l10n.attListNoSongsSelected
-                              : context.l10n.attListSongsSelected(_selectedSongIds.length)),
+                          subtitle: Text(
+                            _selectedSongIds.isEmpty
+                                ? context.l10n.attListNoSongsSelected
+                                : context.l10n.attListSongsSelected(_selectedSongIds.length),
+                          ),
                           trailing: const Icon(Icons.chevron_right),
                           onTap: _openSongPicker,
                         ),
@@ -215,38 +253,10 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
                               alignment: AlignmentDirectional.centerEnd,
                               items: [
                                 for (final c in conductors)
-                                  if (c.id != null)
-                                    DropdownMenuItem(value: c.id, child: Text(c.fullName)),
-                                DropdownMenuItem(
-                                  value: otherValue,
-                                  child: Text(context.l10n.attListOtherConductor),
-                                ),
+                                  if (c.id != null) DropdownMenuItem(value: c.id, child: Text(c.fullName)),
+                                DropdownMenuItem(value: otherValue, child: Text(context.l10n.attListOtherConductor)),
                               ],
-                              onChanged: (v) {
-                                if (v == otherValue) {
-                                  final previousConductorId = _selectedConductorId;
-                                  final previousUseOther = _useOtherConductor;
-                                  final previousName = _otherConductorName;
-                                  final previousSaved = _otherConductorSaved;
-                                  setState(() {
-                                    _useOtherConductor = true;
-                                    _selectedConductorId = null;
-                                  });
-                                  _askOtherConductor(
-                                    previousConductorId: previousConductorId,
-                                    previousUseOther: previousUseOther,
-                                    previousName: previousName,
-                                    previousSaved: previousSaved,
-                                  );
-                                } else {
-                                  setState(() {
-                                    _useOtherConductor = false;
-                                    _otherConductorSaved = false;
-                                    _selectedConductorId = v;
-                                    _otherConductorName = null;
-                                  });
-                                }
-                              },
+                              onChanged: _onConductorChanged,
                             ),
                           ),
                         ),
@@ -277,9 +287,7 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
                       enabled: _canAdd(),
                       title: Text(
                         context.l10n.attListAddSongs,
-                        style: TextStyle(
-                          color: _canAdd() ? AppColors.primary : AppColors.medium,
-                        ),
+                        style: TextStyle(color: _canAdd() ? AppColors.primary : AppColors.medium),
                       ),
                       onTap: _canAdd() ? _addSongs : null,
                     ),
@@ -298,7 +306,11 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
     final result = await Navigator.of(context, rootNavigator: true).push<Set<int>>(
       MaterialPageRoute(
         fullscreenDialog: true,
-        builder: (_) => _SongPickerPage(initialSelection: _selectedSongIds),
+        builder:
+            (ctx) =>
+                ctx.rdSkin != null
+                    ? _RdSongMultiPicker(initialSelection: _selectedSongIds)
+                    : _SongPickerPage(initialSelection: _selectedSongIds),
       ),
     );
     if (result != null && mounted) {
@@ -328,27 +340,23 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
     // Create entries for each selected song
     final newEntries = <SongHistoryEntry>[];
     for (final songId in _selectedSongIds) {
-      final song = songs.firstWhere(
-        (s) => s.id == songId,
-        orElse: () => Song(name: context.l10n.commonUnknown),
-      );
+      final song = songs.firstWhere((s) => s.id == songId, orElse: () => Song(name: context.l10n.commonUnknown));
 
       String? conductorName;
       if (!_useOtherConductor && _selectedConductorId != null) {
-        final conductor = conductors.firstWhere(
-          (c) => c.id == _selectedConductorId,
-          orElse: () => const Person(),
-        );
+        final conductor = conductors.firstWhere((c) => c.id == _selectedConductorId, orElse: () => const Person());
         conductorName = conductor.fullName;
       }
 
-      newEntries.add(SongHistoryEntry(
-        songId: songId,
-        songName: song.displayName,
-        conductorId: _useOtherConductor ? null : _selectedConductorId,
-        conductorName: conductorName,
-        otherConductor: _useOtherConductor ? _otherConductorName : null,
-      ));
+      newEntries.add(
+        SongHistoryEntry(
+          songId: songId,
+          songName: song.displayName,
+          conductorId: _useOtherConductor ? null : _selectedConductorId,
+          conductorName: conductorName,
+          otherConductor: _useOtherConductor ? _otherConductorName : null,
+        ),
+      );
     }
 
     // Add to existing entries
@@ -411,15 +419,13 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
           if (!collectionsAsync.hasValue && !collectionsAsync.hasError) {
             return const Center(child: AppSpinner());
           }
-          final songs =
-              collectionsAsync.hasValue ? rdPlannableWorks(allSongs, collections) : rdWorksIn(allSongs, null);
-          final filtered = _search.isEmpty
-              ? songs
-              : songs
-                  .where((s) => '${s.prefix ?? ''}${s.number ?? ''} ${s.name}'
-                      .toLowerCase()
-                      .contains(_search))
-                  .toList();
+          final songs = collectionsAsync.hasValue ? rdPlannableWorks(allSongs, collections) : rdWorksIn(allSongs, null);
+          final filtered =
+              _search.isEmpty
+                  ? songs
+                  : songs
+                      .where((s) => '${s.prefix ?? ''}${s.number ?? ''} ${s.name}'.toLowerCase().contains(_search))
+                      .toList();
           if (filtered.isEmpty) {
             return Center(
               child: Text(context.l10n.attListNoSongsFound, style: const TextStyle(color: AppColors.medium)),
@@ -441,9 +447,10 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
                   final parts when parts.isNotEmpty => Text(parts.join(' · ')),
                   _ => null,
                 },
-                onChanged: id == null
-                    ? null
-                    : (v) => setState(() {
+                onChanged:
+                    id == null
+                        ? null
+                        : (v) => setState(() {
                           if (v == true) {
                             _selected.add(id);
                           } else {
@@ -465,45 +472,37 @@ class SelectedSongsList extends StatelessWidget {
   final ValueChanged<List<SongHistoryEntry>>? onEntriesChanged;
   final bool readOnly;
 
-  const SelectedSongsList({
-    super.key,
-    required this.entries,
-    this.onEntriesChanged,
-    this.readOnly = false,
-  });
+  const SelectedSongsList({super.key, required this.entries, this.onEntriesChanged, this.readOnly = false});
 
   @override
   Widget build(BuildContext context) {
     if (entries.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(16),
-        child: Text(
-          context.l10n.attListNoSongsSelected,
-        ),
-      );
+      return Padding(padding: const EdgeInsets.all(16), child: Text(context.l10n.attListNoSongsSelected));
     }
 
     return Column(
-      children: entries.asMap().entries.map((entry) {
-        final index = entry.key;
-        final songEntry = entry.value;
+      children:
+          entries.asMap().entries.map((entry) {
+            final index = entry.key;
+            final songEntry = entry.value;
 
-        return ListTile(
-          title: Text(songEntry.songName),
-          subtitle: Text(songEntry.displayConductor),
-          trailing: readOnly
-              ? null
-              : IconButton(
-                  icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
-                  onPressed: () {
-                    final newEntries = List<SongHistoryEntry>.from(entries);
-                    newEntries.removeAt(index);
-                    onEntriesChanged?.call(newEntries);
-                  },
-                ),
-          dense: true,
-        );
-      }).toList(),
+            return ListTile(
+              title: Text(songEntry.songName),
+              subtitle: Text(songEntry.displayConductor),
+              trailing:
+                  readOnly
+                      ? null
+                      : IconButton(
+                        icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                        onPressed: () {
+                          final newEntries = List<SongHistoryEntry>.from(entries);
+                          newEntries.removeAt(index);
+                          onEntriesChanged?.call(newEntries);
+                        },
+                      ),
+              dense: true,
+            );
+          }).toList(),
     );
   }
 }
