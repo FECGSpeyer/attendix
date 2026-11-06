@@ -59,7 +59,7 @@ void main() {
   test('task detail "Zurück" never pops an empty stack', () {
     final src = _read('lib/features/team_organization/presentation/pages/task_detail_page.dart');
     expect(src, contains("context.canPop()"));
-    expect(src, contains("'/settings/team-organization' : '/signout'"));
+    expect(src, contains("'/settings/team-organization' : RedesignRoutes.betaTarget('/signout')"));
   });
 
   test('topic planning refreshes the plan caches (SOL_FIX33)', () {

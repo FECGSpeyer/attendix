@@ -10,6 +10,7 @@ import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
+import '../../../../core/providers/team_org_providers.dart' show myTasksProvider;
 import '../../data/providers/rd_today_providers.dart' show rdSignoutDataProvider;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
@@ -38,6 +39,8 @@ class RdTodayPage extends ConsumerWidget {
 
   Future<void> _refresh(WidgetRef ref, Role role) async {
     ref.invalidate(unreadNotificationCountProvider);
+    // "Meine Aufgaben" (all roles except parents, see build).
+    if (!role.isParent) ref.invalidate(myTasksProvider);
     if (role.canSeeAttendanceTab) {
       ref.read(attendanceRefetchCounter.notifier).state++;
       ref.invalidate(realtimeAttendanceListProvider);

@@ -116,13 +116,16 @@ extension _RuleBeta on _AutoMessageRulePageState {
   }
 
   Widget _selectRow<T>(String label, T value, List<AppSelectOption<T>> options, ValueChanged<T> onChanged) {
-    return RdListRow(
-      title: label,
-      value: options.where((o) => o.value == value).firstOrNull?.label ?? '',
-      onTap: () async {
-        final picked = await showAppSelect<T>(context: context, value: value, options: options, header: label);
-        if (picked != null) onChanged(picked.value);
-      },
+    // The row's own context anchors the iOS popover (like `_SelectTile`).
+    return Builder(
+      builder: (rowContext) => RdListRow(
+        title: label,
+        value: options.where((o) => o.value == value).firstOrNull?.label ?? '',
+        onTap: () async {
+          final picked = await showAppSelect<T>(context: rowContext, value: value, options: options, header: label);
+          if (picked != null) onChanged(picked.value);
+        },
+      ),
     );
   }
 
