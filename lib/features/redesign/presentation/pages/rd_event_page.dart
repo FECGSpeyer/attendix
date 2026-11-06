@@ -53,6 +53,7 @@ import '../widgets/event/rd_event_sections.dart';
 import '../widgets/event/rd_pult_view.dart';
 import '../widgets/today/rd_remind_open_sheet.dart';
 import '../widgets/event/rd_record_widgets.dart';
+import '../widgets/rd_desktop.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/event/rd_event_head.dart';
@@ -104,6 +105,9 @@ class _Undo {
 
 class _RdEventPageState extends ConsumerState<RdEventPage> {
   late RdEventTab _tab = widget.initialTab;
+
+  /// Desktop: Überblick and Anwesenheit side by side (no tabs).
+  bool _sideBySide = false;
 
   // Like the Termin page: the shown status per person (local changes win
   // while a write is in flight), the row ids and the notes.
@@ -877,51 +881,40 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       RdEventTab.record,
     ];
     final tab = tabs.contains(_tab) ? _tab : RdEventTab.overview;
+    // Desktop (wide detail column): Überblick and Programm on the left, the
+    // Anwesenheit on the right instead of three tabs.
+    final wide = members != null && members.isNotEmpty && rdEventSideBySide(context);
+    _sideBySide = wide;
     children.addAll([
       const SizedBox(height: 4),
       _head(attendance, type),
       const SizedBox(height: 16),
-      RdSegmented<RdEventTab>(
-        values: tabs,
-        selected: tab,
-        labelOf: (t) => switch (t) {
-          RdEventTab.overview => l10n.redesignEventTabOverview,
-          RdEventTab.program => l10n.redesignEventTabProgram,
-          RdEventTab.record => l10n.redesignEventTabRecord,
-        },
-        onChanged: (t) => setState(() => _tab = t),
-      ),
-      const SizedBox(height: 16),
+      if (!wide) ...[
+        RdSegmented<RdEventTab>(
+          values: tabs,
+          selected: tab,
+          labelOf: (t) => switch (t) {
+            RdEventTab.overview => l10n.redesignEventTabOverview,
+            RdEventTab.program => l10n.redesignEventTabProgram,
+            RdEventTab.record => l10n.redesignEventTabRecord,
+          },
+          onChanged: (t) => setState(() => _tab = t),
+        ),
+        const SizedBox(height: 16),
+      ],
     ]);
 
-    if (tab == RdEventTab.program) {
-      children.addAll(_programChildren(attendance, type));
-    } else if (members == null) {
-      children.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
-    } else if (members.isEmpty) {
-      final canMutate = canMutateAttendanceDetail(ref.watch(effectiveRoleProvider));
-      children.add(RdInfoCard(
-        text: l10n.redesignEventNoPersons,
-        icon: Icons.group_off_outlined,
-        action: canMutate
-            ? RdOutlineButton(
-                label: l10n.attendanceAddPerson,
-                onPressed: () => addPersonsToAttendance(context, ref, attendanceId: _id, currentPersonIds: _rowPersonIds ?? const {}),
-              )
-            : null,
-      ));
-      // Programm and Ablauf can be prepared before anyone is invited
-      // (Reiter Programm).
-    } else if (tab == RdEventTab.overview) {
+    Widget overview(List<RdMember> members, {bool sideBySide = false}) {
       final span = _span(attendance, type);
-      children.add(_Overview(
+      return _Overview(
         attendance: attendance,
         type: type,
         members: members,
         personAttendanceIds: _paIds,
         span: span,
         phase: rdEventPhase(span, archived: attendance.archived),
-        hasProgramTab: hasProgram,
+        hasProgramTab: hasProgram && !sideBySide,
+        sideBySide: sideBySide,
         onRecord: () => setState(() => _tab = RdEventTab.record),
         onPult: () => setState(() {
           _tab = RdEventTab.record;
@@ -931,9 +924,53 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         }),
         onProgram: () => setState(() => _tab = RdEventTab.program),
         onOpenMember: _openMember,
-      ));
+      );
+    }
+
+    final bottom = _toast == null ? 32.0 : 96.0;
+    final Widget body;
+    if (wide) {
+      body = RdEventColumns(
+        header: children,
+        left: [
+          overview(members, sideBySide: true),
+          if (hasProgram) ...[
+            const SizedBox(height: 24),
+            ..._programChildren(attendance, type),
+          ],
+        ],
+        right: _recordChildren(members, type),
+        bottomPadding: bottom,
+      );
     } else {
-      children.addAll(_recordChildren(members, type));
+      if (tab == RdEventTab.program) {
+        children.addAll(_programChildren(attendance, type));
+      } else if (members == null) {
+        children.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
+      } else if (members.isEmpty) {
+        final canMutate = canMutateAttendanceDetail(ref.watch(effectiveRoleProvider));
+        children.add(RdInfoCard(
+          text: l10n.redesignEventNoPersons,
+          icon: Icons.group_off_outlined,
+          action: canMutate
+              ? RdOutlineButton(
+                  label: l10n.attendanceAddPerson,
+                  onPressed: () => addPersonsToAttendance(context, ref, attendanceId: _id, currentPersonIds: _rowPersonIds ?? const {}),
+                )
+              : null,
+        ));
+        // Programm and Ablauf can be prepared before anyone is invited
+        // (Reiter Programm).
+      } else if (tab == RdEventTab.overview) {
+        children.add(overview(members));
+      } else {
+        children.addAll(_recordChildren(members, type));
+      }
+      body = RdPage(
+        onRefresh: () async => _reload(),
+        padding: EdgeInsets.fromLTRB(20, 12, 20, bottom),
+        children: children,
+      );
     }
 
     return PopScope(
@@ -946,11 +983,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
           Focus(
             autofocus: true,
             onKeyEvent: _onKey,
-            child: RdPage(
-              onRefresh: () async => _reload(),
-              padding: EdgeInsets.fromLTRB(20, 12, 20, _toast == null ? 32 : 96),
-              children: children,
-            ),
+            child: body,
           ),
           if (_toast != null)
             Positioned(
@@ -980,7 +1013,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   /// search field is left alone.
   KeyEventResult _onKey(FocusNode node, KeyEvent event) {
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) return KeyEventResult.ignored;
-    if (_tab != RdEventTab.record || _pult) return KeyEventResult.ignored;
+    if ((_tab != RdEventTab.record && !_sideBySide) || _pult) return KeyEventResult.ignored;
     final primary = FocusManager.instance.primaryFocus;
     if (primary != null &&
         primary != node &&
@@ -1369,6 +1402,7 @@ class _Overview extends ConsumerWidget {
     required this.span,
     required this.phase,
     required this.hasProgramTab,
+    this.sideBySide = false,
     required this.onRecord,
     required this.onPult,
     required this.onProgram,
@@ -1382,6 +1416,9 @@ class _Overview extends ConsumerWidget {
   final ({DateTime start, DateTime end, bool hasTime})? span;
   final RdEventPhase phase;
   final bool hasProgramTab;
+
+  /// The Anwesenheit is next to it (desktop): no "Anwesenheit eintragen".
+  final bool sideBySide;
   final VoidCallback onRecord;
   final VoidCallback onPult;
   final VoidCallback onProgram;
@@ -1509,12 +1546,14 @@ class _Overview extends ConsumerWidget {
               // From the Termin day on: record, Pultmodus, Ablauf.
               if (now) ...[
                 const SizedBox(height: 16),
-                RdPrimaryButton(
-                  label: l10n.redesignEventRecord,
-                  icon: Icons.checklist_rounded,
-                  onPressed: onRecord,
-                ),
-                const SizedBox(height: 10),
+                if (!sideBySide) ...[
+                  RdPrimaryButton(
+                    label: l10n.redesignEventRecord,
+                    icon: Icons.checklist_rounded,
+                    onPressed: onRecord,
+                  ),
+                  const SizedBox(height: 10),
+                ],
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,

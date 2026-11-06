@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/redesign/rd_theme.dart';
+import 'rd_widgets.dart' show RdPage;
 import 'today/rd_today_common.dart' show RdInfoCard;
 
 /// REDESIGN: list and detail side by side on wide screens (canvas
@@ -87,18 +88,8 @@ class RdSplitView extends StatelessWidget {
           VerticalDivider(width: 1, thickness: 1, color: p.line),
           Expanded(
             child: detail == null
-                ? empty ?? Scaffold(
-                    backgroundColor: p.bg,
-                    body: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(32),
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 420),
-                          child: RdInfoCard(text: emptyText, icon: emptyIcon),
-                        ),
-                      ),
-                    ),
-                  )
+                // A short card at the top (not one sentence in a large box).
+                ? empty ?? RdPage(children: [RdInfoCard(text: emptyText, icon: emptyIcon)])
                 : RdSplitScope(isDetail: true, selectedId: selectedId, child: detail!),
           ),
         ],
