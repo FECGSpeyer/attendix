@@ -730,6 +730,34 @@
         "add": "Gruppe hinzufügen",
         "manageCategories": "Kategorien verwalten"
       },
+      "adminsList": {
+        "intro": "Admins haben alle Rechte in dieser Gruppe und können sie auch löschen.",
+        "empty": "Noch keine Admins.",
+        "add": "Admin hinzufügen",
+        "you": "Das bist du",
+        "remove": "Admin entfernen"
+      },
+      "parentsList": {
+        "intro": "Eltern sehen die Anwesenheiten ihrer Kinder und tragen Abwesenheiten ein.",
+        "empty": "Noch keine Eltern eingeladen.",
+        "add": "Elternteil einladen",
+        "remove": "Elternteil entfernen"
+      },
+      "viewersList": {
+        "intro": "Beobachter dürfen Anwesenheiten und Personendaten nur ansehen.",
+        "empty": "Noch keine Beobachter eingeladen.",
+        "add": "Beobachter einladen",
+        "remove": "Beobachter entfernen"
+      },
+      "archiveList": {
+        "intro": "Ausgetretene Personen. Tippe auf eine Person, um sie anzusehen.",
+        "empty": "Keine archivierten Personen.",
+        "restore": "Wiederherstellen"
+      },
+      "pendingList": {
+        "intro": "Diese Personen haben sich angemeldet und warten auf deine Freigabe. Tippe auf eine Person, um sie zu prüfen.",
+        "empty": "Gerade wartet niemand auf Freigabe."
+      },
       "groupEdit": {
         "title": "Gruppe bearbeiten",
         "name": "Name",
@@ -1748,6 +1776,34 @@
         "mainGroup": "Main group",
         "add": "Add group",
         "manageCategories": "Manage categories"
+      },
+      "adminsList": {
+        "intro": "Admins have all rights in this group and can also delete it.",
+        "empty": "No admins yet.",
+        "add": "Add admin",
+        "you": "That's you",
+        "remove": "Remove admin"
+      },
+      "parentsList": {
+        "intro": "Parents see their children's attendance and enter absences.",
+        "empty": "No parents invited yet.",
+        "add": "Invite parent",
+        "remove": "Remove parent"
+      },
+      "viewersList": {
+        "intro": "Observers can only view attendance and personal data.",
+        "empty": "No observers invited yet.",
+        "add": "Invite observer",
+        "remove": "Remove observer"
+      },
+      "archiveList": {
+        "intro": "People who have left. Tap a person to view them.",
+        "empty": "No archived people.",
+        "restore": "Restore"
+      },
+      "pendingList": {
+        "intro": "These people have registered and are waiting for your approval. Tap a person to review them.",
+        "empty": "Nobody is waiting for approval right now."
       },
       "groupEdit": {
         "title": "Edit group",

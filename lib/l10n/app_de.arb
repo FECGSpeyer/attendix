@@ -11912,6 +11912,26 @@
   "@redesignAdminTitle": {
     "description": "redesign.adminTitle"
   },
+  "redesignAdminsListAdd": "Admin hinzufügen",
+  "@redesignAdminsListAdd": {
+    "description": "redesign.adminsList.add"
+  },
+  "redesignAdminsListEmpty": "Noch keine Admins.",
+  "@redesignAdminsListEmpty": {
+    "description": "redesign.adminsList.empty"
+  },
+  "redesignAdminsListIntro": "Admins haben alle Rechte in dieser Gruppe und können sie auch löschen.",
+  "@redesignAdminsListIntro": {
+    "description": "redesign.adminsList.intro"
+  },
+  "redesignAdminsListRemove": "Admin entfernen",
+  "@redesignAdminsListRemove": {
+    "description": "redesign.adminsList.remove"
+  },
+  "redesignAdminsListYou": "Das bist du",
+  "@redesignAdminsListYou": {
+    "description": "redesign.adminsList.you"
+  },
   "redesignAppearanceAppIcon": "App-Symbol",
   "@redesignAppearanceAppIcon": {
     "description": "redesign.appearance.appIcon"
@@ -12026,6 +12046,18 @@
     "placeholders": {
       "group": {}
     }
+  },
+  "redesignArchiveListEmpty": "Keine archivierten Personen.",
+  "@redesignArchiveListEmpty": {
+    "description": "redesign.archiveList.empty"
+  },
+  "redesignArchiveListIntro": "Ausgetretene Personen. Tippe auf eine Person, um sie anzusehen.",
+  "@redesignArchiveListIntro": {
+    "description": "redesign.archiveList.intro"
+  },
+  "redesignArchiveListRestore": "Wiederherstellen",
+  "@redesignArchiveListRestore": {
+    "description": "redesign.archiveList.restore"
   },
   "redesignBulkActionArchive": "Archivieren",
   "@redesignBulkActionArchive": {
@@ -14255,6 +14287,22 @@
       "percent": {}
     }
   },
+  "redesignParentsListAdd": "Elternteil einladen",
+  "@redesignParentsListAdd": {
+    "description": "redesign.parentsList.add"
+  },
+  "redesignParentsListEmpty": "Noch keine Eltern eingeladen.",
+  "@redesignParentsListEmpty": {
+    "description": "redesign.parentsList.empty"
+  },
+  "redesignParentsListIntro": "Eltern sehen die Anwesenheiten ihrer Kinder und tragen Abwesenheiten ein.",
+  "@redesignParentsListIntro": {
+    "description": "redesign.parentsList.intro"
+  },
+  "redesignParentsListRemove": "Elternteil entfernen",
+  "@redesignParentsListRemove": {
+    "description": "redesign.parentsList.remove"
+  },
   "redesignParentsRoute": "Route",
   "@redesignParentsRoute": {
     "description": "redesign.parents.route"
@@ -14262,6 +14310,14 @@
   "redesignParentsToday": "Heute",
   "@redesignParentsToday": {
     "description": "redesign.parents.today"
+  },
+  "redesignPendingListEmpty": "Gerade wartet niemand auf Freigabe.",
+  "@redesignPendingListEmpty": {
+    "description": "redesign.pendingList.empty"
+  },
+  "redesignPendingListIntro": "Diese Personen haben sich angemeldet und warten auf deine Freigabe. Tippe auf eine Person, um sie zu prüfen.",
+  "@redesignPendingListIntro": {
+    "description": "redesign.pendingList.intro"
   },
   "redesignPersonAbsence": "Abwesend",
   "@redesignPersonAbsence": {
@@ -15499,6 +15555,22 @@
   "redesignTypesListIntro": "Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.",
   "@redesignTypesListIntro": {
     "description": "redesign.typesList.intro"
+  },
+  "redesignViewersListAdd": "Beobachter einladen",
+  "@redesignViewersListAdd": {
+    "description": "redesign.viewersList.add"
+  },
+  "redesignViewersListEmpty": "Noch keine Beobachter eingeladen.",
+  "@redesignViewersListEmpty": {
+    "description": "redesign.viewersList.empty"
+  },
+  "redesignViewersListIntro": "Beobachter dürfen Anwesenheiten und Personendaten nur ansehen.",
+  "@redesignViewersListIntro": {
+    "description": "redesign.viewersList.intro"
+  },
+  "redesignViewersListRemove": "Beobachter entfernen",
+  "@redesignViewersListRemove": {
+    "description": "redesign.viewersList.remove"
   },
   "redesignWorkAbout": "Über das Werk",
   "@redesignWorkAbout": {

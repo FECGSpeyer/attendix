@@ -9447,6 +9447,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignAdminTitle => 'Administration';
 
   @override
+  String get redesignAdminsListAdd => 'Add admin';
+
+  @override
+  String get redesignAdminsListEmpty => 'No admins yet.';
+
+  @override
+  String get redesignAdminsListIntro =>
+      'Admins have all rights in this group and can also delete it.';
+
+  @override
+  String get redesignAdminsListRemove => 'Remove admin';
+
+  @override
+  String get redesignAdminsListYou => 'That\'s you';
+
+  @override
   String get redesignAppearanceAppIcon => 'App icon';
 
   @override
@@ -9537,6 +9553,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String redesignApplicantWaitingFor(Object group) {
     return 'Your registration with $group is being reviewed';
   }
+
+  @override
+  String get redesignArchiveListEmpty => 'No archived people.';
+
+  @override
+  String get redesignArchiveListIntro =>
+      'People who have left. Tap a person to view them.';
+
+  @override
+  String get redesignArchiveListRestore => 'Restore';
 
   @override
   String get redesignBulkActionArchive => 'Archive';
@@ -11348,10 +11374,31 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignParentsListAdd => 'Invite parent';
+
+  @override
+  String get redesignParentsListEmpty => 'No parents invited yet.';
+
+  @override
+  String get redesignParentsListIntro =>
+      'Parents see their children\'s attendance and enter absences.';
+
+  @override
+  String get redesignParentsListRemove => 'Remove parent';
+
+  @override
   String get redesignParentsRoute => 'Directions';
 
   @override
   String get redesignParentsToday => 'Today';
+
+  @override
+  String get redesignPendingListEmpty =>
+      'Nobody is waiting for approval right now.';
+
+  @override
+  String get redesignPendingListIntro =>
+      'These people have registered and are waiting for your approval. Tap a person to review them.';
 
   @override
   String get redesignPersonAbsence => 'Away';
@@ -12339,6 +12386,19 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get redesignTypesListIntro =>
       'Attendance types set the name, time, default status and other defaults of new events.';
+
+  @override
+  String get redesignViewersListAdd => 'Invite observer';
+
+  @override
+  String get redesignViewersListEmpty => 'No observers invited yet.';
+
+  @override
+  String get redesignViewersListIntro =>
+      'Observers can only view attendance and personal data.';
+
+  @override
+  String get redesignViewersListRemove => 'Remove observer';
 
   @override
   String get redesignWorkAbout => 'About this work';
