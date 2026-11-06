@@ -36,34 +36,39 @@ class _RdExportPageState extends ConsumerState<RdExportPage> with ExportLogic {
     }
   }
 
+  /// A sheet that was open during a group switch belongs to the old group:
+  /// its result is dropped.
+  bool _stillIn(int? tenantId) => mounted && ref.read(currentTenantIdProvider) == tenantId;
+
   Future<void> _editColumns(List<String> available) async {
+    final tenantId = ref.read(currentTenantIdProvider);
     final result = await showRdSettingsSheet<List<String>>(
       context,
       (_) => _ColumnsSheet(selected: selectedFields, available: available),
     );
-    if (result != null && mounted) setState(() => selectedFields = result);
+    if (result != null && _stillIn(tenantId)) setState(() => selectedFields = result);
   }
 
   Future<void> _pickSort(List<ExportSortOption> options) async {
     final l10n = context.l10n;
+    final tenantId = ref.read(currentTenantIdProvider);
     final picked = await showRdChoiceSheet<String>(
       context,
       title: l10n.rdDataSort,
       selected: sortField,
       options: [for (final o in options) (o.value, o.label)],
     );
-    if (picked != null && mounted) setState(() => sortField = picked);
+    if (picked != null && _stillIn(tenantId)) setState(() => sortField = picked);
   }
 
   String _fileName() {
     final l10n = context.l10n;
     final name = ref.watch(currentTenantProvider)?.shortName ?? '';
     final date = DateFormat(dateFmt()).format(DateTime.now());
-    if (exportType == 'pdf')
-      return '${name}_${contentType == 'player' ? l10n.exportPlayers : l10n.exportAttendance}.pdf';
-    return contentType == 'player'
-        ? '${l10n.exportPlayerListFile(name, date)}.xlsx'
-        : '${l10n.exportAttendanceFileAsOf(name, date)}.xlsx';
+    // Same names as [ExportLogic.runExport] saves.
+    final base =
+        contentType == 'player' ? l10n.exportPlayerListFile(name, date) : l10n.exportAttendanceFileAsOf(name, date);
+    return '$base.${exportType == 'pdf' ? 'pdf' : 'xlsx'}';
   }
 
   @override

@@ -191,6 +191,10 @@ mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
         throw Exception(context.l10n.historyFlutterNoTenant);
       }
       final tenantName = tenant.shortName;
+      // Bound to the group the export started in: checked after loading and
+      // right before the file is saved.
+      final container = ProviderScope.containerOf(context, listen: false);
+      bool stillCurrent() => container.read(currentTenantIdProvider) == tenantId;
 
       // Active (not left) players incl. paused — Ionic db.getPlayers()
       ref.invalidate(playersProvider);
@@ -230,7 +234,7 @@ mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
       // Ionic: column headers are the translated labels (fieldLabel); the
       // values are still resolved by the German field id.
       // Group switched while loading: the data would mix two groups.
-      if (!mounted || ref.read(currentTenantIdProvider) != tenantId) return;
+      if (!mounted || !stillCurrent()) return;
       final l10n = context.l10n;
       final headerFields = [for (final f in selectedFields) exportFieldLabel(f, l10n)];
       final idByHeader = {
@@ -255,31 +259,30 @@ mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
       final exportService = ExportService();
       final date = DateFormat(dateFmt()).format(DateTime.now());
       ref.read(trackingServiceProvider).track(TrackingEvent.reportExported, properties: {'format': exportType == 'pdf' ? 'pdf' : 'xlsx', 'kind': contentType == 'player' ? 'player' : 'attendance'});
+      final branding = exportType == 'pdf' ? await resolvePdfBranding(ref) : null;
 
+      final Uint8List bytes;
+      final String baseName;
       if (contentType == 'player') {
-        if (exportType == 'pdf') {
-          if (!mounted) return;
-          await exportService.exportPlayerListPdf(
-            branding: await resolvePdfBranding(ref),
-            players: sortedPlayers,
-            fields: headerFields,
-            tenantName: tenantName,
-            valueOf: valueOf,
-          );
-        } else {
-          final bytes = await exportService.exportPlayerListExcel(
-            players: sortedPlayers,
-            fields: headerFields,
-            tenantName: tenantName,
-            valueOf: valueOf,
-          );
-          await _shareExcel(bytes, l10n.exportPlayerListFile(tenantName, date));
-        }
+        baseName = l10n.exportPlayerListFile(tenantName, date);
+        bytes = exportType == 'pdf'
+            ? await exportService.buildPlayerListPdf(
+                branding: branding,
+                players: sortedPlayers,
+                fields: headerFields,
+                tenantName: tenantName,
+                valueOf: valueOf,
+              )
+            : await exportService.exportPlayerListExcel(
+                players: sortedPlayers,
+                fields: headerFields,
+                tenantName: tenantName,
+                valueOf: valueOf,
+              );
       } else {
         // All attendances of the current season up to yesterday
         // (Ionic: getAttendance(false, true) + date < today).
-        final attendanceRepo =
-            ref.read(attendanceRepositoryForTenantProvider(tenantId));
+        final attendanceRepo = container.read(attendanceRepositoryForTenantProvider(tenantId));
         // PARITY_A (R1): Ionic getCurrentAttDate() bound, all pages.
         final attendances = await attendanceRepo.getAttendances(
           since: AttendanceRepository.currentAttDate(tenant.seasonStart),
@@ -302,29 +305,30 @@ mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
         final relevant =
             pastAttendances.where((a) => withPersons.contains(a.id)).toList();
 
-        if (exportType == 'pdf') {
-          if (!mounted) return;
-          await exportService.exportAttendancePdf(
-            branding: await resolvePdfBranding(ref),
-            players: sortedPlayers,
-            attendances: relevant,
-            personAttendances: personAttendances,
-            fields: headerFields,
-            tenantName: tenantName,
-            valueOf: valueOf,
-          );
-        } else {
-          final bytes = await exportService.exportAttendanceExcel(
-            players: sortedPlayers,
-            attendances: relevant,
-            personAttendances: personAttendances,
-            fields: headerFields,
-            tenantName: tenantName,
-            valueOf: valueOf,
-          );
-          await _shareExcel(bytes, l10n.exportAttendanceFileAsOf(tenantName, date));
-        }
+        baseName = l10n.exportAttendanceFileAsOf(tenantName, date);
+        bytes = exportType == 'pdf'
+            ? await exportService.buildAttendancePdf(
+                branding: branding,
+                players: sortedPlayers,
+                attendances: relevant,
+                personAttendances: personAttendances,
+                fields: headerFields,
+                tenantName: tenantName,
+                valueOf: valueOf,
+              )
+            : await exportService.exportAttendanceExcel(
+                players: sortedPlayers,
+                attendances: relevant,
+                personAttendances: personAttendances,
+                fields: headerFields,
+                tenantName: tenantName,
+                valueOf: valueOf,
+              );
       }
+
+      // Group switched while building: nothing of the old group is saved.
+      if (!stillCurrent()) return;
+      await NativeFileService.saveBytes(bytes, '$baseName.${exportType == 'pdf' ? 'pdf' : 'xlsx'}');
 
       if (mounted) {
         ToastHelper.showSuccess(context, context.l10n.exportFlutterSuccess);
@@ -341,9 +345,6 @@ mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
   }
 
   /// Share/download the Excel file (works on web/PWA as well)
-  Future<void> _shareExcel(Uint8List bytes, String baseName) async {
-    await NativeFileService.saveBytes(bytes, '$baseName.xlsx');
-  }
 }
 
 class _ExportPageState extends ConsumerState<ExportPage> with ExportLogic {
