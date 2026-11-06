@@ -21,7 +21,7 @@ bash tool/release/check_well_known.sh --apple-cdn https://attendix.de https://ww
   - Quertest: am Laptop anfordern, auf dem iPhone öffnen (und umgekehrt).
 - [ ] Upload-Key-Reset in der Play Console beantragen (dauert 1–2 Tage).
 - [ ] Ionic-Web auf Vercel zusätzlich unter einer Zweitadresse erreichbar machen (z. B. `ionic.attendix.de`).
-- [ ] Ionic-Notfallbuild 5.0.1 fertig bauen (Xcode-Archive Team MXM3YWAKPL + AAB), **nicht hochladen**.
+- Ionic-Notfallbuild 5.0.1 wird bewusst **nicht** vorab gebaut (Entscheidung Leon, 6.11.2026); im Rollback-Fall erst dann bauen.
 - [ ] `bash tool/release/check_well_known.sh https://attendix-5eg.pages.dev` ist grün.
 
 ## 2. Beim Release
@@ -42,7 +42,7 @@ bash tool/release/check_well_known.sh --apple-cdn https://attendix.de https://ww
 ## 4. Rollback
 
 - [ ] Rollout anhalten: iOS phasenweise Veröffentlichung pausieren, Play-Rollout anhalten.
-- [ ] Im Store gibt es kein Downgrade → Ionic-Notfallbuild 5.0.1 hochladen und beschleunigte Prüfung beantragen.
+- [ ] Im Store gibt es kein Downgrade → Ionic 4.19.6 als 5.0.1 bauen (Xcode Team MXM3YWAKPL, Android-Upload-Key), hochladen und beschleunigte Prüfung beantragen. Bis dahin hilft nur das Anhalten des Rollouts oder ein Shorebird-Patch.
 - [ ] Achtung: nach der Login-Übernahme ist die alte Ionic-Sitzung ungültig (Refresh-Token rotiert). Rollback heißt für Nutzer: neu anmelden.
 - [ ] DNS zurück: attendix.de wieder auf Vercel (notierte Einträge). Die Ionic-AASA liegt dort in `src/.well-known/`.
 - [ ] Danach `check_well_known.sh --apple-cdn https://attendix.de` erneut ausführen.
