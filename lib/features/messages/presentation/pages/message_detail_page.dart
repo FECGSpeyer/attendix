@@ -298,7 +298,9 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
     );
 
     final List<Widget> body;
-    if (message == null && messageAsync.isLoading) {
+    // Like `when` in the classic branch: a reload (e.g. after an instance
+    // switch) shows loading instead of acting on the previous message.
+    if (messageAsync.isLoading && (message == null || messageAsync.isReloading)) {
       body = [RdInfoCard(text: l10n.redesignTodayLoading, loading: true)];
     } else if (message == null && messageAsync.hasError) {
       body = [

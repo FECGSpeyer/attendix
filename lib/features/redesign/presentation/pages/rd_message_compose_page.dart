@@ -14,7 +14,9 @@ import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/tiptap_converter.dart';
+import '../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/message/message.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -197,14 +199,14 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
           push: _push,
           email: _email,
         );
+    // Sent: the draft goes, also if the page is gone by now.
+    if (id != null) await _clearDraft();
     if (!mounted) return;
     setState(() => _sending = false);
     if (id == null) {
       ToastHelper.showError(context, context.l10n.messagesSendFailed);
       return;
     }
-    await _clearDraft();
-    if (!mounted) return;
     ToastHelper.showSuccess(context, context.l10n.messagesIsSending);
     context.canPop() ? context.pop(id) : context.go('/messages/$id');
   }
@@ -223,13 +225,34 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
           contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         );
 
+    // No leaving while sending: the result (and the draft) belong here.
+    return PopScope(
+      canPop: !_sending,
+      child: _page(context, p, l10n, groups, counts, field),
+    );
+  }
+
+  Widget _page(
+    BuildContext context,
+    RdPalette p,
+    AppLocalizations l10n,
+    List<Group> groups,
+    MessageRecipientCounts? counts,
+    InputDecoration Function(String) field,
+  ) {
     return RdPage(
       children: [
         Row(
           children: [
-            RdTextLink(
-              label: l10n.redesignCommonCancel,
-              onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.manage),
+            Opacity(
+              opacity: _sending ? 0.45 : 1,
+              child: RdTextLink(
+                label: l10n.redesignCommonCancel,
+                onTap: () {
+                  if (_sending) return;
+                  context.canPop() ? context.pop() : context.go(RedesignRoutes.manage);
+                },
+              ),
             ),
             Expanded(
               child: Semantics(
