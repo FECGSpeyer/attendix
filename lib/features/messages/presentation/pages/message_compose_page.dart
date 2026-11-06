@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/message_providers.dart';
+import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/tiptap_converter.dart';
@@ -15,17 +16,21 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/message/message.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/message_editor_toolbar.dart';
+import '../../../redesign/presentation/pages/rd_message_compose_page.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/presentation/widgets/settings_list.dart';
 
 /// Opens the full-screen compose dialog. Returns the new message id when sent.
 /// [preset]: fixed recipients and prefilled text (Ionic 4.18
 /// "Unentschuldigte anschreiben").
+///
+/// REDESIGN: with the Beta on, the Beta form ([RdMessageComposePage]) opens.
 Future<String?> openMessageCompose(BuildContext context, {MessageComposePreset? preset}) {
+  final beta = ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider);
   return Navigator.of(context, rootNavigator: true).push<String>(
     MaterialPageRoute(
       fullscreenDialog: true,
-      builder: (_) => MessageComposePage(preset: preset),
+      builder: (_) => beta ? RdMessageComposePage(preset: preset) : MessageComposePage(preset: preset),
     ),
   );
 }

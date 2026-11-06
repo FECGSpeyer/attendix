@@ -3,7 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
@@ -193,7 +196,9 @@ class _TasksTabState extends ConsumerState<TasksTab> {
 
   Widget _chip(String label, bool selected, VoidCallback onTap) => Padding(
         padding: const EdgeInsets.only(right: 4),
-        child: IonFilterChip(label: label, selected: selected, onTap: onTap),
+        child: ref.watch(redesignEnabledProvider)
+            ? RdChoiceChip(label: label, selected: selected, onTap: onTap)
+            : IonFilterChip(label: label, selected: selected, onTap: onTap),
       );
 }
 
@@ -217,6 +222,7 @@ class TaskListTile extends StatelessWidget {
     final done = task.status == 'completed';
     final overdue = isTaskOverdue(task, today);
     final l10n = context.l10n;
+    final rd = context.rdSkin;
     final parts = <String>[];
     if (showPerson) {
       final name = task.responsiblePerson.fullName;
@@ -237,7 +243,7 @@ class TaskListTile extends StatelessWidget {
         iconSize: 26,
         icon: Icon(
           done ? Icons.check_circle : Icons.radio_button_unchecked,
-          color: done ? AppColors.success : AppColors.medium,
+          color: done ? (rd?.primary ?? AppColors.success) : (rd?.text2 ?? AppColors.medium),
         ),
         onPressed: onToggle,
       ),
@@ -246,12 +252,14 @@ class TaskListTile extends StatelessWidget {
       title: Text(
         task.title,
         style: done
-            ? const TextStyle(decoration: TextDecoration.lineThrough, color: AppColors.medium)
+            ? TextStyle(decoration: TextDecoration.lineThrough, color: rd?.text2 ?? AppColors.medium)
             : null,
       ),
       subtitle: Text(
         parts.join(' · '),
-        style: TextStyle(color: overdue ? AppColors.danger : AppColors.medium),
+        style: TextStyle(
+          color: overdue ? (rd?.absent ?? AppColors.danger) : (rd?.text2 ?? AppColors.medium),
+        ),
       ),
       trailing: Wrap(
         spacing: 4,
@@ -271,7 +279,20 @@ class _Badge extends StatelessWidget {
   final Color color;
 
   @override
-  Widget build(BuildContext context) => IonBadge(label: label, color: color);
+  Widget build(BuildContext context) {
+    // Beta: same pill as everywhere else in the new design.
+    if (context.rdSkin != null) {
+      final tone = switch (color) {
+        AppColors.danger => RdTone.absent,
+        AppColors.warning => RdTone.late,
+        AppColors.success => RdTone.present,
+        AppColors.primary => RdTone.primary,
+        _ => null,
+      };
+      return RdPill(label, tone: tone);
+    }
+    return IonBadge(label: label, color: color);
+  }
 }
 
 /// Colored pill badge used across the Teamorganisation pages.

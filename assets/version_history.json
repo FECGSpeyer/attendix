@@ -1,11 +1,29 @@
 {
   "versions": [
     {
-      "version": "0.53.0",
+      "version": "0.54.0",
       "date": "6.11.2026",
       "changes": [
         "✨ Beta: Allgemein und Branding der Gruppe im neuen Design, jede Änderung wird sofort gespeichert",
         "✨ Beta: Benachrichtigungs-Einstellungen führen zu Ich › Benachrichtigungen, „Dashboard konfigurieren“ ist im Beta ausgeblendet"
+      ]
+    },
+    {
+      "version": "0.53.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Automatische Nachrichten als Verwaltungsliste mit Schaltern, Regel als Bearbeiten-Seite mit „Regel / Verlauf“",
+        "✨ Beta: „Unentschuldigte anschreiben“ öffnet das neue Formular mit festen Empfängern und vorbefülltem Text",
+        "✨ Beta: Teamorganisation im neuen Design (Aufgaben, Themen, Protokolle), „Meine Aufgaben“ auf Heute",
+        "✨ Beta: Protokoll schreiben und lesen im neuen Design",
+        "🐛 Beta: „Nächster Termin“ bei Themen und „Zurück“ bei Aufgaben öffnen nicht mehr die alten Seiten"
+      ]
+    },
+    {
+      "version": "0.52.1",
+      "date": "6.11.2026",
+      "changes": [
+        "🐛 Übernahme ungesendeter Ionic-Offline-Änderungen: neuere Änderungen auf dem Server gewinnen, ein Abbruch beim ersten Start verliert nichts mehr, Android-Lesefenster abgeschottet"
       ]
     },
     {
