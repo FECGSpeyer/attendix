@@ -30,8 +30,9 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-/// Image model: the newest GPT Terra (Leon, 06.11.2026).
-const MODEL = "gpt-6.1-terra";
+/// Model: the newest GPT Luna, which reads images too; reading a printed
+/// part name needs no Terra (Leon, 06.11.2026: a tenth of the cost).
+const MODEL = "gpt-6-luna";
 
 /// Roles that edit the tenant (app: `Role.canEdit`).
 const EDIT_ROLES = [1, 4, 5, 9];
