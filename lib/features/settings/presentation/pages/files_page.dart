@@ -233,7 +233,11 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       _selectedPaths = {};
       _searchController.clear();
     });
-    _loadEntries();
+    // After the switch has reached the repository provider (the listener
+    // runs while the tenant is still being updated).
+    Future.microtask(() {
+      if (mounted) _loadEntries();
+    });
   }
 
   /// Text input: the Beta text sheet or the old dialog.
@@ -329,6 +333,8 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     final repo = _repo;
     if (!repo.hasTenantId) return;
     final tenantId = ref.read(currentTenantIdProvider);
+    // Only a repository of the current group lists (never a stale one).
+    if (repo.currentTenantId != tenantId) return;
     final path = _currentPath;
     setState(() => _isLoading = true);
     try {
@@ -408,23 +414,28 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   }
 
   Future<void> _openImagePreview(StorageEntry entry) async {
+    final repo = _repo;
+    final tenantId = ref.read(currentTenantIdProvider);
     var url = _imagePreviewUrls[entry.path];
     if (url == null) {
       try {
-        url = await _repo.getSignedFileUrl(entry.path, expiresInSeconds: 3600);
+        url = await repo.getSignedFileUrl(entry.path, expiresInSeconds: 3600);
+        // A late URL of a group switched away from is neither cached nor shown.
+        if (!mounted || !_stillIn(tenantId)) return;
         _imagePreviewUrls[entry.path] = url;
       } catch (e) {
-        if (mounted) ToastHelper.showError(context, context.l10n.filesPreviewFailed(_errorText(e)));
+        if (mounted && _stillIn(tenantId)) ToastHelper.showError(context, context.l10n.filesPreviewFailed(_errorText(e)));
         return;
       }
     }
-    if (!mounted) return;
+    if (!mounted || !_stillIn(tenantId)) return;
     await showImageViewerSheet(context, url: url, fileName: entry.name);
   }
 
   /// INTEGRATION: plays all audio files of the folder as a queue, starting at
   /// the tapped one (Ionic playAudioEntry / AudioPlayerService.playQueue).
   Future<void> _playAudio(StorageEntry entry) async {
+    final repo = _repo; // the queue resolves its URLs in the group it started in
     final audioEntries = _filteredEntries.where(FilesSearch.isAudio).toList();
     final list = audioEntries.isEmpty ? [entry] : audioEntries;
     final startIndex = list.indexWhere((e) => e.path == entry.path).clamp(0, list.length - 1);
@@ -433,7 +444,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         AudioQueueItem(
           fileName: e.name,
           title: e.name,
-          resolveUrl: () => _repo.getSignedFileUrl(e.path, expiresInSeconds: 3600),
+          resolveUrl: () => repo.getSignedFileUrl(e.path, expiresInSeconds: 3600),
         ),
     ];
     try {
@@ -450,6 +461,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   /// (Ionic sendEntryPerTelegram, Edge Function `send-document`).
   Future<void> _sendEntryPerTelegram(StorageEntry entry) async {
     if (entry.isFolder) return;
+    final repo = _repo;
     final chatId = _telegramChatId;
     if (chatId == null || chatId.isEmpty) {
       ToastHelper.showWarning(context, context.l10n.filesConnectTelegram);
@@ -457,7 +469,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     }
     ToastHelper.showInfo(context, context.l10n.filesSendingTelegram);
     try {
-      final url = await _repo.getSignedFileUrl(entry.path, expiresInSeconds: 600);
+      final url = await repo.getSignedFileUrl(entry.path, expiresInSeconds: 600);
       await ref.read(telegramServiceProvider).sendDocumentPerTelegram(url: url, chatId: chatId);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.svcMessageSent);
     } catch (e) {
@@ -468,8 +480,9 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   Future<void> _downloadEntry(StorageEntry entry) async {
     if (entry.isFolder) return;
     final openFailed = context.l10n.filesFlutterOpenLinkFailed;
+    final repo = _repo;
     try {
-      final url = await _repo.getSignedFileUrl(entry.path, downloadName: entry.name);
+      final url = await repo.getSignedFileUrl(entry.path, downloadName: entry.name);
       // NATIVE_MISC: native app → cache dir + system viewer (Ionic downloadFileNative)
       final ok = await NativeFileService.openUrl(url, fileName: entry.name);
       if (!ok) throw Exception(openFailed);
@@ -651,6 +664,11 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     var failed = 0;
     await _withLoading(() async {
       for (final entry in entries) {
+        // Group switched meanwhile: nothing more is deleted.
+        if (!mounted || !_stillIn(tenantId)) {
+          failed++;
+          continue;
+        }
         try {
           await repo.deleteEntry(entry.path, isFolder: entry.isFolder);
         } catch (_) {
@@ -696,6 +714,11 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       await _withLoading(() async {
         final existingNames = {for (final e in await repo.listEntries(target)) e.name};
         for (final entry in entries) {
+          // Group switched meanwhile: nothing more is moved.
+          if (!mounted || !_stillIn(tenantId)) {
+            skipped++;
+            continue;
+          }
           if (existingNames.contains(entry.name)) {
             skipped++;
             continue;
@@ -1011,6 +1034,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   /// Ionic `ion-popover` at the ⋯ button of an entry (same entries,
   /// order and conditions; a tap outside closes it).
   Future<void> _showEntryActions(BuildContext button, StorageEntry entry) async {
+    final tenantId = ref.read(currentTenantIdProvider);
     final canEdit = _canEdit;
     final isAudio = FilesSearch.isAudio(entry);
     final action = await showAppPopoverMenu<VoidCallback>(
@@ -1069,7 +1093,8 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         ],
       ],
     );
-    if (!mounted) return;
+    // An entry of a group switched away from is not acted on.
+    if (!mounted || !_stillIn(tenantId)) return;
     action?.call();
   }
 

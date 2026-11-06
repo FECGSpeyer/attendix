@@ -323,6 +323,7 @@ extension _FilesPageBeta on _FilesPageState {
   /// "+": Dateien hochladen or Ordner anlegen.
   Future<void> _betaAdd(BuildContext context) async {
     final l10n = context.l10n;
+    final tenantId = ref.read(currentTenantIdProvider);
     final action = await showAppActionSheet<String>(
       context,
       actions: [
@@ -330,7 +331,7 @@ extension _FilesPageBeta on _FilesPageState {
         AppActionSheetAction(value: 'folder', label: l10n.filesCreateFolder, icon: Icons.create_new_folder_outlined),
       ],
     );
-    if (!mounted) return;
+    if (!mounted || !_stillIn(tenantId)) return;
     if (action == 'upload') _upload();
     if (action == 'folder') _createFolder();
   }
@@ -338,6 +339,7 @@ extension _FilesPageBeta on _FilesPageState {
   /// "•••" of the page: everything for the whole folder.
   Future<void> _betaFolderActions(BuildContext button) async {
     final l10n = context.l10n;
+    final tenantId = ref.read(currentTenantIdProvider);
     final canEdit = _canEdit;
     final segments = _pathSegments;
     final action = await showAppActionSheet<String>(
@@ -357,7 +359,8 @@ extension _FilesPageBeta on _FilesPageState {
         AppActionSheetAction(value: 'help', label: l10n.a11yHelp, icon: Icons.help_outline),
       ],
     );
-    if (!mounted) return;
+    // Started in a group switched away from: nothing happens.
+    if (!mounted || !_stillIn(tenantId)) return;
     switch (action) {
       case 'select':
         _startSelection();
@@ -407,6 +410,7 @@ extension _FilesPageBeta on _FilesPageState {
   /// and conditions as the old popover).
   Future<void> _betaEntryActions(StorageEntry entry) async {
     final l10n = context.l10n;
+    final tenantId = ref.read(currentTenantIdProvider);
     final canEdit = _canEdit;
     final isAudio = FilesSearch.isAudio(entry);
     final action = await showAppActionSheet<VoidCallback>(
@@ -457,7 +461,8 @@ extension _FilesPageBeta on _FilesPageState {
         ],
       ],
     );
-    if (!mounted) return;
+    // An entry of a group switched away from is not acted on.
+    if (!mounted || !_stillIn(tenantId)) return;
     action?.call();
   }
 }
