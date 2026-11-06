@@ -231,6 +231,7 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
     final groupIds = _groupIds;
     final push = _push;
     final email = _email;
+    final preset = _preset;
     final draft = jsonEncode({'title': _subject.text, 'ops': _body.document.toDelta().toJson()});
     // Inputs are locked while sending, so the snapshot stays the latest text.
     _body.readOnly = true;
@@ -238,7 +239,6 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
     // The draft goes before sending: a compose page opened meanwhile must
     // neither show this message as a draft nor lose its own to a late clear.
     await _clearDraft();
-    final preset = _preset;
     String? id;
     try {
       id = await notifier.send(
