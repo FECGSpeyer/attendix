@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.69.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Dateiablage im neuen Design – Großtitel = aktueller Ordner, Zurück geht einen Ordner hoch, Speicher als dünner Balken, „•••“ für Auswählen/Sortieren/Link/Suchhilfe, „+“ für Hochladen oder Ordner anlegen, Aktionen einer Datei als Blatt",
+        "🐛 Dateiablage: nach einem Gruppenwechsel beginnt die Seite neu im Hauptordner, Aktionen aus der alten Gruppe schreiben nichts mehr"
+      ]
+    },
+    {
       "version": "0.68.0",
       "date": "6.11.2026",
       "changes": [
