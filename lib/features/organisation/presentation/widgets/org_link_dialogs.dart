@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/organisation/organisation.dart';
 import '../../../../data/repositories/base_repository.dart' show RepositoryException;
@@ -19,7 +20,17 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 /// danger toast („Fehler beim Laden der Mandanten“ for the own instances,
 /// „Fehler beim Laden der Organisationen“ for the links) and opens no dialog,
 /// so the admin is not led to create a duplicate organisation.
+/// Returns whether the group that was current when called is still the
+/// current one; the dialogs write nothing after a group switch.
+bool Function() bindCurrentTenant(BuildContext context) {
+  final container = ProviderScope.containerOf(context, listen: false);
+  final tenantId = container.read(currentTenantIdProvider);
+  return () => tenantId != null && container.read(currentTenantIdProvider) == tenantId;
+}
+
 Future<void> showOrganisationLinkDialog(BuildContext context, WidgetRef ref) async {
+  final stillCurrent = bindCurrentTenant(context);
+  final notifier = ref.read(organisationNotifierProvider.notifier);
   List<Organisation> organisations;
   try {
     organisations = await ref.read(userOrganisationsProvider.future);
@@ -36,7 +47,7 @@ Future<void> showOrganisationLinkDialog(BuildContext context, WidgetRef ref) asy
   if (!context.mounted) return;
 
   if (organisations.isEmpty) {
-    await showCreateOrganisationDialog(context, ref);
+    await showCreateOrganisationDialog(context, ref, stillCurrent: stillCurrent);
     return;
   }
 
@@ -74,14 +85,15 @@ Future<void> showOrganisationLinkDialog(BuildContext context, WidgetRef ref) asy
   );
   if (!context.mounted) return;
 
+  if (!stillCurrent()) return;
   if (result == 'create') {
-    await showCreateOrganisationDialog(context, ref);
+    await showCreateOrganisationDialog(context, ref, stillCurrent: stillCurrent);
   } else if (result == 'choose') {
     if (selected == null) {
       ToastHelper.showWarning(context, context.l10n.orgPleaseSelect);
       return;
     }
-    final ok = await ref.read(organisationNotifierProvider.notifier).linkCurrentTenant(selected!);
+    final ok = await notifier.linkCurrentTenant(selected!);
     if (!context.mounted) return;
     ok
         ? ToastHelper.showSuccess(context, context.l10n.orgSelected)
@@ -93,7 +105,12 @@ Future<void> showOrganisationLinkDialog(BuildContext context, WidgetRef ref) asy
 /// Ionic org-settings `openCreateOrganisationAlert()`: an empty name shows
 /// „Bitte gib gültige Werte ein.“ in the alert, which stays open; creating
 /// runs behind a blocking spinner (Ionic getLoadingElement).
-Future<void> showCreateOrganisationDialog(BuildContext context, WidgetRef ref) async {
+Future<void> showCreateOrganisationDialog(
+  BuildContext context,
+  WidgetRef ref, {
+  bool Function()? stillCurrent,
+}) async {
+  final isCurrent = stillCurrent ?? bindCurrentTenant(context);
   final controller = TextEditingController();
   String? error;
   try {
@@ -132,7 +149,7 @@ Future<void> showCreateOrganisationDialog(BuildContext context, WidgetRef ref) a
       ),
     );
     final name = controller.text.trim();
-    if (ok != true || name.isEmpty || !context.mounted) return;
+    if (ok != true || name.isEmpty || !context.mounted || !isCurrent()) return;
     final notifier = ref.read(organisationNotifierProvider.notifier);
     final navigator = Navigator.of(context, rootNavigator: true);
     showAppDialog<void>(
@@ -146,7 +163,8 @@ Future<void> showCreateOrganisationDialog(BuildContext context, WidgetRef ref) a
       org = await notifier.create(name);
       // Ionic db.createOrganisation links the instance right away; a failed
       // link ends with 'Fehler beim Verknüpfen der Organisation', not success.
-      linked = org?.id != null && await notifier.linkCurrentTenant(org!.id!);
+      // Group switched while creating: the new organisation stays unlinked.
+      linked = org?.id != null && isCurrent() && await notifier.linkCurrentTenant(org!.id!);
     } finally {
       navigator.pop();
     }

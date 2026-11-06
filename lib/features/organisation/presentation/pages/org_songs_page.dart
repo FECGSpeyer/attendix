@@ -66,6 +66,7 @@ mixin OrgSongsLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
   bool hasSearched = false;
   bool onlyWithFiles = false;
   int _searchRun = 0;
+  int _initRun = 0;
 
   @override
   void initState() {
@@ -86,6 +87,7 @@ mixin OrgSongsLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
   /// previous group, the next build loads again.
   void resetOrgSongs() {
     _searchRun++;
+    _initRun++;
     setState(() {
       orgSongsInitialized = false;
       _orgTenants = const [];
@@ -103,40 +105,53 @@ mixin OrgSongsLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
   /// Ionic `ngOnInit`: instances, copy targets, own names, first search.
   Future<void> initOrgSongs() async {
     orgSongsInitialized = true;
+    final run = ++_initRun;
+    final container = ProviderScope.containerOf(context, listen: false);
     final repo = ref.read(orgSongRepositoryWithTenantProvider);
     final tenantId = ref.read(currentTenantIdProvider);
     if (tenantId == null) return;
+    // Everything is collected locally and taken over together, only while
+    // this load is still the latest one for the current group.
+    List<OrgSongTenant> orgTenants;
     try {
-      _orgTenants = await repo.getOrgTenants();
+      orgTenants = await repo.getOrgTenants();
     } catch (_) {
-      _orgTenants = const [];
+      orgTenants = const [];
     }
-    final own = _orgTenants.where((t) => t.id == tenantId).firstOrNull;
-    _ownLibraryId = own?.libraryId ?? tenantId;
-    chips = [
-      for (final t in _orgTenants)
-        if (t.songSourceTenantId == null && t.id != _ownLibraryId) OrgSongTenantChip(t.id, t.shortName),
+    final own = orgTenants.where((t) => t.id == tenantId).firstOrNull;
+    final ownLibraryId = own?.libraryId ?? tenantId;
+    final newChips = [
+      for (final t in orgTenants)
+        if (t.songSourceTenantId == null && t.id != ownLibraryId) OrgSongTenantChip(t.id, t.shortName),
     ];
+    List<OrgSongCopyTarget> targets;
     try {
-      final tenants = await ref.read(userTenantsProvider.future);
-      _targets = buildOrgSongCopyTargets(
+      final tenants = await container.read(userTenantsProvider.future);
+      targets = buildOrgSongCopyTargets(
         currentTenantId: tenantId,
-        orgTenants: _orgTenants,
+        orgTenants: orgTenants,
         rolesByTenant: {
           for (final t in tenants)
             if (t.id != null && t.role != null) t.id!: t.role!,
         },
       );
     } catch (_) {
-      _targets = const [];
+      targets = const [];
     }
+    var names = const <String>{};
     try {
-      final rows = await repo.getLibrarySongRows(_ownLibraryId!);
-      ownNames = {for (final r in rows) normOrgSongName((r['name'] as String?) ?? '')};
+      final rows = await repo.getLibrarySongRows(ownLibraryId);
+      names = {for (final r in rows) normOrgSongName((r['name'] as String?) ?? '')};
     } catch (_) {}
-    // Group switched meanwhile: [resetOrgSongs] loads for the new one.
-    if (!mounted || ref.read(currentTenantIdProvider) != tenantId) return;
-    setState(() {});
+    // Group switched or reset meanwhile: [resetOrgSongs] loads for the new one.
+    if (!mounted || run != _initRun || container.read(currentTenantIdProvider) != tenantId) return;
+    setState(() {
+      _orgTenants = orgTenants;
+      _ownLibraryId = ownLibraryId;
+      chips = newChips;
+      _targets = targets;
+      ownNames = names;
+    });
     await _search();
   }
 

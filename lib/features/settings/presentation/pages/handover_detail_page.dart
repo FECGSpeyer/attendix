@@ -126,13 +126,20 @@ mixin HandoverDetailLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> 
       return;
     }
     final container = ProviderScope.containerOf(context, listen: false);
+    final sourceTenantId = data.sourceTenantId ?? sourceTenant?.id;
     final repo = ref.read(playerRepositoryWithTenantProvider);
     final tracking = ref.read(trackingServiceProvider);
     setState(() => transferring = true);
 
     final failed = <Person>[];
     try {
-      for (final person in data.persons) {
+      for (final (index, person) in data.persons.indexed) {
+        // Group switched during the transfer: the remaining people stay and
+        // are listed as not transferred.
+        if (container.read(currentTenantIdProvider) != sourceTenantId) {
+          failed.addAll(data.persons.skip(index));
+          break;
+        }
         final result = await repo.handoverPlayer(
           player: person,
           targetTenantId: data.tenant.id!,

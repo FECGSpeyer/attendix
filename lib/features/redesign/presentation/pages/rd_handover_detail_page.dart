@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
@@ -33,10 +34,10 @@ class _RdHandoverDetailPageState extends ConsumerState<RdHandoverDetailPage> wit
 
   @override
   String handoverConfirmMessage(HandoverData data) => context.l10n.rdOrgHandoverConfirm(
-        data.persons.length,
-        data.tenant.longName,
-        data.stayInInstance ? context.l10n.rdOrgStayNote : context.l10n.rdOrgArchiveNote,
-      );
+    data.persons.length,
+    data.tenant.longName,
+    data.stayInInstance ? context.l10n.rdOrgStayNote : context.l10n.rdOrgArchiveNote,
+  );
 
   void _back() {
     if (context.canPop()) {
@@ -66,42 +67,62 @@ class _RdHandoverDetailPageState extends ConsumerState<RdHandoverDetailPage> wit
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
-    final data = widget.data;
+    // The people were picked in one group: after a switch they are not shown
+    // any more and the selection starts over (a running transfer stops by
+    // itself, see [HandoverDetailLogic.proceed]).
+    final tenantId = ref.watch(currentTenantIdProvider);
+    final source = widget.data?.sourceTenantId;
+    final otherGroup = source != null && tenantId != source;
+    if (otherGroup && !transferring) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) context.go('/settings/handover');
+      });
+    }
+    final data = otherGroup ? null : widget.data;
     final ready = data != null && !loading;
-    return RdPage(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 110),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: ready
-          ? RdStepButton(
-              label: l10n.rdOrgTransfer(data.persons.length),
-              loading: transferring,
-              onPressed: transferring ? null : confirmProceed,
-            )
-          : null,
-      children: [
-        RdBackLink(label: l10n.rdOrgBackSelection, onTap: _back),
-        const SizedBox(height: 4),
-        Semantics(header: true, child: Text(l10n.rdOrgStep2Title, style: RdType.largeTitle(p))),
-        if (!ready)
-          Center(child: Padding(padding: const EdgeInsets.all(32), child: CircularProgressIndicator(color: p.primary)))
-        else ...[
+    return PopScope(
+      // No leaving while people are being transferred.
+      canPop: !transferring,
+      child: RdPage(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 110),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton:
+            ready
+                ? RdStepButton(
+                  label: l10n.rdOrgTransfer(data.persons.length),
+                  loading: transferring,
+                  onPressed: transferring ? null : confirmProceed,
+                )
+                : null,
+        children: [
+          RdBackLink(label: l10n.rdOrgBackSelection, onTap: () => transferring ? null : _back()),
           const SizedBox(height: 4),
-          Text(l10n.rdOrgStep2Sub(data.tenant.longName, data.persons.length), style: RdType.meta(p)),
-          const SizedBox(height: 18),
-          RdGroupedList(children: [
-            for (final person in data.persons)
-              RdListRow(
-                leading: RdInitials(_initials(person), size: 36),
-                title: '${person.firstName} ${person.lastName}',
-                subtitle: l10n.rdOrgHere(person.groupName ?? '–'),
-                value: targetGroupName(groupMapping[person.id]),
-                onTap: targetGroups.isEmpty ? null : () => _changeGroup(person),
-              ),
-          ]),
-          const SizedBox(height: 14),
-          RdListNote(data.stayInInstance ? l10n.rdOrgStayNote : l10n.rdOrgArchiveNote),
+          Semantics(header: true, child: Text(l10n.rdOrgStep2Title, style: RdType.largeTitle(p))),
+          if (!ready)
+            Center(
+              child: Padding(padding: const EdgeInsets.all(32), child: CircularProgressIndicator(color: p.primary)),
+            )
+          else ...[
+            const SizedBox(height: 4),
+            Text(l10n.rdOrgStep2Sub(data.tenant.longName, data.persons.length), style: RdType.meta(p)),
+            const SizedBox(height: 18),
+            RdGroupedList(
+              children: [
+                for (final person in data.persons)
+                  RdListRow(
+                    leading: RdInitials(_initials(person), size: 36),
+                    title: '${person.firstName} ${person.lastName}',
+                    subtitle: l10n.rdOrgHere(person.groupName ?? '–'),
+                    value: targetGroupName(groupMapping[person.id]),
+                    onTap: targetGroups.isEmpty ? null : () => _changeGroup(person),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            RdListNote(data.stayInInstance ? l10n.rdOrgStayNote : l10n.rdOrgArchiveNote),
+          ],
         ],
-      ],
+      ),
     );
   }
 }

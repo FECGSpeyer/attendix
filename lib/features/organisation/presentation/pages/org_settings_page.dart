@@ -287,6 +287,8 @@ class _Section extends StatelessWidget {
 /// key is shown once. A new key cuts the old link.
 Future<void> createGemeindeAppKey(BuildContext context, WidgetRef ref, Organisation org) async {
   final l10n = context.l10n;
+  final stillCurrent = bindCurrentTenant(context);
+  final notifier = ref.read(planSettingsNotifierProvider.notifier);
   if (org.gemeindeAppKeyHash != null) {
     final ok = await showPlanConfirm(
       context,
@@ -297,8 +299,9 @@ Future<void> createGemeindeAppKey(BuildContext context, WidgetRef ref, Organisat
     );
     if (!ok || !context.mounted) return;
   }
+  if (!stillCurrent()) return;
   final created = PlanBeamer.newGemeindeAppKey();
-  final saved = await ref.read(planSettingsNotifierProvider.notifier).updateOrgGemeindeApp({
+  final saved = await notifier.updateOrgGemeindeApp({
     'gemeinde_app_key_hash': created.hash,
     'gemeinde_app_key_hint': created.hint,
   });
