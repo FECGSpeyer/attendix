@@ -102,8 +102,9 @@ class RdImportAi {
     required Set<int> groups,
     required bool isChoir,
   }) async {
+    // Unknown names first: a known instrument already has its answer.
     final asked = [
-      for (final q in questions)
+      for (final q in [...questions.where((q) => q.newGroup == null), ...questions.where((q) => q.newGroup != null)])
         if (_key.hasMatch(q.key)) q,
     ].take(maxQuestions).toList();
     if (asked.isEmpty) return (answers: const <String, RdImportAiAnswer>{}, status: RdImportAiStatus.off);

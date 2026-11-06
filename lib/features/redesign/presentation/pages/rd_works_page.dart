@@ -125,7 +125,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
 
   /// "+": a new Werk, a work list from Excel, or Werke of another group of
   /// the organisation.
-  Future<void> _add(SongsListData data) async {
+  Future<void> _add(SongsListData data, {BuildContext? anchor}) async {
     final l10n = context.l10n;
     // "Aus der Organisation" needs the organisation: wait for it to load.
     var org = false;
@@ -134,9 +134,11 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     } catch (_) {}
     final ownLibrary = await ref.read(rdImportOwnLibraryProvider.future).catchError((_) => false);
     if (!mounted) return;
+    if (!mounted || (anchor != null && !anchor.mounted)) return;
     final action = await showAppActionSheet<String>(
       context,
       title: l10n.redesignWorksAdd,
+      anchor: anchor,
       actions: [
         AppActionSheetAction(
           value: 'new',
@@ -255,6 +257,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     final visibleCollections = ref.watch(rdVisibleCollectionsProvider);
     final chosenCollection = rdShownCollectionId(ref.watch(rdWorksCollectionProvider), visibleCollections);
     final withCollections = visibleCollections != null && visibleCollections.isNotEmpty;
+    final inSplit = RdSplitScope.of(context) != null;
 
     final header = <Widget>[
       Row(
@@ -272,6 +275,19 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
               label: l10n.redesignWorksMore,
               onPressed: () => _more(data, _shown(data), isAdmin),
             ),
+            // Desktop (list next to the Werk): the one "+" sits here.
+            if (isAdmin && inSplit) ...[
+              const SizedBox(width: 8),
+              Builder(
+                builder: (button) => RdCircleButton(
+                  key: const Key('rd-works-add'),
+                  icon: Icons.add,
+                  label: l10n.redesignWorksAdd,
+                  primary: true,
+                  onPressed: () => _add(data, anchor: button),
+                ),
+              ),
+            ],
           ],
         ],
       ),
@@ -376,7 +392,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
 
     Widget? pill(Song song) {
       if (!lead) return null;
-      if (!rdHasNotes(song)) return RdPill(l10n.redesignWorksNoFilesPill, tone: RdTone.absent);
+      if (!rdHasNotes(song)) return RdPill(l10n.redesignWorksNoFilesPill, tone: RdTone.late);
       if (!data.isOrchestra) return null;
       final missing = rdWorkMissingGroups(song, data.groups, counts);
       if (missing.isEmpty) return null;
@@ -391,7 +407,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     return RdPage(
       onRefresh: _refresh,
       floatingActionButton:
-          isAdmin
+          isAdmin && !inSplit
               ? FloatingActionButton(
                 tooltip: l10n.redesignWorksAdd,
                 backgroundColor: p.primary,

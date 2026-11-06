@@ -1081,6 +1081,7 @@
         "optionWord": "Word weglassen, wenn PDF daneben liegt",
         "optionWordDetail": "Für Liedtexte und Pläne, die es auch als PDF gibt.",
         "toReview": "Zur Prüfung",
+        "preparing": "Wird vorbereitet …",
         "reviewOpen": "Zu prüfen · {count}",
         "reviewNew": "Neu · {count}",
         "reviewAll": "Alle · {count}",
@@ -1375,6 +1376,11 @@
         "newMissing": "Bitte fülle Name, Kürzel und Hauptgruppe aus.",
         "newCreated": "Die Gruppe wurde gegründet.",
         "deleteAccount": "Konto löschen"
+      },
+      "help": {
+        "search": "Frage oder Stichwort suchen",
+        "articles": "{count, plural, one {1 Artikel} other {{count} Artikel}}",
+        "glossaryHint": "Begriffe der App erklärt"
       }
     }
   },
@@ -2460,6 +2466,7 @@
         "optionWord": "Leave out Word files next to a PDF",
         "optionWordDetail": "For lyrics and plans that also exist as PDF.",
         "toReview": "Review",
+        "preparing": "Preparing …",
         "reviewOpen": "To review · {count}",
         "reviewNew": "New · {count}",
         "reviewAll": "All · {count}",
@@ -2754,6 +2761,11 @@
         "newMissing": "Please fill in name, short name and main group.",
         "newCreated": "The group was created.",
         "deleteAccount": "Delete account"
+      },
+      "help": {
+        "search": "Search a question or keyword",
+        "articles": "{count, plural, one {1 article} other {{count} articles}}",
+        "glossaryHint": "Terms of the app explained"
       }
     }
   }

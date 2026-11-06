@@ -36,7 +36,7 @@ class RdWorksOverviewPanel extends ConsumerWidget {
     final data = async.valueOrNull;
     if (data == null) {
       return _OverviewPage(
-        hint: l10n.redesignSplitWorksHint,
+        hint: l10n.redesignSplitWorksEmpty,
         failed: async.hasError && !async.isLoading,
         // The sources too: a failed one would keep its stored error.
         onRetry: () {
@@ -76,18 +76,9 @@ class RdWorksOverviewPanel extends ConsumerWidget {
       onTap: s.id == null ? null : () => open(s),
     );
 
+    // No own "+" here: adding lives in the list's header only.
     return _OverviewPage(
-      hint: l10n.redesignSplitWorksHint,
-      action:
-          isAdmin
-              ? RdPrimaryButton(
-                label: l10n.redesignWorksAdd,
-                icon: Icons.add,
-                height: 40,
-                // "Neues Werk" without a Besetzung (it follows from the Noten).
-                onPressed: () => context.push(RedesignRoutes.newWork),
-              )
-              : null,
+      hint: l10n.redesignSplitWorksEmpty,
       children: [
         Row(
           children: [
@@ -211,7 +202,6 @@ class _OverviewPage extends StatelessWidget {
   const _OverviewPage({
     required this.hint,
     required this.children,
-    this.action,
     this.failed = false,
     this.onRetry,
   });
@@ -220,7 +210,6 @@ class _OverviewPage extends StatelessWidget {
 
   /// Empty while the data loads ([failed]: it could not be loaded).
   final List<Widget> children;
-  final Widget? action;
   final bool failed;
   final VoidCallback? onRetry;
 
@@ -232,22 +221,9 @@ class _OverviewPage extends StatelessWidget {
       maxWidth: 640,
       padding: const EdgeInsets.fromLTRB(32, 28, 32, 32),
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Semantics(header: true, child: Text(l10n.redesignSplitOverviewTitle, style: RdType.title(p))),
-                  const SizedBox(height: 4),
-                  Text(hint, style: RdType.meta(p)),
-                ],
-              ),
-            ),
-            if (action != null) ...[const SizedBox(width: 12), action!],
-          ],
-        ),
+        Semantics(header: true, child: Text(l10n.redesignSplitOverviewTitle, style: RdType.title(p))),
+        const SizedBox(height: 4),
+        Text(hint, style: RdType.meta(p)),
         const SizedBox(height: 20),
         if (children.isNotEmpty)
           ...children

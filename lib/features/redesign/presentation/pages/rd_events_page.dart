@@ -96,6 +96,8 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     if (ownInLeaderList) {
       ref.listen<int>(attendanceRefetchCounter, (_, __) => ref.invalidate(signoutDataProvider));
     }
+    // Desktop (list next to the Termin): the one "+" sits in the header.
+    final inSplit = RdSplitScope.of(context) != null;
 
     return RdPage(
       onRefresh: () async {
@@ -112,7 +114,7 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
           await ref.read(rdSignoutDataProvider.future).catchError((_) => const SignoutData());
         }
       },
-      floatingActionButton: canCreate
+      floatingActionButton: canCreate && !inSplit
           ? FloatingActionButton(
               tooltip: l10n.redesignEventsNew,
               backgroundColor: p.primary,
@@ -163,6 +165,16 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
                 }
               }),
             ),
+            if (canCreate && inSplit) ...[
+              const SizedBox(width: 8),
+              RdCircleButton(
+                key: const Key('rd-events-add'),
+                icon: Icons.add,
+                label: l10n.redesignEventsNew,
+                primary: true,
+                onPressed: () => context.push(RedesignRoutes.newEvent),
+              ),
+            ],
           ],
         ),
         if (_searching) ...[

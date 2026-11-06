@@ -10,6 +10,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../settings/presentation/pages/left_players_page.dart' show leftPlayersProvider;
 import '../../data/rd_manage_logic.dart';
+import '../widgets/rd_split_view.dart';
 import '../widgets/manage/rd_manage_entries.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
@@ -72,7 +73,11 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
       children: [
         RdBackLink(
           label: l10n.redesignTabMe,
-          onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.me),
+          // In the split, an area route sits on top of /verwaltung: popping
+          // would land on the Verwaltung again instead of "Ich".
+          onTap: () => RdSplitScope.of(context) == null && context.canPop()
+              ? context.pop()
+              : context.go(RedesignRoutes.me),
         ),
         const SizedBox(height: 4),
         Semantics(
@@ -155,7 +160,9 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
                   leading: RdRowIcon(rdManageAreaIcon(area)),
                   title: rdManageAreaName(l10n, area),
                   subtitle: _areaSummary(l10n, access, area),
-                  onTap: () => context.push(RedesignRoutes.manageArea(area.key)),
+                  // Desktop: the area opens on the right, the list stays.
+                  selected: RdSplitScope.of(context)?.selectedId == area.index,
+                  onTap: () => RdSplitScope.open(context, RedesignRoutes.manageArea(area.key)),
                 ),
             ],
           ),
@@ -191,6 +198,28 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
   }
 }
 
+/// REDESIGN: the Verwaltung on wide screens, like the system settings of a
+/// Mac: the areas stay on the left, the chosen one (first: the first area)
+/// is open on the right (canvas "Beta: Desktop-UX").
+class RdManageSplit extends ConsumerWidget {
+  const RdManageSplit({super.key, this.area});
+
+  /// null: nothing chosen yet (the first area).
+  final RdManageArea? area;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final areas = rdManageAreas(ref.watch(rdManageAccessProvider));
+    final shown = area != null && areas.contains(area) ? area : areas.firstOrNull;
+    return RdSplitView(
+      list: const RdManagePage(),
+      detail: shown == null ? null : RdManageAreaPage(key: ValueKey('rd-manage-${shown.key}'), area: shown),
+      selectedId: shown?.index,
+      emptyText: context.l10n.redesignManageNoMatch,
+    );
+  }
+}
+
 /// One area of the Verwaltung with its entries.
 class RdManageAreaPage extends ConsumerWidget {
   const RdManageAreaPage({super.key, required this.area});
@@ -208,10 +237,13 @@ class RdManageAreaPage extends ConsumerWidget {
 
     return RdPage(
       children: [
-        RdBackLink(
-          label: l10n.redesignMeAdmin,
-          onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.manage),
-        ),
+        if (RdSplitScope.of(context)?.isDetail ?? false)
+          const SizedBox(height: 20)
+        else
+          RdBackLink(
+            label: l10n.redesignMeAdmin,
+            onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.manage),
+          ),
         const SizedBox(height: 4),
         if (area != null)
           Semantics(

@@ -1,6 +1,43 @@
 {
   "versions": [
     {
+      "version": "0.62.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Sammlungen im Noten-Bereich (Repertoire, z. B. Einspielen, Streicher, In Vorbereitung) mit eigenem Kürzel, Sichtbarkeit (alle, nur Leitung, bestimmte Gruppen) und „planbar“",
+        "✨ Beta: Werke-Liste mit Sammlungs-Chips, Suche über alle Sammlungen, Kategorie im Filter; Werke in eine andere Sammlung verschieben",
+        "✨ Beta: „Meine Mappe“ heißt jetzt „Meine Noten“ (Leitung: „Nach Stimme“), „Alle“ ist nach Sammlung gruppiert",
+        "🗄️ Sammlungen erscheinen erst, wenn die Datenbank-Migration angewendet ist (nach dem Store-Release)"
+      ]
+    },
+    {
+      "version": "0.60.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta am Desktop: Unter „Termine“ ist rechts sofort der nächste Termin offen statt einer leeren Fläche",
+        "✨ Beta am Desktop: Ein Termin zeigt Überblick und Anwesenheit nebeneinander statt in Tabs",
+        "✨ Beta am Desktop: „Heute“ nutzt die Breite in zwei Spalten, die Verwaltung ist zweigeteilt wie die Systemeinstellungen",
+        "✨ Beta am Desktop: Ein „+“ pro Bereich im Listenkopf (Termine, Werke, Mitglieder), das Menü öffnet sich direkt am Knopf",
+        "🐛 Beta: „ohne Noten“ hat in Liste und Übersicht dieselbe Farbe"
+      ]
+    },
+    {
+      "version": "0.59.1",
+      "date": "6.11.2026",
+      "changes": [
+        "⚡ Noten-Import: Neuberechnung bei großen Ordnern in Sekundenbruchteilen statt 15 Sekunden, „Zur Prüfung“ zeigt sofort „Wird vorbereitet …“",
+        "✨ Noten-Import: bekannte Instrumente ohne eigene Gruppe (z. B. Oboe, Altsaxophon) werden erkannt und als neue Gruppe vorgeschlagen",
+        "✨ Noten-Import: Stimmname aus dem letzten Namensteil („SoS - … bearbeitet - Oboe“ = „Oboe“), neue Gruppen sind in Schritt 3 wählbar"
+      ]
+    },
+    {
+      "version": "0.59.0",
+      "date": "6.11.2026",
+      "changes": [
+        "💄 Beta: Hilfe, Hilfe-Artikel und Glossar im neuen Design, mit Suche und Themen samt Zahl der Artikel"
+      ]
+    },
+    {
       "version": "0.58.0",
       "date": "6.11.2026",
       "changes": [

@@ -20,6 +20,7 @@ import '../../../../shared/widgets/layout/route_leave_guard.dart';
 import '../../data/rd_manage_logic.dart';
 import '../widgets/manage/rd_manage_entries.dart';
 import '../widgets/rd_group_switch.dart';
+import '../widgets/rd_desktop.dart';
 import '../widgets/rd_logo.dart';
 import '../widgets/rd_widgets.dart';
 import 'rd_destinations.dart';
@@ -35,7 +36,7 @@ class RdShell extends ConsumerWidget {
   final Widget child;
 
   static const double railBreakpoint = 600;
-  static const double sidebarBreakpoint = 840;
+  static const double sidebarBreakpoint = rdSidebarBreakpoint;
 
   static String labelOf(AppLocalizations l10n, RdTab tab) => switch (tab) {
         RdTab.today => l10n.redesignTabToday,
@@ -347,7 +348,7 @@ class _RdSidebar extends ConsumerWidget {
             !location.startsWith('/settings/help'));
 
     return Container(
-      width: 248,
+      width: rdSidebarWidth,
       decoration: BoxDecoration(
         color: p.surface,
         border: Border(right: BorderSide(color: p.line)),

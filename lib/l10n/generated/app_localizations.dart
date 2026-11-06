@@ -18557,6 +18557,24 @@ abstract class AppLocalizations {
   /// **'Gruppe wechseln'**
   String get redesignGroupsTitle;
 
+  /// redesign.help.articles
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Artikel} other {{count} Artikel}}'**
+  String redesignHelpArticles(num count);
+
+  /// redesign.help.glossaryHint
+  ///
+  /// In de, this message translates to:
+  /// **'Begriffe der App erklärt'**
+  String get redesignHelpGlossaryHint;
+
+  /// redesign.help.search
+  ///
+  /// In de, this message translates to:
+  /// **'Frage oder Stichwort suchen'**
+  String get redesignHelpSearch;
+
   /// redesign.import.aiConfirmButton
   ///
   /// In de, this message translates to:
@@ -19240,6 +19258,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Werk wählen'**
   String get redesignImportPickTitle;
+
+  /// redesign.import.preparing
+  ///
+  /// In de, this message translates to:
+  /// **'Wird vorbereitet …'**
+  String get redesignImportPreparing;
 
   /// redesign.import.questionTitle
   ///
