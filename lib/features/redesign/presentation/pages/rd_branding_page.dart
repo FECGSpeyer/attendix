@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/providers/files_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/demo_guard.dart';
@@ -48,16 +49,28 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
   /// even when reloading the organisation fails.
   Organisation? _saved;
 
+  /// Group (and so organisation context) [_saved] belongs to; it is only
+  /// used while that group is still the current one.
+  int? _savedTenantId;
+
   /// Stores logo and text together (the repository writes both columns),
   /// keeps the returned organisation and refreshes the cached ones.
   Future<void> _store(
     ProviderContainer container,
     OrganisationSettingsRepository repo, {
+    required int? tenantId,
     required String logoUrl,
     required String text,
   }) async {
+    // Started in another group than the current one: write nothing.
+    if (tenantId == null || container.read(currentTenantIdProvider) != tenantId) return;
     final saved = await repo.updateBranding(logoUrl: logoUrl, brandingText: text);
-    if (mounted) setState(() => _saved = saved);
+    if (mounted && ref.read(currentTenantIdProvider) == tenantId) {
+      setState(() {
+        _saved = saved;
+        _savedTenantId = tenantId;
+      });
+    }
     container.invalidate(brandingOrganisationProvider);
     container.invalidate(brandingSourceProvider);
     container.invalidate(currentOrganisationProvider);
@@ -80,6 +93,7 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
     // Read the tenant-bound repository before the first await.
     final repo = ref.read(organisationSettingsRepositoryWithTenantProvider);
     final container = ProviderScope.containerOf(context, listen: false);
+    final tenantId = ref.read(currentTenantIdProvider);
     final result = await FilePicker.platform.pickFiles(type: FileType.image, withData: true);
     final file = result?.files.firstOrNull;
     if (file == null || file.bytes == null || !mounted) return;
@@ -94,11 +108,12 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
       return;
     }
     await _run(() async {
+      if (container.read(currentTenantIdProvider) != tenantId) return;
       final url = await repo.uploadLogo(
         file.bytes!,
         contentType: ext == 'svg' ? 'image/svg+xml' : 'image/${ext == 'jpg' ? 'jpeg' : ext}',
       );
-      await _store(container, repo, logoUrl: url, text: org.brandingText ?? '');
+      await _store(container, repo, tenantId: tenantId, logoUrl: url, text: org.brandingText ?? '');
       if (mounted) ToastHelper.showSuccess(context, l10n.rdSettingsBrandingLogoSaved);
     });
   }
@@ -107,6 +122,7 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
     final l10n = context.l10n;
     final repo = ref.read(organisationSettingsRepositoryWithTenantProvider);
     final container = ProviderScope.containerOf(context, listen: false);
+    final tenantId = ref.read(currentTenantIdProvider);
     final confirmed = await showAppConfirm(
       context,
       title: l10n.rdSettingsBrandingRemoveLogo,
@@ -115,8 +131,9 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
     );
     if (!confirmed || !mounted) return;
     await _run(() async {
+      if (container.read(currentTenantIdProvider) != tenantId) return;
       await repo.removeLogo();
-      await _store(container, repo, logoUrl: '', text: org.brandingText ?? '');
+      await _store(container, repo, tenantId: tenantId, logoUrl: '', text: org.brandingText ?? '');
       if (mounted) ToastHelper.showSuccess(context, l10n.rdSettingsBrandingLogoRemoved);
     });
   }
@@ -125,6 +142,7 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
     final l10n = context.l10n;
     final repo = ref.read(organisationSettingsRepositoryWithTenantProvider);
     final container = ProviderScope.containerOf(context, listen: false);
+    final tenantId = ref.read(currentTenantIdProvider);
     final value = await showRdTextSheet(
       context,
       title: l10n.brandingText,
@@ -134,7 +152,7 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
     );
     if (value == null || !mounted) return;
     await _run(() async {
-      await _store(container, repo, logoUrl: org.logoUrl ?? '', text: value);
+      await _store(container, repo, tenantId: tenantId, logoUrl: org.logoUrl ?? '', text: value);
       if (mounted) ToastHelper.showSuccess(context, l10n.brandingSaved);
     });
   }
@@ -150,7 +168,8 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
       Semantics(header: true, child: Text(l10n.rdSettingsBrandingTitle, style: RdType.largeTitle(p))),
       const SizedBox(height: 8),
     ];
-    final org = _saved ?? orgAsync.valueOrNull;
+    final tenantId = ref.watch(currentTenantIdProvider);
+    final org = (_saved != null && _savedTenantId == tenantId ? _saved : null) ?? orgAsync.valueOrNull;
     if (orgAsync.isLoading && org == null) {
       return RdPage(
         children: [
