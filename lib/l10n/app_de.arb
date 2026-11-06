@@ -14090,6 +14090,10 @@
   "@redesignImportMenuHint": {
     "description": "redesign.import.menuHint"
   },
+  "redesignImportNewGroupMessage": "Attendix legt die Gruppe erst beim Hochladen an.",
+  "@redesignImportNewGroupMessage": {
+    "description": "redesign.import.newGroupMessage"
+  },
   "redesignImportNewGroupTitle": "Neue Gruppe anlegen",
   "@redesignImportNewGroupTitle": {
     "description": "redesign.import.newGroupTitle"

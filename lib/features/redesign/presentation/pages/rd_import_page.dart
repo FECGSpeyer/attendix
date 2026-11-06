@@ -719,6 +719,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
               question: q,
               answer: d.answers[q.key],
               ai: state.useAi ? state.ai[q.key]?.category : null,
+              filled: state.aiFilled.contains(q.key),
               onAnswer: (a) => _controller.answer(q.key, a),
             ),
             const SizedBox(height: 10),
@@ -1036,9 +1037,18 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
 
 /// A question about an unknown part name with its answers as chips, always
 /// in the same order: suggestion (✦ from the KI), the own pick, "Neue
-/// Gruppe", "Ohne Zuordnung", "Andere …" last.
+/// Gruppe", "Ohne Zuordnung", "Andere …" last. They work like radio
+/// buttons: tapping the chosen answer keeps it, and tapping the one the KI
+/// filled in takes it as the person's own (the ✦ goes).
 class _QuestionCard extends StatelessWidget {
-  const _QuestionCard({required this.plan, required this.question, required this.answer, required this.onAnswer, this.ai});
+  const _QuestionCard({
+    required this.plan,
+    required this.question,
+    required this.answer,
+    required this.onAnswer,
+    this.ai,
+    this.filled = false,
+  });
 
   final RdImportPlan plan;
   final RdImportQuestion question;
@@ -1047,6 +1057,9 @@ class _QuestionCard extends StatelessWidget {
 
   /// The KI's guess (marked ✦).
   final RdImportCategory? ai;
+
+  /// Whether [answer] was filled in by the KI and not taken yet.
+  final bool filled;
 
   @override
   Widget build(BuildContext context) {
@@ -1066,14 +1079,26 @@ class _QuestionCard extends StatelessWidget {
         : null;
     // The KI's guess gets its own chip unless one of the fixed ones is it.
     final aiChip = ai != null && ai != suggestion && ai != RdImportCategory.other && ai != newGroup;
-    void toggle(RdImportCategory c) => onAnswer(answer == c ? null : c);
-    RdChoiceChip chip(RdImportCategory c, String text, {VoidCallback? onTap}) => RdChoiceChip(
-          label: text,
-          icon: c == ai ? Icons.auto_awesome : null,
-          semanticLabel: c == ai ? l10n.redesignImportAiMark(text) : null,
-          selected: answer == c,
-          onTap: onTap ?? () => toggle(c),
-        );
+    Future<void> pickOther() async {
+      final c = await rdPickImportCategory(context, plan, current: answer, title: l10n.redesignImportQuestionTitle(label));
+      if (c != null) onAnswer(c);
+    }
+
+    RdChoiceChip chip(RdImportCategory c, String text, {VoidCallback? onTap}) {
+      // The ✦ marks the KI's guess until the person has taken it.
+      final mark = c == ai && (answer != c || filled);
+      return RdChoiceChip(
+        label: text,
+        icon: mark ? Icons.auto_awesome : null,
+        semanticLabel: mark ? l10n.redesignImportAiMark(text) : null,
+        selected: answer == c,
+        onTap: onTap ??
+            () {
+              if (answer != c || filled) onAnswer(c);
+            },
+      );
+    }
+
     return RdCard(
       padding: const EdgeInsets.all(14),
       child: Column(
@@ -1091,31 +1116,27 @@ class _QuestionCard extends StatelessWidget {
               if (aiChip)
                 chip(ai, ai.newGroup != null ? l10n.redesignImportAnswerNewGroup(ai.newGroup!) : rdImportCategoryLabel(context, plan, ai)),
               if (picked != null)
-                RdChoiceChip(label: rdImportCategoryLabel(context, plan, picked), selected: true, onTap: () => onAnswer(null)),
+                RdChoiceChip(label: rdImportCategoryLabel(context, plan, picked), selected: true, onTap: pickOther),
               if (newName.isNotEmpty)
                 chip(
                   newGroup,
                   l10n.redesignImportAnswerNewGroup(newGroup.newGroup!),
                   onTap: () async {
-                    if (answer == newGroup) return onAnswer(null);
+                    // The KI's new group is taken as it is; a chosen one
+                    // opens the name again to rename it.
+                    if (answer == newGroup && filled) return onAnswer(newGroup);
                     final name = await showAppPrompt(
                       context,
                       title: l10n.redesignImportNewGroupTitle,
-                      initialValue: newName,
+                      message: l10n.redesignImportNewGroupMessage,
+                      initialValue: newGroup.newGroup,
                       confirmText: l10n.redesignImportNewGroupTitle,
                     );
                     if (name != null && name.trim().isNotEmpty) onAnswer(RdImportCategory(newGroup: name.trim()));
                   },
                 ),
               chip(RdImportCategory.other, l10n.redesignImportAnswerNone),
-              RdChoiceChip(
-                label: l10n.redesignImportAnswerOther,
-                selected: false,
-                onTap: () async {
-                  final c = await rdPickImportCategory(context, plan, current: answer, title: l10n.redesignImportQuestionTitle(label));
-                  if (c != null) onAnswer(c);
-                },
-              ),
+              RdChoiceChip(label: l10n.redesignImportAnswerOther, selected: false, onTap: pickOther),
             ],
           ),
         ],

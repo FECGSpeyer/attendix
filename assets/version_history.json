@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.44.1",
+      "date": "6.11.2026",
+      "changes": [
+        "🐛 Noten importieren: Die Antwort-Knöpfe bei unbekannten Stimmen lassen sich nicht mehr versehentlich abwählen; Tippen auf einen Vorschlag der KI übernimmt ihn (das ✦ verschwindet), und „Neue Gruppe“ sagt, dass die Gruppe erst beim Hochladen angelegt wird"
+      ]
+    },
+    {
       "version": "0.44.0",
       "date": "6.11.2026",
       "changes": [

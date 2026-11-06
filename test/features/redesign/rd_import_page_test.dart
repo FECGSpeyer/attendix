@@ -1010,6 +1010,17 @@ void main() {
     expect(find.text('Neue Gruppe „Saxophon“'), findsNothing);
     expect(find.text('Neue Gruppe „Sax“'), findsOneWidget);
     expect(container.read(rdImportProvider).decisions.answers, isEmpty);
+
+    // Tapping the KI's answer takes it as it is: still chosen, no name
+    // dialog, no ✦ any more.
+    await tester.tap(find.text('Vorschläge der KI'));
+    await tester.pump();
+    await tester.tap(chip);
+    await tester.pumpAndSettle();
+    expect(find.byType(TextField), findsNothing);
+    expect(container.read(rdImportProvider).aiFilled, isEmpty);
+    expect(tester.widget<RdChoiceChip>(chip).selected, isTrue);
+    expect(tester.widget<RdChoiceChip>(chip).icon, isNull);
   });
 
   testWidgets('review: open questions are named, with the way back to them', (tester) async {
