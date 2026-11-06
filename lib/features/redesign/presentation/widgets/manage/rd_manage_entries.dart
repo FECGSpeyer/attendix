@@ -173,7 +173,6 @@ String rdManageTitle(AppLocalizations l10n, RdManageEntry entry) => switch (entr
       RdManageEntry.export => l10n.settingsExport,
       RdManageEntry.certificates => l10n.settingsCertificates,
       RdManageEntry.calendar => l10n.settingsSubscribeCalendar,
-      RdManageEntry.writeMessage => l10n.redesignComposeTitle,
       RdManageEntry.announcements => l10n.settingsAnnouncements,
       RdManageEntry.teamOrg => l10n.teamOrgTitle,
       RdManageEntry.myTasks => l10n.tasksMyTasks,
@@ -220,7 +219,6 @@ IconData rdManageIcon(RdManageEntry entry) => switch (entry) {
       RdManageEntry.export => Icons.download_outlined,
       RdManageEntry.certificates => Icons.workspace_premium_outlined,
       RdManageEntry.calendar => Icons.calendar_month_outlined,
-      RdManageEntry.writeMessage => Icons.edit_outlined,
       RdManageEntry.announcements => Icons.mail_outline,
       RdManageEntry.teamOrg => Icons.supervised_user_circle_outlined,
       RdManageEntry.myTasks => Icons.check_circle_outline,
@@ -289,8 +287,6 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
       generateVorkursCertificates(context, ref);
     case RdManageEntry.calendar:
       showCalendarSubscriptionDialog(context, ref);
-    case RdManageEntry.writeMessage:
-      push(RedesignRoutes.compose);
     case RdManageEntry.announcements:
       push('/settings/messages');
     case RdManageEntry.teamOrg || RdManageEntry.myTasks:
