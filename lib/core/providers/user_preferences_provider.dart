@@ -113,25 +113,35 @@ class UserPreferencesNotifier extends AsyncNotifier<void> {
 
     try {
       final auth = ref.read(supabaseAuthProvider);
-      final currentMetadata = auth.currentUser?.userMetadata ?? {};
 
-      // Merge new values with existing metadata
-      final updatedData = <String, dynamic>{
-        ...currentMetadata,
+      // Ionic updateUser({data: {…}}): only the changed keys are sent. GoTrue
+      // merges them into user_metadata, so a stale local copy can't reset
+      // settings changed on another device (showSongsTab_*, dashboardCards_*).
+      final changedData = <String, dynamic>{
         if (currentTenantId != null) 'currentTenantId': currentTenantId,
         if (wantInstanceSelection != null)
           'wantInstanceSelection': wantInstanceSelection,
       };
 
-      await auth.updateUser(UserAttributes(data: updatedData));
-      // userPreferencesProvider only depends on the user id, which does not
-      // change on updateUser – re-read the metadata explicitly.
-      ref.invalidate(userPreferencesProvider);
+      await auth.updateUser(UserAttributes(data: changedData));
+      _refreshPreferences();
       state = const AsyncData(null);
     } catch (e, stack) {
       debugPrint('Failed to update user preferences: $e');
       state = AsyncError(e, stack);
       rethrow;
+    }
+  }
+
+  /// gotrue-dart stores the user returned by updateUser (merged, fresh
+  /// metadata) as the local copy, but [userPreferencesProvider] only depends
+  /// on the user id, which does not change – re-read the metadata explicitly.
+  void _refreshPreferences() {
+    try {
+      ref.invalidate(userPreferencesProvider);
+    } catch (_) {
+      // Provider container already disposed (write finished after sign-out
+      // or test teardown) – nothing left to refresh.
     }
   }
 
@@ -146,36 +156,33 @@ class UserPreferencesNotifier extends AsyncNotifier<void> {
     // Ionic updateUser({data: {currentTenantId, …}}): only the changed key is
     // sent. GoTrue merges it into user_metadata, so a stale local copy can't
     // reset settings changed on another device (showSongsTab_*,
-    // dashboardCards_*, wantInstanceSelection). gotrue-dart stores the
-    // returned user (fresh metadata) as the local copy.
+    // dashboardCards_*, wantInstanceSelection).
     auth
         .updateUser(
           UserAttributes(
             data: {'currentTenantId': tenantId},
           ),
         )
-        .then((_) {})
+        .then((_) => _refreshPreferences())
         .catchError((Object e) {
           debugPrint('Failed to sync tenant to user_metadata: $e');
         });
   }
 
-  /// Clear current tenant ID from user_metadata
+  /// Clear current tenant ID from user_metadata (fire and forget - does not
+  /// throw)
   void clearCurrentTenantId() {
     final auth = ref.read(supabaseAuthProvider);
-    final currentMetadata = auth.currentUser?.userMetadata ?? {};
 
-    // Remove the key by setting to null
+    // Only the changed key, like [updateCurrentTenantId]; GoTrue removes a
+    // key whose value is null.
     auth
         .updateUser(
           UserAttributes(
-            data: {
-              ...currentMetadata,
-              'currentTenantId': null,
-            },
+            data: {'currentTenantId': null},
           ),
         )
-        .then((_) {})
+        .then((_) => _refreshPreferences())
         .catchError((Object e) {
           debugPrint('Failed to clear tenant from user_metadata: $e');
         });
