@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show AsyncValue, AsyncValueX;
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/router/redesign_routes.dart';
@@ -17,6 +18,18 @@ import '../today/rd_today_common.dart' show RdInfoCard;
 /// list actions, and the loading, empty and error states of the other Beta
 /// pages. The page only shows; loading, saving and rights stay with the
 /// caller (see `rd_groups_page.dart`, `rd_attendance_types_page.dart`).
+
+/// TENANT: the list of [async] only when it surely belongs to the current
+/// group and account (like `permissionsConfirmed`): fully loaded, or a
+/// pull-to-refresh / invalidate of the same list (`isRefreshing`). After a
+/// group or account switch the provider reloads (`isReloading`) and still
+/// holds the old group's value, an error may carry it as well; then null,
+/// so the page shows its loading (or error) state and offers no actions.
+T? rdLoadedValue<T>(AsyncValue<T> async) {
+  if (!async.hasValue || async.hasError) return null;
+  if (async.isLoading && !async.isRefreshing) return null;
+  return async.value;
+}
 
 /// One entry: initials (or [icon]), title, subtitle, a count on the right.
 class RdManageListItem {

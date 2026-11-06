@@ -15689,6 +15689,36 @@ abstract class AppLocalizations {
   /// **'Verwaltung'**
   String get redesignAdminTitle;
 
+  /// redesign.adminsList.add
+  ///
+  /// In de, this message translates to:
+  /// **'Admin hinzufügen'**
+  String get redesignAdminsListAdd;
+
+  /// redesign.adminsList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Admins.'**
+  String get redesignAdminsListEmpty;
+
+  /// redesign.adminsList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Admins haben alle Rechte in dieser Gruppe und können sie auch löschen.'**
+  String get redesignAdminsListIntro;
+
+  /// redesign.adminsList.remove
+  ///
+  /// In de, this message translates to:
+  /// **'Admin entfernen'**
+  String get redesignAdminsListRemove;
+
+  /// redesign.adminsList.you
+  ///
+  /// In de, this message translates to:
+  /// **'Das bist du'**
+  String get redesignAdminsListYou;
+
   /// redesign.appearance.appIcon
   ///
   /// In de, this message translates to:
@@ -15856,6 +15886,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Deine Anmeldung bei {group} wird geprüft'**
   String redesignApplicantWaitingFor(Object group);
+
+  /// redesign.archiveList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Keine archivierten Personen.'**
+  String get redesignArchiveListEmpty;
+
+  /// redesign.archiveList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Ausgetretene Personen. Tippe auf eine Person, um sie anzusehen.'**
+  String get redesignArchiveListIntro;
+
+  /// redesign.archiveList.restore
+  ///
+  /// In de, this message translates to:
+  /// **'Wiederherstellen'**
+  String get redesignArchiveListRestore;
 
   /// redesign.bulk.actionArchive
   ///
@@ -17260,6 +17308,138 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Deine Antwort: {status}'**
   String redesignEventsYourAnswerLabel(Object status);
+
+  /// redesign.extraFieldEdit.defaultHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gilt, solange eine Person oder ein Werk noch keinen Wert hat.'**
+  String get redesignExtraFieldEditDefaultHint;
+
+  /// redesign.extraFieldEdit.delete
+  ///
+  /// In de, this message translates to:
+  /// **'Zusatzfeld löschen'**
+  String get redesignExtraFieldEditDelete;
+
+  /// redesign.extraFieldEdit.deleteFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Das Zusatzfeld konnte nicht gelöscht werden.'**
+  String get redesignExtraFieldEditDeleteFailed;
+
+  /// redesign.extraFieldEdit.deleteHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Werte bei allen Personen bzw. Werken werden mit gelöscht.'**
+  String get redesignExtraFieldEditDeleteHint;
+
+  /// redesign.extraFieldEdit.name
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get redesignExtraFieldEditName;
+
+  /// redesign.extraFieldEdit.nameEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Ein leerer Name wird nicht gespeichert.'**
+  String get redesignExtraFieldEditNameEmpty;
+
+  /// redesign.extraFieldEdit.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Dieses Zusatzfeld gibt es nicht mehr.'**
+  String get redesignExtraFieldEditNotFound;
+
+  /// redesign.extraFieldEdit.optionAdd
+  ///
+  /// In de, this message translates to:
+  /// **'Option hinzufügen'**
+  String get redesignExtraFieldEditOptionAdd;
+
+  /// redesign.extraFieldEdit.optionHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die erste Option ist der Standardwert. Leere Optionen werden nicht gespeichert.'**
+  String get redesignExtraFieldEditOptionHint;
+
+  /// redesign.extraFieldEdit.options
+  ///
+  /// In de, this message translates to:
+  /// **'Optionen'**
+  String get redesignExtraFieldEditOptions;
+
+  /// redesign.extraFieldEdit.optionsNeeded
+  ///
+  /// In de, this message translates to:
+  /// **'Eine Auswahl braucht mindestens eine Option.'**
+  String get redesignExtraFieldEditOptionsNeeded;
+
+  /// redesign.extraFieldEdit.resetHint
+  ///
+  /// In de, this message translates to:
+  /// **'Setzt das Feld bei allen Personen auf den Standardwert.'**
+  String get redesignExtraFieldEditResetHint;
+
+  /// redesign.extraFieldEdit.target
+  ///
+  /// In de, this message translates to:
+  /// **'Gilt für'**
+  String get redesignExtraFieldEditTarget;
+
+  /// redesign.extraFieldEdit.targetPersons
+  ///
+  /// In de, this message translates to:
+  /// **'Personen'**
+  String get redesignExtraFieldEditTargetPersons;
+
+  /// redesign.extraFieldEdit.targetSongs
+  ///
+  /// In de, this message translates to:
+  /// **'Werke'**
+  String get redesignExtraFieldEditTargetSongs;
+
+  /// redesign.extraFieldEdit.title
+  ///
+  /// In de, this message translates to:
+  /// **'Zusatzfeld bearbeiten'**
+  String get redesignExtraFieldEditTitle;
+
+  /// redesign.extraFieldsList.add
+  ///
+  /// In de, this message translates to:
+  /// **'Zusatzfeld hinzufügen'**
+  String get redesignExtraFieldsListAdd;
+
+  /// redesign.extraFieldsList.addFor
+  ///
+  /// In de, this message translates to:
+  /// **'Feld für'**
+  String get redesignExtraFieldsListAddFor;
+
+  /// redesign.extraFieldsList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Zusatzfelder angelegt.'**
+  String get redesignExtraFieldsListEmpty;
+
+  /// redesign.extraFieldsList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Felder für Personen und Werke, zum Beispiel Kleidergröße oder Verlag.'**
+  String get redesignExtraFieldsListIntro;
+
+  /// redesign.extraFieldsList.persons
+  ///
+  /// In de, this message translates to:
+  /// **'Für Personen'**
+  String get redesignExtraFieldsListPersons;
+
+  /// redesign.extraFieldsList.songs
+  ///
+  /// In de, this message translates to:
+  /// **'Für Werke'**
+  String get redesignExtraFieldsListSongs;
 
   /// redesign.files.actions
   ///
@@ -19757,6 +19937,30 @@ abstract class AppLocalizations {
   /// **'{name} · {percent} %'**
   String redesignParentsChildRate(Object name, Object percent);
 
+  /// redesign.parentsList.add
+  ///
+  /// In de, this message translates to:
+  /// **'Elternteil einladen'**
+  String get redesignParentsListAdd;
+
+  /// redesign.parentsList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Eltern eingeladen.'**
+  String get redesignParentsListEmpty;
+
+  /// redesign.parentsList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Eltern sehen die Anwesenheiten ihrer Kinder und tragen Abwesenheiten ein.'**
+  String get redesignParentsListIntro;
+
+  /// redesign.parentsList.remove
+  ///
+  /// In de, this message translates to:
+  /// **'Elternteil entfernen'**
+  String get redesignParentsListRemove;
+
   /// redesign.parents.route
   ///
   /// In de, this message translates to:
@@ -19768,6 +19972,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Heute'**
   String get redesignParentsToday;
+
+  /// redesign.pendingList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Gerade wartet niemand auf Freigabe.'**
+  String get redesignPendingListEmpty;
+
+  /// redesign.pendingList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Personen haben sich angemeldet und warten auf deine Freigabe. Tippe auf eine Person, um sie zu prüfen.'**
+  String get redesignPendingListIntro;
 
   /// redesign.person.absence
   ///
@@ -19810,6 +20026,150 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Bearbeiten'**
   String get redesignPersonEdit;
+
+  /// redesign.personForm.archived
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Person ist archiviert.'**
+  String get redesignPersonFormArchived;
+
+  /// redesign.personForm.contact
+  ///
+  /// In de, this message translates to:
+  /// **'Kontakt'**
+  String get redesignPersonFormContact;
+
+  /// redesign.personForm.copyOther
+  ///
+  /// In de, this message translates to:
+  /// **'In andere Gruppe kopieren'**
+  String get redesignPersonFormCopyOther;
+
+  /// redesign.personForm.create
+  ///
+  /// In de, this message translates to:
+  /// **'Anlegen'**
+  String get redesignPersonFormCreate;
+
+  /// redesign.personForm.createButton
+  ///
+  /// In de, this message translates to:
+  /// **'Person anlegen'**
+  String get redesignPersonFormCreateButton;
+
+  /// redesign.personForm.editTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{name} bearbeiten'**
+  String redesignPersonFormEditTitle(Object name);
+
+  /// redesign.personForm.emailHint
+  ///
+  /// In de, this message translates to:
+  /// **'Bekommt damit Zugang zur App'**
+  String get redesignPersonFormEmailHint;
+
+  /// redesign.personForm.emailUsedBy
+  ///
+  /// In de, this message translates to:
+  /// **'Diese E-Mail wird in einer anderen Gruppe von {name} verwendet. Daten übernehmen?'**
+  String redesignPersonFormEmailUsedBy(Object name);
+
+  /// redesign.personForm.emailUsedMany
+  ///
+  /// In de, this message translates to:
+  /// **'Diese E-Mail wird bereits in anderen Gruppen verwendet. Daten welcher Person übernehmen?'**
+  String get redesignPersonFormEmailUsedMany;
+
+  /// redesign.personForm.existingUserHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gibt es für die E-Mail-Adresse schon ein Konto, wird es automatisch dieser Gruppe zugewiesen.'**
+  String get redesignPersonFormExistingUserHint;
+
+  /// redesign.personForm.liveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Änderungen werden sofort gespeichert.'**
+  String get redesignPersonFormLiveHint;
+
+  /// redesign.personForm.matchDismiss
+  ///
+  /// In de, this message translates to:
+  /// **'Ausblenden'**
+  String get redesignPersonFormMatchDismiss;
+
+  /// redesign.personForm.matchFound
+  ///
+  /// In de, this message translates to:
+  /// **'Person in anderer Gruppe gefunden?'**
+  String get redesignPersonFormMatchFound;
+
+  /// redesign.personForm.more
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Angaben'**
+  String get redesignPersonFormMore;
+
+  /// redesign.personForm.moreHint
+  ///
+  /// In de, this message translates to:
+  /// **'Geburtstag, Beitritt, Lehrer, Zusatzfelder und mehr'**
+  String get redesignPersonFormMoreHint;
+
+  /// redesign.personForm.newTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Person'**
+  String get redesignPersonFormNewTitle;
+
+  /// redesign.personForm.noMatchOther
+  ///
+  /// In de, this message translates to:
+  /// **'In deinen anderen Gruppen wurde keine passende Person gefunden.'**
+  String get redesignPersonFormNoMatchOther;
+
+  /// redesign.personForm.notAllowed
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Admins und Verantwortliche können Personen anlegen und bearbeiten.'**
+  String get redesignPersonFormNotAllowed;
+
+  /// redesign.personForm.notSet
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht gesetzt'**
+  String get redesignPersonFormNotSet;
+
+  /// redesign.personForm.otherGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Gruppen'**
+  String get redesignPersonFormOtherGroups;
+
+  /// redesign.personForm.problemSave
+  ///
+  /// In de, this message translates to:
+  /// **'Gespräch speichern'**
+  String get redesignPersonFormProblemSave;
+
+  /// redesign.personForm.saved
+  ///
+  /// In de, this message translates to:
+  /// **'Gespeichert ✓'**
+  String get redesignPersonFormSaved;
+
+  /// redesign.personForm.searchOtherGroup
+  ///
+  /// In de, this message translates to:
+  /// **'In anderer Gruppe suchen'**
+  String get redesignPersonFormSearchOtherGroup;
+
+  /// redesign.personForm.transferOther
+  ///
+  /// In de, this message translates to:
+  /// **'In andere Gruppe übertragen'**
+  String get redesignPersonFormTransferOther;
 
   /// redesign.person.history
   ///
@@ -19955,78 +20315,6 @@ abstract class AppLocalizations {
   /// **'Fasst mehrere Punkte zusammen'**
   String get redesignPlanAddBlockHint;
 
-  /// redesign.plan.songInPlan
-  ///
-  /// In de, this message translates to:
-  /// **'im Ablauf'**
-  String get redesignPlanSongInPlan;
-
-  /// redesign.plan.newPlan
-  ///
-  /// In de, this message translates to:
-  /// **'Neuer Plan'**
-  String get redesignPlanNewPlan;
-
-  /// redesign.plan.createPlan
-  ///
-  /// In de, this message translates to:
-  /// **'Plan anlegen'**
-  String get redesignPlanCreatePlan;
-
-  /// redesign.plan.day
-  ///
-  /// In de, this message translates to:
-  /// **'Tag'**
-  String get redesignPlanDay;
-
-  /// redesign.plan.content
-  ///
-  /// In de, this message translates to:
-  /// **'Inhalt'**
-  String get redesignPlanContent;
-
-  /// redesign.plan.copyOf
-  ///
-  /// In de, this message translates to:
-  /// **'Kopie von „{name}“'**
-  String redesignPlanCopyOf(String name);
-
-  /// redesign.plan.nameHint
-  ///
-  /// In de, this message translates to:
-  /// **'Name (optional)'**
-  String get redesignPlanNameHint;
-
-  /// redesign.plan.viewWhole
-  ///
-  /// In de, this message translates to:
-  /// **'Ganzer Ablauf'**
-  String get redesignPlanViewWhole;
-
-  /// redesign.plan.viewNow
-  ///
-  /// In de, this message translates to:
-  /// **'Jetzt'**
-  String get redesignPlanViewNow;
-
-  /// redesign.plan.viewWhich
-  ///
-  /// In de, this message translates to:
-  /// **'Welcher Plan'**
-  String get redesignPlanViewWhich;
-
-  /// redesign.plan.download
-  ///
-  /// In de, this message translates to:
-  /// **'Herunterladen'**
-  String get redesignPlanDownload;
-
-  /// redesign.plan.telegram
-  ///
-  /// In de, this message translates to:
-  /// **'Per Telegram'**
-  String get redesignPlanTelegram;
-
   /// redesign.plan.addCurrent
   ///
   /// In de, this message translates to:
@@ -20117,11 +20405,35 @@ abstract class AppLocalizations {
   /// **'eingeklappt'**
   String get redesignPlanCollapsed;
 
+  /// redesign.plan.content
+  ///
+  /// In de, this message translates to:
+  /// **'Inhalt'**
+  String get redesignPlanContent;
+
   /// redesign.plan.copied
   ///
   /// In de, this message translates to:
   /// **'Ablauf vom {date} übernommen'**
   String redesignPlanCopied(Object date);
+
+  /// redesign.plan.copyOf
+  ///
+  /// In de, this message translates to:
+  /// **'Kopie von „{name}“'**
+  String redesignPlanCopyOf(Object name);
+
+  /// redesign.plan.createPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Plan anlegen'**
+  String get redesignPlanCreatePlan;
+
+  /// redesign.plan.day
+  ///
+  /// In de, this message translates to:
+  /// **'Tag'**
+  String get redesignPlanDay;
 
   /// redesign.plan.delete
   ///
@@ -20134,6 +20446,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Mit Rückgängig'**
   String get redesignPlanDeleteHint;
+
+  /// redesign.plan.download
+  ///
+  /// In de, this message translates to:
+  /// **'Herunterladen'**
+  String get redesignPlanDownload;
 
   /// redesign.plan.drag
   ///
@@ -20309,6 +20627,18 @@ abstract class AppLocalizations {
   /// **'Nach oben'**
   String get redesignPlanMoveUp;
 
+  /// redesign.plan.nameHint
+  ///
+  /// In de, this message translates to:
+  /// **'Name (optional)'**
+  String get redesignPlanNameHint;
+
+  /// redesign.plan.newPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Plan'**
+  String get redesignPlanNewPlan;
+
   /// redesign.plan.next
   ///
   /// In de, this message translates to:
@@ -20417,11 +20747,23 @@ abstract class AppLocalizations {
   /// **'Mitglieder sehen den Ablauf im Termin'**
   String get redesignPlanShareHint;
 
+  /// redesign.plan.songInPlan
+  ///
+  /// In de, this message translates to:
+  /// **'im Ablauf'**
+  String get redesignPlanSongInPlan;
+
   /// redesign.plan.start
   ///
   /// In de, this message translates to:
   /// **'Beginn'**
   String get redesignPlanStart;
+
+  /// redesign.plan.telegram
+  ///
+  /// In de, this message translates to:
+  /// **'Per Telegram'**
+  String get redesignPlanTelegram;
 
   /// redesign.plan.templateDelete
   ///
@@ -20452,6 +20794,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'bis {time}'**
   String redesignPlanUntil(Object time);
+
+  /// redesign.plan.viewNow
+  ///
+  /// In de, this message translates to:
+  /// **'Jetzt'**
+  String get redesignPlanViewNow;
+
+  /// redesign.plan.viewWhich
+  ///
+  /// In de, this message translates to:
+  /// **'Welcher Plan'**
+  String get redesignPlanViewWhich;
+
+  /// redesign.plan.viewWhole
+  ///
+  /// In de, this message translates to:
+  /// **'Ganzer Ablauf'**
+  String get redesignPlanViewWhole;
 
   /// redesign.pult.allOpen
   ///
@@ -20602,6 +20962,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count} noch offen'**
   String redesignRemindTitle(Object count);
+
+  /// redesign.rolePerm.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Lege fest, was Helfer und Mitglieder in dieser Gruppe dürfen. Jeder Schalter wird sofort gespeichert.'**
+  String get redesignRolePermIntro;
 
   /// redesign.shiftsList.add
   ///
@@ -20944,6 +21310,96 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Werke'**
   String get redesignTabWorks;
+
+  /// redesign.teacherEdit.contact
+  ///
+  /// In de, this message translates to:
+  /// **'Kontakt'**
+  String get redesignTeacherEditContact;
+
+  /// redesign.teacherEdit.instruments
+  ///
+  /// In de, this message translates to:
+  /// **'Instrumente'**
+  String get redesignTeacherEditInstruments;
+
+  /// redesign.teacherEdit.instrumentsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Tippe zum Aus- oder Abwählen.'**
+  String get redesignTeacherEditInstrumentsHint;
+
+  /// redesign.teacherEdit.name
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get redesignTeacherEditName;
+
+  /// redesign.teacherEdit.nameEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Ein leerer Name wird nicht gespeichert.'**
+  String get redesignTeacherEditNameEmpty;
+
+  /// redesign.teacherEdit.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Diesen Lehrer gibt es nicht mehr.'**
+  String get redesignTeacherEditNotFound;
+
+  /// redesign.teacherEdit.notes
+  ///
+  /// In de, this message translates to:
+  /// **'Notizen'**
+  String get redesignTeacherEditNotes;
+
+  /// redesign.teacherEdit.players
+  ///
+  /// In de, this message translates to:
+  /// **'Spieler'**
+  String get redesignTeacherEditPlayers;
+
+  /// redesign.teacherEdit.playersNone
+  ///
+  /// In de, this message translates to:
+  /// **'Noch lernt niemand bei diesem Lehrer.'**
+  String get redesignTeacherEditPlayersNone;
+
+  /// redesign.teacherEdit.private
+  ///
+  /// In de, this message translates to:
+  /// **'Privatlehrer'**
+  String get redesignTeacherEditPrivate;
+
+  /// redesign.teacherEdit.title
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer bearbeiten'**
+  String get redesignTeacherEditTitle;
+
+  /// redesign.teachersList.add
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer hinzufügen'**
+  String get redesignTeachersListAdd;
+
+  /// redesign.teachersList.addFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Der Lehrer konnte nicht angelegt werden.'**
+  String get redesignTeachersListAddFailed;
+
+  /// redesign.teachersList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Lehrer angelegt.'**
+  String get redesignTeachersListEmpty;
+
+  /// redesign.teachersList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer und die Instrumente, die sie unterrichten. Wer bei wem lernt, legst du bei der Person fest.'**
+  String get redesignTeachersListIntro;
 
   /// redesign.tenants.another
   ///
@@ -21628,6 +22084,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.'**
   String get redesignTypesListIntro;
+
+  /// redesign.viewersList.add
+  ///
+  /// In de, this message translates to:
+  /// **'Beobachter einladen'**
+  String get redesignViewersListAdd;
+
+  /// redesign.viewersList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Beobachter eingeladen.'**
+  String get redesignViewersListEmpty;
+
+  /// redesign.viewersList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Beobachter dürfen Anwesenheiten und Personendaten nur ansehen.'**
+  String get redesignViewersListIntro;
+
+  /// redesign.viewersList.remove
+  ///
+  /// In de, this message translates to:
+  /// **'Beobachter entfernen'**
+  String get redesignViewersListRemove;
 
   /// redesign.work.about
   ///

@@ -30,69 +30,83 @@ Future<void> showAdminsSheet(BuildContext context) {
 String _errorText(Object e) =>
     e is AdminException ? e.message : friendlyErrorMessage(e);
 
+/// "+" of the admins list: e-mail dialog, then add (also the Beta page
+/// `RdAdminsPage`).
+///
+/// TENANT: the repository is bound before the first await ([repo] when the
+/// caller bound it even earlier), so a group switch during the dialog never
+/// adds the admin to the new group.
+Future<void> showAddAdminDialog(BuildContext context, WidgetRef ref, {AdminRepository? repo}) async {
+  final AdminRepository bound = repo ?? ref.read(adminRepositoryWithTenantProvider);
+  final email = (await DialogHelper.showTextInput(
+    context,
+    title: context.l10n.settingsAddAdmin,
+    hint: context.l10n.settingsEmailAddress,
+    confirmText: context.l10n.attendanceAdd,
+    keyboardType: TextInputType.emailAddress,
+  ))
+      ?.trim();
+  if (email == null || email.isEmpty || !context.mounted) return;
+  if (!isValidEmail(email)) {
+    ToastHelper.showError(context, context.l10n.settingsFlutterInvalidEmail);
+    return;
+  }
+  try {
+    final informed = await ref.read(adminNotifierProvider.notifier).create(email, repo: bound);
+    if (context.mounted) {
+      if (informed) {
+        ToastHelper.showSuccess(context, context.l10n.settingsAdminAdded);
+      } else {
+        ToastHelper.showWarning(context, context.l10n.settingsFlutterAdminAddedNotNotified);
+      }
+    }
+  } catch (e) {
+    if (context.mounted) ToastHelper.showError(context, _errorText(e));
+  }
+}
+
+/// Removes [admin] after the confirmation; the own entry only shows a toast
+/// (also the Beta page `RdAdminsPage`). [repo]: see [showAddAdminDialog].
+Future<void> removeAdminWithConfirmation(
+  BuildContext context,
+  WidgetRef ref,
+  TenantAdmin admin, {
+  AdminRepository? repo,
+}) async {
+  final AdminRepository bound = repo ?? ref.read(adminRepositoryWithTenantProvider);
+  final ownId = ref.read(supabaseClientProvider).auth.currentUser?.id;
+  if (admin.userId == ownId) {
+    ToastHelper.showError(context, context.l10n.settingsCannotRemoveSelf);
+    return;
+  }
+  final ok = await showAppDialog<bool>(
+    context: context,
+    builder: (ctx) => AppAlertDialog(
+      title: Text(ctx.l10n.settingsRemoveAdmin),
+      content: Text(ctx.l10n.settingsRemoveMessage(admin.email ?? '')),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(ctx.l10n.commonCancel)),
+        TextButton(
+          style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+          onPressed: () => Navigator.pop(ctx, true),
+          child: Text(ctx.l10n.commonYes),
+        ),
+      ],
+    ),
+  );
+  if (ok != true || !context.mounted) return;
+  try {
+    await ref.read(adminNotifierProvider.notifier).remove(admin.userId, repo: bound);
+    if (context.mounted) {
+      ToastHelper.showSuccess(context, context.l10n.settingsAdminRemoved);
+    }
+  } catch (e) {
+    if (context.mounted) ToastHelper.showError(context, _errorText(e));
+  }
+}
+
 class _AdminsSheet extends ConsumerWidget {
   const _AdminsSheet();
-
-  Future<void> _add(BuildContext context, WidgetRef ref) async {
-    final email = (await DialogHelper.showTextInput(
-      context,
-      title: context.l10n.settingsAddAdmin,
-      hint: context.l10n.settingsEmailAddress,
-      confirmText: context.l10n.attendanceAdd,
-      keyboardType: TextInputType.emailAddress,
-    ))
-        ?.trim();
-    if (email == null || email.isEmpty || !context.mounted) return;
-    if (!isValidEmail(email)) {
-      ToastHelper.showError(context, context.l10n.settingsFlutterInvalidEmail);
-      return;
-    }
-    try {
-      final informed =
-          await ref.read(adminNotifierProvider.notifier).create(email);
-      if (context.mounted) {
-        if (informed) {
-          ToastHelper.showSuccess(context, context.l10n.settingsAdminAdded);
-        } else {
-          ToastHelper.showWarning(context, context.l10n.settingsFlutterAdminAddedNotNotified);
-        }
-      }
-    } catch (e) {
-      if (context.mounted) ToastHelper.showError(context, _errorText(e));
-    }
-  }
-
-  Future<void> _remove(BuildContext context, WidgetRef ref, TenantAdmin admin) async {
-    final ownId = ref.read(supabaseClientProvider).auth.currentUser?.id;
-    if (admin.userId == ownId) {
-      ToastHelper.showError(context, context.l10n.settingsCannotRemoveSelf);
-      return;
-    }
-    final ok = await showAppDialog<bool>(
-      context: context,
-      builder: (ctx) => AppAlertDialog(
-        title: Text(ctx.l10n.settingsRemoveAdmin),
-        content: Text(ctx.l10n.settingsRemoveMessage(admin.email ?? '')),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(ctx.l10n.commonCancel)),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(ctx.l10n.commonYes),
-          ),
-        ],
-      ),
-    );
-    if (ok != true || !context.mounted) return;
-    try {
-      await ref.read(adminNotifierProvider.notifier).remove(admin.userId);
-      if (context.mounted) {
-        ToastHelper.showSuccess(context, context.l10n.settingsAdminRemoved);
-      }
-    } catch (e) {
-      if (context.mounted) ToastHelper.showError(context, _errorText(e));
-    }
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -102,7 +116,7 @@ class _AdminsSheet extends ConsumerWidget {
     return Scaffold(
       appBar: settingsSheetBar(context, title: context.l10n.settingsAdmins),
       floatingActionButton: FloatingActionButton(
-        onPressed: busy ? null : () => _add(context, ref),
+        onPressed: busy ? null : () => showAddAdminDialog(context, ref),
         child: busy
             ? const SizedBox(
                 width: 20, height: 20, child: AppSpinner(strokeWidth: 2))
@@ -135,7 +149,7 @@ class _AdminsSheet extends ConsumerWidget {
                       subtitle: a.createdAt != null
                           ? Text(context.l10n.commonCreatedAt(DateFormat(dateFmt()).format(a.createdAt!.toLocal())))
                           : null,
-                      onTap: () => _remove(context, ref, a),
+                      onTap: () => removeAdminWithConfirmation(context, ref, a),
                     ),
                 ],
               ),

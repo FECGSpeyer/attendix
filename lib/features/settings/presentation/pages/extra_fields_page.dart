@@ -111,8 +111,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
     });
   }
 
-  List<Object> get _churchIds =>
-      (ref.read(churchesProvider).valueOrNull ?? []).map((c) => c.id).whereType<String>().toList();
+  List<Object> get _churchIds => extraFieldChurchIds(ref.read);
 
   Future<void> _addField(ExtraFieldTarget target) async {
     if (_saving) return; // SOL_FIX20: no edits while saving
@@ -185,36 +184,15 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
     }
     final repo = ref.read(extraFieldsRepositoryWithTenantProvider);
     if (!repo.hasTenantId) return;
-    // SOL_FIX19: the tenant the fields are saved for, captured up front.
-    final tenantId = repo.currentTenantId;
     setState(() => _saving = true);
     try {
-      // Ionic db.getSongs(): songs of the effective song tenant
-      // (song_source_tenant_id ?? own tenant). Loaded for the captured
-      // tenant (not the current-tenant provider, which follows a tenant
-      // switch and swallows errors): a load error aborts before any write.
-      final songSettings = await ref
-          .read(songRepositoryForTenantProvider((tenantId: tenantId, songSourceTenantId: null)))
-          .getSongTenantSettings();
-      final songTenantId = songSettings.songSourceTenantId ?? tenantId;
-      await repo.saveFields(personFields: personFields, songFields: songFields);
-      await repo.sanitizeValues(table: 'player', definitions: personFields, churchIds: churchIds);
-      // Deliberate deviation from Ionic (backfillSongAdditionalFields on
-      // db.getSongs()): a synced library belongs to the source instance and
-      // its field definitions. Cleaning it with this instance's song fields
-      // would delete the source's values, so only the own library is cleaned.
-      if (songTenantId == tenantId) {
-        await repo.sanitizeValues(table: 'songs', definitions: songFields, songTenantId: tenantId);
-      }
-
-      // SOL_FIX19: only into the local state of that same tenant.
-      await ref.read(currentTenantProvider.notifier).updateTenantLocalIfCurrent(
-            tenantId,
-            (current) => current.copyWith(
-              additionalFields: personFields,
-              songAdditionalFields: songFields,
-            ),
-          );
+      await saveExtraFieldDefinitions(
+        ref.read,
+        repo,
+        personFields: personFields,
+        songFields: songFields,
+        churchIds: churchIds,
+      );
       if (!mounted) return;
       // SOL_FIX20: later edits stay unsaved.
       setState(() {
@@ -228,15 +206,269 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
     }
   }
 
+  Future<ExtraField?> _showFieldSheet({required ExtraFieldTarget target, ExtraField? existing}) =>
+      showExtraFieldSheet(context, ref, target: target, existing: existing, fields: () => _fields(target));
+
   // ---------------------------------------------------------------------------
-  // Feld-Editor (Bottom Sheet)
+  // UI
   // ---------------------------------------------------------------------------
 
-  /// Add sheet: returns the new field after validation in the open sheet
-  /// (Ionic addExtraField), `null` when dismissed.
-  /// Edit sheet: returns the edited copy on every close (Ionic
-  /// closeEditExtraFieldModal), without validation – that happens on save.
-  Future<ExtraField?> _showFieldSheet({required ExtraFieldTarget target, ExtraField? existing}) async {
+  Future<void> _confirmLeave() async {
+    final leave = await DialogHelper.showConfirmation(
+      context,
+      title: context.l10n.rolePermUnsaved,
+      message: context.l10n.extraFieldsFlutterLeaveMessage,
+      confirmText: context.l10n.rolePermDiscard,
+      isDestructive: true,
+    );
+    if (leave && mounted) {
+      setState(() => _hasChanges = false);
+      context.pop();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Kirchen vorladen (Standardwert für BFECG-Gemeinde)
+    ref.watch(churchesProvider);
+
+    return PopScope(
+      canPop: !_hasChanges && !_saving,
+      onPopInvokedWithResult: (didPop, _) {
+        // SOL_FIX20: Ionic's loading overlay blocks leaving while saving.
+        if (!didPop && !_saving) _confirmLeave();
+      },
+      // UX_SETTINGS (WAVE 8): extra-fields.page.html — arrow-back, condense
+      // title, checkmark save, inset groups with header "+" buttons.
+      child: IonCondense(builder: (context, collapsed) => Scaffold(
+        // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
+        extendBodyBehindAppBar: ionIsIos(context),
+        // IOS_R6: `ion-header translucent` (blur once condensed)
+        appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
+            onPressed: () => Navigator.of(context).maybePop(),
+          ),
+          title: IonCondenseTitle(context.l10n.extraFieldsTitle, collapsed: collapsed),
+          actions: [
+            IconButton(
+              icon: _saving
+                  ? const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2))
+                  : Icon(Icons.check, semanticLabel: context.l10n.commonSave),
+              onPressed: _saving ? null : _save,
+            ),
+          ],
+        )),
+        // SOL_FIX20: Ionic shows a blocking loading overlay
+        // ("Felder werden gespeichert...") while saving – no edits meanwhile.
+        body: Stack(children: [
+          AbsorbPointer(
+            absorbing: _saving,
+            child: ListView(
+          padding: EdgeInsets.fromLTRB(ionListMargin(context), ionIsIos(context) ? 0 : 16, ionListMargin(context), 16),
+          children: [
+            const IonContentTopInset(),
+            IonLargeTitle(context.l10n.extraFieldsTitle, padding: const EdgeInsets.only(bottom: 4)),
+            if (ionIsIos(context)) const SizedBox(height: 16),
+            _buildSection(ExtraFieldTarget.person, context.l10n.extraFieldsForPersons),
+            if (!ionIsIos(context)) const SizedBox(height: AppDimensions.paddingL),
+            _buildSection(ExtraFieldTarget.song, context.l10n.extraFieldsForSongs),
+            if (!ionIsIos(context)) const SizedBox(height: AppDimensions.paddingL),
+            // Ionic: ion-padding + expand="block" button
+            ElevatedButton(
+              onPressed: _saving ? null : _save,
+              child: IonButtonLabel(context.l10n.commonSave),
+            ),
+          ],
+            ),
+          ),
+          if (_saving) _buildSavingOverlay(context),
+        ]),
+      )),
+    );
+  }
+
+  /// SOL_FIX20: Ionic `Utils.getLoadingElement(…, extraFields.saving)`.
+  Widget _buildSavingOverlay(BuildContext context) {
+    return Positioned.fill(
+      key: const ValueKey('extra-fields-saving'),
+      child: ColoredBox(
+        color: Colors.black26,
+        child: Center(
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2)),
+                  const SizedBox(width: AppDimensions.paddingM),
+                  Text(context.l10n.extraFieldsSaving),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSection(ExtraFieldTarget target, String title) {
+    final fields = _fields(target);
+    final list = fields.isEmpty
+              ? ListTile(title: Text(context.l10n.extraFieldsNoneYet))
+              : ReorderableListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  buildDefaultDragHandles: false,
+                  itemCount: fields.length,
+                  onReorder: (o, n) => _reorder(target, o, n),
+                  itemBuilder: (context, i) {
+                    final f = fields[i];
+                    final lines = extraFieldSummaryLines(context.l10n, f, person: target == ExtraFieldTarget.person);
+                    return ListTile(
+                      key: ValueKey('${target.name}-${f.id}-$i'),
+                      title: Text(f.name),
+                      subtitle: Text(lines.join('\n')),
+                      isThreeLine: lines.length > 2,
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit_outlined, color: AppColors.primary, semanticLabel: context.l10n.commonEdit),
+                            onPressed: () => _editField(target, i),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete_outline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
+                            onPressed: () => _removeField(target, i),
+                          ),
+                          if (fields.length > 1)
+                            ReorderableDragStartListener(
+                              index: i,
+                              child: const Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Icon(Icons.drag_handle),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+    if (ionIsIos(context)) {
+      return SettingsListSection(
+        title: title,
+        icons: false,
+        headerAction: IconButton(
+          icon: const Icon(Icons.add, color: AppColors.primary),
+          tooltip: context.l10n.extraFieldsAddNew,
+          onPressed: () => _addField(target),
+        ),
+        children: [list],
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primary,
+                    ),
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.add),
+              tooltip: context.l10n.extraFieldsAddNew,
+              onPressed: () => _addField(target),
+            ),
+          ],
+        ),
+        Card(child: list),
+      ],
+    );
+  }
+}
+
+/// The lines below a field's name on the old page (type, display, visible
+/// for players); also the subtitle of the Beta list.
+List<String> extraFieldSummaryLines(AppLocalizations l10n, ExtraField f, {required bool person}) => [
+      if (f.id != 'bfecg_church') l10n.extraFieldsTypeLine(extraFieldTypeName(f.type)),
+      l10n.extraFieldsDisplayLine(f.displayMode == 'underneath' ? l10n.extraFieldsUnderName : l10n.extraFieldsAsChip),
+      if (person && (f.visibleToPlayers ?? false))
+        '${l10n.extraFieldsVisible}${(f.editableByPlayers ?? false) ? l10n.extraFieldsEditableSuffix : ''}',
+    ];
+
+/// `ref.read` of a widget or `ProviderContainer.read`.
+typedef ProviderRead = T Function<T>(ProviderListenable<T> provider);
+
+/// Church ids for the default of a BFECG church field (Ionic: first church).
+List<Object> extraFieldChurchIds(ProviderRead read) =>
+    (read(churchesProvider).valueOrNull ?? []).map((c) => c.id).whereType<String>().toList();
+
+/// Saves the field definitions of [repo]'s tenant like "Speichern" of the old
+/// page: the definitions, then the values of persons and (own library only)
+/// works are cleaned, then the local tenant state is updated if that tenant
+/// is still the current one. Throws when the definitions cannot be saved.
+/// [read] is `ref.read` or `ProviderContainer.read` (works after the page
+/// closed).
+Future<void> saveExtraFieldDefinitions(
+  ProviderRead read,
+  ExtraFieldsRepository repo, {
+  required List<ExtraField> personFields,
+  required List<ExtraField> songFields,
+  required List<Object> churchIds,
+}) async {
+  // SOL_FIX19: the tenant the fields are saved for, captured up front.
+  final tenantId = repo.currentTenantId;
+  // Ionic db.getSongs(): songs of the effective song tenant
+  // (song_source_tenant_id ?? own tenant). Loaded for the captured
+  // tenant (not the current-tenant provider, which follows a tenant
+  // switch and swallows errors): a load error aborts before any write.
+  final songSettings = await read(songRepositoryForTenantProvider((tenantId: tenantId, songSourceTenantId: null)))
+      .getSongTenantSettings();
+  final songTenantId = songSettings.songSourceTenantId ?? tenantId;
+  await repo.saveFields(personFields: personFields, songFields: songFields);
+  await repo.sanitizeValues(table: 'player', definitions: personFields, churchIds: churchIds);
+  // Deliberate deviation from Ionic (backfillSongAdditionalFields on
+  // db.getSongs()): a synced library belongs to the source instance and
+  // its field definitions. Cleaning it with this instance's song fields
+  // would delete the source's values, so only the own library is cleaned.
+  if (songTenantId == tenantId) {
+    await repo.sanitizeValues(table: 'songs', definitions: songFields, songTenantId: tenantId);
+  }
+
+  // SOL_FIX19: only into the local state of that same tenant.
+  await read(currentTenantProvider.notifier).updateTenantLocalIfCurrent(
+        tenantId,
+        (current) => current.copyWith(
+          additionalFields: personFields,
+          songAdditionalFields: songFields,
+        ),
+      );
+}
+
+// ---------------------------------------------------------------------------
+// Feld-Editor (Bottom Sheet)
+// ---------------------------------------------------------------------------
+
+/// Add sheet: returns the new field after validation in the open sheet
+/// (Ionic addExtraField), `null` when dismissed. [fields] are the fields of
+/// [target] as shown (the new id must not exist yet). Also used by the Beta
+/// list (`rd_extra_fields_page.dart`).
+/// Edit sheet: returns the edited copy on every close (Ionic
+/// closeEditExtraFieldModal), without validation – that happens on save.
+Future<ExtraField?> showExtraFieldSheet(
+  BuildContext context,
+  WidgetRef ref, {
+  required ExtraFieldTarget target,
+  required List<ExtraField> Function() fields,
+  ExtraField? existing,
+}) async {
     final isEdit = existing != null;
     final isPerson = target == ExtraFieldTarget.person;
     final tenantId = ref.read(currentTenantIdProvider);
@@ -275,7 +507,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
       }
       if (type == 'bfecg_church') return existing?.defaultValue;
       if (isEdit && defaultController.text == initialDefaultText) return existing.defaultValue;
-      return _parseDefault(type, defaultController.text);
+      return _parseExtraFieldDefault(type, defaultController.text);
     }
 
     ExtraField buildField(String id) {
@@ -349,9 +581,9 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                   try {
                     final count = await extraFieldsRepo
                         .updateFieldValue(existing.id, value, newDefault);
-                    if (count > 0 && mounted) ToastHelper.showSuccess(context, context.l10n.extraFieldsPersonsUpdated(count));
+                    if (count > 0 && context.mounted) ToastHelper.showSuccess(context, context.l10n.extraFieldsPersonsUpdated(count));
                   } catch (_) {
-                    if (mounted) ToastHelper.showError(context, context.l10n.dbLoadPeopleFailed);
+                    if (context.mounted) ToastHelper.showError(context, context.l10n.dbLoadPeopleFailed);
                     return;
                   } finally {
                     rootNav.pop();
@@ -377,13 +609,13 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                 type,
                 defaultValue: type == 'select' ? null : editedDefault(),
                 options: options.map((c) => c.text).toList(),
-                churchIds: _churchIds,
+                churchIds: extraFieldChurchIds(ref.read),
               );
               try {
                 final count = await extraFieldsRepo.resetFieldValues(existing!.id, resolved);
-                if (mounted) ToastHelper.showSuccess(context, context.l10n.extraFieldsPersonsUpdated(count));
+                if (context.mounted) ToastHelper.showSuccess(context, context.l10n.extraFieldsPersonsUpdated(count));
               } catch (_) {
-                if (mounted) ToastHelper.showError(context, context.l10n.dbLoadPeopleFailed);
+                if (context.mounted) ToastHelper.showError(context, context.l10n.dbLoadPeopleFailed);
               }
             }
 
@@ -395,7 +627,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                 return;
               }
               final id = type == 'bfecg_church' ? 'bfecg_church' : extraFieldIdFromName(name);
-              if (_fields(target).any((f) => f.id == id)) {
+              if (fields().any((f) => f.id == id)) {
                 ToastHelper.showError(ctx, context.l10n.extraFieldsIdExists);
                 return;
               }
@@ -579,201 +811,9 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
     return result;
   }
 
-  static dynamic _parseDefault(String type, String text) {
-    if (type == 'number') return num.tryParse(text.trim()) ?? 0;
-    return text;
-  }
-
-  // ---------------------------------------------------------------------------
-  // UI
-  // ---------------------------------------------------------------------------
-
-  Future<void> _confirmLeave() async {
-    final leave = await DialogHelper.showConfirmation(
-      context,
-      title: context.l10n.rolePermUnsaved,
-      message: context.l10n.extraFieldsFlutterLeaveMessage,
-      confirmText: context.l10n.rolePermDiscard,
-      isDestructive: true,
-    );
-    if (leave && mounted) {
-      setState(() => _hasChanges = false);
-      context.pop();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Kirchen vorladen (Standardwert für BFECG-Gemeinde)
-    ref.watch(churchesProvider);
-
-    return PopScope(
-      canPop: !_hasChanges && !_saving,
-      onPopInvokedWithResult: (didPop, _) {
-        // SOL_FIX20: Ionic's loading overlay blocks leaving while saving.
-        if (!didPop && !_saving) _confirmLeave();
-      },
-      // UX_SETTINGS (WAVE 8): extra-fields.page.html — arrow-back, condense
-      // title, checkmark save, inset groups with header "+" buttons.
-      child: IonCondense(builder: (context, collapsed) => Scaffold(
-        // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
-        extendBodyBehindAppBar: ionIsIos(context),
-        // IOS_R6: `ion-header translucent` (blur once condensed)
-        appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
-            onPressed: () => Navigator.of(context).maybePop(),
-          ),
-          title: IonCondenseTitle(context.l10n.extraFieldsTitle, collapsed: collapsed),
-          actions: [
-            IconButton(
-              icon: _saving
-                  ? const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2))
-                  : Icon(Icons.check, semanticLabel: context.l10n.commonSave),
-              onPressed: _saving ? null : _save,
-            ),
-          ],
-        )),
-        // SOL_FIX20: Ionic shows a blocking loading overlay
-        // ("Felder werden gespeichert...") while saving – no edits meanwhile.
-        body: Stack(children: [
-          AbsorbPointer(
-            absorbing: _saving,
-            child: ListView(
-          padding: EdgeInsets.fromLTRB(ionListMargin(context), ionIsIos(context) ? 0 : 16, ionListMargin(context), 16),
-          children: [
-            const IonContentTopInset(),
-            IonLargeTitle(context.l10n.extraFieldsTitle, padding: const EdgeInsets.only(bottom: 4)),
-            if (ionIsIos(context)) const SizedBox(height: 16),
-            _buildSection(ExtraFieldTarget.person, context.l10n.extraFieldsForPersons),
-            if (!ionIsIos(context)) const SizedBox(height: AppDimensions.paddingL),
-            _buildSection(ExtraFieldTarget.song, context.l10n.extraFieldsForSongs),
-            if (!ionIsIos(context)) const SizedBox(height: AppDimensions.paddingL),
-            // Ionic: ion-padding + expand="block" button
-            ElevatedButton(
-              onPressed: _saving ? null : _save,
-              child: IonButtonLabel(context.l10n.commonSave),
-            ),
-          ],
-            ),
-          ),
-          if (_saving) _buildSavingOverlay(context),
-        ]),
-      )),
-    );
-  }
-
-  /// SOL_FIX20: Ionic `Utils.getLoadingElement(…, extraFields.saving)`.
-  Widget _buildSavingOverlay(BuildContext context) {
-    return Positioned.fill(
-      key: const ValueKey('extra-fields-saving'),
-      child: ColoredBox(
-        color: Colors.black26,
-        child: Center(
-          child: Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimensions.paddingM),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2)),
-                  const SizedBox(width: AppDimensions.paddingM),
-                  Text(context.l10n.extraFieldsSaving),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSection(ExtraFieldTarget target, String title) {
-    final fields = _fields(target);
-    final list = fields.isEmpty
-              ? ListTile(title: Text(context.l10n.extraFieldsNoneYet))
-              : ReorderableListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  buildDefaultDragHandles: false,
-                  itemCount: fields.length,
-                  onReorder: (o, n) => _reorder(target, o, n),
-                  itemBuilder: (context, i) {
-                    final f = fields[i];
-                    final lines = <String>[
-                      if (f.id != 'bfecg_church') context.l10n.extraFieldsTypeLine(extraFieldTypeName(f.type)),
-                      context.l10n.extraFieldsDisplayLine(f.displayMode == 'underneath'
-                          ? context.l10n.extraFieldsUnderName
-                          : context.l10n.extraFieldsAsChip),
-                      if (target == ExtraFieldTarget.person && (f.visibleToPlayers ?? false))
-                        '${context.l10n.extraFieldsVisible}${(f.editableByPlayers ?? false) ? context.l10n.extraFieldsEditableSuffix : ''}',
-                    ];
-                    return ListTile(
-                      key: ValueKey('${target.name}-${f.id}-$i'),
-                      title: Text(f.name),
-                      subtitle: Text(lines.join('\n')),
-                      isThreeLine: lines.length > 2,
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.edit_outlined, color: AppColors.primary, semanticLabel: context.l10n.commonEdit),
-                            onPressed: () => _editField(target, i),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete_outline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
-                            onPressed: () => _removeField(target, i),
-                          ),
-                          if (fields.length > 1)
-                            ReorderableDragStartListener(
-                              index: i,
-                              child: const Padding(
-                                padding: EdgeInsets.all(8),
-                                child: Icon(Icons.drag_handle),
-                              ),
-                            ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-    if (ionIsIos(context)) {
-      return SettingsListSection(
-        title: title,
-        icons: false,
-        headerAction: IconButton(
-          icon: const Icon(Icons.add, color: AppColors.primary),
-          tooltip: context.l10n.extraFieldsAddNew,
-          onPressed: () => _addField(target),
-        ),
-        children: [list],
-      );
-    }
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                    ),
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.add),
-              tooltip: context.l10n.extraFieldsAddNew,
-              onPressed: () => _addField(target),
-            ),
-          ],
-        ),
-        Card(child: list),
-      ],
-    );
-  }
+dynamic _parseExtraFieldDefault(String type, String text) {
+  if (type == 'number') return num.tryParse(text.trim()) ?? 0;
+  return text;
 }
 
 /// Calls [onDispose] when the sheet content leaves the tree, i.e. after the

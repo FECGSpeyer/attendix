@@ -582,8 +582,10 @@ class SettingsPage extends ConsumerWidget {
                     final supabase = ref.read(supabaseClientProvider);
                     final tenantNotifier = ref.read(currentTenantProvider.notifier);
                     await removePushTokenBeforeSignOut(ref);
-                    await supabase.auth.signOut();
-                    await tenantNotifier.clearTenant();
+                    await signOutAndClearTenant(
+                      signOut: supabase.auth.signOut,
+                      clearTenant: tenantNotifier.clearTenant,
+                    );
                     if (context.mounted) context.go('/login');
                   },
                 ),
