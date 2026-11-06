@@ -200,22 +200,31 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
       ),
     );
     if (ok != true || !mounted) return;
-    setState(() => _sending = true);
-    // The draft goes before sending: the page can be left meanwhile (browser
-    // back, tab switch), and a compose page opened then must neither show
-    // this message as a draft nor lose its own draft to a late clear.
+    // Everything the send needs is taken now, before the first await: the
+    // page can be left meanwhile (browser back, tab switch), the send and
+    // the draft handling then finish without it.
+    final notifier = ref.read(messageNotifierProvider.notifier);
+    final content = _content;
+    final groupIds = _groupIds;
+    final push = _push;
+    final email = _email;
     final draft = jsonEncode({'title': _subject.text, 'ops': _body.document.toDelta().toJson()});
+    // Inputs are locked while sending, so the snapshot stays the latest text.
+    _body.readOnly = true;
+    setState(() => _sending = true);
+    // The draft goes before sending: a compose page opened meanwhile must
+    // neither show this message as a draft nor lose its own to a late clear.
     await _clearDraft();
-    final id = await ref.read(messageNotifierProvider.notifier).send(
-          title: title,
-          content: _content,
-          groupIds: _groupIds,
-          push: _push,
-          email: _email,
-        );
+    String? id;
+    try {
+      id = await notifier.send(title: title, content: content, groupIds: groupIds, push: push, email: email);
+    } catch (_) {
+      id = null;
+    }
     // Failed: the draft comes back, unless a new one was started meanwhile.
     if (id == null) await _restoreDraftIfFree(draft);
     if (!mounted) return;
+    _body.readOnly = false;
     setState(() => _sending = false);
     if (id == null) {
       ToastHelper.showError(context, context.l10n.messagesSendFailed);
@@ -358,19 +367,23 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
           children: [
             TextField(
               controller: _subject,
+              readOnly: _sending,
               maxLength: 200,
               textCapitalization: TextCapitalization.sentences,
               textInputAction: TextInputAction.next,
               decoration: field(l10n.redesignComposeSubject),
             ),
-            MessageEditorToolbar(controller: _body),
+            IgnorePointer(ignoring: _sending, child: MessageEditorToolbar(controller: _body)),
             ConstrainedBox(
               constraints: const BoxConstraints(minHeight: 160),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                child: QuillEditor.basic(
+                child: IgnorePointer(
+                  ignoring: _sending,
+                  child: QuillEditor.basic(
                   controller: _body,
-                  config: QuillEditorConfig(scrollable: false, placeholder: l10n.redesignComposeBody),
+                    config: QuillEditorConfig(scrollable: false, placeholder: l10n.redesignComposeBody),
+                  ),
                 ),
               ),
             ),
