@@ -7,6 +7,7 @@ import '../../data/models/organisation/organisation.dart';
 import '../../data/repositories/extra_fields_repository.dart';
 import '../../data/repositories/files_repository.dart';
 import '../../data/repositories/organisation_settings_repository.dart';
+import '../../data/repositories/tenant_settings_repository.dart';
 import 'tenant_providers.dart';
 
 // SETTINGS_EXT: Dateiablage, Zusatzfelder, Branding, Personen verknüpfen
@@ -102,6 +103,27 @@ final organisationSettingsRepositoryForTenantProvider =
 final _organisationSettingsRepositoryForAccountProvider =
     Provider.family<OrganisationSettingsRepository, AccountScopeKey>((ref, key) {
   final repo = OrganisationSettingsRepository(ref);
+  if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
+  return repo;
+});
+
+/// REDESIGN: Einstellungen der Instanz (tenants-Spalten) mit Tenant-Kontext
+final tenantSettingsRepositoryWithTenantProvider = Provider<TenantSettingsRepository>((ref) {
+  final tenant = ref.watch(currentTenantIdProvider);
+  return ref.watch(tenantSettingsRepositoryForTenantProvider(tenant));
+});
+
+/// TENANT_BIND + SOL_FIX15 like [extraFieldsRepositoryForTenantProvider].
+final tenantSettingsRepositoryForTenantProvider =
+    Provider.family<TenantSettingsRepository, int?>((ref, tenantId) {
+  final userId = ref.watch(currentAuthUserIdProvider);
+  return ref.watch(
+      _tenantSettingsRepositoryForAccountProvider((tenantId: tenantId, userId: userId)));
+});
+
+final _tenantSettingsRepositoryForAccountProvider =
+    Provider.family<TenantSettingsRepository, AccountScopeKey>((ref, key) {
+  final repo = TenantSettingsRepository(ref);
   if (key.tenantId != null) repo.bindTenantId(key.tenantId!);
   return repo;
 });

@@ -158,6 +158,7 @@ String rdManageTitle(AppLocalizations l10n, RdManageEntry entry) => switch (entr
       RdManageEntry.runSheets => l10n.settingsRunSheets,
       RdManageEntry.adHocPlanning => l10n.settingsAdHocPlanning,
       RdManageEntry.planningTemplates => l10n.settingsTemplatesFields,
+      RdManageEntry.orgPlans => l10n.plansOrgPlans,
       RdManageEntry.works => l10n.settingsSongs,
       RdManageEntry.workHistory => l10n.historyTitle,
       RdManageEntry.workCategories => l10n.songsSongCategories,
@@ -204,6 +205,7 @@ IconData rdManageIcon(RdManageEntry entry) => switch (entry) {
       RdManageEntry.runSheets => Icons.list,
       RdManageEntry.adHocPlanning => Icons.calendar_today_outlined,
       RdManageEntry.planningTemplates => Icons.description_outlined,
+      RdManageEntry.orgPlans => Icons.business_outlined,
       RdManageEntry.works => Icons.music_note_outlined,
       RdManageEntry.workHistory => Icons.history,
       RdManageEntry.workCategories => Icons.label_outline,
@@ -265,6 +267,8 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
       push('/settings/planung');
     case RdManageEntry.planningTemplates:
       push('/settings/org-settings/planning-templates');
+    case RdManageEntry.orgPlans:
+      push('/settings/org-plans');
     case RdManageEntry.works:
       context.go(RedesignRoutes.works);
     case RdManageEntry.workHistory:

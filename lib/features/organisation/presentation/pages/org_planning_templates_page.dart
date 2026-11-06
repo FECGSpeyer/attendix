@@ -20,6 +20,12 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/presentation/widgets/ion_condense.dart';
 import '../../../settings/presentation/widgets/settings_list.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
+import '../../../redesign/presentation/widgets/manage/rd_manage_list.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
+
+part 'org_planning_templates_page_beta.dart';
 
 /// "Planvorlagen & Felder" of the organisation (Ionic `OrgPlanningTemplatesPage`).
 ///
@@ -33,6 +39,22 @@ class OrgPlanningTemplatesPage extends ConsumerStatefulWidget {
 
 class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesPage> {
   List<Plan>? _templates;
+
+  /// Bumped on every host rebuild so a pushed Beta Vorlagen-Editor shows
+  /// local changes at once, not only after saving.
+  final _rdChanges = ValueNotifier<int>(0);
+
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+    _rdChanges.value++;
+  }
+
+  @override
+  void dispose() {
+    _rdChanges.dispose();
+    super.dispose();
+  }
   List<PlanField> _defaultFields = [];
   int? _selected;
 
@@ -49,6 +71,9 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     _notifier = ref.read(planSettingsNotifierProvider.notifier);
   }
 
+  /// setState for the Beta extension (part file).
+  void _update(VoidCallback fn) => setState(fn);
+
   /// Saves the current Standardfelder; `true` once the write is confirmed.
   /// Uses no `ref`/`context` unless the page is still mounted.
   Future<bool> _saveDefaultFields() async {
@@ -61,9 +86,10 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
 
   /// Ionic saves the templates as edited; `end` is not computed into them
   /// (new templates keep `end: ''`), the end is only shown.
-  Future<void> _saveTemplates() async {
+  Future<bool> _saveTemplates() async {
     final ok = await _notifier.updatePlanningTemplates(_templates!);
     if (!ok && mounted) ToastHelper.showError(context, context.l10n.plansSaveFailed);
+    return ok;
   }
 
   String _computeEnd(Plan tpl) {
@@ -160,7 +186,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       confirmText: context.l10n.attendanceAdd,
       emptyMessage: context.l10n.orgTemplatesEnterName,
     );
-    if (title == null || title.trim().isEmpty) return;
+    if (title == null || title.trim().isEmpty || _templates == null || !mounted) return;
     setState(() {
       _templates = [..._templates!, Plan(title: title.trim(), time: '', end: '', fields: const [])];
       _selected = _templates!.length - 1;
@@ -226,7 +252,26 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
   Future<void> _addToTemplate(int index, BuildContext buttonContext) async {
     final tpl = _templates![index];
     final isGeneral = ref.read(currentTenantProvider)?.type == 'general';
-    final action = await showAppPopoverMenu<String>(
+    final String? action;
+    if (context.rdSkin != null) {
+      action = await showPlanActionSheet<String>(
+        context,
+        title: context.l10n.redesignPlanAddTitle,
+        actions: [
+          PlanSheetAction('field', context.l10n.typeSettingsAddField, icon: Icons.add),
+          PlanSheetAction('note', context.l10n.typeSettingsAddNoteField, icon: Icons.sticky_note_2_outlined),
+          if (!isGeneral)
+            PlanSheetAction('song', context.l10n.orgTemplatesSongPlaceholder, icon: Icons.music_note_outlined),
+          for (var i = 0; i < _defaultFields.length; i++)
+            PlanSheetAction(
+              'default:$i',
+              '${_defaultFields[i].name} · ${context.l10n.planningMinShort(_defaultFields[i].time)}',
+              icon: Icons.short_text,
+            ),
+        ],
+      );
+    } else {
+    action = await showAppPopoverMenu<String>(
       context: buttonContext,
       items: [
         AppPopoverMenuItem(value: 'field', label: context.l10n.typeSettingsAddField),
@@ -241,6 +286,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
           ),
       ],
     );
+    }
     if (action == null || !mounted) return;
     PlanField? field;
     if (action.startsWith('default:')) {
@@ -364,6 +410,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       _defaultFields = [...?org?.defaultFields];
       _orgId = org?.id;
     }
+    if (context.rdSkin != null) return _rdBuild(context);
 
     return IonCondense(builder: (context, collapsed) => Scaffold(
       // IOS_R6: Ionic `ion-content fullscreen` under the translucent header

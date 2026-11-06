@@ -9392,6 +9392,170 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get rdSettingsAddRule => 'Regel hinzufügen';
+
+  @override
+  String get rdSettingsAllEvents => 'Alle Termine sichtbar';
+
+  @override
+  String get rdSettingsAllEventsHint =>
+      'Auch Termine, bei denen sie nicht dabei sind';
+
+  @override
+  String get rdSettingsAllowRegister => 'Selbst anmelden erlauben';
+
+  @override
+  String get rdSettingsAllowRegisterHint =>
+      'Neue Personen melden sich über einen Link an';
+
+  @override
+  String get rdSettingsAutoApprove => 'Neue automatisch freigeben';
+
+  @override
+  String get rdSettingsBack => 'Gruppe';
+
+  @override
+  String get rdSettingsBrandingIntro =>
+      'Logo und Text stehen dezent auf exportierten Plänen und Listen. Gilt für alle Gruppen der Organisation.';
+
+  @override
+  String get rdSettingsBrandingLogoHint => 'Bilddatei, höchstens 2 MB';
+
+  @override
+  String get rdSettingsBrandingLogoRemoved => 'Logo entfernt';
+
+  @override
+  String get rdSettingsBrandingLogoSaved => 'Logo gespeichert';
+
+  @override
+  String get rdSettingsBrandingNoOrg =>
+      'Branding gibt es nur für Gruppen in einer Organisation. Diese Gruppe gehört zu keiner.';
+
+  @override
+  String get rdSettingsBrandingNoText => 'Kein Text';
+
+  @override
+  String get rdSettingsBrandingRemoveLogo => 'Logo entfernen?';
+
+  @override
+  String get rdSettingsBrandingTitle => 'Branding';
+
+  @override
+  String get rdSettingsBrandingToOrg => 'Zur Organisation';
+
+  @override
+  String get rdSettingsCopyRegisterLink => 'Anmelde-Link kopieren';
+
+  @override
+  String get rdSettingsCopyWorksLink => 'Werke-Link kopieren';
+
+  @override
+  String get rdSettingsCriticalHint =>
+      'Regeln bestimmen, wann eine Person als Problemfall gilt.';
+
+  @override
+  String get rdSettingsDutyView => 'Dienstplan in „Meine Termine“';
+
+  @override
+  String get rdSettingsDutyViewHint => 'Dienst-Teams sehen zuerst ihre Dienste';
+
+  @override
+  String get rdSettingsEmptyValue => 'Bitte gib einen Wert ein.';
+
+  @override
+  String get rdSettingsGeneralTitle => 'Allgemein';
+
+  @override
+  String get rdSettingsHolidays => 'Ferien und Feiertage zeigen';
+
+  @override
+  String get rdSettingsHolidaysHint =>
+      'Beim Anlegen von Terminen hervorgehoben (nur Deutschland)';
+
+  @override
+  String get rdSettingsInfoText => 'Hinweis bei fremden Terminen';
+
+  @override
+  String get rdSettingsMembersList => 'Mitgliederliste für alle';
+
+  @override
+  String get rdSettingsMembersListHint =>
+      'Spieler, Helfer und Stimmführer sehen alle Personen';
+
+  @override
+  String get rdSettingsName => 'Name';
+
+  @override
+  String get rdSettingsParentsHint =>
+      'Eltern sehen die Anwesenheit ihrer Kinder und melden sie ab';
+
+  @override
+  String get rdSettingsRegion => 'Bundesland';
+
+  @override
+  String get rdSettingsRegisterFields => 'Felder bei der Anmeldung';
+
+  @override
+  String get rdSettingsRegisterFieldsHint =>
+      'Alle gewählten Felder sind Pflicht. Vorname, Nachname und Gruppe sind immer dabei.';
+
+  @override
+  String get rdSettingsSaveFailed =>
+      'Konnte nicht gespeichert werden. Bitte versuche es noch einmal.';
+
+  @override
+  String rdSettingsSeasonSaved(Object date) {
+    return 'Saisonbeginn: $date';
+  }
+
+  @override
+  String get rdSettingsSeasonStart => 'Saisonbeginn';
+
+  @override
+  String get rdSettingsSectionAttendance => 'Anwesenheit';
+
+  @override
+  String get rdSettingsSectionCritical => 'Problemfälle';
+
+  @override
+  String get rdSettingsSectionFeatures => 'Funktionen';
+
+  @override
+  String get rdSettingsSectionMembers => 'Für Mitglieder';
+
+  @override
+  String get rdSettingsSectionReasons => 'Gründe';
+
+  @override
+  String get rdSettingsSectionRegistration => 'Anmeldung';
+
+  @override
+  String get rdSettingsSectionWorks => 'Werke';
+
+  @override
+  String get rdSettingsShareWorksHint =>
+      'Jeder mit dem Link kann die Werke ansehen';
+
+  @override
+  String get rdSettingsShiftPresent => 'Schichtbedingt zählt als anwesend';
+
+  @override
+  String get rdSettingsShiftPresentHint =>
+      'Schicht- oder arbeitsbedingt Entschuldigte zählen in den Prozenten als da';
+
+  @override
+  String get rdSettingsShortName => 'Kürzel';
+
+  @override
+  String get rdSettingsShortNameHint => 'Steht vor Dateinamen beim Export';
+
+  @override
+  String get rdSettingsTeachersHint => 'Lehrer der Spieler verwalten';
+
+  @override
+  String get rdSettingsUndo => 'Rückgängig';
+
+  @override
   String redesignAbsenceAffects(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -12598,6 +12762,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanAddCurrentHint => 'Die Werke, die gerade dran sind';
 
   @override
+  String get redesignPlanAddDefaultField => 'Standardfeld hinzufügen';
+
+  @override
   String get redesignPlanAddEnd => 'Wird ans Ende gesetzt';
 
   @override
@@ -12797,6 +12964,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanOrgHint => 'Erscheint im Plan der Organisation';
 
   @override
+  String redesignPlanOrgPlansIntro(Object org) {
+    return 'Abläufe aller Gruppen in „$org“';
+  }
+
+  @override
+  String get redesignPlanOrgPlansUpcoming => 'Anstehend';
+
+  @override
   String get redesignPlanOrgTemplateHint => 'Vorlage der Organisation';
 
   @override
@@ -12855,6 +13030,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPlanTemplateDelete => 'Vorlage löschen';
+
+  @override
+  String get redesignPlanTemplateHint => 'Vorlage · sofort gespeichert';
+
+  @override
+  String redesignPlanTemplatesIntro(Object org) {
+    return 'Gelten für alle Gruppen der Organisation „$org“.';
+  }
 
   @override
   String get redesignPlanTitle => 'Ablauf';
