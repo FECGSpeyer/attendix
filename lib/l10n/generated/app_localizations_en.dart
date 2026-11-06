@@ -11266,6 +11266,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Folder from Google Drive, Dropbox or your computer';
 
   @override
+  String get redesignImportNewGroupMessage =>
+      'Attendix creates the group only when uploading.';
+
+  @override
   String get redesignImportNewGroupTitle => 'Create new group';
 
   @override
