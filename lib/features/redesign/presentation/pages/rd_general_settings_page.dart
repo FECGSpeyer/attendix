@@ -13,6 +13,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/demo_guard.dart';
+import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
@@ -185,13 +186,24 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
     }, (c) => late ? c.copyWith(lateReasons: value) : c.copyWith(absenceReasons: value));
   }
 
+  /// Loads data a change needs; on failure shows the error (the change can
+  /// simply be tried again) and returns null.
+  Future<T?> _load<T>(Future<T> future) async {
+    try {
+      return await future;
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, context.l10n.settingsFlutterLoadFailed(friendlyErrorMessage(e)));
+      return null;
+    }
+  }
+
   bool _hasSelectableGroups() => (ref.read(groupsProvider).valueOrNull ?? const []).any((g) => g.maingroup != true);
 
   Future<void> _toggleRegistration(Tenant t, bool on) async {
     if (on) {
       // Ionic: registration needs a group to choose (not the main group).
-      final groups = await ref.read(groupsProvider.future);
-      if (!mounted) return;
+      final groups = await _load(ref.read(groupsProvider.future));
+      if (groups == null || !mounted) return;
       if (!groups.any((g) => g.maingroup != true)) {
         ToastHelper.showError(context, context.l10n.generalSettingsRegisterNoGroups);
         return;
@@ -299,8 +311,8 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
 
   Future<void> _ruleSheet(Tenant t, {int? index}) async {
     final l10n = context.l10n;
-    final types = await ref.read(attendanceTypesProvider.future);
-    if (!mounted) return;
+    final types = await _load(ref.read(attendanceTypesProvider.future));
+    if (types == null || !mounted) return;
     if (index == null && types.isEmpty) {
       ToastHelper.showError(context, l10n.generalSettingsFlutterNoTypes);
       return;

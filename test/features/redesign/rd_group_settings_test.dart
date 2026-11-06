@@ -16,7 +16,20 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:attendix/core/config/supabase_config.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../factories/test_factories.dart';
+import '../../mocks/supabase_mocks.dart';
+
+/// No signed-in user: the tenant notifier's restore finds nothing to load.
+final _auth = () {
+  final auth = MockGoTrueClient();
+  when(() => auth.currentUser).thenReturn(null);
+  when(() => auth.onAuthStateChange).thenAnswer((_) => const Stream.empty());
+  return auth;
+}();
 
 class _TenantNotifier extends CurrentTenantNotifier {
   _TenantNotifier(super.ref) {
@@ -26,6 +39,7 @@ class _TenantNotifier extends CurrentTenantNotifier {
 
 Widget _app(Widget home, {Organisation? org}) => ProviderScope(
   overrides: [
+    supabaseAuthProvider.overrideWithValue(_auth),
     currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
     groupsProvider.overrideWith((ref) async => [TestFactories.createGroup(id: 1, name: 'Sopran')]),
     attendanceTypesProvider.overrideWith((ref) async => const []),
@@ -43,6 +57,8 @@ Widget _app(Widget home, {Organisation? org}) => ProviderScope(
 
 /// REDESIGN: Verwaltung › Gruppe › Allgemein and Branding (package G1).
 void main() {
+  setUp(() => SharedPreferences.setMockInitialValues({}));
+
   testWidgets('Allgemein shows the settings without a save button', (tester) async {
     tester.view.physicalSize = const Size(390, 3000);
     tester.view.devicePixelRatio = 1;
@@ -65,24 +81,27 @@ void main() {
   testWidgets('Branding offers nothing to edit while another group reloads', (tester) async {
     final slowB = Completer<Organisation?>();
     late _TenantNotifier tenants;
-    await tester.pumpWidget(ProviderScope(
-      overrides: [
-        currentTenantProvider.overrideWith((ref) => tenants = _TenantNotifier(ref)),
-        brandingOrganisationProvider.overrideWith((ref) async {
-          if (ref.watch(currentTenantIdProvider) == 7) {
-            return const Organisation(id: 1, name: 'Org A', brandingText: 'Text A');
-          }
-          return slowB.future;
-        }),
-      ],
-      child: MaterialApp(
-        locale: const Locale('de'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
-        home: const RdBrandingPage(),
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          supabaseAuthProvider.overrideWithValue(_auth),
+          currentTenantProvider.overrideWith((ref) => tenants = _TenantNotifier(ref)),
+          brandingOrganisationProvider.overrideWith((ref) async {
+            if (ref.watch(currentTenantIdProvider) == 7) {
+              return const Organisation(id: 1, name: 'Org A', brandingText: 'Text A');
+            }
+            return slowB.future;
+          }),
+        ],
+        child: MaterialApp(
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+          home: const RdBrandingPage(),
+        ),
       ),
-    ));
+    );
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.text('Text A'), findsOneWidget);
 
