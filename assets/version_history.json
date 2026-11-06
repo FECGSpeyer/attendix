@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.54.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: „Meine Stammdaten“ als Bearbeiten-Seite, die jede Änderung sofort speichert",
+        "💄 Beta: Passwort ändern, Feedback geben, „Neu in dieser Version“ und „Kalender abonnieren“ als Blätter im neuen Design"
+      ]
+    },
+    {
       "version": "0.53.0",
       "date": "6.11.2026",
       "changes": [

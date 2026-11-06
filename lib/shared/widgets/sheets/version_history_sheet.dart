@@ -2,9 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/models/version_history.dart';
+import '../../../core/providers/redesign_providers.dart';
+import '../../../core/theme/redesign/rd_theme.dart';
+import '../../../features/redesign/presentation/widgets/rd_widgets.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
 import '../../../core/utils/error_message.dart';
@@ -19,7 +23,10 @@ const versionHistoryUserAsset = 'assets/version_history_user.json';
 
 /// Bottom sheet showing version history (What's New)
 class VersionHistorySheet extends StatefulWidget {
-  const VersionHistorySheet({super.key});
+  const VersionHistorySheet({super.key, this.beta = false});
+
+  /// Beta look (content of an [showRdSheet] sheet).
+  final bool beta;
 
   @override
   State<VersionHistorySheet> createState() => _VersionHistorySheetState();
@@ -63,6 +70,7 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
   // with a row per change for every version.
   @override
   Widget build(BuildContext context) {
+    if (widget.beta) return _buildBeta(context);
     final ios = useIosLook(context);
     return DraggableScrollableSheet(
       initialChildSize: 0.5,
@@ -107,6 +115,55 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
         );
         return ios ? IonModalHandleOverlay(child: sheet) : sheet;
       },
+    );
+  }
+
+  /// REDESIGN (E2): "Neu in dieser Version" as a Beta sheet, one group per
+  /// version ("5.0.0 · 6.11.2026") with a row per change.
+  Widget _buildBeta(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final versions = _versionHistory?.versions ?? const <VersionEntry>[];
+    final Widget body;
+    if (_isLoading) {
+      body = const Padding(padding: EdgeInsets.all(32), child: Center(heightFactor: 1, child: AppSpinner()));
+    } else if (_error != null || versions.isEmpty) {
+      body = Padding(
+        padding: const EdgeInsets.all(24),
+        child: Text(
+          _error != null ? l10n.coreFlutterErrorWith('$_error') : l10n.coreFlutterNoVersionHistory,
+          style: RdType.meta(p, size: 15),
+          textAlign: TextAlign.center,
+        ),
+      );
+    } else {
+      body = ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        children: [
+          for (final v in versions) ...[
+            RdGroupLabel(v.date != null ? '${v.version} · ${v.date}' : v.version),
+            RdGroupedList(
+              children: [
+                for (final change in v.changes)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    child: Text(change, style: RdType.body(p)),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
+        ],
+      );
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RdSheetTitle(l10n.redesignMeWhatsNew),
+        Flexible(child: body),
+      ],
     );
   }
 
@@ -190,6 +247,9 @@ class _VersionSection extends StatelessWidget {
 
 /// Shows the version history sheet as a bottom sheet
 Future<void> showVersionHistorySheet(BuildContext context) {
+  if (ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider)) {
+    return showRdSheet<void>(context, const VersionHistorySheet(beta: true));
+  }
   return showModalBottomSheet(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
