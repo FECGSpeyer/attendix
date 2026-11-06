@@ -14090,6 +14090,10 @@
   "@redesignImportMenuHint": {
     "description": "redesign.import.menuHint"
   },
+  "redesignImportNewGroupMessage": "Attendix legt die Gruppe erst beim Hochladen an.",
+  "@redesignImportNewGroupMessage": {
+    "description": "redesign.import.newGroupMessage"
+  },
   "redesignImportNewGroupTitle": "Neue Gruppe anlegen",
   "@redesignImportNewGroupTitle": {
     "description": "redesign.import.newGroupTitle"
@@ -16002,6 +16006,190 @@
   "redesignTabWorks": "Werke",
   "@redesignTabWorks": {
     "description": "redesign.tab.works"
+  },
+  "redesignTenantsAnother": "Weitere Gruppe",
+  "@redesignTenantsAnother": {
+    "description": "redesign.tenants.another"
+  },
+  "redesignTenantsAskOnStart": "Gruppe nach der Anmeldung wählen",
+  "@redesignTenantsAskOnStart": {
+    "description": "redesign.tenants.askOnStart"
+  },
+  "redesignTenantsAskOnStartHint": "Fragt nach jeder Anmeldung, welche Gruppe du öffnen möchtest.",
+  "@redesignTenantsAskOnStartHint": {
+    "description": "redesign.tenants.askOnStartHint"
+  },
+  "redesignTenantsCannotDelete": "Nur Admins der Gruppe können sie löschen.",
+  "@redesignTenantsCannotDelete": {
+    "description": "redesign.tenants.cannotDelete"
+  },
+  "redesignTenantsCreate": "Neue Gruppe gründen",
+  "@redesignTenantsCreate": {
+    "description": "redesign.tenants.create"
+  },
+  "redesignTenantsCreated": "Angelegt am",
+  "@redesignTenantsCreated": {
+    "description": "redesign.tenants.created"
+  },
+  "redesignTenantsCurrent": "Aktuell",
+  "@redesignTenantsCurrent": {
+    "description": "redesign.tenants.current"
+  },
+  "redesignTenantsDelete": "Gruppe löschen",
+  "@redesignTenantsDelete": {
+    "description": "redesign.tenants.delete"
+  },
+  "redesignTenantsDeleteAccount": "Konto löschen",
+  "@redesignTenantsDeleteAccount": {
+    "description": "redesign.tenants.deleteAccount"
+  },
+  "redesignTenantsDeleteDone": "Die Gruppe wurde gelöscht.",
+  "@redesignTenantsDeleteDone": {
+    "description": "redesign.tenants.deleteDone"
+  },
+  "redesignTenantsDeleteFailed": "Die Gruppe konnte nicht gelöscht werden.",
+  "@redesignTenantsDeleteFailed": {
+    "description": "redesign.tenants.deleteFailed"
+  },
+  "redesignTenantsDeleteMessage": "„{name}“ wird mit allen Daten gelöscht. Das kann nicht rückgängig gemacht werden. Gib zur Bestätigung den Namen der Gruppe ein:",
+  "@redesignTenantsDeleteMessage": {
+    "description": "redesign.tenants.deleteMessage",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignTenantsDeleteNamePh": "Name der Gruppe",
+  "@redesignTenantsDeleteNamePh": {
+    "description": "redesign.tenants.deleteNamePh"
+  },
+  "redesignTenantsDeleteTitle": "Gruppe löschen?",
+  "@redesignTenantsDeleteTitle": {
+    "description": "redesign.tenants.deleteTitle"
+  },
+  "redesignTenantsDeleteWrongName": "Der Name stimmt nicht.",
+  "@redesignTenantsDeleteWrongName": {
+    "description": "redesign.tenants.deleteWrongName"
+  },
+  "redesignTenantsDetailTitle": "Gruppe",
+  "@redesignTenantsDetailTitle": {
+    "description": "redesign.tenants.detailTitle"
+  },
+  "redesignTenantsDetails": "Details",
+  "@redesignTenantsDetails": {
+    "description": "redesign.tenants.details"
+  },
+  "redesignTenantsFavorite": "Als Favorit markieren",
+  "@redesignTenantsFavorite": {
+    "description": "redesign.tenants.favorite"
+  },
+  "redesignTenantsFavoriteRemoved": "„{name}“ ist kein Favorit mehr.",
+  "@redesignTenantsFavoriteRemoved": {
+    "description": "redesign.tenants.favoriteRemoved",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignTenantsFavoriteSet": "„{name}“ ist jetzt Favorit.",
+  "@redesignTenantsFavoriteSet": {
+    "description": "redesign.tenants.favoriteSet",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignTenantsIntro": "Tippe auf eine Gruppe, um sie zu öffnen.",
+  "@redesignTenantsIntro": {
+    "description": "redesign.tenants.intro"
+  },
+  "redesignTenantsJoin": "Einer Gruppe beitreten",
+  "@redesignTenantsJoin": {
+    "description": "redesign.tenants.join"
+  },
+  "redesignTenantsMembers": "Mitglieder",
+  "@redesignTenantsMembers": {
+    "description": "redesign.tenants.members"
+  },
+  "redesignTenantsMore": "Mehr zu {name}",
+  "@redesignTenantsMore": {
+    "description": "redesign.tenants.more",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignTenantsNewCreated": "Die Gruppe wurde gegründet.",
+  "@redesignTenantsNewCreated": {
+    "description": "redesign.tenants.newCreated"
+  },
+  "redesignTenantsNewMain": "Hauptgruppe",
+  "@redesignTenantsNewMain": {
+    "description": "redesign.tenants.newMain"
+  },
+  "redesignTenantsNewMainHint": "Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. Weitere Gruppen wie Sopran oder Geigen legst du später in der Verwaltung an.",
+  "@redesignTenantsNewMainHint": {
+    "description": "redesign.tenants.newMainHint"
+  },
+  "redesignTenantsNewMainName": "Name der Hauptgruppe",
+  "@redesignTenantsNewMainName": {
+    "description": "redesign.tenants.newMainName"
+  },
+  "redesignTenantsNewMissing": "Bitte fülle Name, Kürzel und Hauptgruppe aus.",
+  "@redesignTenantsNewMissing": {
+    "description": "redesign.tenants.newMissing"
+  },
+  "redesignTenantsNewName": "Name",
+  "@redesignTenantsNewName": {
+    "description": "redesign.tenants.newName"
+  },
+  "redesignTenantsNewNameHint": "Wird in der App angezeigt.",
+  "@redesignTenantsNewNameHint": {
+    "description": "redesign.tenants.newNameHint"
+  },
+  "redesignTenantsNewShort": "Kürzel",
+  "@redesignTenantsNewShort": {
+    "description": "redesign.tenants.newShort"
+  },
+  "redesignTenantsNewShortHint": "Für kurze Anzeigen, z. B. in der Gruppenauswahl.",
+  "@redesignTenantsNewShortHint": {
+    "description": "redesign.tenants.newShortHint"
+  },
+  "redesignTenantsNewSubmit": "Gründen",
+  "@redesignTenantsNewSubmit": {
+    "description": "redesign.tenants.newSubmit"
+  },
+  "redesignTenantsNewTitle": "Neue Gruppe",
+  "@redesignTenantsNewTitle": {
+    "description": "redesign.tenants.newTitle"
+  },
+  "redesignTenantsNewType": "Art der Gruppe",
+  "@redesignTenantsNewType": {
+    "description": "redesign.tenants.newType"
+  },
+  "redesignTenantsNotFound": "Diese Gruppe gibt es nicht mehr.",
+  "@redesignTenantsNotFound": {
+    "description": "redesign.tenants.notFound"
+  },
+  "redesignTenantsRegion": "Region",
+  "@redesignTenantsRegion": {
+    "description": "redesign.tenants.region"
+  },
+  "redesignTenantsRole": "Deine Rolle",
+  "@redesignTenantsRole": {
+    "description": "redesign.tenants.role"
+  },
+  "redesignTenantsStart": "Nach der Anmeldung",
+  "@redesignTenantsStart": {
+    "description": "redesign.tenants.start"
+  },
+  "redesignTenantsTitle": "Gruppen",
+  "@redesignTenantsTitle": {
+    "description": "redesign.tenants.title"
+  },
+  "redesignTenantsTypeGeneral": "Allgemein",
+  "@redesignTenantsTypeGeneral": {
+    "description": "redesign.tenants.typeGeneral"
+  },
+  "redesignTenantsUnfavorite": "Kein Favorit mehr",
+  "@redesignTenantsUnfavorite": {
+    "description": "redesign.tenants.unfavorite"
   },
   "redesignTodayAllEvents": "Alle Termine",
   "@redesignTodayAllEvents": {
