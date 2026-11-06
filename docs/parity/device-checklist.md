@@ -28,9 +28,9 @@ Browser, ausgeführt auf dem Handy oder am Rechner.
 
 Diese Punkte entscheiden, ob Play und App Store den Build überhaupt annehmen.
 
-- ☐ Android: mit `scripts/store_build.sh appbundle` bauen (setzt `versionName` = 5.0.0 und `versionCode` = pubspec-Build + 100, aktuell 241; bricht ab, wenn ≤ Ionic 230). Nach dem Build in „App-Info“ bzw. in der Play Console prüfen. (x-4beeb3b857)
-- ☐ iOS: mit `scripts/store_build.sh ipa` bauen, bzw. vor einem Xcode-Archiv `scripts/store_build.sh ios --config-only` ausführen; im Organizer Version 5.0.0 und Build ≥ 241 prüfen (Ionic 4.19.9 steht bei 239). (x-cb1c5c9d93)
-- ☐ Die Versionsanzeige in der App (Einstellungen-Badge, Anmeldeseite) zeigt dieselbe Version wie der Store. Sie kommt aus `AppConstants.appVersion`, nicht aus dem Build-Flag. (x-4beeb3b857)
+- ☐ Android: mit `scripts/store_build.sh appbundle` bauen. Das ist ein Shorebird-Release (sonst kommen keine OTA-Patches an, siehe `docs/release/shorebird.md`) und setzt `versionName` = 5.0.0 und `versionCode` = pubspec-Build + 100 (bricht ab, wenn ≤ Ionic 230). Nach dem Build in „App-Info“ bzw. in der Play Console prüfen. (x-4beeb3b857, x-6fc37335ce)
+- ☐ iOS: mit `scripts/store_build.sh ipa` bauen (Shorebird-Release), **kein** Xcode-Archiv für den Store, das wäre ohne Shorebird. In App Store Connect Version 5.0.0 und Build ≥ 241 prüfen (Ionic 4.19.9 steht bei 239). (x-cb1c5c9d93, x-6fc37335ce)
+- ☐ Die Versionsanzeige in der App (Einstellungen-Badge, Anmeldeseite) zeigt dieselbe Version wie der Store. Sie kommt aus `AppConstants.displayVersion`, nicht aus dem Build-Flag. (x-4beeb3b857)
 - ☐ Bundle-ID `io.stephanus.attendix` auf iOS und Android, iOS-Team `MXM3YWAKPL`. Die `apple-app-site-association` darf nicht nach dem veralteten Kommentar in `Runner.entitlements` geändert werden. (x-49efd91be0)
 - ☐ Android: Release-Bundle (nicht Debug) meldet sich an und lädt Daten. `INTERNET` steht im Release-Manifest nur über Plugin-Manifeste. (x-5da3efae62)
 - ☐ Android: `minSdk` ≥ 24, `compileSdk` ≥ 36, `targetSdk` ≥ 36 im gebauten Bundle. (x-83706089fb)

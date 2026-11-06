@@ -1,0 +1,16 @@
+{
+ "batch": "zz-fixed-notendruck-r6",
+ "ionic": "1923d203",
+ "afterRound": 6,
+ "flutter": "5ddaa2a",
+ "items": {
+  "x-6a833a4976": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/data/pdf_page_merger.dart",
+    "lib/features/songs/data/song_print_service.dart"
+   ],
+   "n": "Notendruck fügt PDFs als Vektorseiten zusammen wie pdf-lib copyPages (PdfPageMerger); beschädigte/verschlüsselte PDFs, Ebenen und Formularfelder werden gerastert eingefügt. PR #354."
+  }
+ }
+}

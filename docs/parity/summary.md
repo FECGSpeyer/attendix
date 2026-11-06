@@ -2,7 +2,7 @@
 
 Ionic 4.19.9 (1923d203), 5684 Punkte in 213 Bausteinen.
 
-Flutter seit Urteil geändert: 1770 Punkte (davon ok 1306, Abweichungen 462), verglichen mit HEAD 6eb9d93a.
+Flutter seit Urteil geändert: 1773 Punkte (davon ok 1306, Abweichungen 465), verglichen mit HEAD 121120ea.
 
 | Status | Anzahl |
 |---|---|
@@ -14,17 +14,16 @@ Flutter seit Urteil geändert: 1770 Punkte (davon ok 1306, Abweichungen 462), ve
 
 `zusammenfassend`: Logik-Einträge mit diff/missing, deren Befunde einzeln als Zusatzbefunde stehen (nicht unter diff/missing gezählt).
 
-Zusätzliche Befunde: 275
+Zusätzliche Befunde: 274
 
 ## Offene Abweichungen nach Schwere
 
 ### hoch (0)
 
 
-### mittel (3)
+### mittel (2)
 
 - **services/live-update/live-update.service** `x-6fc37335ce` zusätzlicher Befund: Updates nur über den Store statt OTA – Befund real, technisch bedingt: Ionic lädt signierte Web-Bundles still und aktiviert sie beim Kaltstart bzw. auf /login, /register / Flutter prüft beim Kaltstart die Store-Version (ab 5.0.0) und bietet 'Update installieren' (Store-Seite bzw. Play In-App-Update); Hotfixes erst nach Store-Freigabe. login_page.dart nur verschoben (Banner jetzt Zeile 674).
-- **services/print/print.service** `x-6a833a4976` zusätzlicher Befund: PDF-Seiten werden gerastert – Weiter real: Printing.raster(bytes, dpi: 150) → je Seite ein PNG in neues PDF (song_print_service.dart:84–90) statt Ionic pdf-lib copyPages (Vektorseiten). Unschärferer Notendruck, größere Dateien, viel Speicher bei großen Mappen.
 - **native/config** `x-6d9a24bfe2` zusätzlicher Befund: Anmeldung und lokale Daten gehen beim Update verloren – Weiter teilweise real: Übernahme liest nur Sitzung (sb-…-auth-token) und currentTenantId aus dem Ionic-localStorage. Nicht übernommen: Offline-Warteschlange offline_writes_v1 (nicht synchronisierte Änderungen gehen beim Update verloren), Ansichts-/Sortieroptionen aus Ionic Storage, push_prompt_shown. mittel passt; Gerätetest laut device-checklist.md offen.
 
 ### niedrig (1247)
