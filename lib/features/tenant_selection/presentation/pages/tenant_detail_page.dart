@@ -5,13 +5,16 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/string_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 
 /// Page showing tenant details and danger zone (delete)
 class TenantDetailPage extends ConsumerWidget {
@@ -22,6 +25,10 @@ class TenantDetailPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tenantsAsync = ref.watch(userTenantsProvider);
+    // REDESIGN (Ich und Einstieg, E1): detail page in the Beta look.
+    if (ref.watch(redesignEnabledProvider)) {
+      return _RdTenantDetail(tenantId: tenantId, tenants: tenantsAsync);
+    }
 
     return tenantsAsync.when(
       loading: () => const Scaffold(
@@ -291,8 +298,9 @@ class _DangerZone extends ConsumerWidget {
 Future<void> _showDeleteTenantDialog(
   BuildContext context,
   WidgetRef ref,
-  Tenant tenant,
-) async {
+  Tenant tenant, {
+  bool beta = false,
+}) async {
   final tenantName = tenant.name;
   final controller = TextEditingController();
 
@@ -304,17 +312,21 @@ Future<void> _showDeleteTenantDialog(
           builder: (context, setDialogState) {
             final matches = controller.text.trim() == tenantName;
             return AppAlertDialog(
-              title: Text(context.l10n.tenantSelectFlutterDeleteTenant),
+              title: Text(beta ? context.l10n.redesignTenantsDeleteTitle : context.l10n.tenantSelectFlutterDeleteTenant),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '${context.l10n.peopleCannotUndoExcl} ${context.l10n.tenantSelectFlutterDeleteAllData}',
-                    style: TextStyle(color: AppColors.danger),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(context.l10n.tenantSelectFlutterEnterNameToConfirm),
+                  if (beta)
+                    Text(context.l10n.redesignTenantsDeleteMessage(tenantName))
+                  else ...[
+                    Text(
+                      '${context.l10n.peopleCannotUndoExcl} ${context.l10n.tenantSelectFlutterDeleteAllData}',
+                      style: TextStyle(color: AppColors.danger),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(context.l10n.tenantSelectFlutterEnterNameToConfirm),
+                  ],
                   const SizedBox(height: 8),
                   Text(
                     tenantName,
@@ -324,7 +336,7 @@ Future<void> _showDeleteTenantDialog(
                   TextField(
                     controller: controller,
                     decoration: InputDecoration(
-                      hintText: context.l10n.orgNamePh,
+                      hintText: beta ? context.l10n.redesignTenantsDeleteNamePh : context.l10n.orgNamePh,
                     ),
                     autofocus: true,
                     onChanged: (_) => setDialogState(() {}),
@@ -362,15 +374,141 @@ Future<void> _showDeleteTenantDialog(
       if (id == null) return;
       await deleteTenant(ref, id);
       if (context.mounted) {
-        ToastHelper.showSuccess(context, context.l10n.tenantSelectFlutterDeleted);
+        ToastHelper.showSuccess(
+          context,
+          beta ? context.l10n.redesignTenantsDeleteDone : context.l10n.tenantSelectFlutterDeleted,
+        );
         context.go('/tenants');
       }
     } catch (e) {
       if (context.mounted) {
-        ToastHelper.showError(context, context.l10n.svcDeleteFailed);
+        ToastHelper.showError(
+          context,
+          beta ? context.l10n.redesignTenantsDeleteFailed : context.l10n.svcDeleteFailed,
+        );
       }
     }
   } finally {
     controller.dispose();
   }
+}
+
+/// REDESIGN (E1): "Gruppe" detail page: back link, head with initials and
+/// kind, the facts as rows, "Gruppe löschen" at the bottom (admins only,
+/// same name check as before).
+class _RdTenantDetail extends ConsumerWidget {
+  const _RdTenantDetail({required this.tenantId, required this.tenants});
+
+  final int tenantId;
+  final AsyncValue<List<Tenant>> tenants;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final back = RdBackLink(
+      label: l10n.redesignTenantsTitle,
+      onTap: () => context.canPop() ? context.pop() : context.go('/tenants'),
+    );
+    final list = tenants.valueOrNull;
+    if (list == null) {
+      return RdPage(
+        onRefresh: () async {
+          try {
+            final _ = await ref.refresh(userTenantsProvider.future);
+          } catch (_) {}
+        },
+        children: [
+          back,
+          const SizedBox(height: 24),
+          if (tenants.hasError)
+            Text(l10n.redesignGroupsLoadFailed, style: RdType.body(p))
+          else
+            const Center(child: CircularProgressIndicator()),
+        ],
+      );
+    }
+    final tenant = list.where((t) => t.id == tenantId).firstOrNull;
+    if (tenant == null) {
+      return RdPage(children: [back, const SizedBox(height: 24), Text(l10n.redesignTenantsNotFound, style: RdType.body(p))]);
+    }
+    final role = Role.fromValue(tenant.role ?? 99);
+    final kind = switch (tenant.type) {
+      'choir' => l10n.registerTypeChoir,
+      'orchestra' => l10n.registerTypeOrchestra,
+      _ => l10n.redesignTenantsTypeGeneral,
+    };
+    final members = ref.watch(tenantMemberCountProvider(tenantId));
+    final name = tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName;
+    return RdPage(
+      children: [
+        back,
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            RdInitials(rdInitialsOf(tenant.shortName.isNotEmpty ? tenant.shortName : name), size: 64, square: true),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Semantics(header: true, child: Text(name, style: RdType.cardTitle(p))),
+                  if ((tenant.description ?? '').isNotEmpty)
+                    Text(tenant.description!, style: RdType.meta(p, size: 14)),
+                  const SizedBox(height: 6),
+                  RdPill(kind),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        RdGroupedList(
+          children: [
+            RdListRow(title: l10n.redesignTenantsRole, value: _roleName(role, l10n), showChevron: false),
+            RdListRow(
+              title: l10n.redesignTenantsMembers,
+              value: members.when(data: (c) => '$c', loading: () => '…', error: (_, __) => '–'),
+              showChevron: false,
+            ),
+            if ((tenant.region ?? '').isNotEmpty)
+              RdListRow(title: l10n.redesignTenantsRegion, value: tenant.region!, showChevron: false),
+            if (tenant.createdAt != null)
+              RdListRow(
+                title: l10n.redesignTenantsCreated,
+                value: DateFormat(dateFmt()).format(tenant.createdAt!),
+                showChevron: false,
+              ),
+          ],
+        ),
+        if (role.isAdmin) ...[
+          const SizedBox(height: 28),
+          RdGroupedList(
+            children: [
+              RdListRow(
+                leading: RdRowIcon(Icons.delete_outline, color: p.absent, background: p.absentSoft),
+                title: l10n.redesignTenantsDelete,
+                titleColor: p.absent,
+                showChevron: false,
+                onTap: () => _showDeleteTenantDialog(context, ref, tenant, beta: true),
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+
+  static String _roleName(Role role, AppLocalizations l10n) => switch (role) {
+        Role.admin => l10n.rolesAdministrator,
+        Role.responsible => l10n.rolesResponsible,
+        Role.helper => l10n.rolesHelper,
+        Role.viewer => l10n.rolesViewer,
+        Role.player => l10n.rolesMember,
+        Role.voiceLeader => l10n.rolesVoiceLeader,
+        Role.voiceLeaderHelper => l10n.rolesVoiceLeaderHelper,
+        Role.parent => l10n.rolesParent,
+        Role.applicant => l10n.rolesApplicant,
+        Role.none => l10n.tenantSelectFlutterNoRole,
+      };
 }

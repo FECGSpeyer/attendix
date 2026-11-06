@@ -14,4 +14,8 @@ class PwaService {
 
   /// Should show PWA install hint
   bool shouldShowInstallHint() => false;
+
+  /// Whether the browser opens Android `intent://` links (Chromium on
+  /// Android), falling back to their page when the app is missing.
+  bool opensAndroidIntents() => false;
 }
