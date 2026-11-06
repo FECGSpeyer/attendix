@@ -210,6 +210,15 @@ void main() {
           isFalse);
     });
 
+    test('times without offset are UTC, also in a daylight saving gap', () {
+      expect(
+          ionicServerChangeIsNewer('2026-03-29T02:30:00', '2026-03-29T02:29:00Z'),
+          isTrue);
+      expect(
+          ionicServerChangeIsNewer('2026-03-29T02:29:00Z', '2026-03-29T02:30:00'),
+          isFalse);
+    });
+
     test('network error or session change keeps the entries for later',
         () async {
       setPending([_ionic('1', 'pa-1', {'status': 2})]);
@@ -254,7 +263,8 @@ void main() {
 
     test('first start after the Ionic app: takeover stays open', () async {
       SharedPreferences.setMockInitialValues({});
-      await prepareIonicOfflineQueueTakeover();
+      expect(await prepareIonicOfflineQueueTakeover(), isTrue,
+          reason: 'marker stored: the session takeover may run');
       final prefs = await SharedPreferences.getInstance();
       expect(prefs.containsKey(ionicQueueDoneKey), isFalse);
       expect(prefs.getInt('ionic_offline_queue_takeover_attempts'), 0,

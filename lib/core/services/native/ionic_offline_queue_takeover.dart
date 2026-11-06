@@ -99,7 +99,7 @@ class IonicQueuedWrite {
       userId: userId is String && userId.isNotEmpty ? userId : null,
       createdAt: createdAt is String && createdAt.isNotEmpty
           ? createdAt
-          : DateTime.now().toIso8601String(),
+          : DateTime.now().toUtc().toIso8601String(),
     );
   }
 
@@ -129,16 +129,23 @@ typedef IonicQueueTarget = ({int tenantId, int attendanceId, String? changedAt})
 @visibleForTesting
 bool ionicServerChangeIsNewer(String? changedAt, String createdAt) {
   if (changedAt == null) return false;
-  var server = DateTime.tryParse(changedAt);
-  final queued = DateTime.tryParse(createdAt);
+  final server = _tryParseAsUtc(changedAt);
+  final queued = _tryParseAsUtc(createdAt);
   if (server == null || queued == null) return false;
-  // changed_at is always written as UTC; a value without offset (timestamp
-  // column without time zone) is UTC, not device-local time.
-  if (!server.isUtc) {
-    server = DateTime.utc(server.year, server.month, server.day, server.hour,
-        server.minute, server.second, server.millisecond, server.microsecond);
-  }
-  return server.isAfter(queued.toUtc());
+  return server.isAfter(queued);
+}
+
+/// A time of day at the end of the string without `Z` or `±hh:mm` offset.
+final _timeWithoutOffset =
+    RegExp(r'[Tt ]\d{2}(?::?\d{2}(?::?\d{2}(?:[.,]\d+)?)?)?$');
+
+/// Both times are written as UTC; a value without offset (timestamp column
+/// without time zone) is UTC, not device-local time. The `Z` is appended
+/// before parsing, so a daylight saving gap of the device cannot shift it.
+DateTime? _tryParseAsUtc(String value) {
+  final trimmed = value.trim();
+  return DateTime.tryParse(
+      _timeWithoutOffset.hasMatch(trimmed) ? '${trimmed}Z' : trimmed);
 }
 
 /// Resolves person_attendances ids to their tenant and Termin – only rows of
@@ -186,29 +193,38 @@ List<IonicQueuedWrite> parseIonicOfflineQueue(String? raw) {
 
 /// Step 1, before `takeOverIonicSession` (which writes its keys on the first
 /// start): if a Flutter version already ran here, the takeover is skipped.
-/// Never throws.
-Future<void> prepareIonicOfflineQueueTakeover() async {
-  if (!isNativeApp) return;
+/// Returns false only when the start marker of the first Flutter start could
+/// not be stored: the session takeover must not run then (its keys would end
+/// the queue takeover on the next start), the next start tries again. True in
+/// all other cases, also on web and desktop. Never throws.
+Future<bool> prepareIonicOfflineQueueTakeover() async {
+  if (!isNativeApp) return true;
+  final SharedPreferences prefs;
   try {
-    final prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     if (prefs.containsKey(ionicQueueDoneKey) ||
         prefs.containsKey(_readAttemptsKey) ||
         prefs.containsKey(ionicQueuePendingKey)) {
-      return;
+      return true;
     }
     if (_sessionTakeoverKeys.any(prefs.containsKey)) {
       await prefs.setBool(ionicQueueDoneKey, true);
-      return;
-    }
-    // First Flutter start: mark the takeover as started before the session
-    // takeover writes its keys, so a crash before the queue read does not
-    // end it on the next start (the read counts attempts from here).
-    if (!await prefs.setInt(_readAttemptsKey, 0)) {
-      debugPrint('[IonicQueue] could not persist the start marker');
+      return true;
     }
   } catch (e) {
     debugPrint('[IonicQueue] prepare failed: $e');
+    return true;
   }
+  // First Flutter start: mark the takeover as started before the session
+  // takeover writes its keys, so a crash before the queue read does not
+  // end it on the next start (the read counts attempts from here).
+  try {
+    if (await prefs.setInt(_readAttemptsKey, 0)) return true;
+    debugPrint('[IonicQueue] could not persist the start marker');
+  } catch (e) {
+    debugPrint('[IonicQueue] could not persist the start marker: $e');
+  }
+  return false;
 }
 
 Future<void>? _readRun;
