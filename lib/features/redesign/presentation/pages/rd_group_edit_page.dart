@@ -343,37 +343,7 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
         bottom: false,
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 4, 8, 6),
-              child: Row(
-                children: [
-                  const SizedBox(width: 88),
-                  Expanded(
-                    child: Semantics(
-                      header: true,
-                      child: Text(
-                        l10n.redesignGroupEditTitle,
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: p.text),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 88,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: RdTextLink(
-                        key: const Key('rd-group-edit-done'),
-                        label: l10n.redesignCommonDone,
-                        onTap: _done,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            RdEditTopBar(title: l10n.redesignGroupEditTitle, doneKey: const Key('rd-group-edit-done'), onDone: _done),
             Expanded(child: body),
           ],
         ),

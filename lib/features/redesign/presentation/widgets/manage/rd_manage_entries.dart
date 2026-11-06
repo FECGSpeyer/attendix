@@ -18,15 +18,9 @@ import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../export/presentation/pages/export_page.dart' show showExportModal;
 import '../../../../history/presentation/pages/history_page.dart' show showHistoryModal;
-import '../../../../settings/presentation/pages/left_players_page.dart' show showArchiveSheet;
-import '../../../../settings/presentation/pages/parents_page.dart' show showParentsSheet;
-import '../../../../settings/presentation/pages/pending_players_page.dart'
-    show showPendingPersonsSheet;
 import '../../../../settings/presentation/pages/settings_page.dart'
     show createMissingAccounts, playersOfCurrentTenant;
-import '../../../../settings/presentation/pages/viewers_page.dart' show showViewersSheet;
 import '../../../../settings/presentation/widgets/calendar_subscription_dialog.dart';
-import '../../../../settings/presentation/widgets/settings_admins_sheet.dart';
 import '../../../../settings/presentation/widgets/vorkurs_certificates.dart';
 import '../../../../songs/presentation/widgets/song_categories_sheet.dart';
 import '../../../data/rd_manage_logic.dart';
@@ -173,7 +167,6 @@ String rdManageTitle(AppLocalizations l10n, RdManageEntry entry) => switch (entr
       RdManageEntry.export => l10n.settingsExport,
       RdManageEntry.certificates => l10n.settingsCertificates,
       RdManageEntry.calendar => l10n.settingsSubscribeCalendar,
-      RdManageEntry.writeMessage => l10n.redesignComposeTitle,
       RdManageEntry.announcements => l10n.settingsAnnouncements,
       RdManageEntry.teamOrg => l10n.teamOrgTitle,
       RdManageEntry.myTasks => l10n.tasksMyTasks,
@@ -220,7 +213,6 @@ IconData rdManageIcon(RdManageEntry entry) => switch (entry) {
       RdManageEntry.export => Icons.download_outlined,
       RdManageEntry.certificates => Icons.workspace_premium_outlined,
       RdManageEntry.calendar => Icons.calendar_month_outlined,
-      RdManageEntry.writeMessage => Icons.edit_outlined,
       RdManageEntry.announcements => Icons.mail_outline,
       RdManageEntry.teamOrg => Icons.supervised_user_circle_outlined,
       RdManageEntry.myTasks => Icons.check_circle_outline,
@@ -237,24 +229,26 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
   ref.read(rdManageRecentProvider.notifier).push(entry);
   void push(String location) => context.push(location);
   switch (entry) {
+    // Lists in the template "Verwaltungsliste" (rd_manage_list.dart); the
+    // old sheets stay in the normal app.
     case RdManageEntry.approvals:
-      showPendingPersonsSheet(context);
+      push(RedesignRoutes.approvals);
     case RdManageEntry.bulkMembers:
       push(RedesignRoutes.bulkMembers);
     case RdManageEntry.rolesPermissions:
-      push('/settings/role-permissions');
+      push(RedesignRoutes.rolePermissions);
     case RdManageEntry.admins:
-      showAdminsSheet(context);
+      push(RedesignRoutes.admins);
     case RdManageEntry.parents:
-      showParentsSheet(context);
+      push(RedesignRoutes.parents);
     case RdManageEntry.viewers:
-      showViewersSheet(context);
+      push(RedesignRoutes.viewers);
     case RdManageEntry.teachers:
-      push('/settings/teachers');
+      push(RedesignRoutes.teachers);
     case RdManageEntry.missingAccounts:
       createMissingAccounts(context, ref, ref.read(rdMissingAccountsProvider));
     case RdManageEntry.archive:
-      showArchiveSheet(context);
+      push(RedesignRoutes.archive);
     case RdManageEntry.myVoice:
       push('/settings/voice-leader');
     // Lists in the template "Verwaltungsliste" (rd_manage_list.dart); the
@@ -264,7 +258,7 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
     case RdManageEntry.shiftPlans:
       push(RedesignRoutes.shiftPlans);
     case RdManageEntry.extraFields:
-      push('/settings/general/extra-fields');
+      push(RedesignRoutes.extraFields);
     case RdManageEntry.runSheets:
       push('/planning');
     case RdManageEntry.adHocPlanning:
@@ -289,8 +283,6 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
       generateVorkursCertificates(context, ref);
     case RdManageEntry.calendar:
       showCalendarSubscriptionDialog(context, ref);
-    case RdManageEntry.writeMessage:
-      push(RedesignRoutes.compose);
     case RdManageEntry.announcements:
       push('/settings/messages');
     case RdManageEntry.teamOrg || RdManageEntry.myTasks:

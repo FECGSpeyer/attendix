@@ -13,6 +13,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/route_leave_guard.dart';
 import '../../../profile/presentation/widgets/profile_helpers.dart'
     show profileRoleName;
+import 'join/rd_join_sheet.dart';
 import 'rd_widgets.dart';
 
 /// REDESIGN: group chip at the top of "Heute" ("SO Stadtorchester ⌄").
@@ -147,6 +148,32 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
     router.go('/tenants');
   }
 
+  /// "Einer Gruppe beitreten": the join sheet replaces this one.
+  /// "Einer Gruppe beitreten": joining switches the group afterwards, so a
+  /// page with unsaved input or a running save is asked first, like
+  /// [_create].
+  Future<void> _join() async {
+    final rootContext = Navigator.of(context, rootNavigator: true).context;
+    final navigator = Navigator.of(context);
+    final sheet = ModalRoute.of(context);
+    final guards = ref.read(routeLeaveGuardRegistryProvider);
+    if (guards.hasGuards && !await guards.canLeave()) return;
+    if (sheet != null && sheet.isCurrent) navigator.pop();
+    if (rootContext.mounted) showRdJoinSheet(rootContext);
+  }
+
+  /// "Neue Gruppe gründen": like "Gruppen verwalten", a page with unsaved
+  /// input or a running save is asked first.
+  Future<void> _create() async {
+    final navigator = Navigator.of(context);
+    final sheet = ModalRoute.of(context);
+    final router = GoRouter.of(context);
+    final guards = ref.read(routeLeaveGuardRegistryProvider);
+    if (guards.hasGuards && !await guards.canLeave()) return;
+    if (sheet != null && sheet.isCurrent) navigator.pop();
+    router.push('/tenants/new');
+  }
+
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
@@ -222,6 +249,27 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
                     ),
                   ),
                 ),
+              ),
+              const SizedBox(height: 12),
+              // REDESIGN (E1): join and found right here, not only via the
+              // group list.
+              RdGroupedList(
+                children: [
+                  RdListRow(
+                    leading: RdRowIcon(Icons.group_add_outlined, color: p.primary, background: p.soft),
+                    title: l10n.redesignTenantsJoin,
+                    titleColor: p.link,
+                    showChevron: false,
+                    onTap: _switchingTo == null ? _join : null,
+                  ),
+                  RdListRow(
+                    leading: RdRowIcon(Icons.add_business_outlined, color: p.primary, background: p.soft),
+                    title: l10n.redesignTenantsCreate,
+                    titleColor: p.link,
+                    showChevron: false,
+                    onTap: _switchingTo == null ? _create : null,
+                  ),
+                ],
               ),
               const SizedBox(height: 12),
               Row(

@@ -291,6 +291,25 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
   }
 }
 
+/// Signs out and always clears the selected group afterwards (#384).
+///
+/// Offline, `auth.signOut()` removes the local session first and then fails
+/// on the server request. The group still has to be cleared: otherwise it
+/// stays selected, and after the next sign-in the group selection finds a
+/// group already set and shows the list instead of opening the group
+/// (Ionic setTenant opens the stored or first group).
+Future<void> signOutAndClearTenant({
+  required Future<void> Function() signOut,
+  required Future<void> Function() clearTenant,
+}) async {
+  try {
+    await signOut();
+  } catch (e) {
+    debugPrint('Sign-out request failed: $e');
+  }
+  await clearTenant();
+}
+
 /// Provider for user's tenants list (sorted: favorites first)
 final userTenantsProvider = FutureProvider<List<Tenant>>((ref) async {
   final supabase = ref.watch(supabaseClientProvider);

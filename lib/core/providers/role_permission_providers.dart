@@ -276,11 +276,20 @@ class RolePermissionNotifier extends Notifier<AsyncValue<void>> {
   AsyncValue<void> build() => const AsyncValue.data(null);
 
   /// Speichert geänderte Berechtigungen und optional files_shared.
-  Future<bool> save(List<TenantRolePermission> permissions, {bool? filesShared}) async {
+  ///
+  /// [repo]: a repository already bound to the tenant the change belongs to
+  /// (pages that queue saves bind it when the change is made); default is
+  /// the repository of the current tenant.
+  Future<bool> save(
+    List<TenantRolePermission> permissions, {
+    bool? filesShared,
+    RolePermissionRepository? repo,
+  }) async {
     state = const AsyncValue.loading();
     var wrotePermissions = false;
+    final boundRepo = repo;
     try {
-      final repo = ref.read(rolePermissionRepositoryWithTenantProvider);
+      final RolePermissionRepository repo = boundRepo ?? ref.read(rolePermissionRepositoryWithTenantProvider);
       if (!repo.hasTenantId) throw StateError(l10nWithoutContext.coreFlutterNoTenantSelected);
       // SOL_FIX19: the tenant this save belongs to (the repository is bound
       // to it), captured before the first await.

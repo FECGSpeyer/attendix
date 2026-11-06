@@ -9711,6 +9711,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAdminTitle => 'Verwaltung';
 
   @override
+  String get redesignAdminsListAdd => 'Admin hinzufügen';
+
+  @override
+  String get redesignAdminsListEmpty => 'Noch keine Admins.';
+
+  @override
+  String get redesignAdminsListIntro =>
+      'Admins haben alle Rechte in dieser Gruppe und können sie auch löschen.';
+
+  @override
+  String get redesignAdminsListRemove => 'Admin entfernen';
+
+  @override
+  String get redesignAdminsListYou => 'Das bist du';
+
+  @override
   String get redesignAppearanceAppIcon => 'App-Symbol';
 
   @override
@@ -9801,6 +9817,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignApplicantWaitingFor(Object group) {
     return 'Deine Anmeldung bei $group wird geprüft';
   }
+
+  @override
+  String get redesignArchiveListEmpty => 'Keine archivierten Personen.';
+
+  @override
+  String get redesignArchiveListIntro =>
+      'Ausgetretene Personen. Tippe auf eine Person, um sie anzusehen.';
+
+  @override
+  String get redesignArchiveListRestore => 'Wiederherstellen';
 
   @override
   String get redesignBulkActionArchive => 'Archivieren';
@@ -10772,6 +10798,82 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignExtraFieldEditDefaultHint =>
+      'Gilt, solange eine Person oder ein Werk noch keinen Wert hat.';
+
+  @override
+  String get redesignExtraFieldEditDelete => 'Zusatzfeld löschen';
+
+  @override
+  String get redesignExtraFieldEditDeleteFailed =>
+      'Das Zusatzfeld konnte nicht gelöscht werden.';
+
+  @override
+  String get redesignExtraFieldEditDeleteHint =>
+      'Die Werte bei allen Personen bzw. Werken werden mit gelöscht.';
+
+  @override
+  String get redesignExtraFieldEditName => 'Name';
+
+  @override
+  String get redesignExtraFieldEditNameEmpty =>
+      'Ein leerer Name wird nicht gespeichert.';
+
+  @override
+  String get redesignExtraFieldEditNotFound =>
+      'Dieses Zusatzfeld gibt es nicht mehr.';
+
+  @override
+  String get redesignExtraFieldEditOptionAdd => 'Option hinzufügen';
+
+  @override
+  String get redesignExtraFieldEditOptionHint =>
+      'Die erste Option ist der Standardwert. Leere Optionen werden nicht gespeichert.';
+
+  @override
+  String get redesignExtraFieldEditOptions => 'Optionen';
+
+  @override
+  String get redesignExtraFieldEditOptionsNeeded =>
+      'Eine Auswahl braucht mindestens eine Option.';
+
+  @override
+  String get redesignExtraFieldEditResetHint =>
+      'Setzt das Feld bei allen Personen auf den Standardwert.';
+
+  @override
+  String get redesignExtraFieldEditTarget => 'Gilt für';
+
+  @override
+  String get redesignExtraFieldEditTargetPersons => 'Personen';
+
+  @override
+  String get redesignExtraFieldEditTargetSongs => 'Werke';
+
+  @override
+  String get redesignExtraFieldEditTitle => 'Zusatzfeld bearbeiten';
+
+  @override
+  String get redesignExtraFieldsListAdd => 'Zusatzfeld hinzufügen';
+
+  @override
+  String get redesignExtraFieldsListAddFor => 'Feld für';
+
+  @override
+  String get redesignExtraFieldsListEmpty =>
+      'Noch keine Zusatzfelder angelegt.';
+
+  @override
+  String get redesignExtraFieldsListIntro =>
+      'Eigene Felder für Personen und Werke, zum Beispiel Kleidergröße oder Verlag.';
+
+  @override
+  String get redesignExtraFieldsListPersons => 'Für Personen';
+
+  @override
+  String get redesignExtraFieldsListSongs => 'Für Werke';
+
+  @override
   String redesignFilesActions(Object name) {
     return 'Aktionen für $name';
   }
@@ -11545,6 +11647,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Ordner aus Google Drive, Dropbox oder vom Rechner';
 
   @override
+  String get redesignImportNewGroupMessage =>
+      'Attendix legt die Gruppe erst beim Hochladen an.';
+
+  @override
   String get redesignImportNewGroupTitle => 'Neue Gruppe anlegen';
 
   @override
@@ -11982,7 +12088,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignManageAnnouncementsHint =>
-      'Gesendete Mitteilungen ansehen';
+      'Schreiben, Gesendetes, Automatik';
 
   @override
   String get redesignManageAreaCommunication => 'Kommunikation';
@@ -12250,6 +12356,25 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignMessagesBellAllGroups => 'Alle Gruppen';
+
+  @override
+  String get redesignMessagesBellEarlier => 'Früher';
+
+  @override
+  String get redesignMessagesBellNew => 'Neu';
+
+  @override
+  String get redesignMessagesBellThisGroup => 'Diese Gruppe';
+
+  @override
+  String get redesignMessagesDelivery => 'Zustellung';
+
+  @override
+  String get redesignMessagesIntro =>
+      'Alles, was an die Gruppe ging, mit Lesestatus.';
+
+  @override
   String get redesignNotifForMe => 'Für mich';
 
   @override
@@ -12382,10 +12507,30 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignParentsListAdd => 'Elternteil einladen';
+
+  @override
+  String get redesignParentsListEmpty => 'Noch keine Eltern eingeladen.';
+
+  @override
+  String get redesignParentsListIntro =>
+      'Eltern sehen die Anwesenheiten ihrer Kinder und tragen Abwesenheiten ein.';
+
+  @override
+  String get redesignParentsListRemove => 'Elternteil entfernen';
+
+  @override
   String get redesignParentsRoute => 'Route';
 
   @override
   String get redesignParentsToday => 'Heute';
+
+  @override
+  String get redesignPendingListEmpty => 'Gerade wartet niemand auf Freigabe.';
+
+  @override
+  String get redesignPendingListIntro =>
+      'Diese Personen haben sich angemeldet und warten auf deine Freigabe. Tippe auf eine Person, um sie zu prüfen.';
 
   @override
   String get redesignPersonAbsence => 'Abwesend';
@@ -12409,6 +12554,89 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPersonEdit => 'Bearbeiten';
+
+  @override
+  String get redesignPersonFormArchived => 'Diese Person ist archiviert.';
+
+  @override
+  String get redesignPersonFormContact => 'Kontakt';
+
+  @override
+  String get redesignPersonFormCopyOther => 'In andere Gruppe kopieren';
+
+  @override
+  String get redesignPersonFormCreate => 'Anlegen';
+
+  @override
+  String get redesignPersonFormCreateButton => 'Person anlegen';
+
+  @override
+  String redesignPersonFormEditTitle(Object name) {
+    return '$name bearbeiten';
+  }
+
+  @override
+  String get redesignPersonFormEmailHint => 'Bekommt damit Zugang zur App';
+
+  @override
+  String redesignPersonFormEmailUsedBy(Object name) {
+    return 'Diese E-Mail wird in einer anderen Gruppe von $name verwendet. Daten übernehmen?';
+  }
+
+  @override
+  String get redesignPersonFormEmailUsedMany =>
+      'Diese E-Mail wird bereits in anderen Gruppen verwendet. Daten welcher Person übernehmen?';
+
+  @override
+  String get redesignPersonFormExistingUserHint =>
+      'Gibt es für die E-Mail-Adresse schon ein Konto, wird es automatisch dieser Gruppe zugewiesen.';
+
+  @override
+  String get redesignPersonFormLiveHint =>
+      'Änderungen werden sofort gespeichert.';
+
+  @override
+  String get redesignPersonFormMatchDismiss => 'Ausblenden';
+
+  @override
+  String get redesignPersonFormMatchFound =>
+      'Person in anderer Gruppe gefunden?';
+
+  @override
+  String get redesignPersonFormMore => 'Weitere Angaben';
+
+  @override
+  String get redesignPersonFormMoreHint =>
+      'Geburtstag, Beitritt, Lehrer, Zusatzfelder und mehr';
+
+  @override
+  String get redesignPersonFormNewTitle => 'Neue Person';
+
+  @override
+  String get redesignPersonFormNoMatchOther =>
+      'In deinen anderen Gruppen wurde keine passende Person gefunden.';
+
+  @override
+  String get redesignPersonFormNotAllowed =>
+      'Nur Admins und Verantwortliche können Personen anlegen und bearbeiten.';
+
+  @override
+  String get redesignPersonFormNotSet => 'Nicht gesetzt';
+
+  @override
+  String get redesignPersonFormOtherGroups => 'Andere Gruppen';
+
+  @override
+  String get redesignPersonFormProblemSave => 'Gespräch speichern';
+
+  @override
+  String get redesignPersonFormSaved => 'Gespeichert ✓';
+
+  @override
+  String get redesignPersonFormSearchOtherGroup => 'In anderer Gruppe suchen';
+
+  @override
+  String get redesignPersonFormTransferOther => 'In andere Gruppe übertragen';
 
   @override
   String get redesignPersonHistory => 'Verlauf';
@@ -12544,15 +12772,32 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanCollapsed => 'eingeklappt';
 
   @override
+  String get redesignPlanContent => 'Inhalt';
+
+  @override
   String redesignPlanCopied(Object date) {
     return 'Ablauf vom $date übernommen';
   }
+
+  @override
+  String redesignPlanCopyOf(Object name) {
+    return 'Kopie von „$name“';
+  }
+
+  @override
+  String get redesignPlanCreatePlan => 'Plan anlegen';
+
+  @override
+  String get redesignPlanDay => 'Tag';
 
   @override
   String get redesignPlanDelete => 'Löschen';
 
   @override
   String get redesignPlanDeleteHint => 'Mit Rückgängig';
+
+  @override
+  String get redesignPlanDownload => 'Herunterladen';
 
   @override
   String get redesignPlanDrag => 'Ziehen zum Sortieren';
@@ -12665,6 +12910,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanMoveUp => 'Nach oben';
 
   @override
+  String get redesignPlanNameHint => 'Name (optional)';
+
+  @override
+  String get redesignPlanNewPlan => 'Neuer Plan';
+
+  @override
   String get redesignPlanNext => 'Nächster Termin';
 
   @override
@@ -12727,7 +12978,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanShareHint => 'Mitglieder sehen den Ablauf im Termin';
 
   @override
+  String get redesignPlanSongInPlan => 'im Ablauf';
+
+  @override
   String get redesignPlanStart => 'Beginn';
+
+  @override
+  String get redesignPlanTelegram => 'Per Telegram';
 
   @override
   String get redesignPlanTemplateDelete => 'Vorlage löschen';
@@ -12745,6 +13002,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignPlanUntil(Object time) {
     return 'bis $time';
   }
+
+  @override
+  String get redesignPlanViewNow => 'Jetzt';
+
+  @override
+  String get redesignPlanViewWhich => 'Welcher Plan';
+
+  @override
+  String get redesignPlanViewWhole => 'Ganzer Ablauf';
 
   @override
   String get redesignPultAllOpen => 'Alle Offenen da';
@@ -12856,6 +13122,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignRemindTitle(Object count) {
     return '$count noch offen';
   }
+
+  @override
+  String get redesignRolePermIntro =>
+      'Lege fest, was Helfer und Mitglieder in dieser Gruppe dürfen. Jeder Schalter wird sofort gespeichert.';
 
   @override
   String get redesignShiftsListAdd => 'Schichtplan anlegen';
@@ -13070,6 +13340,199 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignTabWorks => 'Werke';
+
+  @override
+  String get redesignTeacherEditContact => 'Kontakt';
+
+  @override
+  String get redesignTeacherEditInstruments => 'Instrumente';
+
+  @override
+  String get redesignTeacherEditInstrumentsHint =>
+      'Tippe zum Aus- oder Abwählen.';
+
+  @override
+  String get redesignTeacherEditName => 'Name';
+
+  @override
+  String get redesignTeacherEditNameEmpty =>
+      'Ein leerer Name wird nicht gespeichert.';
+
+  @override
+  String get redesignTeacherEditNotFound => 'Diesen Lehrer gibt es nicht mehr.';
+
+  @override
+  String get redesignTeacherEditNotes => 'Notizen';
+
+  @override
+  String get redesignTeacherEditPlayers => 'Spieler';
+
+  @override
+  String get redesignTeacherEditPlayersNone =>
+      'Noch lernt niemand bei diesem Lehrer.';
+
+  @override
+  String get redesignTeacherEditPrivate => 'Privatlehrer';
+
+  @override
+  String get redesignTeacherEditTitle => 'Lehrer bearbeiten';
+
+  @override
+  String get redesignTeachersListAdd => 'Lehrer hinzufügen';
+
+  @override
+  String get redesignTeachersListAddFailed =>
+      'Der Lehrer konnte nicht angelegt werden.';
+
+  @override
+  String get redesignTeachersListEmpty => 'Noch keine Lehrer angelegt.';
+
+  @override
+  String get redesignTeachersListIntro =>
+      'Lehrer und die Instrumente, die sie unterrichten. Wer bei wem lernt, legst du bei der Person fest.';
+
+  @override
+  String get redesignTenantsAnother => 'Weitere Gruppe';
+
+  @override
+  String get redesignTenantsAskOnStart => 'Gruppe nach der Anmeldung wählen';
+
+  @override
+  String get redesignTenantsAskOnStartHint =>
+      'Fragt nach jeder Anmeldung, welche Gruppe du öffnen möchtest.';
+
+  @override
+  String get redesignTenantsCannotDelete =>
+      'Nur Admins der Gruppe können sie löschen.';
+
+  @override
+  String get redesignTenantsCreate => 'Neue Gruppe gründen';
+
+  @override
+  String get redesignTenantsCreated => 'Angelegt am';
+
+  @override
+  String get redesignTenantsCurrent => 'Aktuell';
+
+  @override
+  String get redesignTenantsDelete => 'Gruppe löschen';
+
+  @override
+  String get redesignTenantsDeleteAccount => 'Konto löschen';
+
+  @override
+  String get redesignTenantsDeleteDone => 'Die Gruppe wurde gelöscht.';
+
+  @override
+  String get redesignTenantsDeleteFailed =>
+      'Die Gruppe konnte nicht gelöscht werden.';
+
+  @override
+  String redesignTenantsDeleteMessage(Object name) {
+    return '„$name“ wird mit allen Daten gelöscht. Das kann nicht rückgängig gemacht werden. Gib zur Bestätigung den Namen der Gruppe ein:';
+  }
+
+  @override
+  String get redesignTenantsDeleteNamePh => 'Name der Gruppe';
+
+  @override
+  String get redesignTenantsDeleteTitle => 'Gruppe löschen?';
+
+  @override
+  String get redesignTenantsDeleteWrongName => 'Der Name stimmt nicht.';
+
+  @override
+  String get redesignTenantsDetailTitle => 'Gruppe';
+
+  @override
+  String get redesignTenantsDetails => 'Details';
+
+  @override
+  String get redesignTenantsFavorite => 'Als Favorit markieren';
+
+  @override
+  String redesignTenantsFavoriteRemoved(Object name) {
+    return '„$name“ ist kein Favorit mehr.';
+  }
+
+  @override
+  String redesignTenantsFavoriteSet(Object name) {
+    return '„$name“ ist jetzt Favorit.';
+  }
+
+  @override
+  String get redesignTenantsIntro => 'Tippe auf eine Gruppe, um sie zu öffnen.';
+
+  @override
+  String get redesignTenantsJoin => 'Einer Gruppe beitreten';
+
+  @override
+  String get redesignTenantsMembers => 'Mitglieder';
+
+  @override
+  String redesignTenantsMore(Object name) {
+    return 'Mehr zu $name';
+  }
+
+  @override
+  String get redesignTenantsNewCreated => 'Die Gruppe wurde gegründet.';
+
+  @override
+  String get redesignTenantsNewMain => 'Hauptgruppe';
+
+  @override
+  String get redesignTenantsNewMainHint =>
+      'Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. Weitere Gruppen wie Sopran oder Geigen legst du später in der Verwaltung an.';
+
+  @override
+  String get redesignTenantsNewMainName => 'Name der Hauptgruppe';
+
+  @override
+  String get redesignTenantsNewMissing =>
+      'Bitte fülle Name, Kürzel und Hauptgruppe aus.';
+
+  @override
+  String get redesignTenantsNewName => 'Name';
+
+  @override
+  String get redesignTenantsNewNameHint => 'Wird in der App angezeigt.';
+
+  @override
+  String get redesignTenantsNewShort => 'Kürzel';
+
+  @override
+  String get redesignTenantsNewShortHint =>
+      'Für kurze Anzeigen, z. B. in der Gruppenauswahl.';
+
+  @override
+  String get redesignTenantsNewSubmit => 'Gründen';
+
+  @override
+  String get redesignTenantsNewTitle => 'Neue Gruppe';
+
+  @override
+  String get redesignTenantsNewType => 'Art der Gruppe';
+
+  @override
+  String get redesignTenantsNotFound => 'Diese Gruppe gibt es nicht mehr.';
+
+  @override
+  String get redesignTenantsRegion => 'Region';
+
+  @override
+  String get redesignTenantsRole => 'Deine Rolle';
+
+  @override
+  String get redesignTenantsStart => 'Nach der Anmeldung';
+
+  @override
+  String get redesignTenantsTitle => 'Gruppen';
+
+  @override
+  String get redesignTenantsTypeGeneral => 'Allgemein';
+
+  @override
+  String get redesignTenantsUnfavorite => 'Kein Favorit mehr';
 
   @override
   String get redesignTodayAllEvents => 'Alle Termine';
@@ -13379,6 +13842,19 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get redesignTypesListIntro =>
       'Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.';
+
+  @override
+  String get redesignViewersListAdd => 'Beobachter einladen';
+
+  @override
+  String get redesignViewersListEmpty => 'Noch keine Beobachter eingeladen.';
+
+  @override
+  String get redesignViewersListIntro =>
+      'Beobachter dürfen Anwesenheiten und Personendaten nur ansehen.';
+
+  @override
+  String get redesignViewersListRemove => 'Beobachter entfernen';
 
   @override
   String get redesignWorkAbout => 'Über das Werk';

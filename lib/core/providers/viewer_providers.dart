@@ -6,7 +6,7 @@ import '../config/supabase_config.dart'
 import '../constants/enums.dart' show Role;
 import '../../data/models/viewer/viewer.dart';
 import '../../data/repositories/user_registration_repository.dart'
-    show AccountFlowException;
+    show AccountFlowException, UserRegistrationRepository;
 import '../../data/repositories/viewer_repository.dart';
 import '../../l10n/l10n.dart';
 import 'tenant_providers.dart';
@@ -84,22 +84,28 @@ class ViewerNotifier extends Notifier<AsyncValue<void>> {
   /// it throws [AccountFlowException] with `db.addViewerFailed` so the page
   /// reports it instead of leaving a silent orphan. Other errors
   /// (registerUser, demo guard) are rethrown unchanged.
+  ///
+  /// [repo] / [registration]: repositories bound by the caller before its
+  /// own first await (e.g. before the invite dialog); default the current
+  /// tenant's.
   Future<Viewer> invite({
     required String email,
     required String firstName,
     required String lastName,
+    ViewerRepository? repo,
+    UserRegistrationRepository? registration,
   }) async {
     final trimmedEmail = email.trim();
     // SOL_FIX7: bind both tenant repositories before the first await.
-    final repo = _repo;
-    final appId = await ref
-        .read(userRegistrationRepositoryWithTenantProvider)
-        .registerUser(
-          email: trimmedEmail,
-          name: firstName.trim(),
-          role: Role.viewer,
-        );
-    final created = await _createViewerWith(repo, Viewer(
+    final viewerRepo = repo ?? _repo;
+    final UserRegistrationRepository registrationRepo =
+        registration ?? ref.read(userRegistrationRepositoryWithTenantProvider);
+    final appId = await registrationRepo.registerUser(
+      email: trimmedEmail,
+      name: firstName.trim(),
+      role: Role.viewer,
+    );
+    final created = await _createViewerWith(viewerRepo, Viewer(
       appId: appId,
       email: trimmedEmail,
       firstName: firstName.trim(),
@@ -113,10 +119,12 @@ class ViewerNotifier extends Notifier<AsyncValue<void>> {
 
   /// Delete a viewer
   /// Throws on failure (LOGIC_PEOPLE: pages must not show success toasts).
-  Future<bool> deleteViewer(int id, {String? appId}) async {
+  /// [repo]: bound by the caller before its first await (see [invite]).
+  Future<bool> deleteViewer(int id, {String? appId, ViewerRepository? repo}) async {
+    final bound = repo ?? _repo;
     state = const AsyncValue.loading();
     try {
-      await _repo.deleteViewer(id, appId: appId);
+      await bound.deleteViewer(id, appId: appId);
       state = const AsyncValue.data(null);
       ref.invalidate(viewersProvider);
       return true;

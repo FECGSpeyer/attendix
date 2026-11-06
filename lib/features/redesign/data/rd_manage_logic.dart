@@ -47,7 +47,6 @@ enum RdManageEntry {
   export(RdManageArea.data),
   certificates(RdManageArea.data),
   calendar(RdManageArea.data),
-  writeMessage(RdManageArea.communication),
   announcements(RdManageArea.communication),
   teamOrg(RdManageArea.communication),
   myTasks(RdManageArea.communication),
@@ -155,7 +154,7 @@ bool rdManageVisible(RdManageEntry entry, RdManageAccess access) {
     RdManageEntry.statistics || RdManageEntry.export => a.isAdmin && !a.isApplicant,
     RdManageEntry.certificates => a.isAdmin && !a.isApplicant && a.isVorkurs,
     RdManageEntry.calendar => !a.isApplicant,
-    RdManageEntry.announcements || RdManageEntry.writeMessage => a.isAdmin,
+    RdManageEntry.announcements => a.isAdmin,
     RdManageEntry.teamOrg => a._showTeam && a.isTeamLeader,
     RdManageEntry.myTasks => a._showTeam && !a.isTeamLeader,
     RdManageEntry.suggestTopic ||
