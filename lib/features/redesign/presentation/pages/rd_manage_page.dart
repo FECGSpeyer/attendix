@@ -9,7 +9,6 @@ import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../settings/presentation/pages/left_players_page.dart' show leftPlayersProvider;
-import '../../../settings/presentation/pages/pending_players_page.dart' show showPendingPersonsSheet;
 import '../../data/rd_manage_logic.dart';
 import '../widgets/manage/rd_manage_entries.dart';
 import '../widgets/rd_widgets.dart';
@@ -132,7 +131,7 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
           ],
           if (pending > 0) ...[
             RdCard(
-              onTap: () => showPendingPersonsSheet(context),
+              onTap: () => context.push(RedesignRoutes.approvals),
               child: Row(
                 children: [
                   RdCountBadge(pending, tone: RdTone.late),

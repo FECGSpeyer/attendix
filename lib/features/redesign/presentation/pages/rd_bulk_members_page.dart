@@ -16,7 +16,6 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/player_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../people/presentation/widgets/pause_person_sheet.dart' show buildPauseHistoryText;
-import '../../../settings/presentation/pages/pending_players_page.dart' show showPendingPersonsSheet;
 import '../../data/rd_members_logic.dart';
 import '../widgets/manage/rd_manage_entries.dart' show rdManagePendingProvider;
 import '../widgets/rd_widgets.dart';
@@ -291,7 +290,7 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
             RdListRow(
               leading: const RdRowIcon(Icons.how_to_reg_outlined),
               title: l10n.redesignManagePending(pending),
-              onTap: () => showPendingPersonsSheet(context),
+              onTap: () => context.push(RedesignRoutes.approvals),
             ),
           ]),
         ],

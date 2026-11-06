@@ -5,7 +5,10 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../data/repositories/user_registration_repository.dart'
     show AccountFlowException;
+import '../../../../core/providers/user_registration_providers.dart'
+    show userRegistrationRepositoryWithTenantProvider;
 import '../../../../core/providers/viewer_providers.dart';
+import '../../../../data/repositories/viewer_repository.dart' show ViewerRepository;
 import '../../../../core/theme/app_colors.dart';
 import '../widgets/settings_list.dart';
 import '../widgets/settings_sheet.dart';
@@ -44,7 +47,7 @@ class ViewersPage extends ConsumerWidget {
               ),
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddViewerDialog(context, ref),
+        onPressed: () => showAddViewerDialog(context, ref),
         child: const Icon(Icons.add),
       ),
       body: viewersAsync.when(
@@ -88,7 +91,7 @@ class ViewersPage extends ConsumerWidget {
                     for (final item in viewers)
                       _ViewerItem(
                         viewer: item,
-                        onDelete: () => _deleteViewer(context, ref, item),
+                        onDelete: () => removeViewerWithConfirmation(context, ref, item),
                       ),
                   ],
                 ),
@@ -100,7 +103,13 @@ class ViewersPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _showAddViewerDialog(BuildContext context, WidgetRef ref) async {
+  /// Invite dialog of "+" (also the Beta page `RdViewersPage`).
+  ///
+  /// TENANT: both repositories are bound before the dialog, so a group
+  /// switch meanwhile never invites into the new group.
+  static Future<void> showAddViewerDialog(BuildContext context, WidgetRef ref) async {
+    final repo = ref.read(viewerRepositoryWithTenantProvider);
+    final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
     final emailController = TextEditingController();
     final firstNameController = TextEditingController();
     final lastNameController = TextEditingController();
@@ -187,6 +196,8 @@ class ViewersPage extends ConsumerWidget {
               email: emailController.text,
               firstName: firstNameController.text,
               lastName: lastNameController.text,
+              repo: repo,
+              registration: registration,
             );
         if (context.mounted) {
           ToastHelper.showSuccess(context, context.l10n.settingsUserCreated);
@@ -201,7 +212,16 @@ class ViewersPage extends ConsumerWidget {
     }
   }
 
-  Future<void> _deleteViewer(BuildContext context, WidgetRef ref, Viewer viewer) async {
+  /// Removes [viewer] after the confirmation (also the Beta page
+  /// `RdViewersPage`). TENANT: [repo] bound by the caller (before its first
+  /// await), else here before the dialog.
+  static Future<void> removeViewerWithConfirmation(
+    BuildContext context,
+    WidgetRef ref,
+    Viewer viewer, {
+    ViewerRepository? repo,
+  }) async {
+    final ViewerRepository bound = repo ?? ref.read(viewerRepositoryWithTenantProvider);
     final confirmed = await showAppDialog<bool>(
       context: context,
       builder: (ctx) => AppAlertDialog(
@@ -224,7 +244,7 @@ class ViewersPage extends ConsumerWidget {
     if (confirmed == true && context.mounted) {
       try {
         final notifier = ref.read(viewerNotifierProvider.notifier);
-        await notifier.deleteViewer(viewer.id!, appId: viewer.appId);
+        await notifier.deleteViewer(viewer.id!, appId: viewer.appId, repo: bound);
 
         if (context.mounted) {
           ToastHelper.showSuccess(context, context.l10n.settingsFlutterViewerRemoved);
