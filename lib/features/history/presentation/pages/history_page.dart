@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/conductor_providers.dart';
 import '../../../../core/providers/history_providers.dart';
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/haptic_helper.dart';
@@ -30,6 +32,11 @@ import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 /// (Ionic md: full-screen modal) the `/history` route is pushed as before.
 /// The `/history` route keeps working for deep links.
 Future<void> showHistoryModal(BuildContext context) async {
+  // REDESIGN: in the Beta the page Verwaltung › Werkhistorie.
+  if (ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider)) {
+    await context.push(RedesignRoutes.workHistory);
+    return;
+  }
   if (!isIosLook(context)) {
     await context.push('/history');
     return;

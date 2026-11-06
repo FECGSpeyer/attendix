@@ -12222,6 +12222,23 @@
   "@rdSettingsUndo": {
     "description": "rdSettings.undo"
   },
+  "rdWmCategoriesIntro": "Kategorien ordnen die Werke, etwa nach Anlass oder Kirchenjahr.",
+  "@rdWmCategoriesIntro": {
+    "description": "rdWm.categoriesIntro"
+  },
+  "rdWmHistoryIntro": "Welche Werke wann gespielt wurden. Tippe auf einen Eintrag, um ihn zu entfernen.",
+  "@rdWmHistoryIntro": {
+    "description": "rdWm.historyIntro"
+  },
+  "rdWmWorksCount": "{count, plural, one {{count} Werk} other {{count} Werke}}",
+  "@rdWmWorksCount": {
+    "description": "rdWm.worksCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "redesignAbsenceAffects": "{count, plural, =0 {In diesem Zeitraum hast du keine Termine.} one {Das betrifft 1 Termin} other {Das betrifft {count} Termine}}",
   "@redesignAbsenceAffects": {
     "description": "redesign.absence.affects",

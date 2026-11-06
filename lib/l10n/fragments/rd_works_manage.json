@@ -1,0 +1,16 @@
+{
+  "de": {
+    "rdWm": {
+      "categoriesIntro": "Kategorien ordnen die Werke, etwa nach Anlass oder Kirchenjahr.",
+      "worksCount": "{count, plural, one {{count} Werk} other {{count} Werke}}",
+      "historyIntro": "Welche Werke wann gespielt wurden. Tippe auf einen Eintrag, um ihn zu entfernen."
+    }
+  },
+  "en": {
+    "rdWm": {
+      "categoriesIntro": "Categories sort the works, e.g. by occasion or church year.",
+      "worksCount": "{count, plural, one {{count} work} other {{count} works}}",
+      "historyIntro": "Which works were played when. Tap an entry to remove it."
+    }
+  }
+}

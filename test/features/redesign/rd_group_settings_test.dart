@@ -10,6 +10,9 @@ import 'package:attendix/features/redesign/data/rd_manage_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_branding_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_general_settings_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_org_settings_page.dart';
+import 'package:attendix/features/redesign/presentation/pages/rd_work_categories_page.dart';
+import 'package:attendix/core/providers/song_providers.dart';
+import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/core/providers/organisation_providers.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
 import 'package:attendix/core/constants/enums.dart';
@@ -127,6 +130,35 @@ void main() {
     await tester.pump(const Duration(milliseconds: 200));
     expect(tester.takeException(), isNull);
     expect(find.text('Organisation erstellen oder verknüpfen'), findsOneWidget);
+  });
+
+  testWidgets('Werk-Kategorien lists the categories with their number of works', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          supabaseAuthProvider.overrideWithValue(_auth),
+          currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
+          songCategoriesProvider.overrideWith(
+            (ref) async => const [SongCategory(id: 'a', name: 'Weihnachten'), SongCategory(id: 'b', name: 'Ostern')],
+          ),
+          songsProvider.overrideWith(
+            (ref) async => const [Song(id: 1, name: 'Stille Nacht', categoryIds: ['a'])],
+          ),
+        ],
+        child: MaterialApp(
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+          home: const RdWorkCategoriesPage(),
+        ),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(tester.takeException(), isNull);
+    expect(find.text('Weihnachten'), findsOneWidget);
+    expect(find.text('1 Werk'), findsOneWidget);
+    expect(find.text('0 Werke'), findsOneWidget);
   });
 
   test('"Dashboard konfigurieren" is not listed in the Beta Verwaltung', () {

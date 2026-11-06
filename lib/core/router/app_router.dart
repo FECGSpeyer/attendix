@@ -109,6 +109,8 @@ import '../providers/redesign_providers.dart';
 import 'redesign_routes.dart';
 import '../../features/redesign/presentation/shell/rd_shell.dart';
 import '../../features/redesign/presentation/pages/rd_export_page.dart';
+import '../../features/redesign/presentation/pages/rd_work_categories_page.dart';
+import '../../features/redesign/presentation/pages/rd_work_history_page.dart';
 import '../../features/redesign/presentation/pages/rd_handover_detail_page.dart';
 import '../../features/redesign/presentation/pages/rd_handover_page.dart';
 import '../../features/redesign/presentation/pages/rd_link_persons_page.dart';
@@ -863,6 +865,14 @@ final routerProvider = Provider<GoRouter>((ref) {
                     builder: (context, state) => const RdBulkMembersPage(),
                   ),
                   // Verwaltungslisten (RedesignRoutes.groups etc.).
+                  GoRoute(
+                    path: 'werkhistorie',
+                    builder: (context, state) => const RdWorkHistoryPage(),
+                  ),
+                  GoRoute(
+                    path: 'werk-kategorien',
+                    builder: (context, state) => const RdWorkCategoriesPage(),
+                  ),
                   GoRoute(
                     path: 'gruppen',
                     builder: (context, state) => const RdGroupsPage(),

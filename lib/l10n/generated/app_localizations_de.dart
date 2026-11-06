@@ -9779,6 +9779,25 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdSettingsUndo => 'Rückgängig';
 
   @override
+  String get rdWmCategoriesIntro =>
+      'Kategorien ordnen die Werke, etwa nach Anlass oder Kirchenjahr.';
+
+  @override
+  String get rdWmHistoryIntro =>
+      'Welche Werke wann gespielt wurden. Tippe auf einen Eintrag, um ihn zu entfernen.';
+
+  @override
+  String rdWmWorksCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke',
+      one: '$count Werk',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String redesignAbsenceAffects(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
