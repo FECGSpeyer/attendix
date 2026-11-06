@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -26,7 +28,7 @@ import '../../../../core/providers/plan_providers.dart' show planAttendanceTypes
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/team_org/team_org.dart' show agendaItemsPlaceholderId;
 import '../../../../data/models/plan/plan.dart' show PlanField;
-import '../../../planning/presentation/widgets/plan_field_dialogs.dart' show showPlanFieldDialog;
+import '../../../planning/presentation/widgets/plan_field_dialogs.dart' show showPlanFieldDialog, PlanSheetAction;
 import '../../../planning/presentation/widgets/plan_fields_editor.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/services/error_reporter.dart';
@@ -35,6 +37,14 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/services/web_window.dart' show setUnloadWarning;
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
+import '../../../redesign/data/rd_manage_logic.dart' show RdManageEntry;
+import '../../../redesign/presentation/widgets/manage/rd_manage_entries.dart' show rdManageTitle;
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
+
+part 'attendance_type_edit_page_beta.dart';
 
 
 /// Ionic `types.page.ts openTypeModal()`: "+" presents the type page with
@@ -150,6 +160,20 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   bool _isLoading = true;
   bool _hasChanges = false;
+
+  // REDESIGN: live saving of the Beta page (attendance_type_edit_page_beta.dart).
+  final _rdTick = ValueNotifier<int>(0);
+  Timer? _rdSaveTimer;
+  bool _rdSaving = false;
+  bool _rdInvalid = false;
+
+  /// A failed save is tried again with the next change, not in a loop.
+  bool _rdBlocked = false;
+
+  /// Captured with the first change: a pending save still runs on dispose.
+  AttendanceTypeNotifier? _rdNotifier;
+
+  void _update(VoidCallback fn) => setState(fn);
   AttendanceType? _originalType;
   int _usageCount = 0;
 
@@ -283,6 +307,17 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   @override
   void dispose() {
+    // REDESIGN: a change made right before leaving is still saved.
+    final pending = _rdSaveTimer?.isActive ?? false;
+    _rdSaveTimer?.cancel();
+    if (pending &&
+        _hasChanges &&
+        _rdNotifier != null &&
+        _nameController.text.trim().isNotEmpty &&
+        _availableStatuses.length >= 2) {
+      unawaited(_rdNotifier!.updateType(widget.typeId!, _buildTypeData()).catchError((_) => null));
+    }
+    _rdTick.dispose();
     setUnloadWarning(this, false);
     _nameController.dispose();
     _durationDaysController.dispose();
@@ -308,6 +343,11 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       );
     }
 
+    // REDESIGN: existing types save live in the Beta look.
+    if (!_isNew && context.rdSkin != null) {
+      setUnloadWarning(this, false);
+      return _rdBuild(context);
+    }
     // Ionic beforeunload: closing/reloading the browser tab warns too.
     final dirty = _isNew ? _hasNewInput : _hasChanges;
     setUnloadWarning(this, dirty);

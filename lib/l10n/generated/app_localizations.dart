@@ -20999,6 +20999,60 @@ abstract class AppLocalizations {
   /// **'Lege fest, was Helfer und Mitglieder in dieser Gruppe dürfen. Jeder Schalter wird sofort gespeichert.'**
   String get redesignRolePermIntro;
 
+  /// redesign.shift.from
+  ///
+  /// In de, this message translates to:
+  /// **'ab {time}'**
+  String redesignShiftFrom(Object time);
+
+  /// redesign.shift.halfHourHint
+  ///
+  /// In de, this message translates to:
+  /// **'Halbe Stunden über die Stufen (0,5 h)'**
+  String get redesignShiftHalfHourHint;
+
+  /// redesign.shift.hours
+  ///
+  /// In de, this message translates to:
+  /// **'{hours} h'**
+  String redesignShiftHours(Object hours);
+
+  /// redesign.shift.locked
+  ///
+  /// In de, this message translates to:
+  /// **'gesperrt, da zugewiesen'**
+  String get redesignShiftLocked;
+
+  /// redesign.shift.removeFixed
+  ///
+  /// In de, this message translates to:
+  /// **'Feste Schicht entfernen'**
+  String get redesignShiftRemoveFixed;
+
+  /// redesign.shift.removeSegment
+  ///
+  /// In de, this message translates to:
+  /// **'Abschnitt entfernen'**
+  String get redesignShiftRemoveSegment;
+
+  /// redesign.shift.times
+  ///
+  /// In de, this message translates to:
+  /// **'{count} ×'**
+  String redesignShiftTimes(Object count);
+
+  /// redesign.shift.unnamed
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Namen'**
+  String get redesignShiftUnnamed;
+
+  /// redesign.shift.work
+  ///
+  /// In de, this message translates to:
+  /// **'Schicht'**
+  String get redesignShiftWork;
+
   /// redesign.shiftsList.add
   ///
   /// In de, this message translates to:
@@ -22078,6 +22132,114 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Deine Zusage'**
   String get redesignTodayYourAnswer;
+
+  /// redesign.type.all
+  ///
+  /// In de, this message translates to:
+  /// **'alle'**
+  String get redesignTypeAll;
+
+  /// redesign.type.attendance
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit'**
+  String get redesignTypeAttendance;
+
+  /// redesign.type.days
+  ///
+  /// In de, this message translates to:
+  /// **'Tage'**
+  String get redesignTypeDays;
+
+  /// redesign.type.default
+  ///
+  /// In de, this message translates to:
+  /// **'Standard'**
+  String get redesignTypeDefault;
+
+  /// redesign.type.delete
+  ///
+  /// In de, this message translates to:
+  /// **'Terminart löschen'**
+  String get redesignTypeDelete;
+
+  /// redesign.type.features
+  ///
+  /// In de, this message translates to:
+  /// **'Funktionen'**
+  String get redesignTypeFeatures;
+
+  /// redesign.type.inList
+  ///
+  /// In de, this message translates to:
+  /// **'In der Liste'**
+  String get redesignTypeInList;
+
+  /// redesign.type.invalid
+  ///
+  /// In de, this message translates to:
+  /// **'Noch nicht gespeichert: Name und mindestens zwei Status nötig'**
+  String get redesignTypeInvalid;
+
+  /// redesign.type.location
+  ///
+  /// In de, this message translates to:
+  /// **'Ort und Navigation'**
+  String get redesignTypeLocation;
+
+  /// redesign.type.off
+  ///
+  /// In de, this message translates to:
+  /// **'aus'**
+  String get redesignTypeOff;
+
+  /// redesign.type.on
+  ///
+  /// In de, this message translates to:
+  /// **'an'**
+  String get redesignTypeOn;
+
+  /// redesign.type.remindersActive
+  ///
+  /// In de, this message translates to:
+  /// **'{count} aktiv'**
+  String redesignTypeRemindersActive(Object count);
+
+  /// redesign.type.statuses
+  ///
+  /// In de, this message translates to:
+  /// **'Mögliche Status'**
+  String get redesignTypeStatuses;
+
+  /// redesign.type.time
+  ///
+  /// In de, this message translates to:
+  /// **'Zeit'**
+  String get redesignTypeTime;
+
+  /// redesign.type.timeHint
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschlag, je Termin änderbar'**
+  String get redesignTypeTimeHint;
+
+  /// redesign.type.usage
+  ///
+  /// In de, this message translates to:
+  /// **'Wird in {count} Terminen verwendet. Änderungen gelten auch für diese.'**
+  String redesignTypeUsage(Object count);
+
+  /// redesign.type.whoBelongs
+  ///
+  /// In de, this message translates to:
+  /// **'Wer gehört dazu'**
+  String get redesignTypeWhoBelongs;
+
+  /// redesign.type.whoBelongsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen und Zusatzfeld-Filter'**
+  String get redesignTypeWhoBelongsHint;
 
   /// redesign.typesList.add
   ///

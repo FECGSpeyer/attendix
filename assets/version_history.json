@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.59.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Terminart bearbeiten als Beta-Seite, die sofort speichert: Anwesenheit, Zeit, Anzeige in der Liste und Funktionen (Werke, Ort, Ablaufplan, Erinnerungen, Checkliste, Dienstplan, Protokoll, Anmeldefelder, Wer gehört dazu) als eigene Unterseiten",
+        "✨ Beta: Schichtplan bearbeiten als Beta-Seite, die sofort speichert, mit Blättern für Abschnitte und feste Schichten"
+      ]
+    },
+    {
       "version": "0.55.0",
       "date": "6.11.2026",
       "changes": [
