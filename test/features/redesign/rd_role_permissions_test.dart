@@ -25,10 +25,13 @@ class _TenantNotifier extends CurrentTenantNotifier {
 
 /// Records the saves instead of calling Supabase.
 class _FakeNotifier extends RolePermissionNotifier {
-  _FakeNotifier(this.saves, this.result);
+  _FakeNotifier(this.saves, this.result, [this.results]);
 
   final List<List<TenantRolePermission>> saves;
   final bool result;
+
+  /// Results per save in order (then [result]).
+  final List<bool>? results;
 
   @override
   Future<bool> save(
@@ -38,7 +41,8 @@ class _FakeNotifier extends RolePermissionNotifier {
   }) async {
     saves.add(permissions);
     await Future<void>.delayed(const Duration(milliseconds: 200));
-    return result;
+    final i = saves.length - 1;
+    return results != null && i < results!.length ? results![i] : result;
   }
 }
 
@@ -47,7 +51,12 @@ final _permissions = [
     TenantRolePermission(id: role.value, tenantId: 7, role: role.value),
 ];
 
-Widget _app(List<List<TenantRolePermission>> saves, {bool result = true, Role role = Role.admin}) {
+Widget _app(
+  List<List<TenantRolePermission>> saves, {
+  bool result = true,
+  List<bool>? results,
+  Role role = Role.admin,
+}) {
   final router = GoRouter(
     initialLocation: RedesignRoutes.rolePermissions,
     routes: [GoRoute(path: RedesignRoutes.rolePermissions, builder: (_, __) => const RdRolePermissionsPage())],
@@ -57,7 +66,7 @@ Widget _app(List<List<TenantRolePermission>> saves, {bool result = true, Role ro
       effectiveRoleProvider.overrideWithValue(role),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
       rolePermissionsProvider.overrideWith((ref) async => _permissions),
-      rolePermissionNotifierProvider.overrideWith(() => _FakeNotifier(saves, result)),
+      rolePermissionNotifierProvider.overrideWith(() => _FakeNotifier(saves, result, results)),
     ],
     child: MaterialApp.router(
       locale: const Locale('de'),
@@ -119,6 +128,25 @@ void main() {
       await _settle(tester);
       expect(saves, hasLength(2));
       expect(_switchOf(tester, 'Eigene Pausierung erlauben').value, isFalse);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('a failed early save does not undo later saved changes', (tester) async {
+      tester.view.physicalSize = const Size(393, 4000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final saves = <List<TenantRolePermission>>[];
+      await tester.pumpWidget(_app(saves, results: [false, true, true]));
+      await _settle(tester);
+
+      // On, off, on again; only the first save fails.
+      for (var i = 0; i < 3; i++) {
+        await tester.tap(find.text('Eigene Pausierung erlauben'));
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      await _settle(tester);
+      expect(saves, hasLength(3));
+      expect(_switchOf(tester, 'Eigene Pausierung erlauben').value, isTrue);
       await tester.pump(const Duration(seconds: 5));
     });
 
