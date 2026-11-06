@@ -10719,6 +10719,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignGroupEditDeleteFailed => 'The group could not be deleted.';
+
+  @override
   String get redesignGroupEditDeleteMain => 'The main group cannot be deleted.';
 
   @override
@@ -10754,7 +10757,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignGroupEditName => 'Name';
 
   @override
-  String get redesignGroupEditNameEmpty => 'Without a name nothing is saved.';
+  String get redesignGroupEditNameEmpty => 'An empty name is not saved.';
 
   @override
   String get redesignGroupEditNotFound => 'This group no longer exists.';
@@ -12310,9 +12313,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignTypesListAdd => 'Add attendance type';
-
-  @override
-  String get redesignTypesListAllDay => 'All day';
 
   @override
   String redesignTypesListAllDayDays(num count) {

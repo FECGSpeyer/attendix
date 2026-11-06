@@ -7,6 +7,8 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/services/ai_service.dart';
 import '../../../../core/services/offline_queue_service.dart';
+import '../../../../core/services/tracking/tracking_event.dart';
+import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -153,6 +155,7 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
     if (_deleted || repo == null || !repo.hasTenantId || !_session.isCurrent()) return false;
     try {
       await repo.updateGroup(_groupId, {...updates});
+      _container.read(trackingServiceProvider).track(TrackingEvent.instrumentUpdated);
       _refresh();
       return true;
     } catch (_) {
@@ -161,7 +164,10 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
     }
   }
 
-  void _write(Map<String, dynamic> updates) => _enqueue(() => _store(updates));
+  /// Writes [updates]; on failure [revert] puts the shown value back.
+  void _write(Map<String, dynamic> updates, {VoidCallback? revert}) => _enqueue(() async {
+    if (!await _store(updates) && revert != null && mounted && !_deleted) setState(revert);
+  });
 
   /// Saves a text column when it differs from what is stored when it runs
   /// (the last typed value wins). Like the old page: trimmed, an empty field
@@ -199,8 +205,11 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
     if (choice == null || !mounted) return;
     final id = choice == -1 ? null : choice;
     if (id == _categoryId) return;
+    final before = _categoryId;
     setState(() => _categoryId = id);
-    _write({'category': id});
+    _write({'category': id}, revert: () {
+      if (_categoryId == id) _categoryId = before;
+    });
   }
 
   void _toggleClef(String clef) {
@@ -211,13 +220,19 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
     } else {
       next.add(clef);
     }
+    final before = _clefs;
     setState(() => _clefs = next);
-    _write({
-      'clefs': [
-        for (final c in groupClefOptions)
-          if (next.contains(c)) c.toLowerCase(),
-      ],
-    });
+    _write(
+      {
+        'clefs': [
+          for (final c in groupClefOptions)
+            if (next.contains(c)) c.toLowerCase(),
+        ],
+      },
+      revert: () {
+        if (identical(_clefs, next)) _clefs = before;
+      },
+    );
   }
 
   /// Old page: synonyms from the AI function `synonyms-gpt`.
@@ -270,14 +285,16 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
       );
       if (!confirmed || !mounted) return;
       final notifier = ref.read(groupNotifierProvider.notifier);
-      // Nothing is written to the group while it is deleted (a field that
-      // loses focus now); a failed delete writes again.
+      // Saves still running finish first; nothing is written to the group
+      // while it is deleted (the form is locked); a failed delete writes again.
+      await _queue;
+      if (!mounted) return;
       _deleted = true;
       await notifier.deleteGroup(_groupId);
       if (!mounted) return;
       if (ref.read(groupNotifierProvider).hasError) {
         _deleted = false;
-        ToastHelper.showError(context, l10n.instrumentsCannotDelete);
+        ToastHelper.showError(context, l10n.redesignGroupEditDeleteFailed);
         return;
       }
       ref.invalidate(playerCountsForGroupsProvider);
@@ -316,7 +333,8 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
       );
     } else {
       _fill(group);
-      body = _form(context, group);
+      // Locked while deleting: no change can get lost.
+      body = IgnorePointer(ignoring: _deleting, child: _form(context, group));
     }
 
     return Scaffold(
@@ -439,8 +457,11 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
             labelOf: (v) => v,
             onChanged: (v) {
               if (v == _tuning) return;
+              final before = _tuning;
               setState(() => _tuning = v);
-              _write({'tuning': v});
+              _write({'tuning': v}, revert: () {
+                if (_tuning == v) _tuning = before;
+              });
             },
           ),
           const SizedBox(height: 20),

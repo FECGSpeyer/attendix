@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.43.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Verwaltung › Gruppen, Anwesenheits-Typen und Schichtpläne als einheitliche Verwaltungslisten mit „Reihenfolge ändern“ im •••-Menü",
+        "✨ Beta: Neue Seite „Gruppe bearbeiten“ mit sofortigem Speichern"
+      ]
+    },
+    {
       "version": "0.42.3",
       "date": "6.11.2026",
       "changes": [

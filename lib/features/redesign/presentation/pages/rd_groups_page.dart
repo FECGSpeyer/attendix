@@ -57,6 +57,8 @@ class _RdGroupsPageState extends ConsumerState<RdGroupsPage> {
     if (ok) {
       ToastHelper.showSuccess(context, l10n.typeSettingsOrderSaved);
     } else {
+      // Rows are renumbered one by one: show what is stored now.
+      ref.invalidate(groupsProvider);
       ToastHelper.showError(context, l10n.redesignManageListOrderFailed);
     }
     return ok;

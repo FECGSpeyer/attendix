@@ -13484,6 +13484,10 @@
       "name": {}
     }
   },
+  "redesignGroupEditDeleteFailed": "Die Gruppe konnte nicht gelöscht werden.",
+  "@redesignGroupEditDeleteFailed": {
+    "description": "redesign.groupEdit.deleteFailed"
+  },
   "redesignGroupEditDeleteMain": "Die Hauptgruppe lässt sich nicht löschen.",
   "@redesignGroupEditDeleteMain": {
     "description": "redesign.groupEdit.deleteMain"
@@ -13521,7 +13525,7 @@
   "@redesignGroupEditName": {
     "description": "redesign.groupEdit.name"
   },
-  "redesignGroupEditNameEmpty": "Ohne Namen wird nicht gespeichert.",
+  "redesignGroupEditNameEmpty": "Ein leerer Name wird nicht gespeichert.",
   "@redesignGroupEditNameEmpty": {
     "description": "redesign.groupEdit.nameEmpty"
   },
@@ -15467,10 +15471,6 @@
   "redesignTypesListAdd": "Anwesenheits-Typ hinzufügen",
   "@redesignTypesListAdd": {
     "description": "redesign.typesList.add"
-  },
-  "redesignTypesListAllDay": "Ganztägig",
-  "@redesignTypesListAllDay": {
-    "description": "redesign.typesList.allDay"
   },
   "redesignTypesListAllDayDays": "{count, plural, one {Ganztägig} other {Ganztägig · {count} Tage}}",
   "@redesignTypesListAllDayDays": {

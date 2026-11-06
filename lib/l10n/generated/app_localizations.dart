@@ -17591,6 +17591,12 @@ abstract class AppLocalizations {
   /// **'Gruppe „{name}“ wirklich löschen?'**
   String redesignGroupEditDeleteConfirm(Object name);
 
+  /// redesign.groupEdit.deleteFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Gruppe konnte nicht gelöscht werden.'**
+  String get redesignGroupEditDeleteFailed;
+
   /// redesign.groupEdit.deleteMain
   ///
   /// In de, this message translates to:
@@ -17642,7 +17648,7 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.nameEmpty
   ///
   /// In de, this message translates to:
-  /// **'Ohne Namen wird nicht gespeichert.'**
+  /// **'Ein leerer Name wird nicht gespeichert.'**
   String get redesignGroupEditNameEmpty;
 
   /// redesign.groupEdit.notFound
@@ -20110,12 +20116,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Anwesenheits-Typ hinzufügen'**
   String get redesignTypesListAdd;
-
-  /// redesign.typesList.allDay
-  ///
-  /// In de, this message translates to:
-  /// **'Ganztägig'**
-  String get redesignTypesListAllDay;
 
   /// redesign.typesList.allDayDays
   ///

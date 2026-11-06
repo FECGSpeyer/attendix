@@ -10827,6 +10827,10 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignGroupEditDeleteFailed =>
+      'Die Gruppe konnte nicht gelöscht werden.';
+
+  @override
   String get redesignGroupEditDeleteMain =>
       'Die Hauptgruppe lässt sich nicht löschen.';
 
@@ -10863,7 +10867,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignGroupEditName => 'Name';
 
   @override
-  String get redesignGroupEditNameEmpty => 'Ohne Namen wird nicht gespeichert.';
+  String get redesignGroupEditNameEmpty =>
+      'Ein leerer Name wird nicht gespeichert.';
 
   @override
   String get redesignGroupEditNotFound => 'Diese Gruppe gibt es nicht mehr.';
@@ -12429,9 +12434,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignTypesListAdd => 'Anwesenheits-Typ hinzufügen';
-
-  @override
-  String get redesignTypesListAllDay => 'Ganztägig';
 
   @override
   String redesignTypesListAllDayDays(num count) {

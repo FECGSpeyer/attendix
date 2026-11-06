@@ -27,6 +27,7 @@ class RdManageListItem {
     this.count,
     this.countWarn = false,
     this.icon,
+    this.trailing,
     this.onTap,
   });
 
@@ -43,6 +44,9 @@ class RdManageListItem {
 
   /// Icon instead of the initials of [title].
   final IconData? icon;
+
+  /// Own widget on the right (e.g. a switch); replaces [count].
+  final Widget? trailing;
   final VoidCallback? onTap;
 }
 
@@ -84,6 +88,8 @@ class RdManageListPage extends StatefulWidget {
     this.actions = const [],
     this.onReorder,
     this.onRefresh,
+    this.backLabel,
+    this.onBack,
   });
 
   final String title;
@@ -119,6 +125,10 @@ class RdManageListPage extends StatefulWidget {
 
   final Future<void> Function()? onRefresh;
 
+  /// Back link; default "‹ Verwaltung" (pop, else Ich › Verwaltung).
+  final String? backLabel;
+  final VoidCallback? onBack;
+
   @override
   State<RdManageListPage> createState() => _RdManageListPageState();
 }
@@ -131,9 +141,14 @@ class _RdManageListPageState extends State<RdManageListPage> {
 
   int get _itemCount => (widget.sections ?? const []).fold(0, (sum, s) => sum + s.items.length);
 
-  bool get _canReorder => widget.onReorder != null && _itemCount > 1;
+  /// Each section is sorted on its own: only offered when one has 2+ rows.
+  bool get _canReorder =>
+      widget.onReorder != null && (widget.sections ?? const []).any((s) => s.items.length > 1);
 
-  void _back() => context.canPop() ? context.pop() : context.go(RedesignRoutes.manage);
+  void _back() {
+    if (widget.onBack != null) return widget.onBack!();
+    context.canPop() ? context.pop() : context.go(RedesignRoutes.manage);
+  }
 
   void _startSorting() {
     setState(() {
@@ -170,6 +185,8 @@ class _RdManageListPageState extends State<RdManageListPage> {
 
   /// [newIndex] as `onReorderItem` reports it (already without the moved row).
   void _move(int section, int oldIndex, int newIndex) {
+    // A move during the save would be dropped when the save succeeds.
+    if (_saving) return;
     setState(() {
       if (newIndex == oldIndex) return;
       final items = [..._sorting![section].items];
@@ -211,7 +228,7 @@ class _RdManageListPageState extends State<RdManageListPage> {
         if (sorting != null)
           RdTextLink(key: const Key('rd-manage-list-cancel'), label: l10n.redesignCommonCancel, onTap: _cancelSorting)
         else
-          Expanded(child: RdBackLink(label: l10n.redesignMeAdmin, onTap: _back)),
+          Expanded(child: RdBackLink(label: widget.backLabel ?? l10n.redesignMeAdmin, onTap: _back)),
         if (sorting != null) ...[
           const Spacer(),
           if (_saving)
@@ -271,7 +288,7 @@ class _RdManageListPageState extends State<RdManageListPage> {
           if (shown[s].items.isNotEmpty) ...[
             if (shown[s].title != null) RdSectionHeader(shown[s].title!, trailing: '${shown[s].items.length}'),
             sorting != null
-                ? RdGroupedList(children: [_sortList(context, s, shown[s])])
+                ? RdGroupedList(children: [IgnorePointer(ignoring: _saving, child: _sortList(context, s, shown[s]))])
                 : RdGroupedList(
                   children: [
                     for (final item in shown[s].items) _ItemRow(key: ValueKey('rd-manage-item-${item.id}'), item: item),
@@ -368,8 +385,8 @@ class _ItemRow extends StatelessWidget {
       leading: _leading(item),
       title: item.title,
       subtitle: item.subtitle,
-      value: item.countWarn ? null : count,
-      trailing: item.countWarn && count != null ? RdPill(count, tone: RdTone.absent) : null,
+      value: item.trailing != null || item.countWarn ? null : count,
+      trailing: item.trailing ?? (item.countWarn && count != null ? RdPill(count, tone: RdTone.absent) : null),
       onTap: item.onTap,
     );
   }

@@ -733,7 +733,7 @@
       "groupEdit": {
         "title": "Gruppe bearbeiten",
         "name": "Name",
-        "nameEmpty": "Ohne Namen wird nicht gespeichert.",
+        "nameEmpty": "Ein leerer Name wird nicht gespeichert.",
         "category": "Kategorie",
         "categoryNone": "Keine",
         "manageCategories": "Kategorien verwalten",
@@ -753,13 +753,13 @@
         "deleteMain": "Die Hauptgruppe lässt sich nicht löschen.",
         "deleteMembers": "{count, plural, one {In der Gruppe ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.} other {In der Gruppe sind oder waren noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.}}",
         "deleteConfirm": "Gruppe „{name}“ wirklich löschen?",
+        "deleteFailed": "Die Gruppe konnte nicht gelöscht werden.",
         "notFound": "Diese Gruppe gibt es nicht mehr."
       },
       "typesList": {
         "intro": "Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.",
         "empty": "Noch keine Anwesenheits-Typen angelegt.",
         "add": "Anwesenheits-Typ hinzufügen",
-        "allDay": "Ganztägig",
         "allDayDays": "{count, plural, one {Ganztägig} other {Ganztägig · {count} Tage}}",
         "defaultStatus": "Standard: {status}",
         "hidden": "Ausgeblendet"
@@ -1752,7 +1752,7 @@
       "groupEdit": {
         "title": "Edit group",
         "name": "Name",
-        "nameEmpty": "Without a name nothing is saved.",
+        "nameEmpty": "An empty name is not saved.",
         "category": "Category",
         "categoryNone": "None",
         "manageCategories": "Manage categories",
@@ -1772,13 +1772,13 @@
         "deleteMain": "The main group cannot be deleted.",
         "deleteMembers": "{count, plural, one {1 person is (or was) in this group, archived ones included. Move them to another group first.} other {{count} people are (or were) in this group, archived ones included. Move them to another group first.}}",
         "deleteConfirm": "Really delete the group “{name}”?",
+        "deleteFailed": "The group could not be deleted.",
         "notFound": "This group no longer exists."
       },
       "typesList": {
         "intro": "Attendance types set the name, time, default status and other defaults of new events.",
         "empty": "No attendance types yet.",
         "add": "Add attendance type",
-        "allDay": "All day",
         "allDayDays": "{count, plural, one {All day} other {All day · {count} days}}",
         "defaultStatus": "Default: {status}",
         "hidden": "Hidden"
