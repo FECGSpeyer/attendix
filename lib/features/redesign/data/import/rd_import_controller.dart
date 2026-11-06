@@ -488,7 +488,10 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       aiFilled: const {},
       aiStatus: RdImportAiStatus.off,
     );
+    _aiWorks = const {};
+    _worksRun++;
     unawaited(_suggest());
+    unawaited(_matchWorks());
     return null;
   }
 
@@ -658,6 +661,11 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         decisions: state.decisions.copyWith(answers: answers),
       );
       _dropStaleConfirmations();
+      _worksRun++;
+      if (_aiWorks.isNotEmpty) {
+        _aiWorks = const {};
+        _replan();
+      }
       return;
     }
     state = state.copyWith(useAi: true);
@@ -667,28 +675,73 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     } else {
       unawaited(_suggest());
     }
+    unawaited(_matchWorks());
+  }
+
+  /// The Werke the KI named for folders the comparison is not sure about,
+  /// by folder name ([rdBuildImportPlan] `aiWorks`).
+  Map<String, int> _aiWorks = const {};
+
+  /// Counts the Werk requests: an answer of an older one is dropped.
+  int _worksRun = 0;
+
+  /// Asks the KI which Werk in Attendix the folders are that the comparison
+  /// is not sure about (other spelling, translation, typo). Its sure answers
+  /// become Werke "zu prüfen"; nothing is taken unseen.
+  Future<void> _matchWorks() async {
+    final plan = state.plan;
+    final tenantId = _tenantId;
+    final input = _input;
+    if (plan == null || tenantId == null || input == null || !state.useAi) return;
+    final folders = rdImportWorksToAsk(plan);
+    if (folders.isEmpty) return;
+    final run = ++_worksRun;
+    final found = await ref.read(rdImportAiProvider).matchWorks(tenantId, folders, songs: plan.songs.keys.toSet());
+    if (_disposed || run != _worksRun || !state.useAi || !identical(_input, input) || found.isEmpty) return;
+    // Only while the questions are shown: in the review the Werke may have
+    // been decided about already.
+    if (state.step != RdImportStep.questions) return;
+    _aiWorks = found;
+    _replan();
   }
 
   /// The plan again with the parts decided so far: two folders with the
   /// same part only after an answer are Fassungen too.
   void _replan() {
     final input = _input;
-    if (input == null || state.plan == null) return;
-    final d = state.decisions;
-    state = state.copyWith(
-      plan: rdBuildImportPlan(
-        input.entries,
-        songs: input.songs,
-        instruments: input.instruments,
-        isChoir: input.isChoir,
-        hashes: input.hashes,
-        dates: input.dates,
-        junk: input.junk,
-        answers: d.answers,
-        categories: d.categories,
-        cache: input.cache,
-      ),
+    final before = state.plan;
+    if (input == null || before == null) return;
+    var d = state.decisions;
+    final plan = rdBuildImportPlan(
+      input.entries,
+      songs: input.songs,
+      instruments: input.instruments,
+      isChoir: input.isChoir,
+      hashes: input.hashes,
+      dates: input.dates,
+      junk: input.junk,
+      answers: d.answers,
+      categories: d.categories,
+      aiWorks: _aiWorks,
+      cache: input.cache,
     );
+    // A Werk whose key changed (KI hint came or went) keeps what the person
+    // decided about it: target, skip, Fassung, "Passt so".
+    final moved = rdImportMovedWorks(before, plan);
+    if (moved.isNotEmpty) {
+      String to(String key) => moved[key] ?? key;
+      d = d.copyWith(
+        targets: {for (final e in d.targets.entries) to(e.key): e.value},
+        fassungen: {for (final e in d.fassungen.entries) to(e.key): e.value},
+        confirmed: {for (final k in d.confirmed) to(k)},
+        recheck: {for (final k in d.recheck) to(k)},
+      );
+      for (final e in moved.entries) {
+        final selection = _confirmedAs.remove(e.key);
+        if (selection != null) _confirmedAs[e.value] = selection;
+      }
+    }
+    state = state.copyWith(plan: plan, decisions: d);
     _dropStaleConfirmations();
   }
 

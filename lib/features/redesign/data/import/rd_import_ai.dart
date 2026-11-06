@@ -76,15 +76,29 @@ RdImportCategory? rdImportAiCategory(Map<String, dynamic> answer, {required Set<
 }
 
 class RdImportAi {
-  RdImportAi(this._invoke);
+  /// [works] calls `work-match`; without it no Werk is matched.
+  RdImportAi(this._invoke, {Future<dynamic> Function(Map<String, dynamic> body)? works})
+      : _works = works ?? ((_) async => const {'matches': []});
 
   /// Calls the function on [client].
-  factory RdImportAi.supabase(SupabaseClient client) => RdImportAi((body) async {
-        final response = await client.functions.invoke(function, body: body).timeout(const Duration(seconds: 60));
-        return response.data;
-      });
+  factory RdImportAi.supabase(SupabaseClient client) => RdImportAi(
+        (body) async {
+          final response = await client.functions.invoke(function, body: body).timeout(const Duration(seconds: 60));
+          return response.data;
+        },
+        works: (body) async {
+          final response = await client.functions.invoke(worksFunction, body: body).timeout(const Duration(seconds: 90));
+          return response.data;
+        },
+      );
 
   static const function = 'part-suggest';
+
+  /// Finds the Werk in Attendix of folders the comparison is not sure about.
+  static const worksFunction = 'work-match';
+
+  /// Folders per call (the function refuses more).
+  static const maxWorks = 150;
 
   /// Questions per call (the function refuses more).
   static const maxQuestions = 80;
@@ -92,6 +106,41 @@ class RdImportAi {
   static final _key = RegExp(r'^[\p{L}\p{N} ._+\-]{1,80}$', unicode: true);
 
   final Future<dynamic> Function(Map<String, dynamic> body) _invoke;
+  final Future<dynamic> Function(Map<String, dynamic> body) _works;
+
+  /// The Werk in Attendix the KI is sure each of [folders] (names) is, by
+  /// folder name; folders it does not know or is unsure about are missing.
+  /// Never throws: without the KI the comparison alone counts.
+  Future<Map<String, int>> matchWorks(int tenantId, List<String> folders, {required Set<int> songs}) async {
+    final asked = folders.take(maxWorks).toList();
+    if (asked.isEmpty || songs.isEmpty) return const {};
+    dynamic data;
+    try {
+      data = await _works({
+        'tenantId': tenantId,
+        'works': [
+          for (var i = 0; i < asked.length; i++) {'key': 'w$i', 'name': asked[i]},
+        ],
+      });
+      if (data is String) data = jsonDecode(data);
+    } catch (_) {
+      return const {};
+    }
+    final result = <String, int>{};
+    final list = data is Map ? data['matches'] : null;
+    if (list is List) {
+      for (final m in list) {
+        if (m is! Map) continue;
+        final key = m['key'];
+        final id = m['songId'];
+        if (key is! String || !key.startsWith('w') || id is! int || !songs.contains(id) || m['confidence'] != 'high') continue;
+        final index = int.tryParse(key.substring(1));
+        if (index == null || index < 0 || index >= asked.length) continue;
+        result.putIfAbsent(asked[index], () => id);
+      }
+    }
+    return result;
+  }
 
   /// Guesses for [questions] of [tenantId]'s import, by question key. Keys
   /// the KI left out or answered with something that does not fit are
