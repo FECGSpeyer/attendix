@@ -631,6 +631,8 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
       ToastHelper.showError(context, context.l10n.personFlutterNoPermissionRoles);
       return;
     }
+    // Bind the tenant repository before the first await (tenant switch).
+    final repo = ref.read(userRegistrationRepositoryWithTenantProvider);
     final current = _userRole ?? Role.player;
     // Ionic: Mitglied, Verantwortlicher, Helfer and – for Stimmführer – the
     // Stimmführer roles; another current role stays visible.
@@ -648,7 +650,6 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
       actions: [for (final r in roles) AppActionSheetAction(value: r, label: UserRegistrationRepository.roleText(r))],
     );
     if (role == null || role == current || !mounted) return;
-    final repo = ref.read(userRegistrationRepositoryWithTenantProvider);
     if (person.appId == null || !repo.hasTenantId) return;
     try {
       await repo.updateTenantUserRole(person.appId!, role);
