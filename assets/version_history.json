@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.68.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Werk-Kategorien als Verwaltungsliste mit Anzahl der Werke, Umbenennen/Löschen per Tipp, Reihenfolge über „•••“",
+        "✨ Beta: Werkhistorie als Verwaltungsliste mit Suche, nach Datum gruppiert; Werke, Dirigent und Datum in einem Blatt hinzufügen"
+      ]
+    },
+    {
       "version": "0.67.0",
       "date": "6.11.2026",
       "changes": [
