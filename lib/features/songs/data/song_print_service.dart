@@ -11,6 +11,7 @@ import '../../../core/services/pdf_branding.dart';
 import '../../../data/models/song/song.dart';
 import '../../../data/models/song/song_additional_field.dart';
 import '../presentation/utils/song_utils.dart';
+import 'pdf_page_merger.dart';
 import '../../../l10n/l10n.dart';
 import '../../../core/services/native/native_file_service.dart';
 import '../../../core/services/pdf_fonts.dart';
@@ -40,11 +41,25 @@ final songPrintServiceProvider = Provider<SongPrintService>((ref) {
 /// several song files (with copies) into one document and opens the
 /// platform print dialog.
 ///
-/// PDF pages are rasterized (the `pdf` package cannot import existing PDFs).
+/// Like Ionic `mergeEntries` (pdf-lib `copyPages`), PDF pages are taken over
+/// as vector pages in their original size ([PdfPageMerger], pure Dart on all
+/// platforms). Images become an A4 page with the image centred and fitted.
+/// A PDF that cannot be imported (damaged, encrypted) is rasterised instead
+/// of failing the whole print.
 class SongPrintService {
+  SongPrintService({
+    Future<Uint8List?> Function(String url)? download,
+    Future<Uint8List> Function(Uint8List pdf)? rasterizePdf,
+  })  : _downloadFn = download ?? _httpDownload,
+        _rasterizeFn = rasterizePdf ?? _rasterize;
+
+  /// Test seams (production: HTTP download / `Printing.raster`).
+  final Future<Uint8List?> Function(String url) _downloadFn;
+  final Future<Uint8List> Function(Uint8List pdf) _rasterizeFn;
+
   bool _printing = false;
 
-  Future<Uint8List?> _download(String url) async {
+  static Future<Uint8List?> _httpDownload(String url) async {
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode != 200) return null;
@@ -52,6 +67,33 @@ class SongPrintService {
     } catch (_) {
       return null;
     }
+  }
+
+  /// Fallback for PDFs that cannot be imported as vector pages: every page
+  /// rendered at 150 dpi into a new PDF of the same page size.
+  static Future<Uint8List> _rasterize(Uint8List bytes) async {
+    final doc = pw.Document();
+    await for (final page in Printing.raster(bytes, dpi: 150)) {
+      final image = pw.MemoryImage(await page.toPng());
+      doc.addPage(pw.Page(
+        pageFormat: PdfPageFormat(page.width * 72 / 150, page.height * 72 / 150),
+        margin: pw.EdgeInsets.zero,
+        build: (_) => pw.Center(child: pw.Image(image, fit: pw.BoxFit.contain)),
+      ));
+    }
+    return doc.save();
+  }
+
+  /// Ionic: PNG/JPG on an A4 page (595.28 × 841.89 pt), centred and fitted.
+  static Future<Uint8List> _imagePage(Uint8List bytes) {
+    final image = pw.MemoryImage(bytes);
+    final doc = pw.Document()
+      ..addPage(pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        margin: pw.EdgeInsets.zero,
+        build: (_) => pw.Center(child: pw.Image(image, fit: pw.BoxFit.contain)),
+      ));
+    return doc.save();
   }
 
   /// Merge and print. Returns null if a print job is already running.
@@ -65,33 +107,31 @@ class SongPrintService {
     if (_printing) return null;
     _printing = true;
     try {
-      final doc = pw.Document();
+      final merger = PdfPageMerger();
       var pages = 0;
       var skipped = 0;
 
       for (final entry in entries) {
         if (entry.copies <= 0) continue;
-        final bytes = await _download(entry.file.url);
+        final bytes = await _downloadFn(entry.file.url);
         if (bytes == null) {
           skipped++;
           continue;
         }
 
-        final images = <pw.MemoryImage>[];
-        final pageFormats = <PdfPageFormat>[];
         try {
           if (SongUtils.isPdf(entry.file)) {
-            await for (final page in Printing.raster(bytes, dpi: 150)) {
-              final png = await page.toPng();
-              images.add(pw.MemoryImage(png));
-              pageFormats.add(PdfPageFormat(
-                page.width * 72 / 150,
-                page.height * 72 / 150,
-              ));
+            try {
+              pages += merger.addPdf(bytes, copies: entry.copies);
+            } catch (e) {
+              // Damaged / encrypted PDF: insert it rasterised instead.
+              if (kDebugMode) {
+                debugPrint('[SongPrintService] raster fallback ${entry.file.fileName}: $e');
+              }
+              pages += merger.addPdf(await _rasterizeFn(bytes), copies: entry.copies);
             }
           } else if (SongUtils.isImage(entry.file)) {
-            images.add(pw.MemoryImage(bytes));
-            pageFormats.add(PdfPageFormat.a4);
+            pages += merger.addPdf(await _imagePage(bytes), copies: entry.copies);
           } else {
             skipped++;
             continue;
@@ -101,21 +141,11 @@ class SongPrintService {
           skipped++;
           continue;
         }
-
-        for (var c = 0; c < entry.copies; c++) {
-          for (var i = 0; i < images.length; i++) {
-            final image = images[i];
-            doc.addPage(pw.Page(
-              pageFormat: pageFormats[i],
-              margin: pw.EdgeInsets.zero,
-              build: (_) => pw.Center(child: pw.Image(image, fit: pw.BoxFit.contain)),
-            ));
-            pages++;
-          }
-        }
+        // Let the loading overlay repaint between files.
+        await Future<void>.delayed(Duration.zero);
       }
 
-      final data = pages > 0 ? await doc.save() : null;
+      final data = pages > 0 ? merger.save() : null;
       onMerged?.call();
       if (data != null) await NativeFileService.printPdf(data, fileName);
       return SongPrintResult(pageCount: pages, skipped: skipped);
