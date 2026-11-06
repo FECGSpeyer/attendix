@@ -16587,6 +16587,51 @@
   "@redesignRolePermIntro": {
     "description": "redesign.rolePerm.intro"
   },
+  "redesignShiftFrom": "ab {time}",
+  "@redesignShiftFrom": {
+    "description": "redesign.shift.from",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "redesignShiftHalfHourHint": "Halbe Stunden über die Stufen (0,5 h)",
+  "@redesignShiftHalfHourHint": {
+    "description": "redesign.shift.halfHourHint"
+  },
+  "redesignShiftHours": "{hours} h",
+  "@redesignShiftHours": {
+    "description": "redesign.shift.hours",
+    "placeholders": {
+      "hours": {}
+    }
+  },
+  "redesignShiftLocked": "gesperrt, da zugewiesen",
+  "@redesignShiftLocked": {
+    "description": "redesign.shift.locked"
+  },
+  "redesignShiftRemoveFixed": "Feste Schicht entfernen",
+  "@redesignShiftRemoveFixed": {
+    "description": "redesign.shift.removeFixed"
+  },
+  "redesignShiftRemoveSegment": "Abschnitt entfernen",
+  "@redesignShiftRemoveSegment": {
+    "description": "redesign.shift.removeSegment"
+  },
+  "redesignShiftTimes": "{count} ×",
+  "@redesignShiftTimes": {
+    "description": "redesign.shift.times",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignShiftUnnamed": "Ohne Namen",
+  "@redesignShiftUnnamed": {
+    "description": "redesign.shift.unnamed"
+  },
+  "redesignShiftWork": "Schicht",
+  "@redesignShiftWork": {
+    "description": "redesign.shift.work"
+  },
   "redesignShiftsListAdd": "Schichtplan anlegen",
   "@redesignShiftsListAdd": {
     "description": "redesign.shiftsList.add"
@@ -17419,6 +17464,84 @@
   "redesignTodayYourAnswer": "Deine Zusage",
   "@redesignTodayYourAnswer": {
     "description": "redesign.today.yourAnswer"
+  },
+  "redesignTypeAll": "alle",
+  "@redesignTypeAll": {
+    "description": "redesign.type.all"
+  },
+  "redesignTypeAttendance": "Anwesenheit",
+  "@redesignTypeAttendance": {
+    "description": "redesign.type.attendance"
+  },
+  "redesignTypeDays": "Tage",
+  "@redesignTypeDays": {
+    "description": "redesign.type.days"
+  },
+  "redesignTypeDefault": "Standard",
+  "@redesignTypeDefault": {
+    "description": "redesign.type.default"
+  },
+  "redesignTypeDelete": "Terminart löschen",
+  "@redesignTypeDelete": {
+    "description": "redesign.type.delete"
+  },
+  "redesignTypeFeatures": "Funktionen",
+  "@redesignTypeFeatures": {
+    "description": "redesign.type.features"
+  },
+  "redesignTypeInList": "In der Liste",
+  "@redesignTypeInList": {
+    "description": "redesign.type.inList"
+  },
+  "redesignTypeInvalid": "Noch nicht gespeichert: Name und mindestens zwei Status nötig",
+  "@redesignTypeInvalid": {
+    "description": "redesign.type.invalid"
+  },
+  "redesignTypeLocation": "Ort und Navigation",
+  "@redesignTypeLocation": {
+    "description": "redesign.type.location"
+  },
+  "redesignTypeOff": "aus",
+  "@redesignTypeOff": {
+    "description": "redesign.type.off"
+  },
+  "redesignTypeOn": "an",
+  "@redesignTypeOn": {
+    "description": "redesign.type.on"
+  },
+  "redesignTypeRemindersActive": "{count} aktiv",
+  "@redesignTypeRemindersActive": {
+    "description": "redesign.type.remindersActive",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignTypeStatuses": "Mögliche Status",
+  "@redesignTypeStatuses": {
+    "description": "redesign.type.statuses"
+  },
+  "redesignTypeTime": "Zeit",
+  "@redesignTypeTime": {
+    "description": "redesign.type.time"
+  },
+  "redesignTypeTimeHint": "Vorschlag, je Termin änderbar",
+  "@redesignTypeTimeHint": {
+    "description": "redesign.type.timeHint"
+  },
+  "redesignTypeUsage": "Wird in {count} Terminen verwendet. Änderungen gelten auch für diese.",
+  "@redesignTypeUsage": {
+    "description": "redesign.type.usage",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignTypeWhoBelongs": "Wer gehört dazu",
+  "@redesignTypeWhoBelongs": {
+    "description": "redesign.type.whoBelongs"
+  },
+  "redesignTypeWhoBelongsHint": "Gruppen und Zusatzfeld-Filter",
+  "@redesignTypeWhoBelongsHint": {
+    "description": "redesign.type.whoBelongsHint"
   },
   "redesignTypesListAdd": "Anwesenheits-Typ hinzufügen",
   "@redesignTypesListAdd": {

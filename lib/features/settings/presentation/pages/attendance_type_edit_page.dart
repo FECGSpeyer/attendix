@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -26,7 +29,7 @@ import '../../../../core/providers/plan_providers.dart' show planAttendanceTypes
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/team_org/team_org.dart' show agendaItemsPlaceholderId;
 import '../../../../data/models/plan/plan.dart' show PlanField;
-import '../../../planning/presentation/widgets/plan_field_dialogs.dart' show showPlanFieldDialog;
+import '../../../planning/presentation/widgets/plan_field_dialogs.dart' show showPlanFieldDialog, PlanSheetAction;
 import '../../../planning/presentation/widgets/plan_fields_editor.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/services/error_reporter.dart';
@@ -35,6 +38,14 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/services/web_window.dart' show setUnloadWarning;
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
+import '../../../redesign/data/rd_manage_logic.dart' show RdManageEntry;
+import '../../../redesign/presentation/widgets/manage/rd_manage_entries.dart' show rdManageTitle;
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
+
+part 'attendance_type_edit_page_beta.dart';
 
 
 /// Ionic `types.page.ts openTypeModal()`: "+" presents the type page with
@@ -150,6 +161,43 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   bool _isLoading = true;
   bool _hasChanges = false;
+
+  // REDESIGN: live saving of the Beta page (attendance_type_edit_page_beta.dart).
+  final _rdTick = ValueNotifier<int>(0);
+  Timer? _rdSaveTimer;
+  bool _rdSaving = false;
+  bool _rdInvalid = false;
+
+  /// What was last loaded or saved, and what last failed. A change is any
+  /// difference in the saved data, whichever editor made it (also the
+  /// classic sub-editors and text fields without setState). A failed state
+  /// is not retried in a loop; any further change is saved again.
+  String? _rdSavedJson;
+  String? _rdFailedJson;
+  // REDESIGN: the state of the save last put on [_rdChain] (null when none
+  // is pending); a change back to the stored state is still saved after it.
+  String? _rdQueuedJson;
+  bool _rdListening = false;
+
+  /// Saves run one after another, also the flush on dispose, so an older
+  /// state never overwrites a newer one.
+  Future<void> _rdChain = Future.value();
+
+  /// Captured with the notifier: invalidates the plan and protocol type
+  /// lists also when a save ends after the page is gone.
+  ProviderContainer? _rdContainer;
+
+  void _rdInvalidateCaches() {
+    _rdContainer?.invalidate(protocolTypesProvider);
+    _rdContainer?.invalidate(planAttendanceTypesProvider);
+  }
+
+  String _rdJson() => jsonEncode(_buildTypeData(), toEncodable: (o) => o.toString());
+
+  /// Captured with the first change: a pending save still runs on dispose.
+  AttendanceTypeNotifier? _rdNotifier;
+
+  void _update(VoidCallback fn) => setState(fn);
   AttendanceType? _originalType;
   int _usageCount = 0;
 
@@ -283,6 +331,26 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   @override
   void dispose() {
+    // REDESIGN: a change made right before leaving is still saved.
+    _rdSaveTimer?.cancel();
+    final notifier = _rdNotifier;
+    if (notifier != null &&
+        _rdSavedJson != null &&
+        _nameController.text.trim().isNotEmpty &&
+        _availableStatuses.length >= 2) {
+      final json = _rdJson();
+      if (json != (_rdQueuedJson ?? _rdSavedJson) && json != _rdFailedJson) {
+        final data = _buildTypeData();
+        final id = widget.typeId!;
+        final invalidate = _rdInvalidateCaches;
+        unawaited(
+          _rdChain.then((_) => notifier.updateType(id, data)).then((r) {
+            if (r != null) invalidate();
+          }, onError: (_) {}),
+        );
+      }
+    }
+    _rdTick.dispose();
     setUnloadWarning(this, false);
     _nameController.dispose();
     _durationDaysController.dispose();
@@ -308,6 +376,11 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       );
     }
 
+    // REDESIGN: existing types save live in the Beta look.
+    if (!_isNew && context.rdSkin != null) {
+      setUnloadWarning(this, false);
+      return _rdBuild(context);
+    }
     // Ionic beforeunload: closing/reloading the browser tab warns too.
     final dirty = _isNew ? _hasNewInput : _hasChanges;
     setUnloadWarning(this, dirty);
