@@ -6,6 +6,8 @@ import '../../../../data/models/song/song.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
 import 'ion_items.dart';
+import 'rd_plan_widgets.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 
 /// Song related helpers of the Ablaufplan editor (Ionic `PlanningPage`
 /// `onSongsChange`, `addCurrentSongs`, `resolvePlaceholderFields`).
@@ -92,7 +94,17 @@ class PlanSongHelper {
 
 /// Searchable song picker (Ionic `songSelectModal`: "Werk auswählen" with a
 /// searchbar toolbar and an inset list).
-Future<Song?> showPlanSongPicker(BuildContext context, List<Song> songs) {
+/// In the Beta skin a sheet with search; [currentIds] (Werke of the current
+/// history) are listed first and [inPlanIds] are marked "im Ablauf".
+Future<Song?> showPlanSongPicker(
+  BuildContext context,
+  List<Song> songs, {
+  Set<int> currentIds = const {},
+  Set<int> inPlanIds = const {},
+}) {
+  if (context.rdSkin != null) {
+    return showRdPlanSongPicker(context, songs, currentIds: currentIds, inPlanIds: inPlanIds);
+  }
   return Navigator.of(context, rootNavigator: true).push<Song>(MaterialPageRoute(
     fullscreenDialog: true,
     builder: (_) => _SongPicker(songs: songs),
