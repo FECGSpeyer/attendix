@@ -17,17 +17,22 @@ import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
 
-Future<void> _extraFieldWrites = Future.value();
+Future<void>? _extraFieldWrites;
 
 /// Runs [task] after every earlier write of the extra fields from the Beta
 /// pages (list and edit page), so each one builds both lists from the state
 /// the previous one left (a save still running from a closed edit page is
 /// never overwritten by a reorder or a new field).
 Future<T> rdSerialExtraFieldWrite<T>(Future<T> Function() task) {
-  final result = _extraFieldWrites.then((_) => task());
+  final result = (_extraFieldWrites ?? Future<void>.value()).then((_) => task());
   _extraFieldWrites = result.then((_) {}, onError: (Object _) {});
   return result;
 }
+
+/// Starts with an empty write queue: each widget test runs in its own zone,
+/// and a future of an earlier test's zone never calls back in the next one.
+@visibleForTesting
+void rdResetExtraFieldWrites() => _extraFieldWrites = null;
 
 /// Saves the person and work fields of [repo]'s tenant like "Speichern" of
 /// the old page (definitions, then the values are cleaned). Returns false
@@ -69,8 +74,9 @@ class _RdExtraFieldsPageState extends ConsumerState<RdExtraFieldsPage> {
 
   Future<bool> _saveOrder(List<RdManageListSection> sections) async {
     final l10n = context.l10n;
-    final repo = ref.read(extraFieldsRepositoryWithTenantProvider);
-    final read = ref.read;
+    // Not through `ref`: the write's turn may come after the list was left.
+    final read = ProviderScope.containerOf(context, listen: false).read;
+    final repo = read(extraFieldsRepositoryWithTenantProvider);
     List<ExtraField> ordered(Object key, List<ExtraField> fields) {
       final byId = {for (final f in fields) f.id: f};
       final items = sections.where((s) => s.key == key).firstOrNull?.items ?? const <RdManageListItem>[];
@@ -125,18 +131,19 @@ class _RdExtraFieldsPageState extends ConsumerState<RdExtraFieldsPage> {
     );
     if (target == null || !mounted) return;
     final song = target == ExtraFieldTarget.song;
-    // Bound before the first await: the field goes to this tenant.
-    final repo = ref.read(extraFieldsRepositoryWithTenantProvider);
+    // Bound before the first await: the field goes to this tenant. Not
+    // through `ref`: the write's turn may come after the list was left.
+    final read = ProviderScope.containerOf(context, listen: false).read;
+    final repo = read(extraFieldsRepositoryWithTenantProvider);
     List<ExtraField> fieldsOf(Tenant? t) =>
         (song ? t?.songAdditionalFields : t?.additionalFields) ?? const <ExtraField>[];
     final field = await showExtraFieldSheet(
       context,
       ref,
       target: target,
-      fields: () => fieldsOf(ref.read(currentTenantProvider)),
+      fields: () => fieldsOf(read(currentTenantProvider)),
     );
     if (field == null || !mounted) return;
-    final read = ref.read;
     setState(() => _adding = true);
     var ok = false;
     try {

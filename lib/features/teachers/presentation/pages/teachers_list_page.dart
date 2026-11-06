@@ -6,6 +6,8 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/teacher_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/services/tracking/tracking_event.dart';
+import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
@@ -44,7 +46,14 @@ Future<List<Group>> loadTeacherGroups(WidgetRef ref) async {
 /// Ionic "Lehrer hinzufügen" sheet (breakpoint 0.7), also used by the Beta
 /// list (`rd_teachers_page.dart`). Returns the created teacher, null when
 /// the sheet was closed or creating failed.
+///
+/// The repository (bound to tenant and account) is taken before the first
+/// await: when the group changed while the sheet was open, nothing is
+/// created (the instruments belong to the old group) and an error is shown.
 Future<Teacher?> showAddTeacherSheet(BuildContext context, WidgetRef ref) async {
+  final container = ProviderScope.containerOf(context, listen: false);
+  final repo = container.read(teacherRepositoryWithTenantProvider);
+  final saveFailed = context.l10n.extraFieldsSaveFailed;
   // Ionic teachers.page: instruments without the main group. Ionic has
   // db.groups() always loaded; here the groups may not be loaded yet.
   final groups = (await loadTeacherGroups(ref))
@@ -62,8 +71,17 @@ Future<Teacher?> showAddTeacherSheet(BuildContext context, WidgetRef ref) async 
     ),
   );
   if (result == null) return null;
+  // Same tenant and account as when the sheet was opened (one repository
+  // instance per tenant and account).
+  if (!repo.hasTenantId || !identical(container.read(teacherRepositoryWithTenantProvider), repo)) {
+    if (context.mounted) ToastHelper.showError(context, saveFailed);
+    return null;
+  }
   try {
-    return await ref.read(teacherNotifierProvider.notifier).createTeacher(result);
+    final created = await repo.createTeacher(result);
+    container.read(trackingServiceProvider).track(TrackingEvent.teacherAdded);
+    container.invalidate(teachersProvider);
+    return created;
   } catch (e) {
     if (context.mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
     return null;

@@ -135,14 +135,20 @@ class _RdTeacherEditPageState extends ConsumerState<RdTeacherEditPage> {
 
   /// Saves a text column when it differs from what is stored when it runs
   /// (the last typed value wins). Trimmed like the old page; an empty name
-  /// is not saved.
+  /// is not saved. A failed save shows the value last stored again, unless
+  /// the field was edited meanwhile.
   void _saveText(String column) {
     final value = _controllerOf(column).text.trim(); // read now: the page may be gone when it runs
     _enqueue(() async {
       if (!_stored.containsKey(column)) return;
       if (value == _stored[column]) return;
       if (column == 'name' && value.isEmpty) return;
-      if (await _store({column: value})) _stored[column] = value;
+      if (await _store({column: value})) {
+        _stored[column] = value;
+      } else if (mounted) {
+        final controller = _controllerOf(column);
+        if (controller.text.trim() == value) setState(() => controller.text = _stored[column]!);
+      }
     });
   }
 
