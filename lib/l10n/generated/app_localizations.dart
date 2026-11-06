@@ -3983,6 +3983,330 @@ abstract class AppLocalizations {
   /// **'Unbekannte Gemeinde'**
   String get churchOverviewUnknownChurch;
 
+  /// collections.add
+  ///
+  /// In de, this message translates to:
+  /// **'Sammlung anlegen'**
+  String get collectionsAdd;
+
+  /// collections.addFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Sammlung konnte nicht angelegt werden.'**
+  String get collectionsAddFailed;
+
+  /// collections.addHint
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. Einspielen, Streicher, In Vorbereitung'**
+  String get collectionsAddHint;
+
+  /// collections.addTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Sammlung'**
+  String get collectionsAddTitle;
+
+  /// collections.bannerGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Nur {names} und die Leitung sehen dieses Werk.'**
+  String collectionsBannerGroups(Object names);
+
+  /// collections.bannerLeads
+  ///
+  /// In de, this message translates to:
+  /// **'Nur die Leitung sieht dieses Werk.'**
+  String get collectionsBannerLeads;
+
+  /// collections.category
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorie'**
+  String get collectionsCategory;
+
+  /// collections.categoryAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Kategorien'**
+  String get collectionsCategoryAll;
+
+  /// collections.chip
+  ///
+  /// In de, this message translates to:
+  /// **'{name} · {count}'**
+  String collectionsChip(Object name, Object count);
+
+  /// collections.delete
+  ///
+  /// In de, this message translates to:
+  /// **'Sammlung löschen'**
+  String get collectionsDelete;
+
+  /// collections.deleteConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ löschen? Ihre Werke kommen ins Repertoire zurück.'**
+  String collectionsDeleteConfirm(Object name);
+
+  /// collections.deleteFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Sammlung konnte nicht gelöscht werden.'**
+  String get collectionsDeleteFailed;
+
+  /// collections.editHint
+  ///
+  /// In de, this message translates to:
+  /// **'Änderungen werden sofort gespeichert.'**
+  String get collectionsEditHint;
+
+  /// collections.editTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Sammlung bearbeiten'**
+  String get collectionsEditTitle;
+
+  /// collections.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine eigenen Sammlungen. Lege zum Beispiel „Einspielen“ oder „In Vorbereitung“ an.'**
+  String get collectionsEmpty;
+
+  /// collections.emptyIn
+  ///
+  /// In de, this message translates to:
+  /// **'In „{name}“ liegt noch kein Werk.'**
+  String collectionsEmptyIn(Object name);
+
+  /// collections.groupsNone
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle mindestens eine Gruppe. Bis dahin sieht sie nur die Leitung.'**
+  String get collectionsGroupsNone;
+
+  /// collections.intoRepertoire
+  ///
+  /// In de, this message translates to:
+  /// **'Ins Repertoire aufnehmen (Nr. {number})'**
+  String collectionsIntoRepertoire(Object number);
+
+  /// collections.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Jedes Werk liegt in genau einer Sammlung. Das Repertoire gibt es immer.'**
+  String get collectionsIntro;
+
+  /// collections.leadsSeeAll
+  ///
+  /// In de, this message translates to:
+  /// **'Die Leitung sieht jede Sammlung.'**
+  String get collectionsLeadsSeeAll;
+
+  /// collections.manage
+  ///
+  /// In de, this message translates to:
+  /// **'Sammlungen verwalten'**
+  String get collectionsManage;
+
+  /// collections.move
+  ///
+  /// In de, this message translates to:
+  /// **'In Sammlung verschieben'**
+  String get collectionsMove;
+
+  /// collections.moveDone
+  ///
+  /// In de, this message translates to:
+  /// **'Verschoben nach „{name}“'**
+  String collectionsMoveDone(Object name);
+
+  /// collections.moveDoneNumber
+  ///
+  /// In de, this message translates to:
+  /// **'Verschoben nach „{name}“ als Nr. {number}'**
+  String collectionsMoveDoneNumber(Object name, Object number);
+
+  /// collections.moveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Das Werk konnte nicht verschoben werden.'**
+  String get collectionsMoveFailed;
+
+  /// collections.moveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ein Werk liegt immer in genau einer Sammlung.'**
+  String get collectionsMoveHint;
+
+  /// collections.moveNext
+  ///
+  /// In de, this message translates to:
+  /// **'nächste Nr. {number}'**
+  String collectionsMoveNext(Object number);
+
+  /// collections.name
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get collectionsName;
+
+  /// collections.nameEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Namen wird der Name nicht gespeichert.'**
+  String get collectionsNameEmpty;
+
+  /// collections.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Sammlung gibt es nicht mehr.'**
+  String get collectionsNotFound;
+
+  /// collections.notPlannable
+  ///
+  /// In de, this message translates to:
+  /// **'nicht planbar'**
+  String get collectionsNotPlannable;
+
+  /// collections.onlyLeads
+  ///
+  /// In de, this message translates to:
+  /// **'nur Leitung'**
+  String get collectionsOnlyLeads;
+
+  /// collections.orderFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Reihenfolge konnte nicht gespeichert werden.'**
+  String get collectionsOrderFailed;
+
+  /// collections.orderSaved
+  ///
+  /// In de, this message translates to:
+  /// **'Reihenfolge gespeichert'**
+  String get collectionsOrderSaved;
+
+  /// collections.plannable
+  ///
+  /// In de, this message translates to:
+  /// **'Im Termin-Programm planbar'**
+  String get collectionsPlannable;
+
+  /// collections.plannableHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ihre Werke lassen sich in Termine und Abläufe einplanen und stehen dann bei „Als Nächstes“.'**
+  String get collectionsPlannableHint;
+
+  /// collections.prefix
+  ///
+  /// In de, this message translates to:
+  /// **'Nummern mit'**
+  String get collectionsPrefix;
+
+  /// collections.prefixHint
+  ///
+  /// In de, this message translates to:
+  /// **'Kürzel vor der Nummer, z. B. E für E1, E2 … Eine Änderung gilt auch für die Werke, die schon in der Sammlung liegen.'**
+  String get collectionsPrefixHint;
+
+  /// collections.prefixNone
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Kürzel teilt sich die Sammlung die Nummern mit dem Repertoire.'**
+  String get collectionsPrefixNone;
+
+  /// collections.prefixTaken
+  ///
+  /// In de, this message translates to:
+  /// **'Mit „{prefix}“ gäbe es doppelte Nummern ({number}). Wähle ein anderes Kürzel.'**
+  String collectionsPrefixTaken(Object prefix, Object number);
+
+  /// collections.prefixTakenShort
+  ///
+  /// In de, this message translates to:
+  /// **'Mit „{prefix}“ gäbe es doppelte Nummern. Wähle ein anderes Kürzel.'**
+  String collectionsPrefixTakenShort(Object prefix);
+
+  /// collections.publicLink
+  ///
+  /// In de, this message translates to:
+  /// **'Im öffentlichen Werke-Link'**
+  String get collectionsPublicLink;
+
+  /// collections.publicLinkHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gilt nur, wenn alle die Sammlung sehen.'**
+  String get collectionsPublicLinkHint;
+
+  /// collections.repertoire
+  ///
+  /// In de, this message translates to:
+  /// **'Repertoire'**
+  String get collectionsRepertoire;
+
+  /// collections.repertoireHint
+  ///
+  /// In de, this message translates to:
+  /// **'Standard, alle sehen es'**
+  String get collectionsRepertoireHint;
+
+  /// collections.row
+  ///
+  /// In de, this message translates to:
+  /// **'Sammlung'**
+  String get collectionsRow;
+
+  /// collections.saveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Änderung konnte nicht gespeichert werden.'**
+  String get collectionsSaveFailed;
+
+  /// collections.searchAll
+  ///
+  /// In de, this message translates to:
+  /// **'In allen Sammlungen suchen'**
+  String get collectionsSearchAll;
+
+  /// collections.title
+  ///
+  /// In de, this message translates to:
+  /// **'Sammlungen'**
+  String get collectionsTitle;
+
+  /// collections.visAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get collectionsVisAll;
+
+  /// collections.visGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Bestimmte Gruppen'**
+  String get collectionsVisGroups;
+
+  /// collections.visLeads
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Leitung'**
+  String get collectionsVisLeads;
+
+  /// collections.whoSees
+  ///
+  /// In de, this message translates to:
+  /// **'Wer sieht diese Sammlung'**
+  String get collectionsWhoSees;
+
+  /// collections.works
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Kein Werk} one {1 Werk} other {{count} Werke}}'**
+  String collectionsWorks(num count);
+
   /// common.all
   ///
   /// In de, this message translates to:
@@ -18422,13 +18746,13 @@ abstract class AppLocalizations {
   /// redesign.folder.title
   ///
   /// In de, this message translates to:
-  /// **'Meine Mappe'**
+  /// **'Meine Noten'**
   String get redesignFolderTitle;
 
   /// redesign.folder.titleLeads
   ///
   /// In de, this message translates to:
-  /// **'Mappen'**
+  /// **'Nach Stimme'**
   String get redesignFolderTitleLeads;
 
   /// redesign.groupEdit.category
@@ -23732,13 +24056,13 @@ abstract class AppLocalizations {
   /// redesign.works.folder
   ///
   /// In de, this message translates to:
-  /// **'Meine Mappe'**
+  /// **'Meine Noten'**
   String get redesignWorksFolder;
 
   /// redesign.works.folders
   ///
   /// In de, this message translates to:
-  /// **'Mappen'**
+  /// **'Nach Stimme'**
   String get redesignWorksFolders;
 
   /// redesign.works.forGroup

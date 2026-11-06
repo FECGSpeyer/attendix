@@ -78,6 +78,12 @@ mixin _$Song {
   )
   SongCopiedFrom? get copiedFrom => throw _privateConstructorUsedError;
 
+  /// Sammlung of the Werk (`songs.collection_id`); null = "Repertoire".
+  /// Written only by [SongRepository.moveSongToCollection] and on create,
+  /// never by Song updates (the column may not exist yet).
+  @JsonKey(name: 'collection_id', includeToJson: false)
+  int? get collectionId => throw _privateConstructorUsedError;
+
   /// Serializes this Song to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -122,6 +128,7 @@ abstract class $SongCopyWith<$Res> {
       fromJson: songCopiedFromOrNull,
     )
     SongCopiedFrom? copiedFrom,
+    @JsonKey(name: 'collection_id', includeToJson: false) int? collectionId,
   });
 
   $BeamerFileCopyWith<$Res>? get beamerFile;
@@ -165,6 +172,7 @@ class _$SongCopyWithImpl<$Res, $Val extends Song>
     Object? createdAt = freezed,
     Object? beamerFile = freezed,
     Object? copiedFrom = freezed,
+    Object? collectionId = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -278,6 +286,11 @@ class _$SongCopyWithImpl<$Res, $Val extends Song>
                     ? _value.copiedFrom
                     : copiedFrom // ignore: cast_nullable_to_non_nullable
                         as SongCopiedFrom?,
+            collectionId:
+                freezed == collectionId
+                    ? _value.collectionId
+                    : collectionId // ignore: cast_nullable_to_non_nullable
+                        as int?,
           )
           as $Val,
     );
@@ -350,6 +363,7 @@ abstract class _$$SongImplCopyWith<$Res> implements $SongCopyWith<$Res> {
       fromJson: songCopiedFromOrNull,
     )
     SongCopiedFrom? copiedFrom,
+    @JsonKey(name: 'collection_id', includeToJson: false) int? collectionId,
   });
 
   @override
@@ -392,6 +406,7 @@ class __$$SongImplCopyWithImpl<$Res>
     Object? createdAt = freezed,
     Object? beamerFile = freezed,
     Object? copiedFrom = freezed,
+    Object? collectionId = freezed,
   }) {
     return _then(
       _$SongImpl(
@@ -505,6 +520,11 @@ class __$$SongImplCopyWithImpl<$Res>
                 ? _value.copiedFrom
                 : copiedFrom // ignore: cast_nullable_to_non_nullable
                     as SongCopiedFrom?,
+        collectionId:
+            freezed == collectionId
+                ? _value.collectionId
+                : collectionId // ignore: cast_nullable_to_non_nullable
+                    as int?,
       ),
     );
   }
@@ -544,6 +564,7 @@ class _$SongImpl implements _Song {
       fromJson: songCopiedFromOrNull,
     )
     this.copiedFrom,
+    @JsonKey(name: 'collection_id', includeToJson: false) this.collectionId,
   }) : _instrumentIds = instrumentIds,
        _files = files,
        _categoryIds = categoryIds,
@@ -667,9 +688,16 @@ class _$SongImpl implements _Song {
   )
   final SongCopiedFrom? copiedFrom;
 
+  /// Sammlung of the Werk (`songs.collection_id`); null = "Repertoire".
+  /// Written only by [SongRepository.moveSongToCollection] and on create,
+  /// never by Song updates (the column may not exist yet).
+  @override
+  @JsonKey(name: 'collection_id', includeToJson: false)
+  final int? collectionId;
+
   @override
   String toString() {
-    return 'Song(id: $id, tenantId: $tenantId, name: $name, number: $number, prefix: $prefix, withChoir: $withChoir, withSolo: $withSolo, lastSung: $lastSung, nextPlanned: $nextPlanned, link: $link, conductor: $conductor, composer: $composer, legacyId: $legacyId, instrumentIds: $instrumentIds, files: $files, difficulty: $difficulty, category: $category, categoryIds: $categoryIds, additionalFields: $additionalFields, createdAt: $createdAt, beamerFile: $beamerFile, copiedFrom: $copiedFrom)';
+    return 'Song(id: $id, tenantId: $tenantId, name: $name, number: $number, prefix: $prefix, withChoir: $withChoir, withSolo: $withSolo, lastSung: $lastSung, nextPlanned: $nextPlanned, link: $link, conductor: $conductor, composer: $composer, legacyId: $legacyId, instrumentIds: $instrumentIds, files: $files, difficulty: $difficulty, category: $category, categoryIds: $categoryIds, additionalFields: $additionalFields, createdAt: $createdAt, beamerFile: $beamerFile, copiedFrom: $copiedFrom, collectionId: $collectionId)';
   }
 
   @override
@@ -720,7 +748,9 @@ class _$SongImpl implements _Song {
             (identical(other.beamerFile, beamerFile) ||
                 other.beamerFile == beamerFile) &&
             (identical(other.copiedFrom, copiedFrom) ||
-                other.copiedFrom == copiedFrom));
+                other.copiedFrom == copiedFrom) &&
+            (identical(other.collectionId, collectionId) ||
+                other.collectionId == collectionId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -749,6 +779,7 @@ class _$SongImpl implements _Song {
     createdAt,
     beamerFile,
     copiedFrom,
+    collectionId,
   ]);
 
   /// Create a copy of Song
@@ -797,6 +828,8 @@ abstract class _Song implements Song {
       fromJson: songCopiedFromOrNull,
     )
     final SongCopiedFrom? copiedFrom,
+    @JsonKey(name: 'collection_id', includeToJson: false)
+    final int? collectionId,
   }) = _$SongImpl;
 
   factory _Song.fromJson(Map<String, dynamic> json) = _$SongImpl.fromJson;
@@ -878,6 +911,13 @@ abstract class _Song implements Song {
     fromJson: songCopiedFromOrNull,
   )
   SongCopiedFrom? get copiedFrom;
+
+  /// Sammlung of the Werk (`songs.collection_id`); null = "Repertoire".
+  /// Written only by [SongRepository.moveSongToCollection] and on create,
+  /// never by Song updates (the column may not exist yet).
+  @override
+  @JsonKey(name: 'collection_id', includeToJson: false)
+  int? get collectionId;
 
   /// Create a copy of Song
   /// with the given fields replaced by the non-null parameter values.
@@ -2229,5 +2269,442 @@ abstract class _SongCategory implements SongCategory {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SongCategoryImplCopyWith<_$SongCategoryImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+SongCollection _$SongCollectionFromJson(Map<String, dynamic> json) {
+  return _SongCollection.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SongCollection {
+  int? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'tenant_id')
+  int? get tenantId => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+
+  /// Number prefix of its Werke ("E" → E1, E2 …).
+  String get prefix => throw _privateConstructorUsedError;
+
+  /// `all`, `leads` or `groups` (see [SongCollectionVisibility]).
+  String get visibility => throw _privateConstructorUsedError;
+
+  /// Groups that see it when [visibility] is `groups`.
+  @JsonKey(name: 'group_ids')
+  List<int> get groupIds => throw _privateConstructorUsedError;
+
+  /// Its Werke can be put into a Termin programme or a plan.
+  bool get plannable => throw _privateConstructorUsedError;
+
+  /// The public Werke link shows its Werke (only when visible to all).
+  @JsonKey(name: 'public_link')
+  bool get publicLink => throw _privateConstructorUsedError;
+  int get index => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at', includeToJson: false)
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+
+  /// Serializes this SongCollection to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of SongCollection
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SongCollectionCopyWith<SongCollection> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SongCollectionCopyWith<$Res> {
+  factory $SongCollectionCopyWith(
+    SongCollection value,
+    $Res Function(SongCollection) then,
+  ) = _$SongCollectionCopyWithImpl<$Res, SongCollection>;
+  @useResult
+  $Res call({
+    int? id,
+    @JsonKey(name: 'tenant_id') int? tenantId,
+    String name,
+    String prefix,
+    String visibility,
+    @JsonKey(name: 'group_ids') List<int> groupIds,
+    bool plannable,
+    @JsonKey(name: 'public_link') bool publicLink,
+    int index,
+    @JsonKey(name: 'created_at', includeToJson: false) DateTime? createdAt,
+  });
+}
+
+/// @nodoc
+class _$SongCollectionCopyWithImpl<$Res, $Val extends SongCollection>
+    implements $SongCollectionCopyWith<$Res> {
+  _$SongCollectionCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SongCollection
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? tenantId = freezed,
+    Object? name = null,
+    Object? prefix = null,
+    Object? visibility = null,
+    Object? groupIds = null,
+    Object? plannable = null,
+    Object? publicLink = null,
+    Object? index = null,
+    Object? createdAt = freezed,
+  }) {
+    return _then(
+      _value.copyWith(
+            id:
+                freezed == id
+                    ? _value.id
+                    : id // ignore: cast_nullable_to_non_nullable
+                        as int?,
+            tenantId:
+                freezed == tenantId
+                    ? _value.tenantId
+                    : tenantId // ignore: cast_nullable_to_non_nullable
+                        as int?,
+            name:
+                null == name
+                    ? _value.name
+                    : name // ignore: cast_nullable_to_non_nullable
+                        as String,
+            prefix:
+                null == prefix
+                    ? _value.prefix
+                    : prefix // ignore: cast_nullable_to_non_nullable
+                        as String,
+            visibility:
+                null == visibility
+                    ? _value.visibility
+                    : visibility // ignore: cast_nullable_to_non_nullable
+                        as String,
+            groupIds:
+                null == groupIds
+                    ? _value.groupIds
+                    : groupIds // ignore: cast_nullable_to_non_nullable
+                        as List<int>,
+            plannable:
+                null == plannable
+                    ? _value.plannable
+                    : plannable // ignore: cast_nullable_to_non_nullable
+                        as bool,
+            publicLink:
+                null == publicLink
+                    ? _value.publicLink
+                    : publicLink // ignore: cast_nullable_to_non_nullable
+                        as bool,
+            index:
+                null == index
+                    ? _value.index
+                    : index // ignore: cast_nullable_to_non_nullable
+                        as int,
+            createdAt:
+                freezed == createdAt
+                    ? _value.createdAt
+                    : createdAt // ignore: cast_nullable_to_non_nullable
+                        as DateTime?,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$SongCollectionImplCopyWith<$Res>
+    implements $SongCollectionCopyWith<$Res> {
+  factory _$$SongCollectionImplCopyWith(
+    _$SongCollectionImpl value,
+    $Res Function(_$SongCollectionImpl) then,
+  ) = __$$SongCollectionImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({
+    int? id,
+    @JsonKey(name: 'tenant_id') int? tenantId,
+    String name,
+    String prefix,
+    String visibility,
+    @JsonKey(name: 'group_ids') List<int> groupIds,
+    bool plannable,
+    @JsonKey(name: 'public_link') bool publicLink,
+    int index,
+    @JsonKey(name: 'created_at', includeToJson: false) DateTime? createdAt,
+  });
+}
+
+/// @nodoc
+class __$$SongCollectionImplCopyWithImpl<$Res>
+    extends _$SongCollectionCopyWithImpl<$Res, _$SongCollectionImpl>
+    implements _$$SongCollectionImplCopyWith<$Res> {
+  __$$SongCollectionImplCopyWithImpl(
+    _$SongCollectionImpl _value,
+    $Res Function(_$SongCollectionImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of SongCollection
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? tenantId = freezed,
+    Object? name = null,
+    Object? prefix = null,
+    Object? visibility = null,
+    Object? groupIds = null,
+    Object? plannable = null,
+    Object? publicLink = null,
+    Object? index = null,
+    Object? createdAt = freezed,
+  }) {
+    return _then(
+      _$SongCollectionImpl(
+        id:
+            freezed == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                    as int?,
+        tenantId:
+            freezed == tenantId
+                ? _value.tenantId
+                : tenantId // ignore: cast_nullable_to_non_nullable
+                    as int?,
+        name:
+            null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                    as String,
+        prefix:
+            null == prefix
+                ? _value.prefix
+                : prefix // ignore: cast_nullable_to_non_nullable
+                    as String,
+        visibility:
+            null == visibility
+                ? _value.visibility
+                : visibility // ignore: cast_nullable_to_non_nullable
+                    as String,
+        groupIds:
+            null == groupIds
+                ? _value._groupIds
+                : groupIds // ignore: cast_nullable_to_non_nullable
+                    as List<int>,
+        plannable:
+            null == plannable
+                ? _value.plannable
+                : plannable // ignore: cast_nullable_to_non_nullable
+                    as bool,
+        publicLink:
+            null == publicLink
+                ? _value.publicLink
+                : publicLink // ignore: cast_nullable_to_non_nullable
+                    as bool,
+        index:
+            null == index
+                ? _value.index
+                : index // ignore: cast_nullable_to_non_nullable
+                    as int,
+        createdAt:
+            freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                    as DateTime?,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SongCollectionImpl implements _SongCollection {
+  const _$SongCollectionImpl({
+    this.id,
+    @JsonKey(name: 'tenant_id') this.tenantId,
+    required this.name,
+    this.prefix = '',
+    this.visibility = 'all',
+    @JsonKey(name: 'group_ids') final List<int> groupIds = const [],
+    this.plannable = true,
+    @JsonKey(name: 'public_link') this.publicLink = true,
+    this.index = 0,
+    @JsonKey(name: 'created_at', includeToJson: false) this.createdAt,
+  }) : _groupIds = groupIds;
+
+  factory _$SongCollectionImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SongCollectionImplFromJson(json);
+
+  @override
+  final int? id;
+  @override
+  @JsonKey(name: 'tenant_id')
+  final int? tenantId;
+  @override
+  final String name;
+
+  /// Number prefix of its Werke ("E" → E1, E2 …).
+  @override
+  @JsonKey()
+  final String prefix;
+
+  /// `all`, `leads` or `groups` (see [SongCollectionVisibility]).
+  @override
+  @JsonKey()
+  final String visibility;
+
+  /// Groups that see it when [visibility] is `groups`.
+  final List<int> _groupIds;
+
+  /// Groups that see it when [visibility] is `groups`.
+  @override
+  @JsonKey(name: 'group_ids')
+  List<int> get groupIds {
+    if (_groupIds is EqualUnmodifiableListView) return _groupIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_groupIds);
+  }
+
+  /// Its Werke can be put into a Termin programme or a plan.
+  @override
+  @JsonKey()
+  final bool plannable;
+
+  /// The public Werke link shows its Werke (only when visible to all).
+  @override
+  @JsonKey(name: 'public_link')
+  final bool publicLink;
+  @override
+  @JsonKey()
+  final int index;
+  @override
+  @JsonKey(name: 'created_at', includeToJson: false)
+  final DateTime? createdAt;
+
+  @override
+  String toString() {
+    return 'SongCollection(id: $id, tenantId: $tenantId, name: $name, prefix: $prefix, visibility: $visibility, groupIds: $groupIds, plannable: $plannable, publicLink: $publicLink, index: $index, createdAt: $createdAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SongCollectionImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.tenantId, tenantId) ||
+                other.tenantId == tenantId) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.prefix, prefix) || other.prefix == prefix) &&
+            (identical(other.visibility, visibility) ||
+                other.visibility == visibility) &&
+            const DeepCollectionEquality().equals(other._groupIds, _groupIds) &&
+            (identical(other.plannable, plannable) ||
+                other.plannable == plannable) &&
+            (identical(other.publicLink, publicLink) ||
+                other.publicLink == publicLink) &&
+            (identical(other.index, index) || other.index == index) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    tenantId,
+    name,
+    prefix,
+    visibility,
+    const DeepCollectionEquality().hash(_groupIds),
+    plannable,
+    publicLink,
+    index,
+    createdAt,
+  );
+
+  /// Create a copy of SongCollection
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SongCollectionImplCopyWith<_$SongCollectionImpl> get copyWith =>
+      __$$SongCollectionImplCopyWithImpl<_$SongCollectionImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SongCollectionImplToJson(this);
+  }
+}
+
+abstract class _SongCollection implements SongCollection {
+  const factory _SongCollection({
+    final int? id,
+    @JsonKey(name: 'tenant_id') final int? tenantId,
+    required final String name,
+    final String prefix,
+    final String visibility,
+    @JsonKey(name: 'group_ids') final List<int> groupIds,
+    final bool plannable,
+    @JsonKey(name: 'public_link') final bool publicLink,
+    final int index,
+    @JsonKey(name: 'created_at', includeToJson: false)
+    final DateTime? createdAt,
+  }) = _$SongCollectionImpl;
+
+  factory _SongCollection.fromJson(Map<String, dynamic> json) =
+      _$SongCollectionImpl.fromJson;
+
+  @override
+  int? get id;
+  @override
+  @JsonKey(name: 'tenant_id')
+  int? get tenantId;
+  @override
+  String get name;
+
+  /// Number prefix of its Werke ("E" → E1, E2 …).
+  @override
+  String get prefix;
+
+  /// `all`, `leads` or `groups` (see [SongCollectionVisibility]).
+  @override
+  String get visibility;
+
+  /// Groups that see it when [visibility] is `groups`.
+  @override
+  @JsonKey(name: 'group_ids')
+  List<int> get groupIds;
+
+  /// Its Werke can be put into a Termin programme or a plan.
+  @override
+  bool get plannable;
+
+  /// The public Werke link shows its Werke (only when visible to all).
+  @override
+  @JsonKey(name: 'public_link')
+  bool get publicLink;
+  @override
+  int get index;
+  @override
+  @JsonKey(name: 'created_at', includeToJson: false)
+  DateTime? get createdAt;
+
+  /// Create a copy of SongCollection
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SongCollectionImplCopyWith<_$SongCollectionImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

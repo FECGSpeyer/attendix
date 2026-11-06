@@ -96,7 +96,12 @@ class _RdSongMultiPickerState extends ConsumerState<_RdSongMultiPicker> {
     final p = context.rd;
     final l10n = context.l10n;
     final songsAsync = ref.watch(songsProvider);
-    final songs = songsAsync.valueOrNull ?? const <Song>[];
+    final collectionsAsync = ref.watch(songCollectionsProvider);
+    final collections = collectionsAsync.valueOrNull;
+    final allSongs = songsAsync.valueOrNull ?? const <Song>[];
+    // Fail closed: ohne geladene Sammlungen nur das Repertoire anbieten.
+    final songs = collectionsAsync.hasValue ? rdPlannableWorks(allSongs, collections) : rdWorksIn(allSongs, null);
+    final collectionsLoading = !collectionsAsync.hasValue && !collectionsAsync.hasError;
     final filtered =
         _search.isEmpty
             ? songs
@@ -140,9 +145,9 @@ class _RdSongMultiPickerState extends ConsumerState<_RdSongMultiPicker> {
           ),
         ),
         const SizedBox(height: 16),
-        if (songsAsync.isLoading && songs.isEmpty)
+        if ((songsAsync.isLoading && allSongs.isEmpty) || collectionsLoading)
           const Padding(padding: EdgeInsets.all(24), child: Center(child: AppSpinner()))
-        else if (songsAsync.hasError && songs.isEmpty)
+        else if (songsAsync.hasError && allSongs.isEmpty)
           RdInfoCard(text: l10n.attendanceFlutterErrorWith(friendlyErrorMessage(songsAsync.error!)))
         else if (filtered.isEmpty)
           Padding(
@@ -155,7 +160,13 @@ class _RdSongMultiPickerState extends ConsumerState<_RdSongMultiPicker> {
               for (final song in filtered)
                 RdListRow(
                   title: '${song.prefix ?? ''}${song.number ?? ''} ${song.name}'.trim(),
-                  subtitle: (song.composer?.isNotEmpty ?? false) ? song.composer : null,
+                  subtitle: switch ([
+                    if (rdCollectionById(collections ?? const [], song.collectionId) case final c?) c.name,
+                    if (song.composer?.isNotEmpty ?? false) song.composer!,
+                  ]) {
+                    final parts when parts.isNotEmpty => parts.join(' · '),
+                    _ => null,
+                  },
                   selected: song.id != null && _selected.contains(song.id),
                   trailing: RdSheetCheck(song.id != null && _selected.contains(song.id)),
                   showChevron: false,

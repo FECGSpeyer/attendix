@@ -262,6 +262,8 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
         if (song.categoryIds != null) 'category_ids': song.categoryIds,
         if (song.additionalFields != null)
           'additional_fields': song.additionalFields,
+        // Only set when the database has Sammlungen (never sent otherwise).
+        if (song.collectionId != null) 'collection_id': song.collectionId,
       };
       // Set tenant ID (effective song tenant)
       data['tenantId'] = songTenantId;
@@ -668,6 +670,138 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
       return result;
     } catch (e, stack) {
       handleError(e, stack, 'getHistoryForAttendances');
+      rethrow;
+    }
+  }
+
+  // ==========================================================================
+  // Sammlungen (song_collections, supabase/sql/song_collections.sql)
+  // ==========================================================================
+
+  /// Whether [e] says the database has no Sammlungen yet (the migration
+  /// `song_collections.sql` has not run: table or column unknown).
+  static bool isMissingCollectionsSchema(Object e) =>
+      e is PostgrestException &&
+      const {'42P01', 'PGRST205', '42703', 'PGRST204', 'PGRST200'}.contains(e.code);
+
+  /// Sammlungen of the effective song tenant in their order; null when the
+  /// database has none yet (then the app works without Sammlungen).
+  Future<List<SongCollection>?> getSongCollections() async {
+    try {
+      final response = await supabase
+          .from('song_collections')
+          .select('*')
+          .eq('tenant_id', songTenantId)
+          .order('index', ascending: true)
+          .order('id', ascending: true);
+
+      return (response as List)
+          .map((e) => SongCollection.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, stack) {
+      if (isMissingCollectionsSchema(e)) return null;
+      handleError(e, stack, 'getSongCollections');
+      rethrow;
+    }
+  }
+
+  /// Creates a Sammlung in the effective song tenant.
+  Future<SongCollection> addSongCollection(SongCollection collection) async {
+    ensureNotDemo('addSongCollection'); // DEMO_GUARD
+    try {
+      final response = await supabase
+          .from('song_collections')
+          .insert({
+            'tenant_id': songTenantId,
+            'name': collection.name,
+            'prefix': collection.prefix,
+            'visibility': collection.visibility,
+            'group_ids': collection.groupIds,
+            'plannable': collection.plannable,
+            'public_link': collection.publicLink,
+            'index': collection.index,
+          })
+          .select()
+          .single();
+      return SongCollection.fromJson(response);
+    } catch (e, stack) {
+      handleError(e, stack, 'addSongCollection');
+      rethrow;
+    }
+  }
+
+  /// Changes columns of a Sammlung (name, prefix, visibility, group_ids,
+  /// plannable, public_link, index).
+  Future<void> updateSongCollection(int id, Map<String, dynamic> updates) async {
+    ensureNotDemo('updateSongCollection'); // DEMO_GUARD
+    try {
+      await supabase
+          .from('song_collections')
+          .update(updates)
+          .eq('id', id)
+          .eq('tenant_id', songTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'updateSongCollection');
+      rethrow;
+    }
+  }
+
+  /// Changes the prefix of Sammlung [id] and of its Werke that still carry
+  /// the old one, in one transaction (function `rename_song_collection_prefix`
+  /// in song_collections.sql, checks the tenant). Throws a
+  /// [RepositoryException] with code 23505 when a number would be taken
+  /// twice; then nothing changed.
+  Future<void> renameSongCollectionPrefix(int id, String prefix) async {
+    ensureNotDemo('renameSongCollectionPrefix'); // DEMO_GUARD
+    try {
+      await supabase.rpc('rename_song_collection_prefix', params: {
+        'p_collection_id': id,
+        'p_tenant_id': songTenantId,
+        'p_prefix': prefix,
+      });
+    } catch (e, stack) {
+      handleError(e, stack, 'renameSongCollectionPrefix');
+      rethrow;
+    }
+  }
+
+  /// Deletes a Sammlung; its Werke fall back to "Repertoire" (on delete
+  /// set null).
+  Future<void> deleteSongCollection(int id) async {
+    ensureNotDemo('deleteSongCollection'); // DEMO_GUARD
+    try {
+      await supabase
+          .from('song_collections')
+          .delete()
+          .eq('id', id)
+          .eq('tenant_id', songTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'deleteSongCollection');
+      rethrow;
+    }
+  }
+
+  /// Puts Werk [id] into Sammlung [collectionId] (null = Repertoire),
+  /// with a new [prefix] and [number] when given.
+  Future<void> moveSongToCollection(
+    int id,
+    int? collectionId, {
+    String? prefix,
+    int? number,
+  }) async {
+    ensureNotDemo('moveSongToCollection'); // DEMO_GUARD
+    try {
+      await supabase
+          .from('songs')
+          .update({
+            'collection_id': collectionId,
+            if (prefix != null) 'prefix': prefix,
+            if (number != null) 'number': number,
+          })
+          .eq('id', id)
+          .eq('tenantId', songTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'moveSongToCollection');
       rethrow;
     }
   }

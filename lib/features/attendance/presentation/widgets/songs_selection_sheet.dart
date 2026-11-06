@@ -14,6 +14,7 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
+import '../../../redesign/data/rd_collections_logic.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart';
@@ -383,6 +384,11 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
   @override
   Widget build(BuildContext context) {
     final songsAsync = ref.watch(songsProvider);
+    // Sammlungen (Beta): Werke of a Sammlung that is not "planbar" stay out
+    // (while they load nothing is offered, after an error only the
+    // Repertoire).
+    final collectionsAsync = ref.watch(songCollectionsProvider);
+    final collections = collectionsAsync.valueOrNull;
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.attListChooseSongs),
@@ -409,7 +415,11 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
       body: songsAsync.when(
         loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(child: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)))),
-        data: (songs) {
+        data: (allSongs) {
+          if (!collectionsAsync.hasValue && !collectionsAsync.hasError) {
+            return const Center(child: AppSpinner());
+          }
+          final songs = collectionsAsync.hasValue ? rdPlannableWorks(allSongs, collections) : rdWorksIn(allSongs, null);
           final filtered =
               _search.isEmpty
                   ? songs
@@ -430,7 +440,13 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
                 value: id != null && _selected.contains(id),
                 controlAffinity: ListTileControlAffinity.leading,
                 title: Text('${song.prefix ?? ''}${song.number ?? ''} ${song.name}'.trim()),
-                subtitle: (song.composer?.isNotEmpty ?? false) ? Text(song.composer!) : null,
+                subtitle: switch ([
+                  if (rdCollectionById(collections ?? const [], song.collectionId) case final c?) c.name,
+                  if (song.composer?.isNotEmpty ?? false) song.composer!,
+                ]) {
+                  final parts when parts.isNotEmpty => Text(parts.join(' · ')),
+                  _ => null,
+                },
                 onChanged:
                     id == null
                         ? null

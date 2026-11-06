@@ -42,6 +42,10 @@ class Song with _$Song {
     /// organisation (`songs.copied_from`, Ionic 4.17.13). Written only by
     /// the org copy, never by Song updates.
     @JsonKey(name: 'copied_from', includeToJson: false, fromJson: songCopiedFromOrNull) SongCopiedFrom? copiedFrom,
+    /// Sammlung of the Werk (`songs.collection_id`); null = "Repertoire".
+    /// Written only by [SongRepository.moveSongToCollection] and on create,
+    /// never by Song updates (the column may not exist yet).
+    @JsonKey(name: 'collection_id', includeToJson: false) int? collectionId,
   }) = _Song;
 
   factory Song.fromJson(Map<String, dynamic> json) => _$SongFromJson(json);
@@ -135,6 +139,54 @@ class SongCategory with _$SongCategory {
 
   factory SongCategory.fromJson(Map<String, dynamic> json) =>
       _$SongCategoryFromJson(json);
+}
+
+/// Who sees a Sammlung ([SongCollection.visibility]).
+enum SongCollectionVisibility {
+  /// Every member.
+  all('all'),
+
+  /// Only the leads (admin, responsible, viewer).
+  leads('leads'),
+
+  /// The leads and the persons of [SongCollection.groupIds].
+  groups('groups');
+
+  const SongCollectionVisibility(this.value);
+  final String value;
+
+  static SongCollectionVisibility fromValue(String? value) =>
+      values.firstWhere((v) => v.value == value, orElse: () => SongCollectionVisibility.all);
+}
+
+/// A Sammlung of Werke (`song_collections`, Beta "Noten-Bereich neu
+/// gedacht"). "Repertoire" has no row (songs without a Sammlung).
+@freezed
+class SongCollection with _$SongCollection {
+  const factory SongCollection({
+    int? id,
+    @JsonKey(name: 'tenant_id') int? tenantId,
+    required String name,
+    /// Number prefix of its Werke ("E" → E1, E2 …).
+    @Default('') String prefix,
+    /// `all`, `leads` or `groups` (see [SongCollectionVisibility]).
+    @Default('all') String visibility,
+    /// Groups that see it when [visibility] is `groups`.
+    @JsonKey(name: 'group_ids') @Default([]) List<int> groupIds,
+    /// Its Werke can be put into a Termin programme or a plan.
+    @Default(true) bool plannable,
+    /// The public Werke link shows its Werke (only when visible to all).
+    @JsonKey(name: 'public_link') @Default(true) bool publicLink,
+    @Default(0) int index,
+    @JsonKey(name: 'created_at', includeToJson: false) DateTime? createdAt,
+  }) = _SongCollection;
+
+  factory SongCollection.fromJson(Map<String, dynamic> json) =>
+      _$SongCollectionFromJson(json);
+}
+
+extension SongCollectionX on SongCollection {
+  SongCollectionVisibility get visibleTo => SongCollectionVisibility.fromValue(visibility);
 }
 
 /// Extension for Song

@@ -155,6 +155,22 @@ final songCategoriesProvider = FutureProvider<List<SongCategory>>((ref) async {
   return repo.getSongCategories();
 });
 
+/// Sammlungen of the song library (of the song source tenant), in their
+/// order. Null when the database has no Sammlungen yet (migration
+/// `song_collections.sql` not run): then everything works as before.
+/// Bumped whenever Werke changed their Sammlung or prefix through
+/// [SongCollectionNotifier]: song lists loaded on their own (the planning's
+/// `planSongsProvider`) watch it and reload.
+final songCollectionChangesProvider = StateProvider<int>((ref) => 0);
+
+final songCollectionsProvider = FutureProvider<List<SongCollection>?>((ref) async {
+  final repo = await _readySongRepository(ref);
+
+  if (!repo.hasTenantId) return null;
+
+  return repo.getSongCollections();
+});
+
 /// Provider for song history. With a song id: Werkhistorie of that song
 /// (visible entries incl. attendance type and conductor).
 final songHistoryProvider =
@@ -308,6 +324,20 @@ class SongsListData {
   /// Groups shown as instruments (all but the main group)
   List<Group> get instruments =>
       groups.where((g) => g.maingroup != true).toList();
+
+  /// The same data with other [songs] (e.g. the Werke of one Sammlung).
+  SongsListData withSongs(List<Song> songs) => SongsListData(
+        tenantId: tenantId,
+        tenantType: tenantType,
+        songs: songs,
+        categories: categories,
+        groups: groups,
+        groupCategories: groupCategories,
+        currentSongs: currentSongs,
+        additionalFields: additionalFields,
+        publicTenant: publicTenant,
+        songSharingId: songSharingId,
+      );
 }
 
 /// Ionic: for orchestras, songs without instrument_ids count as fully
@@ -688,6 +718,142 @@ final songCategoryNotifierProvider =
     NotifierProvider<SongCategoryNotifier, AsyncValue<void>>(() {
   return SongCategoryNotifier();
 });
+
+/// Mutations of the Sammlungen (song_collections) and of the Sammlung of
+/// Werke. Every call binds the tenant repository before its first await.
+class SongCollectionNotifier extends Notifier<AsyncValue<void>> {
+  @override
+  AsyncValue<void> build() => const AsyncValue.data(null);
+
+  SongRepository get _repo => ref.read(songRepositoryWithTenantProvider);
+
+  /// Adds a Sammlung after the last one; null on failure.
+  Future<SongCollection?> add(SongCollection collection) async {
+    final repo = _repo;
+    state = const AsyncValue.loading();
+    try {
+      final existing = await repo.getSongCollections() ?? const <SongCollection>[];
+      final index = existing.fold<int>(-1, (m, c) => c.index > m ? c.index : m) + 1;
+      final result = await repo.addSongCollection(collection.copyWith(index: index));
+      state = const AsyncValue.data(null);
+      ref.invalidate(songCollectionsProvider);
+      return result;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return null;
+    }
+  }
+
+  /// Changes columns of Sammlung [id].
+  Future<bool> update(int id, Map<String, dynamic> updates) async {
+    final repo = _repo;
+    state = const AsyncValue.loading();
+    try {
+      await repo.updateSongCollection(id, updates);
+      state = const AsyncValue.data(null);
+      ref.invalidate(songCollectionsProvider);
+      return true;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return false;
+    }
+  }
+
+  /// Deletes Sammlung [id]; its Werke go back to "Repertoire".
+  Future<bool> delete(int id) async {
+    final repo = _repo;
+    state = const AsyncValue.loading();
+    try {
+      await repo.deleteSongCollection(id);
+      state = const AsyncValue.data(null);
+      ref.invalidate(songCollectionsProvider);
+      ref.invalidate(songsProvider);
+      ref.read(songCollectionChangesProvider.notifier).state++;
+      return true;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return false;
+    }
+  }
+
+  /// Changes the prefix of Sammlung [id] and of its Werke with the old one,
+  /// all or nothing. [clash] when a number would then be taken twice.
+  Future<({bool ok, bool clash})> renamePrefix(int id, String prefix) async {
+    final repo = _repo;
+    state = const AsyncValue.loading();
+    try {
+      await repo.renameSongCollectionPrefix(id, prefix);
+      state = const AsyncValue.data(null);
+      return (ok: true, clash: false);
+    } on RepositoryException catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return (ok: false, clash: e.code == '23505');
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return (ok: false, clash: false);
+    } finally {
+      ref.invalidate(songCollectionsProvider);
+      ref.invalidate(songsProvider);
+      // Every loaded Werk (details, edit forms) takes the new prefix.
+      ref.invalidate(songByIdProvider);
+      ref.read(songCollectionChangesProvider.notifier).state++;
+    }
+  }
+
+  /// Stores the order of [collections] (index 0..n).
+  Future<bool> reorder(List<SongCollection> collections) async {
+    final repo = _repo;
+    state = const AsyncValue.loading();
+    try {
+      for (var i = 0; i < collections.length; i++) {
+        final id = collections[i].id;
+        if (id != null && collections[i].index != i) {
+          await repo.updateSongCollection(id, {'index': i});
+        }
+      }
+      state = const AsyncValue.data(null);
+      ref.invalidate(songCollectionsProvider);
+      return true;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      ref.invalidate(songCollectionsProvider);
+      return false;
+    }
+  }
+
+  /// Moves Werke into Sammlung [collectionId] (null = Repertoire), each
+  /// with its new prefix and number when it changes ([moves]: song id →
+  /// (prefix, number), both null = keep). Returns false when one failed
+  /// (the ones before it stay moved).
+  Future<bool> move(int? collectionId, Map<int, ({String? prefix, int? number})> moves) async {
+    final repo = _repo;
+    state = const AsyncValue.loading();
+    try {
+      for (final entry in moves.entries) {
+        await repo.moveSongToCollection(
+          entry.key,
+          collectionId,
+          prefix: entry.value.prefix,
+          number: entry.value.number,
+        );
+      }
+      state = const AsyncValue.data(null);
+      return true;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return false;
+    } finally {
+      ref.invalidate(songsProvider);
+      for (final id in moves.keys) {
+        ref.invalidate(songByIdProvider(id));
+      }
+      ref.read(songCollectionChangesProvider.notifier).state++;
+    }
+  }
+}
+
+final songCollectionNotifierProvider =
+    NotifierProvider<SongCollectionNotifier, AsyncValue<void>>(SongCollectionNotifier.new);
 
 // ============================================================================
 // Group directory helpers (Gruppenverzeichnis)

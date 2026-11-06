@@ -570,8 +570,8 @@
         "add": "Werk hinzufügen",
         "empty": "Noch keine Werke.",
         "noMatch": "Kein Werk passt zur Suche.",
-        "folder": "Meine Mappe",
-        "folders": "Mappen",
+        "folder": "Meine Noten",
+        "folders": "Nach Stimme",
         "next": "Als Nächstes",
         "allEvents": "Alle Termine",
         "eventWorks": "{count, plural, one {1 Werk} other {{count} Werke}}",
@@ -623,8 +623,8 @@
         "later": "Link, Schwierigkeit und Zusatzfelder später in „Bearbeiten“."
       },
       "folder": {
-        "title": "Meine Mappe",
-        "titleLeads": "Mappen",
+        "title": "Meine Noten",
+        "titleLeads": "Nach Stimme",
         "other": "Andere Stimme",
         "next": "Als Nächstes · {count}",
         "all": "Alle Werke · {count}",
@@ -1995,8 +1995,8 @@
         "add": "Add work",
         "empty": "No works yet.",
         "noMatch": "No work matches the search.",
-        "folder": "My folder",
-        "folders": "Folders",
+        "folder": "My parts",
+        "folders": "By part",
         "next": "Coming up",
         "allEvents": "All events",
         "eventWorks": "{count, plural, one {1 work} other {{count} works}}",
@@ -2048,8 +2048,8 @@
         "later": "Link, difficulty and additional fields later in “Edit”."
       },
       "folder": {
-        "title": "My folder",
-        "titleLeads": "Folders",
+        "title": "My parts",
+        "titleLeads": "By part",
         "other": "Other part",
         "next": "Coming up · {count}",
         "all": "All works · {count}",

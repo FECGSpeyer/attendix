@@ -24,6 +24,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../songs/presentation/widgets/file_drop/file_drop_target.dart' show isFileDropSupported;
+import '../../data/rd_collections_logic.dart';
 import '../../data/rd_work_files_controller.dart';
 import '../../data/rd_work_files_logic.dart';
 import '../../data/rd_works_logic.dart';
@@ -33,6 +34,7 @@ import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/work/rd_work_file_actions.dart';
 import '../widgets/work/rd_work_files.dart';
+import '../widgets/works/rd_collections_ui.dart';
 
 /// REDESIGN: a work, one page for everybody (canvas "Werke neu gedacht",
 /// boards 4 and 12). On top the part to open ("Deine Stimme", for the
@@ -101,7 +103,11 @@ class RdWorkPage extends ConsumerWidget {
       lastSung: listed?.lastSung,
       nextPlanned: listed?.nextPlanned,
       conductor: listed?.conductor,
+      collectionId: listed?.collectionId ?? data.song.collectionId,
     );
+    // Sammlungen (null while the database has none, or on the public page).
+    final collections = data.isPublic ? null : ref.watch(songCollectionsProvider).valueOrNull;
+    final collection = rdCollectionById(collections ?? const [], song.collectionId);
     final groupId = ref.watch(currentSelfServicePlayerProvider).valueOrNull?.instrument;
     final ownGroup = groups.where((g) => g.id == groupId).firstOrNull;
     final lead = rdWorkLead(song, groupId, isMainGroup: ownGroup?.maingroup ?? false, choir: data.isChoir);
@@ -124,9 +130,14 @@ class RdWorkPage extends ConsumerWidget {
               ref.watch(currentTenantIdProvider),
             );
     final meta = [
+      if (collection != null) collection.name,
       if (song.fullNumber.isNotEmpty) l10n.redesignWorkNumber(song.fullNumber),
       ...rdCategoryNames(song, data.categories),
     ].join(' · ');
+    final banner = rdCollectionBanner(l10n, collection, groups);
+    final songs = ref.watch(songsProvider).valueOrNull;
+    final intoRepertoire =
+        collection != null && songs != null ? rdMoveNumbering(song, null, collections!, songs) : null;
     final difficulty = (song.difficulty ?? 0) >= 1 && (song.difficulty ?? 0) <= 3;
 
     void more(BuildContext button, SongFile file) => rdShowWorkFileActions(button, ref, data, file, groups);
@@ -188,6 +199,29 @@ class RdWorkPage extends ConsumerWidget {
                   tone: RdTone.late,
                 ),
             ],
+          ),
+        ],
+        if (banner != null) ...[
+          const SizedBox(height: 14),
+          RdInfoCard(
+            key: const Key('rd-work-collection-banner'),
+            text: banner,
+            icon: rdCollectionIcon(collection),
+            action:
+                !canEdit
+                    ? null
+                    : collection?.visibleTo == SongCollectionVisibility.leads
+                    ? RdOutlineButton(
+                      key: const Key('rd-work-into-repertoire'),
+                      label: l10n.collectionsIntoRepertoire(
+                        intoRepertoire == null ? song.fullNumber : '${intoRepertoire.prefix}${intoRepertoire.number}',
+                      ),
+                      onPressed: () => rdMoveWorkToCollection(context, ref, song, to: -1),
+                    )
+                    : RdOutlineButton(
+                      label: l10n.collectionsMove,
+                      onPressed: () => rdMoveWorkToCollection(context, ref, song),
+                    ),
           ),
         ],
         const SizedBox(height: 14),
@@ -260,7 +294,20 @@ class RdWorkPage extends ConsumerWidget {
           ..._fileSection(context, ref, data, song, files, groups, recording, groupId, missing, filesState, more, pick),
         const SizedBox(height: 24),
         RdSectionHeader(l10n.redesignWorkAbout),
-        RdGroupedList(children: _aboutRows(context, ref, data, song, files, groups)),
+        RdGroupedList(
+          children: [
+            // Where the Werk lives; leads move it from here.
+            if (collections != null && collections.isNotEmpty)
+              RdListRow(
+                key: const Key('rd-work-collection-row'),
+                title: l10n.collectionsRow,
+                value: collection?.name ?? l10n.collectionsRepertoire,
+                showChevron: canEdit,
+                onTap: canEdit ? () => rdMoveWorkToCollection(context, ref, song) : null,
+              ),
+            ..._aboutRows(context, ref, data, song, files, groups),
+          ],
+        ),
       ],
     );
     if (!canEdit) return page;

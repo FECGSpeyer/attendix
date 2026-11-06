@@ -2978,6 +2978,260 @@
   "@churchOverviewUnknownChurch": {
     "description": "churchOverview.unknownChurch"
   },
+  "collectionsAdd": "Sammlung anlegen",
+  "@collectionsAdd": {
+    "description": "collections.add"
+  },
+  "collectionsAddFailed": "Die Sammlung konnte nicht angelegt werden.",
+  "@collectionsAddFailed": {
+    "description": "collections.addFailed"
+  },
+  "collectionsAddHint": "z. B. Einspielen, Streicher, In Vorbereitung",
+  "@collectionsAddHint": {
+    "description": "collections.addHint"
+  },
+  "collectionsAddTitle": "Neue Sammlung",
+  "@collectionsAddTitle": {
+    "description": "collections.addTitle"
+  },
+  "collectionsBannerGroups": "Nur {names} und die Leitung sehen dieses Werk.",
+  "@collectionsBannerGroups": {
+    "description": "collections.bannerGroups",
+    "placeholders": {
+      "names": {}
+    }
+  },
+  "collectionsBannerLeads": "Nur die Leitung sieht dieses Werk.",
+  "@collectionsBannerLeads": {
+    "description": "collections.bannerLeads"
+  },
+  "collectionsCategory": "Kategorie",
+  "@collectionsCategory": {
+    "description": "collections.category"
+  },
+  "collectionsCategoryAll": "Alle Kategorien",
+  "@collectionsCategoryAll": {
+    "description": "collections.categoryAll"
+  },
+  "collectionsChip": "{name} · {count}",
+  "@collectionsChip": {
+    "description": "collections.chip",
+    "placeholders": {
+      "name": {},
+      "count": {}
+    }
+  },
+  "collectionsDelete": "Sammlung löschen",
+  "@collectionsDelete": {
+    "description": "collections.delete"
+  },
+  "collectionsDeleteConfirm": "„{name}“ löschen? Ihre Werke kommen ins Repertoire zurück.",
+  "@collectionsDeleteConfirm": {
+    "description": "collections.deleteConfirm",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "collectionsDeleteFailed": "Die Sammlung konnte nicht gelöscht werden.",
+  "@collectionsDeleteFailed": {
+    "description": "collections.deleteFailed"
+  },
+  "collectionsEditHint": "Änderungen werden sofort gespeichert.",
+  "@collectionsEditHint": {
+    "description": "collections.editHint"
+  },
+  "collectionsEditTitle": "Sammlung bearbeiten",
+  "@collectionsEditTitle": {
+    "description": "collections.editTitle"
+  },
+  "collectionsEmpty": "Noch keine eigenen Sammlungen. Lege zum Beispiel „Einspielen“ oder „In Vorbereitung“ an.",
+  "@collectionsEmpty": {
+    "description": "collections.empty"
+  },
+  "collectionsEmptyIn": "In „{name}“ liegt noch kein Werk.",
+  "@collectionsEmptyIn": {
+    "description": "collections.emptyIn",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "collectionsGroupsNone": "Wähle mindestens eine Gruppe. Bis dahin sieht sie nur die Leitung.",
+  "@collectionsGroupsNone": {
+    "description": "collections.groupsNone"
+  },
+  "collectionsIntoRepertoire": "Ins Repertoire aufnehmen (Nr. {number})",
+  "@collectionsIntoRepertoire": {
+    "description": "collections.intoRepertoire",
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "collectionsIntro": "Jedes Werk liegt in genau einer Sammlung. Das Repertoire gibt es immer.",
+  "@collectionsIntro": {
+    "description": "collections.intro"
+  },
+  "collectionsLeadsSeeAll": "Die Leitung sieht jede Sammlung.",
+  "@collectionsLeadsSeeAll": {
+    "description": "collections.leadsSeeAll"
+  },
+  "collectionsManage": "Sammlungen verwalten",
+  "@collectionsManage": {
+    "description": "collections.manage"
+  },
+  "collectionsMove": "In Sammlung verschieben",
+  "@collectionsMove": {
+    "description": "collections.move"
+  },
+  "collectionsMoveDone": "Verschoben nach „{name}“",
+  "@collectionsMoveDone": {
+    "description": "collections.moveDone",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "collectionsMoveDoneNumber": "Verschoben nach „{name}“ als Nr. {number}",
+  "@collectionsMoveDoneNumber": {
+    "description": "collections.moveDoneNumber",
+    "placeholders": {
+      "name": {},
+      "number": {}
+    }
+  },
+  "collectionsMoveFailed": "Das Werk konnte nicht verschoben werden.",
+  "@collectionsMoveFailed": {
+    "description": "collections.moveFailed"
+  },
+  "collectionsMoveHint": "Ein Werk liegt immer in genau einer Sammlung.",
+  "@collectionsMoveHint": {
+    "description": "collections.moveHint"
+  },
+  "collectionsMoveNext": "nächste Nr. {number}",
+  "@collectionsMoveNext": {
+    "description": "collections.moveNext",
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "collectionsName": "Name",
+  "@collectionsName": {
+    "description": "collections.name"
+  },
+  "collectionsNameEmpty": "Ohne Namen wird der Name nicht gespeichert.",
+  "@collectionsNameEmpty": {
+    "description": "collections.nameEmpty"
+  },
+  "collectionsNotFound": "Diese Sammlung gibt es nicht mehr.",
+  "@collectionsNotFound": {
+    "description": "collections.notFound"
+  },
+  "collectionsNotPlannable": "nicht planbar",
+  "@collectionsNotPlannable": {
+    "description": "collections.notPlannable"
+  },
+  "collectionsOnlyLeads": "nur Leitung",
+  "@collectionsOnlyLeads": {
+    "description": "collections.onlyLeads"
+  },
+  "collectionsOrderFailed": "Die Reihenfolge konnte nicht gespeichert werden.",
+  "@collectionsOrderFailed": {
+    "description": "collections.orderFailed"
+  },
+  "collectionsOrderSaved": "Reihenfolge gespeichert",
+  "@collectionsOrderSaved": {
+    "description": "collections.orderSaved"
+  },
+  "collectionsPlannable": "Im Termin-Programm planbar",
+  "@collectionsPlannable": {
+    "description": "collections.plannable"
+  },
+  "collectionsPlannableHint": "Ihre Werke lassen sich in Termine und Abläufe einplanen und stehen dann bei „Als Nächstes“.",
+  "@collectionsPlannableHint": {
+    "description": "collections.plannableHint"
+  },
+  "collectionsPrefix": "Nummern mit",
+  "@collectionsPrefix": {
+    "description": "collections.prefix"
+  },
+  "collectionsPrefixHint": "Kürzel vor der Nummer, z. B. E für E1, E2 … Eine Änderung gilt auch für die Werke, die schon in der Sammlung liegen.",
+  "@collectionsPrefixHint": {
+    "description": "collections.prefixHint"
+  },
+  "collectionsPrefixNone": "Ohne Kürzel teilt sich die Sammlung die Nummern mit dem Repertoire.",
+  "@collectionsPrefixNone": {
+    "description": "collections.prefixNone"
+  },
+  "collectionsPrefixTaken": "Mit „{prefix}“ gäbe es doppelte Nummern ({number}). Wähle ein anderes Kürzel.",
+  "@collectionsPrefixTaken": {
+    "description": "collections.prefixTaken",
+    "placeholders": {
+      "prefix": {},
+      "number": {}
+    }
+  },
+  "collectionsPrefixTakenShort": "Mit „{prefix}“ gäbe es doppelte Nummern. Wähle ein anderes Kürzel.",
+  "@collectionsPrefixTakenShort": {
+    "description": "collections.prefixTakenShort",
+    "placeholders": {
+      "prefix": {}
+    }
+  },
+  "collectionsPublicLink": "Im öffentlichen Werke-Link",
+  "@collectionsPublicLink": {
+    "description": "collections.publicLink"
+  },
+  "collectionsPublicLinkHint": "Gilt nur, wenn alle die Sammlung sehen.",
+  "@collectionsPublicLinkHint": {
+    "description": "collections.publicLinkHint"
+  },
+  "collectionsRepertoire": "Repertoire",
+  "@collectionsRepertoire": {
+    "description": "collections.repertoire"
+  },
+  "collectionsRepertoireHint": "Standard, alle sehen es",
+  "@collectionsRepertoireHint": {
+    "description": "collections.repertoireHint"
+  },
+  "collectionsRow": "Sammlung",
+  "@collectionsRow": {
+    "description": "collections.row"
+  },
+  "collectionsSaveFailed": "Die Änderung konnte nicht gespeichert werden.",
+  "@collectionsSaveFailed": {
+    "description": "collections.saveFailed"
+  },
+  "collectionsSearchAll": "In allen Sammlungen suchen",
+  "@collectionsSearchAll": {
+    "description": "collections.searchAll"
+  },
+  "collectionsTitle": "Sammlungen",
+  "@collectionsTitle": {
+    "description": "collections.title"
+  },
+  "collectionsVisAll": "Alle",
+  "@collectionsVisAll": {
+    "description": "collections.visAll"
+  },
+  "collectionsVisGroups": "Bestimmte Gruppen",
+  "@collectionsVisGroups": {
+    "description": "collections.visGroups"
+  },
+  "collectionsVisLeads": "Nur Leitung",
+  "@collectionsVisLeads": {
+    "description": "collections.visLeads"
+  },
+  "collectionsWhoSees": "Wer sieht diese Sammlung",
+  "@collectionsWhoSees": {
+    "description": "collections.whoSees"
+  },
+  "collectionsWorks": "{count, plural, =0 {Kein Werk} one {1 Werk} other {{count} Werke}}",
+  "@collectionsWorks": {
+    "description": "collections.works",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "commonAll": "Alle",
   "@commonAll": {
     "description": "common.all"
@@ -14086,11 +14340,11 @@
   "@redesignFolderPick": {
     "description": "redesign.folder.pick"
   },
-  "redesignFolderTitle": "Meine Mappe",
+  "redesignFolderTitle": "Meine Noten",
   "@redesignFolderTitle": {
     "description": "redesign.folder.title"
   },
-  "redesignFolderTitleLeads": "Mappen",
+  "redesignFolderTitleLeads": "Nach Stimme",
   "@redesignFolderTitleLeads": {
     "description": "redesign.folder.titleLeads"
   },
@@ -18200,11 +18454,11 @@
   "@redesignWorksFilterTitle": {
     "description": "redesign.works.filterTitle"
   },
-  "redesignWorksFolder": "Meine Mappe",
+  "redesignWorksFolder": "Meine Noten",
   "@redesignWorksFolder": {
     "description": "redesign.works.folder"
   },
-  "redesignWorksFolders": "Mappen",
+  "redesignWorksFolders": "Nach Stimme",
   "@redesignWorksFolders": {
     "description": "redesign.works.folders"
   },

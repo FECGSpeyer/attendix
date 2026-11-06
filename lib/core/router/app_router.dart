@@ -121,6 +121,8 @@ import '../../features/redesign/presentation/pages/rd_general_settings_page.dart
 import '../../features/redesign/presentation/pages/rd_today_page.dart';
 import '../../features/redesign/presentation/pages/rd_import_page.dart';
 import '../../features/redesign/presentation/pages/rd_folder_page.dart';
+import '../../features/redesign/presentation/pages/rd_collections_page.dart';
+import '../../features/redesign/presentation/pages/rd_collection_edit_page.dart';
 import '../../features/redesign/presentation/pages/rd_work_create_page.dart';
 import '../../features/redesign/presentation/pages/rd_work_edit_page.dart';
 import '../../features/redesign/presentation/pages/rd_work_page.dart';
@@ -785,12 +787,31 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'neu',
                 name: 'redesignWorkCreate',
-                builder: (context, state) => const RdWorkCreatePage(),
+                builder:
+                    (context, state) =>
+                        RdWorkCreatePage(collectionId: int.tryParse(state.uri.queryParameters['sammlung'] ?? '')),
               ),
               GoRoute(
                 path: 'mappe',
                 name: 'redesignFolder',
                 builder: (context, state) => const RdFolderPage(),
+              ),
+              GoRoute(
+                path: 'sammlungen',
+                name: 'redesignCollections',
+                builder: (context, state) => const RdCollectionsPage(),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    name: 'redesignCollection',
+                    builder: (context, state) {
+                      final id = int.tryParse(state.pathParameters['id'] ?? '');
+                      return id == null
+                          ? const RdCollectionsPage()
+                          : RdCollectionEditPage(key: ValueKey('rd-collection-$id'), collectionId: id);
+                    },
+                  ),
+                ],
               ),
               GoRoute(
                 path: ':id/bearbeiten',

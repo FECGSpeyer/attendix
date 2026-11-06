@@ -59,6 +59,8 @@ part 'planning_page_beta.dart';
 final planSongsProvider = FutureProvider<List<Song>>((ref) async {
   // Wait for the song source tenant (Werk-Synchronisierung) first.
   await ref.watch(songTenantSettingsProvider.future);
+  // Reloads after Werke moved between Sammlungen ("planbar").
+  ref.watch(songCollectionChangesProvider);
   final repo = ref.watch(songRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   return repo.getSongs();
@@ -2129,6 +2131,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final attendancesAsync = ref.watch(planAttendancesProvider);
     final typesAsync = ref.watch(planAttendanceTypesProvider);
     ref.watch(planSongsProvider);
+    // Loaded for the Werk picker (Werke of a Sammlung that is not "planbar").
+    ref.watch(songCollectionsProvider);
     ref.watch(currentSongsProvider);
     ref.watch(groupsProvider);
     ref.watch(groupCategoriesProvider);

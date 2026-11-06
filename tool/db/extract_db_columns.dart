@@ -3,7 +3,7 @@
 //
 // Sources (union):
 //   1. src/app/utilities/supabase.ts — generated types, `Tables.<t>.Row`
-//   2. supabase/sql/*.sql — `CREATE TABLE` bodies and
+//   2. supabase/sql/*.sql (Ionic, then this repository) — `CREATE TABLE` bodies and
 //      `ALTER TABLE <t> ADD COLUMN` statements (newer than the generated
 //      types, e.g. player.sort_order, tenants.duty_view)
 //
@@ -29,8 +29,10 @@ void main(List<String> args) {
   _parseGeneratedTypes(
       File('$ionic/src/app/utilities/supabase.ts').readAsStringSync(), tables);
 
-  final sqlDir = Directory('$ionic/supabase/sql');
-  if (sqlDir.existsSync()) {
+  // The Ionic migrations, then the ones of this repository (tables only
+  // the Flutter app uses, e.g. song_collections).
+  for (final sqlDir in [Directory('$ionic/supabase/sql'), Directory('supabase/sql')]) {
+    if (!sqlDir.existsSync()) continue;
     final files = sqlDir
         .listSync()
         .whereType<File>()

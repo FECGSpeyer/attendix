@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.70.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Sammlungen im Noten-Bereich (Repertoire, z. B. Einspielen, Streicher, In Vorbereitung) mit eigenem Kürzel, Sichtbarkeit (alle, nur Leitung, bestimmte Gruppen) und „planbar“",
+        "✨ Beta: Werke-Liste mit Sammlungs-Chips, Suche über alle Sammlungen, Kategorie im Filter; Werke in eine andere Sammlung verschieben",
+        "✨ Beta: „Meine Mappe“ heißt jetzt „Meine Noten“ (Leitung: „Nach Stimme“), „Alle“ ist nach Sammlung gruppiert",
+        "🗄️ Sammlungen erscheinen erst, wenn die Datenbank-Migration angewendet ist (nach dem Store-Release)"
+      ]
+    },
+    {
       "version": "0.69.0",
       "date": "6.11.2026",
       "changes": [
