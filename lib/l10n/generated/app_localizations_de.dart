@@ -10634,6 +10634,82 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignExtraFieldEditDefaultHint =>
+      'Gilt, solange eine Person oder ein Werk noch keinen Wert hat.';
+
+  @override
+  String get redesignExtraFieldEditDelete => 'Zusatzfeld löschen';
+
+  @override
+  String get redesignExtraFieldEditDeleteFailed =>
+      'Das Zusatzfeld konnte nicht gelöscht werden.';
+
+  @override
+  String get redesignExtraFieldEditDeleteHint =>
+      'Die Werte bei allen Personen bzw. Werken werden mit gelöscht.';
+
+  @override
+  String get redesignExtraFieldEditName => 'Name';
+
+  @override
+  String get redesignExtraFieldEditNameEmpty =>
+      'Ein leerer Name wird nicht gespeichert.';
+
+  @override
+  String get redesignExtraFieldEditNotFound =>
+      'Dieses Zusatzfeld gibt es nicht mehr.';
+
+  @override
+  String get redesignExtraFieldEditOptionAdd => 'Option hinzufügen';
+
+  @override
+  String get redesignExtraFieldEditOptionHint =>
+      'Die erste Option ist der Standardwert. Leere Optionen werden nicht gespeichert.';
+
+  @override
+  String get redesignExtraFieldEditOptions => 'Optionen';
+
+  @override
+  String get redesignExtraFieldEditOptionsNeeded =>
+      'Eine Auswahl braucht mindestens eine Option.';
+
+  @override
+  String get redesignExtraFieldEditResetHint =>
+      'Setzt das Feld bei allen Personen auf den Standardwert.';
+
+  @override
+  String get redesignExtraFieldEditTarget => 'Gilt für';
+
+  @override
+  String get redesignExtraFieldEditTargetPersons => 'Personen';
+
+  @override
+  String get redesignExtraFieldEditTargetSongs => 'Werke';
+
+  @override
+  String get redesignExtraFieldEditTitle => 'Zusatzfeld bearbeiten';
+
+  @override
+  String get redesignExtraFieldsListAdd => 'Zusatzfeld hinzufügen';
+
+  @override
+  String get redesignExtraFieldsListAddFor => 'Feld für';
+
+  @override
+  String get redesignExtraFieldsListEmpty =>
+      'Noch keine Zusatzfelder angelegt.';
+
+  @override
+  String get redesignExtraFieldsListIntro =>
+      'Eigene Felder für Personen und Werke, zum Beispiel Kleidergröße oder Verlag.';
+
+  @override
+  String get redesignExtraFieldsListPersons => 'Für Personen';
+
+  @override
+  String get redesignExtraFieldsListSongs => 'Für Werke';
+
+  @override
   String redesignFilesActions(Object name) {
     return 'Aktionen für $name';
   }
@@ -13030,6 +13106,56 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignTabWorks => 'Werke';
+
+  @override
+  String get redesignTeacherEditContact => 'Kontakt';
+
+  @override
+  String get redesignTeacherEditInstruments => 'Instrumente';
+
+  @override
+  String get redesignTeacherEditInstrumentsHint =>
+      'Tippe zum Aus- oder Abwählen.';
+
+  @override
+  String get redesignTeacherEditName => 'Name';
+
+  @override
+  String get redesignTeacherEditNameEmpty =>
+      'Ein leerer Name wird nicht gespeichert.';
+
+  @override
+  String get redesignTeacherEditNotFound => 'Diesen Lehrer gibt es nicht mehr.';
+
+  @override
+  String get redesignTeacherEditNotes => 'Notizen';
+
+  @override
+  String get redesignTeacherEditPlayers => 'Spieler';
+
+  @override
+  String get redesignTeacherEditPlayersNone =>
+      'Noch lernt niemand bei diesem Lehrer.';
+
+  @override
+  String get redesignTeacherEditPrivate => 'Privatlehrer';
+
+  @override
+  String get redesignTeacherEditTitle => 'Lehrer bearbeiten';
+
+  @override
+  String get redesignTeachersListAdd => 'Lehrer hinzufügen';
+
+  @override
+  String get redesignTeachersListAddFailed =>
+      'Der Lehrer konnte nicht angelegt werden.';
+
+  @override
+  String get redesignTeachersListEmpty => 'Noch keine Lehrer angelegt.';
+
+  @override
+  String get redesignTeachersListIntro =>
+      'Lehrer und die Instrumente, die sie unterrichten. Wer bei wem lernt, legst du bei der Person fest.';
 
   @override
   String get redesignTodayAllEvents => 'Alle Termine';

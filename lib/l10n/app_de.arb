@@ -13244,6 +13244,94 @@
       "status": {}
     }
   },
+  "redesignExtraFieldEditDefaultHint": "Gilt, solange eine Person oder ein Werk noch keinen Wert hat.",
+  "@redesignExtraFieldEditDefaultHint": {
+    "description": "redesign.extraFieldEdit.defaultHint"
+  },
+  "redesignExtraFieldEditDelete": "Zusatzfeld löschen",
+  "@redesignExtraFieldEditDelete": {
+    "description": "redesign.extraFieldEdit.delete"
+  },
+  "redesignExtraFieldEditDeleteFailed": "Das Zusatzfeld konnte nicht gelöscht werden.",
+  "@redesignExtraFieldEditDeleteFailed": {
+    "description": "redesign.extraFieldEdit.deleteFailed"
+  },
+  "redesignExtraFieldEditDeleteHint": "Die Werte bei allen Personen bzw. Werken werden mit gelöscht.",
+  "@redesignExtraFieldEditDeleteHint": {
+    "description": "redesign.extraFieldEdit.deleteHint"
+  },
+  "redesignExtraFieldEditName": "Name",
+  "@redesignExtraFieldEditName": {
+    "description": "redesign.extraFieldEdit.name"
+  },
+  "redesignExtraFieldEditNameEmpty": "Ein leerer Name wird nicht gespeichert.",
+  "@redesignExtraFieldEditNameEmpty": {
+    "description": "redesign.extraFieldEdit.nameEmpty"
+  },
+  "redesignExtraFieldEditNotFound": "Dieses Zusatzfeld gibt es nicht mehr.",
+  "@redesignExtraFieldEditNotFound": {
+    "description": "redesign.extraFieldEdit.notFound"
+  },
+  "redesignExtraFieldEditOptionAdd": "Option hinzufügen",
+  "@redesignExtraFieldEditOptionAdd": {
+    "description": "redesign.extraFieldEdit.optionAdd"
+  },
+  "redesignExtraFieldEditOptionHint": "Die erste Option ist der Standardwert. Leere Optionen werden nicht gespeichert.",
+  "@redesignExtraFieldEditOptionHint": {
+    "description": "redesign.extraFieldEdit.optionHint"
+  },
+  "redesignExtraFieldEditOptions": "Optionen",
+  "@redesignExtraFieldEditOptions": {
+    "description": "redesign.extraFieldEdit.options"
+  },
+  "redesignExtraFieldEditOptionsNeeded": "Eine Auswahl braucht mindestens eine Option.",
+  "@redesignExtraFieldEditOptionsNeeded": {
+    "description": "redesign.extraFieldEdit.optionsNeeded"
+  },
+  "redesignExtraFieldEditResetHint": "Setzt das Feld bei allen Personen auf den Standardwert.",
+  "@redesignExtraFieldEditResetHint": {
+    "description": "redesign.extraFieldEdit.resetHint"
+  },
+  "redesignExtraFieldEditTarget": "Gilt für",
+  "@redesignExtraFieldEditTarget": {
+    "description": "redesign.extraFieldEdit.target"
+  },
+  "redesignExtraFieldEditTargetPersons": "Personen",
+  "@redesignExtraFieldEditTargetPersons": {
+    "description": "redesign.extraFieldEdit.targetPersons"
+  },
+  "redesignExtraFieldEditTargetSongs": "Werke",
+  "@redesignExtraFieldEditTargetSongs": {
+    "description": "redesign.extraFieldEdit.targetSongs"
+  },
+  "redesignExtraFieldEditTitle": "Zusatzfeld bearbeiten",
+  "@redesignExtraFieldEditTitle": {
+    "description": "redesign.extraFieldEdit.title"
+  },
+  "redesignExtraFieldsListAdd": "Zusatzfeld hinzufügen",
+  "@redesignExtraFieldsListAdd": {
+    "description": "redesign.extraFieldsList.add"
+  },
+  "redesignExtraFieldsListAddFor": "Feld für",
+  "@redesignExtraFieldsListAddFor": {
+    "description": "redesign.extraFieldsList.addFor"
+  },
+  "redesignExtraFieldsListEmpty": "Noch keine Zusatzfelder angelegt.",
+  "@redesignExtraFieldsListEmpty": {
+    "description": "redesign.extraFieldsList.empty"
+  },
+  "redesignExtraFieldsListIntro": "Eigene Felder für Personen und Werke, zum Beispiel Kleidergröße oder Verlag.",
+  "@redesignExtraFieldsListIntro": {
+    "description": "redesign.extraFieldsList.intro"
+  },
+  "redesignExtraFieldsListPersons": "Für Personen",
+  "@redesignExtraFieldsListPersons": {
+    "description": "redesign.extraFieldsList.persons"
+  },
+  "redesignExtraFieldsListSongs": "Für Werke",
+  "@redesignExtraFieldsListSongs": {
+    "description": "redesign.extraFieldsList.songs"
+  },
   "redesignFilesActions": "Aktionen für {name}",
   "@redesignFilesActions": {
     "description": "redesign.files.actions",
@@ -16129,6 +16217,66 @@
   "redesignTabWorks": "Werke",
   "@redesignTabWorks": {
     "description": "redesign.tab.works"
+  },
+  "redesignTeacherEditContact": "Kontakt",
+  "@redesignTeacherEditContact": {
+    "description": "redesign.teacherEdit.contact"
+  },
+  "redesignTeacherEditInstruments": "Instrumente",
+  "@redesignTeacherEditInstruments": {
+    "description": "redesign.teacherEdit.instruments"
+  },
+  "redesignTeacherEditInstrumentsHint": "Tippe zum Aus- oder Abwählen.",
+  "@redesignTeacherEditInstrumentsHint": {
+    "description": "redesign.teacherEdit.instrumentsHint"
+  },
+  "redesignTeacherEditName": "Name",
+  "@redesignTeacherEditName": {
+    "description": "redesign.teacherEdit.name"
+  },
+  "redesignTeacherEditNameEmpty": "Ein leerer Name wird nicht gespeichert.",
+  "@redesignTeacherEditNameEmpty": {
+    "description": "redesign.teacherEdit.nameEmpty"
+  },
+  "redesignTeacherEditNotFound": "Diesen Lehrer gibt es nicht mehr.",
+  "@redesignTeacherEditNotFound": {
+    "description": "redesign.teacherEdit.notFound"
+  },
+  "redesignTeacherEditNotes": "Notizen",
+  "@redesignTeacherEditNotes": {
+    "description": "redesign.teacherEdit.notes"
+  },
+  "redesignTeacherEditPlayers": "Spieler",
+  "@redesignTeacherEditPlayers": {
+    "description": "redesign.teacherEdit.players"
+  },
+  "redesignTeacherEditPlayersNone": "Noch lernt niemand bei diesem Lehrer.",
+  "@redesignTeacherEditPlayersNone": {
+    "description": "redesign.teacherEdit.playersNone"
+  },
+  "redesignTeacherEditPrivate": "Privatlehrer",
+  "@redesignTeacherEditPrivate": {
+    "description": "redesign.teacherEdit.private"
+  },
+  "redesignTeacherEditTitle": "Lehrer bearbeiten",
+  "@redesignTeacherEditTitle": {
+    "description": "redesign.teacherEdit.title"
+  },
+  "redesignTeachersListAdd": "Lehrer hinzufügen",
+  "@redesignTeachersListAdd": {
+    "description": "redesign.teachersList.add"
+  },
+  "redesignTeachersListAddFailed": "Der Lehrer konnte nicht angelegt werden.",
+  "@redesignTeachersListAddFailed": {
+    "description": "redesign.teachersList.addFailed"
+  },
+  "redesignTeachersListEmpty": "Noch keine Lehrer angelegt.",
+  "@redesignTeachersListEmpty": {
+    "description": "redesign.teachersList.empty"
+  },
+  "redesignTeachersListIntro": "Lehrer und die Instrumente, die sie unterrichten. Wer bei wem lernt, legst du bei der Person fest.",
+  "@redesignTeachersListIntro": {
+    "description": "redesign.teachersList.intro"
   },
   "redesignTodayAllEvents": "Alle Termine",
   "@redesignTodayAllEvents": {

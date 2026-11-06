@@ -246,7 +246,7 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
     case RdManageEntry.viewers:
       push(RedesignRoutes.viewers);
     case RdManageEntry.teachers:
-      push('/settings/teachers');
+      push(RedesignRoutes.teachers);
     case RdManageEntry.missingAccounts:
       createMissingAccounts(context, ref, ref.read(rdMissingAccountsProvider));
     case RdManageEntry.archive:
@@ -260,7 +260,7 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
     case RdManageEntry.shiftPlans:
       push(RedesignRoutes.shiftPlans);
     case RdManageEntry.extraFields:
-      push('/settings/general/extra-fields');
+      push(RedesignRoutes.extraFields);
     case RdManageEntry.runSheets:
       push('/planning');
     case RdManageEntry.adHocPlanning:

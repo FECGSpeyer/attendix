@@ -10529,6 +10529,80 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignExtraFieldEditDefaultHint =>
+      'Used when a person or work has no value yet.';
+
+  @override
+  String get redesignExtraFieldEditDelete => 'Delete extra field';
+
+  @override
+  String get redesignExtraFieldEditDeleteFailed =>
+      'The extra field could not be deleted.';
+
+  @override
+  String get redesignExtraFieldEditDeleteHint =>
+      'The values of all people or works are removed as well.';
+
+  @override
+  String get redesignExtraFieldEditName => 'Name';
+
+  @override
+  String get redesignExtraFieldEditNameEmpty => 'An empty name is not saved.';
+
+  @override
+  String get redesignExtraFieldEditNotFound =>
+      'This extra field no longer exists.';
+
+  @override
+  String get redesignExtraFieldEditOptionAdd => 'Add option';
+
+  @override
+  String get redesignExtraFieldEditOptionHint =>
+      'The first option is the default. Empty options are not saved.';
+
+  @override
+  String get redesignExtraFieldEditOptions => 'Options';
+
+  @override
+  String get redesignExtraFieldEditOptionsNeeded =>
+      'A selection needs at least one option.';
+
+  @override
+  String get redesignExtraFieldEditResetHint =>
+      'Sets this field to the default for every person.';
+
+  @override
+  String get redesignExtraFieldEditTarget => 'For';
+
+  @override
+  String get redesignExtraFieldEditTargetPersons => 'People';
+
+  @override
+  String get redesignExtraFieldEditTargetSongs => 'Works';
+
+  @override
+  String get redesignExtraFieldEditTitle => 'Edit extra field';
+
+  @override
+  String get redesignExtraFieldsListAdd => 'Add extra field';
+
+  @override
+  String get redesignExtraFieldsListAddFor => 'Field for';
+
+  @override
+  String get redesignExtraFieldsListEmpty => 'No extra fields yet.';
+
+  @override
+  String get redesignExtraFieldsListIntro =>
+      'Your own fields for people and works, e.g. clothing size or publisher.';
+
+  @override
+  String get redesignExtraFieldsListPersons => 'For people';
+
+  @override
+  String get redesignExtraFieldsListSongs => 'For works';
+
+  @override
   String redesignFilesActions(Object name) {
     return 'Actions for $name';
   }
@@ -12904,6 +12978,53 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignTabWorks => 'Works';
+
+  @override
+  String get redesignTeacherEditContact => 'Contact';
+
+  @override
+  String get redesignTeacherEditInstruments => 'Instruments';
+
+  @override
+  String get redesignTeacherEditInstrumentsHint => 'Tap to select or deselect.';
+
+  @override
+  String get redesignTeacherEditName => 'Name';
+
+  @override
+  String get redesignTeacherEditNameEmpty => 'An empty name is not saved.';
+
+  @override
+  String get redesignTeacherEditNotFound => 'This teacher no longer exists.';
+
+  @override
+  String get redesignTeacherEditNotes => 'Notes';
+
+  @override
+  String get redesignTeacherEditPlayers => 'Players';
+
+  @override
+  String get redesignTeacherEditPlayersNone =>
+      'Nobody learns with this teacher yet.';
+
+  @override
+  String get redesignTeacherEditPrivate => 'Private teacher';
+
+  @override
+  String get redesignTeacherEditTitle => 'Edit teacher';
+
+  @override
+  String get redesignTeachersListAdd => 'Add teacher';
+
+  @override
+  String get redesignTeachersListAddFailed => 'The teacher could not be added.';
+
+  @override
+  String get redesignTeachersListEmpty => 'No teachers yet.';
+
+  @override
+  String get redesignTeachersListIntro =>
+      'Teachers and the instruments they teach. Who learns with whom is set on the person.';
 
   @override
   String get redesignTodayAllEvents => 'All events';

@@ -17309,6 +17309,138 @@ abstract class AppLocalizations {
   /// **'Deine Antwort: {status}'**
   String redesignEventsYourAnswerLabel(Object status);
 
+  /// redesign.extraFieldEdit.defaultHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gilt, solange eine Person oder ein Werk noch keinen Wert hat.'**
+  String get redesignExtraFieldEditDefaultHint;
+
+  /// redesign.extraFieldEdit.delete
+  ///
+  /// In de, this message translates to:
+  /// **'Zusatzfeld löschen'**
+  String get redesignExtraFieldEditDelete;
+
+  /// redesign.extraFieldEdit.deleteFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Das Zusatzfeld konnte nicht gelöscht werden.'**
+  String get redesignExtraFieldEditDeleteFailed;
+
+  /// redesign.extraFieldEdit.deleteHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Werte bei allen Personen bzw. Werken werden mit gelöscht.'**
+  String get redesignExtraFieldEditDeleteHint;
+
+  /// redesign.extraFieldEdit.name
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get redesignExtraFieldEditName;
+
+  /// redesign.extraFieldEdit.nameEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Ein leerer Name wird nicht gespeichert.'**
+  String get redesignExtraFieldEditNameEmpty;
+
+  /// redesign.extraFieldEdit.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Dieses Zusatzfeld gibt es nicht mehr.'**
+  String get redesignExtraFieldEditNotFound;
+
+  /// redesign.extraFieldEdit.optionAdd
+  ///
+  /// In de, this message translates to:
+  /// **'Option hinzufügen'**
+  String get redesignExtraFieldEditOptionAdd;
+
+  /// redesign.extraFieldEdit.optionHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die erste Option ist der Standardwert. Leere Optionen werden nicht gespeichert.'**
+  String get redesignExtraFieldEditOptionHint;
+
+  /// redesign.extraFieldEdit.options
+  ///
+  /// In de, this message translates to:
+  /// **'Optionen'**
+  String get redesignExtraFieldEditOptions;
+
+  /// redesign.extraFieldEdit.optionsNeeded
+  ///
+  /// In de, this message translates to:
+  /// **'Eine Auswahl braucht mindestens eine Option.'**
+  String get redesignExtraFieldEditOptionsNeeded;
+
+  /// redesign.extraFieldEdit.resetHint
+  ///
+  /// In de, this message translates to:
+  /// **'Setzt das Feld bei allen Personen auf den Standardwert.'**
+  String get redesignExtraFieldEditResetHint;
+
+  /// redesign.extraFieldEdit.target
+  ///
+  /// In de, this message translates to:
+  /// **'Gilt für'**
+  String get redesignExtraFieldEditTarget;
+
+  /// redesign.extraFieldEdit.targetPersons
+  ///
+  /// In de, this message translates to:
+  /// **'Personen'**
+  String get redesignExtraFieldEditTargetPersons;
+
+  /// redesign.extraFieldEdit.targetSongs
+  ///
+  /// In de, this message translates to:
+  /// **'Werke'**
+  String get redesignExtraFieldEditTargetSongs;
+
+  /// redesign.extraFieldEdit.title
+  ///
+  /// In de, this message translates to:
+  /// **'Zusatzfeld bearbeiten'**
+  String get redesignExtraFieldEditTitle;
+
+  /// redesign.extraFieldsList.add
+  ///
+  /// In de, this message translates to:
+  /// **'Zusatzfeld hinzufügen'**
+  String get redesignExtraFieldsListAdd;
+
+  /// redesign.extraFieldsList.addFor
+  ///
+  /// In de, this message translates to:
+  /// **'Feld für'**
+  String get redesignExtraFieldsListAddFor;
+
+  /// redesign.extraFieldsList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Zusatzfelder angelegt.'**
+  String get redesignExtraFieldsListEmpty;
+
+  /// redesign.extraFieldsList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Felder für Personen und Werke, zum Beispiel Kleidergröße oder Verlag.'**
+  String get redesignExtraFieldsListIntro;
+
+  /// redesign.extraFieldsList.persons
+  ///
+  /// In de, this message translates to:
+  /// **'Für Personen'**
+  String get redesignExtraFieldsListPersons;
+
+  /// redesign.extraFieldsList.songs
+  ///
+  /// In de, this message translates to:
+  /// **'Für Werke'**
+  String get redesignExtraFieldsListSongs;
+
   /// redesign.files.actions
   ///
   /// In de, this message translates to:
@@ -20992,6 +21124,96 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Werke'**
   String get redesignTabWorks;
+
+  /// redesign.teacherEdit.contact
+  ///
+  /// In de, this message translates to:
+  /// **'Kontakt'**
+  String get redesignTeacherEditContact;
+
+  /// redesign.teacherEdit.instruments
+  ///
+  /// In de, this message translates to:
+  /// **'Instrumente'**
+  String get redesignTeacherEditInstruments;
+
+  /// redesign.teacherEdit.instrumentsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Tippe zum Aus- oder Abwählen.'**
+  String get redesignTeacherEditInstrumentsHint;
+
+  /// redesign.teacherEdit.name
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get redesignTeacherEditName;
+
+  /// redesign.teacherEdit.nameEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Ein leerer Name wird nicht gespeichert.'**
+  String get redesignTeacherEditNameEmpty;
+
+  /// redesign.teacherEdit.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Diesen Lehrer gibt es nicht mehr.'**
+  String get redesignTeacherEditNotFound;
+
+  /// redesign.teacherEdit.notes
+  ///
+  /// In de, this message translates to:
+  /// **'Notizen'**
+  String get redesignTeacherEditNotes;
+
+  /// redesign.teacherEdit.players
+  ///
+  /// In de, this message translates to:
+  /// **'Spieler'**
+  String get redesignTeacherEditPlayers;
+
+  /// redesign.teacherEdit.playersNone
+  ///
+  /// In de, this message translates to:
+  /// **'Noch lernt niemand bei diesem Lehrer.'**
+  String get redesignTeacherEditPlayersNone;
+
+  /// redesign.teacherEdit.private
+  ///
+  /// In de, this message translates to:
+  /// **'Privatlehrer'**
+  String get redesignTeacherEditPrivate;
+
+  /// redesign.teacherEdit.title
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer bearbeiten'**
+  String get redesignTeacherEditTitle;
+
+  /// redesign.teachersList.add
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer hinzufügen'**
+  String get redesignTeachersListAdd;
+
+  /// redesign.teachersList.addFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Der Lehrer konnte nicht angelegt werden.'**
+  String get redesignTeachersListAddFailed;
+
+  /// redesign.teachersList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Lehrer angelegt.'**
+  String get redesignTeachersListEmpty;
+
+  /// redesign.teachersList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer und die Instrumente, die sie unterrichten. Wer bei wem lernt, legst du bei der Person fest.'**
+  String get redesignTeachersListIntro;
 
   /// redesign.today.allEvents
   ///

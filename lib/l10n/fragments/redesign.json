@@ -827,6 +827,51 @@
         "shifts": "{count, plural, one {1 Schicht} other {{count} Schichten}}",
         "cycle": "{count, plural, one {Zyklus 1 Tag} other {Zyklus {count} Tage}}"
       },
+      "teachersList": {
+        "intro": "Lehrer und die Instrumente, die sie unterrichten. Wer bei wem lernt, legst du bei der Person fest.",
+        "empty": "Noch keine Lehrer angelegt.",
+        "add": "Lehrer hinzufügen",
+        "addFailed": "Der Lehrer konnte nicht angelegt werden."
+      },
+      "teacherEdit": {
+        "title": "Lehrer bearbeiten",
+        "name": "Name",
+        "nameEmpty": "Ein leerer Name wird nicht gespeichert.",
+        "instruments": "Instrumente",
+        "instrumentsHint": "Tippe zum Aus- oder Abwählen.",
+        "private": "Privatlehrer",
+        "contact": "Kontakt",
+        "notes": "Notizen",
+        "players": "Spieler",
+        "playersNone": "Noch lernt niemand bei diesem Lehrer.",
+        "notFound": "Diesen Lehrer gibt es nicht mehr."
+      },
+      "extraFieldsList": {
+        "intro": "Eigene Felder für Personen und Werke, zum Beispiel Kleidergröße oder Verlag.",
+        "empty": "Noch keine Zusatzfelder angelegt.",
+        "add": "Zusatzfeld hinzufügen",
+        "addFor": "Feld für",
+        "persons": "Für Personen",
+        "songs": "Für Werke"
+      },
+      "extraFieldEdit": {
+        "title": "Zusatzfeld bearbeiten",
+        "name": "Name",
+        "nameEmpty": "Ein leerer Name wird nicht gespeichert.",
+        "target": "Gilt für",
+        "targetPersons": "Personen",
+        "targetSongs": "Werke",
+        "options": "Optionen",
+        "optionAdd": "Option hinzufügen",
+        "optionHint": "Die erste Option ist der Standardwert. Leere Optionen werden nicht gespeichert.",
+        "optionsNeeded": "Eine Auswahl braucht mindestens eine Option.",
+        "defaultHint": "Gilt, solange eine Person oder ein Werk noch keinen Wert hat.",
+        "resetHint": "Setzt das Feld bei allen Personen auf den Standardwert.",
+        "delete": "Zusatzfeld löschen",
+        "deleteHint": "Die Werte bei allen Personen bzw. Werken werden mit gelöscht.",
+        "deleteFailed": "Das Zusatzfeld konnte nicht gelöscht werden.",
+        "notFound": "Dieses Zusatzfeld gibt es nicht mehr."
+      },
       "pult": {
         "open": "Pultmodus",
         "openHint": "Große Kacheln zum Antippen, gut für das Tablet am Pult",
@@ -2077,6 +2122,51 @@
         "add": "Add shift plan",
         "shifts": "{count, plural, one {1 shift} other {{count} shifts}}",
         "cycle": "{count, plural, one {Cycle of 1 day} other {Cycle of {count} days}}"
+      },
+      "teachersList": {
+        "intro": "Teachers and the instruments they teach. Who learns with whom is set on the person.",
+        "empty": "No teachers yet.",
+        "add": "Add teacher",
+        "addFailed": "The teacher could not be added."
+      },
+      "teacherEdit": {
+        "title": "Edit teacher",
+        "name": "Name",
+        "nameEmpty": "An empty name is not saved.",
+        "instruments": "Instruments",
+        "instrumentsHint": "Tap to select or deselect.",
+        "private": "Private teacher",
+        "contact": "Contact",
+        "notes": "Notes",
+        "players": "Players",
+        "playersNone": "Nobody learns with this teacher yet.",
+        "notFound": "This teacher no longer exists."
+      },
+      "extraFieldsList": {
+        "intro": "Your own fields for people and works, e.g. clothing size or publisher.",
+        "empty": "No extra fields yet.",
+        "add": "Add extra field",
+        "addFor": "Field for",
+        "persons": "For people",
+        "songs": "For works"
+      },
+      "extraFieldEdit": {
+        "title": "Edit extra field",
+        "name": "Name",
+        "nameEmpty": "An empty name is not saved.",
+        "target": "For",
+        "targetPersons": "People",
+        "targetSongs": "Works",
+        "options": "Options",
+        "optionAdd": "Add option",
+        "optionHint": "The first option is the default. Empty options are not saved.",
+        "optionsNeeded": "A selection needs at least one option.",
+        "defaultHint": "Used when a person or work has no value yet.",
+        "resetHint": "Sets this field to the default for every person.",
+        "delete": "Delete extra field",
+        "deleteHint": "The values of all people or works are removed as well.",
+        "deleteFailed": "The extra field could not be deleted.",
+        "notFound": "This extra field no longer exists."
       },
       "pult": {
         "open": "Stand mode",

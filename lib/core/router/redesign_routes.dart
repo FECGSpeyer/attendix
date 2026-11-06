@@ -117,6 +117,20 @@ class RedesignRoutes {
   /// pending sheet; a person still opens the old review page).
   static const String approvals = '$manage/freigaben';
 
+  /// Verwaltung › Lehrer (replaces `/settings/teachers` in the Beta).
+  static const String teachers = '$manage/lehrer';
+
+  /// "Lehrer bearbeiten" of the new design.
+  static String teacherEdit(int id) => '$teachers/$id';
+
+  /// Verwaltung › Zusatzfelder (replaces `/settings/general/extra-fields`).
+  static const String extraFields = '$manage/zusatzfelder';
+
+  /// "Zusatzfeld bearbeiten": field ids are unique per list only, so the
+  /// list (persons or works) is part of the path.
+  static String extraFieldEdit({required bool song, required String id}) =>
+      '$extraFields/${song ? 'werke' : 'personen'}/${Uri.encodeComponent(id)}';
+
   /// Ich › Benachrichtigungen.
   static const String notifications = '$me/benachrichtigungen';
 
@@ -136,6 +150,7 @@ class RedesignRoutes {
     archive,
     approvals,
     rolePermissions,
+    extraFields,
   };
 
   /// Pages for super admins only (the old admins sheet: `role.isAdmin`).
@@ -213,11 +228,18 @@ class RedesignRoutes {
   /// * Werke like `/songs-tab` (not for parents and applicants).
   /// * Verwaltung not for applicants and parents (nothing to manage there);
   ///   each entry keeps the guard of the page it opens.
+  /// * Lehrer like `/settings/teachers` (`Role.isConductor`: Admins,
+  ///   Verantwortliche and Beobachter see the list); a teacher opens only
+  ///   for Admins and Verantwortliche, like on the old page.
   static String? roleRedirect(String location, Role role) {
     if (location == manage || location.startsWith('$manage/')) {
       if (role.isApplicant || role.isParent) return me;
       if (_isLeadOnly(location) && !(role.isAdmin || role.isResponsible)) return manage;
       if (_matches(_adminOnly, location) && !role.isAdmin) return manage;
+      if (location == teachers || location.startsWith('$teachers/')) {
+        if (!role.isConductor) return manage;
+        if (location != teachers && !(role.isAdmin || role.isResponsible)) return teachers;
+      }
       return null;
     }
     if (location == members || location.startsWith('$members/')) {
