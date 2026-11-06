@@ -81,14 +81,18 @@ class _RdExtraFieldEditPageState extends ConsumerState<RdExtraFieldEditPage> {
   bool _editable = false;
   bool _boolDefault = false;
 
-  /// The default text as last written: an untouched field keeps the stored
-  /// value (e.g. a legacy `false`), like the old page.
+  /// The text values as last confirmed stored (updated inside the write's
+  /// turn); a failed save puts the shown value back to them. An untouched
+  /// default keeps the stored value (e.g. a legacy `false`), like the old page.
+  String _storedName = '';
   String _storedDefaultText = '';
+  List<String> _storedOptions = const [];
 
   bool _deleted = false;
   bool _busy = false;
 
-  /// Writes run one after another, so the last change always wins.
+  /// The last write of this page in the shared queue
+  /// ([rdSerialExtraFieldWrite]): awaiting it waits for every earlier one.
   Future<void> _queue = Future.value();
 
   /// Bound once the field is loaded, so text saved when the page closes
@@ -134,6 +138,8 @@ class _RdExtraFieldEditPageState extends ConsumerState<RdExtraFieldEditPage> {
     _repo = ref.read(extraFieldsRepositoryWithTenantProvider);
     _type = f.type;
     _name.text = f.name;
+    _storedName = f.name;
+    _storedOptions = [...?f.options];
     _storedDefaultText = _defaultText(f);
     _default.text = _storedDefaultText;
     _displayMode = f.displayMode ?? 'chip';
@@ -155,66 +161,86 @@ class _RdExtraFieldEditPageState extends ConsumerState<RdExtraFieldEditPage> {
     return option;
   }
 
-  /// A failing task never blocks the writes after it.
-  void _enqueue(Future<void> Function() task) {
-    _queue = _queue.then((_) => task()).catchError((Object _) {});
-  }
-
-  /// Applies [change] to the field as stored now and saves both lists (like
-  /// "Speichern" of the old page). Nothing is written when the field did not
-  /// change; reports a failure while the page is open.
-  Future<bool> _store(ExtraField Function(ExtraField stored) change) async {
+  /// Puts [change] into the shared write queue right away (also from
+  /// [dispose]), so a write of this page never lands after a later one of a
+  /// page opened again. [change] runs in the write's turn on the field as
+  /// stored then and returns null when nothing is to be written (like
+  /// "Speichern" of the old page, both lists are saved); [onStored] runs in
+  /// that turn after a successful write. Never throws.
+  Future<bool> _store(ExtraField? Function(ExtraField stored) change, {VoidCallback? onStored}) {
     final repo = _repo;
-    if (_deleted || repo == null || !repo.hasTenantId || !_session.isCurrent()) return false;
+    if (_deleted || repo == null) return Future.value(false);
     final read = _container.read;
-    try {
-      final ok = await rdSerialExtraFieldWrite(() async {
-        // Both lists as stored now (after every earlier write).
-        final tenant = read(currentTenantProvider);
-        if (tenant?.id != repo.currentTenantId) return false;
-        final list = _listOf(tenant, _song);
-        final index = list.indexWhere((f) => f.id == _fieldId);
-        if (index < 0) return false;
-        final next = change(list[index]);
-        if (_sameField(next, list[index])) return true;
+    final session = _session;
+    final song = _song;
+    final fieldId = _fieldId;
+    final result = rdSerialExtraFieldWrite(() async {
+      if (!repo.hasTenantId || !session.isCurrent()) return false;
+      // Both lists as stored now (after every earlier write).
+      final tenant = read(currentTenantProvider);
+      if (tenant?.id != repo.currentTenantId) return false;
+      final list = _listOf(tenant, song);
+      final index = list.indexWhere((f) => f.id == fieldId);
+      if (index < 0) return false;
+      final next = change(list[index]);
+      if (next != null && !_sameField(next, list[index])) {
         final updated = [...list]..[index] = next;
-        return rdSaveExtraFields(
+        final ok = await rdSaveExtraFields(
           read,
           repo,
-          persons: _song ? _listOf(tenant, false) : updated,
-          songs: _song ? updated : _listOf(tenant, true),
+          persons: song ? _listOf(tenant, false) : updated,
+          songs: song ? updated : _listOf(tenant, true),
         );
-      });
-      if (!ok) throw StateError('field or tenant gone');
+        if (!ok) return false;
+      }
+      onStored?.call();
       return true;
-    } catch (_) {
-      if (mounted) ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
-      return false;
-    }
+    }).catchError((Object _) => false);
+    _queue = result.then((_) {});
+    return result;
   }
 
-  /// Saves [change]; on failure [revert] puts the shown value back.
-  void _write(ExtraField Function(ExtraField stored) change, {VoidCallback? revert}) => _enqueue(() async {
-    if (!await _store(change) && revert != null && mounted && !_deleted) setState(revert);
-  });
+  /// Saves [change]; on failure (reported while the page is open) [revert]
+  /// puts the shown value back.
+  void _write(ExtraField? Function(ExtraField stored) change, {VoidCallback? onStored, VoidCallback? revert}) {
+    unawaited(
+      _store(change, onStored: onStored).then((ok) {
+        if (ok || !mounted || _deleted) return;
+        ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
+        if (revert != null) setState(revert);
+      }),
+    );
+  }
 
-  /// Like the old page: trimmed; an empty name is not saved.
+  /// Like the old page: trimmed; an empty name is not saved. A failed save
+  /// shows the name last stored again, unless it was edited meanwhile.
   void _saveName() {
     final value = _name.text.trim();
     if (_type == null || value.isEmpty) return;
-    _write((f) => f.copyWith(name: value));
+    _write(
+      (f) => f.copyWith(name: value),
+      onStored: () => _storedName = value,
+      revert: () {
+        if (_name.text.trim() == value) _name.text = _storedName;
+      },
+    );
   }
 
+  /// Compared with the default last stored in the write's turn: typing
+  /// A → B and back to A while B is saved still writes A.
   void _saveDefaultText() {
     final type = _type;
     if (type == null || type == 'boolean' || type == 'select' || type == 'bfecg_church') return;
     final text = _default.text;
-    if (text == _storedDefaultText) return;
-    _enqueue(() async {
-      // Old page `_parseDefault`: a number field stores a number.
-      final value = type == 'number' ? (num.tryParse(text.trim()) ?? 0) : text;
-      if (await _store((f) => f.copyWith(defaultValue: value))) _storedDefaultText = text;
-    });
+    // Old page `_parseDefault`: a number field stores a number.
+    final value = type == 'number' ? (num.tryParse(text.trim()) ?? 0) : text;
+    _write(
+      (f) => text == _storedDefaultText ? null : f.copyWith(defaultValue: value),
+      onStored: () => _storedDefaultText = text,
+      revert: () {
+        if (_default.text == text) _default.text = _storedDefaultText;
+      },
+    );
   }
 
   /// The options as shown without empty ones; null when a selection would be
@@ -229,11 +255,30 @@ class _RdExtraFieldEditPageState extends ConsumerState<RdExtraFieldEditPage> {
 
   /// Like the old page: the options of a selection, the first one is its
   /// default.
+  /// A failed save shows the options last stored again, unless they were
+  /// edited meanwhile.
   void _saveOptions() {
     if (_type != 'select') return;
     final values = _optionValues;
     if (values == null) return;
-    _write((f) => f.copyWith(options: values, defaultValue: values.first));
+    _write(
+      (f) => f.copyWith(options: values, defaultValue: values.first),
+      onStored: () => _storedOptions = values,
+      revert: () {
+        if (!listEquals(_optionValues, values)) return;
+        final old = [..._options];
+        _options.clear();
+        for (final o in _storedOptions) {
+          _addOptionRow(o);
+        }
+        // Disposed after the frame: a removed row may still hold its focus.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          for (final o in old) {
+            o.dispose();
+          }
+        });
+      },
+    );
   }
 
   void _done() {
@@ -414,7 +459,8 @@ class _RdExtraFieldEditPageState extends ConsumerState<RdExtraFieldEditPage> {
       if (!mounted) return;
       _deleted = true;
       var ok = false;
-      final read = ref.read;
+      // Not through `ref`: the turn may come after the page was left.
+      final read = _container.read;
       try {
         ok = await rdSerialExtraFieldWrite(() async {
           final tenant = read(currentTenantProvider);
