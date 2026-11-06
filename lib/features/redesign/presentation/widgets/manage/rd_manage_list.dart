@@ -95,6 +95,7 @@ class RdManageListPage extends StatefulWidget {
     this.loadFailed = false,
     this.onRetry,
     this.notice,
+    this.header,
     this.emptyIcon = Icons.inbox_outlined,
     this.addLabel,
     this.onAdd,
@@ -119,6 +120,9 @@ class RdManageListPage extends StatefulWidget {
 
   /// Important note below the intro (card).
   final String? notice;
+
+  /// Own widget above the list, e.g. a search field.
+  final Widget? header;
 
   final String emptyText;
   final IconData emptyIcon;
@@ -340,6 +344,7 @@ class _RdManageListPageState extends State<RdManageListPage> {
           RdInfoCard(icon: Icons.info_outline, text: widget.notice!),
         ],
         const SizedBox(height: 20),
+        if (widget.header != null) ...[widget.header!, const SizedBox(height: 16)],
         ...body,
       ],
     );

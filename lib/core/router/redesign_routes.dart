@@ -134,6 +134,9 @@ class RedesignRoutes {
   /// Verwaltung › Werk-Kategorien (replaces the old categories sheet).
   static const String workCategories = '$manage/werk-kategorien';
 
+  /// Verwaltung › Werkhistorie (replaces the old history modal).
+  static const String workHistory = '$manage/werkhistorie';
+
   /// Ich › Benachrichtigungen.
   static const String notifications = '$me/benachrichtigungen';
 

@@ -9682,6 +9682,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Categories sort the works, e.g. by occasion or church year.';
 
   @override
+  String get rdWmHistoryIntro =>
+      'Which works were played when. Tap an entry to remove it.';
+
+  @override
   String rdWmWorksCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

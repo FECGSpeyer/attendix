@@ -9783,6 +9783,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Kategorien ordnen die Werke, etwa nach Anlass oder Kirchenjahr.';
 
   @override
+  String get rdWmHistoryIntro =>
+      'Welche Werke wann gespielt wurden. Tippe auf einen Eintrag, um ihn zu entfernen.';
+
+  @override
   String rdWmWorksCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

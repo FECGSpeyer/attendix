@@ -16121,6 +16121,12 @@ abstract class AppLocalizations {
   /// **'Kategorien ordnen die Werke, etwa nach Anlass oder Kirchenjahr.'**
   String get rdWmCategoriesIntro;
 
+  /// rdWm.historyIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Welche Werke wann gespielt wurden. Tippe auf einen Eintrag, um ihn zu entfernen.'**
+  String get rdWmHistoryIntro;
+
   /// rdWm.worksCount
   ///
   /// In de, this message translates to:
