@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.55.0",
+      "version": "0.57.0",
       "date": "6.11.2026",
       "changes": [
         "✨ Beta am Desktop: Unter „Termine“ ist rechts sofort der nächste Termin offen statt einer leeren Fläche",
