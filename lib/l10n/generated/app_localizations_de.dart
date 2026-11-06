@@ -10806,6 +10806,108 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignFolderTitleLeads => 'Mappen';
 
   @override
+  String get redesignGroupEditCategory => 'Kategorie';
+
+  @override
+  String get redesignGroupEditCategoryNone => 'Keine';
+
+  @override
+  String get redesignGroupEditClefs => 'Notenschlüssel';
+
+  @override
+  String get redesignGroupEditClefsHint =>
+      'Mindestens ein Notenschlüssel bleibt ausgewählt.';
+
+  @override
+  String get redesignGroupEditDelete => 'Gruppe löschen';
+
+  @override
+  String redesignGroupEditDeleteConfirm(Object name) {
+    return 'Gruppe „$name“ wirklich löschen?';
+  }
+
+  @override
+  String get redesignGroupEditDeleteMain =>
+      'Die Hauptgruppe lässt sich nicht löschen.';
+
+  @override
+  String redesignGroupEditDeleteMembers(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'In der Gruppe sind oder waren noch $count Personen (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.',
+      one:
+          'In der Gruppe ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignGroupEditGenerate => 'Synonyme generieren';
+
+  @override
+  String get redesignGroupEditHint => 'Änderungen werden sofort gespeichert.';
+
+  @override
+  String get redesignGroupEditInstrument => 'Instrument';
+
+  @override
+  String get redesignGroupEditMainGroupHint =>
+      'Das ist die Hauptgruppe (die Leitung). Stimmung, Notenschlüssel und Synonyme gibt es für sie nicht, löschen lässt sie sich nicht.';
+
+  @override
+  String get redesignGroupEditManageCategories => 'Kategorien verwalten';
+
+  @override
+  String get redesignGroupEditName => 'Name';
+
+  @override
+  String get redesignGroupEditNameEmpty => 'Ohne Namen wird nicht gespeichert.';
+
+  @override
+  String get redesignGroupEditNotFound => 'Diese Gruppe gibt es nicht mehr.';
+
+  @override
+  String get redesignGroupEditNotes => 'Notizen';
+
+  @override
+  String get redesignGroupEditRange => 'Tonumfang';
+
+  @override
+  String get redesignGroupEditSynonyms => 'Synonyme';
+
+  @override
+  String get redesignGroupEditSynonymsHint =>
+      'Über die Synonyme ordnet die App hochgeladene Noten automatisch dieser Gruppe zu.';
+
+  @override
+  String get redesignGroupEditSynonymsLabel =>
+      'Andere Namen, mit Komma getrennt';
+
+  @override
+  String get redesignGroupEditTitle => 'Gruppe bearbeiten';
+
+  @override
+  String get redesignGroupEditTuning => 'Stimmung';
+
+  @override
+  String get redesignGroupsListAdd => 'Gruppe hinzufügen';
+
+  @override
+  String get redesignGroupsListEmpty => 'Noch keine Gruppen angelegt.';
+
+  @override
+  String get redesignGroupsListIntro =>
+      'Gruppen ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.';
+
+  @override
+  String get redesignGroupsListMainGroup => 'Hauptgruppe';
+
+  @override
+  String get redesignGroupsListManageCategories => 'Kategorien verwalten';
+
+  @override
   String get redesignGroupsLoadFailed =>
       'Deine Gruppen konnten nicht geladen werden.';
 
@@ -11002,6 +11104,20 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignManageGeneralTitle => 'Allgemeine Einstellungen';
+
+  @override
+  String get redesignManageListMore => 'Weitere Aktionen';
+
+  @override
+  String get redesignManageListOrderFailed =>
+      'Die Reihenfolge konnte nicht gespeichert werden. Bitte versuche es erneut.';
+
+  @override
+  String get redesignManageListReorder => 'Reihenfolge ändern';
+
+  @override
+  String get redesignManageListReorderHint =>
+      'Halte einen Griff gedrückt und ziehe die Einträge an ihre Stelle. „Fertig“ speichert die Reihenfolge.';
 
   @override
   String get redesignManageMissingHint =>
@@ -11819,6 +11935,42 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignShiftsListAdd => 'Schichtplan anlegen';
+
+  @override
+  String redesignShiftsListCycle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Zyklus $count Tage',
+      one: 'Zyklus 1 Tag',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignShiftsListEmpty => 'Noch keine Schichtpläne angelegt.';
+
+  @override
+  String get redesignShiftsListImportant =>
+      'Die Anwesenheiten werden beim Anlegen eines Termins und beim Zuweisen eines Plans aktualisiert.';
+
+  @override
+  String get redesignShiftsListIntro =>
+      'Schichtpläne entschuldigen Personen automatisch, wenn sie zur Zeit eines Termins Schicht haben. Den Plan weist du bei der Person zu.';
+
+  @override
+  String redesignShiftsListShifts(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Schichten',
+      one: '1 Schicht',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignSignoutCannot => 'Ich kann nicht';
 
   @override
@@ -12274,6 +12426,39 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignTodayYourAnswer => 'Deine Zusage';
+
+  @override
+  String get redesignTypesListAdd => 'Anwesenheits-Typ hinzufügen';
+
+  @override
+  String get redesignTypesListAllDay => 'Ganztägig';
+
+  @override
+  String redesignTypesListAllDayDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ganztägig · $count Tage',
+      one: 'Ganztägig',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignTypesListDefaultStatus(Object status) {
+    return 'Standard: $status';
+  }
+
+  @override
+  String get redesignTypesListEmpty =>
+      'Noch keine Anwesenheits-Typen angelegt.';
+
+  @override
+  String get redesignTypesListHidden => 'Ausgeblendet';
+
+  @override
+  String get redesignTypesListIntro =>
+      'Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.';
 
   @override
   String get redesignWorkAbout => 'Über das Werk';
