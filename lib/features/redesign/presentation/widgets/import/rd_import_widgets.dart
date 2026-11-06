@@ -87,12 +87,17 @@ class RdImportFrame extends StatelessWidget {
   }
 }
 
-/// Every category a file can get: the groups, Aufnahme, Liedtext, the
-/// types, "Chor" for choirs and "Sonstige".
-List<(RdImportCategory, String)> rdImportCategoryOptions(BuildContext context, RdImportPlan plan) {
+/// Every category a file can get: the groups, the [newGroups] still to be
+/// created, Aufnahme, Liedtext, the types, "Chor" for choirs and "Sonstige".
+List<(RdImportCategory, String)> rdImportCategoryOptions(
+  BuildContext context,
+  RdImportPlan plan, {
+  List<String> newGroups = const [],
+}) {
   final l10n = context.l10n;
   return [
     for (final g in plan.instruments) (RdImportCategory(instrumentId: g.id), g.name),
+    for (final name in newGroups) (RdImportCategory(newGroup: name), l10n.redesignImportCategoryNewGroup(name)),
     (const RdImportCategory(instrumentId: 1), l10n.songsRecording),
     (const RdImportCategory(instrumentId: 2), l10n.songsLyrics),
     (const RdImportCategory(note: 'Partitur'), 'Partitur'),
@@ -116,17 +121,20 @@ String rdImportCategoryLabel(BuildContext context, RdImportPlan plan, RdImportCa
   return c.note ?? l10n.redesignImportCategoryOther;
 }
 
-/// Sheet with every category, the groups ("Stimmen") apart from the other
-/// kinds of files; returns the one picked.
+/// Sheet with every category, the groups ("Stimmen", with the [newGroups]
+/// still to be created) apart from the other kinds of files; returns the
+/// one picked.
 Future<RdImportCategory?> rdPickImportCategory(
   BuildContext context,
   RdImportPlan plan, {
   required String title,
   RdImportCategory? current,
+  List<String> newGroups = const [],
 }) {
-  final options = rdImportCategoryOptions(context, plan);
-  final parts = options.take(plan.instruments.length).toList();
-  final files = options.skip(plan.instruments.length).toList();
+  final options = rdImportCategoryOptions(context, plan, newGroups: newGroups);
+  final partCount = plan.instruments.length + newGroups.length;
+  final parts = options.take(partCount).toList();
+  final files = options.skip(partCount).toList();
   return showRdSheet<RdImportCategory>(
     context,
     Builder(builder: (context) {

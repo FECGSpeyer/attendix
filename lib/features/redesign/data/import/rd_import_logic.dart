@@ -327,6 +327,8 @@ Map<String, String?> rdFindWorkFolders(
 
   // The common root, unless it is a Werk itself (ZIP of one Werk: its
   // name, or only sorting folders below it).
+  final structural = <String, bool>{};
+  bool isStructural(String seg) => structural.putIfAbsent(seg, () => _isStructural(seg, instruments));
   var root = 0;
   final first = entries.first.folders;
   while (root < first.length) {
@@ -336,7 +338,7 @@ Map<String, String?> rdFindWorkFolders(
       return f.length > root + 1 && f[root] == seg;
     });
     if (!shared || _looksLikeWork(seg, songs)) break;
-    if (entries.any((e) => _isStructural(e.folders[root + 1], instruments))) break;
+    if (entries.any((e) => isStructural(e.folders[root + 1]))) break;
     root++;
   }
 
@@ -351,8 +353,6 @@ Map<String, String?> rdFindWorkFolders(
     withFiles.add(f.join('/'));
   }
 
-  final structural = <String, bool>{};
-  bool isStructural(String seg) => structural.putIfAbsent(seg, () => _isStructural(seg, instruments));
   final workLike = <String, bool>{};
   bool looksLikeWork(String seg) => workLike.putIfAbsent(seg, () => _looksLikeWork(seg, songs));
 
@@ -523,6 +523,7 @@ class RdImportFile {
     this.questionKey,
     this.hardSkip,
     this.besidePdf = false,
+    this.newGroup,
   });
 
   final RdImportEntry entry;
@@ -542,11 +543,16 @@ class RdImportFile {
   /// Word/text file with a PDF of the same name next to it.
   final bool besidePdf;
 
+  /// A known instrument without a group in Attendix ("Oboe"): becomes a new
+  /// group unless the person decides otherwise.
+  final String? newGroup;
+
   String get path => entry.path;
   String get name => entry.name;
 
-  RdImportCategory get guessed =>
-      RdImportCategory(instrumentId: guess.instrumentId, note: guess.note);
+  RdImportCategory get guessed => guess.instrumentId == null && guess.note == null && newGroup != null
+      ? RdImportCategory(newGroup: newGroup)
+      : RdImportCategory(instrumentId: guess.instrumentId, note: guess.note);
 }
 
 /// A version of a Werk: the files of one sub-folder.
@@ -611,6 +617,7 @@ class RdImportQuestion {
     required this.works,
     this.files = const [],
     this.suggestion,
+    this.newGroup,
   });
 
   final String key;
@@ -627,6 +634,13 @@ class RdImportQuestion {
 
   /// Group the name might mean (unsure match).
   final int? suggestion;
+
+  /// A known instrument without a group: "Neue Gruppe" with this name is
+  /// the answer while the person gives none.
+  final String? newGroup;
+
+  /// The answer that counts while none is given.
+  RdImportCategory? get proposed => newGroup == null ? null : RdImportCategory(newGroup: newGroup);
 }
 
 class RdImportPlan {
@@ -681,6 +695,39 @@ Set<String> rdImportPathsToDate(RdImportPlan plan) => {
 /// Builds the plan: Werk folders, the Werk in Attendix, categories,
 /// duplicates (by [hashes]), Fassungen (newest by [dates], the date inside
 /// a PDF) and the questions.
+/// What [rdBuildImportPlan] reads from the names alone. Kept while files,
+/// Werke and groups stay the same: an answer or a change by hand only
+/// changes the rest, so the plan is made again in a moment.
+class RdImportPlanCache {
+  Map<String, String?>? _folders;
+  final Map<String, ({FileCategoryGuess guess, String? newGroup})> _files = {};
+}
+
+/// The part of [e] read from its name (or its folder's), and the new group
+/// a known instrument without a group in Attendix becomes ("Oboe").
+({FileCategoryGuess guess, String? newGroup}) _readName(
+  RdImportEntry e,
+  String folder,
+  List<InstrumentInfo> instruments,
+  bool isChoir,
+  Set<String> groupNames,
+) {
+  var guess = guessFileCategory(e.name, instruments: instruments, isChoir: isChoir);
+  // A part named only by its folder ("Violine 1/Seite 1.pdf").
+  final byFolderName = e.folders.isNotEmpty && e.folders.join('/') != folder ? '${e.folders.last} ${e.name}' : null;
+  if (guess.confidence == MatchConfidence.none && byFolderName != null) {
+    final byFolder = guessFileCategory(byFolderName, instruments: instruments, isChoir: isChoir);
+    if (byFolder.instrumentId != null || byFolder.note != null) guess = byFolder;
+  }
+  String? newGroup;
+  if (guess.confidence == MatchConfidence.none && guess.instrumentId == null && guess.note == null) {
+    newGroup = InstrumentMatcher.knownGroup(e.name, isChoir: isChoir);
+    if (newGroup == null && byFolderName != null) newGroup = InstrumentMatcher.knownGroup(byFolderName, isChoir: isChoir);
+    if (newGroup != null && groupNames.contains(newGroup.toLowerCase())) newGroup = null;
+  }
+  return (guess: guess, newGroup: newGroup);
+}
+
 RdImportPlan rdBuildImportPlan(
   List<RdImportEntry> entries, {
   required List<RdImportSong> songs,
@@ -691,8 +738,12 @@ RdImportPlan rdBuildImportPlan(
   int junk = 0,
   Map<String, RdImportCategory> answers = const {},
   Map<String, RdImportCategory> categories = const {},
+  RdImportPlanCache? cache,
 }) {
-  final folderOf = rdFindWorkFolders(entries, songs: songs, instruments: instruments);
+  final folderOf = cache == null
+      ? rdFindWorkFolders(entries, songs: songs, instruments: instruments)
+      : cache._folders ??= rdFindWorkFolders(entries, songs: songs, instruments: instruments);
+  final groupNames = {for (final g in instruments) g.name.trim().toLowerCase()};
 
   // Werk folders → Werke (folders of the same Werk in Attendix, or new ones
   // with the same title, are one Werk).
@@ -782,14 +833,15 @@ RdImportPlan rdBuildImportPlan(
       } else if (e.size > rdMaxUploadBytes) {
         hard = RdSkipReason.tooLarge;
       }
-      var guess = guessFileCategory(e.name, instruments: instruments, isChoir: isChoir);
-      // A part named only by its folder ("Violine 1/Seite 1.pdf").
-      final folder = folderOf[e.path] ?? '';
-      if (guess.confidence == MatchConfidence.none && e.folders.isNotEmpty && e.folders.join('/') != folder) {
-        final byFolder = guessFileCategory('${e.folders.last} ${e.name}', instruments: instruments, isChoir: isChoir);
-        if (byFolder.instrumentId != null || byFolder.note != null) guess = byFolder;
-      }
-      raw.add(RdImportFile(entry: e, fassungKey: fassungKeyOf(e), guess: guess, hardSkip: hard));
+      final read = cache?._files[e.path] ?? _readName(e, folderOf[e.path] ?? '', instruments, isChoir, groupNames);
+      cache?._files[e.path] = read;
+      raw.add(RdImportFile(
+        entry: e,
+        fassungKey: fassungKeyOf(e),
+        guess: read.guess,
+        hardSkip: hard,
+        newGroup: hard == null ? read.newGroup : null,
+      ));
     }
 
     // Duplicates: same size and content; the copy outside "Alt" folders and
@@ -828,6 +880,7 @@ RdImportPlan rdBuildImportPlan(
           entry: f.entry,
           fassungKey: f.fassungKey,
           guess: f.guess,
+          newGroup: f.newGroup,
           hardSkip: f.hardSkip ?? (duplicates.contains(f.path) ? RdSkipReason.duplicate : null),
           besidePdf: _textExtensions.contains(f.entry.extension) &&
               pdfStems.contains('${f.entry.folders.join('/')}/${stem(f.name)}'),
@@ -926,20 +979,25 @@ RdImportPlan rdBuildImportPlan(
     return na != nb ? na.compareTo(nb) : a.title.toLowerCase().compareTo(b.title.toLowerCase());
   });
 
-  // Questions: names that come up in two or more files. Single unknown
-  // files are decided in the review of their Werk.
+  // Questions: names that come up in two or more files, and every known
+  // instrument that would become a new group. Other single unknown files
+  // are decided in the review of their Werk.
   final questions = <RdImportQuestion>[];
   for (final entry in questionFiles.entries) {
     final list = entry.value;
-    if (list.length < 2) continue;
     final labels = <String, int>{};
     final suggestions = <int, int>{};
+    final newGroups = <String, int>{};
     for (final q in list) {
       final label = q.label;
       if (label != null) labels[label] = (labels[label] ?? 0) + 1;
       final id = q.file.guess.instrumentId;
       if (id != null) suggestions[id] = (suggestions[id] ?? 0) + 1;
+      final group = q.file.newGroup;
+      if (group != null) newGroups[group] = (newGroups[group] ?? 0) + 1;
     }
+    // A new group is asked about even for one file: it is created on upload.
+    if (list.length < 2 && newGroups.isEmpty) continue;
     String top(Map<String, int> counts) => (counts.entries.toList()..sort((a, b) => b.value.compareTo(a.value))).first.key;
     final suggestion = suggestions.isEmpty ? null : (suggestions.entries.toList()..sort((a, b) => b.value.compareTo(a.value))).first.key;
     questions.add(RdImportQuestion(
@@ -949,6 +1007,7 @@ RdImportPlan rdBuildImportPlan(
       works: {for (final q in list) q.work}.take(2).toList(),
       files: {for (final q in list) q.file.name}.take(3).toList(),
       suggestion: suggestion,
+      newGroup: newGroups.isEmpty ? null : top(newGroups),
     ));
   }
   questions.sort((a, b) => b.fileCount != a.fileCount ? b.fileCount.compareTo(a.fileCount) : a.label.compareTo(b.label));
@@ -1191,7 +1250,7 @@ RdFileState rdFileState(RdImportPlan plan, RdImportDecisions d, RdImportWork wor
   }
   final manual = d.take[f.path];
   final take = manual ?? reason == null;
-  final unclear = take && !byHand && f.guess.confidence != MatchConfidence.sure;
+  final unclear = take && !byHand && f.guess.confidence != MatchConfidence.sure && f.newGroup == null;
   return RdFileState(
     take: take,
     category: category,
@@ -1366,6 +1425,22 @@ List<String> rdImportNewGroups(List<RdUploadItem> items) => {
       for (final i in items)
         if (i.category.newGroup != null) i.category.newGroup!,
     }.toList();
+
+/// The new groups the files go to as decided so far, to pick them for other
+/// files too before they exist ("Neue Gruppe: Oboe").
+List<String> rdImportPendingGroups(RdImportPlan plan, RdImportDecisions d) {
+  final existing = {for (final g in plan.instruments) g.name.trim().toLowerCase()};
+  final names = <String, String>{};
+  for (final work in plan.works) {
+    for (final f in work.files) {
+      if (f.hardSkip != null) continue;
+      final name = _decided(f, d.categories, d.answers, plan.instruments, work.title).newGroup;
+      if (name == null || existing.contains(name.trim().toLowerCase())) continue;
+      names.putIfAbsent(name.trim().toLowerCase(), () => name);
+    }
+  }
+  return names.values.toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+}
 
 /// Terms to remember as synonyms: the part names of files whose group was
 /// chosen by hand or by an answer ("künftig so erkennen"). [groupIds] maps

@@ -18923,6 +18923,12 @@ abstract class AppLocalizations {
   /// **'Werk wählen'**
   String get redesignImportPickTitle;
 
+  /// redesign.import.preparing
+  ///
+  /// In de, this message translates to:
+  /// **'Wird vorbereitet …'**
+  String get redesignImportPreparing;
+
   /// redesign.import.questionTitle
   ///
   /// In de, this message translates to:

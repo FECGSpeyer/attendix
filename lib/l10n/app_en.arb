@@ -3132,6 +3132,7 @@
   "redesignImportPickSearch": "Search work",
   "redesignImportPickSkip": "Do not import",
   "redesignImportPickTitle": "Choose work",
+  "redesignImportPreparing": "Preparing …",
   "redesignImportQuestionTitle": "“{name}” belongs to …",
   "redesignImportQuestionWhere": "{count} files, e.g. in {works}",
   "redesignImportQuestionsIntro": "Attendix does not know these part names yet. Your answer applies to all files with this name – next time Attendix will know it.",

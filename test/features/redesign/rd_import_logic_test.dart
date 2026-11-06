@@ -150,6 +150,22 @@ void main() {
       expect(reasons.values.where((r) => r == RdSkipReason.duplicate), hasLength(1));
     });
 
+    test('a known instrument without a group becomes a new group, whatever stands before it', () {
+      final plan = _plan([
+        _e('Noten/1 Erstes/SoS - Erstes bearbeitet - Oboe.pdf'),
+        _e('Noten/2 Zweites/Oboe.pdf'),
+        _e('Noten/3 Drittes/Alto Saxophone 1.pdf'),
+      ]);
+      expect({for (final q in plan.questions) q.key: q.newGroup}, {'oboe': 'Oboe', 'alto saxophone': 'Altsaxophon'});
+      const d = RdImportDecisions();
+      final file = rdWorkState(plan, d, plan.works.firstWhere((w) => w.title == 'Erstes')).files.values.single;
+      expect(file.category, const RdImportCategory(newGroup: 'Oboe'));
+      expect(file.unclear, isFalse);
+      expect(rdImportPendingGroups(plan, d), ['Altsaxophon', 'Oboe']);
+      // Answered with a group: Oboe is no new group any more.
+      expect(rdImportPendingGroups(plan, const RdImportDecisions(answers: {'oboe': RdImportCategory(instrumentId: 16)})), ['Altsaxophon']);
+    });
+
     test('a part already in Attendix is left out, a new one is taken', () {
       final plan = _plan([
         _e('Noten/120 Wie wunderbar/Violine 1.pdf'),

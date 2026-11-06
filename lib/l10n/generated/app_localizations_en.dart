@@ -11574,6 +11574,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportPickTitle => 'Choose work';
 
   @override
+  String get redesignImportPreparing => 'Preparing …';
+
+  @override
   String redesignImportQuestionTitle(Object name) {
     return '“$name” belongs to …';
   }
