@@ -265,10 +265,12 @@ void main() {
     final home = Uri.parse('https://drive.google.com/drive/my-drive');
     expect(rdDriveLaunches(home, platform: TargetPlatform.iOS, web: false).first.$1, Uri.parse('googledrive://'));
     expect(
-      rdDriveLaunches(page, platform: TargetPlatform.android, web: true).single.$1.toString(),
+      rdDriveLaunches(page, platform: TargetPlatform.android, web: true, intents: true).single.$1.toString(),
       'intent://drive.google.com/drive/folders/abc?resourcekey=k#Intent;scheme=https;package=com.google.android.apps.docs;'
       'S.browser_fallback_url=https%3A%2F%2Fdrive.google.com%2Fdrive%2Ffolders%2Fabc%3Fresourcekey%3Dk;end',
     );
+    // A browser without intent links gets the page.
+    expect(rdDriveLaunches(page, platform: TargetPlatform.android, web: true), [browser]);
   });
 
   test('reads the ZIP, asks once, creates Werk and group, keeps the Besetzung', () async {

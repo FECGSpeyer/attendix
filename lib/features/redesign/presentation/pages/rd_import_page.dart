@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/providers/pwa_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -233,7 +234,8 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   /// the phone, else in the browser.
   Future<void> _openDrive([RdDriveRef? folder]) async {
     final page = folder == null ? Uri.https('drive.google.com', '/drive/my-drive') : rdDriveFolderUrl(folder);
-    for (final (uri, mode) in rdDriveLaunches(page, platform: defaultTargetPlatform, web: kIsWeb)) {
+    final intents = ref.read(pwaServiceProvider).opensAndroidIntents();
+    for (final (uri, mode) in rdDriveLaunches(page, platform: defaultTargetPlatform, web: kIsWeb, intents: intents)) {
       try {
         if (await launchUrl(uri, mode: mode)) return;
       } catch (_) {}
@@ -1041,17 +1043,22 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
 
 /// The ways to open the Drive [page], best first. On a phone the Drive app
 /// comes first: the app by its own link on iOS, an app-only launch of the
-/// page in the app, and in Chrome on Android an intent link that falls back
-/// to the page itself. The browser is the last way.
+/// page in the app, and in Chrome on Android ([intents]) an intent link that
+/// falls back to the page itself. Otherwise the browser.
 @visibleForTesting
-List<(Uri, LaunchMode)> rdDriveLaunches(Uri page, {required TargetPlatform platform, required bool web}) {
+List<(Uri, LaunchMode)> rdDriveLaunches(
+  Uri page, {
+  required TargetPlatform platform,
+  required bool web,
+  bool intents = false,
+}) {
   final browser = (page, LaunchMode.externalApplication);
   final phone = platform == TargetPlatform.iOS || platform == TargetPlatform.android;
   if (!phone) return [browser];
   if (web) {
-    // iOS has no way from the browser to the app without an error page
+    // iOS and other browsers have no way to the app without an error page
     // when it is missing; Drive's page offers the app itself.
-    if (platform == TargetPlatform.iOS) return [browser];
+    if (platform != TargetPlatform.android || !intents) return [browser];
     final fallback = Uri.encodeComponent(page.toString());
     final rest = page.hasQuery ? '${page.path}?${page.query}' : page.path;
     return [
