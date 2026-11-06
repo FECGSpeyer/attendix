@@ -26,6 +26,7 @@ import '../../../songs/data/song_print_service.dart';
 import '../../../songs/presentation/pages/song_import_page.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../songs/presentation/widgets/song_categories_sheet.dart';
+import '../../data/import/rd_import_controller.dart' show rdImportOwnLibraryProvider;
 import '../../data/providers/rd_works_filter.dart';
 import '../../data/rd_works_logic.dart';
 import '../widgets/rd_split_view.dart';
@@ -116,6 +117,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     try {
       org = await ref.read(currentOrganisationProvider.future).timeout(const Duration(seconds: 5)) != null;
     } catch (_) {}
+    final ownLibrary = await ref.read(rdImportOwnLibraryProvider.future).catchError((_) => false);
     if (!mounted) return;
     final action = await showAppActionSheet<String>(
       context,
@@ -133,6 +135,13 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
           label: l10n.redesignWorksAddImport,
           subtitle: l10n.redesignWorksAddImportHint,
         ),
+        if (ownLibrary)
+          AppActionSheetAction(
+            value: 'files',
+            icon: Icons.folder_zip_outlined,
+            label: l10n.redesignImportTitle,
+            subtitle: l10n.redesignImportMenuHint,
+          ),
         if (org)
           AppActionSheetAction(
             value: 'org',
@@ -155,6 +164,9 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
           ref.invalidate(songsProvider);
           ref.invalidate(songsListDataProvider);
         }
+      case 'files':
+        // "Noten importieren": its controller refreshes the Werke.
+        await context.push(RedesignRoutes.worksImport);
       case 'org':
         await context.push('/settings/org-settings/songs');
     }
