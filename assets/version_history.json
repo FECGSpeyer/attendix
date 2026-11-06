@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.49.2",
+      "date": "6.11.2026",
+      "changes": [
+        "🐛 Offline: Die Personenliste bleibt nach einem Tab-Wechsel mit den zuletzt geladenen Personen sichtbar statt „Fehler beim Laden“, und die Gruppenübersicht zählt die Personen aus dieser Liste statt „0 Personen“",
+        "🐛 Nach einem Abmelden ohne Internet öffnet die nächste Anmeldung wieder direkt die Gruppe statt der Seite „Instanzen“"
+      ]
+    },
+    {
       "version": "0.49.1",
       "date": "6.11.2026",
       "changes": [
