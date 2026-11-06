@@ -121,7 +121,7 @@ class LeftPlayersPage extends ConsumerWidget {
                 final player = players[index];
                 return _LeftPlayerItem(
                   player: player,
-                  onReactivate: () => _reactivatePlayer(context, ref, player),
+                  onReactivate: () => reactivateWithConfirmation(context, ref, player),
                   // Ionic openPlayerModal: PersonPage as a card modal
                   // (readOnly, hasLeft) above the sheet; reload the list
                   // only when the person was reactivated (`activated`).
@@ -145,7 +145,9 @@ class LeftPlayersPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _reactivatePlayer(BuildContext context, WidgetRef ref, Person player) async {
+  /// Restores [player] after the confirmation (also the Beta page
+  /// `RdArchivePage`).
+  static Future<void> reactivateWithConfirmation(BuildContext context, WidgetRef ref, Person player) async {
     final repository = ref.read(playerRepositoryWithTenantProvider);
     final confirmed = await showAppDialog<bool>(
       context: context,

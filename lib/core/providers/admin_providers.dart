@@ -47,11 +47,15 @@ class AdminNotifier extends Notifier<AsyncValue<void>> {
   AsyncValue<void> build() => const AsyncValue.data(null);
 
   /// Returns `false` when the admin was added but could not be informed.
-  Future<bool> create(String email) async {
+  ///
+  /// [repo]: repository bound by the caller before its first await (e.g.
+  /// before a dialog), so a group switch meanwhile never writes into the new
+  /// group; default the current one.
+  Future<bool> create(String email, {AdminRepository? repo}) async {
+    final AdminRepository bound = repo ?? ref.read(adminRepositoryWithTenantProvider);
     state = const AsyncValue.loading();
     try {
-      final informed =
-          await ref.read(adminRepositoryWithTenantProvider).createAdmin(email);
+      final informed = await bound.createAdmin(email);
       state = const AsyncValue.data(null);
       ref.invalidate(adminsProvider);
       return informed;
@@ -61,10 +65,12 @@ class AdminNotifier extends Notifier<AsyncValue<void>> {
     }
   }
 
-  Future<void> remove(String userId) async {
+  /// [repo]: see [create].
+  Future<void> remove(String userId, {AdminRepository? repo}) async {
+    final AdminRepository bound = repo ?? ref.read(adminRepositoryWithTenantProvider);
     state = const AsyncValue.loading();
     try {
-      await ref.read(adminRepositoryWithTenantProvider).removeAdmin(userId);
+      await bound.removeAdmin(userId);
       state = const AsyncValue.data(null);
       ref.invalidate(adminsProvider);
     } catch (e, stack) {

@@ -524,6 +524,32 @@
         "review": "Prüfen und freigeben",
         "history": "Verlauf"
       },
+      "personForm": {
+        "newTitle": "Neue Person",
+        "create": "Anlegen",
+        "createButton": "Person anlegen",
+        "editTitle": "{name} bearbeiten",
+        "contact": "Kontakt",
+        "emailHint": "Bekommt damit Zugang zur App",
+        "more": "Weitere Angaben",
+        "moreHint": "Geburtstag, Beitritt, Lehrer, Zusatzfelder und mehr",
+        "saved": "Gespeichert ✓",
+        "liveHint": "Änderungen werden sofort gespeichert.",
+        "notAllowed": "Nur Admins und Verantwortliche können Personen anlegen und bearbeiten.",
+        "archived": "Diese Person ist archiviert.",
+        "problemSave": "Gespräch speichern",
+        "notSet": "Nicht gesetzt",
+        "matchDismiss": "Ausblenden",
+        "matchFound": "Person in anderer Gruppe gefunden?",
+        "existingUserHint": "Gibt es für die E-Mail-Adresse schon ein Konto, wird es automatisch dieser Gruppe zugewiesen.",
+        "searchOtherGroup": "In anderer Gruppe suchen",
+        "noMatchOther": "In deinen anderen Gruppen wurde keine passende Person gefunden.",
+        "transferOther": "In andere Gruppe übertragen",
+        "copyOther": "In andere Gruppe kopieren",
+        "otherGroups": "Andere Gruppen",
+        "emailUsedBy": "Diese E-Mail wird in einer anderen Gruppe von {name} verwendet. Daten übernehmen?",
+        "emailUsedMany": "Diese E-Mail wird bereits in anderen Gruppen verwendet. Daten welcher Person übernehmen?"
+      },
       "works": {
         "search": "Titel oder Nummer",
         "searchLabel": "Werke suchen",
@@ -730,6 +756,34 @@
         "add": "Gruppe hinzufügen",
         "manageCategories": "Kategorien verwalten"
       },
+      "adminsList": {
+        "intro": "Admins haben alle Rechte in dieser Gruppe und können sie auch löschen.",
+        "empty": "Noch keine Admins.",
+        "add": "Admin hinzufügen",
+        "you": "Das bist du",
+        "remove": "Admin entfernen"
+      },
+      "parentsList": {
+        "intro": "Eltern sehen die Anwesenheiten ihrer Kinder und tragen Abwesenheiten ein.",
+        "empty": "Noch keine Eltern eingeladen.",
+        "add": "Elternteil einladen",
+        "remove": "Elternteil entfernen"
+      },
+      "viewersList": {
+        "intro": "Beobachter dürfen Anwesenheiten und Personendaten nur ansehen.",
+        "empty": "Noch keine Beobachter eingeladen.",
+        "add": "Beobachter einladen",
+        "remove": "Beobachter entfernen"
+      },
+      "archiveList": {
+        "intro": "Ausgetretene Personen. Tippe auf eine Person, um sie anzusehen.",
+        "empty": "Keine archivierten Personen.",
+        "restore": "Wiederherstellen"
+      },
+      "pendingList": {
+        "intro": "Diese Personen haben sich angemeldet und warten auf deine Freigabe. Tippe auf eine Person, um sie zu prüfen.",
+        "empty": "Gerade wartet niemand auf Freigabe."
+      },
       "groupEdit": {
         "title": "Gruppe bearbeiten",
         "name": "Name",
@@ -756,6 +810,9 @@
         "deleteFailed": "Die Gruppe konnte nicht gelöscht werden.",
         "notFound": "Diese Gruppe gibt es nicht mehr."
       },
+      "rolePerm": {
+        "intro": "Lege fest, was Helfer und Mitglieder in dieser Gruppe dürfen. Jeder Schalter wird sofort gespeichert."
+      },
       "typesList": {
         "intro": "Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.",
         "empty": "Noch keine Anwesenheits-Typen angelegt.",
@@ -771,6 +828,51 @@
         "add": "Schichtplan anlegen",
         "shifts": "{count, plural, one {1 Schicht} other {{count} Schichten}}",
         "cycle": "{count, plural, one {Zyklus 1 Tag} other {Zyklus {count} Tage}}"
+      },
+      "teachersList": {
+        "intro": "Lehrer und die Instrumente, die sie unterrichten. Wer bei wem lernt, legst du bei der Person fest.",
+        "empty": "Noch keine Lehrer angelegt.",
+        "add": "Lehrer hinzufügen",
+        "addFailed": "Der Lehrer konnte nicht angelegt werden."
+      },
+      "teacherEdit": {
+        "title": "Lehrer bearbeiten",
+        "name": "Name",
+        "nameEmpty": "Ein leerer Name wird nicht gespeichert.",
+        "instruments": "Instrumente",
+        "instrumentsHint": "Tippe zum Aus- oder Abwählen.",
+        "private": "Privatlehrer",
+        "contact": "Kontakt",
+        "notes": "Notizen",
+        "players": "Spieler",
+        "playersNone": "Noch lernt niemand bei diesem Lehrer.",
+        "notFound": "Diesen Lehrer gibt es nicht mehr."
+      },
+      "extraFieldsList": {
+        "intro": "Eigene Felder für Personen und Werke, zum Beispiel Kleidergröße oder Verlag.",
+        "empty": "Noch keine Zusatzfelder angelegt.",
+        "add": "Zusatzfeld hinzufügen",
+        "addFor": "Feld für",
+        "persons": "Für Personen",
+        "songs": "Für Werke"
+      },
+      "extraFieldEdit": {
+        "title": "Zusatzfeld bearbeiten",
+        "name": "Name",
+        "nameEmpty": "Ein leerer Name wird nicht gespeichert.",
+        "target": "Gilt für",
+        "targetPersons": "Personen",
+        "targetSongs": "Werke",
+        "options": "Optionen",
+        "optionAdd": "Option hinzufügen",
+        "optionHint": "Die erste Option ist der Standardwert. Leere Optionen werden nicht gespeichert.",
+        "optionsNeeded": "Eine Auswahl braucht mindestens eine Option.",
+        "defaultHint": "Gilt, solange eine Person oder ein Werk noch keinen Wert hat.",
+        "resetHint": "Setzt das Feld bei allen Personen auf den Standardwert.",
+        "delete": "Zusatzfeld löschen",
+        "deleteHint": "Die Werte bei allen Personen bzw. Werken werden mit gelöscht.",
+        "deleteFailed": "Das Zusatzfeld konnte nicht gelöscht werden.",
+        "notFound": "Dieses Zusatzfeld gibt es nicht mehr."
       },
       "pult": {
         "open": "Pultmodus",
@@ -1192,7 +1294,19 @@
         "hours": "{count} Std.",
         "hoursMinutes": "{hours} Std. {minutes} Min",
         "less": "5 Minuten weniger",
-        "more5": "5 Minuten mehr"
+        "more5": "5 Minuten mehr",
+        "songInPlan": "im Ablauf",
+        "newPlan": "Neuer Plan",
+        "createPlan": "Plan anlegen",
+        "day": "Tag",
+        "content": "Inhalt",
+        "copyOf": "Kopie von „{name}“",
+        "nameHint": "Name (optional)",
+        "viewWhole": "Ganzer Ablauf",
+        "viewNow": "Jetzt",
+        "viewWhich": "Welcher Plan",
+        "download": "Herunterladen",
+        "telegram": "Per Telegram"
       },
       "messages": {
         "intro": "Alles, was an die Gruppe ging, mit Lesestatus.",
@@ -1774,6 +1888,32 @@
         "review": "Review and approve",
         "history": "History"
       },
+      "personForm": {
+        "newTitle": "New person",
+        "create": "Create",
+        "createButton": "Add person",
+        "editTitle": "Edit {name}",
+        "contact": "Contact",
+        "emailHint": "Gets access to the app with it",
+        "more": "More details",
+        "moreHint": "Birthday, joined, teacher, extra fields and more",
+        "saved": "Saved ✓",
+        "liveHint": "Changes are saved right away.",
+        "notAllowed": "Only admins and responsible persons can add and edit people.",
+        "archived": "This person is archived.",
+        "problemSave": "Save conversation",
+        "notSet": "Not set",
+        "matchDismiss": "Hide",
+        "matchFound": "Person found in another group?",
+        "existingUserHint": "If an account already exists for this e-mail address, it is added to this group automatically.",
+        "searchOtherGroup": "Search in other group",
+        "noMatchOther": "No matching person was found in your other groups.",
+        "transferOther": "Transfer to another group",
+        "copyOther": "Copy to another group",
+        "otherGroups": "Other groups",
+        "emailUsedBy": "This email is used by {name} in another group. Take over the data?",
+        "emailUsedMany": "This email is already used in other groups. Whose data should be taken over?"
+      },
       "works": {
         "search": "Title or number",
         "searchLabel": "Search works",
@@ -1980,6 +2120,34 @@
         "add": "Add group",
         "manageCategories": "Manage categories"
       },
+      "adminsList": {
+        "intro": "Admins have all rights in this group and can also delete it.",
+        "empty": "No admins yet.",
+        "add": "Add admin",
+        "you": "That's you",
+        "remove": "Remove admin"
+      },
+      "parentsList": {
+        "intro": "Parents see their children's attendance and enter absences.",
+        "empty": "No parents invited yet.",
+        "add": "Invite parent",
+        "remove": "Remove parent"
+      },
+      "viewersList": {
+        "intro": "Observers can only view attendance and personal data.",
+        "empty": "No observers invited yet.",
+        "add": "Invite observer",
+        "remove": "Remove observer"
+      },
+      "archiveList": {
+        "intro": "People who have left. Tap a person to view them.",
+        "empty": "No archived people.",
+        "restore": "Restore"
+      },
+      "pendingList": {
+        "intro": "These people have registered and are waiting for your approval. Tap a person to review them.",
+        "empty": "Nobody is waiting for approval right now."
+      },
       "groupEdit": {
         "title": "Edit group",
         "name": "Name",
@@ -2006,6 +2174,9 @@
         "deleteFailed": "The group could not be deleted.",
         "notFound": "This group no longer exists."
       },
+      "rolePerm": {
+        "intro": "Choose what helpers and members may do in this group. Each switch is saved right away."
+      },
       "typesList": {
         "intro": "Attendance types set the name, time, default status and other defaults of new events.",
         "empty": "No attendance types yet.",
@@ -2021,6 +2192,51 @@
         "add": "Add shift plan",
         "shifts": "{count, plural, one {1 shift} other {{count} shifts}}",
         "cycle": "{count, plural, one {Cycle of 1 day} other {Cycle of {count} days}}"
+      },
+      "teachersList": {
+        "intro": "Teachers and the instruments they teach. Who learns with whom is set on the person.",
+        "empty": "No teachers yet.",
+        "add": "Add teacher",
+        "addFailed": "The teacher could not be added."
+      },
+      "teacherEdit": {
+        "title": "Edit teacher",
+        "name": "Name",
+        "nameEmpty": "An empty name is not saved.",
+        "instruments": "Instruments",
+        "instrumentsHint": "Tap to select or deselect.",
+        "private": "Private teacher",
+        "contact": "Contact",
+        "notes": "Notes",
+        "players": "Players",
+        "playersNone": "Nobody learns with this teacher yet.",
+        "notFound": "This teacher no longer exists."
+      },
+      "extraFieldsList": {
+        "intro": "Your own fields for people and works, e.g. clothing size or publisher.",
+        "empty": "No extra fields yet.",
+        "add": "Add extra field",
+        "addFor": "Field for",
+        "persons": "For people",
+        "songs": "For works"
+      },
+      "extraFieldEdit": {
+        "title": "Edit extra field",
+        "name": "Name",
+        "nameEmpty": "An empty name is not saved.",
+        "target": "For",
+        "targetPersons": "People",
+        "targetSongs": "Works",
+        "options": "Options",
+        "optionAdd": "Add option",
+        "optionHint": "The first option is the default. Empty options are not saved.",
+        "optionsNeeded": "A selection needs at least one option.",
+        "defaultHint": "Used when a person or work has no value yet.",
+        "resetHint": "Sets this field to the default for every person.",
+        "delete": "Delete extra field",
+        "deleteHint": "The values of all people or works are removed as well.",
+        "deleteFailed": "The extra field could not be deleted.",
+        "notFound": "This extra field no longer exists."
       },
       "pult": {
         "open": "Stand mode",
@@ -2442,7 +2658,19 @@
         "hours": "{count} h",
         "hoursMinutes": "{hours} h {minutes} min",
         "less": "5 minutes less",
-        "more5": "5 minutes more"
+        "more5": "5 minutes more",
+        "songInPlan": "in plan",
+        "newPlan": "New plan",
+        "createPlan": "Create plan",
+        "day": "Day",
+        "content": "Content",
+        "copyOf": "Copy of “{name}”",
+        "nameHint": "Name (optional)",
+        "viewWhole": "Whole plan",
+        "viewNow": "Now",
+        "viewWhich": "Which plan",
+        "download": "Download",
+        "telegram": "Via Telegram"
       },
       "messages": {
         "intro": "Everything sent to the group, with read status.",
