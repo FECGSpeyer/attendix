@@ -7,6 +7,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
@@ -27,11 +28,16 @@ class HandoverData {
     required this.persons,
     required this.tenant,
     required this.stayInInstance,
+    this.sourceTenantId,
   });
 
   final List<Person> persons;
   final Tenant tenant;
   final bool stayInInstance;
+
+  /// Group the people were picked in. The transfer only runs while it is
+  /// still the current group.
+  final int? sourceTenantId;
 }
 
 /// Personenübergabe – step 1: choose target tenant, filter and select persons
@@ -43,59 +49,84 @@ class HandoverPage extends ConsumerStatefulWidget {
   ConsumerState<HandoverPage> createState() => _HandoverPageState();
 }
 
-class _HandoverPageState extends ConsumerState<HandoverPage> {
-  bool _stayInInstance = false;
-  bool _includeMainGroup = false;
-  int? _targetTenantId;
-  final Set<int> _selected = {};
-  final List<String> _filters = [];
-  DateTime _date = DateTime.now();
-  int? _groupId;
+/// What step 1 shows: target groups, the filtered people and the ticked
+/// ones (shared by the old page and the Beta page).
+typedef HandoverView = ({
+  List<Tenant> tenants,
+  List<Group> groups,
+  Map<int?, String> groupNames,
+  List<Person> filtered,
+  List<Person> selectedPersons,
+  bool loading,
+});
+
+/// State and rules of step 1 (Ionic settings/handover), shared by the old
+/// page and the Beta page (`RdHandoverPage`).
+mixin HandoverSelectionLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
+  bool stayInInstance = false;
+  bool includeMainGroup = false;
+  int? targetTenantId;
+  final Set<int> selected = {};
+  final List<String> filters = [];
+  DateTime date = DateTime.now();
+  int? groupId;
   bool _noTenantsToastShown = false;
   bool _playersErrorToastShown = false;
+  int? _viewTenantId;
 
-  DateFormat get _dateFormat => DateFormat(dateFmt());
+  DateFormat get dateFormat => DateFormat(dateFmt());
 
-  List<Person> _filtered(List<Person> all, int? mainGroupId) {
-    var list = _includeMainGroup
+  List<Person> filteredPeople(List<Person> all, int? mainGroupId) {
+    var list = includeMainGroup
         ? all
         : all.where((p) => p.instrument != mainGroupId).toList();
 
     DateTime? birthday(Person p) =>
         p.birthday == null ? null : DateTime.tryParse(p.birthday!);
 
-    if (_filters.contains('older')) {
+    if (filters.contains('older')) {
       list = list.where((p) {
         final b = birthday(p);
-        return b != null && _date.isAfter(b);
+        return b != null && date.isAfter(b);
       }).toList();
     }
-    if (_filters.contains('younger')) {
+    if (filters.contains('younger')) {
       list = list.where((p) {
         final b = birthday(p);
-        return b != null && _date.isBefore(b);
+        return b != null && date.isBefore(b);
       }).toList();
     }
-    if (_filters.contains('group') && _groupId != null) {
-      list = list.where((p) => p.instrument == _groupId).toList();
+    if (filters.contains('group') && groupId != null) {
+      list = list.where((p) => p.instrument == groupId).toList();
     }
     return list;
   }
 
-  Future<void> _pickDate() async {
+  Future<void> pickDate() async {
     final now = DateTime.now();
     final picked = await showAppDatePicker(
       context: context,
-      initialDate: _date.isAfter(now) ? now : _date,
+      initialDate: date.isAfter(now) ? now : date,
       firstDate: DateTime(1900),
       lastDate: now,
       locale: Locale(currentLanguage()),
     );
-    if (picked != null) setState(() => _date = picked);
+    if (picked != null) setState(() => date = picked);
   }
 
-  @override
-  Widget build(BuildContext context) {
+  /// Watches the data of step 1 and applies the Ionic defaults and toasts.
+  HandoverView handoverView() {
+    // A group switch starts over: target, filters and ticks belonged to the
+    // previous group.
+    final tenantId = ref.watch(currentTenantIdProvider);
+    if (tenantId != _viewTenantId) {
+      _viewTenantId = tenantId;
+      targetTenantId = null;
+      groupId = null;
+      selected.clear();
+      filters.clear();
+      _noTenantsToastShown = false;
+    }
     final playersAsync = ref.watch(playersProvider);
     final groups = ref.watch(groupsProvider).valueOrNull ?? const <Group>[];
     final mainGroupId = ref.watch(mainGroupProvider).valueOrNull?.id;
@@ -103,8 +134,8 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
     final tenants = tenantsAsync.valueOrNull ?? const <Tenant>[];
 
     // Default target = first tenant of the organisation (Ionic)
-    if (_targetTenantId == null && tenants.isNotEmpty) {
-      _targetTenantId = tenants.first.id;
+    if (targetTenantId == null && tenants.isNotEmpty) {
+      targetTenantId = tenants.first.id;
     }
     if (tenantsAsync.hasValue && tenants.isEmpty && !_noTenantsToastShown) {
       _noTenantsToastShown = true;
@@ -129,17 +160,54 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
         }
       });
     }
-    _groupId ??= groups.isNotEmpty ? groups.first.id : null;
+    groupId ??= groups.isNotEmpty ? groups.first.id : null;
 
     final groupNames = {for (final g in groups) g.id: g.name};
     // Ionic Utils.getModifiedPlayersForList order: main group first, group
     // sort_order, group name, person sort_order, last name.
-    final filtered = _filtered(
-      sortPeopleByGroup(playersAsync.valueOrNull ?? const [], groups),
+    final filtered = filteredPeople(
+      sortPeopleByGroup((playersAsync.isReloading ? null : playersAsync.valueOrNull) ?? const [], groups),
       mainGroupId,
     );
     final selectedPersons =
-        filtered.where((p) => p.id != null && _selected.contains(p.id)).toList();
+        filtered.where((p) => p.id != null && selected.contains(p.id)).toList();
+    return (
+      tenants: tenants,
+      groups: groups,
+      groupNames: groupNames,
+      filtered: filtered,
+      selectedPersons: selectedPersons,
+      loading: playersAsync.isLoading,
+    );
+  }
+
+  /// Opens step 2 with the ticked people.
+  void openHandoverDetail(HandoverView view, String route) {
+    final tenant = view.tenants.firstWhere((t) => t.id == targetTenantId);
+    context.push(
+      route,
+      extra: HandoverData(
+        persons: view.selectedPersons
+            .map((p) => p.copyWith(groupName: p.groupName ?? view.groupNames[p.instrument]))
+            .toList(),
+        tenant: tenant,
+        stayInInstance: stayInInstance,
+        sourceTenantId: _viewTenantId,
+      ),
+    );
+  }
+}
+
+class _HandoverPageState extends ConsumerState<HandoverPage> with HandoverSelectionLogic {
+  @override
+  Widget build(BuildContext context) {
+    final view = handoverView();
+    final tenants = view.tenants;
+    final groups = view.groups;
+    final groupNames = view.groupNames;
+    final filtered = view.filtered;
+    final selectedPersons = view.selectedPersons;
+    final playersLoading = view.loading;
 
     // IOS_R6: Ionic `ion-header collapse="condense"` (large title on iOS)
     return IonCondense(builder: (context, collapsed) => Scaffold(
@@ -148,23 +216,10 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
       // IOS_R6: `ion-header translucent` + `collapse="condense"`
       appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(title: IonCondenseTitle(context.l10n.handoverTitle, collapsed: collapsed))),
       floatingActionButton: TabBarFab.wrap(FloatingActionButton(
-        onPressed: _targetTenantId == null || selectedPersons.isEmpty
+        onPressed: targetTenantId == null || selectedPersons.isEmpty
             ? null
-            : () {
-                final tenant = tenants.firstWhere((t) => t.id == _targetTenantId);
-                context.push(
-                  '/settings/handover/detail',
-                  extra: HandoverData(
-                    persons: selectedPersons
-                        .map((p) => p.copyWith(
-                            groupName: p.groupName ?? groupNames[p.instrument]))
-                        .toList(),
-                    tenant: tenant,
-                    stayInInstance: _stayInInstance,
-                  ),
-                );
-              },
-        backgroundColor: _targetTenantId == null || selectedPersons.isEmpty
+            : () => openHandoverDetail(view, '/settings/handover/detail'),
+        backgroundColor: targetTenantId == null || selectedPersons.isEmpty
             ? AppColors.medium
             : null,
         child: const Icon(Icons.arrow_forward),
@@ -196,14 +251,14 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                 SwitchListTile.adaptive(
                   title: Text(context.l10n.handoverKeepInTenant),
                   subtitle: Text(context.l10n.handoverKeepHelper),
-                  value: _stayInInstance,
-                  onChanged: (v) => setState(() => _stayInInstance = v),
+                  value: stayInInstance,
+                  onChanged: (v) => setState(() => stayInInstance = v),
                 ),
                 SwitchListTile.adaptive(
                   title: Text(context.l10n.handoverRespectMainGroup),
                   subtitle: Text(context.l10n.handoverMainGroupHelper),
-                  value: _includeMainGroup,
-                  onChanged: (v) => setState(() => _includeMainGroup = v),
+                  value: includeMainGroup,
+                  onChanged: (v) => setState(() => includeMainGroup = v),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -213,7 +268,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                   child: AppDropdownFormField<int>(
                     iosInterface: AppSelectInterface.alert,
                     // ignore: deprecated_member_use
-                    value: _targetTenantId,
+                    value: targetTenantId,
                     isExpanded: true,
                     decoration: InputDecoration(labelText: context.l10n.handoverTargetTenant),
                     items: [
@@ -221,17 +276,17 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                         if (t.id != null)
                           DropdownMenuItem(value: t.id, child: Text(t.longName)),
                     ],
-                    onChanged: (v) => setState(() => _targetTenantId = v),
+                    onChanged: (v) => setState(() => targetTenantId = v),
                   ),
                 ),
                 PopupMenuButton<String>(
-                  onSelected: (f) => setState(() => _filters.add(f)),
+                  onSelected: (f) => setState(() => filters.add(f)),
                   itemBuilder: (context) => [
-                    if (!_filters.contains('younger') && !_filters.contains('older')) ...[
+                    if (!filters.contains('younger') && !filters.contains('older')) ...[
                       PopupMenuItem(value: 'younger', child: Text(context.l10n.handoverYoungerThanDots)),
                       PopupMenuItem(value: 'older', child: Text(context.l10n.handoverOlderThanDots)),
                     ],
-                    if (!_filters.contains('group'))
+                    if (!filters.contains('group'))
                       PopupMenuItem(value: 'group', child: Text(context.l10n.handoverInGroupDots)),
                   ],
                   child: ListTile(
@@ -239,19 +294,19 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                     title: Text(context.l10n.handoverAddFilter),
                   ),
                 ),
-                if (_filters.contains('younger') || _filters.contains('older'))
+                if (filters.contains('younger') || filters.contains('older'))
                   ListTile(
-                    title: Text(_filters.contains('younger') ? context.l10n.handoverYoungerThan : context.l10n.handoverOlderThan),
-                    subtitle: Text(_dateFormat.format(_date)),
-                    onTap: _pickDate,
+                    title: Text(filters.contains('younger') ? context.l10n.handoverYoungerThan : context.l10n.handoverOlderThan),
+                    subtitle: Text(dateFormat.format(date)),
+                    onTap: pickDate,
                     trailing: IconButton(
                       icon: Icon(Icons.delete_outline, semanticLabel: context.l10n.commonDelete),
                       onPressed: () => setState(() {
-                        _filters.remove(_filters.contains('younger') ? 'younger' : 'older');
+                        filters.remove(filters.contains('younger') ? 'younger' : 'older');
                       }),
                     ),
                   ),
-                if (_filters.contains('group'))
+                if (filters.contains('group'))
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
                     child: Row(
@@ -260,7 +315,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                           child: AppDropdownFormField<int>(
                             iosInterface: AppSelectInterface.alert,
                             // ignore: deprecated_member_use
-                            value: _groupId,
+                            value: groupId,
                             isExpanded: true,
                             decoration: InputDecoration(labelText: context.l10n.peopleGroup),
                             items: [
@@ -268,12 +323,12 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                                 if (g.id != null)
                                   DropdownMenuItem(value: g.id, child: Text(g.name)),
                             ],
-                            onChanged: (v) => setState(() => _groupId = v),
+                            onChanged: (v) => setState(() => groupId = v),
                           ),
                         ),
                         IconButton(
                           icon: Icon(Icons.delete_outline, semanticLabel: context.l10n.commonDelete),
-                          onPressed: () => setState(() => _filters.remove('group')),
+                          onPressed: () => setState(() => filters.remove('group')),
                         ),
                       ],
                     ),
@@ -282,7 +337,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
             ),
           ),
           const SizedBox(height: AppDimensions.paddingM),
-          if (playersAsync.isLoading)
+          if (playersLoading)
             const Center(child: AppSpinner())
           else if (filtered.isEmpty)
             Card(
@@ -301,7 +356,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                 ),
                 TextButton(
                   onPressed: () => setState(() {
-                    _selected
+                    selected
                       ..clear()
                       ..addAll(filtered.where((p) => p.id != null).map((p) => p.id!));
                   }),
@@ -314,20 +369,20 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                 children: [
                   for (final p in filtered)
                     CheckboxListTile(
-                      value: _selected.contains(p.id),
+                      value: selected.contains(p.id),
                       onChanged: p.id == null
                           ? null
                           : (v) => setState(() {
                                 if (v == true) {
-                                  _selected.add(p.id!);
+                                  selected.add(p.id!);
                                 } else {
-                                  _selected.remove(p.id);
+                                  selected.remove(p.id);
                                 }
                               }),
                       title: Text('${p.firstName} ${p.lastName}'),
                       subtitle: Text([
                         if (p.birthday != null && DateTime.tryParse(p.birthday!) != null)
-                          _dateFormat.format(DateTime.parse(p.birthday!)),
+                          dateFormat.format(DateTime.parse(p.birthday!)),
                         p.groupName ?? groupNames[p.instrument] ?? '',
                       ].join(' | ')),
                     ),

@@ -9,6 +9,10 @@ import 'package:attendix/data/models/organisation/organisation.dart';
 import 'package:attendix/features/redesign/data/rd_manage_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_branding_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_general_settings_page.dart';
+import 'package:attendix/features/redesign/presentation/pages/rd_org_settings_page.dart';
+import 'package:attendix/core/providers/organisation_providers.dart';
+import 'package:attendix/core/providers/debug_providers.dart';
+import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,6 +49,8 @@ Widget _app(Widget home, {Organisation? org}) => ProviderScope(
     attendanceTypesProvider.overrideWith((ref) async => const []),
     hasDutyTypesProvider.overrideWithValue(false),
     brandingOrganisationProvider.overrideWith((ref) async => org),
+    currentOrganisationProvider.overrideWith((ref) async => org),
+    effectiveRoleProvider.overrideWithValue(Role.admin),
   ],
   child: MaterialApp(
     locale: const Locale('de'),
@@ -113,6 +119,14 @@ void main() {
     slowB.complete(const Organisation(id: 2, name: 'Org B', brandingText: 'Text B'));
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.text('Text B'), findsOneWidget);
+  });
+
+  testWidgets('Organisation without one offers to create or link it', (tester) async {
+    await tester.pumpWidget(_app(const RdOrgSettingsPage()));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(tester.takeException(), isNull);
+    expect(find.text('Organisation erstellen oder verknüpfen'), findsOneWidget);
   });
 
   test('"Dashboard konfigurieren" is not listed in the Beta Verwaltung', () {
