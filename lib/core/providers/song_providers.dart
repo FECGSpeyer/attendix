@@ -777,6 +777,8 @@ class SongCollectionNotifier extends Notifier<AsyncValue<void>> {
     } finally {
       ref.invalidate(songCollectionsProvider);
       ref.invalidate(songsProvider);
+      // Every loaded Werk (details, edit forms) takes the new prefix.
+      ref.invalidate(songByIdProvider);
       ref.read(songCollectionChangesProvider.notifier).state++;
     }
   }

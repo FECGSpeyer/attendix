@@ -222,9 +222,13 @@ create trigger song_collections_tenant_fixed
   for each row execute function public.song_collections_tenant_fixed();
 
 -- Changes the prefix of Sammlung [p_collection_id] and of its Werke that
--- still carry the old one in one transaction. Raises 23505 when a number
--- would then be taken twice (nothing is changed). Runs with the caller's
--- rights, so the policies above decide who may.
+-- still carry the old one in one transaction. Only admins/responsibles
+-- (1, 5) of the owning tenant or of a tenant synced to it (like the policy
+-- "admins_manage_song_collections"); it then sees and changes every Werk,
+-- so no row is left out. Raises 23505 when a number would be taken twice
+-- (nothing is changed). One lock per tenant: two renames at the same time
+-- (A1 → X1, B1 → X1) run one after the other and the second one sees the
+-- first.
 create or replace function public.rename_song_collection_prefix(
   p_collection_id bigint,
   p_tenant_id bigint,
@@ -232,13 +236,26 @@ create or replace function public.rename_song_collection_prefix(
 )
 returns void
 language plpgsql
-security invoker
+security definer
 set search_path = public
 as $$
 declare
   v_old text;
   v_new text := trim(coalesce(p_prefix, ''));
 begin
+  if not exists (
+    select 1
+    from "tenantUsers" tu
+    join tenants t on t.id = tu."tenantId"
+    where tu."userId" = auth.uid()::text
+      and tu.role in (1, 5)
+      and (tu."tenantId" = p_tenant_id or t.song_source_tenant_id = p_tenant_id)
+  ) then
+    raise exception 'not allowed' using errcode = '42501';
+  end if;
+
+  perform pg_advisory_xact_lock(hashtext('song_collection_prefix'), (p_tenant_id % 2147483647)::integer);
+
   select trim(c.prefix) into v_old
   from song_collections c
   where c.id = p_collection_id and c.tenant_id = p_tenant_id
@@ -246,12 +263,9 @@ begin
   if not found then
     raise exception 'collection % not found', p_collection_id;
   end if;
-  if lower(v_old) = lower(v_new) then
-    update song_collections set prefix = v_new
-    where id = p_collection_id and tenant_id = p_tenant_id;
-    return;
-  end if;
-  if exists (
+
+  -- Only the case changes (e → E): no number can clash.
+  if lower(v_old) <> lower(v_new) and exists (
     select 1
     from songs s
     join songs o
@@ -263,6 +277,7 @@ begin
   ) then
     raise exception 'prefix % would take a number twice', v_new using errcode = '23505';
   end if;
+
   update songs set prefix = v_new
   where "tenantId" = p_tenant_id
     and collection_id = p_collection_id
