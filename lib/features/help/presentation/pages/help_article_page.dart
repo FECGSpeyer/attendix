@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../data/help_content_service.dart';
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../redesign/presentation/pages/rd_help_pages.dart';
 import '../widgets/glossary_term_popover.dart';
 import '../widgets/help_markdown.dart';
 import '../../../../l10n/l10n.dart';
@@ -20,6 +22,8 @@ class HelpArticlePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // REDESIGN (E3): Beta page on the same route.
+    if (ref.watch(redesignEnabledProvider)) return RdHelpArticlePage(articleId: articleId);
     final service = ref.watch(helpContentServiceProvider);
     final article = service.getArticle(articleId);
 
