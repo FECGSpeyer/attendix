@@ -70,6 +70,16 @@ class _RdExportPageState extends ConsumerState<RdExportPage> with ExportLogic {
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
+    // Columns may name extra fields of one group: a group switch starts
+    // with the default columns again.
+    ref.listen(currentTenantIdProvider, (prev, next) {
+      if (prev == next) return;
+      setState(() {
+        sortField = 'gruppe';
+        sortAscending = true;
+        selectedFields = contentType == 'player' ? [...defaultPlayerExportFields] : [...defaultAttendanceExportFields];
+      });
+    });
     final extraFields = ref.watch(personListExtraFieldsProvider);
     final available = availableExportFields(contentType, extraFields);
     final sortOptions = exportSortOptions(contentType, extraFields);
