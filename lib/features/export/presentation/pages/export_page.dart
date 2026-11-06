@@ -182,7 +182,15 @@ mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
       return;
     }
 
+    // The settings stay as they were at the start, even when they are
+    // changed while the export runs.
+    final fields = [...selectedFields];
+    final kind = contentType;
+    final format = exportType;
+    final sortBy = sortField;
+    final ascendingOrder = sortAscending;
     setState(() => isExporting = true);
+    ProviderSubscription<int?>? tenantWatch;
 
     try {
       final tenant = ref.read(currentTenantProvider);
@@ -193,8 +201,13 @@ mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
       final tenantName = tenant.shortName;
       // Bound to the group the export started in: checked after loading and
       // right before the file is saved.
+      // Any group switch (also A → B → A) ends the export for good.
       final container = ProviderScope.containerOf(context, listen: false);
-      bool stillCurrent() => container.read(currentTenantIdProvider) == tenantId;
+      var switched = false;
+      tenantWatch = container.listen<int?>(currentTenantIdProvider, (prev, next) {
+        if (prev != next) switched = true;
+      });
+      bool stillCurrent() => !switched && container.read(currentTenantIdProvider) == tenantId;
 
       // Active (not left) players incl. paused — Ionic db.getPlayers()
       ref.invalidate(playersProvider);
@@ -236,9 +249,9 @@ mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
       // Group switched while loading: the data would mix two groups.
       if (!mounted || !stillCurrent()) return;
       final l10n = context.l10n;
-      final headerFields = [for (final f in selectedFields) exportFieldLabel(f, l10n)];
+      final headerFields = [for (final f in fields) exportFieldLabel(f, l10n)];
       final idByHeader = {
-        for (var i = 0; i < selectedFields.length; i++) headerFields[i]: selectedFields[i],
+        for (var i = 0; i < fields.length; i++) headerFields[i]: fields[i],
       };
 
       String valueOf(Person p, String header) => exportFieldValue(
@@ -251,21 +264,21 @@ mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
 
       final sortedPlayers = sortPlayersForExport(
         players,
-        sortField,
-        ascending: sortAscending,
+        sortBy,
+        ascending: ascendingOrder,
         percentages: percentages,
       );
 
       final exportService = ExportService();
       final date = DateFormat(dateFmt()).format(DateTime.now());
-      ref.read(trackingServiceProvider).track(TrackingEvent.reportExported, properties: {'format': exportType == 'pdf' ? 'pdf' : 'xlsx', 'kind': contentType == 'player' ? 'player' : 'attendance'});
-      final branding = exportType == 'pdf' ? await resolvePdfBranding(ref) : null;
+      ref.read(trackingServiceProvider).track(TrackingEvent.reportExported, properties: {'format': format == 'pdf' ? 'pdf' : 'xlsx', 'kind': kind == 'player' ? 'player' : 'attendance'});
+      final branding = format == 'pdf' ? await resolvePdfBranding(ref) : null;
 
       final Uint8List bytes;
       final String baseName;
-      if (contentType == 'player') {
+      if (kind == 'player') {
         baseName = l10n.exportPlayerListFile(tenantName, date);
-        bytes = exportType == 'pdf'
+        bytes = format == 'pdf'
             ? await exportService.buildPlayerListPdf(
                 branding: branding,
                 players: sortedPlayers,
@@ -306,7 +319,7 @@ mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
             pastAttendances.where((a) => withPersons.contains(a.id)).toList();
 
         baseName = l10n.exportAttendanceFileAsOf(tenantName, date);
-        bytes = exportType == 'pdf'
+        bytes = format == 'pdf'
             ? await exportService.buildAttendancePdf(
                 branding: branding,
                 players: sortedPlayers,
@@ -328,7 +341,7 @@ mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
 
       // Group switched while building: nothing of the old group is saved.
       if (!stillCurrent()) return;
-      await NativeFileService.saveBytes(bytes, '$baseName.${exportType == 'pdf' ? 'pdf' : 'xlsx'}');
+      await NativeFileService.saveBytes(bytes, '$baseName.${format == 'pdf' ? 'pdf' : 'xlsx'}');
 
       if (mounted) {
         ToastHelper.showSuccess(context, context.l10n.exportFlutterSuccess);
@@ -338,6 +351,7 @@ mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
         ToastHelper.showError(context, context.l10n.exportFlutterFailedWith(friendlyErrorMessage(e)));
       }
     } finally {
+      tenantWatch?.close();
       if (mounted) {
         setState(() => isExporting = false);
       }
