@@ -30,54 +30,61 @@ class OrgSongsPage extends ConsumerStatefulWidget {
   ConsumerState<OrgSongsPage> createState() => _OrgSongsPageState();
 }
 
-class _TenantChip {
-  _TenantChip(this.id, this.name);
+class OrgSongTenantChip {
+  OrgSongTenantChip(this.id, this.name);
   final int id;
   final String name;
   bool selected = true;
 }
 
-class _OrgSongsPageState extends ConsumerState<OrgSongsPage> {
+/// Name as compared with the own Werke ("Schon bei dir").
+String normOrgSongName(String name) => name.trim().toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
+
+/// Search, paging and copy of the org Werke, shared by the old page and the
+/// Beta page (`RdOrgSongsPage`).
+mixin OrgSongsLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
+  /// `?q=` of the route.
+  String? get initialOrgSongQuery;
+
   static const _pageSize = 50;
 
-  late final _searchController = TextEditingController(text: widget.initialQuery ?? '');
-  final _scrollController = ScrollController();
+  late final searchController = TextEditingController(text: initialOrgSongQuery ?? '');
+  final scrollController = ScrollController();
   Timer? _debounce;
 
-  bool _initialized = false;
+  bool orgSongsInitialized = false;
   List<OrgSongTenant> _orgTenants = const [];
-  List<_TenantChip> _chips = const [];
+  List<OrgSongTenantChip> chips = const [];
   List<OrgSongCopyTarget> _targets = const [];
   int? _ownLibraryId;
-  Set<String> _ownNames = const {};
+  Set<String> ownNames = const {};
 
-  List<OrgSongResult> _results = const [];
-  int _total = 0;
-  bool _loading = false;
-  bool _loadingMore = false;
-  bool _hasSearched = false;
-  bool _onlyWithFiles = false;
+  List<OrgSongResult> results = const [];
+  int total = 0;
+  bool searching = false;
+  bool loadingMore = false;
+  bool hasSearched = false;
+  bool onlyWithFiles = false;
   int _searchRun = 0;
 
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
+    scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
     _debounce?.cancel();
-    _searchController.dispose();
-    _scrollController.dispose();
+    searchController.dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
-  static String _normName(String name) => name.trim().toLowerCase().replaceAll(RegExp(r'\s+'), ' ');
 
   /// Ionic `ngOnInit`: instances, copy targets, own names, first search.
-  Future<void> _init() async {
-    _initialized = true;
+  Future<void> initOrgSongs() async {
+    orgSongsInitialized = true;
     final repo = ref.read(orgSongRepositoryWithTenantProvider);
     final tenantId = ref.read(currentTenantIdProvider);
     if (tenantId == null) return;
@@ -88,9 +95,9 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> {
     }
     final own = _orgTenants.where((t) => t.id == tenantId).firstOrNull;
     _ownLibraryId = own?.libraryId ?? tenantId;
-    _chips = [
+    chips = [
       for (final t in _orgTenants)
-        if (t.songSourceTenantId == null && t.id != _ownLibraryId) _TenantChip(t.id, t.shortName),
+        if (t.songSourceTenantId == null && t.id != _ownLibraryId) OrgSongTenantChip(t.id, t.shortName),
     ];
     try {
       final tenants = await ref.read(userTenantsProvider.future);
@@ -107,7 +114,7 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> {
     }
     try {
       final rows = await repo.getLibrarySongRows(_ownLibraryId!);
-      _ownNames = {for (final r in rows) _normName((r['name'] as String?) ?? '')};
+      ownNames = {for (final r in rows) normOrgSongName((r['name'] as String?) ?? '')};
     } catch (_) {}
     if (!mounted) return;
     setState(() {});
@@ -115,14 +122,14 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> {
   }
 
   Future<List<OrgSongResult>> _fetchPage(int offset) {
-    final selected = _chips.where((c) => c.selected).map((c) => c.id).toList();
-    final allSelected = selected.length == _chips.length;
+    final selected = chips.where((c) => c.selected).map((c) => c.id).toList();
+    final allSelected = selected.length == chips.length;
     return ref
         .read(orgSongRepositoryWithTenantProvider)
         .searchOrgSongs(
-          _searchController.text.trim(),
+          searchController.text.trim(),
           tenantIds: allSelected ? null : selected,
-          onlyWithFiles: _onlyWithFiles,
+          onlyWithFiles: onlyWithFiles,
           limit: _pageSize,
           offset: offset,
         );
@@ -130,63 +137,63 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> {
 
   Future<void> _search() async {
     final run = ++_searchRun;
-    setState(() => _loading = true);
+    setState(() => searching = true);
     try {
       final rows = await _fetchPage(0);
       if (!mounted || run != _searchRun) return;
       setState(() {
-        _results = rows;
-        _total = rows.firstOrNull?.totalCount ?? 0;
+        results = rows;
+        total = rows.firstOrNull?.totalCount ?? 0;
       });
     } catch (e) {
       if (!mounted || run != _searchRun) return;
       setState(() {
-        _results = const [];
-        _total = 0;
+        results = const [];
+        total = 0;
       });
       ToastHelper.showError(context, context.l10n.orgSongsSearchFailed(friendlyErrorMessage(e)));
     } finally {
       if (mounted && run == _searchRun) {
         setState(() {
-          _loading = false;
-          _hasSearched = true;
+          searching = false;
+          hasSearched = true;
         });
       }
     }
   }
 
-  void _onSearchChanged(String _) {
+  void onSearchChanged(String _) {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 300), _search);
   }
 
-  bool get _canLoadMore => _results.length < _total;
+  bool get canLoadMoreOrgSongs => results.length < total;
 
   void _onScroll() {
-    if (!_scrollController.hasClients) return;
-    final pos = _scrollController.position;
-    if (pos.pixels > pos.maxScrollExtent - 300) _loadMore();
+    if (!scrollController.hasClients) return;
+    final pos = scrollController.position;
+    if (pos.pixels > pos.maxScrollExtent - 300) loadMoreOrgSongs();
   }
 
-  Future<void> _loadMore() async {
-    if (_loadingMore || _loading || !_canLoadMore) return;
+  Future<void> loadMoreOrgSongs() async {
+    if (loadingMore || searching || !canLoadMoreOrgSongs) return;
     final run = _searchRun;
-    setState(() => _loadingMore = true);
+    setState(() => loadingMore = true);
     try {
-      final rows = await _fetchPage(_results.length);
-      if (mounted && run == _searchRun) setState(() => _results = [..._results, ...rows]);
+      final rows = await _fetchPage(results.length);
+      if (mounted && run == _searchRun) setState(() => results = [...results, ...rows]);
     } catch (_) {
       // Ionic: a failed page is ignored
     } finally {
-      if (mounted) setState(() => _loadingMore = false);
+      if (mounted) setState(() => loadingMore = false);
     }
   }
 
-  void _toggleChip(_TenantChip chip) {
+  void toggleChip(OrgSongTenantChip chip) {
     setState(() {
       chip.selected = !chip.selected;
-      if (!_chips.any((c) => c.selected)) {
-        for (final c in _chips) {
+      if (!chips.any((c) => c.selected)) {
+        for (final c in chips) {
           c.selected = true;
         }
       }
@@ -194,12 +201,12 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> {
     _search();
   }
 
-  void _toggleOnlyWithFiles() {
-    setState(() => _onlyWithFiles = !_onlyWithFiles);
+  void toggleOnlyWithFiles() {
+    setState(() => onlyWithFiles = !onlyWithFiles);
     _search();
   }
 
-  Future<void> _openCopy(OrgSongResult song) async {
+  Future<void> openCopy(OrgSongResult song) async {
     final targets = _targets.where((t) => t.libraryId != song.tenantId).toList();
     if (targets.isEmpty) {
       ToastHelper.showWarning(context, context.l10n.orgSongsNoTargets);
@@ -212,11 +219,16 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> {
       orgTenants: _orgTenants,
       onCopied: (libraryId) {
         if (libraryId == _ownLibraryId && mounted) {
-          setState(() => _ownNames = {..._ownNames, _normName(song.name)});
+          setState(() => ownNames = {...ownNames, normOrgSongName(song.name)});
         }
       },
     );
   }
+}
+
+class _OrgSongsPageState extends ConsumerState<OrgSongsPage> with OrgSongsLogic {
+  @override
+  String? get initialOrgSongQuery => widget.initialQuery;
 
   @override
   Widget build(BuildContext context) {
@@ -225,9 +237,9 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> {
     final orgAsync = ref.watch(currentOrganisationProvider);
     final hasOrg = orgAsync.valueOrNull != null;
     final allowed = isAdmin && hasOrg;
-    if (allowed && !_initialized) {
+    if (allowed && !orgSongsInitialized) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && !_initialized) _init();
+        if (mounted && !orgSongsInitialized) initOrgSongs();
       });
     }
 
@@ -249,15 +261,15 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> {
 
   Widget _buildContent(BuildContext context) {
     return ListView(
-      controller: _scrollController,
+      controller: scrollController,
       padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 24)),
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: IonSearchbar(
-            controller: _searchController,
+            controller: searchController,
             hintText: context.l10n.orgSongsSearchPh,
-            onChanged: _onSearchChanged,
+            onChanged: onSearchChanged,
           ),
         ),
         Padding(
@@ -269,26 +281,26 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> {
               FilterChip(
                 avatar: const Icon(Icons.attach_file, size: 16),
                 label: Text(context.l10n.orgSongsOnlyWithFiles),
-                selected: _onlyWithFiles,
-                onSelected: (_) => _toggleOnlyWithFiles(),
+                selected: onlyWithFiles,
+                onSelected: (_) => toggleOnlyWithFiles(),
               ),
-              for (final chip in _chips)
-                FilterChip(label: Text(chip.name), selected: chip.selected, onSelected: (_) => _toggleChip(chip)),
+              for (final chip in chips)
+                FilterChip(label: Text(chip.name), selected: chip.selected, onSelected: (_) => toggleChip(chip)),
             ],
           ),
         ),
-        if (_hasSearched && !_loading)
+        if (hasSearched && !searching)
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
             child: Text(
-              context.l10n.orgSongsResultCount(_total),
+              context.l10n.orgSongsResultCount(total),
               style: const TextStyle(fontSize: 13, color: AppColors.medium),
             ),
           ),
-        if (_results.isNotEmpty)
+        if (results.isNotEmpty)
           IonInsetList(
             children: [
-              for (final song in _results)
+              for (final song in results)
                 IonItem(
                   key: ValueKey('${song.tenantId}-${song.id}'),
                   title: Text(orgSongLabel(song.prefix, song.number, song.name)),
@@ -305,7 +317,7 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (_ownNames.contains(_normName(song.name)))
+                      if (ownNames.contains(normOrgSongName(song.name)))
                         Container(
                           margin: const EdgeInsets.only(right: 8),
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -318,17 +330,17 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> {
                       const Icon(Icons.copy_outlined, color: AppColors.medium, size: 20),
                     ],
                   ),
-                  onTap: () => _openCopy(song),
+                  onTap: () => openCopy(song),
                 ),
             ],
           )
-        else if (_hasSearched && !_loading)
+        else if (hasSearched && !searching)
           IonInsetList(
             children: [
               IonItem(title: Text(context.l10n.orgSongsNoResults, style: const TextStyle(color: AppColors.medium))),
             ],
           ),
-        if ((_loading && _results.isEmpty) || _loadingMore)
+        if ((searching && results.isEmpty) || loadingMore)
           const Padding(padding: EdgeInsets.all(16), child: Center(child: AppSpinner())),
       ],
     );

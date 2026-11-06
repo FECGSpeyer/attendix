@@ -9527,6 +9527,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdOrgStep2Title => 'Gruppen im Ziel';
 
   @override
+  String get rdOrgTakeOver => 'Übernehmen';
+
+  @override
   String get rdOrgThisGroup => 'Diese Gruppe';
 
   @override
@@ -9542,6 +9545,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdOrgWorksHint => 'Werke anderer Gruppen finden und übernehmen';
+
+  @override
+  String get rdOrgWorksNoPermission =>
+      'Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen.';
 
   @override
   String get rdSettingsAddRule => 'Regel hinzufügen';

@@ -11904,6 +11904,10 @@
   "@rdOrgStep2Title": {
     "description": "rdOrg.step2Title"
   },
+  "rdOrgTakeOver": "Übernehmen",
+  "@rdOrgTakeOver": {
+    "description": "rdOrg.takeOver"
+  },
   "rdOrgThisGroup": "Diese Gruppe",
   "@rdOrgThisGroup": {
     "description": "rdOrg.thisGroup"
@@ -11926,6 +11930,10 @@
   "rdOrgWorksHint": "Werke anderer Gruppen finden und übernehmen",
   "@rdOrgWorksHint": {
     "description": "rdOrg.worksHint"
+  },
+  "rdOrgWorksNoPermission": "Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen.",
+  "@rdOrgWorksNoPermission": {
+    "description": "rdOrg.worksNoPermission"
   },
   "rdSettingsAddRule": "Regel hinzufügen",
   "@rdSettingsAddRule": {

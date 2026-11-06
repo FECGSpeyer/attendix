@@ -15665,6 +15665,12 @@ abstract class AppLocalizations {
   /// **'Gruppen im Ziel'**
   String get rdOrgStep2Title;
 
+  /// rdOrg.takeOver
+  ///
+  /// In de, this message translates to:
+  /// **'Übernehmen'**
+  String get rdOrgTakeOver;
+
   /// rdOrg.thisGroup
   ///
   /// In de, this message translates to:
@@ -15694,6 +15700,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Werke anderer Gruppen finden und übernehmen'**
   String get rdOrgWorksHint;
+
+  /// rdOrg.worksNoPermission
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen.'**
+  String get rdOrgWorksNoPermission;
 
   /// rdSettings.addRule
   ///

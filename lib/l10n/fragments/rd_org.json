@@ -42,7 +42,9 @@
       "archiveNote": "Die Personen werden hier archiviert. Wer ein Konto hat, bekommt eine Nachricht.",
       "transfer": "Übergeben ({count})",
       "handoverConfirm": "Möchtest du {count} Personen wirklich an „{tenant}“ übergeben? {note}",
-      "noOtherGroups": "Die Organisation hat keine weitere Gruppe."
+      "noOtherGroups": "Die Organisation hat keine weitere Gruppe.",
+      "takeOver": "Übernehmen",
+      "worksNoPermission": "Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen."
     }
   },
   "en": {
@@ -88,7 +90,9 @@
       "archiveNote": "The people are archived here. People with an account get a message.",
       "transfer": "Hand over ({count})",
       "handoverConfirm": "Do you really want to hand over {count} people to “{tenant}”? {note}",
-      "noOtherGroups": "The organisation has no other group."
+      "noOtherGroups": "The organisation has no other group.",
+      "takeOver": "Take over",
+      "worksNoPermission": "Only admins and leads of a group in an organisation can search works across the organisation."
     }
   }
 }

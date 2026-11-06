@@ -9429,6 +9429,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdOrgStep2Title => 'Groups in the target';
 
   @override
+  String get rdOrgTakeOver => 'Take over';
+
+  @override
   String get rdOrgThisGroup => 'This group';
 
   @override
@@ -9444,6 +9447,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdOrgWorksHint => 'Find and take over works of other groups';
+
+  @override
+  String get rdOrgWorksNoPermission =>
+      'Only admins and leads of a group in an organisation can search works across the organisation.';
 
   @override
   String get rdSettingsAddRule => 'Add rule';
