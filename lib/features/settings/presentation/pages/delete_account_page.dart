@@ -5,6 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/legal_providers.dart';
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -96,10 +101,106 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
     }
   }
 
+  /// REDESIGN (E4): subpage of Ich – what is deleted as a list, the
+  /// warning as a card, code input, red button. Same code and flow.
+  Widget _buildBeta(BuildContext context, bool isDeleting) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    return RdPage(
+      children: [
+        RdBackLink(
+          label: l10n.redesignTabMe,
+          onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.me),
+        ),
+        Semantics(header: true, child: Text(l10n.deleteAccountTitle, style: RdType.largeTitle(p))),
+        const SizedBox(height: 8),
+        StrongHtmlText(l10n.deleteAccountIntro, style: RdType.meta(p, size: 15)),
+        const SizedBox(height: 12),
+        RdGroupedList(
+          children: [
+            for (final (icon, item) in [
+              (Icons.person_outline, l10n.deleteAccountProfile),
+              (Icons.groups_outlined, l10n.deleteAccountMemberships),
+              (Icons.event_available_outlined, l10n.deleteAccountAttendance),
+              (Icons.lock_outline, l10n.deleteAccountAccess),
+            ])
+              RdListRow(
+                leading: RdRowIcon(icon, color: p.absent, background: p.absentSoft),
+                title: item,
+                showChevron: false,
+              ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        RdCard(
+          color: p.absentSoft,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.warning_amber_rounded, color: p.absent),
+              const SizedBox(width: 10),
+              Expanded(
+                child: StrongHtmlText(
+                  l10n.deleteAccountCannotUndo,
+                  style: TextStyle(fontSize: 15, color: p.text),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+        Text(l10n.deleteAccountEnterCode, style: RdType.meta(p, size: 14)),
+        const SizedBox(height: 8),
+        Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+            decoration: BoxDecoration(color: p.track, borderRadius: BorderRadius.circular(p.buttonRadius)),
+            child: SelectableText(
+              _verificationCode,
+              style: TextStyle(
+                fontFamily: 'Courier New',
+                fontFamilyFallback: const ['Courier', 'monospace'],
+                fontSize: 26,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 6,
+                color: p.text,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        RdGroupedList(
+          children: [
+            RdFieldRow(
+              label: l10n.deleteAccountCode,
+              child: TextField(
+                controller: _confirmController,
+                autocorrect: false,
+                enableSuggestions: false,
+                textCapitalization: TextCapitalization.characters,
+                decoration: rdInputDecoration(p, l10n.deleteAccountCodePlaceholder),
+                onChanged: (_) => setState(() {}),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        RdPrimaryButton(
+          label: isDeleting ? l10n.deleteAccountDeleting : l10n.deleteAccountDeleteForever,
+          icon: Icons.delete_outline,
+          color: p.absent,
+          loading: isDeleting,
+          onPressed: !_canDelete || isDeleting ? null : _deleteAccount,
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDeleting = ref.watch(accountNotifierProvider).isLoading;
+    if (ref.watch(redesignEnabledProvider)) return _buildBeta(context, isDeleting);
     const white = TextStyle(color: Colors.white);
 
     final ios = ionIsIos(context);

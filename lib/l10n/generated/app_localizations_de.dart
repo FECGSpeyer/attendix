@@ -9708,6 +9708,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAccountsTitle => 'Konto wechseln';
 
   @override
+  String get redesignAdminLimitGb => 'Höchstens (GB)';
+
+  @override
   String get redesignAdminTitle => 'Verwaltung';
 
   @override
@@ -13202,6 +13205,40 @@ class AppLocalizationsDe extends AppLocalizations {
       'Lege fest, was Helfer und Mitglieder in dieser Gruppe dürfen. Jeder Schalter wird sofort gespeichert.';
 
   @override
+  String redesignShiftFrom(Object time) {
+    return 'ab $time';
+  }
+
+  @override
+  String get redesignShiftHalfHourHint =>
+      'Halbe Stunden über die Stufen (0,5 h)';
+
+  @override
+  String redesignShiftHours(Object hours) {
+    return '$hours h';
+  }
+
+  @override
+  String get redesignShiftLocked => 'gesperrt, da zugewiesen';
+
+  @override
+  String get redesignShiftRemoveFixed => 'Feste Schicht entfernen';
+
+  @override
+  String get redesignShiftRemoveSegment => 'Abschnitt entfernen';
+
+  @override
+  String redesignShiftTimes(Object count) {
+    return '$count ×';
+  }
+
+  @override
+  String get redesignShiftUnnamed => 'Ohne Namen';
+
+  @override
+  String get redesignShiftWork => 'Schicht';
+
+  @override
   String get redesignShiftsListAdd => 'Schichtplan anlegen';
 
   @override
@@ -13886,6 +13923,65 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignTodayYourAnswer => 'Deine Zusage';
+
+  @override
+  String get redesignTypeAll => 'alle';
+
+  @override
+  String get redesignTypeAttendance => 'Anwesenheit';
+
+  @override
+  String get redesignTypeDays => 'Tage';
+
+  @override
+  String get redesignTypeDefault => 'Standard';
+
+  @override
+  String get redesignTypeDelete => 'Terminart löschen';
+
+  @override
+  String get redesignTypeFeatures => 'Funktionen';
+
+  @override
+  String get redesignTypeInList => 'In der Liste';
+
+  @override
+  String get redesignTypeInvalid =>
+      'Noch nicht gespeichert: Name und mindestens zwei Status nötig';
+
+  @override
+  String get redesignTypeLocation => 'Ort und Navigation';
+
+  @override
+  String get redesignTypeOff => 'aus';
+
+  @override
+  String get redesignTypeOn => 'an';
+
+  @override
+  String redesignTypeRemindersActive(Object count) {
+    return '$count aktiv';
+  }
+
+  @override
+  String get redesignTypeStatuses => 'Mögliche Status';
+
+  @override
+  String get redesignTypeTime => 'Zeit';
+
+  @override
+  String get redesignTypeTimeHint => 'Vorschlag, je Termin änderbar';
+
+  @override
+  String redesignTypeUsage(Object count) {
+    return 'Wird in $count Terminen verwendet. Änderungen gelten auch für diese.';
+  }
+
+  @override
+  String get redesignTypeWhoBelongs => 'Wer gehört dazu';
+
+  @override
+  String get redesignTypeWhoBelongsHint => 'Gruppen und Zusatzfeld-Filter';
 
   @override
   String get redesignTypesListAdd => 'Anwesenheits-Typ hinzufügen';
