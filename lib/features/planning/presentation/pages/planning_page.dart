@@ -58,6 +58,8 @@ part 'planning_page_beta.dart';
 /// Provider for songs list (for adding to plan)
 final planSongsProvider = FutureProvider<List<Song>>((ref) async {
   // Wait for the song source tenant (Werk-Synchronisierung) first.
+  // Reload after Werke moved between Sammlungen ("planbar" may change).
+  ref.watch(songCollectionChangesProvider);
   await ref.watch(songTenantSettingsProvider.future);
   final repo = ref.watch(songRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];

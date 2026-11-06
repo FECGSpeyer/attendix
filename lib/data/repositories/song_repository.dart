@@ -746,6 +746,25 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// Changes the prefix of Sammlung [id] and of its Werke that still carry
+  /// the old one, in one transaction (function `rename_song_collection_prefix`
+  /// in song_collections.sql, checks the tenant). Throws a
+  /// [RepositoryException] with code 23505 when a number would be taken
+  /// twice; then nothing changed.
+  Future<void> renameSongCollectionPrefix(int id, String prefix) async {
+    ensureNotDemo('renameSongCollectionPrefix'); // DEMO_GUARD
+    try {
+      await supabase.rpc('rename_song_collection_prefix', params: {
+        'p_collection_id': id,
+        'p_tenant_id': songTenantId,
+        'p_prefix': prefix,
+      });
+    } catch (e, stack) {
+      handleError(e, stack, 'renameSongCollectionPrefix');
+      rethrow;
+    }
+  }
+
   /// Deletes a Sammlung; its Werke fall back to "Repertoire" (on delete
   /// set null).
   Future<void> deleteSongCollection(int id) async {

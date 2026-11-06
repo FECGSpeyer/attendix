@@ -99,15 +99,24 @@ class PlanSongHelper {
 /// searchbar toolbar and an inset list).
 /// In the Beta skin a sheet with search; [currentIds] (Werke of the current
 /// history) are listed first and [inPlanIds] are marked "im Ablauf".
-/// Werke of a Sammlung that is not "planbar" (Beta Sammlungen) stay out.
+/// Werke of a Sammlung that is not "planbar" (Beta Sammlungen) stay out;
+/// the Sammlungen are loaded first, and when that fails only the Repertoire
+/// is offered.
 Future<Song?> showPlanSongPicker(
   BuildContext context,
   List<Song> songs, {
   Set<int> currentIds = const {},
   Set<int> inPlanIds = const {},
-}) {
-  final collections = ProviderScope.containerOf(context, listen: false).read(songCollectionsProvider).valueOrNull;
-  final plannable = rdPlannableWorks(songs, collections);
+}) async {
+  List<SongCollection>? collections;
+  var known = true;
+  try {
+    collections = await ProviderScope.containerOf(context, listen: false).read(songCollectionsProvider.future);
+  } catch (_) {
+    known = false;
+  }
+  if (!context.mounted) return null;
+  final plannable = known ? rdPlannableWorks(songs, collections) : rdWorksIn(songs, null);
   if (context.rdSkin != null) {
     return showRdPlanSongPicker(
       context,

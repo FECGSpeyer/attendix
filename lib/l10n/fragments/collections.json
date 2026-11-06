@@ -53,7 +53,8 @@
       "emptyIn": "In „{name}“ liegt noch kein Werk.",
       "category": "Kategorie",
       "categoryAll": "Alle Kategorien",
-      "prefixTaken": "Mit „{prefix}“ gäbe es doppelte Nummern ({number}). Wähle ein anderes Kürzel."
+      "prefixTaken": "Mit „{prefix}“ gäbe es doppelte Nummern ({number}). Wähle ein anderes Kürzel.",
+      "prefixTakenShort": "Mit „{prefix}“ gäbe es doppelte Nummern. Wähle ein anderes Kürzel."
     }
   },
   "en": {
@@ -110,7 +111,8 @@
       "emptyIn": "There is no piece in \"{name}\" yet.",
       "category": "Category",
       "categoryAll": "All categories",
-      "prefixTaken": "With \"{prefix}\" numbers would be taken twice ({number}). Pick another prefix."
+      "prefixTaken": "With \"{prefix}\" numbers would be taken twice ({number}). Pick another prefix.",
+      "prefixTakenShort": "With \"{prefix}\" numbers would be taken twice. Pick another prefix."
     }
   }
 }

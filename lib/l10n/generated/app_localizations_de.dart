@@ -2563,6 +2563,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String collectionsPrefixTakenShort(Object prefix) {
+    return 'Mit „$prefix“ gäbe es doppelte Nummern. Wähle ein anderes Kürzel.';
+  }
+
+  @override
   String get collectionsPublicLink => 'Im öffentlichen Werke-Link';
 
   @override

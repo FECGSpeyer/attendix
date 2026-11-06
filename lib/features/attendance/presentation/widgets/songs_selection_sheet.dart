@@ -376,8 +376,11 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
   @override
   Widget build(BuildContext context) {
     final songsAsync = ref.watch(songsProvider);
-    // Sammlungen (Beta): Werke of a Sammlung that is not "planbar" stay out.
-    final collections = ref.watch(songCollectionsProvider).valueOrNull;
+    // Sammlungen (Beta): Werke of a Sammlung that is not "planbar" stay out
+    // (while they load nothing is offered, after an error only the
+    // Repertoire).
+    final collectionsAsync = ref.watch(songCollectionsProvider);
+    final collections = collectionsAsync.valueOrNull;
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.attListChooseSongs),
@@ -405,7 +408,11 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
         loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(child: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)))),
         data: (allSongs) {
-          final songs = rdPlannableWorks(allSongs, collections);
+          if (!collectionsAsync.hasValue && !collectionsAsync.hasError) {
+            return const Center(child: AppSpinner());
+          }
+          final songs =
+              collectionsAsync.hasValue ? rdPlannableWorks(allSongs, collections) : rdWorksIn(allSongs, null);
           final filtered = _search.isEmpty
               ? songs
               : songs

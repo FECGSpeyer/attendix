@@ -4223,6 +4223,12 @@ abstract class AppLocalizations {
   /// **'Mit „{prefix}“ gäbe es doppelte Nummern ({number}). Wähle ein anderes Kürzel.'**
   String collectionsPrefixTaken(Object prefix, Object number);
 
+  /// collections.prefixTakenShort
+  ///
+  /// In de, this message translates to:
+  /// **'Mit „{prefix}“ gäbe es doppelte Nummern. Wähle ein anderes Kürzel.'**
+  String collectionsPrefixTakenShort(Object prefix);
+
   /// collections.publicLink
   ///
   /// In de, this message translates to:

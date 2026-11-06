@@ -3168,6 +3168,13 @@
       "number": {}
     }
   },
+  "collectionsPrefixTakenShort": "Mit „{prefix}“ gäbe es doppelte Nummern. Wähle ein anderes Kürzel.",
+  "@collectionsPrefixTakenShort": {
+    "description": "collections.prefixTakenShort",
+    "placeholders": {
+      "prefix": {}
+    }
+  },
   "collectionsPublicLink": "Im öffentlichen Werke-Link",
   "@collectionsPublicLink": {
     "description": "collections.publicLink"

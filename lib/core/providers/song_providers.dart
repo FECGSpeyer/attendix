@@ -158,6 +158,11 @@ final songCategoriesProvider = FutureProvider<List<SongCategory>>((ref) async {
 /// Sammlungen of the song library (of the song source tenant), in their
 /// order. Null when the database has no Sammlungen yet (migration
 /// `song_collections.sql` not run): then everything works as before.
+/// Bumped whenever Werke changed their Sammlung or prefix through
+/// [SongCollectionNotifier]: song lists loaded on their own (the planning's
+/// `planSongsProvider`) watch it and reload.
+final songCollectionChangesProvider = StateProvider<int>((ref) => 0);
+
 final songCollectionsProvider = FutureProvider<List<SongCollection>?>((ref) async {
   final repo = await _readySongRepository(ref);
 
@@ -746,10 +751,33 @@ class SongCollectionNotifier extends Notifier<AsyncValue<void>> {
       state = const AsyncValue.data(null);
       ref.invalidate(songCollectionsProvider);
       ref.invalidate(songsProvider);
+      ref.read(songCollectionChangesProvider.notifier).state++;
       return true;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
       return false;
+    }
+  }
+
+  /// Changes the prefix of Sammlung [id] and of its Werke with the old one,
+  /// all or nothing. [clash] when a number would then be taken twice.
+  Future<({bool ok, bool clash})> renamePrefix(int id, String prefix) async {
+    final repo = _repo;
+    state = const AsyncValue.loading();
+    try {
+      await repo.renameSongCollectionPrefix(id, prefix);
+      state = const AsyncValue.data(null);
+      return (ok: true, clash: false);
+    } on RepositoryException catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return (ok: false, clash: e.code == '23505');
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return (ok: false, clash: false);
+    } finally {
+      ref.invalidate(songCollectionsProvider);
+      ref.invalidate(songsProvider);
+      ref.read(songCollectionChangesProvider.notifier).state++;
     }
   }
 
@@ -800,6 +828,7 @@ class SongCollectionNotifier extends Notifier<AsyncValue<void>> {
       for (final id in moves.keys) {
         ref.invalidate(songByIdProvider(id));
       }
+      ref.read(songCollectionChangesProvider.notifier).state++;
     }
   }
 }

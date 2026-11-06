@@ -28,7 +28,13 @@ final rdVisibleCollectionsProvider = Provider.autoDispose<List<SongCollection>?>
   final groups = ref.watch(groupsProvider).valueOrNull ?? const <Group>[];
   final groupId = ref.watch(currentSelfServicePlayerProvider).valueOrNull?.instrument;
   final ownGroup = groups.where((g) => g.id == groupId).firstOrNull;
-  return rdVisibleCollections(all, lead: role.isConductor, ownGroup: ownGroup, groups: groups);
+  return rdVisibleCollections(
+    all,
+    lead: role.isConductor,
+    ownGroup: ownGroup,
+    groups: groups,
+    ownTenantId: ref.watch(currentTenantIdProvider),
+  );
 });
 
 /// The Sammlung the Werke list shows (null = Repertoire), kept while the

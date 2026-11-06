@@ -106,30 +106,16 @@ class _RdCollectionEditPageState extends ConsumerState<RdCollectionEditPage> {
   }
 
   /// The prefix of the Sammlung and of its Werke that still carry the old
-  /// one; refused when a number would then be taken twice.
+  /// one, all or nothing (one database transaction); refused when a number
+  /// would then be taken twice (checked here first for the message, and
+  /// again by the database).
   void _savePrefix({bool quiet = false}) {
     final value = _prefix.text.trim();
     final songs = _songs;
     _enqueue(() async {
-      if (!_filled || value == _storedPrefix || songs == null) return;
+      if (!_filled || _deleted || value == _storedPrefix || songs == null) return;
       final old = _storedPrefix;
-      final inside = [
-        for (final s in rdWorksIn(songs, _id))
-          if ((s.prefix ?? '').trim().toLowerCase() == old.toLowerCase()) s,
-      ];
-      final insideIds = {for (final s in inside) s.id};
-      final clash =
-          inside
-              .where(
-                (s) => songs.any(
-                  (o) =>
-                      !insideIds.contains(o.id) &&
-                      o.number != null &&
-                      o.number == s.number &&
-                      (o.prefix ?? '').trim().toLowerCase() == value.toLowerCase(),
-                ),
-              )
-              .firstOrNull;
+      final clash = rdPrefixClash(songs, _id, old, value);
       if (clash != null) {
         if (!quiet && mounted) {
           ToastHelper.showError(context, context.l10n.collectionsPrefixTaken(value, '$value${clash.number}'));
@@ -137,11 +123,16 @@ class _RdCollectionEditPageState extends ConsumerState<RdCollectionEditPage> {
         }
         return;
       }
-      if (!await _store({'prefix': value})) return;
-      _storedPrefix = value;
-      if (inside.isEmpty) return;
-      final ok = await _notifier.move(_id, {for (final s in inside) if (s.id != null) s.id!: (prefix: value, number: null)});
-      if (!ok && mounted) ToastHelper.showError(context, context.l10n.collectionsSaveFailed);
+      final result = await _notifier.renamePrefix(_id, value);
+      if (result.ok) {
+        _storedPrefix = value;
+      } else if (!quiet && mounted) {
+        ToastHelper.showError(
+          context,
+          result.clash ? context.l10n.collectionsPrefixTakenShort(value) : context.l10n.collectionsSaveFailed,
+        );
+        setState(() => _prefix.text = old);
+      }
     });
   }
 

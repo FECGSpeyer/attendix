@@ -2536,6 +2536,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String collectionsPrefixTakenShort(Object prefix) {
+    return 'With \"$prefix\" numbers would be taken twice. Pick another prefix.';
+  }
+
+  @override
   String get collectionsPublicLink => 'In the public piece link';
 
   @override

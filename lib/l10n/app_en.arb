@@ -684,6 +684,7 @@
   "collectionsPrefixHint": "Prefix before the number, e.g. E for E1, E2 … A change also applies to the pieces already in the collection.",
   "collectionsPrefixNone": "Without a prefix the collection shares its numbers with the repertoire.",
   "collectionsPrefixTaken": "With \"{prefix}\" numbers would be taken twice ({number}). Pick another prefix.",
+  "collectionsPrefixTakenShort": "With \"{prefix}\" numbers would be taken twice. Pick another prefix.",
   "collectionsPublicLink": "In the public piece link",
   "collectionsPublicLinkHint": "Only applies when everyone sees the collection.",
   "collectionsRepertoire": "Repertoire",

@@ -19,6 +19,10 @@ void main() {
     expect(rdVisibleCollections(all, lead: true, ownGroup: null, groups: groups), all);
     expect(rdVisibleCollections(all, lead: false, ownGroup: violine, groups: groups), [einspielen, streicher]);
     expect(rdVisibleCollections(all, lead: false, ownGroup: floete, groups: groups), [einspielen]);
+    // Synced library: the groups are those of the source tenant, the
+    // database matched them by name.
+    const synced = SongCollection(id: 13, tenantId: 99, name: 'Bläser', visibility: 'groups', groupIds: [501]);
+    expect(rdVisibleCollections([synced], lead: false, ownGroup: floete, groups: groups, ownTenantId: 7), [synced]);
 
     const songs = [
       Song(id: 1, name: 'A'),
@@ -41,6 +45,9 @@ void main() {
     expect(rdMoveNumbering(songs[1], null, all, songs), (prefix: '', number: 41));
     // Into a Sammlung without prefix: the number stays.
     expect(rdMoveNumbering(songs[2], null, all, songs), isNull);
+    // Prefix E → none: B's 1 is free, unless another Werk has 1 already.
+    expect(rdPrefixClash(songs, 10, 'E', ''), isNull);
+    expect(rdPrefixClash([...songs, const Song(id: 4, name: 'D', number: 1)], 10, 'E', ''), isNotNull);
   });
 
   test('Werke of a Sammlung that is not planbar stay out of programmes', () {

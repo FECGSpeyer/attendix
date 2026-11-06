@@ -8,19 +8,24 @@ import 'rd_works_logic.dart' show rdNextFreeNumber;
 
 /// Whether a viewer sees [collection]: leads (admin, responsible, viewer)
 /// every one, members those for all and, for "bestimmte Gruppen", the ones
-/// of their group (by id, or by name like the database for synced
-/// libraries). The database enforces the same; this keeps a role preview
-/// and stale data in line.
+/// of their group (by id, or by name like the database). The database
+/// enforces the same; this keeps a role preview and stale data in line. A
+/// Sammlung of another tenant (synced library, [ownTenantId] differs) names
+/// groups of that tenant: the database already matched them by name, so
+/// what it returned stays.
 bool rdCollectionVisible(
   SongCollection collection, {
   required bool lead,
   required Group? ownGroup,
   required List<Group> groups,
+  int? ownTenantId,
 }) {
   if (lead) return true;
+  final synced = ownTenantId != null && collection.tenantId != null && collection.tenantId != ownTenantId;
   return switch (collection.visibleTo) {
     SongCollectionVisibility.all => true,
     SongCollectionVisibility.leads => false,
+    SongCollectionVisibility.groups when synced => true,
     SongCollectionVisibility.groups =>
       ownGroup != null &&
           (collection.groupIds.contains(ownGroup.id) ||
@@ -38,9 +43,12 @@ List<SongCollection> rdVisibleCollections(
   required bool lead,
   required Group? ownGroup,
   required List<Group> groups,
+  int? ownTenantId,
 }) => [
   for (final c in collections)
-    if (c.id != null && rdCollectionVisible(c, lead: lead, ownGroup: ownGroup, groups: groups)) c,
+    if (c.id != null &&
+        rdCollectionVisible(c, lead: lead, ownGroup: ownGroup, groups: groups, ownTenantId: ownTenantId))
+      c,
 ];
 
 /// The Werke a viewer sees: Repertoire and the [visible] Sammlungen (a Werk
@@ -110,6 +118,22 @@ int rdCollectionNextNumber(List<Song> songs, SongCollection? target) =>
       if (s.id != song.id) s,
   ];
   return (prefix: prefix, number: rdNextFreeNumber(others, prefix));
+}
+
+/// A Werk of Sammlung [collectionId] with prefix [from] whose number
+/// another Werk already has with prefix [to] (renaming the prefix would
+/// take it twice); null when there is none.
+Song? rdPrefixClash(List<Song> songs, int collectionId, String from, String to) {
+  String norm(String? p) => (p ?? '').trim().toLowerCase();
+  if (norm(from) == norm(to)) return null;
+  final inside = [
+    for (final s in rdWorksIn(songs, collectionId))
+      if (norm(s.prefix) == norm(from) && s.number != null) s,
+  ];
+  for (final s in inside) {
+    if (songs.any((o) => o.id != s.id && o.number == s.number && norm(o.prefix) == norm(to))) return s;
+  }
+  return null;
 }
 
 /// The groups of [collection] by name, in group order ("Violine 1, Viola").
