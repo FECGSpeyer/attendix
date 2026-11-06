@@ -73,7 +73,11 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
       children: [
         RdBackLink(
           label: l10n.redesignTabMe,
-          onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.me),
+          // In the split, an area route sits on top of /verwaltung: popping
+          // would land on the Verwaltung again instead of "Ich".
+          onTap: () => RdSplitScope.of(context) == null && context.canPop()
+              ? context.pop()
+              : context.go(RedesignRoutes.me),
         ),
         const SizedBox(height: 4),
         Semantics(

@@ -27,7 +27,8 @@ class RdEventsSplitHome extends ConsumerWidget {
     if (role.isParent || !role.canSeeAttendanceTab || !role.canAddAttendance) {
       return const RdEventsPage();
     }
-    final all = ref.watch(realtimeAttendanceListProvider).valueOrNull;
+    final async = ref.watch(realtimeAttendanceListProvider);
+    final all = async.valueOrNull;
     final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
     final next = all == null ? null : rdUpcoming(all, types: types).where((a) => a.id != null).firstOrNull?.id;
     final l10n = context.l10n;
@@ -38,9 +39,19 @@ class RdEventsSplitHome extends ConsumerWidget {
       emptyText: l10n.redesignSplitEventsEmpty,
       empty: RdPage(
         children: [
-          all == null
-              ? RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
-              : RdInfoCard(text: l10n.redesignTodayNoUpcoming, icon: Icons.event_available_outlined),
+          if (all != null)
+            RdInfoCard(text: l10n.redesignTodayNoUpcoming, icon: Icons.event_available_outlined)
+          else if (async.hasError && !async.isLoading)
+            RdInfoCard(
+              text: l10n.redesignTodayLoadFailed,
+              icon: Icons.cloud_off_outlined,
+              action: RdOutlineButton(
+                label: l10n.redesignCommonRetry,
+                onPressed: () => ref.invalidate(realtimeAttendanceListProvider),
+              ),
+            )
+          else
+            RdInfoCard(text: l10n.redesignTodayLoading, loading: true),
         ],
       ),
     );
