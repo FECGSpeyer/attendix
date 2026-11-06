@@ -339,7 +339,8 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
         child: _loading
             ? const Center(child: AppSpinner())
             : ListView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+              // Keeps the export/Telegram buttons reachable above the keyboard.
+              padding: EdgeInsets.fromLTRB(20, 12, 20, 32 + MediaQuery.viewInsetsOf(context).bottom),
               children: [
                 Row(
                   children: [
