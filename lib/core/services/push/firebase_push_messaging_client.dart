@@ -38,12 +38,14 @@ class FirebasePushMessagingClient implements PushMessagingClient {
         }
       }
       if (_isIos) {
-        // In-app alert like Ionic; the system banner is not shown on top of
-        // it while the app is open, only the sound is played.
+        // Ionic presentationOptions [badge, sound, alert]: while the app is
+        // open iOS shows the system banner (and keeps the notification in
+        // the notification centre), plays the sound and sets the badge –
+        // in addition to the in-app alert. Android: in-app alert only.
         await FirebaseMessaging.instance
             .setForegroundNotificationPresentationOptions(
-          alert: false,
-          badge: false,
+          alert: true,
+          badge: true,
           sound: true,
         );
       }
