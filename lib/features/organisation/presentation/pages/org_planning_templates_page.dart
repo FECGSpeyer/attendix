@@ -39,6 +39,22 @@ class OrgPlanningTemplatesPage extends ConsumerStatefulWidget {
 
 class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesPage> {
   List<Plan>? _templates;
+
+  /// Bumped on every host rebuild so a pushed Beta Vorlagen-Editor shows
+  /// local changes at once, not only after saving.
+  final _rdChanges = ValueNotifier<int>(0);
+
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+    _rdChanges.value++;
+  }
+
+  @override
+  void dispose() {
+    _rdChanges.dispose();
+    super.dispose();
+  }
   List<PlanField> _defaultFields = [];
   int? _selected;
 

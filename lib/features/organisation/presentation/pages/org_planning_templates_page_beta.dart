@@ -157,6 +157,22 @@ class _RdTemplateEditorState extends State<_RdTemplateEditor> {
     return list != null && _index < list.length ? list[_index] : null;
   }
 
+  @override
+  void initState() {
+    super.initState();
+    _host._rdChanges.addListener(_onHostChanged);
+  }
+
+  @override
+  void dispose() {
+    _host._rdChanges.removeListener(_onHostChanged);
+    super.dispose();
+  }
+
+  void _onHostChanged() {
+    if (mounted) setState(() {});
+  }
+
   Future<void> _run(Future<void> Function() action) async {
     await action();
     if (mounted) setState(() {});

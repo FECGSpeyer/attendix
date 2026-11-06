@@ -196,15 +196,18 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
   Widget _buildBeta(BuildContext context) {
     final l10n = context.l10n;
     final orgAsync = ref.watch(currentOrganisationProvider);
-    final org = orgAsync.valueOrNull;
+    // TENANT: after a group switch the providers still hold the old group's
+    // values while reloading; show loading and offer no actions until then.
+    final org = rdLoadedValue(orgAsync);
     final plansAsync = ref.watch(orgPlansProvider);
     final key = org?.publicPlanKey;
-    final entries = plansAsync.valueOrNull;
+    final entries = rdLoadedValue(plansAsync);
+    final orgReady = orgAsync.hasValue && !orgAsync.hasError && !(orgAsync.isLoading && !orgAsync.isRefreshing);
     final split = entries == null ? null : splitOrgPlanEntries(entries);
     final showTab = ref.watch(optionalTabsNotifierProvider).orgPlans;
     return RdManageListPage(
       title: l10n.plansOrgPlans,
-      intro: org == null ? l10n.plansNoOrg : l10n.redesignPlanOrgPlansIntro(org.name),
+      intro: org != null ? l10n.redesignPlanOrgPlansIntro(org.name) : (orgReady ? l10n.plansNoOrg : ''),
       notice: key != null ? l10n.plansPublicLinkActive : null,
       loadFailed: plansAsync.hasError && entries == null,
       onRetry: () => ref.invalidate(orgPlansProvider),
@@ -214,7 +217,9 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
       },
       emptyText: l10n.plansNoUpcomingOrgPlans,
       emptyIcon: Icons.event_note_outlined,
-      sections: org == null
+      sections: !orgReady
+          ? null
+          : org == null
           ? const []
           : split == null
           ? null
