@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/organisation/organisation.dart';
+import '../../../../data/repositories/base_repository.dart' show RepositoryException;
+import '../../../../data/repositories/organisation_repository.dart' show OrganisationRepository;
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
@@ -12,12 +14,24 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 /// With existing organisations of the user: radio list "Organisation
 /// auswählen" (Abbrechen / Auswählen / Neue Organisation erstellen);
 /// otherwise directly "Organisation erstellen".
+///
+/// Ionic OrganisationService.getOrganisationsFromUser: a load error shows a
+/// danger toast („Fehler beim Laden der Mandanten“ for the own instances,
+/// „Fehler beim Laden der Organisationen“ for the links) and opens no dialog,
+/// so the admin is not led to create a duplicate organisation.
 Future<void> showOrganisationLinkDialog(BuildContext context, WidgetRef ref) async {
   List<Organisation> organisations;
   try {
     organisations = await ref.read(userOrganisationsProvider.future);
-  } catch (_) {
-    organisations = const [];
+  } catch (e) {
+    if (!context.mounted) return;
+    final tenantsFailed =
+        e is RepositoryException && e.operation == OrganisationRepository.opLoadUserOrgTenants;
+    ToastHelper.showError(
+      context,
+      tenantsFailed ? context.l10n.dbLoadTenantsFailed2 : context.l10n.svcLoadOrgsFailed,
+    );
+    return;
   }
   if (!context.mounted) return;
 

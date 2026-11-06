@@ -49,6 +49,20 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
     super.initState();
     _nameController = TextEditingController();
     _descriptionController = TextEditingController();
+    // Ionic ShiftService: a failed usage check toasts "Fehler beim
+    // Überprüfen der Schichtverwendung" (also for a cached error).
+    ref.listenManual<AsyncValue<int>>(
+      shiftUsageCountProvider(widget.shiftId),
+      (previous, next) {
+        if (next.hasError && !next.isLoading && previous?.hasError != true) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) return;
+            ToastHelper.showError(context, context.l10n.svcCheckShiftUsageFailed);
+          });
+        }
+      },
+      fireImmediately: true,
+    );
   }
 
   @override
@@ -164,7 +178,12 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
                 ];
               }
               _initializeFromShift(shift);
-              return [_buildList(context, shift, usageCount.valueOrNull ?? 0)];
+              // A failed usage check counts as used: name/date/remove of
+              // the fixed shifts stay locked instead of being released.
+              return [
+                _buildList(context, shift,
+                    usageCount.hasError ? 1 : usageCount.valueOrNull ?? 0),
+              ];
             },
           ),
         ],

@@ -52,6 +52,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
   DateTime _date = DateTime.now();
   int? _groupId;
   bool _noTenantsToastShown = false;
+  bool _playersErrorToastShown = false;
 
   DateFormat get _dateFormat => DateFormat(dateFmt());
 
@@ -113,6 +114,18 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
             context,
             context.l10n.handoverNoOtherTenants,
           );
+        }
+      });
+    }
+    // Ionic db.getPlayers(): toast when the persons can't be loaded (the
+    // list stays empty).
+    if (!playersAsync.hasError) {
+      _playersErrorToastShown = false;
+    } else if (!playersAsync.isLoading && !_playersErrorToastShown) {
+      _playersErrorToastShown = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ToastHelper.showError(context, context.l10n.dbLoadPeopleFailed);
         }
       });
     }

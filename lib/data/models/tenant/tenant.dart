@@ -123,7 +123,8 @@ class CriticalRule with _$CriticalRule {
     @JsonKey(name: 'attendance_type_ids') required List<String> attendanceTypeIds,
     required List<int> statuses,
     @JsonKey(name: 'threshold_type') required CriticalRuleThresholdType thresholdType,
-    @JsonKey(name: 'threshold_value') required int thresholdValue,
+    // Ionic allows decimals (e.g. 33.5 %), so keep the stored number as is.
+    @JsonKey(name: 'threshold_value') required num thresholdValue,
     @JsonKey(name: 'period_type') CriticalRulePeriodType? periodType,
     @JsonKey(name: 'period_days') int? periodDays,
     required CriticalRuleOperator operator,

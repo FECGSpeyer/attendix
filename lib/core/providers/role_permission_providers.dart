@@ -278,6 +278,7 @@ class RolePermissionNotifier extends Notifier<AsyncValue<void>> {
   /// Speichert geänderte Berechtigungen und optional files_shared.
   Future<bool> save(List<TenantRolePermission> permissions, {bool? filesShared}) async {
     state = const AsyncValue.loading();
+    var wrotePermissions = false;
     try {
       final repo = ref.read(rolePermissionRepositoryWithTenantProvider);
       if (!repo.hasTenantId) throw StateError(l10nWithoutContext.coreFlutterNoTenantSelected);
@@ -285,8 +286,16 @@ class RolePermissionNotifier extends Notifier<AsyncValue<void>> {
       // to it), captured before the first await.
       final tenantId = repo.currentTenantId;
 
+      // DEMO_GUARD: block before the first write, not only when files_shared
+      // is reached, so the demo account changes nothing.
+      if (filesShared != null) repo.ensureNotDemo('updateFilesShared');
+
       for (final p in permissions) {
-        if (p.id != null) await repo.updatePermission(p);
+        if (p.id != null) {
+          // Set before the await: a failed request may still have landed.
+          wrotePermissions = true;
+          await repo.updatePermission(p);
+        }
       }
 
       if (filesShared != null) {
@@ -306,6 +315,8 @@ class RolePermissionNotifier extends Notifier<AsyncValue<void>> {
       return true;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
+      // Some permissions may already be saved: reload them.
+      if (wrotePermissions) ref.invalidate(rolePermissionsProvider);
       return false;
     }
   }
