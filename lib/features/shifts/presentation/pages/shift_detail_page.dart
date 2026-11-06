@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -16,6 +18,14 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../planning/presentation/widgets/plan_field_dialogs.dart' show PlanSheetAction;
+import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
+import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
+
+part 'shift_detail_page_beta.dart';
 
 /// Shift Detail Page
 ///
@@ -44,6 +54,15 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
   bool _hasChanges = false;
   bool _isInitialized = false;
 
+  // REDESIGN: live saving of the Beta page (shift_detail_page_beta.dart).
+  Timer? _rdSaveTimer;
+  ShiftNotifier? _rdNotifier;
+
+  /// REDESIGN: saves run one after another, also the flush on dispose.
+  Future<void> _rdChain = Future.value();
+
+  void _update(VoidCallback fn) => setState(fn);
+
   @override
   void initState() {
     super.initState();
@@ -67,6 +86,13 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
 
   @override
   void dispose() {
+    // REDESIGN: a change made right before leaving is still saved.
+    _rdSaveTimer?.cancel();
+    final notifier = _rdNotifier;
+    if (notifier != null && _hasChanges && _nameController.text.trim().isNotEmpty) {
+      final plan = _rdPlan();
+      unawaited(_rdChain.then((_) => notifier.updateShift(plan)).then((_) {}, onError: (_) {}));
+    }
     _nameController.dispose();
     _descriptionController.dispose();
     for (final c in [..._durationControllers, ..._repeatControllers]) {
@@ -106,6 +132,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (context.rdSkin != null) return _rdBuild(context);
     final shiftAsync = ref.watch(shiftByIdProvider(widget.shiftId));
     final usageCount = ref.watch(shiftUsageCountProvider(widget.shiftId));
     // Ionic `@if (linkedTenants.length > 0)`: hidden while loading/on error.

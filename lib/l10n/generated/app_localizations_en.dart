@@ -13072,6 +13072,39 @@ class AppLocalizationsEn extends AppLocalizations {
       'Choose what helpers and members may do in this group. Each switch is saved right away.';
 
   @override
+  String redesignShiftFrom(Object time) {
+    return 'from $time';
+  }
+
+  @override
+  String get redesignShiftHalfHourHint => 'Half hours via the steps (0.5 h)';
+
+  @override
+  String redesignShiftHours(Object hours) {
+    return '$hours h';
+  }
+
+  @override
+  String get redesignShiftLocked => 'locked, already assigned';
+
+  @override
+  String get redesignShiftRemoveFixed => 'Remove fixed shift';
+
+  @override
+  String get redesignShiftRemoveSegment => 'Remove section';
+
+  @override
+  String redesignShiftTimes(Object count) {
+    return '$count ×';
+  }
+
+  @override
+  String get redesignShiftUnnamed => 'Unnamed';
+
+  @override
+  String get redesignShiftWork => 'Shift';
+
+  @override
   String get redesignShiftsListAdd => 'Add shift plan';
 
   @override
@@ -13749,6 +13782,65 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignTodayYourAnswer => 'Your answer';
+
+  @override
+  String get redesignTypeAll => 'all';
+
+  @override
+  String get redesignTypeAttendance => 'Attendance';
+
+  @override
+  String get redesignTypeDays => 'Days';
+
+  @override
+  String get redesignTypeDefault => 'Default';
+
+  @override
+  String get redesignTypeDelete => 'Delete event type';
+
+  @override
+  String get redesignTypeFeatures => 'Features';
+
+  @override
+  String get redesignTypeInList => 'In the list';
+
+  @override
+  String get redesignTypeInvalid =>
+      'Not saved yet: a name and at least two statuses are needed';
+
+  @override
+  String get redesignTypeLocation => 'Location and navigation';
+
+  @override
+  String get redesignTypeOff => 'off';
+
+  @override
+  String get redesignTypeOn => 'on';
+
+  @override
+  String redesignTypeRemindersActive(Object count) {
+    return '$count active';
+  }
+
+  @override
+  String get redesignTypeStatuses => 'Possible statuses';
+
+  @override
+  String get redesignTypeTime => 'Time';
+
+  @override
+  String get redesignTypeTimeHint => 'Suggestion, can be changed per event';
+
+  @override
+  String redesignTypeUsage(Object count) {
+    return 'Used in $count events. Changes apply to them too.';
+  }
+
+  @override
+  String get redesignTypeWhoBelongs => 'Who belongs';
+
+  @override
+  String get redesignTypeWhoBelongsHint => 'Groups and extra field filters';
 
   @override
   String get redesignTypesListAdd => 'Add attendance type';
