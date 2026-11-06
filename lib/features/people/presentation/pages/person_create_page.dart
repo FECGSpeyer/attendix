@@ -10,6 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/player_providers.dart';
 import '../../../../core/utils/tenant_label_utils.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
@@ -941,6 +942,8 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     // Ionic readOnly: only admins and responsibles can create persons.
     final role = ref.read(currentRoleProvider);
     if (!(role.isAdmin || role.isResponsible) || _isLoading) return;
+    // Bind the tenant repository before the first await (tenant switch).
+    final repo = ref.read(playerRepositoryWithTenantProvider);
     // Commit a typed date (applied on focus loss) before reading the form.
     FocusManager.instance.primaryFocus?.unfocus();
     await Future<void>.delayed(Duration.zero);
@@ -996,6 +999,9 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         person,
         isMainGroup: _isMainGroup,
         imageBytes: _pickedImage,
+        repo: repo,
+        // Like before: a page closed at the duplicate check still creates.
+        createWhenGone: true,
       );
       if (!created) return;
 

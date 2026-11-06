@@ -16,6 +16,7 @@ import '../../core/utils/person_matcher.dart' show RankedMatch;
 import '../../core/utils/toast_helper.dart';
 import '../../data/models/person/person.dart';
 import '../../data/repositories/cross_tenant_person_repository.dart';
+import '../../data/repositories/player_repository.dart';
 import '../../data/repositories/profile_repository.dart';
 import '../../data/services/auth_service.dart';
 import '../../l10n/l10n.dart';
@@ -219,18 +220,26 @@ Future<Map<String, dynamic>> saveSharedPersonFields(
 /// main group, else Spieler), the person joins every Termin since the join
 /// date, the Passbild is uploaded after the insert. Returns false when the
 /// user cancelled at the duplicate question; throws when saving fails.
+///
+/// [repo]: the tenant repository bound by the caller before its first await
+/// (tenant switch); read from [ref] when null. [createWhenGone]: when the
+/// page is gone at the duplicate question, the person is still created
+/// (normal app) instead of cancelled.
 Future<bool> createPersonWithChecks(
   BuildContext context,
   WidgetRef ref,
   Person person, {
   required bool isMainGroup,
   Uint8List? imageBytes,
+  PlayerRepository? repo,
+  bool createWhenGone = false,
 }) async {
-  // Bind the tenant repository before the first await (tenant switch).
-  final repo = ref.read(playerRepositoryWithTenantProvider);
+  // Bind everything before the first await (tenant switch, page closed).
+  final PlayerRepository players = repo ?? ref.read(playerRepositoryWithTenantProvider);
   final tracking = ref.read(trackingServiceProvider);
-  final existing = await repo.findPlayersByName(person.firstName, person.lastName);
-  if (existing.isNotEmpty) {
+  final container = ProviderScope.containerOf(context, listen: false);
+  final existing = await players.findPlayersByName(person.firstName, person.lastName);
+  if (existing.isNotEmpty && (context.mounted || !createWhenGone)) {
     if (!context.mounted) return false;
     final confirmed = await DialogHelper.showConfirmation(
       context,
@@ -242,15 +251,16 @@ Future<bool> createPersonWithChecks(
     if (!confirmed) return false;
   }
 
-  await repo.addPlayer(
+  await players.addPlayer(
     person,
     register: person.email != null && person.email!.isNotEmpty,
     role: isMainGroup ? Role.responsible : Role.player,
     imageBytes: imageBytes,
   );
   tracking.track(TrackingEvent.playerAdded, properties: {'instrumentId': person.instrument});
-  ref.invalidate(realtimePlayersProvider);
-  ref.invalidate(playersProvider);
+  container
+    ..invalidate(realtimePlayersProvider)
+    ..invalidate(playersProvider);
   return true;
 }
 
