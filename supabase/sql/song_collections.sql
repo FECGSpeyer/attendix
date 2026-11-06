@@ -200,6 +200,20 @@ begin
 end;
 $$;
 
+-- Applied after Stufe 1, Werke may already point to a Sammlung of another
+-- tenant (the foreign key only checks the id). Block writes on songs for
+-- this transaction, put such Werke back into Repertoire, then install the
+-- trigger, so no wrong reference is left or added in between.
+lock table public.songs in share row exclusive mode;
+
+update public.songs s
+set collection_id = null
+where s.collection_id is not null
+  and not exists (
+    select 1 from public.song_collections c
+    where c.id = s.collection_id and c.tenant_id = s."tenantId"
+  );
+
 drop trigger if exists songs_collection_same_tenant on public.songs;
 create trigger songs_collection_same_tenant
   before insert or update of collection_id, "tenantId" on public.songs

@@ -1,5 +1,7 @@
 -- STUFE 2 von supabase/sql/song_collections.sql (nach dem Store-Release,
 -- setzt Stufe 1 voraus). Sichtbarkeitsregel und Mandanten-Prüfung auf songs.
+-- In EINER Transaktion ausführen: sie setzt Werke, die auf eine Sammlung eines
+-- anderen Mandanten zeigen, zurück ins Repertoire, bevor der Trigger greift.
 -- Rückbau: drop policy if exists "songs_collection_visibility" on public.songs;
 --          drop trigger if exists songs_collection_same_tenant on public.songs;
 --          drop function if exists public.songs_collection_same_tenant();
@@ -30,6 +32,20 @@ begin
   return new;
 end;
 $$;
+
+-- Applied after Stufe 1, Werke may already point to a Sammlung of another
+-- tenant (the foreign key only checks the id). Block writes on songs for
+-- this transaction, put such Werke back into Repertoire, then install the
+-- trigger, so no wrong reference is left or added in between.
+lock table public.songs in share row exclusive mode;
+
+update public.songs s
+set collection_id = null
+where s.collection_id is not null
+  and not exists (
+    select 1 from public.song_collections c
+    where c.id = s.collection_id and c.tenant_id = s."tenantId"
+  );
 
 drop trigger if exists songs_collection_same_tenant on public.songs;
 create trigger songs_collection_same_tenant
