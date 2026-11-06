@@ -12,6 +12,11 @@ import '../adaptive/adaptive.dart';
 import '../../../features/auth/presentation/widgets/ion_form_list.dart';
 import '../layout/ion_modal_handle.dart';
 
+/// User-facing version history ("Was ist neu"): the continued Ionic history
+/// with the store versions, topmost entry = [AppConstants.displayVersion].
+/// The internal 0.x history (`assets/version_history.json`) is not shown.
+const versionHistoryUserAsset = 'assets/version_history_user.json';
+
 /// Bottom sheet showing version history (What's New)
 class VersionHistorySheet extends StatefulWidget {
   const VersionHistorySheet({super.key});
@@ -33,8 +38,7 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
 
   Future<void> _loadVersionHistory() async {
     try {
-      final jsonString =
-          await rootBundle.loadString('assets/version_history.json');
+      final jsonString = await rootBundle.loadString(versionHistoryUserAsset);
       final jsonData = json.decode(jsonString) as Map<String, dynamic>;
       if (mounted) {
         setState(() {

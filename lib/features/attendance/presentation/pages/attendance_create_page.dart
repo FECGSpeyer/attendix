@@ -877,7 +877,13 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         songEntries: _songEntries,
         dutyRequiredByWeekday: _dutyRequiredByWeekday,
       );
-      final ids = await writer.create(input);
+      final ids = await writer.create(
+        input,
+        // Ionic player-absence.service: toast, the Termine are still created.
+        onAbsencesLoadFailed: () {
+          if (mounted) ToastHelper.showError(context, context.l10n.svcLoadAbsencesFailed);
+        },
+      );
       final lastCreatedId = ids.isEmpty ? null : ids.last;
 
       if (!mounted) return;

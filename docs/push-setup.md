@@ -20,8 +20,23 @@ unavailable, and in debug builds the log shows
 Since November 2026 the app uses the Ionic ID **`io.stephanus.attendix`** on iOS and
 Android, so it reuses the existing Ionic apps in Firebase (and the iOS APNs key). It
 replaces the Ionic app on a device and ships as an update of the store app "Attendix".
-Store versions must be higher than Ionic's (4.19.6, Android versionCode 227), e.g.
-`--build-name 5.0.0 --build-number 228`.
+Store versions must be higher than Ionic's last state 4.19.9 (Android versionCode 230,
+iOS build 239). `pubspec.yaml` keeps the internal developer version (0.x, far below
+that), so **always build store releases with `scripts/store_build.sh`**:
+
+```bash
+scripts/store_build.sh ipa         # App Store
+scripts/store_build.sh appbundle   # Play Store
+scripts/store_build.sh --print     # only show the numbers, e.g. --build-name 5.0.0 --build-number 241
+```
+
+It builds with `--build-name` = `AppConstants.displayVersion` (what users see) and
+`--build-number` = pubspec build number + 100, refuses numbers not above Ionic's and
+passes further `flutter build` arguments through (except `--build-name`/`--build-number`).
+An Xcode archive takes the numbers of the last `flutter build`, and any plain
+`flutter build ios` or `flutter run` writes the internal 0.x numbers back. Right
+before archiving in Xcode run `scripts/store_build.sh ios --config-only` and check
+version and build of the archive in the Organizer (5.0.0 / 241 or higher).
 
 **Android signing:** Play App Signing is active, so Play only needs our *upload* key.
 Put it in `android/key.properties` (gitignored, never commit):
@@ -54,7 +69,7 @@ App Links to attendix.de are not verified.
 They are read by `lib/core/config/firebase_options.dart`:
 
 ```bash
-flutter build ipa \
+scripts/store_build.sh ipa \
   --dart-define=FIREBASE_API_KEY=... \
   --dart-define=FIREBASE_MESSAGING_SENDER_ID=... \
   --dart-define=FIREBASE_IOS_APP_ID=1:...:ios:... \
@@ -123,5 +138,6 @@ under the name "Benachrichtigungen" ("Notifications" in English).
 | Settings → Benachrichtigungen → "Push-Benachrichtigungen" toggle (native only) | Same toggle in `NotificationsPage` (native only) → `togglePush` |
 
 Not ported: the Live Activity / live plan notifications (native Swift/Java
-code in Ionic). The iOS foreground system banner is suppressed. Only the
-in-app alert is shown, together with the sound.
+code in Ionic). Foreground pushes on iOS show the system banner, sound and
+badge like Ionic (`presentationOptions [badge, sound, alert]`) in addition to
+the in-app alert; Android shows only the in-app alert.

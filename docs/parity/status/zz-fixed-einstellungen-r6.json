@@ -1,0 +1,43 @@
+{
+ "batch": "zz-fixed-einstellungen-r6",
+ "ionic": "1923d203",
+ "afterRound": 6,
+ "flutter": "3fe913c9",
+ "items": {
+  "settings/settings/settings.page#text-87e51c97": {
+   "s": "ok",
+   "f": [
+    "lib/core/constants/app_constants.dart",
+    "lib/features/settings/presentation/pages/settings_page.dart"
+   ],
+   "n": "Badge zeigt AppConstants.displayVersion (Store-Version 5.0.0, setzt die Ionic-Nummern fort); behoben in #340"
+  },
+  "settings/settings/settings.page#text-7dea9c51": {
+   "s": "ok",
+   "f": [
+    "lib/core/constants/app_constants.dart",
+    "lib/shared/widgets/sheets/version_history_sheet.dart",
+    "assets/version_history_user.json"
+   ],
+   "n": "Was ist neu lädt assets/version_history_user.json = Ionic-Historie 4.19.9 (1923d203) + 5.0.0; behoben in #340"
+  },
+  "settings/settings/settings.page#text-b8c80f4b": {
+   "s": "ok",
+   "f": [
+    "lib/core/constants/app_constants.dart",
+    "lib/shared/widgets/sheets/version_history_sheet.dart",
+    "assets/version_history_user.json"
+   ],
+   "n": "Kopf 'Version x' ohne Datum greift für die alten Ionic-Einträge ohne Datum und für 5.0.0; behoben in #340"
+  },
+  "settings/settings/settings.page#text-8938a6a0": {
+   "s": "ok",
+   "f": [
+    "lib/core/constants/app_constants.dart",
+    "lib/shared/widgets/sheets/version_history_sheet.dart",
+    "assets/version_history_user.json"
+   ],
+   "n": "gleiche Einträge wie Ionic (je Änderung eine Zeile); behoben in #340"
+  }
+ }
+}

@@ -12,6 +12,8 @@
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:attendix.de</string>
+		<!-- AUTOFILL: password suggestions for attendix.de (AASA "webcredentials"). -->
+		<string>webcredentials:attendix.de</string>
 	</array>
 </dict>
 </plist>

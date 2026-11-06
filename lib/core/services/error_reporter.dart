@@ -47,6 +47,19 @@ class ErrorReporter {
     }
   }
 
+  /// Sets a tag on all following events (e.g. `shorebird_patch`).
+  /// No-op without Sentry. Never throws.
+  static void setTag(String key, String value) {
+    if (!_enabled) return;
+    unawaited(
+      Future<void>.sync(
+        () => Sentry.configureScope((scope) => scope.setTag(key, value)),
+      ).then((_) {}, onError: (Object e) {
+        if (kDebugMode) debugPrint('ErrorReporter: setTag failed: $e');
+      }),
+    );
+  }
+
   /// Removes personal data before an event is sent.
   @visibleForTesting
   static SentryEvent? scrub(SentryEvent event, Hint hint) {

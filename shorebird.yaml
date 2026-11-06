@@ -1,0 +1,4 @@
+# Shorebird Code Push (OTA) für iOS und Android. Nicht geheim.
+app_id: 0e3f066a-c1e8-4b9b-8f3c-04ed88e8aaaa
+# Patch beim Start im Hintergrund laden, gilt ab dem nächsten Start (kein Hinweis an Nutzer).
+auto_update: true

@@ -55,6 +55,18 @@ void main() {
         reason: 'available_statuses must NOT use .name which sends strings',
       );
     });
+
+    test('a successful save makes the saved type the new baseline', () {
+      // Null-keeping rules (end_time, duration_days) compare with
+      // _originalType; a stale one turns 20:30 back into null on the
+      // next all-day save without leaving the page.
+      final save = _extractMethodBody(pageSource, '_save')!;
+      final nullCheck = save.indexOf('if (updated == null)');
+      final baseline = save.indexOf('_originalType = updated;');
+      expect(nullCheck, greaterThan(-1));
+      expect(baseline, greaterThan(nullCheck),
+          reason: 'set _originalType only after a successful update');
+    });
   });
 }
 

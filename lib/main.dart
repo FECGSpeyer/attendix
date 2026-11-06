@@ -29,6 +29,7 @@ import 'core/services/planning_draft_store.dart' show clearPlanningDrafts;
 import 'core/services/live_activity_service.dart';
 import 'core/services/native/ionic_offline_queue_takeover.dart';
 import 'core/services/native/ionic_session_takeover.dart';
+import 'core/services/native/shorebird_patch_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/redesign/rd_theme.dart';
 import 'core/utils/toast_helper.dart';
@@ -89,6 +90,11 @@ void main() async {
     release: AppConstants.appVersion,
     environment: dotenv.isInitialized ? dotenv.maybeGet('SENTRY_ENVIRONMENT') : null,
   );
+  // SHOREBIRD: tag events with the running code push patch (release stays
+  // the app version). Not awaited, so the start never waits for it.
+  unawaited(readShorebirdPatchNumber().then((patch) {
+    if (patch != null) ErrorReporter.setTag('shorebird_patch', '$patch');
+  }));
   final previousOnError = FlutterError.onError;
   FlutterError.onError = (details) {
     ErrorReporter.report(details.exception, details.stack, where: 'FlutterError');
@@ -142,9 +148,16 @@ class AttendixApp extends ConsumerStatefulWidget {
 }
 
 class _AttendixAppState extends ConsumerState<AttendixApp> {
+  // SHOREBIRD: download a new code push patch silently when the app returns
+  // from the background (active from the next start, nothing visible).
+  late final AppLifecycleListener _shorebirdResumeListener;
+
   @override
   void initState() {
     super.initState();
+    _shorebirdResumeListener = AppLifecycleListener(
+      onResume: () => unawaited(checkShorebirdPatchOnResume()),
+    );
     // Start update listener (web: service worker; NATIVE_MISC: native store check)
     ref.read(appUpdateServiceProvider).startListening();
     // PROFILE_OFFLINE: replay queued offline attendance writes
@@ -182,6 +195,12 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
         );
       }));
     });
+  }
+
+  @override
+  void dispose() {
+    _shorebirdResumeListener.dispose();
+    super.dispose();
   }
 
   @override

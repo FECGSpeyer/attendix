@@ -206,7 +206,24 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
     }
   }
 
-  Future<void> _planInto(AgendaItem item) async {
+  /// Ionic binds `item` to the form via ngModel: "Einplanen" uses the current
+  /// (unsaved) title, duration and status, not the stored copy. The joined
+  /// responsible person stays as loaded (Ionic: only the id is bound).
+  AgendaItem _formItem(AgendaItem saved) {
+    final desc = _description.text.trim();
+    final duration = num.tryParse(_duration.text.trim())?.round() ?? 0;
+    return saved.copyWith(
+      title: _title.text.trim(),
+      description: desc.isEmpty ? null : desc,
+      status: _status,
+      priority: _priority,
+      responsiblePersonId: _responsibleId,
+      defaultDuration: duration > 0 ? duration : null,
+    );
+  }
+
+  Future<void> _planInto(AgendaItem saved) async {
+    final item = _formItem(saved);
     final protocolRepo = ref.read(protocolRepositoryWithTenantProvider);
     final types = await ref.read(protocolTypesProvider.future);
     List<ProtocolAttendance> upcoming = [];
@@ -349,11 +366,12 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
                               : null,
                         ),
                       ]),
-                    if (!_isNew && isLeader && item?.status == 'open')
+                    // Ionic: live form status (unsaved "Erledigt" hides it).
+                    if (!_isNew && isLeader && item != null && _status == 'open')
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                         child: FilledButton.icon(
-                          onPressed: () => _planInto(item!),
+                          onPressed: () => _planInto(item),
                           icon: const Icon(Icons.calendar_today_outlined),
                           label: IonButtonLabel(l10n.agendaPlanIn),
                         ),

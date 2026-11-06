@@ -49,6 +49,22 @@ void main() {
       expect(button(tester, 'ANMELDEN').onPressed, isNotNull);
     });
 
+    testWidgets('e-mail and password share one AutofillGroup (password suggestions)',
+        (tester) async {
+      await setPhone(tester);
+      await tester.pumpWidget(app(const LoginPage()));
+      await tester.pumpAndSettle();
+
+      final fields = find.byType(TextFormField);
+      expect(fields, findsNWidgets(2));
+      final group = find.byType(AutofillGroup);
+      expect(group, findsOneWidget);
+      for (var i = 0; i < 2; i++) {
+        expect(
+            find.ancestor(of: fields.at(i), matching: group), findsOneWidget);
+      }
+    });
+
     testWidgets('"Code senden" is disabled until the e-mail is filled',
         (tester) async {
       await setPhone(tester);
