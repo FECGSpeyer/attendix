@@ -9,6 +9,7 @@ import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/files_providers.dart';
 import '../../../../core/providers/group_providers.dart';
+import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -78,7 +79,11 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
       // The group list keeps a copy of each group: refresh it, or switching
       // groups would bring back the old values.
       container.invalidate(userTenantsProvider);
-      if (evaluate) await repo.evaluateCriticalRules();
+      if (evaluate) {
+        await repo.evaluateCriticalRules();
+        // The Problemfälle shown elsewhere (e.g. on Heute) follow the new rules.
+        container.invalidate(criticalPlayersProvider);
+      }
       return true;
     } catch (_) {
       if (mounted) ToastHelper.showError(context, failed);
@@ -186,12 +191,13 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
     }, (c) => late ? c.copyWith(lateReasons: value) : c.copyWith(absenceReasons: value));
   }
 
-  /// Loads data a change needs; on failure shows the error (the change can
-  /// simply be tried again) and returns null.
-  Future<T?> _load<T>(Future<T> future) async {
+  /// Loads data a change needs; on failure shows the error and drops the
+  /// failed result, so tapping again loads it anew. Returns null then.
+  Future<T?> _load<T>(FutureProvider<T> provider) async {
     try {
-      return await future;
+      return await ref.read(provider.future);
     } catch (e) {
+      ref.invalidate(provider);
       if (mounted) ToastHelper.showError(context, context.l10n.settingsFlutterLoadFailed(friendlyErrorMessage(e)));
       return null;
     }
@@ -202,7 +208,7 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
   Future<void> _toggleRegistration(Tenant t, bool on) async {
     if (on) {
       // Ionic: registration needs a group to choose (not the main group).
-      final groups = await _load(ref.read(groupsProvider.future));
+      final groups = await _load(groupsProvider);
       if (groups == null || !mounted) return;
       if (!groups.any((g) => g.maingroup != true)) {
         ToastHelper.showError(context, context.l10n.generalSettingsRegisterNoGroups);
@@ -311,7 +317,7 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
 
   Future<void> _ruleSheet(Tenant t, {int? index}) async {
     final l10n = context.l10n;
-    final types = await _load(ref.read(attendanceTypesProvider.future));
+    final types = await _load(attendanceTypesProvider);
     if (types == null || !mounted) return;
     if (index == null && types.isEmpty) {
       ToastHelper.showError(context, l10n.generalSettingsFlutterNoTypes);
