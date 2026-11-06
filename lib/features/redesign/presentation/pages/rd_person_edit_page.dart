@@ -136,8 +136,13 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     _checkTransfer();
   }
 
+  /// Set while the page closes: values are still written, the page is not
+  /// rebuilt any more.
+  bool _disposing = false;
+
   @override
   void dispose() {
+    _disposing = true;
     // Text typed last is saved when the page closes (no focus change).
     _flushTyped();
     _saveName('firstName', _first);
@@ -213,7 +218,8 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     final appId = person.appId;
     final repo = ref.read(userRegistrationRepositoryWithTenantProvider);
     if (appId == null || !repo.hasTenantId) return;
-    setState(() => _loadingRole = true);
+    // Also called while building (first load): the result rebuilds.
+    _loadingRole = true;
     Role? role;
     try {
       role = await repo.getTenantUserRole(appId);
@@ -299,19 +305,25 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     if (_deleted || repo == null || !repo.hasTenantId) return false;
     try {
       await repo.updatePlayerFields(_personId, columns);
-      _container.read(trackingServiceProvider).track(TrackingEvent.playerUpdated);
-      _refresh();
-      _markSaved();
-      return true;
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.personUpdateFailedWith(friendlyErrorMessage(e)));
       return false;
     }
+    _refresh();
+    _markSaved();
+    try {
+      _container.read(trackingServiceProvider).track(TrackingEvent.playerUpdated);
+    } catch (_) {}
+    return true;
   }
 
   void _apply(Map<String, dynamic> columns) {
     final p = _person;
     if (p == null) return;
+    if (_disposing || !mounted) {
+      _person = applyPersonColumns(p, columns);
+      return;
+    }
     setState(() => _person = applyPersonColumns(p, columns));
   }
 
@@ -384,7 +396,8 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     final person = _person;
     final shared = _shared;
     if (person == null || shared == null) return;
-    final profileRepo = ref.read(profileRepositoryWithTenantProvider);
+    // Container, not ref: also runs while the page closes.
+    final profileRepo = _container.read(profileRepositoryWithTenantProvider);
     _enqueue(() async {
       if (mapEquals(next, _storedAdditional)) return;
       final fields = await shared;
@@ -949,7 +962,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     final main = ref.watch(mainGroupProvider).valueOrNull;
     final isMainGroup = main?.id != null && main!.id == person.instrument;
     final textStyle = TextStyle(fontSize: 17, color: p.text);
-    final userId = ref.read(supabaseClientProvider).auth.currentUser?.id;
+    final userId = ref.watch(currentAuthUserIdProvider);
     final isSelf = person.appId != null && person.appId == userId;
     final hasEmail = (person.email ?? '').trim().isNotEmpty;
 

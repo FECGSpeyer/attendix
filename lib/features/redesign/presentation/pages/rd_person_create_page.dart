@@ -482,6 +482,7 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
                 keyboardType: TextInputType.emailAddress,
                 style: textStyle,
                 decoration: rdInputDecoration(p, 'max@example.com'),
+                onChanged: (_) => setState(() {}),
               ),
             ),
             RdFieldRow(
@@ -492,6 +493,7 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
                 keyboardType: TextInputType.phone,
                 style: textStyle,
                 decoration: rdInputDecoration(p, '+49 123 456789'),
+                onChanged: (_) => setState(() {}),
               ),
             ),
           ],
