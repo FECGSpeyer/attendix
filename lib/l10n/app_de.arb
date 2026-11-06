@@ -15780,6 +15780,10 @@
   "@redesignPlanAddCurrentHint": {
     "description": "redesign.plan.addCurrentHint"
   },
+  "redesignPlanAddDefaultField": "Standardfeld hinzufügen",
+  "@redesignPlanAddDefaultField": {
+    "description": "redesign.plan.addDefaultField"
+  },
   "redesignPlanAddEnd": "Wird ans Ende gesetzt",
   "@redesignPlanAddEnd": {
     "description": "redesign.plan.addEnd"
@@ -16042,6 +16046,17 @@
   "@redesignPlanOrgHint": {
     "description": "redesign.plan.orgHint"
   },
+  "redesignPlanOrgPlansIntro": "Abläufe aller Gruppen in „{org}“",
+  "@redesignPlanOrgPlansIntro": {
+    "description": "redesign.plan.orgPlansIntro",
+    "placeholders": {
+      "org": {}
+    }
+  },
+  "redesignPlanOrgPlansUpcoming": "Anstehend",
+  "@redesignPlanOrgPlansUpcoming": {
+    "description": "redesign.plan.orgPlansUpcoming"
+  },
   "redesignPlanOrgTemplateHint": "Vorlage der Organisation",
   "@redesignPlanOrgTemplateHint": {
     "description": "redesign.plan.orgTemplateHint"
@@ -16119,6 +16134,17 @@
   "redesignPlanTemplateDelete": "Vorlage löschen",
   "@redesignPlanTemplateDelete": {
     "description": "redesign.plan.templateDelete"
+  },
+  "redesignPlanTemplateHint": "Vorlage · sofort gespeichert",
+  "@redesignPlanTemplateHint": {
+    "description": "redesign.plan.templateHint"
+  },
+  "redesignPlanTemplatesIntro": "Gelten für alle Gruppen der Organisation „{org}“.",
+  "@redesignPlanTemplatesIntro": {
+    "description": "redesign.plan.templatesIntro",
+    "placeholders": {
+      "org": {}
+    }
   },
   "redesignPlanTitle": "Ablauf",
   "@redesignPlanTitle": {

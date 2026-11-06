@@ -12635,6 +12635,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanAddCurrentHint => 'The works currently in rehearsal';
 
   @override
+  String get redesignPlanAddDefaultField => 'Add default field';
+
+  @override
   String get redesignPlanAddEnd => 'Added at the end';
 
   @override
@@ -12833,6 +12836,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanOrgHint => 'Shown in the organisation\'s plan';
 
   @override
+  String redesignPlanOrgPlansIntro(Object org) {
+    return 'Run sheets of all groups in “$org”';
+  }
+
+  @override
+  String get redesignPlanOrgPlansUpcoming => 'Upcoming';
+
+  @override
   String get redesignPlanOrgTemplateHint => 'Organisation template';
 
   @override
@@ -12889,6 +12900,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignPlanTemplateDelete => 'Delete template';
+
+  @override
+  String get redesignPlanTemplateHint => 'Template · saved right away';
+
+  @override
+  String redesignPlanTemplatesIntro(Object org) {
+    return 'Apply to all groups of the organisation “$org”.';
+  }
 
   @override
   String get redesignPlanTitle => 'Run sheet';

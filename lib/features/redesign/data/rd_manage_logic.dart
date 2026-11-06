@@ -39,6 +39,7 @@ enum RdManageEntry {
   runSheets(RdManageArea.events),
   adHocPlanning(RdManageArea.events),
   planningTemplates(RdManageArea.events),
+  orgPlans(RdManageArea.events),
   works(RdManageArea.works),
   workHistory(RdManageArea.works),
   workCategories(RdManageArea.works),
@@ -145,7 +146,7 @@ bool rdManageVisible(RdManageEntry entry, RdManageAccess access) {
     RdManageEntry.extraFields =>
       a.isAdmin,
     RdManageEntry.runSheets || RdManageEntry.adHocPlanning => a._showPlanning,
-    RdManageEntry.planningTemplates => a._showPlanning && a.hasOrganisation,
+    RdManageEntry.planningTemplates || RdManageEntry.orgPlans => a._showPlanning && a.hasOrganisation,
     RdManageEntry.works => !a.isGeneral && !a.isApplicant && a.canOpenWorks,
     RdManageEntry.workHistory => (a.isAdmin || a.isHelper) && !a.isGeneral && !a.isApplicant,
     RdManageEntry.workCategories => a.isAdmin && !a.isGeneral && !a.isApplicant,

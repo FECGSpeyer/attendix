@@ -20627,6 +20627,12 @@ abstract class AppLocalizations {
   /// **'Die Werke, die gerade dran sind'**
   String get redesignPlanAddCurrentHint;
 
+  /// redesign.plan.addDefaultField
+  ///
+  /// In de, this message translates to:
+  /// **'Standardfeld hinzufügen'**
+  String get redesignPlanAddDefaultField;
+
   /// redesign.plan.addEnd
   ///
   /// In de, this message translates to:
@@ -20963,6 +20969,18 @@ abstract class AppLocalizations {
   /// **'Erscheint im Plan der Organisation'**
   String get redesignPlanOrgHint;
 
+  /// redesign.plan.orgPlansIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Abläufe aller Gruppen in „{org}“'**
+  String redesignPlanOrgPlansIntro(Object org);
+
+  /// redesign.plan.orgPlansUpcoming
+  ///
+  /// In de, this message translates to:
+  /// **'Anstehend'**
+  String get redesignPlanOrgPlansUpcoming;
+
   /// redesign.plan.orgTemplateHint
   ///
   /// In de, this message translates to:
@@ -21070,6 +21088,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Vorlage löschen'**
   String get redesignPlanTemplateDelete;
+
+  /// redesign.plan.templateHint
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage · sofort gespeichert'**
+  String get redesignPlanTemplateHint;
+
+  /// redesign.plan.templatesIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Gelten für alle Gruppen der Organisation „{org}“.'**
+  String redesignPlanTemplatesIntro(Object org);
 
   /// redesign.plan.title
   ///
