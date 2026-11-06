@@ -1,13 +1,10 @@
 # Fix-Paket „querschnitt“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 2acb693, 5ddaa2a, 4de3564, 525a06f, ed511da, 359f15d, 43a315b, 0e6c255 (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 2acb693, 5ddaa2a, 4de3564, 96b8284, 525a06f, ed511da, 359f15d, 43a315b, 0e6c255 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 1
+## Angleichen (hoch/mittel): 0
 
-- [ ] **mittel** `services/live-update/live-update.service` `x-6fc37335ce` **Updates nur über den Store statt OTA** [src/app/services/live-update/live-update.service.ts:117](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/live-update/live-update.service.ts#L117) (2. Prüfung: bestätigt)
-  Befund real, technisch bedingt: Ionic lädt signierte Web-Bundles still und aktiviert sie beim Kaltstart bzw. auf /login, /register / Flutter prüft beim Kaltstart die Store-Version (ab 5.0.0) und bietet 'Update installieren' (Store-Seite bzw. Play In-App-Update); Hotfixes erst nach Store-Freigabe. login_page.dart nur verschoben (Banner jetzt Zeile 674).
-  Flutter: lib/core/services/native/store_update_service.dart:52, lib/features/auth/presentation/pages/login_page.dart:674, lib/features/settings/presentation/pages/settings_page.dart:552
 
 ## Flutter besser – Leon entscheidet: 52
 
