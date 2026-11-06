@@ -67,7 +67,7 @@ extension _PlanFieldsEditorBeta on _PlanFieldsEditorState {
     if (isAgenda) {
       return _RdRowFrame(
         divider: divider,
-        onTap: widget.onAddTopics,
+        onTap: () => _rdAgendaSheet(field),
         child: Row(
           children: [
             Icon(Icons.commit, color: p.text2, size: 20),
@@ -264,11 +264,8 @@ extension _PlanFieldsEditorBeta on _PlanFieldsEditorState {
       case 'down':
         final to = action == 'up' ? i - 1 : i + 1;
         if (to >= 0 && to < fields.length) {
-          final tmp = fields[i];
-          fields[i] = fields[to];
-          fields[to] = tmp;
-          // A row keeps its block only when its new neighbour belongs to it.
-          fields = PlanUtils.normalizeGroups(fields);
+          // Same rules as dragging: never splits a block from its Unterpunkte.
+          fields = PlanUtils.moveField(fields, i, to);
         }
       case 'indent':
         fields = PlanUtils.toggleIndent(fields, i);
@@ -278,6 +275,27 @@ extension _PlanFieldsEditorBeta on _PlanFieldsEditorState {
         fields.removeAt(i);
     }
     if (e != null || action != null) _emit(fields);
+  }
+
+  /// Tagesordnung marker: "Themen aufnehmen" (when offered) and Löschen,
+  /// like the swipe actions of the normal editor.
+  Future<void> _rdAgendaSheet(PlanField field) async {
+    final l10n = context.l10n;
+    final action = await showRdPlanActionSheet<String>(
+      context,
+      title: widget.templateMode ? l10n.typeSettingsAgenda : l10n.planningAgendaInsertPos,
+      actions: [
+        if (widget.onAddTopics != null) PlanSheetAction('topics', l10n.attendanceAddTopics, icon: Icons.add),
+        PlanSheetAction('delete', l10n.redesignPlanDelete, icon: Icons.delete_outline, destructive: true),
+      ],
+    );
+    if (!mounted) return;
+    if (action == 'topics') {
+      widget.onAddTopics?.call();
+    } else if (action == 'delete') {
+      final i = _fields.indexWhere((f) => f.id == field.id);
+      if (i >= 0) _emit([..._fields]..removeAt(i));
+    }
   }
 
   /// Block head: name / Ausführung inline, then Unterpunkt, Vorlage,

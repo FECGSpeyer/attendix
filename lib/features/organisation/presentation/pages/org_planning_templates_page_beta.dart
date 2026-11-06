@@ -14,13 +14,17 @@ extension _OrgTemplatesBeta on _OrgPlanningTemplatesPageState {
       emptyText: l10n.orgTemplatesNoTemplates,
       emptyIcon: Icons.description_outlined,
       addLabel: l10n.orgTemplatesAddTemplate,
-      onAdd: () async {
-        final before = _templates?.length ?? 0;
-        await _addTemplate();
-        if (!mounted) return;
-        final list = _templates;
-        if (list != null && list.length > before) _rdOpenTemplate(list.length - 1);
-      },
+      // Only once the Vorlagen are loaded (_addTemplate needs them).
+      onAdd:
+          templates == null
+              ? null
+              : () async {
+                final before = _templates?.length ?? 0;
+                await _addTemplate();
+                if (!mounted) return;
+                final list = _templates;
+                if (list != null && list.length > before) _rdOpenTemplate(list.length - 1);
+              },
       sections:
           templates == null
               ? null
@@ -31,7 +35,8 @@ extension _OrgTemplatesBeta on _OrgPlanningTemplatesPageState {
                   items: [
                     for (var i = 0; i < templates.length; i++)
                       RdManageListItem(
-                        id: 'tpl-$i-${templates[i].title}',
+                        // Position-independent: survives a failed save and a retry.
+                        id: 'tpl-${identityHashCode(templates[i])}',
                         title: templates[i].title ?? '',
                         subtitle: _rdTemplateSubtitle(templates[i]),
                         onTap: () => _rdOpenTemplate(i),
@@ -66,16 +71,17 @@ extension _OrgTemplatesBeta on _OrgPlanningTemplatesPageState {
         final tplIds = sections.firstWhere((s) => s.key == 'templates').items.map((i) => i.id).toList();
         final fieldIds =
             sections.firstWhere((s) => s.key == 'fields').items.map((i) => i.id).where((id) => id != 'df-add').toList();
-        final tpls = _templates!;
-        final tplKeys = [for (var i = 0; i < tpls.length; i++) 'tpl-$i-${tpls[i].title}'];
-        final newTemplates = [for (final id in tplIds) tpls[tplKeys.indexOf(id as String)]];
+        final byId = {for (final t in _templates!) 'tpl-${identityHashCode(t)}': t};
+        final newTemplates = [for (final id in tplIds) byId[id]!];
         final newFields = [for (final id in fieldIds) _defaultFields.firstWhere((f) => 'df-${f.id}' == id)];
         _update(() {
           _templates = newTemplates;
           _defaultFields = newFields;
         });
-        await _saveTemplates();
-        return _saveDefaultFields();
+        // Both must be saved; a failure keeps the sort mode open for a retry.
+        final templatesOk = await _saveTemplates();
+        final fieldsOk = await _saveDefaultFields();
+        return templatesOk && fieldsOk;
       },
     );
   }

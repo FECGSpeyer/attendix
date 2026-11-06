@@ -296,6 +296,14 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                     leading: const RdRowIcon(Icons.history),
                     title: e.title,
                     subtitle: [orgPlanDate(e.date), if (e.tenantLabel.isNotEmpty) e.tenantLabel].join(' · '),
+                    showChevron: !e.isAdHoc,
+                    trailing: e.isAdHoc
+                        ? IconButton(
+                          tooltip: context.l10n.commonDelete,
+                          icon: Icon(Icons.delete_outline, color: context.rd.text2),
+                          onPressed: () => _deleteAdHoc(e),
+                        )
+                        : null,
                     onTap: () => openOrgPlanEntry(context, e),
                   ),
               ],

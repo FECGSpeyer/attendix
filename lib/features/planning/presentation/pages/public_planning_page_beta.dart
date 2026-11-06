@@ -34,15 +34,13 @@ extension _PublicPlanningBeta on _PublicPlanningPageState {
                       : const SizedBox.shrink(),
             ),
             RdCircleButton(icon: Icons.ios_share, label: l10n.plansShareExport, onPressed: _shareCurrentPlan),
-            if (loggedIn) ...[
-              const SizedBox(width: 8),
-              RdCircleButton(
-                key: const Key('rd-adhoc-more'),
-                icon: Icons.more_horiz,
-                label: l10n.redesignPlanMore,
-                onPressed: _rdMore,
-              ),
-            ],
+            const SizedBox(width: 8),
+            RdCircleButton(
+              key: const Key('rd-adhoc-more'),
+              icon: Icons.more_horiz,
+              label: l10n.redesignPlanMore,
+              onPressed: _rdMore,
+            ),
           ],
         ),
         const SizedBox(height: 4),
@@ -167,8 +165,9 @@ extension _PublicPlanningBeta on _PublicPlanningPageState {
       context,
       title: l10n.plansPlanning,
       actions: [
-        PlanSheetAction('mine', l10n.plansMyPlans, icon: Icons.list),
-        PlanSheetAction('new', l10n.plansNewPlan, icon: Icons.add_circle_outline),
+        // Like the normal page: account-bound entries only when logged in.
+        if (_loggedIn) PlanSheetAction('mine', l10n.plansMyPlans, icon: Icons.list),
+        if (_loggedIn) PlanSheetAction('new', l10n.plansNewPlan, icon: Icons.add_circle_outline),
         PlanSheetAction('restore', l10n.plansRestoreTemplate, icon: Icons.refresh),
         PlanSheetAction('export', l10n.planningExport, icon: Icons.picture_as_pdf_outlined),
       ],

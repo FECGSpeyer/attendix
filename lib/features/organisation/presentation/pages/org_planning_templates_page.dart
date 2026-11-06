@@ -70,9 +70,10 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
 
   /// Ionic saves the templates as edited; `end` is not computed into them
   /// (new templates keep `end: ''`), the end is only shown.
-  Future<void> _saveTemplates() async {
+  Future<bool> _saveTemplates() async {
     final ok = await _notifier.updatePlanningTemplates(_templates!);
     if (!ok && mounted) ToastHelper.showError(context, context.l10n.plansSaveFailed);
+    return ok;
   }
 
   String _computeEnd(Plan tpl) {
@@ -169,7 +170,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       confirmText: context.l10n.attendanceAdd,
       emptyMessage: context.l10n.orgTemplatesEnterName,
     );
-    if (title == null || title.trim().isEmpty) return;
+    if (title == null || title.trim().isEmpty || _templates == null || !mounted) return;
     setState(() {
       _templates = [..._templates!, Plan(title: title.trim(), time: '', end: '', fields: const [])];
       _selected = _templates!.length - 1;
