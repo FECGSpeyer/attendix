@@ -110,7 +110,12 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
     for (final p in persons) {
       if (p.id == _personId) return p.fullName;
     }
-    if (widget.task?.responsiblePersonId == _personId) return widget.task!.responsiblePerson.fullName;
+    // A new task has no task and no person yet: `null == null` must not
+    // reach `widget.task!` (crashed the sheet into an empty grey area).
+    final task = widget.task;
+    if (task != null && _personId != null && task.responsiblePersonId == _personId) {
+      return task.responsiblePerson.fullName;
+    }
     return '';
   }
 
