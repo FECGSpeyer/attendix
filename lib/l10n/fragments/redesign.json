@@ -524,6 +524,23 @@
         "review": "Prüfen und freigeben",
         "history": "Verlauf"
       },
+      "personForm": {
+        "newTitle": "Neue Person",
+        "create": "Anlegen",
+        "createButton": "Person anlegen",
+        "editTitle": "{name} bearbeiten",
+        "contact": "Kontakt",
+        "emailHint": "Bekommt damit Zugang zur App",
+        "more": "Weitere Angaben",
+        "moreHint": "Geburtstag, Beitritt, Lehrer, Zusatzfelder und mehr",
+        "saved": "Gespeichert ✓",
+        "liveHint": "Änderungen werden sofort gespeichert.",
+        "notAllowed": "Nur Admins und Verantwortliche können Personen anlegen und bearbeiten.",
+        "archived": "Diese Person ist archiviert.",
+        "problemSave": "Gespräch speichern",
+        "notSet": "Nicht gesetzt",
+        "matchDismiss": "Ausblenden"
+      },
       "works": {
         "search": "Titel oder Nummer",
         "searchLabel": "Werke suchen",
@@ -1487,6 +1504,23 @@
         "pending": "Waiting for approval.",
         "review": "Review and approve",
         "history": "History"
+      },
+      "personForm": {
+        "newTitle": "New person",
+        "create": "Create",
+        "createButton": "Add person",
+        "editTitle": "Edit {name}",
+        "contact": "Contact",
+        "emailHint": "Gets access to the app with it",
+        "more": "More details",
+        "moreHint": "Birthday, joined, teacher, extra fields and more",
+        "saved": "Saved ✓",
+        "liveHint": "Changes are saved right away.",
+        "notAllowed": "Only admins and responsible persons can add and edit people.",
+        "archived": "This person is archived.",
+        "problemSave": "Save conversation",
+        "notSet": "Not set",
+        "matchDismiss": "Hide"
       },
       "works": {
         "search": "Title or number",

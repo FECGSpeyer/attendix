@@ -14155,6 +14155,69 @@
   "@redesignPersonEdit": {
     "description": "redesign.person.edit"
   },
+  "redesignPersonFormArchived": "Diese Person ist archiviert.",
+  "@redesignPersonFormArchived": {
+    "description": "redesign.personForm.archived"
+  },
+  "redesignPersonFormContact": "Kontakt",
+  "@redesignPersonFormContact": {
+    "description": "redesign.personForm.contact"
+  },
+  "redesignPersonFormCreate": "Anlegen",
+  "@redesignPersonFormCreate": {
+    "description": "redesign.personForm.create"
+  },
+  "redesignPersonFormCreateButton": "Person anlegen",
+  "@redesignPersonFormCreateButton": {
+    "description": "redesign.personForm.createButton"
+  },
+  "redesignPersonFormEditTitle": "{name} bearbeiten",
+  "@redesignPersonFormEditTitle": {
+    "description": "redesign.personForm.editTitle",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPersonFormEmailHint": "Bekommt damit Zugang zur App",
+  "@redesignPersonFormEmailHint": {
+    "description": "redesign.personForm.emailHint"
+  },
+  "redesignPersonFormLiveHint": "Änderungen werden sofort gespeichert.",
+  "@redesignPersonFormLiveHint": {
+    "description": "redesign.personForm.liveHint"
+  },
+  "redesignPersonFormMatchDismiss": "Ausblenden",
+  "@redesignPersonFormMatchDismiss": {
+    "description": "redesign.personForm.matchDismiss"
+  },
+  "redesignPersonFormMore": "Weitere Angaben",
+  "@redesignPersonFormMore": {
+    "description": "redesign.personForm.more"
+  },
+  "redesignPersonFormMoreHint": "Geburtstag, Beitritt, Lehrer, Zusatzfelder und mehr",
+  "@redesignPersonFormMoreHint": {
+    "description": "redesign.personForm.moreHint"
+  },
+  "redesignPersonFormNewTitle": "Neue Person",
+  "@redesignPersonFormNewTitle": {
+    "description": "redesign.personForm.newTitle"
+  },
+  "redesignPersonFormNotAllowed": "Nur Admins und Verantwortliche können Personen anlegen und bearbeiten.",
+  "@redesignPersonFormNotAllowed": {
+    "description": "redesign.personForm.notAllowed"
+  },
+  "redesignPersonFormNotSet": "Nicht gesetzt",
+  "@redesignPersonFormNotSet": {
+    "description": "redesign.personForm.notSet"
+  },
+  "redesignPersonFormProblemSave": "Gespräch speichern",
+  "@redesignPersonFormProblemSave": {
+    "description": "redesign.personForm.problemSave"
+  },
+  "redesignPersonFormSaved": "Gespeichert ✓",
+  "@redesignPersonFormSaved": {
+    "description": "redesign.personForm.saved"
+  },
   "redesignPersonHistory": "Verlauf",
   "@redesignPersonHistory": {
     "description": "redesign.person.history"

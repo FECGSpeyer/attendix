@@ -18461,6 +18461,96 @@ abstract class AppLocalizations {
   /// **'Bearbeiten'**
   String get redesignPersonEdit;
 
+  /// redesign.personForm.archived
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Person ist archiviert.'**
+  String get redesignPersonFormArchived;
+
+  /// redesign.personForm.contact
+  ///
+  /// In de, this message translates to:
+  /// **'Kontakt'**
+  String get redesignPersonFormContact;
+
+  /// redesign.personForm.create
+  ///
+  /// In de, this message translates to:
+  /// **'Anlegen'**
+  String get redesignPersonFormCreate;
+
+  /// redesign.personForm.createButton
+  ///
+  /// In de, this message translates to:
+  /// **'Person anlegen'**
+  String get redesignPersonFormCreateButton;
+
+  /// redesign.personForm.editTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{name} bearbeiten'**
+  String redesignPersonFormEditTitle(Object name);
+
+  /// redesign.personForm.emailHint
+  ///
+  /// In de, this message translates to:
+  /// **'Bekommt damit Zugang zur App'**
+  String get redesignPersonFormEmailHint;
+
+  /// redesign.personForm.liveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Änderungen werden sofort gespeichert.'**
+  String get redesignPersonFormLiveHint;
+
+  /// redesign.personForm.matchDismiss
+  ///
+  /// In de, this message translates to:
+  /// **'Ausblenden'**
+  String get redesignPersonFormMatchDismiss;
+
+  /// redesign.personForm.more
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Angaben'**
+  String get redesignPersonFormMore;
+
+  /// redesign.personForm.moreHint
+  ///
+  /// In de, this message translates to:
+  /// **'Geburtstag, Beitritt, Lehrer, Zusatzfelder und mehr'**
+  String get redesignPersonFormMoreHint;
+
+  /// redesign.personForm.newTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Person'**
+  String get redesignPersonFormNewTitle;
+
+  /// redesign.personForm.notAllowed
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Admins und Verantwortliche können Personen anlegen und bearbeiten.'**
+  String get redesignPersonFormNotAllowed;
+
+  /// redesign.personForm.notSet
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht gesetzt'**
+  String get redesignPersonFormNotSet;
+
+  /// redesign.personForm.problemSave
+  ///
+  /// In de, this message translates to:
+  /// **'Gespräch speichern'**
+  String get redesignPersonFormProblemSave;
+
+  /// redesign.personForm.saved
+  ///
+  /// In de, this message translates to:
+  /// **'Gespeichert ✓'**
+  String get redesignPersonFormSaved;
+
   /// redesign.person.history
   ///
   /// In de, this message translates to:

@@ -6,9 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/constants/enums.dart';
-import '../../../../core/providers/player_providers.dart';
-import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -34,8 +31,7 @@ import '../widgets/church_picker_sheet.dart';
 import '../widgets/person_detail/date_input_row.dart';
 import '../widgets/person_detail/allgemein_accordion.dart'
     show otherOrchestraOptions, personExtraFields;
-import '../../../../core/services/tracking/tracking_event.dart';
-import '../../../../core/services/tracking/tracking_service.dart';
+import '../../person_write.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/ion/ion_widgets.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
@@ -945,8 +941,6 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     // Ionic readOnly: only admins and responsibles can create persons.
     final role = ref.read(currentRoleProvider);
     if (!(role.isAdmin || role.isResponsible) || _isLoading) return;
-    // Bind the tenant repository before the first await (tenant switch).
-    final repo = ref.read(playerRepositoryWithTenantProvider);
     // Commit a typed date (applied on focus loss) before reading the form.
     FocusManager.instance.primaryFocus?.unfocus();
     await Future<void>.delayed(Duration.zero);
@@ -955,26 +949,6 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     setState(() => _isLoading = true);
 
     try {
-      final firstName = _firstNameController.text.trim();
-      final lastName = _lastNameController.text.trim();
-
-      // B3-015: Check for duplicate names
-      final existingPlayers = await repo.findPlayersByName(firstName, lastName);
-      if (existingPlayers.isNotEmpty && mounted) {
-        final confirmed = await DialogHelper.showConfirmation(
-          context,
-          title: context.l10n.peopleFlutterPossibleDuplicate,
-          message: context.l10n.peopleFlutterDuplicateMessage(
-              '$firstName $lastName', existingPlayers.length),
-          confirmText: context.l10n.peopleFlutterCreateAnyway,
-          cancelText: context.l10n.commonCancel,
-        );
-        if (!confirmed) {
-          setState(() => _isLoading = false);
-          return;
-        }
-      }
-
       final person = Person(
         firstName: _firstNameController.text.trim(),
         lastName: _lastNameController.text.trim(),
@@ -1009,23 +983,21 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         correctBirthday: _birthdayEdited,
       );
 
-      // LOGIC_PEOPLE: Ionic addPerson → db.addPlayer(player, Boolean(email),
-      // role): the account is registered right away when an e-mail is set
-      // (RESPONSIBLE for the main group, else PLAYER), an existing row of the
-      // same account is reactivated instead of duplicated, and the person is
-      // added to all Termine since the join date.
-      await repo.addPlayer(
+      // B3-015 duplicate check + LOGIC_PEOPLE: Ionic addPerson →
+      // db.addPlayer(player, Boolean(email), role): the account is
+      // registered right away when an e-mail is set (RESPONSIBLE for the
+      // main group, else PLAYER), an existing row of the same account is
+      // reactivated instead of duplicated, and the person is added to all
+      // Termine since the join date. ASTRA_PHOTO: the Passbild is uploaded
+      // after the insert; a failure keeps the person.
+      final created = await createPersonWithChecks(
+        context,
+        ref,
         person,
-        register: person.email != null && person.email!.isNotEmpty,
-        role: _isMainGroup ? Role.responsible : Role.player,
-        // ASTRA_PHOTO: uploaded after the insert; a failure keeps the person.
+        isMainGroup: _isMainGroup,
         imageBytes: _pickedImage,
       );
-      ref.read(trackingServiceProvider).track(TrackingEvent.playerAdded, properties: {'instrumentId': person.instrument});
-
-      // Invalidate the people list to trigger refresh
-      ref.invalidate(realtimePlayersProvider);
-      ref.invalidate(playersProvider);
+      if (!created) return;
 
       if (mounted) {
         ToastHelper.showSuccess(context, context.l10n.personAdded);
