@@ -158,6 +158,41 @@ extension _PublicPlanningBeta on _PublicPlanningPageState {
     _changed();
   }
 
+  /// Beta "Hinzufügen": one sheet instead of the popover.
+  Future<String?> _rdAddMenu({
+    required bool loggedIn,
+    required bool isGeneral,
+    required List<PlanField> orgFields,
+    required List<PlanBlockTemplate> blockTemplates,
+  }) {
+    final l10n = context.l10n;
+    return showPlanActionSheet<String>(
+      context,
+      title: l10n.redesignPlanAddTitle,
+      actions: [
+        PlanSheetAction('field', l10n.planningAddField, icon: Icons.add),
+        PlanSheetAction('group', l10n.planningAddBlock, icon: Icons.folder_outlined),
+        PlanSheetAction('note', l10n.planningAddNoteField, icon: Icons.sticky_note_2_outlined),
+        if (loggedIn && !isGeneral) ...[
+          PlanSheetAction('current', l10n.planningAddCurrentSongs, icon: Icons.queue_music),
+          if (_songs.isNotEmpty) PlanSheetAction('song', l10n.planningAddSong, icon: Icons.music_note_outlined),
+        ],
+        for (var i = 0; i < orgFields.length; i++)
+          PlanSheetAction(
+            'orgfield:$i',
+            '${orgFields[i].name} · ${l10n.planningMinShort(orgFields[i].time)}',
+            icon: Icons.business_outlined,
+          ),
+        for (final tpl in blockTemplates)
+          PlanSheetAction(
+            'block:${tpl.id}',
+            '${tpl.name} · ${l10n.planningMinShort(PlanUtils.templateMinutes(tpl))}',
+            icon: Icons.bookmark_outline,
+          ),
+      ],
+    );
+  }
+
   /// •••: Meine Pläne, Neuer Plan, Vorlage wiederherstellen, Exportieren.
   Future<void> _rdMore() async {
     final l10n = context.l10n;
@@ -202,6 +237,8 @@ class _RdMyPlansList extends ConsumerWidget {
   final void Function(SharedPlan plan) onOpen;
 
   Future<void> _more(BuildContext context, WidgetRef ref, SharedPlan plan, String title) async {
+    // TENANT: read the repository before the first await.
+    final repo = ref.read(planRepositoryWithTenantProvider);
     final action = await showPlanActionSheet<String>(
       context,
       title: title,
@@ -222,7 +259,7 @@ class _RdMyPlansList extends ConsumerWidget {
     );
     if (!ok) return;
     try {
-      await ref.read(planRepositoryWithTenantProvider).deleteMySharedPlan(plan.id);
+      await repo.deleteMySharedPlan(plan.id);
       ref.invalidate(mySharedPlansProvider);
     } catch (_) {
       if (context.mounted) ToastHelper.showError(context, context.l10n.plansDeleteFailed);

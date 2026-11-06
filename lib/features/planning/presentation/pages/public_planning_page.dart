@@ -497,30 +497,11 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     final String? action;
     if (context.rdSkin != null) {
       // Beta: one sheet instead of the popover.
-      action = await showPlanActionSheet<String>(
-        context,
-        title: l10n.redesignPlanAddTitle,
-        actions: [
-          PlanSheetAction('field', l10n.planningAddField, icon: Icons.add),
-          PlanSheetAction('group', l10n.planningAddBlock, icon: Icons.folder_outlined),
-          PlanSheetAction('note', l10n.planningAddNoteField, icon: Icons.sticky_note_2_outlined),
-          if (loggedIn && !isGeneral) ...[
-            PlanSheetAction('current', l10n.planningAddCurrentSongs, icon: Icons.queue_music),
-            if (_songs.isNotEmpty) PlanSheetAction('song', l10n.planningAddSong, icon: Icons.music_note_outlined),
-          ],
-          for (var i = 0; i < orgFields.length; i++)
-            PlanSheetAction(
-              'orgfield:$i',
-              '${orgFields[i].name} · ${l10n.planningMinShort(orgFields[i].time)}',
-              icon: Icons.business_outlined,
-            ),
-          for (final tpl in blockTemplates)
-            PlanSheetAction(
-              'block:${tpl.id}',
-              '${tpl.name} · ${l10n.planningMinShort(PlanUtils.templateMinutes(tpl))}',
-              icon: Icons.bookmark_outline,
-            ),
-        ],
+      action = await _rdAddMenu(
+        loggedIn: loggedIn,
+        isGeneral: isGeneral,
+        orgFields: orgFields,
+        blockTemplates: blockTemplates,
       );
     } else {
     final box = anchorContext.findRenderObject() as RenderBox;
