@@ -28,8 +28,8 @@ import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTransluce
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/services/web_window.dart' show setUnloadWarning;
 
-/// German holiday regions
-const _holidayRegions = [
+/// German holiday regions (also used by the Beta page Allgemein)
+const holidayRegions = [
   ('', 'Keine Feiertage'),
   ('BW', 'Baden-Württemberg'),
   ('BY', 'Bayern'),
@@ -717,7 +717,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                             iosInterface: AppSelectInterface.alert,
                           value: _selectedRegion,
                           decoration: decoration,
-                          items: _holidayRegions
+                          items: holidayRegions
                               .map((r) => DropdownMenuItem(
                                   value: r.$1,
                                   child: Text(r.$1.isEmpty ? context.l10n.generalSettingsFlutterNoHolidays : r.$2)))
