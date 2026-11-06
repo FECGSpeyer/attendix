@@ -23,6 +23,7 @@ import 'package:attendix/features/redesign/data/rd_event_logic.dart';
 import 'package:attendix/core/providers/realtime_providers.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_event_edit_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_event_page.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_desktop.dart';
 import 'package:attendix/features/redesign/presentation/widgets/event/rd_pult_view.dart';
 import 'package:attendix/features/redesign/presentation/widgets/rd_split_view.dart';
 import 'package:attendix/l10n/l10n.dart';
@@ -790,6 +791,22 @@ void main() {
     expect(find.text('Gesamtprobe'), findsOneWidget);
     expect(find.bySemanticsLabel('Termine'), findsNothing);
     expect(find.text('Bearbeiten'), findsOneWidget);
+  });
+
+  testWidgets('desktop: Überblick and Anwesenheit side by side, no tabs', (tester) async {
+    _size(tester, const Size(1728, 1030));
+    await tester.pumpWidget(_Harness().app(split: true));
+    await _settle(tester);
+    expect(tester.takeException(), isNull);
+    expect(find.byType(RdEventColumns), findsOneWidget);
+    expect(find.text('Anwesenheit eintragen'), findsNothing);
+
+    // Next to the sidebar and the 400 px list, the detail gets 1440 - 248 - 401
+    // = 791 px: below 900 it keeps the tabs.
+    _size(tester, const Size(1440, 900));
+    await tester.pumpWidget(_Harness().app(split: true));
+    await _settle(tester);
+    expect(find.byType(RdEventColumns), findsNothing);
   });
 
   testWidgets('fits on a 320 px phone', (tester) async {
