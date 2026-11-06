@@ -334,10 +334,14 @@ class PlanUtils {
   /// "YYYY-MM-DDTHH:mm:00" without offset (dayjs-valid). Keeps the date of an
   /// ISO [previous] value, otherwise today (the datetime's default date).
   /// Readers ([parseTimeToMinutes], [formatTime]) accept it and "HH:mm".
+  /// Composed as text (no local DateTime with the picked time), so a time in a
+  /// DST gap (e.g. 02:30 on 2026-03-29 in Europe/Berlin) is kept as picked.
   static String ionTimeValue(int hour, int minute, {String? previous, DateTime? now}) {
     final prev = previous != null && previous.contains('T') ? DateTime.tryParse(previous.trim())?.toLocal() : null;
     final day = prev ?? now ?? DateTime.now();
-    return DateFormat("yyyy-MM-dd'T'HH:mm:00").format(DateTime(day.year, day.month, day.day, hour, minute));
+    String two(int v) => v.toString().padLeft(2, '0');
+    return '${day.year.toString().padLeft(4, '0')}-${two(day.month)}-${two(day.day)}'
+        'T${two(hour)}:${two(minute)}:00';
   }
 
   /// Ionic `planning.page validate`: a start time, at least one field and a
