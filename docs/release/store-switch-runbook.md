@@ -19,7 +19,7 @@ bash tool/release/check_well_known.sh --apple-cdn https://attendix.de https://ww
   - „Confirm signup“: `{{ .SiteURL }}/resetPassword?token_hash={{ .TokenHash }}&type=signup`
   - Ionic 4.19.6 (`app.component.ts#handleAuthUrl`, seit 15.7.2026) und Flutter (`AuthLink`) verarbeiten beide.
   - Quertest: am Laptop anfordern, auf dem iPhone öffnen (und umgekehrt).
-- [ ] Upload-Key-Reset in der Play Console beantragen (dauert 1–2 Tage).
+- [ ] Android-Upload-Key: liegt bei Leon (Keystore „attendix“, 6.11.2026 gefunden). Vor dem Release prüfen, dass der SHA-256 aus `keytool -list -v -keystore <datei>` zum Upload-Zertifikat in der Play Console (App-Integrität → App-Signatur) passt. Nur wenn nicht: Upload-Key-Reset beantragen (1–2 Tage).
 - [ ] Ionic-Web auf Vercel zusätzlich unter einer Zweitadresse erreichbar machen (z. B. `ionic.attendix.de`).
 - Ionic-Notfallbuild 5.0.1 wird bewusst **nicht** vorab gebaut (Entscheidung Leon, 6.11.2026); im Rollback-Fall erst dann bauen.
 - [ ] `bash tool/release/check_well_known.sh https://attendix-5eg.pages.dev` ist grün.
