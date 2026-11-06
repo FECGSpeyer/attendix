@@ -659,7 +659,9 @@ void main() {
 
     test('the router uses the split for Termine, Mitglieder and Werke', () {
       final router = File('lib/core/router/app_router.dart').readAsStringSync();
-      expect(RegExp('RdSplitView\\(').allMatches(router).length, 6);
+      expect(RegExp('RdSplitView\\(').allMatches(router).length, 5);
+      // Termine: the next Termin is open next to the list.
+      expect(router, contains('RdEventsSplitHome()'));
       expect(router, contains("ValueKey('rd-events-split')"));
       expect(router, contains("ValueKey('rd-members-split')"));
       expect(router, contains("ValueKey('rd-works-split')"));

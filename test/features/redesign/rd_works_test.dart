@@ -705,7 +705,8 @@ void main() {
       expect(_stat('1 ohne Noten'), findsOneWidget);
       expect(find.textContaining('ALS NÄCHSTES GEPLANT'), findsOneWidget);
       expect(find.text('NOCH OHNE NOTEN'), findsOneWidget);
-      expect(find.text('Werk hinzufügen'), findsOneWidget);
+      // Adding lives in the list's header only (one "+").
+      expect(find.text('Werk hinzufügen'), findsNothing);
       // Ave is planned again: not "long ago"; the oldest comes first.
       expect(find.text('AM LÄNGSTEN NICHT DRAN'), findsOneWidget);
       expect(

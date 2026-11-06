@@ -16,6 +16,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_events_providers.dart' show rdAttendanceDurationDays, rdUnrecordedProvider;
 import '../../../data/providers/rd_members_providers.dart';
 import '../../../data/providers/rd_today_providers.dart';
+import '../rd_desktop.dart';
 import '../rd_widgets.dart';
 import 'rd_player_today.dart';
 import 'rd_remind_open_sheet.dart';
@@ -70,49 +71,71 @@ class RdLeaderToday extends ConsumerWidget {
     final next = upcoming.firstOrNull;
     final week = rdThisWeek(upcoming.skip(1).toList());
 
+    final nextCard = <Widget>[
+      // UX V1: Beobachter cannot open Termine (Ionic); say so once
+      // instead of rows that look tappable.
+      if (role.isViewer) ...[
+        RdInfoCard(text: l10n.redesignTodayViewerHint, icon: Icons.info_outline),
+        const SizedBox(height: 16),
+      ],
+      if (next == null)
+        RdInfoCard(
+          text: l10n.redesignTodayNoUpcoming,
+          icon: Icons.event_available_outlined,
+          action: RdOutlineButton(
+            label: l10n.redesignTodayAllEvents,
+            onPressed: () => context.go(RedesignRoutes.events),
+          ),
+        )
+      else
+        _NextEventCard(attendance: next, canOpen: role.canAddAttendance, canRemind: isLead),
+    ];
+    final own = <Widget>[
+      if (role.canSeeSelfServiceTab) ...[
+        const SizedBox(height: 24),
+        const RdOwnAnswerSection(),
+        const RdDutySection(),
+      ],
+    ];
+    final weekSection = <Widget>[
+      RdSectionHeader(
+        l10n.redesignTodayThisWeek,
+        trailing: isLead ? _birthdayLine(context, ref) : null,
+        action: RdLinkButton(
+          label: l10n.redesignCommonAll,
+          onPressed: () => context.go(RedesignRoutes.events),
+        ),
+      ),
+      if (week.isEmpty)
+        RdInfoCard(text: l10n.redesignTodayWeekEmpty)
+      else
+        RdGroupedList(
+          children: [
+            for (final a in week) _WeekRow(attendance: a, canOpen: role.canAddAttendance),
+          ],
+        ),
+    ];
+
+    // Desktop: the next Termin on the left, what needs attention and the
+    // week on the right (canvas "Beta: Desktop-UX").
+    if (rdTodayColumns(context)) {
+      return RdDesktopColumns(
+        minWidth: 0,
+        left: [...nextCard, ...own],
+        right: [
+          if (isLead) _AttentionSection(next: next, padding: const EdgeInsets.only(bottom: 24)),
+          ...weekSection,
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // UX V1: Beobachter cannot open Termine (Ionic); say so once
-        // instead of rows that look tappable.
-        if (role.isViewer) ...[
-          RdInfoCard(text: l10n.redesignTodayViewerHint, icon: Icons.info_outline),
-          const SizedBox(height: 16),
-        ],
-        if (next == null)
-          RdInfoCard(
-            text: l10n.redesignTodayNoUpcoming,
-            icon: Icons.event_available_outlined,
-            action: RdOutlineButton(
-              label: l10n.redesignTodayAllEvents,
-              onPressed: () => context.go(RedesignRoutes.events),
-            ),
-          )
-        else
-          _NextEventCard(attendance: next, canOpen: role.canAddAttendance, canRemind: isLead),
+        ...nextCard,
         if (isLead) _AttentionSection(next: next),
-        if (role.canSeeSelfServiceTab) ...[
-          const SizedBox(height: 24),
-          const RdOwnAnswerSection(),
-          const RdDutySection(),
-        ],
+        ...own,
         const SizedBox(height: 24),
-        RdSectionHeader(
-          l10n.redesignTodayThisWeek,
-          trailing: isLead ? _birthdayLine(context, ref) : null,
-          action: RdLinkButton(
-            label: l10n.redesignCommonAll,
-            onPressed: () => context.go(RedesignRoutes.events),
-          ),
-        ),
-        if (week.isEmpty)
-          RdInfoCard(text: l10n.redesignTodayWeekEmpty)
-        else
-          RdGroupedList(
-            children: [
-              for (final a in week) _WeekRow(attendance: a, canOpen: role.canAddAttendance),
-            ],
-          ),
+        ...weekSection,
       ],
     );
   }
@@ -259,7 +282,10 @@ class _NextEventCard extends ConsumerWidget {
 /// "Braucht deine Aufmerksamkeit" (Dirigent, Verantwortlich): new
 /// registrations, critical members, sign-outs for the next Termin.
 class _AttentionSection extends ConsumerWidget {
-  const _AttentionSection({required this.next});
+  const _AttentionSection({required this.next, this.padding = const EdgeInsets.only(top: 24)});
+
+  /// Space around the section (below it when it opens a desktop column).
+  final EdgeInsets padding;
 
   final Attendance? next;
 
@@ -317,7 +343,7 @@ class _AttentionSection extends ConsumerWidget {
     ];
     if (rows.isEmpty) return const SizedBox.shrink();
     return Padding(
-      padding: const EdgeInsets.only(top: 24),
+      padding: padding,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

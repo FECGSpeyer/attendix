@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.60.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta am Desktop: Unter „Termine“ ist rechts sofort der nächste Termin offen statt einer leeren Fläche",
+        "✨ Beta am Desktop: Ein Termin zeigt Überblick und Anwesenheit nebeneinander statt in Tabs",
+        "✨ Beta am Desktop: „Heute“ nutzt die Breite in zwei Spalten, die Verwaltung ist zweigeteilt wie die Systemeinstellungen",
+        "✨ Beta am Desktop: Ein „+“ pro Bereich im Listenkopf (Termine, Werke, Mitglieder), das Menü öffnet sich direkt am Knopf",
+        "🐛 Beta: „ohne Noten“ hat in Liste und Übersicht dieselbe Farbe"
+      ]
+    },
+    {
       "version": "0.59.1",
       "date": "6.11.2026",
       "changes": [
