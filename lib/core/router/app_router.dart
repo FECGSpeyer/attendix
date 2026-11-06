@@ -162,6 +162,10 @@ const Map<String, RoleCheck> _protectedRoutes = {
   '/settings/viewers': _isAdminOrResponsible,
   '/settings/parents': _isAdminOrResponsible,
 
+  // Ionic LinkPersonsPage: modal only for isSuperAdmin (ADMIN), no URL.
+  // Must precede '/settings/general' (first prefix match wins).
+  '/settings/general/link-persons': _isAdmin,
+
   // Admin or Responsible
   '/settings/general': _isAdminOrResponsible,
   '/settings/types': _isAdminOrResponsible,

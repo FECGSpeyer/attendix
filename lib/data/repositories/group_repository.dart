@@ -347,9 +347,9 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Persist new sort_order values for instruments (id -> sort_order).
-  /// Ionic: instrument-list.page.ts saveOrder()
-  Future<void> updateGroupSortOrders(Map<int, int> sortOrders) async {
+  /// Persist sort_order values for instruments (id -> sort_order, null
+  /// stays null). Ionic: instrument-list.page.ts saveOrder()
+  Future<void> updateGroupSortOrders(Map<int, int?> sortOrders) async {
     ensureNotDemo('updateGroupSortOrders'); // DEMO_GUARD
     try {
       for (final entry in sortOrders.entries) {
@@ -365,9 +365,9 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Persist new sort_order values for group categories (id -> sort_order).
-  /// Ionic: group-category.service.ts updateGroupCategorySortOrder()
-  Future<void> updateGroupCategorySortOrders(Map<int, int> sortOrders) async {
+  /// Persist sort_order values for group categories (id -> sort_order, null
+  /// stays null). Ionic: group-category.service.ts updateGroupCategorySortOrder()
+  Future<void> updateGroupCategorySortOrders(Map<int, int?> sortOrders) async {
     ensureNotDemo('updateGroupCategorySortOrders'); // DEMO_GUARD
     try {
       for (final entry in sortOrders.entries) {

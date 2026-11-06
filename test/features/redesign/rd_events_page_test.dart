@@ -196,6 +196,18 @@ void main() {
       expect(rdPast(list, now: now).map((a) => a.id), [2, 4, 5]);
     });
 
+    test('all-day type without own duration_days: still upcoming on day 2 (#353)', () {
+      final camp = [TestFactories.createAttendance(id: 9, date: _day(-1, from: now), typeId: 'camp')];
+      final types = [
+        TestFactories.createAttendanceType(id: 'camp', name: 'Freizeit')
+            .copyWith(allDay: true, durationDays: 3),
+      ];
+      expect(rdUpcoming(camp, now: now, types: types).map((a) => a.id), [9]);
+      expect(rdPast(camp, now: now, types: types), isEmpty);
+      // Without types as before: ended after the first day.
+      expect(rdUpcoming(camp, now: now), isEmpty);
+    });
+
     test('average only over Termine with a percentage', () {
       expect(rdAveragePercentage(rdPast(list, now: now)), 80);
       expect(rdAveragePercentage(const []), isNull);

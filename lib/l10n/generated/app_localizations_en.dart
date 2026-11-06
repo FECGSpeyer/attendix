@@ -9678,7 +9678,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get redesignCreateDeadline => 'Sign-out deadline';
+  String get redesignCreateDeadline => 'Reply by';
 
   @override
   String get redesignCreateDeadline24h => '24 h before';
@@ -9688,7 +9688,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignCreateDeadlineHint =>
-      'After that, members can no longer sign in or out themselves.';
+      'After that, members can no longer accept; declining still works.';
 
   @override
   String get redesignCreateDeadlineNone => 'None';
@@ -9973,10 +9973,27 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignEventAllSettled => 'All done';
+
+  @override
   String get redesignEventAnswers => 'Responses';
 
   @override
   String get redesignEventAnswersTitle => 'Answers with reason';
+
+  @override
+  String get redesignEventArchiveHint => 'Archive via •••';
+
+  @override
+  String redesignEventAttendancePersons(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people',
+      one: '1 person',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get redesignEventBusyLeave => 'Please wait until everything is saved.';
@@ -10002,12 +10019,32 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String redesignEventCountAbsentStarted(Object count) {
+    return '$count absent';
+  }
+
+  @override
   String redesignEventCountExcused(Object count) {
     return '$count excused';
   }
 
   @override
+  String redesignEventCountExcusedStarted(Object count) {
+    return '$count excused';
+  }
+
+  @override
+  String redesignEventCountHere(Object count) {
+    return '$count present';
+  }
+
+  @override
   String redesignEventCountLate(Object count) {
+    return '$count late';
+  }
+
+  @override
+  String redesignEventCountLateStarted(Object count) {
     return '$count late';
   }
 
@@ -10052,6 +10089,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignEventEditBack => 'Event';
 
   @override
+  String get redesignEventEditBasics => 'Basics';
+
+  @override
   String get redesignEventEditDeadlineLocked => 'The event is in the past.';
 
   @override
@@ -10067,7 +10107,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignEventEditHint =>
-      'Changes are saved right away. Works, schedule and preparation are changed in the overview.';
+      'Changes are saved right away. Works and schedule are changed in the Program tab, preparation in the overview.';
 
   @override
   String get redesignEventEditSaved => 'Saved';
@@ -10077,6 +10117,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignEventExportExcel => 'Export as Excel';
+
+  @override
+  String get redesignEventForMembers => 'For members';
 
   @override
   String get redesignEventHide => 'Less';
@@ -10089,6 +10132,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get redesignEventKeyboardHint =>
       'Keyboard: A present · V late · F absent · ↑↓ next person · ⌘Z or Ctrl+Z undo';
+
+  @override
+  String get redesignEventLeadersOnly => 'Leaders only';
 
   @override
   String get redesignEventMenu => 'More actions';
@@ -10124,11 +10170,19 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String redesignEventNextInPlan(Object items) {
+    return 'Next: $items';
+  }
+
+  @override
   String get redesignEventNoMatch => 'Nobody matches your search.';
 
   @override
   String get redesignEventNoPersons =>
       'No people have been added to this event yet.';
+
+  @override
+  String get redesignEventNoPlanYet => 'No schedule yet';
 
   @override
   String get redesignEventNoReason => 'no reason';
@@ -10143,6 +10197,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignEventNoteHint => 'e.g. reason or time';
 
   @override
+  String redesignEventNowInPlan(Object time) {
+    return 'Now in the schedule · until $time';
+  }
+
+  @override
+  String get redesignEventPhaseArchived => 'Archived';
+
+  @override
+  String redesignEventPhaseRunning(Object time) {
+    return 'Running · since $time';
+  }
+
+  @override
+  String get redesignEventPhaseRunningShort => 'Running';
+
+  @override
+  String redesignEventPhaseToday(Object time) {
+    return 'Today $time';
+  }
+
+  @override
+  String get redesignEventPhaseYesterday => 'Yesterday';
+
+  @override
   String get redesignEventPlan => 'View schedule';
 
   @override
@@ -10155,7 +10233,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignEventPlanEditHint => 'Items, times, PDF and Telegram';
 
   @override
+  String get redesignEventPlanEditShort => 'Edit';
+
+  @override
   String get redesignEventPlanHint => 'Run sheet, live on the day';
+
+  @override
+  String get redesignEventPlanLive => 'Live schedule';
+
+  @override
+  String redesignEventPlanMinutes(Object count) {
+    return '$count min';
+  }
+
+  @override
+  String get redesignEventPlanNowPill => 'now';
 
   @override
   String get redesignEventPlanSection => 'Schedule';
@@ -10168,12 +10260,41 @@ class AppLocalizationsEn extends AppLocalizations {
       'Members see the schedule with the event';
 
   @override
+  String get redesignEventPlanShared => 'Schedule visible to all';
+
+  @override
   String redesignEventPrep(Object done, Object total) {
     return 'Preparation · $done of $total done';
   }
 
   @override
+  String redesignEventPresentOf(Object present, Object total, Object percent) {
+    return '$present of $total · $percent %';
+  }
+
+  @override
   String get redesignEventProgram => 'Programme';
+
+  @override
+  String redesignEventProgramMore(Object names, Object count) {
+    return '$names and $count more';
+  }
+
+  @override
+  String redesignEventProgramPlan(Object range) {
+    return 'Schedule $range';
+  }
+
+  @override
+  String redesignEventProgramWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pieces',
+      one: '1 piece',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get redesignEventRecord => 'Take attendance';
@@ -10253,6 +10374,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignEventTabOverview => 'Overview';
+
+  @override
+  String get redesignEventTabProgram => 'Program';
 
   @override
   String get redesignEventTabRecord => 'Attendance';
@@ -11005,10 +11129,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignNotifTelegramDisconnect => 'Disconnect';
 
   @override
+  String redesignOwnAnswerDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'You can still answer for $count days.',
+      one: 'You can still answer for 1 day.',
+      zero: 'You can still answer today.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignOwnAskReason => 'The leaders ask for the reason.';
+
+  @override
+  String get redesignOwnComeLater => 'Coming later';
+
+  @override
+  String get redesignOwnComingLater => 'You\'re coming later';
+
+  @override
+  String get redesignOwnIn => 'You\'re in';
+
+  @override
   String get redesignOwnInfos => 'Event info';
 
   @override
   String get redesignOwnMore => 'More';
+
+  @override
+  String get redesignOwnNoAnswer => 'No answer yet';
 
   @override
   String get redesignOwnNoNotes => 'No scores';
@@ -11020,7 +11171,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignOwnNotFound => 'This event is no longer in your list.';
 
   @override
+  String get redesignOwnNotRecorded => 'Not recorded';
+
+  @override
+  String get redesignOwnNoteToLeaders => 'Note to the leaders';
+
+  @override
   String get redesignOwnOpenMine => 'Open your scores';
+
+  @override
+  String get redesignOwnPlanAll => 'View all';
+
+  @override
+  String get redesignOwnPlanLive => 'Live view';
+
+  @override
+  String redesignOwnPlanMore(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'and $count more items',
+      one: 'and 1 more item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignOwnPlanned => 'You\'re scheduled';
 
   @override
   String get redesignOwnPrintMine => 'My scores as one PDF';
@@ -11037,7 +11214,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignOwnRoute => 'Directions';
 
   @override
+  String get redesignOwnSignOut => 'Sign out';
+
+  @override
   String get redesignOwnYouConduct => 'You conduct';
+
+  @override
+  String get redesignOwnYourAttendance => 'Your attendance';
 
   @override
   String get redesignParentsAllKids => 'All children';

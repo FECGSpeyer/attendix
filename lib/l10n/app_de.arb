@@ -12179,7 +12179,7 @@
       }
     }
   },
-  "redesignCreateDeadline": "Abmeldeschluss",
+  "redesignCreateDeadline": "Antwort bis",
   "@redesignCreateDeadline": {
     "description": "redesign.create.deadline"
   },
@@ -12191,7 +12191,7 @@
   "@redesignCreateDeadline2d": {
     "description": "redesign.create.deadline2d"
   },
-  "redesignCreateDeadlineHint": "Danach können sich Mitglieder nicht mehr selbst an- oder abmelden.",
+  "redesignCreateDeadlineHint": "Danach kann man nicht mehr zusagen, absagen geht weiter.",
   "@redesignCreateDeadlineHint": {
     "description": "redesign.create.deadlineHint"
   },
@@ -12522,6 +12522,10 @@
       }
     }
   },
+  "redesignEventAllSettled": "Alles erledigt",
+  "@redesignEventAllSettled": {
+    "description": "redesign.event.allSettled"
+  },
   "redesignEventAnswers": "Rückmeldungen",
   "@redesignEventAnswers": {
     "description": "redesign.event.answers"
@@ -12529,6 +12533,19 @@
   "redesignEventAnswersTitle": "Rückmeldungen mit Grund",
   "@redesignEventAnswersTitle": {
     "description": "redesign.event.answersTitle"
+  },
+  "redesignEventArchiveHint": "Archivieren unter •••",
+  "@redesignEventArchiveHint": {
+    "description": "redesign.event.archiveHint"
+  },
+  "redesignEventAttendancePersons": "{count, plural, one {1 Person} other {{count} Personen}}",
+  "@redesignEventAttendancePersons": {
+    "description": "redesign.event.attendancePersons",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "redesignEventBusyLeave": "Bitte warte, bis alles gespeichert ist.",
   "@redesignEventBusyLeave": {
@@ -12561,6 +12578,13 @@
       "count": {}
     }
   },
+  "redesignEventCountAbsentStarted": "{count} abwesend",
+  "@redesignEventCountAbsentStarted": {
+    "description": "redesign.event.countAbsentStarted",
+    "placeholders": {
+      "count": {}
+    }
+  },
   "redesignEventCountExcused": "{count} entsch.",
   "@redesignEventCountExcused": {
     "description": "redesign.event.countExcused",
@@ -12568,9 +12592,30 @@
       "count": {}
     }
   },
+  "redesignEventCountExcusedStarted": "{count} entschuldigt",
+  "@redesignEventCountExcusedStarted": {
+    "description": "redesign.event.countExcusedStarted",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventCountHere": "{count} anwesend",
+  "@redesignEventCountHere": {
+    "description": "redesign.event.countHere",
+    "placeholders": {
+      "count": {}
+    }
+  },
   "redesignEventCountLate": "{count} später",
   "@redesignEventCountLate": {
     "description": "redesign.event.countLate",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventCountLateStarted": "{count} verspätet",
+  "@redesignEventCountLateStarted": {
+    "description": "redesign.event.countLateStarted",
     "placeholders": {
       "count": {}
     }
@@ -12628,6 +12673,10 @@
   "@redesignEventEditBack": {
     "description": "redesign.eventEdit.back"
   },
+  "redesignEventEditBasics": "Grunddaten",
+  "@redesignEventEditBasics": {
+    "description": "redesign.event.editBasics"
+  },
   "redesignEventEditDeadlineLocked": "Der Termin liegt in der Vergangenheit.",
   "@redesignEventEditDeadlineLocked": {
     "description": "redesign.eventEdit.deadlineLocked"
@@ -12647,7 +12696,7 @@
   "@redesignEventEditFolderNone": {
     "description": "redesign.eventEdit.folderNone"
   },
-  "redesignEventEditHint": "Änderungen werden sofort gespeichert. Werke, Ablauf und Vorbereitung änderst du im Überblick.",
+  "redesignEventEditHint": "Änderungen werden sofort gespeichert. Werke und Ablauf änderst du im Reiter Programm, die Vorbereitung im Überblick.",
   "@redesignEventEditHint": {
     "description": "redesign.eventEdit.hint"
   },
@@ -12663,6 +12712,10 @@
   "@redesignEventExportExcel": {
     "description": "redesign.event.exportExcel"
   },
+  "redesignEventForMembers": "Für Mitglieder",
+  "@redesignEventForMembers": {
+    "description": "redesign.event.forMembers"
+  },
   "redesignEventHide": "Weniger",
   "@redesignEventHide": {
     "description": "redesign.event.hide"
@@ -12677,6 +12730,10 @@
   "redesignEventKeyboardHint": "Tastatur: A anwesend · V verspätet · F fehlt · ↑↓ nächste Person · ⌘Z oder Strg+Z rückgängig",
   "@redesignEventKeyboardHint": {
     "description": "redesign.event.keyboardHint"
+  },
+  "redesignEventLeadersOnly": "Nur Leitung",
+  "@redesignEventLeadersOnly": {
+    "description": "redesign.event.leadersOnly"
   },
   "redesignEventMenu": "Weitere Aktionen",
   "@redesignEventMenu": {
@@ -12717,6 +12774,13 @@
       "title": {}
     }
   },
+  "redesignEventNextInPlan": "Danach: {items}",
+  "@redesignEventNextInPlan": {
+    "description": "redesign.event.nextInPlan",
+    "placeholders": {
+      "items": {}
+    }
+  },
   "redesignEventNoMatch": "Niemand passt zur Suche.",
   "@redesignEventNoMatch": {
     "description": "redesign.event.noMatch"
@@ -12724,6 +12788,10 @@
   "redesignEventNoPersons": "Für diesen Termin sind noch keine Personen eingetragen.",
   "@redesignEventNoPersons": {
     "description": "redesign.event.noPersons"
+  },
+  "redesignEventNoPlanYet": "Noch kein Ablauf",
+  "@redesignEventNoPlanYet": {
+    "description": "redesign.event.noPlanYet"
   },
   "redesignEventNoReason": "ohne Grund",
   "@redesignEventNoReason": {
@@ -12741,6 +12809,39 @@
   "@redesignEventNoteHint": {
     "description": "redesign.event.noteHint"
   },
+  "redesignEventNowInPlan": "Jetzt im Ablauf · bis {time}",
+  "@redesignEventNowInPlan": {
+    "description": "redesign.event.nowInPlan",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "redesignEventPhaseArchived": "Archiviert",
+  "@redesignEventPhaseArchived": {
+    "description": "redesign.event.phaseArchived"
+  },
+  "redesignEventPhaseRunning": "Läuft · seit {time}",
+  "@redesignEventPhaseRunning": {
+    "description": "redesign.event.phaseRunning",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "redesignEventPhaseRunningShort": "Läuft",
+  "@redesignEventPhaseRunningShort": {
+    "description": "redesign.event.phaseRunningShort"
+  },
+  "redesignEventPhaseToday": "Heute {time}",
+  "@redesignEventPhaseToday": {
+    "description": "redesign.event.phaseToday",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "redesignEventPhaseYesterday": "Gestern",
+  "@redesignEventPhaseYesterday": {
+    "description": "redesign.event.phaseYesterday"
+  },
   "redesignEventPlan": "Ablauf ansehen",
   "@redesignEventPlan": {
     "description": "redesign.event.plan"
@@ -12757,9 +12858,28 @@
   "@redesignEventPlanEditHint": {
     "description": "redesign.event.planEditHint"
   },
+  "redesignEventPlanEditShort": "Bearbeiten",
+  "@redesignEventPlanEditShort": {
+    "description": "redesign.event.planEditShort"
+  },
   "redesignEventPlanHint": "Ablaufplan, am Termin-Tag live",
   "@redesignEventPlanHint": {
     "description": "redesign.event.planHint"
+  },
+  "redesignEventPlanLive": "Ablauf live",
+  "@redesignEventPlanLive": {
+    "description": "redesign.event.planLive"
+  },
+  "redesignEventPlanMinutes": "{count} Min",
+  "@redesignEventPlanMinutes": {
+    "description": "redesign.event.planMinutes",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventPlanNowPill": "jetzt",
+  "@redesignEventPlanNowPill": {
+    "description": "redesign.event.planNowPill"
   },
   "redesignEventPlanSection": "Ablauf",
   "@redesignEventPlanSection": {
@@ -12773,6 +12893,10 @@
   "@redesignEventPlanShareHint": {
     "description": "redesign.event.planShareHint"
   },
+  "redesignEventPlanShared": "Ablauf für alle sichtbar",
+  "@redesignEventPlanShared": {
+    "description": "redesign.event.planShared"
+  },
   "redesignEventPrep": "Vorbereitung · {done} von {total} erledigt",
   "@redesignEventPrep": {
     "description": "redesign.event.prep",
@@ -12781,9 +12905,42 @@
       "total": {}
     }
   },
+  "redesignEventPresentOf": "{present} von {total} · {percent} %",
+  "@redesignEventPresentOf": {
+    "description": "redesign.event.presentOf",
+    "placeholders": {
+      "present": {},
+      "total": {},
+      "percent": {}
+    }
+  },
   "redesignEventProgram": "Programm",
   "@redesignEventProgram": {
     "description": "redesign.event.program"
+  },
+  "redesignEventProgramMore": "{names} und {count} weitere",
+  "@redesignEventProgramMore": {
+    "description": "redesign.event.programMore",
+    "placeholders": {
+      "names": {},
+      "count": {}
+    }
+  },
+  "redesignEventProgramPlan": "Ablauf {range}",
+  "@redesignEventProgramPlan": {
+    "description": "redesign.event.programPlan",
+    "placeholders": {
+      "range": {}
+    }
+  },
+  "redesignEventProgramWorks": "{count, plural, one {1 Werk} other {{count} Werke}}",
+  "@redesignEventProgramWorks": {
+    "description": "redesign.event.programWorks",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "redesignEventRecord": "Anwesenheit eintragen",
   "@redesignEventRecord": {
@@ -12888,6 +13045,10 @@
   "redesignEventTabOverview": "Überblick",
   "@redesignEventTabOverview": {
     "description": "redesign.event.tabOverview"
+  },
+  "redesignEventTabProgram": "Programm",
+  "@redesignEventTabProgram": {
+    "description": "redesign.event.tabProgram"
   },
   "redesignEventTabRecord": "Anwesenheit",
   "@redesignEventTabRecord": {
@@ -13828,6 +13989,31 @@
   "@redesignNotifTelegramDisconnect": {
     "description": "redesign.notif.telegramDisconnect"
   },
+  "redesignOwnAnswerDays": "{count, plural, =0 {Du kannst heute noch antworten.} one {Du kannst noch 1 Tag antworten.} other {Du kannst noch {count} Tage antworten.}}",
+  "@redesignOwnAnswerDays": {
+    "description": "redesign.own.answerDays",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignOwnAskReason": "Die Leitung fragt nach dem Grund.",
+  "@redesignOwnAskReason": {
+    "description": "redesign.own.askReason"
+  },
+  "redesignOwnComeLater": "Komme später",
+  "@redesignOwnComeLater": {
+    "description": "redesign.own.comeLater"
+  },
+  "redesignOwnComingLater": "Du kommst später",
+  "@redesignOwnComingLater": {
+    "description": "redesign.own.comingLater"
+  },
+  "redesignOwnIn": "Du bist dabei",
+  "@redesignOwnIn": {
+    "description": "redesign.own.in"
+  },
   "redesignOwnInfos": "Infos zum Termin",
   "@redesignOwnInfos": {
     "description": "redesign.own.infos"
@@ -13835,6 +14021,10 @@
   "redesignOwnMore": "Mehr",
   "@redesignOwnMore": {
     "description": "redesign.own.more"
+  },
+  "redesignOwnNoAnswer": "Noch keine Antwort",
+  "@redesignOwnNoAnswer": {
+    "description": "redesign.own.noAnswer"
   },
   "redesignOwnNoNotes": "Keine Noten",
   "@redesignOwnNoNotes": {
@@ -13848,9 +14038,38 @@
   "@redesignOwnNotFound": {
     "description": "redesign.own.notFound"
   },
+  "redesignOwnNotRecorded": "Nicht erfasst",
+  "@redesignOwnNotRecorded": {
+    "description": "redesign.own.notRecorded"
+  },
+  "redesignOwnNoteToLeaders": "Notiz an die Leitung",
+  "@redesignOwnNoteToLeaders": {
+    "description": "redesign.own.noteToLeaders"
+  },
   "redesignOwnOpenMine": "Deine Noten öffnen",
   "@redesignOwnOpenMine": {
     "description": "redesign.own.openMine"
+  },
+  "redesignOwnPlanAll": "Ganz ansehen",
+  "@redesignOwnPlanAll": {
+    "description": "redesign.own.planAll"
+  },
+  "redesignOwnPlanLive": "Live-Ansicht",
+  "@redesignOwnPlanLive": {
+    "description": "redesign.own.planLive"
+  },
+  "redesignOwnPlanMore": "{count, plural, one {und 1 weiterer Punkt} other {und {count} weitere Punkte}}",
+  "@redesignOwnPlanMore": {
+    "description": "redesign.own.planMore",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignOwnPlanned": "Du bist eingeplant",
+  "@redesignOwnPlanned": {
+    "description": "redesign.own.planned"
   },
   "redesignOwnPrintMine": "Meine Noten als ein PDF",
   "@redesignOwnPrintMine": {
@@ -13872,9 +14091,17 @@
   "@redesignOwnRoute": {
     "description": "redesign.own.route"
   },
+  "redesignOwnSignOut": "Abmelden",
+  "@redesignOwnSignOut": {
+    "description": "redesign.own.signOut"
+  },
   "redesignOwnYouConduct": "Du dirigierst",
   "@redesignOwnYouConduct": {
     "description": "redesign.own.youConduct"
+  },
+  "redesignOwnYourAttendance": "Deine Anwesenheit",
+  "@redesignOwnYourAttendance": {
+    "description": "redesign.own.yourAttendance"
   },
   "redesignParentsAllKids": "Alle Kinder",
   "@redesignParentsAllKids": {

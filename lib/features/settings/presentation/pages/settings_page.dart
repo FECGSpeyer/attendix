@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/shorebird_providers.dart';
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
@@ -546,7 +547,8 @@ class SettingsPage extends ConsumerWidget {
                   icon: Icons.auto_awesome_outlined,
                   title: l10n.settingsWhatsNew,
                   detail: false,
-                  trailing: const IonBadge(text: AppConstants.appVersion),
+                  // SHOREBIRD: "5.0.0 (Patch 2)" while a code push patch runs
+                  trailing: IonBadge(text: ref.watch(appVersionLabelProvider)),
                   onTap: () => showVersionHistorySheet(context),
                 ),
                 // NATIVE_MISC: Ionic liveUpdate.updateAvailable() → "Update installieren"

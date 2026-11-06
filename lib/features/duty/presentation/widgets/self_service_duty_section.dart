@@ -5,6 +5,8 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/duty_utils.dart';
+import '../../../../core/utils/event_list_utils.dart';
+import '../../../../data/repositories/duty_repository.dart' show DutyTermin;
 import '../pages/unavailability_page.dart';
 import 'duty_actions.dart';
 import '../../../../l10n/l10n.dart';
@@ -96,7 +98,7 @@ class SelfServiceDutySection extends ConsumerWidget {
               children: [
                 Text(r.termin.title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                 const SizedBox(height: 2),
-                Text(_dateLine(r.termin), style: const TextStyle(color: AppColors.medium)),
+                Text(dutyEventMetaLine(r.termin), style: const TextStyle(color: AppColors.medium)),
                 const SizedBox(height: 6),
                 DutyPill(text: context.l10n.signoutYouAreAssigned, color: AppColors.warningDark),
                 const SizedBox(height: AppDimensions.paddingS),
@@ -140,7 +142,7 @@ class SelfServiceDutySection extends ConsumerWidget {
               children: [
                 Text(next.termin.title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                 const SizedBox(height: 2),
-                Text(_dateLine(next.termin), style: const TextStyle(color: AppColors.medium)),
+                Text(dutyEventMetaLine(next.termin), style: const TextStyle(color: AppColors.medium)),
                 const SizedBox(height: 6),
                 Wrap(
                   spacing: 6,
@@ -279,6 +281,17 @@ String _dateLine(DutyTermin t) {
   final time = t.attendance.startTime ?? t.type.startTime;
   final timeText = time != null && time.length >= 5 ? ' · ${l10nWithoutContext.dutyFlutterTimeOClock(time.substring(0, 5))}' : '';
   return '${_dateShort(t)}$timeText';
+}
+
+/// Ionic `getEventMeta(att, true, false)` on the duty cards ("Bitte
+/// bestätigen", "Nächster Dienst"): "Di., 05.11.2026 · 19:00–21:00", only
+/// the start time without an end time; no place.
+String dutyEventMetaLine(DutyTermin t) {
+  final a = t.attendance;
+  return EventListUtils.meta([
+    EventListUtils.readableDate(a.date, allDay: t.type.allDay, durationDays: t.type.durationDays),
+    EventListUtils.timeRange(a.startTime ?? t.type.startTime, a.endTime ?? t.type.endTime),
+  ]);
 }
 
 String _dutyMeta(DutyTermin t) {

@@ -85,8 +85,12 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
       ToastHelper.showError(context, context.l10n.generalSettingsSelectStatus);
       return;
     }
-    final threshold = int.tryParse(_thresholdController.text);
-    if (threshold == null || threshold <= 0) {
+    // Ionic number input: decimals allowed (e.g. 33.5 %); a decimal comma
+    // from the German keyboard counts as the decimal point.
+    final threshold =
+        num.tryParse(_thresholdController.text.trim().replaceAll(',', '.'));
+    // NaN/Infinity would pass `<= 0` but break the JSON encoding on save.
+    if (threshold == null || !threshold.isFinite || threshold <= 0) {
       ToastHelper.showError(context, context.l10n.generalSettingsThresholdPositive);
       return;
     }
@@ -212,12 +216,13 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
                 Expanded(
                   child: TextField(
                     controller: _thresholdController,
-                    keyboardType: TextInputType.number,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    // Ionic general.page: label "Anzahl" / "Prozent"
                     decoration: InputDecoration(
-                      labelText: context.l10n.typeSettingsValue,
-                      suffixText: _thresholdType == CriticalRuleThresholdType.percentage
-                          ? '%'
-                          : 'x',
+                      labelText: _thresholdType == CriticalRuleThresholdType.percentage
+                          ? context.l10n.generalSettingsPercent
+                          : context.l10n.generalSettingsCount,
                     ),
                   ),
                 ),

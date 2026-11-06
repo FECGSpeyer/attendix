@@ -17,6 +17,7 @@ import 'group_providers.dart';
 import 'player_providers.dart';
 import 'profile_providers.dart';
 import 'tenant_providers.dart';
+import '../utils/global_toast.dart';
 import '../utils/paged_query.dart';
 
 /// Date range for statistics filtering
@@ -167,7 +168,15 @@ final activePlayersForStatsProvider = FutureProvider<List<Person>>((ref) async {
 
   // SOL_FIX1: per-tenant instance instead of mutating the shared one.
   final repo = ref.watch(playerRepositoryForTenantProvider(tenantId));
-  final players = await repo.getPlayers();
+  final List<Person> players;
+  try {
+    players = await repo.getPlayers();
+  } catch (_) {
+    // Ionic db.getPlayers: red toast "Fehler beim Laden der Personen" instead
+    // of empty charts without a hint (once per failed load).
+    GlobalToast.error(l10nWithoutContext.dbLoadPeopleFailed);
+    rethrow;
+  }
 
   // Filter to active players only (left is null or empty = still active, not paused)
   return players.where((p) {

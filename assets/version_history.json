@@ -1,10 +1,36 @@
 {
   "versions": [
     {
-      "version": "0.41.28",
-      "date": "5.11.2026",
+      "version": "0.42.3",
+      "date": "6.11.2026",
       "changes": [
         "🔐 Passwort-Vorschläge beim Anmelden: gespeicherte Zugangsdaten werden angeboten und nach der Anmeldung gesichert"
+      ]
+    },
+    {
+      "version": "0.42.2",
+      "date": "6.11.2026",
+      "changes": [
+        "🐛 Beta: Mehrtägige Termine wie eine Freizeit bleiben in der Terminliste, unter Heute und bei den Werken bis zum letzten Tag sichtbar"
+      ]
+    },
+    {
+      "version": "0.42.1",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ Versionsanzeige und „Was ist neu“ zeigen die Store-Version 5.0.0 und die gewohnte Versionshistorie der bisherigen App"
+      ]
+    },
+    {
+      "version": "0.42.0",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ Beta: Jeder Termin hat oben denselben Kopf mit Art und Phase („Morgen“, „Heute 19:30“, „Läuft · seit 19:30“, „Gestern“, „Archiviert“)",
+        "✨ Beta: Die Karte oben folgt dem Termin: vorher Rückmeldungen, am Tag „Anwesenheit eintragen“ mit Pultmodus und Ablauf, während des Termins „Jetzt im Ablauf“, danach die Anwesenheit in Prozent",
+        "✨ Beta: Neuer Reiter „Programm“ mit den Werken und dem Ablauf als Liste mit Uhrzeiten, die aktuelle Zeile ist markiert",
+        "✨ Beta: Im Überblick sind die Angaben in „Für Mitglieder“ und „Nur Leitung“ geteilt; „Bearbeiten“ ist genauso gegliedert und heißt jetzt „Antwort bis“",
+        "✨ Beta: Mitglieder sehen im Termin oben „Du bist eingeplant“ mit „Abmelden“ und „Komme später“, den freigegebenen Ablauf als kurze Vorschau und die Infos als Zeilen",
+        "✨ Beta: Während des Termins zeigt die Karte oben für Mitglieder „Jetzt im Ablauf“ mit „Deine Noten öffnen“, danach „Deine Anwesenheit“ mit „Grund nachtragen“ und „Ich war doch da“, wenn die Leitung per Nachricht nachfragt"
       ]
     },
     {

@@ -12,7 +12,7 @@ bash tool/release/check_well_known.sh https://attendix-5eg.pages.dev  # remote
 bash tool/release/check_well_known.sh --apple-cdn https://attendix.de https://www.attendix.de
 ```
 
-## 1. Vorher (jederzeit, ohne Wirkung auf Ionic)
+## 1. Vor dem Release, nach dem TestFlight-Test (ohne Wirkung auf Ionic)
 
 - [ ] Supabase-Mailvorlagen auf token_hash-Links umstellen:
   - „Reset Password“: `{{ .SiteURL }}/resetPassword?token_hash={{ .TokenHash }}&type=recovery`
@@ -26,7 +26,7 @@ bash tool/release/check_well_known.sh --apple-cdn https://attendix.de https://ww
 
 ## 2. Beim Release
 
-- [ ] Store-Builds mit `shorebird release` bauen (Shorebird-Doku, sobald im Repo vorhanden).
+- [ ] Store-Builds mit `shorebird release` bauen (siehe `docs/release/shorebird.md`).
 - [ ] Versionsnummern: Android `versionCode` > 227, iOS-Build > 236.
 - [ ] iOS: „Phasenweise Veröffentlichung“ einschalten.
 - [ ] Android: gestaffelter Rollout 5 % → 20 % → 50 % → 100 %; vor jeder Stufe Absturzrate und Rückmeldungen prüfen.

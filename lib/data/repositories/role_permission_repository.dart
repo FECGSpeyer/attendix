@@ -63,6 +63,8 @@ class RolePermissionRepository extends BaseRepository with TenantAwareRepository
   /// "Dateiablage für alle Mitglieder" (tenants.files_shared). Nur Admins
   /// (DB-Trigger protect_tenant_files_flags prüft das zusätzlich).
   Future<void> updateFilesShared(bool filesShared) async {
+    // DEMO_GUARD: Ionic DbService.updateTenantData → checkDemoRestriction.
+    ensureNotDemo('updateFilesShared');
     try {
       await supabase
           .from('tenants')

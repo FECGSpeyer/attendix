@@ -38,7 +38,12 @@ void main() {
     test('archivePlayer revokes access and removes later Termine', () {
       final b = body(source, 'archivePlayer');
       expect(b, contains('removeUserFromTenant(appId, personId: player.id)'));
-      expect(b, contains('removeFromUpcomingAttendances(player.id!, from: leftDate)'));
+      // Ionic getAttendancesByDate(left): date > local start of leave day.
+      expect(
+        b.replaceAll(RegExp(r'\s+'), ' '),
+        contains('removeFromUpcomingAttendances( player.id!, from: leftDate, '
+            'inclusive: false, )'),
+      );
       expect(b, contains("if (clearAppId) 'appId': null"));
       expect(b, contains(".eq('tenantId', currentTenantId)"));
     });
@@ -132,6 +137,8 @@ void main() {
       expect(b, contains(".eq('appId', appId)"));
       expect(b, contains(".eq('tenantId', currentTenantId)"));
       expect(b, contains("..['left'] = null"));
+      // Ionic pickPersonFields (no img): the reactivated row keeps its picture
+      expect(b, contains("..remove('img')"));
     });
   });
 

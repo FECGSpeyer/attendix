@@ -1,0 +1,2527 @@
+{
+  "versions": [
+    {
+      "version": "5.0.0",
+      "changes": [
+        "✨ Attendix wurde technisch komplett neu aufgebaut: schneller und flüssiger, alle gewohnten Funktionen bleiben erhalten."
+      ]
+    },
+    {
+      "version": "4.19.9",
+      "date": "4.11.2026",
+      "changes": [
+        "📝 Ablaufplan: Beim Weiterbearbeiten eines begonnenen Plans werden die gespeicherten Programmpunkte wieder sofort angezeigt."
+      ]
+    },
+    {
+      "version": "4.19.8",
+      "date": "4.11.2026",
+      "changes": [
+        "🎵 Termin: Bei „Werke hinzufügen“ werden wieder alle Werke zur Auswahl angezeigt. Live-Aktualisierungen auf der Terminseite funktionieren wieder zuverlässig."
+      ]
+    },
+    {
+      "version": "4.19.7",
+      "date": "3.11.2026",
+      "changes": [
+        "🗂️ Gemeinde App: Neben den kommenden ORG-Plänen kommen jetzt auch die letzten 20 vergangenen mit."
+      ]
+    },
+    {
+      "version": "4.19.6",
+      "date": "2.11.2026",
+      "changes": [
+        "💾 Automatische Nachrichten: Eine Regel speicherst du jetzt wie auf den anderen Seiten über den runden Speichern-Button unten rechts statt über den Button oben in der Kopfzeile."
+      ]
+    },
+    {
+      "version": "4.19.5",
+      "date": "2.11.2026",
+      "changes": [
+        "🎻 Personen: Beim Anlegen oder Bearbeiten zeigt das Feld Gruppe jetzt immer die ausgewählte Gruppe an statt der ersten Gruppe der Liste."
+      ]
+    },
+    {
+      "version": "4.19.4",
+      "date": "2.11.2026",
+      "changes": [
+        "⚡ Termine: Ein Termin öffnet jetzt schneller. Die Personenliste erscheint sofort, Werke und Dirigenten laden im Hintergrund nach."
+      ]
+    },
+    {
+      "version": "4.19.3",
+      "date": "2.11.2026",
+      "changes": [
+        "🖼️ Personen übergeben: Beim Überführen in eine andere Instanz wird jetzt auch das Profilbild mit übernommen."
+      ]
+    },
+    {
+      "version": "4.19.2",
+      "date": "2.11.2026",
+      "changes": [
+        "🐛 Termine anlegen: Ein schneller Doppeltipp auf „Termin anlegen“ legt den Termin nicht mehr doppelt an, und derselbe Tag wird auch bei mehrfacher Auswahl nur einmal angelegt."
+      ]
+    },
+    {
+      "version": "4.19.1",
+      "date": "2.11.2026",
+      "changes": [
+        "🗂️ Dateiablage: Mehrere Dateien und Ordner auf einmal markieren (Häkchen oben oder im Menü) und gemeinsam verschieben oder löschen.",
+        "📁 Verschieben zeigt jetzt die Ordnerstruktur als aufklappbaren Baum, in dem du das Ziel antippst. Neue Zielordner legst du direkt im Dialog an, gleichnamige Einträge im Ziel werden nicht überschrieben."
+      ]
+    },
+    {
+      "version": "4.19.0",
+      "date": "2.11.2026",
+      "changes": [
+        "🧭 Seitenleiste auf Tablet und Computer: Statt der Tabs unten gibt es links eine einklappbare Seitenleiste mit mehr Bereichen (z. B. Teamorganisation, Ablaufpläne, Dateiablage, Statistik), Zählern für offene Aufgaben und neue Anmeldungen, Instanzwechsel oben und Ausloggen unten. Einklappen per Symbol oben links oder Strg/⌘ + B. Auf dem Handy bleiben die Tabs.",
+        "🗓️ Termine auf großen Bildschirmen: Anstehende Termine links, vergangene Termine mit Durchschnitt rechts."
+      ]
+    },
+    {
+      "version": "4.18.0",
+      "date": "2.11.2026",
+      "changes": [
+        "⏱️ Automatische Nachrichten: Admins und Verantwortliche legen unter Einstellungen → Mitteilungen Regeln an, z. B. eine Nachricht an alle, die nach einer Probe noch unentschuldigt sind. Mit Vorlagen, Platzhaltern, Verzögerung, „mehrmals in Folge“, Vorschau und Verlauf. Gesendet wird nur, wenn die Anwesenheit wirklich eingetragen wurde.",
+        "💬 Mitglieder können auf die Nachricht antworten: Grund nachtragen oder „Ich war doch da“. Die Rückmeldungen erscheinen im Termin zum Bestätigen oder Ablehnen.",
+        "✉️ Im Termin-Menü gibt es „Unentschuldigte anschreiben“ für eine vorausgefüllte Mitteilung an alle Unentschuldigten.",
+        "📱 Mitteilungen-Seiten haben auf iOS genug Abstand zur Tableiste."
+      ]
+    },
+    {
+      "version": "4.17.27",
+      "date": "2.11.2026",
+      "changes": [
+        "🎵 Werke je Termin: Die Markierung „♪ n Werke“ zeigt jetzt nur die Werke, die beim Termin unter „Werke“ ausgewählt wurden, nicht mehr die Werke aus dem Ablaufplan. „Aktuelle Werke“ ebenso."
+      ]
+    },
+    {
+      "version": "4.17.26",
+      "date": "1.11.2026",
+      "changes": [
+        "🎵 Werke je Termin: Unter „Meine Anwesenheit“ zeigt jeder Termin mit Werken die Markierung „♪ n Werke“, auch vergangene Termine. Ein Tipp öffnet die Werke des Termins mit Noten anzeigen, herunterladen und drucken. Werke aus dem Ablaufplan erscheinen auch, wenn der Plan nicht freigegeben ist.",
+        "📄 Ablaufplan: Mitglieder öffnen die Noten eines Werks direkt per Tipp auf die Zeile.",
+        "🎶 Aktuelle Werke zeigen jetzt auch die Werke aus dem Ablaufplan."
+      ]
+    },
+    {
+      "version": "4.17.25",
+      "date": "1.11.2026",
+      "changes": [
+        "🎵 Ablaufplan: Sind alle aktuellen Werke schon im Plan, fragt „Aktuelle Werke hinzufügen“ jetzt, ob sie noch einmal hinzugefügt werden sollen. Bei mehreren Plänen zählt nur der geöffnete Plan."
+      ]
+    },
+    {
+      "version": "4.17.24",
+      "date": "1.11.2026",
+      "changes": [
+        "🗄️ Termine archivieren: Admins und Verantwortliche können vergangene Termine über das Menü (⋮) im Termin archivieren. Mitglieder sehen archivierte Termine und ihre Anwesenheit dazu nicht mehr, auch nicht im Kalender-Abo. In der Terminübersicht holst du sie über „Archivierte anzeigen“ zurück und kannst sie jederzeit wiederherstellen."
+      ]
+    },
+    {
+      "version": "4.17.23",
+      "date": "1.11.2026",
+      "changes": [
+        "🍎 Mac-App (Apple-Chip): Dateien öffnen sich ohne den Hinweis „Link öffnet in Safari“ direkt im Browser.",
+        "⬇️ Mac-App: Werk-Dateien und Aufnahmen lassen sich wieder herunterladen, sie landen über den Browser im Downloads-Ordner."
+      ]
+    },
+    {
+      "version": "4.17.22",
+      "date": "31.10.2026",
+      "changes": [
+        "🎨 Live Activity: Laufende Ablaufpläne auf dem Sperrbildschirm haben jetzt die Farbe ihres Termintyps, damit du mehrere gleichzeitig auseinanderhalten kannst. Auf dem iPhone ab dem nächsten App-Store-Update."
+      ]
+    },
+    {
+      "version": "4.17.21",
+      "date": "31.10.2026",
+      "changes": [
+        "📱 Android: Die Tableiste unten liegt jetzt auch auf Geräten mit Navigationstasten (z. B. Huawei) über den Systemknöpfen statt darunter. Wirkt nach dem nächsten App-Update aus dem Play Store."
+      ]
+    },
+    {
+      "version": "4.17.20",
+      "date": "30.10.2026",
+      "changes": [
+        "🍎 Werke: In der App aus dem App Store auf dem Mac (Apple-Chip) öffnen sich Dateien wieder, und zwar im Browser."
+      ]
+    },
+    {
+      "version": "4.17.19",
+      "date": "30.10.2026",
+      "changes": [
+        "📄 Werke: In der installierten Web-App (z. B. am Mac über „Zum Dock hinzufügen“) öffnen sich PDFs und Bilder jetzt direkt in Attendix, mit Knöpfen zum Herunterladen und Schließen."
+      ]
+    },
+    {
+      "version": "4.17.18",
+      "date": "30.10.2026",
+      "changes": [
+        "🐛 Werke: Dateien und Links lassen sich in der installierten Web-App (z. B. Safari „Zum Dock hinzufügen“ am Mac) wieder öffnen."
+      ]
+    },
+    {
+      "version": "4.17.17",
+      "date": "30.10.2026",
+      "changes": [
+        "📊 Statistiken: Neuer Bereich „Zusatzfelder“ zeigt für Auswahl-, Ja/Nein- und Gemeinde-Felder als Diagramm und Liste, wie sich die Optionen prozentual verteilen.",
+        "🎛️ Auswertung pro Feld frei wählbar, filterbar nach Gruppe, optional mit Pausierenden, und bei allen Gruppen zusätzlich als Verteilung pro Gruppe."
+      ]
+    },
+    {
+      "version": "4.17.16",
+      "date": "30.10.2026",
+      "changes": [
+        "🎶 Chor: Neue Kategorie „Chor (alle)“ für Dateien, die alle Sänger bekommen, direkt oben im Upload- und Kategorie-Dialog statt „Sonstige (Freitext)“.",
+        "📄 Chor (alle)-Dateien werden auf der Abmeldeseite, beim Drucken aller aktuellen Noten und im Gruppenverzeichnis zuverlässig angezeigt, auch bei Tippvarianten wie „Chor “."
+      ]
+    },
+    {
+      "version": "4.17.15",
+      "date": "30.10.2026",
+      "changes": [
+        "🏢 Ad-hoc-Ablaufplanung: Ein Plan, den du zur Organisation hinzugefügt hast, wird beim erneuten Öffnen jetzt zuverlässig als „In Organisation“ angezeigt."
+      ]
+    },
+    {
+      "version": "4.17.14",
+      "date": "30.10.2026",
+      "changes": [
+        "👀 Termine, zu denen du nicht eingeladen bist, sind in deiner Übersicht jetzt deutlich gekennzeichnet: grau hinterlegt, gestrichelt umrandet und mit dem Hinweis „Nicht eingeladen“ (bei „Alle Termine für Mitglieder sichtbar“)."
+      ]
+    },
+    {
+      "version": "4.17.13",
+      "date": "30.10.2026",
+      "changes": [
+        "🔎 Werke in der Organisation suchen: Als Admin oder Verantwortlicher findest du unter Organisation (oder im Menü der Werke) die Werke aller Instanzen deiner Organisation.",
+        "📋 Werk in eine Zielinstanz kopieren: Felder und Dateien einzeln wählen, Gruppen zuordnen, bei gleichem Namen ins vorhandene Werk übernehmen und vergebene Nummern ändern."
+      ]
+    },
+    {
+      "version": "4.17.12",
+      "date": "30.10.2026",
+      "changes": [
+        "🖨️ Für FECG Speyer und FECG Schwegenheim: Das Ablaufplan-PDF in der Gemeinde App trägt jetzt Logo und Namen deiner Gemeinde, wie der Export in Attendix."
+      ]
+    },
+    {
+      "version": "4.17.11",
+      "date": "30.10.2026",
+      "changes": [
+        "📽️ Für FECG Speyer und FECG Schwegenheim: In der Gemeinde App verknüpfte Beamer-Dateien erscheinen am Programmpunkt, und die Datei eines Werks gilt in jedem Plan.",
+        "🛡️ Verknüpfte Beamer-Dateien bleiben erhalten, auch wenn du den Plan gleichzeitig in Attendix bearbeitest."
+      ]
+    },
+    {
+      "version": "4.17.10",
+      "date": "30.10.2026",
+      "changes": [
+        "📽️ Für FECG Speyer und FECG Schwegenheim: Bei ORG-Plänen zeigt der Ablaufplan, welche Programmpunkte eine Beamer-Datei brauchen. Bei Werken und Titeln mit „Lied“ oder „Gedicht“ geht das von selbst.",
+        "✏️ Programmpunkte bearbeitest du jetzt in einem eigenen Fenster statt im kleinen Dialog.",
+        "🔗 In den Organisations-Einstellungen gibt es den neuen Bereich „Gemeinde App“ mit Verbindungsschlüssel."
+      ]
+    },
+    {
+      "version": "4.17.9",
+      "date": "29.10.2026",
+      "changes": [
+        "🔀 Anwesenheit und Dienst-Einteilung sind getrennt: Wer auf anwesend gesetzt wird, ist nicht mehr automatisch eingeteilt.",
+        "🙋 In der Besetzung siehst du, wer anwesend, aber nicht eingeteilt ist, und kannst so schnell Ersatz einteilen."
+      ]
+    },
+    {
+      "version": "4.17.8",
+      "date": "29.10.2026",
+      "changes": [
+        "🏢 ORG-Pläne laufen jetzt auch als Live-Anzeige auf dem Sperrbildschirm, für Admins und Verantwortliche aller Chöre der Organisation."
+      ]
+    },
+    {
+      "version": "4.17.7",
+      "date": "29.10.2026",
+      "changes": [
+        "👆 Auf iOS kannst du wieder mit einer Wischgeste vom linken Bildschirmrand zur vorherigen Seite zurückgehen."
+      ]
+    },
+    {
+      "version": "4.17.6",
+      "date": "28.10.2026",
+      "changes": [
+        "🔤 Beim Versenden von PDFs und Bildern per Telegram erscheint jetzt der lesbare Dateiname ohne zufällige Zahl am Ende."
+      ]
+    },
+    {
+      "version": "4.17.5",
+      "date": "28.10.2026",
+      "changes": [
+        "📨 In der Ad-hoc-Ablaufplanung kannst du den Plan jetzt auch per Telegram verschicken (PDF, PDF 2x A5 oder Bild).",
+        "🎨 Programmblöcke sind dezenter: kein farbiger Hintergrund mehr im Editor, in der Planansicht und im PDF, nur noch fetter Blockname und eine feine graue Linie bei den Unterpunkten."
+      ]
+    },
+    {
+      "version": "4.17.4",
+      "date": "28.10.2026",
+      "changes": [
+        "🧩 Programmblöcke gibt es jetzt auch in der Ad-hoc-Ablaufplanung und im öffentlichen Planungstool: über „+“ › „Programmblock hinzufügen“, inklusive Unterpunkten, Ein- und Ausrücken und deinen Blockvorlagen.",
+        "🐛 Im Bearbeiten-Link eines geteilten Plans wandern beim Verschieben eines Blocks jetzt alle Unterpunkte mit."
+      ]
+    },
+    {
+      "version": "4.17.3",
+      "date": "27.10.2026",
+      "changes": [
+        "🐛 Sagst du als Admin einen Dienst mit „Kann nicht“ ab, verschwindet er oben unter Termine sofort aus „Bitte bestätigen“."
+      ]
+    },
+    {
+      "version": "4.17.2",
+      "date": "27.10.2026",
+      "changes": [
+        "🐛 Nach dem Tippen auf eine Push-Nachricht öffnet sich das Menü wieder unten statt mitten auf dem Bildschirm.",
+        "📋 In der Dienstplan-Ansicht springt eine Dienst-Nachricht direkt zu „Bitte bestätigen“ bzw. zu deinen Diensten statt ein Menü zu öffnen."
+      ]
+    },
+    {
+      "version": "4.17.1",
+      "date": "27.10.2026",
+      "changes": [
+        "✅ Admins und Verantwortliche können ihre eigenen Dienste jetzt bestätigen oder absagen: oben unter Termine und im Termin bei ihrem Namen.",
+        "📖 Die Hilfe erklärt, was nötig ist, damit Dienst-Pushs ankommen.",
+        "🎨 Die Zahlen oben in der Dienstplan-Ansicht stehen wieder auf einer Linie."
+      ]
+    },
+    {
+      "version": "4.17.0",
+      "date": "27.10.2026",
+      "changes": [
+        "🇬🇧 Attendix gibt es jetzt auch auf Englisch: Unter Einstellungen → System → Sprache kannst du die Sprache wählen. Ohne Auswahl richtet sich die App nach deinem Gerät.",
+        "📖 Die Hilfe gibt es ebenfalls auf Englisch.",
+        "🔔 Push-Nachrichten, Telegram, E-Mails und Kalender-Abos kommen in der Sprache, die du gewählt hast.",
+        "📅 Datumsangaben werden je nach Sprache angezeigt, z. B. 27/10/2026 auf Englisch.",
+        "🐛 Benachrichtigungen bei Pausierungen werden wieder verschickt.",
+        "🏷️ Das NEU-Zeichen in den Einstellungen steht jetzt an der Sprachauswahl."
+      ]
+    },
+    {
+      "version": "4.16.4",
+      "date": "27.10.2026",
+      "changes": [
+        "🌍 Weitere Vorbereitung für Englisch, Russisch und Spanisch: Datumsauswahl, Wochentage und Monatsnamen richten sich nach der App-Sprache. Sichtbar ändert sich noch nichts."
+      ]
+    },
+    {
+      "version": "4.16.3",
+      "date": "27.10.2026",
+      "changes": [
+        "🌍 Weitere Vorbereitung für Englisch, Russisch und Spanisch: Fast alle Seiten der App sind jetzt übersetzbar. Sichtbar ändert sich noch nichts."
+      ]
+    },
+    {
+      "version": "4.16.2",
+      "date": "27.10.2026",
+      "changes": [
+        "🛠️ Behoben: attendix.de war nach dem letzten Update nicht erreichbar (Seite nicht gefunden)."
+      ]
+    },
+    {
+      "version": "4.16.1",
+      "date": "27.10.2026",
+      "changes": [
+        "🌍 Vorbereitung für Englisch, Russisch und Spanisch: Die App kann jetzt Übersetzungen laden. Sichtbar ändert sich noch nichts, die Sprachauswahl folgt mit der englischen Fassung."
+      ]
+    },
+    {
+      "version": "4.16.0",
+      "date": "27.10.2026",
+      "changes": [
+        "🎧 Neu: Dienstplan. Termintypen im Dienst-Modus (z. B. Tontechnik) mit benötigter Personenzahl, Einteilung durch die Leitung, Bestätigung per Push und Selbst-Eintragen.",
+        "🆘 Fällt jemand aus, bekommt das Team eine Einspring-Anfrage; kurz vorher geht bei Bedarf eine dringende Nachricht an alle und die Leitung.",
+        "🔀 Dienste fair verteilen: Die App schlägt für einen Zeitraum eine gerechte Einteilung vor, die du anpassen kannst.",
+        "📅 Regelmäßig verhindert: Wochentage eintragen, an denen du grundsätzlich nicht kannst; neue Termine werden automatisch entschuldigt.",
+        "📱 Optionale Dienstplan-Ansicht für Meine Termine mit deinen Diensten, offenen Diensten und Zahlen statt Quote.",
+        "🗓️ Kalender-Abo: zeigt nur deine eigenen Dienste und kann abgesagte Termine ausblenden."
+      ]
+    },
+    {
+      "version": "4.15.7",
+      "date": "26.10.2026",
+      "changes": [
+        "👁️ Beobachter sehen den Ablaufplan nicht mehr: weder in der Terminübersicht noch im Termin noch als Live-Anzeige."
+      ]
+    },
+    {
+      "version": "4.15.6",
+      "date": "25.10.2026",
+      "changes": [
+        "🎂 Dashboard: Die Geburtstage-Karte zeigt keine archivierten Personen mehr an."
+      ]
+    },
+    {
+      "version": "4.15.5",
+      "date": "24.10.2026",
+      "changes": [
+        "🖼️ Profil: Unter Einstellungen kannst du dein Passbild jetzt auch entfernen (Tipp auf „Passbild“ → „Passbild entfernen“)."
+      ]
+    },
+    {
+      "version": "4.15.4",
+      "date": "24.10.2026",
+      "changes": [
+        "⏰ Ablauf: Vor dem Start steht unter „Start“ jetzt klar „beginnt in 14 Min.“ statt eines dunklen Badges mit „in 13:42“."
+      ]
+    },
+    {
+      "version": "4.15.3",
+      "date": "23.10.2026",
+      "changes": [
+        "🛠️ Hintergrund: Vorbereitung für den Umzug auf einen eigenen Server. Adressen sind nicht mehr fest eingebaut, an der App ändert sich nichts."
+      ]
+    },
+    {
+      "version": "4.15.2",
+      "date": "23.10.2026",
+      "changes": [
+        "🧹 Hintergrund: Alte App-Updates werden jetzt jede Woche automatisch vom Server gelöscht. Das spart rund 6 GB Speicher, an der App ändert sich nichts."
+      ]
+    },
+    {
+      "version": "4.15.1",
+      "date": "22.10.2026",
+      "changes": [
+        "⏱️ iPhone: Kommt bei schlechtem Netz kein Update an, springt der laufende Ablaufplan nach einer Minute selbst zum nächsten Punkt, statt bei „Beginnt in 0:00“ stehen zu bleiben."
+      ]
+    },
+    {
+      "version": "4.15.0",
+      "date": "22.10.2026",
+      "changes": [
+        "📁 Dateiablage für alle: Jede Instanz hat jetzt eine eigene Dateiablage mit 5 GB Speicher (Einstellungen → Dateiablage).",
+        "💾 Ist der Speicher fast voll, kannst du direkt in der Dateiablage mehr Speicher anfragen.",
+        "🔐 Admins legen unter Rollen & Berechtigungen fest, ob alle Mitglieder die Dateiablage sehen."
+      ]
+    },
+    {
+      "version": "4.14.43",
+      "date": "22.10.2026",
+      "changes": [
+        "💾 Dateiablage: Jede Instanz hat jetzt ein Speicherlimit (Standard 5 GB). Die Belegung steht oben in der Dateiablage, zu große Uploads werden mit Hinweis abgelehnt."
+      ]
+    },
+    {
+      "version": "4.14.42",
+      "date": "22.10.2026",
+      "changes": [
+        "❓ Hilfe: Für die Freischaltung der Dateiablage meldest du dich direkt beim Attendix-Admin über „Feedback geben“."
+      ]
+    },
+    {
+      "version": "4.14.41",
+      "date": "22.10.2026",
+      "changes": [
+        "❓ Hilfe: Der Artikel zur Dateiablage erklärt jetzt, wie deine Instanz sie freischalten lassen kann."
+      ]
+    },
+    {
+      "version": "4.14.40",
+      "date": "22.10.2026",
+      "changes": [
+        "🛠️ Die Gemeinden-Verwaltung ist aus den allgemeinen Einstellungen in den Bereich „Administration“ umgezogen."
+      ]
+    },
+    {
+      "version": "4.14.39",
+      "date": "22.10.2026",
+      "changes": [
+        "🛠️ Neuer Bereich „Administration“ für das Attendix-Team mit Usage Dashboard und dem Dateiablage-Schalter je Instanz."
+      ]
+    },
+    {
+      "version": "4.14.38",
+      "date": "22.10.2026",
+      "changes": [
+        "📁 Dateiablage: Das Attendix-Team kann die Dateiablage jetzt je Instanz ein- und ausschalten und für alle Mitglieder freigeben."
+      ]
+    },
+    {
+      "version": "4.14.37",
+      "date": "21.10.2026",
+      "changes": [
+        "🐛 Werk-Synchronisierung: Werke der Quellinstanz lassen sich jetzt auch in der synchronisierten Instanz öffnen."
+      ]
+    },
+    {
+      "version": "4.14.36",
+      "date": "21.10.2026",
+      "changes": [
+        "⚠️ Werk löschen bei Werk-Synchronisierung: Attendix warnt jetzt, dass das Werk auch in den verknüpften Instanzen gelöscht wird, inklusive deren Historie."
+      ]
+    },
+    {
+      "version": "4.14.35",
+      "date": "21.10.2026",
+      "changes": [
+        "🐛 „Account entfernen“ bei einer Person nimmt dem Konto nicht mehr den Zugang zur Instanz, wenn es dort noch mit einer anderen Person verknüpft ist."
+      ]
+    },
+    {
+      "version": "4.14.34",
+      "date": "20.10.2026",
+      "changes": [
+        "🐛 iPhone: Absturz behoben, wenn mehrere laufende Ablaufpläne gleichzeitig starten.",
+        "🐛 Bist du in mehreren Gruppen, beendet das Öffnen der App nicht mehr die Live-Anzeigen der anderen Gruppen."
+      ]
+    },
+    {
+      "version": "4.14.33",
+      "date": "20.10.2026",
+      "changes": [
+        "🎨 iPhone: Der laufende Programmpunkt im Fortschrittsbalken hat wieder einen sichtbaren grauen Hintergrund."
+      ]
+    },
+    {
+      "version": "4.14.32",
+      "date": "20.10.2026",
+      "changes": [
+        "🐛 iPhone: Der laufende Ablaufplan springt beim Start jetzt auch dann zum ersten Punkt, wenn die App geschlossen ist, statt bei „Beginnt in 0:00“ stehen zu bleiben."
+      ]
+    },
+    {
+      "version": "4.14.31",
+      "date": "20.10.2026",
+      "changes": [
+        "🧹 Dashboard: Die Karte „Termine“ zeigt die Terminbeschreibung nicht mehr als rohen Text mit HTML-Tags an. Die Beschreibung findest du weiterhin im Termin selbst."
+      ]
+    },
+    {
+      "version": "4.14.30",
+      "date": "20.10.2026",
+      "changes": [
+        "⚡ Web-App: deutlich weniger Serveranfragen. Nach Updates wird nicht mehr alle 30 Sekunden gesucht, sondern beim Öffnen und Zurückkehren in den Tab sowie stündlich. Icons werden erst bei Bedarf geladen."
+      ]
+    },
+    {
+      "version": "4.14.29",
+      "date": "20.10.2026",
+      "changes": [
+        "📐 Laufender Ablaufplan auf dem iPhone: luftigeres Layout auf dem Sperrbildschirm und ein gleichmäßiger Fortschrittsbalken."
+      ]
+    },
+    {
+      "version": "4.14.28",
+      "date": "20.10.2026",
+      "changes": [
+        "🔧 iOS: Theme-Paket auf Version 1.1.0 festgesetzt, damit die App wieder mit Xcode 26 baut."
+      ]
+    },
+    {
+      "version": "4.14.27",
+      "date": "20.10.2026",
+      "changes": [
+        "💄 Ablaufplan: Das Menü zum Hinzufügen von Punkten bleibt auch bei vielen Vorlagen und Feldern auf dem Bildschirm und lässt sich scrollen, „Programmblock hinzufügen“ kommt ohne Icon aus."
+      ]
+    },
+    {
+      "version": "4.14.26",
+      "date": "20.10.2026",
+      "changes": [
+        "🐛 Android: Keine doppelten leeren Ränder mehr über der Kopfzeile und unter der Tab-Leiste, und der Audio-Player liegt wieder über statt auf der Tab-Leiste.",
+        "🐛 Android: Der Hinweis „Verbindung wiederhergestellt“ erscheint nur noch, wenn die Verbindung wirklich weg war, nicht mehr bei jedem Wechsel zwischen WLAN und Mobilfunk.",
+        "💄 Android: Die Benachrichtigung zum laufenden Ablaufplan ist aufgeräumt: oben Ablauf und „Punkt x von y“ mit Restzeit, darunter bis wann der Punkt läuft und was danach kommt, und der Balken zeigt den Fortschritt im ganzen Ablauf."
+      ]
+    },
+    {
+      "version": "4.14.25",
+      "date": "20.10.2026",
+      "changes": [
+        "🐛 Dashboard: Ein Problemfall verschwindet jetzt sofort aus der Karte „Problemfälle“, sobald du ihn in der Person gelöst hast."
+      ]
+    },
+    {
+      "version": "4.14.24",
+      "date": "19.10.2026",
+      "changes": [
+        "✨ Laufender Ablaufplan auf dem iPhone: neues Design für Sperrbildschirm und Dynamic Island mit dem aktuellen Punkt groß samt Restzeit, einem Balken für den ganzen Ablauf und den nächsten Punkten wie im Programmheft (ab diesem App-Update)."
+      ]
+    },
+    {
+      "version": "4.14.23",
+      "date": "19.10.2026",
+      "changes": [
+        "📅 Werke: Ist ein Werk nur für einen künftigen Termin eingeplant, steht dort jetzt „Geplant am …“ statt fälschlich „Zuletzt gesungen am …“."
+      ]
+    },
+    {
+      "version": "4.14.22",
+      "date": "19.10.2026",
+      "changes": [
+        "⏱️ Ablaufplan-Ansicht: Vor dem Start ist noch kein Punkt markiert, stattdessen zählt neben „Start“ die Zeit bis zum Beginn herunter.",
+        "✏️ Ablaufplan-Ansicht: Öffnest du den Plan in der Terminübersicht, kommst du über den Stift oben direkt in den Editor."
+      ]
+    },
+    {
+      "version": "4.14.21",
+      "date": "18.10.2026",
+      "changes": [
+        "🗂️ Übersicht: Die Liste aller Termine über mehrere Instanzen nutzt jetzt auch das neue Karten-Layout mit Karte für den nächsten Termin, Direkt-Buttons, Monatsgruppen und farbigem Instanz-Punkt."
+      ]
+    },
+    {
+      "version": "4.14.20",
+      "date": "18.10.2026",
+      "changes": [
+        "📱 Meine Anwesenheit: Die Buttons Zusagen, Verspätung und Absagen bleiben auch auf schmalen Bildschirmen in einer Reihe innerhalb der Karte."
+      ]
+    },
+    {
+      "version": "4.14.19",
+      "date": "18.10.2026",
+      "changes": [
+        "🔤 Import: Umlaute und Sonderzeichen (z. B. ü, ö, ß) aus CSV-Dateien werden beim Import von Personen und Werken wieder korrekt übernommen."
+      ]
+    },
+    {
+      "version": "4.14.18",
+      "date": "18.10.2026",
+      "changes": [
+        "📝 Ablaufpläne: Beim Hinzufügen eines Feldes oder Programmblocks kannst du direkt einen Info-Text eingeben, auch in Planvorlagen und geteilten Plänen."
+      ]
+    },
+    {
+      "version": "4.14.17",
+      "date": "18.10.2026",
+      "changes": [
+        "⏭️ Audio-Player: Bei mehreren Audiodateien aus einem Ordner zeigt der Sperrbildschirm auf dem iPhone wieder Vor/Zurück zum nächsten bzw. vorherigen Titel, Spulen über den Schieberegler bleibt möglich."
+      ]
+    },
+    {
+      "version": "4.14.16",
+      "date": "18.10.2026",
+      "changes": [
+        "🎵 Audio-Player: Die Steuerung auf dem Sperrbildschirm des iPhones ist wieder da (Stand von 4.14.12, mit Spulen und Cover)."
+      ]
+    },
+    {
+      "version": "4.14.15",
+      "date": "18.10.2026",
+      "changes": [
+        "⏱️ Laufender Ablaufplan: Vor dem Start zeigt die Live-Anzeige jetzt klar einen Countdown bis zum Beginn und darunter die ersten Programmpunkte mit Uhrzeit, statt die Zeit neben dem ersten Punkt laufen zu lassen."
+      ]
+    },
+    {
+      "version": "4.14.14",
+      "date": "18.10.2026",
+      "changes": [
+        "🎵 Audio-Player: Auf dem Sperrbildschirm des iPhones kannst du wieder über den Schieberegler spulen."
+      ]
+    },
+    {
+      "version": "4.14.13",
+      "date": "18.10.2026",
+      "changes": [
+        "⏭️ Audio-Player: Spielst du mehrere Audiodateien aus einem Ordner ab, zeigt der Sperrbildschirm auf dem iPhone Vor/Zurück zum nächsten bzw. vorherigen Titel statt 10 Sekunden springen."
+      ]
+    },
+    {
+      "version": "4.14.12",
+      "date": "18.10.2026",
+      "changes": [
+        "🎵 Audio-Player: Neuer Anlauf für das Cover auf dem iPhone (Branding-Logo bzw. Attendix-Logo auf Sperrbildschirm und im Kontrollzentrum)."
+      ]
+    },
+    {
+      "version": "4.14.11",
+      "date": "18.10.2026",
+      "changes": [
+        "🎵 Audio-Player: Auch auf dem iPhone zeigen Sperrbildschirm und Kontrollzentrum jetzt ein Cover, das Branding-Logo deiner Gruppe bzw. Organisation oder sonst das Attendix-Logo."
+      ]
+    },
+    {
+      "version": "4.14.10",
+      "date": "18.10.2026",
+      "changes": [
+        "🎵 Audio-Player: Hat deine Gruppe oder Organisation ein Logo im Branding hinterlegt, erscheint es auf Android und im Browser als Cover in der Wiedergabe-Steuerung, sonst weiterhin das Attendix-Logo."
+      ]
+    },
+    {
+      "version": "4.14.9",
+      "date": "18.10.2026",
+      "changes": [
+        "📐 Termine: Die Karte des heutigen bzw. nächsten Termins nutzt wieder die volle Breite.",
+        "🗓️ Terminlisten: Bei Terminen ohne Namen steht das Datum nicht mehr doppelt in Titel und Unterzeile.",
+        "📝 Anwesenheit: Eine Notiz bzw. ein Grund erscheint sofort bei der Person, ohne den Termin neu öffnen zu müssen."
+      ]
+    },
+    {
+      "version": "4.14.8",
+      "date": "18.10.2026",
+      "changes": [
+        "📍 Laufender Ablaufplan auf dem Sperrbildschirm: Auf dem iPhone zeigt eine Live Activity (auch in der Dynamic Island) den aktuellen Programmpunkt mit Restzeit und was als Nächstes kommt, auf Android eine laufende Benachrichtigung mit Countdown. Abschalten kannst du sie unter Einstellungen → Benachrichtigungen.",
+        "🖨️ Drucken auf dem iPhone öffnet wieder den Druckdialog, auch wenn Werk- oder Dateiname Leerzeichen oder Umlaute enthalten.",
+        "🎵 Audio-Player: Auf Android und im Browser erscheint in der Wiedergabe-Steuerung jetzt das Attendix-Logo als Cover.",
+        "📱 iOS: Anpassung an iOS 27, damit die App mit dem neuen iOS-SDK startet."
+      ]
+    },
+    {
+      "version": "4.14.7",
+      "date": "18.10.2026",
+      "changes": [
+        "👆 Meine Anwesenheit: Ein Tipp auf die Karte des heutigen bzw. nächsten Termins öffnet kein Menü mehr, das geht nur noch über „Weitere Optionen“. Ablaufplan, Infos, Anhang, Dateien und Route öffnest du direkt über die Markierungen auf der Karte, sie stehen deshalb nicht mehr unter „Weitere Optionen“."
+      ]
+    },
+    {
+      "version": "4.14.6",
+      "date": "18.10.2026",
+      "changes": [
+        "📐 Meine Anwesenheit: Dein Status steht in der Karte des heutigen bzw. nächsten Termins jetzt unter Datum und Uhrzeit, damit lange Titel die volle Breite haben."
+      ]
+    },
+    {
+      "version": "4.14.5",
+      "date": "18.10.2026",
+      "changes": [
+        "📐 Die Karte für den heutigen bzw. nächsten Termin kommt besser mit langen Namen und Adressen klar: Der Titel nutzt die volle Breite, der Ort steht in einer eigenen Zeile und die Prozentzahl wandert zu den Zählern."
+      ]
+    },
+    {
+      "version": "4.14.4",
+      "date": "18.10.2026",
+      "changes": [
+        "🪪 Unter \"Mehr\" ist deine Profilkarte jetzt schlichter: helle Karte wie die Menüpunkte darunter, Geburtstag, Telefon und Zusatzfelder als dezente Markierungen."
+      ]
+    },
+    {
+      "version": "4.14.3",
+      "date": "18.10.2026",
+      "changes": [
+        "✏️ Meine Anwesenheit: Die Buttons heißen jetzt \"Zusagen\", \"Verspätung\" und \"Absagen\". Der Status zeigt entsprechend \"Zugesagt\" bzw. \"Verspätung gemeldet\"."
+      ]
+    },
+    {
+      "version": "4.14.2",
+      "date": "18.10.2026",
+      "changes": [
+        "🎁 Der Geburtstagsbanner auf der Personen-Seite ist schlichter: helle Karte statt Farbverlauf, das Alter steht als \"17 Jahre\" neben dem Namen."
+      ]
+    },
+    {
+      "version": "4.14.1",
+      "date": "18.10.2026",
+      "changes": [
+        "📄 Termine: Hat ein Termin einen Ablaufplan, öffnest du ihn direkt aus der Heute-Karte oder über das Symbol in der Liste.",
+        "✨ Meine Anwesenheit: \"Weitere Optionen\" zeigt nur noch, was nicht schon als Button auf der Karte steht. Lange Titel schieben den Status nicht mehr aus der Karte, und die Buttons sind besser lesbar."
+      ]
+    },
+    {
+      "version": "4.14.0",
+      "date": "18.10.2026",
+      "changes": [
+        "🧩 Programmblöcke im Ablaufplan: Fasse Programmpunkte wie \"Programm Jugendchor\" mit Unterpunkten zusammen. Die Dauer rechnet sich automatisch aus den Unterpunkten, Blöcke lassen sich ein- und ausklappen, als Ganzes verschieben und als Vorlage speichern. Planansicht, Live-Modus, Dashboard und PDF zeigen die Unterpunkte eingerückt.",
+        "🗂️ Neues Layout für die Terminlisten: Termine, Meine Anwesenheit und die Eltern-Ansicht zeigen Termine als Karten mit Datumskachel, Uhrzeit und Ort, nach Monaten gruppiert. Der Termin von heute steht oben in einer eigenen Karte, bei vergangenen Terminen siehst du die letzten drei und kannst den Rest aufklappen.",
+        "✋ Meine Anwesenheit: Am aktuellen Termin meldest du dich direkt mit Dabei, Später oder Absagen an oder ab. Die Begrüßung ist schlanker, Aktuelle Werke und Abwesenheit melden sind eigene Kacheln."
+      ]
+    },
+    {
+      "version": "4.13.18",
+      "date": "18.10.2026",
+      "changes": [
+        "🐛 Die Dashboard-Karte \"Aktueller Ablaufplan\" zeigt bei mehrtägigen Terminen auch an den Folgetagen den Ablaufplan des jeweiligen Tages."
+      ]
+    },
+    {
+      "version": "4.13.17",
+      "date": "18.10.2026",
+      "changes": [
+        "🐛 Mehrtägige Termine (z. B. Freizeiten) bleiben bis zu ihrem letzten Tag der aktuelle Termin und rutschen erst danach zu den vergangenen Terminen."
+      ]
+    },
+    {
+      "version": "4.13.16",
+      "date": "17.10.2026",
+      "changes": [
+        "✏️ Dashboard-Karten: Die Infozeile unter dem Namen ist jetzt kleiner als der Name, und bei den Problemfällen entfällt das ungenaue \"seit\"-Datum."
+      ]
+    },
+    {
+      "version": "4.13.15",
+      "date": "17.10.2026",
+      "changes": [
+        "🎨 Alle Dashboard-Karten im neuen Look: Kalenderblätter statt runder Icons, dezente Status-Pillen statt kräftiger Badges. Termine zeigen Anwesend, Abgemeldet und Offen jetzt als übersichtliche Kacheln mit Fortschrittsbalken; Werke zeigen ihre Nummer, Problemfälle die Initialen."
+      ]
+    },
+    {
+      "version": "4.13.14",
+      "date": "17.10.2026",
+      "changes": [
+        "🎂 Geburtstage im Dashboard neu gestaltet: Datum als Kalenderblatt, deutsche Monatsnamen, Wochentag und \"wird 17\" statt umbrechender Altersangabe. Heutige Geburtstage sind hervorgehoben, vergangene stehen getrennt unter \"Zuletzt\"."
+      ]
+    },
+    {
+      "version": "4.13.13",
+      "date": "17.10.2026",
+      "changes": [
+        "🔍 Neue Bildansicht: Zoomen mit zwei Fingern genau dort, wo du hinzeigst, Doppeltippen vergrößert die angetippte Stelle, vergrößerte Bilder lassen sich flüssig verschieben und zum Schließen einfach wegwischen. Dazu ein neues, schlichtes Vollbild-Design mit Zoom-Leiste."
+      ]
+    },
+    {
+      "version": "4.13.12",
+      "date": "17.10.2026",
+      "changes": [
+        "↕️ Die Reihenfolge der Zusatzfelder lässt sich jetzt per Drag-and-drop ändern. Chips und Texte in Listen und Detailansichten erscheinen in genau dieser Reihenfolge."
+      ]
+    },
+    {
+      "version": "4.13.11",
+      "date": "17.10.2026",
+      "changes": [
+        "🔤 Bei Texteingaben wird jetzt nur noch der Satzanfang großgeschrieben, nicht mehr jedes Wort. Bei Namen bleibt jedes Wort groß, E-Mail und Passwort starten klein."
+      ]
+    },
+    {
+      "version": "4.13.10",
+      "date": "17.10.2026",
+      "changes": [
+        "📌 Beim „Einplanen“ eines Themas kannst du jetzt auch direkt einen neuen Termin anlegen. Das Thema landet gleich in dessen Tagesordnung."
+      ]
+    },
+    {
+      "version": "4.13.9",
+      "date": "17.10.2026",
+      "changes": [
+        "📆 Termine lassen sich auf einen anderen Tag verschieben: im Termin unter Allgemein → Datum oder in der Teamorganisation über „Ändern“. Haben schon Personen einen Status, fragt die App, ob alle auf den Standardstatus zurückgesetzt werden sollen. Fristen der Checkliste und die Anmeldefrist wandern mit."
+      ]
+    },
+    {
+      "version": "4.13.8",
+      "date": "17.10.2026",
+      "changes": [
+        "📅 Teamorganisation: Im Reiter Themen kannst du mit „Ändern“ einen anderen anstehenden Termin wählen. Steht keiner an, legst du direkt dort einen Termin vom passenden Typ an.",
+        "🗂️ Themen lassen sich wieder aus einem Termin herausnehmen, ohne sie zu löschen: Tippe auf den TOP und wähle „Aus diesem Termin entfernen“ oder entferne den Haken unter „Themen aufnehmen“. Das Thema bleibt im Themenspeicher."
+      ]
+    },
+    {
+      "version": "4.13.7",
+      "date": "17.10.2026",
+      "changes": [
+        "🔧 Die Priorität einer Aufgabe lässt sich jetzt auch am Computer wieder einstellen. Statt der Pfeil-Symbole wählst du sie jetzt als Text aus: Niedrig, Mittel oder Hoch."
+      ]
+    },
+    {
+      "version": "4.13.6",
+      "date": "17.10.2026",
+      "changes": [
+        "📱 Die Tabbar auf iOS passt sich wieder an die Zahl der Tabs an. Wer nur wenige Tabs hat, sieht jetzt eine kompakte Leiste statt einer breiten mit viel Leerraum."
+      ]
+    },
+    {
+      "version": "4.13.5",
+      "date": "17.10.2026",
+      "changes": [
+        "🗓️ Termine können jetzt mehrere Ablaufpläne haben, z. B. einen pro Tag bei Freizeiten. Im Plan-Editor unter + → \"Weiteren Ablaufplan anlegen\". Mitglieder sehen automatisch den Plan von heute, und beim Teilen gibt es alle Tage in einer PDF."
+      ]
+    },
+    {
+      "version": "4.13.4",
+      "date": "16.10.2026",
+      "changes": [
+        "📚 Große Werkelisten werden jetzt vollständig geladen und bauen sich beim Scrollen flüssig auf. Die Suche findet Werke auch über Präfix und Nummer, z. B. \"LB12\"."
+      ]
+    },
+    {
+      "version": "4.13.3",
+      "date": "14.10.2026",
+      "changes": [
+        "🧹 Die App räumt alte Update-Dateien jetzt automatisch auf und belegt dadurch deutlich weniger Speicher auf dem Handy."
+      ]
+    },
+    {
+      "version": "4.13.2",
+      "date": "14.10.2026",
+      "changes": [
+        "📣 Die leere Mitteilungen-Seite sieht jetzt aufgeräumter aus und erklärt kurz, wofür Mitteilungen da sind."
+      ]
+    },
+    {
+      "version": "4.13.1",
+      "date": "14.10.2026",
+      "changes": [
+        "📝 Anmelden mit Notiz fragt jetzt auch die Anmeldefelder des Termins ab.",
+        "✏️ Neu: Angemeldete können ihre Anmeldefelder unter „Meine Anwesenheit“ nachträglich anpassen."
+      ]
+    },
+    {
+      "version": "4.13.0",
+      "date": "14.10.2026",
+      "changes": [
+        "🗂️ Neu: Teamorganisation unter Mehr → Planung – Themen sammeln, Tagesordnung im Ablaufplan, Protokoll schreiben und Aufgaben verteilen.",
+        "📝 Protokoll-Editor mit Ergebnis pro Punkt (besprochen, beschlossen, vertagt), Live-Anzeige und automatischem Speichern; auf Tablet und Laptop mit verstellbaren Spalten.",
+        "📣 Protokoll freigeben: Anwesende und Personen mit Aufgaben werden benachrichtigt, auf Wunsch mit PDF; beschlossene Themen lassen sich dabei gleich abhaken.",
+        "✅ Aufgaben mit Fälligkeit, Priorität und Erinnerungen; Mitglieder sehen ihre eigenen Aufgaben und haken sie ab.",
+        "💡 Mitglieder können Themen vorschlagen, die Leitung übernimmt oder lehnt sie ab.",
+        "📦 Die alten Besprechungen wurden als Protokolle übernommen, der Bereich „Besprechungen“ entfällt."
+      ]
+    },
+    {
+      "version": "4.12.15",
+      "date": "14.10.2026",
+      "changes": [
+        "✨ iPhone: Die Wisch-Animation der Tabbar ist wieder da."
+      ]
+    },
+    {
+      "version": "4.12.14",
+      "date": "14.10.2026",
+      "changes": [
+        "🐛 Tabs wechseln wieder sofort und der richtige Tab ist markiert. Ursache war die Benachrichtigungs-Glocke, die beim Öffnen einer zweiten Seite mit Glocke einen Fehler auslöste."
+      ]
+    },
+    {
+      "version": "4.12.10",
+      "date": "13.10.2026",
+      "changes": [
+        "🐛 Das Fenster \"Administratoren\" in den Einstellungen öffnet sich wieder zuverlässig beim Antippen."
+      ]
+    },
+    {
+      "version": "4.12.9",
+      "date": "13.10.2026",
+      "changes": [
+        "📋 Der Platzhalter \"Tagesordnungspunkte\" im Ablaufplan zeigt jetzt überall die dem Termin zugeordneten Punkte als TOP 1, TOP 2, …: in der Termin-Ansicht, im Plan-Editor, in der Plan-Ansicht und im PDF- und Telegram-Export.",
+        "🗑️ Separater Tagesordnungs-PDF wieder entfernt, zum Drucken dient der Ablaufplan-Export."
+      ]
+    },
+    {
+      "version": "4.12.8",
+      "date": "13.10.2026",
+      "changes": [
+        "🐛 \"Protokoll\" öffnet sich jetzt auch, wenn der Termin über die Startseite (nächster Termin) geöffnet wurde."
+      ]
+    },
+    {
+      "version": "4.12.7",
+      "date": "13.10.2026",
+      "changes": [
+        "🐛 \"Protokoll\" im Termin öffnet jetzt wieder die Protokoll-Seite (vorher passierte beim Antippen nichts)."
+      ]
+    },
+    {
+      "version": "4.12.6",
+      "date": "13.10.2026",
+      "changes": [
+        "✅ Aufgabe direkt am Tagesordnungspunkt erstellen: im Protokoll unter jedem aufgeklappten Punkt und auf der Detailseite des Punkts. Die Aufgabe ist mit dem Punkt verknüpft und steht in der Aufgabenliste.",
+        "🐛 Aufgaben aus einem noch ungespeicherten Protokoll werden jetzt korrekt mit dem Protokoll verknüpft, und der Aufgaben-Verweis landet im richtigen Abschnitt."
+      ]
+    },
+    {
+      "version": "4.12.5",
+      "date": "13.10.2026",
+      "changes": [
+        "🖨️ Tagesordnung als PDF: Im Termin (unter \"Protokoll\") oder im Protokoll über das Drucker-Symbol alle Tagesordnungspunkte nummeriert mit Beschreibung, Verantwortlichem und Notizspalte ausdrucken.",
+        "📋 Ablaufplan-PDF zeigt beim Platzhalter \"Tagesordnungspunkte\" jetzt die zugeordneten Punkte als TOP 1, TOP 2, …",
+        "❓ Neuer Hilfe-Artikel: Von der Tagesordnung zum Protokoll."
+      ]
+    },
+    {
+      "version": "4.12.4",
+      "date": "13.10.2026",
+      "changes": [
+        "❓ Hilfe zu Mitteilungen ausführlicher: Schreiben mit Formatierung, Empfänger, Lese-Übersicht, Löschen sowie ein neuer Artikel zum Empfangen und Lesen.",
+        "❓ Hilfe zur Ad-hoc-Erinnerung erweitert: an alle, nur an Personen ohne Status oder an eine einzelne Person, und wer sie per Push und E-Mail bekommt."
+      ]
+    },
+    {
+      "version": "4.12.3",
+      "date": "13.10.2026",
+      "changes": [
+        "❓ Hilfe ergänzt: neue Artikel zu Dateiablage, Audio-Player (Hintergrund und Sperrbildschirm), Drucken, Gruppenverzeichnis, Gemeinde-Übersicht und zur E-Mail beim Hinzufügen einer Person."
+      ]
+    },
+    {
+      "version": "4.12.2",
+      "date": "13.10.2026",
+      "changes": [
+        "🎂 Beim Speichern des eigenen Profils wird der Geburtstag nur noch als bestätigt markiert, wenn er wirklich geändert wurde. Dadurch tauchen keine falschen Geburtstage (z. B. das Registrierungsdatum) mehr auf.",
+        "🐛 Bei Registrierungen ohne Geburtstagsfeld wird kein Platzhalter-Datum mehr als Geburtstag gespeichert."
+      ]
+    },
+    {
+      "version": "4.12.1",
+      "date": "13.10.2026",
+      "changes": [
+        "✉️ Wer zu einer Instanz hinzugefügt wird und dafür einen neuen Account bekommt, sieht in der Willkommens-E-Mail jetzt auch Instanz und Rolle.",
+        "🐛 Personen mit bestehendem Login, die in keiner Instanz mehr waren, erhalten beim Hinzufügen jetzt ebenfalls eine Info-E-Mail."
+      ]
+    },
+    {
+      "version": "4.12.0",
+      "date": "13.10.2026",
+      "changes": [
+        "📣 Neu: Mitteilungen. Admins und Verantwortliche können unter Einstellungen → Kommunikation eine formatierte Nachricht (fett, kursiv, Listen, Links) an alle aktiven Mitglieder oder einzelne Gruppen senden, per Push/Telegram und E-Mail.",
+        "👀 Zu jeder Mitteilung siehst du, wer sie in der App gelesen hat und ob Push und E-Mail zugestellt bzw. geöffnet wurden.",
+        "🔔 Neue Einstellung „Mitteilungen“ unter Benachrichtigungen, um Push-Benachrichtigungen für Mitteilungen ein- oder auszuschalten."
+      ]
+    },
+    {
+      "version": "4.11.1",
+      "date": "13.10.2026",
+      "changes": [
+        "✉️ Account-E-Mails (Zugang, neue Instanz, Registrierung genehmigt/abgelehnt) kommen jetzt im einheitlichen Attendix-Design.",
+        "🔐 Neue Accounts erhalten statt eines Passworts per E-Mail einen sicheren Link, um ihr Passwort selbst festzulegen."
+      ]
+    },
+    {
+      "version": "4.11.0",
+      "date": "13.10.2026",
+      "changes": [
+        "🎧 Audio-Player: Wiedergabe läuft im Hintergrund und bei gesperrtem Bildschirm weiter, mit Titel und Steuerung (Pause, vor, zurück) auf dem Sperrbildschirm und in der Benachrichtigung (nach App-Update aus dem Store).",
+        "⏭️ Audio-Player: Der nächste Titel einer Wiedergabeliste startet schneller."
+      ]
+    },
+    {
+      "version": "4.10.17",
+      "date": "13.10.2026",
+      "changes": [
+        "🖨️ Drucken einheitlich: In der App öffnet sich der Druckdialog des Systems (nach App-Update aus dem Store), im Browser ohne Popup und ohne doppelten Dialog, mobil über das Teilen-Menü."
+      ]
+    },
+    {
+      "version": "4.10.16",
+      "date": "12.10.2026",
+      "changes": [
+        "🐛 Dateiablage: Der letzte Eintrag wird auf iOS nicht mehr von der Tab-Leiste verdeckt."
+      ]
+    },
+    {
+      "version": "4.10.15",
+      "date": "12.10.2026",
+      "changes": [
+        "🎵 Der Audio-Player überdeckt im iOS-Browser nicht mehr die Tab-Leiste."
+      ]
+    },
+    {
+      "version": "4.10.14",
+      "date": "12.10.2026",
+      "changes": [
+        "🐛 Ordner der Dateiablage lässt sich beim Termin jetzt auswählen (direkt in der Liste oder über das Häkchen).",
+        "📁 Der Dateiablage-Ordner steht auf der Terminseite jetzt über dem Ort."
+      ]
+    },
+    {
+      "version": "4.10.13",
+      "date": "12.10.2026",
+      "changes": [
+        "📁 Termine können mit einem Ordner der Dateiablage verknüpft werden (z. B. für Aufnahmen).",
+        "🎧 Mitglieder springen auf der Anmeldeseite und in der Übersicht direkt vom Termin in den verknüpften Ordner."
+      ]
+    },
+    {
+      "version": "4.10.12",
+      "date": "12.10.2026",
+      "changes": [
+        "🐛 Verantwortliche bei Tagesordnungspunkten und Aufgaben können wieder gespeichert werden.",
+        "💾 Speichern-Button in der Detailansicht von Aufgaben und Tagesordnungspunkten jetzt unten rechts."
+      ]
+    },
+    {
+      "version": "4.10.11",
+      "date": "12.10.2026",
+      "changes": [
+        "📋 Teamorganisation: Aufgaben und Tagesordnungspunkte direkt auf einer Seite – inkl. Anlegen (jederzeit), Wischen zum Löschen und erledigten Einträgen hinter „Alle anzeigen“.",
+        "🐛 Tagesordnungspunkte mit Status „In Bearbeitung“ können wieder gespeichert werden.",
+        "📅 Fälligkeitsdatum von Aufgaben und Tagesordnungspunkten lässt sich zuverlässig setzen, ändern und löschen.",
+        "🗑️ Aufgaben und Tagesordnungspunkte können jetzt auch in der Detailansicht gelöscht werden."
+      ]
+    },
+    {
+      "version": "4.10.10",
+      "date": "12.10.2026",
+      "changes": [
+        "🎨 Gemeinde-Übersicht im einheitlichen Design mit gruppierten Abschnitten und abgerundeten Ecken."
+      ]
+    },
+    {
+      "version": "4.10.9",
+      "date": "12.10.2026",
+      "changes": [
+        "⛪ Gemeinde-Übersicht: Ist das Extrafeld „Gemeinde“ aktiv, zeigt die Personenliste (gefilterte Personen) und jede Anwesenheit (nur Anwesende inkl. Verspätete) im Menü, wie viele Personen je Gemeinde dabei sind."
+      ]
+    },
+    {
+      "version": "4.10.8",
+      "date": "11.10.2026",
+      "changes": [
+        "📤 Werke: Beim Hochladen mehrerer Dateien zeigt ein Fortschrittsbalken jetzt den Upload-Stand an, inklusive Status pro Datei. Fehlgeschlagene Dateien bleiben zum erneuten Hochladen im Fenster."
+      ]
+    },
+    {
+      "version": "4.10.4",
+      "date": "11.10.2026",
+      "changes": [
+        "🛠️ Gruppenverzeichnis ist jetzt immer erreichbar – auch ohne Werkkategorien, bei aktivem Kategoriefilter und für Chöre.",
+        "🧹 Gespeicherte Kategoriefilter von gelöschten Kategorien werden automatisch zurückgesetzt."
+      ]
+    },
+    {
+      "version": "4.10.7",
+      "date": "11.10.2026",
+      "changes": [
+        "🐛 Dateiablage: Direktlinks lassen sich jetzt öffnen, statt mit „Der Link konnte nicht geöffnet werden“ abzubrechen."
+      ]
+    },
+    {
+      "version": "4.10.6",
+      "date": "11.10.2026",
+      "changes": [
+        "🧹 Dateiablage: Hochladen, Ordner erstellen, Link teilen und Sortierung sind jetzt in einem Menü im Header zusammengefasst – der Titel wird nicht mehr überdeckt."
+      ]
+    },
+    {
+      "version": "4.10.5",
+      "date": "11.10.2026",
+      "changes": [
+        "🐛 Dateiablage: Geteilte Direktlinks bleiben nicht mehr endlos beim Laden hängen."
+      ]
+    },
+    {
+      "version": "4.10.4",
+      "date": "11.10.2026",
+      "changes": [
+        "🔗 Dateiablage: Dateien und Ordner können jetzt per Direktlink geteilt werden – der Link öffnet die Datei bzw. den Ordner direkt in der App."
+      ]
+    },
+    {
+      "version": "4.10.3",
+      "date": "11.10.2026",
+      "changes": [
+        "🎼 Gruppenverzeichnis: Neue Gruppe „Dirigenten“ listet alle Partituren – inklusive Drucken der kompletten Mappe."
+      ]
+    },
+    {
+      "version": "4.10.2",
+      "date": "11.10.2026",
+      "changes": [
+        "🖨️ Gruppenverzeichnis: Die komplette Notenmappe einer Gruppe/eines Instruments kann jetzt mit einem Klick als zusammengeführtes PDF gedruckt werden."
+      ]
+    },
+    {
+      "version": "4.10.1",
+      "date": "11.10.2026",
+      "changes": [
+        "🎧 Audio-Player: Vor- und Zurück-Buttons, wenn in der Dateiablage mehrere Audios im Ordner liegen.",
+        "▶️ Automatische Wiedergabe: Nach dem Ende eines Audios startet automatisch das nächste."
+      ]
+    },
+    {
+      "version": "4.10.0",
+      "date": "1.10.2026",
+      "changes": [
+        "📋 Teamorganisation: Tagesordnungspunkte, Aufgaben und Protokolle für Teamtreffen und Proben.",
+        "✅ Aufgaben mit Fälligkeitsdatum, Priorität und Verantwortlichen – inkl. automatischer Erinnerungen (2 Tage vorher).",
+        "📝 Protokoll-Editor (Tiptap) pro Termin – strukturiert nach Ablaufplan-Feldern, mit eingebetteten Aufgaben- und Tagesordnungs-Referenzen.",
+        "🔔 Aufgaben-Erinnerungen in den Benachrichtigungseinstellungen abschaltbar."
+      ]
+    },
+    {
+      "version": "4.9.6",
+      "date": "1.10.2026",
+      "changes": [
+        "📋 Org-Planvorlagen: Wiederverwendbare Vorlagen und Standardfelder auf Organisationsebene definierbar – verfügbar in Ablaufplanung und Ad-hoc-Planung für alle Instanzen.",
+        "🎵 Ad-hoc-Ablaufplanung: Aktuelle Werke und Werk-Auswahl jetzt verfügbar (wenn eingeloggt); Chor/Orchester- und Werk-Platzhalter werden automatisch aus der Historie befüllt."
+      ]
+    },
+    {
+      "version": "4.9.5",
+      "date": "1.10.2026",
+      "changes": [
+        "🔍 Anwesenheitsliste nach Zusatzfeldern (Personen- und Anmeldefelder) sortierbar – auf- und absteigend.",
+        "⚙️ Filter, Sortierung und Ansichts-Optionen im Termin in übersichtliche Untermenüs zusammengefasst.",
+        "👁️ Anmeldefelder in der Anwesenheitsliste ein-/ausblendbar.",
+        "🔔 Erinnerung gezielt nur an Personen ohne Status (Neutral) sendbar."
+      ]
+    },
+    {
+      "version": "4.9.4",
+      "date": "1.10.2026",
+      "changes": [
+        "🐛 Fix: Selbstregistrierung blockiert jetzt korrekt, wenn keine Gruppen vorhanden sind – Admins können die Registrierung erst aktivieren, wenn mindestens eine Gruppe angelegt wurde."
+      ]
+    },
+    {
+      "version": "4.9.3",
+      "date": "30.9.2026",
+      "changes": [
+        "✨ Neu: Werkverzeichnis als PDF exportieren – die aktuelle (gefilterte & sortierte) Werkeliste lässt sich über das Menü als PDF herunterladen."
+      ]
+    },
+    {
+      "version": "4.9.2",
+      "date": "25.9.2026",
+      "changes": [
+        "❓ Neu: Personen-Zusatzfelder können organisationsweit konfiguriert werden; ihre Werte werden für Personen mit gemeinsamem Konto oder organisationsweiter Verknüpfung instanzübergreifend synchron gehalten.",
+        "🐛 Hilfe-Center: Glossar-Popover ist jetzt breiter, scrollbar bei langen Texten und linksbündig; Hilfe-Seiten bleiben nach einem Neuladen für alle Rollen erreichbar."
+      ]
+    },
+    {
+      "version": "4.9.1",
+      "date": "25.9.2026",
+      "changes": [
+        "🎨 Update: iOS 27 Liquid Glass Theme aktiviert (iOS 26 als Fallback für ältere Geräte)."
+      ]
+    },
+    {
+      "version": "4.9.0",
+      "date": "25.9.2026",
+      "changes": [
+        "❓ Neu: Hilfe-Center in den Einstellungen mit durchsuchbaren Anleitungen und einem Glossar zu allen wichtigen Begriffen."
+      ]
+    },
+    {
+      "version": "4.8.21",
+      "date": "25.9.2026",
+      "changes": [
+        "🧱 Dashboard: Karten werden auf größeren Bildschirmen jetzt platzsparend ohne Lücken zwischen unterschiedlich hohen Karten angeordnet."
+      ]
+    },
+    {
+      "version": "4.8.20",
+      "date": "25.9.2026",
+      "changes": [
+        "🐛 Dashboard: Der Durchschnitt beim aktuellen Termin zeigt jetzt korrekt die aktuelle Anwesenheitsquote an."
+      ]
+    },
+    {
+      "version": "4.8.19",
+      "date": "25.9.2026",
+      "changes": [
+        "📋 Zusatzfelder für Personen und Werke können in den jeweiligen Listen jetzt wahlweise als Chip oder unter dem Namen angezeigt werden."
+      ]
+    },
+    {
+      "version": "4.8.18",
+      "date": "25.9.2026",
+      "changes": [
+        "🐛 Auf der öffentlichen Werke-Freigabeseite werden Kategorien jetzt korrekt angezeigt, inklusive der Segment-Buttons und des Kategorie-Filters."
+      ]
+    },
+    {
+      "version": "4.8.17",
+      "date": "25.9.2026",
+      "changes": [
+        "🐛 Behoben: Nach einem Neuladen wurde manchmal die falsche Instanz geöffnet, weil eine fehlgeschlagene Synchronisierung der zuletzt gewählten Instanz unbemerkt blieb. Die zuletzt gewählte Instanz wird nun zuverlässig auf diesem Gerät gemerkt und automatisch mit dem Konto synchronisiert."
+      ]
+    },
+    {
+      "version": "4.8.16",
+      "date": "25.9.2026",
+      "changes": [
+        "🐛 Beim Übernehmen von Stammdaten einer vorgeschlagenen Person aus einer anderen Instanz werden Vor- und Nachname nun korrekt mit übernommen.",
+        "🐛 Dashboard-Karte 'Abwesenheiten & Pausierungen' zeigt jetzt alle aktuell pausierten Personen an, unabhängig davon, wann die Pausierung erfolgt ist."
+      ]
+    },
+    {
+      "version": "4.8.15",
+      "date": "25.9.2026",
+      "changes": [
+        "🔀 Bei der Genehmigung neuer Registrierungen wird nun automatisch geprüft, ob in der Instanz bereits eine ähnliche Person ohne Account existiert. Admins können die Registrierung direkt mit dieser Person zusammenführen, wobei die bisherigen Anwesenheitsdaten erhalten bleiben und der neue Account übernommen wird."
+      ]
+    },
+    {
+      "version": "4.8.14",
+      "date": "22.9.2026",
+      "changes": [
+        "📍 Ort / Navigation: Bei Termintypen kann jetzt eine Ortsfunktion aktiviert werden. Wenn aktiv, kann bei jedem Termin eine Adresse oder ein Ortsname hinterlegt werden. Dieser wird auf der Anmeldungsseite, der Elternseite und in der Termindetailansicht als Navigationslink angezeigt (Google Maps / Apple Maps). Der Ort wird außerdem im Kalender-Abo als LOCATION-Eigenschaft übertragen."
+      ]
+    },
+    {
+      "version": "4.8.13",
+      "date": "22.9.2026",
+      "changes": [
+        "📥 Werke aus Excel/CSV importieren: Als Administrator können jetzt mehrere Werke auf einmal aus einer Excel- (.xlsx/.xls) oder CSV-Datei importiert werden (Menü → 'Werke importieren'). Spalten werden automatisch zugeordnet, eine Vorlage steht zum Download bereit. In der Vorschau sind alle Werke mit Hinweisen und Duplikaten sichtbar. Kategorien werden per Namen zugeordnet, Zusatzfelder werden unterstützt."
+      ]
+    },
+    {
+      "version": "4.8.12",
+      "date": "21.9.2026",
+      "changes": [
+        "🐛 Personen ohne E-Mail werden beim Übertrag in andere Instanz nicht mehr doppelt angelegt.",
+        "🔍 Boolean-Zusatzfelder können jetzt nach 'Ja' und 'Nein' gefiltert werden.",
+        "📋 Buttons auf der Werke-Seite in einem Menü zusammengefasst."
+      ]
+    },
+    {
+      "version": "4.8.11",
+      "date": "21.9.2026",
+      "changes": [
+        "🔒 DSGVO: Datenschutzerklärung muss beim ersten Login akzeptiert werden.",
+        "🔒 DSGVO: Zustimmung wird nun dauerhaft gespeichert.",
+        "✅ Datenschutz-Checkbox auf der Registrierungsseite hinzugefügt."
+      ]
+    },
+    {
+      "version": "4.8.10",
+      "date": "17.9.2026",
+      "changes": [
+        "🔄 Updates werden nun automatisch im Hintergrund installiert, ohne den aktuellen Arbeitsablauf zu unterbrechen."
+      ]
+    },
+    {
+      "version": "4.8.9",
+      "date": "17.9.2026",
+      "changes": [
+        "🔧 Fix: Registrierung via Einladungslink schlug fehl, obwohl der Account erstellt wurde — RLS-Richtlinie für authentifizierte Selbstregistrierung ergänzt."
+      ]
+    },
+    {
+      "version": "4.8.3",
+      "date": "16.9.2026",
+      "changes": [
+        "🎵 Werke: Kategorie-Auswahl beim Datei-Upload verbessert (kein doppelter Dialog mehr).",
+        "🎵 Werke: Freitext-Kategorie direkt im Upload-Dialog eingeben.",
+        "🎵 Werke: Chor-Tenants erhalten automatisch Kategorie \"Chor\" für PDFs."
+      ]
+    },
+    {
+      "version": "4.8.2",
+      "date": "16.9.2026",
+      "changes": [
+        "🔍 Anwesenheitstyp-Filter: Ja/Nein-Felder als Filterkriterium nutzbar."
+      ]
+    },
+    {
+      "version": "4.8.1",
+      "date": "13.9.2026",
+      "changes": [
+        "⚡ Werke: Ladezeit deutlich reduziert (parallele Abfragen).",
+        "⏳ Werke: Skeleton-Ladeanimation beim ersten Laden."
+      ]
+    },
+    {
+      "version": "4.8.0",
+      "date": "10.9.2026",
+      "changes": [
+        "📂 Dateien: Drag & Drop direkt auf der Werkseite.",
+        "📂 Dateien: Einzelner Drop öffnet Smart-Upload mit Kategorie & Ersetzen-Option.",
+        "📂 Dateien: Mehrfach-Upload mit Ersetzen-Option pro Datei.",
+        "📂 Dateien: Sortierung nach Kategorie.",
+        "📂 Dateien: Farbige Kategorie-Badges (Aufnahme, Liedtext, Sibelius, Partitur, Chor, Klavierauszug).",
+        "📂 Dateien: .doc, .docx und .txt werden automatisch als Liedtext erkannt."
+      ]
+    },
+    {
+      "version": "4.7.7",
+      "date": "8.9.2026",
+      "changes": [
+        "🔙 Navigation: Zurück-Button in Einstellungen korrigiert.",
+        "🏢 Einstellungen: Instanz-Schnellwechsel im Header."
+      ]
+    },
+    {
+      "version": "4.7.6",
+      "date": "7.9.2026",
+      "changes": [
+        "🐛 Bugfixes und Verbesserungen."
+      ]
+    },
+    {
+      "version": "4.7.5",
+      "date": "3.9.2026",
+      "changes": [
+        "🎼 Werke: Mehrere Kategorien pro Werk auswählbar."
+      ]
+    },
+    {
+      "version": "4.7.4",
+      "date": "31.8.2026",
+      "changes": [
+        "📶 Offline-Modus: Statusänderungen und Notizen werden bei fehlender Internetverbindung lokal gespeichert und automatisch synchronisiert, sobald die Verbindung wiederhergestellt ist.",
+        "⚡ Anwesenheit: Flackern beim Ändern des Status behoben – kurzes Zurückspringen auf den alten Wert tritt nicht mehr auf.",
+        "🔔 Dashboard: Benachrichtigungsglocke jetzt auch auf der Dashboard-Seite sichtbar.",
+        "🔕 Benachrichtigungen: Hinweis \"(selbst abgemeldet)\" entfernt – nur \"(von Elternteil abgemeldet)\" wird weiterhin angezeigt."
+      ]
+    },
+    {
+      "version": "4.7.3",
+      "date": "31.8.2026",
+      "changes": [
+        "🔍 Anwesenheit: Statusfilter im Header – mehrere Status gleichzeitig auswählbar, aktiver Filter wird angezeigt."
+      ]
+    },
+    {
+      "version": "4.7.2",
+      "date": "31.8.2026",
+      "changes": [
+        "🎨 Profilkarte auf Einstellungs-, Termine- und Übersichtsseite im neuen Hero-Design.",
+        "📅 Abwesenheit melden: Datumsauswahl als Range-Picker mit Hervorhebung des gewählten Zeitraums.",
+        "⚙️ Abwesenheit löschen: Rücksetztext nennt jetzt den Standardstatus des Termintyps.",
+        "🗑️ Termine löschen: Eintrag wird sofort aus der Liste entfernt.",
+        "🔒 Hinweis zur Pausieren-Funktion nur noch für berechtigte Personen sichtbar."
+      ]
+    },
+    {
+      "version": "4.7.1",
+      "date": "31.8.2026",
+      "changes": [
+        "⚡ Anwesenheitsliste: Wischaktionen reduziert - nur noch Notiz direkt, Rest per 'Mehr'-Button.",
+        "🔔 Erinnerung einzeln senden: Direkt aus dem Mehr-Menü einer Person.",
+        "📜 Ablaufplan: Export- und Sendeoptionen in einem Teilen-Menü gebündelt.",
+        "📍 Öffentlicher Ablaufplan: Scrollt automatisch zum aktuellen Programmpunkt.",
+        "🔔 Update-Hinweis nur noch bei Major- oder Minor-Updates als Dialog."
+      ]
+    },
+    {
+      "version": "4.7.0",
+      "date": "28.8.2026",
+      "changes": [
+        "➕ Zusatzfelder für Werke (analog zu Personen-Zusatzfeldern).",
+        "🔍 Werkliste: Zusatzfelder als Badge anzeigen und danach filtern.",
+        "⚙️ Zusatzfelder (Personen & Werke) in eigene Einstellungsseite ausgelagert.",
+        "🗓️ Geplante Abwesenheiten: Personen können zukünftige Abwesenheitszeiträume eintragen. Passende Termine werden automatisch entschuldigt.",
+        "⚙️ Neue Rollenberechtigung: Geplante Abwesenheiten für Spieler, Helfer und Stimmführer-Helfer konfigurierbar.",
+        "📊 Konfigurierbares Dashboard: Geburtstage, Termine, Mitglieder-Veränderungen, Abwesenheiten & Problemfälle auf einen Blick. Als Tab pinnbar, Karten frei sortier- und ein-/ausblendbar."
+      ]
+    },
+    {
+      "version": "4.6.4",
+      "date": "28.8.2026",
+      "changes": [
+        "🎂 Geburtstagsnachrichten (Push & Telegram) zeigen jetzt das Alter der Person.",
+        "📅 Ablaufplan: Standarduhrzeit entspricht jetzt der Uhrzeit des Termins.",
+        "🔍 Terminliste: Nach Termintyp filtern möglich."
+      ]
+    },
+    {
+      "version": "4.6.3",
+      "date": "27.8.2026",
+      "changes": [
+        "🎵 Werke: Aufnahmen können jetzt auch heruntergeladen werden (Werkverzeichnis & Selbstauskunft).",
+        "🖨️ Werke: Drucken öffnet jetzt zuverlässig den Druckdialog statt die Datei nur im Browser anzuzeigen."
+      ]
+    },
+    {
+      "version": "4.6.2",
+      "date": "25.8.2026",
+      "changes": [
+        "👥 Personen: Admins können die Reihenfolge von Personen innerhalb einer Gruppe per Drag & Drop anpassen. Die Reihenfolge wird für alle Nutzer gespeichert und gilt auch in der Terminansicht.",
+        "📝 Personenliste: Die Notizen-Ansichtsoption zeigt den vollständigen Notiztext direkt unter dem Namen an.",
+        "⌨️ Alle Eingabefelder: Automatische Großschreibung des ersten Buchstabens aktiviert."
+      ]
+    },
+    {
+      "version": "4.6.1",
+      "date": "25.8.2026",
+      "changes": [
+        "📅 Kalender-Abo: Nur noch die eigenen Termine werden abonniert (Admins sehen weiterhin alle). Der Ablaufplan wird mit Zeiten und Programmpunkten in der Beschreibung angezeigt. Status (Zugesagt, Entschuldigt etc.) erscheint im Termintitel. Terminkategorie-Farbe wird übernommen. Erinnerung bei offener Anmeldung, wenn eine Anmeldefrist gesetzt ist."
+      ]
+    },
+    {
+      "version": "4.6.0",
+      "date": "25.8.2026",
+      "changes": [
+        "🏢 Organisations-Einstellungen: Neuer dedizierter Bereich in den Einstellungen für alle Org-Funktionen (Branding, Pläne, Personenverknüpfung, Übergabe).",
+        "📋 Ad-Hoc Ablaufplanung: Pläne können direkt aus dem Planungseditor zur Organisation hinzugefügt oder wieder entfernt werden.",
+        "📅 Org-Pläne: Eigener Tab-Bereich mit Live-Modus, Verlauf vergangener Pläne und direktem Link zur Ablaufplanung.",
+        "🌐 Öffentliche Org-Plan-Seite: Accordion-Ansicht mit Live-Modus, Export und Verlauf vergangener Pläne.",
+        "📅 Abonniere die Org-Ablaufpläne in deinem Kalender.",
+        "🔔 Erinnerungen: Betreff und Nachricht der Ad-Hoc-Erinnerung sind jetzt frei editierbar (inkl. Vorschau des Links). Betreff wird als Titel für Push, Telegram und E-Mail verwendet."
+      ]
+    },
+    {
+      "version": "4.5.0",
+      "date": "24.8.2026",
+      "changes": [
+        "🔗 Ablaufpläne können als öffentlicher Link geteilt werden (auch ohne Account). Optional mit Edit-Schlüssel zum Bearbeiten.",
+        "📡 Live-Ansicht: Wenn der Plan gerade läuft, kann der aktuelle Programmblock hervorgehoben werden – in der Plan-Ansicht, im Probenmanager und auf der geteilten Seite."
+      ]
+    },
+    {
+      "version": "4.4.9",
+      "date": "21.8.2026",
+      "changes": [
+        "⏸️ Mitglieder: Spieler können sich selbst pausieren, wenn die Funktion vom Admin aktiviert wurde (Einstellungen → Rollen & Berechtigungen → Mitglied)."
+      ]
+    },
+    {
+      "version": "4.4.8",
+      "date": "21.8.2026",
+      "changes": [
+        "🔔 Benachrichtigungen: Neuer Toggle \"Beide Kanäle gleichzeitig\" – Push und Telegram werden parallel gesendet, wenn beide konfiguriert sind."
+      ]
+    },
+    {
+      "version": "4.4.7",
+      "date": "20.8.2026",
+      "changes": [
+        "🔗 Personen: Gleiche Personen aus verschiedenen Instanzen können jetzt dauerhaft verknüpft werden (global_person_id).",
+        "🔄 Personen: Änderungen an Name, Geburtstag, E-Mail und Telefon werden automatisch auf alle verknüpften Instanzen übertragen.",
+        "⚙️ Einstellungen: Neue Funktion \"Personen verknüpfen\" zur manuellen Verknüpfung bestehender Personen über Instanzgrenzen hinweg."
+      ]
+    },
+    {
+      "version": "4.4.6",
+      "date": "19.8.2026",
+      "changes": [
+        "📄 Export: PDF-Export passt Zellabstand und Schriftgröße automatisch an, um den Inhalt auf einer Seite darzustellen.",
+        "🔍 Personen: Suche berücksichtigt jetzt auch Zusatzfelder vom Typ \"Text\".",
+        "👤 Person: Admins können über das Aktionsmenü ihren eigenen Benutzer direkt einer Person zuweisen.",
+        "⚡ Instanz wechseln: Oben in der Kopfzeile kann die Instanz direkt per Dropdown gewechselt werden."
+      ]
+    },
+    {
+      "version": "4.4.5",
+      "date": "18.8.2026",
+      "changes": [
+        "👥 Personen: Beim Pausieren einer Person wird gefragt, ob sie auch in anderen Instanzen der Organisation pausiert werden soll."
+      ]
+    },
+    {
+      "version": "4.4.4",
+      "date": "17.8.2026",
+      "changes": [
+        "👥 Personen: Neue Sortieroption \"Gruppe + Beitrittsdatum ↓\" — Stimmführer erscheinen innerhalb der Gruppe zuerst, dann absteigend nach Beitrittsdatum."
+      ]
+    },
+    {
+      "version": "4.4.3",
+      "date": "17.8.2026",
+      "changes": [
+        "👥 Personen: Beim ersten Aufruf ohne angelegte Personen wird ein direkter Button zum Importieren angeboten."
+      ]
+    },
+    {
+      "version": "4.4.2",
+      "date": "14.8.2026",
+      "changes": [
+        "🖼️ Anwesenheit: Profilbilder können über das Menü in der Anwesenheitsliste ein- und ausgeblendet werden."
+      ]
+    },
+    {
+      "version": "4.4.1",
+      "date": "14.8.2026",
+      "changes": [
+        "🐛 Geburtsdatum auf der Profilkarte wird jetzt immer korrekt angezeigt."
+      ]
+    },
+    {
+      "version": "4.4.0",
+      "date": "13.8.2026",
+      "changes": [
+        "🎵 Werke-Tab: Dirigenten können die Werke-Datenbank jetzt direkt als Tab in der Tab-Leiste anpinnen (Pin-Icon in der Werke-Datenbank).",
+        "🖨️ Noten-Sammeldruck: Alle aktuellen Noten einer Stimme lassen sich mit einem Klick als ein PDF zusammenführen und drucken."
+      ]
+    },
+    {
+      "version": "4.3.5",
+      "date": "13.8.2026",
+      "changes": [
+        "🎓 Vorkurs-Urkunden: Urkunden für Vorkurs-Instanzen können jetzt direkt aus der App generiert und als PDF exportiert werden."
+      ]
+    },
+    {
+      "version": "4.3.4",
+      "date": "13.8.2026",
+      "changes": [
+        "🎂 Geburtstagsbenachrichtigungen: Wer selbst Geburtstag hat, erhält jetzt einen persönlichen Glückwunsch.",
+        "🔧 Geburtstags-Sync: Absturz durch fehlerhafte UUID in der Datenbank behoben.",
+        "🎨 Segment-Buttons (iOS): Doppelter Auswahlhintergrund mit unterschiedlichem Eckenradius behoben."
+      ]
+    },
+    {
+      "version": "4.3.3",
+      "date": "12.8.2026",
+      "changes": [
+        "💬 Bessere Fehlermeldungen beim Anmelden: Hinweise auf fehlende Konten oder nicht gesetztes Passwort mit direktem Angebot zur Registrierung oder zum Code-Login.",
+        "🔗 Bestätigungslink: Nach dem Klick auf den Bestätigungslink wurde fälschlicherweise eine Erfolgs- und eine Fehlermeldung gleichzeitig angezeigt – das ist jetzt behoben."
+      ]
+    },
+    {
+      "version": "4.3.2",
+      "date": "12.8.2026",
+      "changes": [
+        "🌙 Dunkelmodus: Die Anmeldeseite passt sich jetzt dem Systemdesign an."
+      ]
+    },
+    {
+      "version": "4.3.1",
+      "date": "12.8.2026",
+      "changes": [
+        "🔑 Registrierung per Code zuverlässiger: Beim Anlegen eines Kontos ohne Passwort wird jetzt zuverlässig ein 6-stelliger Code per E-Mail versendet, den du direkt in der App eingibst. Bisher konnte es passieren, dass stattdessen nur eine Bestätigungs-E-Mail ankam und die App weiter auf den Code wartete."
+      ]
+    },
+    {
+      "version": "4.3.0",
+      "date": "12.8.2026",
+      "changes": [
+        "🔑 Anmelden & Registrieren mit Code per E-Mail: Du kannst dich jetzt ganz ohne Passwort anmelden. Fordere auf der Anmeldeseite über „Anmelden mit Code per E-Mail“ einen 6-stelligen Code an, den wir dir per E-Mail schicken, und gib ihn direkt in der App ein. Auch bei der Registrierung über einen Einladungslink oder das Registrierungsfenster kannst du dein Konto ohne Passwort anlegen. Den Code kannst du bei Bedarf erneut anfordern."
+      ]
+    },
+    {
+      "version": "4.2.1",
+      "date": "12.8.2026",
+      "changes": [
+        "🔄 Update-Hinweis nach Neuinstallation behoben: Nach einer frischen Installation der App aus dem Store erschien fälschlicherweise sofort ein „Update verfügbar“-Hinweis, obwohl bereits die neueste Version installiert war. Updates werden jetzt nur noch angeboten, wenn tatsächlich eine neuere Version vorliegt."
+      ]
+    },
+    {
+      "version": "4.2.0",
+      "date": "11.8.2026",
+      "changes": [
+        "📥 Personen aus Excel/CSV importieren: Als Administrator kannst du jetzt über die Personenliste (Optionen-Menü → „Personen importieren“) mehrere Personen auf einmal aus einer Excel- (.xlsx/.xls) oder CSV-Datei anlegen. Die Spalten werden automatisch zugeordnet und lassen sich bei Bedarf manuell anpassen, eine Vorlage steht zum Download bereit. In der Vorschau siehst du vor dem Import alle Personen inklusive Hinweisen und Duplikaten. Ein kombiniertes Namensfeld (Vor- und Nachname in einer Spalte) wird unterstützt. Konten und Einladungs-E-Mails werden nur auf Wunsch erstellt (standardmäßig aus). Lässt sich eine Gruppe nicht eindeutig zuordnen, kann sie für jede Person direkt in der Vorschau ausgewählt werden."
+      ]
+    },
+    {
+      "version": "4.1.4",
+      "date": "11.8.2026",
+      "changes": [
+        "🔔 Benachrichtigungszentrale: Statusänderungen bei Anwesenheiten (An- und Abmeldungen) landen jetzt zuverlässig in der Benachrichtigungszentrale. Bisher konnte es passieren, dass bei mehreren Änderungen zum selben Termin zwar die Push-Benachrichtigung ankam, der Eintrag in der Zentrale aber fehlte."
+      ]
+    },
+    {
+      "version": "4.1.3",
+      "date": "10.8.2026",
+      "changes": [
+        "🔔 Benachrichtigungszentrale über alle Instanzen: In der Benachrichtigungszentrale gibt es jetzt zwei Ansichten – „Aktuelle Instanz“ (Standard) und „Alle“. In der Ansicht „Alle“ werden Benachrichtigungen aus allen deinen Instanzen angezeigt und mit der jeweiligen Instanz gekennzeichnet. Ein Tippen auf eine Benachrichtigung aus einer anderen Instanz wechselt automatisch dorthin. Sind für die aktuelle Instanz keine Benachrichtigungen vorhanden, öffnet sich direkt die Ansicht „Alle“."
+      ]
+    },
+    {
+      "version": "4.1.2",
+      "date": "10.8.2026",
+      "changes": [
+        "🖼️ Bild-Export im öffentlichen Ablaufplanungs-Tool: Unter https://attendix.de/planung lässt sich der Plan jetzt zusätzlich zu den PDF-Exporten auch als Bild (PNG) exportieren.",
+        "✉️ Bestätigungs-E-Mail erneut senden: Wer sich mit einer noch nicht bestätigten E-Mail-Adresse anmeldet, wird jetzt gefragt, ob die Bestätigungs-E-Mail erneut gesendet werden soll – die Adresse kann dabei direkt korrigiert werden.",
+        "⬆️ Update jederzeit nachholen: Wird ein verfügbares Update mit „Später“ verschoben, erscheint auf der Anmelde- und der Einstellungsseite eine Schaltfläche „Update installieren“, um es manuell einzuspielen. Der Update-Hinweis erklärt zudem, dass die Aktualisierung nur einen kurzen Moment dauert und man danach direkt weiterarbeiten kann."
+      ]
+    },
+    {
+      "version": "4.1.1",
+      "date": "31.7.2026",
+      "changes": [
+        "🔍 Gemeindeauswahl mit Suche: Im Registrierungsformular lässt sich die Gemeinde jetzt über ein Suchfeld schnell finden, statt durch die gesamte Liste zu scrollen.",
+        "🔔 Registrierungs-Benachrichtigungen: Neue Registrierungen werden nun bevorzugt per Push benachrichtigt (Telegram nur als Fallback) und erscheinen zusätzlich in der Benachrichtigungszentrale."
+      ]
+    },
+    {
+      "version": "4.1.0",
+      "date": "20.7.2026",
+      "changes": [
+        "🔔 Benachrichtigungszentrale: Über das Glocken-Symbol oben rechts sind jetzt auf jedem Tab alle an dich gesendeten Benachrichtigungen an einem Ort einsehbar – mit Gelesen-/Ungelesen-Status und einem Zähler für ungelesene Einträge.",
+        "📥 Alle Kanäle: Push-, Telegram- und E-Mail-Erinnerungen landen jetzt zusätzlich in der Benachrichtigungszentrale. So sehen auch Mitglieder ohne aktivierte Push- oder Telegram-Benachrichtigungen ihre Erinnerungen direkt in der App.",
+        "➡️ Direkt zum Termin: Ein Tipp auf eine Termin-Benachrichtigung öffnet die zugehörige Anwesenheit – bei Bedarf wird automatisch zur richtigen Instanz gewechselt.",
+        "✅ Schnelleres Ab- und Ummelden: Beim Abmelden oder Eintragen einer Verspätung erscheint jetzt eine kompakte Auswahl. Der Grund lässt sich direkt aus einer Liste antippen – ohne verschachtelte Menüs und großes Fenster wie bisher.",
+        "🎨 Eigenes Branding: Unter Einstellungen › Allgemein › Branding lassen sich pro Instanz ein Logo und ein Branding-Text hinterlegen. Diese erscheinen jetzt in einem aufgeräumten Kopfbereich exportierter Pläne und Listen (PDF und Bild) – oben links Logo und Text, oben rechts das Erstellungsdatum, darunter Titel und Stand mit dezenter Trennlinie.",
+        "📋 Branding im öffentlichen Ablaufplanungs-Tool: Unter https://attendix.de/planung kann jetzt zwischen den Vorlagen „FECG Speyer“ und „FECG Schwegenheim“ ein Branding gewählt werden, das ebenfalls im Kopfbereich der Exporte erscheint.",
+        "🔤 Kyrillische Schrift in Exporten: PDF- und Bild-Exporte stellen kyrillische Zeichen (z. B. russische Namen und Werktitel) jetzt korrekt dar, statt sie in lateinische Buchstaben umzuschreiben. Dazu wird eine Unicode-Schriftart eingebettet, die zusätzlich in der Spieler- und Anwesenheitsliste greift."
+      ]
+    },
+    {
+      "version": "4.0.8",
+      "date": "30.6.2026",
+      "changes": [
+        "👤 Verbesserte Ansicht für Passbilder: Passbilder werden jetzt in der Mitglieder-Ansicht und im Profil größer angezeigt, sodass sie besser erkennbar sind."
+      ]
+    },
+    {
+      "version": "4.0.7",
+      "date": "29.6.2026",
+      "changes": [
+        "🚀 Schnellere Updates der nativen App: Kleine Verbesserungen am Web-Teil der App werden jetzt direkt beim nächsten Start eingespielt – ohne Umweg über App Store oder Play Store. Native Updates (neue Berechtigungen, native Plugins) brauchen weiterhin ein Store-Update.",
+        "📋 Öffentliches Ablaufplanungs-Tool: Unter https://attendix.de/planung steht ein abgespecktes Ablaufplanungs-Tool ohne Login zur Verfügung – ideal für Ad-hoc-Planungen externer Benutzer. Mit drei Vorlagen (Gottesdienst, Chorprobe, Orchesterprobe), die per Klick als Startpunkt geladen werden.",
+        "📤 Export als PDF oder Bild, jeweils einseitig (A4) oder als 2x A5 nebeneinander. Der Plan wird im Browser lokal gespeichert, sodass ein Reload die Arbeit nicht verwirft."
+      ]
+    },
+    {
+      "version": "4.0.6",
+      "date": "19.6.2026",
+      "changes": [
+        "🔗 Teil-Links auf nativen Apps korrigiert: Beim Kopieren von Lied-, Stimmregister- und Sharing-Links wurde auf iOS/Android bisher die interne App-URL eingefügt (z. B. capacitor://localhost). Die Links zeigen jetzt zuverlässig auf https://attendix.de/ und lassen sich überall öffnen.",
+        "🎵 Pausieren mit Startdatum: Admins können beim Pausieren einer Person optional ein Startdatum in der Vergangenheit angeben. Die Person wird dann ab diesem Datum aus allen Anwesenheiten entfernt, die nach dem Startdatum liegen. Ein Enddatum reaktiviert die Person automatisch.",
+        "🎺 Noten-Upload: Waldhorn- und Althorn-Stimmen werden wieder korrekt zugeordnet. Hintergrund: Der erweiterte Instrumenten-Matcher hatte zwei Regressionen – die kurze Variante \"alt\" (für Bratsche/Alto) traf fälschlich auf \"althorn\", und Dateinamen mit vorangestellter Nummer (z. B. \"1. Waldhorn.pdf\") fielen in den unsicheren Fallback. Beides ist jetzt durch eine Nummern-Konsistenzprüfung und Wortgrenzen-Match für kurze Aliase behoben.",
+        "🎺 Synonyme bei gleichnamigen Stimmen: Wenn mehrere Stimmen denselben Synonym-Eintrag teilen (z. B. \"Horn Es\" für Althorn 1 und Althorn 2), entscheidet jetzt die Nummer im Dateinamen – \"Horn Es 2.pdf\" landet bei Althorn 2 statt zufällig bei Althorn 1."
+      ]
+    },
+    {
+      "version": "4.0.5",
+      "date": "16.6.2026",
+      "changes": [
+        "📲 Anwesenheit als eigene Seite: Die Anwesenheit ist jetzt eine echte Seite mit eigener URL (/tabs/attendance/<id>) statt eines Dialogs. Anwesenheiten lassen sich direkt verlinken, per Push öffnen und beim Neuladen bleibt man auf der gewünschten Anwesenheit.",
+        "🔙 Zurück-Button: Oben links ist jetzt ein Standard-Zurück-Button – er nutzt die Navigations-Historie und fällt sauber auf die Anwesenheitsliste zurück, wenn die Seite über einen Link oder Push geöffnet wurde.",
+        "🔔 Push-Benachrichtigungen: Tippen auf eine Anwesenheits-Benachrichtigung führt für Dirigenten und Helfer direkt auf die Anwesenheitsseite – ohne Umweg über die Liste."
+      ]
+    },
+    {
+      "version": "4.0.4",
+      "date": "8.6.2026",
+      "changes": [
+        "🔍 Bessere Personensuche über Instanzen hinweg: Beim Hinzufügen einer Person werden mögliche Übereinstimmungen aus verbundenen Instanzen jetzt direkt während der Eingabe als Vorschlagsliste angezeigt – mit Treffergenauigkeit und Hinweis, ob die Person bereits ein Konto hat.",
+        "✨ Tippfehler- und Umlaut-tolerant: Müller ↔ Mueller ↔ Muller werden als gleiche Person erkannt, ebenso kleine Tippfehler und vertauschte Vor-/Nachnamen.",
+        "👤 Auch Personen ohne Konto werden vorgeschlagen: Personen aus verbundenen Instanzen werden jetzt unabhängig vom Account-Status als mögliche Übereinstimmung angezeigt.",
+        "✉️ Vorschlag bei E-Mail-Eingabe: Wenn eine E-Mail bereits in einer anderen Instanz verwendet wird, wird die zugehörige Person zur Datenübernahme vorgeschlagen.",
+        "🎵 Dirigent in Werk-Liste ändern: In der Anwesenheit kann der Dirigent eines Werks direkt geändert werden. Tippen auf ein Werk öffnet eine Auswahl: Dirigent ändern oder zum Werk navigieren."
+      ]
+    },
+    {
+      "version": "4.0.3",
+      "date": "5.6.2026",
+      "changes": [
+        "🐛 Werkauswahl auf iOS/Mac: Im Werkauswahl-Dialog (Anwesenheit, Werkhistorie) wurden ausgewählte Werke auf iPhone/iPad/Mac nicht übernommen. Auswahl funktioniert jetzt zuverlässig auf allen Plattformen.",
+        "🐛 Profilbild: Verhindert, dass in seltenen Fällen ein eingebettetes Bild (data:-URL) anstelle eines hochgeladenen Bildes in der Datenbank gespeichert wird – beim Speichern wird ein solches Bild nun automatisch hochgeladen und durch die echte URL ersetzt.",
+        "🐛 Pausieren: Pausieren einer Person hat den Status nicht mehr gespeichert – die Felder 'paused' und 'paused_until' (sowie weitere Felder wie Schicht, Eltern-Verknüpfung, Stimmführer-Helfer) wurden beim Update versehentlich verworfen. Behoben."
+      ]
+    },
+    {
+      "version": "4.0.2",
+      "date": "2.6.2026",
+      "changes": [
+        "🐛 Push-Benachrichtigungen: Beim Öffnen einer Anwesenheit über eine Push-Benachrichtigung war die Personenliste manchmal leer. Behoben durch robustere Initialisierung beim Kaltstart und Schutz gegen Realtime-Events ohne Personendaten."
+      ]
+    },
+    {
+      "version": "4.0.1",
+      "date": "29.5.2026",
+      "changes": [
+        "📝 Schnelle Notizauswahl: Beim Hinzufügen einer Notiz pro Person in der Anwesenheit können vordefinierte Gründe direkt per Tap ausgewählt oder eine eigene Notiz eingegeben werden.",
+        "🐛 Fehlerbehebungen"
+      ]
+    },
+    {
+      "version": "4.0.0",
+      "date": "8.5.2026",
+      "changes": [
+        "📱 Native App: Attendix ist jetzt im Google Play Store & App Store verfügbar!",
+        "🔔 Push-Benachrichtigungen: Native Push-Notifications als Alternative zu Telegram.",
+        "🔗 Deep Links: Links in Benachrichtigungen öffnen direkt die richtige Seite in der App.",
+        "📣 Ad-hoc Erinnerungen: Versende manuelle Erinnerungen direkt aus der Anwesenheitsansicht.",
+        "🚀 Push bevorzugt: Push-Benachrichtigungen werden bevorzugt, Telegram nur als Fallback wenn kein Push zugestellt werden kann.",
+        "🏠 App-Hinweis: PWA-Nutzer werden nach dem Login einmalig auf die native App hingewiesen.",
+        "📝 Beschreibung & Anhang: Anwesenheiten können jetzt mit einer Rich-Text-Beschreibung und einem Dateianhang versehen werden.",
+        "📎 Anhang-Zugriff: Beschreibung und Anhang sind über das Aktionsmenü auf der Abmelde-, Eltern- und Übersichtsseite einsehbar.",
+        "✏️ Ablaufplan-Überschrift: Pro Anwesenheit kann im Planungs-Modal eine eigene Überschrift für den Ablaufplan gesetzt werden, die in PDF-Export und Telegram-Versand verwendet wird."
+      ]
+    },
+    {
+      "version": "3.15.0",
+      "date": "5.5.2026",
+      "changes": [
+        "⚙️ Konfigurierbare Gründe: Abwesenheits- und Verspätungsgründe können nun pro Instanz unter 'Einstellungen' individuell angepasst werden.",
+        "📝 Flexible An-/Abmeldung: Gründe hinzufügen, bearbeiten oder löschen - passend zu den Anforderungen deiner Organisation.",
+        "🔄 Automatischer Fallback: Wenn keine Gründe konfiguriert sind, werden automatisch die Standardwerte verwendet.",
+        "🔧 Checklisten-Reminder: Erweitertes Zeitfenster für Telegram-Benachrichtigungen und Duplikatskontrolle verhindert verpasste Reminder."
+      ]
+    },
+    {
+      "version": "3.14.0",
+      "date": "5.5.2026",
+      "changes": [
+        "🎵 Werk-Navigation: Auf der Anwesenheit kannst du jetzt direkt auf ein Werk tippen und zur Werk-Detailseite navigieren."
+      ]
+    },
+    {
+      "version": "3.13.6",
+      "date": "28.4.2026",
+      "changes": [
+        "📅 Native Datumseingabe: Alle Datumsfelder verwenden jetzt native HTML5 date inputs mit DD.MM.YYYY Anzeige.",
+        "📝 Manuelle Eingabe: Direkte Texteingabe im Format TT.MM.JJJJ möglich mit automatischer Validierung.",
+        "📆 Kalender-Button: Klick auf das Kalender-Icon öffnet den nativen Browser-Datepicker.",
+        "✨ Vereinfachte Bedienung: Keine redundanten Modi mehr - native Funktionalität für beste Nutzererfahrung."
+      ]
+    },
+    {
+      "version": "3.13.5",
+      "date": "28.4.2026",
+      "changes": [
+        "🔍 Werkauswahl mit Suche: Alle Werkauswahl-Dialoge verfügen jetzt über eine Suchfunktion für schnelles Auffinden von Werken (Anwesenheit hinzufügen/bearbeiten, Ablaufpläne, Werkhistorie)."
+      ]
+    },
+    {
+      "version": "3.13.4",
+      "date": "28.4.2026",
+      "changes": [
+        "👥 Anwesenheits-Übersicht: Gruppen-Header zeigen jetzt die Anzahl anwesender Personen (z.B. 'Sopran (8/12)' statt 'Sopran (12)')."
+      ]
+    },
+    {
+      "version": "3.13.3",
+      "date": "28.4.2026",
+      "changes": [
+        "✨ Ablaufpläne für 'general' Instanzen: Ablaufpläne sind jetzt auch für Instanzen vom Typ 'general' verfügbar.",
+        "🎵 Werke-Features ausgeblendet: Alle werke-relevanten Optionen werden bei 'general' Instanzen konsequent ausgeblendet (Werke verwalten, Werk-Platzhalter, Aktuelle Werke hinzufügen, Instanz-Name vor Werken).",
+        "📋 Anwesenheiten aufgeräumt: Werke-Sektion wird beim Erstellen und Bearbeiten von Anwesenheiten in 'general' Instanzen nicht mehr angezeigt.",
+        "🎯 Ablaufplan-Erstellung: Werk-bezogene Optionen sind nur noch für Nicht-General-Instanzen verfügbar.",
+        "🗂️ Menü-Struktur: Ablaufpläne haben jetzt eine eigene 'Planung' Sektion im Mehr-Menü."
+      ]
+    },
+    {
+      "version": "3.13.2",
+      "date": "24.4.2026",
+      "changes": [
+        "🔧 Schichtplan-Zuweisungen: Beim Kopieren eines Schichtplans in eine andere Instanz werden Zuweisungen jetzt korrekt übernommen, wenn 'Mit Zuweisungen' ausgewählt wird."
+      ]
+    },
+    {
+      "version": "3.13.1",
+      "date": "24.4.2026",
+      "changes": [
+        "📅 Kalender-Konsistenz: Alle Datums-Kalender beginnen jetzt einheitlich am Montag (vorher teilweise Sonntag).",
+        "🔧 Schichtplan-Fix: Kalender für Schichtplan-Startdatum und Schicht-Konfiguration beginnen am Montag.",
+        "📝 Registrierung: Geburtsdatum-Kalender bei der Registrierung beginnt am Montag."
+      ]
+    },
+    {
+      "version": "3.13.0",
+      "date": "24.4.2026",
+      "changes": [
+        "🔄 Code-Formatierung: Standardisierung des Code-Stils (Quotes, Semicolons, Line-Endings) für bessere Wartbarkeit.",
+        "🔐 Auth-Flow-Verbesserung: Optimierte Initialisierung und Sign-Out-Handling, verhindert Race-Conditions.",
+        "🔧 Duplikate bei Reaktivierung: Pausierte Personen erscheinen nach der Reaktivierung nicht mehr doppelt in Anwesenheiten.",
+        "🛡️ Datenbank-Constraint: UNIQUE constraint auf (attendance_id, person_id) verhindert zukünftige Duplikate auf DB-Ebene.",
+        "📅 Zeitzonen-Fix: Geburtsdatum, joined und playsSince werden auf UTC Mitternacht normalisiert - keine falschen Daten mehr durch Zeitzonenverschiebungen.",
+        "✅ Alle Datumsfelder korrigiert: Betrifft Person anlegen/bearbeiten, Registrierung, Person übertragen/kopieren und Zusatzfelder."
+      ]
+    },
+    {
+      "version": "3.12.0",
+      "date": "30.3.2026",
+      "changes": [
+        "✏️ Bulk-Bearbeitung: Felder für alle Personen gleichzeitig bearbeiten - Standard-Felder (Gruppe, Stimmführer, Notizen, Telefon) und Zusatzfelder.",
+        "⚡ Für alle setzen: Mit einem Klick den gleichen Wert für alle Personen übernehmen.",
+        "📋 Änderungs-Tracking: Nur tatsächlich geänderte Personen werden gespeichert, geänderte Zeilen sind visuell markiert.",
+        "🔧 Fix: Person hinzufügen - Auswahl aus 'Passende Personen' wurde nicht korrekt erkannt.",
+        "🎨 Person hinzufügen: Listen als einklappbare Akkordeons mit verbessertem Design."
+      ]
+    },
+    {
+      "version": "3.11.0",
+      "date": "27.3.2026",
+      "changes": [
+        "🎵 Aktuelle Werke gruppiert: Songs werden nach Datum UND Event-Typ gruppiert (z.B. '27.03.2026 | Probe', '27.03.2026 | Konzert').",
+        "📊 Konsistente Sortierung: Events am selben Datum werden nach attendance_id sortiert - identisch zur Anwesenheitsliste.",
+        "👥 Personen manuell hinzufügen: Admins können in der Anwesenheit jede Person der Instanz manuell hinzufügen.",
+        "🎯 Intelligente Filterung: Passende Personen (nach Anwesenheitstyp) werden oben priorisiert, andere Personen darunter angezeigt.",
+        "⏳ Lade-Indikator: Beim Öffnen des Person-hinzufügen-Dialogs wird ein Spinner angezeigt.",
+        "🎼 Chor-Partituren: Bei Chor-Instanzen werden auch Dateien mit der Notiz 'Chor' in der Spieler-Ansicht berücksichtigt.",
+        "🖨️ Chor-Druck: Druckfunktion für aktuelle Werke berücksichtigt Chor-Noten."
+      ]
+    },
+    {
+      "version": "3.10.0",
+      "date": "26.3.2026",
+      "changes": [
+        "🎼 Sortierbare Gruppen: Gruppen können per Drag & Drop für die Partitur-Reihenfolge sortiert werden - instanzweit eindeutiger Index.",
+        "📂 Sortierbare Kategorien: Kategorien haben ebenfalls einen eigenen Reorder-Modus mit Drag & Drop.",
+        "🔢 Index-Badges: Sichtbare Nummerierung bei Gruppen und Kategorien im Reorder-Modus.",
+        "👥 Personenliste: Group-Header werden auch bei Sortierung nach Gruppe angezeigt (basierend auf sort_order).",
+        "🔧 Audio-Player Fix: Audio-Player wird nicht mehr doppelt angezeigt.",
+        "📋 Schichtplan Fix: Kopierte Schichtpläne werden jetzt korrekt angezeigt.",
+        "🖨️ Print Fix: Print-Dialog öffnet sich nun zuverlässiger auf allen Geräten."
+      ]
+    },
+    {
+      "version": "3.9.3",
+      "date": "23.3.2026",
+      "changes": [
+        "📋 Ablaufplan zurücksetzen: Wenn kein Standard-Plan vorhanden ist, werden beim Zurücksetzen alle Einträge entfernt."
+      ]
+    },
+    {
+      "version": "3.9.2",
+      "date": "13.3.2026",
+      "changes": [
+        "🔧 Rollen & Berechtigungen: Darstellung als Accordions pro Rolle statt einzelner Listen. Rollen ohne konfigurierbare Berechtigungen werden ausgeblendet.",
+        "📊 Schicht-/Arbeitsbedingt = Anwesend: Neben 'Schichtbedingt' wird nun auch 'Arbeitsbedingt' bei der prozentualen Berechnung als anwesend gewertet.",
+        "📤 Export: Anwesenheit in % wird nun korrekt berechnet statt immer 0 anzuzeigen."
+      ]
+    },
+    {
+      "version": "3.9.1",
+      "date": "13.3.2026",
+      "changes": [
+        "⚙️ Schichtbedingt = Anwesend: Neue Einstellung unter Anwesenheiten, um schichtbedingt entschuldigte Abwesenheiten als anwesend für die prozentuale Berechnung zu werten.",
+        "📊 Prozentberechnung: Personen mit der Notiz 'Schichtbedingt' werden bei aktivierter Einstellung als anwesend gezählt – in Personenliste, Statistiken, Elternansicht und Anwesenheitsliste."
+      ]
+    },
+    {
+      "version": "3.9.0",
+      "date": "13.3.2026",
+      "changes": [
+        "🔐 Rollen & Berechtigungen: Neue Einstellungsseite unter Instanz-Verwaltung, um Rollenrechte pro Instanz zu konfigurieren.",
+        "👥 Helfer-Gruppeneinschränkung: Helfer und Stimmführer-Helfer können optional auf die Anwesenheitspflege ihrer eigenen Gruppe beschränkt werden.",
+        "� Anwesenheiten erstellen: Admins können Helfern das Recht zum Anlegen neuer Anwesenheiten entziehen.",
+        "👁️ Spielernotizen: Helfer können optional die Notizen der Spieler in der Anwesenheitsansicht sehen.",
+        "✅ Checkliste: Helfer können optional die Checkliste in der Anwesenheitsansicht einsehen.",
+        "�🗄️ Neue Datenbanktabelle 'tenant_role_permissions' für erweiterbare, rollenbasierte Berechtigungen pro Instanz."
+      ]
+    },
+    {
+      "version": "3.8.7",
+      "date": "13.3.2026",
+      "changes": [
+        "🎼 Konfigurierbarer Registerprobenplan: Gruppen (z.B. Sopran, Alt, Tenor, Bass) können im Modal frei hinzugefügt, umbenannt und entfernt werden.",
+        "🎤 Dirigenten editierbar: Dirigentennamen können im Registerprobenplan-Modal angepasst, hinzugefügt und entfernt werden.",
+        "💾 Gruppen werden im LocalStorage gespeichert und beim nächsten Öffnen automatisch wiederhergestellt.",
+        "📊 Dynamische Spalten: Die PDF-Tabelle passt sich automatisch an die Anzahl der konfigurierten Gruppen an.",
+        "🔄 Verbesserte Rotation: Jeder Dirigent wird jeder Gruppe mindestens einmal zugewiesen, Zeitslots werden entsprechend aufgeteilt."
+      ]
+    },
+    {
+      "version": "3.8.6",
+      "date": "11.3.2026",
+      "changes": [
+        "👁️ Zusatzfelder für Mitglieder sichtbar: Admins können pro Zusatzfeld festlegen, ob Mitglieder es in ihren Stammdaten (unter 'Mehr') sehen können.",
+        "✏️ Bearbeitbare Zusatzfelder: Optional können sichtbare Zusatzfelder auch von Mitgliedern selbst bearbeitet werden (z.B. Text, Zahl, Auswahl, Ja/Nein).",
+        "🔧 Neue Toggles 'Für Mitglieder sichtbar' und 'Von Mitgliedern bearbeitbar' beim Erstellen und Bearbeiten von Zusatzfeldern.",
+        "📋 Sichtbare Zusatzfelder werden in der Stammdaten-Karte und im Bearbeiten-Dialog angezeigt - je nach Einstellung nur lesend oder auch editierbar.",
+        "📜 Werk-Historie: Auf der Werk-Seite wird nun angezeigt, an welchen Terminen das Werk vorgetragen wurde – inkl. Datum, Anwesenheitstyp und Dirigent."
+      ]
+    },
+    {
+      "version": "3.8.5",
+      "date": "10.3.2026",
+      "changes": [
+        "🎵 In-App Audio-Player: Aufnahmen werden nun direkt in der App abgespielt statt in einem neuen Browser-Tab. Ein schwebender Player mit Play/Pause, Seek-Slider und Zeitanzeige erscheint oberhalb der Tab-Bar.",
+        "🔊 Aufnahme abspielen: Audio-Dateien zeigen jetzt 'Aufnahme abspielen' statt 'Datei öffnen' im Aktionsmenü.",
+        "🎧 Persistenter Player: Audio spielt auch bei Navigation zwischen Seiten weiter.",
+        "📁 Dateiablage: Audio-Dateien in der Dateiablage können ebenfalls direkt in der App abgespielt werden."
+      ]
+    },
+    {
+      "version": "3.8.4",
+      "date": "3.3.2026",
+      "changes": [
+        "📁 Dateiablage (Beta): Neue Dateiablage unter Einstellungen mit Ordnerstruktur, Upload, Download, Umbenennen und Verschieben.",
+        "🖼️ Bildvorschau: Bilder werden als Thumbnail angezeigt und können in einer Vollbild-Vorschau mit Pinch-/Doppeltap-Zoom geöffnet werden.",
+        "📤 Mehrfach-Upload & Telegram: Mehrere Dateien gleichzeitig hochladen, Duplikate optional überschreiben und Dateien direkt per Telegram senden.",
+        "🔐 Rollenrechte: Helfer können Dateien ansehen/hochladen/bearbeiten, Löschen bleibt auf Admins/Verantwortliche beschränkt (inkl. Hinweis in der UI)."
+      ]
+    },
+    {
+      "version": "3.8.3",
+      "date": "23.2.2026",
+      "changes": [
+        "🔍 Zusatzfeld-Filter: In der Personen-Liste kann nun auch nach Text-, Auswahl- und Gemeinde-Zusatzfeldern gefiltert werden.",
+        "🏷️ Zusatzfeld-Anzeige: Badges zeigen nun je nach Feldtyp den passenden Wert an (Auswahlwert, Textinhalt, Gemeindename).",
+        "🐛 Select-Popover: Lange Auswahllisten scrollen nun korrekt."
+      ]
+    },
+    {
+      "version": "3.8.2",
+      "date": "21.2.2026",
+      "changes": [
+        "📄 PDF-Design: Ablaufplan-PDFs haben nun ein moderneres, minimalistisches Design ohne Rahmenlinien - optimiert für Schwarz-Weiß-Druck.",
+        "📑 Doppel-Export: Neuer Export '2x A5' erstellt den Ablaufplan zwei mal nebeneinander im Querformat - ideal zum Ausschneiden. Auch per Telegram sendbar.",
+        "🏷️ Instanz-Prefix: Neue Einstellung bei Anwesenheitstypen ermöglicht es, den Instanz-Namen automatisch vor jeden Werk-Eintrag im Ablaufplan zu setzen."
+      ]
+    },
+    {
+      "version": "3.8.1",
+      "date": "20.2.2026",
+      "changes": [
+        "🎼 Stimmführer-Badge: In der Mitglieder-Übersicht werden Stimmführer nun mit einem Badge gekennzeichnet."
+      ]
+    },
+    {
+      "version": "3.8.0",
+      "date": "20.2.2026",
+      "changes": [
+        "👥 Mitglieder-Tab: Neuer Tab für Spieler, Helfer und Stimmführer zeigt eine Übersicht aller Personen (nach Gruppe sortiert). Aktivierbar in den allgemeinen Einstellungen.",
+        "🔍 Quickfilter: Falls das Zusatzfeld 'Einteilung' vorhanden ist, erscheint ein Schnellfilter für die Mitglieder-Übersicht.",
+        "🧹 Zusatzfeld-Validierung: Beim Ändern von Zusatzfeldern werden automatisch ungültige Werte bei Personen korrigiert (z.B. gelöschte Optionen → Standardwert).",
+        "🗑️ Person aus Anwesenheit entfernen: Personen können nun aus einzelnen Anwesenheiten gelöscht werden (mit Warnhinweis, nicht rückgängig machbar).",
+        "🔄 Automatische Termin-Synchronisation: Bei Änderung eines Zusatzfelds einer Person werden anstehende Termine automatisch aktualisiert (Person wird hinzugefügt/entfernt basierend auf Zusatzfeld-Filter)."
+      ]
+    },
+    {
+      "version": "3.7.9",
+      "date": "19.2.2026",
+      "changes": [
+        "🎼 Stimmführer-Rollen: Neue Rollen 'Stimmführer' und 'Stimmführer & Helfer' ermöglichen Einblick in Kontaktdaten und Abwesenheiten der eigenen Stimme.",
+        "👥 Meine Stimme: Neue Seite unter 'Mehr' zeigt Stimmführern alle Mitglieder ihrer Gruppe mit Kontaktdaten und anstehenden Abwesenheiten.",
+        "🔄 Automatische Rollenvergabe: Beim Aktivieren des Stimmführer-Status kann optional die entsprechende Rolle vergeben werden."
+      ]
+    },
+    {
+      "version": "3.7.8",
+      "date": "16.2.2026",
+      "changes": [
+        "📊 Status-Übersicht: Neue Option im Anwesenheits-Popover zeigt eine Übersicht aller verwendeten Status mit Anzahlen.",
+        "📅 Anstehende Termine: In der Personen-Ansicht werden nun alle anstehenden Termine mit Status angezeigt.",
+        "📋 Ablaufplan teilen: Pläne können nun mit allen Mitgliedern geteilt werden - Anzeige in Abmeldung/Eltern mit Warnung bei fehlendem Instrument."
+      ]
+    },
+    {
+      "version": "3.7.7",
+      "date": "16.2.2026",
+      "changes": [
+        "✏️ Zusatzfelder bearbeiten: Zusatzfelder für Personen können nun nachträglich bearbeitet werden - Name ändern, Standardwert anpassen und alle Werte auf den Standard zurücksetzen.",
+        "⚠️ Option löschen: Beim Löschen einer Auswahl-Option werden betroffene Personen automatisch auf den Standardwert zurückgesetzt."
+      ]
+    },
+    {
+      "version": "3.7.6",
+      "date": "15.2.2026",
+      "changes": [
+        "🎵 Werke sortieren: Neue Sortieroptionen nach 'Zuletzt gespielt/gesungen' - sortiere Werke danach, wann sie zuletzt aufgeführt wurden."
+      ]
+    },
+    {
+      "version": "3.7.5",
+      "date": "13.2.2026",
+      "changes": [
+        "📅 Schichtplan kopieren mit Anwesenheits-Update: Beim Kopieren eines Schichtplans mit Zuweisungen werden nun auch die anstehenden Termine der zugewiesenen Personen automatisch aktualisiert."
+      ]
+    },
+    {
+      "version": "3.7.4",
+      "date": "12.2.2026",
+      "changes": [
+        "📋 Schichtplan kopieren mit Zuweisungen: Beim Kopieren eines Schichtplans in eine andere Instanz können nun auch die Personen-Zuweisungen übernommen werden."
+      ]
+    },
+    {
+      "version": "3.7.3",
+      "date": "12.2.2026",
+      "changes": [
+        "🔄 Automatische Update-Erkennung: Die App prüft jetzt automatisch auf neue Versionen und zeigt einen Update-Dialog an."
+      ]
+    },
+    {
+      "version": "3.7.2",
+      "date": "12.2.2026",
+      "changes": [
+        "👨‍👩‍👧 Eltern-Ansicht optimiert: Neue Willkommenskarte mit Anwesenheitsstatistiken pro Kind.",
+        "🎵 Aktuelle Werke: Eltern können jetzt auch die aktuellen Werke einsehen.",
+        "📅 Bessere Terminübersicht: Termine sind jetzt in Aktuell, Anstehende und Vergangene gruppiert.",
+        "🔄 Pull-to-Refresh: Daten durch Herunterziehen aktualisieren.",
+        "ℹ️ Legende: Info-Button erklärt die Anwesenheits-Symbole."
+      ]
+    },
+    {
+      "version": "3.7.1",
+      "date": "9.2.2026",
+      "changes": [
+        "✅ Checklisten für Termintypen: Lege To-Dos mit Deadlines für jeden Termintyp an. Die Checkliste wird automatisch in neue Termine übernommen.",
+        "📋 To-Do Verwaltung: Hake einzelne Punkte ab, füge ad-hoc Aufgaben hinzu und behalte den Überblick über anstehende Deadlines.",
+        "⏰ Deadline-Anzeige: Fälligkeiten werden relativ (z.B. 'in 2 Tagen') und absolut angezeigt. Überfällige Aufgaben werden rot markiert."
+      ]
+    },
+    {
+      "version": "3.7.0",
+      "date": "5.2.2026",
+      "changes": [
+        "🚨 Problemfälle erkennen: Definiere Regeln zur automatischen Erkennung von Problemfällen unter Einstellungen → Problemfall-Regeln. Optional: Benachrichtigungen per Telegram.",
+        "📤 Ablaufplan als Bild versenden: Teile den Ablaufplan direkt als Bild über Telegram - perfekt für Messenger-Gruppen.",
+        "⏰ Terminerinnerungen: Konfiguriere bis zu 3 Erinnerungen pro Termintyp (z.B. 1h, 24h, 48h vorher). Automatischer Versand per Telegram.",
+        "⚠️ Schutz vor Datenverlust: Warnung beim Verlassen von Seiten mit ungespeicherten Änderungen (Termintypen & allgemeine Einstellungen)."
+      ]
+    },
+    {
+      "version": "3.6.2",
+      "date": "4.2.2026",
+      "changes": [
+        "📊 Statistik-Dashboard: Visualisiere Anwesenheitsdaten mit interaktiven Charts und detaillierten Auswertungen."
+      ]
+    },
+    {
+      "version": "3.6.1",
+      "date": "4.2.2026",
+      "changes": [
+        "🖨️ Druckfunktion für Werke: Dateien eines Werkes direkt aus der App drucken.",
+        "🖨️ Gruppen-PDFs drucken: Drucke Gruppen-PDFs mit automatischer Kopienanzahl basierend auf aktiven Mitgliedern.",
+        "📱 Als App installieren: Hinweis zur Installation der Web-App auf deinem Gerät.",
+        "📁 Gruppenverzeichnis: Neue Übersicht aller Gruppen mit zugehörigen Dateien."
+      ]
+    },
+    {
+      "version": "3.6.0",
+      "date": "3.2.2026",
+      "changes": [
+        "🌐 Gesamtübersicht für Mitglieder: Alle Termine aus allen Instanzen auf einen Blick – ideal bei Mehrfachmitgliedschaften.",
+        "🔀 Flexible Sortierung: Termine chronologisch oder nach Instanz gruppiert anzeigen.",
+        "🎨 Farbkodierung: Termine werden nach Instanz farblich gekennzeichnet.",
+        "✅ Schnelle An-/Abmeldung: Direkt aus der Gesamtübersicht möglich.",
+        "⏸️ Pausieren mit Enddatum: Automatische Reaktivierung am festgelegten Datum."
+      ]
+    },
+    {
+      "version": "3.5.9",
+      "date": "3.2.2026",
+      "changes": [
+        "📝 Liedtexte: Neue Datei-Kategorie – PDFs werden automatisch erkannt und in der Werkübersicht angezeigt.",
+        "🏷️ Kategoriefilter: Werke nach Kategorien filtern mit praktischem Segment-Control.",
+        "📂 Kategorie-Zuweisung: Jedem Werk eine Kategorie zuweisen und im Lesemodus anzeigen.",
+        "⚠️ Upload-Hinweis: Warnung bei Liedtext-Dateien, die keine PDFs sind.",
+        "🔄 Sofortige Aktualisierung: Datei-Kategorien werden direkt nach Änderung aktualisiert.",
+        "📋 Werke kopieren: Dupliziere Werke inkl. Dateien in andere Instanzen."
+      ]
+    },
+    {
+      "version": "3.5.8",
+      "date": "27.1.2026",
+      "changes": [
+        "🎨 Layout-Auswahl: Wähle zwischen Kürzel- und Text-Layout für die Anwesenheitsanzeige.",
+        "🆕 Neues Kürzel: 'LE' für 'Verspätet entschuldigt'.",
+        "📖 Legende: In der Veranstaltungsübersicht und im Selbstbedienungsbereich."
+      ]
+    },
+    {
+      "version": "3.5.7",
+      "date": "25.1.2026",
+      "changes": [
+        "📝 Notizfelder für Ablaufpläne hinzugefügt."
+      ]
+    },
+    {
+      "version": "3.5.6",
+      "date": "16.1.2026",
+      "changes": [
+        "👆 Swipe-Info: Per Wischgeste nach links siehst du, wer den Anwesenheitsstatus zuletzt geändert hat."
+      ]
+    },
+    {
+      "version": "3.5.5",
+      "date": "14.1.2026",
+      "changes": [
+        "🐛 Fehlerbehebungen"
+      ]
+    },
+    {
+      "version": "3.5.4",
+      "date": "11.1.2026",
+      "changes": [
+        "🐛 Fehlerbehebungen"
+      ]
+    },
+    {
+      "version": "3.5.3",
+      "date": "31.12.2025",
+      "changes": [
+        "⭐ Schwierigkeitsgrad: Weise Werken einen Schwierigkeitsgrad zu für bessere Planung."
+      ]
+    },
+    {
+      "version": "3.5.2",
+      "date": "30.12.2025",
+      "changes": [
+        "🔐 Passwort ändern: Einfach in den Einstellungen möglich.",
+        "🤖 KI-Synonym-Generator: Erstelle Gruppen-Synonyme mit künstlicher Intelligenz."
+      ]
+    },
+    {
+      "version": "3.5.1",
+      "date": "17.12.2025",
+      "changes": [
+        "📈 Organisationsstatistiken: Übersicht über alle Instanzen deiner Organisation.",
+        "⚡ Instanz-Schnellauswahl: Schneller Wechsel beim App-Start (aktivierbar in den Instanz-Einstellungen)."
+      ]
+    },
+    {
+      "version": "3.5.0",
+      "changes": [
+        "📅 Schichtpläne: Automatisiere die Planung und Verwaltung deiner Schichten.",
+        "⏱️ Anmeldefristen: Setze Deadlines für Terminanmeldungen.",
+        "📥 Excel-Export: Exportiere Anwesenheiten zur Auswertung und Archivierung."
+      ]
+    },
+    {
+      "version": "3.4.0",
+      "changes": [
+        "🏷️ Anwesenheits-Typen: Definiere verschiedene Terminarten für mehr Flexibilität (Einstellungen → Anwesenheits-Typen)."
+      ]
+    },
+    {
+      "version": "3.3.1",
+      "changes": [
+        "🐛 Behoben: Benutzer ohne Instanz können wieder zugewiesen werden."
+      ]
+    },
+    {
+      "version": "3.3.0",
+      "changes": [
+        "📚 Werkdatenbank: Verwalte Dateien zu deinen Werken mit automatischer Instrumenten-Zuordnung.",
+        "✨ Verbesserte Werkverwaltung: Neue, übersichtlichere Benutzeroberfläche.",
+        "🔗 Externe Links: Teile Werke auch mit Personen ohne Account."
+      ]
+    },
+    {
+      "version": "3.2.0",
+      "changes": [
+        "🏢 Organisationen: Verknüpfe Instanzen zu einer Organisation – Personendaten können kopiert/verschoben werden.",
+        "✉️ E-Mail-Benachrichtigung: Bestehende Nutzer werden informiert, wenn sie zu einer Instanz hinzugefügt werden.",
+        "🍎 Neues Apple Design für die Benutzeroberfläche."
+      ]
+    },
+    {
+      "version": "3.1.0",
+      "changes": [
+        "📅 Mehrfach-Erstellung: Lege mehrere Anwesenheiten gleichzeitig an.",
+        "🎨 Verbesserter Kalender: Optimierte Farbdarstellung bei der Terminanlage.",
+        "🎄 Feiertage & Ferien: Können bei der Planung berücksichtigt werden.",
+        "👨‍🏫 Lehrerverwaltung für Orchester.",
+        "🔧 Optimierte Personen-Ansicht und Instanzeinstellungen."
+      ]
+    },
+    {
+      "version": "3.0.0",
+      "changes": [
+        "💾 Personenbezogene Speicherung: Anwesenheiten werden pro Person erfasst.",
+        "👤 Anwesenheitsübersicht: Direkt in der Personenliste einsehbar.",
+        "🎵 Dirigenten integriert: Keine separate Verwaltung mehr nötig."
+      ]
+    },
+    {
+      "version": "2.1.1",
+      "changes": [
+        "🎂 Sortierung: Nach anstehenden Geburtstagen sortieren."
+      ]
+    },
+    {
+      "version": "2.1.0",
+      "changes": [
+        "🧪 Beta: Neue Speichermethode für Anwesenheiten.",
+        "⚪ Neutral-Status: Wähle den Ausgangsstatus beim Anlegen."
+      ]
+    },
+    {
+      "version": "2.0.3",
+      "changes": [
+        "🐛 Fehlerbehebungen"
+      ]
+    },
+    {
+      "version": "2.0.2",
+      "changes": [
+        "🐛 Behoben: Probleme beim parallelen Arbeiten."
+      ]
+    },
+    {
+      "version": "2.0.1",
+      "changes": [
+        "🎮 Demo-Login verfügbar."
+      ]
+    },
+    {
+      "version": "2.0.0",
+      "changes": [
+        "🎉 Attendix ist da!",
+        "📋 Verwalte alle Anwesenheiten in einer App!"
+      ]
+    },
+    {
+      "version": "1.8.3",
+      "changes": [
+        "🎼 Werke können direkt Vorträgen zugeordnet werden."
+      ]
+    },
+    {
+      "version": "1.8.2",
+      "changes": [
+        "👋 Neue Mitglieder werden ab Eintrittsdatum zu Anwesenheiten hinzugefügt."
+      ]
+    },
+    {
+      "version": "1.8.1",
+      "changes": [
+        "🐛 Behoben: Benutzer mit bestehendem Konto konnten nicht archiviert werden."
+      ]
+    },
+    {
+      "version": "1.8.0",
+      "changes": [
+        "⚡ Echtzeit-Aktualisierung der Anwesenheitsliste.",
+        "🐛 Behoben: Fehler bei gleichzeitiger Nutzung."
+      ]
+    },
+    {
+      "version": "1.7.9",
+      "changes": [
+        "🐛 Fehlerbehebungen"
+      ]
+    },
+    {
+      "version": "1.7.8",
+      "changes": [
+        "⏱️ Probenplan: Minütlich planbar.",
+        "🐛 Fehlerbehebungen"
+      ]
+    },
+    {
+      "version": "1.7.7",
+      "changes": [
+        "⏸️ Dirigenten können jetzt pausiert werden."
+      ]
+    },
+    {
+      "version": "1.7.6",
+      "changes": [
+        "🐛 Export-Fehler behoben."
+      ]
+    },
+    {
+      "version": "1.7.5",
+      "changes": [
+        "⚡ Echtzeit-Anwesenheit jetzt Standard."
+      ]
+    },
+    {
+      "version": "1.7.4",
+      "changes": [
+        "🐛 Behoben: Fehler bei der Beobachter-Funktion."
+      ]
+    },
+    {
+      "version": "1.7.3",
+      "changes": [
+        "⏰ Verspätungen: Anzahl wird bei Mitgliedern angezeigt.",
+        "✨ Kleinere Verbesserungen."
+      ]
+    },
+    {
+      "version": "1.7.2",
+      "changes": [
+        "🎼 Werkhistorie: Mehrere Werke gleichzeitig auswählbar."
+      ]
+    },
+    {
+      "version": "1.7.1",
+      "changes": [
+        "🤝 Helfer-Rolle: Mitglieder können die Anwesenheit pflegen."
+      ]
+    },
+    {
+      "version": "1.7.0",
+      "changes": [
+        "⚡ Echtzeit-Aktualisierung der Anwesenheit."
+      ]
+    },
+    {
+      "version": "1.6.18",
+      "changes": [
+        "👁️ Beobachter: Können eingesehen und entfernt werden."
+      ]
+    },
+    {
+      "version": "1.6.17",
+      "changes": [
+        "🚀 Performance-Verbesserungen und Fehlerbehebungen."
+      ]
+    },
+    {
+      "version": "1.6.16",
+      "changes": [
+        "🐛 Behoben: Probenplan Export & Versand."
+      ]
+    },
+    {
+      "version": "1.6.15",
+      "changes": [
+        "🐛 Behoben: Anwesenheit einzelner Personen wurde nicht angezeigt."
+      ]
+    },
+    {
+      "version": "1.6.14",
+      "changes": [
+        "🔔 Update-Benachrichtigung hinzugefügt."
+      ]
+    },
+    {
+      "version": "1.6.13",
+      "changes": [
+        "🎨 Verbesserte Darstellung für Abwesenheiten.",
+        "🐛 Behoben: Fehler beim Schließen einer Anwesenheit."
+      ]
+    },
+    {
+      "version": "1.6.12",
+      "changes": [
+        "🎨 Verbesserte Darstellung für Abmeldungen bei Mitgliedern."
+      ]
+    },
+    {
+      "version": "1.6.11",
+      "changes": [
+        "⚪ Neutraler Status hinzugefügt.",
+        "✅ Mitglieder können sich für Vorträge anmelden."
+      ]
+    },
+    {
+      "version": "1.6.10",
+      "changes": [
+        "🐛 Fehlerbehebungen"
+      ]
+    },
+    {
+      "version": "1.6.9",
+      "changes": [
+        "📋 Dropdown für Abmeldegründe hinzugefügt."
+      ]
+    },
+    {
+      "version": "1.6.8",
+      "changes": [
+        "📱 Telegram: Benachrichtigung auch bei Verspätungen."
+      ]
+    },
+    {
+      "version": "1.6.7",
+      "changes": [
+        "🐛 Fehlerbehebungen"
+      ]
+    },
+    {
+      "version": "1.6.6",
+      "changes": [
+        "⏰ Verspätung ankündigen: Mitglieder können sich zum Zuspätkommen abmelden.",
+        "🐛 Fehlerbehebungen und Rechtschreibkorrekturen."
+      ]
+    },
+    {
+      "version": "1.6.5",
+      "changes": [
+        "🎂 Alter wird in der Personenliste angezeigt.",
+        "📝 Notizen: Volltext per Klick in der Historie einsehbar.",
+        "🐛 Fehlerbehebungen"
+      ]
+    },
+    {
+      "version": "1.6.4",
+      "changes": [
+        "🐛 Fehlerbehebungen"
+      ]
+    },
+    {
+      "version": "1.6.3",
+      "changes": [
+        "📅 Saisonbeginn: Jetzt definierbar.",
+        "⏰ Probenzeiten: Individuell einstellbar.",
+        "📊 Probenanzahl je Werk in der Historie."
+      ]
+    },
+    {
+      "version": "1.6.2",
+      "changes": [
+        "📴 Offline-Warnung bei der Anwesenheitspflege.",
+        "🚀 Performance-Verbesserungen.",
+        "🐛 Fehlerbehebungen"
+      ]
+    },
+    {
+      "version": "1.6.1",
+      "changes": [
+        "🐛 Fehlerbehebungen"
+      ]
+    },
+    {
+      "version": "1.6.0",
+      "changes": [
+        "🎵 Chor & Orchester: Apps wurden zusammengeführt."
+      ]
+    },
+    {
+      "version": "1.5.3",
+      "changes": [
+        "🎵 Dirigenten werden automatisch als entschuldigt markiert."
+      ]
+    },
+    {
+      "version": "1.5.2",
+      "changes": [
+        "📅 Probenplanung: Auch ältere Termine sind jetzt auswählbar."
+      ]
+    },
+    {
+      "version": "1.5.1",
+      "changes": [
+        "🎓 VoS: Mitglieder können als Prüflinge markiert werden."
+      ]
+    },
+    {
+      "version": "1.5.0",
+      "changes": [
+        "👁️ Beobachter-Rolle hinzugefügt."
+      ]
+    },
+    {
+      "version": "1.4.5",
+      "changes": [
+        "🎵 Dirigent bei der Historie änderbar.",
+        "✅ Mehrfachauswahl von Werken bei der Probenplanung.",
+        "⏰ Uhrzeiten bei Probenplan-Einträgen sichtbar.",
+        "📝 Anwesenheitsnotizen im Probenplan anzeigbar."
+      ]
+    },
+    {
+      "version": "1.4.4",
+      "changes": [
+        "📄 Probenplan-Export vergrößert.",
+        "📝 'Wort' als erster Eintrag im Probenplan.",
+        "🎵 Freitext mit Dirigent: z.B. 'Wort (Max Mustermann)'."
+      ]
+    },
+    {
+      "version": "1.4.3",
+      "changes": [
+        "📱 Probenpläne per Telegram versenden."
+      ]
+    },
+    {
+      "version": "1.4.2",
+      "changes": [
+        "👁️ Leseansicht und Export für Probenpläne.",
+        "🔗 Probenplan einer Anwesenheit zuweisbar.",
+        "🔄 Pull-to-Refresh für Anwesenheit und Mitglieder.",
+        "🐛 Behoben: Aktuelle Anwesenheit ist jetzt löschbar."
+      ]
+    },
+    {
+      "version": "1.4.1",
+      "changes": [
+        "📅 Datumsauswahl schließt automatisch.",
+        "✉️ E-Mail-Vorlage angepasst.",
+        "🐛 Behoben: Instrumente nicht editierbar."
+      ]
+    },
+    {
+      "version": "1.4.0",
+      "changes": [
+        "📋 Probenplanung hinzugefügt.",
+        "🗑️ Werke aus der Historie löschbar."
+      ]
+    },
+    {
+      "version": "4.8.4",
+      "date": "16.9.2026",
+      "changes": [
+        "📋 Anmeldefelder für Anwesenheitstypen konfigurierbar.",
+        "✅ Anmeldefelder beim Anmelden in der Self-Service-Ansicht abfragen.",
+        "🔧 Fix: Auto-Genehmigung bei Registrierung fügt Person korrekt zu zukünftigen Anwesenheiten hinzu."
+      ]
+    },
+    {
+      "version": "4.8.5",
+      "date": "16.9.2026",
+      "changes": [
+        "🔧 Fix: Alle Termine (Nicht-Mitglied-Ansicht) werden korrekt angezeigt."
+      ]
+    },
+    {
+      "version": "4.8.6",
+      "date": "16.9.2026",
+      "changes": [
+        "🔧 Fix: \"Verspätung eintragen\" wird ausgeblendet, wenn der Anwesenheitstyp keine Verspätungen erlaubt."
+      ]
+    },
+    {
+      "version": "4.8.7",
+      "date": "16.9.2026",
+      "changes": [
+        "🔧 Fix: Anmeldefelder werden beim Anmelden korrekt abgefragt."
+      ]
+    },
+    {
+      "version": "4.8.8",
+      "date": "16.9.2026",
+      "changes": [
+        "🔧 Fix: Anmeldefelder-Dialog kann nicht mehr abgebrochen werden."
+      ]
+    }
+  ]
+}
