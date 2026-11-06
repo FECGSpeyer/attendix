@@ -138,9 +138,10 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       // another sign-in) the other navigation wins.
       final shown = await untilRouteShown(route);
       if (!mounted) return;
-      if (!shown ||
-          route?.isCurrent != true ||
-          container.read(supabaseAuthProvider).currentUser?.id != userId) {
+      bool stillWanted() =>
+          route?.isCurrent == true &&
+          container.read(supabaseAuthProvider).currentUser?.id == userId;
+      if (!shown || !stillWanted()) {
         setState(() => _isAutoNavigating = false);
         return;
       }
@@ -153,11 +154,19 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       // Wait for currentTenantUserProvider to load so router doesn't redirect back
       await container.read(currentTenantUserProvider.future);
 
+      // Same checks again after the loads above: the page, the account and
+      // the group must still be the ones this run started for.
+      if (!stillWanted() ||
+          container.read(currentTenantProvider)?.id != savedTenant.id) {
+        if (mounted) setState(() => _isAutoNavigating = false);
+        return;
+      }
+
       // Get notifier BEFORE navigation (widget may be disposed after go())
       final prefsNotifier =
           container.read(userPreferencesNotifierProvider.notifier);
 
-      // Navigate FIRST (also when the router already replaced this page)
+      // Navigate FIRST, before the auth sync below
       goReplacingHistory(
         router,
         homeRouteFor(
