@@ -9493,6 +9493,70 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get rdDataAddColumn => 'Add column';
+
+  @override
+  String get rdDataAddOwn => 'Add own column';
+
+  @override
+  String get rdDataAttendance => 'Attendance';
+
+  @override
+  String get rdDataBack => 'Statistics & data';
+
+  @override
+  String get rdDataCertificates => 'Certificates';
+
+  @override
+  String rdDataCertificatesCreate(Object count) {
+    return 'Create certificates for $count people';
+  }
+
+  @override
+  String get rdDataCertificatesFor =>
+      'For which groups should certificates be created?';
+
+  @override
+  String get rdDataColumns => 'Columns';
+
+  @override
+  String rdDataColumnsCount(Object count) {
+    return '$count columns';
+  }
+
+  @override
+  String get rdDataColumnsHint =>
+      'Drag to sort. Own columns stay empty, e.g. to fill in on paper.';
+
+  @override
+  String get rdDataExportTitle => 'Export';
+
+  @override
+  String rdDataFile(Object name) {
+    return 'File: $name';
+  }
+
+  @override
+  String get rdDataFormat => 'Format';
+
+  @override
+  String rdDataGroupCount(Object count) {
+    return '$count people';
+  }
+
+  @override
+  String get rdDataMembers => 'Member list';
+
+  @override
+  String get rdDataOwnEmpty => 'Own column, stays empty';
+
+  @override
+  String get rdDataSort => 'Sort by';
+
+  @override
+  String get rdDataWhat => 'What';
+
+  @override
   String get rdOrgArchiveNote =>
       'The people are archived here. People with an account get a message.';
 
@@ -9811,6 +9875,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdSettingsUndo => 'Undo';
+
+  @override
+  String get rdWmCategoriesIntro =>
+      'Categories sort the works, e.g. by occasion or church year.';
+
+  @override
+  String get rdWmHistoryIntro =>
+      'Which works were played when. Tap an entry to remove it.';
+
+  @override
+  String rdWmWorksCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count works',
+      one: '$count work',
+    );
+    return '$_temp0';
+  }
 
   @override
   String redesignAbsenceAffects(num count) {
@@ -12346,6 +12429,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignJoinWelcomeNoName => 'Welcome';
+
+  @override
+  String get redesignLoginForgot => 'Forgot password?';
+
+  @override
+  String get redesignLoginResetIntro =>
+      'We will send you a link to set a new password.';
+
+  @override
+  String get redesignLoginResetSend => 'Send link';
 
   @override
   String get redesignManageAnnouncementsHint =>

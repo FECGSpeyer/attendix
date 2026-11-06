@@ -9598,6 +9598,70 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get rdDataAddColumn => 'Spalte hinzufügen';
+
+  @override
+  String get rdDataAddOwn => 'Eigene Spalte hinzufügen';
+
+  @override
+  String get rdDataAttendance => 'Anwesenheit';
+
+  @override
+  String get rdDataBack => 'Auswertung & Daten';
+
+  @override
+  String get rdDataCertificates => 'Urkunden';
+
+  @override
+  String rdDataCertificatesCreate(Object count) {
+    return 'Urkunden für $count Personen erstellen';
+  }
+
+  @override
+  String get rdDataCertificatesFor =>
+      'Für welche Gruppen sollen Urkunden erstellt werden?';
+
+  @override
+  String get rdDataColumns => 'Spalten';
+
+  @override
+  String rdDataColumnsCount(Object count) {
+    return '$count Spalten';
+  }
+
+  @override
+  String get rdDataColumnsHint =>
+      'Ziehen zum Sortieren. Eigene Spalten bleiben leer, etwa zum Ausfüllen auf Papier.';
+
+  @override
+  String get rdDataExportTitle => 'Export';
+
+  @override
+  String rdDataFile(Object name) {
+    return 'Datei: $name';
+  }
+
+  @override
+  String get rdDataFormat => 'Format';
+
+  @override
+  String rdDataGroupCount(Object count) {
+    return '$count Personen';
+  }
+
+  @override
+  String get rdDataMembers => 'Mitgliederliste';
+
+  @override
+  String get rdDataOwnEmpty => 'Eigene Spalte, bleibt leer';
+
+  @override
+  String get rdDataSort => 'Sortieren nach';
+
+  @override
+  String get rdDataWhat => 'Was';
+
+  @override
   String get rdOrgArchiveNote =>
       'Die Personen werden hier archiviert. Wer ein Konto hat, bekommt eine Nachricht.';
 
@@ -9919,6 +9983,25 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdSettingsUndo => 'Rückgängig';
+
+  @override
+  String get rdWmCategoriesIntro =>
+      'Kategorien ordnen die Werke, etwa nach Anlass oder Kirchenjahr.';
+
+  @override
+  String get rdWmHistoryIntro =>
+      'Welche Werke wann gespielt wurden. Tippe auf einen Eintrag, um ihn zu entfernen.';
+
+  @override
+  String rdWmWorksCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke',
+      one: '$count Werk',
+    );
+    return '$_temp0';
+  }
 
   @override
   String redesignAbsenceAffects(num count) {
@@ -12477,6 +12560,16 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignJoinWelcomeNoName => 'Willkommen';
+
+  @override
+  String get redesignLoginForgot => 'Passwort vergessen?';
+
+  @override
+  String get redesignLoginResetIntro =>
+      'Wir schicken dir einen Link, mit dem du ein neues Passwort setzt.';
+
+  @override
+  String get redesignLoginResetSend => 'Link senden';
 
   @override
   String get redesignManageAnnouncementsHint =>

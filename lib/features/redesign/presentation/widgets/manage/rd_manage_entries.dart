@@ -16,12 +16,11 @@ import '../../../../../core/router/route_access.dart' show canOpenSongsTab;
 import '../../../../../core/services/certificate_service.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../../export/presentation/pages/export_page.dart' show showExportModal;
 import '../../../../history/presentation/pages/history_page.dart' show showHistoryModal;
 import '../../../../settings/presentation/pages/settings_page.dart'
     show createMissingAccounts, playersOfCurrentTenant;
 import '../../../../settings/presentation/widgets/calendar_subscription_dialog.dart';
-import '../../../../settings/presentation/widgets/vorkurs_certificates.dart';
+import 'rd_data_sheets.dart';
 import '../../../../songs/presentation/widgets/song_categories_sheet.dart';
 import '../../../data/rd_manage_logic.dart';
 
@@ -282,9 +281,9 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
     case RdManageEntry.statistics:
       push(RedesignRoutes.stats);
     case RdManageEntry.export:
-      showExportModal(context);
+      push('/export');
     case RdManageEntry.certificates:
-      generateVorkursCertificates(context, ref);
+      rdGenerateCertificates(context, ref);
     case RdManageEntry.calendar:
       showCalendarSubscriptionDialog(context, ref);
     case RdManageEntry.announcements:

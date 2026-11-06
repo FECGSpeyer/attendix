@@ -137,6 +137,12 @@ class RedesignRoutes {
   static String extraFieldEdit({required bool song, required String id}) =>
       '$extraFields/${song ? 'werke' : 'personen'}/${Uri.encodeComponent(id)}';
 
+  /// Verwaltung › Werk-Kategorien (replaces the old categories sheet).
+  static const String workCategories = '$manage/werk-kategorien';
+
+  /// Verwaltung › Werkhistorie (replaces the old history modal).
+  static const String workHistory = '$manage/werkhistorie';
+
   /// Ich › Benachrichtigungen.
   static const String notifications = '$me/benachrichtigungen';
 
@@ -157,6 +163,7 @@ class RedesignRoutes {
     approvals,
     rolePermissions,
     extraFields,
+    workCategories,
   };
 
   /// Pages for super admins only (the old admins sheet: `role.isAdmin`).
@@ -243,6 +250,10 @@ class RedesignRoutes {
       if (role.isApplicant || role.isParent) return me;
       if (_isLeadOnly(location) && !(role.isAdmin || role.isResponsible)) return manage;
       if (_matches(_adminOnly, location) && !role.isAdmin) return manage;
+      // Werkhistorie like the old entry: leads and helpers.
+      if (_matches({workHistory}, location) && !(role.isAdmin || role.isResponsible || role.isHelperRole)) {
+        return manage;
+      }
       if (location == teachers || location.startsWith('$teachers/')) {
         if (!role.isConductor) return manage;
         if (location != teachers && !(role.isAdmin || role.isResponsible)) return teachers;

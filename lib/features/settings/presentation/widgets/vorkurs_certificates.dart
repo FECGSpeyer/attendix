@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/services/certificate_service.dart';
@@ -27,14 +28,25 @@ List<Person> filterCertificatePersons(List<Person> persons, Set<int> groupIds) {
 
 /// "Urkunden generieren" (Ionic settings.page generateVorkursCertificates):
 /// choose groups, then create one multi-page PDF and share/download it.
-Future<void> generateVorkursCertificates(BuildContext context, WidgetRef ref) async {
+/// [pickGroups] replaces the group dialog (the Beta uses a sheet).
+Future<void> generateVorkursCertificates(
+  BuildContext context,
+  WidgetRef ref, {
+  Future<Set<int>?> Function(List<Group> groups)? pickGroups,
+}) async {
+  // Bound to the group it started in: after a switch nothing is made.
+  final container = ProviderScope.containerOf(context, listen: false);
+  final tenantId = container.read(currentTenantIdProvider);
+  bool stillCurrent() => tenantId != null && container.read(currentTenantIdProvider) == tenantId;
   final groups = await ref.read(groupsProvider.future);
   if (!context.mounted) return;
-  final selected = await showAppDialog<Set<int>>(
-    context: context,
-    builder: (_) => _GroupSelectDialog(groups: groups),
-  );
-  if (selected == null || !context.mounted) return;
+  final selected = pickGroups != null
+      ? await pickGroups(groups)
+      : await showAppDialog<Set<int>>(
+          context: context,
+          builder: (_) => _GroupSelectDialog(groups: groups),
+        );
+  if (selected == null || !context.mounted || !stillCurrent()) return;
   if (selected.isEmpty) {
     ToastHelper.showWarning(context, context.l10n.settingsSelectOneGroup);
     return;
@@ -42,8 +54,9 @@ Future<void> generateVorkursCertificates(BuildContext context, WidgetRef ref) as
 
   ToastHelper.showInfo(context, context.l10n.settingsCreatingCertificates);
   try {
-    ref.invalidate(playersProvider);
-    final persons = filterCertificatePersons(await ref.read(playersProvider.future), selected);
+    container.invalidate(playersProvider);
+    final persons = filterCertificatePersons(await container.read(playersProvider.future), selected);
+    if (!stillCurrent()) return;
     if (persons.isEmpty) {
       if (context.mounted) {
         ToastHelper.showWarning(context, context.l10n.settingsNoPersonsInGroups);
@@ -54,6 +67,7 @@ Future<void> generateVorkursCertificates(BuildContext context, WidgetRef ref) as
       persons.map((p) => (firstName: p.firstName, lastName: p.lastName)).toList(),
     );
     final fileName = 'Urkunden_Vorkurs_${DateFormat('yyyy-MM-dd').format(DateTime.now())}.pdf';
+    if (!stillCurrent()) return;
     await NativeFileService.saveBytes(bytes, fileName);
   } catch (_) {
     if (context.mounted) ToastHelper.showError(context, context.l10n.settingsCertificatesFailed);

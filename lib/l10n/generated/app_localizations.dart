@@ -15767,6 +15767,114 @@ abstract class AppLocalizations {
   /// **'Ohne Ergebnis: {count}'**
   String protocolWithoutOutcome(Object count);
 
+  /// rdData.addColumn
+  ///
+  /// In de, this message translates to:
+  /// **'Spalte hinzufügen'**
+  String get rdDataAddColumn;
+
+  /// rdData.addOwn
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Spalte hinzufügen'**
+  String get rdDataAddOwn;
+
+  /// rdData.attendance
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit'**
+  String get rdDataAttendance;
+
+  /// rdData.back
+  ///
+  /// In de, this message translates to:
+  /// **'Auswertung & Daten'**
+  String get rdDataBack;
+
+  /// rdData.certificates
+  ///
+  /// In de, this message translates to:
+  /// **'Urkunden'**
+  String get rdDataCertificates;
+
+  /// rdData.certificatesCreate
+  ///
+  /// In de, this message translates to:
+  /// **'Urkunden für {count} Personen erstellen'**
+  String rdDataCertificatesCreate(Object count);
+
+  /// rdData.certificatesFor
+  ///
+  /// In de, this message translates to:
+  /// **'Für welche Gruppen sollen Urkunden erstellt werden?'**
+  String get rdDataCertificatesFor;
+
+  /// rdData.columns
+  ///
+  /// In de, this message translates to:
+  /// **'Spalten'**
+  String get rdDataColumns;
+
+  /// rdData.columnsCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Spalten'**
+  String rdDataColumnsCount(Object count);
+
+  /// rdData.columnsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ziehen zum Sortieren. Eigene Spalten bleiben leer, etwa zum Ausfüllen auf Papier.'**
+  String get rdDataColumnsHint;
+
+  /// rdData.exportTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Export'**
+  String get rdDataExportTitle;
+
+  /// rdData.file
+  ///
+  /// In de, this message translates to:
+  /// **'Datei: {name}'**
+  String rdDataFile(Object name);
+
+  /// rdData.format
+  ///
+  /// In de, this message translates to:
+  /// **'Format'**
+  String get rdDataFormat;
+
+  /// rdData.groupCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Personen'**
+  String rdDataGroupCount(Object count);
+
+  /// rdData.members
+  ///
+  /// In de, this message translates to:
+  /// **'Mitgliederliste'**
+  String get rdDataMembers;
+
+  /// rdData.ownEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Spalte, bleibt leer'**
+  String get rdDataOwnEmpty;
+
+  /// rdData.sort
+  ///
+  /// In de, this message translates to:
+  /// **'Sortieren nach'**
+  String get rdDataSort;
+
+  /// rdData.what
+  ///
+  /// In de, this message translates to:
+  /// **'Was'**
+  String get rdDataWhat;
+
   /// rdOrg.archiveNote
   ///
   /// In de, this message translates to:
@@ -16330,6 +16438,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Rückgängig'**
   String get rdSettingsUndo;
+
+  /// rdWm.categoriesIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorien ordnen die Werke, etwa nach Anlass oder Kirchenjahr.'**
+  String get rdWmCategoriesIntro;
+
+  /// rdWm.historyIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Welche Werke wann gespielt wurden. Tippe auf einen Eintrag, um ihn zu entfernen.'**
+  String get rdWmHistoryIntro;
+
+  /// rdWm.worksCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Werk} other {{count} Werke}}'**
+  String rdWmWorksCount(num count);
 
   /// redesign.absence.affects
   ///
@@ -20140,6 +20266,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Willkommen'**
   String get redesignJoinWelcomeNoName;
+
+  /// redesign.login.forgot
+  ///
+  /// In de, this message translates to:
+  /// **'Passwort vergessen?'**
+  String get redesignLoginForgot;
+
+  /// redesign.login.resetIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Wir schicken dir einen Link, mit dem du ein neues Passwort setzt.'**
+  String get redesignLoginResetIntro;
+
+  /// redesign.login.resetSend
+  ///
+  /// In de, this message translates to:
+  /// **'Link senden'**
+  String get redesignLoginResetSend;
 
   /// redesign.manage.announcementsHint
   ///

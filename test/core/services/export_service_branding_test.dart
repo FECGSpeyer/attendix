@@ -104,10 +104,13 @@ void main() {
     });
 
     test('export page passes the resolved tenant branding to both PDFs', () {
-      for (final method in ['exportPlayerListPdf(', 'exportAttendancePdf(']) {
-        final call = RegExp('${RegExp.escape(method)}[\\s\\S]*?\\);').firstMatch(page);
+      // The branding is resolved once and passed to both PDF builders (the
+      // file is saved by the page after the group check).
+      expect(page, contains('await resolvePdfBranding(ref)'));
+      for (final method in ['buildPlayerListPdf(', 'buildAttendancePdf(']) {
+        final call = RegExp('${RegExp.escape(method)}[\\s\\S]*?\\)').firstMatch(page);
         expect(call, isNotNull, reason: method);
-        expect(call!.group(0), contains('branding: await resolvePdfBranding(ref)'), reason: method);
+        expect(call!.group(0), contains('branding: branding'), reason: method);
       }
     });
   });

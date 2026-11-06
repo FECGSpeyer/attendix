@@ -1,13 +1,44 @@
 {
   "versions": [
     {
-      "version": "0.66.0",
+      "version": "0.70.0",
       "date": "6.11.2026",
       "changes": [
         "✨ Beta: Sammlungen im Noten-Bereich (Repertoire, z. B. Einspielen, Streicher, In Vorbereitung) mit eigenem Kürzel, Sichtbarkeit (alle, nur Leitung, bestimmte Gruppen) und „planbar“",
         "✨ Beta: Werke-Liste mit Sammlungs-Chips, Suche über alle Sammlungen, Kategorie im Filter; Werke in eine andere Sammlung verschieben",
         "✨ Beta: „Meine Mappe“ heißt jetzt „Meine Noten“ (Leitung: „Nach Stimme“), „Alle“ ist nach Sammlung gruppiert",
         "🗄️ Sammlungen erscheinen erst, wenn die Datenbank-Migration angewendet ist (nach dem Store-Release)"
+      ]
+    },
+    {
+      "version": "0.69.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Dateiablage im neuen Design – Großtitel = aktueller Ordner, Zurück geht einen Ordner hoch, Speicher als dünner Balken, „•••“ für Auswählen/Sortieren/Link/Suchhilfe, „+“ für Hochladen oder Ordner anlegen, Aktionen einer Datei als Blatt",
+        "🐛 Dateiablage: nach einem Gruppenwechsel beginnt die Seite neu im Hauptordner, Aktionen aus der alten Gruppe schreiben nichts mehr"
+      ]
+    },
+    {
+      "version": "0.68.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Werk-Kategorien als Verwaltungsliste mit Anzahl der Werke, Umbenennen/Löschen per Tipp, Reihenfolge über „•••“",
+        "✨ Beta: Werkhistorie als Verwaltungsliste mit Suche, nach Datum gruppiert; Werke, Dirigent und Datum in einem Blatt hinzufügen"
+      ]
+    },
+    {
+      "version": "0.67.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Export als eigene Seite (Was, Spalten, Format), Spalten im Blatt sortieren und eigene Spalten hinzufügen",
+        "✨ Beta: Urkunden – Gruppen im Blatt auswählen, mit Personenzahl je Gruppe"
+      ]
+    },
+    {
+      "version": "0.66.0",
+      "date": "6.11.2026",
+      "changes": [
+        "💄 Beta: Anmelden mit Beta-Karte über dem gewohnten Foto und Logo, „Passwort vergessen?“ als Blatt, Registrierung per Beitrittslink in derselben Karte; Felder, Autofill und Ablauf bleiben gleich"
       ]
     },
     {
