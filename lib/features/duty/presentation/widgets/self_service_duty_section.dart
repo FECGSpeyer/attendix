@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/duty_utils.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../data/repositories/duty_repository.dart' show DutyTermin;
@@ -11,6 +12,9 @@ import '../pages/unavailability_page.dart';
 import 'duty_actions.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
+import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../redesign/presentation/widgets/today/rd_today_common.dart';
 
 /// Dienstplan part of "Meine Termine" (self service): "Bitte bestätigen",
 /// and – when the tenant uses the Dienstplan view – "Nächster Dienst",
@@ -328,6 +332,7 @@ Widget _openDutyTile(
 
 /// Sheet "Offene Dienste" with "Ich übernehme" and "Regelmäßig verhindert".
 Future<void> showOpenDutiesSheet(BuildContext context) {
+  if (context.rdSkin != null) return _rdOpenDutiesSheet(context);
   return showModalBottomSheet<void>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -392,6 +397,64 @@ bool scrollToDutySection(String id) => _DutyAnchor.scrollTo(id);
 /// `duty-open`): each section title registers its context, a tap on a stat
 /// tile scrolls it into view. A registry instead of GlobalKeys, so two
 /// mounted sections never clash.
+/// Beta (redesign) "Offene Dienste": one row per open duty with a
+/// "Ich übernehme" button, then "Regelmäßig verhindert".
+Future<void> _rdOpenDutiesSheet(BuildContext context) {
+  return showRdPlanSheet<void>(
+    context,
+    title: context.l10n.signoutOpenDuties,
+    builder: (ctx, _) => [
+      Consumer(
+        builder: (ctx, ref, _) {
+          final p = ctx.rd;
+          final overview = ref.watch(myDutyOverviewProvider).valueOrNull;
+          final open = overview?.openDuties ?? const <DutyTermin>[];
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (open.isEmpty)
+                RdInfoCard(text: ctx.l10n.signoutAllDutiesFilled, icon: Icons.check_circle_outline)
+              else
+                RdGroupedList(
+                  children: [
+                    for (final t in open)
+                      RdListRow(
+                        leading: const RdRowIcon(Icons.volunteer_activism_outlined),
+                        title: t.title,
+                        subtitle: '${_dateShort(t)} · ${_dutyMeta(t)}',
+                        showChevron: false,
+                        trailing: TextButton(
+                          onPressed: () => takeDutyAction(ctx, ref, t.attendance.id!),
+                          child: Text(ctx.l10n.signoutIllTakeIt,
+                              style: TextStyle(color: p.link, fontWeight: FontWeight.w600)),
+                        ),
+                      ),
+                  ],
+                ),
+              if (overview?.person?.id != null) ...[
+                const SizedBox(height: 16),
+                RdGroupedList(
+                  children: [
+                    RdListRow(
+                      leading: const RdRowIcon(Icons.event_busy_outlined),
+                      title: ctx.l10n.signoutRegularlyUnavailable,
+                      subtitle: ctx.l10n.signoutRegularlyUnavailableHint,
+                      onTap: () {
+                        Navigator.of(ctx).pop();
+                        openUnavailabilityPage(context, personId: overview!.person!.id!);
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ],
+          );
+        },
+      ),
+    ],
+  );
+}
+
 class _DutyAnchor extends StatefulWidget {
   const _DutyAnchor({required this.id, required this.child});
 

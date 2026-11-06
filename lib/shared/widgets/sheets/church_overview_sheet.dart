@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/redesign/rd_theme.dart';
 import '../../../data/models/church/church.dart';
+import '../../../features/planning/presentation/widgets/rd_plan_widgets.dart';
+import '../../../features/redesign/presentation/widgets/rd_widgets.dart';
 import '../../../l10n/l10n.dart';
 
 /// One church with its number of persons.
@@ -74,6 +77,14 @@ Future<void> showChurchOverviewSheet(
   String? subtitle,
 }) {
   final data = computeChurchOverview(churchIds, churches);
+  if (context.rdSkin != null) {
+    final label = subtitle ?? context.l10n.commonPeople;
+    return showRdPlanSheet<void>(
+      context,
+      title: context.l10n.churchOverviewTitle,
+      builder: (ctx, _) => [RdChurchOverviewView(data: data, subtitle: label)],
+    );
+  }
   return showModalBottomSheet<void>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -159,6 +170,64 @@ class ChurchOverviewView extends StatelessWidget {
               child: Text(l10n.churchOverviewNoPeople,
                   style: const TextStyle(color: AppColors.medium)),
             ),
+          ),
+      ],
+    );
+  }
+}
+
+/// Beta (redesign) content of the church overview sheet: the total on top,
+/// then one row per Gemeinde with its count.
+class RdChurchOverviewView extends StatelessWidget {
+  const RdChurchOverviewView({super.key, required this.data, required this.subtitle});
+
+  final ChurchOverviewData data;
+  final String subtitle;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RdGroupedList(
+          children: [
+            RdListRow(
+              title: subtitle,
+              leading: const RdRowIcon(Icons.people_outline),
+              trailing: RdCountBadge(data.total),
+              showChevron: false,
+            ),
+            RdListRow(
+              title: l10n.churchOverviewChurches,
+              leading: const RdRowIcon(Icons.business_outlined),
+              trailing: RdCountBadge(data.churchCounts.length),
+              showChevron: false,
+            ),
+          ],
+        ),
+        if (data.churchCounts.isNotEmpty || data.withoutChurch > 0) ...[
+          const SizedBox(height: 20),
+          RdGroupLabel(l10n.churchOverviewChurches),
+          RdGroupedList(
+            children: [
+              for (final c in data.churchCounts)
+                RdListRow(title: c.name, trailing: RdCountBadge(c.count), showChevron: false),
+              if (data.withoutChurch > 0)
+                RdListRow(
+                  title: l10n.churchOverviewNoChurch,
+                  titleColor: p.text2,
+                  trailing: RdCountBadge(data.withoutChurch, tone: RdTone.excused),
+                  showChevron: false,
+                ),
+            ],
+          ),
+        ],
+        if (data.total == 0)
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: Center(child: Text(l10n.churchOverviewNoPeople, style: TextStyle(color: p.text2))),
           ),
       ],
     );
