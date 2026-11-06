@@ -18,6 +18,7 @@ import '../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/message/message.dart';
+import '../../../messages/presentation/pages/message_compose_page.dart' show MessageComposePreset, openMessageCompose;
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../messages/presentation/widgets/message_editor_toolbar.dart';
@@ -36,8 +37,14 @@ Map<String, dynamic> rdPlainTextDoc(String text) =>
 /// draft (same key), shows who is unreachable and asks before sending.
 /// Sends through the same send-message Edge Function; the live recipient
 /// count comes from its dry run. Pops with the new message id.
+///
+/// With a [preset] (Termin › "Unentschuldigte anschreiben", opened through
+/// [openMessageCompose]) the recipients are fixed, title and text are
+/// prefilled, the message is linked to the Termin and no draft is kept.
 class RdMessageComposePage extends ConsumerStatefulWidget {
-  const RdMessageComposePage({super.key});
+  const RdMessageComposePage({super.key, this.preset});
+
+  final MessageComposePreset? preset;
 
   @override
   ConsumerState<RdMessageComposePage> createState() => _RdMessageComposePageState();
@@ -60,13 +67,23 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
   /// Same draft as the old compose page (one draft per group).
   String get _draftKey => 'message-draft-$_tenantId';
 
+  MessageComposePreset? get _preset => widget.preset;
+  bool get _isPreset => _preset?.playerIds.isNotEmpty ?? false;
+
   @override
   void initState() {
     super.initState();
     _tenantId = ref.read(currentTenantIdProvider);
+    if (_isPreset) {
+      _subject.text = _preset!.title;
+      _body = QuillController(
+        document: Document.fromJson(TiptapConverter.toDeltaOps(_preset!.content)),
+        selection: const TextSelection.collapsed(offset: 0),
+      );
+    }
     _subject.addListener(_onChange);
     _listenBody();
-    _restoreDraft();
+    if (!_isPreset) _restoreDraft();
     _loadCounts();
   }
 
@@ -113,6 +130,7 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
   }
 
   Future<void> _saveDraft() async {
+    if (_isPreset) return; // keep the user's normal draft
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(
@@ -125,6 +143,7 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
   }
 
   Future<void> _restoreDraftIfFree(String draft) async {
+    if (_isPreset) return;
     try {
       final prefs = await SharedPreferences.getInstance();
       if (prefs.getString(_draftKey) == null) await prefs.setString(_draftKey, draft);
@@ -134,6 +153,7 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
   }
 
   Future<void> _clearDraft() async {
+    if (_isPreset) return;
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_draftKey);
@@ -145,25 +165,28 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
   Map<String, dynamic> get _content =>
       TiptapConverter.fromDeltaOps(_body.document.toDelta().toJson().cast<Map<String, dynamic>>());
 
-  List<int>? get _groupIds => _onlyGroups ? _groups.toList() : null;
+  List<int>? get _groupIds => !_isPreset && _onlyGroups ? _groups.toList() : null;
 
   bool get _complete =>
       _subject.text.trim().isNotEmpty && TiptapConverter.hasText(_content) && (_push || _email);
 
   bool get _canSend =>
-      !_sending && _complete && (!_onlyGroups || _groups.isNotEmpty) && (_counts?.recipients ?? 0) > 0;
+      !_sending &&
+      _complete &&
+      (_isPreset || !_onlyGroups || _groups.isNotEmpty) &&
+      (_counts?.recipients ?? 0) > 0;
 
   Future<void> _loadCounts() async {
     final request = ++_request;
     setState(() => _countsFailed = false);
-    if (_onlyGroups && _groups.isEmpty) {
+    if (!_isPreset && _onlyGroups && _groups.isEmpty) {
       setState(() => _counts = const MessageRecipientCounts());
       return;
     }
     try {
       final counts = await ref
           .read(messageRepositoryWithTenantProvider)
-          .getRecipientCounts(groupIds: _groupIds, push: _push, email: _email);
+          .getRecipientCounts(groupIds: _groupIds, push: _push, email: _email, playerIds: _preset?.playerIds);
       if (mounted && request == _request) setState(() => _counts = counts);
     } catch (_) {
       if (mounted && request == _request) setState(() => _countsFailed = true);
@@ -208,6 +231,7 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
     final groupIds = _groupIds;
     final push = _push;
     final email = _email;
+    final preset = _preset;
     final draft = jsonEncode({'title': _subject.text, 'ops': _body.document.toDelta().toJson()});
     // Inputs are locked while sending, so the snapshot stays the latest text.
     _body.readOnly = true;
@@ -217,7 +241,16 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
     await _clearDraft();
     String? id;
     try {
-      id = await notifier.send(title: title, content: content, groupIds: groupIds, push: push, email: email);
+      id = await notifier.send(
+        title: title,
+        content: content,
+        groupIds: groupIds,
+        push: push,
+        email: email,
+        playerIds: preset?.playerIds,
+        attendanceId: preset?.attendanceId,
+        allowResponses: preset?.allowResponses ?? false,
+      );
     } catch (_) {
       id = null;
     }
@@ -231,7 +264,8 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
       return;
     }
     ToastHelper.showSuccess(context, context.l10n.messagesIsSending);
-    context.canPop() ? context.pop(id) : context.go('/messages/$id');
+    final nav = Navigator.of(context);
+    nav.canPop() ? nav.pop(id) : context.go('/messages/$id');
   }
 
   @override
@@ -273,7 +307,8 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
                 label: l10n.redesignCommonCancel,
                 onTap: () {
                   if (_sending) return;
-                  context.canPop() ? context.pop() : context.go(RedesignRoutes.manage);
+                  final nav = Navigator.of(context);
+                  nav.canPop() ? nav.pop() : context.go(RedesignRoutes.manage);
                 },
               ),
             ),
@@ -299,6 +334,17 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
         Text(l10n.redesignComposeTitle, style: RdType.largeTitle(p)),
         const SizedBox(height: 16),
         RdGroupLabel(l10n.redesignComposeTo),
+        if (_isPreset)
+          RdGroupedList(
+            children: [
+              RdListRow(
+                leading: const RdRowIcon(Icons.people_outline),
+                title: _preset!.recipientsLabel,
+                showChevron: false,
+              ),
+            ],
+          )
+        else ...[
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -337,6 +383,7 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
                   ),
             ],
           ),
+        ],
         ],
         const SizedBox(height: 8),
         Padding(

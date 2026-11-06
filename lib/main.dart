@@ -108,12 +108,17 @@ void main() async {
   // Initialize Supabase
   await SupabaseConfig.initialize();
   // IONIC_QUEUE: decided before the session takeover writes its keys
-  await prepareIonicOfflineQueueTakeover();
-  // IONIC_SESSION: keep the Ionic login after the store update (once, native)
-  await takeOverIonicSession(
-    supabaseUrl: SupabaseConfig.supabaseUrl,
-    anonKey: SupabaseConfig.supabaseAnonKey,
-  );
+  // (start marker stored first; otherwise the takeover waits for the next start)
+  if (await prepareIonicOfflineQueueTakeover()) {
+    // IONIC_SESSION: keep the Ionic login after the store update (once, native)
+    await takeOverIonicSession(
+      supabaseUrl: SupabaseConfig.supabaseUrl,
+      anonKey: SupabaseConfig.supabaseAnonKey,
+    );
+  } else {
+    debugPrint('[IonicQueue] start marker not stored, session takeover '
+        'postponed to the next start');
+  }
   // IONIC_QUEUE: unsent Ionic offline writes (once, native, not awaited);
   // imported and replayed by the offline queue.
   startIonicOfflineQueueRead();

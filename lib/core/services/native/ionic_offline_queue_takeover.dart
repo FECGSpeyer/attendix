@@ -20,7 +20,8 @@ import 'native_platform.dart';
 /// 1. [prepareIonicOfflineQueueTakeover] (before the session takeover):
 ///    an install that already ran a Flutter version skips the takeover – its
 ///    Ionic queue is older than changes made since, a replay would overwrite
-///    them.
+///    them. On the first Flutter start a marker is stored instead, so a crash
+///    between session takeover and queue read does not end the takeover.
 /// 2. [startIonicOfflineQueueRead] (after the session takeover, not awaited):
 ///    the native side reads the raw entries (ios/Runner/AppDelegate.swift
 ///    IonicOfflineQueueReader, android .../ionic/IonicOfflineQueueReader.kt);
@@ -98,7 +99,7 @@ class IonicQueuedWrite {
       userId: userId is String && userId.isNotEmpty ? userId : null,
       createdAt: createdAt is String && createdAt.isNotEmpty
           ? createdAt
-          : DateTime.now().toIso8601String(),
+          : DateTime.now().toUtc().toIso8601String(),
     );
   }
 
@@ -117,8 +118,35 @@ class IonicQueuedWrite {
       };
 }
 
-/// Tenant and Termin of a person_attendances row.
-typedef IonicQueueTarget = ({int tenantId, int attendanceId});
+/// Tenant, Termin and last change (`changed_at`, null if unknown) of a
+/// person_attendances row.
+typedef IonicQueueTarget = ({int tenantId, int attendanceId, String? changedAt});
+
+/// True when the record was changed on the server after the Ionic write was
+/// queued: that newer change wins (whichever path made it – a Flutter online
+/// write, another device, or the replay of this very Ionic write). Missing or
+/// unparsable times keep the Ionic write.
+@visibleForTesting
+bool ionicServerChangeIsNewer(String? changedAt, String createdAt) {
+  if (changedAt == null) return false;
+  final server = _tryParseAsUtc(changedAt);
+  final queued = _tryParseAsUtc(createdAt);
+  if (server == null || queued == null) return false;
+  return server.isAfter(queued);
+}
+
+/// A time of day at the end of the string without `Z` or `±hh:mm` offset.
+final _timeWithoutOffset =
+    RegExp(r'[Tt ]\d{2}(?::?\d{2}(?::?\d{2}(?:[.,]\d+)?)?)?$');
+
+/// Both times are written as UTC; a value without offset (timestamp column
+/// without time zone) is UTC, not device-local time. The `Z` is appended
+/// before parsing, so a daylight saving gap of the device cannot shift it.
+DateTime? _tryParseAsUtc(String value) {
+  final trimmed = value.trim();
+  return DateTime.tryParse(
+      _timeWithoutOffset.hasMatch(trimmed) ? '${trimmed}Z' : trimmed);
+}
 
 /// Resolves person_attendances ids to their tenant and Termin – only rows of
 /// instances the signed-in user belongs to (others are missing).
@@ -165,22 +193,38 @@ List<IonicQueuedWrite> parseIonicOfflineQueue(String? raw) {
 
 /// Step 1, before `takeOverIonicSession` (which writes its keys on the first
 /// start): if a Flutter version already ran here, the takeover is skipped.
-/// Never throws.
-Future<void> prepareIonicOfflineQueueTakeover() async {
-  if (!isNativeApp) return;
+/// Returns false only when the start marker of the first Flutter start could
+/// not be stored: the session takeover must not run then (its keys would end
+/// the queue takeover on the next start), the next start tries again. True in
+/// all other cases, also on web and desktop. Never throws.
+Future<bool> prepareIonicOfflineQueueTakeover() async {
+  if (!isNativeApp) return true;
+  final SharedPreferences prefs;
   try {
-    final prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     if (prefs.containsKey(ionicQueueDoneKey) ||
         prefs.containsKey(_readAttemptsKey) ||
         prefs.containsKey(ionicQueuePendingKey)) {
-      return;
+      return true;
     }
     if (_sessionTakeoverKeys.any(prefs.containsKey)) {
       await prefs.setBool(ionicQueueDoneKey, true);
+      return true;
     }
   } catch (e) {
     debugPrint('[IonicQueue] prepare failed: $e');
+    return true;
   }
+  // First Flutter start: mark the takeover as started before the session
+  // takeover writes its keys, so a crash before the queue read does not
+  // end it on the next start (the read counts attempts from here).
+  try {
+    if (await prefs.setInt(_readAttemptsKey, 0)) return true;
+    debugPrint('[IonicQueue] could not persist the start marker');
+  } catch (e) {
+    debugPrint('[IonicQueue] could not persist the start marker: $e');
+  }
+  return false;
 }
 
 Future<void>? _readRun;
@@ -232,7 +276,8 @@ Future<void> _importTail = Future<void>.value();
 /// to an instance of [userId] are dropped (logged); entries without a user
 /// belong to [userId] (Ionic replayed them for whoever was signed in). An
 /// entry is never added twice (id `ionic:<Ionic id>`), and a record that
-/// already has a pending Flutter write of the user keeps that newer write.
+/// already has a pending Flutter write of the user, or whose `changed_at` on
+/// the server is later than the Ionic write, keeps that newer change.
 ///
 /// Network, storage or session changes ([isCurrent] false) keep the pending
 /// entries for the next try. Returns the number of added writes.
@@ -299,6 +344,12 @@ Future<int> _import({
             '${e.personAttendanceId} not found in an instance of the user');
         continue;
       }
+      if (ionicServerChangeIsNewer(target.changedAt, e.createdAt)) {
+        debugPrint('[IonicQueue] dropping write ${e.id}: record '
+            '${e.personAttendanceId} changed on the server since '
+            '(${target.changedAt} > ${e.createdAt})');
+        continue;
+      }
       final payload = {
         for (final MapEntry(:key, :value) in e.payload.entries)
           if (_ionicPayloadColumns.contains(key)) key: value,
@@ -332,9 +383,14 @@ Future<int> _import({
         return added == 0 ? current : next;
       });
     }
-    await p.setBool(ionicQueueDoneKey, true);
-    await p.remove(ionicQueuePendingKey);
     debugPrint('[IonicQueue] took over $added unsent Ionic writes');
+    // Only drop the pending copy once "done" is stored; otherwise a later run
+    // retries (the ionic:<id> dedup and the changed_at check stop repeats).
+    if (!await p.setBool(ionicQueueDoneKey, true)) {
+      debugPrint('[IonicQueue] could not store done, keeping the entries');
+      return added;
+    }
+    await p.remove(ionicQueuePendingKey);
     return added;
   } catch (e) {
     debugPrint('[IonicQueue] import failed, retry later: $e');
@@ -364,7 +420,8 @@ Future<Map<String, IonicQueueTarget>> resolveIonicQueueTargets(
         i, i + 100 > personAttendanceIds.length ? personAttendanceIds.length : i + 100);
     final rows = await supabase
         .from('person_attendances')
-        .select('id, attendance_id, attendance:attendance_id!inner(tenantId)')
+        .select(
+            'id, attendance_id, changed_at, attendance:attendance_id!inner(tenantId)')
         .inFilter('id', chunk)
         .inFilter('attendance.tenantId', tenantIds);
     for (final row in rows as List) {
@@ -372,8 +429,12 @@ Future<Map<String, IonicQueueTarget>> resolveIonicQueueTargets(
       final attendanceId = row['attendance_id'];
       if (tenantId is! num || attendanceId is! num) continue;
       if (!tenantIds.contains(tenantId.toInt())) continue;
-      result[row['id'].toString()] =
-          (tenantId: tenantId.toInt(), attendanceId: attendanceId.toInt());
+      final changedAt = row['changed_at'];
+      result[row['id'].toString()] = (
+        tenantId: tenantId.toInt(),
+        attendanceId: attendanceId.toInt(),
+        changedAt: changedAt is String && changedAt.isNotEmpty ? changedAt : null,
+      );
     }
   }
   return result;
