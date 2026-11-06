@@ -32,7 +32,12 @@ String _errorText(Object e) =>
 
 /// "+" of the admins list: e-mail dialog, then add (also the Beta page
 /// `RdAdminsPage`).
-Future<void> showAddAdminDialog(BuildContext context, WidgetRef ref) async {
+///
+/// TENANT: the repository is bound before the first await ([repo] when the
+/// caller bound it even earlier), so a group switch during the dialog never
+/// adds the admin to the new group.
+Future<void> showAddAdminDialog(BuildContext context, WidgetRef ref, {AdminRepository? repo}) async {
+  final AdminRepository bound = repo ?? ref.read(adminRepositoryWithTenantProvider);
   final email = (await DialogHelper.showTextInput(
     context,
     title: context.l10n.settingsAddAdmin,
@@ -47,7 +52,7 @@ Future<void> showAddAdminDialog(BuildContext context, WidgetRef ref) async {
     return;
   }
   try {
-    final informed = await ref.read(adminNotifierProvider.notifier).create(email);
+    final informed = await ref.read(adminNotifierProvider.notifier).create(email, repo: bound);
     if (context.mounted) {
       if (informed) {
         ToastHelper.showSuccess(context, context.l10n.settingsAdminAdded);
@@ -61,8 +66,14 @@ Future<void> showAddAdminDialog(BuildContext context, WidgetRef ref) async {
 }
 
 /// Removes [admin] after the confirmation; the own entry only shows a toast
-/// (also the Beta page `RdAdminsPage`).
-Future<void> removeAdminWithConfirmation(BuildContext context, WidgetRef ref, TenantAdmin admin) async {
+/// (also the Beta page `RdAdminsPage`). [repo]: see [showAddAdminDialog].
+Future<void> removeAdminWithConfirmation(
+  BuildContext context,
+  WidgetRef ref,
+  TenantAdmin admin, {
+  AdminRepository? repo,
+}) async {
+  final AdminRepository bound = repo ?? ref.read(adminRepositoryWithTenantProvider);
   final ownId = ref.read(supabaseClientProvider).auth.currentUser?.id;
   if (admin.userId == ownId) {
     ToastHelper.showError(context, context.l10n.settingsCannotRemoveSelf);
@@ -85,7 +96,7 @@ Future<void> removeAdminWithConfirmation(BuildContext context, WidgetRef ref, Te
   );
   if (ok != true || !context.mounted) return;
   try {
-    await ref.read(adminNotifierProvider.notifier).remove(admin.userId);
+    await ref.read(adminNotifierProvider.notifier).remove(admin.userId, repo: bound);
     if (context.mounted) {
       ToastHelper.showSuccess(context, context.l10n.settingsAdminRemoved);
     }

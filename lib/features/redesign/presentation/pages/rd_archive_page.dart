@@ -25,7 +25,8 @@ class RdArchivePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final async = ref.watch(leftPlayersProvider);
-    final players = async.valueOrNull;
+    // TENANT: never the old group's list after a group or account switch.
+    final players = rdLoadedValue(async);
     return RdManageListPage(
       title: rdManageTitle(l10n, RdManageEntry.archive),
       intro: l10n.redesignArchiveListIntro,

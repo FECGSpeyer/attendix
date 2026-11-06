@@ -30,6 +30,8 @@ class RdAdminsPage extends ConsumerWidget {
       ToastHelper.showError(context, l10n.settingsCannotRemoveSelf);
       return;
     }
+    // TENANT: bound to the group of the shown list before the first await.
+    final repo = ref.read(adminRepositoryWithTenantProvider);
     final remove = await showAppActionSheet<bool>(
       context,
       title: admin.email,
@@ -44,7 +46,7 @@ class RdAdminsPage extends ConsumerWidget {
     );
     if (remove != true || !context.mounted) return;
     if (DemoGuard.blocked()) return; // DEMO_GUARD (the old entry is hidden in the demo)
-    await removeAdminWithConfirmation(context, ref, admin);
+    await removeAdminWithConfirmation(context, ref, admin, repo: repo);
   }
 
   @override
@@ -53,7 +55,8 @@ class RdAdminsPage extends ConsumerWidget {
     final async = ref.watch(adminsProvider);
     final busy = ref.watch(adminNotifierProvider).isLoading;
     final ownId = ref.watch(currentAuthUserIdProvider);
-    final admins = async.valueOrNull;
+    // TENANT: never the old group's list after a group or account switch.
+    final admins = rdLoadedValue(async);
     final format = DateFormat(dateFmt());
 
     String? subtitle(TenantAdmin a) {
@@ -89,7 +92,7 @@ class RdAdminsPage extends ConsumerWidget {
       emptyIcon: Icons.verified_user_outlined,
       addLabel: l10n.redesignAdminsListAdd,
       // Old sheet: "+" waits while an admin is added or removed.
-      onAdd: busy
+      onAdd: busy || admins == null
           ? null
           : () {
               if (DemoGuard.blocked()) return; // DEMO_GUARD

@@ -24,7 +24,8 @@ class RdParentsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final async = ref.watch(parentsProvider);
-    final parents = async.valueOrNull;
+    // TENANT: never the old group's list after a group or account switch.
+    final parents = rdLoadedValue(async);
     return RdManageListPage(
       title: rdManageTitle(l10n, RdManageEntry.parents),
       intro: l10n.redesignParentsListIntro,
@@ -48,7 +49,7 @@ class RdParentsPage extends ConsumerWidget {
       emptyText: l10n.redesignParentsListEmpty,
       emptyIcon: Icons.favorite_border,
       addLabel: l10n.redesignParentsListAdd,
-      onAdd: () => ParentsPage.showAddParentDialog(context, ref),
+      onAdd: parents == null ? null : () => ParentsPage.showAddParentDialog(context, ref),
       onRefresh: () async {
         ref.invalidate(parentsProvider);
         await ref.read(parentsProvider.future).catchError((_) => const <ParentModel>[]);
@@ -57,8 +58,10 @@ class RdParentsPage extends ConsumerWidget {
   }
 
   Future<void> _onTap(BuildContext context, WidgetRef ref, ParentModel parent) async {
+    // TENANT: bound to the group of the shown list before the first await.
+    final repo = ref.read(parentRepositoryWithTenantProvider);
     if (!await rdConfirmRemoveAction(context, parent.fullName, context.l10n.redesignParentsListRemove)) return;
-    if (context.mounted) await ParentsPage.removeParentWithConfirmation(context, ref, parent);
+    if (context.mounted) await ParentsPage.removeParentWithConfirmation(context, ref, parent, repo: repo);
   }
 }
 
@@ -72,7 +75,8 @@ class RdViewersPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final async = ref.watch(viewersProvider);
-    final viewers = async.valueOrNull;
+    // TENANT: never the old group's list after a group or account switch.
+    final viewers = rdLoadedValue(async);
     return RdManageListPage(
       title: rdManageTitle(l10n, RdManageEntry.viewers),
       intro: l10n.redesignViewersListIntro,
@@ -96,7 +100,7 @@ class RdViewersPage extends ConsumerWidget {
       emptyText: l10n.redesignViewersListEmpty,
       emptyIcon: Icons.visibility_outlined,
       addLabel: l10n.redesignViewersListAdd,
-      onAdd: () => ViewersPage.showAddViewerDialog(context, ref),
+      onAdd: viewers == null ? null : () => ViewersPage.showAddViewerDialog(context, ref),
       onRefresh: () async {
         ref.invalidate(viewersProvider);
         await ref.read(viewersProvider.future).catchError((_) => const <Viewer>[]);
@@ -105,8 +109,10 @@ class RdViewersPage extends ConsumerWidget {
   }
 
   Future<void> _onTap(BuildContext context, WidgetRef ref, Viewer viewer) async {
+    // TENANT: bound to the group of the shown list before the first await.
+    final repo = ref.read(viewerRepositoryWithTenantProvider);
     if (!await rdConfirmRemoveAction(context, viewer.fullName, context.l10n.redesignViewersListRemove)) return;
-    if (context.mounted) await ViewersPage.removeViewerWithConfirmation(context, ref, viewer);
+    if (context.mounted) await ViewersPage.removeViewerWithConfirmation(context, ref, viewer, repo: repo);
   }
 }
 

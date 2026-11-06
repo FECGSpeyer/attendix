@@ -6,6 +6,9 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../data/repositories/user_registration_repository.dart'
     show AccountFlowException;
 import '../../../../core/providers/parent_providers.dart';
+import '../../../../core/providers/user_registration_providers.dart'
+    show userRegistrationRepositoryWithTenantProvider;
+import '../../../../data/repositories/parent_repository.dart' show ParentRepository;
 import '../../../../core/theme/app_colors.dart';
 import '../widgets/settings_list.dart';
 import '../widgets/settings_sheet.dart';
@@ -101,7 +104,12 @@ class ParentsPage extends ConsumerWidget {
   }
 
   /// Invite dialog of "+" (also the Beta page `RdParentsPage`).
+  ///
+  /// TENANT: both repositories are bound before the dialog, so a group
+  /// switch meanwhile never invites into the new group.
   static Future<void> showAddParentDialog(BuildContext context, WidgetRef ref) async {
+    final repo = ref.read(parentRepositoryWithTenantProvider);
+    final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
     final emailController = TextEditingController();
     final firstNameController = TextEditingController();
     final lastNameController = TextEditingController();
@@ -188,6 +196,8 @@ class ParentsPage extends ConsumerWidget {
               email: emailController.text,
               firstName: firstNameController.text,
               lastName: lastNameController.text,
+              repo: repo,
+              registration: registration,
             );
         if (context.mounted) {
           ToastHelper.showSuccess(context, context.l10n.settingsUserCreated);
@@ -203,8 +213,15 @@ class ParentsPage extends ConsumerWidget {
   }
 
   /// Removes [parent] after the confirmation (also the Beta page
-  /// `RdParentsPage`).
-  static Future<void> removeParentWithConfirmation(BuildContext context, WidgetRef ref, ParentModel parent) async {
+  /// `RdParentsPage`). TENANT: [repo] bound by the caller (before its first
+  /// await), else here before the dialog.
+  static Future<void> removeParentWithConfirmation(
+    BuildContext context,
+    WidgetRef ref,
+    ParentModel parent, {
+    ParentRepository? repo,
+  }) async {
+    final ParentRepository bound = repo ?? ref.read(parentRepositoryWithTenantProvider);
     final confirmed = await showAppDialog<bool>(
       context: context,
       builder: (ctx) => AppAlertDialog(
@@ -227,7 +244,7 @@ class ParentsPage extends ConsumerWidget {
     if (confirmed == true && context.mounted) {
       try {
         final notifier = ref.read(parentNotifierProvider.notifier);
-        await notifier.deleteParent(parent.id!, appId: parent.appId);
+        await notifier.deleteParent(parent.id!, appId: parent.appId, repo: bound);
 
         if (context.mounted) {
           ToastHelper.showSuccess(context, context.l10n.settingsFlutterParentRemoved);
