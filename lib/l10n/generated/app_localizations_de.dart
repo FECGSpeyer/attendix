@@ -11378,6 +11378,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPersonFormContact => 'Kontakt';
 
   @override
+  String get redesignPersonFormCopyOther => 'In andere Gruppe kopieren';
+
+  @override
   String get redesignPersonFormCreate => 'Anlegen';
 
   @override
@@ -11392,11 +11395,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPersonFormEmailHint => 'Bekommt damit Zugang zur App';
 
   @override
+  String get redesignPersonFormExistingUserHint =>
+      'Gibt es für die E-Mail-Adresse schon ein Konto, wird es automatisch dieser Gruppe zugewiesen.';
+
+  @override
   String get redesignPersonFormLiveHint =>
       'Änderungen werden sofort gespeichert.';
 
   @override
   String get redesignPersonFormMatchDismiss => 'Ausblenden';
+
+  @override
+  String get redesignPersonFormMatchFound =>
+      'Person in anderer Gruppe gefunden?';
 
   @override
   String get redesignPersonFormMore => 'Weitere Angaben';
@@ -11409,6 +11420,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPersonFormNewTitle => 'Neue Person';
 
   @override
+  String get redesignPersonFormNoMatchOther =>
+      'In deinen anderen Gruppen wurde keine passende Person gefunden.';
+
+  @override
   String get redesignPersonFormNotAllowed =>
       'Nur Admins und Verantwortliche können Personen anlegen und bearbeiten.';
 
@@ -11416,10 +11431,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPersonFormNotSet => 'Nicht gesetzt';
 
   @override
+  String get redesignPersonFormOtherGroups => 'Andere Gruppen';
+
+  @override
   String get redesignPersonFormProblemSave => 'Gespräch speichern';
 
   @override
   String get redesignPersonFormSaved => 'Gespeichert ✓';
+
+  @override
+  String get redesignPersonFormSearchOtherGroup => 'In anderer Gruppe suchen';
+
+  @override
+  String get redesignPersonFormTransferOther => 'In andere Gruppe übertragen';
 
   @override
   String get redesignPersonHistory => 'Verlauf';

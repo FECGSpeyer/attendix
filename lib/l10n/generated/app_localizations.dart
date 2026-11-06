@@ -18473,6 +18473,12 @@ abstract class AppLocalizations {
   /// **'Kontakt'**
   String get redesignPersonFormContact;
 
+  /// redesign.personForm.copyOther
+  ///
+  /// In de, this message translates to:
+  /// **'In andere Gruppe kopieren'**
+  String get redesignPersonFormCopyOther;
+
   /// redesign.personForm.create
   ///
   /// In de, this message translates to:
@@ -18497,6 +18503,12 @@ abstract class AppLocalizations {
   /// **'Bekommt damit Zugang zur App'**
   String get redesignPersonFormEmailHint;
 
+  /// redesign.personForm.existingUserHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gibt es für die E-Mail-Adresse schon ein Konto, wird es automatisch dieser Gruppe zugewiesen.'**
+  String get redesignPersonFormExistingUserHint;
+
   /// redesign.personForm.liveHint
   ///
   /// In de, this message translates to:
@@ -18508,6 +18520,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Ausblenden'**
   String get redesignPersonFormMatchDismiss;
+
+  /// redesign.personForm.matchFound
+  ///
+  /// In de, this message translates to:
+  /// **'Person in anderer Gruppe gefunden?'**
+  String get redesignPersonFormMatchFound;
 
   /// redesign.personForm.more
   ///
@@ -18527,6 +18545,12 @@ abstract class AppLocalizations {
   /// **'Neue Person'**
   String get redesignPersonFormNewTitle;
 
+  /// redesign.personForm.noMatchOther
+  ///
+  /// In de, this message translates to:
+  /// **'In deinen anderen Gruppen wurde keine passende Person gefunden.'**
+  String get redesignPersonFormNoMatchOther;
+
   /// redesign.personForm.notAllowed
   ///
   /// In de, this message translates to:
@@ -18539,6 +18563,12 @@ abstract class AppLocalizations {
   /// **'Nicht gesetzt'**
   String get redesignPersonFormNotSet;
 
+  /// redesign.personForm.otherGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Gruppen'**
+  String get redesignPersonFormOtherGroups;
+
   /// redesign.personForm.problemSave
   ///
   /// In de, this message translates to:
@@ -18550,6 +18580,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Gespeichert ✓'**
   String get redesignPersonFormSaved;
+
+  /// redesign.personForm.searchOtherGroup
+  ///
+  /// In de, this message translates to:
+  /// **'In anderer Gruppe suchen'**
+  String get redesignPersonFormSearchOtherGroup;
+
+  /// redesign.personForm.transferOther
+  ///
+  /// In de, this message translates to:
+  /// **'In andere Gruppe übertragen'**
+  String get redesignPersonFormTransferOther;
 
   /// redesign.person.history
   ///

@@ -499,7 +499,7 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
           ],
         ),
         hint(l10n.redesignPersonFormEmailHint),
-        hint('${l10n.personAccountHelp}\n${l10n.personExistingUserHint}'),
+        hint('${l10n.personAccountHelp}\n${l10n.redesignPersonFormExistingUserHint}'),
         const SizedBox(height: 20),
         RdGroupedList(
           children: [

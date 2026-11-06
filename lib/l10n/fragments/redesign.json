@@ -539,7 +539,14 @@
         "archived": "Diese Person ist archiviert.",
         "problemSave": "Gespräch speichern",
         "notSet": "Nicht gesetzt",
-        "matchDismiss": "Ausblenden"
+        "matchDismiss": "Ausblenden",
+        "matchFound": "Person in anderer Gruppe gefunden?",
+        "existingUserHint": "Gibt es für die E-Mail-Adresse schon ein Konto, wird es automatisch dieser Gruppe zugewiesen.",
+        "searchOtherGroup": "In anderer Gruppe suchen",
+        "noMatchOther": "In deinen anderen Gruppen wurde keine passende Person gefunden.",
+        "transferOther": "In andere Gruppe übertragen",
+        "copyOther": "In andere Gruppe kopieren",
+        "otherGroups": "Andere Gruppen"
       },
       "works": {
         "search": "Titel oder Nummer",
@@ -1520,7 +1527,14 @@
         "archived": "This person is archived.",
         "problemSave": "Save conversation",
         "notSet": "Not set",
-        "matchDismiss": "Hide"
+        "matchDismiss": "Hide",
+        "matchFound": "Person found in another group?",
+        "existingUserHint": "If an account already exists for this e-mail address, it is added to this group automatically.",
+        "searchOtherGroup": "Search in other group",
+        "noMatchOther": "No matching person was found in your other groups.",
+        "transferOther": "Transfer to another group",
+        "copyOther": "Copy to another group",
+        "otherGroups": "Other groups"
       },
       "works": {
         "search": "Title or number",

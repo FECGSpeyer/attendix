@@ -150,7 +150,7 @@ class RdPersonMatchList extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(child: RdGroupLabel(l10n.personFlutterMatchFound)),
+            Expanded(child: RdGroupLabel(l10n.redesignPersonFormMatchFound)),
             RdTextLink(label: l10n.redesignPersonFormMatchDismiss, onTap: onDismiss),
           ],
         ),
