@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.43.1",
+      "date": "6.11.2026",
+      "changes": [
+        "🐛 Teamorganisation: „Aufgabe anlegen“ öffnete nur eine leere graue Fläche"
+      ]
+    },
+    {
       "version": "0.43.0",
       "date": "6.11.2026",
       "changes": [
