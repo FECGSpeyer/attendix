@@ -13457,6 +13457,130 @@
   "@redesignFolderTitleLeads": {
     "description": "redesign.folder.titleLeads"
   },
+  "redesignGroupEditCategory": "Kategorie",
+  "@redesignGroupEditCategory": {
+    "description": "redesign.groupEdit.category"
+  },
+  "redesignGroupEditCategoryNone": "Keine",
+  "@redesignGroupEditCategoryNone": {
+    "description": "redesign.groupEdit.categoryNone"
+  },
+  "redesignGroupEditClefs": "Notenschlüssel",
+  "@redesignGroupEditClefs": {
+    "description": "redesign.groupEdit.clefs"
+  },
+  "redesignGroupEditClefsHint": "Mindestens ein Notenschlüssel bleibt ausgewählt.",
+  "@redesignGroupEditClefsHint": {
+    "description": "redesign.groupEdit.clefsHint"
+  },
+  "redesignGroupEditDelete": "Gruppe löschen",
+  "@redesignGroupEditDelete": {
+    "description": "redesign.groupEdit.delete"
+  },
+  "redesignGroupEditDeleteConfirm": "Gruppe „{name}“ wirklich löschen?",
+  "@redesignGroupEditDeleteConfirm": {
+    "description": "redesign.groupEdit.deleteConfirm",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignGroupEditDeleteFailed": "Die Gruppe konnte nicht gelöscht werden.",
+  "@redesignGroupEditDeleteFailed": {
+    "description": "redesign.groupEdit.deleteFailed"
+  },
+  "redesignGroupEditDeleteMain": "Die Hauptgruppe lässt sich nicht löschen.",
+  "@redesignGroupEditDeleteMain": {
+    "description": "redesign.groupEdit.deleteMain"
+  },
+  "redesignGroupEditDeleteMembers": "{count, plural, one {In der Gruppe ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.} other {In der Gruppe sind oder waren noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.}}",
+  "@redesignGroupEditDeleteMembers": {
+    "description": "redesign.groupEdit.deleteMembers",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignGroupEditGenerate": "Synonyme generieren",
+  "@redesignGroupEditGenerate": {
+    "description": "redesign.groupEdit.generate"
+  },
+  "redesignGroupEditHint": "Änderungen werden sofort gespeichert.",
+  "@redesignGroupEditHint": {
+    "description": "redesign.groupEdit.hint"
+  },
+  "redesignGroupEditInstrument": "Instrument",
+  "@redesignGroupEditInstrument": {
+    "description": "redesign.groupEdit.instrument"
+  },
+  "redesignGroupEditMainGroupHint": "Das ist die Hauptgruppe (die Leitung). Stimmung, Notenschlüssel und Synonyme gibt es für sie nicht, löschen lässt sie sich nicht.",
+  "@redesignGroupEditMainGroupHint": {
+    "description": "redesign.groupEdit.mainGroupHint"
+  },
+  "redesignGroupEditManageCategories": "Kategorien verwalten",
+  "@redesignGroupEditManageCategories": {
+    "description": "redesign.groupEdit.manageCategories"
+  },
+  "redesignGroupEditName": "Name",
+  "@redesignGroupEditName": {
+    "description": "redesign.groupEdit.name"
+  },
+  "redesignGroupEditNameEmpty": "Ein leerer Name wird nicht gespeichert.",
+  "@redesignGroupEditNameEmpty": {
+    "description": "redesign.groupEdit.nameEmpty"
+  },
+  "redesignGroupEditNotFound": "Diese Gruppe gibt es nicht mehr.",
+  "@redesignGroupEditNotFound": {
+    "description": "redesign.groupEdit.notFound"
+  },
+  "redesignGroupEditNotes": "Notizen",
+  "@redesignGroupEditNotes": {
+    "description": "redesign.groupEdit.notes"
+  },
+  "redesignGroupEditRange": "Tonumfang",
+  "@redesignGroupEditRange": {
+    "description": "redesign.groupEdit.range"
+  },
+  "redesignGroupEditSynonyms": "Synonyme",
+  "@redesignGroupEditSynonyms": {
+    "description": "redesign.groupEdit.synonyms"
+  },
+  "redesignGroupEditSynonymsHint": "Über die Synonyme ordnet die App hochgeladene Noten automatisch dieser Gruppe zu.",
+  "@redesignGroupEditSynonymsHint": {
+    "description": "redesign.groupEdit.synonymsHint"
+  },
+  "redesignGroupEditSynonymsLabel": "Andere Namen, mit Komma getrennt",
+  "@redesignGroupEditSynonymsLabel": {
+    "description": "redesign.groupEdit.synonymsLabel"
+  },
+  "redesignGroupEditTitle": "Gruppe bearbeiten",
+  "@redesignGroupEditTitle": {
+    "description": "redesign.groupEdit.title"
+  },
+  "redesignGroupEditTuning": "Stimmung",
+  "@redesignGroupEditTuning": {
+    "description": "redesign.groupEdit.tuning"
+  },
+  "redesignGroupsListAdd": "Gruppe hinzufügen",
+  "@redesignGroupsListAdd": {
+    "description": "redesign.groupsList.add"
+  },
+  "redesignGroupsListEmpty": "Noch keine Gruppen angelegt.",
+  "@redesignGroupsListEmpty": {
+    "description": "redesign.groupsList.empty"
+  },
+  "redesignGroupsListIntro": "Gruppen ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.",
+  "@redesignGroupsListIntro": {
+    "description": "redesign.groupsList.intro"
+  },
+  "redesignGroupsListMainGroup": "Hauptgruppe",
+  "@redesignGroupsListMainGroup": {
+    "description": "redesign.groupsList.mainGroup"
+  },
+  "redesignGroupsListManageCategories": "Kategorien verwalten",
+  "@redesignGroupsListManageCategories": {
+    "description": "redesign.groupsList.manageCategories"
+  },
   "redesignGroupsLoadFailed": "Deine Gruppen konnten nicht geladen werden.",
   "@redesignGroupsLoadFailed": {
     "description": "redesign.groups.loadFailed"
@@ -13692,6 +13816,22 @@
   "redesignManageGeneralTitle": "Allgemeine Einstellungen",
   "@redesignManageGeneralTitle": {
     "description": "redesign.manage.generalTitle"
+  },
+  "redesignManageListMore": "Weitere Aktionen",
+  "@redesignManageListMore": {
+    "description": "redesign.manageList.more"
+  },
+  "redesignManageListOrderFailed": "Die Reihenfolge konnte nicht gespeichert werden. Bitte versuche es erneut.",
+  "@redesignManageListOrderFailed": {
+    "description": "redesign.manageList.orderFailed"
+  },
+  "redesignManageListReorder": "Reihenfolge ändern",
+  "@redesignManageListReorder": {
+    "description": "redesign.manageList.reorder"
+  },
+  "redesignManageListReorderHint": "Halte einen Griff gedrückt und ziehe die Einträge an ihre Stelle. „Fertig“ speichert die Reihenfolge.",
+  "@redesignManageListReorderHint": {
+    "description": "redesign.manageList.reorderHint"
   },
   "redesignManageMissingHint": "Mitglieder mit E-Mail, aber ohne Zugang",
   "@redesignManageMissingHint": {
@@ -14739,6 +14879,40 @@
       "count": {}
     }
   },
+  "redesignShiftsListAdd": "Schichtplan anlegen",
+  "@redesignShiftsListAdd": {
+    "description": "redesign.shiftsList.add"
+  },
+  "redesignShiftsListCycle": "{count, plural, one {Zyklus 1 Tag} other {Zyklus {count} Tage}}",
+  "@redesignShiftsListCycle": {
+    "description": "redesign.shiftsList.cycle",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignShiftsListEmpty": "Noch keine Schichtpläne angelegt.",
+  "@redesignShiftsListEmpty": {
+    "description": "redesign.shiftsList.empty"
+  },
+  "redesignShiftsListImportant": "Die Anwesenheiten werden beim Anlegen eines Termins und beim Zuweisen eines Plans aktualisiert.",
+  "@redesignShiftsListImportant": {
+    "description": "redesign.shiftsList.important"
+  },
+  "redesignShiftsListIntro": "Schichtpläne entschuldigen Personen automatisch, wenn sie zur Zeit eines Termins Schicht haben. Den Plan weist du bei der Person zu.",
+  "@redesignShiftsListIntro": {
+    "description": "redesign.shiftsList.intro"
+  },
+  "redesignShiftsListShifts": "{count, plural, one {1 Schicht} other {{count} Schichten}}",
+  "@redesignShiftsListShifts": {
+    "description": "redesign.shiftsList.shifts",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "redesignSignoutCannot": "Ich kann nicht",
   "@redesignSignoutCannot": {
     "description": "redesign.signout.cannot"
@@ -15293,6 +15467,38 @@
   "redesignTodayYourAnswer": "Deine Zusage",
   "@redesignTodayYourAnswer": {
     "description": "redesign.today.yourAnswer"
+  },
+  "redesignTypesListAdd": "Anwesenheits-Typ hinzufügen",
+  "@redesignTypesListAdd": {
+    "description": "redesign.typesList.add"
+  },
+  "redesignTypesListAllDayDays": "{count, plural, one {Ganztägig} other {Ganztägig · {count} Tage}}",
+  "@redesignTypesListAllDayDays": {
+    "description": "redesign.typesList.allDayDays",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignTypesListDefaultStatus": "Standard: {status}",
+  "@redesignTypesListDefaultStatus": {
+    "description": "redesign.typesList.defaultStatus",
+    "placeholders": {
+      "status": {}
+    }
+  },
+  "redesignTypesListEmpty": "Noch keine Anwesenheits-Typen angelegt.",
+  "@redesignTypesListEmpty": {
+    "description": "redesign.typesList.empty"
+  },
+  "redesignTypesListHidden": "Ausgeblendet",
+  "@redesignTypesListHidden": {
+    "description": "redesign.typesList.hidden"
+  },
+  "redesignTypesListIntro": "Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.",
+  "@redesignTypesListIntro": {
+    "description": "redesign.typesList.intro"
   },
   "redesignWorkAbout": "Über das Werk",
   "@redesignWorkAbout": {

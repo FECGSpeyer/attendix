@@ -75,6 +75,10 @@ Widget _app(
             builder: (_, __) => const RdManagePage(),
             routes: [
               GoRoute(
+                path: 'terminarten',
+                builder: (_, __) => const Scaffold(body: Text('page beta types')),
+              ),
+              GoRoute(
                 path: ':area',
                 builder: (_, s) =>
                     RdManageAreaPage(area: RdManageArea.fromKey(s.pathParameters['area'])),
@@ -283,7 +287,7 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('an area lists its entries and opens the old page', (tester) async {
+    testWidgets('an area lists its entries and opens their pages', (tester) async {
       _phone(tester);
       await tester.pumpWidget(_app(_admin));
       await _settle(tester);
@@ -294,8 +298,9 @@ void main() {
       expect(find.text('Ablaufpläne'), findsOneWidget);
       expect(find.text('Planvorlagen & Felder'), findsOneWidget);
 
+      // Anwesenheits-Typen opens the Verwaltungsliste of the Beta.
       await _tapVisible(tester, find.text('Anwesenheits-Typen'));
-      expect(find.text('page types'), findsOneWidget);
+      expect(find.text('page beta types'), findsOneWidget);
     });
 
     testWidgets('Mitglieder, Register & Rollen shows the counts', (tester) async {

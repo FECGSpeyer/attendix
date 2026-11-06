@@ -76,12 +76,28 @@ class RedesignRoutes {
   /// Verwaltung › Mitglieder bearbeiten (several members at once).
   static const String bulkMembers = '$manage/mitglieder-bearbeiten';
 
+  /// Verwaltung › Gruppen (replaces `/settings/instruments` in the Beta).
+  static const String groups = '$manage/gruppen';
+
+  /// "Gruppe bearbeiten" of the new design.
+  static String groupEdit(int id) => '$groups/$id';
+
+  /// Verwaltung › Anwesenheits-Typen (list; a type opens the old page).
+  static const String attendanceTypes = '$manage/terminarten';
+
+  /// Verwaltung › Schichtpläne (list; a plan opens the old page).
+  static const String shiftPlans = '$manage/schichtplaene';
+
   /// Ich › Benachrichtigungen.
   static const String notifications = '$me/benachrichtigungen';
 
   /// Pages for leads only (Admins and Verantwortliche, like the old
-  /// statistics, messages and archive entries).
-  static const _leadOnly = {stats, compose, bulkMembers};
+  /// statistics, messages and archive entries and the old group, type and
+  /// shift pages); their sub pages too.
+  static const _leadOnly = {stats, compose, bulkMembers, groups, attendanceTypes, shiftPlans};
+
+  static bool _isLeadOnly(String location) =>
+      _leadOnly.any((route) => location == route || location.startsWith('$route/'));
 
   /// True while the new design is switched on (set by
   /// `RedesignSettingsNotifier`).
@@ -153,7 +169,7 @@ class RedesignRoutes {
   static String? roleRedirect(String location, Role role) {
     if (location == manage || location.startsWith('$manage/')) {
       if (role.isApplicant || role.isParent) return me;
-      if (_leadOnly.contains(location) && !(role.isAdmin || role.isResponsible)) return manage;
+      if (_isLeadOnly(location) && !(role.isAdmin || role.isResponsible)) return manage;
       return null;
     }
     if (location == members || location.startsWith('$members/')) {

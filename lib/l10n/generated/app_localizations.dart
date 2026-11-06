@@ -17555,6 +17555,180 @@ abstract class AppLocalizations {
   /// **'Mappen'**
   String get redesignFolderTitleLeads;
 
+  /// redesign.groupEdit.category
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorie'**
+  String get redesignGroupEditCategory;
+
+  /// redesign.groupEdit.categoryNone
+  ///
+  /// In de, this message translates to:
+  /// **'Keine'**
+  String get redesignGroupEditCategoryNone;
+
+  /// redesign.groupEdit.clefs
+  ///
+  /// In de, this message translates to:
+  /// **'Notenschlüssel'**
+  String get redesignGroupEditClefs;
+
+  /// redesign.groupEdit.clefsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mindestens ein Notenschlüssel bleibt ausgewählt.'**
+  String get redesignGroupEditClefsHint;
+
+  /// redesign.groupEdit.delete
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe löschen'**
+  String get redesignGroupEditDelete;
+
+  /// redesign.groupEdit.deleteConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe „{name}“ wirklich löschen?'**
+  String redesignGroupEditDeleteConfirm(Object name);
+
+  /// redesign.groupEdit.deleteFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Gruppe konnte nicht gelöscht werden.'**
+  String get redesignGroupEditDeleteFailed;
+
+  /// redesign.groupEdit.deleteMain
+  ///
+  /// In de, this message translates to:
+  /// **'Die Hauptgruppe lässt sich nicht löschen.'**
+  String get redesignGroupEditDeleteMain;
+
+  /// redesign.groupEdit.deleteMembers
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {In der Gruppe ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.} other {In der Gruppe sind oder waren noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.}}'**
+  String redesignGroupEditDeleteMembers(num count);
+
+  /// redesign.groupEdit.generate
+  ///
+  /// In de, this message translates to:
+  /// **'Synonyme generieren'**
+  String get redesignGroupEditGenerate;
+
+  /// redesign.groupEdit.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Änderungen werden sofort gespeichert.'**
+  String get redesignGroupEditHint;
+
+  /// redesign.groupEdit.instrument
+  ///
+  /// In de, this message translates to:
+  /// **'Instrument'**
+  String get redesignGroupEditInstrument;
+
+  /// redesign.groupEdit.mainGroupHint
+  ///
+  /// In de, this message translates to:
+  /// **'Das ist die Hauptgruppe (die Leitung). Stimmung, Notenschlüssel und Synonyme gibt es für sie nicht, löschen lässt sie sich nicht.'**
+  String get redesignGroupEditMainGroupHint;
+
+  /// redesign.groupEdit.manageCategories
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorien verwalten'**
+  String get redesignGroupEditManageCategories;
+
+  /// redesign.groupEdit.name
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get redesignGroupEditName;
+
+  /// redesign.groupEdit.nameEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Ein leerer Name wird nicht gespeichert.'**
+  String get redesignGroupEditNameEmpty;
+
+  /// redesign.groupEdit.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Gruppe gibt es nicht mehr.'**
+  String get redesignGroupEditNotFound;
+
+  /// redesign.groupEdit.notes
+  ///
+  /// In de, this message translates to:
+  /// **'Notizen'**
+  String get redesignGroupEditNotes;
+
+  /// redesign.groupEdit.range
+  ///
+  /// In de, this message translates to:
+  /// **'Tonumfang'**
+  String get redesignGroupEditRange;
+
+  /// redesign.groupEdit.synonyms
+  ///
+  /// In de, this message translates to:
+  /// **'Synonyme'**
+  String get redesignGroupEditSynonyms;
+
+  /// redesign.groupEdit.synonymsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Über die Synonyme ordnet die App hochgeladene Noten automatisch dieser Gruppe zu.'**
+  String get redesignGroupEditSynonymsHint;
+
+  /// redesign.groupEdit.synonymsLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Namen, mit Komma getrennt'**
+  String get redesignGroupEditSynonymsLabel;
+
+  /// redesign.groupEdit.title
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe bearbeiten'**
+  String get redesignGroupEditTitle;
+
+  /// redesign.groupEdit.tuning
+  ///
+  /// In de, this message translates to:
+  /// **'Stimmung'**
+  String get redesignGroupEditTuning;
+
+  /// redesign.groupsList.add
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe hinzufügen'**
+  String get redesignGroupsListAdd;
+
+  /// redesign.groupsList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Gruppen angelegt.'**
+  String get redesignGroupsListEmpty;
+
+  /// redesign.groupsList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.'**
+  String get redesignGroupsListIntro;
+
+  /// redesign.groupsList.mainGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Hauptgruppe'**
+  String get redesignGroupsListMainGroup;
+
+  /// redesign.groupsList.manageCategories
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorien verwalten'**
+  String get redesignGroupsListManageCategories;
+
   /// redesign.groups.loadFailed
   ///
   /// In de, this message translates to:
@@ -17878,6 +18052,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Allgemeine Einstellungen'**
   String get redesignManageGeneralTitle;
+
+  /// redesign.manageList.more
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Aktionen'**
+  String get redesignManageListMore;
+
+  /// redesign.manageList.orderFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Reihenfolge konnte nicht gespeichert werden. Bitte versuche es erneut.'**
+  String get redesignManageListOrderFailed;
+
+  /// redesign.manageList.reorder
+  ///
+  /// In de, this message translates to:
+  /// **'Reihenfolge ändern'**
+  String get redesignManageListReorder;
+
+  /// redesign.manageList.reorderHint
+  ///
+  /// In de, this message translates to:
+  /// **'Halte einen Griff gedrückt und ziehe die Einträge an ihre Stelle. „Fertig“ speichert die Reihenfolge.'**
+  String get redesignManageListReorderHint;
 
   /// redesign.manage.missingHint
   ///
@@ -19181,6 +19379,42 @@ abstract class AppLocalizations {
   /// **'{count} noch offen'**
   String redesignRemindTitle(Object count);
 
+  /// redesign.shiftsList.add
+  ///
+  /// In de, this message translates to:
+  /// **'Schichtplan anlegen'**
+  String get redesignShiftsListAdd;
+
+  /// redesign.shiftsList.cycle
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Zyklus 1 Tag} other {Zyklus {count} Tage}}'**
+  String redesignShiftsListCycle(num count);
+
+  /// redesign.shiftsList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Schichtpläne angelegt.'**
+  String get redesignShiftsListEmpty;
+
+  /// redesign.shiftsList.important
+  ///
+  /// In de, this message translates to:
+  /// **'Die Anwesenheiten werden beim Anlegen eines Termins und beim Zuweisen eines Plans aktualisiert.'**
+  String get redesignShiftsListImportant;
+
+  /// redesign.shiftsList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Schichtpläne entschuldigen Personen automatisch, wenn sie zur Zeit eines Termins Schicht haben. Den Plan weist du bei der Person zu.'**
+  String get redesignShiftsListIntro;
+
+  /// redesign.shiftsList.shifts
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Schicht} other {{count} Schichten}}'**
+  String redesignShiftsListShifts(num count);
+
   /// redesign.signout.cannot
   ///
   /// In de, this message translates to:
@@ -19876,6 +20110,42 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Deine Zusage'**
   String get redesignTodayYourAnswer;
+
+  /// redesign.typesList.add
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheits-Typ hinzufügen'**
+  String get redesignTypesListAdd;
+
+  /// redesign.typesList.allDayDays
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Ganztägig} other {Ganztägig · {count} Tage}}'**
+  String redesignTypesListAllDayDays(num count);
+
+  /// redesign.typesList.defaultStatus
+  ///
+  /// In de, this message translates to:
+  /// **'Standard: {status}'**
+  String redesignTypesListDefaultStatus(Object status);
+
+  /// redesign.typesList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Anwesenheits-Typen angelegt.'**
+  String get redesignTypesListEmpty;
+
+  /// redesign.typesList.hidden
+  ///
+  /// In de, this message translates to:
+  /// **'Ausgeblendet'**
+  String get redesignTypesListHidden;
+
+  /// redesign.typesList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.'**
+  String get redesignTypesListIntro;
 
   /// redesign.work.about
   ///

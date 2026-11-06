@@ -10699,6 +10699,109 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignFolderTitleLeads => 'Folders';
 
   @override
+  String get redesignGroupEditCategory => 'Category';
+
+  @override
+  String get redesignGroupEditCategoryNone => 'None';
+
+  @override
+  String get redesignGroupEditClefs => 'Clefs';
+
+  @override
+  String get redesignGroupEditClefsHint => 'At least one clef stays selected.';
+
+  @override
+  String get redesignGroupEditDelete => 'Delete group';
+
+  @override
+  String redesignGroupEditDeleteConfirm(Object name) {
+    return 'Really delete the group “$name”?';
+  }
+
+  @override
+  String get redesignGroupEditDeleteFailed => 'The group could not be deleted.';
+
+  @override
+  String get redesignGroupEditDeleteMain => 'The main group cannot be deleted.';
+
+  @override
+  String redesignGroupEditDeleteMembers(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count people are (or were) in this group, archived ones included. Move them to another group first.',
+      one:
+          '1 person is (or was) in this group, archived ones included. Move them to another group first.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignGroupEditGenerate => 'Generate synonyms';
+
+  @override
+  String get redesignGroupEditHint => 'Changes are saved right away.';
+
+  @override
+  String get redesignGroupEditInstrument => 'Instrument';
+
+  @override
+  String get redesignGroupEditMainGroupHint =>
+      'This is the main group (the leads). It has no tuning, clefs or synonyms and cannot be deleted.';
+
+  @override
+  String get redesignGroupEditManageCategories => 'Manage categories';
+
+  @override
+  String get redesignGroupEditName => 'Name';
+
+  @override
+  String get redesignGroupEditNameEmpty => 'An empty name is not saved.';
+
+  @override
+  String get redesignGroupEditNotFound => 'This group no longer exists.';
+
+  @override
+  String get redesignGroupEditNotes => 'Notes';
+
+  @override
+  String get redesignGroupEditRange => 'Range';
+
+  @override
+  String get redesignGroupEditSynonyms => 'Synonyms';
+
+  @override
+  String get redesignGroupEditSynonymsHint =>
+      'With synonyms the app assigns uploaded parts to this group automatically.';
+
+  @override
+  String get redesignGroupEditSynonymsLabel =>
+      'Other names, separated by commas';
+
+  @override
+  String get redesignGroupEditTitle => 'Edit group';
+
+  @override
+  String get redesignGroupEditTuning => 'Tuning';
+
+  @override
+  String get redesignGroupsListAdd => 'Add group';
+
+  @override
+  String get redesignGroupsListEmpty => 'No groups yet.';
+
+  @override
+  String get redesignGroupsListIntro =>
+      'Groups sort the members, for example by instrument or voice. Their order also applies to lists and parts.';
+
+  @override
+  String get redesignGroupsListMainGroup => 'Main group';
+
+  @override
+  String get redesignGroupsListManageCategories => 'Manage categories';
+
+  @override
   String get redesignGroupsLoadFailed => 'Your groups could not be loaded.';
 
   @override
@@ -10892,6 +10995,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignManageGeneralTitle => 'General settings';
+
+  @override
+  String get redesignManageListMore => 'More actions';
+
+  @override
+  String get redesignManageListOrderFailed =>
+      'The order could not be saved. Please try again.';
+
+  @override
+  String get redesignManageListReorder => 'Change order';
+
+  @override
+  String get redesignManageListReorderHint =>
+      'Hold a handle and drag the entries into place. “Done” saves the order.';
 
   @override
   String get redesignManageMissingHint =>
@@ -11705,6 +11822,42 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignShiftsListAdd => 'Add shift plan';
+
+  @override
+  String redesignShiftsListCycle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Cycle of $count days',
+      one: 'Cycle of 1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignShiftsListEmpty => 'No shift plans yet.';
+
+  @override
+  String get redesignShiftsListImportant =>
+      'Attendances are updated when a new event is created and when a plan is assigned to a person.';
+
+  @override
+  String get redesignShiftsListIntro =>
+      'Shift plans excuse people automatically when they work a shift at the time of an event. Assign a plan on the person.';
+
+  @override
+  String redesignShiftsListShifts(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count shifts',
+      one: '1 shift',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignSignoutCannot => 'I can\'t come';
 
   @override
@@ -12157,6 +12310,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignTodayYourAnswer => 'Your answer';
+
+  @override
+  String get redesignTypesListAdd => 'Add attendance type';
+
+  @override
+  String redesignTypesListAllDayDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'All day · $count days',
+      one: 'All day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignTypesListDefaultStatus(Object status) {
+    return 'Default: $status';
+  }
+
+  @override
+  String get redesignTypesListEmpty => 'No attendance types yet.';
+
+  @override
+  String get redesignTypesListHidden => 'Hidden';
+
+  @override
+  String get redesignTypesListIntro =>
+      'Attendance types set the name, time, default status and other defaults of new events.';
 
   @override
   String get redesignWorkAbout => 'About this work';
