@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../data/help_content_service.dart';
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../redesign/presentation/pages/rd_help_pages.dart';
 import '../../data/help_models.dart';
 import '../../../../l10n/l10n.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
@@ -37,6 +39,8 @@ class _HelpPageState extends ConsumerState<HelpPage> {
 
   @override
   Widget build(BuildContext context) {
+    // REDESIGN (E3): Beta page on the same route.
+    if (ref.watch(redesignEnabledProvider)) return const RdHelpPage();
     final service = ref.watch(helpContentServiceProvider);
     final term = _searchTerm.trim();
     final results = term.isEmpty ? null : service.search(term);
