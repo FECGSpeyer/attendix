@@ -194,10 +194,11 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
   /// Loads data a change needs; on failure shows the error and drops the
   /// failed result, so tapping again loads it anew. Returns null then.
   Future<T?> _load<T>(FutureProvider<T> provider) async {
+    final container = ProviderScope.containerOf(context, listen: false);
     try {
-      return await ref.read(provider.future);
+      return await container.read(provider.future);
     } catch (e) {
-      ref.invalidate(provider);
+      container.invalidate(provider);
       if (mounted) ToastHelper.showError(context, context.l10n.settingsFlutterLoadFailed(friendlyErrorMessage(e)));
       return null;
     }
@@ -305,10 +306,14 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
   List<CriticalRule> _rules(Tenant t) => [...?t.criticalRules];
 
   Future<void> _saveRules(Tenant t, List<CriticalRule> rules, String toast) async {
+    // Stored and local list are the same normalised rules (e.g. a legacy
+    // rule without period is saved with its default period).
+    final json = rules.map(criticalRuleToJson).toList();
+    final normalised = json.map(CriticalRule.fromJson).toList();
     final ok = await _save(
       t.id,
-      {'critical_rules': rules.map(criticalRuleToJson).toList()},
-      (c) => c.copyWith(criticalRules: rules),
+      {'critical_rules': json},
+      (c) => c.copyWith(criticalRules: normalised),
       // Ionic re-evaluates the Problemfall rules right away.
       evaluate: true,
     );
