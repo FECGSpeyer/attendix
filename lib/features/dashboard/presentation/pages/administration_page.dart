@@ -429,7 +429,9 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
         builder: (ctx) {
           final p = ctx.rd;
           final l10n = ctx.l10n;
-          return Padding(
+          // Scrolls inside the sheet so "Speichern" stays reachable above
+          // the keyboard on short screens.
+          return SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + MediaQuery.viewInsetsOf(ctx).bottom),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -564,25 +566,27 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
             const SizedBox(height: 12),
             RdGroupedList(
               children: [
+                // One row per duplicate, each merges exactly one pair with
+                // its own confirmation (like the old buttons).
                 for (final g in duplicates)
-                  RdListRow(
-                    title: g.target.name,
-                    subtitle: l10n.adminTimesPresent(g.duplicates.length + 1),
-                    showChevron: false,
-                    trailing: RdTextLink(
-                      label: l10n.adminMerge,
-                      onTap: () {
-                        if (saving) return;
-                        _merge(
-                          [for (final dup in g.duplicates) (g.target.id!, dup.id!)],
-                          title: l10n.adminMergeChurches,
-                          message: l10n.adminMergeMessage(
-                              g.duplicates.map((d) => d.name).join(', '), g.target.name),
-                          confirm: l10n.adminMerge,
-                        );
-                      },
+                  for (final dup in g.duplicates)
+                    RdListRow(
+                      title: dup.name,
+                      subtitle: '→ ${g.target.name}',
+                      showChevron: false,
+                      trailing: RdTextLink(
+                        label: l10n.adminMerge,
+                        onTap: () {
+                          if (saving) return;
+                          _merge(
+                            [(g.target.id!, dup.id!)],
+                            title: l10n.adminMergeChurches,
+                            message: l10n.adminMergeMessage(dup.name, g.target.name),
+                            confirm: l10n.adminMerge,
+                          );
+                        },
+                      ),
                     ),
-                  ),
               ],
             ),
             const SizedBox(height: 12),
