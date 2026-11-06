@@ -714,7 +714,7 @@
         "generalHint": "Name, Saison, Gründe, Anmeldung",
         "recent": "Zuletzt geöffnet",
         "missingHint": "Mitglieder mit E-Mail, aber ohne Zugang",
-        "announcementsHint": "Gesendete Mitteilungen ansehen",
+        "announcementsHint": "Schreiben, Gesendetes, Automatik",
         "extraFieldsHint": "Eigene Felder für Personen und Werke"
       },
       "manageList": {
@@ -1015,6 +1015,14 @@
         "hoursMinutes": "{hours} Std. {minutes} Min",
         "less": "5 Minuten weniger",
         "more5": "5 Minuten mehr"
+      },
+      "messages": {
+        "intro": "Alles, was an die Gruppe ging, mit Lesestatus.",
+        "delivery": "Zustellung",
+        "bellThisGroup": "Diese Gruppe",
+        "bellAllGroups": "Alle Gruppen",
+        "bellNew": "Neu",
+        "bellEarlier": "Früher"
       }
     }
   },
@@ -1733,7 +1741,7 @@
         "generalHint": "Name, season, reasons, registration",
         "recent": "Recently opened",
         "missingHint": "Members with an e-mail but no access",
-        "announcementsHint": "View sent messages",
+        "announcementsHint": "Write, sent messages, automation",
         "extraFieldsHint": "Custom fields for people and works"
       },
       "manageList": {
@@ -2034,6 +2042,14 @@
         "hoursMinutes": "{hours} h {minutes} min",
         "less": "5 minutes less",
         "more5": "5 minutes more"
+      },
+      "messages": {
+        "intro": "Everything sent to the group, with read status.",
+        "delivery": "Delivery",
+        "bellThisGroup": "This group",
+        "bellAllGroups": "All groups",
+        "bellNew": "New",
+        "bellEarlier": "Earlier"
       }
     }
   }

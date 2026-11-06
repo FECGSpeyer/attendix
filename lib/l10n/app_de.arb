@@ -13764,7 +13764,7 @@
   "@redesignJoinWelcomeNoName": {
     "description": "redesign.join.welcomeNoName"
   },
-  "redesignManageAnnouncementsHint": "Gesendete Mitteilungen ansehen",
+  "redesignManageAnnouncementsHint": "Schreiben, Gesendetes, Automatik",
   "@redesignManageAnnouncementsHint": {
     "description": "redesign.manage.announcementsHint"
   },
@@ -14092,6 +14092,30 @@
         "type": "num"
       }
     }
+  },
+  "redesignMessagesBellAllGroups": "Alle Gruppen",
+  "@redesignMessagesBellAllGroups": {
+    "description": "redesign.messages.bellAllGroups"
+  },
+  "redesignMessagesBellEarlier": "Früher",
+  "@redesignMessagesBellEarlier": {
+    "description": "redesign.messages.bellEarlier"
+  },
+  "redesignMessagesBellNew": "Neu",
+  "@redesignMessagesBellNew": {
+    "description": "redesign.messages.bellNew"
+  },
+  "redesignMessagesBellThisGroup": "Diese Gruppe",
+  "@redesignMessagesBellThisGroup": {
+    "description": "redesign.messages.bellThisGroup"
+  },
+  "redesignMessagesDelivery": "Zustellung",
+  "@redesignMessagesDelivery": {
+    "description": "redesign.messages.delivery"
+  },
+  "redesignMessagesIntro": "Alles, was an die Gruppe ging, mit Lesestatus.",
+  "@redesignMessagesIntro": {
+    "description": "redesign.messages.intro"
   },
   "redesignNotifForMe": "Für mich",
   "@redesignNotifForMe": {

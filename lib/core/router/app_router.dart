@@ -132,6 +132,7 @@ import '../../features/redesign/presentation/pages/rd_attendance_types_page.dart
 import '../../features/redesign/presentation/pages/rd_group_edit_page.dart';
 import '../../features/redesign/presentation/pages/rd_groups_page.dart';
 import '../../features/redesign/presentation/pages/rd_shift_plans_page.dart';
+import '../../features/redesign/presentation/pages/rd_messages_page.dart';
 import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea;
 import '../../features/redesign/presentation/pages/rd_manage_page.dart';
 import '../../features/redesign/presentation/widgets/rd_split_view.dart';
@@ -1073,7 +1074,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'messages',
                 name: 'messages',
-                builder: (context, state) => const MessageListPage(),
+                builder: (context, state) => const _BetaOr(beta: RdMessagesPage(), classic: MessageListPage()),
               ),
               // AUTO_MESSAGES (Ionic 4.18): /tabs/settings/auto-messages(/:id)
               GoRoute(
