@@ -10,6 +10,7 @@
         "✨ Noten importieren: Werke mit Fassungen, unsicherer Zuordnung oder unklaren Stimmen werden erst hochgeladen, wenn jemand sie geprüft hat",
         "✨ Noten importieren: Nach einem Drive-Import erinnert Attendix daran, die Freigabe des Ordners wieder aufzuheben",
         "✨ Noten importieren: Auf Wunsch schlägt die KI Antworten auf die Fragen vor; sichere Vorschläge sind ausgefüllt und mit ✦ markiert, alle lassen sich ändern und gelten erst, wenn du sie übernimmst",
+        "⚡ KI-Stimmerkennung nutzt neuere Modelle: GPT-6 Luna für Stimmnamen beim Import, GPT-6.1 Terra zum Lesen der ersten Notenseite beim Hochladen",
         "💄 Noten importieren: eigene Seite unter Werke im Stil der Beta, Rückfrage beim Verlassen und Fehler mit Ausweg (z. B. ZIP statt Link)",
         "💄 Ohne Beta-Schalter bleibt alles wie in der Ionic-App"
       ]

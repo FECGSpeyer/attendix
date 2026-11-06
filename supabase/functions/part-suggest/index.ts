@@ -29,7 +29,7 @@
 //
 // Setup: supabase/sql/part_detect_usage.sql run once (as for part-detect),
 //        then supabase functions deploy part-suggest --project-ref <ref>
-import OpenAI from "https://deno.land/x/openai@v4.69.0/mod.ts";
+import OpenAI from "npm:openai@4.104.0";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
@@ -42,6 +42,9 @@ const EDIT_ROLES = [1, 4, 5, 9];
 /// Shared with part-detect: calls per day (UTC) per account and per tenant.
 const DAILY_LIMIT_USER = 200;
 const DAILY_LIMIT_TENANT = 500;
+
+/// Text model: the newest GPT Luna (Leon, 06.11.2026).
+const MODEL = "gpt-6-luna";
 
 const MAX_QUESTIONS = 80;
 const MAX_GROUPS = 150;
@@ -193,11 +196,12 @@ Deno.serve(async (req: Request) => {
   try {
     const client = new OpenAI({ apiKey: Deno.env.get("OPEN_AI_KEY") });
     const response = await client.chat.completions.create({
-      model: "gpt-4.1-mini",
+      model: MODEL,
       stream: false,
-      temperature: 0,
+      reasoning_effort: "low",
       response_format: { type: "json_object" },
-      max_tokens: 60 * names.length + 100,
+      // Reasoning tokens count against this limit too.
+      max_completion_tokens: 4000 + 60 * names.length,
       messages: [
         { role: "system", content: SYSTEM },
         {

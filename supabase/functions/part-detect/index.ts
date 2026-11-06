@@ -23,12 +23,15 @@
 //
 // Setup: run supabase/sql/part_detect_usage.sql once, then
 //        supabase functions deploy part-detect --project-ref <ref>
-import OpenAI from "https://deno.land/x/openai@v4.69.0/mod.ts";
+import OpenAI from "npm:openai@4.104.0";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+/// Image model: the newest GPT Terra (Leon, 06.11.2026).
+const MODEL = "gpt-6.1-terra";
 
 /// Roles that edit the tenant (app: `Role.canEdit`).
 const EDIT_ROLES = [1, 4, 5, 9];
@@ -165,11 +168,12 @@ Deno.serve(async (req: Request) => {
   try {
     const client = new OpenAI({ apiKey: Deno.env.get("OPEN_AI_KEY") });
     const response = await client.chat.completions.create({
-      model: "gpt-4.1-mini",
+      model: MODEL,
       stream: false,
-      temperature: 0,
+      reasoning_effort: "low",
       response_format: { type: "json_object" },
-      max_tokens: 120,
+      // Reasoning tokens count against this limit too.
+      max_completion_tokens: 4000,
       messages: [
         { role: "system", content: SYSTEM },
         {
