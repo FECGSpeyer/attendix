@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/supabase_config.dart';
 import '../services/attendance_list_cache.dart';
+import '../services/offline_list_cache.dart';
 import '../services/attendance_detail_cache.dart'
     show
         OfflineReadCacheGuard,
@@ -52,8 +53,17 @@ final realtimePlayersProvider = StreamProvider.autoDispose<List<Person>>((ref) a
     }).toList();
   }
 
-  // Initial data
-  final initialData = await playerRepo.getPlayers();
+  // Initial data. Offline (or on a network error) the last loaded list,
+  // shared with playersProvider: the provider is disposed on a tab switch,
+  // and Ionic people/list keeps showing the list it loaded once (#384).
+  final initialData = await OfflineListCache.read<Person>(
+    ref,
+    tenantId: tenantId,
+    part: 'players',
+    fetch: playerRepo.getPlayers,
+    toJson: (p) => p.toJson(),
+    fromJson: Person.fromJson,
+  );
   yield enrichPlayers(initialData);
 
   // Create a stream controller to manage updates

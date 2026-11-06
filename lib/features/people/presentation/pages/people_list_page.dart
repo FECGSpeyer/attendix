@@ -582,6 +582,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           ),
         ),
       ...peopleAsync.when(
+        // #384: a failed reload keeps the loaded list; the error page only
+        // when nothing was loaded yet.
+        skipError: true,
         loading: () => [_skeletonSliver()],
         error: (error, stack) => [
           SliverFillRemaining(
