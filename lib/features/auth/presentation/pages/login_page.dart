@@ -28,6 +28,9 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/display/attendix_logo.dart';
 import '../../../redesign/presentation/widgets/rd_account_switch.dart' show RdSavedAccountsOnLogin;
 import '../../../redesign/presentation/widgets/rd_logo.dart' show rdLogoColors;
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../widgets/ion_buttons.dart';
 import '../widgets/ion_input_decoration.dart';
 import '../widgets/reset_password_dialog.dart';
@@ -548,8 +551,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final ios = useIosLook(context);
-    final cardColor = Theme.of(context).cardTheme.color ??
-        Theme.of(context).colorScheme.surface;
+    // REDESIGN (E5): photo and logo stay, only the card gets the Beta look.
+    final beta = ref.watch(redesignEnabledProvider);
+    final cardColor = beta
+        ? context.rd.surface
+        : Theme.of(context).cardTheme.color ?? Theme.of(context).colorScheme.surface;
     // Ionic .version: white ion-label at the root font size (iOS 17pt via
     // -apple-system-body, md 16px), 20 high lines, flowing text that wraps
     // between words ("… | Impressum &" / "Datenschutz").
@@ -605,7 +611,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           ),
                           decoration: BoxDecoration(
                             color: cardColor,
-                            borderRadius: BorderRadius.circular(1.25 * rem),
+                            borderRadius: BorderRadius.circular(beta ? context.rd.cardRadius : 1.25 * rem),
                             boxShadow: const [
                               BoxShadow(
                                 color: Color(0x73000000),
@@ -643,7 +649,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                     child: AutofillGroup(
                                       onDisposeAction:
                                           AutofillContextAction.cancel,
-                                      child: _buildForm(context),
+                                      child: beta ? _buildFormBeta(context) : _buildForm(context),
                                     ),
                                   ),
                                 ],
@@ -743,6 +749,154 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
               ),
             ),
+        ],
+      ),
+    );
+  }
+
+  /// REDESIGN (E5): the same form (controllers, autofill hints, validators,
+  /// actions) with Beta building blocks: mode chips, fields in a grouped
+  /// card, one main button, links without capitals.
+  Widget _buildFormBeta(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    Widget link(String label, VoidCallback onTap) =>
+        RdTextLink(label: label, onTap: () => _isLoading ? null : onTap());
+    final emailField = RdFieldRow(
+      label: l10n.loginEmail,
+      child: TextFormField(
+        controller: _emailController,
+        decoration: rdInputDecoration(p, l10n.loginEmailPlaceholder),
+        keyboardType: TextInputType.emailAddress,
+        textInputAction: _mode == AuthMode.password ? TextInputAction.next : TextInputAction.go,
+        autocorrect: false,
+        readOnly: _mode == AuthMode.otp && _otpSent,
+        autofillHints: const [AutofillHints.email],
+        onFieldSubmitted: _mode == AuthMode.otp && !_otpSent ? (_) => _requestCode() : null,
+        validator: (value) {
+          if (value == null || value.trim().isEmpty) return l10n.loginToastEnterEmail;
+          if (!isValidEmail(value)) return l10n.loginToastInvalidEmail;
+          return null;
+        },
+      ),
+    );
+    final passwordField = RdFieldRow(
+      label: l10n.loginPassword,
+      child: Row(
+        children: [
+          Expanded(
+            child: TextFormField(
+              controller: _passwordController,
+              decoration: rdInputDecoration(p, ''),
+              obscureText: _obscurePassword,
+              textInputAction: TextInputAction.done,
+              autofillHints: const [AutofillHints.password],
+              onFieldSubmitted: (_) => _onSubmit(),
+              validator: (value) {
+                if (value == null || value.isEmpty) return l10n.loginFlutterEnterPassword;
+                return null;
+              },
+            ),
+          ),
+          IconButton(
+            tooltip: l10n.loginShowPassword,
+            visualDensity: VisualDensity.compact,
+            icon: Icon(
+              _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+              color: p.text2,
+            ),
+            onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+          ),
+        ],
+      ),
+    );
+    return Form(
+      key: _formKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_teamsLinkMode)
+            Text(l10n.loginLinkNote, style: RdType.meta(p, size: 14))
+          else
+            // Wrap: with large system text the chips go to a second line.
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                RdChoiceChip(
+                  label: l10n.loginModePassword,
+                  selected: _mode == AuthMode.password,
+                  onTap: _isLoading || _mode == AuthMode.password ? null : () => _setMode(AuthMode.password),
+                ),
+                RdChoiceChip(
+                  label: l10n.loginModeOtp,
+                  selected: _mode == AuthMode.otp,
+                  onTap: _isLoading || _mode == AuthMode.otp ? null : () => _setMode(AuthMode.otp),
+                ),
+              ],
+            ),
+          const SizedBox(height: 14),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: p.bg,
+              borderRadius: BorderRadius.circular(p.cardRadius),
+            ),
+            child: Column(
+              children: [
+                emailField,
+                if (_mode == AuthMode.password) ...[
+                  Divider(height: 1, thickness: 1, color: p.line),
+                  passwordField,
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          if (_mode == AuthMode.password) ...[
+            RdPrimaryButton(
+              label: _teamsLinkMode ? l10n.loginLinkAndSignIn : l10n.loginSignIn,
+              loading: _isLoading,
+              onPressed: _isLoading || !_canSubmit ? null : _login,
+            ),
+            const SizedBox(height: 6),
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              spacing: 8,
+              children: [
+                link(l10n.redesignLoginForgot, _forgotPassword),
+                link(l10n.loginRegister, _openRegister),
+              ],
+            ),
+          ] else if (!_otpSent) ...[
+            RdPrimaryButton(
+              label: l10n.loginSendCode,
+              loading: _isLoading,
+              onPressed: _isLoading || !_canSubmit ? null : _requestCode,
+            ),
+            const SizedBox(height: 6),
+            Align(alignment: Alignment.centerRight, child: link(l10n.loginRegister, _openRegister)),
+          ] else ...[
+            OtpCodeField(
+              controller: _otpController,
+              enabled: !_isLoading,
+              onCompleted: (_) => _verifyCode(),
+            ),
+            const SizedBox(height: 16),
+            RdPrimaryButton(
+              label: l10n.loginSignIn,
+              loading: _isLoading,
+              onPressed: _isLoading || !_canSubmit ? null : _verifyCode,
+            ),
+            const SizedBox(height: 6),
+            Center(
+              child: ResendCodeButton(
+                cooldown: _cooldown,
+                enabled: !_isLoading,
+                onResend: _requestCode,
+              ),
+            ),
+          ],
         ],
       ),
     );

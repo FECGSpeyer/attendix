@@ -19817,6 +19817,24 @@ abstract class AppLocalizations {
   /// **'Willkommen'**
   String get redesignJoinWelcomeNoName;
 
+  /// redesign.login.forgot
+  ///
+  /// In de, this message translates to:
+  /// **'Passwort vergessen?'**
+  String get redesignLoginForgot;
+
+  /// redesign.login.resetIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Wir schicken dir einen Link, mit dem du ein neues Passwort setzt.'**
+  String get redesignLoginResetIntro;
+
+  /// redesign.login.resetSend
+  ///
+  /// In de, this message translates to:
+  /// **'Link senden'**
+  String get redesignLoginResetSend;
+
   /// redesign.manage.announcementsHint
   ///
   /// In de, this message translates to:

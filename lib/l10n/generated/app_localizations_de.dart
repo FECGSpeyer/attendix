@@ -12273,6 +12273,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignJoinWelcomeNoName => 'Willkommen';
 
   @override
+  String get redesignLoginForgot => 'Passwort vergessen?';
+
+  @override
+  String get redesignLoginResetIntro =>
+      'Wir schicken dir einen Link, mit dem du ein neues Passwort setzt.';
+
+  @override
+  String get redesignLoginResetSend => 'Link senden';
+
+  @override
   String get redesignManageAnnouncementsHint =>
       'Schreiben, Gesendetes, Automatik';
 
