@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.44.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Allgemein und Branding der Gruppe im neuen Design, jede Änderung wird sofort gespeichert",
+        "✨ Beta: Benachrichtigungs-Einstellungen führen zu Ich › Benachrichtigungen, „Dashboard konfigurieren“ ist im Beta ausgeblendet"
+      ]
+    },
+    {
       "version": "0.43.1",
       "date": "6.11.2026",
       "changes": [

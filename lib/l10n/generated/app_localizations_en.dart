@@ -9294,6 +9294,167 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get rdSettingsAddRule => 'Add rule';
+
+  @override
+  String get rdSettingsAllEvents => 'All events visible';
+
+  @override
+  String get rdSettingsAllEventsHint => 'Also events they are not part of';
+
+  @override
+  String get rdSettingsAllowRegister => 'Allow self sign-up';
+
+  @override
+  String get rdSettingsAllowRegisterHint => 'New persons sign up via a link';
+
+  @override
+  String get rdSettingsAutoApprove => 'Approve new ones automatically';
+
+  @override
+  String get rdSettingsBack => 'Group';
+
+  @override
+  String get rdSettingsBrandingIntro =>
+      'Logo and text appear subtly on exported plans and lists. Applies to all groups of the organisation.';
+
+  @override
+  String get rdSettingsBrandingLogoHint => 'Image file, at most 2 MB';
+
+  @override
+  String get rdSettingsBrandingLogoRemoved => 'Logo removed';
+
+  @override
+  String get rdSettingsBrandingLogoSaved => 'Logo saved';
+
+  @override
+  String get rdSettingsBrandingNoOrg =>
+      'Branding is only available for groups in an organisation. This group is not in one.';
+
+  @override
+  String get rdSettingsBrandingNoText => 'No text';
+
+  @override
+  String get rdSettingsBrandingRemoveLogo => 'Remove logo?';
+
+  @override
+  String get rdSettingsBrandingTitle => 'Branding';
+
+  @override
+  String get rdSettingsBrandingToOrg => 'To the organisation';
+
+  @override
+  String get rdSettingsCopyRegisterLink => 'Copy sign-up link';
+
+  @override
+  String get rdSettingsCopyWorksLink => 'Copy works link';
+
+  @override
+  String get rdSettingsCriticalHint =>
+      'Rules decide when a person counts as a problem case.';
+
+  @override
+  String get rdSettingsDutyView => 'Duty roster in “My events”';
+
+  @override
+  String get rdSettingsDutyViewHint => 'Duty teams see their duties first';
+
+  @override
+  String get rdSettingsEmptyValue => 'Please enter a value.';
+
+  @override
+  String get rdSettingsGeneralTitle => 'General';
+
+  @override
+  String get rdSettingsHolidays => 'Show holidays';
+
+  @override
+  String get rdSettingsHolidaysHint =>
+      'Highlighted when creating events (Germany only)';
+
+  @override
+  String get rdSettingsInfoText => 'Note on other events';
+
+  @override
+  String get rdSettingsMembersList => 'Member list for everyone';
+
+  @override
+  String get rdSettingsMembersListHint =>
+      'Players, helpers and section leaders see all persons';
+
+  @override
+  String get rdSettingsName => 'Name';
+
+  @override
+  String get rdSettingsParentsHint =>
+      'Parents see their children\'s attendance and excuse them';
+
+  @override
+  String get rdSettingsRegion => 'State';
+
+  @override
+  String get rdSettingsRegisterFields => 'Fields on sign-up';
+
+  @override
+  String get rdSettingsRegisterFieldsHint =>
+      'All selected fields are required. First name, last name and group are always included.';
+
+  @override
+  String get rdSettingsSaveFailed => 'Could not be saved. Please try again.';
+
+  @override
+  String rdSettingsSeasonSaved(Object date) {
+    return 'Season start: $date';
+  }
+
+  @override
+  String get rdSettingsSeasonStart => 'Season start';
+
+  @override
+  String get rdSettingsSectionAttendance => 'Attendance';
+
+  @override
+  String get rdSettingsSectionCritical => 'Problem cases';
+
+  @override
+  String get rdSettingsSectionFeatures => 'Features';
+
+  @override
+  String get rdSettingsSectionMembers => 'For members';
+
+  @override
+  String get rdSettingsSectionReasons => 'Reasons';
+
+  @override
+  String get rdSettingsSectionRegistration => 'Sign-up';
+
+  @override
+  String get rdSettingsSectionWorks => 'Works';
+
+  @override
+  String get rdSettingsShareWorksHint =>
+      'Anyone with the link can view the works';
+
+  @override
+  String get rdSettingsShiftPresent => 'Shift-related counts as present';
+
+  @override
+  String get rdSettingsShiftPresentHint =>
+      'Excused for shift or work counts as present in the percentages';
+
+  @override
+  String get rdSettingsShortName => 'Short name';
+
+  @override
+  String get rdSettingsShortNameHint => 'Used in front of export file names';
+
+  @override
+  String get rdSettingsTeachersHint => 'Manage the players\' teachers';
+
+  @override
+  String get rdSettingsUndo => 'Undo';
+
+  @override
   String redesignAbsenceAffects(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

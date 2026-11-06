@@ -15443,6 +15443,306 @@ abstract class AppLocalizations {
   /// **'Ohne Ergebnis: {count}'**
   String protocolWithoutOutcome(Object count);
 
+  /// rdSettings.addRule
+  ///
+  /// In de, this message translates to:
+  /// **'Regel hinzufügen'**
+  String get rdSettingsAddRule;
+
+  /// rdSettings.allEvents
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Termine sichtbar'**
+  String get rdSettingsAllEvents;
+
+  /// rdSettings.allEventsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Auch Termine, bei denen sie nicht dabei sind'**
+  String get rdSettingsAllEventsHint;
+
+  /// rdSettings.allowRegister
+  ///
+  /// In de, this message translates to:
+  /// **'Selbst anmelden erlauben'**
+  String get rdSettingsAllowRegister;
+
+  /// rdSettings.allowRegisterHint
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Personen melden sich über einen Link an'**
+  String get rdSettingsAllowRegisterHint;
+
+  /// rdSettings.autoApprove
+  ///
+  /// In de, this message translates to:
+  /// **'Neue automatisch freigeben'**
+  String get rdSettingsAutoApprove;
+
+  /// rdSettings.back
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe'**
+  String get rdSettingsBack;
+
+  /// rdSettings.brandingIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Logo und Text stehen dezent auf exportierten Plänen und Listen. Gilt für alle Gruppen der Organisation.'**
+  String get rdSettingsBrandingIntro;
+
+  /// rdSettings.brandingLogoHint
+  ///
+  /// In de, this message translates to:
+  /// **'Bilddatei, höchstens 2 MB'**
+  String get rdSettingsBrandingLogoHint;
+
+  /// rdSettings.brandingLogoRemoved
+  ///
+  /// In de, this message translates to:
+  /// **'Logo entfernt'**
+  String get rdSettingsBrandingLogoRemoved;
+
+  /// rdSettings.brandingLogoSaved
+  ///
+  /// In de, this message translates to:
+  /// **'Logo gespeichert'**
+  String get rdSettingsBrandingLogoSaved;
+
+  /// rdSettings.brandingNoOrg
+  ///
+  /// In de, this message translates to:
+  /// **'Branding gibt es nur für Gruppen in einer Organisation. Diese Gruppe gehört zu keiner.'**
+  String get rdSettingsBrandingNoOrg;
+
+  /// rdSettings.brandingNoText
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Text'**
+  String get rdSettingsBrandingNoText;
+
+  /// rdSettings.brandingRemoveLogo
+  ///
+  /// In de, this message translates to:
+  /// **'Logo entfernen?'**
+  String get rdSettingsBrandingRemoveLogo;
+
+  /// rdSettings.brandingTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Branding'**
+  String get rdSettingsBrandingTitle;
+
+  /// rdSettings.brandingToOrg
+  ///
+  /// In de, this message translates to:
+  /// **'Zur Organisation'**
+  String get rdSettingsBrandingToOrg;
+
+  /// rdSettings.copyRegisterLink
+  ///
+  /// In de, this message translates to:
+  /// **'Anmelde-Link kopieren'**
+  String get rdSettingsCopyRegisterLink;
+
+  /// rdSettings.copyWorksLink
+  ///
+  /// In de, this message translates to:
+  /// **'Werke-Link kopieren'**
+  String get rdSettingsCopyWorksLink;
+
+  /// rdSettings.criticalHint
+  ///
+  /// In de, this message translates to:
+  /// **'Regeln bestimmen, wann eine Person als Problemfall gilt.'**
+  String get rdSettingsCriticalHint;
+
+  /// rdSettings.dutyView
+  ///
+  /// In de, this message translates to:
+  /// **'Dienstplan in „Meine Termine“'**
+  String get rdSettingsDutyView;
+
+  /// rdSettings.dutyViewHint
+  ///
+  /// In de, this message translates to:
+  /// **'Dienst-Teams sehen zuerst ihre Dienste'**
+  String get rdSettingsDutyViewHint;
+
+  /// rdSettings.emptyValue
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib einen Wert ein.'**
+  String get rdSettingsEmptyValue;
+
+  /// rdSettings.generalTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Allgemein'**
+  String get rdSettingsGeneralTitle;
+
+  /// rdSettings.holidays
+  ///
+  /// In de, this message translates to:
+  /// **'Ferien und Feiertage zeigen'**
+  String get rdSettingsHolidays;
+
+  /// rdSettings.holidaysHint
+  ///
+  /// In de, this message translates to:
+  /// **'Beim Anlegen von Terminen hervorgehoben (nur Deutschland)'**
+  String get rdSettingsHolidaysHint;
+
+  /// rdSettings.infoText
+  ///
+  /// In de, this message translates to:
+  /// **'Hinweis bei fremden Terminen'**
+  String get rdSettingsInfoText;
+
+  /// rdSettings.membersList
+  ///
+  /// In de, this message translates to:
+  /// **'Mitgliederliste für alle'**
+  String get rdSettingsMembersList;
+
+  /// rdSettings.membersListHint
+  ///
+  /// In de, this message translates to:
+  /// **'Spieler, Helfer und Stimmführer sehen alle Personen'**
+  String get rdSettingsMembersListHint;
+
+  /// rdSettings.name
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get rdSettingsName;
+
+  /// rdSettings.parentsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Eltern sehen die Anwesenheit ihrer Kinder und melden sie ab'**
+  String get rdSettingsParentsHint;
+
+  /// rdSettings.region
+  ///
+  /// In de, this message translates to:
+  /// **'Bundesland'**
+  String get rdSettingsRegion;
+
+  /// rdSettings.registerFields
+  ///
+  /// In de, this message translates to:
+  /// **'Felder bei der Anmeldung'**
+  String get rdSettingsRegisterFields;
+
+  /// rdSettings.registerFieldsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Alle gewählten Felder sind Pflicht. Vorname, Nachname und Gruppe sind immer dabei.'**
+  String get rdSettingsRegisterFieldsHint;
+
+  /// rdSettings.saveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Konnte nicht gespeichert werden. Bitte versuche es noch einmal.'**
+  String get rdSettingsSaveFailed;
+
+  /// rdSettings.seasonSaved
+  ///
+  /// In de, this message translates to:
+  /// **'Saisonbeginn: {date}'**
+  String rdSettingsSeasonSaved(Object date);
+
+  /// rdSettings.seasonStart
+  ///
+  /// In de, this message translates to:
+  /// **'Saisonbeginn'**
+  String get rdSettingsSeasonStart;
+
+  /// rdSettings.sectionAttendance
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit'**
+  String get rdSettingsSectionAttendance;
+
+  /// rdSettings.sectionCritical
+  ///
+  /// In de, this message translates to:
+  /// **'Problemfälle'**
+  String get rdSettingsSectionCritical;
+
+  /// rdSettings.sectionFeatures
+  ///
+  /// In de, this message translates to:
+  /// **'Funktionen'**
+  String get rdSettingsSectionFeatures;
+
+  /// rdSettings.sectionMembers
+  ///
+  /// In de, this message translates to:
+  /// **'Für Mitglieder'**
+  String get rdSettingsSectionMembers;
+
+  /// rdSettings.sectionReasons
+  ///
+  /// In de, this message translates to:
+  /// **'Gründe'**
+  String get rdSettingsSectionReasons;
+
+  /// rdSettings.sectionRegistration
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldung'**
+  String get rdSettingsSectionRegistration;
+
+  /// rdSettings.sectionWorks
+  ///
+  /// In de, this message translates to:
+  /// **'Werke'**
+  String get rdSettingsSectionWorks;
+
+  /// rdSettings.shareWorksHint
+  ///
+  /// In de, this message translates to:
+  /// **'Jeder mit dem Link kann die Werke ansehen'**
+  String get rdSettingsShareWorksHint;
+
+  /// rdSettings.shiftPresent
+  ///
+  /// In de, this message translates to:
+  /// **'Schichtbedingt zählt als anwesend'**
+  String get rdSettingsShiftPresent;
+
+  /// rdSettings.shiftPresentHint
+  ///
+  /// In de, this message translates to:
+  /// **'Schicht- oder arbeitsbedingt Entschuldigte zählen in den Prozenten als da'**
+  String get rdSettingsShiftPresentHint;
+
+  /// rdSettings.shortName
+  ///
+  /// In de, this message translates to:
+  /// **'Kürzel'**
+  String get rdSettingsShortName;
+
+  /// rdSettings.shortNameHint
+  ///
+  /// In de, this message translates to:
+  /// **'Steht vor Dateinamen beim Export'**
+  String get rdSettingsShortNameHint;
+
+  /// rdSettings.teachersHint
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer der Spieler verwalten'**
+  String get rdSettingsTeachersHint;
+
+  /// rdSettings.undo
+  ///
+  /// In de, this message translates to:
+  /// **'Rückgängig'**
+  String get rdSettingsUndo;
+
   /// redesign.absence.affects
   ///
   /// In de, this message translates to:

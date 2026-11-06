@@ -161,11 +161,10 @@ bool rdManageVisible(RdManageEntry entry, RdManageAccess access) {
     RdManageEntry.suggestTopic ||
     RdManageEntry.protocols =>
       a._showTeam && !a.isTeamLeader && a.inTeamCircle,
-    RdManageEntry.general ||
-    RdManageEntry.branding ||
-    RdManageEntry.dashboard ||
-    RdManageEntry.organisation =>
-      a.isAdmin,
+    // "Dashboard konfigurieren" only sets the dashboard tab of the classic
+    // view; in the Beta "Heute" is the start page, so it is hidden here.
+    RdManageEntry.dashboard => false,
+    RdManageEntry.general || RdManageEntry.branding || RdManageEntry.organisation => a.isAdmin,
   };
 }
 

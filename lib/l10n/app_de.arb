@@ -11726,6 +11726,209 @@
       "count": {}
     }
   },
+  "rdSettingsAddRule": "Regel hinzufügen",
+  "@rdSettingsAddRule": {
+    "description": "rdSettings.addRule"
+  },
+  "rdSettingsAllEvents": "Alle Termine sichtbar",
+  "@rdSettingsAllEvents": {
+    "description": "rdSettings.allEvents"
+  },
+  "rdSettingsAllEventsHint": "Auch Termine, bei denen sie nicht dabei sind",
+  "@rdSettingsAllEventsHint": {
+    "description": "rdSettings.allEventsHint"
+  },
+  "rdSettingsAllowRegister": "Selbst anmelden erlauben",
+  "@rdSettingsAllowRegister": {
+    "description": "rdSettings.allowRegister"
+  },
+  "rdSettingsAllowRegisterHint": "Neue Personen melden sich über einen Link an",
+  "@rdSettingsAllowRegisterHint": {
+    "description": "rdSettings.allowRegisterHint"
+  },
+  "rdSettingsAutoApprove": "Neue automatisch freigeben",
+  "@rdSettingsAutoApprove": {
+    "description": "rdSettings.autoApprove"
+  },
+  "rdSettingsBack": "Gruppe",
+  "@rdSettingsBack": {
+    "description": "rdSettings.back"
+  },
+  "rdSettingsBrandingIntro": "Logo und Text stehen dezent auf exportierten Plänen und Listen. Gilt für alle Gruppen der Organisation.",
+  "@rdSettingsBrandingIntro": {
+    "description": "rdSettings.brandingIntro"
+  },
+  "rdSettingsBrandingLogoHint": "Bilddatei, höchstens 2 MB",
+  "@rdSettingsBrandingLogoHint": {
+    "description": "rdSettings.brandingLogoHint"
+  },
+  "rdSettingsBrandingLogoRemoved": "Logo entfernt",
+  "@rdSettingsBrandingLogoRemoved": {
+    "description": "rdSettings.brandingLogoRemoved"
+  },
+  "rdSettingsBrandingLogoSaved": "Logo gespeichert",
+  "@rdSettingsBrandingLogoSaved": {
+    "description": "rdSettings.brandingLogoSaved"
+  },
+  "rdSettingsBrandingNoOrg": "Branding gibt es nur für Gruppen in einer Organisation. Diese Gruppe gehört zu keiner.",
+  "@rdSettingsBrandingNoOrg": {
+    "description": "rdSettings.brandingNoOrg"
+  },
+  "rdSettingsBrandingNoText": "Kein Text",
+  "@rdSettingsBrandingNoText": {
+    "description": "rdSettings.brandingNoText"
+  },
+  "rdSettingsBrandingRemoveLogo": "Logo entfernen?",
+  "@rdSettingsBrandingRemoveLogo": {
+    "description": "rdSettings.brandingRemoveLogo"
+  },
+  "rdSettingsBrandingTitle": "Branding",
+  "@rdSettingsBrandingTitle": {
+    "description": "rdSettings.brandingTitle"
+  },
+  "rdSettingsBrandingToOrg": "Zur Organisation",
+  "@rdSettingsBrandingToOrg": {
+    "description": "rdSettings.brandingToOrg"
+  },
+  "rdSettingsCopyRegisterLink": "Anmelde-Link kopieren",
+  "@rdSettingsCopyRegisterLink": {
+    "description": "rdSettings.copyRegisterLink"
+  },
+  "rdSettingsCopyWorksLink": "Werke-Link kopieren",
+  "@rdSettingsCopyWorksLink": {
+    "description": "rdSettings.copyWorksLink"
+  },
+  "rdSettingsCriticalHint": "Regeln bestimmen, wann eine Person als Problemfall gilt.",
+  "@rdSettingsCriticalHint": {
+    "description": "rdSettings.criticalHint"
+  },
+  "rdSettingsDutyView": "Dienstplan in „Meine Termine“",
+  "@rdSettingsDutyView": {
+    "description": "rdSettings.dutyView"
+  },
+  "rdSettingsDutyViewHint": "Dienst-Teams sehen zuerst ihre Dienste",
+  "@rdSettingsDutyViewHint": {
+    "description": "rdSettings.dutyViewHint"
+  },
+  "rdSettingsEmptyValue": "Bitte gib einen Wert ein.",
+  "@rdSettingsEmptyValue": {
+    "description": "rdSettings.emptyValue"
+  },
+  "rdSettingsGeneralTitle": "Allgemein",
+  "@rdSettingsGeneralTitle": {
+    "description": "rdSettings.generalTitle"
+  },
+  "rdSettingsHolidays": "Ferien und Feiertage zeigen",
+  "@rdSettingsHolidays": {
+    "description": "rdSettings.holidays"
+  },
+  "rdSettingsHolidaysHint": "Beim Anlegen von Terminen hervorgehoben (nur Deutschland)",
+  "@rdSettingsHolidaysHint": {
+    "description": "rdSettings.holidaysHint"
+  },
+  "rdSettingsInfoText": "Hinweis bei fremden Terminen",
+  "@rdSettingsInfoText": {
+    "description": "rdSettings.infoText"
+  },
+  "rdSettingsMembersList": "Mitgliederliste für alle",
+  "@rdSettingsMembersList": {
+    "description": "rdSettings.membersList"
+  },
+  "rdSettingsMembersListHint": "Spieler, Helfer und Stimmführer sehen alle Personen",
+  "@rdSettingsMembersListHint": {
+    "description": "rdSettings.membersListHint"
+  },
+  "rdSettingsName": "Name",
+  "@rdSettingsName": {
+    "description": "rdSettings.name"
+  },
+  "rdSettingsParentsHint": "Eltern sehen die Anwesenheit ihrer Kinder und melden sie ab",
+  "@rdSettingsParentsHint": {
+    "description": "rdSettings.parentsHint"
+  },
+  "rdSettingsRegion": "Bundesland",
+  "@rdSettingsRegion": {
+    "description": "rdSettings.region"
+  },
+  "rdSettingsRegisterFields": "Felder bei der Anmeldung",
+  "@rdSettingsRegisterFields": {
+    "description": "rdSettings.registerFields"
+  },
+  "rdSettingsRegisterFieldsHint": "Alle gewählten Felder sind Pflicht. Vorname, Nachname und Gruppe sind immer dabei.",
+  "@rdSettingsRegisterFieldsHint": {
+    "description": "rdSettings.registerFieldsHint"
+  },
+  "rdSettingsSaveFailed": "Konnte nicht gespeichert werden. Bitte versuche es noch einmal.",
+  "@rdSettingsSaveFailed": {
+    "description": "rdSettings.saveFailed"
+  },
+  "rdSettingsSeasonSaved": "Saisonbeginn: {date}",
+  "@rdSettingsSeasonSaved": {
+    "description": "rdSettings.seasonSaved",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "rdSettingsSeasonStart": "Saisonbeginn",
+  "@rdSettingsSeasonStart": {
+    "description": "rdSettings.seasonStart"
+  },
+  "rdSettingsSectionAttendance": "Anwesenheit",
+  "@rdSettingsSectionAttendance": {
+    "description": "rdSettings.sectionAttendance"
+  },
+  "rdSettingsSectionCritical": "Problemfälle",
+  "@rdSettingsSectionCritical": {
+    "description": "rdSettings.sectionCritical"
+  },
+  "rdSettingsSectionFeatures": "Funktionen",
+  "@rdSettingsSectionFeatures": {
+    "description": "rdSettings.sectionFeatures"
+  },
+  "rdSettingsSectionMembers": "Für Mitglieder",
+  "@rdSettingsSectionMembers": {
+    "description": "rdSettings.sectionMembers"
+  },
+  "rdSettingsSectionReasons": "Gründe",
+  "@rdSettingsSectionReasons": {
+    "description": "rdSettings.sectionReasons"
+  },
+  "rdSettingsSectionRegistration": "Anmeldung",
+  "@rdSettingsSectionRegistration": {
+    "description": "rdSettings.sectionRegistration"
+  },
+  "rdSettingsSectionWorks": "Werke",
+  "@rdSettingsSectionWorks": {
+    "description": "rdSettings.sectionWorks"
+  },
+  "rdSettingsShareWorksHint": "Jeder mit dem Link kann die Werke ansehen",
+  "@rdSettingsShareWorksHint": {
+    "description": "rdSettings.shareWorksHint"
+  },
+  "rdSettingsShiftPresent": "Schichtbedingt zählt als anwesend",
+  "@rdSettingsShiftPresent": {
+    "description": "rdSettings.shiftPresent"
+  },
+  "rdSettingsShiftPresentHint": "Schicht- oder arbeitsbedingt Entschuldigte zählen in den Prozenten als da",
+  "@rdSettingsShiftPresentHint": {
+    "description": "rdSettings.shiftPresentHint"
+  },
+  "rdSettingsShortName": "Kürzel",
+  "@rdSettingsShortName": {
+    "description": "rdSettings.shortName"
+  },
+  "rdSettingsShortNameHint": "Steht vor Dateinamen beim Export",
+  "@rdSettingsShortNameHint": {
+    "description": "rdSettings.shortNameHint"
+  },
+  "rdSettingsTeachersHint": "Lehrer der Spieler verwalten",
+  "@rdSettingsTeachersHint": {
+    "description": "rdSettings.teachersHint"
+  },
+  "rdSettingsUndo": "Rückgängig",
+  "@rdSettingsUndo": {
+    "description": "rdSettings.undo"
+  },
   "redesignAbsenceAffects": "{count, plural, =0 {In diesem Zeitraum hast du keine Termine.} one {Das betrifft 1 Termin} other {Das betrifft {count} Termine}}",
   "@redesignAbsenceAffects": {
     "description": "redesign.absence.affects",
