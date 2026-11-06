@@ -70,6 +70,7 @@ void main() {
       'updateAttendancePlanFields', 'setTypeDefaultOrgPlan', 'saveBlockTemplates',
     ],
     'user_registration': ['registerUser', 'createPlayerAccount'],
+    'role_permission': ['updateFilesShared'],
   };
 
   // Ionic leaves these open for the demo account (no checkDemoRestriction):

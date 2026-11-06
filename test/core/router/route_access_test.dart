@@ -237,4 +237,11 @@ void main() {
     }
     expect(isRoleGatedRoute('/settings'), isFalse);
   });
+
+  test('link-persons is admin-only (Ionic isSuperAdmin), other general pages admin/responsible', () {
+    expect(_go('/settings/general/link-persons', Role.admin), isNull);
+    expect(_go('/settings/general/link-persons', Role.responsible), isNot(isNull));
+    expect(_go('/settings/general', Role.responsible), isNull);
+    expect(_go('/settings/general/extra-fields', Role.responsible), isNull);
+  });
 }

@@ -45,6 +45,8 @@ class _FakeAudioPlayer implements AudioPlayer {
 
   @override
   Future<void> play() async {
+    // just_audio: `if (playing) return;` – also after completion.
+    if (playing) return;
     playing = true;
     _playingCtrl.add(true);
   }
@@ -210,6 +212,29 @@ void main() {
 
       await svc.togglePlayPause();
       expect(fake.playing, isTrue);
+    });
+
+    test('after the track ended, Play restarts it and Pause works again',
+        () async {
+      final c = makeContainer();
+      addTearDown(c.dispose);
+      final svc = c.read(audioPlayerServiceProvider.notifier);
+
+      await svc.playFromUrl('https://example.com/a.mp3', 'a.mp3', 'A');
+      fake.position = const Duration(minutes: 3);
+      // just_audio keeps `playing` true when the track completes.
+      fake.emitProcessingState(ProcessingState.completed);
+      await pumpEventQueue();
+      expect(fake.playing, isFalse);
+      expect(fake.position, Duration.zero);
+      expect(c.read(audioPlayerServiceProvider).isPlaying, isFalse);
+
+      await svc.togglePlayPause();
+      expect(fake.playing, isTrue);
+      expect(c.read(audioPlayerServiceProvider).isPlaying, isTrue);
+
+      await svc.togglePlayPause();
+      expect(fake.playing, isFalse);
     });
 
     test('stop clears state and stops the underlying player', () async {

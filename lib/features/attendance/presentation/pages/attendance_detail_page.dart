@@ -128,6 +128,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   bool _deletedHandled = false;
   /// Ionic navigateBack after a failed load: only once.
   bool _loadFailedHandled = false;
+  /// "Neu laden" (banner) is running: a failure shows the reload toast and
+  /// keeps the page (Ionic attendance.page reload), no "erneut öffnen".
+  bool _manualReloading = false;
+  /// The last "Neu laden" failed: keep showing the loaded Termin.
+  bool _manualReloadFailed = false;
   // LOGIC_ATT: person rows removed on this device (no "deletedByOther")
   final Set<String> _ownDeletedPaIds = {};
   bool _isSendingReminder = false;
@@ -391,6 +396,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     // back to the list. The error page below only shows until then.
     ref.listen<AsyncValue<Attendance?>>(attendanceDetailProvider(widget.attendanceId), (previous, next) {
       if (!next.hasError || next.hasValue || next.isLoading || !mounted || _loadFailedHandled) return;
+      if (_manualReloading) return;
       _loadFailedHandled = true;
       ToastHelper.showError(context, context.l10n.attendanceLoadFailedReopen);
       if (context.canPop()) {
@@ -418,6 +424,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     // replaced, so the checklist always shows (and edits) the current list,
     // including changes by others.
     ref.listen<AsyncValue<Attendance?>>(attendanceDetailProvider(widget.attendanceId), (prev, next) {
+      if (_manualReloadFailed && !next.hasError && !next.isLoading) {
+        setState(() => _manualReloadFailed = false);
+      }
       final att = next.valueOrNull;
       if (att == null || identical(att, prev?.valueOrNull) || !_checklistLoaded) return;
       if (_checklistSaving > 0) return;
@@ -433,6 +442,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final availableStatuses = (typeStatuses?.isNotEmpty == true) ? typeStatuses! : AttendanceStatus.values;
 
     return attendanceAsync.when(
+      // A failed "Neu laden" keeps the loaded Termin (Ionic: toast, page stays).
+      skipError: _manualReloading || _manualReloadFailed,
       loading: () => Scaffold(
         appBar: AppBar(title: Text(context.l10n.signoutAttendance)),
         body: const Center(child: AppSpinner()),
@@ -1538,11 +1549,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
               ),
             ),
             OutlinedButton.icon(
-              onPressed: () {
-                ref.invalidate(allPersonsForAttendanceProvider);
-                ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
-                ref.invalidate(attendanceDetailProvider(widget.attendanceId));
-              },
+              onPressed: _reloadFromBanner,
               icon: const Icon(Icons.refresh),
               label: IonButtonLabel(context.l10n.attendanceReload),
             ),
@@ -1550,6 +1557,35 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         ),
       ),
     );
+  }
+
+  /// Ionic reload(): loads Termin and persons anew; on failure the danger
+  /// toast „Neu laden fehlgeschlagen — bitte erneut versuchen.“ and the page
+  /// stays (no navigation back).
+  Future<void> _reloadFromBanner() async {
+    if (_manualReloading) return;
+    _manualReloading = true;
+    if (_manualReloadFailed) setState(() => _manualReloadFailed = false);
+    final id = widget.attendanceId;
+    ref.invalidate(allPersonsForAttendanceProvider);
+    ref.invalidate(personAttendancesForAttendanceProvider(id));
+    ref.invalidate(attendanceDetailProvider(id));
+    try {
+      await Future.wait([
+        ref.read(attendanceDetailProvider(id).future),
+        ref.read(allPersonsForAttendanceProvider.future),
+        ref.read(personAttendancesForAttendanceProvider(id).future),
+      ]);
+    } catch (_) {
+      if (mounted) {
+        if (ref.read(attendanceDetailProvider(id)).hasError) {
+          setState(() => _manualReloadFailed = true);
+        }
+        ToastHelper.showError(context, context.l10n.attendanceReloadFailed);
+      }
+    } finally {
+      _manualReloading = false;
+    }
   }
   // ============== END ATT_DETAIL ==============
 

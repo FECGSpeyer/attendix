@@ -1609,7 +1609,19 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       confirmText: context.l10n.commonDelete,
       destructive: true,
     );
-    if (ok) await ref.read(planSettingsNotifierProvider.notifier).deleteBlockTemplate(tpl.id);
+    if (!ok) return;
+    // Ionic tenant.service: a failed tenant update shows this toast (the
+    // only error message here; the template simply stays otherwise).
+    bool deleted;
+    try {
+      deleted = await ref.read(planSettingsNotifierProvider.notifier).deleteBlockTemplate(tpl.id);
+    } catch (_) {
+      // Reading the current templates failed (repository already reports).
+      deleted = false;
+    }
+    if (!deleted && mounted) {
+      ToastHelper.showError(context, context.l10n.svcUpdateSettingsFailed);
+    }
   }
 
   Future<void> _saveBlockTemplate(PlanField head) async {

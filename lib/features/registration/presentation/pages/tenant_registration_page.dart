@@ -486,7 +486,12 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                 textCapitalization: TextCapitalization.sentences,
                 decoration: ionItemInputDecoration(context, field.name),
                 maxLines: field.type == 'textarea' ? 3 : 1,
-                initialValue: field.defaultValue?.toString(),
+                // Ionic: text fields created without a default carry
+                // `false` (emptyField); ion-input shows that as empty and the
+                // required check below then shows the toast.
+                initialValue: field.defaultValue is bool
+                    ? ''
+                    : field.defaultValue?.toString(),
                 // Ionic stores the input value as is (validated below).
                 onSaved: (value) =>
                     _formData.additionalFields[field.id] = value ?? '',
@@ -500,13 +505,17 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               child: TextFormField(
                 style: inputStyle,
                 decoration: ionItemInputDecoration(context, field.name),
-                keyboardType: TextInputType.number,
+                // Ionic ion-input type=number: decimals and negatives allowed.
+                keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true, signed: true),
                 initialValue: field.defaultValue?.toString(),
-                // Ionic stores null for a cleared number input.
+                // Ionic stores null for a cleared number input, otherwise the
+                // number (parseFloat); unparsable input stays a string so the
+                // check below shows the toast.
                 onSaved: (value) => _formData.additionalFields[field.id] =
-                    value == null || value.isEmpty
+                    value == null || value.trim().isEmpty
                         ? null
-                        : int.tryParse(value) ?? value,
+                        : parseRegistrationNumber(value) ?? value,
               ),
             ),
           );

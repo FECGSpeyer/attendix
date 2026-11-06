@@ -114,7 +114,10 @@ class AttendanceCreateWriter {
 
   /// Creates one Termin per day of [input] and returns their ids in the
   /// same order. Throws on the first failed write.
-  Future<List<int>> create(AttendanceCreateInput input) async {
+  ///
+  /// [onAbsencesLoadFailed]: the planned absences could not be loaded (Ionic
+  /// player-absence.service toast); the Termine are created anyway.
+  Future<List<int>> create(AttendanceCreateInput input, {void Function()? onAbsencesLoadFailed}) async {
     if (_saveTenant == null) throw StateError('No tenant selected');
     try {
       final planTypes = await _ref.read(planAttendanceTypesProvider.future);
@@ -129,11 +132,14 @@ class AttendanceCreateWriter {
     // DUTY: "Regelmäßig verhindert" rules (never throws)
     _unavailability = await _dutyRepo.getUnavailabilityForTenant();
 
-    // LOGIC_ATT: planned absences (Ionic getPlayerAbsencesForTenant, non-fatal)
+    // LOGIC_ATT: planned absences (Ionic getPlayerAbsencesForTenant: toast
+    // „Fehler beim Laden der Abwesenheiten“, non-fatal – proceed without
+    // absence check)
     try {
       _absences = await _playerAbsenceRepo.getAbsencesForTenant();
     } catch (_) {
       _absences = const [];
+      onAbsencesLoadFailed?.call();
     }
     // LOGIC_ATT: shift plans (Ionic db.shifts()) for the shift excuse
     try {

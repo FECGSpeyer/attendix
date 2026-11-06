@@ -1,3 +1,6 @@
+import 'dart:typed_data';
+
+import 'package:attendix/core/constants/app_constants.dart';
 import 'package:attendix/features/auth/data/auth_flow_service.dart';
 import 'package:attendix/features/registration/data/providers/registration_providers.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -157,6 +160,16 @@ void main() {
           contains('wartet auf die Genehmigung'));
     });
 
+    test('number field stores a number like Ionic parseFloat', () {
+      expect(parseRegistrationNumber('3'), 3);
+      expect(parseRegistrationNumber('3'), isA<int>());
+      expect(parseRegistrationNumber('1.5'), 1.5);
+      expect(parseRegistrationNumber('1,5'), 1.5);
+      expect(parseRegistrationNumber('-2'), -2);
+      expect(parseRegistrationNumber('abc'), isNull);
+      expect(parseRegistrationNumber('Infinity'), isNull);
+    });
+
     test('player row matches Ionic addPlayer fields', () {
       final data = buildRegistrationPlayerData(
         tenantId: 7,
@@ -183,6 +196,24 @@ void main() {
       expect(data['joined'], '2026-10-28T00:00:00.000Z');
       expect(data['playsSince'], '2026-10-28T00:00:00.000Z');
       expect(data['history'], isEmpty);
+      // Ionic addPlayer: DEFAULT_IMAGE without a picture.
+      expect(data['img'], kDefaultAvatarUrl);
+      final withPicture = buildRegistrationPlayerData(
+        tenantId: 7,
+        appId: 'uid',
+        formData: RegistrationFormData(
+          firstName: 'Max',
+          lastName: 'Muster',
+          profileImageBytes: Uint8List.fromList([1, 2, 3]),
+        ),
+        email: 'max@example.de',
+        pending: true,
+        hasBirthDate: false,
+        phone: null,
+        todayIso: '2026-10-28T00:00:00.000Z',
+      );
+      expect(withPicture.containsKey('img'), isFalse,
+          reason: 'set by the upload afterwards');
     });
   });
 }
