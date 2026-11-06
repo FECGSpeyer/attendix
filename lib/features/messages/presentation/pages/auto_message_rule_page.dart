@@ -22,6 +22,14 @@ import '../../../../shared/widgets/adaptive/ion_toolbar_segment.dart';
 import '../../../settings/presentation/widgets/settings_list.dart';
 import '../auto_message_texts.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/event/rd_event_head.dart' show rdEventMeta;
+import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
+
+part 'auto_message_rule_beta.dart';
 
 enum _Tab { rule, history }
 
@@ -294,9 +302,12 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
 
   // --- Build -----------------------------------------------------------------
 
+  void _setTab(_Tab tab) => setState(() => _tab = tab);
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    if (ref.watch(redesignEnabledProvider)) return _buildBeta();
     return Scaffold(
       appBar: AppBar(
         title: Text(_isNew ? l10n.autoMessagesNewRule : l10n.autoMessagesRule),

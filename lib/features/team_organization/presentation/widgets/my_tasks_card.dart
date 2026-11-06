@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -36,9 +39,7 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
     if (id == null || _done.contains(id)) return;
     setState(() => _done.add(id));
     try {
-      await ref
-          .read(teamTaskNotifierProvider.notifier)
-          .update(id, {'status': 'completed'});
+      await ref.read(teamTaskNotifierProvider.notifier).update(id, {'status': 'completed'});
       if (mounted) ToastHelper.showSuccess(context, context.l10n.tasksDone);
     } catch (_) {
       if (!mounted) return;
@@ -54,10 +55,11 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
     if (tasks == null) return const SizedBox.shrink();
 
     final today = localToday();
-    final open = groupTasksByDue(
-      tasks.where((t) => t.status != 'completed' && !_done.contains(t.id)).toList(),
-      today,
-    ).expand((g) => g.tasks).toList();
+    final open =
+        groupTasksByDue(
+          tasks.where((t) => t.status != 'completed' && !_done.contains(t.id)).toList(),
+          today,
+        ).expand((g) => g.tasks).toList();
     if (open.isEmpty) return const SizedBox.shrink();
 
     final overdue = open.where((t) => isTaskOverdue(t, today)).length;
@@ -66,6 +68,17 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
     final subtitle = overdue > 0 ? '$openText · ${l10n.tasksOverdueCount(overdue)}' : openText;
     final isLeader = ref.watch(isTeamLeaderProvider);
     final shown = open.take(widget.limit).toList();
+
+    if (ref.watch(redesignEnabledProvider)) {
+      return _buildBeta(
+        context,
+        shown: shown,
+        openCount: open.length,
+        subtitle: subtitle,
+        isLeader: isLeader,
+        today: today,
+      );
+    }
 
     return DashboardCard(
       icon: Icons.check_box_outlined,
@@ -89,9 +102,8 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
                 _dueLabel(l10n, task, today),
                 style: TextStyle(color: isTaskOverdue(task, today) ? AppColors.danger : AppColors.medium),
               ),
-              trailing: task.status == 'in_progress'
-                  ? IonBadge(label: l10n.tasksInProgress, color: AppColors.warning)
-                  : null,
+              trailing:
+                  task.status == 'in_progress' ? IonBadge(label: l10n.tasksInProgress, color: AppColors.warning) : null,
               onTap: task.id == null ? null : () => context.push('/settings/tasks/${task.id}'),
             ),
           ],
@@ -99,15 +111,60 @@ class _MyTasksCardState extends ConsumerState<MyTasksCard> {
             const Divider(height: 1),
             ListTile(
               title: Text(
-                open.length > widget.limit
-                    ? l10n.tasksFlutterShowAllCount(open.length)
-                    : l10n.tasksFlutterAllTasks,
+                open.length > widget.limit ? l10n.tasksFlutterShowAllCount(open.length) : l10n.tasksFlutterAllTasks,
                 style: const TextStyle(color: AppColors.primary),
               ),
               trailing: const IonDetailIcon(),
               onTap: () => context.push('/settings/team-organization?tab=tasks'),
             ),
           ],
+        ],
+      ),
+    );
+  }
+
+  /// Beta Heute: section with grouped rows (same actions as the card).
+  Widget _buildBeta(
+    BuildContext context, {
+    required List<TeamTask> shown,
+    required int openCount,
+    required String subtitle,
+    required bool isLeader,
+    required String today,
+  }) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          RdSectionHeader(l10n.tasksMyTasks, trailing: subtitle),
+          RdGroupedList(
+            children: [
+              for (final task in shown)
+                RdListRow(
+                  key: ValueKey('rd-my-task-${task.id}'),
+                  leading: IconButton(
+                    tooltip: l10n.tasksMarkDone,
+                    visualDensity: VisualDensity.compact,
+                    icon: Icon(Icons.radio_button_unchecked, color: p.text2),
+                    onPressed: () => _complete(task),
+                  ),
+                  title: task.title,
+                  subtitle: _dueLabel(l10n, task, today),
+                  trailing: task.status == 'in_progress' ? RdPill(l10n.tasksInProgress, tone: RdTone.late) : null,
+                  onTap: task.id == null ? null : () => context.push('/settings/tasks/${task.id}'),
+                ),
+              if (openCount > widget.limit || isLeader)
+                RdListRow(
+                  title:
+                      openCount > widget.limit ? l10n.tasksFlutterShowAllCount(openCount) : l10n.tasksFlutterAllTasks,
+                  titleColor: p.link,
+                  onTap: () => context.push('/settings/team-organization?tab=tasks'),
+                ),
+            ],
+          ),
         ],
       ),
     );
