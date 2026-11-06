@@ -487,6 +487,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     final sharedFieldValues =
         ref.watch(sharedPersonFieldValuesProvider).valueOrNull ?? const {};
     final mainGroupId = ref.watch(mainGroupProvider).valueOrNull?.id;
+    // _sortPeople liest die Gruppen per ref.read: hier beobachten, damit die
+    // Liste neu sortiert wird, sobald sie geladen sind (Sortierung „Gruppe“).
+    ref.watch(groupsProvider);
     final churchNames = <String, String>{
       if (_churchField(tenant) != null)
         for (final c in ref.watch(churchesProvider).valueOrNull ?? const [])
