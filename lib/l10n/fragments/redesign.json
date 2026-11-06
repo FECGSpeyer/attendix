@@ -181,7 +181,17 @@
         "allSettings": "Alle Einstellungen",
         "logout": "Ausloggen",
         "attendance": "Deine Anwesenheit",
-        "attendanceLate": "{count, plural, one {1 × verspätet} other {{count} × verspätet}}"
+        "attendanceLate": "{count, plural, one {1 × verspätet} other {{count} × verspätet}}",
+        "passwordNew": "Neues Passwort",
+        "passwordRepeat": "Wiederholen",
+        "passwordHint": "Mindestens 6 Zeichen.",
+        "feedbackTitle": "Feedback geben",
+        "feedbackSend": "Senden",
+        "calendarIntro": "Mit diesem Link zeigt deine Kalender-App alle Termine an und bleibt aktuell.",
+        "photoChange": "Passbild ändern",
+        "saving": "Wird gespeichert …",
+        "saved": "Gespeichert ✓",
+        "savesItself": "Änderungen werden sofort gespeichert."
       },
       "appearance": {
         "title": "Darstellung",
@@ -1545,7 +1555,17 @@
         "allSettings": "All settings",
         "logout": "Log out",
         "attendance": "Your attendance",
-        "attendanceLate": "{count, plural, one {late once} other {late {count} times}}"
+        "attendanceLate": "{count, plural, one {late once} other {late {count} times}}",
+        "passwordNew": "New password",
+        "passwordRepeat": "Repeat",
+        "passwordHint": "At least 6 characters.",
+        "feedbackTitle": "Give feedback",
+        "feedbackSend": "Send",
+        "calendarIntro": "With this link your calendar app shows all events and stays up to date.",
+        "photoChange": "Change photo",
+        "saving": "Saving …",
+        "saved": "Saved ✓",
+        "savesItself": "Changes are saved right away."
       },
       "appearance": {
         "title": "Appearance",

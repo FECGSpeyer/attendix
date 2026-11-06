@@ -12,7 +12,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/branding_providers.dart';
+import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../../../../core/services/pdf_branding.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -1087,6 +1092,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
 
   Widget _buildScaffold(BuildContext context, bool wide) {
     final showFooter = _isLeader && !wide && !_loading && !_loadFailed && !_notAvailable && _attendance != null;
+    if (ref.watch(redesignEnabledProvider)) return _buildBeta(context, wide, showFooter);
     return PopScope(
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) unawaited(_flushAll());
@@ -1179,6 +1185,151 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                     : _isLeader
                         ? (wide ? _buildWideLayout(context) : _buildEditLayout(context))
                         : _buildReadLayout(context),
+      ),
+    );
+  }
+
+  /// Beta: same content, Beta frame (back link, title with date and
+  /// status, share as round button, footer with the Beta buttons).
+  Widget _buildBeta(BuildContext context, bool wide, bool showFooter) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final ready = !_loading && !_notAvailable && !_loadFailed && _attendance != null;
+    final Widget body;
+    if (_loading) {
+      body = _betaState(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
+    } else if (_notAvailable) {
+      body = _betaState(RdInfoCard(icon: Icons.lock_outline, text: '${l10n.protocolNotPublished}\n${l10n.protocolNotPublishedHint}'));
+    } else if (!ready) {
+      body = _betaState(RdInfoCard(
+        icon: Icons.cloud_off_outlined,
+        text: l10n.protocolLoadFailed,
+        action: RdOutlineButton(label: l10n.protocolRetry, onPressed: _load),
+      ));
+    } else {
+      body = _isLeader ? (wide ? _buildWideLayout(context) : _buildEditLayout(context)) : _buildReadLayout(context);
+    }
+
+    return PopScope(
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) unawaited(_flushAll());
+      },
+      child: Scaffold(
+        backgroundColor: p.bg,
+        bottomNavigationBar: showFooter ? _betaFooter(context) : null,
+        body: SafeArea(
+          bottom: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: RdBackLink(
+                            label: _isLeader ? l10n.teamOrgTitle : l10n.commonBack,
+                            onTap: () => context.canPop()
+                                ? context.pop()
+                                : context.go(_isLeader
+                                    ? '/settings/team-organization?tab=protocols'
+                                    : RedesignRoutes.events),
+                          ),
+                        ),
+                        if (ready)
+                          RdCircleButton(
+                            key: const Key('rd-protocol-share'),
+                            icon: Icons.ios_share,
+                            label: l10n.protocolSharePdf,
+                            onPressed: _sharePdf,
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(l10n.protocolTitle.toUpperCase(), style: RdType.eyebrow(p.text2)),
+                    if (ready) ...[
+                      const SizedBox(height: 2),
+                      Semantics(header: true, child: Text(_title, style: RdType.title(p))),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              [_dateLabel, if (_timeRange.isNotEmpty) l10n.attendanceTimeOClock(_timeRange)].join(' · '),
+                              style: RdType.meta(p, size: 15),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          RdPill(
+                            _isPublished ? l10n.teamOrgPublished : l10n.teamOrgDraft,
+                            tone: _isPublished ? RdTone.present : null,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              Expanded(child: body),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _betaState(Widget card) => ListView(padding: const EdgeInsets.fromLTRB(20, 16, 20, 20), children: [card]);
+
+  /// Beta footer: save state above "Notizen" and "Veröffentlichen".
+  Widget _betaFooter(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    return Material(
+      color: p.bg,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 6, 20, 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (_savingCount > 0)
+                    const Padding(
+                      padding: EdgeInsets.only(right: 6),
+                      child: SizedBox(width: 12, height: 12, child: AppSpinner(strokeWidth: 2)),
+                    ),
+                  Text(_saveLabel, style: RdType.meta(p, size: 13)),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Expanded(
+                    child: RdOutlineButton(
+                      label: _hasNotes(protocolGeneralSectionId) ? '${l10n.protocolNotes} •' : l10n.protocolNotes,
+                      icon: Icons.description_outlined,
+                      onPressed: _openGeneralNotes,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: RdPrimaryButton(
+                      label: _isPublished ? l10n.protocolRepublish : l10n.protocolPublishShort,
+                      onPressed: _openPublish,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -2037,8 +2188,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     return ListView(
       padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
-        Text(_title, style: theme.textTheme.headlineSmall),
-        Text([_dateLabel, if (_timeRange.isNotEmpty) context.l10n.attendanceTimeOClock(_timeRange)].join(' · ')),
+        if (context.rdSkin == null) ...[
+          Text(_title, style: theme.textTheme.headlineSmall),
+          Text([_dateLabel, if (_timeRange.isNotEmpty) context.l10n.attendanceTimeOClock(_timeRange)].join(' · ')),
+        ],
         if (_isPublished)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingS),

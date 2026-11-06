@@ -58,7 +58,8 @@ class FeedbackRepository extends BaseRepository with TenantAwareRepository {
         'message': message,
         'rating': rating,
         'anonymous': anonymous,
-        'phone': phone,
+        // Anonymous feedback never carries a phone number.
+        'phone': anonymous ? null : phone,
         'tenant_id': anonymous ? null : (hasTenantId ? currentTenantId : null),
         'user_id': anonymous ? null : userId,
       });

@@ -10,11 +10,13 @@ import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
+import '../../../../core/providers/team_org_providers.dart' show myTasksProvider;
 import '../../data/providers/rd_today_providers.dart' show rdSignoutDataProvider;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart';
 import '../../../parents/data/providers/parents_providers.dart';
+import '../../../team_organization/presentation/widgets/my_tasks_card.dart';
 import '../widgets/rd_group_switch.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_applicant_today.dart';
@@ -37,6 +39,8 @@ class RdTodayPage extends ConsumerWidget {
 
   Future<void> _refresh(WidgetRef ref, Role role) async {
     ref.invalidate(unreadNotificationCountProvider);
+    // "Meine Aufgaben" (all roles except parents, see build).
+    if (!role.isParent) ref.invalidate(myTasksProvider);
     if (role.canSeeAttendanceTab) {
       ref.read(attendanceRefetchCounter.notifier).state++;
       ref.invalidate(realtimeAttendanceListProvider);
@@ -93,6 +97,8 @@ class RdTodayPage extends ConsumerWidget {
           child: Text(l10n.redesignTabToday, style: RdType.largeTitle(p)),
         ),
         const SizedBox(height: 18),
+        // Open tasks of the Teamorganisation (renders nothing when none).
+        if (!role.isParent) const MyTasksCard(),
         if (role.isParent)
           const RdParentToday()
         else if (role.canSeeAttendanceTab)
