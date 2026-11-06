@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/files_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/person_matcher.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -99,14 +100,33 @@ mixin LinkPersonsLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
   bool loading = true;
   int linkedCount = 0;
 
+  /// Group the suggestions were loaded for. Linking only happens while it
+  /// is still the current group.
+  int? _loadedTenantId;
+  int _loadRun = 0;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _load());
   }
 
+  /// Loads the suggestions again, e.g. after a group switch.
+  void reload() {
+    setState(() {
+      loading = true;
+      groups = [];
+      tenants = [];
+      linkedCount = 0;
+    });
+    _load();
+  }
+
   Future<void> _load() async {
+    final run = ++_loadRun;
+    final tenantId = ref.read(currentTenantIdProvider);
     final organisationSettingsRepo = ref.read(organisationSettingsRepositoryWithTenantProvider);
+    final orgRepo = ref.read(organisationRepositoryProvider);
     try {
       try {
         final prefs = await SharedPreferences.getInstance();
@@ -115,14 +135,18 @@ mixin LinkPersonsLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
 
       final org = await organisationSettingsRepo.getCurrentOrganisation();
       if (org?.id == null) return;
-      final orgRepo = ref.read(organisationRepositoryProvider);
-      tenants = await orgRepo.getInstancesOfOrganisation(org!.id!);
-      final persons = await orgRepo.getAllPersonsFromOrganisation(tenants);
+      final loadedTenants = await orgRepo.getInstancesOfOrganisation(org!.id!);
+      final persons = await orgRepo.getAllPersonsFromOrganisation(loadedTenants);
+      if (run != _loadRun) return;
+      tenants = loadedTenants;
       groups = buildPersonLinkGroups(persons, _ignoredKeys);
+      _loadedTenantId = tenantId;
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.settingsFlutterLoadFailed(friendlyErrorMessage(e)));
+      if (mounted && run == _loadRun) {
+        ToastHelper.showError(context, context.l10n.settingsFlutterLoadFailed(friendlyErrorMessage(e)));
+      }
     } finally {
-      if (mounted) setState(() => loading = false);
+      if (mounted && run == _loadRun) setState(() => loading = false);
     }
   }
 
@@ -145,6 +169,7 @@ mixin LinkPersonsLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
     final ids = all.map((p) => p.id!).toList();
     final existingId = all.map((p) => p.globalPersonId).firstWhere((id) => id?.isNotEmpty ?? false, orElse: () => null);
     final globalId = existingId ?? const Uuid().v4();
+    if (_loadedTenantId == null || ref.read(currentTenantIdProvider) != _loadedTenantId) return;
     try {
       await ref.read(organisationSettingsRepositoryWithTenantProvider).setGlobalPersonId(ids, globalId);
       if (!mounted) return;

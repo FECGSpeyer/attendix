@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/song_copy.dart';
 import '../../../../l10n/l10n.dart';
@@ -41,8 +42,12 @@ class _RdOrgSongsPageState extends ConsumerState<RdOrgSongsPage> with OrgSongsLo
     final p = context.rd;
     final l10n = context.l10n;
     final role = ref.watch(effectiveRoleProvider);
+    ref.listen(currentTenantIdProvider, (prev, next) {
+      if (prev != next) resetOrgSongs();
+    });
     final orgAsync = ref.watch(currentOrganisationProvider);
-    final allowed = (role.isAdmin || role.isResponsible) && orgAsync.valueOrNull != null;
+    final org = orgAsync.isReloading ? null : orgAsync.valueOrNull;
+    final allowed = (role.isAdmin || role.isResponsible) && org != null;
     if (allowed && !orgSongsInitialized) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && !orgSongsInitialized) initOrgSongs();
@@ -54,7 +59,7 @@ class _RdOrgSongsPageState extends ConsumerState<RdOrgSongsPage> with OrgSongsLo
       Semantics(header: true, child: Text(l10n.rdOrgWorks, style: RdType.largeTitle(p))),
       const SizedBox(height: 12),
     ];
-    if (orgAsync.isLoading && !orgAsync.hasValue) {
+    if (orgAsync.isLoading && org == null) {
       return RdPage(children: [
         ...header,
         Center(child: Padding(padding: const EdgeInsets.all(32), child: CircularProgressIndicator(color: p.primary))),

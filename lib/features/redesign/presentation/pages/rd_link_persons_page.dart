@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
@@ -35,6 +36,10 @@ class _RdLinkPersonsPageState extends ConsumerState<RdLinkPersonsPage> with Link
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
+    // Suggestions belong to one group: reload them after a group switch.
+    ref.listen(currentTenantIdProvider, (prev, next) {
+      if (prev != next) reload();
+    });
     return RdPage(
       children: [
         RdBackLink(label: l10n.rdOrgBack, onTap: _back),

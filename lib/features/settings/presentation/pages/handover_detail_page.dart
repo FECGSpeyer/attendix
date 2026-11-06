@@ -119,7 +119,15 @@ mixin HandoverDetailLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> 
   Future<void> proceed() async {
     final data = handoverData!;
     final sourceTenant = ref.read(currentTenantProvider);
+    // Picked in another group than the current one: transfer nothing.
+    if (data.sourceTenantId != null && sourceTenant?.id != data.sourceTenantId) {
+      ToastHelper.showError(context, context.l10n.handoverNoData);
+      context.go('/settings/handover');
+      return;
+    }
+    final container = ProviderScope.containerOf(context, listen: false);
     final repo = ref.read(playerRepositoryWithTenantProvider);
+    final tracking = ref.read(trackingServiceProvider);
     setState(() => transferring = true);
 
     final failed = <Person>[];
@@ -136,7 +144,7 @@ mixin HandoverDetailLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> 
         if (result != HandoverResult.success) failed.add(person);
       }
 
-      ref.read(trackingServiceProvider).track(
+      tracking.track(
         TrackingEvent.handoverCreated,
         properties: {
           'count': data.persons.length,
@@ -144,7 +152,7 @@ mixin HandoverDetailLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> 
           'failed': failed.length,
         },
       );
-      ref.invalidate(playersProvider);
+      container.invalidate(playersProvider);
 
       if (!mounted) return;
       if (failed.isNotEmpty) {

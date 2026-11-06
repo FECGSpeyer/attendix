@@ -7,6 +7,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
@@ -27,11 +28,16 @@ class HandoverData {
     required this.persons,
     required this.tenant,
     required this.stayInInstance,
+    this.sourceTenantId,
   });
 
   final List<Person> persons;
   final Tenant tenant;
   final bool stayInInstance;
+
+  /// Group the people were picked in. The transfer only runs while it is
+  /// still the current group.
+  final int? sourceTenantId;
 }
 
 /// Personenübergabe – step 1: choose target tenant, filter and select persons
@@ -66,6 +72,7 @@ mixin HandoverSelectionLogic<T extends ConsumerStatefulWidget> on ConsumerState<
   int? groupId;
   bool _noTenantsToastShown = false;
   bool _playersErrorToastShown = false;
+  int? _viewTenantId;
 
   DateFormat get dateFormat => DateFormat(dateFmt());
 
@@ -109,6 +116,17 @@ mixin HandoverSelectionLogic<T extends ConsumerStatefulWidget> on ConsumerState<
 
   /// Watches the data of step 1 and applies the Ionic defaults and toasts.
   HandoverView handoverView() {
+    // A group switch starts over: target, filters and ticks belonged to the
+    // previous group.
+    final tenantId = ref.watch(currentTenantIdProvider);
+    if (tenantId != _viewTenantId) {
+      _viewTenantId = tenantId;
+      targetTenantId = null;
+      groupId = null;
+      selected.clear();
+      filters.clear();
+      _noTenantsToastShown = false;
+    }
     final playersAsync = ref.watch(playersProvider);
     final groups = ref.watch(groupsProvider).valueOrNull ?? const <Group>[];
     final mainGroupId = ref.watch(mainGroupProvider).valueOrNull?.id;
@@ -148,7 +166,7 @@ mixin HandoverSelectionLogic<T extends ConsumerStatefulWidget> on ConsumerState<
     // Ionic Utils.getModifiedPlayersForList order: main group first, group
     // sort_order, group name, person sort_order, last name.
     final filtered = filteredPeople(
-      sortPeopleByGroup(playersAsync.valueOrNull ?? const [], groups),
+      sortPeopleByGroup((playersAsync.isReloading ? null : playersAsync.valueOrNull) ?? const [], groups),
       mainGroupId,
     );
     final selectedPersons =
@@ -174,6 +192,7 @@ mixin HandoverSelectionLogic<T extends ConsumerStatefulWidget> on ConsumerState<
             .toList(),
         tenant: tenant,
         stayInInstance: stayInInstance,
+        sourceTenantId: _viewTenantId,
       ),
     );
   }

@@ -82,6 +82,24 @@ mixin OrgSongsLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
   }
 
 
+  /// Starts over after a group switch: everything loaded belongs to the
+  /// previous group, the next build loads again.
+  void resetOrgSongs() {
+    _searchRun++;
+    setState(() {
+      orgSongsInitialized = false;
+      _orgTenants = const [];
+      chips = const [];
+      _targets = const [];
+      _ownLibraryId = null;
+      ownNames = const {};
+      results = const [];
+      total = 0;
+      searching = false;
+      hasSearched = false;
+    });
+  }
+
   /// Ionic `ngOnInit`: instances, copy targets, own names, first search.
   Future<void> initOrgSongs() async {
     orgSongsInitialized = true;
@@ -116,7 +134,8 @@ mixin OrgSongsLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
       final rows = await repo.getLibrarySongRows(_ownLibraryId!);
       ownNames = {for (final r in rows) normOrgSongName((r['name'] as String?) ?? '')};
     } catch (_) {}
-    if (!mounted) return;
+    // Group switched meanwhile: [resetOrgSongs] loads for the new one.
+    if (!mounted || ref.read(currentTenantIdProvider) != tenantId) return;
     setState(() {});
     await _search();
   }

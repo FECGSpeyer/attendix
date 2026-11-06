@@ -47,8 +47,13 @@ class _RdOrgSettingsPageState extends ConsumerState<RdOrgSettingsPage> {
     }
   }
 
+  /// Whether [tenantId] (read when an action started) is still the current
+  /// group. An action that started in another group writes nothing.
+  bool _stillIn(int? tenantId) => mounted && tenantId != null && ref.read(currentTenantIdProvider) == tenantId;
+
   Future<void> _rename(Organisation org) async {
     final l10n = context.l10n;
+    final tenantId = ref.read(currentTenantIdProvider);
     final name = await showRdTextSheet(
       context,
       title: l10n.orgRename,
@@ -57,7 +62,7 @@ class _RdOrgSettingsPageState extends ConsumerState<RdOrgSettingsPage> {
       required: true,
       capitalization: TextCapitalization.words,
     );
-    if (name == null || name.trim().isEmpty || !mounted) return;
+    if (name == null || name.trim().isEmpty || !_stillIn(tenantId)) return;
     final ok = await ref.read(planSettingsNotifierProvider.notifier).updateOrgName(name.trim());
     if (!mounted) return;
     ok ? ToastHelper.showSuccess(context, l10n.orgRenamed) : ToastHelper.showError(context, l10n.plansSaveFailed);
@@ -65,6 +70,7 @@ class _RdOrgSettingsPageState extends ConsumerState<RdOrgSettingsPage> {
 
   Future<void> _unlink(Organisation org) async {
     final l10n = context.l10n;
+    final tenantId = ref.read(currentTenantIdProvider);
     final ok = await showAppConfirm(
       context,
       title: l10n.orgUnlink,
@@ -72,7 +78,7 @@ class _RdOrgSettingsPageState extends ConsumerState<RdOrgSettingsPage> {
       confirmText: l10n.orgUnlinkButton,
       destructive: true,
     );
-    if (!ok || org.id == null || !mounted) return;
+    if (!ok || org.id == null || !_stillIn(tenantId)) return;
     final success = await ref.read(organisationNotifierProvider.notifier).unlinkCurrentTenant(org.id!);
     if (!mounted) return;
     success ? ToastHelper.showSuccess(context, l10n.orgUnlinked) : ToastHelper.showError(context, l10n.orgFlutterUnlinkFailed);
@@ -87,6 +93,7 @@ class _RdOrgSettingsPageState extends ConsumerState<RdOrgSettingsPage> {
   /// group whose works this group uses, or its own works.
   Future<void> _pickSongSource(List<Tenant> others, int? current) async {
     final l10n = context.l10n;
+    final tenantId = ref.read(currentTenantIdProvider);
     final picked = await showRdChoiceSheet<int>(
       context,
       title: l10n.rdOrgSongSource,
@@ -97,7 +104,7 @@ class _RdOrgSettingsPageState extends ConsumerState<RdOrgSettingsPage> {
           if (t.id != null) (t.id!, t.shortName),
       ],
     );
-    if (picked == null || !mounted) return;
+    if (picked == null || !_stillIn(tenantId)) return;
     final next = picked == 0 ? null : picked;
     if (next == current) return;
     if (current != null && next == null) {
@@ -108,16 +115,15 @@ class _RdOrgSettingsPageState extends ConsumerState<RdOrgSettingsPage> {
         confirmText: l10n.orgDisable,
         destructive: true,
       );
-      if (!ok || !mounted) return;
+      if (!ok || !_stillIn(tenantId)) return;
     }
-    final tenantId = ref.read(currentTenantIdProvider);
-    if (tenantId == null) return;
-    final repo = ref.read(songRepositoryForTenantProvider((tenantId: tenantId, songSourceTenantId: null)));
+    final container = ProviderScope.containerOf(context, listen: false);
+    final repo = ref.read(songRepositoryForTenantProvider((tenantId: tenantId!, songSourceTenantId: null)));
     setState(() => _busy = true);
     try {
       await repo.updateSongSourceTenantId(next);
-      ref.invalidate(songTenantSettingsProvider);
-      ref.invalidate(currentTenantProvider);
+      container.invalidate(songTenantSettingsProvider);
+      container.invalidate(currentTenantProvider);
       if (mounted) ToastHelper.showSuccess(context, l10n.orgSyncSaved);
     } catch (_) {
       if (mounted) ToastHelper.showError(context, l10n.plansSaveFailed);
@@ -146,7 +152,9 @@ class _RdOrgSettingsPageState extends ConsumerState<RdOrgSettingsPage> {
     final lead = role.isAdmin || role.isResponsible;
     final orgAsync = ref.watch(currentOrganisationProvider);
     final tenant = ref.watch(currentTenantProvider);
-    final org = orgAsync.valueOrNull;
+    // After a group switch the provider reloads and may still hold the
+    // previous group's organisation: show nothing of it then.
+    final org = orgAsync.isReloading || orgAsync.hasError ? null : orgAsync.valueOrNull;
 
     if (orgAsync.isLoading && org == null) {
       return RdPage(children: [
@@ -180,9 +188,11 @@ class _RdOrgSettingsPageState extends ConsumerState<RdOrgSettingsPage> {
       ]);
     }
 
-    final linked = ref.watch(linkedTenantsProvider).valueOrNull ?? const <Tenant>[];
+    final linkedAsync = ref.watch(linkedTenantsProvider);
+    final linked = (linkedAsync.isReloading ? null : linkedAsync.valueOrNull) ?? const <Tenant>[];
     final others = linked.where((t) => t.id != tenant?.id).toList();
-    final songSource = ref.watch(songTenantSettingsProvider).valueOrNull?.songSourceTenantId;
+    final songAsync = ref.watch(songTenantSettingsProvider);
+    final songSource = songAsync.isReloading ? null : songAsync.valueOrNull?.songSourceTenantId;
     final songSourceName = songSource == null
         ? l10n.orgNoneOwnSongs
         : others.where((t) => t.id == songSource).map((t) => t.shortName).firstOrNull ?? l10n.orgNoneOwnSongs;
