@@ -226,6 +226,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   void _onTenantChanged() {
     setState(() {
       _entries = [];
+      _isLoading = false;
       _imagePreviewUrls.clear();
       _usedBytes = null;
       _currentPath = '';
@@ -350,7 +351,9 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     } catch (e) {
       if (mounted && _stillIn(tenantId)) ToastHelper.showError(context, context.l10n.filesLoadFailed(_errorText(e)));
     } finally {
-      if (mounted) setState(() => _isLoading = false);
+      // Only the current load ends the spinner (a dropped one of another
+      // group or folder does not).
+      if (mounted && _stillIn(tenantId) && path == _currentPath) setState(() => _isLoading = false);
     }
   }
 

@@ -195,7 +195,6 @@ extension _FilesPageBeta on _FilesPageState {
   }
 
   List<Widget> _betaList(BuildContext context) {
-    final p = context.rd;
     final l10n = context.l10n;
     if (_isLoading && _entries.isEmpty) {
       return [RdInfoCard(text: l10n.redesignTodayLoading, loading: true)];
@@ -210,10 +209,7 @@ extension _FilesPageBeta on _FilesPageState {
     return [
       RdGroupedList(
         children: [
-          for (var i = 0; i < filtered.length; i++) ...[
-            _betaRow(context, filtered[i]),
-            if (i < filtered.length - 1) Divider(height: 1, thickness: 1, color: p.line),
-          ],
+          for (final e in filtered) _betaRow(context, e),
         ],
       ),
     ];
