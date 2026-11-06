@@ -1,18 +1,26 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/message_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/tiptap_converter.dart';
+import '../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/message/message.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../messages/presentation/widgets/message_editor_toolbar.dart';
 import '../widgets/rd_widgets.dart';
 
 /// Tiptap document of a plain text (one paragraph per line), the format
@@ -22,10 +30,12 @@ Map<String, dynamic> rdPlainTextDoc(String text) =>
       {'insert': '${text.trimRight()}\n'},
     ]);
 
-/// REDESIGN: Verwaltung › Mitteilung schreiben (canvas "MitteilungNeu"):
-/// recipients as chips (alle / Register), subject and plain text, push and
-/// e-mail. Sends through the same send-message Edge Function as the old
-/// compose page; the live recipient count comes from its dry run.
+/// REDESIGN: Mitteilungen › "+" (canvas "MitteilungNeu", K1 "Mitteilung
+/// schreiben"): recipients as chips (alle / Register), subject and
+/// formatted text, push and e-mail. Like the old compose page it keeps a
+/// draft (same key), shows who is unreachable and asks before sending.
+/// Sends through the same send-message Edge Function; the live recipient
+/// count comes from its dry run. Pops with the new message id.
 class RdMessageComposePage extends ConsumerStatefulWidget {
   const RdMessageComposePage({super.key});
 
@@ -35,35 +45,110 @@ class RdMessageComposePage extends ConsumerStatefulWidget {
 
 class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
   final _subject = TextEditingController();
-  final _body = TextEditingController();
+  QuillController _body = QuillController.basic();
+  StreamSubscription<Object?>? _bodyChanges;
   final Set<int> _groups = {};
   bool _onlyGroups = false;
   bool _push = true;
-  bool _email = false;
+  bool _email = true; // like the old compose page
   bool _sending = false;
   MessageRecipientCounts? _counts;
   bool _countsFailed = false;
   int _request = 0;
+  int? _tenantId;
+
+  /// Same draft as the old compose page (one draft per group).
+  String get _draftKey => 'message-draft-$_tenantId';
 
   @override
   void initState() {
     super.initState();
-    _subject.addListener(() => setState(() {}));
-    _body.addListener(() => setState(() {}));
+    _tenantId = ref.read(currentTenantIdProvider);
+    _subject.addListener(_onChange);
+    _listenBody();
+    _restoreDraft();
     _loadCounts();
   }
 
   @override
   void dispose() {
+    _bodyChanges?.cancel();
     _subject.dispose();
     _body.dispose();
     super.dispose();
   }
 
+  void _listenBody() {
+    _bodyChanges?.cancel();
+    _bodyChanges = _body.document.changes.listen((_) => _onChange());
+  }
+
+  void _onChange() {
+    if (!mounted) return;
+    setState(() {});
+    if (!_sending) unawaited(_saveDraft());
+  }
+
+  Future<void> _restoreDraft() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_draftKey);
+      if (raw == null || !mounted) return;
+      final draft = jsonDecode(raw) as Map<String, dynamic>;
+      final ops = draft['ops'];
+      if (ops is List && ops.isNotEmpty) {
+        final old = _body;
+        _body = QuillController(
+          document: Document.fromJson(ops.cast<Map<String, dynamic>>()),
+          selection: const TextSelection.collapsed(offset: 0),
+        );
+        _listenBody();
+        old.dispose();
+      }
+      _subject.text = draft['title'] as String? ?? '';
+      setState(() {});
+    } catch (_) {
+      // Drafts are a convenience only.
+    }
+  }
+
+  Future<void> _saveDraft() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        _draftKey,
+        jsonEncode({'title': _subject.text, 'ops': _body.document.toDelta().toJson()}),
+      );
+    } catch (_) {
+      // ignore
+    }
+  }
+
+  Future<void> _restoreDraftIfFree(String draft) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.getString(_draftKey) == null) await prefs.setString(_draftKey, draft);
+    } catch (_) {
+      // ignore
+    }
+  }
+
+  Future<void> _clearDraft() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_draftKey);
+    } catch (_) {
+      // ignore
+    }
+  }
+
+  Map<String, dynamic> get _content =>
+      TiptapConverter.fromDeltaOps(_body.document.toDelta().toJson().cast<Map<String, dynamic>>());
+
   List<int>? get _groupIds => _onlyGroups ? _groups.toList() : null;
 
   bool get _complete =>
-      _subject.text.trim().isNotEmpty && _body.text.trim().isNotEmpty && (_push || _email);
+      _subject.text.trim().isNotEmpty && TiptapConverter.hasText(_content) && (_push || _email);
 
   bool get _canSend =>
       !_sending && _complete && (!_onlyGroups || _groups.isNotEmpty) && (_counts?.recipients ?? 0) > 0;
@@ -96,22 +181,57 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
       return;
     }
     if (DemoGuard.blocked()) return; // DEMO_GUARD
+    final counts = _counts!;
+    final l10n = context.l10n;
+    final title = _subject.text.trim();
+    final channels = [
+      if (_push) l10n.messagesViaPush(counts.push),
+      if (_email) l10n.messagesViaEmail(counts.email),
+    ].join(', ');
+    final ok = await showAppDialog<bool>(
+      context: context,
+      builder: (ctx) => AppAlertDialog(
+        title: Text(l10n.messagesSendConfirm),
+        content: Text(l10n.messagesSendConfirmMessage(title, counts.recipients, channels)),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(l10n.commonCancel)),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: Text(l10n.messagesSend)),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+    // Everything the send needs is taken now, before the first await: the
+    // page can be left meanwhile (browser back, tab switch), the send and
+    // the draft handling then finish without it.
+    final notifier = ref.read(messageNotifierProvider.notifier);
+    final content = _content;
+    final groupIds = _groupIds;
+    final push = _push;
+    final email = _email;
+    final draft = jsonEncode({'title': _subject.text, 'ops': _body.document.toDelta().toJson()});
+    // Inputs are locked while sending, so the snapshot stays the latest text.
+    _body.readOnly = true;
     setState(() => _sending = true);
-    final id = await ref.read(messageNotifierProvider.notifier).send(
-          title: _subject.text.trim(),
-          content: rdPlainTextDoc(_body.text),
-          groupIds: _groupIds,
-          push: _push,
-          email: _email,
-        );
+    // The draft goes before sending: a compose page opened meanwhile must
+    // neither show this message as a draft nor lose its own to a late clear.
+    await _clearDraft();
+    String? id;
+    try {
+      id = await notifier.send(title: title, content: content, groupIds: groupIds, push: push, email: email);
+    } catch (_) {
+      id = null;
+    }
+    // Failed: the draft comes back, unless a new one was started meanwhile.
+    if (id == null) await _restoreDraftIfFree(draft);
     if (!mounted) return;
+    _body.readOnly = false;
     setState(() => _sending = false);
     if (id == null) {
       ToastHelper.showError(context, context.l10n.messagesSendFailed);
       return;
     }
     ToastHelper.showSuccess(context, context.l10n.messagesIsSending);
-    context.canPop() ? context.pop() : context.go(RedesignRoutes.manage);
+    context.canPop() ? context.pop(id) : context.go('/messages/$id');
   }
 
   @override
@@ -124,16 +244,38 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
     InputDecoration field(String label) => InputDecoration(
           labelText: label,
           border: InputBorder.none,
+          counterText: '',
           contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         );
 
+    // No leaving while sending: the result (and the draft) belong here.
+    return PopScope(
+      canPop: !_sending,
+      child: _page(context, p, l10n, groups, counts, field),
+    );
+  }
+
+  Widget _page(
+    BuildContext context,
+    RdPalette p,
+    AppLocalizations l10n,
+    List<Group> groups,
+    MessageRecipientCounts? counts,
+    InputDecoration Function(String) field,
+  ) {
     return RdPage(
       children: [
         Row(
           children: [
-            RdTextLink(
-              label: l10n.redesignCommonCancel,
-              onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.manage),
+            Opacity(
+              opacity: _sending ? 0.45 : 1,
+              child: RdTextLink(
+                label: l10n.redesignCommonCancel,
+                onTap: () {
+                  if (_sending) return;
+                  context.canPop() ? context.pop() : context.go(RedesignRoutes.manage);
+                },
+              ),
             ),
             Expanded(
               child: Semantics(
@@ -173,6 +315,11 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
             ),
           ],
         ),
+        if (!_onlyGroups)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+            child: Text(l10n.messagesInclMainGroup, style: RdType.meta(p, size: 13)),
+          ),
         if (_onlyGroups) ...[
           const SizedBox(height: 10),
           Wrap(
@@ -200,27 +347,45 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
                 : counts == null
                     ? ''
                     : [
-                        l10n.messagesAllCount(counts.recipients),
-                        if (_push) '${l10n.messagesPush}: ${counts.push}',
-                        if (_email) '${l10n.messagesEmail}: ${counts.email}',
+                        l10n.commonPersons(counts.recipients),
+                        if (_push) '${l10n.messagesPush} ${counts.push}',
+                        if (_email) '${l10n.messagesEmail} ${counts.email}',
                       ].join(' · '),
             style: RdType.meta(p, size: 13),
           ),
         ),
+        if (!_countsFailed && (counts?.unreachable ?? 0) > 0)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
+            child: Text(
+              l10n.messagesUnreachableSummary(counts!.unreachable),
+              style: RdType.meta(p, size: 13).copyWith(color: p.absent),
+            ),
+          ),
         const SizedBox(height: 16),
         RdGroupedList(
           children: [
             TextField(
               controller: _subject,
+              readOnly: _sending,
+              maxLength: 200,
+              textCapitalization: TextCapitalization.sentences,
               textInputAction: TextInputAction.next,
               decoration: field(l10n.redesignComposeSubject),
             ),
-            TextField(
-              controller: _body,
-              minLines: 6,
-              maxLines: 14,
-              keyboardType: TextInputType.multiline,
-              decoration: field(l10n.redesignComposeBody),
+            IgnorePointer(ignoring: _sending, child: MessageEditorToolbar(controller: _body)),
+            ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 160),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: IgnorePointer(
+                  ignoring: _sending,
+                  child: QuillEditor.basic(
+                  controller: _body,
+                    config: QuillEditorConfig(scrollable: false, placeholder: l10n.redesignComposeBody),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
