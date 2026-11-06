@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +7,10 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
@@ -24,6 +30,20 @@ import '../../../../shared/widgets/layout/ion_modal_handle.dart';
 /// Ionic: `ion-modal [breakpoints]="[0, .9]"` – on iOS a sheet with the
 /// grabber drawn over the toolbar (IOS_FORMS1).
 Future<void> showMasterDataSheet(BuildContext context) {
+  // REDESIGN (E2): Beta edit page as a high sheet that saves right away.
+  if (ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider)) {
+    return showModalBottomSheet(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: context.rd.bg,
+      builder: (_) => const FractionallySizedBox(
+        heightFactor: 0.95,
+        child: MasterDataSheet(beta: true),
+      ),
+    );
+  }
   final ios = useIosLook(context);
   return showModalBottomSheet(
     context: context,
@@ -43,7 +63,11 @@ Future<void> showMasterDataSheet(BuildContext context) {
 
 /// Edit own master data: Passbild, name, phone, birthday, extra fields.
 class MasterDataSheet extends ConsumerStatefulWidget {
-  const MasterDataSheet({super.key});
+  const MasterDataSheet({super.key, this.beta = false});
+
+  /// Beta look: no "Speichern" button, every change is saved on its own
+  /// (text after a short pause, picks right away), "Fertig" closes.
+  final bool beta;
 
   @override
   ConsumerState<MasterDataSheet> createState() => _MasterDataSheetState();
@@ -63,8 +87,17 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
   bool _initialized = false;
   bool _saving = false;
 
+  // REDESIGN (E2) live save: changes not saved yet, a save asked for while
+  // one runs, the pause timer and whether something was saved already.
+  bool _dirty = false;
+  bool _again = false;
+  bool _saved = false;
+  Timer? _pause;
+  List<ProfileExtraField> _visibleFields = const [];
+
   @override
   void dispose() {
+    _pause?.cancel();
     _firstName.dispose();
     _lastName.dispose();
     _phone.dispose();
@@ -116,6 +149,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
         _birthday =
             '${picked.year.toString().padLeft(4, '0')}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
       });
+      if (widget.beta) _changed(now: true);
     }
   }
 
@@ -255,9 +289,62 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     }
   }
 
-  Future<void> _save(List<ProfileExtraField> visibleFields) async {
+  /// REDESIGN (E2): a field changed – save after a short pause (typing) or
+  /// right away (picks, switches).
+  void _changed({bool now = false}) {
+    _dirty = true;
+    _pause?.cancel();
+    if (now) {
+      _autoSave();
+    } else {
+      _pause = Timer(const Duration(milliseconds: 900), _autoSave);
+      setState(() {});
+    }
+  }
+
+  /// One save at a time; a change during a save is saved right after it.
+  Future<void> _autoSave() async {
+    _pause?.cancel();
+    if (!mounted || !_dirty) return;
+    if (_saving) {
+      _again = true;
+      return;
+    }
+    _dirty = false;
+    final ok = await _save(_visibleFields, quiet: true);
+    if (!mounted) return;
+    if (!ok) _dirty = true;
+    if (_again) {
+      _again = false;
+      if (ok) await _autoSave();
+    }
+  }
+
+  /// "Fertig": saves what is still open, then closes.
+  Future<void> _done() async {
+    final navigator = Navigator.of(context);
+    if (_dirty || _saving) {
+      _again = false;
+      while (_saving) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        if (!mounted) return;
+      }
+      if (_dirty) {
+        _dirty = false;
+        final ok = await _save(_visibleFields, quiet: true);
+        if (!mounted) return;
+        if (!ok) {
+          _dirty = true;
+          return;
+        }
+      }
+    }
+    if (navigator.canPop()) navigator.pop();
+  }
+
+  Future<bool> _save(List<ProfileExtraField> visibleFields, {bool quiet = false}) async {
     final profile = _profile;
-    if (profile == null) return;
+    if (profile == null) return false;
     // Take values of text-based extra fields from their controllers
     for (final field in visibleFields.where((f) => f.editableByPlayers)) {
       final controller = _fieldControllers[field.id];
@@ -288,8 +375,11 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
           additionalFields: additional,
           visibleFields: visibleFields,
         );
-    if (!mounted) return;
-    setState(() => _saving = false);
+    if (!mounted) return ok;
+    setState(() {
+      _saving = false;
+      if (ok) _saved = true;
+    });
     if (ok) {
       // The saved values are the comparison base for the next save right
       // away; the reload of ownProfileProvider replaces it once it arrives.
@@ -304,12 +394,16 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
         organisationId: profile.organisationId,
         additionalFields: {...profile.additionalFields, ...additional},
       );
-      // Ionic updateUserData: toast only, the sheet stays open.
-      ToastHelper.showSuccess(
-          context, context.l10n.settingsProfileUpdated);
+      // Ionic updateUserData: toast only, the sheet stays open. The Beta
+      // shows "Gespeichert ✓" instead.
+      if (!quiet) {
+        ToastHelper.showSuccess(
+            context, context.l10n.settingsProfileUpdated);
+      }
     } else {
       ToastHelper.showError(context, context.l10n.dbUpdateProfileFailed);
     }
+    return ok;
   }
 
   @override
@@ -334,6 +428,8 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
       _profile = profile;
       _loadedProfile = profile;
     }
+    _visibleFields = visibleFields;
+    if (widget.beta) return _buildBeta(context, profileAsync, profile, churches);
     final inputStyle = ionItemInputStyle(context);
 
     // Ionic master data modal: sheet (breakpoint .9) with a plain toolbar
@@ -418,6 +514,180 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
               ],
             ),
     );
+  }
+
+  /// REDESIGN (E2): "Meine Stammdaten" edit page – Passbild on top, fields
+  /// in cards, saves on its own ("Gespeichert ✓"), "Fertig" closes.
+  Widget _buildBeta(
+    BuildContext context,
+    AsyncValue<OwnProfile?> profileAsync,
+    OwnProfile? profile,
+    List<Church> churches,
+  ) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    Widget text(String label, TextEditingController c,
+            {TextInputType? keyboard, TextCapitalization caps = TextCapitalization.none, int lines = 1}) =>
+        RdFieldRow(
+          label: label,
+          child: TextField(
+            controller: c,
+            keyboardType: keyboard,
+            textCapitalization: caps,
+            minLines: 1,
+            maxLines: lines,
+            decoration: rdInputDecoration(p, ''),
+            onChanged: (_) => _changed(),
+          ),
+        );
+    final Widget body;
+    if (!_initialized) {
+      body = Center(
+        child: profileAsync.hasError
+            ? Text(l10n.signoutFlutterError(friendlyErrorMessage(profileAsync.error)), style: RdType.body(p))
+            : profileAsync.hasValue && profile == null
+                ? Text(l10n.settingsFlutterNoProfile, style: RdType.body(p))
+                : const AppSpinner(),
+      );
+    } else {
+      body = RdFormBody(
+        children: [
+          const SizedBox(height: 8),
+          Center(
+            child: Avatar(
+              imageUrl: hasCustomProfileImage(_img) ? _img : null,
+              firstName: _firstName.text,
+              lastName: _lastName.text,
+              size: 84,
+            ),
+          ),
+          Center(child: RdTextLink(label: l10n.redesignMePhotoChange, onTap: _changeImg)),
+          const SizedBox(height: 12),
+          RdGroupedList(
+            children: [
+              text(l10n.peopleFirstName, _firstName, caps: TextCapitalization.words),
+              text(l10n.peopleLastName, _lastName, caps: TextCapitalization.words),
+              RdListRow(
+                title: l10n.peopleBirthday,
+                value: (_birthday ?? '').isEmpty ? l10n.orgChoose : formatIonDateButton(_birthday),
+                onTap: _pickBirthday,
+              ),
+              text(l10n.settingsMobile, _phone, keyboard: TextInputType.phone),
+            ],
+          ),
+          if (_visibleFields.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            RdGroupLabel(l10n.settingsExtraFields),
+            RdGroupedList(
+              children: [
+                for (final field in _visibleFields) _buildBetaExtraField(field, churches, text),
+              ],
+            ),
+          ],
+          const SizedBox(height: 12),
+          Center(
+            child: Text(
+              _saving
+                  ? l10n.redesignMeSaving
+                  : _dirty
+                      ? ''
+                      : _saved
+                          ? l10n.redesignMeSaved
+                          : l10n.redesignMeSavesItself,
+              style: RdType.meta(p, size: 13),
+            ),
+          ),
+        ],
+      );
+    }
+    return PopScope(
+      canPop: !_dirty && !_saving,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _done();
+      },
+      child: Column(
+        children: [
+          RdFormTopBar(
+            title: l10n.settingsMyData,
+            cancel: '',
+            submit: l10n.redesignCommonDone,
+            saving: false,
+            onCancel: null,
+            onSubmit: _done,
+          ),
+          Expanded(child: body),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBetaExtraField(
+    ProfileExtraField field,
+    List<Church> churches,
+    Widget Function(String label, TextEditingController c,
+            {TextInputType? keyboard, TextCapitalization caps, int lines})
+        text,
+  ) {
+    final p = context.rd;
+    if (!field.editableByPlayers) {
+      return RdListRow(
+        title: field.name,
+        subtitle: extraFieldDisplayValue(field, _additional, churches),
+        showChevron: false,
+      );
+    }
+    switch (field.type) {
+      case 'boolean':
+        return RdListRow(
+          title: field.name,
+          showChevron: false,
+          trailing: Switch.adaptive(
+            value: _additional[field.id] == true,
+            activeTrackColor: p.primary,
+            onChanged: (v) {
+              setState(() => _additional[field.id] = v);
+              _changed(now: true);
+            },
+          ),
+        );
+      case 'select':
+        final current = _additional[field.id]?.toString();
+        final valid = field.options.contains(current);
+        return RdListRow(
+          title: field.name,
+          value: valid ? current! : context.l10n.settingsPleaseSelect,
+          onTap: () async {
+            final value = await showIonSelectOptions<String>(
+              context,
+              title: field.name,
+              options: [for (final o in field.options) (o, o)],
+              selected: valid ? current : null,
+            );
+            if (value != null && mounted) {
+              setState(() => _additional[field.id] = value);
+              _changed(now: true);
+            }
+          },
+        );
+      case 'bfecg_church':
+        return RdListRow(
+          title: field.name,
+          value: _churchLabel(field, churches),
+          onTap: () async {
+            final before = _additional[field.id];
+            await _selectChurch(field, churches);
+            if (mounted && _additional[field.id] != before) _changed(now: true);
+          },
+        );
+      default:
+        return text(
+          field.name,
+          _controllerFor(field),
+          keyboard: field.type == 'number' ? TextInputType.number : TextInputType.text,
+          caps: TextCapitalization.sentences,
+          lines: field.type == 'textarea' ? 4 : 1,
+        );
+    }
   }
 
   Widget _buildExtraField(ProfileExtraField field, List<Church> churches) {

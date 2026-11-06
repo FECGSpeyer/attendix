@@ -5,6 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
@@ -61,6 +64,87 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
   if (!context.mounted) return;
   final isIos = Theme.of(context).platform == TargetPlatform.iOS;
   var hideExcused = false;
+
+  Future<void> copyLink(BuildContext ctx) async {
+    final finalLink = hideExcused ? '$link&hideExcused=1' : link;
+    try {
+      await Clipboard.setData(ClipboardData(text: finalLink));
+    } catch (_) {
+      if (ctx.mounted) {
+        ToastHelper.showError(ctx, ctx.l10n.settingsFlutterCopyLinkFailed);
+      }
+      return;
+    }
+    if (ctx.mounted) {
+      ToastHelper.showSuccess(ctx, ctx.l10n.settingsLinkCopied);
+    }
+  }
+
+  Future<void> openGuide(BuildContext ctx) async {
+    // IOS_PAGES3: Ionic handler returns nothing → the alert closes.
+    Navigator.of(ctx).pop();
+    try {
+      await NativeFileService.openLinkInApp(
+        Uri.parse(isIos
+            ? 'https://support.apple.com/de-de/102301'
+            : 'https://support.google.com/calendar/answer/37100?hl=de&co=GENIE.Platform%3DAndroid'),
+      );
+    } catch (_) {}
+  }
+
+  // REDESIGN (E2): Beta sheet – short sentence, the link in a card, "Link
+  // kopieren" as main button, "Anleitung öffnen" as second.
+  if (ref.read(redesignEnabledProvider)) {
+    await showRdSheet<void>(
+      context,
+      StatefulBuilder(
+        builder: (ctx, setState) {
+          final p = ctx.rd;
+          final l10n = ctx.l10n;
+          return SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Semantics(header: true, child: Text(l10n.settingsSubscribeCalendar, style: RdType.section(p))),
+                const SizedBox(height: 6),
+                Text(l10n.redesignMeCalendarIntro, style: RdType.meta(p, size: 14)),
+                const SizedBox(height: 12),
+                RdCard(
+                  child: SelectableText(
+                    hideExcused ? '$link&hideExcused=1' : link,
+                    style: RdType.meta(p, size: 13),
+                  ),
+                ),
+                if (personal) ...[
+                  const SizedBox(height: 12),
+                  RdGroupedList(
+                    children: [
+                      RdListRow(
+                        title: l10n.settingsHideCancelled,
+                        showChevron: false,
+                        trailing: Switch.adaptive(
+                          value: hideExcused,
+                          activeTrackColor: p.primary,
+                          onChanged: (v) => setState(() => hideExcused = v),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                const SizedBox(height: 16),
+                RdPrimaryButton(label: l10n.settingsCopyLink, icon: Icons.copy, onPressed: () => copyLink(ctx)),
+                const SizedBox(height: 10),
+                RdOutlineButton(label: l10n.settingsOpenGuide, icon: Icons.help_outline, onPressed: () => openGuide(ctx)),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+    return;
+  }
 
   await showAppDialog<void>(
     context: context,
@@ -127,34 +211,11 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
         // laid out centrally by AppAlertDialog.
         actions: [
           TextButton(
-            onPressed: () async {
-              final finalLink = hideExcused ? '$link&hideExcused=1' : link;
-              try {
-                await Clipboard.setData(ClipboardData(text: finalLink));
-              } catch (_) {
-                if (ctx.mounted) {
-                  ToastHelper.showError(ctx, ctx.l10n.settingsFlutterCopyLinkFailed);
-                }
-                return;
-              }
-              if (ctx.mounted) {
-                ToastHelper.showSuccess(ctx, ctx.l10n.settingsLinkCopied);
-              }
-            },
+            onPressed: () => copyLink(ctx),
             child: Text(ctx.l10n.settingsCopyLink),
           ),
           TextButton(
-            onPressed: () async {
-              // IOS_PAGES3: Ionic handler returns nothing → the alert closes.
-              Navigator.of(ctx).pop();
-              try {
-                await NativeFileService.openLinkInApp(
-                  Uri.parse(isIos
-                      ? 'https://support.apple.com/de-de/102301'
-                      : 'https://support.google.com/calendar/answer/37100?hl=de&co=GENIE.Platform%3DAndroid'),
-                );
-              } catch (_) {}
-            },
+            onPressed: () => openGuide(ctx),
             child: Text(ctx.l10n.settingsOpenGuide),
           ),
           TextButton(

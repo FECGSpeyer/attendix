@@ -11955,7 +11955,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignMeCalendar => 'Kalender abonnieren';
 
   @override
+  String get redesignMeCalendarIntro =>
+      'Mit diesem Link zeigt deine Kalender-App alle Termine an und bleibt aktuell.';
+
+  @override
   String get redesignMeFeedback => 'Feedback geben';
+
+  @override
+  String get redesignMeFeedbackSend => 'Senden';
+
+  @override
+  String get redesignMeFeedbackTitle => 'Feedback geben';
 
   @override
   String get redesignMeForMe => 'Für mich';
@@ -11976,6 +11986,27 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignMeNotifications => 'Benachrichtigungen';
+
+  @override
+  String get redesignMePasswordHint => 'Mindestens 6 Zeichen.';
+
+  @override
+  String get redesignMePasswordNew => 'Neues Passwort';
+
+  @override
+  String get redesignMePasswordRepeat => 'Wiederholen';
+
+  @override
+  String get redesignMePhotoChange => 'Passbild ändern';
+
+  @override
+  String get redesignMeSaved => 'Gespeichert ✓';
+
+  @override
+  String get redesignMeSavesItself => 'Änderungen werden sofort gespeichert.';
+
+  @override
+  String get redesignMeSaving => 'Wird gespeichert …';
 
   @override
   String get redesignMeWhatsNew => 'Neu in dieser Version';
