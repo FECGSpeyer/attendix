@@ -91,6 +91,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     final container = ProviderScope.containerOf(context, listen: false);
     final router = GoRouter.of(context);
     final route = ModalRoute.of(context);
+    final userId = container.read(supabaseAuthProvider).currentUser?.id;
 
     try {
       // Wait for tenants to load
@@ -130,6 +131,20 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
 
       if (!mounted) return;
 
+      // An account switch opens this page from inside the tab shell: going
+      // back into the shell before this page is fully shown left "Heute"
+      // blank (old and new shell shared their navigator key). Nothing is
+      // changed before that; if the page was left meanwhile (back, link,
+      // another sign-in) the other navigation wins.
+      final shown = await untilRouteShown(route);
+      if (!mounted) return;
+      if (!shown ||
+          route?.isCurrent != true ||
+          container.read(supabaseAuthProvider).currentUser?.id != userId) {
+        setState(() => _isAutoNavigating = false);
+        return;
+      }
+
       // Set tenant locally WITHOUT triggering auth sync
       await container
           .read(currentTenantProvider.notifier)
@@ -141,11 +156,6 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       // Get notifier BEFORE navigation (widget may be disposed after go())
       final prefsNotifier =
           container.read(userPreferencesNotifierProvider.notifier);
-
-      // An account switch opens this page from inside the tab shell: going
-      // back into the shell before this page is fully shown left "Heute"
-      // blank (old and new shell shared their navigator key).
-      await untilRouteShown(route);
 
       // Navigate FIRST (also when the router already replaced this page)
       goReplacingHistory(
