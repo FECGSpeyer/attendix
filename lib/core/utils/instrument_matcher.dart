@@ -479,7 +479,9 @@ class InstrumentMatcher {
         second = hit;
       }
     }
-    if (best == null || best.weak || (second != null && second.score == best.score)) return null;
+    // Two instruments named for sure ("Oboe - Englischhorn", "Sopran Alt"):
+    // no single new group.
+    if (best == null || best.weak || (second != null && (!second.weak || second.score == best.score))) return null;
     final group = _familyGroups[best.id];
     if (group.family == 'violine') {
       final at = _find(words.tokens, tokenize(best.term));
@@ -601,6 +603,7 @@ class InstrumentMatcher {
   }
 
   static final Map<String, int> _rankCache = {};
+  static final RegExp _romanPattern = RegExp(r'^[ivx]+$');
 
   static int _rankOf(List<String> tokens) {
     if (tokens.isEmpty) return 0;
@@ -612,10 +615,10 @@ class InstrumentMatcher {
       if (!ambiguous(t)) return 2;
       rank = 1;
     }
-    // Abbreviations of one or two letters may be something else ("VI").
+    // Abbreviations that are also a roman numeral ("VI") may be a number.
     for (final t in _abbreviationTerms) {
       if (_find(tokens, t) == null) continue;
-      if (!ambiguous(t) && (t.length > 1 || t.single.length > 2)) return 2;
+      if (!ambiguous(t) && !(t.length == 1 && _romanPattern.hasMatch(t.single))) return 2;
       rank = 1;
     }
     return rank;
@@ -681,15 +684,13 @@ class InstrumentMatcher {
         ' ',
       );
     }
-    String clean(String text) => text
-        .replaceFirst(RegExp(r'^\s*\d+[\s.\-]+'), '')
-        .replaceAll(RegExp(r'^[\s\-–.,()]+|[\s\-–.,()]+$'), '')
-        .replaceAll(RegExp(r'\s+'), ' ')
-        .trim();
-    stem = clean(stem);
+    String trim(String text) =>
+        text.replaceAll(RegExp(r'^[\s\-–.,()]+|[\s\-–.,()]+$'), '').replaceAll(RegExp(r'\s+'), ' ').trim();
+    stem = trim(stem.replaceFirst(RegExp(r'^\s*\d+[\s.\-]+'), ''));
     // "SoS - bearbeitet - Oboe": the last part of the name that names an
-    // instrument is the part; what stands before it is not.
-    final sections = stem.split(RegExp(r'\s+[-–—]\s+|\s*[–—]\s*')).map(clean).where((x) => x.isNotEmpty).toList();
+    // instrument is the part; what stands before it is not. A part keeps
+    // its leading number ("SoS - 2. Kl").
+    final sections = stem.split(RegExp(r'\s+[-–—]\s+|\s*[–—]\s*')).map(trim).where((x) => x.isNotEmpty).toList();
     if (sections.length > 1) {
       var bestRank = 0;
       String? chosen;

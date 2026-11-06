@@ -162,6 +162,13 @@ void main() {
       expect(file.category, const RdImportCategory(newGroup: 'Oboe'));
       expect(file.unclear, isFalse);
       expect(rdImportPendingGroups(plan, d), ['Altsaxophon', 'Oboe']);
+      // A choir: a voice without a group comes before "Chor" for any sheet.
+      final choir = rdBuildImportPlan([_e('Noten/1 Erstes/Tenor.pdf'), _e('Noten/1 Erstes/Alle.pdf')],
+          songs: const [], instruments: const [], isChoir: true);
+      expect({for (final f in choir.works.single.files) f.name: f.guessed}, {
+        'Alle.pdf': const RdImportCategory(note: 'Chor'),
+        'Tenor.pdf': const RdImportCategory(newGroup: 'Tenor'),
+      });
       // Answered with a group: Oboe is no new group any more.
       expect(rdImportPendingGroups(plan, const RdImportDecisions(answers: {'oboe': RdImportCategory(instrumentId: 16)})), ['Altsaxophon']);
     });

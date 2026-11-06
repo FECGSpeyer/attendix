@@ -1,3 +1,4 @@
+import '../../../../core/utils/choir_file_utils.dart' show kChoirAllNote;
 import '../../../../core/utils/instrument_matcher.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../songs/presentation/widgets/file_upload_sheet.dart' show FileCategoryGuess, guessFileCategory, learnableTerm;
@@ -719,11 +720,20 @@ class RdImportPlanCache {
     final byFolder = guessFileCategory(byFolderName, instruments: instruments, isChoir: isChoir);
     if (byFolder.instrumentId != null || byFolder.note != null) guess = byFolder;
   }
+  bool open(FileCategoryGuess g) => g.confidence == MatchConfidence.none && g.instrumentId == null && g.note == null;
+  // In a choir every sheet without a group is "Chor"; a voice that has no
+  // group yet ("Tenor.pdf") comes first.
+  final choirOnly = isChoir &&
+      guess.note == kChoirAllNote &&
+      open(guessFileCategory(e.name, instruments: instruments, isChoir: false));
   String? newGroup;
-  if (guess.confidence == MatchConfidence.none && guess.instrumentId == null && guess.note == null) {
+  if (open(guess) || choirOnly) {
     newGroup = InstrumentMatcher.knownGroup(e.name, isChoir: isChoir);
-    if (newGroup == null && byFolderName != null) newGroup = InstrumentMatcher.knownGroup(byFolderName, isChoir: isChoir);
+    if (newGroup == null && byFolderName != null && !choirOnly) {
+      newGroup = InstrumentMatcher.knownGroup(byFolderName, isChoir: isChoir);
+    }
     if (newGroup != null && groupNames.contains(newGroup.toLowerCase())) newGroup = null;
+    if (newGroup != null && choirOnly) guess = const FileCategoryGuess(instrumentId: null, note: null, confidence: MatchConfidence.none);
   }
   return (guess: guess, newGroup: newGroup);
 }
