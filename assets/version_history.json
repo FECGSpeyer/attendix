@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.47.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Gruppenauswahl, Gruppen-Details und „Neue Gruppe“ im neuen Design, Beitreten und Gründen direkt im Blatt „Gruppe wechseln“",
+        "✨ Beta: „Konto löschen“ auch ohne Gruppe"
+      ]
+    },
+    {
       "version": "0.44.1",
       "date": "6.11.2026",
       "changes": [
