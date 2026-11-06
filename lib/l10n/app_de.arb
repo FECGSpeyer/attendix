@@ -11912,6 +11912,26 @@
   "@redesignAdminTitle": {
     "description": "redesign.adminTitle"
   },
+  "redesignAdminsListAdd": "Admin hinzufügen",
+  "@redesignAdminsListAdd": {
+    "description": "redesign.adminsList.add"
+  },
+  "redesignAdminsListEmpty": "Noch keine Admins.",
+  "@redesignAdminsListEmpty": {
+    "description": "redesign.adminsList.empty"
+  },
+  "redesignAdminsListIntro": "Admins haben alle Rechte in dieser Gruppe und können sie auch löschen.",
+  "@redesignAdminsListIntro": {
+    "description": "redesign.adminsList.intro"
+  },
+  "redesignAdminsListRemove": "Admin entfernen",
+  "@redesignAdminsListRemove": {
+    "description": "redesign.adminsList.remove"
+  },
+  "redesignAdminsListYou": "Das bist du",
+  "@redesignAdminsListYou": {
+    "description": "redesign.adminsList.you"
+  },
   "redesignAppearanceAppIcon": "App-Symbol",
   "@redesignAppearanceAppIcon": {
     "description": "redesign.appearance.appIcon"
@@ -12026,6 +12046,18 @@
     "placeholders": {
       "group": {}
     }
+  },
+  "redesignArchiveListEmpty": "Keine archivierten Personen.",
+  "@redesignArchiveListEmpty": {
+    "description": "redesign.archiveList.empty"
+  },
+  "redesignArchiveListIntro": "Ausgetretene Personen. Tippe auf eine Person, um sie anzusehen.",
+  "@redesignArchiveListIntro": {
+    "description": "redesign.archiveList.intro"
+  },
+  "redesignArchiveListRestore": "Wiederherstellen",
+  "@redesignArchiveListRestore": {
+    "description": "redesign.archiveList.restore"
   },
   "redesignBulkActionArchive": "Archivieren",
   "@redesignBulkActionArchive": {
@@ -13211,6 +13243,94 @@
     "placeholders": {
       "status": {}
     }
+  },
+  "redesignExtraFieldEditDefaultHint": "Gilt, solange eine Person oder ein Werk noch keinen Wert hat.",
+  "@redesignExtraFieldEditDefaultHint": {
+    "description": "redesign.extraFieldEdit.defaultHint"
+  },
+  "redesignExtraFieldEditDelete": "Zusatzfeld löschen",
+  "@redesignExtraFieldEditDelete": {
+    "description": "redesign.extraFieldEdit.delete"
+  },
+  "redesignExtraFieldEditDeleteFailed": "Das Zusatzfeld konnte nicht gelöscht werden.",
+  "@redesignExtraFieldEditDeleteFailed": {
+    "description": "redesign.extraFieldEdit.deleteFailed"
+  },
+  "redesignExtraFieldEditDeleteHint": "Die Werte bei allen Personen bzw. Werken werden mit gelöscht.",
+  "@redesignExtraFieldEditDeleteHint": {
+    "description": "redesign.extraFieldEdit.deleteHint"
+  },
+  "redesignExtraFieldEditName": "Name",
+  "@redesignExtraFieldEditName": {
+    "description": "redesign.extraFieldEdit.name"
+  },
+  "redesignExtraFieldEditNameEmpty": "Ein leerer Name wird nicht gespeichert.",
+  "@redesignExtraFieldEditNameEmpty": {
+    "description": "redesign.extraFieldEdit.nameEmpty"
+  },
+  "redesignExtraFieldEditNotFound": "Dieses Zusatzfeld gibt es nicht mehr.",
+  "@redesignExtraFieldEditNotFound": {
+    "description": "redesign.extraFieldEdit.notFound"
+  },
+  "redesignExtraFieldEditOptionAdd": "Option hinzufügen",
+  "@redesignExtraFieldEditOptionAdd": {
+    "description": "redesign.extraFieldEdit.optionAdd"
+  },
+  "redesignExtraFieldEditOptionHint": "Die erste Option ist der Standardwert. Leere Optionen werden nicht gespeichert.",
+  "@redesignExtraFieldEditOptionHint": {
+    "description": "redesign.extraFieldEdit.optionHint"
+  },
+  "redesignExtraFieldEditOptions": "Optionen",
+  "@redesignExtraFieldEditOptions": {
+    "description": "redesign.extraFieldEdit.options"
+  },
+  "redesignExtraFieldEditOptionsNeeded": "Eine Auswahl braucht mindestens eine Option.",
+  "@redesignExtraFieldEditOptionsNeeded": {
+    "description": "redesign.extraFieldEdit.optionsNeeded"
+  },
+  "redesignExtraFieldEditResetHint": "Setzt das Feld bei allen Personen auf den Standardwert.",
+  "@redesignExtraFieldEditResetHint": {
+    "description": "redesign.extraFieldEdit.resetHint"
+  },
+  "redesignExtraFieldEditTarget": "Gilt für",
+  "@redesignExtraFieldEditTarget": {
+    "description": "redesign.extraFieldEdit.target"
+  },
+  "redesignExtraFieldEditTargetPersons": "Personen",
+  "@redesignExtraFieldEditTargetPersons": {
+    "description": "redesign.extraFieldEdit.targetPersons"
+  },
+  "redesignExtraFieldEditTargetSongs": "Werke",
+  "@redesignExtraFieldEditTargetSongs": {
+    "description": "redesign.extraFieldEdit.targetSongs"
+  },
+  "redesignExtraFieldEditTitle": "Zusatzfeld bearbeiten",
+  "@redesignExtraFieldEditTitle": {
+    "description": "redesign.extraFieldEdit.title"
+  },
+  "redesignExtraFieldsListAdd": "Zusatzfeld hinzufügen",
+  "@redesignExtraFieldsListAdd": {
+    "description": "redesign.extraFieldsList.add"
+  },
+  "redesignExtraFieldsListAddFor": "Feld für",
+  "@redesignExtraFieldsListAddFor": {
+    "description": "redesign.extraFieldsList.addFor"
+  },
+  "redesignExtraFieldsListEmpty": "Noch keine Zusatzfelder angelegt.",
+  "@redesignExtraFieldsListEmpty": {
+    "description": "redesign.extraFieldsList.empty"
+  },
+  "redesignExtraFieldsListIntro": "Eigene Felder für Personen und Werke, zum Beispiel Kleidergröße oder Verlag.",
+  "@redesignExtraFieldsListIntro": {
+    "description": "redesign.extraFieldsList.intro"
+  },
+  "redesignExtraFieldsListPersons": "Für Personen",
+  "@redesignExtraFieldsListPersons": {
+    "description": "redesign.extraFieldsList.persons"
+  },
+  "redesignExtraFieldsListSongs": "Für Werke",
+  "@redesignExtraFieldsListSongs": {
+    "description": "redesign.extraFieldsList.songs"
   },
   "redesignFilesActions": "Aktionen für {name}",
   "@redesignFilesActions": {
@@ -15125,6 +15245,22 @@
       "percent": {}
     }
   },
+  "redesignParentsListAdd": "Elternteil einladen",
+  "@redesignParentsListAdd": {
+    "description": "redesign.parentsList.add"
+  },
+  "redesignParentsListEmpty": "Noch keine Eltern eingeladen.",
+  "@redesignParentsListEmpty": {
+    "description": "redesign.parentsList.empty"
+  },
+  "redesignParentsListIntro": "Eltern sehen die Anwesenheiten ihrer Kinder und tragen Abwesenheiten ein.",
+  "@redesignParentsListIntro": {
+    "description": "redesign.parentsList.intro"
+  },
+  "redesignParentsListRemove": "Elternteil entfernen",
+  "@redesignParentsListRemove": {
+    "description": "redesign.parentsList.remove"
+  },
   "redesignParentsRoute": "Route",
   "@redesignParentsRoute": {
     "description": "redesign.parents.route"
@@ -15132,6 +15268,14 @@
   "redesignParentsToday": "Heute",
   "@redesignParentsToday": {
     "description": "redesign.parents.today"
+  },
+  "redesignPendingListEmpty": "Gerade wartet niemand auf Freigabe.",
+  "@redesignPendingListEmpty": {
+    "description": "redesign.pendingList.empty"
+  },
+  "redesignPendingListIntro": "Diese Personen haben sich angemeldet und warten auf deine Freigabe. Tippe auf eine Person, um sie zu prüfen.",
+  "@redesignPendingListIntro": {
+    "description": "redesign.pendingList.intro"
   },
   "redesignPersonAbsence": "Abwesend",
   "@redesignPersonAbsence": {
@@ -15164,6 +15308,108 @@
   "redesignPersonEdit": "Bearbeiten",
   "@redesignPersonEdit": {
     "description": "redesign.person.edit"
+  },
+  "redesignPersonFormArchived": "Diese Person ist archiviert.",
+  "@redesignPersonFormArchived": {
+    "description": "redesign.personForm.archived"
+  },
+  "redesignPersonFormContact": "Kontakt",
+  "@redesignPersonFormContact": {
+    "description": "redesign.personForm.contact"
+  },
+  "redesignPersonFormCopyOther": "In andere Gruppe kopieren",
+  "@redesignPersonFormCopyOther": {
+    "description": "redesign.personForm.copyOther"
+  },
+  "redesignPersonFormCreate": "Anlegen",
+  "@redesignPersonFormCreate": {
+    "description": "redesign.personForm.create"
+  },
+  "redesignPersonFormCreateButton": "Person anlegen",
+  "@redesignPersonFormCreateButton": {
+    "description": "redesign.personForm.createButton"
+  },
+  "redesignPersonFormEditTitle": "{name} bearbeiten",
+  "@redesignPersonFormEditTitle": {
+    "description": "redesign.personForm.editTitle",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPersonFormEmailHint": "Bekommt damit Zugang zur App",
+  "@redesignPersonFormEmailHint": {
+    "description": "redesign.personForm.emailHint"
+  },
+  "redesignPersonFormEmailUsedBy": "Diese E-Mail wird in einer anderen Gruppe von {name} verwendet. Daten übernehmen?",
+  "@redesignPersonFormEmailUsedBy": {
+    "description": "redesign.personForm.emailUsedBy",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPersonFormEmailUsedMany": "Diese E-Mail wird bereits in anderen Gruppen verwendet. Daten welcher Person übernehmen?",
+  "@redesignPersonFormEmailUsedMany": {
+    "description": "redesign.personForm.emailUsedMany"
+  },
+  "redesignPersonFormExistingUserHint": "Gibt es für die E-Mail-Adresse schon ein Konto, wird es automatisch dieser Gruppe zugewiesen.",
+  "@redesignPersonFormExistingUserHint": {
+    "description": "redesign.personForm.existingUserHint"
+  },
+  "redesignPersonFormLiveHint": "Änderungen werden sofort gespeichert.",
+  "@redesignPersonFormLiveHint": {
+    "description": "redesign.personForm.liveHint"
+  },
+  "redesignPersonFormMatchDismiss": "Ausblenden",
+  "@redesignPersonFormMatchDismiss": {
+    "description": "redesign.personForm.matchDismiss"
+  },
+  "redesignPersonFormMatchFound": "Person in anderer Gruppe gefunden?",
+  "@redesignPersonFormMatchFound": {
+    "description": "redesign.personForm.matchFound"
+  },
+  "redesignPersonFormMore": "Weitere Angaben",
+  "@redesignPersonFormMore": {
+    "description": "redesign.personForm.more"
+  },
+  "redesignPersonFormMoreHint": "Geburtstag, Beitritt, Lehrer, Zusatzfelder und mehr",
+  "@redesignPersonFormMoreHint": {
+    "description": "redesign.personForm.moreHint"
+  },
+  "redesignPersonFormNewTitle": "Neue Person",
+  "@redesignPersonFormNewTitle": {
+    "description": "redesign.personForm.newTitle"
+  },
+  "redesignPersonFormNoMatchOther": "In deinen anderen Gruppen wurde keine passende Person gefunden.",
+  "@redesignPersonFormNoMatchOther": {
+    "description": "redesign.personForm.noMatchOther"
+  },
+  "redesignPersonFormNotAllowed": "Nur Admins und Verantwortliche können Personen anlegen und bearbeiten.",
+  "@redesignPersonFormNotAllowed": {
+    "description": "redesign.personForm.notAllowed"
+  },
+  "redesignPersonFormNotSet": "Nicht gesetzt",
+  "@redesignPersonFormNotSet": {
+    "description": "redesign.personForm.notSet"
+  },
+  "redesignPersonFormOtherGroups": "Andere Gruppen",
+  "@redesignPersonFormOtherGroups": {
+    "description": "redesign.personForm.otherGroups"
+  },
+  "redesignPersonFormProblemSave": "Gespräch speichern",
+  "@redesignPersonFormProblemSave": {
+    "description": "redesign.personForm.problemSave"
+  },
+  "redesignPersonFormSaved": "Gespeichert ✓",
+  "@redesignPersonFormSaved": {
+    "description": "redesign.personForm.saved"
+  },
+  "redesignPersonFormSearchOtherGroup": "In anderer Gruppe suchen",
+  "@redesignPersonFormSearchOtherGroup": {
+    "description": "redesign.personForm.searchOtherGroup"
+  },
+  "redesignPersonFormTransferOther": "In andere Gruppe übertragen",
+  "@redesignPersonFormTransferOther": {
+    "description": "redesign.personForm.transferOther"
   },
   "redesignPersonHistory": "Verlauf",
   "@redesignPersonHistory": {
@@ -15283,55 +15529,6 @@
   "@redesignPlanAddBlockHint": {
     "description": "redesign.plan.addBlockHint"
   },
-  "redesignPlanSongInPlan": "im Ablauf",
-  "@redesignPlanSongInPlan": {
-    "description": "redesign.plan.songInPlan"
-  },
-  "redesignPlanNewPlan": "Neuer Plan",
-  "@redesignPlanNewPlan": {
-    "description": "redesign.plan.newPlan"
-  },
-  "redesignPlanCreatePlan": "Plan anlegen",
-  "@redesignPlanCreatePlan": {
-    "description": "redesign.plan.createPlan"
-  },
-  "redesignPlanDay": "Tag",
-  "@redesignPlanDay": {
-    "description": "redesign.plan.day"
-  },
-  "redesignPlanContent": "Inhalt",
-  "@redesignPlanContent": {
-    "description": "redesign.plan.content"
-  },
-  "redesignPlanCopyOf": "Kopie von „{name}“",
-  "@redesignPlanCopyOf": {
-    "description": "redesign.plan.copyOf",
-    "placeholders": {"name": {"type": "String"}}
-  },
-  "redesignPlanNameHint": "Name (optional)",
-  "@redesignPlanNameHint": {
-    "description": "redesign.plan.nameHint"
-  },
-  "redesignPlanViewWhole": "Ganzer Ablauf",
-  "@redesignPlanViewWhole": {
-    "description": "redesign.plan.viewWhole"
-  },
-  "redesignPlanViewNow": "Jetzt",
-  "@redesignPlanViewNow": {
-    "description": "redesign.plan.viewNow"
-  },
-  "redesignPlanViewWhich": "Welcher Plan",
-  "@redesignPlanViewWhich": {
-    "description": "redesign.plan.viewWhich"
-  },
-  "redesignPlanDownload": "Herunterladen",
-  "@redesignPlanDownload": {
-    "description": "redesign.plan.download"
-  },
-  "redesignPlanTelegram": "Per Telegram",
-  "@redesignPlanTelegram": {
-    "description": "redesign.plan.telegram"
-  },
   "redesignPlanAddCurrent": "Aktuelle Werke",
   "@redesignPlanAddCurrent": {
     "description": "redesign.plan.addCurrent"
@@ -15395,12 +15592,31 @@
   "@redesignPlanCollapsed": {
     "description": "redesign.plan.collapsed"
   },
+  "redesignPlanContent": "Inhalt",
+  "@redesignPlanContent": {
+    "description": "redesign.plan.content"
+  },
   "redesignPlanCopied": "Ablauf vom {date} übernommen",
   "@redesignPlanCopied": {
     "description": "redesign.plan.copied",
     "placeholders": {
       "date": {}
     }
+  },
+  "redesignPlanCopyOf": "Kopie von „{name}“",
+  "@redesignPlanCopyOf": {
+    "description": "redesign.plan.copyOf",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPlanCreatePlan": "Plan anlegen",
+  "@redesignPlanCreatePlan": {
+    "description": "redesign.plan.createPlan"
+  },
+  "redesignPlanDay": "Tag",
+  "@redesignPlanDay": {
+    "description": "redesign.plan.day"
   },
   "redesignPlanDelete": "Löschen",
   "@redesignPlanDelete": {
@@ -15409,6 +15625,10 @@
   "redesignPlanDeleteHint": "Mit Rückgängig",
   "@redesignPlanDeleteHint": {
     "description": "redesign.plan.deleteHint"
+  },
+  "redesignPlanDownload": "Herunterladen",
+  "@redesignPlanDownload": {
+    "description": "redesign.plan.download"
   },
   "redesignPlanDrag": "Ziehen zum Sortieren",
   "@redesignPlanDrag": {
@@ -15552,6 +15772,14 @@
   "@redesignPlanMoveUp": {
     "description": "redesign.plan.moveUp"
   },
+  "redesignPlanNameHint": "Name (optional)",
+  "@redesignPlanNameHint": {
+    "description": "redesign.plan.nameHint"
+  },
+  "redesignPlanNewPlan": "Neuer Plan",
+  "@redesignPlanNewPlan": {
+    "description": "redesign.plan.newPlan"
+  },
   "redesignPlanNext": "Nächster Termin",
   "@redesignPlanNext": {
     "description": "redesign.plan.next"
@@ -15633,9 +15861,17 @@
   "@redesignPlanShareHint": {
     "description": "redesign.plan.shareHint"
   },
+  "redesignPlanSongInPlan": "im Ablauf",
+  "@redesignPlanSongInPlan": {
+    "description": "redesign.plan.songInPlan"
+  },
   "redesignPlanStart": "Beginn",
   "@redesignPlanStart": {
     "description": "redesign.plan.start"
+  },
+  "redesignPlanTelegram": "Per Telegram",
+  "@redesignPlanTelegram": {
+    "description": "redesign.plan.telegram"
   },
   "redesignPlanTemplateDelete": "Vorlage löschen",
   "@redesignPlanTemplateDelete": {
@@ -15659,6 +15895,18 @@
     "placeholders": {
       "time": {}
     }
+  },
+  "redesignPlanViewNow": "Jetzt",
+  "@redesignPlanViewNow": {
+    "description": "redesign.plan.viewNow"
+  },
+  "redesignPlanViewWhich": "Welcher Plan",
+  "@redesignPlanViewWhich": {
+    "description": "redesign.plan.viewWhich"
+  },
+  "redesignPlanViewWhole": "Ganzer Ablauf",
+  "@redesignPlanViewWhole": {
+    "description": "redesign.plan.viewWhole"
   },
   "redesignPultAllOpen": "Alle Offenen da",
   "@redesignPultAllOpen": {
@@ -15797,6 +16045,10 @@
     "placeholders": {
       "count": {}
     }
+  },
+  "redesignRolePermIntro": "Lege fest, was Helfer und Mitglieder in dieser Gruppe dürfen. Jeder Schalter wird sofort gespeichert.",
+  "@redesignRolePermIntro": {
+    "description": "redesign.rolePerm.intro"
   },
   "redesignShiftsListAdd": "Schichtplan anlegen",
   "@redesignShiftsListAdd": {
@@ -16055,6 +16307,66 @@
   "redesignTabWorks": "Werke",
   "@redesignTabWorks": {
     "description": "redesign.tab.works"
+  },
+  "redesignTeacherEditContact": "Kontakt",
+  "@redesignTeacherEditContact": {
+    "description": "redesign.teacherEdit.contact"
+  },
+  "redesignTeacherEditInstruments": "Instrumente",
+  "@redesignTeacherEditInstruments": {
+    "description": "redesign.teacherEdit.instruments"
+  },
+  "redesignTeacherEditInstrumentsHint": "Tippe zum Aus- oder Abwählen.",
+  "@redesignTeacherEditInstrumentsHint": {
+    "description": "redesign.teacherEdit.instrumentsHint"
+  },
+  "redesignTeacherEditName": "Name",
+  "@redesignTeacherEditName": {
+    "description": "redesign.teacherEdit.name"
+  },
+  "redesignTeacherEditNameEmpty": "Ein leerer Name wird nicht gespeichert.",
+  "@redesignTeacherEditNameEmpty": {
+    "description": "redesign.teacherEdit.nameEmpty"
+  },
+  "redesignTeacherEditNotFound": "Diesen Lehrer gibt es nicht mehr.",
+  "@redesignTeacherEditNotFound": {
+    "description": "redesign.teacherEdit.notFound"
+  },
+  "redesignTeacherEditNotes": "Notizen",
+  "@redesignTeacherEditNotes": {
+    "description": "redesign.teacherEdit.notes"
+  },
+  "redesignTeacherEditPlayers": "Spieler",
+  "@redesignTeacherEditPlayers": {
+    "description": "redesign.teacherEdit.players"
+  },
+  "redesignTeacherEditPlayersNone": "Noch lernt niemand bei diesem Lehrer.",
+  "@redesignTeacherEditPlayersNone": {
+    "description": "redesign.teacherEdit.playersNone"
+  },
+  "redesignTeacherEditPrivate": "Privatlehrer",
+  "@redesignTeacherEditPrivate": {
+    "description": "redesign.teacherEdit.private"
+  },
+  "redesignTeacherEditTitle": "Lehrer bearbeiten",
+  "@redesignTeacherEditTitle": {
+    "description": "redesign.teacherEdit.title"
+  },
+  "redesignTeachersListAdd": "Lehrer hinzufügen",
+  "@redesignTeachersListAdd": {
+    "description": "redesign.teachersList.add"
+  },
+  "redesignTeachersListAddFailed": "Der Lehrer konnte nicht angelegt werden.",
+  "@redesignTeachersListAddFailed": {
+    "description": "redesign.teachersList.addFailed"
+  },
+  "redesignTeachersListEmpty": "Noch keine Lehrer angelegt.",
+  "@redesignTeachersListEmpty": {
+    "description": "redesign.teachersList.empty"
+  },
+  "redesignTeachersListIntro": "Lehrer und die Instrumente, die sie unterrichten. Wer bei wem lernt, legst du bei der Person fest.",
+  "@redesignTeachersListIntro": {
+    "description": "redesign.teachersList.intro"
   },
   "redesignTenantsAnother": "Weitere Gruppe",
   "@redesignTenantsAnother": {
@@ -16602,6 +16914,22 @@
   "redesignTypesListIntro": "Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.",
   "@redesignTypesListIntro": {
     "description": "redesign.typesList.intro"
+  },
+  "redesignViewersListAdd": "Beobachter einladen",
+  "@redesignViewersListAdd": {
+    "description": "redesign.viewersList.add"
+  },
+  "redesignViewersListEmpty": "Noch keine Beobachter eingeladen.",
+  "@redesignViewersListEmpty": {
+    "description": "redesign.viewersList.empty"
+  },
+  "redesignViewersListIntro": "Beobachter dürfen Anwesenheiten und Personendaten nur ansehen.",
+  "@redesignViewersListIntro": {
+    "description": "redesign.viewersList.intro"
+  },
+  "redesignViewersListRemove": "Beobachter entfernen",
+  "@redesignViewersListRemove": {
+    "description": "redesign.viewersList.remove"
   },
   "redesignWorkAbout": "Über das Werk",
   "@redesignWorkAbout": {

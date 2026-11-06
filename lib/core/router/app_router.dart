@@ -124,6 +124,8 @@ import '../../features/redesign/presentation/pages/rd_members_page.dart';
 import '../../features/redesign/presentation/pages/rd_voice_leader_page.dart';
 import '../../features/redesign/presentation/pages/rd_own_event_page.dart';
 import '../../features/redesign/presentation/pages/rd_person_page.dart';
+import '../../features/redesign/presentation/pages/rd_person_create_page.dart';
+import '../../features/redesign/presentation/pages/rd_person_edit_page.dart';
 import '../../features/redesign/presentation/pages/rd_person_history_page.dart';
 import '../../features/redesign/presentation/pages/rd_appearance_page.dart';
 import '../../features/redesign/presentation/pages/rd_bulk_members_page.dart';
@@ -131,10 +133,19 @@ import '../../features/redesign/presentation/pages/rd_message_compose_page.dart'
 import '../../features/redesign/presentation/pages/rd_notifications_page.dart';
 import '../../features/redesign/presentation/pages/rd_stats_page.dart';
 import '../../features/redesign/presentation/pages/rd_attendance_types_page.dart';
+import '../../features/redesign/presentation/pages/rd_extra_field_edit_page.dart';
+import '../../features/redesign/presentation/pages/rd_extra_fields_page.dart';
 import '../../features/redesign/presentation/pages/rd_group_edit_page.dart';
 import '../../features/redesign/presentation/pages/rd_groups_page.dart';
+import '../../features/redesign/presentation/pages/rd_teacher_edit_page.dart';
+import '../../features/redesign/presentation/pages/rd_teachers_page.dart';
 import '../../features/redesign/presentation/pages/rd_shift_plans_page.dart';
+import '../../features/redesign/presentation/pages/rd_role_permissions_page.dart';
 import '../../features/redesign/presentation/pages/rd_messages_page.dart';
+import '../../features/redesign/presentation/pages/rd_admins_page.dart';
+import '../../features/redesign/presentation/pages/rd_archive_page.dart';
+import '../../features/redesign/presentation/pages/rd_parents_page.dart';
+import '../../features/redesign/presentation/pages/rd_pending_page.dart';
 import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea;
 import '../../features/redesign/presentation/pages/rd_manage_page.dart';
 import '../../features/redesign/presentation/widgets/rd_split_view.dart';
@@ -688,6 +699,22 @@ final routerProvider = Provider<GoRouter>((ref) {
               state: state,
             ),
             routes: [
+              // Before ':id': "neu" is no person id.
+              GoRoute(
+                path: 'neu',
+                name: 'redesignPersonCreate',
+                builder: (context, state) => const RdPersonCreatePage(),
+              ),
+              GoRoute(
+                path: ':id/bearbeiten',
+                name: 'redesignPersonEdit',
+                builder: (context, state) {
+                  final id = int.tryParse(state.pathParameters['id'] ?? '');
+                  return id == null
+                      ? const RdMembersPage()
+                      : RdPersonEditPage(key: ValueKey('rd-person-edit-$id'), personId: id);
+                },
+              ),
               GoRoute(
                 path: ':id',
                 name: 'redesignPerson',
@@ -848,12 +875,72 @@ final routerProvider = Provider<GoRouter>((ref) {
                     ],
                   ),
                   GoRoute(
+                    path: 'lehrer',
+                    builder: (context, state) => const RdTeachersPage(),
+                    routes: [
+                      GoRoute(
+                        path: ':id',
+                        builder: (context, state) {
+                          final id = int.tryParse(state.pathParameters['id'] ?? '');
+                          return id == null
+                              ? const RdTeachersPage()
+                              : RdTeacherEditPage(key: ValueKey('rd-teacher-edit-$id'), teacherId: id);
+                        },
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'zusatzfelder',
+                    builder: (context, state) => const RdExtraFieldsPage(),
+                    routes: [
+                      GoRoute(
+                        path: ':list/:id',
+                        builder: (context, state) {
+                          final list = state.pathParameters['list'];
+                          final id = state.pathParameters['id'] ?? '';
+                          if ((list != 'personen' && list != 'werke') || id.isEmpty) {
+                            return const RdExtraFieldsPage();
+                          }
+                          return RdExtraFieldEditPage(
+                            key: ValueKey('rd-extra-field-edit-$list-$id'),
+                            song: list == 'werke',
+                            fieldId: id,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  GoRoute(
                     path: 'terminarten',
                     builder: (context, state) => const RdAttendanceTypesPage(),
                   ),
                   GoRoute(
                     path: 'schichtplaene',
                     builder: (context, state) => const RdShiftPlansPage(),
+                  ),
+                  GoRoute(
+                    path: 'rollen',
+                    builder: (context, state) => const RdRolePermissionsPage(),
+                  ),
+                  GoRoute(
+                    path: 'admins',
+                    builder: (context, state) => const RdAdminsPage(),
+                  ),
+                  GoRoute(
+                    path: 'eltern',
+                    builder: (context, state) => const RdParentsPage(),
+                  ),
+                  GoRoute(
+                    path: 'beobachter',
+                    builder: (context, state) => const RdViewersPage(),
+                  ),
+                  GoRoute(
+                    path: 'archiv',
+                    builder: (context, state) => const RdArchivePage(),
+                  ),
+                  GoRoute(
+                    path: 'freigaben',
+                    builder: (context, state) => const RdPendingPage(),
                   ),
                   GoRoute(
                     path: ':area',

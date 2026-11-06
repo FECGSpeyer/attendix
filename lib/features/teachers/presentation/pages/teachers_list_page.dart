@@ -6,6 +6,8 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/teacher_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/services/tracking/tracking_event.dart';
+import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
@@ -30,6 +32,60 @@ bool isTeacherFormValid({
 }) {
   if (!isNew) return true;
   return name.length >= 3 && instruments.isNotEmpty;
+}
+
+/// All groups of the tenant; waits for them if no page loaded them yet.
+Future<List<Group>> loadTeacherGroups(WidgetRef ref) async {
+  try {
+    return await ref.read(groupsProvider.future);
+  } catch (_) {
+    return ref.read(groupsProvider).valueOrNull ?? const [];
+  }
+}
+
+/// Ionic "Lehrer hinzufügen" sheet (breakpoint 0.7), also used by the Beta
+/// list (`rd_teachers_page.dart`). Returns the created teacher, null when
+/// the sheet was closed or creating failed.
+///
+/// The repository (bound to tenant and account) is taken before the first
+/// await: when the group changed while the sheet was open, nothing is
+/// created (the instruments belong to the old group) and an error is shown.
+Future<Teacher?> showAddTeacherSheet(BuildContext context, WidgetRef ref) async {
+  final container = ProviderScope.containerOf(context, listen: false);
+  final repo = container.read(teacherRepositoryWithTenantProvider);
+  final saveFailed = context.l10n.extraFieldsSaveFailed;
+  // Ionic teachers.page: instruments without the main group. Ionic has
+  // db.groups() always loaded; here the groups may not be loaded yet.
+  final groups = (await loadTeacherGroups(ref))
+      .where((g) => g.maingroup != true)
+      .toList();
+  if (!context.mounted) return null;
+  final result = await showModalBottomSheet<Teacher>(
+    context: context,
+    useRootNavigator: true, // IOS_SHELL2: above the tab bar
+    isScrollControlled: true,
+    showDragHandle: true,
+    builder: (ctx) => Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+      child: _TeacherForm(availableInstruments: groups),
+    ),
+  );
+  if (result == null) return null;
+  // Same tenant and account as when the sheet was opened (one repository
+  // instance per tenant and account).
+  if (!repo.hasTenantId || !identical(container.read(teacherRepositoryWithTenantProvider), repo)) {
+    if (context.mounted) ToastHelper.showError(context, saveFailed);
+    return null;
+  }
+  try {
+    final created = await repo.createTeacher(result);
+    container.read(trackingServiceProvider).track(TrackingEvent.teacherAdded);
+    container.invalidate(teachersProvider);
+    return created;
+  } catch (e) {
+    if (context.mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
+    return null;
+  }
 }
 
 /// Teacher list (Ionic teachers.page): "Lehrer", rows with name, instrument
@@ -98,44 +154,9 @@ class TeachersListPage extends ConsumerWidget {
         ),
       ],
       floatingActionButton: TabBarFab.wrap(isAdmin
-          ? IonFabButton(onPressed: () => _showAddSheet(context, ref))
+          ? IonFabButton(onPressed: () => showAddTeacherSheet(context, ref))
           : null),
     );
-  }
-
-  /// All groups of the tenant; waits for them if no page loaded them yet.
-  Future<List<Group>> _loadGroups(WidgetRef ref) async {
-    try {
-      return await ref.read(groupsProvider.future);
-    } catch (_) {
-      return ref.read(groupsProvider).valueOrNull ?? const [];
-    }
-  }
-
-  /// Ionic "Lehrer hinzufügen" sheet (breakpoint 0.7).
-  Future<void> _showAddSheet(BuildContext context, WidgetRef ref) async {
-    // Ionic teachers.page: instruments without the main group. Ionic has
-    // db.groups() always loaded; here the groups may not be loaded yet.
-    final groups = (await _loadGroups(ref))
-        .where((g) => g.maingroup != true)
-        .toList();
-    if (!context.mounted) return;
-    final result = await showModalBottomSheet<Teacher>(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      showDragHandle: true,
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-        child: _TeacherForm(availableInstruments: groups),
-      ),
-    );
-    if (result == null) return;
-    try {
-      await ref.read(teacherNotifierProvider.notifier).createTeacher(result);
-    } catch (e) {
-      if (context.mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
-    }
   }
 
   /// Ionic TeacherPage modal ("Lehrer bearbeiten").
@@ -144,7 +165,7 @@ class TeachersListPage extends ConsumerWidget {
     WidgetRef ref,
     Teacher teacher,
   ) async {
-    final groups = await _loadGroups(ref);
+    final groups = await loadTeacherGroups(ref);
     if (!context.mounted) return;
     final result = await Navigator.of(context, rootNavigator: true).push<Teacher>(
       MaterialPageRoute(
