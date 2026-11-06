@@ -12,6 +12,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../redesign/data/rd_collections_logic.dart';
 
 part 'songs_selection_sheet.freezed.dart';
 part 'songs_selection_sheet.g.dart';
@@ -375,6 +376,8 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
   @override
   Widget build(BuildContext context) {
     final songsAsync = ref.watch(songsProvider);
+    // Sammlungen (Beta): Werke of a Sammlung that is not "planbar" stay out.
+    final collections = ref.watch(songCollectionsProvider).valueOrNull;
     return Scaffold(
       appBar: AppBar(
         title: Text(context.l10n.attListChooseSongs),
@@ -401,7 +404,8 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
       body: songsAsync.when(
         loading: () => const Center(child: AppSpinner()),
         error: (e, _) => Center(child: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)))),
-        data: (songs) {
+        data: (allSongs) {
+          final songs = rdPlannableWorks(allSongs, collections);
           final filtered = _search.isEmpty
               ? songs
               : songs
@@ -423,7 +427,13 @@ class _SongPickerPageState extends ConsumerState<_SongPickerPage> {
                 value: id != null && _selected.contains(id),
                 controlAffinity: ListTileControlAffinity.leading,
                 title: Text('${song.prefix ?? ''}${song.number ?? ''} ${song.name}'.trim()),
-                subtitle: (song.composer?.isNotEmpty ?? false) ? Text(song.composer!) : null,
+                subtitle: switch ([
+                  if (rdCollectionById(collections ?? const [], song.collectionId) case final c?) c.name,
+                  if (song.composer?.isNotEmpty ?? false) song.composer!,
+                ]) {
+                  final parts when parts.isNotEmpty => Text(parts.join(' · ')),
+                  _ => null,
+                },
                 onChanged: id == null
                     ? null
                     : (v) => setState(() {

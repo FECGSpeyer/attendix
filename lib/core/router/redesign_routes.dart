@@ -62,8 +62,14 @@ class RedesignRoutes {
   /// "Neues Werk" of the new design (title and number, then the Noten).
   static const String newWork = '$works/neu';
 
-  /// "Meine Mappe" / "Mappen": the Noten of one part as one folder.
+  /// "Meine Noten" / "Nach Stimme": the Noten of one part as one folder.
   static const String folder = '$works/mappe';
+
+  /// "Sammlungen" of the Werke (Admins and Verantwortliche).
+  static const String collections = '$works/sammlungen';
+
+  /// "Sammlung bearbeiten".
+  static String collection(int id) => '$collections/$id';
 
   /// Tab "Ich".
   static const String me = '/ich';
@@ -259,6 +265,11 @@ class RedesignRoutes {
       // "Neues Werk" and "Werk bearbeiten" like the old song form: Admins
       // and Verantwortliche.
       if (location == newWork && !(role.isAdmin || role.isResponsible)) return works;
+      // Sammlungen like the song categories: Admins and Verantwortliche.
+      if ((location == collections || location.startsWith('$collections/')) &&
+          !(role.isAdmin || role.isResponsible)) {
+        return works;
+      }
       final edit = RegExp('^$works/(\\d+)/bearbeiten\$').firstMatch(location);
       if (edit != null && !(role.isAdmin || role.isResponsible)) return work(int.parse(edit.group(1)!));
       return null;

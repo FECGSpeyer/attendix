@@ -8,6 +8,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../../data/models/song/song.dart';
+import '../../../redesign/data/rd_collections_logic.dart';
 import 'plan_export_actions.dart';
 import 'plan_field_dialogs.dart';
 
@@ -662,6 +663,7 @@ Future<Song?> showRdPlanSongPicker(
   List<Song> songs, {
   Set<int> currentIds = const {},
   Set<int> inPlanIds = const {},
+  List<SongCollection>? collections,
 }) {
   return showModalBottomSheet<Song>(
     context: context,
@@ -673,18 +675,21 @@ Future<Song?> showRdPlanSongPicker(
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(ctx).bottom),
       child: SizedBox(
         height: MediaQuery.sizeOf(ctx).height * 0.85,
-        child: _RdSongPicker(songs: songs, currentIds: currentIds, inPlanIds: inPlanIds),
+        child: _RdSongPicker(songs: songs, currentIds: currentIds, inPlanIds: inPlanIds, collections: collections),
       ),
     ),
   );
 }
 
 class _RdSongPicker extends StatefulWidget {
-  const _RdSongPicker({required this.songs, required this.currentIds, required this.inPlanIds});
+  const _RdSongPicker({required this.songs, required this.currentIds, required this.inPlanIds, this.collections});
 
   final List<Song> songs;
   final Set<int> currentIds;
   final Set<int> inPlanIds;
+
+  /// Sammlungen, to name the one of a Werk (none for the Repertoire).
+  final List<SongCollection>? collections;
 
   @override
   State<_RdSongPicker> createState() => _RdSongPickerState();
@@ -709,12 +714,16 @@ class _RdSongPickerState extends State<_RdSongPicker> {
     Widget row(Song s) {
       final inPlan = widget.inPlanIds.contains(s.id);
       final composer = (s.composer ?? '').trim();
+      final subtitle = [
+        if (rdCollectionById(widget.collections ?? const [], s.collectionId) case final c?) c.name,
+        if (composer.isNotEmpty) composer,
+      ].join(' · ');
       return RdListRow(
         leading: RdRowIcon(
           Icons.music_note_outlined,
         ),
         title: '${s.prefix ?? ''}${s.number ?? ''} ${s.name}'.trim(),
-        subtitle: composer.isEmpty ? null : composer,
+        subtitle: subtitle.isEmpty ? null : subtitle,
         showChevron: false,
         trailing: inPlan
             ? Text(l10n.redesignPlanSongInPlan, style: RdType.meta(p, size: 13))

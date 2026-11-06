@@ -20,6 +20,7 @@ import '../../data/rd_works_logic.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../widgets/works/rd_collections_ui.dart';
 
 /// REDESIGN: "Werk bearbeiten" (canvas "Werke neu gedacht", board
 /// "Bearbeiten"): only the master data of a Werk, saved right away like
@@ -202,6 +203,25 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
         _storedPrefix = prefix;
         _storedNumber = number;
       }
+    });
+  }
+
+  /// "Sammlung": moves the Werk (typed numbers saved first) and takes the
+  /// prefix and number it got there.
+  Future<void> _moveToCollection(Song song) async {
+    _saveNumber();
+    await _queue;
+    if (!mounted) return;
+    final moved = await rdMoveWorkToCollection(context, ref, song);
+    if (!moved || !mounted) return;
+    final songs = await ref.read(songsProvider.future).catchError((_) => const <Song>[]);
+    final fresh = songs.where((s) => s.id == _songId).firstOrNull;
+    if (fresh == null || !mounted) return;
+    setState(() {
+      _storedPrefix = fresh.prefix ?? '';
+      _storedNumber = fresh.number;
+      _prefix.text = _storedPrefix!;
+      _number.text = fresh.number?.toString() ?? '';
     });
   }
 
@@ -424,6 +444,20 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
               ],
             ),
           ),
+        if (ref.watch(songCollectionsProvider).valueOrNull case final collections?
+            when collections.isNotEmpty) ...[
+          const SizedBox(height: 20),
+          RdGroupedList(
+            children: [
+              RdListRow(
+                key: const Key('rd-work-edit-collection'),
+                title: l10n.collectionsRow,
+                value: rdCollectionName(l10n, collections, data.song.collectionId),
+                onTap: () => _moveToCollection(data.song),
+              ),
+            ],
+          ),
+        ],
         const SizedBox(height: 20),
         Row(
           children: [

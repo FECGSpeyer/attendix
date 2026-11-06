@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/song_filter_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
@@ -11,16 +12,23 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
+import '../../data/rd_collections_logic.dart';
 import '../../data/rd_works_logic.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
+import '../widgets/works/rd_collections_ui.dart';
 
 /// REDESIGN: "Neues Werk" (canvas "Werke neu gedacht", board "Neues
 /// Werk"): title, prefix and the next free number, the category the list
 /// is filtered to, Chor/Solo. No Besetzung: the groups follow from the
-/// Noten uploaded right after, on the Werk page this opens.
+/// Noten uploaded right after, on the Werk page this opens. With
+/// Sammlungen (canvas "Noten-Bereich neu gedacht") the Werk goes into the
+/// Sammlung the list shows ([collectionId]) and takes its prefix.
 class RdWorkCreatePage extends ConsumerStatefulWidget {
-  const RdWorkCreatePage({super.key});
+  const RdWorkCreatePage({super.key, this.collectionId});
+
+  /// The Sammlung the Werke list showed (null = Repertoire).
+  final int? collectionId;
 
   @override
   ConsumerState<RdWorkCreatePage> createState() => _RdWorkCreatePageState();
@@ -33,6 +41,12 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
 
   /// The number was typed (not the suggested next free one).
   bool _numberTouched = false;
+
+  /// The prefix was typed (not the one of the Sammlung).
+  bool _prefixTouched = false;
+
+  /// The Sammlung of the new Werk (null = Repertoire).
+  late int? _collection = widget.collectionId;
   bool _withChoir = false;
   bool _withSolo = false;
   bool _saving = false;
@@ -74,6 +88,7 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
             withChoir: _withChoir,
             withSolo: _withSolo,
             categoryIds: categoryIds,
+            collectionId: _collection,
             // The Besetzung follows from the uploaded Noten.
             instrumentIds: const [],
           ),
@@ -102,6 +117,15 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
     final filtered = tenantId == null ? null : ref.watch(songFilterProvider(tenantId)).category;
     final preselected = categories.where((c) => c.id == filtered).firstOrNull;
     final categoryIds = _pickedCategories ?? [if (preselected != null) preselected.id!];
+    final collections = ref.watch(songCollectionsProvider).valueOrNull;
+    final collection = rdCollectionById(collections ?? const [], _collection);
+    // Until a prefix is typed, the field shows the one of the Sammlung.
+    final collectionPrefix = collection?.prefix ?? '';
+    if (!_prefixTouched && _prefix.text != collectionPrefix) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !_prefixTouched) setState(() => _prefix.text = collectionPrefix);
+      });
+    }
     final prefix = _prefix.text.trim();
     final next = songs == null ? null : rdNextFreeNumber(songs, prefix);
     // Until a number is typed, the field shows the next free one.
@@ -167,7 +191,7 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
                                 textInputAction: TextInputAction.next,
                                 style: textStyle,
                                 decoration: rdInputDecoration(p, l10n.redesignWorkEditPrefixHint),
-                                onChanged: (_) => setState(() {}),
+                                onChanged: (_) => setState(() => _prefixTouched = true),
                               ),
                             ),
                           ),
@@ -205,6 +229,27 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
                         ],
                       ),
                     ),
+                  if (collections != null && collections.isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    RdGroupLabel(l10n.collectionsRow),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final c in [null, ...collections.where((c) => c.id != null)])
+                          RdChoiceChip(
+                            key: Key('rd-work-create-collection-${c?.id ?? 'repertoire'}'),
+                            label: c?.name ?? l10n.collectionsRepertoire,
+                            icon: rdCollectionIcon(c),
+                            selected: c?.id == _collection,
+                            onTap: () => setState(() => _collection = c?.id),
+                          ),
+                      ],
+                    ),
+                    if (rdCollectionBanner(l10n, collection, ref.watch(groupsProvider).valueOrNull ?? const [])
+                        case final audience?)
+                      hint(audience),
+                  ],
                   if (categories.isNotEmpty) ...[
                     const SizedBox(height: 20),
                     RdGroupLabel(l10n.redesignWorkCreateCategory),

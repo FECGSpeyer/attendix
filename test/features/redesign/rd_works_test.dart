@@ -202,12 +202,14 @@ MaterialApp _material(GoRouter router) => MaterialApp.router(
       routerConfig: router,
     );
 
-List<Override> _common(Role role) => [
+List<Override> _common(Role role, {List<SongCollection>? collections}) => [
       initialRedesignSettingsProvider.overrideWithValue(
         const RedesignSettings(enabled: true, world: RdFarbwelt.petrol),
       ),
       effectiveRoleProvider.overrideWithValue(role),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
+      // Without Sammlungen in the database (null) the Werke tab as before.
+      songCollectionsProvider.overrideWith((ref) async => collections),
     ];
 
 /// The two coming Termine of [_worksApp], relative to today: "Als Nächstes"
@@ -229,6 +231,7 @@ Widget _worksApp(
   int? instrument = 11,
   Map<int, int>? counts,
   bool folder = false,
+  List<SongCollection>? collections,
   List<Override> overrides = const [],
 }) {
   final router = GoRouter(
@@ -258,7 +261,7 @@ Widget _worksApp(
   final list = songs ?? [_ouverture, _ave, _abend];
   return ProviderScope(
     overrides: [
-      ..._common(role),
+      ..._common(role, collections: collections),
       songsRealtimeProvider.overrideWith((ref) {}),
       songsListDataProvider(null).overrideWith((ref) async => SongsListData(
             tenantId: 7,
@@ -539,7 +542,7 @@ void main() {
       await _settle(tester);
 
       expect(find.text('Werke'), findsOneWidget);
-      expect(find.text('Meine Mappe'), findsOneWidget);
+      expect(find.text('Meine Noten'), findsOneWidget);
       expect(find.text('Titel oder Nummer'), findsOneWidget);
       // The next Termin with its Werke and the own part as one PDF.
       expect(find.text('Als Nächstes'), findsOneWidget);
@@ -562,7 +565,7 @@ void main() {
         lessThan(tester.getTopLeft(find.text('Ave verum corpus').last).dy),
       );
 
-      await tester.tap(find.text('Meine Mappe'));
+      await tester.tap(find.text('Meine Noten'));
       await _settle(tester);
       expect(find.text('page folder'), findsOneWidget);
     });
@@ -614,12 +617,45 @@ void main() {
       expect(find.text('Kein Werk passt zur Suche.'), findsOneWidget);
     });
 
+    testWidgets('Sammlungen: chips, the chosen one, search in all, hidden ones stay out', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_worksApp(
+        Role.player,
+        songs: [_ouverture, _ave.copyWith(collectionId: 1, prefix: 'E', number: 1), _abend.copyWith(collectionId: 2)],
+        collections: const [
+          SongCollection(id: 1, name: 'Einspielen', prefix: 'E'),
+          SongCollection(id: 2, name: 'In Vorbereitung', visibility: 'leads'),
+        ],
+      ));
+      await _settle(tester);
+      Finder row(int id) => find.byKey(ValueKey('rd-work-$id'));
+
+      // Repertoire first; the leads-only Sammlung is no chip for a player.
+      expect(find.text('Repertoire · 1'), findsOneWidget);
+      expect(find.text('Einspielen · 1'), findsOneWidget);
+      expect(find.byKey(const Key('rd-collection-chip-2')), findsNothing);
+      expect(row(5), findsOneWidget);
+      expect(row(6), findsNothing);
+
+      await tester.tap(find.text('Einspielen · 1'));
+      await _settle(tester);
+      expect(row(6), findsOneWidget);
+      expect(row(5), findsNothing);
+
+      // The search covers every Sammlung the player sees, not the hidden one.
+      await tester.enterText(find.byType(TextField), 'e');
+      await _settle(tester);
+      expect(row(5), findsOneWidget);
+      expect(row(6), findsOneWidget);
+      expect(row(7), findsNothing);
+    });
+
     testWidgets('lead: missing Noten, sort and filter, the + menu', (tester) async {
       _phone(tester);
       await tester.pumpWidget(_worksApp(Role.admin, instrument: null, counts: const {11: 2, 12: 1}));
       await _settle(tester);
 
-      expect(find.text('Mappen'), findsOneWidget);
+      expect(find.text('Nach Stimme'), findsOneWidget);
       expect(find.byKey(const Key('rd-works-open-mine')), findsNothing);
       // Both Termine still lack Noten (Ave has none).
       expect(find.text('Noten fehlen'), findsNWidgets(2));
@@ -775,7 +811,7 @@ void main() {
     await tester.pumpWidget(_worksApp(Role.player, folder: true));
     await _settle(tester);
 
-    expect(find.text('Meine Mappe'), findsOneWidget);
+    expect(find.text('Meine Noten'), findsOneWidget);
     expect(find.text('Klarinette'), findsOneWidget);
     expect(find.text('Als Nächstes · 2'), findsOneWidget);
     // Ave has no Klarinette part yet (in both Termine).

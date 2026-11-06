@@ -2129,6 +2129,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final attendancesAsync = ref.watch(planAttendancesProvider);
     final typesAsync = ref.watch(planAttendanceTypesProvider);
     ref.watch(planSongsProvider);
+    // Loaded for the Werk picker (Werke of a Sammlung that is not "planbar").
+    ref.watch(songCollectionsProvider);
     ref.watch(currentSongsProvider);
     ref.watch(groupsProvider);
     ref.watch(groupCategoriesProvider);

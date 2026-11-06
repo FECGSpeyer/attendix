@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/providers/song_providers.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../data/models/song/song.dart';
@@ -8,6 +10,7 @@ import '../../../../l10n/l10n.dart';
 import 'ion_items.dart';
 import 'rd_plan_widgets.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/data/rd_collections_logic.dart';
 
 /// Song related helpers of the Ablaufplan editor (Ionic `PlanningPage`
 /// `onSongsChange`, `addCurrentSongs`, `resolvePlaceholderFields`).
@@ -96,18 +99,27 @@ class PlanSongHelper {
 /// searchbar toolbar and an inset list).
 /// In the Beta skin a sheet with search; [currentIds] (Werke of the current
 /// history) are listed first and [inPlanIds] are marked "im Ablauf".
+/// Werke of a Sammlung that is not "planbar" (Beta Sammlungen) stay out.
 Future<Song?> showPlanSongPicker(
   BuildContext context,
   List<Song> songs, {
   Set<int> currentIds = const {},
   Set<int> inPlanIds = const {},
 }) {
+  final collections = ProviderScope.containerOf(context, listen: false).read(songCollectionsProvider).valueOrNull;
+  final plannable = rdPlannableWorks(songs, collections);
   if (context.rdSkin != null) {
-    return showRdPlanSongPicker(context, songs, currentIds: currentIds, inPlanIds: inPlanIds);
+    return showRdPlanSongPicker(
+      context,
+      plannable,
+      currentIds: currentIds,
+      inPlanIds: inPlanIds,
+      collections: collections,
+    );
   }
   return Navigator.of(context, rootNavigator: true).push<Song>(MaterialPageRoute(
     fullscreenDialog: true,
-    builder: (_) => _SongPicker(songs: songs),
+    builder: (_) => _SongPicker(songs: plannable),
   ));
 }
 

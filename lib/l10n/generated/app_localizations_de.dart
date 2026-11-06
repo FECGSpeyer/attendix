@@ -2412,6 +2412,207 @@ class AppLocalizationsDe extends AppLocalizations {
   String get churchOverviewUnknownChurch => 'Unbekannte Gemeinde';
 
   @override
+  String get collectionsAdd => 'Sammlung anlegen';
+
+  @override
+  String get collectionsAddFailed =>
+      'Die Sammlung konnte nicht angelegt werden.';
+
+  @override
+  String get collectionsAddHint =>
+      'z. B. Einspielen, Streicher, In Vorbereitung';
+
+  @override
+  String get collectionsAddTitle => 'Neue Sammlung';
+
+  @override
+  String collectionsBannerGroups(Object names) {
+    return 'Nur $names und die Leitung sehen dieses Werk.';
+  }
+
+  @override
+  String get collectionsBannerLeads => 'Nur die Leitung sieht dieses Werk.';
+
+  @override
+  String get collectionsCategory => 'Kategorie';
+
+  @override
+  String get collectionsCategoryAll => 'Alle Kategorien';
+
+  @override
+  String collectionsChip(Object name, Object count) {
+    return '$name · $count';
+  }
+
+  @override
+  String get collectionsDelete => 'Sammlung löschen';
+
+  @override
+  String collectionsDeleteConfirm(Object name) {
+    return '„$name“ löschen? Ihre Werke kommen ins Repertoire zurück.';
+  }
+
+  @override
+  String get collectionsDeleteFailed =>
+      'Die Sammlung konnte nicht gelöscht werden.';
+
+  @override
+  String get collectionsEditHint => 'Änderungen werden sofort gespeichert.';
+
+  @override
+  String get collectionsEditTitle => 'Sammlung bearbeiten';
+
+  @override
+  String get collectionsEmpty =>
+      'Noch keine eigenen Sammlungen. Lege zum Beispiel „Einspielen“ oder „In Vorbereitung“ an.';
+
+  @override
+  String collectionsEmptyIn(Object name) {
+    return 'In „$name“ liegt noch kein Werk.';
+  }
+
+  @override
+  String get collectionsGroupsNone =>
+      'Wähle mindestens eine Gruppe. Bis dahin sieht sie nur die Leitung.';
+
+  @override
+  String collectionsIntoRepertoire(Object number) {
+    return 'Ins Repertoire aufnehmen (Nr. $number)';
+  }
+
+  @override
+  String get collectionsIntro =>
+      'Jedes Werk liegt in genau einer Sammlung. Das Repertoire gibt es immer.';
+
+  @override
+  String get collectionsLeadsSeeAll => 'Die Leitung sieht jede Sammlung.';
+
+  @override
+  String get collectionsManage => 'Sammlungen verwalten';
+
+  @override
+  String get collectionsMove => 'In Sammlung verschieben';
+
+  @override
+  String collectionsMoveDone(Object name) {
+    return 'Verschoben nach „$name“';
+  }
+
+  @override
+  String collectionsMoveDoneNumber(Object name, Object number) {
+    return 'Verschoben nach „$name“ als Nr. $number';
+  }
+
+  @override
+  String get collectionsMoveFailed =>
+      'Das Werk konnte nicht verschoben werden.';
+
+  @override
+  String get collectionsMoveHint =>
+      'Ein Werk liegt immer in genau einer Sammlung.';
+
+  @override
+  String collectionsMoveNext(Object number) {
+    return 'nächste Nr. $number';
+  }
+
+  @override
+  String get collectionsName => 'Name';
+
+  @override
+  String get collectionsNameEmpty =>
+      'Ohne Namen wird der Name nicht gespeichert.';
+
+  @override
+  String get collectionsNotFound => 'Diese Sammlung gibt es nicht mehr.';
+
+  @override
+  String get collectionsNotPlannable => 'nicht planbar';
+
+  @override
+  String get collectionsOnlyLeads => 'nur Leitung';
+
+  @override
+  String get collectionsOrderFailed =>
+      'Die Reihenfolge konnte nicht gespeichert werden.';
+
+  @override
+  String get collectionsOrderSaved => 'Reihenfolge gespeichert';
+
+  @override
+  String get collectionsPlannable => 'Im Termin-Programm planbar';
+
+  @override
+  String get collectionsPlannableHint =>
+      'Ihre Werke lassen sich in Termine und Abläufe einplanen und stehen dann bei „Als Nächstes“.';
+
+  @override
+  String get collectionsPrefix => 'Nummern mit';
+
+  @override
+  String get collectionsPrefixHint =>
+      'Kürzel vor der Nummer, z. B. E für E1, E2 … Eine Änderung gilt auch für die Werke, die schon in der Sammlung liegen.';
+
+  @override
+  String get collectionsPrefixNone =>
+      'Ohne Kürzel teilt sich die Sammlung die Nummern mit dem Repertoire.';
+
+  @override
+  String collectionsPrefixTaken(Object prefix, Object number) {
+    return 'Mit „$prefix“ gäbe es doppelte Nummern ($number). Wähle ein anderes Kürzel.';
+  }
+
+  @override
+  String get collectionsPublicLink => 'Im öffentlichen Werke-Link';
+
+  @override
+  String get collectionsPublicLinkHint =>
+      'Gilt nur, wenn alle die Sammlung sehen.';
+
+  @override
+  String get collectionsRepertoire => 'Repertoire';
+
+  @override
+  String get collectionsRepertoireHint => 'Standard, alle sehen es';
+
+  @override
+  String get collectionsRow => 'Sammlung';
+
+  @override
+  String get collectionsSaveFailed =>
+      'Die Änderung konnte nicht gespeichert werden.';
+
+  @override
+  String get collectionsSearchAll => 'In allen Sammlungen suchen';
+
+  @override
+  String get collectionsTitle => 'Sammlungen';
+
+  @override
+  String get collectionsVisAll => 'Alle';
+
+  @override
+  String get collectionsVisGroups => 'Bestimmte Gruppen';
+
+  @override
+  String get collectionsVisLeads => 'Nur Leitung';
+
+  @override
+  String get collectionsWhoSees => 'Wer sieht diese Sammlung';
+
+  @override
+  String collectionsWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke',
+      one: '1 Werk',
+      zero: 'Kein Werk',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get commonAll => 'Alle';
 
   @override
@@ -11066,10 +11267,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignFolderPick => 'Stimme wählen';
 
   @override
-  String get redesignFolderTitle => 'Meine Mappe';
+  String get redesignFolderTitle => 'Meine Noten';
 
   @override
-  String get redesignFolderTitleLeads => 'Mappen';
+  String get redesignFolderTitleLeads => 'Nach Stimme';
 
   @override
   String get redesignGroupEditCategory => 'Kategorie';
@@ -14338,10 +14539,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorksFilterTitle => 'Sortieren & Filtern';
 
   @override
-  String get redesignWorksFolder => 'Meine Mappe';
+  String get redesignWorksFolder => 'Meine Noten';
 
   @override
-  String get redesignWorksFolders => 'Mappen';
+  String get redesignWorksFolders => 'Nach Stimme';
 
   @override
   String get redesignWorksForGroup => 'Für Gruppe';

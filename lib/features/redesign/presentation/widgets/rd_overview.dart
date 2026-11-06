@@ -13,9 +13,11 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
+import '../../data/rd_collections_logic.dart';
 import '../../data/rd_overview_logic.dart';
 import 'rd_widgets.dart';
 import 'today/rd_today_common.dart' show RdInfoCard;
+import 'works/rd_collections_ui.dart';
 
 /// REDESIGN: what the empty detail column of the split view shows while
 /// nothing is chosen on the left (Werke, Mitglieder): a short overview with
@@ -51,7 +53,16 @@ class RdWorksOverviewPanel extends ConsumerWidget {
     }
     final role = ref.watch(effectiveRoleProvider);
     final isAdmin = role.isAdmin || role.isResponsible;
-    final o = rdWorksOverview(data.songs);
+    // With Sammlungen: the Werke of the one the list shows.
+    final collections = ref.watch(rdVisibleCollectionsProvider);
+    final o = rdWorksOverview(
+      collections == null || collections.isEmpty
+          ? data.songs
+          : rdWorksIn(
+            rdVisibleWorks(data.songs, collections),
+            rdShownCollectionId(ref.watch(rdWorksCollectionProvider), collections),
+          ),
+    );
     final dateFmt = DateFormat.yMMMEd(Localizations.localeOf(context).toLanguageTag());
 
     void open(Song s) {

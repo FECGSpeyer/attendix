@@ -53,6 +53,7 @@ Future<void> showRdWorksFilterSheet(
   required int? groupId,
   required Map<int, int>? playerCounts,
   required String query,
+  bool withCategories = false,
 }) {
   return showModalBottomSheet<void>(
     context: context,
@@ -74,6 +75,7 @@ Future<void> showRdWorksFilterSheet(
                 groupId: groupId,
                 playerCounts: playerCounts,
                 query: query,
+                withCategories: withCategories,
               ),
         ),
   );
@@ -87,6 +89,7 @@ class _FilterSheet extends ConsumerWidget {
     required this.groupId,
     required this.playerCounts,
     required this.query,
+    this.withCategories = false,
   });
 
   final ScrollController controller;
@@ -95,6 +98,9 @@ class _FilterSheet extends ConsumerWidget {
   final int? groupId;
   final Map<int, int>? playerCounts;
   final String query;
+
+  /// With Sammlungen the category chips of the list move here.
+  final bool withCategories;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -126,6 +132,7 @@ class _FilterSheet extends ConsumerWidget {
     ];
     final booleanFields = data.additionalFields.where((f) => f.isBoolean).toList();
     final sort = filter.sortOption;
+    final categories = [...data.categories.where((c) => c.id != null)]..sort((a, b) => a.index.compareTo(b.index));
 
     return ListView(
       controller: controller,
@@ -150,6 +157,7 @@ class _FilterSheet extends ConsumerWidget {
                 notifier
                   ..reset()
                   ..setSortOption(SongSortOption.numberAsc);
+                if (withCategories) notifier.setCategory(null);
                 ref.read(rdWorksOnlyProvider.notifier).state = const {};
               },
             ),
@@ -169,6 +177,27 @@ class _FilterSheet extends ConsumerWidget {
               ),
           ],
         ),
+        if (withCategories && categories.isNotEmpty) ...[
+          const SizedBox(height: 20),
+          RdGroupLabel(l10n.collectionsCategory),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              RdChoiceChip(
+                label: l10n.collectionsCategoryAll,
+                selected: filter.category == null,
+                onTap: () => notifier.setCategory(null),
+              ),
+              for (final c in categories)
+                RdChoiceChip(
+                  label: c.name,
+                  selected: filter.category == c.id,
+                  onTap: () => notifier.setCategory(filter.category == c.id ? null : c.id),
+                ),
+            ],
+          ),
+        ],
         const SizedBox(height: 20),
         RdGroupLabel(l10n.redesignWorksOnly),
         Wrap(

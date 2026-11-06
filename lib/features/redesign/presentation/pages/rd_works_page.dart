@@ -28,10 +28,12 @@ import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../songs/presentation/widgets/song_categories_sheet.dart';
 import '../../data/import/rd_import_controller.dart' show rdImportOwnLibraryProvider;
 import '../../data/providers/rd_works_filter.dart';
+import '../../data/rd_collections_logic.dart';
 import '../../data/rd_works_logic.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../widgets/works/rd_collections_ui.dart';
 import '../widgets/works/rd_works_filter_sheet.dart';
 import 'rd_folder_page.dart' show rdEventLabel;
 
@@ -42,9 +44,12 @@ final rdWorksQueryProvider = StateProvider<String>((ref) => '');
 /// REDESIGN: tab "Werke" (canvas "Werke neu gedacht", board "Liste"):
 /// search, "Als Nächstes" (members: the own Noten for the next Termin,
 /// leads: where Noten are missing), categories as chips, sort and filter,
-/// every Werk with one status line. "Meine Mappe" / "Mappen" opens the Noten
-/// of one part, "+" adds, imports or takes over Werke; categories, the share
-/// link and the PDF list sit behind "•••".
+/// every Werk with one status line. "Meine Noten" / "Nach Stimme" opens the
+/// Noten of one part, "+" adds, imports or takes over Werke; categories, the
+/// share link and the PDF list sit behind "•••". With Sammlungen (canvas
+/// "Noten-Bereich neu gedacht") their chips replace the category chips (the
+/// categories move into the filter sheet), the list shows the chosen
+/// Sammlung and a search looks through every Sammlung the viewer sees.
 class RdWorksPage extends ConsumerStatefulWidget {
   const RdWorksPage({super.key});
 
@@ -82,9 +87,17 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
   Future<void> _more(SongsListData data, List<Song> shown, bool isAdmin) async {
     final l10n = context.l10n;
     final sharingId = data.songSharingId;
+    // Sammlungen once the database has them (null before the migration).
+    final collections = ref.read(songCollectionsProvider).valueOrNull != null;
     final action = await showAppActionSheet<String>(
       context,
       actions: [
+        if (isAdmin && collections)
+          AppActionSheetAction(
+            value: 'collections',
+            icon: Icons.folder_copy_outlined,
+            label: l10n.collectionsManage,
+          ),
         if (isAdmin)
           AppActionSheetAction(
             value: 'categories',
@@ -98,6 +111,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     );
     if (!mounted || action == null) return;
     switch (action) {
+      case 'collections':
+        await context.push(RedesignRoutes.collections);
       case 'categories':
         await showSongCategoriesSheet(context);
       case 'share':
@@ -154,7 +169,14 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     if (!mounted || action == null) return;
     switch (action) {
       case 'new':
-        await context.push(RedesignRoutes.newWork);
+        // In the Sammlung the list shows.
+        final collection = rdShownCollectionId(
+          ref.read(rdWorksCollectionProvider),
+          ref.read(rdVisibleCollectionsProvider),
+        );
+        await context.push(
+          collection == null ? RedesignRoutes.newWork : '${RedesignRoutes.newWork}?sammlung=$collection',
+        );
       case 'import':
         final imported = await Navigator.of(
           context,
@@ -229,6 +251,10 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     final lead = role.isConductor;
     final async = ref.watch(songsListDataProvider(null));
     final data = async.valueOrNull;
+    // Sammlungen: null before the database has them (then as before).
+    final visibleCollections = ref.watch(rdVisibleCollectionsProvider);
+    final chosenCollection = rdShownCollectionId(ref.watch(rdWorksCollectionProvider), visibleCollections);
+    final withCollections = visibleCollections != null && visibleCollections.isNotEmpty;
 
     final header = <Widget>[
       Row(
@@ -236,7 +262,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
           Expanded(child: Semantics(header: true, child: Text(l10n.redesignTabWorks, style: RdType.largeTitle(p)))),
           if (data != null) ...[
             RdPillButton(
-              icon: Icons.folder_outlined,
+              icon: Icons.queue_music_outlined,
               label: lead ? l10n.redesignWorksFolders : l10n.redesignWorksFolder,
               onPressed: () => context.push(RedesignRoutes.folder),
             ),
@@ -255,7 +281,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         onChanged: _setQuery,
         textInputAction: TextInputAction.search,
         decoration: InputDecoration(
-          hintText: l10n.redesignWorksSearch,
+          hintText: withCollections ? l10n.collectionsSearchAll : l10n.redesignWorksSearch,
           prefixIcon: Icon(Icons.search, color: p.text2),
           suffixIcon:
               _query.isEmpty
@@ -307,9 +333,13 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     final categories = [...data.categories.where((c) => c.id != null)]..sort((a, b) => a.index.compareTo(b.index));
     final sort = filter.sortOption;
     final byLast = sort == SongSortOption.lastSungAsc || sort == SongSortOption.lastSungDesc;
-    final filterCount = filter.activeFilterCount + only.length;
+    // With Sammlungen the category sits in the filter sheet and counts there.
+    final filterCount =
+        filter.activeFilterCount + only.length + (withCollections && filter.category != null ? 1 : 0);
+    final listData = _scoped(data);
+    final searching = _query.trim().isNotEmpty;
 
-    String status(Song song) {
+    String baseStatus(Song song) {
       final cats = rdCategoryNames(song, data.categories);
       if (lead) {
         final last = DateTime.tryParse(song.lastSung ?? '');
@@ -333,6 +363,15 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         if (rdRecording(song) != null) l10n.redesignWorksStatusRecording,
         ...cats,
       ].join(' · ');
+    }
+
+    String status(Song song) {
+      // A search finds Werke of other Sammlungen: their name comes first.
+      final elsewhere =
+          withCollections && searching && song.collectionId != chosenCollection
+              ? rdCollectionName(l10n, visibleCollections, song.collectionId)
+              : null;
+      return [if (elsewhere != null) elsewhere, baseStatus(song)].where((t) => t.isNotEmpty).join(' · ');
     }
 
     Widget? pill(Song song) {
@@ -387,7 +426,15 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
             ..._memberNext(context, events, ownGroup, data.isChoir, status),
           const SizedBox(height: 18),
         ],
-        if (categories.isNotEmpty) ...[
+        if (withCollections) ...[
+          RdCollectionChips(
+            collections: visibleCollections,
+            songs: rdVisibleWorks(data.songs, visibleCollections),
+            selected: chosenCollection,
+            onSelected: (id) => ref.read(rdWorksCollectionProvider.notifier).state = id,
+          ),
+          const SizedBox(height: 10),
+        ] else if (categories.isNotEmpty) ...[
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             clipBehavior: Clip.none,
@@ -430,11 +477,12 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
               onTap:
                   () => showRdWorksFilterSheet(
                     context,
-                    data: data,
+                    data: listData,
                     lead: lead,
                     groupId: ownGroup?.id,
                     playerCounts: counts,
                     query: _query,
+                    withCategories: withCollections,
                   ),
             ),
           ],
@@ -443,13 +491,19 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         if (shown.isEmpty)
           RdInfoCard(
             icon: Icons.music_off_outlined,
-            text: data.songs.isEmpty ? l10n.redesignWorksEmpty : l10n.redesignWorksNoMatch,
+            text:
+                data.songs.isEmpty
+                    ? l10n.redesignWorksEmpty
+                    : listData.songs.isEmpty && !searching
+                    ? l10n.collectionsEmptyIn(rdCollectionName(l10n, visibleCollections, chosenCollection))
+                    : l10n.redesignWorksNoMatch,
             action:
                 filterCount > 0
                     ? RdOutlineButton(
                       label: l10n.redesignWorksResetFilter,
                       onPressed: () {
                         filterNotifier.reset();
+                        if (withCollections) filterNotifier.setCategory(null);
                         ref.read(rdWorksOnlyProvider.notifier).state = const {};
                       },
                     )
@@ -561,11 +615,23 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     return data.groups.where((g) => g.id == groupId && g.maingroup != true).firstOrNull;
   }
 
+  /// The Werke the list works on: those of the chosen Sammlung, during a
+  /// search those of every Sammlung the viewer sees; without Sammlungen in
+  /// the database all of them.
+  SongsListData _scoped(SongsListData data) {
+    final visible = ref.read(rdVisibleCollectionsProvider);
+    if (visible == null) return data;
+    final songs = rdVisibleWorks(data.songs, visible);
+    if (visible.isEmpty || _query.trim().isNotEmpty) return data.withSongs(songs);
+    final chosen = rdShownCollectionId(ref.read(rdWorksCollectionProvider), visible);
+    return data.withSongs(rdWorksIn(songs, chosen));
+  }
+
   /// The filtered and sorted Werke (see [rdFilteredWorks]).
   List<Song> _shown(SongsListData data) {
     final lead = ref.read(effectiveRoleProvider).isConductor;
     return rdFilteredWorks(
-      data: data,
+      data: _scoped(data),
       filter: ref.read(songFilterProvider(data.tenantId)),
       only: ref.read(rdWorksOnlyProvider),
       query: _query,

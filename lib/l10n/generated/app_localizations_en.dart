@@ -2391,6 +2391,200 @@ class AppLocalizationsEn extends AppLocalizations {
   String get churchOverviewUnknownChurch => 'Unknown church';
 
   @override
+  String get collectionsAdd => 'Add collection';
+
+  @override
+  String get collectionsAddFailed => 'The collection could not be created.';
+
+  @override
+  String get collectionsAddHint => 'e.g. Warm-up, Strings, In preparation';
+
+  @override
+  String get collectionsAddTitle => 'New collection';
+
+  @override
+  String collectionsBannerGroups(Object names) {
+    return 'Only $names and the leads see this piece.';
+  }
+
+  @override
+  String get collectionsBannerLeads => 'Only the leads see this piece.';
+
+  @override
+  String get collectionsCategory => 'Category';
+
+  @override
+  String get collectionsCategoryAll => 'All categories';
+
+  @override
+  String collectionsChip(Object name, Object count) {
+    return '$name · $count';
+  }
+
+  @override
+  String get collectionsDelete => 'Delete collection';
+
+  @override
+  String collectionsDeleteConfirm(Object name) {
+    return 'Delete \"$name\"? Its pieces go back to the repertoire.';
+  }
+
+  @override
+  String get collectionsDeleteFailed => 'The collection could not be deleted.';
+
+  @override
+  String get collectionsEditHint => 'Changes are saved right away.';
+
+  @override
+  String get collectionsEditTitle => 'Edit collection';
+
+  @override
+  String get collectionsEmpty =>
+      'No own collections yet. Add for example \"Warm-up\" or \"In preparation\".';
+
+  @override
+  String collectionsEmptyIn(Object name) {
+    return 'There is no piece in \"$name\" yet.';
+  }
+
+  @override
+  String get collectionsGroupsNone =>
+      'Pick at least one group. Until then only the leads see it.';
+
+  @override
+  String collectionsIntoRepertoire(Object number) {
+    return 'Add to repertoire (no. $number)';
+  }
+
+  @override
+  String get collectionsIntro =>
+      'Every piece lives in exactly one collection. The repertoire is always there.';
+
+  @override
+  String get collectionsLeadsSeeAll => 'Leads see every collection.';
+
+  @override
+  String get collectionsManage => 'Manage collections';
+
+  @override
+  String get collectionsMove => 'Move to collection';
+
+  @override
+  String collectionsMoveDone(Object name) {
+    return 'Moved to \"$name\"';
+  }
+
+  @override
+  String collectionsMoveDoneNumber(Object name, Object number) {
+    return 'Moved to \"$name\" as no. $number';
+  }
+
+  @override
+  String get collectionsMoveFailed => 'The piece could not be moved.';
+
+  @override
+  String get collectionsMoveHint =>
+      'A piece always lives in exactly one collection.';
+
+  @override
+  String collectionsMoveNext(Object number) {
+    return 'next no. $number';
+  }
+
+  @override
+  String get collectionsName => 'Name';
+
+  @override
+  String get collectionsNameEmpty => 'Without a name the name is not saved.';
+
+  @override
+  String get collectionsNotFound => 'This collection no longer exists.';
+
+  @override
+  String get collectionsNotPlannable => 'not plannable';
+
+  @override
+  String get collectionsOnlyLeads => 'leads only';
+
+  @override
+  String get collectionsOrderFailed => 'The order could not be saved.';
+
+  @override
+  String get collectionsOrderSaved => 'Order saved';
+
+  @override
+  String get collectionsPlannable => 'Plannable in the event programme';
+
+  @override
+  String get collectionsPlannableHint =>
+      'Its pieces can be planned into events and run sheets and then show under \"Up next\".';
+
+  @override
+  String get collectionsPrefix => 'Numbers with';
+
+  @override
+  String get collectionsPrefixHint =>
+      'Prefix before the number, e.g. E for E1, E2 … A change also applies to the pieces already in the collection.';
+
+  @override
+  String get collectionsPrefixNone =>
+      'Without a prefix the collection shares its numbers with the repertoire.';
+
+  @override
+  String collectionsPrefixTaken(Object prefix, Object number) {
+    return 'With \"$prefix\" numbers would be taken twice ($number). Pick another prefix.';
+  }
+
+  @override
+  String get collectionsPublicLink => 'In the public piece link';
+
+  @override
+  String get collectionsPublicLinkHint =>
+      'Only applies when everyone sees the collection.';
+
+  @override
+  String get collectionsRepertoire => 'Repertoire';
+
+  @override
+  String get collectionsRepertoireHint => 'Default, everyone sees it';
+
+  @override
+  String get collectionsRow => 'Collection';
+
+  @override
+  String get collectionsSaveFailed => 'The change could not be saved.';
+
+  @override
+  String get collectionsSearchAll => 'Search all collections';
+
+  @override
+  String get collectionsTitle => 'Collections';
+
+  @override
+  String get collectionsVisAll => 'Everyone';
+
+  @override
+  String get collectionsVisGroups => 'Certain groups';
+
+  @override
+  String get collectionsVisLeads => 'Leads only';
+
+  @override
+  String get collectionsWhoSees => 'Who sees this collection';
+
+  @override
+  String collectionsWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pieces',
+      one: '1 piece',
+      zero: 'No piece',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get commonAll => 'All';
 
   @override
@@ -10954,10 +11148,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignFolderPick => 'Pick a part';
 
   @override
-  String get redesignFolderTitle => 'My folder';
+  String get redesignFolderTitle => 'My parts';
 
   @override
-  String get redesignFolderTitleLeads => 'Folders';
+  String get redesignFolderTitleLeads => 'By part';
 
   @override
   String get redesignGroupEditCategory => 'Category';
@@ -14199,10 +14393,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignWorksFilterTitle => 'Sort & filter';
 
   @override
-  String get redesignWorksFolder => 'My folder';
+  String get redesignWorksFolder => 'My parts';
 
   @override
-  String get redesignWorksFolders => 'Folders';
+  String get redesignWorksFolders => 'By part';
 
   @override
   String get redesignWorksForGroup => 'For group';

@@ -41,6 +41,7 @@ _$SongImpl _$$SongImplFromJson(Map<String, dynamic> json) => _$SongImpl(
           : DateTime.parse(json['created_at'] as String),
   beamerFile: const BeamerFileConverter().fromJson(json['beamer_file']),
   copiedFrom: songCopiedFromOrNull(json['copied_from']),
+  collectionId: (json['collection_id'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$$SongImplToJson(_$SongImpl instance) =>
@@ -161,3 +162,38 @@ Map<String, dynamic> _$$SongCategoryImplToJson(_$SongCategoryImpl instance) =>
       'index': instance.index,
       'created_at': instance.createdAt?.toIso8601String(),
     };
+
+_$SongCollectionImpl _$$SongCollectionImplFromJson(Map<String, dynamic> json) =>
+    _$SongCollectionImpl(
+      id: (json['id'] as num?)?.toInt(),
+      tenantId: (json['tenant_id'] as num?)?.toInt(),
+      name: json['name'] as String,
+      prefix: json['prefix'] as String? ?? '',
+      visibility: json['visibility'] as String? ?? 'all',
+      groupIds:
+          (json['group_ids'] as List<dynamic>?)
+              ?.map((e) => (e as num).toInt())
+              .toList() ??
+          const [],
+      plannable: json['plannable'] as bool? ?? true,
+      publicLink: json['public_link'] as bool? ?? true,
+      index: (json['index'] as num?)?.toInt() ?? 0,
+      createdAt:
+          json['created_at'] == null
+              ? null
+              : DateTime.parse(json['created_at'] as String),
+    );
+
+Map<String, dynamic> _$$SongCollectionImplToJson(
+  _$SongCollectionImpl instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'tenant_id': instance.tenantId,
+  'name': instance.name,
+  'prefix': instance.prefix,
+  'visibility': instance.visibility,
+  'group_ids': instance.groupIds,
+  'plannable': instance.plannable,
+  'public_link': instance.publicLink,
+  'index': instance.index,
+};

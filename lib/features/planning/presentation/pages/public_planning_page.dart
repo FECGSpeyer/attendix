@@ -865,6 +865,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     final org = loggedIn ? ref.watch(currentOrganisationProvider).valueOrNull : null;
     if (loggedIn) {
       ref.watch(planSongsProvider);
+      ref.watch(songCollectionsProvider);
       final history = ref.watch(currentSongsProvider);
       // Re-resolve placeholder rows once songs and history are loaded (Ionic ngOnInit).
       if (_ready && !_resolvedSongs && history.hasValue && ref.read(planSongsProvider).hasValue) {

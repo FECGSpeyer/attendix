@@ -17,16 +17,20 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../songs/data/song_print_service.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
+import '../../data/rd_collections_logic.dart';
 import '../../data/rd_works_logic.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/work/rd_work_file_actions.dart' show rdOpenWorkFile;
+import '../widgets/works/rd_collections_ui.dart';
 
-/// REDESIGN: "Meine Mappe" (canvas "Werke neu gedacht", board "Mappe"):
+/// REDESIGN: "Meine Noten" (canvas "Werke neu gedacht", board "Mappe"):
 /// the Noten of one part, for the coming Termine or all Werke, opened one
 /// by one or as one PDF (also to print). Members see their own part and may
 /// pick another; leads pick any group, the conductors' scores included.
-/// Replaces the group folders ("Dateien") of the Werke tab.
+/// Replaces the group folders ("Dateien") of the Werke tab. With Sammlungen
+/// (canvas "Noten-Bereich neu gedacht") "Alle" is grouped by Sammlung,
+/// Repertoire first, and leaves out the Sammlungen the viewer does not see.
 class RdFolderPage extends ConsumerStatefulWidget {
   const RdFolderPage({super.key});
 
@@ -147,10 +151,18 @@ class _RdFolderPageState extends ConsumerState<RdFolderPage> {
       types: ref.watch(attendanceTypesProvider).valueOrNull ?? const [],
     );
     final nextSongs = {for (final e in events) ...e.songs};
+    final collections = ref.watch(rdVisibleCollectionsProvider);
+    final byCollection = collections != null && collections.isNotEmpty;
+    // Repertoire (null) first, then the Sammlungen in their order.
+    final collectionOrder = <int?, int>{null: -1, for (final (i, c) in collections?.indexed ?? const <(int, SongCollection)>[]) c.id: i};
     final allEntries = [
-      for (final song in data.songs)
+      for (final song in collections == null ? data.songs : rdVisibleWorks(data.songs, collections))
         for (final f in _files(song, groupId, choir)) (song: song, file: f),
     ]..sort((a, b) {
+      if (byCollection) {
+        final o = (collectionOrder[a.song.collectionId] ?? 0).compareTo(collectionOrder[b.song.collectionId] ?? 0);
+        if (o != 0) return o;
+      }
       final c = (a.song.prefix ?? '').compareTo(b.song.prefix ?? '');
       return c != 0 ? c : (a.song.number ?? 0).compareTo(b.song.number ?? 0);
     });
@@ -207,10 +219,19 @@ class _RdFolderPageState extends ConsumerState<RdFolderPage> {
           onChanged: (all) => setState(() => _all = all),
         ),
         const SizedBox(height: 16),
-        if (_all)
-          allEntries.isEmpty
-              ? RdInfoCard(text: l10n.redesignFolderEmpty(group.name), icon: Icons.folder_open_outlined)
-              : RdGroupedList(children: [for (final e in allEntries) row(e.song, e.file)])
+        if (_all && allEntries.isEmpty)
+          RdInfoCard(text: l10n.redesignFolderEmpty(group.name), icon: Icons.folder_open_outlined)
+        else if (_all && byCollection) ...[
+          // Grouped by Sammlung (a spread, so the "else" below stays here).
+          for (final id in [null, for (final c in collections) c.id])
+            if (allEntries.where((e) => e.song.collectionId == id).toList() case final entries
+                when entries.isNotEmpty) ...[
+              RdGroupLabel(rdCollectionName(l10n, collections, id)),
+              RdGroupedList(children: [for (final e in entries) row(e.song, e.file)]),
+              const SizedBox(height: 16),
+            ],
+        ] else if (_all)
+          RdGroupedList(children: [for (final e in allEntries) row(e.song, e.file)])
         else if (events.isEmpty)
           RdInfoCard(text: l10n.redesignFolderNothingNext, icon: Icons.event_outlined)
         else
