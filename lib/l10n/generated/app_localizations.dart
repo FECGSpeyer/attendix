@@ -19967,6 +19967,18 @@ abstract class AppLocalizations {
   /// **'Bekommt damit Zugang zur App'**
   String get redesignPersonFormEmailHint;
 
+  /// redesign.personForm.emailUsedBy
+  ///
+  /// In de, this message translates to:
+  /// **'Diese E-Mail wird in einer anderen Gruppe von {name} verwendet. Daten übernehmen?'**
+  String redesignPersonFormEmailUsedBy(Object name);
+
+  /// redesign.personForm.emailUsedMany
+  ///
+  /// In de, this message translates to:
+  /// **'Diese E-Mail wird bereits in anderen Gruppen verwendet. Daten welcher Person übernehmen?'**
+  String get redesignPersonFormEmailUsedMany;
+
   /// redesign.personForm.existingUserHint
   ///
   /// In de, this message translates to:

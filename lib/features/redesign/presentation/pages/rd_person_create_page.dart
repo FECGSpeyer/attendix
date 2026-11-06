@@ -195,7 +195,12 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
       return;
     }
     if (matches.isEmpty || !mounted) return;
-    final chosen = await showEmailTakenDialog(context, matches);
+    final chosen = await showEmailTakenDialog(
+      context,
+      matches,
+      usedBy: context.l10n.redesignPersonFormEmailUsedBy,
+      usedMany: context.l10n.redesignPersonFormEmailUsedMany,
+    );
     if (chosen != null && mounted) _applyMatch(chosen);
   }
 
