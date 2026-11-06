@@ -9294,6 +9294,165 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get rdOrgArchiveNote =>
+      'The people are archived here. People with an account get a message.';
+
+  @override
+  String get rdOrgBack => 'Organisation';
+
+  @override
+  String get rdOrgBackSelection => 'Selection';
+
+  @override
+  String get rdOrgCreate => 'Create or link organisation';
+
+  @override
+  String get rdOrgFilter => 'Filter';
+
+  @override
+  String rdOrgFilterGroup(Object group) {
+    return 'In $group';
+  }
+
+  @override
+  String rdOrgFilterOlder(Object date) {
+    return 'Older than $date';
+  }
+
+  @override
+  String rdOrgFilterYounger(Object date) {
+    return 'Younger than $date';
+  }
+
+  @override
+  String get rdOrgGaKey => 'Connection key';
+
+  @override
+  String rdOrgGaKeyActive(Object hint) {
+    return 'Active, ends in …$hint';
+  }
+
+  @override
+  String get rdOrgGaNoKey => 'Not connected yet';
+
+  @override
+  String get rdOrgHandover => 'Hand over people';
+
+  @override
+  String rdOrgHandoverConfirm(Object count, Object tenant, Object note) {
+    return 'Do you really want to hand over $count people to “$tenant”? $note';
+  }
+
+  @override
+  String get rdOrgHandoverIntro =>
+      'Hand people over to another group of the organisation. People with an account are notified.';
+
+  @override
+  String get rdOrgHandoverTarget => 'Target group';
+
+  @override
+  String rdOrgHere(Object group) {
+    return 'Here: $group';
+  }
+
+  @override
+  String get rdOrgKeepActive => 'Keep them active here';
+
+  @override
+  String get rdOrgKeepActiveHint => 'Otherwise they are archived here';
+
+  @override
+  String get rdOrgLinkIntro =>
+      'Linked people keep name, birthday, email and phone in sync across all groups.';
+
+  @override
+  String get rdOrgLinkPersonsHint => 'The same person in several groups';
+
+  @override
+  String get rdOrgMainGroup => 'Include main group';
+
+  @override
+  String get rdOrgMainGroupHint => 'Also shows people of the main group';
+
+  @override
+  String get rdOrgName => 'Name';
+
+  @override
+  String rdOrgNext(Object count) {
+    return 'Next ($count)';
+  }
+
+  @override
+  String get rdOrgNoOtherGroups => 'The organisation has no other group.';
+
+  @override
+  String get rdOrgNoneAdminOnly =>
+      'This group is not in an organisation. Only admins can manage organisations.';
+
+  @override
+  String get rdOrgNoneIntro =>
+      'Create an organisation or link this group to an existing one. Then you can connect people across all groups and share plans.';
+
+  @override
+  String get rdOrgNoneTitle => 'No organisation';
+
+  @override
+  String rdOrgPeopleCount(Object count) {
+    return '$count people';
+  }
+
+  @override
+  String get rdOrgPersonFields => 'Shared extra fields';
+
+  @override
+  String get rdOrgSectionGroups => 'Groups';
+
+  @override
+  String get rdOrgSectionPlansWorks => 'Plans and works';
+
+  @override
+  String get rdOrgSongSource => 'Works from';
+
+  @override
+  String get rdOrgSongSyncIntro =>
+      'Use the works of another group. All changes are saved there.';
+
+  @override
+  String get rdOrgStayNote => 'The people stay active here.';
+
+  @override
+  String rdOrgStep2Sub(Object tenant, Object count) {
+    return '$tenant · $count people';
+  }
+
+  @override
+  String get rdOrgStep2Title => 'Groups in the target';
+
+  @override
+  String get rdOrgTakeOver => 'Take over';
+
+  @override
+  String get rdOrgThisGroup => 'This group';
+
+  @override
+  String rdOrgTransfer(Object count) {
+    return 'Hand over ($count)';
+  }
+
+  @override
+  String get rdOrgUnlink => 'Leave organisation';
+
+  @override
+  String get rdOrgWorks => 'Works of the organisation';
+
+  @override
+  String get rdOrgWorksHint => 'Find and take over works of other groups';
+
+  @override
+  String get rdOrgWorksNoPermission =>
+      'Only admins and leads of a group in an organisation can search works across the organisation.';
+
+  @override
   String get rdSettingsAddRule => 'Add rule';
 
   @override
@@ -9603,6 +9762,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignAccountsTitle => 'Switch account';
+
+  @override
+  String get redesignAdminLimitGb => 'Maximum (GB)';
 
   @override
   String get redesignAdminTitle => 'Administration';

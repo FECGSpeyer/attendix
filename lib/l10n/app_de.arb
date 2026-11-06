@@ -11726,6 +11726,215 @@
       "count": {}
     }
   },
+  "rdOrgArchiveNote": "Die Personen werden hier archiviert. Wer ein Konto hat, bekommt eine Nachricht.",
+  "@rdOrgArchiveNote": {
+    "description": "rdOrg.archiveNote"
+  },
+  "rdOrgBack": "Organisation",
+  "@rdOrgBack": {
+    "description": "rdOrg.back"
+  },
+  "rdOrgBackSelection": "Auswahl",
+  "@rdOrgBackSelection": {
+    "description": "rdOrg.backSelection"
+  },
+  "rdOrgCreate": "Organisation erstellen oder verknüpfen",
+  "@rdOrgCreate": {
+    "description": "rdOrg.create"
+  },
+  "rdOrgFilter": "Filter",
+  "@rdOrgFilter": {
+    "description": "rdOrg.filter"
+  },
+  "rdOrgFilterGroup": "In {group}",
+  "@rdOrgFilterGroup": {
+    "description": "rdOrg.filterGroup",
+    "placeholders": {
+      "group": {}
+    }
+  },
+  "rdOrgFilterOlder": "Älter als {date}",
+  "@rdOrgFilterOlder": {
+    "description": "rdOrg.filterOlder",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "rdOrgFilterYounger": "Jünger als {date}",
+  "@rdOrgFilterYounger": {
+    "description": "rdOrg.filterYounger",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "rdOrgGaKey": "Verbindungsschlüssel",
+  "@rdOrgGaKey": {
+    "description": "rdOrg.gaKey"
+  },
+  "rdOrgGaKeyActive": "Aktiv, endet auf …{hint}",
+  "@rdOrgGaKeyActive": {
+    "description": "rdOrg.gaKeyActive",
+    "placeholders": {
+      "hint": {}
+    }
+  },
+  "rdOrgGaNoKey": "Noch nicht verbunden",
+  "@rdOrgGaNoKey": {
+    "description": "rdOrg.gaNoKey"
+  },
+  "rdOrgHandover": "Personen übergeben",
+  "@rdOrgHandover": {
+    "description": "rdOrg.handover"
+  },
+  "rdOrgHandoverConfirm": "Möchtest du {count} Personen wirklich an „{tenant}“ übergeben? {note}",
+  "@rdOrgHandoverConfirm": {
+    "description": "rdOrg.handoverConfirm",
+    "placeholders": {
+      "count": {},
+      "tenant": {},
+      "note": {}
+    }
+  },
+  "rdOrgHandoverIntro": "Personen an eine andere Gruppe der Organisation weitergeben. Wer ein Konto hat, wird informiert.",
+  "@rdOrgHandoverIntro": {
+    "description": "rdOrg.handoverIntro"
+  },
+  "rdOrgHandoverTarget": "Ziel-Gruppe",
+  "@rdOrgHandoverTarget": {
+    "description": "rdOrg.handoverTarget"
+  },
+  "rdOrgHere": "Hier: {group}",
+  "@rdOrgHere": {
+    "description": "rdOrg.here",
+    "placeholders": {
+      "group": {}
+    }
+  },
+  "rdOrgKeepActive": "Hier weiter aktiv lassen",
+  "@rdOrgKeepActive": {
+    "description": "rdOrg.keepActive"
+  },
+  "rdOrgKeepActiveHint": "Sonst werden sie hier archiviert",
+  "@rdOrgKeepActiveHint": {
+    "description": "rdOrg.keepActiveHint"
+  },
+  "rdOrgLinkIntro": "Verknüpfte Personen gleichen Name, Geburtstag, E-Mail und Telefon über alle Gruppen ab.",
+  "@rdOrgLinkIntro": {
+    "description": "rdOrg.linkIntro"
+  },
+  "rdOrgLinkPersonsHint": "Dieselbe Person in mehreren Gruppen",
+  "@rdOrgLinkPersonsHint": {
+    "description": "rdOrg.linkPersonsHint"
+  },
+  "rdOrgMainGroup": "Hauptgruppe einbeziehen",
+  "@rdOrgMainGroup": {
+    "description": "rdOrg.mainGroup"
+  },
+  "rdOrgMainGroupHint": "Zeigt auch Personen aus der Hauptgruppe",
+  "@rdOrgMainGroupHint": {
+    "description": "rdOrg.mainGroupHint"
+  },
+  "rdOrgName": "Name",
+  "@rdOrgName": {
+    "description": "rdOrg.name"
+  },
+  "rdOrgNext": "Weiter ({count})",
+  "@rdOrgNext": {
+    "description": "rdOrg.next",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdOrgNoOtherGroups": "Die Organisation hat keine weitere Gruppe.",
+  "@rdOrgNoOtherGroups": {
+    "description": "rdOrg.noOtherGroups"
+  },
+  "rdOrgNoneAdminOnly": "Diese Gruppe gehört zu keiner Organisation. Nur Admins können Organisationen verwalten.",
+  "@rdOrgNoneAdminOnly": {
+    "description": "rdOrg.noneAdminOnly"
+  },
+  "rdOrgNoneIntro": "Erstelle eine Organisation oder verknüpfe diese Gruppe mit einer bestehenden. Dann kannst du Personen über alle Gruppen verbinden und Pläne gemeinsam nutzen.",
+  "@rdOrgNoneIntro": {
+    "description": "rdOrg.noneIntro"
+  },
+  "rdOrgNoneTitle": "Keine Organisation",
+  "@rdOrgNoneTitle": {
+    "description": "rdOrg.noneTitle"
+  },
+  "rdOrgPeopleCount": "{count} Personen",
+  "@rdOrgPeopleCount": {
+    "description": "rdOrg.peopleCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdOrgPersonFields": "Gemeinsame Zusatzfelder",
+  "@rdOrgPersonFields": {
+    "description": "rdOrg.personFields"
+  },
+  "rdOrgSectionGroups": "Gruppen",
+  "@rdOrgSectionGroups": {
+    "description": "rdOrg.sectionGroups"
+  },
+  "rdOrgSectionPlansWorks": "Pläne und Werke",
+  "@rdOrgSectionPlansWorks": {
+    "description": "rdOrg.sectionPlansWorks"
+  },
+  "rdOrgSongSource": "Werke aus",
+  "@rdOrgSongSource": {
+    "description": "rdOrg.songSource"
+  },
+  "rdOrgSongSyncIntro": "Werke einer anderen Gruppe verwenden. Alle Änderungen werden dort gespeichert.",
+  "@rdOrgSongSyncIntro": {
+    "description": "rdOrg.songSyncIntro"
+  },
+  "rdOrgStayNote": "Die Personen bleiben hier aktiv.",
+  "@rdOrgStayNote": {
+    "description": "rdOrg.stayNote"
+  },
+  "rdOrgStep2Sub": "{tenant} · {count} Personen",
+  "@rdOrgStep2Sub": {
+    "description": "rdOrg.step2Sub",
+    "placeholders": {
+      "tenant": {},
+      "count": {}
+    }
+  },
+  "rdOrgStep2Title": "Gruppen im Ziel",
+  "@rdOrgStep2Title": {
+    "description": "rdOrg.step2Title"
+  },
+  "rdOrgTakeOver": "Übernehmen",
+  "@rdOrgTakeOver": {
+    "description": "rdOrg.takeOver"
+  },
+  "rdOrgThisGroup": "Diese Gruppe",
+  "@rdOrgThisGroup": {
+    "description": "rdOrg.thisGroup"
+  },
+  "rdOrgTransfer": "Übergeben ({count})",
+  "@rdOrgTransfer": {
+    "description": "rdOrg.transfer",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdOrgUnlink": "Von Organisation trennen",
+  "@rdOrgUnlink": {
+    "description": "rdOrg.unlink"
+  },
+  "rdOrgWorks": "Werke der Organisation",
+  "@rdOrgWorks": {
+    "description": "rdOrg.works"
+  },
+  "rdOrgWorksHint": "Werke anderer Gruppen finden und übernehmen",
+  "@rdOrgWorksHint": {
+    "description": "rdOrg.worksHint"
+  },
+  "rdOrgWorksNoPermission": "Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen.",
+  "@rdOrgWorksNoPermission": {
+    "description": "rdOrg.worksNoPermission"
+  },
   "rdSettingsAddRule": "Regel hinzufügen",
   "@rdSettingsAddRule": {
     "description": "rdSettings.addRule"
@@ -12110,6 +12319,10 @@
   "redesignAccountsTitle": "Konto wechseln",
   "@redesignAccountsTitle": {
     "description": "redesign.accounts.title"
+  },
+  "redesignAdminLimitGb": "Höchstens (GB)",
+  "@redesignAdminLimitGb": {
+    "description": "redesign.admin.limitGb"
   },
   "redesignAdminTitle": "Verwaltung",
   "@redesignAdminTitle": {

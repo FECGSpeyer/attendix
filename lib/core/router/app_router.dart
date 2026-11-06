@@ -108,6 +108,11 @@ import '../../shared/widgets/adaptive/ion_button_label.dart';
 import '../providers/redesign_providers.dart';
 import 'redesign_routes.dart';
 import '../../features/redesign/presentation/shell/rd_shell.dart';
+import '../../features/redesign/presentation/pages/rd_handover_detail_page.dart';
+import '../../features/redesign/presentation/pages/rd_handover_page.dart';
+import '../../features/redesign/presentation/pages/rd_link_persons_page.dart';
+import '../../features/redesign/presentation/pages/rd_org_settings_page.dart';
+import '../../features/redesign/presentation/pages/rd_org_songs_page.dart';
 import '../../features/redesign/presentation/pages/rd_branding_page.dart';
 import '../../features/redesign/presentation/pages/rd_general_settings_page.dart';
 import '../../features/redesign/presentation/pages/rd_today_page.dart';
@@ -1328,7 +1333,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'org-settings',
                 name: 'orgSettings',
-                builder: (context, state) => const OrgSettingsPage(),
+                builder: (context, state) => const _BetaOr(beta: RdOrgSettingsPage(), classic: OrgSettingsPage()),
                 routes: [
                   GoRoute(
                     path: 'planning-templates',
@@ -1344,8 +1349,9 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'songs',
                     name: 'orgSongs',
-                    builder: (context, state) => OrgSongsPage(
-                      initialQuery: state.uri.queryParameters['q'],
+                    builder: (context, state) => _BetaOr(
+                      beta: RdOrgSongsPage(initialQuery: state.uri.queryParameters['q']),
+                      classic: OrgSongsPage(initialQuery: state.uri.queryParameters['q']),
                     ),
                   ),
                 ],
@@ -1402,7 +1408,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'general/link-persons',
                 name: 'linkPersons',
-                builder: (context, state) => const LinkPersonsPage(),
+                builder: (context, state) => const _BetaOr(beta: RdLinkPersonsPage(), classic: LinkPersonsPage()),
               ),
               // END SETTINGS_EXT
               GoRoute(
@@ -1422,16 +1428,18 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'handover',
                 name: 'handover',
-                builder: (context, state) => const HandoverPage(),
+                builder: (context, state) => const _BetaOr(beta: RdHandoverPage(), classic: HandoverPage()),
                 routes: [
                   GoRoute(
                     path: 'detail',
                     name: 'handoverDetail',
-                    builder: (context, state) => HandoverDetailPage(
-                      data: state.extra is HandoverData
-                          ? state.extra as HandoverData
-                          : null,
-                    ),
+                    builder: (context, state) {
+                      final data = state.extra is HandoverData ? state.extra as HandoverData : null;
+                      return _BetaOr(
+                        beta: RdHandoverDetailPage(data: data),
+                        classic: HandoverDetailPage(data: data),
+                      );
+                    },
                   ),
                 ],
               ),

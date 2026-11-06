@@ -15443,6 +15443,270 @@ abstract class AppLocalizations {
   /// **'Ohne Ergebnis: {count}'**
   String protocolWithoutOutcome(Object count);
 
+  /// rdOrg.archiveNote
+  ///
+  /// In de, this message translates to:
+  /// **'Die Personen werden hier archiviert. Wer ein Konto hat, bekommt eine Nachricht.'**
+  String get rdOrgArchiveNote;
+
+  /// rdOrg.back
+  ///
+  /// In de, this message translates to:
+  /// **'Organisation'**
+  String get rdOrgBack;
+
+  /// rdOrg.backSelection
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl'**
+  String get rdOrgBackSelection;
+
+  /// rdOrg.create
+  ///
+  /// In de, this message translates to:
+  /// **'Organisation erstellen oder verknüpfen'**
+  String get rdOrgCreate;
+
+  /// rdOrg.filter
+  ///
+  /// In de, this message translates to:
+  /// **'Filter'**
+  String get rdOrgFilter;
+
+  /// rdOrg.filterGroup
+  ///
+  /// In de, this message translates to:
+  /// **'In {group}'**
+  String rdOrgFilterGroup(Object group);
+
+  /// rdOrg.filterOlder
+  ///
+  /// In de, this message translates to:
+  /// **'Älter als {date}'**
+  String rdOrgFilterOlder(Object date);
+
+  /// rdOrg.filterYounger
+  ///
+  /// In de, this message translates to:
+  /// **'Jünger als {date}'**
+  String rdOrgFilterYounger(Object date);
+
+  /// rdOrg.gaKey
+  ///
+  /// In de, this message translates to:
+  /// **'Verbindungsschlüssel'**
+  String get rdOrgGaKey;
+
+  /// rdOrg.gaKeyActive
+  ///
+  /// In de, this message translates to:
+  /// **'Aktiv, endet auf …{hint}'**
+  String rdOrgGaKeyActive(Object hint);
+
+  /// rdOrg.gaNoKey
+  ///
+  /// In de, this message translates to:
+  /// **'Noch nicht verbunden'**
+  String get rdOrgGaNoKey;
+
+  /// rdOrg.handover
+  ///
+  /// In de, this message translates to:
+  /// **'Personen übergeben'**
+  String get rdOrgHandover;
+
+  /// rdOrg.handoverConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Möchtest du {count} Personen wirklich an „{tenant}“ übergeben? {note}'**
+  String rdOrgHandoverConfirm(Object count, Object tenant, Object note);
+
+  /// rdOrg.handoverIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Personen an eine andere Gruppe der Organisation weitergeben. Wer ein Konto hat, wird informiert.'**
+  String get rdOrgHandoverIntro;
+
+  /// rdOrg.handoverTarget
+  ///
+  /// In de, this message translates to:
+  /// **'Ziel-Gruppe'**
+  String get rdOrgHandoverTarget;
+
+  /// rdOrg.here
+  ///
+  /// In de, this message translates to:
+  /// **'Hier: {group}'**
+  String rdOrgHere(Object group);
+
+  /// rdOrg.keepActive
+  ///
+  /// In de, this message translates to:
+  /// **'Hier weiter aktiv lassen'**
+  String get rdOrgKeepActive;
+
+  /// rdOrg.keepActiveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Sonst werden sie hier archiviert'**
+  String get rdOrgKeepActiveHint;
+
+  /// rdOrg.linkIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Verknüpfte Personen gleichen Name, Geburtstag, E-Mail und Telefon über alle Gruppen ab.'**
+  String get rdOrgLinkIntro;
+
+  /// rdOrg.linkPersonsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Dieselbe Person in mehreren Gruppen'**
+  String get rdOrgLinkPersonsHint;
+
+  /// rdOrg.mainGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Hauptgruppe einbeziehen'**
+  String get rdOrgMainGroup;
+
+  /// rdOrg.mainGroupHint
+  ///
+  /// In de, this message translates to:
+  /// **'Zeigt auch Personen aus der Hauptgruppe'**
+  String get rdOrgMainGroupHint;
+
+  /// rdOrg.name
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get rdOrgName;
+
+  /// rdOrg.next
+  ///
+  /// In de, this message translates to:
+  /// **'Weiter ({count})'**
+  String rdOrgNext(Object count);
+
+  /// rdOrg.noOtherGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Die Organisation hat keine weitere Gruppe.'**
+  String get rdOrgNoOtherGroups;
+
+  /// rdOrg.noneAdminOnly
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Gruppe gehört zu keiner Organisation. Nur Admins können Organisationen verwalten.'**
+  String get rdOrgNoneAdminOnly;
+
+  /// rdOrg.noneIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Erstelle eine Organisation oder verknüpfe diese Gruppe mit einer bestehenden. Dann kannst du Personen über alle Gruppen verbinden und Pläne gemeinsam nutzen.'**
+  String get rdOrgNoneIntro;
+
+  /// rdOrg.noneTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Organisation'**
+  String get rdOrgNoneTitle;
+
+  /// rdOrg.peopleCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Personen'**
+  String rdOrgPeopleCount(Object count);
+
+  /// rdOrg.personFields
+  ///
+  /// In de, this message translates to:
+  /// **'Gemeinsame Zusatzfelder'**
+  String get rdOrgPersonFields;
+
+  /// rdOrg.sectionGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen'**
+  String get rdOrgSectionGroups;
+
+  /// rdOrg.sectionPlansWorks
+  ///
+  /// In de, this message translates to:
+  /// **'Pläne und Werke'**
+  String get rdOrgSectionPlansWorks;
+
+  /// rdOrg.songSource
+  ///
+  /// In de, this message translates to:
+  /// **'Werke aus'**
+  String get rdOrgSongSource;
+
+  /// rdOrg.songSyncIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Werke einer anderen Gruppe verwenden. Alle Änderungen werden dort gespeichert.'**
+  String get rdOrgSongSyncIntro;
+
+  /// rdOrg.stayNote
+  ///
+  /// In de, this message translates to:
+  /// **'Die Personen bleiben hier aktiv.'**
+  String get rdOrgStayNote;
+
+  /// rdOrg.step2Sub
+  ///
+  /// In de, this message translates to:
+  /// **'{tenant} · {count} Personen'**
+  String rdOrgStep2Sub(Object tenant, Object count);
+
+  /// rdOrg.step2Title
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen im Ziel'**
+  String get rdOrgStep2Title;
+
+  /// rdOrg.takeOver
+  ///
+  /// In de, this message translates to:
+  /// **'Übernehmen'**
+  String get rdOrgTakeOver;
+
+  /// rdOrg.thisGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Gruppe'**
+  String get rdOrgThisGroup;
+
+  /// rdOrg.transfer
+  ///
+  /// In de, this message translates to:
+  /// **'Übergeben ({count})'**
+  String rdOrgTransfer(Object count);
+
+  /// rdOrg.unlink
+  ///
+  /// In de, this message translates to:
+  /// **'Von Organisation trennen'**
+  String get rdOrgUnlink;
+
+  /// rdOrg.works
+  ///
+  /// In de, this message translates to:
+  /// **'Werke der Organisation'**
+  String get rdOrgWorks;
+
+  /// rdOrg.worksHint
+  ///
+  /// In de, this message translates to:
+  /// **'Werke anderer Gruppen finden und übernehmen'**
+  String get rdOrgWorksHint;
+
+  /// rdOrg.worksNoPermission
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen.'**
+  String get rdOrgWorksNoPermission;
+
   /// rdSettings.addRule
   ///
   /// In de, this message translates to:
@@ -15982,6 +16246,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Konto wechseln'**
   String get redesignAccountsTitle;
+
+  /// redesign.admin.limitGb
+  ///
+  /// In de, this message translates to:
+  /// **'Höchstens (GB)'**
+  String get redesignAdminLimitGb;
 
   /// redesign.adminTitle
   ///
