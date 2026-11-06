@@ -819,14 +819,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           if (_teamsLinkMode)
             Text(l10n.loginLinkNote, style: RdType.meta(p, size: 14))
           else
-            Row(
+            // Wrap: with large system text the chips go to a second line.
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
                 RdChoiceChip(
                   label: l10n.loginModePassword,
                   selected: _mode == AuthMode.password,
                   onTap: _isLoading || _mode == AuthMode.password ? null : () => _setMode(AuthMode.password),
                 ),
-                const SizedBox(width: 8),
                 RdChoiceChip(
                   label: l10n.loginModeOtp,
                   selected: _mode == AuthMode.otp,

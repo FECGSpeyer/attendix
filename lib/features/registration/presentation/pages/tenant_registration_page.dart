@@ -1078,11 +1078,22 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         ] else if (_otpSent) ...[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12),
-            child: OtpCodeField(
-              controller: _otpController,
-              enabled: !_isLoading,
-              onCompleted: (_) => _verifyCode(),
-            ),
+            child: ref.read(redesignEnabledProvider)
+                // Beta card is narrower: shrink the code boxes to the space
+                // that is left (e.g. 320 px screens) instead of clipping.
+                ? FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: OtpCodeField(
+                      controller: _otpController,
+                      enabled: !_isLoading,
+                      onCompleted: (_) => _verifyCode(),
+                    ),
+                  )
+                : OtpCodeField(
+                    controller: _otpController,
+                    enabled: !_isLoading,
+                    onCompleted: (_) => _verifyCode(),
+                  ),
           ),
           ListenableBuilder(
             listenable: _otpController,

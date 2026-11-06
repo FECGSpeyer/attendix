@@ -64,7 +64,9 @@ class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
     final l10n = context.l10n;
     if (widget.beta) {
       final p = context.rd;
-      return Padding(
+      // Scrolls inside the sheet so the button stays reachable above the
+      // keyboard on short screens.
+      return SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + MediaQuery.viewInsetsOf(context).bottom),
         child: Column(
           mainAxisSize: MainAxisSize.min,
