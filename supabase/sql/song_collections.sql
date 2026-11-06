@@ -17,7 +17,10 @@
 --
 -- Additive and safe to run twice. Without it the app behaves as before
 -- (it detects the missing table/column and hides every Sammlung feature).
--- Apply only after the store release (no production change before it).
+-- Applied in two steps (Leon, 2026-11-06): song_collections_stufe1.sql
+-- (table, column, RPC; nothing on songs reads or writes) before the store
+-- release, song_collections_stufe2.sql (restrictive policy and trigger on
+-- songs) after it. Together they are exactly this file.
 --
 -- Rollback (in this order: policies and triggers before the functions
 -- they use, the table with its own policies and trigger before the
@@ -103,7 +106,7 @@ as $$
             join tenants t on t.id = p."tenantId"
             join instruments own on own.id = p.instrument
             join instruments g on g.id = any (c.group_ids)
-            where p."appId" = auth.uid()::text
+            where p."appId" = auth.uid()
               and p."left" is null
               and (p."tenantId" = c.tenant_id or t.song_source_tenant_id = c.tenant_id)
               and lower(trim(own.name)) = lower(trim(g.name))
@@ -196,6 +199,20 @@ begin
   return new;
 end;
 $$;
+
+-- Applied after Stufe 1, Werke may already point to a Sammlung of another
+-- tenant (the foreign key only checks the id). Block writes on songs for
+-- this transaction, put such Werke back into Repertoire, then install the
+-- trigger, so no wrong reference is left or added in between.
+lock table public.songs in share row exclusive mode;
+
+update public.songs s
+set collection_id = null
+where s.collection_id is not null
+  and not exists (
+    select 1 from public.song_collections c
+    where c.id = s.collection_id and c.tenant_id = s."tenantId"
+  );
 
 drop trigger if exists songs_collection_same_tenant on public.songs;
 create trigger songs_collection_same_tenant
