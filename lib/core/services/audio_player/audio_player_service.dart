@@ -355,6 +355,10 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
       await player.pause();
       if (_player != player) return;
       await player.seek(Duration.zero);
+      if (_player != player) return;
+      // The pause above synced the lock screen at the end position; report
+      // the rewind too (like [seek]), otherwise it stays at the end.
+      _syncPositionState();
     } catch (e) {
       debugPrint('Audio rewind after end failed: $e');
     }

@@ -83,6 +83,7 @@ class _RecordingBridge implements MediaSessionBridge {
   ({String title, String artist, String? coverUrl})? metadata;
   int clearCount = 0;
   Duration? lastDuration;
+  Duration? lastPosition;
 
   @override
   bool get isSupported => true;
@@ -103,7 +104,10 @@ class _RecordingBridge implements MediaSessionBridge {
   @override
   void setPlaybackState(MediaSessionPlayback state) => playbackStates.add(state);
   @override
-  void setPositionState(Duration duration, Duration position) => lastDuration = duration;
+  void setPositionState(Duration duration, Duration position) {
+    lastDuration = duration;
+    lastPosition = position;
+  }
 }
 
 void main() {
@@ -180,6 +184,32 @@ void main() {
     await Future<void>.delayed(Duration.zero);
     expect(container.read(audioPlayerServiceProvider).isPlaying, isFalse);
     expect(bridge.playbackStates.last, MediaSessionPlayback.paused);
+  });
+
+  test('after the track ended the lock screen shows paused at 0:00', () async {
+    final players = <_FakeAudioPlayer>[];
+    final c = ProviderContainer(overrides: [
+      audioPlayerFactoryProvider.overrideWithValue(() {
+        final p = _FakeAudioPlayer();
+        players.add(p);
+        return p;
+      }),
+      mediaSessionBridgeProvider.overrideWithValue(bridge),
+      brandingSourceProvider.overrideWith((ref) async => null),
+    ]);
+    addTearDown(c.dispose);
+    await c
+        .read(audioPlayerServiceProvider.notifier)
+        .playFromUrl('https://x/a.mp3', 'a.mp3', 'Song');
+    final player = players.single;
+    player.position = const Duration(minutes: 3);
+
+    player._processingStateCtrl.add(ProcessingState.completed);
+    await pumpEventQueue();
+
+    expect(bridge.playbackStates.last, MediaSessionPlayback.paused);
+    expect(bridge.lastPosition, Duration.zero);
+    expect(bridge.lastDuration, const Duration(minutes: 3));
   });
 
   test('stop clears metadata and sets playback state none', () async {
