@@ -143,6 +143,7 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
   }
 
   Future<void> _restoreDraftIfFree(String draft) async {
+    if (_isPreset) return;
     try {
       final prefs = await SharedPreferences.getInstance();
       if (prefs.getString(_draftKey) == null) await prefs.setString(_draftKey, draft);
