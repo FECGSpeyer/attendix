@@ -800,6 +800,13 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.byType(RdEventColumns), findsOneWidget);
     expect(find.text('Anwesenheit eintragen'), findsNothing);
+
+    // Next to the sidebar and the 400 px list, the detail gets 1440 - 248 - 401
+    // = 791 px: below 900 it keeps the tabs.
+    _size(tester, const Size(1440, 900));
+    await tester.pumpWidget(_Harness().app(split: true));
+    await _settle(tester);
+    expect(find.byType(RdEventColumns), findsNothing);
   });
 
   testWidgets('fits on a 320 px phone', (tester) async {

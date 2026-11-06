@@ -39,23 +39,30 @@ class RdEventColumns extends StatelessWidget {
     required this.left,
     required this.right,
     this.bottomPadding = 32,
+    this.onRefresh,
   });
 
   final List<Widget> header;
   final List<Widget> left;
   final List<Widget> right;
   final double bottomPadding;
+  final Future<void> Function()? onRefresh;
 
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
-    Widget column(List<Widget> children) => ListView(
-          primary: false,
-          padding: EdgeInsets.only(bottom: bottomPadding),
-          children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
-          ],
-        );
+    Widget column(List<Widget> children) {
+      final list = ListView(
+        primary: false,
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: EdgeInsets.only(bottom: bottomPadding),
+        children: [
+          Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+        ],
+      );
+      return onRefresh == null ? list : RefreshIndicator(onRefresh: onRefresh!, child: list);
+    }
+
     return Scaffold(
       backgroundColor: p.bg,
       body: SafeArea(

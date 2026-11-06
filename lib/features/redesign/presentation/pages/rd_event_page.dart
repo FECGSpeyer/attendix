@@ -815,12 +815,12 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     // Changes on other devices (the list's realtime channel bumps the
-    // counter on every person_attendances update).
+    // counter on every attendance and person_attendances update): reload
+    // the Termin too, so time, place and notes stay current without a pull
+    // (the desktop columns have none).
     ref.listen<int>(attendanceRefetchCounter, (_, __) {
       _reloadDebounce?.cancel();
-      _reloadDebounce = Timer(const Duration(milliseconds: 400), () {
-        if (mounted) ref.invalidate(personAttendancesForAttendanceProvider(_id));
-      });
+      _reloadDebounce = Timer(const Duration(milliseconds: 400), _reload);
     });
 
     final attendanceAsync = ref.watch(attendanceDetailProvider(_id));
@@ -941,6 +941,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         ],
         right: _recordChildren(members, type),
         bottomPadding: bottom,
+        onRefresh: () async => _reload(),
       );
     } else {
       if (tab == RdEventTab.program) {
