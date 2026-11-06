@@ -12598,6 +12598,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanAddCurrentHint => 'Die Werke, die gerade dran sind';
 
   @override
+  String get redesignPlanAddDefaultField => 'Standardfeld hinzufügen';
+
+  @override
   String get redesignPlanAddEnd => 'Wird ans Ende gesetzt';
 
   @override
@@ -12797,6 +12800,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPlanOrgHint => 'Erscheint im Plan der Organisation';
 
   @override
+  String redesignPlanOrgPlansIntro(Object org) {
+    return 'Abläufe aller Gruppen in „$org“';
+  }
+
+  @override
+  String get redesignPlanOrgPlansUpcoming => 'Anstehend';
+
+  @override
   String get redesignPlanOrgTemplateHint => 'Vorlage der Organisation';
 
   @override
@@ -12855,6 +12866,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPlanTemplateDelete => 'Vorlage löschen';
+
+  @override
+  String get redesignPlanTemplateHint => 'Vorlage · sofort gespeichert';
+
+  @override
+  String redesignPlanTemplatesIntro(Object org) {
+    return 'Gelten für alle Gruppen der Organisation „$org“.';
+  }
 
   @override
   String get redesignPlanTitle => 'Ablauf';
