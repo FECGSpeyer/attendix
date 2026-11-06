@@ -12125,6 +12125,78 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPersonEdit => 'Edit';
 
   @override
+  String get redesignPersonFormArchived => 'This person is archived.';
+
+  @override
+  String get redesignPersonFormContact => 'Contact';
+
+  @override
+  String get redesignPersonFormCopyOther => 'Copy to another group';
+
+  @override
+  String get redesignPersonFormCreate => 'Create';
+
+  @override
+  String get redesignPersonFormCreateButton => 'Add person';
+
+  @override
+  String redesignPersonFormEditTitle(Object name) {
+    return 'Edit $name';
+  }
+
+  @override
+  String get redesignPersonFormEmailHint => 'Gets access to the app with it';
+
+  @override
+  String get redesignPersonFormExistingUserHint =>
+      'If an account already exists for this e-mail address, it is added to this group automatically.';
+
+  @override
+  String get redesignPersonFormLiveHint => 'Changes are saved right away.';
+
+  @override
+  String get redesignPersonFormMatchDismiss => 'Hide';
+
+  @override
+  String get redesignPersonFormMatchFound => 'Person found in another group?';
+
+  @override
+  String get redesignPersonFormMore => 'More details';
+
+  @override
+  String get redesignPersonFormMoreHint =>
+      'Birthday, joined, teacher, extra fields and more';
+
+  @override
+  String get redesignPersonFormNewTitle => 'New person';
+
+  @override
+  String get redesignPersonFormNoMatchOther =>
+      'No matching person was found in your other groups.';
+
+  @override
+  String get redesignPersonFormNotAllowed =>
+      'Only admins and responsible persons can add and edit people.';
+
+  @override
+  String get redesignPersonFormNotSet => 'Not set';
+
+  @override
+  String get redesignPersonFormOtherGroups => 'Other groups';
+
+  @override
+  String get redesignPersonFormProblemSave => 'Save conversation';
+
+  @override
+  String get redesignPersonFormSaved => 'Saved ✓';
+
+  @override
+  String get redesignPersonFormSearchOtherGroup => 'Search in other group';
+
+  @override
+  String get redesignPersonFormTransferOther => 'Transfer to another group';
+
+  @override
   String get redesignPersonHistory => 'History';
 
   @override

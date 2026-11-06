@@ -155,6 +155,10 @@ Widget _personApp(Role role, MockPlayerRepository repo, {Person? person, int id 
         builder: (_, __) => const Scaffold(body: Text('page members')),
         routes: [
           GoRoute(
+            path: ':id/bearbeiten',
+            builder: (_, state) => Scaffold(body: Text('page edit ${state.pathParameters['id']}')),
+          ),
+          GoRoute(
             path: ':id',
             builder: (_, state) {
               final page = RdPersonPage(personId: int.parse(state.pathParameters['id']!));
@@ -535,14 +539,14 @@ void main() {
       expect(find.text('Notiz'), findsOneWidget);
     });
 
-    testWidgets('admin: Bearbeiten opens the old page, Pausieren and Archivieren shown', (tester) async {
+    testWidgets('admin: Bearbeiten opens the Beta edit page, Pausieren and Archivieren shown', (tester) async {
       await tester.pumpWidget(_personApp(Role.admin, _repo(), person: anna));
       await _settle(tester);
       expect(find.text('Archivieren'), findsOneWidget);
       expect(find.text('Pausieren'), findsOneWidget);
       await _tapVisible(tester, find.text('Bearbeiten'));
       await _settle(tester);
-      expect(find.text('page old 1'), findsOneWidget);
+      expect(find.text('page edit 1'), findsOneWidget);
     });
 
     testWidgets('Beobachter sees no edit actions', (tester) async {

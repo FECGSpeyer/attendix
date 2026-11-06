@@ -15137,6 +15137,97 @@
   "@redesignPersonEdit": {
     "description": "redesign.person.edit"
   },
+  "redesignPersonFormArchived": "Diese Person ist archiviert.",
+  "@redesignPersonFormArchived": {
+    "description": "redesign.personForm.archived"
+  },
+  "redesignPersonFormContact": "Kontakt",
+  "@redesignPersonFormContact": {
+    "description": "redesign.personForm.contact"
+  },
+  "redesignPersonFormCopyOther": "In andere Gruppe kopieren",
+  "@redesignPersonFormCopyOther": {
+    "description": "redesign.personForm.copyOther"
+  },
+  "redesignPersonFormCreate": "Anlegen",
+  "@redesignPersonFormCreate": {
+    "description": "redesign.personForm.create"
+  },
+  "redesignPersonFormCreateButton": "Person anlegen",
+  "@redesignPersonFormCreateButton": {
+    "description": "redesign.personForm.createButton"
+  },
+  "redesignPersonFormEditTitle": "{name} bearbeiten",
+  "@redesignPersonFormEditTitle": {
+    "description": "redesign.personForm.editTitle",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPersonFormEmailHint": "Bekommt damit Zugang zur App",
+  "@redesignPersonFormEmailHint": {
+    "description": "redesign.personForm.emailHint"
+  },
+  "redesignPersonFormExistingUserHint": "Gibt es für die E-Mail-Adresse schon ein Konto, wird es automatisch dieser Gruppe zugewiesen.",
+  "@redesignPersonFormExistingUserHint": {
+    "description": "redesign.personForm.existingUserHint"
+  },
+  "redesignPersonFormLiveHint": "Änderungen werden sofort gespeichert.",
+  "@redesignPersonFormLiveHint": {
+    "description": "redesign.personForm.liveHint"
+  },
+  "redesignPersonFormMatchDismiss": "Ausblenden",
+  "@redesignPersonFormMatchDismiss": {
+    "description": "redesign.personForm.matchDismiss"
+  },
+  "redesignPersonFormMatchFound": "Person in anderer Gruppe gefunden?",
+  "@redesignPersonFormMatchFound": {
+    "description": "redesign.personForm.matchFound"
+  },
+  "redesignPersonFormMore": "Weitere Angaben",
+  "@redesignPersonFormMore": {
+    "description": "redesign.personForm.more"
+  },
+  "redesignPersonFormMoreHint": "Geburtstag, Beitritt, Lehrer, Zusatzfelder und mehr",
+  "@redesignPersonFormMoreHint": {
+    "description": "redesign.personForm.moreHint"
+  },
+  "redesignPersonFormNewTitle": "Neue Person",
+  "@redesignPersonFormNewTitle": {
+    "description": "redesign.personForm.newTitle"
+  },
+  "redesignPersonFormNoMatchOther": "In deinen anderen Gruppen wurde keine passende Person gefunden.",
+  "@redesignPersonFormNoMatchOther": {
+    "description": "redesign.personForm.noMatchOther"
+  },
+  "redesignPersonFormNotAllowed": "Nur Admins und Verantwortliche können Personen anlegen und bearbeiten.",
+  "@redesignPersonFormNotAllowed": {
+    "description": "redesign.personForm.notAllowed"
+  },
+  "redesignPersonFormNotSet": "Nicht gesetzt",
+  "@redesignPersonFormNotSet": {
+    "description": "redesign.personForm.notSet"
+  },
+  "redesignPersonFormOtherGroups": "Andere Gruppen",
+  "@redesignPersonFormOtherGroups": {
+    "description": "redesign.personForm.otherGroups"
+  },
+  "redesignPersonFormProblemSave": "Gespräch speichern",
+  "@redesignPersonFormProblemSave": {
+    "description": "redesign.personForm.problemSave"
+  },
+  "redesignPersonFormSaved": "Gespeichert ✓",
+  "@redesignPersonFormSaved": {
+    "description": "redesign.personForm.saved"
+  },
+  "redesignPersonFormSearchOtherGroup": "In anderer Gruppe suchen",
+  "@redesignPersonFormSearchOtherGroup": {
+    "description": "redesign.personForm.searchOtherGroup"
+  },
+  "redesignPersonFormTransferOther": "In andere Gruppe übertragen",
+  "@redesignPersonFormTransferOther": {
+    "description": "redesign.personForm.transferOther"
+  },
   "redesignPersonHistory": "Verlauf",
   "@redesignPersonHistory": {
     "description": "redesign.person.history"
