@@ -423,10 +423,16 @@ Future<void> _rdOpenDutiesSheet(BuildContext context) {
                         title: t.title,
                         subtitle: '${_dateShort(t)} · ${_dutyMeta(t)}',
                         showChevron: false,
-                        trailing: TextButton(
-                          onPressed: () => takeDutyAction(ctx, ref, t.attendance.id!),
-                          child: Text(ctx.l10n.signoutIllTakeIt,
-                              style: TextStyle(color: p.link, fontWeight: FontWeight.w600)),
+                        // Below title and date, so a small phone with large
+                        // text keeps the title readable.
+                        footer: Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: TextButton(
+                            onPressed: () => takeDutyAction(ctx, ref, t.attendance.id!),
+                            style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 36)),
+                            child: Text(ctx.l10n.signoutIllTakeIt,
+                                style: TextStyle(color: p.link, fontWeight: FontWeight.w600)),
+                          ),
                         ),
                       ),
                   ],

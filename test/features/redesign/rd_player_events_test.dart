@@ -247,7 +247,7 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.text('Offene Dienste'), findsNWidgets(2));
       // The button sits below title and date, its label is not cut.
-      final button = find.descendant(of: find.byType(ListTile), matching: find.byType(FilledButton));
+      final button = find.widgetWithText(TextButton, 'Ich übernehme');
       expect(button, findsOneWidget);
       expect(tester.getTopLeft(button).dy, greaterThan(tester.getBottomLeft(find.text('Ordnerdienst').last).dy));
       final label = tester.renderObject<RenderParagraph>(
