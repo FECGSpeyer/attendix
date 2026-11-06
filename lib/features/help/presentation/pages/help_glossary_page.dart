@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../data/help_content_service.dart';
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../redesign/presentation/pages/rd_help_pages.dart';
 import '../widgets/help_markdown.dart';
 import '../../../../l10n/l10n.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
@@ -31,6 +33,8 @@ class _HelpGlossaryPageState extends ConsumerState<HelpGlossaryPage> {
 
   @override
   Widget build(BuildContext context) {
+    // REDESIGN (E3): Beta page on the same route.
+    if (ref.watch(redesignEnabledProvider)) return const RdHelpGlossaryPage();
     final service = ref.watch(helpContentServiceProvider);
     final term = _searchTerm.trim().toLowerCase();
     final terms = term.isEmpty

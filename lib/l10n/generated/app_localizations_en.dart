@@ -10920,6 +10920,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignGroupsTitle => 'Switch group';
 
   @override
+  String redesignHelpArticles(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count articles',
+      one: '1 article',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignHelpGlossaryHint => 'Terms of the app explained';
+
+  @override
+  String get redesignHelpSearch => 'Search a question or keyword';
+
+  @override
   String get redesignImportAiConfirmButton => 'Use them';
 
   @override

@@ -1370,6 +1370,11 @@
         "newMissing": "Bitte fülle Name, Kürzel und Hauptgruppe aus.",
         "newCreated": "Die Gruppe wurde gegründet.",
         "deleteAccount": "Konto löschen"
+      },
+      "help": {
+        "search": "Frage oder Stichwort suchen",
+        "articles": "{count, plural, one {1 Artikel} other {{count} Artikel}}",
+        "glossaryHint": "Begriffe der App erklärt"
       }
     }
   },
@@ -2744,6 +2749,11 @@
         "newMissing": "Please fill in name, short name and main group.",
         "newCreated": "The group was created.",
         "deleteAccount": "Delete account"
+      },
+      "help": {
+        "search": "Search a question or keyword",
+        "articles": "{count, plural, one {1 article} other {{count} articles}}",
+        "glossaryHint": "Terms of the app explained"
       }
     }
   }

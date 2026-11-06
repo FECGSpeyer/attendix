@@ -13724,6 +13724,23 @@
   "@redesignGroupsTitle": {
     "description": "redesign.groups.title"
   },
+  "redesignHelpArticles": "{count, plural, one {1 Artikel} other {{count} Artikel}}",
+  "@redesignHelpArticles": {
+    "description": "redesign.help.articles",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignHelpGlossaryHint": "Begriffe der App erklärt",
+  "@redesignHelpGlossaryHint": {
+    "description": "redesign.help.glossaryHint"
+  },
+  "redesignHelpSearch": "Frage oder Stichwort suchen",
+  "@redesignHelpSearch": {
+    "description": "redesign.help.search"
+  },
   "redesignImportAiConfirmButton": "Übernehmen",
   "@redesignImportAiConfirmButton": {
     "description": "redesign.import.aiConfirmButton"
