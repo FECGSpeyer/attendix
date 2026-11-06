@@ -1380,6 +1380,9 @@
         "search": "Frage oder Stichwort suchen",
         "articles": "{count, plural, one {1 Artikel} other {{count} Artikel}}",
         "glossaryHint": "Begriffe der App erklärt"
+      },
+      "admin": {
+        "limitGb": "Höchstens (GB)"
       }
     }
   },
@@ -2764,6 +2767,9 @@
         "search": "Search a question or keyword",
         "articles": "{count, plural, one {1 article} other {{count} articles}}",
         "glossaryHint": "Terms of the app explained"
+      },
+      "admin": {
+        "limitGb": "Maximum (GB)"
       }
     }
   }

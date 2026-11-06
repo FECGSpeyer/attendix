@@ -4,7 +4,12 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/dashboard_providers.dart';
+import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/error_message.dart';
@@ -230,7 +235,6 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
     final churches = churchesAsync.valueOrNull ?? const <Church>[];
     final duplicates = findChurchDuplicates(churches);
 
-    final ios = ionIsIos(context);
     void mergeAll() {
       final pairs = [
         for (final g in duplicates)
@@ -244,6 +248,10 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
       );
     }
 
+    if (ref.watch(redesignEnabledProvider)) {
+      return _buildBeta(context, storage, churchesAsync, churches, duplicates, saving, mergeAll);
+    }
+    final ios = ionIsIos(context);
     // UX_SETTINGS (WAVE 8): administration.page.html — condense title,
     // inset lists (Auswertung / Speicher / Gemeinden) on the light page.
     return IonCondense(builder: (context, collapsed) => Scaffold(
@@ -410,6 +418,210 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
         ],
       ),
     ));
+  }
+
+  /// REDESIGN (E4): small sheet to set the storage limit (same check and
+  /// write as the old field).
+  Future<void> _editLimitBeta() async {
+    await showRdSheet<void>(
+      context,
+      Builder(
+        builder: (ctx) {
+          final p = ctx.rd;
+          final l10n = ctx.l10n;
+          return Padding(
+            padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + MediaQuery.viewInsetsOf(ctx).bottom),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Semantics(header: true, child: Text(l10n.adminMaxStorage, style: RdType.section(p))),
+                const SizedBox(height: 12),
+                RdGroupedList(
+                  children: [
+                    RdFieldRow(
+                      label: l10n.redesignAdminLimitGb,
+                      child: TextField(
+                        controller: _limitController,
+                        autofocus: true,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        decoration: rdInputDecoration(p, l10n.adminUnlimited),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Text(l10n.adminLimitHelper, style: RdType.meta(p, size: 12)),
+                ),
+                const SizedBox(height: 16),
+                RdPrimaryButton(
+                  label: l10n.commonSave,
+                  onPressed: () async {
+                    Navigator.of(ctx).pop();
+                    await _saveFilesLimit();
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Future<void> _churchMoreBeta(Church c, List<Church> churches) async {
+    final l10n = context.l10n;
+    final action = await showAppActionSheet<int>(
+      context,
+      title: c.name,
+      actions: [
+        AppActionSheetAction(value: 0, icon: Icons.edit_outlined, label: l10n.adminRenameChurch),
+        AppActionSheetAction(value: 1, icon: Icons.merge_type, label: l10n.adminMerge),
+      ],
+    );
+    if (!mounted) return;
+    if (action == 0) await _rename(c);
+    if (action == 1) await _mergeManual(c, churches);
+  }
+
+  /// REDESIGN (E4): settings page – Nutzungs-Dashboard, storage limit as a
+  /// value with a small sheet, duplicates as a hint card, Gemeinden as list.
+  Widget _buildBeta(
+    BuildContext context,
+    AsyncValue<TenantStorageInfo> storage,
+    AsyncValue<List<Church>> churchesAsync,
+    List<Church> churches,
+    List<ChurchDuplicateGroup> duplicates,
+    bool saving,
+    VoidCallback mergeAll,
+  ) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final tenant = ref.watch(currentTenantProvider);
+    final maxGb = _toGb(storage.valueOrNull?.maxBytes);
+    final usedBytes = storage.valueOrNull?.usedBytes;
+    return RdPage(
+      children: [
+        RdBackLink(
+          label: l10n.redesignTabMe,
+          onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.me),
+        ),
+        Semantics(header: true, child: Text(l10n.adminTitle, style: RdType.largeTitle(p))),
+        const SizedBox(height: 16),
+        RdGroupedList(
+          children: [
+            RdListRow(
+              leading: RdRowIcon(Icons.analytics_outlined, color: p.primary, background: p.soft),
+              title: l10n.usageTitle,
+              onTap: () => context.push('/dashboard'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        RdGroupLabel(l10n.adminStorageFor(tenant?.longName ?? '')),
+        RdGroupedList(
+          children: [
+            RdListRow(
+              title: l10n.adminMaxStorage,
+              value: maxGb == null ? l10n.adminUnlimited : l10n.adminGb(_fmtGb(maxGb)),
+              onTap: saving || !storage.hasValue ? null : _editLimitBeta,
+            ),
+            if (usedBytes != null)
+              RdListRow(
+                title: l10n.adminCurrentlyUsed,
+                value: l10n.adminGb(_fmtGb(_toGb(usedBytes)!)),
+                showChevron: false,
+              ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        RdGroupLabel(l10n.adminChurchesCount(churches.length)),
+        if (churchesAsync.isLoading && churches.isEmpty)
+          const Padding(padding: EdgeInsets.all(20), child: Center(child: AppSpinner()))
+        else ...[
+          if (duplicates.isNotEmpty) ...[
+            RdCard(
+              color: p.lateSoft,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.warning_amber_rounded, color: p.late),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text(l10n.adminDuplicateGroups(duplicates.length), style: RdType.cardTitle(p))),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(l10n.adminDuplicatesHint, style: RdType.meta(p, size: 14)),
+                  const SizedBox(height: 8),
+                  RdTextLink(label: l10n.adminMergeAllDuplicates, onTap: saving ? () {} : mergeAll),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            RdGroupedList(
+              children: [
+                for (final g in duplicates)
+                  RdListRow(
+                    title: g.target.name,
+                    subtitle: l10n.adminTimesPresent(g.duplicates.length + 1),
+                    showChevron: false,
+                    trailing: RdTextLink(
+                      label: l10n.adminMerge,
+                      onTap: () {
+                        if (saving) return;
+                        _merge(
+                          [for (final dup in g.duplicates) (g.target.id!, dup.id!)],
+                          title: l10n.adminMergeChurches,
+                          message: l10n.adminMergeMessage(
+                              g.duplicates.map((d) => d.name).join(', '), g.target.name),
+                          confirm: l10n.adminMerge,
+                        );
+                      },
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+          ],
+          RdGroupedList(
+            children: [
+              Semantics(
+                expanded: _showAllChurches,
+                child: RdListRow(
+                  title: l10n.adminShowAllChurches,
+                  showChevron: false,
+                  trailing: Icon(_showAllChurches ? Icons.expand_less : Icons.expand_more, color: p.text2),
+                  onTap: () => setState(() => _showAllChurches = !_showAllChurches),
+                ),
+              ),
+              if (_showAllChurches)
+                for (final c in churches)
+                  RdListRow(
+                    leading: RdRowIcon(Icons.home_outlined, color: p.text2, background: p.track),
+                    title: c.name,
+                    showChevron: false,
+                    trailing: IconButton(
+                      tooltip: l10n.redesignTenantsMore(c.name),
+                      icon: Icon(Icons.more_horiz, color: p.text2),
+                      onPressed: saving ? null : () => _churchMoreBeta(c, churches),
+                    ),
+                  ),
+              RdListRow(
+                leading: RdRowIcon(Icons.add, color: p.primary, background: p.soft),
+                title: l10n.adminAddChurch,
+                titleColor: p.link,
+                showChevron: false,
+                onTap: _addChurch,
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
   }
 }
 

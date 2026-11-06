@@ -15983,6 +15983,12 @@ abstract class AppLocalizations {
   /// **'Konto wechseln'**
   String get redesignAccountsTitle;
 
+  /// redesign.admin.limitGb
+  ///
+  /// In de, this message translates to:
+  /// **'Höchstens (GB)'**
+  String get redesignAdminLimitGb;
+
   /// redesign.adminTitle
   ///
   /// In de, this message translates to:

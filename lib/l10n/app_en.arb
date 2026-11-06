@@ -2642,6 +2642,7 @@
   "redesignAccountsSignIn": "Sign in",
   "redesignAccountsSwitched": "Signed in as {name}",
   "redesignAccountsTitle": "Switch account",
+  "redesignAdminLimitGb": "Maximum (GB)",
   "redesignAdminTitle": "Administration",
   "redesignAdminsListAdd": "Add admin",
   "redesignAdminsListEmpty": "No admins yet.",
