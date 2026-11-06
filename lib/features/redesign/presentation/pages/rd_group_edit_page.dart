@@ -270,13 +270,16 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
       );
       if (!confirmed || !mounted) return;
       final notifier = ref.read(groupNotifierProvider.notifier);
+      // Nothing is written to the group while it is deleted (a field that
+      // loses focus now); a failed delete writes again.
+      _deleted = true;
       await notifier.deleteGroup(_groupId);
       if (!mounted) return;
       if (ref.read(groupNotifierProvider).hasError) {
+        _deleted = false;
         ToastHelper.showError(context, l10n.instrumentsCannotDelete);
         return;
       }
-      _deleted = true; // nothing left to save
       ref.invalidate(playerCountsForGroupsProvider);
       if (context.canPop()) {
         context.pop();

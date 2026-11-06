@@ -142,13 +142,16 @@ class _RdManageListPageState extends State<RdManageListPage> {
     });
   }
 
-  void _cancelSorting() => setState(() => _sorting = null);
+  void _cancelSorting() {
+    if (_saving) return; // the moved order stays until the save has answered
+    setState(() => _sorting = null);
+  }
 
   Future<void> _finishSorting() async {
     final sorting = _sorting;
     if (sorting == null || _saving) return;
     if (!_moved) {
-      _cancelSorting();
+      setState(() => _sorting = null);
       return;
     }
     setState(() => _saving = true);
