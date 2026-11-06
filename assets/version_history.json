@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.60.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Noten-Import: Werke werden auch bei Tippfehlern und anderen Schreibweisen erkannt (Buchstabenvergleich)",
+        "✨ Noten-Import: Ordner, die neu wären oder nur über die Nummer passen, prüft die KI gegen die Werkliste; ihre Treffer stehen zur Prüfung"
+      ]
+    },
+    {
       "version": "0.59.1",
       "date": "6.11.2026",
       "changes": [
