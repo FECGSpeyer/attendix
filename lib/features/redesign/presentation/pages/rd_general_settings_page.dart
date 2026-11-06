@@ -52,20 +52,35 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
     }
   }
 
-  /// Saves [values] for the current tenant and applies them locally with
-  /// [apply]. Returns whether it was stored.
-  Future<bool> _save(Map<String, dynamic> values, Tenant Function(Tenant t) apply) async {
-    if (_saving || DemoGuard.blocked()) return false;
-    final tenantId = ref.read(currentTenantProvider)?.id;
-    if (tenantId == null) return false;
-    final repo = ref.read(tenantSettingsRepositoryForTenantProvider(tenantId));
+  /// Saves [values] for the group [tenantId] (the group shown when the
+  /// change started) and applies them locally with [apply]. Aborts when the
+  /// current group changed meanwhile. Everything it needs after the `await`
+  /// is bound before it, so leaving the page while saving still updates the
+  /// local group. With [evaluate] the Problemfall rules are re-evaluated
+  /// (Ionic does that after every save). Returns whether it was stored.
+  Future<bool> _save(
+    int? tenantId,
+    Map<String, dynamic> values,
+    Tenant Function(Tenant t) apply, {
+    bool evaluate = false,
+  }) async {
+    if (_saving || DemoGuard.blocked() || tenantId == null) return false;
+    if (ref.read(currentTenantProvider)?.id != tenantId) return false;
+    final container = ProviderScope.containerOf(context, listen: false);
+    final repo = container.read(tenantSettingsRepositoryForTenantProvider(tenantId));
+    final tenantNotifier = container.read(currentTenantProvider.notifier);
+    final failed = context.l10n.rdSettingsSaveFailed;
     setState(() => _saving = true);
     try {
       await repo.updateSettings(values);
-      await ref.read(currentTenantProvider.notifier).updateTenantLocalIfCurrent(tenantId, apply);
+      await tenantNotifier.updateTenantLocalIfCurrent(tenantId, apply);
+      // The group list keeps a copy of each group: refresh it, or switching
+      // groups would bring back the old values.
+      container.invalidate(userTenantsProvider);
+      if (evaluate) await repo.evaluateCriticalRules();
       return true;
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, context.l10n.rdSettingsSaveFailed);
+      if (mounted) ToastHelper.showError(context, failed);
       return false;
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -83,10 +98,9 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
       capitalization: TextCapitalization.words,
     );
     if (value == null || !mounted) return;
-    final ok = await _save({
+    await _save(t.id, {
       short ? 'shortName' : 'longName': value,
     }, (c) => short ? c.copyWith(shortName: value) : c.copyWith(longName: value));
-    if (ok) ref.invalidate(userTenantsProvider);
   }
 
   DateTime _seasonOf(Tenant t) =>
@@ -113,7 +127,8 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
     );
     if (picked == null || !mounted) return;
     final value = _isoDate(picked);
-    if (!await _save({'seasonStart': value}, (c) => c.copyWith(seasonStart: value))) return;
+    final ok = await _save(t.id, {'seasonStart': value}, (c) => c.copyWith(seasonStart: value), evaluate: true);
+    if (!ok) return;
     // The season start changes every percentage: offer to undo it.
     messenger?.showSnackBar(
       SnackBar(
@@ -122,7 +137,7 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
         action: SnackBarAction(
           label: l10n.rdSettingsUndo,
           onPressed: () {
-            if (mounted) _save({'seasonStart': before}, (c) => c.copyWith(seasonStart: before));
+            if (mounted) _save(t.id, {'seasonStart': before}, (c) => c.copyWith(seasonStart: before), evaluate: true);
           },
         ),
       ),
@@ -135,7 +150,7 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
       text: t.showAllAttendancesInfoText ?? '',
       defaultText: context.l10n.defaultsShowAllInfoText,
     );
-    await _save({
+    await _save(t.id, {
       'show_all_attendances': on,
       'show_all_attendances_info_text': info,
     }, (c) => c.copyWith(showAllAttendances: on, showAllAttendancesInfoText: info));
@@ -152,7 +167,7 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
     );
     if (value == null || !mounted) return;
     final info = normalizeShowAllInfoText(enabled: true, text: value, defaultText: l10n.defaultsShowAllInfoText);
-    await _save({'show_all_attendances_info_text': info}, (c) => c.copyWith(showAllAttendancesInfoText: info));
+    await _save(t.id, {'show_all_attendances_info_text': info}, (c) => c.copyWith(showAllAttendancesInfoText: info));
   }
 
   Future<void> _editReasons(Tenant t, {required bool late}) async {
@@ -165,7 +180,7 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
     );
     if (list == null || !mounted) return;
     final value = normalizeReasons(list);
-    await _save({
+    await _save(t.id, {
       late ? 'late_reasons' : 'absence_reasons': value,
     }, (c) => late ? c.copyWith(lateReasons: value) : c.copyWith(absenceReasons: value));
   }
@@ -183,13 +198,13 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
       }
       final id = (t.registerId ?? '').isNotEmpty ? t.registerId! : const Uuid().v4();
       final fields = initialRegistrationFields(t.registrationFields);
-      await _save({
+      await _save(t.id, {
         'register_id': id,
         'registration_fields': fields,
       }, (c) => c.copyWith(registerId: id, registrationFields: fields));
     } else {
       // Ionic: off → no link, no auto approval, no fields.
-      await _save({
+      await _save(t.id, {
         'register_id': null,
         'auto_approve_registrations': false,
         'registration_fields': <String>[],
@@ -216,7 +231,7 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
       hint: l10n.rdSettingsRegisterFieldsHint,
     );
     if (selected == null || !mounted) return;
-    await _save({'registration_fields': selected}, (c) => c.copyWith(registrationFields: selected));
+    await _save(t.id, {'registration_fields': selected}, (c) => c.copyWith(registrationFields: selected));
   }
 
   String _registrationFieldsLabel(Tenant t) {
@@ -235,7 +250,7 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
 
   Future<void> _toggleSharing(Tenant t, bool on) async {
     final id = on ? ((t.songSharingId ?? '').isNotEmpty ? t.songSharingId! : const Uuid().v4()) : null;
-    await _save({'song_sharing_id': id}, (c) => c.copyWith(songSharingId: id));
+    await _save(t.id, {'song_sharing_id': id}, (c) => c.copyWith(songSharingId: id));
   }
 
   Future<void> _copyLink(String link) async {
@@ -258,7 +273,7 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
     );
     if (region == null || !mounted) return;
     final value = region.isEmpty ? null : region;
-    await _save({'region': value}, (c) => c.copyWith(region: value));
+    await _save(t.id, {'region': value}, (c) => c.copyWith(region: value));
   }
 
   String _regionLabel(Tenant t) {
@@ -271,15 +286,15 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
 
   List<CriticalRule> _rules(Tenant t) => [...?t.criticalRules];
 
-  Future<void> _saveRules(List<CriticalRule> rules, String toast) async {
-    final tenantId = ref.read(currentTenantProvider)?.id;
-    final ok = await _save({
-      'critical_rules': rules.map(criticalRuleToJson).toList(),
-    }, (c) => c.copyWith(criticalRules: rules));
-    if (!ok || tenantId == null) return;
-    if (mounted) ToastHelper.showSuccess(context, toast);
-    // Ionic re-evaluates the Problemfall rules right away.
-    await ref.read(tenantSettingsRepositoryForTenantProvider(tenantId)).evaluateCriticalRules();
+  Future<void> _saveRules(Tenant t, List<CriticalRule> rules, String toast) async {
+    final ok = await _save(
+      t.id,
+      {'critical_rules': rules.map(criticalRuleToJson).toList()},
+      (c) => c.copyWith(criticalRules: rules),
+      // Ionic re-evaluates the Problemfall rules right away.
+      evaluate: true,
+    );
+    if (ok && mounted) ToastHelper.showSuccess(context, toast);
   }
 
   Future<void> _ruleSheet(Tenant t, {int? index}) async {
@@ -313,6 +328,7 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
       rules[index] = rule;
     }
     await _saveRules(
+      t,
       rules,
       index == null ? l10n.generalSettingsFlutterRuleAdded : l10n.generalSettingsFlutterRuleUpdated,
     );
@@ -343,7 +359,7 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
     final current = ref.read(currentTenantProvider);
     if (current == null) return;
     final rules = _rules(current)..removeWhere((r) => r.id == rule.id);
-    await _saveRules(rules, l10n.generalSettingsFlutterRuleDeleted);
+    await _saveRules(t, rules, l10n.generalSettingsFlutterRuleDeleted);
   }
 
   // ---------------------------------------------------------------- build
@@ -407,7 +423,9 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
               title: l10n.rdSettingsShiftPresent,
               subtitle: l10n.rdSettingsShiftPresentHint,
               value: t.shiftExcusedAsPresent,
-              onChanged: on((v) => _save({'shift_excused_as_present': v}, (c) => c.copyWith(shiftExcusedAsPresent: v))),
+              onChanged: on(
+                (v) => _save(t.id, {'shift_excused_as_present': v}, (c) => c.copyWith(shiftExcusedAsPresent: v)),
+              ),
             ),
           ],
         ),
@@ -436,13 +454,13 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
                 title: l10n.rdSettingsDutyView,
                 subtitle: l10n.rdSettingsDutyViewHint,
                 value: t.dutyView,
-                onChanged: on((v) => _save({'duty_view': v}, (c) => c.copyWith(dutyView: v))),
+                onChanged: on((v) => _save(t.id, {'duty_view': v}, (c) => c.copyWith(dutyView: v))),
               ),
             RdSwitchRow(
               title: l10n.rdSettingsMembersList,
               subtitle: l10n.rdSettingsMembersListHint,
               value: t.showMembersList,
-              onChanged: on((v) => _save({'showMembersList': v}, (c) => c.copyWith(showMembersList: v))),
+              onChanged: on((v) => _save(t.id, {'showMembersList': v}, (c) => c.copyWith(showMembersList: v))),
             ),
           ],
         ),
@@ -483,7 +501,7 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
                 title: l10n.rdSettingsAutoApprove,
                 value: t.autoApproveRegistrations,
                 onChanged: on(
-                  (v) => _save({'auto_approve_registrations': v}, (c) => c.copyWith(autoApproveRegistrations: v)),
+                  (v) => _save(t.id, {'auto_approve_registrations': v}, (c) => c.copyWith(autoApproveRegistrations: v)),
                 ),
               ),
               RdListRow(
@@ -523,19 +541,19 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
                 title: l10n.generalSettingsMaintainTeachers,
                 subtitle: l10n.rdSettingsTeachersHint,
                 value: t.maintainTeachers,
-                onChanged: on((v) => _save({'maintainTeachers': v}, (c) => c.copyWith(maintainTeachers: v))),
+                onChanged: on((v) => _save(t.id, {'maintainTeachers': v}, (c) => c.copyWith(maintainTeachers: v))),
               ),
             RdSwitchRow(
               title: l10n.generalSettingsParentsFeature,
               subtitle: l10n.rdSettingsParentsHint,
               value: t.parents ?? false,
-              onChanged: on((v) => _save({'parents': v}, (c) => c.copyWith(parents: v))),
+              onChanged: on((v) => _save(t.id, {'parents': v}, (c) => c.copyWith(parents: v))),
             ),
             RdSwitchRow(
               title: l10n.rdSettingsHolidays,
               subtitle: l10n.rdSettingsHolidaysHint,
               value: t.showHolidays,
-              onChanged: on((v) => _save({'showHolidays': v}, (c) => c.copyWith(showHolidays: v))),
+              onChanged: on((v) => _save(t.id, {'showHolidays': v}, (c) => c.copyWith(showHolidays: v))),
             ),
             if (t.showHolidays)
               RdListRow(
@@ -550,10 +568,7 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
         RdGroupedList(
           children: [
             for (var i = 0; i < rules.length; i++)
-              RdListRow(
-                title: rules[i].describe(types),
-                onTap: enabled ? () => _ruleActions(t, i) : null,
-              ),
+              RdListRow(title: rules[i].describe(types), onTap: enabled ? () => _ruleActions(t, i) : null),
             RdListRow(
               title: l10n.rdSettingsAddRule,
               titleColor: p.primary,

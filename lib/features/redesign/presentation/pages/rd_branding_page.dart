@@ -43,17 +43,21 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
     }
   }
 
-  void _refresh() {
-    ref.invalidate(brandingOrganisationProvider);
-    ref.invalidate(brandingSourceProvider);
-    ref.invalidate(currentOrganisationProvider);
-  }
-
-  /// Stores logo and text together (the repository writes both columns).
-  Future<bool> _store(OrganisationSettingsRepository repo, {required String logoUrl, required String text}) async {
+  /// Stores logo and text together (the repository writes both columns)
+  /// and waits until the organisation is loaded again: [_busy] stays on until
+  /// then, so no change can start from the old values and overwrite the new
+  /// logo or text.
+  Future<void> _store(
+    ProviderContainer container,
+    OrganisationSettingsRepository repo, {
+    required String logoUrl,
+    required String text,
+  }) async {
     await repo.updateBranding(logoUrl: logoUrl, brandingText: text);
-    _refresh();
-    return true;
+    container.invalidate(brandingOrganisationProvider);
+    container.invalidate(brandingSourceProvider);
+    container.invalidate(currentOrganisationProvider);
+    if (mounted) await ref.read(brandingOrganisationProvider.future);
   }
 
   Future<void> _run(Future<void> Function() action) async {
@@ -72,6 +76,7 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
     final l10n = context.l10n;
     // Read the tenant-bound repository before the first await.
     final repo = ref.read(organisationSettingsRepositoryWithTenantProvider);
+    final container = ProviderScope.containerOf(context, listen: false);
     final result = await FilePicker.platform.pickFiles(type: FileType.image, withData: true);
     final file = result?.files.firstOrNull;
     if (file == null || file.bytes == null || !mounted) return;
@@ -90,7 +95,7 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
         file.bytes!,
         contentType: ext == 'svg' ? 'image/svg+xml' : 'image/${ext == 'jpg' ? 'jpeg' : ext}',
       );
-      await _store(repo, logoUrl: url, text: org.brandingText ?? '');
+      await _store(container, repo, logoUrl: url, text: org.brandingText ?? '');
       if (mounted) ToastHelper.showSuccess(context, l10n.rdSettingsBrandingLogoSaved);
     });
   }
@@ -98,6 +103,7 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
   Future<void> _removeLogo(Organisation org) async {
     final l10n = context.l10n;
     final repo = ref.read(organisationSettingsRepositoryWithTenantProvider);
+    final container = ProviderScope.containerOf(context, listen: false);
     final confirmed = await showAppConfirm(
       context,
       title: l10n.rdSettingsBrandingRemoveLogo,
@@ -107,7 +113,7 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
     if (!confirmed || !mounted) return;
     await _run(() async {
       await repo.removeLogo();
-      await _store(repo, logoUrl: '', text: org.brandingText ?? '');
+      await _store(container, repo, logoUrl: '', text: org.brandingText ?? '');
       if (mounted) ToastHelper.showSuccess(context, l10n.rdSettingsBrandingLogoRemoved);
     });
   }
@@ -115,6 +121,7 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
   Future<void> _editText(Organisation org) async {
     final l10n = context.l10n;
     final repo = ref.read(organisationSettingsRepositoryWithTenantProvider);
+    final container = ProviderScope.containerOf(context, listen: false);
     final value = await showRdTextSheet(
       context,
       title: l10n.brandingText,
@@ -124,7 +131,7 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
     );
     if (value == null || !mounted) return;
     await _run(() async {
-      await _store(repo, logoUrl: org.logoUrl ?? '', text: value);
+      await _store(container, repo, logoUrl: org.logoUrl ?? '', text: value);
       if (mounted) ToastHelper.showSuccess(context, l10n.brandingSaved);
     });
   }
