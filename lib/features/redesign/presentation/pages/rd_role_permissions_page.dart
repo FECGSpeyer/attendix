@@ -10,6 +10,7 @@ import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/role_permission/tenant_role_permission.dart';
+import '../../../../data/repositories/role_permission_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
@@ -44,21 +45,43 @@ bool _absenceSwitch(Role role) => role == Role.player || role == Role.helper || 
 bool _hasSwitches(Role role) => _helperSwitches(role) || _selfPauseSwitch(role) || _absenceSwitch(role);
 
 class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
+  /// What the switches show (may hold changes still being saved).
   final Map<Role, TenantRolePermission> _permissions = {};
+
+  /// What is confirmed saved; a failed save jumps back to this.
+  final Map<Role, TenantRolePermission> _saved = {};
   bool _filesShared = false;
+  bool _savedFilesShared = false;
   bool _initialized = false;
+
+  /// The repository (bound to one group and account) the shown data was
+  /// loaded with. Every save goes through it, also after a group switch.
+  RolePermissionRepository? _repo;
+
+  /// Raised on a group or account switch: saves queued before it no longer
+  /// touch what the page shows.
+  int _generation = 0;
 
   /// Saves run one after another, so the last switch always wins.
   Future<void> _queue = Future.value();
 
-  void _initFrom(List<TenantRolePermission> permissions) {
-    if (_initialized) return;
+  void _initFrom(List<TenantRolePermission> permissions, RolePermissionRepository repo) {
     _initialized = true;
+    _repo = repo;
     for (final (role, _) in rdConfigurableRoles(context.l10n)) {
       final p = permissions.where((p) => p.role == role.value).firstOrNull;
-      if (p != null) _permissions[role] = p;
+      if (p != null) _permissions[role] = _saved[role] = p;
     }
-    _filesShared = ref.read(currentTenantProvider)?.filesShared ?? false;
+    final tenant = ref.read(currentTenantProvider);
+    _filesShared = _savedFilesShared = tenant?.id == repo.currentTenantId && (tenant?.filesShared ?? false);
+  }
+
+  void _reset() {
+    _initialized = false;
+    _repo = null;
+    _generation++;
+    _permissions.clear();
+    _saved.clear();
   }
 
   void _failed() {
@@ -66,30 +89,41 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
   }
 
   void _setPermission(Role role, TenantRolePermission next) {
-    final before = _permissions[role];
-    if (before == null || before == next) return;
+    final repo = _repo;
+    if (repo == null || _permissions[role] == null || _permissions[role] == next) return;
     setState(() => _permissions[role] = next);
-    // Bound now: the save still belongs to this group after a switch.
     final notifier = ref.read(rolePermissionNotifierProvider.notifier);
+    final generation = _generation;
     _queue = _queue.then((_) async {
-      if (await notifier.save([next])) return;
-      if (!mounted) return;
+      final ok = await notifier.save([next], repo: repo);
+      if (!mounted || generation != _generation) return;
+      if (ok) {
+        _saved[role] = next;
+        return;
+      }
+      // A newer change still waits in the queue: it decides the end state.
       setState(() {
-        if (_permissions[role] == next) _permissions[role] = before;
+        if (_permissions[role] == next) _permissions[role] = _saved[role]!;
       });
       _failed();
     });
   }
 
   void _setFilesShared(bool value) {
-    if (value == _filesShared) return;
+    final repo = _repo;
+    if (repo == null || value == _filesShared) return;
     setState(() => _filesShared = value);
     final notifier = ref.read(rolePermissionNotifierProvider.notifier);
+    final generation = _generation;
     _queue = _queue.then((_) async {
-      if (await notifier.save(const [], filesShared: value)) return;
-      if (!mounted) return;
+      final ok = await notifier.save(const [], filesShared: value, repo: repo);
+      if (!mounted || generation != _generation) return;
+      if (ok) {
+        _savedFilesShared = value;
+        return;
+      }
       setState(() {
-        if (_filesShared == value) _filesShared = !value;
+        if (_filesShared == value) _filesShared = _savedFilesShared;
       });
       _failed();
     });
@@ -166,8 +200,12 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     final l10n = context.l10n;
     final async = ref.watch(rolePermissionsProvider);
     final isAdmin = ref.watch(effectiveRoleProvider).isAdmin;
-    final permissions = async.valueOrNull;
-    if (permissions != null) _initFrom(permissions);
+    // A group or account switch gives a new repository: start over with the
+    // data of the new group instead of keeping the old switches.
+    final repo = ref.watch(rolePermissionRepositoryWithTenantProvider);
+    if (_initialized && !identical(repo, _repo)) _reset();
+    // Only fully loaded data of this group (no old value during a reload).
+    if (!_initialized && repo.hasTenantId && permissionsConfirmed(async)) _initFrom(async.requireValue, repo);
 
     final header = <Widget>[
       RdBackLink(

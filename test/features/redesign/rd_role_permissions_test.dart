@@ -6,6 +6,7 @@ import 'package:attendix/core/router/redesign_routes.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/role_permission/tenant_role_permission.dart';
+import 'package:attendix/data/repositories/role_permission_repository.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_role_permissions_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
 import 'package:attendix/l10n/l10n.dart';
@@ -30,8 +31,13 @@ class _FakeNotifier extends RolePermissionNotifier {
   final bool result;
 
   @override
-  Future<bool> save(List<TenantRolePermission> permissions, {bool? filesShared}) async {
+  Future<bool> save(
+    List<TenantRolePermission> permissions, {
+    bool? filesShared,
+    RolePermissionRepository? repo,
+  }) async {
     saves.add(permissions);
+    await Future<void>.delayed(const Duration(milliseconds: 200));
     return result;
   }
 }
@@ -98,7 +104,7 @@ void main() {
       expect(_switchOf(tester, 'Eigene Pausierung erlauben').value, isTrue);
     });
 
-    testWidgets('a failed save puts the switch back', (tester) async {
+    testWidgets('failed saves put the switch back to the saved value', (tester) async {
       tester.view.physicalSize = const Size(393, 4000);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
@@ -106,9 +112,12 @@ void main() {
       await tester.pumpWidget(_app(saves, result: false));
       await _settle(tester);
 
+      // On, off again while the first save still runs; both saves fail.
+      await tester.tap(find.text('Eigene Pausierung erlauben'));
+      await tester.pump(const Duration(milliseconds: 50));
       await tester.tap(find.text('Eigene Pausierung erlauben'));
       await _settle(tester);
-      expect(saves, hasLength(1));
+      expect(saves, hasLength(2));
       expect(_switchOf(tester, 'Eigene Pausierung erlauben').value, isFalse);
       await tester.pump(const Duration(seconds: 5));
     });
