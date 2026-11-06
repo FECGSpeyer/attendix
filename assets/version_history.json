@@ -12,6 +12,13 @@
       ]
     },
     {
+      "version": "0.52.1",
+      "date": "6.11.2026",
+      "changes": [
+        "🐛 Übernahme ungesendeter Ionic-Offline-Änderungen: neuere Änderungen auf dem Server gewinnen, ein Abbruch beim ersten Start verliert nichts mehr, Android-Lesefenster abgeschottet"
+      ]
+    },
+    {
       "version": "0.52.0",
       "date": "6.11.2026",
       "changes": [

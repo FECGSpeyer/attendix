@@ -54,9 +54,9 @@ void main() {
       resolveCalls.add(ids);
       // pa-3 belongs to an instance the user is not a member of.
       const known = <String, IonicQueueTarget>{
-        'pa-1': (tenantId: 42, attendanceId: 7),
-        'pa-2': (tenantId: 43, attendanceId: 8),
-        'pa-4': (tenantId: 42, attendanceId: 9),
+        'pa-1': (tenantId: 42, attendanceId: 7, changedAt: null),
+        'pa-2': (tenantId: 43, attendanceId: 8, changedAt: null),
+        'pa-4': (tenantId: 42, attendanceId: 9, changedAt: null),
       };
       return {for (final id in ids) if (known[id] != null) id: known[id]!};
     }
@@ -167,6 +167,58 @@ void main() {
       expect(queue.single.payload, {'status': 1});
     });
 
+    test('a server change after the Ionic write wins, an older one does not',
+        () async {
+      // The Ionic writes were queued at 2026-10-01T10:00:00Z (_ionic).
+      setPending([
+        _ionic('1', 'pa-1', {'status': 2}),
+        _ionic('2', 'pa-2', {'status': 3}),
+        _ionic('3', 'pa-4', {'status': 1}),
+      ]);
+      Future<Map<String, IonicQueueTarget>> withChangedAt(
+              List<String> ids) async =>
+          {
+            // Saved online after a failed import (or this write replayed).
+            'pa-1': (
+              tenantId: 42,
+              attendanceId: 7,
+              changedAt: '2026-10-01T10:30:00.123456+00:00',
+            ),
+            'pa-2': (
+              tenantId: 43,
+              attendanceId: 8,
+              changedAt: '2026-09-30T08:00:00+00:00',
+            ),
+            // Unparsable: imported as before.
+            'pa-4': (tenantId: 42, attendanceId: 9, changedAt: 'kaputt'),
+          };
+
+      expect(
+          await importIonicOfflineQueue(
+              store: store, userId: 'u1', resolve: withChangedAt),
+          2);
+      final queue = await store.load();
+      expect(queue.map((e) => e.id), ['ionic:2', 'ionic:3']);
+      // changed_at without offset is UTC, not device time.
+      expect(
+          ionicServerChangeIsNewer(
+              '2026-10-01T10:00:01', '2026-10-01T10:00:00Z'),
+          isTrue);
+      expect(
+          ionicServerChangeIsNewer(
+              '2026-10-01T09:59:59', '2026-10-01T10:00:00Z'),
+          isFalse);
+    });
+
+    test('times without offset are UTC, also in a daylight saving gap', () {
+      expect(
+          ionicServerChangeIsNewer('2026-03-29T02:30:00', '2026-03-29T02:29:00Z'),
+          isTrue);
+      expect(
+          ionicServerChangeIsNewer('2026-03-29T02:29:00Z', '2026-03-29T02:30:00'),
+          isFalse);
+    });
+
     test('network error or session change keeps the entries for later',
         () async {
       setPending([_ionic('1', 'pa-1', {'status': 2})]);
@@ -211,9 +263,19 @@ void main() {
 
     test('first start after the Ionic app: takeover stays open', () async {
       SharedPreferences.setMockInitialValues({});
-      await prepareIonicOfflineQueueTakeover();
+      expect(await prepareIonicOfflineQueueTakeover(), isTrue,
+          reason: 'marker stored: the session takeover may run');
       final prefs = await SharedPreferences.getInstance();
       expect(prefs.containsKey(ionicQueueDoneKey), isFalse);
+      expect(prefs.getInt('ionic_offline_queue_takeover_attempts'), 0,
+          reason: 'start marker stored before the session takeover');
+
+      // Crash after the session takeover wrote its keys, before the queue
+      // read: the next start must not end the takeover.
+      await prefs.setBool('ionic_session_takeover_done', true);
+      await prepareIonicOfflineQueueTakeover();
+      expect(prefs.containsKey(ionicQueueDoneKey), isFalse);
+      expect(prefs.getInt('ionic_offline_queue_takeover_attempts'), 0);
     });
   });
 }
