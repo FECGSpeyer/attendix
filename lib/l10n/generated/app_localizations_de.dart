@@ -11822,7 +11822,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignManageAnnouncementsHint =>
-      'Gesendete Mitteilungen ansehen';
+      'Schreiben, Gesendetes, Automatik';
 
   @override
   String get redesignManageAreaCommunication => 'Kommunikation';
@@ -12088,6 +12088,25 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get redesignMessagesBellAllGroups => 'Alle Gruppen';
+
+  @override
+  String get redesignMessagesBellEarlier => 'Früher';
+
+  @override
+  String get redesignMessagesBellNew => 'Neu';
+
+  @override
+  String get redesignMessagesBellThisGroup => 'Diese Gruppe';
+
+  @override
+  String get redesignMessagesDelivery => 'Zustellung';
+
+  @override
+  String get redesignMessagesIntro =>
+      'Alles, was an die Gruppe ging, mit Lesestatus.';
 
   @override
   String get redesignNotifForMe => 'Für mich';

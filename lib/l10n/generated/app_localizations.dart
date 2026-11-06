@@ -19040,7 +19040,7 @@ abstract class AppLocalizations {
   /// redesign.manage.announcementsHint
   ///
   /// In de, this message translates to:
-  /// **'Gesendete Mitteilungen ansehen'**
+  /// **'Schreiben, Gesendetes, Automatik'**
   String get redesignManageAnnouncementsHint;
 
   /// redesign.manage.areaCommunication
@@ -19444,6 +19444,42 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {1 Person} other {{count} Personen}}'**
   String redesignMembersTotal(num count);
+
+  /// redesign.messages.bellAllGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Gruppen'**
+  String get redesignMessagesBellAllGroups;
+
+  /// redesign.messages.bellEarlier
+  ///
+  /// In de, this message translates to:
+  /// **'Früher'**
+  String get redesignMessagesBellEarlier;
+
+  /// redesign.messages.bellNew
+  ///
+  /// In de, this message translates to:
+  /// **'Neu'**
+  String get redesignMessagesBellNew;
+
+  /// redesign.messages.bellThisGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Gruppe'**
+  String get redesignMessagesBellThisGroup;
+
+  /// redesign.messages.delivery
+  ///
+  /// In de, this message translates to:
+  /// **'Zustellung'**
+  String get redesignMessagesDelivery;
+
+  /// redesign.messages.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Alles, was an die Gruppe ging, mit Lesestatus.'**
+  String get redesignMessagesIntro;
 
   /// redesign.notif.forMe
   ///
