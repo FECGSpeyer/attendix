@@ -650,6 +650,19 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     final created = plan.works.where((w) => rdDefaultTarget(plan, w).isNew).length;
     final unanswered = plan.questions.where((q) => d.answers[q.key] == null && q.newGroup == null).length;
     final pendingGroups = rdImportPendingGroups(plan, d);
+    // Werk folders the KI is asked about, or answered for.
+    final askWorks =
+        rdImportWorksToAsk(plan).isNotEmpty || plan.works.any((w) => w.match.kind == RdMatchKind.byAi);
+    final aiSwitch = RdGroupedList(
+      children: [
+        RdSwitchRow(
+          title: l10n.redesignImportAiOption,
+          subtitle: l10n.redesignImportAiOptionDetail,
+          value: state.useAi,
+          onChanged: _controller.setUseAi,
+        ),
+      ],
+    );
     return RdImportFrame(
       backLabel: l10n.redesignImportStepSource,
       onBack: _back,
@@ -681,9 +694,14 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
           ),
         ),
         const SizedBox(height: 20),
-        if (plan.questions.isEmpty)
-          RdCard(child: Text(l10n.redesignImportQuestionsNone, style: RdType.body(p)))
-        else ...[
+        if (plan.questions.isEmpty) ...[
+          RdCard(child: Text(l10n.redesignImportQuestionsNone, style: RdType.body(p))),
+          // Unsure Werk folders go to the KI too: the switch stays.
+          if (askWorks) ...[
+            const SizedBox(height: 10),
+            aiSwitch,
+          ],
+        ] else ...[
           RdSectionHeader(l10n.redesignImportQuestionsTitle(plan.questions.length)),
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
@@ -691,16 +709,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
           ),
           // The switch sits above the questions: the names go to the KI
           // only while it is on.
-          RdGroupedList(
-            children: [
-              RdSwitchRow(
-                title: l10n.redesignImportAiOption,
-                subtitle: l10n.redesignImportAiOptionDetail,
-                value: state.useAi,
-                onChanged: _controller.setUseAi,
-              ),
-            ],
-          ),
+          aiSwitch,
           const SizedBox(height: 10),
           if (_aiNote(context, state) case final note?)
             Padding(

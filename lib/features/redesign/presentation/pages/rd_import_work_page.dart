@@ -116,6 +116,7 @@ class RdImportWorkPage extends ConsumerWidget {
             RdMatchKind.numberOnly => l10n.redesignImportMatchNumberOnly,
             RdMatchKind.titleOnly => l10n.redesignImportMatchTitleOnly,
             RdMatchKind.ambiguous => l10n.redesignImportMatchAmbiguous,
+            RdMatchKind.byAi => l10n.redesignImportMatchByAi,
             _ => null,
           };
 
