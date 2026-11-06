@@ -19895,108 +19895,6 @@ abstract class AppLocalizations {
   /// **'Fasst mehrere Punkte zusammen'**
   String get redesignPlanAddBlockHint;
 
-  /// redesign.plan.songInPlan
-  ///
-  /// In de, this message translates to:
-  /// **'im Ablauf'**
-  String get redesignPlanSongInPlan;
-
-  /// redesign.plan.newPlan
-  ///
-  /// In de, this message translates to:
-  /// **'Neuer Plan'**
-  String get redesignPlanNewPlan;
-
-  /// redesign.plan.createPlan
-  ///
-  /// In de, this message translates to:
-  /// **'Plan anlegen'**
-  String get redesignPlanCreatePlan;
-
-  /// redesign.plan.day
-  ///
-  /// In de, this message translates to:
-  /// **'Tag'**
-  String get redesignPlanDay;
-
-  /// redesign.plan.content
-  ///
-  /// In de, this message translates to:
-  /// **'Inhalt'**
-  String get redesignPlanContent;
-
-  /// redesign.plan.copyOf
-  ///
-  /// In de, this message translates to:
-  /// **'Kopie von „{name}“'**
-  String redesignPlanCopyOf(String name);
-
-  /// redesign.plan.nameHint
-  ///
-  /// In de, this message translates to:
-  /// **'Name (optional)'**
-  String get redesignPlanNameHint;
-
-  /// redesign.plan.viewWhole
-  ///
-  /// In de, this message translates to:
-  /// **'Ganzer Ablauf'**
-  String get redesignPlanViewWhole;
-
-  /// redesign.plan.viewNow
-  ///
-  /// In de, this message translates to:
-  /// **'Jetzt'**
-  String get redesignPlanViewNow;
-
-  /// redesign.plan.viewWhich
-  ///
-  /// In de, this message translates to:
-  /// **'Welcher Plan'**
-  String get redesignPlanViewWhich;
-
-  /// redesign.plan.download
-  ///
-  /// In de, this message translates to:
-  /// **'Herunterladen'**
-  String get redesignPlanDownload;
-
-  /// redesign.plan.telegram
-  ///
-  /// In de, this message translates to:
-  /// **'Per Telegram'**
-  String get redesignPlanTelegram;
-
-  /// redesign.plan.orgPlansIntro
-  ///
-  /// In de, this message translates to:
-  /// **'Abläufe aller Gruppen in „{org}“'**
-  String redesignPlanOrgPlansIntro(String org);
-
-  /// redesign.plan.templatesIntro
-  ///
-  /// In de, this message translates to:
-  /// **'Gelten für alle Gruppen der Organisation „{org}“.'**
-  String redesignPlanTemplatesIntro(String org);
-
-  /// redesign.plan.orgPlansUpcoming
-  ///
-  /// In de, this message translates to:
-  /// **'Anstehend'**
-  String get redesignPlanOrgPlansUpcoming;
-
-  /// redesign.plan.addDefaultField
-  ///
-  /// In de, this message translates to:
-  /// **'Standardfeld hinzufügen'**
-  String get redesignPlanAddDefaultField;
-
-  /// redesign.plan.templateHint
-  ///
-  /// In de, this message translates to:
-  /// **'Vorlage · sofort gespeichert'**
-  String get redesignPlanTemplateHint;
-
   /// redesign.plan.addCurrent
   ///
   /// In de, this message translates to:
@@ -20008,6 +19906,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Die Werke, die gerade dran sind'**
   String get redesignPlanAddCurrentHint;
+
+  /// redesign.plan.addDefaultField
+  ///
+  /// In de, this message translates to:
+  /// **'Standardfeld hinzufügen'**
+  String get redesignPlanAddDefaultField;
 
   /// redesign.plan.addEnd
   ///
@@ -20087,11 +19991,35 @@ abstract class AppLocalizations {
   /// **'eingeklappt'**
   String get redesignPlanCollapsed;
 
+  /// redesign.plan.content
+  ///
+  /// In de, this message translates to:
+  /// **'Inhalt'**
+  String get redesignPlanContent;
+
   /// redesign.plan.copied
   ///
   /// In de, this message translates to:
   /// **'Ablauf vom {date} übernommen'**
   String redesignPlanCopied(Object date);
+
+  /// redesign.plan.copyOf
+  ///
+  /// In de, this message translates to:
+  /// **'Kopie von „{name}“'**
+  String redesignPlanCopyOf(Object name);
+
+  /// redesign.plan.createPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Plan anlegen'**
+  String get redesignPlanCreatePlan;
+
+  /// redesign.plan.day
+  ///
+  /// In de, this message translates to:
+  /// **'Tag'**
+  String get redesignPlanDay;
 
   /// redesign.plan.delete
   ///
@@ -20104,6 +20032,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Mit Rückgängig'**
   String get redesignPlanDeleteHint;
+
+  /// redesign.plan.download
+  ///
+  /// In de, this message translates to:
+  /// **'Herunterladen'**
+  String get redesignPlanDownload;
 
   /// redesign.plan.drag
   ///
@@ -20279,6 +20213,18 @@ abstract class AppLocalizations {
   /// **'Nach oben'**
   String get redesignPlanMoveUp;
 
+  /// redesign.plan.nameHint
+  ///
+  /// In de, this message translates to:
+  /// **'Name (optional)'**
+  String get redesignPlanNameHint;
+
+  /// redesign.plan.newPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Plan'**
+  String get redesignPlanNewPlan;
+
   /// redesign.plan.next
   ///
   /// In de, this message translates to:
@@ -20302,6 +20248,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Erscheint im Plan der Organisation'**
   String get redesignPlanOrgHint;
+
+  /// redesign.plan.orgPlansIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Abläufe aller Gruppen in „{org}“'**
+  String redesignPlanOrgPlansIntro(Object org);
+
+  /// redesign.plan.orgPlansUpcoming
+  ///
+  /// In de, this message translates to:
+  /// **'Anstehend'**
+  String get redesignPlanOrgPlansUpcoming;
 
   /// redesign.plan.orgTemplateHint
   ///
@@ -20387,17 +20345,41 @@ abstract class AppLocalizations {
   /// **'Mitglieder sehen den Ablauf im Termin'**
   String get redesignPlanShareHint;
 
+  /// redesign.plan.songInPlan
+  ///
+  /// In de, this message translates to:
+  /// **'im Ablauf'**
+  String get redesignPlanSongInPlan;
+
   /// redesign.plan.start
   ///
   /// In de, this message translates to:
   /// **'Beginn'**
   String get redesignPlanStart;
 
+  /// redesign.plan.telegram
+  ///
+  /// In de, this message translates to:
+  /// **'Per Telegram'**
+  String get redesignPlanTelegram;
+
   /// redesign.plan.templateDelete
   ///
   /// In de, this message translates to:
   /// **'Vorlage löschen'**
   String get redesignPlanTemplateDelete;
+
+  /// redesign.plan.templateHint
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage · sofort gespeichert'**
+  String get redesignPlanTemplateHint;
+
+  /// redesign.plan.templatesIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Gelten für alle Gruppen der Organisation „{org}“.'**
+  String redesignPlanTemplatesIntro(Object org);
 
   /// redesign.plan.title
   ///
@@ -20422,6 +20404,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'bis {time}'**
   String redesignPlanUntil(Object time);
+
+  /// redesign.plan.viewNow
+  ///
+  /// In de, this message translates to:
+  /// **'Jetzt'**
+  String get redesignPlanViewNow;
+
+  /// redesign.plan.viewWhich
+  ///
+  /// In de, this message translates to:
+  /// **'Welcher Plan'**
+  String get redesignPlanViewWhich;
+
+  /// redesign.plan.viewWhole
+  ///
+  /// In de, this message translates to:
+  /// **'Ganzer Ablauf'**
+  String get redesignPlanViewWhole;
 
   /// redesign.pult.allOpen
   ///

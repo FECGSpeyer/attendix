@@ -15283,77 +15283,6 @@
   "@redesignPlanAddBlockHint": {
     "description": "redesign.plan.addBlockHint"
   },
-  "redesignPlanSongInPlan": "im Ablauf",
-  "@redesignPlanSongInPlan": {
-    "description": "redesign.plan.songInPlan"
-  },
-  "redesignPlanNewPlan": "Neuer Plan",
-  "@redesignPlanNewPlan": {
-    "description": "redesign.plan.newPlan"
-  },
-  "redesignPlanCreatePlan": "Plan anlegen",
-  "@redesignPlanCreatePlan": {
-    "description": "redesign.plan.createPlan"
-  },
-  "redesignPlanDay": "Tag",
-  "@redesignPlanDay": {
-    "description": "redesign.plan.day"
-  },
-  "redesignPlanContent": "Inhalt",
-  "@redesignPlanContent": {
-    "description": "redesign.plan.content"
-  },
-  "redesignPlanCopyOf": "Kopie von „{name}“",
-  "@redesignPlanCopyOf": {
-    "description": "redesign.plan.copyOf",
-    "placeholders": {"name": {"type": "String"}}
-  },
-  "redesignPlanNameHint": "Name (optional)",
-  "@redesignPlanNameHint": {
-    "description": "redesign.plan.nameHint"
-  },
-  "redesignPlanViewWhole": "Ganzer Ablauf",
-  "@redesignPlanViewWhole": {
-    "description": "redesign.plan.viewWhole"
-  },
-  "redesignPlanViewNow": "Jetzt",
-  "@redesignPlanViewNow": {
-    "description": "redesign.plan.viewNow"
-  },
-  "redesignPlanViewWhich": "Welcher Plan",
-  "@redesignPlanViewWhich": {
-    "description": "redesign.plan.viewWhich"
-  },
-  "redesignPlanDownload": "Herunterladen",
-  "@redesignPlanDownload": {
-    "description": "redesign.plan.download"
-  },
-  "redesignPlanTelegram": "Per Telegram",
-  "@redesignPlanTelegram": {
-    "description": "redesign.plan.telegram"
-  },
-  "redesignPlanOrgPlansIntro": "Abläufe aller Gruppen in „{org}“",
-  "@redesignPlanOrgPlansIntro": {
-    "description": "redesign.plan.orgPlansIntro",
-    "placeholders": {"org": {"type": "String"}}
-  },
-  "redesignPlanTemplatesIntro": "Gelten für alle Gruppen der Organisation „{org}“.",
-  "@redesignPlanTemplatesIntro": {
-    "description": "redesign.plan.templatesIntro",
-    "placeholders": {"org": {"type": "String"}}
-  },
-  "redesignPlanOrgPlansUpcoming": "Anstehend",
-  "@redesignPlanOrgPlansUpcoming": {
-    "description": "redesign.plan.orgPlansUpcoming"
-  },
-  "redesignPlanAddDefaultField": "Standardfeld hinzufügen",
-  "@redesignPlanAddDefaultField": {
-    "description": "redesign.plan.addDefaultField"
-  },
-  "redesignPlanTemplateHint": "Vorlage · sofort gespeichert",
-  "@redesignPlanTemplateHint": {
-    "description": "redesign.plan.templateHint"
-  },
   "redesignPlanAddCurrent": "Aktuelle Werke",
   "@redesignPlanAddCurrent": {
     "description": "redesign.plan.addCurrent"
@@ -15361,6 +15290,10 @@
   "redesignPlanAddCurrentHint": "Die Werke, die gerade dran sind",
   "@redesignPlanAddCurrentHint": {
     "description": "redesign.plan.addCurrentHint"
+  },
+  "redesignPlanAddDefaultField": "Standardfeld hinzufügen",
+  "@redesignPlanAddDefaultField": {
+    "description": "redesign.plan.addDefaultField"
   },
   "redesignPlanAddEnd": "Wird ans Ende gesetzt",
   "@redesignPlanAddEnd": {
@@ -15417,12 +15350,31 @@
   "@redesignPlanCollapsed": {
     "description": "redesign.plan.collapsed"
   },
+  "redesignPlanContent": "Inhalt",
+  "@redesignPlanContent": {
+    "description": "redesign.plan.content"
+  },
   "redesignPlanCopied": "Ablauf vom {date} übernommen",
   "@redesignPlanCopied": {
     "description": "redesign.plan.copied",
     "placeholders": {
       "date": {}
     }
+  },
+  "redesignPlanCopyOf": "Kopie von „{name}“",
+  "@redesignPlanCopyOf": {
+    "description": "redesign.plan.copyOf",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPlanCreatePlan": "Plan anlegen",
+  "@redesignPlanCreatePlan": {
+    "description": "redesign.plan.createPlan"
+  },
+  "redesignPlanDay": "Tag",
+  "@redesignPlanDay": {
+    "description": "redesign.plan.day"
   },
   "redesignPlanDelete": "Löschen",
   "@redesignPlanDelete": {
@@ -15431,6 +15383,10 @@
   "redesignPlanDeleteHint": "Mit Rückgängig",
   "@redesignPlanDeleteHint": {
     "description": "redesign.plan.deleteHint"
+  },
+  "redesignPlanDownload": "Herunterladen",
+  "@redesignPlanDownload": {
+    "description": "redesign.plan.download"
   },
   "redesignPlanDrag": "Ziehen zum Sortieren",
   "@redesignPlanDrag": {
@@ -15574,6 +15530,14 @@
   "@redesignPlanMoveUp": {
     "description": "redesign.plan.moveUp"
   },
+  "redesignPlanNameHint": "Name (optional)",
+  "@redesignPlanNameHint": {
+    "description": "redesign.plan.nameHint"
+  },
+  "redesignPlanNewPlan": "Neuer Plan",
+  "@redesignPlanNewPlan": {
+    "description": "redesign.plan.newPlan"
+  },
   "redesignPlanNext": "Nächster Termin",
   "@redesignPlanNext": {
     "description": "redesign.plan.next"
@@ -15592,6 +15556,17 @@
   "redesignPlanOrgHint": "Erscheint im Plan der Organisation",
   "@redesignPlanOrgHint": {
     "description": "redesign.plan.orgHint"
+  },
+  "redesignPlanOrgPlansIntro": "Abläufe aller Gruppen in „{org}“",
+  "@redesignPlanOrgPlansIntro": {
+    "description": "redesign.plan.orgPlansIntro",
+    "placeholders": {
+      "org": {}
+    }
+  },
+  "redesignPlanOrgPlansUpcoming": "Anstehend",
+  "@redesignPlanOrgPlansUpcoming": {
+    "description": "redesign.plan.orgPlansUpcoming"
   },
   "redesignPlanOrgTemplateHint": "Vorlage der Organisation",
   "@redesignPlanOrgTemplateHint": {
@@ -15655,13 +15630,32 @@
   "@redesignPlanShareHint": {
     "description": "redesign.plan.shareHint"
   },
+  "redesignPlanSongInPlan": "im Ablauf",
+  "@redesignPlanSongInPlan": {
+    "description": "redesign.plan.songInPlan"
+  },
   "redesignPlanStart": "Beginn",
   "@redesignPlanStart": {
     "description": "redesign.plan.start"
   },
+  "redesignPlanTelegram": "Per Telegram",
+  "@redesignPlanTelegram": {
+    "description": "redesign.plan.telegram"
+  },
   "redesignPlanTemplateDelete": "Vorlage löschen",
   "@redesignPlanTemplateDelete": {
     "description": "redesign.plan.templateDelete"
+  },
+  "redesignPlanTemplateHint": "Vorlage · sofort gespeichert",
+  "@redesignPlanTemplateHint": {
+    "description": "redesign.plan.templateHint"
+  },
+  "redesignPlanTemplatesIntro": "Gelten für alle Gruppen der Organisation „{org}“.",
+  "@redesignPlanTemplatesIntro": {
+    "description": "redesign.plan.templatesIntro",
+    "placeholders": {
+      "org": {}
+    }
   },
   "redesignPlanTitle": "Ablauf",
   "@redesignPlanTitle": {
@@ -15681,6 +15675,18 @@
     "placeholders": {
       "time": {}
     }
+  },
+  "redesignPlanViewNow": "Jetzt",
+  "@redesignPlanViewNow": {
+    "description": "redesign.plan.viewNow"
+  },
+  "redesignPlanViewWhich": "Welcher Plan",
+  "@redesignPlanViewWhich": {
+    "description": "redesign.plan.viewWhich"
+  },
+  "redesignPlanViewWhole": "Ganzer Ablauf",
+  "@redesignPlanViewWhole": {
+    "description": "redesign.plan.viewWhole"
   },
   "redesignPultAllOpen": "Alle Offenen da",
   "@redesignPultAllOpen": {
