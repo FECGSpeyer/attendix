@@ -43,21 +43,24 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
     }
   }
 
-  /// Stores logo and text together (the repository writes both columns)
-  /// and waits until the organisation is loaded again: [_busy] stays on until
-  /// then, so no change can start from the old values and overwrite the new
-  /// logo or text.
+  /// The organisation as `updateBranding` returned it. The page shows and
+  /// edits this one, so a later change always starts from what was saved,
+  /// even when reloading the organisation fails.
+  Organisation? _saved;
+
+  /// Stores logo and text together (the repository writes both columns),
+  /// keeps the returned organisation and refreshes the cached ones.
   Future<void> _store(
     ProviderContainer container,
     OrganisationSettingsRepository repo, {
     required String logoUrl,
     required String text,
   }) async {
-    await repo.updateBranding(logoUrl: logoUrl, brandingText: text);
+    final saved = await repo.updateBranding(logoUrl: logoUrl, brandingText: text);
+    if (mounted) setState(() => _saved = saved);
     container.invalidate(brandingOrganisationProvider);
     container.invalidate(brandingSourceProvider);
     container.invalidate(currentOrganisationProvider);
-    if (mounted) await ref.read(brandingOrganisationProvider.future);
   }
 
   Future<void> _run(Future<void> Function() action) async {
@@ -147,7 +150,7 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
       Semantics(header: true, child: Text(l10n.rdSettingsBrandingTitle, style: RdType.largeTitle(p))),
       const SizedBox(height: 8),
     ];
-    final org = orgAsync.valueOrNull;
+    final org = _saved ?? orgAsync.valueOrNull;
     if (orgAsync.isLoading && org == null) {
       return RdPage(
         children: [
