@@ -68,24 +68,26 @@ class ExportPage extends ConsumerStatefulWidget {
   ConsumerState<ExportPage> createState() => _ExportPageState();
 }
 
-class _ExportPageState extends ConsumerState<ExportPage> {
-  String _exportType = 'pdf';
-  String _contentType = 'player';
-  List<String> _selectedFields = [...defaultPlayerExportFields];
-  String _sortField = 'gruppe';
-  bool _sortAscending = true;
-  bool _isExporting = false;
+/// Export settings and the export itself, shared by the old page and the
+/// Beta page (`RdExportPage`).
+mixin ExportLogic<T extends ConsumerStatefulWidget> on ConsumerState<T> {
+  String exportType = 'pdf';
+  String contentType = 'player';
+  List<String> selectedFields = [...defaultPlayerExportFields];
+  String sortField = 'gruppe';
+  bool sortAscending = true;
+  bool isExporting = false;
 
   // PARITY_B (I2): Ionic export uses db.getPersonExtraFields()
   List<ExtraField> get _extraFields => ref.read(personListExtraFieldsProvider);
 
-  void _setContentType(String value) {
-    if (value == _contentType) return;
+  void setContentType(String value) {
+    if (value == contentType) return;
     setState(() {
-      _contentType = value;
-      _sortField = 'gruppe';
-      _sortAscending = true;
-      _selectedFields = value == 'player'
+      contentType = value;
+      sortField = 'gruppe';
+      sortAscending = true;
+      selectedFields = value == 'player'
           ? [...defaultPlayerExportFields]
           : [...defaultAttendanceExportFields];
     });
@@ -94,7 +96,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
   /// Ionic `ion-select multiple` "Felder": keeps the current order of the
   /// fields that stay selected, appends newly selected ones.
   Future<void> _pickFields(List<String> available) async {
-    final selection = {..._selectedFields};
+    final selection = {...selectedFields};
     final result = await showAppDialog<Set<String>>(
       context: context,
       builder: (ctx) => StatefulBuilder(
@@ -132,25 +134,228 @@ class _ExportPageState extends ConsumerState<ExportPage> {
     );
     if (result == null || !mounted) return;
     setState(() {
-      _selectedFields = [
+      selectedFields = [
         // custom (free text) columns are not part of `available` and stay
-        for (final f in _selectedFields)
+        for (final f in selectedFields)
           if (result.contains(f) || !available.contains(f)) f,
         for (final f in available)
-          if (result.contains(f) && !_selectedFields.contains(f)) f,
+          if (result.contains(f) && !selectedFields.contains(f)) f,
       ];
     });
   }
 
+  /// Ionic addExtraField(): free text column (values stay empty)
+  Future<void> _addCustomField() async {
+    final controller = TextEditingController();
+    final name = await showAppDialog<String>(
+      context: context,
+      builder: (ctx) => AppAlertDialog(
+        title: Text(context.l10n.exportAddField),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          textCapitalization: TextCapitalization.sentences,
+          decoration: InputDecoration(labelText: context.l10n.exportFlutterColumnName),
+          onSubmitted: (v) => Navigator.pop(ctx, v.trim()),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(context.l10n.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            child: Text(context.l10n.attendanceAdd),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (name != null && name.isNotEmpty && mounted) {
+      setState(() => selectedFields.add(name));
+    }
+  }
+
+  Future<void> runExport() async {
+    if (selectedFields.isEmpty) {
+      ToastHelper.showError(context, context.l10n.planningChooseFieldMin);
+      return;
+    }
+
+    setState(() => isExporting = true);
+
+    try {
+      final tenant = ref.read(currentTenantProvider);
+      final tenantId = ref.read(currentTenantIdProvider);
+      if (tenant == null || tenantId == null) {
+        throw Exception(context.l10n.historyFlutterNoTenant);
+      }
+      final tenantName = tenant.shortName;
+
+      // Active (not left) players incl. paused — Ionic db.getPlayers()
+      ref.invalidate(playersProvider);
+      // PARITY_B (I2): Ionic export.page hydrateSharedPersonFieldValues
+      final rawPlayers = await ref
+          .read(profileRepositoryWithTenantProvider)
+          .hydrateSharedPersonFieldValues(
+              await ref.read(playersProvider.future));
+      final groupsMap = await ref.read(groupsMapProvider.future);
+      // Ionic allPlayers = Utils.getModifiedPlayersForList (group order,
+      // sort_order, last name) — the stable export sort keeps that order
+      // for equal values.
+      final players = sortPeopleByGroup(
+        rawPlayers
+            .map((p) => p.copyWith(
+                  groupName:
+                      p.instrument != null ? groupsMap[p.instrument] : null,
+                ))
+            .toList(),
+        await ref.read(groupsProvider.future),
+      );
+
+      final percentages =
+          await ref.read(playerAttendancePercentagesProvider.future);
+      final extraFields = _extraFields;
+      final churchNames = <String, String>{};
+      if (extraFields.any((f) => f.type == 'bfecg_church')) {
+        try {
+          for (final c in await ref.read(churchesProvider.future)) {
+            if (c.id != null) churchNames[c.id!] = c.name;
+          }
+        } catch (_) {
+          // Church names are optional — fall back to raw ids
+        }
+      }
+
+      // Ionic: column headers are the translated labels (fieldLabel); the
+      // values are still resolved by the German field id.
+      // Group switched while loading: the data would mix two groups.
+      if (!mounted || ref.read(currentTenantIdProvider) != tenantId) return;
+      final l10n = context.l10n;
+      final headerFields = [for (final f in selectedFields) exportFieldLabel(f, l10n)];
+      final idByHeader = {
+        for (var i = 0; i < selectedFields.length; i++) headerFields[i]: selectedFields[i],
+      };
+
+      String valueOf(Person p, String header) => exportFieldValue(
+            p,
+            idByHeader[header] ?? header,
+            extraFields: extraFields,
+            churchNames: churchNames,
+            percentage: p.id != null ? percentages[p.id] : null,
+          );
+
+      final sortedPlayers = sortPlayersForExport(
+        players,
+        sortField,
+        ascending: sortAscending,
+        percentages: percentages,
+      );
+
+      final exportService = ExportService();
+      final date = DateFormat(dateFmt()).format(DateTime.now());
+      ref.read(trackingServiceProvider).track(TrackingEvent.reportExported, properties: {'format': exportType == 'pdf' ? 'pdf' : 'xlsx', 'kind': contentType == 'player' ? 'player' : 'attendance'});
+
+      if (contentType == 'player') {
+        if (exportType == 'pdf') {
+          if (!mounted) return;
+          await exportService.exportPlayerListPdf(
+            branding: await resolvePdfBranding(ref),
+            players: sortedPlayers,
+            fields: headerFields,
+            tenantName: tenantName,
+            valueOf: valueOf,
+          );
+        } else {
+          final bytes = await exportService.exportPlayerListExcel(
+            players: sortedPlayers,
+            fields: headerFields,
+            tenantName: tenantName,
+            valueOf: valueOf,
+          );
+          await _shareExcel(bytes, l10n.exportPlayerListFile(tenantName, date));
+        }
+      } else {
+        // All attendances of the current season up to yesterday
+        // (Ionic: getAttendance(false, true) + date < today).
+        final attendanceRepo =
+            ref.read(attendanceRepositoryForTenantProvider(tenantId));
+        // PARITY_A (R1): Ionic getCurrentAttDate() bound, all pages.
+        final attendances = await attendanceRepo.getAttendances(
+          since: AttendanceRepository.currentAttDate(tenant.seasonStart),
+        );
+        final now = DateTime.now();
+        final startOfToday = DateTime(now.year, now.month, now.day);
+        final pastAttendances = attendances.where((a) {
+          final d = DateTime.tryParse(a.date);
+          return d != null && d.isBefore(startOfToday);
+        }).toList()
+          ..sort((a, b) => a.date.compareTo(b.date));
+
+        final personAttendances = await attendanceRepo
+            .getPersonAttendancesForAttendances(
+                pastAttendances.map((a) => a.id).whereType<int>().toList());
+
+        // Only attendances that actually have person entries
+        final withPersons =
+            personAttendances.map((pa) => pa.attendanceId).toSet();
+        final relevant =
+            pastAttendances.where((a) => withPersons.contains(a.id)).toList();
+
+        if (exportType == 'pdf') {
+          if (!mounted) return;
+          await exportService.exportAttendancePdf(
+            branding: await resolvePdfBranding(ref),
+            players: sortedPlayers,
+            attendances: relevant,
+            personAttendances: personAttendances,
+            fields: headerFields,
+            tenantName: tenantName,
+            valueOf: valueOf,
+          );
+        } else {
+          final bytes = await exportService.exportAttendanceExcel(
+            players: sortedPlayers,
+            attendances: relevant,
+            personAttendances: personAttendances,
+            fields: headerFields,
+            tenantName: tenantName,
+            valueOf: valueOf,
+          );
+          await _shareExcel(bytes, l10n.exportAttendanceFileAsOf(tenantName, date));
+        }
+      }
+
+      if (mounted) {
+        ToastHelper.showSuccess(context, context.l10n.exportFlutterSuccess);
+      }
+    } catch (e) {
+      if (mounted) {
+        ToastHelper.showError(context, context.l10n.exportFlutterFailedWith(friendlyErrorMessage(e)));
+      }
+    } finally {
+      if (mounted) {
+        setState(() => isExporting = false);
+      }
+    }
+  }
+
+  /// Share/download the Excel file (works on web/PWA as well)
+  Future<void> _shareExcel(Uint8List bytes, String baseName) async {
+    await NativeFileService.saveBytes(bytes, '$baseName.xlsx');
+  }
+}
+
+class _ExportPageState extends ConsumerState<ExportPage> with ExportLogic {
   @override
   Widget build(BuildContext context) {
     final extraFields = ref.watch(personListExtraFieldsProvider);
-    final available = availableExportFields(_contentType, extraFields);
-    final sortOptions = exportSortOptions(_contentType, extraFields);
-    if (!sortOptions.any((o) => o.value == _sortField)) {
-      _sortField = 'gruppe';
+    final available = availableExportFields(contentType, extraFields);
+    final sortOptions = exportSortOptions(contentType, extraFields);
+    if (!sortOptions.any((o) => o.value == sortField)) {
+      sortField = 'gruppe';
     }
-    final selectedAvailable = _selectedFields
+    final selectedAvailable = selectedFields
         .where(available.contains)
         .map((f) => exportFieldLabel(f, context.l10n))
         .join(', ');
@@ -184,9 +389,9 @@ class _ExportPageState extends ConsumerState<ExportPage> {
         children: [
           // Ionic `ion-segment mode="md"`: Spieler | Anwesenheit
           _ExportSegment(
-            value: _contentType,
+            value: contentType,
             options: [('player', context.l10n.exportPlayers), ('attendance', context.l10n.exportAttendance)],
-            onChanged: _setContentType,
+            onChanged: setContentType,
           ),
           // "Felder" multi select
           ListTile(
@@ -202,16 +407,16 @@ class _ExportPageState extends ConsumerState<ExportPage> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               buildDefaultDragHandles: false,
-              itemCount: _selectedFields.length,
+              itemCount: selectedFields.length,
               onReorder: (oldIndex, newIndex) {
                 setState(() {
                   if (newIndex > oldIndex) newIndex--;
-                  final item = _selectedFields.removeAt(oldIndex);
-                  _selectedFields.insert(newIndex, item);
+                  final item = selectedFields.removeAt(oldIndex);
+                  selectedFields.insert(newIndex, item);
                 });
               },
               itemBuilder: (context, index) {
-                final field = _selectedFields[index];
+                final field = selectedFields[index];
                 return Slidable(
                   key: ValueKey('$field-$index'),
                   endActionPane: ActionPane(
@@ -219,7 +424,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
                     extentRatio: 0.22,
                     children: [
                       SlidableAction(
-                        onPressed: (_) => setState(() => _selectedFields.removeAt(index)),
+                        onPressed: (_) => setState(() => selectedFields.removeAt(index)),
                         backgroundColor: AppColors.danger,
                         foregroundColor: Colors.white,
                         icon: Icons.delete,
@@ -268,24 +473,24 @@ class _ExportPageState extends ConsumerState<ExportPage> {
           ),
           _SelectItem<String>(
             label: context.l10n.exportSortBy,
-            value: _sortField,
+            value: sortField,
             options: [for (final o in sortOptions) (o.value, o.label)],
-            onChanged: (v) => setState(() => _sortField = v),
+            onChanged: (v) => setState(() => sortField = v),
           ),
           _SelectItem<bool>(
             label: context.l10n.exportOrder,
-            value: _sortAscending,
+            value: sortAscending,
             options: [(true, context.l10n.exportAsc), (false, context.l10n.exportDesc)],
-            onChanged: (v) => setState(() => _sortAscending = v),
+            onChanged: (v) => setState(() => sortAscending = v),
           ),
           _SelectItem<String>(
             label: context.l10n.exportExportType,
-            value: _exportType,
+            value: exportType,
             options: const [('pdf', 'PDF'), ('excel', 'Excel')],
-            onChanged: (v) => setState(() => _exportType = v),
+            onChanged: (v) => setState(() => exportType = v),
           ),
           // Flutter hint: the PDF attendance export is limited to 8 dates
-          if (_contentType == 'attendance' && _exportType == 'pdf')
+          if (contentType == 'attendance' && exportType == 'pdf')
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Text(
@@ -296,8 +501,8 @@ class _ExportPageState extends ConsumerState<ExportPage> {
           Padding(
             padding: const EdgeInsets.all(AppDimensions.paddingM),
             child: FilledButton(
-              onPressed: _isExporting ? null : _export,
-              child: _isExporting
+              onPressed: isExporting ? null : runExport,
+              child: isExporting
                   ? const SizedBox(
                       width: 20,
                       height: 20,
@@ -309,206 +514,6 @@ class _ExportPageState extends ConsumerState<ExportPage> {
         ],
       ),
     );
-  }
-
-  /// Ionic addExtraField(): free text column (values stay empty)
-  Future<void> _addCustomField() async {
-    final controller = TextEditingController();
-    final name = await showAppDialog<String>(
-      context: context,
-      builder: (ctx) => AppAlertDialog(
-        title: Text(context.l10n.exportAddField),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          textCapitalization: TextCapitalization.sentences,
-          decoration: InputDecoration(labelText: context.l10n.exportFlutterColumnName),
-          onSubmitted: (v) => Navigator.pop(ctx, v.trim()),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(context.l10n.commonCancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: Text(context.l10n.attendanceAdd),
-          ),
-        ],
-      ),
-    );
-    controller.dispose();
-    if (name != null && name.isNotEmpty && mounted) {
-      setState(() => _selectedFields.add(name));
-    }
-  }
-
-  Future<void> _export() async {
-    if (_selectedFields.isEmpty) {
-      ToastHelper.showError(context, context.l10n.planningChooseFieldMin);
-      return;
-    }
-
-    setState(() => _isExporting = true);
-
-    try {
-      final tenant = ref.read(currentTenantProvider);
-      final tenantId = ref.read(currentTenantIdProvider);
-      if (tenant == null || tenantId == null) {
-        throw Exception(context.l10n.historyFlutterNoTenant);
-      }
-      final tenantName = tenant.shortName;
-
-      // Active (not left) players incl. paused — Ionic db.getPlayers()
-      ref.invalidate(playersProvider);
-      // PARITY_B (I2): Ionic export.page hydrateSharedPersonFieldValues
-      final rawPlayers = await ref
-          .read(profileRepositoryWithTenantProvider)
-          .hydrateSharedPersonFieldValues(
-              await ref.read(playersProvider.future));
-      final groupsMap = await ref.read(groupsMapProvider.future);
-      // Ionic allPlayers = Utils.getModifiedPlayersForList (group order,
-      // sort_order, last name) — the stable export sort keeps that order
-      // for equal values.
-      final players = sortPeopleByGroup(
-        rawPlayers
-            .map((p) => p.copyWith(
-                  groupName:
-                      p.instrument != null ? groupsMap[p.instrument] : null,
-                ))
-            .toList(),
-        await ref.read(groupsProvider.future),
-      );
-
-      final percentages =
-          await ref.read(playerAttendancePercentagesProvider.future);
-      final extraFields = _extraFields;
-      final churchNames = <String, String>{};
-      if (extraFields.any((f) => f.type == 'bfecg_church')) {
-        try {
-          for (final c in await ref.read(churchesProvider.future)) {
-            if (c.id != null) churchNames[c.id!] = c.name;
-          }
-        } catch (_) {
-          // Church names are optional — fall back to raw ids
-        }
-      }
-
-      // Ionic: column headers are the translated labels (fieldLabel); the
-      // values are still resolved by the German field id.
-      if (!mounted) return;
-      final l10n = context.l10n;
-      final headerFields = [for (final f in _selectedFields) exportFieldLabel(f, l10n)];
-      final idByHeader = {
-        for (var i = 0; i < _selectedFields.length; i++) headerFields[i]: _selectedFields[i],
-      };
-
-      String valueOf(Person p, String header) => exportFieldValue(
-            p,
-            idByHeader[header] ?? header,
-            extraFields: extraFields,
-            churchNames: churchNames,
-            percentage: p.id != null ? percentages[p.id] : null,
-          );
-
-      final sortedPlayers = sortPlayersForExport(
-        players,
-        _sortField,
-        ascending: _sortAscending,
-        percentages: percentages,
-      );
-
-      final exportService = ExportService();
-      final date = DateFormat(dateFmt()).format(DateTime.now());
-      ref.read(trackingServiceProvider).track(TrackingEvent.reportExported, properties: {'format': _exportType == 'pdf' ? 'pdf' : 'xlsx', 'kind': _contentType == 'player' ? 'player' : 'attendance'});
-
-      if (_contentType == 'player') {
-        if (_exportType == 'pdf') {
-          if (!mounted) return;
-          await exportService.exportPlayerListPdf(
-            branding: await resolvePdfBranding(ref),
-            players: sortedPlayers,
-            fields: headerFields,
-            tenantName: tenantName,
-            valueOf: valueOf,
-          );
-        } else {
-          final bytes = await exportService.exportPlayerListExcel(
-            players: sortedPlayers,
-            fields: headerFields,
-            tenantName: tenantName,
-            valueOf: valueOf,
-          );
-          await _shareExcel(bytes, l10n.exportPlayerListFile(tenantName, date));
-        }
-      } else {
-        // All attendances of the current season up to yesterday
-        // (Ionic: getAttendance(false, true) + date < today).
-        final attendanceRepo =
-            ref.read(attendanceRepositoryForTenantProvider(tenantId));
-        // PARITY_A (R1): Ionic getCurrentAttDate() bound, all pages.
-        final attendances = await attendanceRepo.getAttendances(
-          since: AttendanceRepository.currentAttDate(tenant.seasonStart),
-        );
-        final now = DateTime.now();
-        final startOfToday = DateTime(now.year, now.month, now.day);
-        final pastAttendances = attendances.where((a) {
-          final d = DateTime.tryParse(a.date);
-          return d != null && d.isBefore(startOfToday);
-        }).toList()
-          ..sort((a, b) => a.date.compareTo(b.date));
-
-        final personAttendances = await attendanceRepo
-            .getPersonAttendancesForAttendances(
-                pastAttendances.map((a) => a.id).whereType<int>().toList());
-
-        // Only attendances that actually have person entries
-        final withPersons =
-            personAttendances.map((pa) => pa.attendanceId).toSet();
-        final relevant =
-            pastAttendances.where((a) => withPersons.contains(a.id)).toList();
-
-        if (_exportType == 'pdf') {
-          if (!mounted) return;
-          await exportService.exportAttendancePdf(
-            branding: await resolvePdfBranding(ref),
-            players: sortedPlayers,
-            attendances: relevant,
-            personAttendances: personAttendances,
-            fields: headerFields,
-            tenantName: tenantName,
-            valueOf: valueOf,
-          );
-        } else {
-          final bytes = await exportService.exportAttendanceExcel(
-            players: sortedPlayers,
-            attendances: relevant,
-            personAttendances: personAttendances,
-            fields: headerFields,
-            tenantName: tenantName,
-            valueOf: valueOf,
-          );
-          await _shareExcel(bytes, l10n.exportAttendanceFileAsOf(tenantName, date));
-        }
-      }
-
-      if (mounted) {
-        ToastHelper.showSuccess(context, context.l10n.exportFlutterSuccess);
-      }
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, context.l10n.exportFlutterFailedWith(friendlyErrorMessage(e)));
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isExporting = false);
-      }
-    }
-  }
-
-  /// Share/download the Excel file (works on web/PWA as well)
-  Future<void> _shareExcel(Uint8List bytes, String baseName) async {
-    await NativeFileService.saveBytes(bytes, '$baseName.xlsx');
   }
 }
 

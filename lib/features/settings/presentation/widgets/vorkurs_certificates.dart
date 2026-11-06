@@ -27,13 +27,20 @@ List<Person> filterCertificatePersons(List<Person> persons, Set<int> groupIds) {
 
 /// "Urkunden generieren" (Ionic settings.page generateVorkursCertificates):
 /// choose groups, then create one multi-page PDF and share/download it.
-Future<void> generateVorkursCertificates(BuildContext context, WidgetRef ref) async {
+/// [pickGroups] replaces the group dialog (the Beta uses a sheet).
+Future<void> generateVorkursCertificates(
+  BuildContext context,
+  WidgetRef ref, {
+  Future<Set<int>?> Function(List<Group> groups)? pickGroups,
+}) async {
   final groups = await ref.read(groupsProvider.future);
   if (!context.mounted) return;
-  final selected = await showAppDialog<Set<int>>(
-    context: context,
-    builder: (_) => _GroupSelectDialog(groups: groups),
-  );
+  final selected = pickGroups != null
+      ? await pickGroups(groups)
+      : await showAppDialog<Set<int>>(
+          context: context,
+          builder: (_) => _GroupSelectDialog(groups: groups),
+        );
   if (selected == null || !context.mounted) return;
   if (selected.isEmpty) {
     ToastHelper.showWarning(context, context.l10n.settingsSelectOneGroup);
