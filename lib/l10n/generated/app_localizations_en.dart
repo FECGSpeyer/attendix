@@ -11702,7 +11702,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignJoinWelcomeNoName => 'Welcome';
 
   @override
-  String get redesignManageAnnouncementsHint => 'View sent messages';
+  String get redesignManageAnnouncementsHint =>
+      'Write, sent messages, automation';
 
   @override
   String get redesignManageAreaCommunication => 'Communication';
@@ -11969,6 +11970,25 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get redesignMessagesBellAllGroups => 'All groups';
+
+  @override
+  String get redesignMessagesBellEarlier => 'Earlier';
+
+  @override
+  String get redesignMessagesBellNew => 'New';
+
+  @override
+  String get redesignMessagesBellThisGroup => 'This group';
+
+  @override
+  String get redesignMessagesDelivery => 'Delivery';
+
+  @override
+  String get redesignMessagesIntro =>
+      'Everything sent to the group, with read status.';
 
   @override
   String get redesignNotifForMe => 'For me';

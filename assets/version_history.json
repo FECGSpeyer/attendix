@@ -10,6 +10,15 @@
       ]
     },
     {
+      "version": "0.48.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Mitteilungen als Verwaltungsliste, Mitteilung als Detailseite (Löschen unter •••), Glocke als Beta-Blatt",
+        "✨ Beta: „Mitteilung schreiben“ mit Formatierung, Entwurf, Hinweis auf Unerreichbare und Rückfrage vor dem Senden",
+        "🐛 Beta: „Zum Termin“ in einer Mitteilung öffnet den Beta-Termin statt der alten Seite"
+      ]
+    },
+    {
       "version": "0.47.0",
       "date": "6.11.2026",
       "changes": [
