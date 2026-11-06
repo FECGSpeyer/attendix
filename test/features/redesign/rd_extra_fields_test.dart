@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/church_providers.dart';
 import 'package:attendix/core/providers/connectivity_provider.dart';
@@ -32,9 +34,22 @@ class _FakeExtraFieldsRepo extends ExtraFieldsRepository {
   final saves = <({List<ExtraField> persons, List<ExtraField> songs})>[];
   final sanitized = <String>[];
 
+  /// The next save waits for it.
+  Completer<void>? gate;
+
+  /// The next save fails.
+  bool failNext = false;
+
   @override
   Future<void> saveFields({required List<ExtraField> personFields, required List<ExtraField> songFields}) async {
+    if (failNext) {
+      failNext = false;
+      throw StateError('offline');
+    }
     saves.add((persons: personFields, songs: songFields));
+    final g = gate;
+    gate = null;
+    if (g != null) await g.future;
   }
 
   @override
@@ -72,7 +87,10 @@ void _phone(WidgetTester tester) {
 }
 
 void main() {
-  setUp(() => SharedPreferences.setMockInitialValues({}));
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+    rdResetExtraFieldWrites();
+  });
 
   group('Zusatzfelder', () {
     test('two sections with the lines of the old page as subtitle', () {
@@ -95,54 +113,11 @@ void main() {
     });
 
     testWidgets('edit page: every change of the old sheet is saved right away', (tester) async {
-      _phone(tester);
-      late _FakeExtraFieldsRepo repo;
-      final container = createTestContainer(
-        tenant: TestFactories.createTenant(id: 7).copyWith(
-          additionalFields: const [_size, _member],
-          songAdditionalFields: const [_publisher],
-        ),
-        overrides: [
-          effectiveRoleProvider.overrideWithValue(Role.admin),
-          currentTenantIdProvider.overrideWithValue(7),
-          offlineQueueUserIdProvider.overrideWithValue(() => 'u1'),
-          connectivityProvider.overrideWith((ref) => const Stream<bool>.empty()),
-          offlineQueueSessionIdProvider.overrideWithValue(() => 's1'),
-          churchesProvider.overrideWith((ref) async => []),
-          songRepositoryForTenantProvider.overrideWith((ref, key) => _FakeSongRepo(ref)),
-          extraFieldsRepositoryWithTenantProvider.overrideWith((ref) => repo = _FakeExtraFieldsRepo(ref)),
-        ],
+      final container = await _pumpEditPage(
+        tester,
+        location: RedesignRoutes.extraFieldEdit(song: false, id: 'groesse'),
       );
-      addTearDown(container.dispose);
-      final router = GoRouter(
-        initialLocation: RedesignRoutes.extraFieldEdit(song: false, id: 'groesse'),
-        routes: [
-          GoRoute(
-            path: RedesignRoutes.extraFields,
-            builder: (_, __) => const Scaffold(body: Text('page fields')),
-            routes: [
-              GoRoute(
-                path: ':list/:id',
-                builder: (_, s) =>
-                    RdExtraFieldEditPage(song: s.pathParameters['list'] == 'werke', fieldId: s.pathParameters['id']!),
-              ),
-            ],
-          ),
-        ],
-      );
-      await tester.pumpWidget(
-        UncontrolledProviderScope(
-          container: container,
-          child: MaterialApp.router(
-            locale: const Locale('de'),
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
-            routerConfig: router,
-          ),
-        ),
-      );
-      await _settle(tester);
+      final repo = container.read(extraFieldsRepositoryWithTenantProvider) as _FakeExtraFieldsRepo;
 
       expect(find.text('Zusatzfeld bearbeiten'), findsOneWidget);
       expect(find.text('Auswahl'), findsOneWidget); // Typ (read only)
@@ -169,5 +144,101 @@ void main() {
       final tenant = container.read(currentTenantProvider)!;
       expect(tenant.additionalFields!.first.options, ['XS', 'M']);
     });
+
+    testWidgets('edit page: default A → B saving, back to A and closed: A is stored', (tester) async {
+      final container = await _pumpEditPage(
+        tester,
+        location: RedesignRoutes.extraFieldEdit(song: true, id: 'verlag'),
+        songs: const [ExtraField(id: 'verlag', name: 'Verlag', type: 'text', defaultValue: 'A')],
+      );
+      final repo = container.read(extraFieldsRepositoryWithTenantProvider) as _FakeExtraFieldsRepo;
+      final gate = repo.gate = Completer<void>();
+
+      await tester.enterText(find.byKey(const Key('rd-extra-field-edit-default')), 'B');
+      FocusManager.instance.primaryFocus?.unfocus();
+      await _settle(tester);
+      expect(repo.saves.single.songs.single.defaultValue, 'B'); // still running
+
+      await tester.enterText(find.byKey(const Key('rd-extra-field-edit-default')), 'A');
+      await tester.tap(find.byKey(const Key('rd-extra-field-edit-done')));
+      await _settle(tester);
+      expect(find.text('page fields'), findsOneWidget);
+
+      gate.complete();
+      await _settle(tester);
+      expect(repo.saves.map((s) => s.songs.single.defaultValue), ['B', 'A']);
+      expect(container.read(currentTenantProvider)!.songAdditionalFields!.single.defaultValue, 'A');
+    });
+
+    testWidgets('edit page: a failed name save shows the stored name again', (tester) async {
+      final container = await _pumpEditPage(tester, location: RedesignRoutes.extraFieldEdit(song: true, id: 'verlag'));
+      final repo = container.read(extraFieldsRepositoryWithTenantProvider) as _FakeExtraFieldsRepo;
+      repo.failNext = true;
+
+      await tester.enterText(find.byKey(const Key('rd-extra-field-edit-name')), 'Herausgeber');
+      FocusManager.instance.primaryFocus?.unfocus();
+      await _settle(tester);
+
+      expect(repo.saves, isEmpty);
+      expect(find.text('Fehler beim Speichern'), findsOneWidget);
+      final name = tester.widget<TextField>(find.byKey(const Key('rd-extra-field-edit-name')));
+      expect(name.controller!.text, 'Verlag');
+      await tester.pump(const Duration(seconds: 5)); // toast gone
+    });
   });
+}
+
+/// "Zusatzfeld bearbeiten" at [location] for tenant 7 with a fake repository.
+Future<ProviderContainer> _pumpEditPage(
+  WidgetTester tester, {
+  required String location,
+  List<ExtraField> persons = const [_size, _member],
+  List<ExtraField> songs = const [_publisher],
+}) async {
+  _phone(tester);
+  final container = createTestContainer(
+    tenant: TestFactories.createTenant(id: 7).copyWith(additionalFields: persons, songAdditionalFields: songs),
+    overrides: [
+      effectiveRoleProvider.overrideWithValue(Role.admin),
+      currentTenantIdProvider.overrideWithValue(7),
+      offlineQueueUserIdProvider.overrideWithValue(() => 'u1'),
+      connectivityProvider.overrideWith((ref) => const Stream<bool>.empty()),
+      offlineQueueSessionIdProvider.overrideWithValue(() => 's1'),
+      churchesProvider.overrideWith((ref) async => []),
+      songRepositoryForTenantProvider.overrideWith((ref, key) => _FakeSongRepo(ref)),
+      extraFieldsRepositoryWithTenantProvider.overrideWith((ref) => _FakeExtraFieldsRepo(ref)),
+    ],
+  );
+  addTearDown(container.dispose);
+  final router = GoRouter(
+    initialLocation: location,
+    routes: [
+      GoRoute(
+        path: RedesignRoutes.extraFields,
+        builder: (_, __) => const Scaffold(body: Text('page fields')),
+        routes: [
+          GoRoute(
+            path: ':list/:id',
+            builder:
+                (_, s) =>
+                    RdExtraFieldEditPage(song: s.pathParameters['list'] == 'werke', fieldId: s.pathParameters['id']!),
+          ),
+        ],
+      ),
+    ],
+  );
+  await tester.pumpWidget(
+    UncontrolledProviderScope(
+      container: container,
+      child: MaterialApp.router(
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+        routerConfig: router,
+      ),
+    ),
+  );
+  await _settle(tester);
+  return container;
 }
