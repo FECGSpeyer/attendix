@@ -6,16 +6,19 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/message_providers.dart';
+import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/ionic_route_mapper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/models/user_notification/user_notification.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../../shared/widgets/layout/ion_modal_handle.dart';
 import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
 
@@ -61,7 +64,9 @@ class NotificationBell extends ConsumerWidget implements HiddenWithSidePanel {
     // sheet is `100% - 10px` high below the safe area and the grabber is drawn
     // over the header (no extra 48pt drag-handle row), so the sheet top sits
     // where Ionic's does.
-    final ios = useIosLook(context);
+    // REDESIGN (canvas K1 "Glocke"): Beta sheet like "Gruppe wechseln".
+    final beta = ref.read(redesignEnabledProvider);
+    final ios = !beta && useIosLook(context);
     // PARITY_R3: Ionic sheet modal on desktop/tablet (min 768 × 600) = a
     // 600 px wide sheet at the bottom (ion-modal `--width: 600px`, sheet
     // height kept) – sized centrally by IonModalTheme.
@@ -75,7 +80,7 @@ class NotificationBell extends ConsumerWidget implements HiddenWithSidePanel {
       useSafeArea: true,
       showDragHandle: !ios,
       // ion-content color="light" behind the inset list
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: beta ? context.rd.bg : Theme.of(context).scaffoldBackgroundColor,
       builder:
           (_) => DraggableScrollableSheet(
             expand: false,
@@ -86,6 +91,7 @@ class NotificationBell extends ConsumerWidget implements HiddenWithSidePanel {
                 (context, scrollController) => _NotificationCenter(
                   initialAllTenants: allTenants,
                   scrollController: scrollController,
+                  beta: beta,
                 ),
           ),
     );
@@ -187,10 +193,14 @@ class _BellTarget {
 }
 
 class _NotificationCenter extends ConsumerStatefulWidget {
-  const _NotificationCenter({required this.initialAllTenants, this.scrollController});
+  const _NotificationCenter({required this.initialAllTenants, this.scrollController, this.beta = false});
 
   final bool initialAllTenants;
   final ScrollController? scrollController;
+
+  /// REDESIGN: title with "•••", "Diese Gruppe / Alle Gruppen", rows grouped
+  /// in "Neu" and "Früher".
+  final bool beta;
 
   @override
   ConsumerState<_NotificationCenter> createState() => _NotificationCenterState();
@@ -381,6 +391,164 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
     );
   }
 
+  Future<void> _betaMore(int unread, List<UserNotification> list) async {
+    final l10n = context.l10n;
+    final action = await showAppActionSheet<String>(
+      context,
+      actions: [
+        if (unread > 0) AppActionSheetAction(value: 'read', icon: Icons.done_all, label: l10n.bellMarkAllRead),
+        if (list.isNotEmpty)
+          AppActionSheetAction(value: 'delete', icon: Icons.delete_outline, label: l10n.bellDeleteAll, destructive: true),
+      ],
+    );
+    if (!mounted) return;
+    if (action == 'read') await _markAll();
+    if (action == 'delete') await _deleteAll();
+  }
+
+  Widget _buildBeta(
+    AsyncValue<List<UserNotification>> listAsync,
+    List<UserNotification> list,
+    int unread,
+    List<Tenant> tenants,
+  ) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final fresh = [for (final n in list) if (!_isRead(n)) n];
+    final older = [for (final n in list) if (_isRead(n)) n];
+    Widget group(String label, List<UserNotification> rows) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RdGroupLabel(label),
+        RdGroupedList(children: [for (final n in rows) _buildBetaRow(n, tenants)]),
+        const SizedBox(height: 18),
+      ],
+    );
+    final List<Widget> body;
+    if (listAsync.isLoading && list.isEmpty) {
+      body = [
+        const SizedBox(height: 60),
+        Center(child: CircularProgressIndicator(color: p.primary)),
+      ];
+    } else if (list.isEmpty) {
+      body = [
+        const SizedBox(height: 60),
+        Icon(Icons.notifications_off_outlined, size: 44, color: p.text2),
+        const SizedBox(height: 8),
+        Text(l10n.bellNone, textAlign: TextAlign.center, style: RdType.meta(p, size: 15)),
+      ];
+    } else {
+      body = [
+        if (fresh.isNotEmpty) group(l10n.redesignMessagesBellNew, fresh),
+        if (older.isNotEmpty) group(l10n.redesignMessagesBellEarlier, older),
+      ];
+    }
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 16, 10),
+          child: Row(
+            children: [
+              Expanded(
+                child: Semantics(header: true, child: Text(l10n.bellTitle, style: RdType.section(p))),
+              ),
+              if (unread > 0 || list.isNotEmpty)
+                RdCircleButton(
+                  key: const Key('rd-bell-more'),
+                  icon: Icons.more_horiz,
+                  label: l10n.redesignManageListMore,
+                  onPressed: () => _betaMore(unread, list),
+                ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          child: RdSegmented<bool>(
+            values: const [false, true],
+            selected: _allTenants,
+            labelOf: (all) => all ? l10n.redesignMessagesBellAllGroups : l10n.redesignMessagesBellThisGroup,
+            onChanged: (v) => setState(() {
+              _allTenants = v;
+              _readOverrides.clear();
+            }),
+          ),
+        ),
+        Expanded(
+          child: RefreshIndicator(
+            color: p.primary,
+            backgroundColor: p.surface,
+            onRefresh: () async {
+              _readOverrides.clear();
+              ref.invalidate(unreadNotificationCountProvider);
+              ref.invalidate(userNotificationsProvider(_allTenants));
+              await ref.read(userNotificationsProvider(_allTenants).future);
+            },
+            child: ListView(
+              controller: widget.scrollController,
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+              children: body,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Beta row: unread dot, the group (in "Alle Gruppen"), text and date;
+  /// swipe right = read/unread, swipe left = delete (as before).
+  Widget _buildBetaRow(UserNotification n, List<Tenant> tenants) {
+    final p = context.rd;
+    final read = _isRead(n);
+    final tenantName = _allTenants ? _tenantName(n, tenants) : '';
+    final body = n.body.replaceAll(RegExp(r'\s+'), ' ').trim();
+    final when = n.createdAt == null ? '' : DateFormat('${dateFmt()} HH:mm').format(n.createdAt!.toLocal());
+    return Slidable(
+      key: ValueKey(n.id),
+      startActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        extentRatio: 0.22,
+        children: [
+          SlidableAction(
+            onPressed: (_) => _toggleRead(n),
+            backgroundColor: p.primary,
+            foregroundColor: p.onPrimary,
+            icon: read ? Icons.mark_email_unread_outlined : Icons.drafts_outlined,
+          ),
+        ],
+      ),
+      endActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        extentRatio: 0.22,
+        children: [
+          SlidableAction(
+            onPressed: (_) => _guard(() => _notifier.deleteOne(n)),
+            backgroundColor: p.absent,
+            foregroundColor: Colors.white,
+            icon: Icons.delete_outline,
+          ),
+        ],
+      ),
+      child: RdListRow(
+        leading: SizedBox(
+          width: 10,
+          child: read
+              ? null
+              : Container(
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(color: p.primary, shape: BoxShape.circle),
+                ),
+        ),
+        title: body,
+        subtitle: [if (tenantName.isNotEmpty) tenantName, if (when.isNotEmpty) when].join(' · '),
+        showChevron: n.isNavigable,
+        onTap: () => _onTap(n),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -389,6 +557,7 @@ class _NotificationCenterState extends ConsumerState<_NotificationCenter> {
     final unread = ref.watch(unreadNotificationCountProvider).valueOrNull ?? 0;
     final tenants = ref.watch(userTenantsProvider).valueOrNull ?? const <Tenant>[];
     final list = listAsync.valueOrNull ?? const <UserNotification>[];
+    if (widget.beta) return _buildBeta(listAsync, list, unread, tenants);
 
     return Column(
       children: [

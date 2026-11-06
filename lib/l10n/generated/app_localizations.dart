@@ -19040,7 +19040,7 @@ abstract class AppLocalizations {
   /// redesign.manage.announcementsHint
   ///
   /// In de, this message translates to:
-  /// **'Gesendete Mitteilungen ansehen'**
+  /// **'Schreiben, Gesendetes, Automatik'**
   String get redesignManageAnnouncementsHint;
 
   /// redesign.manage.areaCommunication
@@ -19444,6 +19444,42 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {1 Person} other {{count} Personen}}'**
   String redesignMembersTotal(num count);
+
+  /// redesign.messages.bellAllGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Gruppen'**
+  String get redesignMessagesBellAllGroups;
+
+  /// redesign.messages.bellEarlier
+  ///
+  /// In de, this message translates to:
+  /// **'Früher'**
+  String get redesignMessagesBellEarlier;
+
+  /// redesign.messages.bellNew
+  ///
+  /// In de, this message translates to:
+  /// **'Neu'**
+  String get redesignMessagesBellNew;
+
+  /// redesign.messages.bellThisGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Gruppe'**
+  String get redesignMessagesBellThisGroup;
+
+  /// redesign.messages.delivery
+  ///
+  /// In de, this message translates to:
+  /// **'Zustellung'**
+  String get redesignMessagesDelivery;
+
+  /// redesign.messages.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Alles, was an die Gruppe ging, mit Lesestatus.'**
+  String get redesignMessagesIntro;
 
   /// redesign.notif.forMe
   ///
@@ -19858,6 +19894,78 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Fasst mehrere Punkte zusammen'**
   String get redesignPlanAddBlockHint;
+
+  /// redesign.plan.songInPlan
+  ///
+  /// In de, this message translates to:
+  /// **'im Ablauf'**
+  String get redesignPlanSongInPlan;
+
+  /// redesign.plan.newPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Plan'**
+  String get redesignPlanNewPlan;
+
+  /// redesign.plan.createPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Plan anlegen'**
+  String get redesignPlanCreatePlan;
+
+  /// redesign.plan.day
+  ///
+  /// In de, this message translates to:
+  /// **'Tag'**
+  String get redesignPlanDay;
+
+  /// redesign.plan.content
+  ///
+  /// In de, this message translates to:
+  /// **'Inhalt'**
+  String get redesignPlanContent;
+
+  /// redesign.plan.copyOf
+  ///
+  /// In de, this message translates to:
+  /// **'Kopie von „{name}“'**
+  String redesignPlanCopyOf(String name);
+
+  /// redesign.plan.nameHint
+  ///
+  /// In de, this message translates to:
+  /// **'Name (optional)'**
+  String get redesignPlanNameHint;
+
+  /// redesign.plan.viewWhole
+  ///
+  /// In de, this message translates to:
+  /// **'Ganzer Ablauf'**
+  String get redesignPlanViewWhole;
+
+  /// redesign.plan.viewNow
+  ///
+  /// In de, this message translates to:
+  /// **'Jetzt'**
+  String get redesignPlanViewNow;
+
+  /// redesign.plan.viewWhich
+  ///
+  /// In de, this message translates to:
+  /// **'Welcher Plan'**
+  String get redesignPlanViewWhich;
+
+  /// redesign.plan.download
+  ///
+  /// In de, this message translates to:
+  /// **'Herunterladen'**
+  String get redesignPlanDownload;
+
+  /// redesign.plan.telegram
+  ///
+  /// In de, this message translates to:
+  /// **'Per Telegram'**
+  String get redesignPlanTelegram;
 
   /// redesign.plan.addCurrent
   ///

@@ -26,6 +26,8 @@ import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/services/native/native_file_service.dart';
 import '../../../../core/services/pdf_fonts.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 
 /// Opens the Registerprobenplan modal (Ionic `isPlanModalOpen`, a sheet with
 /// breakpoints `[0, 1]`, i.e. full height).
@@ -38,6 +40,7 @@ Future<void> showRegisterPlanSheet(BuildContext context, {DateTime? attendanceDa
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     useSafeArea: true,
+    backgroundColor: context.rdSkin != null ? context.rd.bg : null,
     builder: (context) => FractionallySizedBox(
       heightFactor: 1,
       child: RegisterPlanSheet(attendanceDate: attendanceDate),
@@ -162,6 +165,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
     ref.watch(notificationConfigProvider);
     final chatId = planTelegramChatId(ref);
     final theme = Theme.of(context);
+    if (context.rdSkin != null) return _buildBeta(context, chatId);
 
     return Scaffold(
       // Ionic: ion-content color="light" (grey grouped background).
@@ -257,6 +261,183 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
                 ],
               ],
             ),
+    );
+  }
+
+  /// REDESIGN (Termin-Werkzeuge T1): the same generator in the Beta look.
+  Widget _buildBeta(BuildContext context, String? chatId) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    Widget input(
+      _Entry e,
+      String keyPrefix,
+      IconData icon,
+      String hint,
+      TextCapitalization caps,
+      VoidCallback? onRemove,
+    ) => Padding(
+      key: ValueKey('$keyPrefix-${e.id}'),
+      padding: const EdgeInsets.fromLTRB(14, 4, 4, 4),
+      child: Row(
+        children: [
+          RdRowIcon(icon),
+          const SizedBox(width: 12),
+          Expanded(
+            child: TextField(
+              controller: e.controller,
+              textCapitalization: caps,
+              style: TextStyle(fontSize: 17, color: p.text),
+              decoration: InputDecoration(
+                hintText: hint,
+                hintStyle: TextStyle(color: p.text2),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                filled: false,
+                isDense: true,
+              ),
+            ),
+          ),
+          if (onRemove != null)
+            IconButton(
+              icon: Icon(Icons.remove_circle_outline, semanticLabel: l10n.commonRemove),
+              color: p.absent,
+              onPressed: onRemove,
+            ),
+        ],
+      ),
+    );
+    Widget addRow(String label, VoidCallback onTap) => RdListRow(
+      leading: Icon(Icons.add, color: p.link),
+      title: label,
+      titleColor: p.link,
+      showChevron: false,
+      onTap: onTap,
+    );
+    final minutes = num.tryParse(_minutesController.text.trim()) ?? 0;
+    void step(int delta) => setState(() {
+      final next = (minutes + delta).clamp(0, 999);
+      _minutesController.text = next == next.roundToDouble() ? '${next.round()}' : '$next';
+    });
+    Widget stepButton(IconData icon, String label, int delta) => Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: Material(
+        color: p.soft,
+        shape: const CircleBorder(),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: () => step(delta),
+          child: SizedBox(width: 44, height: 44, child: Icon(icon, color: p.softText)),
+        ),
+      ),
+    );
+    return Material(
+      color: p.bg,
+      child: SafeArea(
+        child: _loading
+            ? const Center(child: AppSpinner())
+            : ListView(
+              // Keeps the export/Telegram buttons reachable above the keyboard.
+              padding: EdgeInsets.fromLTRB(20, 12, 20, 32 + MediaQuery.viewInsetsOf(context).bottom),
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Semantics(
+                        header: true,
+                        child: Text(l10n.planningSectionalPlan, style: RdType.title(p)),
+                      ),
+                    ),
+                    RdCircleButton(icon: Icons.close, label: l10n.commonClose, onPressed: () => Navigator.pop(context)),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                RdGroupLabel(l10n.planningGroups),
+                RdGroupedList(
+                  children: [
+                    for (var i = 0; i < _groups.length; i++)
+                      input(
+                        _groups[i],
+                        'group',
+                        Icons.people_outline,
+                        l10n.planningGroupName,
+                        TextCapitalization.sentences,
+                        _groups.length > 2 ? () => _remove(_groups, i) : null,
+                      ),
+                    addRow(l10n.planningGroups, () => setState(() => _groups.add(_entry('')))),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                RdGroupLabel(l10n.planningConductors),
+                RdGroupedList(
+                  children: [
+                    for (var i = 0; i < _conductors.length; i++)
+                      input(
+                        _conductors[i],
+                        'conductor',
+                        Icons.person_outline,
+                        l10n.planningName,
+                        TextCapitalization.words,
+                        _conductors.length > 1 ? () => _remove(_conductors, i) : null,
+                      ),
+                    addRow(l10n.planningConductors, () => setState(() => _conductors.add(_entry('')))),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                RdGroupLabel(l10n.planningTimeMinutes),
+                RdCard(
+                  child: Row(
+                    children: [
+                      stepButton(Icons.remove, l10n.redesignPlanLess, -5),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: TextField(
+                          controller: _minutesController,
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: p.text),
+                          decoration: InputDecoration(
+                            isDense: true,
+                            filled: true,
+                            fillColor: p.bg,
+                            suffixText: l10n.redesignPlanMinUnit,
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
+                          onChanged: (_) => setState(() {}),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      stepButton(Icons.add, l10n.redesignPlanMore5, 5),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                RdPrimaryButton(
+                  icon: Icons.description_outlined,
+                  label: l10n.planningExport,
+                  loading: _busy,
+                  onPressed: _disabled ? null : () => _createPlan(),
+                ),
+                if (chatId != null) ...[
+                  const SizedBox(height: 8),
+                  RdOutlineButton(
+                    icon: Icons.send_outlined,
+                    label: l10n.planningTelegramPdfShort,
+                    onPressed: _disabled ? null : () => _createPlan(perTelegram: true),
+                  ),
+                  const SizedBox(height: 8),
+                  RdOutlineButton(
+                    icon: Icons.image_outlined,
+                    label: l10n.planningTelegramImageShort,
+                    onPressed: _disabled ? null : () => _createPlan(perTelegram: true, asImage: true),
+                  ),
+                ],
+              ],
+            ),
+      ),
     );
   }
 
