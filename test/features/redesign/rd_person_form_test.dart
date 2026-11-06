@@ -162,6 +162,53 @@ void main() {
     await tester.pump(const Duration(seconds: 3));
   });
 
+  testWidgets('Person bearbeiten: a failed write is written again on the next focus loss', (tester) async {
+    final repo = await _pump(tester, const RdPersonEditPage(personId: 1));
+    var fail = true;
+    when(() => repo.updatePlayerFields(any(), any())).thenAnswer((_) async {
+      if (fail) throw Exception('offline');
+    });
+
+    await tester.enterText(find.byKey(const Key('rd-person-phone')), '0176 999');
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    verify(() => repo.updatePlayerFields(1, {'phone': '0176 999'})).called(1);
+
+    fail = false;
+    await tester.showKeyboard(find.byKey(const Key('rd-person-phone')));
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    // Written again (the failed write did not count as stored).
+    verify(() => repo.updatePlayerFields(1, {'phone': '0176 999'})).called(1);
+
+    // Stored now: another focus loss writes nothing.
+    await tester.showKeyboard(find.byKey(const Key('rd-person-phone')));
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    verifyNever(() => repo.updatePlayerFields(any(), any()));
+    await tester.pump(const Duration(seconds: 10));
+  });
+
+  testWidgets('Person bearbeiten: a note is not written when the stored history cannot be loaded',
+      (tester) async {
+    final repo = await _pump(tester, const RdPersonEditPage(personId: 1), person: _person.copyWith(notes: 'alt'));
+    when(() => repo.getPlayerById(any())).thenAnswer((_) async => throw Exception('offline'));
+
+    await tester.enterText(find.byKey(const Key('rd-person-notes')), 'neu');
+    FocusManager.instance.primaryFocus?.unfocus();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    verifyNever(() => repo.updatePlayerFields(any(), any()));
+    final field = tester.widget<TextField>(find.byKey(const Key('rd-person-notes')));
+    expect(field.controller!.text, 'alt');
+    await tester.pump(const Duration(seconds: 10));
+  });
+
   testWidgets('Person bearbeiten: opening and closing writes nothing (stored note with a line break)',
       (tester) async {
     final repo = await _pump(tester, const RdPersonEditPage(personId: 1),

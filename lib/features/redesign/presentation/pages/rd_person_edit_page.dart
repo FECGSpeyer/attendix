@@ -108,10 +108,28 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
   /// Typed text is saved a moment after the last key stroke.
   Timer? _typingTimer;
   final Map<String, dynamic> _typedColumns = {};
-  bool _typedExtra = false;
+
+  /// Zusatzfelder changed here and not queued yet (also those whose write
+  /// failed: they are written again with the next change or "Fertig").
+  final Map<String, dynamic> _pendingExtra = {};
+
+  /// Zusatzfelder changed here: the organisation values loaded later do not
+  /// replace what was entered.
+  final Set<String> _touchedExtra = {};
+
+  /// Names, phone and notes as stored (trimmed). Only a successful write
+  /// changes them, so a failed one is written again on the next focus loss
+  /// or "Fertig".
+  final Map<String, String> _confirmed = {};
+
+  /// The newest queued value per text column (until its write finished).
+  final Map<String, String> _requested = {};
 
   /// Writes run one after another, so the last change always wins.
   Future<void> _queue = Future.value();
+
+  /// Queued writes that have not finished yet.
+  int _running = 0;
 
   /// Bound once the person is loaded, so text saved when the page closes
   /// (or while the group changes) still goes to the group it came from.
@@ -139,10 +157,10 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     super.initState();
     _container = ProviderScope.containerOf(context, listen: false);
     for (final (focus, save) in [
-      (_firstFocus, () => _saveName('firstName', _first.text)),
-      (_lastFocus, () => _saveName('lastName', _last.text)),
-      (_phoneFocus, _savePhone),
-      (_notesFocus, _saveNotes),
+      (_firstFocus, () => _saveText('firstName', _first.text)),
+      (_lastFocus, () => _saveText('lastName', _last.text)),
+      (_phoneFocus, () => _saveText('phone', _phone.text)),
+      (_notesFocus, () => _saveText('notes', _notes.text)),
       (_emailFocus, _saveEmail),
     ]) {
       focus.addListener(() {
@@ -168,11 +186,23 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
   /// it needs the account question ([_done] waits for it).
   void _saveTyped() {
     _flushTyped();
-    _saveName('firstName', _first.text);
-    _saveName('lastName', _last.text);
-    _savePhone();
-    _saveNotes();
+    for (final (column, c) in _textFields) {
+      _saveText(column, c.text);
+    }
   }
+
+  List<(String, TextEditingController)> get _textFields =>
+      [('firstName', _first), ('lastName', _last), ('phone', _phone), ('notes', _notes)];
+
+  /// Something is not written yet: back goes through [_done], which waits
+  /// for it (and shows a failure while the page is still open).
+  bool get _unsaved =>
+      _running > 0 ||
+      _emailSave != null ||
+      _emailChanged ||
+      _typedColumns.isNotEmpty ||
+      _pendingExtra.isNotEmpty ||
+      _textFields.any((f) => _confirmed.containsKey(f.$1) && f.$2.text.trim() != _confirmed[f.$1]);
 
   @override
   void dispose() {
@@ -216,6 +246,11 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     _email.text = person.email ?? '';
     _phone.text = person.phone ?? '';
     _notes.text = person.notes ?? '';
+    // Compared trimmed: opening and closing the page writes nothing (e.g. a
+    // stored note "abc\n").
+    for (final (column, c) in _textFields) {
+      _confirmed[column] = c.text.trim();
+    }
     // Ionic ngOnInit: missing Zusatzfeld values get their default.
     final fields = ref.read(personListExtraFieldsProvider);
     final churchIds = <Object>[
@@ -242,22 +277,26 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     _loadUserRole(person);
   }
 
-  /// Organisation fields: shared values replace the shown ones. Null when
-  /// they cannot be loaded (then Zusatzfelder are not saved, like Ionic).
+  /// Organisation fields: shared values replace the stored ones (and the
+  /// shown ones not changed here meanwhile). Null when they cannot be loaded
+  /// (then Zusatzfelder are not saved, like Ionic).
   Future<SharedPersonFields?> _loadShared(Person person) async {
     try {
       final repo = _profileRepo;
       if (repo == null) throw StateError('no profile repository');
       final shared = await loadSharedPersonFields(ref, repo, person);
-      if (mounted && shared.values.isNotEmpty) {
-        setState(() {
-          for (final e in shared.values.entries) {
-            if (shared.fieldIds.contains(e.key)) {
-              _additional[e.key] = e.value;
-              _storedAdditional[e.key] = e.value;
-            }
-          }
-        });
+      void take() {
+        for (final e in shared.values.entries) {
+          if (!shared.fieldIds.contains(e.key)) continue;
+          _storedAdditional[e.key] = e.value;
+          if (!_touchedExtra.contains(e.key)) _additional[e.key] = e.value;
+        }
+      }
+
+      if (mounted && !_disposing) {
+        setState(take);
+      } else {
+        take();
       }
       return shared;
     } catch (_) {
@@ -332,10 +371,18 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
   // Writing
   // ---------------------------------------------------------------------
 
-  void _enqueue(Future<void> Function() task) {
-    _queue = _queue.then((_) => task()).catchError((Object e, StackTrace st) {
+  /// Queues [task]; the returned future completes when it finished.
+  Future<void> _enqueue(Future<void> Function() task) {
+    _running++;
+    final run = _queue.then((_) => task()).catchError((Object e, StackTrace st) {
       ErrorReporter.report(e, st, where: 'rd_person_edit_page');
+      if (mounted) ToastHelper.showError(context, context.l10n.personUpdateFailedWith(friendlyErrorMessage(e)));
+    }).whenComplete(() {
+      _running--;
+      // Back may close the page directly again.
+      if (_running == 0 && mounted && !_disposing) setState(() {});
     });
+    return _queue = run;
   }
 
   void _refresh() {
@@ -371,22 +418,40 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     return true;
   }
 
-  /// Writes [columns] with [entry] added to the stored history (like the
-  /// person page with the freshly loaded person): entries deleted in
-  /// "Verlauf" stay deleted, entries added elsewhere (copy to another
-  /// group) stay.
-  Future<bool> _storeWithHistory(Map<String, dynamic> columns, Map<String, dynamic> entry) async {
+  /// Writes [columns] with the [entry] built from the stored person added to
+  /// the stored history (like the person page with the freshly loaded
+  /// person): entries deleted in "Verlauf" stay deleted, entries added
+  /// elsewhere (copy to another group) stay. When the person cannot be
+  /// loaded nothing is written (an old history would bring deleted entries
+  /// back): a toast, and [revert] sets the shown value back.
+  Future<bool> _storeWithHistory(
+    Map<String, dynamic> columns,
+    Map<String, dynamic> Function(Person stored) entry, {
+    required VoidCallback revert,
+  }) async {
     final repo = _repo;
     if (_deleted || !_editable || repo == null || !repo.hasTenantId) return false;
     Person? stored;
+    Object? error;
     try {
       stored = await repo.getPlayerById(_personId);
     } catch (e, st) {
+      error = e;
       ErrorReporter.report(e, st, where: 'rd_person_edit_page');
     }
+    if (stored == null) {
+      revert();
+      if (mounted) {
+        ToastHelper.showError(
+          context,
+          error == null ? context.l10n.redesignPersonNotFound : context.l10n.personUpdateFailedWith(friendlyErrorMessage(error)),
+        );
+      }
+      return false;
+    }
     final history = [
-      for (final h in (stored ?? _person)?.history ?? const <PlayerHistoryEntry>[]) h.toJson(),
-      entry,
+      for (final h in stored.history) h.toJson(),
+      entry(stored),
     ];
     return _store({...columns, 'history': history});
   }
@@ -437,8 +502,9 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
   void _onExtra(String id, dynamic value, {bool typing = false}) {
     if (!_editable) return;
     setState(() => _additional[id] = value);
+    _pendingExtra[id] = value;
+    _touchedExtra.add(id);
     if (typing) {
-      _typedExtra = true;
       _restartTyping();
     } else {
       _writeExtra();
@@ -457,28 +523,40 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
       _typedColumns.clear();
       _enqueue(() => _store(columns));
     }
-    if (_typedExtra) {
-      _typedExtra = false;
-      _writeExtra();
-    }
+    if (_pendingExtra.isNotEmpty) _writeExtra();
   }
 
   /// Zusatzfelder: organisation fields to tenant_group_person_fields, the
   /// rest to additional_fields, then Ionic
   /// syncPlayerWithUpcomingAttendancesByAdditionalFields.
+  ///
+  /// Only the fields changed here are put onto the stored values when the
+  /// write runs (after the organisation values are loaded): values shown
+  /// before they were loaded never overwrite stored organisation values.
   void _writeExtra() {
-    final next = Map<String, dynamic>.from(_additional);
     final person = _person;
     final shared = _shared;
     final profileRepo = _profileRepo;
-    if (person == null || shared == null || !_editable) return;
+    if (_pendingExtra.isEmpty || person == null || shared == null || !_editable) return;
+    final changes = Map<String, dynamic>.from(_pendingExtra);
+    _pendingExtra.clear();
+    // Written again with the next change or "Fertig" (newer values win).
+    void keepForRetry() {
+      for (final e in changes.entries) {
+        _pendingExtra.putIfAbsent(e.key, () => e.value);
+      }
+    }
+
     _enqueue(() async {
-      if (mapEquals(next, _storedAdditional)) return;
       final fields = await shared;
       if (fields == null || profileRepo == null) {
+        keepForRetry();
         if (mounted) ToastHelper.showError(context, context.l10n.svcLoadSharedFieldsFailed);
         return;
       }
+      final old = _storedAdditional;
+      final next = {...old, ...changes};
+      if (mapEquals(next, old)) return;
       final Map<String, dynamic> local;
       try {
         local = await saveSharedPersonFields(
@@ -489,11 +567,14 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
           personKey: organisationPersonKey(person),
         );
       } catch (e) {
+        keepForRetry();
         if (mounted) ToastHelper.showError(context, context.l10n.personUpdateFailedWith(friendlyErrorMessage(e)));
         return;
       }
-      if (!await _store({'additional_fields': local})) return;
-      final old = _storedAdditional;
+      if (!await _store({'additional_fields': local})) {
+        keepForRetry();
+        return;
+      }
       _storedAdditional = next;
       try {
         await _repo!.syncPlayerWithUpcomingAttendances(
@@ -507,33 +588,37 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     });
   }
 
-  // Compared with the trimmed stored values: opening and closing the page
-  // writes nothing (e.g. a stored note "abc\n").
-
-  void _saveName(String column, String text) {
+  /// Names, phone and notes: written when the text differs from the stored
+  /// one ([_confirmed]) and from the one already queued. Names are never
+  /// emptied. Ionic: the previous note goes to the history.
+  void _saveText(String column, String text) {
     final value = text.trim();
-    final stored = column == 'firstName' ? _person?.firstName : _person?.lastName;
-    if (!_editable || stored == null || value.isEmpty || value == stored.trim()) return;
-    _apply({column: value});
-    _enqueue(() => _store({column: value}));
-  }
-
-  void _savePhone() {
-    final value = _phone.text.trim();
-    if (!_editable || value == (_person!.phone ?? '').trim()) return;
-    _apply({'phone': value.isEmpty ? null : value});
-    _enqueue(() => _store({'phone': value.isEmpty ? null : value}));
-  }
-
-  /// Ionic: the previous note goes to the history.
-  void _saveNotes() {
-    final value = _notes.text.trim();
-    final person = _person;
-    if (!_editable || person == null || value == (person.notes ?? '').trim()) return;
-    final entry = personNotesChangeEntry(person.notes);
-    final notes = value.isEmpty ? null : value;
-    _apply({'notes': notes});
-    _enqueue(() => _storeWithHistory({'notes': notes}, entry));
+    final confirmed = _confirmed[column];
+    if (!_editable || confirmed == null) return;
+    if ((column == 'firstName' || column == 'lastName') && value.isEmpty) return;
+    if (value == (_requested[column] ?? confirmed)) return;
+    final stored = value.isEmpty ? null : value;
+    _apply({column: stored});
+    _requested[column] = value;
+    _enqueue(() async {
+      final bool ok;
+      if (column == 'notes') {
+        ok = await _storeWithHistory(
+          {'notes': stored},
+          (s) => personNotesChangeEntry(s.notes),
+          revert: () {
+            if (_requested['notes'] != value) return; // a newer note is queued
+            final back = _confirmed['notes'] ?? '';
+            _apply({'notes': back.isEmpty ? null : back});
+            if (!_disposing && _notes.text.trim() == value) _notes.text = back;
+          },
+        );
+      } else {
+        ok = await _store({column: stored});
+      }
+      if (ok) _confirmed[column] = value;
+      if (_requested[column] == value) _requested.remove(column);
+    });
   }
 
   String _name(Person p) => '${p.firstName} ${p.lastName}'.trim();
@@ -575,9 +660,16 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     _apply({'instrument': groupId, 'isLeader': false});
     final after = _person!;
     final groups = await _container.read(groupsMapProvider.future).catchError((Object _) => <int, String>{});
-    final entry = personGroupChangeEntry(groups, before.instrument, groupId);
     _enqueue(() async {
-      if (!await _storeWithHistory({'instrument': groupId, 'isLeader': false}, entry)) return;
+      final ok = await _storeWithHistory(
+        {'instrument': groupId, 'isLeader': false},
+        (stored) => personGroupChangeEntry(groups, stored.instrument, groupId),
+        // Back to the group shown before (unless another one was chosen).
+        revert: () {
+          if (_person?.instrument == groupId) _apply({'instrument': before.instrument, 'isLeader': before.isLeader});
+        },
+      );
+      if (!ok) return;
       await _syncRoles(before: before, after: after, assignVoiceLeaderRole: false);
     });
   }
@@ -642,12 +734,12 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     setState(() => _emailInvalid = false);
     if (value.isEmpty) {
       _apply({'email': null});
-      _enqueue(() => _store({'email': null}));
+      await _enqueue(() => _store({'email': null}));
       return;
     }
-    // Bound before the dialogs: the save after "Ja" does not depend on the
-    // page any more.
-    final accounts = _container.read(accountCreationNotifierProvider.notifier);
+    // Bound to the person's group when the page was filled ([_fill]): the
+    // account after "Ja" is created there even after a group switch.
+    final registrations = _registrations;
     final draft = await _lookupEmail(value);
     if (!mounted) return;
     if (draft != null) value = draft.person.email?.trim() ?? value;
@@ -660,15 +752,40 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     }
     if (mounted) _email.text = value;
     if (draft != null) await _takeDraft(draft);
-    _enqueue(() async {
+    // Awaited: the e-mail save ([_emailSave]) runs until the account exists
+    // and the page knows it, so a second focus loss neither asks again nor
+    // queues a second account.
+    await _enqueue(() async {
+      final String appId;
       try {
-        await accounts.createAccount(_person!.copyWith(email: value));
+        if (registrations == null || !registrations.hasTenantId) {
+          throw AccountFlowException(l10nWithoutContext.coreFlutterNoInstanceSelected);
+        }
+        // Like AccountCreationNotifier.createAccount, with the bound repository.
+        final mainGroupId = await registrations.getMainGroupId().catchError((Object _) => null);
+        appId = await registrations.createPlayerAccount(_person!.copyWith(email: value), mainGroupId: mainGroupId);
       } catch (e) {
         if (mounted) ToastHelper.showError(context, context.l10n.personUpdateFailedWith(friendlyErrorMessage(e)));
         return;
       }
+      _setAppId(appId);
+      _container
+        ..invalidate(playersProvider)
+        ..invalidate(playerByIdProvider(_personId));
       if (await _store({'email': value})) _apply({'email': value});
     });
+  }
+
+  /// The account created here, before the reload shows it.
+  void _setAppId(String appId) {
+    final p = _person;
+    if (p == null) return;
+    if (_disposing || !mounted) {
+      _person = p.copyWith(appId: appId);
+      return;
+    }
+    setState(() => _person = p.copyWith(appId: appId));
+    if (_editingStarted) _loadUserRole(_person!);
   }
 
   /// Ionic onEmailBlur: the e-mail belongs to a person of another group
@@ -686,7 +803,12 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     }
     matches = matches.where((m) => m.person.id != _personId).toList();
     if (matches.isEmpty || !mounted) return null;
-    final chosen = await showEmailTakenDialog(context, matches);
+    final chosen = await showEmailTakenDialog(
+      context,
+      matches,
+      usedBy: context.l10n.redesignPersonFormEmailUsedBy,
+      usedMany: context.l10n.redesignPersonFormEmailUsedMany,
+    );
     if (chosen == null || !mounted) return null;
     final groups = ref.read(groupsProvider).valueOrNull ?? const [];
     final group = groups.where((g) => g.name == chosen.groupName).firstOrNull;
@@ -701,8 +823,8 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
       _first.text = m.firstName;
       _last.text = m.lastName;
     }
-    _saveName('firstName', m.firstName);
-    _saveName('lastName', m.lastName);
+    _saveText('firstName', m.firstName);
+    _saveText('lastName', m.lastName);
     _onColumns({
       if (m.correctBirthday && m.birthday != null) ...{'birthday': m.birthday, 'correctBirthday': true},
       'otherExercise': m.otherExercise,
@@ -718,11 +840,21 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
 
   Future<void> _solveProblem() async {
     if (!_editable) return;
-    final entry = personProblemSolvedEntry(_problemNotes.text);
+    final remarks = _problemNotes.text;
+    final entry = personProblemSolvedEntry(remarks);
     final columns = personProblemSolvedColumns();
     setState(() => _problemSolved = false);
     _problemNotes.clear();
-    _enqueue(() => _storeWithHistory(columns, entry));
+    _enqueue(() => _storeWithHistory(
+          columns,
+          (_) => entry,
+          // The remarks are shown again to save them later.
+          revert: () {
+            if (!mounted || _disposing) return;
+            setState(() => _problemSolved = true);
+            if (_problemNotes.text.isEmpty) _problemNotes.text = remarks;
+          },
+        ));
   }
 
   Future<void> _resetLateCount(Person person) async {
@@ -874,7 +1006,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
   /// then reloaded (current history, e.g. after an earlier copy).
   Future<void> _transfer({required bool copy}) async {
     _saveTyped();
-    await _queue;
+    await _settle();
     if (!mounted) return;
     Person? stored;
     try {
@@ -966,8 +1098,18 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     );
   }
 
-  /// "Fertig" and back: saves the typed text and waits for the e-mail
-  /// (account question) before the page closes.
+  /// Waits until every queued write finished (also the ones queued meanwhile).
+  Future<void> _settle() async {
+    while (true) {
+      final queue = _queue;
+      await queue;
+      if (identical(queue, _queue)) return;
+    }
+  }
+
+  /// "Fertig" and back: saves the typed text, waits for the e-mail (account
+  /// question) and every queued write, then the page closes. Failures are
+  /// shown as toasts while it is still open.
   Future<void> _done() async {
     if (_leaving) return;
     _leaving = true;
@@ -975,6 +1117,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     FocusScope.of(context).unfocus();
     _saveTyped();
     await _saveEmail();
+    await _settle();
     if (!mounted) return;
     // An invalid e-mail is shown once; "Fertig" again leaves without it.
     if (_emailInvalid && !wasInvalid) {
@@ -1106,9 +1249,10 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
         ),
       ),
     );
-    // Back waits for the e-mail (account question) like "Fertig".
+    // Back waits for the e-mail (account question) and the writes like
+    // "Fertig" while something is not saved yet.
     return PopScope(
-      canPop: !(_editable && (_emailSave != null || _emailChanged)),
+      canPop: !(_editable && _unsaved),
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _done();
       },
