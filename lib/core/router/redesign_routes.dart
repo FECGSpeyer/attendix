@@ -101,16 +101,50 @@ class RedesignRoutes {
   /// Verwaltung › Rollen und Rechte (replaces `/settings/role-permissions`).
   static const String rolePermissions = '$manage/rollen';
 
+  /// Verwaltung › Admins (replaces the old admins sheet; super admins only).
+  static const String admins = '$manage/admins';
+
+  /// Verwaltung › Eltern (replaces the old parents sheet).
+  static const String parents = '$manage/eltern';
+
+  /// Verwaltung › Beobachter (replaces the old viewers sheet).
+  static const String viewers = '$manage/beobachter';
+
+  /// Verwaltung › Archiv: persons who left (replaces the old archive sheet).
+  static const String archive = '$manage/archiv';
+
+  /// Verwaltung › Freigaben: persons waiting for approval (replaces the old
+  /// pending sheet; a person still opens the old review page).
+  static const String approvals = '$manage/freigaben';
+
   /// Ich › Benachrichtigungen.
   static const String notifications = '$me/benachrichtigungen';
 
   /// Pages for leads only (Admins and Verantwortliche, like the old
-  /// statistics, messages and archive entries and the old group, type and
-  /// shift pages); their sub pages too.
-  static const _leadOnly = {stats, compose, bulkMembers, groups, attendanceTypes, shiftPlans, rolePermissions};
+  /// statistics, messages and archive entries, the old group, type and
+  /// shift pages and `/settings/parents|viewers|pending|left`); their sub
+  /// pages too.
+  static const _leadOnly = {
+    stats,
+    compose,
+    bulkMembers,
+    groups,
+    attendanceTypes,
+    shiftPlans,
+    parents,
+    viewers,
+    archive,
+    approvals,
+    rolePermissions,
+  };
 
-  static bool _isLeadOnly(String location) =>
-      _leadOnly.any((route) => location == route || location.startsWith('$route/'));
+  /// Pages for super admins only (the old admins sheet: `role.isAdmin`).
+  static const _adminOnly = {admins};
+
+  static bool _matches(Set<String> routes, String location) =>
+      routes.any((route) => location == route || location.startsWith('$route/'));
+
+  static bool _isLeadOnly(String location) => _matches(_leadOnly, location);
 
   /// True while the new design is switched on (set by
   /// `RedesignSettingsNotifier`).
@@ -183,6 +217,7 @@ class RedesignRoutes {
     if (location == manage || location.startsWith('$manage/')) {
       if (role.isApplicant || role.isParent) return me;
       if (_isLeadOnly(location) && !(role.isAdmin || role.isResponsible)) return manage;
+      if (_matches(_adminOnly, location) && !role.isAdmin) return manage;
       return null;
     }
     if (location == members || location.startsWith('$members/')) {

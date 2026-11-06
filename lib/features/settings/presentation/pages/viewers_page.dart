@@ -44,7 +44,7 @@ class ViewersPage extends ConsumerWidget {
               ),
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddViewerDialog(context, ref),
+        onPressed: () => showAddViewerDialog(context, ref),
         child: const Icon(Icons.add),
       ),
       body: viewersAsync.when(
@@ -88,7 +88,7 @@ class ViewersPage extends ConsumerWidget {
                     for (final item in viewers)
                       _ViewerItem(
                         viewer: item,
-                        onDelete: () => _deleteViewer(context, ref, item),
+                        onDelete: () => removeViewerWithConfirmation(context, ref, item),
                       ),
                   ],
                 ),
@@ -100,7 +100,8 @@ class ViewersPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _showAddViewerDialog(BuildContext context, WidgetRef ref) async {
+  /// Invite dialog of "+" (also the Beta page `RdViewersPage`).
+  static Future<void> showAddViewerDialog(BuildContext context, WidgetRef ref) async {
     final emailController = TextEditingController();
     final firstNameController = TextEditingController();
     final lastNameController = TextEditingController();
@@ -201,7 +202,9 @@ class ViewersPage extends ConsumerWidget {
     }
   }
 
-  Future<void> _deleteViewer(BuildContext context, WidgetRef ref, Viewer viewer) async {
+  /// Removes [viewer] after the confirmation (also the Beta page
+  /// `RdViewersPage`).
+  static Future<void> removeViewerWithConfirmation(BuildContext context, WidgetRef ref, Viewer viewer) async {
     final confirmed = await showAppDialog<bool>(
       context: context,
       builder: (ctx) => AppAlertDialog(

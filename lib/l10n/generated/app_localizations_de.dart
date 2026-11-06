@@ -9547,6 +9547,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAdminTitle => 'Verwaltung';
 
   @override
+  String get redesignAdminsListAdd => 'Admin hinzufügen';
+
+  @override
+  String get redesignAdminsListEmpty => 'Noch keine Admins.';
+
+  @override
+  String get redesignAdminsListIntro =>
+      'Admins haben alle Rechte in dieser Gruppe und können sie auch löschen.';
+
+  @override
+  String get redesignAdminsListRemove => 'Admin entfernen';
+
+  @override
+  String get redesignAdminsListYou => 'Das bist du';
+
+  @override
   String get redesignAppearanceAppIcon => 'App-Symbol';
 
   @override
@@ -9637,6 +9653,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignApplicantWaitingFor(Object group) {
     return 'Deine Anmeldung bei $group wird geprüft';
   }
+
+  @override
+  String get redesignArchiveListEmpty => 'Keine archivierten Personen.';
+
+  @override
+  String get redesignArchiveListIntro =>
+      'Ausgetretene Personen. Tippe auf eine Person, um sie anzusehen.';
+
+  @override
+  String get redesignArchiveListRestore => 'Wiederherstellen';
 
   @override
   String get redesignBulkActionArchive => 'Archivieren';
@@ -12218,10 +12244,30 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignParentsListAdd => 'Elternteil einladen';
+
+  @override
+  String get redesignParentsListEmpty => 'Noch keine Eltern eingeladen.';
+
+  @override
+  String get redesignParentsListIntro =>
+      'Eltern sehen die Anwesenheiten ihrer Kinder und tragen Abwesenheiten ein.';
+
+  @override
+  String get redesignParentsListRemove => 'Elternteil entfernen';
+
+  @override
   String get redesignParentsRoute => 'Route';
 
   @override
   String get redesignParentsToday => 'Heute';
+
+  @override
+  String get redesignPendingListEmpty => 'Gerade wartet niemand auf Freigabe.';
+
+  @override
+  String get redesignPendingListIntro =>
+      'Diese Personen haben sich angemeldet und warten auf deine Freigabe. Tippe auf eine Person, um sie zu prüfen.';
 
   @override
   String get redesignPersonAbsence => 'Abwesend';
@@ -13293,6 +13339,19 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get redesignTypesListIntro =>
       'Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.';
+
+  @override
+  String get redesignViewersListAdd => 'Beobachter einladen';
+
+  @override
+  String get redesignViewersListEmpty => 'Noch keine Beobachter eingeladen.';
+
+  @override
+  String get redesignViewersListIntro =>
+      'Beobachter dürfen Anwesenheiten und Personendaten nur ansehen.';
+
+  @override
+  String get redesignViewersListRemove => 'Beobachter entfernen';
 
   @override
   String get redesignWorkAbout => 'Über das Werk';

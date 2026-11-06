@@ -44,7 +44,7 @@ class ParentsPage extends ConsumerWidget {
               ),
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddParentDialog(context, ref),
+        onPressed: () => showAddParentDialog(context, ref),
         child: const Icon(Icons.add),
       ),
       body: parentsAsync.when(
@@ -88,7 +88,7 @@ class ParentsPage extends ConsumerWidget {
                     for (final item in parents)
                       _ParentItem(
                         parent: item,
-                        onDelete: () => _deleteParent(context, ref, item),
+                        onDelete: () => removeParentWithConfirmation(context, ref, item),
                       ),
                   ],
                 ),
@@ -100,7 +100,8 @@ class ParentsPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _showAddParentDialog(BuildContext context, WidgetRef ref) async {
+  /// Invite dialog of "+" (also the Beta page `RdParentsPage`).
+  static Future<void> showAddParentDialog(BuildContext context, WidgetRef ref) async {
     final emailController = TextEditingController();
     final firstNameController = TextEditingController();
     final lastNameController = TextEditingController();
@@ -201,7 +202,9 @@ class ParentsPage extends ConsumerWidget {
     }
   }
 
-  Future<void> _deleteParent(BuildContext context, WidgetRef ref, ParentModel parent) async {
+  /// Removes [parent] after the confirmation (also the Beta page
+  /// `RdParentsPage`).
+  static Future<void> removeParentWithConfirmation(BuildContext context, WidgetRef ref, ParentModel parent) async {
     final confirmed = await showAppDialog<bool>(
       context: context,
       builder: (ctx) => AppAlertDialog(

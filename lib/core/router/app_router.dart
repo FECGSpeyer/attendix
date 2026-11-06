@@ -137,6 +137,10 @@ import '../../features/redesign/presentation/pages/rd_group_edit_page.dart';
 import '../../features/redesign/presentation/pages/rd_groups_page.dart';
 import '../../features/redesign/presentation/pages/rd_shift_plans_page.dart';
 import '../../features/redesign/presentation/pages/rd_role_permissions_page.dart';
+import '../../features/redesign/presentation/pages/rd_admins_page.dart';
+import '../../features/redesign/presentation/pages/rd_archive_page.dart';
+import '../../features/redesign/presentation/pages/rd_parents_page.dart';
+import '../../features/redesign/presentation/pages/rd_pending_page.dart';
 import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea;
 import '../../features/redesign/presentation/pages/rd_manage_page.dart';
 import '../../features/redesign/presentation/widgets/rd_split_view.dart';
@@ -876,6 +880,26 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'rollen',
                     builder: (context, state) => const RdRolePermissionsPage(),
+                  ),
+                  GoRoute(
+                    path: 'admins',
+                    builder: (context, state) => const RdAdminsPage(),
+                  ),
+                  GoRoute(
+                    path: 'eltern',
+                    builder: (context, state) => const RdParentsPage(),
+                  ),
+                  GoRoute(
+                    path: 'beobachter',
+                    builder: (context, state) => const RdViewersPage(),
+                  ),
+                  GoRoute(
+                    path: 'archiv',
+                    builder: (context, state) => const RdArchivePage(),
+                  ),
+                  GoRoute(
+                    path: 'freigaben',
+                    builder: (context, state) => const RdPendingPage(),
                   ),
                   GoRoute(
                     path: ':area',

@@ -15689,6 +15689,36 @@ abstract class AppLocalizations {
   /// **'Verwaltung'**
   String get redesignAdminTitle;
 
+  /// redesign.adminsList.add
+  ///
+  /// In de, this message translates to:
+  /// **'Admin hinzufügen'**
+  String get redesignAdminsListAdd;
+
+  /// redesign.adminsList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Admins.'**
+  String get redesignAdminsListEmpty;
+
+  /// redesign.adminsList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Admins haben alle Rechte in dieser Gruppe und können sie auch löschen.'**
+  String get redesignAdminsListIntro;
+
+  /// redesign.adminsList.remove
+  ///
+  /// In de, this message translates to:
+  /// **'Admin entfernen'**
+  String get redesignAdminsListRemove;
+
+  /// redesign.adminsList.you
+  ///
+  /// In de, this message translates to:
+  /// **'Das bist du'**
+  String get redesignAdminsListYou;
+
   /// redesign.appearance.appIcon
   ///
   /// In de, this message translates to:
@@ -15856,6 +15886,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Deine Anmeldung bei {group} wird geprüft'**
   String redesignApplicantWaitingFor(Object group);
+
+  /// redesign.archiveList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Keine archivierten Personen.'**
+  String get redesignArchiveListEmpty;
+
+  /// redesign.archiveList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Ausgetretene Personen. Tippe auf eine Person, um sie anzusehen.'**
+  String get redesignArchiveListIntro;
+
+  /// redesign.archiveList.restore
+  ///
+  /// In de, this message translates to:
+  /// **'Wiederherstellen'**
+  String get redesignArchiveListRestore;
 
   /// redesign.bulk.actionArchive
   ///
@@ -19655,6 +19703,30 @@ abstract class AppLocalizations {
   /// **'{name} · {percent} %'**
   String redesignParentsChildRate(Object name, Object percent);
 
+  /// redesign.parentsList.add
+  ///
+  /// In de, this message translates to:
+  /// **'Elternteil einladen'**
+  String get redesignParentsListAdd;
+
+  /// redesign.parentsList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Eltern eingeladen.'**
+  String get redesignParentsListEmpty;
+
+  /// redesign.parentsList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Eltern sehen die Anwesenheiten ihrer Kinder und tragen Abwesenheiten ein.'**
+  String get redesignParentsListIntro;
+
+  /// redesign.parentsList.remove
+  ///
+  /// In de, this message translates to:
+  /// **'Elternteil entfernen'**
+  String get redesignParentsListRemove;
+
   /// redesign.parents.route
   ///
   /// In de, this message translates to:
@@ -19666,6 +19738,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Heute'**
   String get redesignParentsToday;
+
+  /// redesign.pendingList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Gerade wartet niemand auf Freigabe.'**
+  String get redesignPendingListEmpty;
+
+  /// redesign.pendingList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Personen haben sich angemeldet und warten auf deine Freigabe. Tippe auf eine Person, um sie zu prüfen.'**
+  String get redesignPendingListIntro;
 
   /// redesign.person.absence
   ///
@@ -21334,6 +21418,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.'**
   String get redesignTypesListIntro;
+
+  /// redesign.viewersList.add
+  ///
+  /// In de, this message translates to:
+  /// **'Beobachter einladen'**
+  String get redesignViewersListAdd;
+
+  /// redesign.viewersList.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Beobachter eingeladen.'**
+  String get redesignViewersListEmpty;
+
+  /// redesign.viewersList.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Beobachter dürfen Anwesenheiten und Personendaten nur ansehen.'**
+  String get redesignViewersListIntro;
+
+  /// redesign.viewersList.remove
+  ///
+  /// In de, this message translates to:
+  /// **'Beobachter entfernen'**
+  String get redesignViewersListRemove;
 
   /// redesign.work.about
   ///
