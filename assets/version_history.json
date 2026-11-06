@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.49.0",
+      "version": "0.51.0",
       "date": "6.11.2026",
       "changes": [
         "✨ Beta: Automatische Nachrichten als Verwaltungsliste mit Schaltern, Regel als Bearbeiten-Seite mit „Regel / Verlauf“",
@@ -9,6 +9,15 @@
         "✨ Beta: Teamorganisation im neuen Design (Aufgaben, Themen, Protokolle), „Meine Aufgaben“ auf Heute",
         "✨ Beta: Protokoll schreiben und lesen im neuen Design",
         "🐛 Beta: „Nächster Termin“ bei Themen und „Zurück“ bei Aufgaben öffnen nicht mehr die alten Seiten"
+      ]
+    },
+    {
+      "version": "0.49.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Im Ablauf-Editor stehen Name, Ausführender, Info und Dauer direkt im Punkt-Blatt und speichern beim Schließen, ohne zweiten Dialog",
+        "✨ Beta: Werk hinzufügen, Neuer Plan, Umbenennen, Tag zuordnen, Link teilen und Export als Beta-Blätter",
+        "✨ Beta: „Ablauf ansehen“ als Beta-Seite mit Umschalter „Jetzt / Ganzer Ablauf“, Registerprobenplan im Beta-Look"
       ]
     },
     {
