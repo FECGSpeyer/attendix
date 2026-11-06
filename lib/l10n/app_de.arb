@@ -15983,11 +15983,11 @@
   "@redesignTenantsAnother": {
     "description": "redesign.tenants.another"
   },
-  "redesignTenantsAskOnStart": "Gruppe beim Start wählen",
+  "redesignTenantsAskOnStart": "Gruppe nach der Anmeldung wählen",
   "@redesignTenantsAskOnStart": {
     "description": "redesign.tenants.askOnStart"
   },
-  "redesignTenantsAskOnStartHint": "Fragt vor dem Öffnen der App, welche Gruppe du öffnen möchtest.",
+  "redesignTenantsAskOnStartHint": "Fragt nach jeder Anmeldung, welche Gruppe du öffnen möchtest.",
   "@redesignTenantsAskOnStartHint": {
     "description": "redesign.tenants.askOnStartHint"
   },
@@ -16147,7 +16147,7 @@
   "@redesignTenantsRole": {
     "description": "redesign.tenants.role"
   },
-  "redesignTenantsStart": "Beim Start",
+  "redesignTenantsStart": "Nach der Anmeldung",
   "@redesignTenantsStart": {
     "description": "redesign.tenants.start"
   },

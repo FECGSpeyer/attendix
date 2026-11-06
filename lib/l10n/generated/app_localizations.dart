@@ -20780,13 +20780,13 @@ abstract class AppLocalizations {
   /// redesign.tenants.askOnStart
   ///
   /// In de, this message translates to:
-  /// **'Gruppe beim Start wählen'**
+  /// **'Gruppe nach der Anmeldung wählen'**
   String get redesignTenantsAskOnStart;
 
   /// redesign.tenants.askOnStartHint
   ///
   /// In de, this message translates to:
-  /// **'Fragt vor dem Öffnen der App, welche Gruppe du öffnen möchtest.'**
+  /// **'Fragt nach jeder Anmeldung, welche Gruppe du öffnen möchtest.'**
   String get redesignTenantsAskOnStartHint;
 
   /// redesign.tenants.cannotDelete
@@ -21008,7 +21008,7 @@ abstract class AppLocalizations {
   /// redesign.tenants.start
   ///
   /// In de, this message translates to:
-  /// **'Beim Start'**
+  /// **'Nach der Anmeldung'**
   String get redesignTenantsStart;
 
   /// redesign.tenants.title

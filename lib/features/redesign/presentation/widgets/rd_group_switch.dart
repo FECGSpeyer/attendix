@@ -149,10 +149,17 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
   }
 
   /// "Einer Gruppe beitreten": the join sheet replaces this one.
-  void _join() {
+  /// "Einer Gruppe beitreten": joining switches the group afterwards, so a
+  /// page with unsaved input or a running save is asked first, like
+  /// [_create].
+  Future<void> _join() async {
     final rootContext = Navigator.of(context, rootNavigator: true).context;
-    Navigator.of(context).pop();
-    showRdJoinSheet(rootContext);
+    final navigator = Navigator.of(context);
+    final sheet = ModalRoute.of(context);
+    final guards = ref.read(routeLeaveGuardRegistryProvider);
+    if (guards.hasGuards && !await guards.canLeave()) return;
+    if (sheet != null && sheet.isCurrent) navigator.pop();
+    if (rootContext.mounted) showRdJoinSheet(rootContext);
   }
 
   /// "Neue Gruppe gründen": like "Gruppen verwalten", a page with unsaved

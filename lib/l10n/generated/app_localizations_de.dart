@@ -12911,11 +12911,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTenantsAnother => 'Weitere Gruppe';
 
   @override
-  String get redesignTenantsAskOnStart => 'Gruppe beim Start wählen';
+  String get redesignTenantsAskOnStart => 'Gruppe nach der Anmeldung wählen';
 
   @override
   String get redesignTenantsAskOnStartHint =>
-      'Fragt vor dem Öffnen der App, welche Gruppe du öffnen möchtest.';
+      'Fragt nach jeder Anmeldung, welche Gruppe du öffnen möchtest.';
 
   @override
   String get redesignTenantsCannotDelete =>
@@ -13039,7 +13039,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTenantsRole => 'Deine Rolle';
 
   @override
-  String get redesignTenantsStart => 'Beim Start';
+  String get redesignTenantsStart => 'Nach der Anmeldung';
 
   @override
   String get redesignTenantsTitle => 'Gruppen';
