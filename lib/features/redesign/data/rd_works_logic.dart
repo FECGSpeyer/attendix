@@ -5,6 +5,7 @@ import '../../../data/models/song/song.dart';
 import '../../../data/repositories/song_repository.dart' show CurrentSongsGroup;
 import '../../songs/presentation/utils/song_utils.dart';
 import 'rd_dates.dart';
+import 'rd_event_phase.dart' show rdEffectiveDurationDays;
 
 /// REDESIGN: pure logic of the Werke tab (canvas "WerkeListe", "WerkDetail").
 
@@ -284,7 +285,10 @@ bool _rdEventOver(RdNextEvent event, Attendance? att, List<AttendanceType> types
   final date = event.date;
   if (date == null) return false;
   final type = att?.typeId == null ? null : types.where((t) => t.id == att!.typeId).firstOrNull;
-  final days = (att?.durationDays ?? 1) < 1 ? 1 : (att?.durationDays ?? 1);
+  final effective = rdEffectiveDurationDays(att?.durationDays,
+          typeAllDay: type?.allDay ?? false, typeDurationDays: type?.durationDays) ??
+      1;
+  final days = effective < 1 ? 1 : effective;
   final lastDay = rdAddDays(date, days - 1);
   if (type?.allDay ?? false) return !now.isBefore(rdAddDays(lastDay, 1));
   // Start and end from one source: the Termin's own times, else its type's
