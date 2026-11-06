@@ -130,9 +130,22 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
     ref.listenManual<AsyncValue<List<Person>>>(playersProvider, (prev, next) {
       if (!next.hasError || next.isLoading) return;
       if (prev != null && prev.hasError && !prev.isLoading) return;
-      if (ref.read(activePlayersForStatsProvider).hasError) return;
-      GlobalToast.error(l10nWithoutContext.dbLoadPeopleFailed);
+      _showPeopleLoadFailedAfterFrame();
     }, fireImmediately: true);
+  }
+
+  /// fireImmediately reports an already stored failure synchronously in
+  /// initState, i.e. while the tree builds; inserting the toast overlay then
+  /// throws "setState() called during build". So the toast follows the frame.
+  void _showPeopleLoadFailedAfterFrame() {
+    WidgetsBinding.instance
+      ..addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (ref.read(activePlayersForStatsProvider).hasError) return;
+        GlobalToast.error(l10nWithoutContext.dbLoadPeopleFailed);
+      })
+      // A later failure (provider refresh) may arrive between frames.
+      ..ensureVisualUpdate();
   }
 
   @override
