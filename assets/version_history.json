@@ -1,10 +1,59 @@
 {
   "versions": [
     {
-      "version": "0.44.2",
+      "version": "0.49.3",
       "date": "6.11.2026",
       "changes": [
         "🐛 Beta-Design: Nach „Konto wechseln“ bzw. „Konto hinzufügen“ blieb „Heute“ manchmal komplett leer, bis man den Tab gewechselt hat"
+      ]
+    },
+    {
+      "version": "0.49.2",
+      "date": "6.11.2026",
+      "changes": [
+        "🐛 Offline: Die Personenliste bleibt nach einem Tab-Wechsel mit den zuletzt geladenen Personen sichtbar statt „Fehler beim Laden“, und die Gruppenübersicht zählt die Personen aus dieser Liste statt „0 Personen“",
+        "🐛 Nach einem Abmelden ohne Internet öffnet die nächste Anmeldung wieder direkt die Gruppe statt der Seite „Instanzen“"
+      ]
+    },
+    {
+      "version": "0.49.1",
+      "date": "6.11.2026",
+      "changes": [
+        "🐛 Personenliste: Sortierung nach Gruppe folgt wieder immer der Instrument-Reihenfolge"
+      ]
+    },
+    {
+      "version": "0.49.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Im Ablauf-Editor stehen Name, Ausführender, Info und Dauer direkt im Punkt-Blatt und speichern beim Schließen, ohne zweiten Dialog",
+        "✨ Beta: Werk hinzufügen, Neuer Plan, Umbenennen, Tag zuordnen, Link teilen und Export als Beta-Blätter",
+        "✨ Beta: „Ablauf ansehen“ als Beta-Seite mit Umschalter „Jetzt / Ganzer Ablauf“, Registerprobenplan im Beta-Look"
+      ]
+    },
+    {
+      "version": "0.48.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Mitteilungen als Verwaltungsliste, Mitteilung als Detailseite (Löschen unter •••), Glocke als Beta-Blatt",
+        "✨ Beta: „Mitteilung schreiben“ mit Formatierung, Entwurf, Hinweis auf Unerreichbare und Rückfrage vor dem Senden",
+        "🐛 Beta: „Zum Termin“ in einer Mitteilung öffnet den Beta-Termin statt der alten Seite"
+      ]
+    },
+    {
+      "version": "0.47.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Gruppenauswahl, Gruppen-Details und „Neue Gruppe“ im neuen Design, Beitreten und Gründen direkt im Blatt „Gruppe wechseln“",
+        "✨ Beta: „Konto löschen“ auch ohne Gruppe"
+      ]
+    },
+    {
+      "version": "0.44.1",
+      "date": "6.11.2026",
+      "changes": [
+        "🐛 Noten importieren: Die Antwort-Knöpfe bei unbekannten Stimmen lassen sich nicht mehr versehentlich abwählen; Tippen auf einen Vorschlag der KI übernimmt ihn (das ✦ verschwindet), und „Neue Gruppe“ sagt, dass die Gruppe erst beim Hochladen angelegt wird",
+        "✨ Noten importieren: „Google Drive öffnen“ öffnet auf dem Handy die Drive-App, wenn sie installiert ist (in der Android-Web-App auch aus dem Browser)"
       ]
     },
     {

@@ -166,8 +166,8 @@ void main() {
         rdManageVisible(RdManageEntry.bulkMembers, const RdManageAccess(isAdmin: true, isApplicant: true)),
         isFalse,
       );
-      expect(rdManageVisible(RdManageEntry.writeMessage, const RdManageAccess(isAdmin: true)), isTrue);
-      expect(rdManageVisible(RdManageEntry.writeMessage, const RdManageAccess(isHelper: true)), isFalse);
+      expect(rdManageVisible(RdManageEntry.announcements, const RdManageAccess(isAdmin: true)), isTrue);
+      expect(rdManageVisible(RdManageEntry.announcements, const RdManageAccess(isHelper: true)), isFalse);
     });
   });
 

@@ -24,6 +24,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/widgets/ion_form_list.dart';
 import 'tenant_create_page.dart';
 import '../../../redesign/presentation/pages/rd_no_group_page.dart';
+import '../../../redesign/presentation/pages/rd_tenants_view.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/push_providers.dart';
@@ -288,11 +289,16 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     try {
       await toggleTenantFavorite(ref, tenant.id!, setFavorite);
       if (!mounted) return;
+      final beta = ref.read(redesignEnabledProvider);
       ToastHelper.showSuccess(
         context,
         setFavorite
-            ? context.l10n.settingsFavoriteSet(tenant.longName)
-            : context.l10n.settingsFavoriteRemoved(tenant.longName),
+            ? (beta
+                ? context.l10n.redesignTenantsFavoriteSet(tenant.longName)
+                : context.l10n.settingsFavoriteSet(tenant.longName))
+            : (beta
+                ? context.l10n.redesignTenantsFavoriteRemoved(tenant.longName)
+                : context.l10n.settingsFavoriteRemoved(tenant.longName)),
       );
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.svcSaveFailed);
@@ -303,8 +309,13 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
   Future<void> _deleteInstance(Tenant tenant) async {
     if (tenant.id == null) return;
     // Ionic canDeleteTenant(): admin && !db.isDemo().
+    // REDESIGN (E1): same dialog and steps, Beta texts ("Gruppe").
+    final beta = ref.read(redesignEnabledProvider);
     if (tenant.role != Role.admin.value || DemoGuard.isDemo) { // DEMO_GUARD
-      ToastHelper.showError(context, context.l10n.settingsCannotDeleteTenant);
+      ToastHelper.showError(
+        context,
+        beta ? context.l10n.redesignTenantsCannotDelete : context.l10n.settingsCannotDeleteTenant,
+      );
       return;
     }
     final controller = TextEditingController();
@@ -316,22 +327,24 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
             (dialogContext) => StatefulBuilder(
               builder:
                   (dialogContext, setDialogState) => AppAlertDialog(
-                    title: Text(dialogContext.l10n.settingsDeleteTenant),
+                    title: Text(beta ? dialogContext.l10n.redesignTenantsDeleteTitle : dialogContext.l10n.settingsDeleteTenant),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           error ??
-                              dialogContext.l10n
-                                  .settingsDeleteTenantMessage(tenant.longName),
+                              (beta
+                                  ? dialogContext.l10n.redesignTenantsDeleteMessage(tenant.longName)
+                                  : dialogContext.l10n
+                                      .settingsDeleteTenantMessage(tenant.longName)),
                         ),
                         const SizedBox(height: 12),
                         TextField(
                           controller: controller,
                           autofocus: true,
                           decoration: InputDecoration(
-                            hintText: dialogContext.l10n.settingsTenantNamePh,
+                            hintText: beta ? dialogContext.l10n.redesignTenantsDeleteNamePh : dialogContext.l10n.settingsTenantNamePh,
                           ),
                         ),
                       ],
@@ -351,8 +364,9 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
                           } else {
                             setDialogState(
                               () =>
-                                  error =
-                                      dialogContext.l10n.settingsWrongName,
+                                  error = beta
+                                      ? dialogContext.l10n.redesignTenantsDeleteWrongName
+                                      : dialogContext.l10n.settingsWrongName,
                             );
                           }
                         },
@@ -384,12 +398,20 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       sheetNavigator?.pop();
       final toastContext = widget.sheet ? rootContext : (mounted ? context : null);
       if (toastContext != null && toastContext.mounted) {
-        ToastHelper.showSuccess(toastContext, toastContext.l10n.dbInstanceDeleted);
+        ToastHelper.showSuccess(
+          toastContext,
+          beta ? toastContext.l10n.redesignTenantsDeleteDone : toastContext.l10n.dbInstanceDeleted,
+        );
       }
       if (wasCurrent) router.go('/tenants');
       if (!wasCurrent && home != null) goReplacingHistory(router, home);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, context.l10n.dbDeleteInstanceFailed);
+      if (mounted) {
+        ToastHelper.showError(
+          context,
+          beta ? context.l10n.redesignTenantsDeleteFailed : context.l10n.dbDeleteInstanceFailed,
+        );
+      }
     } finally {
       controller.dispose();
     }
@@ -421,6 +443,24 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       // of the bare form; the default app keeps the Ionic flow.
       if (ref.watch(redesignSettingsProvider).enabled) return const RdNoGroupPage();
       return const TenantCreatePage(canDismiss: false);
+    }
+
+    // REDESIGN (Ich und Einstieg, E1): the Beta group list; the logic
+    // above (auto start, no group) and the actions below stay the same.
+    if (!widget.sheet && ref.watch(redesignEnabledProvider)) {
+      return RdTenantsView(
+        tenants: tenantsAsync,
+        currentTenantId: currentTenant?.id,
+        onOpen: _selectTenant,
+        onFavorite: _toggleFavorite,
+        onDelete: _deleteInstance,
+        onRefresh: () async {
+          try {
+            final _ = await ref.refresh(userTenantsProvider.future);
+          } catch (_) {}
+        },
+        onLogout: _logout,
+      );
     }
 
     // UX_NAV: layout of the Ionic "Instanz wechseln" modal

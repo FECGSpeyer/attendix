@@ -18371,6 +18371,12 @@ abstract class AppLocalizations {
   /// **'Ordner aus Google Drive, Dropbox oder vom Rechner'**
   String get redesignImportMenuHint;
 
+  /// redesign.import.newGroupMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Attendix legt die Gruppe erst beim Hochladen an.'**
+  String get redesignImportNewGroupMessage;
+
   /// redesign.import.newGroupTitle
   ///
   /// In de, this message translates to:
@@ -19034,7 +19040,7 @@ abstract class AppLocalizations {
   /// redesign.manage.announcementsHint
   ///
   /// In de, this message translates to:
-  /// **'Gesendete Mitteilungen ansehen'**
+  /// **'Schreiben, Gesendetes, Automatik'**
   String get redesignManageAnnouncementsHint;
 
   /// redesign.manage.areaCommunication
@@ -19438,6 +19444,42 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {1 Person} other {{count} Personen}}'**
   String redesignMembersTotal(num count);
+
+  /// redesign.messages.bellAllGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Gruppen'**
+  String get redesignMessagesBellAllGroups;
+
+  /// redesign.messages.bellEarlier
+  ///
+  /// In de, this message translates to:
+  /// **'Früher'**
+  String get redesignMessagesBellEarlier;
+
+  /// redesign.messages.bellNew
+  ///
+  /// In de, this message translates to:
+  /// **'Neu'**
+  String get redesignMessagesBellNew;
+
+  /// redesign.messages.bellThisGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Gruppe'**
+  String get redesignMessagesBellThisGroup;
+
+  /// redesign.messages.delivery
+  ///
+  /// In de, this message translates to:
+  /// **'Zustellung'**
+  String get redesignMessagesDelivery;
+
+  /// redesign.messages.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Alles, was an die Gruppe ging, mit Lesestatus.'**
+  String get redesignMessagesIntro;
 
   /// redesign.notif.forMe
   ///
@@ -19852,6 +19894,78 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Fasst mehrere Punkte zusammen'**
   String get redesignPlanAddBlockHint;
+
+  /// redesign.plan.songInPlan
+  ///
+  /// In de, this message translates to:
+  /// **'im Ablauf'**
+  String get redesignPlanSongInPlan;
+
+  /// redesign.plan.newPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Plan'**
+  String get redesignPlanNewPlan;
+
+  /// redesign.plan.createPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Plan anlegen'**
+  String get redesignPlanCreatePlan;
+
+  /// redesign.plan.day
+  ///
+  /// In de, this message translates to:
+  /// **'Tag'**
+  String get redesignPlanDay;
+
+  /// redesign.plan.content
+  ///
+  /// In de, this message translates to:
+  /// **'Inhalt'**
+  String get redesignPlanContent;
+
+  /// redesign.plan.copyOf
+  ///
+  /// In de, this message translates to:
+  /// **'Kopie von „{name}“'**
+  String redesignPlanCopyOf(String name);
+
+  /// redesign.plan.nameHint
+  ///
+  /// In de, this message translates to:
+  /// **'Name (optional)'**
+  String get redesignPlanNameHint;
+
+  /// redesign.plan.viewWhole
+  ///
+  /// In de, this message translates to:
+  /// **'Ganzer Ablauf'**
+  String get redesignPlanViewWhole;
+
+  /// redesign.plan.viewNow
+  ///
+  /// In de, this message translates to:
+  /// **'Jetzt'**
+  String get redesignPlanViewNow;
+
+  /// redesign.plan.viewWhich
+  ///
+  /// In de, this message translates to:
+  /// **'Welcher Plan'**
+  String get redesignPlanViewWhich;
+
+  /// redesign.plan.download
+  ///
+  /// In de, this message translates to:
+  /// **'Herunterladen'**
+  String get redesignPlanDownload;
+
+  /// redesign.plan.telegram
+  ///
+  /// In de, this message translates to:
+  /// **'Per Telegram'**
+  String get redesignPlanTelegram;
 
   /// redesign.plan.addCurrent
   ///
@@ -20770,6 +20884,264 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Werke'**
   String get redesignTabWorks;
+
+  /// redesign.tenants.another
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Gruppe'**
+  String get redesignTenantsAnother;
+
+  /// redesign.tenants.askOnStart
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe nach der Anmeldung wählen'**
+  String get redesignTenantsAskOnStart;
+
+  /// redesign.tenants.askOnStartHint
+  ///
+  /// In de, this message translates to:
+  /// **'Fragt nach jeder Anmeldung, welche Gruppe du öffnen möchtest.'**
+  String get redesignTenantsAskOnStartHint;
+
+  /// redesign.tenants.cannotDelete
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Admins der Gruppe können sie löschen.'**
+  String get redesignTenantsCannotDelete;
+
+  /// redesign.tenants.create
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Gruppe gründen'**
+  String get redesignTenantsCreate;
+
+  /// redesign.tenants.created
+  ///
+  /// In de, this message translates to:
+  /// **'Angelegt am'**
+  String get redesignTenantsCreated;
+
+  /// redesign.tenants.current
+  ///
+  /// In de, this message translates to:
+  /// **'Aktuell'**
+  String get redesignTenantsCurrent;
+
+  /// redesign.tenants.delete
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe löschen'**
+  String get redesignTenantsDelete;
+
+  /// redesign.tenants.deleteAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Konto löschen'**
+  String get redesignTenantsDeleteAccount;
+
+  /// redesign.tenants.deleteDone
+  ///
+  /// In de, this message translates to:
+  /// **'Die Gruppe wurde gelöscht.'**
+  String get redesignTenantsDeleteDone;
+
+  /// redesign.tenants.deleteFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Gruppe konnte nicht gelöscht werden.'**
+  String get redesignTenantsDeleteFailed;
+
+  /// redesign.tenants.deleteMessage
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ wird mit allen Daten gelöscht. Das kann nicht rückgängig gemacht werden. Gib zur Bestätigung den Namen der Gruppe ein:'**
+  String redesignTenantsDeleteMessage(Object name);
+
+  /// redesign.tenants.deleteNamePh
+  ///
+  /// In de, this message translates to:
+  /// **'Name der Gruppe'**
+  String get redesignTenantsDeleteNamePh;
+
+  /// redesign.tenants.deleteTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe löschen?'**
+  String get redesignTenantsDeleteTitle;
+
+  /// redesign.tenants.deleteWrongName
+  ///
+  /// In de, this message translates to:
+  /// **'Der Name stimmt nicht.'**
+  String get redesignTenantsDeleteWrongName;
+
+  /// redesign.tenants.detailTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe'**
+  String get redesignTenantsDetailTitle;
+
+  /// redesign.tenants.details
+  ///
+  /// In de, this message translates to:
+  /// **'Details'**
+  String get redesignTenantsDetails;
+
+  /// redesign.tenants.favorite
+  ///
+  /// In de, this message translates to:
+  /// **'Als Favorit markieren'**
+  String get redesignTenantsFavorite;
+
+  /// redesign.tenants.favoriteRemoved
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ ist kein Favorit mehr.'**
+  String redesignTenantsFavoriteRemoved(Object name);
+
+  /// redesign.tenants.favoriteSet
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ ist jetzt Favorit.'**
+  String redesignTenantsFavoriteSet(Object name);
+
+  /// redesign.tenants.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Tippe auf eine Gruppe, um sie zu öffnen.'**
+  String get redesignTenantsIntro;
+
+  /// redesign.tenants.join
+  ///
+  /// In de, this message translates to:
+  /// **'Einer Gruppe beitreten'**
+  String get redesignTenantsJoin;
+
+  /// redesign.tenants.members
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder'**
+  String get redesignTenantsMembers;
+
+  /// redesign.tenants.more
+  ///
+  /// In de, this message translates to:
+  /// **'Mehr zu {name}'**
+  String redesignTenantsMore(Object name);
+
+  /// redesign.tenants.newCreated
+  ///
+  /// In de, this message translates to:
+  /// **'Die Gruppe wurde gegründet.'**
+  String get redesignTenantsNewCreated;
+
+  /// redesign.tenants.newMain
+  ///
+  /// In de, this message translates to:
+  /// **'Hauptgruppe'**
+  String get redesignTenantsNewMain;
+
+  /// redesign.tenants.newMainHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Hauptgruppe ist für die Leitung (z. B. Dirigenten, Vorstand). Sie kann nicht gelöscht werden und bekommt mehr Rechte. Weitere Gruppen wie Sopran oder Geigen legst du später in der Verwaltung an.'**
+  String get redesignTenantsNewMainHint;
+
+  /// redesign.tenants.newMainName
+  ///
+  /// In de, this message translates to:
+  /// **'Name der Hauptgruppe'**
+  String get redesignTenantsNewMainName;
+
+  /// redesign.tenants.newMissing
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte fülle Name, Kürzel und Hauptgruppe aus.'**
+  String get redesignTenantsNewMissing;
+
+  /// redesign.tenants.newName
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get redesignTenantsNewName;
+
+  /// redesign.tenants.newNameHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wird in der App angezeigt.'**
+  String get redesignTenantsNewNameHint;
+
+  /// redesign.tenants.newShort
+  ///
+  /// In de, this message translates to:
+  /// **'Kürzel'**
+  String get redesignTenantsNewShort;
+
+  /// redesign.tenants.newShortHint
+  ///
+  /// In de, this message translates to:
+  /// **'Für kurze Anzeigen, z. B. in der Gruppenauswahl.'**
+  String get redesignTenantsNewShortHint;
+
+  /// redesign.tenants.newSubmit
+  ///
+  /// In de, this message translates to:
+  /// **'Gründen'**
+  String get redesignTenantsNewSubmit;
+
+  /// redesign.tenants.newTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Gruppe'**
+  String get redesignTenantsNewTitle;
+
+  /// redesign.tenants.newType
+  ///
+  /// In de, this message translates to:
+  /// **'Art der Gruppe'**
+  String get redesignTenantsNewType;
+
+  /// redesign.tenants.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Gruppe gibt es nicht mehr.'**
+  String get redesignTenantsNotFound;
+
+  /// redesign.tenants.region
+  ///
+  /// In de, this message translates to:
+  /// **'Region'**
+  String get redesignTenantsRegion;
+
+  /// redesign.tenants.role
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Rolle'**
+  String get redesignTenantsRole;
+
+  /// redesign.tenants.start
+  ///
+  /// In de, this message translates to:
+  /// **'Nach der Anmeldung'**
+  String get redesignTenantsStart;
+
+  /// redesign.tenants.title
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen'**
+  String get redesignTenantsTitle;
+
+  /// redesign.tenants.typeGeneral
+  ///
+  /// In de, this message translates to:
+  /// **'Allgemein'**
+  String get redesignTenantsTypeGeneral;
+
+  /// redesign.tenants.unfavorite
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Favorit mehr'**
+  String get redesignTenantsUnfavorite;
 
   /// redesign.today.allEvents
   ///

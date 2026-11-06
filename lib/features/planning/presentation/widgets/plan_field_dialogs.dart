@@ -4,6 +4,8 @@ import '../../../../core/utils/plan_beamer.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import 'rd_plan_widgets.dart';
 
 /// Values entered in a plan field dialog.
 class PlanFieldInput {
@@ -60,6 +62,31 @@ Future<PlanFieldInput?> showPlanFieldDialog(
   VoidCallback? onDelete,
   PlanFieldBeamerOptions? beamer,
 }) {
+  if (context.rdSkin != null) {
+    return showRdPlanFieldSheet(
+      context,
+      title: title,
+      subtitle: subtitle,
+      message: message,
+      nameLabel: nameLabel,
+      nameHint: nameHint,
+      conductorLabel: conductorLabel,
+      conductorHint: conductorHint,
+      infoHint: infoHint,
+      confirmText: confirmText,
+      emptyNameMessage: emptyNameMessage,
+      initialName: initialName,
+      initialConductor: initialConductor,
+      initialInfo: initialInfo,
+      initialMinutes: initialMinutes,
+      withConductor: withConductor,
+      withInfo: withInfo,
+      withMinutes: withMinutes,
+      requireName: requireName,
+      onDelete: onDelete,
+      beamer: beamer,
+    );
+  }
   return showAppDialog<PlanFieldInput>(
     context: context,
     builder: (ctx) => _PlanFieldDialog(
@@ -333,6 +360,18 @@ Future<String?> showPlanTextPrompt(
   bool allowEmpty = false,
   String? emptyMessage,
 }) {
+  if (context.rdSkin != null) {
+    return showRdPlanTextSheet(
+      context,
+      title: title,
+      message: message,
+      initialValue: initialValue,
+      hint: hint,
+      confirmText: confirmText,
+      allowEmpty: allowEmpty,
+      emptyMessage: emptyMessage,
+    );
+  }
   final controller = TextEditingController(text: initialValue ?? '');
   // Ionic `alert.message = …; return false`: an empty name shows
   // [emptyMessage] in the dialog, which stays open.
@@ -416,6 +455,9 @@ Future<T?> showPlanActionSheet<T>(
   String? subtitle,
   required List<PlanSheetAction<T>> actions,
 }) {
+  if (context.rdSkin != null) {
+    return showRdPlanActionSheet<T>(context, title: title, subtitle: subtitle, actions: actions);
+  }
   // IOS_LOOK: adaptive ion-action-sheet
   return showAppActionSheet<T>(
     context,
