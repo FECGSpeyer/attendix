@@ -33,6 +33,14 @@ import '../../../../core/utils/file_mime.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
+
+part 'files_page_beta.dart';
 
 enum FilesSortBy { name, updatedAt, size }
 
@@ -204,6 +212,62 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   }
 
   FilesRepository get _repo => ref.read(filesRepositoryWithTenantProvider);
+
+  /// The new design (Beta switch): same logic, Beta look and sheets.
+  bool get _beta => ref.read(redesignEnabledProvider);
+
+  /// Whether [tenantId] (read when an action started) is still the current
+  /// group; an action that started in another group writes nothing.
+  bool _stillIn(int? tenantId) => mounted && tenantId != null && ref.read(currentTenantIdProvider) == tenantId;
+
+  /// After a group switch the page starts over in the root of the new
+  /// group: nothing of the old group (entries, previews, usage, selection,
+  /// path) stays visible or selectable.
+  void _onTenantChanged() {
+    setState(() {
+      _entries = [];
+      _isLoading = false;
+      _imagePreviewUrls.clear();
+      _usedBytes = null;
+      _currentPath = '';
+      _selectionMode = false;
+      _selectedPaths = {};
+      _searchController.clear();
+    });
+    // After the switch has reached the repository provider (the listener
+    // runs while the tenant is still being updated).
+    Future.microtask(() {
+      if (mounted) _loadEntries();
+    });
+  }
+
+  /// Text input: the Beta text sheet or the old dialog.
+  Future<String?> _askText({required String title, String initial = '', String? hint, String? confirmText}) {
+    if (_beta) {
+      return showRdTextSheet(context, title: title, initial: initial, hint: hint, capitalization: TextCapitalization.none);
+    }
+    return DialogHelper.showTextInput(
+      context,
+      title: title,
+      initialValue: initial.isEmpty ? null : initial,
+      hint: hint,
+      confirmText: confirmText,
+    );
+  }
+
+  /// Confirmation: the Beta confirm or the old dialog.
+  Future<bool> _confirm({required String title, required String message, required String confirmText}) {
+    if (_beta) {
+      return showAppConfirm(context, title: title, message: message, confirmText: confirmText, destructive: true);
+    }
+    return DialogHelper.showConfirmation(
+      context,
+      title: title,
+      message: message,
+      confirmText: confirmText,
+      isDestructive: true,
+    );
+  }
   bool get _canEdit => ref.read(canEditFilesProvider);
   int? get _maxBytes => ref.read(currentTenantProvider)?.filesMaxBytes;
 
@@ -269,34 +333,43 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   Future<void> _loadEntries() async {
     final repo = _repo;
     if (!repo.hasTenantId) return;
+    final tenantId = ref.read(currentTenantIdProvider);
+    // Only a repository of the current group lists (never a stale one).
+    if (repo.currentTenantId != tenantId) return;
+    final path = _currentPath;
     setState(() => _isLoading = true);
     try {
-      final loaded = await repo.listEntries(_currentPath);
-      if (!mounted) return;
+      final loaded = await repo.listEntries(path);
+      // A result of another group or folder (switched meanwhile) is dropped.
+      if (!mounted || !_stillIn(tenantId) || path != _currentPath) return;
       setState(() {
         _entries = FilesSearch.sort(loaded, _sortBy, _ascending);
         _syncSelection();
       });
       await _loadImagePreviews();
-      if (_canEdit) await _loadUsage();
+      if (_canEdit && _stillIn(tenantId)) await _loadUsage();
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.filesLoadFailed(_errorText(e)));
+      if (mounted && _stillIn(tenantId)) ToastHelper.showError(context, context.l10n.filesLoadFailed(_errorText(e)));
     } finally {
-      if (mounted) setState(() => _isLoading = false);
+      // Only the current load ends the spinner (a dropped one of another
+      // group or folder does not).
+      if (mounted && _stillIn(tenantId) && path == _currentPath) setState(() => _isLoading = false);
     }
   }
 
   Future<void> _loadUsage() async {
+    final tenantId = ref.read(currentTenantIdProvider);
     try {
       final used = await _repo.getUsedBytes();
-      if (mounted) setState(() => _usedBytes = used);
+      if (_stillIn(tenantId)) setState(() => _usedBytes = used);
     } catch (_) {
-      if (mounted) setState(() => _usedBytes = null);
+      if (_stillIn(tenantId)) setState(() => _usedBytes = null);
     }
   }
 
   Future<void> _loadImagePreviews() async {
     final repo = _repo; // UI_TENANT_HOIST: bind before the first await
+    final tenantId = ref.read(currentTenantIdProvider);
     _imagePreviewUrls.clear();
     final images = _entries.where(FilesSearch.isImage).toList();
     if (images.isEmpty) return;
@@ -307,7 +380,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         return MapEntry(e.path, '');
       }
     }));
-    if (!mounted) return;
+    if (!mounted || !_stillIn(tenantId)) return;
     setState(() {
       for (final r in results) {
         if (r.value.isNotEmpty) _imagePreviewUrls[r.key] = r.value;
@@ -344,23 +417,28 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   }
 
   Future<void> _openImagePreview(StorageEntry entry) async {
+    final repo = _repo;
+    final tenantId = ref.read(currentTenantIdProvider);
     var url = _imagePreviewUrls[entry.path];
     if (url == null) {
       try {
-        url = await _repo.getSignedFileUrl(entry.path, expiresInSeconds: 3600);
+        url = await repo.getSignedFileUrl(entry.path, expiresInSeconds: 3600);
+        // A late URL of a group switched away from is neither cached nor shown.
+        if (!mounted || !_stillIn(tenantId)) return;
         _imagePreviewUrls[entry.path] = url;
       } catch (e) {
-        if (mounted) ToastHelper.showError(context, context.l10n.filesPreviewFailed(_errorText(e)));
+        if (mounted && _stillIn(tenantId)) ToastHelper.showError(context, context.l10n.filesPreviewFailed(_errorText(e)));
         return;
       }
     }
-    if (!mounted) return;
+    if (!mounted || !_stillIn(tenantId)) return;
     await showImageViewerSheet(context, url: url, fileName: entry.name);
   }
 
   /// INTEGRATION: plays all audio files of the folder as a queue, starting at
   /// the tapped one (Ionic playAudioEntry / AudioPlayerService.playQueue).
   Future<void> _playAudio(StorageEntry entry) async {
+    final repo = _repo; // the queue resolves its URLs in the group it started in
     final audioEntries = _filteredEntries.where(FilesSearch.isAudio).toList();
     final list = audioEntries.isEmpty ? [entry] : audioEntries;
     final startIndex = list.indexWhere((e) => e.path == entry.path).clamp(0, list.length - 1);
@@ -369,7 +447,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         AudioQueueItem(
           fileName: e.name,
           title: e.name,
-          resolveUrl: () => _repo.getSignedFileUrl(e.path, expiresInSeconds: 3600),
+          resolveUrl: () => repo.getSignedFileUrl(e.path, expiresInSeconds: 3600),
         ),
     ];
     try {
@@ -386,6 +464,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   /// (Ionic sendEntryPerTelegram, Edge Function `send-document`).
   Future<void> _sendEntryPerTelegram(StorageEntry entry) async {
     if (entry.isFolder) return;
+    final repo = _repo;
     final chatId = _telegramChatId;
     if (chatId == null || chatId.isEmpty) {
       ToastHelper.showWarning(context, context.l10n.filesConnectTelegram);
@@ -393,7 +472,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     }
     ToastHelper.showInfo(context, context.l10n.filesSendingTelegram);
     try {
-      final url = await _repo.getSignedFileUrl(entry.path, expiresInSeconds: 600);
+      final url = await repo.getSignedFileUrl(entry.path, expiresInSeconds: 600);
       await ref.read(telegramServiceProvider).sendDocumentPerTelegram(url: url, chatId: chatId);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.svcMessageSent);
     } catch (e) {
@@ -404,8 +483,9 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   Future<void> _downloadEntry(StorageEntry entry) async {
     if (entry.isFolder) return;
     final openFailed = context.l10n.filesFlutterOpenLinkFailed;
+    final repo = _repo;
     try {
-      final url = await _repo.getSignedFileUrl(entry.path, downloadName: entry.name);
+      final url = await repo.getSignedFileUrl(entry.path, downloadName: entry.name);
       // NATIVE_MISC: native app → cache dir + system viewer (Ionic downloadFileNative)
       final ok = await NativeFileService.openUrl(url, fileName: entry.name);
       if (!ok) throw Exception(openFailed);
@@ -459,15 +539,16 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       ToastHelper.showWarning(context, context.l10n.filesNoEditRights);
       return;
     }
-    final name = await DialogHelper.showTextInput(
-      context,
+    final tenantId = ref.read(currentTenantIdProvider);
+    final path = _currentPath;
+    final name = await _askText(
       title: context.l10n.filesCreateFolder,
       hint: context.l10n.filesFolderName,
       confirmText: context.l10n.filesCreate,
     );
-    if (name == null || name.trim().isEmpty || !mounted) return;
+    if (name == null || name.trim().isEmpty || !mounted || !_stillIn(tenantId)) return;
     try {
-      await repo.createFolder(_currentPath, name);
+      await repo.createFolder(path, name);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.filesFolderCreated);
       await _loadEntries();
     } catch (e) {
@@ -477,14 +558,14 @@ class _FilesPageState extends ConsumerState<FilesPage> {
 
   Future<void> _renameEntry(StorageEntry entry) async {
     final repo = _repo; // UI_TENANT_HOIST: bind before the first await
-    final name = await DialogHelper.showTextInput(
-      context,
+    final tenantId = ref.read(currentTenantIdProvider);
+    final name = await _askText(
       title: entry.isFolder ? context.l10n.filesRenameFolder : context.l10n.filesRenameFile,
-      initialValue: entry.name,
+      initial: entry.name,
       hint: context.l10n.filesNewName,
       confirmText: context.l10n.commonSave,
     );
-    if (name == null || name.trim().isEmpty || !mounted) return;
+    if (name == null || name.trim().isEmpty || !mounted || !_stillIn(tenantId)) return;
     try {
       await repo.renameEntry(entry.path, name, isFolder: entry.isFolder);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.filesRenamed);
@@ -576,17 +657,21 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     final entries = _selectedEntries;
     if (entries.isEmpty || !_canEdit) return;
     final l10n = context.l10n;
-    final confirmed = await DialogHelper.showConfirmation(
-      context,
+    final tenantId = ref.read(currentTenantIdProvider);
+    final confirmed = await _confirm(
       title: l10n.filesDeleteSelectedHeader(entries.length),
       message: l10n.filesDeleteSelectedMessage(entries.length),
       confirmText: l10n.commonDelete,
-      isDestructive: true,
     );
-    if (!confirmed || !mounted) return;
+    if (!confirmed || !mounted || !_stillIn(tenantId)) return;
     var failed = 0;
     await _withLoading(() async {
       for (final entry in entries) {
+        // Group switched meanwhile: nothing more is deleted.
+        if (!mounted || !_stillIn(tenantId)) {
+          failed++;
+          continue;
+        }
         try {
           await repo.deleteEntry(entry.path, isFolder: entry.isFolder);
         } catch (_) {
@@ -614,13 +699,14 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       ToastHelper.showWarning(context, context.l10n.filesNoEditRights);
       return false;
     }
+    final tenantId = ref.read(currentTenantIdProvider);
     final target = await showFilesMoveModal(
       context,
       repo: repo,
       items: entries,
       currentPath: _currentPath,
     );
-    if (target == null || !mounted) return false;
+    if (target == null || !mounted || !_stillIn(tenantId)) return false;
     final l10n = context.l10n;
 
     var ok = 0;
@@ -631,6 +717,11 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       await _withLoading(() async {
         final existingNames = {for (final e in await repo.listEntries(target)) e.name};
         for (final entry in entries) {
+          // Group switched meanwhile: nothing more is moved.
+          if (!mounted || !_stillIn(tenantId)) {
+            skipped++;
+            continue;
+          }
           if (existingNames.contains(entry.name)) {
             skipped++;
             continue;
@@ -665,14 +756,13 @@ class _FilesPageState extends ConsumerState<FilesPage> {
 
   Future<void> _deleteEntry(StorageEntry entry) async {
     final repo = _repo; // UI_TENANT_HOIST: bind before the first await
-    final confirmed = await DialogHelper.showConfirmation(
-      context,
+    final tenantId = ref.read(currentTenantIdProvider);
+    final confirmed = await _confirm(
       title: entry.isFolder ? context.l10n.filesDeleteFolder : context.l10n.filesDeleteFile,
       message: context.l10n.filesDeleteMessage(entry.name),
       confirmText: context.l10n.commonDelete,
-      isDestructive: true,
     );
-    if (!confirmed || !mounted) return;
+    if (!confirmed || !mounted || !_stillIn(tenantId)) return;
     try {
       await repo.deleteEntry(entry.path, isFolder: entry.isFolder);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.filesDeleted);
@@ -683,6 +773,11 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   }
 
   Future<void> _requestMoreStorage() async {
+    // The request names the group (and usage) it was started in.
+    final tenantId = ref.read(currentTenantIdProvider);
+    final tenant = ref.read(currentTenantProvider);
+    final max = _maxBytes;
+    final usedBytes = _usedBytes;
     final controller = TextEditingController();
     final note = await showAppDialog<String>(
       context: context,
@@ -707,13 +802,11 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       ),
     );
     controller.dispose();
-    if (note == null || !mounted) return;
+    if (note == null || !mounted || !_stillIn(tenantId)) return;
 
-    final tenant = ref.read(currentTenantProvider);
-    final max = _maxBytes;
     final usage = max != null
-        ? '${formatFileSize(_usedBytes ?? 0)} von ${formatFileSize(max)}'
-        : formatFileSize(_usedBytes ?? 0);
+        ? '${formatFileSize(usedBytes ?? 0)} von ${formatFileSize(max)}'
+        : formatFileSize(usedBytes ?? 0);
     final message = [
       'Anfrage: Mehr Speicher für die Dateiablage',
       'Instanz: ${tenant?.longName} (ID ${tenant?.id})',
@@ -796,8 +889,10 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     // SOL_FIX3: bind the (per-tenant) repository once for the whole upload
     // job, so a tenant switch mid-upload never uploads into another tenant.
     final repo = _repo;
+    final tenantId = ref.read(currentTenantIdProvider);
+    final path = _currentPath;
     final result = await FilePicker.platform.pickFiles(allowMultiple: true, withData: true);
-    if (result == null || result.files.isEmpty || !mounted) return;
+    if (result == null || result.files.isEmpty || !mounted || !_stillIn(tenantId) || path != _currentPath) return;
     final files = result.files.where((f) => f.bytes != null).toList();
     if (files.isEmpty) return;
 
@@ -808,10 +903,10 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     var overwrite = false;
     if (duplicates.isNotEmpty) {
       final handling = await _askDuplicateHandling(duplicates.toList());
-      if (handling == null) return;
+      if (handling == null || !mounted || !_stillIn(tenantId)) return;
       overwrite = handling == 'overwrite';
     }
-    if (!await _hasEnoughSpace(files, names, duplicates, overwrite) || !mounted) return;
+    if (!await _hasEnoughSpace(files, names, duplicates, overwrite) || !mounted || !_stillIn(tenantId)) return;
 
     final progress = ValueNotifier<String>(context.l10n.filesUploadProgress(0, files.length, 0));
     showAppDialog<void>(
@@ -844,13 +939,15 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       final name = names[f]!;
       final isDuplicate = duplicates.contains(name);
       progress.value = progressText(name);
-      if (isDuplicate && !overwrite) {
+      // Group switched meanwhile: the rest is skipped (nothing more is
+      // uploaded into the old group).
+      if ((isDuplicate && !overwrite) || !mounted || !_stillIn(tenantId)) {
         skipped++;
         processed++;
         continue;
       }
       try {
-        await repo.uploadFile(_currentPath, f.name, f.bytes!, overwrite: isDuplicate && overwrite);
+        await repo.uploadFile(path, f.name, f.bytes!, overwrite: isDuplicate && overwrite);
         ref.read(trackingServiceProvider).track(TrackingEvent.fileUploaded, properties: {'size': f.size, 'mime': songFileMimeType(f.extension ?? '')});
         success++;
       } catch (_) {
@@ -940,6 +1037,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   /// Ionic `ion-popover` at the ⋯ button of an entry (same entries,
   /// order and conditions; a tap outside closes it).
   Future<void> _showEntryActions(BuildContext button, StorageEntry entry) async {
+    final tenantId = ref.read(currentTenantIdProvider);
     final canEdit = _canEdit;
     final isAudio = FilesSearch.isAudio(entry);
     final action = await showAppPopoverMenu<VoidCallback>(
@@ -998,7 +1096,8 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         ],
       ],
     );
-    if (!mounted) return;
+    // An entry of a group switched away from is not acted on.
+    if (!mounted || !_stillIn(tenantId)) return;
     action?.call();
   }
 
@@ -1044,6 +1143,12 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     final canAccess = ref.watch(canAccessFilesProvider);
     final isRoleLoading = ref.watch(isRoleLoadingProvider);
     final canEdit = ref.watch(canEditFilesProvider);
+    ref.listen<int?>(currentTenantIdProvider, (prev, next) {
+      if (prev != next) _onTenantChanged();
+    });
+    if (ref.watch(redesignEnabledProvider)) {
+      return _buildBeta(context, canAccess: canAccess, isRoleLoading: isRoleLoading, canEdit: canEdit);
+    }
 
     return Scaffold(
       // Ionic 4.19.1: selection toolbar (✕, "n ausgewählt", Alle/Keine)
