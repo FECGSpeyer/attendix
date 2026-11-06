@@ -126,6 +126,7 @@ import '../../features/redesign/presentation/pages/rd_event_create_page.dart';
 import '../../features/redesign/presentation/pages/rd_event_edit_page.dart';
 import '../../features/redesign/presentation/pages/rd_event_page.dart';
 import '../../features/redesign/presentation/pages/rd_events_page.dart';
+import '../../features/redesign/presentation/pages/rd_events_split_home.dart';
 import '../../features/redesign/presentation/pages/rd_me_page.dart';
 import '../../features/redesign/presentation/pages/rd_members_page.dart';
 import '../../features/redesign/presentation/pages/rd_voice_leader_page.dart';
@@ -627,14 +628,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: RedesignRoutes.events,
             name: 'redesignEvents',
             pageBuilder: (context, state) => AppPageTransitions.none(
-              child: rdUseSplit(context)
-                  ? RdSplitView(
-                      list: const RdEventsPage(),
-                      detail: null,
-                      selectedId: null,
-                      emptyText: context.l10n.redesignSplitEventsEmpty,
-                    )
-                  : const RdEventsPage(),
+              // Wide screens: the next Termin is open next to the list.
+              child: rdUseSplit(context) ? const RdEventsSplitHome() : const RdEventsPage(),
               state: state,
             ),
             routes: [
@@ -850,7 +845,8 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'verwaltung',
                 name: 'redesignManage',
-                builder: (context, state) => const RdManagePage(),
+                // Wide screens: areas on the left, the chosen one on the right.
+                builder: (context, state) => rdUseSplit(context) ? const RdManageSplit() : const RdManagePage(),
                 routes: [
                   // Fixed pages before the `:area` pattern.
                   GoRoute(
@@ -951,9 +947,17 @@ final routerProvider = Provider<GoRouter>((ref) {
                   ),
                   GoRoute(
                     path: ':area',
-                    builder: (context, state) => RdManageAreaPage(
-                      area: RdManageArea.fromKey(state.pathParameters['area']),
-                    ),
+                    pageBuilder: (context, state) {
+                      final area = RdManageArea.fromKey(state.pathParameters['area']);
+                      // One page for every area, so the list keeps its state.
+                      if (rdUseSplit(context)) {
+                        return NoTransitionPage<void>(
+                          key: const ValueKey('rd-manage-split'),
+                          child: RdManageSplit(area: area),
+                        );
+                      }
+                      return MaterialPage<void>(key: state.pageKey, child: RdManageAreaPage(area: area));
+                    },
                   ),
                 ],
               ),

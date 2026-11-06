@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/redesign/rd_palette.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
 
 import '../../../l10n/l10n.dart';
@@ -65,8 +66,14 @@ Future<T?> showAppActionSheet<T>(
   bool showCancel = true,
   bool cancelDestructive = false,
   bool useRootNavigator = true,
+  BuildContext? anchor,
 }) {
   final rd = context.rdSkin;
+  // Beta on desktop: a menu right at the button ([anchor]) instead of a
+  // sheet from the bottom (canvas "Beta: Desktop-UX").
+  if (rd != null && anchor != null && MediaQuery.sizeOf(context).width >= 840) {
+    return _showRdAnchoredMenu<T>(anchor, rd, actions, useRootNavigator: useRootNavigator);
+  }
   if (rd != null) {
     // Beta-Skin: the action sheet of the new design on every platform.
     return showModalBottomSheet<T>(
@@ -497,4 +504,76 @@ class _RdActionSheet<T> extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<T?> _showRdAnchoredMenu<T>(
+  BuildContext anchor,
+  RdPalette p,
+  List<AppActionSheetAction<T>> actions, {
+  required bool useRootNavigator,
+}) {
+  final box = anchor.findRenderObject()! as RenderBox;
+  final overlay = Navigator.of(anchor, rootNavigator: useRootNavigator).overlay!.context.findRenderObject()! as RenderBox;
+  final rect = Rect.fromPoints(
+    box.localToGlobal(Offset(0, box.size.height + 6), ancestor: overlay),
+    box.localToGlobal(box.size.bottomRight(const Offset(0, 6)), ancestor: overlay),
+  );
+  return showMenu<T>(
+    context: anchor,
+    useRootNavigator: useRootNavigator,
+    position: RelativeRect.fromRect(rect, Offset.zero & overlay.size),
+    color: p.surface,
+    surfaceTintColor: Colors.transparent,
+    elevation: 8,
+    constraints: const BoxConstraints(minWidth: 300, maxWidth: 380),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+      side: BorderSide(color: p.line),
+    ),
+    items: [
+      for (final a in actions)
+        PopupMenuItem<T>(
+          value: a.value,
+          enabled: a.enabled,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          child: Row(
+            children: [
+              if (a.icon != null) ...[
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: a.destructive ? p.absentSoft : p.soft,
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                  child: Icon(a.icon, size: 18, color: a.destructive ? p.absent : (a.color ?? p.softText)),
+                ),
+                const SizedBox(width: 12),
+              ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      a.label,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: a.destructive ? p.absent : (a.color ?? p.text),
+                      ),
+                    ),
+                    if (a.subtitle != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(a.subtitle!, style: RdType.meta(p, size: 13)),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+    ],
+  );
 }

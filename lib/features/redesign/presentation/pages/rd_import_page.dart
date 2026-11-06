@@ -67,6 +67,10 @@ String rdImportReadErrorText(AppLocalizations l10n, RdImportReadError error) => 
 class _RdImportPageState extends ConsumerState<RdImportPage> {
   _Filter? _filter;
 
+  /// "Zur Prüfung" was tapped and the plan is made again (a second or so
+  /// with thousands of files): the button says so meanwhile.
+  bool _preparing = false;
+
   /// Which source is being set up (null = the choice).
   _Source? _mode;
   final _link = TextEditingController();
@@ -644,7 +648,8 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     final d = state.decisions;
     final existing = plan.works.where((w) => w.match.songId != null).length;
     final created = plan.works.where((w) => rdDefaultTarget(plan, w).isNew).length;
-    final unanswered = plan.questions.where((q) => d.answers[q.key] == null).length;
+    final unanswered = plan.questions.where((q) => d.answers[q.key] == null && q.newGroup == null).length;
+    final pendingGroups = rdImportPendingGroups(plan, d);
     return RdImportFrame(
       backLabel: l10n.redesignImportStepSource,
       onBack: _back,
@@ -723,7 +728,10 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
             _QuestionCard(
               plan: plan,
               question: q,
-              answer: d.answers[q.key],
+              // A known instrument without a group: its new group counts
+              // until the person answers.
+              answer: d.answers[q.key] ?? q.proposed,
+              newGroups: pendingGroups,
               ai: state.useAi ? state.ai[q.key]?.category : null,
               filled: state.aiFilled.contains(q.key),
               onAnswer: (a) => _controller.answer(q.key, a),
@@ -754,7 +762,11 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
           Text(l10n.redesignImportQuestionsOpen(unanswered), style: RdType.meta(p, size: 13)),
           const SizedBox(height: 10),
         ],
-        RdPrimaryButton(label: l10n.redesignImportToReview, onPressed: _toReview),
+        RdPrimaryButton(
+          label: _preparing ? l10n.redesignImportPreparing : l10n.redesignImportToReview,
+          loading: _preparing,
+          onPressed: _toReview,
+        ),
       ],
     );
   }
@@ -762,6 +774,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   /// "Zur Prüfung": answers the KI filled in are confirmed first (they are
   /// used for every file with the name and learned as terms).
   Future<void> _toReview() async {
+    if (_preparing) return;
     final filled = ref.read(rdImportProvider).aiFilled.length;
     if (filled > 0) {
       final l10n = context.l10n;
@@ -775,8 +788,17 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
       if (!ok || !mounted) return;
       _controller.confirmAi();
     }
-    setState(() => _filter = null);
-    await _controller.goTo(RdImportStep.review);
+    setState(() {
+      _filter = null;
+      _preparing = true;
+    });
+    // Show "Wird vorbereitet …" before the work blocks the page.
+    await WidgetsBinding.instance.endOfFrame;
+    try {
+      if (mounted) await _controller.goTo(RdImportStep.review);
+    } finally {
+      if (mounted) setState(() => _preparing = false);
+    }
   }
 
   /// What the KI did with the questions; null when it was not asked.
@@ -806,7 +828,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     final d = state.decisions;
     final states = {for (final w in plan.works) w.key: rdWorkState(plan, d, w)};
     final summary = rdImportSummary(plan, d);
-    final unanswered = plan.questions.where((q) => d.answers[q.key] == null).length;
+    final unanswered = plan.questions.where((q) => d.answers[q.key] == null && q.newGroup == null).length;
     final open = plan.works.where((w) => states[w.key]!.open).toList();
     final created = plan.works.where((w) => states[w.key]!.target.isNew).toList();
     final filter = _filter ?? (open.isNotEmpty ? _Filter.open : _Filter.all);
@@ -1088,12 +1110,16 @@ class _QuestionCard extends StatelessWidget {
     required this.onAnswer,
     this.ai,
     this.filled = false,
+    this.newGroups = const [],
   });
 
   final RdImportPlan plan;
   final RdImportQuestion question;
   final RdImportCategory? answer;
   final ValueChanged<RdImportCategory?> onAnswer;
+
+  /// New groups other answers create, to pick under "Andere …".
+  final List<String> newGroups;
 
   /// The KI's guess (marked ✦).
   final RdImportCategory? ai;
@@ -1107,7 +1133,7 @@ class _QuestionCard extends StatelessWidget {
     final l10n = context.l10n;
     final suggestion = question.suggestion == null ? null : RdImportCategory(instrumentId: question.suggestion);
     final label = question.label;
-    final newName = label.isEmpty ? label : label[0].toUpperCase() + label.substring(1);
+    final newName = question.newGroup ?? (label.isEmpty ? label : label[0].toUpperCase() + label.substring(1));
     final ai = this.ai;
     final newGroup = answer?.newGroup != null && answer != ai ? answer! : RdImportCategory(newGroup: newName);
     final picked = answer != null &&
@@ -1120,7 +1146,13 @@ class _QuestionCard extends StatelessWidget {
     // The KI's guess gets its own chip unless one of the fixed ones is it.
     final aiChip = ai != null && ai != suggestion && ai != RdImportCategory.other && ai != newGroup;
     Future<void> pickOther() async {
-      final c = await rdPickImportCategory(context, plan, current: answer, title: l10n.redesignImportQuestionTitle(label));
+      final c = await rdPickImportCategory(
+        context,
+        plan,
+        current: answer,
+        title: l10n.redesignImportQuestionTitle(label),
+        newGroups: newGroups,
+      );
       if (c != null) onAnswer(c);
     }
 

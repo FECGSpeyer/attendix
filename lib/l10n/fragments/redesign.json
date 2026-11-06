@@ -1081,6 +1081,7 @@
         "optionWord": "Word weglassen, wenn PDF daneben liegt",
         "optionWordDetail": "Für Liedtexte und Pläne, die es auch als PDF gibt.",
         "toReview": "Zur Prüfung",
+        "preparing": "Wird vorbereitet …",
         "reviewOpen": "Zu prüfen · {count}",
         "reviewNew": "Neu · {count}",
         "reviewAll": "Alle · {count}",
@@ -1375,6 +1376,42 @@
         "newMissing": "Bitte fülle Name, Kürzel und Hauptgruppe aus.",
         "newCreated": "Die Gruppe wurde gegründet.",
         "deleteAccount": "Konto löschen"
+      },
+      "type": {
+        "attendance": "Anwesenheit",
+        "statuses": "Mögliche Status",
+        "default": "Standard",
+        "time": "Zeit",
+        "timeHint": "Vorschlag, je Termin änderbar",
+        "days": "Tage",
+        "inList": "In der Liste",
+        "features": "Funktionen",
+        "on": "an",
+        "off": "aus",
+        "remindersActive": "{count} aktiv",
+        "whoBelongs": "Wer gehört dazu",
+        "whoBelongsHint": "Gruppen und Zusatzfeld-Filter",
+        "all": "alle",
+        "usage": "Wird in {count} Terminen verwendet. Änderungen gelten auch für diese.",
+        "delete": "Terminart löschen",
+        "location": "Ort und Navigation",
+        "invalid": "Noch nicht gespeichert: Name und mindestens zwei Status nötig"
+      },
+      "shift": {
+        "work": "Schicht",
+        "from": "ab {time}",
+        "hours": "{hours} h",
+        "times": "{count} ×",
+        "locked": "gesperrt, da zugewiesen",
+        "removeSegment": "Abschnitt entfernen",
+        "removeFixed": "Feste Schicht entfernen",
+        "halfHourHint": "Halbe Stunden über die Stufen (0,5 h)",
+        "unnamed": "Ohne Namen"
+      },
+      "help": {
+        "search": "Frage oder Stichwort suchen",
+        "articles": "{count, plural, one {1 Artikel} other {{count} Artikel}}",
+        "glossaryHint": "Begriffe der App erklärt"
       }
     }
   },
@@ -2460,6 +2497,7 @@
         "optionWord": "Leave out Word files next to a PDF",
         "optionWordDetail": "For lyrics and plans that also exist as PDF.",
         "toReview": "Review",
+        "preparing": "Preparing …",
         "reviewOpen": "To review · {count}",
         "reviewNew": "New · {count}",
         "reviewAll": "All · {count}",
@@ -2754,6 +2792,42 @@
         "newMissing": "Please fill in name, short name and main group.",
         "newCreated": "The group was created.",
         "deleteAccount": "Delete account"
+      },
+      "type": {
+        "attendance": "Attendance",
+        "statuses": "Possible statuses",
+        "default": "Default",
+        "time": "Time",
+        "timeHint": "Suggestion, can be changed per event",
+        "days": "Days",
+        "inList": "In the list",
+        "features": "Features",
+        "on": "on",
+        "off": "off",
+        "remindersActive": "{count} active",
+        "whoBelongs": "Who belongs",
+        "whoBelongsHint": "Groups and extra field filters",
+        "all": "all",
+        "usage": "Used in {count} events. Changes apply to them too.",
+        "delete": "Delete event type",
+        "location": "Location and navigation",
+        "invalid": "Not saved yet: a name and at least two statuses are needed"
+      },
+      "shift": {
+        "work": "Shift",
+        "from": "from {time}",
+        "hours": "{hours} h",
+        "times": "{count} ×",
+        "locked": "locked, already assigned",
+        "removeSegment": "Remove section",
+        "removeFixed": "Remove fixed shift",
+        "halfHourHint": "Half hours via the steps (0.5 h)",
+        "unnamed": "Unnamed"
+      },
+      "help": {
+        "search": "Search a question or keyword",
+        "articles": "{count, plural, one {1 article} other {{count} articles}}",
+        "glossaryHint": "Terms of the app explained"
       }
     }
   }

@@ -151,8 +151,8 @@ Uint8List _zip(Map<String, String> files) {
 
 final _zipBytes = _zip({
   'Noten/120 Wie wunderbar/Viola.pdf': '%PDF viola',
-  'Noten/120 Wie wunderbar/Sax 1.pdf': '%PDF sax eins',
-  'Noten/157 Jesus ruft dich/Sax 2.pdf': '%PDF sax zwei',
+  'Noten/120 Wie wunderbar/Kazoo 1.pdf': '%PDF sax eins',
+  'Noten/157 Jesus ruft dich/Kazoo 2.pdf': '%PDF sax zwei',
   'Noten/157 Jesus ruft dich/Violine 1.pdf': '%PDF violine',
   'Noten/157 Jesus ruft dich/Kopie/Violine 1.pdf': '%PDF violine',
   'Noten/.DS_Store': 'x',
@@ -200,7 +200,7 @@ List<Override> _overrides(_FakeFiles files, _FakeSongs songs, _FakeGroupNotifier
 PlatformFile _richZip() {
   final bytes = _zip({
     'Noten (Speyer)/SOS-Spieler PDF/120 Wie wunderbar/Viola.pdf': '%PDF viola /CreationDate (D:20240312)',
-    'Noten (Speyer)/SOS-Spieler PDF/120 Wie wunderbar/Sax 1.pdf': '%PDF sax eins',
+    'Noten (Speyer)/SOS-Spieler PDF/120 Wie wunderbar/Kazoo 1.pdf': '%PDF sax eins',
     'Noten (Speyer)/SOS-Spieler PDF/120 Wie wunderbar/Violine 1.pdf': '%PDF v1',
     'Noten (Speyer)/Dirigenten/120 Wie wunderbar/Partitur.pdf': '%PDF partitur',
     'Noten (Speyer)/Dirigenten/26 Via dolorosa/Viola.pdf': '%PDF /CreationDate (D:20190101)',
@@ -211,7 +211,7 @@ PlatformFile _richZip() {
     'Noten (Speyer)/Dirigenten/26 Via dolorosa/Alt/Viola.pdf': '%PDF /CreationDate (D:20150101) alt',
     'Noten (Speyer)/Dirigenten/26 Via dolorosa/Liedtext.docx': 'docx',
     'Noten (Speyer)/Dirigenten/26 Via dolorosa/Liedtext.pdf': '%PDF text',
-    'Noten (Speyer)/SOS-Spieler PDF/157 Jesus ruft dich/Sax 2.pdf': '%PDF sax zwei',
+    'Noten (Speyer)/SOS-Spieler PDF/157 Jesus ruft dich/Kazoo 2.pdf': '%PDF sax zwei',
     'Noten (Speyer)/SOS-Spieler PDF/157 Jesus ruft dich/Violine 1.pdf': '%PDF violine',
     'Noten (Speyer)/SOS-Spieler PDF/157 Jesus ruft dich/Kopie/Violine 1.pdf': '%PDF violine',
     'Noten (Speyer)/SOS-Spieler PDF/80 Du Großer Gott Nikita/Viola.pdf': '%PDF dgg',
@@ -234,10 +234,10 @@ FakeDrive _drive() => FakeDrive({
       ],
       'f120000001': [
         file('a000000001', 'Viola.pdf', size: 10, md5: 'viola'),
-        file('a000000002', 'Sax 1.pdf', size: 13, md5: 'sax1'),
+        file('a000000002', 'Kazoo 1.pdf', size: 13, md5: 'sax1'),
       ],
       'f157000001': [
-        file('b000000001', 'Sax 2.pdf', size: 13, md5: 'sax2'),
+        file('b000000001', 'Kazoo 2.pdf', size: 13, md5: 'sax2'),
         file('b000000002', 'Violine 1.pdf', size: 12, md5: 'violine'),
         {'id': 'doc0000001', 'name': 'Liedtext', 'mimeType': 'application/vnd.google-apps.document'},
         folder('k157000001', 'Kopie'),
@@ -292,9 +292,9 @@ void main() {
     expect(plan.fileCount, 5);
     final jesus = plan.works.last;
     expect(jesus.files.where((f) => f.hardSkip == RdSkipReason.duplicate), hasLength(1));
-    expect(plan.questions.map((q) => q.key), ['sax']);
+    expect(plan.questions.map((q) => q.key), ['kazoo']);
 
-    controller.answer('sax', const RdImportCategory(newGroup: 'Saxophon'));
+    controller.answer('kazoo', const RdImportCategory(newGroup: 'Saxophon'));
     final summary = rdImportSummary(plan, c.read(rdImportProvider).decisions);
     expect(summary.open, 0);
     expect(summary.take, 4);
@@ -308,8 +308,8 @@ void main() {
     expect(songs.created.single.number, 157);
     expect(files.uploads, unorderedEquals([
       '3 Viola.pdf 10 12 -',
-      '3 Sax 1.pdf 13 99 -',
-      '901 Sax 2.pdf 13 99 -',
+      '3 Kazoo 1.pdf 13 99 -',
+      '901 Kazoo 2.pdf 13 99 -',
       '901 Violine 1.pdf 12 10 -',
     ]));
     // Every upload keeps the Besetzung of its Werk (Harfe has no file).
@@ -368,21 +368,21 @@ void main() {
     // The copy in "Kopie" has the same MD5; the Google Doc cannot be copied.
     expect(jesus.files.where((f) => f.hardSkip == RdSkipReason.duplicate), hasLength(1));
     expect(jesus.files.firstWhere((f) => f.name == 'Liedtext.gdoc').hardSkip, RdSkipReason.unsupported);
-    expect(plan.questions.map((q) => q.key), ['sax']);
+    expect(plan.questions.map((q) => q.key), ['kazoo']);
     // Duplicates come from Drive's MD5; only the PDFs of the Werk with two
     // Fassungen (main folder and "Kopie") are read for their dates.
     final heads = drive.calls.where((c) => c['action'] == 'head').map((c) => (c['file'] as Map)['id']).toSet();
     expect(heads, isNotEmpty);
     expect(heads.difference({'b000000001', 'b000000002', 'c000000001'}), isEmpty);
 
-    controller.answer('sax', const RdImportCategory(newGroup: 'Saxophon'));
+    controller.answer('kazoo', const RdImportCategory(newGroup: 'Saxophon'));
     await controller.upload();
     final done = c.read(rdImportProvider);
     expect(done.upload!.failures, isEmpty);
     expect(files.uploads, unorderedEquals([
       '3 Viola.pdf songs/7/3/Viola_100.pdf 12 -',
-      '3 Sax 1.pdf songs/7/3/Sax-1_100.pdf 99 -',
-      '901 Sax 2.pdf songs/7/901/Sax-2_100.pdf 99 -',
+      '3 Kazoo 1.pdf songs/7/3/Kazoo-1_100.pdf 99 -',
+      '901 Kazoo 2.pdf songs/7/901/Kazoo-2_100.pdf 99 -',
       '901 Violine 1.pdf songs/7/901/Violine-1_100.pdf 10 -',
     ]));
     final copies = drive.calls.where((c) => c['action'] == 'copy').toList();
@@ -399,7 +399,7 @@ void main() {
     addTearDown(sub.close);
     final controller = c.read(rdImportProvider.notifier);
     await controller.read([_zipFile()]);
-    controller.answer('sax', const RdImportCategory(newGroup: 'Saxophon'));
+    controller.answer('kazoo', const RdImportCategory(newGroup: 'Saxophon'));
     await controller.upload();
     var upload = c.read(rdImportProvider).upload!;
     expect(upload.succeeded, 3);
@@ -410,7 +410,7 @@ void main() {
     final sub2 = broken.listen(rdImportProvider, (_, __) {});
     addTearDown(sub2.close);
     await broken.read(rdImportProvider.notifier).read([_zipFile()]);
-    broken.read(rdImportProvider.notifier).answer('sax', const RdImportCategory(newGroup: 'Saxophon'));
+    broken.read(rdImportProvider.notifier).answer('kazoo', const RdImportCategory(newGroup: 'Saxophon'));
     await broken.read(rdImportProvider.notifier).upload();
     upload = broken.read(rdImportProvider).upload!;
     expect(upload.succeeded, 0);
@@ -543,50 +543,50 @@ void main() {
     expect(c.read(rdImportProvider).aiStatus, RdImportAiStatus.loading);
     expect(calls.single['tenantId'], 7);
     expect((calls.single['questions'] as List).single, {
-      'key': 'sax',
-      'label': 'Sax',
-      'files': ['Sax 1.pdf', 'Sax 2.pdf'],
+      'key': 'kazoo',
+      'label': 'Kazoo',
+      'files': ['Kazoo 1.pdf', 'Kazoo 2.pdf'],
       'works': ['Wie wunderbar', 'Jesus ruft dich'],
     });
     reply.complete({
       'answers': [
-        {'key': 'sax', 'kind': 'new', 'newGroup': 'Saxophon', 'confidence': 'high'},
+        {'key': 'kazoo', 'kind': 'new', 'newGroup': 'Saxophon', 'confidence': 'high'},
       ],
     });
     await Future<void>.delayed(Duration.zero);
     var state = c.read(rdImportProvider);
     expect(state.aiStatus, RdImportAiStatus.done);
-    expect(state.decisions.answers, {'sax': const RdImportCategory(newGroup: 'Saxophon')});
-    expect(state.aiFilled, {'sax'});
+    expect(state.decisions.answers, {'kazoo': const RdImportCategory(newGroup: 'Saxophon')});
+    expect(state.aiFilled, {'kazoo'});
 
     // Off takes the filled-in answer back, on puts it in again (no new request).
     controller.setUseAi(false);
     expect(c.read(rdImportProvider).decisions.answers, isEmpty);
     controller.setUseAi(true);
-    expect(c.read(rdImportProvider).decisions.answers['sax'], const RdImportCategory(newGroup: 'Saxophon'));
+    expect(c.read(rdImportProvider).decisions.answers['kazoo'], const RdImportCategory(newGroup: 'Saxophon'));
     expect(calls, hasLength(1));
 
     // A person's answer stays, also when the KI is switched off.
-    controller.answer('sax', const RdImportCategory(instrumentId: 12));
+    controller.answer('kazoo', const RdImportCategory(instrumentId: 12));
     expect(c.read(rdImportProvider).aiFilled, isEmpty);
     controller.setUseAi(false);
-    expect(c.read(rdImportProvider).decisions.answers['sax'], const RdImportCategory(instrumentId: 12));
+    expect(c.read(rdImportProvider).decisions.answers['kazoo'], const RdImportCategory(instrumentId: 12));
 
     // A late reply does not override an answer given meanwhile; an unsure one is only offered.
     controller.restart();
     controller.setUseAi(true);
     reply = Completer();
     await controller.read([_zipFile()]);
-    controller.answer('sax', const RdImportCategory(instrumentId: 30));
+    controller.answer('kazoo', const RdImportCategory(instrumentId: 30));
     reply.complete({
       'answers': [
-        {'key': 'sax', 'kind': 'group', 'groupId': 10, 'confidence': 'low'},
+        {'key': 'kazoo', 'kind': 'group', 'groupId': 10, 'confidence': 'low'},
       ],
     });
     await Future<void>.delayed(Duration.zero);
     state = c.read(rdImportProvider);
-    expect(state.decisions.answers['sax'], const RdImportCategory(instrumentId: 30));
-    expect(state.ai['sax'], const RdImportAiAnswer(RdImportCategory(instrumentId: 10), sure: false));
+    expect(state.decisions.answers['kazoo'], const RdImportCategory(instrumentId: 30));
+    expect(state.ai['kazoo'], const RdImportAiAnswer(RdImportCategory(instrumentId: 10), sure: false));
     expect(state.aiFilled, isEmpty);
   });
 
@@ -602,11 +602,11 @@ void main() {
     await controller.read([_zipFile()]);
     reply.complete({
       'answers': [
-        {'key': 'sax', 'kind': 'new', 'newGroup': 'Saxophon', 'confidence': 'high'},
+        {'key': 'kazoo', 'kind': 'new', 'newGroup': 'Saxophon', 'confidence': 'high'},
       ],
     });
     await Future<void>.delayed(Duration.zero);
-    expect(c.read(rdImportProvider).aiFilled, {'sax'});
+    expect(c.read(rdImportProvider).aiFilled, {'kazoo'});
     // Not to the review (and so not uploaded or learned) before they are taken.
     await controller.goTo(RdImportStep.review);
     expect(c.read(rdImportProvider).step, RdImportStep.questions);
@@ -614,7 +614,7 @@ void main() {
     expect(files.uploads, isEmpty);
     controller.confirmAi();
     expect(c.read(rdImportProvider).aiFilled, isEmpty);
-    expect(c.read(rdImportProvider).decisions.answers['sax'], const RdImportCategory(newGroup: 'Saxophon'));
+    expect(c.read(rdImportProvider).decisions.answers['kazoo'], const RdImportCategory(newGroup: 'Saxophon'));
     await controller.goTo(RdImportStep.review);
     expect(c.read(rdImportProvider).step, RdImportStep.review);
 
@@ -626,12 +626,12 @@ void main() {
     expect(c.read(rdImportProvider).step, RdImportStep.review);
     reply.complete({
       'answers': [
-        {'key': 'sax', 'kind': 'new', 'newGroup': 'Saxophon', 'confidence': 'high'},
+        {'key': 'kazoo', 'kind': 'new', 'newGroup': 'Saxophon', 'confidence': 'high'},
       ],
     });
     await Future<void>.delayed(Duration.zero);
     final state = c.read(rdImportProvider);
-    expect(state.ai['sax']?.sure, isTrue);
+    expect(state.ai['kazoo']?.sure, isTrue);
     expect(state.decisions.answers, isEmpty);
     expect(state.aiFilled, isEmpty);
   });
@@ -886,9 +886,9 @@ void main() {
     );
     expect(error, isNull);
     await tester.pump();
-    expect(find.text('„Sax“ gehört zu …'), findsOneWidget);
+    expect(find.text('„Kazoo“ gehört zu …'), findsOneWidget);
 
-    container.read(rdImportProvider.notifier).answer('sax', const RdImportCategory(newGroup: 'Saxophon'));
+    container.read(rdImportProvider.notifier).answer('kazoo', const RdImportCategory(newGroup: 'Saxophon'));
     await tester.runAsync(() => container.read(rdImportProvider.notifier).upload());
     await tester.pump();
     expect(find.text('Freigabe wieder aufheben'), findsOneWidget);
@@ -933,8 +933,8 @@ void main() {
     expect(error, isNull);
     await tester.pump();
     expect(find.text('Schritt 2 von 4 · Stimmen'), findsOneWidget);
-    expect(find.text('„Sax“ gehört zu …'), findsOneWidget);
-    await tester.tap(find.text('Neue Gruppe „Sax“'));
+    expect(find.text('„Kazoo“ gehört zu …'), findsOneWidget);
+    await tester.tap(find.text('Neue Gruppe „Kazoo“'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'Saxophon');
     await tester.tap(find.text('Neue Gruppe anlegen').last);
@@ -943,6 +943,9 @@ void main() {
 
     await tester.ensureVisible(find.text('Zur Prüfung'));
     await tester.tap(find.text('Zur Prüfung'));
+    await tester.pump();
+    // Right away, before the plan is made again.
+    expect(find.text('Wird vorbereitet …'), findsOneWidget);
     await tester.pump();
     expect(find.text('Schritt 3 von 4 · Prüfen'), findsOneWidget);
     // Every answer given: no hint about open questions.
@@ -974,7 +977,7 @@ void main() {
     addTearDown(tester.view.reset);
     final ai = RdImportAi((_) async => {
           'answers': [
-            {'key': 'sax', 'kind': 'new', 'newGroup': 'Saxophon', 'confidence': 'high'},
+            {'key': 'kazoo', 'kind': 'new', 'newGroup': 'Saxophon', 'confidence': 'high'},
           ],
         });
     await tester.pumpWidget(ProviderScope(
@@ -1018,14 +1021,14 @@ void main() {
     await tester.tap(find.text('Nochmal ansehen'));
     await tester.pumpAndSettle();
     expect(container.read(rdImportProvider).step, RdImportStep.questions);
-    expect(container.read(rdImportProvider).aiFilled, {'sax'});
+    expect(container.read(rdImportProvider).aiFilled, {'kazoo'});
 
     await tester.ensureVisible(find.text('Vorschläge der KI'));
     await tester.tap(find.text('Vorschläge der KI'));
     await tester.pump();
     expect(find.text('Die KI hat 1 Antwort ausgefüllt (✦), bitte kurz prüfen.'), findsNothing);
     expect(find.text('Neue Gruppe „Saxophon“'), findsNothing);
-    expect(find.text('Neue Gruppe „Sax“'), findsOneWidget);
+    expect(find.text('Neue Gruppe „Kazoo“'), findsOneWidget);
     expect(container.read(rdImportProvider).decisions.answers, isEmpty);
 
     // Tapping the KI's answer takes it as it is: still chosen, no name
@@ -1064,7 +1067,7 @@ void main() {
     expect(find.textContaining('1 Stimmname ist noch offen.'), findsOneWidget);
     await tester.tap(find.text('Fragen beantworten'));
     await tester.pump();
-    expect(find.text('„Sax“ gehört zu …'), findsOneWidget);
+    expect(find.text('„Kazoo“ gehört zu …'), findsOneWidget);
   });
 
   testWidgets('leaving while the dates of Fassungen are read after the questions asks too; back leads to them', (tester) async {

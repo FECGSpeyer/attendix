@@ -502,6 +502,7 @@ class RdCircleButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.dot = false,
+    this.primary = false,
   });
 
   final IconData icon;
@@ -511,6 +512,9 @@ class RdCircleButton extends StatelessWidget {
   /// Red dot (unread notifications).
   final bool dot;
 
+  /// Filled in the primary colour: the one "+" of a list on desktop.
+  final bool primary;
+
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
@@ -519,7 +523,7 @@ class RdCircleButton extends StatelessWidget {
       label: label,
       excludeSemantics: true,
       child: Material(
-        color: p.surface,
+        color: primary ? p.primary : p.surface,
         shape: const CircleBorder(),
         child: InkWell(
           customBorder: const CircleBorder(),
@@ -530,7 +534,7 @@ class RdCircleButton extends StatelessWidget {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                Icon(icon, size: 22, color: p.text),
+                Icon(icon, size: 22, color: primary ? p.onPrimary : p.text),
                 if (dot)
                   Positioned(
                     top: 9,
