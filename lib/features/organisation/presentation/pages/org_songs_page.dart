@@ -266,6 +266,10 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> with OrgSongsLogic 
 
   @override
   Widget build(BuildContext context) {
+    // A group switch starts over (a load for the old group is dropped).
+    ref.listen(currentTenantIdProvider, (prev, next) {
+      if (prev != next) resetOrgSongs();
+    });
     final role = ref.watch(effectiveRoleProvider);
     final isAdmin = role.isAdmin || role.isResponsible;
     final orgAsync = ref.watch(currentOrganisationProvider);
