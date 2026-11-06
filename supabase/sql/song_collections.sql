@@ -17,7 +17,10 @@
 --
 -- Additive and safe to run twice. Without it the app behaves as before
 -- (it detects the missing table/column and hides every Sammlung feature).
--- Apply only after the store release (no production change before it).
+-- Applied in two steps (Leon, 2026-11-06): song_collections_stufe1.sql
+-- (table, column, RPC; nothing on songs reads or writes) before the store
+-- release, song_collections_stufe2.sql (restrictive policy and trigger on
+-- songs) after it. Together they are exactly this file.
 --
 -- Rollback (in this order: policies and triggers before the functions
 -- they use, the table with its own policies and trigger before the
