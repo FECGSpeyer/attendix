@@ -18710,7 +18710,7 @@ abstract class AppLocalizations {
   /// redesign.import.aiOptionDetail
   ///
   /// In de, this message translates to:
-  /// **'Die unbekannten Stimmnamen und einige Dateinamen gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.'**
+  /// **'Unbekannte Stimmnamen, einige Dateinamen und die Namen unsicherer Werk-Ordner gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.'**
   String get redesignImportAiOptionDetail;
 
   /// redesign.import.answerNewGroup
@@ -19228,6 +19228,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Mehrere Werke in Attendix passen. Bitte prüfe, ob es das richtige ist.'**
   String get redesignImportMatchAmbiguous;
+
+  /// redesign.import.matchByAi
+  ///
+  /// In de, this message translates to:
+  /// **'Die KI hält den Ordner für dieses Werk, etwa wegen anderer Schreibweise oder Übersetzung. Bitte prüfe es.'**
+  String get redesignImportMatchByAi;
 
   /// redesign.import.matchNumberOnly
   ///
@@ -19918,6 +19924,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Willkommen'**
   String get redesignJoinWelcomeNoName;
+
+  /// redesign.login.forgot
+  ///
+  /// In de, this message translates to:
+  /// **'Passwort vergessen?'**
+  String get redesignLoginForgot;
+
+  /// redesign.login.resetIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Wir schicken dir einen Link, mit dem du ein neues Passwort setzt.'**
+  String get redesignLoginResetIntro;
+
+  /// redesign.login.resetSend
+  ///
+  /// In de, this message translates to:
+  /// **'Link senden'**
+  String get redesignLoginResetSend;
 
   /// redesign.manage.announcementsHint
   ///

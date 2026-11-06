@@ -11384,7 +11384,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignImportAiOptionDetail =>
-      'The unknown part names and some file names are sent to the AI. Sure suggestions are filled in, all can be changed.';
+      'Unknown part names, some file names and the names of unsure work folders are sent to the AI. Sure suggestions are filled in, all can be changed.';
 
   @override
   String redesignImportAnswerNewGroup(Object name) {
@@ -11756,6 +11756,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get redesignImportMatchAmbiguous =>
       'Several works in Attendix fit. Please check that this is the right one.';
+
+  @override
+  String get redesignImportMatchByAi =>
+      'The AI takes the folder for this work, e.g. because of another spelling or a translation. Please check it.';
 
   @override
   String get redesignImportMatchNumberOnly =>
@@ -12207,6 +12211,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignJoinWelcomeNoName => 'Welcome';
+
+  @override
+  String get redesignLoginForgot => 'Forgot password?';
+
+  @override
+  String get redesignLoginResetIntro =>
+      'We will send you a link to set a new password.';
+
+  @override
+  String get redesignLoginResetSend => 'Send link';
 
   @override
   String get redesignManageAnnouncementsHint =>

@@ -112,4 +112,35 @@ void main() {
     // No other outgoing request than the model.
     expect(src, isNot(contains('fetch(')));
   });
+
+  test('matchWorks: folders by index key; only sure answers with Werke of the tenant', () async {
+    Map<String, dynamic>? sent;
+    final ai = RdImportAi((_) async => {}, works: (body) async {
+      sent = body;
+      return {
+        'matches': [
+          {'key': 'w0', 'songId': 5, 'confidence': 'high'},
+          {'key': 'w1', 'songId': 6, 'confidence': 'low'},
+          {'key': 'w2', 'songId': 99, 'confidence': 'high'},
+          {'key': 'x', 'songId': 5, 'confidence': 'high'},
+        ],
+      };
+    });
+    final found = await ai.matchWorks(7, ['157 Jesus ruft dich', '12 Halleluja', '3 Neu'], songs: {5, 6});
+    expect(sent!['works'], [
+      {'key': 'w0', 'name': '157 Jesus ruft dich'},
+      {'key': 'w1', 'name': '12 Halleluja'},
+      {'key': 'w2', 'name': '3 Neu'},
+    ]);
+    expect(found, {'157 Jesus ruft dich': 5});
+    // Not reachable: the comparison alone counts.
+    final failed = await RdImportAi((_) async => {}, works: (_) async => throw const FunctionException(status: 500))
+        .matchWorks(7, ['a'], songs: {5});
+    expect(failed, isEmpty);
+    final src = File('supabase/functions/work-match/index.ts').readAsStringSync();
+    expect(src, contains('.in("role", EDIT_ROLES)'));
+    expect(src, contains('.eq("tenantId", tenantId)'));
+    expect(src.indexOf('part_detect_take'), lessThan(src.indexOf('chat.completions.create')));
+    expect(src, contains('songIds.has(id)'));
+  });
 }

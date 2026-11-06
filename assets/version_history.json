@@ -1,11 +1,33 @@
 {
   "versions": [
     {
-      "version": "0.64.0",
+      "version": "0.67.0",
       "date": "6.11.2026",
       "changes": [
         "✨ Beta: Export als eigene Seite (Was, Spalten, Format), Spalten im Blatt sortieren und eigene Spalten hinzufügen",
         "✨ Beta: Urkunden – Gruppen im Blatt auswählen, mit Personenzahl je Gruppe"
+      ]
+    },
+    {
+      "version": "0.66.0",
+      "date": "6.11.2026",
+      "changes": [
+        "💄 Beta: Anmelden mit Beta-Karte über dem gewohnten Foto und Logo, „Passwort vergessen?“ als Blatt, Registrierung per Beitrittslink in derselben Karte; Felder, Autofill und Ablauf bleiben gleich"
+      ]
+    },
+    {
+      "version": "0.65.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Die übrigen Termin-Blätter im Beta-Design: Gemeinde-Übersicht, Aktuelle Werke, Rückmeldung, Beschreibung und Anhang, Dirigent ändern, Ordner wählen, Werke hinzufügen und Offene Dienste"
+      ]
+    },
+    {
+      "version": "0.64.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Noten-Import: Werke werden auch bei Tippfehlern und anderen Schreibweisen erkannt (Buchstabenvergleich)",
+        "✨ Noten-Import: Ordner, die neu wären oder nur über die Nummer passen, prüft die KI gegen die Werkliste; ihre Treffer stehen zur Prüfung"
       ]
     },
     {

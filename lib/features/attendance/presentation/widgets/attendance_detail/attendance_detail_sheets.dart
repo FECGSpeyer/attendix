@@ -4,10 +4,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../core/config/supabase_config.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../planning/presentation/widgets/rd_plan_widgets.dart';
+import '../../../../redesign/presentation/widgets/rd_widgets.dart';
 
 /// Result of [showPersonNoteSheet]: `null` = cancelled, `''` = delete note,
 /// anything else = the new note.
@@ -95,6 +98,14 @@ Future<ConductorChoice?> showConductorChangeDialog(
   const otherValue = -1;
   final hasOther = currentOtherConductor?.isNotEmpty == true;
   int? selected = hasOther ? otherValue : currentConductorId;
+  if (context.rdSkin != null) {
+    return _rdConductorChange(
+      context,
+      conductors: conductors,
+      selected: selected,
+      currentOtherConductor: currentOtherConductor,
+    );
+  }
 
   final picked = await showAppDialog<int>(
     context: context,
@@ -166,6 +177,58 @@ Future<ConductorChoice?> showConductorChangeDialog(
   return ConductorChoice(otherConductor: name);
 }
 
+/// Beta (redesign) "Dirigent ändern": tapping a row picks it; "Anderer
+/// Dirigent" asks for the name in a Beta text sheet.
+Future<ConductorChoice?> _rdConductorChange(
+  BuildContext context, {
+  required List<Person> conductors,
+  required int? selected,
+  required String? currentOtherConductor,
+}) async {
+  const otherValue = -1;
+  final picked = await showRdPlanSheet<int>(
+    context,
+    title: context.l10n.attendanceChangeConductor,
+    builder:
+        (ctx, pop) => [
+          RdGroupedList(
+            children: [
+              for (final con in conductors)
+                RdListRow(
+                  title: con.fullName,
+                  selected: selected == con.id,
+                  trailing: RdSheetCheck(selected == con.id),
+                  showChevron: false,
+                  onTap: () => pop(con.id!),
+                ),
+              RdListRow(
+                title: ctx.l10n.attListOtherConductor,
+                subtitle: selected == otherValue ? currentOtherConductor : null,
+                selected: selected == otherValue,
+                trailing: RdSheetCheck(selected == otherValue),
+                showChevron: false,
+                onTap: () => pop(otherValue),
+              ),
+            ],
+          ),
+        ],
+  );
+  if (picked == null) return null;
+  if (picked != otherValue) {
+    final person = conductors.where((c) => c.id == picked).firstOrNull;
+    return person == null ? null : ConductorChoice(person: person);
+  }
+  if (!context.mounted) return null;
+  final name = await showRdPlanTextSheet(
+    context,
+    title: context.l10n.attListEnterConductor,
+    initialValue: currentOtherConductor ?? '',
+    hint: context.l10n.attListConductor,
+  );
+  if (name == null || name.trim().isEmpty) return null;
+  return ConductorChoice(otherConductor: name.trim());
+}
+
 /// Folder picker for the Dateiablage (Ionic `FilesFolderPickerComponent`).
 ///
 /// Lists the storage bucket `files` below the tenant prefix `{tenantId}/`
@@ -177,6 +240,7 @@ Future<String?> showFilesFolderPicker(
 }) {
   final supabase = ProviderScope.containerOf(context, listen: false).read(supabaseClientProvider);
   return showModalBottomSheet<String>(
+    backgroundColor: context.rdSkin != null ? context.rd.bg : null,
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
@@ -254,8 +318,86 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
 
   List<String> get _segments => _path.split('/').where((s) => s.isNotEmpty).toList();
 
+  String _child(String folder) => _path.isEmpty ? folder : '$_path/$folder';
+
+  /// Beta (redesign) layout: breadcrumb chips, one grouped list of folders.
+  Widget _buildBeta(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final segments = _segments;
+    return SafeArea(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+          children: [
+            Semantics(header: true, child: Text(l10n.folderPickerTitle, style: RdType.cardTitle(p))),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                RdChoiceChip(label: l10n.filesTitle, selected: segments.isEmpty, onTap: () => _navigate('')),
+                for (var i = 0; i < segments.length; i++)
+                  RdChoiceChip(
+                    label: segments[i],
+                    selected: i == segments.length - 1,
+                    onTap: () => _navigate(segments.sublist(0, i + 1).join('/')),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (segments.isNotEmpty) ...[
+              RdPrimaryButton(
+                key: const Key('rd-folder-choose-this'),
+                label: '${l10n.folderPickerChooseThis}: ${segments.last}',
+                icon: Icons.check,
+                onPressed: _loading ? null : () => Navigator.pop(context, _path),
+              ),
+              const SizedBox(height: 16),
+            ],
+            RdGroupedList(
+              children: [
+                if (segments.isNotEmpty)
+                  RdListRow(
+                    title: l10n.folderPickerParent,
+                    leading: const RdRowIcon(Icons.arrow_upward),
+                    showChevron: false,
+                    onTap: () => _navigate(segments.sublist(0, segments.length - 1).join('/')),
+                  ),
+                if (_loading)
+                  const Padding(padding: EdgeInsets.all(24), child: Center(child: AppSpinner()))
+                else ...[
+                  for (final folder in _folders)
+                    RdListRow(
+                      title: folder,
+                      leading: const RdRowIcon(Icons.folder_outlined),
+                      trailing: TextButton(
+                        onPressed: () => Navigator.pop(context, _child(folder)),
+                        child: Text(l10n.folderPickerChoose, style: TextStyle(color: p.link)),
+                      ),
+                      showChevron: false,
+                      onTap: () => _navigate(_child(folder)),
+                    ),
+                  if (_folders.isEmpty)
+                    RdListRow(
+                      title: _error ?? l10n.folderPickerNoSubfolders,
+                      titleColor: _error != null ? p.absent : p.text2,
+                      showChevron: false,
+                    ),
+                ],
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (context.rdSkin != null) return _buildBeta(context);
     final segments = _segments;
     return SafeArea(
       child: ConstrainedBox(

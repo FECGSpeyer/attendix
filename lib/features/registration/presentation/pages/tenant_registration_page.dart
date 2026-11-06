@@ -10,6 +10,11 @@ import 'package:intl/intl.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/church_providers.dart';
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../shared/widgets/display/attendix_logo.dart';
+import '../../../redesign/presentation/widgets/rd_logo.dart' show rdLogoColors;
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/providers/tenant_providers.dart';
@@ -104,6 +109,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   Widget build(BuildContext context) {
     final tenantAsync = ref.watch(tenantByRegisterIdProvider(widget.registerId));
 
+    if (ref.watch(redesignEnabledProvider)) return _buildBeta(tenantAsync);
     final ios = ionIsIos(context);
     final hasData = tenantAsync.valueOrNull != null;
     return Scaffold(
@@ -215,18 +221,18 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     final inputStyle = ionItemInputStyle(context);
     final dateFormat = DateFormat(dateFmt());
 
+    final beta = ref.watch(redesignEnabledProvider);
+    Widget header(String text) => beta ? RdGroupLabel(text) : IonListHeader(text);
+
     // Ionic tenant-register: one inset list with a card (instance name +
     // intro), then the "Account", "Persönliche Daten" and "Weitere
     // Informationen" groups and the primary "Registrierung abschließen" item.
-    return Form(
-      key: _formKey,
-      child: ListView(
-        controller: _scrollController,
-        padding: const EdgeInsets.only(bottom: 32),
-        children: [
-          const IonContentTopInset(),
+    // REDESIGN (E5): in the Beta the same groups sit in the card over the
+    // login photo; the card header with the group comes from [_buildBeta].
+    final children = <Widget>[
+          if (!beta) const IonContentTopInset(),
           // ion-header collapse="condense": large title on iOS
-          if (ios)
+          if (ios && !beta)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
               child: Text(
@@ -240,7 +246,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             ),
 
           // ion-card: business icon, instance name (ion-title), intro
-          Container(
+          if (!beta) Container(
             margin: const EdgeInsets.fromLTRB(16, 16, 16, 16),
             padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
             decoration: BoxDecoration(
@@ -279,12 +285,14 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           ),
 
           // Account
-          IonListHeader(context.l10n.tenantRegisterAccount),
+          header(context.l10n.tenantRegisterAccount),
           _buildAccountGroup(),
 
           // Persönliche Daten
-          IonListHeader(context.l10n.tenantRegisterPersonalData),
+          header(context.l10n.tenantRegisterPersonalData),
           IonInsetGroup(
+            margin: _betaGroupMargin,
+            color: _betaGroupColor,
             children: [
               if (registrationFields.contains('picture'))
                 IonItem(
@@ -352,8 +360,10 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           ),
 
           // Weitere Informationen
-          IonListHeader(context.l10n.tenantRegisterMoreInfo),
+          header(context.l10n.tenantRegisterMoreInfo),
           IonInsetGroup(
+            margin: _betaGroupMargin,
+            color: _betaGroupColor,
             children: [
               groupsAsync.when(
                 loading: () => const Padding(
@@ -426,6 +436,22 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
           const SizedBox(height: 8),
 
           // ion-item color="primary" button: Registrierung abschließen
+          if (beta)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: RdPrimaryButton(
+                key: const ValueKey('tenant-register-finish'),
+                icon: Icons.check_circle_outline,
+                label: context.l10n.tenantRegisterFinish,
+                loading: _isLoading,
+                onPressed: _isLoading ||
+                        _noGroupsAvailable ||
+                        (!_isLoggedIn && _mode == AuthMode.otp)
+                    ? null
+                    : () => _submit(tenant),
+              ),
+            )
+          else
           IonInsetGroup(
             children: [
               IonButtonItem(
@@ -441,11 +467,125 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               ),
             ],
           ),
-          if (_isLoading)
+          if (_isLoading && !beta)
             const Padding(
               padding: EdgeInsets.only(top: 16),
               child: Center(child: AppSpinner()),
             ),
+    ];
+    if (beta) {
+      return Form(
+        key: _formKey,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+      );
+    }
+    return Form(
+      key: _formKey,
+      child: ListView(
+        controller: _scrollController,
+        padding: const EdgeInsets.only(bottom: 32),
+        children: children,
+      ),
+    );
+  }
+
+  // REDESIGN (E5): the form groups sit flush inside the Beta card.
+  EdgeInsetsGeometry? get _betaGroupMargin =>
+      ref.read(redesignEnabledProvider) ? const EdgeInsets.only(bottom: 8) : null;
+  Color? get _betaGroupColor => ref.read(redesignEnabledProvider) ? context.rd.bg : null;
+
+  /// REDESIGN (E5): same photo and logo as the login, a Beta card with the
+  /// group on top that scrolls with the form; "Registrierung abschließen"
+  /// at the end of the card. Form, fields and flow are the old ones.
+  Widget _buildBeta(AsyncValue<Tenant?> tenantAsync) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final tenant = tenantAsync.valueOrNull;
+    final Widget content;
+    if (tenantAsync.isLoading && tenant == null) {
+      content = const Padding(padding: EdgeInsets.all(32), child: Center(child: AppSpinner()));
+    } else if (tenantAsync.hasError && tenant == null) {
+      content = _buildErrorState(error: tenantAsync.error);
+    } else if (tenant == null) {
+      content = _buildErrorState(message: l10n.tenantRegisterFlutterInvalidLink);
+    } else {
+      final name = tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName;
+      content = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(name, textAlign: TextAlign.center, style: RdType.section(p)),
+          const SizedBox(height: 4),
+          Text(l10n.tenantRegisterIntro, textAlign: TextAlign.center, style: RdType.meta(p, size: 14)),
+          const SizedBox(height: 16),
+          _buildForm(tenant),
+        ],
+      );
+    }
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/images/login_bg.jpg',
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => ColoredBox(color: p.primary),
+          ),
+          SafeArea(
+            bottom: false,
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              padding: EdgeInsets.fromLTRB(10, 72, 10, 32 + MediaQuery.paddingOf(context).bottom),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    alignment: Alignment.topCenter,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(20, 64, 20, 20),
+                        decoration: BoxDecoration(
+                          color: p.surface,
+                          borderRadius: BorderRadius.circular(p.cardRadius),
+                          boxShadow: const [
+                            BoxShadow(color: Color(0x73000000), blurRadius: 60, spreadRadius: -15, offset: Offset(0, 20)),
+                          ],
+                        ),
+                        child: content,
+                      ),
+                      Positioned(
+                        top: -56,
+                        child: Container(
+                          width: 104,
+                          height: 104,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: p.surface,
+                            boxShadow: const [
+                              BoxShadow(color: Color(0x8F000000), blurRadius: 38, spreadRadius: -12, offset: Offset(0, 16)),
+                            ],
+                          ),
+                          clipBehavior: Clip.antiAlias,
+                          child: AttendixLogo(size: 104, radius: 0, colors: rdLogoColors(ref.watch(redesignSettingsProvider).world)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: SafeArea(
+              child: IconButton(
+                icon: const Icon(Icons.home_outlined, color: Colors.white),
+                tooltip: l10n.coreFlutterRouterGoHome,
+                onPressed: _goHome,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -869,12 +1009,16 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     if (_isLoggedIn) {
       final email = ref.read(supabaseClientProvider).auth.currentUser?.email ?? '';
       return IonInsetGroup(
+        margin: _betaGroupMargin,
+        color: _betaGroupColor,
         children: [IonItem(label: context.l10n.tenantRegisterSignedInAs(email))],
       );
     }
 
     final inputStyle = ionItemInputStyle(context);
     return IonInsetGroup(
+      margin: _betaGroupMargin,
+      color: _betaGroupColor,
       children: [
         IonButtonItem(
           label: context.l10n.tenantRegisterHaveAccount,
@@ -934,11 +1078,22 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         ] else if (_otpSent) ...[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12),
-            child: OtpCodeField(
-              controller: _otpController,
-              enabled: !_isLoading,
-              onCompleted: (_) => _verifyCode(),
-            ),
+            child: ref.read(redesignEnabledProvider)
+                // Beta card is narrower: shrink the code boxes to the space
+                // that is left (e.g. 320 px screens) instead of clipping.
+                ? FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: OtpCodeField(
+                      controller: _otpController,
+                      enabled: !_isLoading,
+                      onCompleted: (_) => _verifyCode(),
+                    ),
+                  )
+                : OtpCodeField(
+                    controller: _otpController,
+                    enabled: !_isLoading,
+                    onCompleted: (_) => _verifyCode(),
+                  ),
           ),
           ListenableBuilder(
             listenable: _otpController,

@@ -8,6 +8,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
@@ -17,6 +18,8 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
+import '../../../planning/presentation/widgets/rd_plan_widgets.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 
 /// App bar title of the parents page (Ionic: tenant switcher when the user
 /// has more than one tenant, otherwise the tenant's long name).
@@ -231,6 +234,37 @@ Future<void> showCurrentSongsSheet(
   BuildContext context,
   List<({String date, List<SongHistory> history})> groups,
 ) {
+  if (context.rdSkin != null) {
+    return showRdPlanSheet<void>(
+      context,
+      title: context.l10n.signoutCurrentSongs,
+      builder: (ctx, _) => [
+        for (final group in groups) ...[
+          RdGroupLabel(group.date),
+          RdGroupedList(
+            children: [
+              for (final his in group.history)
+                if (his.song != null)
+                  RdListRow(
+                    title: '${his.song!.number ?? ''}. ${his.song!.name}',
+                    subtitle: (his.conductorName ?? '').isNotEmpty
+                        ? ctx.l10n.signoutConductor(his.conductorName!)
+                        : null,
+                    trailing: (his.song!.link ?? '').isNotEmpty
+                        ? Icon(Icons.download_outlined, color: ctx.rd.link, size: 20)
+                        : null,
+                    showChevron: false,
+                    onTap: (his.song!.link ?? '').isEmpty
+                        ? null
+                        : () => NativeFileService.openLinkInApp(Uri.parse(his.song!.link!)),
+                  ),
+            ],
+          ),
+          const SizedBox(height: 16),
+        ],
+      ],
+    );
+  }
   return showModalBottomSheet(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar

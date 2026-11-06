@@ -11502,7 +11502,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportAiOptionDetail =>
-      'Die unbekannten Stimmnamen und einige Dateinamen gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.';
+      'Unbekannte Stimmnamen, einige Dateinamen und die Namen unsicherer Werk-Ordner gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.';
 
   @override
   String redesignImportAnswerNewGroup(Object name) {
@@ -11876,6 +11876,10 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get redesignImportMatchAmbiguous =>
       'Mehrere Werke in Attendix passen. Bitte prüfe, ob es das richtige ist.';
+
+  @override
+  String get redesignImportMatchByAi =>
+      'Die KI hält den Ordner für dieses Werk, etwa wegen anderer Schreibweise oder Übersetzung. Bitte prüfe es.';
 
   @override
   String get redesignImportMatchNumberOnly =>
@@ -12331,6 +12335,16 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignJoinWelcomeNoName => 'Willkommen';
+
+  @override
+  String get redesignLoginForgot => 'Passwort vergessen?';
+
+  @override
+  String get redesignLoginResetIntro =>
+      'Wir schicken dir einen Link, mit dem du ein neues Passwort setzt.';
+
+  @override
+  String get redesignLoginResetSend => 'Link senden';
 
   @override
   String get redesignManageAnnouncementsHint =>
