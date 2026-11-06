@@ -685,7 +685,11 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
       if (mounted) {
         final router = GoRouter.of(context);
         if (widget.isModal) Navigator.of(context).pop();
-        router.go(beta ? RedesignRoutes.today : Role.admin.defaultRoute);
+        if (beta) {
+          router.go(RedesignRoutes.today);
+        } else {
+          router.go(Role.admin.defaultRoute);
+        }
       }
     } catch (e) {
       if (mounted) {
