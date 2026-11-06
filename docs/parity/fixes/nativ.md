@@ -1,16 +1,13 @@
 # Fix-Paket „nativ“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 525a06f, ed511da, 43a315b (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 2acb693, 4de3564, 525a06f, ed511da, 359f15d, 43a315b, 0e6c255 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 2
+## Angleichen (hoch/mittel): 1
 
 - [ ] **mittel** `native/config` `x-6d9a24bfe2` **Anmeldung und lokale Daten gehen beim Update verloren** [src/app/services/base/supabase.ts:8](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/base/supabase.ts#L8) (2. Prüfung: bestätigt)
   Weiter teilweise real: Übernahme liest nur Sitzung (sb-…-auth-token) und currentTenantId aus dem Ionic-localStorage. Nicht übernommen: Offline-Warteschlange offline_writes_v1 (nicht synchronisierte Änderungen gehen beim Update verloren), Ansichts-/Sortieroptionen aus Ionic Storage, push_prompt_shown. mittel passt; Gerätetest laut device-checklist.md offen.
   Flutter: lib/core/services/native/ionic_session_takeover.dart:114, ios/Runner/AppDelegate.swift:188, android/app/src/main/kotlin/de/attendix/attendix/ionic/IonicSessionPlugin.kt:126
-- [ ] **mittel** `native/config` `x-8e475b1344` **iOS-Push im Vordergrund ohne Banner und Badge** [capacitor.config.json:7](https://github.com/FECGSpeyer/attendance/blob/1923d203/capacitor.config.json#L7) (2. Prüfung: bestätigt)
-  Echt. Ionic: presentationOptions [badge, sound, alert] (gleich dem Default von @capacitor-firebase/messaging) → bei offener App System-Banner + Ton + Badge, dazu der In-App-Alert (push.service.ts:180/218). Flutter iOS: alert:false, badge:false, sound:true (bewusst, Kommentar) → nur Ton + In-App-Alert. Zusätzlich fehlt damit der Eintrag in der Mitteilungszentrale für Pushes, die bei offener App ankommen, und das Badge „1“ nach Verlassen der App. Android in beiden nur In-App-Alert.
-  Flutter: lib/core/services/push/firebase_push_messaging_client.dart:43
 
 ## Flutter besser – Leon entscheidet: 0
 

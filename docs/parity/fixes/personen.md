@@ -1,22 +1,10 @@
 # Fix-Paket „personen“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 525a06f, ed511da, 43a315b (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 2acb693, 4de3564, 525a06f, ed511da, 359f15d, 43a315b, 0e6c255 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 4
+## Angleichen (hoch/mittel): 0
 
-- [ ] **mittel** `instruments/instrument-list/instrument-list.page` `action-13fe6ace` [instruments/instrument-list/instrument-list.page.html:9](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L9) (2. Prüfung: korrigiert)
-  Rolle (nur Admin/Verantwortlicher, Route-Guard jetzt app_router.dart:168), Icon swap_vert ↔ Häkchen, Ziehen innerhalb der Kategorie und Toasts „Reihenfolge gespeichert“/„Fehler…“ wie Ionic. Erstprüfer übersah beim Handler: Häkchen ohne Verschieben – Ionic saveOrder schreibt nur vorhandene sort_order unverändert (null bleibt null) / Flutter _toggleReorder → computeGlobalSortOrder schreibt immer 1..n an alle Gruppen (gleiche Abweichung wie x-d0c116c654). Andere DB-Werte → mittel (sichtbare Reihenfolge bleibt gleich, Badges erscheinen/ändern sich).
-  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:101, lib/features/instruments/presentation/pages/instruments_list_page.dart:38, lib/features/instruments/presentation/pages/instruments_list_page.dart:49, lib/core/router/app_router.dart:168
-- [ ] **mittel** `instruments/instrument-list/instrument-list.page` `action-b5b9e69f` [instruments/instrument-list/instrument-list.page.html:20](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L20) (2. Prüfung: korrigiert)
-  Icon swap_vert ↔ Häkchen, Beenden speichert Kategorie-sort_order und daraus die globale Gruppen-sort_order (1..n, wie Ionic saveCategoryOrder), Toast „Reihenfolge gespeichert“ bzw. „Fehler beim Speichern der Reihenfolge“. Erstprüfer übersah: Häkchen ohne Verschieben – Ionic schreibt nur vorhandene Kategorie-sort_order unverändert (null bleibt null) / Flutter vergibt immer 1..n an alle Kategorien (Z. 43–49). Andere DB-Werte → mittel; sichtbare Reihenfolge bleibt gleich, später neu angelegte Kategorien landen dann aber hinter statt alphabetisch zwischen den bisher unnummerierten.
-  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:112, lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:28, lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:43
-- [ ] **mittel** `instruments/instrument-list/instrument-list.page` `x-d0c116c654` **Sortiermodus ohne Verschieben nummeriert neu** [src/app/instruments/instrument-list/instrument-list.page.ts:401](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.ts#L401) (2. Prüfung: korrigiert)
-  Besteht weiter: Ionic saveOrder schreibt beim Häkchen ohne Verschieben nur vorhandene sort_order unverändert (null bleibt null) / Flutter computeGlobalSortOrder schreibt beim Verlassen immer 1..n an alle Gruppen. Bewertung korrigiert: abweichende DB-Werte sind nie niedrig → mittel (sichtbare Reihenfolge bleibt, Badges ändern sich, unnummerierte Gruppen bekommen Werte, später neue Gruppen sortieren dann ans Ende statt alphabetisch).
-  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:49
-- [ ] **mittel** `instruments/instrument/instrument.page` `x-718f3b20d0` **Geschriebene Werte beim Aktualisieren** [src/app/instruments/instrument/instrument.page.ts:64](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument/instrument.page.ts#L64) (2. Prüfung: korrigiert)
-  Besteht weiter (_save): Ionic schreibt notes, range, tuning, clefs, name, maingroup, category, synonyms wie geladen/eingegeben ('' bleibt '', versteckte Felder unverändert) / Flutter trimmt, schreibt leere range/synonyms/notes als null und tuning/clefs immer – bei Chor/Allgemein/Hauptgruppe (Felder versteckt) wird tuning null zu „C“ und clefs null/[] zu [g]. Bewertung korrigiert: andere DB-Werte, teils in Feldern, die der Nutzer nicht sieht → mittel.
-  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:720, lib/features/instruments/presentation/pages/instruments_list_page.dart:729
 
 ## Flutter besser – Leon entscheidet: 25
 

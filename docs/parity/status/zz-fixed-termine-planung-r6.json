@@ -1,0 +1,88 @@
+{
+ "batch": "zz-fixed-termine-planung-r6",
+ "ionic": "1923d203",
+ "afterRound": 6,
+ "flutter": "0e6c255",
+ "items": {
+  "x-05b82aec95": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ],
+   "n": "„Einplanen“ nimmt den aktuellen Formularstand (Titel, Dauer, Status) wie Ionic. PR #347."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-6d6140de": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ],
+   "n": "Button hängt am Status im Formular; bei „Erledigt“/„Verworfen“ sofort weg. PR #347."
+  },
+  "services/tenant/tenant.service#toast-028a6639": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ],
+   "n": "Fehler beim Löschen einer Blockvorlage zeigt „Fehler beim Aktualisieren der Einstellungen“. PR #347."
+  },
+  "attendance/attendance/attendance.page#toast-87a629e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ],
+   "n": "„Neu laden“ wartet auf Termin und Personen; bei Fehler Toast, Seite bleibt mit geladenem Termin. PR #347."
+  },
+  "services/player-absence/player-absence.service#toast-41ab2170": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/attendance_create_writes.dart",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ],
+   "n": "Termin anlegen: Ladefehler der Abwesenheiten zeigt „Fehler beim Laden der Abwesenheiten“, der Termin wird trotzdem angelegt. PR #347."
+  },
+  "selfService/signout/signout.page#action-ff28907b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/data/providers/upcoming_songs_provider.dart"
+   ],
+   "n": "„Aktuelle Werke“ (Kachel, Liste, Druck) nach Dienst-Ansicht: nicht eingeteilte Dienst-Termine zählen nicht mit. PR #347."
+  },
+  "selfService/signout/signout.page#text-4beefbd6": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart"
+   ],
+   "n": "„Nächster Dienst“ mit Jahr und Endzeit wie Ionic. PR #347."
+  },
+  "selfService/signout/signout.page#text-76bcf174": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart"
+   ],
+   "n": "„Bitte bestätigen“ mit Jahr und Endzeit wie Ionic. PR #347."
+  },
+  "services/db.service#toast-f23fb4a8": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/statistics_providers.dart",
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ],
+   "n": "Statistik: Ladefehler der Personen zeigt „Fehler beim Laden der Personen“, einmal je Fehlversuch und erst nach dem Frame. PR #347."
+  },
+  "services/group-category/group-category.service#toast-e1869ba2": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/group_providers.dart"
+   ],
+   "n": "„Fehler beim Laden der Kategorien“ direkt beim Laden der Kategorien. PR #347."
+  },
+  "services/tenant/tenant.service#logic-029b4bca": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/role_permission_repository.dart",
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ],
+   "n": "Sammelpunkt: die beiden Abweichungen db-a71d98ce (Demo-Sperre files_shared, PR #344) und toast-028a6639 (Vorlage löschen meldet Fehler) sind behoben, die übrigen Methoden waren schon gleich. PR #347."
+  }
+ }
+}

@@ -1,19 +1,10 @@
 # Fix-Paket „app“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 525a06f, ed511da, 43a315b (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 2acb693, 4de3564, 525a06f, ed511da, 359f15d, 43a315b, 0e6c255 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 3
+## Angleichen (hoch/mittel): 0
 
-- [ ] **mittel** `register/tenant-register/tenant-register.page` `toast-bd259c1e` [register/tenant-register/tenant-register.page.ts:441](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/register/tenant-register/tenant-register.page.ts#L441) (2. Prüfung: korrigiert)
-  Alter Randfall behoben (onSaved schreibt jetzt immer value ?? ''). Neu: Textfelder, die in Ionic mit Typ Text ohne Standardwert angelegt wurden, haben defaultValue false (emptyField). Ionic: ion-input zeigt leer, unberührt → Toast 'Bitte füllen Sie das Feld "{field}" aus.' / Flutter: initialValue defaultValue?.toString() → Feld mit 'false' vorbelegt, kein Toast, 'false' wird in additional_fields gespeichert. Fehlende Pflichtprüfung + anderer DB-Wert.
-  Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:480-495, lib/features/registration/presentation/pages/tenant_registration_page.dart:1138-1142, lib/features/settings/presentation/pages/extra_fields_page.dart:246-253
-- [ ] **mittel** `register/tenant-register/tenant-register.page` `field-3d36f520-2` [register/tenant-register/tenant-register.page.html:163](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/register/tenant-register/tenant-register.page.html#L163) (2. Prüfung: korrigiert)
-  Label/Default gleich, leer → null wie Ionic. Ionic: ion-input type=number, NumericValueAccessor speichert parseFloat-Zahl, Dezimal/Minus eingebbar / Flutter: TextInputType.number ohne decimal/signed → auf iOS/Android keine Dezimal- oder Minuswerte eingebbar; int.tryParse ?? value → Dezimalwerte (Web/Hardware-Tastatur) landen als String '1.5' statt Zahl in player.additional_fields. Abweichender DB-Wert und eingeschränkte Eingabe → nicht niedrig.
-  Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:497-512, lib/features/registration/presentation/pages/tenant_registration_page.dart:1143-1147
-- [ ] **mittel** `register/tenant-register/tenant-register.page` `x-eed3ad9724` **img bei Selbstregistrierung ohne Bild** [src/app/register/tenant-register/tenant-register.page.ts:329](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/register/tenant-register/tenant-register.page.ts#L329) (2. Prüfung: korrigiert)
-  Ionic: addPlayer schreibt img = DEFAULT_IMAGE (https://ionicframework.com/docs/img/demos/avatar.svg), wenn kein Passbild gewählt / Flutter: buildRegistrationPlayerData setzt kein img (DB-Default). Anderer DB-Wert → nach Vorgabe nicht niedrig; sichtbar ohne Folgen (Ionic liest img || DEFAULT_IMAGE, Flutter wertet .svg als kein Bild). Fix trivial: 'img': kDefaultAvatarUrl wie import_mapper.
-  Flutter: lib/features/registration/data/providers/registration_providers.dart:347-380, lib/core/utils/import_mapper.dart:330
 
 ## Flutter besser – Leon entscheidet: 46
 

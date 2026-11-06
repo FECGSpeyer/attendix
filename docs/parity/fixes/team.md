@@ -1,16 +1,10 @@
 # Fix-Paket „team“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 525a06f, ed511da, 43a315b (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 2acb693, 4de3564, 525a06f, ed511da, 359f15d, 43a315b, 0e6c255 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 2
+## Angleichen (hoch/mittel): 0
 
-- [ ] **mittel** `agenda-items/agenda-item-detail/agenda-item-detail.page` `action-6d6140de` [agenda-items/agenda-item-detail/agenda-item-detail.page.html:108](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/agenda-items/agenda-item-detail/agenda-item-detail.page.html#L108) (2. Prüfung: korrigiert)
-  Button „Einplanen“: Rollen gleich (nur Admin/Verantwortlich, nur offene und bestehende Themen). Ionic richtet Sichtbarkeit und Einplanen nach dem ungespeicherten Formular (Status/Titel live), Flutter nach dem gespeicherten Stand (item?.status). Gleiche Ursache wie x-05b82aec95 (Plan bekommt den alten Titel) → mittel wie dort. Fix in #347.
-  Flutter: lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:352-360, lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:209-216
-- [ ] **mittel** `agenda-items/agenda-item-detail/agenda-item-detail.page` `x-05b82aec95` **Einplanen nach gespeichertem Stand** [src/app/agenda-items/agenda-item-detail/agenda-item-detail.page.html:106](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/agenda-items/agenda-item-detail/agenda-item-detail.page.html#L106) (2. Prüfung: korrigiert)
-  Korrektur niedrig→mittel (anderer DB-Wert). Ionic: item ist per ngModel ans Formular gebunden – beim Einplanen schreibt buildAgendaField den ungespeicherten Titel und die ungespeicherte Dauer als TOP-Name/-Dauer in attendance.plan; Status ≠ „Offen“ blendet „Einplanen“ sofort aus / Flutter: Button-Bedingung und _planInto(item) nutzen das gespeicherte Thema (agendaItemByIdProvider) → Plan bekommt alten Titel/alte Dauer, Button verschwindet erst nach Speichern. Ablauf Titel ändern → Einplanen → Speichern: in Flutter steht im Ablaufplan/Protokoll der alte Titel.
-  Flutter: lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:352-360, lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:264-268, lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:291-294
 
 ## Flutter besser – Leon entscheidet: 3
 

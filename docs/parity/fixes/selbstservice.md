@@ -1,19 +1,10 @@
 # Fix-Paket „selbstservice“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 525a06f, ed511da, 43a315b (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 2acb693, 4de3564, 525a06f, ed511da, 359f15d, 43a315b, 0e6c255 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 3
+## Angleichen (hoch/mittel): 0
 
-- [ ] **mittel** `selfService/signout/signout.page` `action-ff28907b` [selfService/signout/signout.page.html:150](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/selfService/signout/signout.page.html#L150) (2. Prüfung: korrigiert)
-  Kachel, Text und Bedingung (nur ohne Dienstplan-Ansicht, Werke ab heute, kein Rollenfilter) gleich, aber anderer Filter: Ionic berechnet upcomingSongs nach applyDutyView aus personAttendances ohne nicht zugeteilte Dienst-Termine (isUnassignedDuty) / Flutter upcomingSongsProvider nimmt die Rohdaten (signoutDataProvider) ohne applySignoutDutyView – Werke von Dienst-Terminen, für die die Person nur Ersatz ist (bzw. bei show_all_attendances nicht eingeteilt), zählen in „N Termine“, erscheinen im Sheet „Aktuelle Werke“ und werden beim Drucken mitgenommen; die Kachel kann allein dadurch erscheinen. Erstprüfung hat den Dienst-Filter übersehen.
-  Flutter: lib/features/self_service/presentation/pages/signout_page.dart:478, lib/features/self_service/data/providers/upcoming_songs_provider.dart:63, lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:299
-- [ ] **mittel** `selfService/signout/signout.page` `text-76bcf174` [selfService/signout/signout.page.html:193](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/selfService/signout/signout.page.html#L193) (2. Prüfung: korrigiert)
-  Ionic getEventMeta(att, true, false) auf „Bitte bestätigen“: „Di., 05.11.2026 · 19:00–21:00“ / Flutter _dateLine: „Di, 05.11. · 19:00 Uhr“ – ohne Jahr und ohne Endzeit. Erstprüfer/Runde: niedrig, aber die Endzeit fehlt als Information zur Entscheidung Bestätigen/Kann nicht; in der Dienstplan-Ansicht steht der angefragte Dienst sonst nirgends mit Zeitspanne, daher mittel.
-  Flutter: lib/features/duty/presentation/widgets/self_service_duty_section.dart:99, lib/features/duty/presentation/widgets/self_service_duty_section.dart:278
-- [ ] **mittel** `selfService/signout/signout.page` `text-4beefbd6` [selfService/signout/signout.page.html:383](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/selfService/signout/signout.page.html#L383) (2. Prüfung: korrigiert)
-  Ionic getEventMeta(nextDuty, true, false): „Di., 05.11.2026 · 19:00–21:00“ / Flutter _dateLine: „Di, 05.11. · 19:00 Uhr“ – ohne Jahr und ohne Endzeit. Erstprüfer: niedrig, aber die Endzeit des Dienstes fehlt als Information; in der Dienstplan-Ansicht steht der eigene Dienst sonst nirgends auf der Seite (Weitere Termine ohne eigene Dienste), daher mittel.
-  Flutter: lib/features/duty/presentation/widgets/self_service_duty_section.dart:143, lib/features/duty/presentation/widgets/self_service_duty_section.dart:278
 
 ## Flutter besser – Leon entscheidet: 15
 

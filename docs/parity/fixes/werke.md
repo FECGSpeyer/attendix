@@ -1,13 +1,10 @@
 # Fix-Paket „werke“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 525a06f, ed511da, 43a315b (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 2acb693, 4de3564, 525a06f, ed511da, 359f15d, 43a315b, 0e6c255 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 1
+## Angleichen (hoch/mittel): 0
 
-- [ ] **mittel** `songs/songs.page` `action-761fe550` [songs/songs.page.html:497](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/songs.page.html#L497) (2. Prüfung: korrigiert)
-  Korrektur niedrig→mittel (anderer DB-Wert ist nie niedrig). Gleich: „Hinzufügen“ nur mit Nummer und Name aktiv, Duplikat- („Nummer vergeben“) und Link-Prüfung, insert songs {number,name,withChoir,withSolo,instrument_ids (Orchester: alle Gruppen-Ids inkl. Hauptgruppe, sonst []),prefix,tenantId = effektiver Werke-Tenant}, danach Navigation zum neuen Werk. Abweichende Schreibwerte: Ionic schreibt link = '' bei leerem Feld und Name/Präfix ungetrimmt / Flutter lässt link weg (NULL) und trimmt Name/Präfix. Funktional ohne Folge (alle Leser prüfen link nur auf truthy), Fix trivial. Flutter besser: Fehler → „Werk konnte nicht erstellt werden“, Sheet bleibt offen (Ionic schließt still ohne Navigation); Nummer als Zahl verglichen (Ionic „007“ ≠ „7“ → Duplikat möglich). Randfall: nicht ganzzahlige Nummer (Web) → Flutter tut still nichts, Ionic Insert scheitert still.
-  Flutter: lib/features/songs/presentation/widgets/add_song_sheet.dart:58-59, lib/features/songs/presentation/widgets/add_song_sheet.dart:61-98, lib/features/songs/presentation/widgets/add_song_sheet.dart:218-227, lib/data/repositories/song_repository.dart:243-280
 
 ## Flutter besser – Leon entscheidet: 17
 

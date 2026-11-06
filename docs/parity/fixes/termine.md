@@ -1,13 +1,10 @@
 # Fix-Paket „termine“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 525a06f, ed511da, 43a315b (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 2acb693, 4de3564, 525a06f, ed511da, 359f15d, 43a315b, 0e6c255 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 1
+## Angleichen (hoch/mittel): 0
 
-- [ ] **mittel** `attendance/attendance/attendance.page` `toast-87a629e9` [attendance/attendance/attendance.page.ts:544](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L544) (2. Prüfung: korrigiert)
-  Ionic: Toast (danger) "Neu laden fehlgeschlagen — bitte erneut versuchen." und Seite bleibt. Flutter: "Neu laden" invalidiert nur die Provider. Schlägt das Laden des Termins fehl, kommt der andere Toast "…bitte erneut öffnen" und die Seite wird verlassen (Z. 395); schlägt nur die Personenliste fehl, kommt gar kein Toast, nur das Banner bleibt. Fehlermeldung fehlt/ist anders, daher mind. mittel statt niedrig.
-  Flutter: lib/features/attendance/presentation/pages/attendance_detail_page.dart:1541, lib/features/attendance/presentation/pages/attendance_detail_page.dart:395, lib/features/attendance/presentation/pages/attendance_detail_page.dart:452
 
 ## Flutter besser – Leon entscheidet: 27
 
