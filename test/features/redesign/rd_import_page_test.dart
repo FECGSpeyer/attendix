@@ -29,6 +29,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show FunctionException;
+import 'package:url_launcher/url_launcher.dart' show LaunchMode;
 
 import '../../factories/test_factories.dart';
 import 'fake_drive.dart';
@@ -254,6 +255,20 @@ void main() {
   test('ZIP name without the Drive date and part number', () {
     expect(RdImportSource.zipStem('Noten (Speyer)-20261031T174501Z-001.zip'), 'Noten (Speyer)');
     expect(RdImportSource.zipStem('Stille Nacht.zip'), 'Stille Nacht');
+  });
+
+  test('Google Drive opens in the Drive app on phones, else in the browser', () {
+    final page = Uri.parse('https://drive.google.com/drive/folders/abc?resourcekey=k');
+    final browser = (page, LaunchMode.externalApplication);
+    expect(rdDriveLaunches(page, platform: TargetPlatform.macOS, web: false), [browser]);
+    expect(rdDriveLaunches(page, platform: TargetPlatform.android, web: false), [(page, LaunchMode.externalNonBrowserApplication), browser]);
+    final home = Uri.parse('https://drive.google.com/drive/my-drive');
+    expect(rdDriveLaunches(home, platform: TargetPlatform.iOS, web: false).first.$1, Uri.parse('googledrive://'));
+    expect(
+      rdDriveLaunches(page, platform: TargetPlatform.android, web: true).single.$1.toString(),
+      'intent://drive.google.com/drive/folders/abc?resourcekey=k#Intent;scheme=https;package=com.google.android.apps.docs;'
+      'S.browser_fallback_url=https%3A%2F%2Fdrive.google.com%2Fdrive%2Ffolders%2Fabc%3Fresourcekey%3Dk;end',
+    );
   });
 
   test('reads the ZIP, asks once, creates Werk and group, keeps the Besetzung', () async {

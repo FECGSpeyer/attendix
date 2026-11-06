@@ -229,11 +229,15 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     _pick();
   }
 
+  /// Google Drive (or the shared folder), in the Drive app when it is on
+  /// the phone, else in the browser.
   Future<void> _openDrive([RdDriveRef? folder]) async {
-    final uri = folder == null ? Uri.https('drive.google.com', '/') : rdDriveFolderUrl(folder);
-    try {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (_) {}
+    final page = folder == null ? Uri.https('drive.google.com', '/drive/my-drive') : rdDriveFolderUrl(folder);
+    for (final (uri, mode) in rdDriveLaunches(page, platform: defaultTargetPlatform, web: kIsWeb)) {
+      try {
+        if (await launchUrl(uri, mode: mode)) return;
+      } catch (_) {}
+    }
   }
 
   Future<void> _pick() async {
@@ -1033,6 +1037,35 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
       ],
     );
   }
+}
+
+/// The ways to open the Drive [page], best first. On a phone the Drive app
+/// comes first: the app by its own link on iOS, an app-only launch of the
+/// page in the app, and in Chrome on Android an intent link that falls back
+/// to the page itself. The browser is the last way.
+@visibleForTesting
+List<(Uri, LaunchMode)> rdDriveLaunches(Uri page, {required TargetPlatform platform, required bool web}) {
+  final browser = (page, LaunchMode.externalApplication);
+  final phone = platform == TargetPlatform.iOS || platform == TargetPlatform.android;
+  if (!phone) return [browser];
+  if (web) {
+    // iOS has no way from the browser to the app without an error page
+    // when it is missing; Drive's page offers the app itself.
+    if (platform == TargetPlatform.iOS) return [browser];
+    final fallback = Uri.encodeComponent(page.toString());
+    final rest = page.hasQuery ? '${page.path}?${page.query}' : page.path;
+    return [
+      (
+        Uri.parse('intent://${page.host}$rest#Intent;scheme=https;package=com.google.android.apps.docs;S.browser_fallback_url=$fallback;end'),
+        LaunchMode.externalApplication,
+      ),
+    ];
+  }
+  return [
+    if (platform == TargetPlatform.iOS && page.path == '/drive/my-drive') (Uri.parse('googledrive://'), LaunchMode.externalApplication),
+    (page, LaunchMode.externalNonBrowserApplication),
+    browser,
+  ];
 }
 
 /// A question about an unknown part name with its answers as chips, always
