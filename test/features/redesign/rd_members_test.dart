@@ -359,6 +359,18 @@ void main() {
       expect(RedesignRoutes.person(3), '/mitglieder/3');
       expect(RedesignRoutes.isRedesignRoute('/mitglieder/3'), isTrue);
     });
+
+    test('"Neue Person" and "Person bearbeiten" only for Admins and Verantwortliche', () {
+      for (final role in [Role.admin, Role.responsible]) {
+        expect(RedesignRoutes.roleRedirect(RedesignRoutes.personNew, role), isNull, reason: role.name);
+        expect(RedesignRoutes.roleRedirect(RedesignRoutes.personEdit(3), role), isNull, reason: role.name);
+      }
+      for (final role in Role.values.where((r) => r.canSeePeopleTab && !r.isAdmin && !r.isResponsible)) {
+        expect(RedesignRoutes.roleRedirect(RedesignRoutes.personNew, role), '/mitglieder', reason: role.name);
+        expect(RedesignRoutes.roleRedirect(RedesignRoutes.personEdit(3), role), '/mitglieder/3', reason: role.name);
+        expect(RedesignRoutes.roleRedirect(RedesignRoutes.personHistory(3), role), isNull, reason: role.name);
+      }
+    });
   });
 
   group('RdMembersPage', () {

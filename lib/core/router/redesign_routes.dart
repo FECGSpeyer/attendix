@@ -152,7 +152,8 @@ class RedesignRoutes {
   ///   (`Role.canAddAttendance`, like `/attendance/:id`); an own Termin
   ///   (`/termine/meine/…`) for everyone else too.
   /// * Mitglieder and its persons only for roles with the old people tab
-  ///   (`Role.canSeePeopleTab`, like `/people`).
+  ///   (`Role.canSeePeopleTab`, like `/people`); "Neue Person" and "Person
+  ///   bearbeiten" only for Admins and Verantwortliche.
   /// * Werke like `/songs-tab` (not for parents and applicants).
   /// * Verwaltung not for applicants and parents (nothing to manage there);
   ///   each entry keeps the guard of the page it opens.
@@ -163,7 +164,14 @@ class RedesignRoutes {
       return null;
     }
     if (location == members || location.startsWith('$members/')) {
-      return role.canSeePeopleTab ? null : today;
+      if (!role.canSeePeopleTab) return today;
+      // "Neue Person" and "Person bearbeiten" like the old person form:
+      // Admins and Verantwortliche.
+      final lead = role.isAdmin || role.isResponsible;
+      if (location == personNew && !lead) return members;
+      final edit = RegExp('^$members/(\\d+)/bearbeiten\$').firstMatch(location);
+      if (edit != null && !lead) return person(int.parse(edit.group(1)!));
+      return null;
     }
     if (location == works || location.startsWith('$works/')) {
       if (!canOpenSongsTab(role)) return today;
