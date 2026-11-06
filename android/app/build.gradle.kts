@@ -35,6 +35,9 @@ android {
         applicationId = "io.stephanus.attendix"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
+        // STORE_SWITCH: must stay <= 24 (Android 7) like the Ionic app, so its
+        // Play Store users keep getting the update. Flutter 3.47 defaults to 24
+        // (FlutterExtension.minSdkVersion); pin it if a Flutter upgrade raises it.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

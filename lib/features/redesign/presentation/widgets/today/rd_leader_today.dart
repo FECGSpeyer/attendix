@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/constants/enums.dart';
+import '../../../../../core/providers/attendance_type_providers.dart';
 import '../../../../../core/providers/dashboard_providers.dart';
 import '../../../../../core/providers/player_providers.dart';
 import '../../../../../core/providers/realtime_providers.dart';
@@ -14,7 +15,7 @@ import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../settings/presentation/pages/pending_players_page.dart'
     show showPendingPersonsSheet;
-import '../../../data/providers/rd_events_providers.dart' show rdUnrecordedProvider;
+import '../../../data/providers/rd_events_providers.dart' show rdAttendanceDurationDays, rdUnrecordedProvider;
 import '../../../data/providers/rd_members_providers.dart';
 import '../../../data/providers/rd_today_providers.dart';
 import '../rd_widgets.dart';
@@ -33,10 +34,11 @@ class RdLeaderToday extends ConsumerWidget {
 
   /// Upcoming Termine (not ended), soonest first, without the type filter
   /// of the Termin list.
-  static List<Attendance> upcomingOf(List<Attendance> all, {DateTime? now}) {
+  static List<Attendance> upcomingOf(List<Attendance> all,
+      {DateTime? now, List<AttendanceType> types = const []}) {
     final current = now ?? DateTime.now();
     final upcoming = all
-        .where((a) => !EventListUtils.hasEnded(a.date, a.durationDays, now: current))
+        .where((a) => !EventListUtils.hasEnded(a.date, rdAttendanceDurationDays(a, types), now: current))
         .toList();
     DateTime keyOf(Attendance a) =>
         rdStartOf(a.date, a.startTime) ?? DateTime(9999);
@@ -65,7 +67,8 @@ class RdLeaderToday extends ConsumerWidget {
       return RdInfoCard(text: l10n.redesignTodayLoading, loading: true);
     }
 
-    final upcoming = upcomingOf(all);
+    final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
+    final upcoming = upcomingOf(all, types: types);
     final next = upcoming.firstOrNull;
     final week = rdThisWeek(upcoming.skip(1).toList());
 

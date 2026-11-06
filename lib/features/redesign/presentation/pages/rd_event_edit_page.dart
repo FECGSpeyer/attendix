@@ -31,6 +31,7 @@ import '../../../attendance/presentation/widgets/attendance_detail/general_info_
 import '../../data/providers/rd_today_providers.dart' show rdDeadlineLabel;
 import '../../data/rd_create_logic.dart' show rdRecentPlaces;
 import '../../data/rd_event_details_logic.dart';
+import '../../data/rd_event_phase.dart' show rdEffectiveDurationDays;
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart';
@@ -454,7 +455,9 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     final folder = (att.filesFolder ?? '').trim();
     final canFiles = ref.watch(canAccessFilesProvider);
     final role = ref.watch(effectiveRoleProvider);
-    final days = att.durationDays ?? type?.durationDays ?? 1;
+    final days = rdEffectiveDurationDays(att.durationDays,
+            typeAllDay: type?.allDay ?? false, typeDurationDays: type?.durationDays) ??
+        1;
 
     return RdFormBody(children: [
       RdGroupLabel(l10n.redesignEventEditBasics),
