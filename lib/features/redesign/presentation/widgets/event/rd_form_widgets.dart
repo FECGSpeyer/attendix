@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../../l10n/l10n.dart';
+import '../rd_widgets.dart' show RdTextLink;
 
 /// REDESIGN: form parts of "Neuer Termin" and "Termin bearbeiten".
 
@@ -36,6 +38,52 @@ class RdFormBody extends StatelessWidget {
           ),
         ],
       );
+}
+
+/// Top bar of the Beta edit pages that save right away (Termin, Werk,
+/// Gruppe, Person bearbeiten): the title in the middle, "Fertig" on the
+/// right, no "Abbrechen" (nothing to discard).
+class RdEditTopBar extends StatelessWidget {
+  const RdEditTopBar({super.key, required this.title, required this.onDone, this.doneKey, this.leading});
+
+  final String title;
+  final VoidCallback onDone;
+  final Key? doneKey;
+
+  /// Optional status on the left (e.g. "Gespeichert"), at most 88 wide.
+  final Widget? leading;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 4, 8, 6),
+      child: Row(
+        children: [
+          SizedBox(width: 88, child: leading),
+          Expanded(
+            child: Semantics(
+              header: true,
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: p.text),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 88,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: RdTextLink(key: doneKey, label: context.l10n.redesignCommonDone, onTap: onDone),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 /// "Abbrechen · Neuer Termin · Anlegen".

@@ -98,15 +98,27 @@ void main() {
   });
 
   test('logout removes the push token before signing out', () {
+    // Every sign-out button: the token delete needs the session (RLS), so
+    // removePushTokenBeforeSignOut must run before signOutAndClearTenant /
+    // auth.signOut, whichever the file uses.
     for (final path in [
       'lib/features/settings/presentation/pages/settings_page.dart',
       'lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart',
+      'lib/features/tenant_selection/presentation/pages/tenant_create_page.dart',
+      'lib/shared/widgets/layout/side_nav/side_nav.dart',
+      'lib/features/redesign/presentation/rd_actions.dart',
     ]) {
       final src = File(path).readAsStringSync();
       final remove = src.indexOf('removePushTokenBeforeSignOut(ref)');
-      final signOut = src.indexOf('auth.signOut()', remove);
       expect(remove, greaterThan(-1), reason: path);
-      expect(signOut, greaterThan(remove), reason: path);
+      final signOutCalls = [
+        for (final call in ['signOutAndClearTenant(', 'auth.signOut()'])
+          ...call.allMatches(src).map((m) => m.start),
+      ];
+      expect(signOutCalls, isNotEmpty, reason: path);
+      for (final signOut in signOutCalls) {
+        expect(signOut, greaterThan(remove), reason: path);
+      }
     }
   });
 

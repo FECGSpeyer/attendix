@@ -1,7 +1,7 @@
 name: attendix
 description: "Attendance Management App - Flutter Version"
 publish_to: 'none'
-version: 0.51.0+153
+version: 0.53.0+156
 
 environment:
   sdk: ^3.7.0
