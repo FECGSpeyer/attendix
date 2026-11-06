@@ -75,6 +75,17 @@ jobs:
           test -f build/web/_headers || cp web/_headers build/web/_headers
           grep -q "frame-ancestors" build/web/_headers
 
+      - name: Verify Universal Link files (.well-known)
+        # iOS (AASA) and Android (assetlinks.json) fetch these for Universal
+        # Links / App Links and password suggestions. Same fallback as _headers,
+        # then fail if a file is missing, not JSON or lacks the app IDs.
+        run: |
+          mkdir -p build/web/.well-known
+          for f in apple-app-site-association assetlinks.json; do
+            test -f "build/web/.well-known/$f" || cp "web/.well-known/$f" "build/web/.well-known/$f"
+          done
+          bash tool/release/check_well_known.sh build/web
+
       - name: Deploy to Cloudflare Pages
         # cloudflare/pages-action is no longer resolvable; wrangler-action is its successor
         uses: cloudflare/wrangler-action@v3
