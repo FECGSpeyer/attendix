@@ -552,7 +552,6 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
             for (var i = 0; i < rules.length; i++)
               RdListRow(
                 title: rules[i].describe(types),
-                subtitle: rules[i].operator == CriticalRuleOperator.and ? 'AND' : 'OR',
                 onTap: enabled ? () => _ruleActions(t, i) : null,
               ),
             RdListRow(
