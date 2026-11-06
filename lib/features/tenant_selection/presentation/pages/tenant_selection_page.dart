@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -13,6 +15,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
@@ -70,12 +73,15 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
 
     final userPrefs = ref.read(userPreferencesProvider);
 
-    // If user wants to see selection, don't auto-navigate
-    if (userPrefs.wantInstanceSelection) return;
+    // Ionic getWantedTenant(): with "Instanzauswahl aktivieren" a radio
+    // alert asks right after a sign-in (a restored session opens the stored
+    // instance). It runs here and not on the login page, because the router
+    // replaces /login with /tenants as soon as the session exists.
+    final ask = InstanceSelectionGate.wanted(userPrefs);
 
     // If tenant is already set, user navigated here to switch - show selection
     final currentTenant = ref.read(currentTenantProvider);
-    if (currentTenant != null) return;
+    if (!ask && currentTenant != null) return;
 
     setState(() => _isAutoNavigating = true);
 
@@ -90,9 +96,26 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       final tenants = await container.read(userTenantsProvider.future);
       // UX_NAV: Ionic db.setTenant opens the stored tenant, otherwise the
       // first one (no selection screen unless "Instanzauswahl" is enabled).
-      final savedTenant =
-          tenants.where((t) => t.id == userPrefs.currentTenantId).firstOrNull ??
-          tenants.firstOrNull;
+      // Same order as the background restore (Ionic setTenant): a group the
+      // restore set meanwhile is kept; otherwise IONIC_SESSION's pending
+      // Ionic group, this device's instance, then user_metadata. Setting it
+      // below also ends the pending restore in CurrentTenantNotifier.
+      final restoredId = container.read(currentTenantProvider)?.id;
+      Tenant? storedTenant = tenants.where((t) => t.id == restoredId).firstOrNull;
+      if (storedTenant == null) {
+        for (final id in await preferredTenantIds(userPrefs.currentTenantId)) {
+          storedTenant = tenants.where((t) => t.id == id).firstOrNull;
+          if (storedTenant != null) break;
+        }
+      }
+      var savedTenant = storedTenant ?? tenants.firstOrNull;
+      if (ask && savedTenant != null) {
+        if (!mounted) return;
+        savedTenant = await _askWantedTenant(tenants, storedTenant);
+        if (!mounted) return;
+        // The choice is made; a later visit of the list shows it normally.
+        InstanceSelectionGate.afterSignIn = false;
+      }
 
       // No tenant at all: show the (empty) list with "Neue Instanz anlegen"
       if (savedTenant == null) {
@@ -138,6 +161,26 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     }
   }
 
+  /// Ionic `getWantedTenant()`: radio alert "Instanz auswählen" (no
+  /// backdrop dismiss). "Abbrechen" opens the stored tenant, otherwise the
+  /// first one; "Öffnen" the checked one.
+  Future<Tenant> _askWantedTenant(List<Tenant> tenants, Tenant? stored) async {
+    final fallback = stored ?? tenants.first;
+    final result = await showAppRadioAlert<int>(
+      context,
+      title: context.l10n.dbChooseInstanceHeader,
+      subtitle: context.l10n.dbChooseInstanceMessage,
+      options: [for (final t in tenants) (t.id!, t.longName)],
+      initialValue: stored?.id,
+      confirmText: context.l10n.commonOpen,
+      cancelDestructive: true,
+      barrierDismissible: false,
+    );
+    // Cancelled, or "Öffnen" without a checked tenant → fallback.
+    final id = result?.value;
+    return tenants.where((t) => t.id == id).firstOrNull ?? fallback;
+  }
+
   /// Get the user's role for a specific tenant
   Future<Role> _getTenantUserRole(int tenantId,
       {ProviderContainer? container}) async {
@@ -174,6 +217,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     if (!mounted) return;
 
     // Set tenant locally WITHOUT triggering auth sync
+    InstanceSelectionGate.afterSignIn = false;
     await container.read(currentTenantProvider.notifier).setTenantLocal(tenant);
 
     // Wait for currentTenantUserProvider to load so router doesn't redirect back
@@ -183,11 +227,15 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     final prefsNotifier =
         container.read(userPreferencesNotifierProvider.notifier);
 
-    final home = homeRouteFor(
-      role,
-      tenant.id,
-      container.read(supabaseAuthProvider).currentUser?.userMetadata,
-    );
+    // Ionic settings onTenantChange navigates to Utils.getUrl(role) (no
+    // dashboard start page); the dashboard start only applies after login.
+    final home = widget.sheet && !RedesignRoutes.active
+        ? role.defaultRoute
+        : homeRouteFor(
+            role,
+            tenant.id,
+            container.read(supabaseAuthProvider).currentUser?.userMetadata,
+          );
 
     // Navigate FIRST - before auth sync can cause rebuilds
     // IOS_SETTINGS2: Ionic `modal?.dismiss()` before navigating.
@@ -205,29 +253,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       showDragHandle: true,
-      builder:
-          (sheetContext) => Consumer(
-            builder: (context, ref, _) {
-              final prefs = ref.watch(userPreferencesProvider);
-              return SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  child: Card(
-                    margin: EdgeInsets.zero,
-                    child: SwitchListTile.adaptive(
-                      title: Text(context.l10n.settingsEnableTenantSelect),
-                      subtitle: Text(context.l10n.settingsTenantSelectHelper),
-                      value: prefs.wantInstanceSelection,
-                      onChanged:
-                          (value) => ref
-                              .read(userPreferencesNotifierProvider.notifier)
-                              .updatePreferences(wantInstanceSelection: value),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
+      builder: (sheetContext) => const _InstanceSelectionToggle(),
     );
   }
 
@@ -319,6 +345,16 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       final rootContext = router.routerDelegate.navigatorKey.currentContext;
       final sheetNavigator = widget.sheet ? Navigator.of(context) : null;
       final wasCurrent = tenant.id == ref.read(currentTenantProvider)?.id;
+      // Ionic deleteInstance: setTenant() + Utils.getUrl(role) after every
+      // delete – the open instance's start page (read before the sheet closes).
+      final currentId = ref.read(currentTenantIdProvider);
+      final home = currentId == null
+          ? null
+          : homeRouteFor(
+              ref.read(currentRoleProvider),
+              currentId,
+              ref.read(supabaseAuthProvider).currentUser?.userMetadata,
+            );
       await deleteTenant(ref, tenant.id!);
       sheetNavigator?.pop();
       final toastContext = widget.sheet ? rootContext : (mounted ? context : null);
@@ -326,6 +362,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
         ToastHelper.showSuccess(toastContext, toastContext.l10n.dbInstanceDeleted);
       }
       if (wasCurrent) router.go('/tenants');
+      if (!wasCurrent && home != null) goReplacingHistory(router, home);
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.dbDeleteInstanceFailed);
     } finally {
@@ -365,12 +402,17 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     // (settings.page.html): "+" (Neue Instanz) left, title "Instanzen (n)",
     // cog (Instanzauswahl) right; inset list with short/long name, "Aktuell"
     // badge, favorite star and swipe actions Löschen / Favorit.
-    // IOS_SETTINGS2: Ionic openCreateInstanceModal dismisses the sheet first.
-    void createInstance() {
+    // IOS_SETTINGS2: Ionic openCreateInstanceModal dismisses the sheet and
+    // presents RegisterPage as a card modal over the settings page.
+    Future<void> createInstance() async {
       if (widget.sheet) {
-        final router = GoRouter.of(context);
-        Navigator.of(context).pop();
-        router.push('/tenants/new');
+        final navigator = Navigator.of(context);
+        final sheetRoute = ModalRoute.of(context);
+        navigator.pop();
+        // The card modal scales the page behind it: wait until the sheet
+        // is gone so it is not part of that picture.
+        await _untilDismissed(sheetRoute);
+        if (navigator.mounted) await showTenantCreateModal(navigator.context);
       } else {
         context.push('/tenants/new');
       }
@@ -577,4 +619,73 @@ class _TenantTile extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Ionic ngModel: the toggle flips at once and every change is written
+/// (settings.page.ts onTenantSelectionChange). The writes are serialized in
+/// [UserPreferencesNotifier.setWantInstanceSelection]; while writing, the
+/// toggle shows the wanted value; on failure a toast and the stored value.
+class _InstanceSelectionToggle extends ConsumerStatefulWidget {
+  const _InstanceSelectionToggle();
+
+  @override
+  ConsumerState<_InstanceSelectionToggle> createState() => _InstanceSelectionToggleState();
+}
+
+class _InstanceSelectionToggleState extends ConsumerState<_InstanceSelectionToggle> {
+  /// Write loop this toggle already waits for (one toast per failed loop).
+  Future<void>? _awaiting;
+
+  Future<void> _onChanged(bool newValue) async {
+    final write = ref
+        .read(userPreferencesNotifierProvider.notifier)
+        .setWantInstanceSelection(newValue);
+    if (identical(write, _awaiting)) return;
+    _awaiting = write;
+    try {
+      await write;
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, context.l10n.svcSaveFailed);
+    } finally {
+      if (identical(_awaiting, write)) _awaiting = null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final prefs = ref.watch(userPreferencesProvider);
+    final value = ref.watch(wantedInstanceSelectionProvider) ??
+        prefs.wantInstanceSelection;
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: Card(
+          margin: EdgeInsets.zero,
+          child: SwitchListTile.adaptive(
+            title: Text(context.l10n.settingsEnableTenantSelect),
+            subtitle: Text(context.l10n.settingsTenantSelectHelper),
+            value: value,
+            onChanged: _onChanged,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Completes once [route]'s exit transition has finished (at the latest
+/// after a short timeout, or right away without a running transition).
+Future<void> _untilDismissed(ModalRoute<dynamic>? route) {
+  final animation = route?.animation;
+  if (animation == null || animation.isDismissed) return Future.value();
+  final done = Completer<void>();
+  void listener(AnimationStatus status) {
+    if (status != AnimationStatus.dismissed) return;
+    animation.removeStatusListener(listener);
+    if (!done.isCompleted) done.complete();
+  }
+
+  animation.addStatusListener(listener);
+  return done.future
+      .timeout(const Duration(milliseconds: 600), onTimeout: () {});
 }

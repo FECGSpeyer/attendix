@@ -1,18 +1,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <!-- SHOREBIRD: code push patches are downloaded at app start -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <!-- NATIVE_MISC: audio_service lock-screen controls (Ionic capacitor-media-session) -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
     <application
-        android:label="attendix"
+        android:label="Attendix"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
-            android:name=".MainActivity"
+            android:name="io.stephanus.attendix.MainActivity"
             android:exported="true"
-            android:launchMode="singleTop"
-            android:taskAffinity=""
+            android:launchMode="singleTask"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
@@ -31,7 +32,7 @@
             </intent-filter>
             <!-- DB_REVIEW_REST (F1): App Links like Ionic AndroidManifest.xml.
                  attendix.de/.well-known/assetlinks.json must list this package
-                 (de.attendix.attendix) with its release signing fingerprint. -->
+                 (io.stephanus.attendix) with its signing fingerprint (Play App Signing). -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -83,6 +84,14 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="default" />
     </application>
+    <!-- open_filex declares media/storage read permissions. The app only opens
+         files it wrote to its own cache dir (no permission needed); the Ionic
+         app never asked for them and Play would require a photo/video
+         permission declaration for the update. -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" tools:node="remove" />
     <!-- PUSH: Android 13+ notification permission (Ionic manifest) -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- DB_REVIEW_REST (F2): Android 16 "Live Update" (promoted ongoing notification) -->

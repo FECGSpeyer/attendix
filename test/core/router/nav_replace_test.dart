@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('NAV_REPLACE: tenant pick and auto-navigation replace the history entry', () {
     final s = File('lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart').readAsStringSync();
-    expect(RegExp(r'goReplacingHistory\(').allMatches(s).length, 2);
+    expect(RegExp(r'goReplacingHistory\(').allMatches(s).length, 3); // + start page after deleting another instance
     expect(s, isNot(contains('router.go(home)')));
   });
 
@@ -21,6 +21,6 @@ void main() {
     expect(i, greaterThan(0));
     final block = s.substring(i, s.indexOf("return '/tenants';", i));
     expect(block, contains('homeRouteFor('));
-    expect(block, contains('wantInstanceSelection'));
+    expect(block, contains('InstanceSelectionGate.wanted('));
   });
 }

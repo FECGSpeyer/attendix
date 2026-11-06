@@ -5,10 +5,12 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/plan/plan.dart';
+import '../../../../data/models/song/song.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../planning/presentation/pages/plan_viewer_page.dart';
+import 'song_options_sheet.dart';
 
 /// Plan viewer bottom sheet for displaying attendance plans
 ///
@@ -384,6 +386,9 @@ Future<void> showPlanViewerSheet(
   required CrossTenantPersonAttendance attendance,
   int? playerInstrumentId,
   List<Map<String, dynamic>> songs = const [],
+  // Ionic 4.17.26: the instance's Werke (member view) – rows of Werke open
+  // the score options and Werke without own parts are marked.
+  List<Song> memberSongs = const [],
   // ASTRA_PARENTS: Ionic `attendance.extra_plans` + `duration_days`. With
   // further plans the viewer shows the day/plan chips (Ionic PlanViewer
   // `allPlans`, preselecting today's plan) instead of a single plan.
@@ -396,6 +401,10 @@ Future<void> showPlanViewerSheet(
   } catch (e, st) {
     ErrorReporter.report(e, st, where: 'plan_viewer_sheet');
   }
+  // PARITY_SELF: "Meine Termine" loads extra_plans with the Termin (Ionic
+  // getPersonAttendances), so multi-day Termine get the day chips there too.
+  extraPlans ??= attendance.extraPlans;
+  durationDays ??= attendance.durationDays;
   final extra = <Plan>[];
   for (final p in extraPlans ?? const <Map<String, dynamic>>[]) {
     try {
@@ -404,7 +413,18 @@ Future<void> showPlanViewerSheet(
       ErrorReporter.report(e, st, where: 'plan_viewer_sheet');
     }
   }
+  Song? memberSong(int? songId) =>
+      songId == null ? null : memberSongs.where((s) => s.id == songId).firstOrNull;
+
   bool missing(int? songId) {
+    if (memberSongs.isNotEmpty) {
+      final song = memberSong(songId);
+      final ids = song?.instrumentIds;
+      return playerInstrumentId != null &&
+          ids != null &&
+          ids.isNotEmpty &&
+          !ids.contains(playerInstrumentId);
+    }
     if (songId == null || playerInstrumentId == null || songs.isEmpty) return false;
     final song = songs.firstWhere((s) => s['id'] == songId, orElse: () => <String, dynamic>{});
     final ids = song['instrument_ids'] as List?;
@@ -412,7 +432,6 @@ Future<void> showPlanViewerSheet(
   }
 
   final date = attendance.date ?? '';
-  final isToday = DateUtils.isSameDay(DateTime.tryParse(date), DateTime.now());
   return showPlanViewer(
     context,
     attendance: PlanAttendance(
@@ -428,7 +447,20 @@ Future<void> showPlanViewerSheet(
     // attendance.plan), so leave it out when there are further plans.
     plan: extra.isEmpty ? plan : null,
     title: (attendance.typeInfo?.isNotEmpty ?? false) ? attendance.typeInfo : context.l10n.signoutRunSheet,
-    defaultLive: isToday,
+    // PARITY_SELF: Ionic opens the viewer without defaultLive (signout,
+    // parents, overview), so the live mode only starts within the plan's
+    // time window (isLiveNow: 5 min before start to 15 min after the end).
     fieldWarning: (f) => missing(f.songId) ? l10nWithoutContext.planningNoScoresInstrument : null,
+    songAction: memberSongs.isEmpty
+        ? null
+        : (f) {
+            final song = memberSong(f.songId);
+            if (song == null) return null;
+            return () => showSongOptionsSheet(
+                  context,
+                  song: song,
+                  playerInstrumentId: playerInstrumentId,
+                );
+          },
   );
 }

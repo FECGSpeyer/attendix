@@ -179,6 +179,8 @@ Mehr Details: `test/README.md`
 
 Dies sorgt dafür, dass Benutzer in der App sehen, dass es eine neue Version gibt.
 
+**Interne vs. Nutzer-Version:** `appVersion` und `assets/version_history.json` sind die interne Entwicklerhistorie (0.x, Sentry-Release) und werden Nutzern nicht gezeigt. Nutzer sehen `AppConstants.displayVersion` und `assets/version_history_user.json` (weitergeführte Ionic-Historie). Diese beiden nur bei Store-Releases pflegen: `displayVersion` erhöhen und einen Eintrag obendrauf in `assets/version_history_user.json` setzen (oberster Eintrag = `displayVersion`).
+
 ## Rollen-System
 
 - **Dirigent (conductor):** Vollzugriff
@@ -195,9 +197,10 @@ Prüfung via `role.isConductor`, `role.canSeePeopleTab`, etc.
 # 1. Release-Build erstellen
 flutter build ios --release
 
-# 2. Auf iPhone installieren und starten (Device-ID anpassen)
+# 2. Auf iPhone installieren und starten (Device-ID anpassen).
+#    App-ID ist io.stephanus.attendix auf iOS und Android (ersetzt die Ionic-App)
 xcrun devicectl device install app --device 00008120-000C4D5C0205A01E build/ios/iphoneos/Runner.app
-xcrun devicectl device process launch --device 00008120-000C4D5C0205A01E de.attendix.attendix
+xcrun devicectl device process launch --device 00008120-000C4D5C0205A01E io.stephanus.attendix
 ```
 
 **Voraussetzungen:**

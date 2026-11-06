@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/player_absence_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -250,7 +251,11 @@ Future<bool> deletePlannedAbsenceFlow(
   WidgetRef ref,
   PlayerAbsence absence, {
   bool selfService = false,
+  Future<Set<String>?> Function()? onlyIds,
 }) async {
+  // [onlyIds] are ids of the current group: abort when the group changes
+  // before the delete is sent.
+  final tenantId = ref.read(currentTenantIdProvider);
   final confirmed = await DialogHelper.showConfirmation(
     context,
     title: context.l10n.signoutDeleteAbsence,
@@ -262,8 +267,24 @@ Future<bool> deletePlannedAbsenceFlow(
   );
   if (!confirmed || !context.mounted) return false;
 
-  final ok =
-      await ref.read(playerAbsenceNotifierProvider.notifier).deleteAbsence(absence);
+  Set<String>? ids;
+  try {
+    if (onlyIds != null) {
+      ids = await onlyIds();
+      if (ref.read(currentTenantIdProvider) != tenantId) {
+        throw StateError('Instanz während des Löschens gewechselt');
+      }
+    }
+  } catch (_) {
+    if (context.mounted) {
+      ToastHelper.showError(context, context.l10n.personFlutterAbsenceDeleteFailed);
+    }
+    return false;
+  }
+  if (!context.mounted) return false;
+  final ok = await ref
+      .read(playerAbsenceNotifierProvider.notifier)
+      .deleteAbsence(absence, onlyIds: ids);
   if (!context.mounted) return ok;
   if (ok) {
     ref.invalidate(upcomingAttendancesProvider(absence.personId));

@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/services/native/native_file_service.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/services/plan_export_service.dart';
@@ -152,7 +154,9 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
   }
 
   Future<void> _subscribeCalendar() async {
-    final base = '${SupabaseConfig.supabaseUrl}/functions/v1/ical-org-plans?key=${widget.publicKey}';
+    // Ionic: calendar texts in the app language (German is the default).
+    final lang = currentLanguage() != 'de' ? '&lang=${currentLanguage()}' : '';
+    final base = '${SupabaseConfig.supabaseUrl}/functions/v1/ical-org-plans?key=${widget.publicKey}$lang';
     final link = await showPlanActionSheet<String>(
       context,
       title: context.l10n.plansSubscribeCalendar,
@@ -169,6 +173,18 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
         content: SelectableText(ctx.l10n.plansCalendarLinkMessage(link)),
         actions: [
           TextButton(onPressed: () => copyPlanLink(ctx, link), child: Text(ctx.l10n.plansCopyLink)),
+          // Ionic: „Anleitung öffnen“ (Apple-Hilfe on iOS, Google Kalender
+          // otherwise) in the browser; the alert closes.
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              final ios = defaultTargetPlatform == TargetPlatform.iOS;
+              NativeFileService.openLinkInApp(Uri.parse(ios
+                  ? 'https://support.apple.com/de-de/102301'
+                  : 'https://support.google.com/calendar/answer/37100?hl=de&co=GENIE.Platform%3DAndroid'));
+            },
+            child: Text(ctx.l10n.plansOpenGuide),
+          ),
           TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonClose)),
         ],
       ),

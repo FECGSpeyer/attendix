@@ -1,7 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/providers/self_service_providers.dart';
+import '../../../../core/providers/signout_providers.dart';
+import '../../../../core/providers/song_providers.dart';
+import '../../../../core/utils/attendance_songs.dart';
+import '../../../../core/utils/event_list_utils.dart';
 import '../../../../data/models/song/song.dart';
 
 /// Group of songs for a specific date/attendance
@@ -19,124 +23,80 @@ class UpcomingSongGroup {
   });
 }
 
-/// Provider for upcoming songs across all tenants for the current user
-final upcomingSongsProvider =
-    FutureProvider<List<UpcomingSongGroup>>((ref) async {
-  final supabase = Supabase.instance.client;
-  // SOL_FIX14: per-user data – reload when the account changes.
-  final userId = ref.watch(currentAuthUserIdProvider);
-  if (userId == null) return [];
-
-  // Get all person records for this user
-  final personRecords = await supabase
-      .from('player')
-      .select('id, tenantId, instrument')
-      .eq('appId', userId);
-
-  if (personRecords.isEmpty) return [];
-
-  final personIds = (personRecords as List).map((p) => p['id'] as int).toList();
-  final tenantIds =
-      (personRecords as List).map((p) => p['tenantId'] as int).toSet().toList();
-
-  // Get upcoming attendances for these persons
-  final now = DateTime.now().toIso8601String().split('T')[0];
-  final upcomingAttendances = await supabase
-      .from('attendance')
-      .select('id, date, typeInfo')
-      .inFilter('tenantId', tenantIds)
-      .gte('date', now)
-      .order('date', ascending: true)
-      .limit(10);
-
-  if ((upcomingAttendances as List).isEmpty) return [];
-
-  final attendanceIds =
-      (upcomingAttendances as List).map((a) => a['id'] as int).toList();
-
-  // Get person_attendances to filter only those the user is invited to
-  final personAttendances = await supabase
-      .from('person_attendances')
-      .select('attendance_id')
-      .inFilter('person_id', personIds)
-      .inFilter('attendance_id', attendanceIds);
-
-  final filteredAttendanceIds = (personAttendances as List)
-      .map((pa) => pa['attendance_id'] as int)
-      .toSet()
+/// Ionic 4.17.26/27: Werke selected for each Termin of "Meine Termine"
+/// (own past and upcoming Termine), by Termin id. Feeds the "♪ n Werke" chip,
+/// the Werke sheet and "Aktuelle Werke".
+final signoutAttendanceSongsProvider =
+    FutureProvider<Map<int, List<AttendanceSong>>>((ref) async {
+  final data = await ref.watch(signoutDataProvider.future);
+  final ids = [...data.allUpcoming, ...data.past]
+      .map((a) => a.attendanceId)
+      .whereType<int>()
       .toList();
-
-  if (filteredAttendanceIds.isEmpty) return [];
-
-  // Get history entries for these attendances with song data
-  final historyResponse = await supabase
-      .from('history')
-      // Ionic History columns: songId (camelCase), person_id, otherConductor.
-      // conductorName/count are computed client-side, not DB columns.
-      .select('''
-        id, songId, attendance_id, date, person_id, otherConductor,
-        song:songId(id, name, number, prefix, link, instrument_ids, files, difficulty),
-        person:person_id(firstName, lastName)
-      ''')
-      .inFilter('tenantId', tenantIds)
-      .inFilter('attendance_id', filteredAttendanceIds);
-
-  // Group history entries by attendance
-  final Map<int, List<SongHistory>> groupedHistory = {};
-  for (final h in historyResponse as List) {
-    final attendanceId = h['attendance_id'] as int?;
-    if (attendanceId == null) continue;
-
-    final songData = h['song'] as Map<String, dynamic>?;
-    final person = h['person'] as Map<String, dynamic>?;
-    final otherConductor = h['otherConductor'] as String?;
-    final history = SongHistory(
-      id: h['id'] as int?,
-      songId: h['songId'] as int?,
-      attendanceId: attendanceId,
-      personId: h['person_id'] as int?,
-      date: h['date'] as String?,
-      conductorName: person != null
-          ? '${person['firstName'] ?? ''} ${person['lastName'] ?? ''}'.trim()
-          : otherConductor,
-      otherConductor: otherConductor,
-      song: songData != null ? Song.fromJson(songData) : null,
-    );
-
-    groupedHistory.putIfAbsent(attendanceId, () => []).add(history);
+  if (ids.isEmpty) return const {};
+  final repo = ref.watch(songRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return const {};
+  List<SongHistory> history;
+  try {
+    history = await repo.getHistoryForAttendances(ids);
+  } catch (_) {
+    // Ionic: logged, the page works without the Werke.
+    history = const [];
   }
-
-  // Create song groups sorted by date
-  final List<UpcomingSongGroup> result = [];
-  for (final att in upcomingAttendances) {
-    final attendanceId = att['id'] as int;
-    final songs = groupedHistory[attendanceId];
-    if (songs == null || songs.isEmpty) continue;
-
-    result.add(UpcomingSongGroup(
-      date: att['date'] as String? ?? '',
-      typeInfo: att['typeInfo'] as String?,
-      attendanceId: attendanceId,
-      songs: songs,
-    ));
-  }
-
-  return result;
+  if (history.isEmpty) return const {};
+  final songs = await ref.watch(songsProvider.future);
+  return songsByAttendance(history, songs);
 });
 
-/// Provider to get the current user's instrument ID
+/// "Aktuelle Werke" of "Meine Termine" (Ionic 4.17.26 `upcomingSongs`): the
+/// Werke of the own Termine from today on, one group per Termin, ascending.
+/// Like Ionic (computed after `applyDutyView`), duty Termine the person is
+/// not assigned to (substitute, or listed via show_all_attendances) are left
+/// out. The tile only shows outside the Dienstplan view.
+final upcomingSongsProvider =
+    FutureProvider<List<UpcomingSongGroup>>((ref) async {
+  // Account switch rebuilds the list (signoutDataProvider is per account).
+  ref.watch(currentAuthUserIdProvider);
+  final data = applySignoutDutyView(
+    await ref.watch(signoutDataProvider.future),
+    useDutyView: false,
+  );
+  final byAttendance = await ref.watch(signoutAttendanceSongsProvider.future);
+  if (byAttendance.isEmpty) return [];
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final seen = <int>{};
+  final atts = [...data.allUpcoming, ...data.past].where((a) {
+    final id = a.attendanceId;
+    final date = EventListUtils.parse(a.date);
+    if (id == null || date == null || !byAttendance.containsKey(id)) return false;
+    if (DateTime(date.year, date.month, date.day).isBefore(today)) return false;
+    return seen.add(id);
+  }).toList()
+    ..sort((a, b) => (EventListUtils.parse(a.date) ?? now)
+        .compareTo(EventListUtils.parse(b.date) ?? now));
+  return [
+    for (final att in atts)
+      UpcomingSongGroup(
+        date: att.date ?? '',
+        typeInfo: att.eventTitle,
+        attendanceId: att.attendanceId,
+        songs: [
+          for (final entry in byAttendance[att.attendanceId]!)
+            entry.toHistory(att.attendanceId!),
+        ],
+      ),
+  ];
+});
+
+/// Provider to get the current user's instrument ID in the CURRENT tenant
+/// (Ionic signout.page uses this.player.instrument). Reading by appId alone
+/// returned the group of an arbitrary tenant for members of several groups.
 final currentPlayerInstrumentProvider = FutureProvider<int?>((ref) async {
-  final supabase = Supabase.instance.client;
   // SOL_FIX14: per-user data – reload when the account changes.
   final userId = ref.watch(currentAuthUserIdProvider);
   if (userId == null) return null;
 
-  final response = await supabase
-      .from('player')
-      .select('instrument')
-      .eq('appId', userId)
-      .limit(1)
-      .maybeSingle();
-
-  return response?['instrument'] as int?;
+  final player = await ref.watch(currentSelfServicePlayerProvider.future);
+  return player?.instrument;
 });

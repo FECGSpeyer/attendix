@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show FileOptions;
 
 import '../../core/constants/enums.dart';
+import '../../core/utils/archived_attendance.dart';
 import '../../core/utils/duty_utils.dart';
 import '../../core/utils/paged_query.dart';
 import '../../core/utils/shift_utils.dart';
@@ -106,9 +107,12 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
         });
       }
 
-      return rows
-          .map((e) => _parseAttendance(e, withPersonAttendances))
-          .toList();
+      // Ionic 4.17.24 `filterArchivedForRole`.
+      return filterArchivedForRole(
+        rows.map((e) => _parseAttendance(e, withPersonAttendances)).toList(),
+        currentUserRole,
+        (a) => a.archived,
+      );
     } catch (e, stack) {
       handleError(e, stack, 'getAttendances');
       rethrow;
@@ -128,7 +132,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
           .select('*')
           .eq('tenantId', currentTenantId)
           .gte('date', startOfDay.toIso8601String())
-          .order('date');
+          .order('date', ascending: true);
 
       final response = limit != null ? await ordered.limit(limit) : await ordered;
 
@@ -246,6 +250,17 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   /// Update an existing attendance
   Future<Attendance> updateAttendance(int id, Map<String, dynamic> updates) async {
     ensureNotDemo('updateAttendance'); // DEMO_GUARD
+    // Ionic 4.17.24: only admins/responsible archive or restore Termine
+    // (also checked here, not only in the menu).
+    if ((updates.containsKey('archived') ||
+            updates.containsKey('archived_at') ||
+            updates.containsKey('archived_by')) &&
+        !canSeeArchivedAttendances(currentUserRole)) {
+      throw RepositoryException(
+        message: 'Archiving Termine needs the admin or responsible role',
+        operation: 'updateAttendance',
+      );
+    }
     try {
       // Remove read-only fields
       updates.remove('id');
@@ -302,13 +317,15 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
 
       final response = await supabase
           .from('person_attendances')
-          .select('*, attendance:attendance_id!inner(id, date, type, typeInfo, songs, type_id, start_time, end_time, deadline, tenantId)')
+          .select('*, attendance:attendance_id!inner(id, date, type, typeInfo, songs, type_id, start_time, end_time, deadline, tenantId, archived)')
           .eq('person_id', personId)
           .eq('attendance.tenantId', currentTenantId)
           .gt('attendance.date', sinceDate.toIso8601String());
 
+      final showArchived = canSeeArchivedAttendances(currentUserRole);
       return (response as List)
           .where((row) => row['attendance'] != null)
+          .where((row) => showArchived || !isArchivedRow(row['attendance'] as Map<String, dynamic>?))
           .map((e) => _parsePersonAttendanceWithAttendance(e as Map<String, dynamic>))
           .toList();
     } catch (e, stack) {
@@ -320,29 +337,38 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   /// Get upcoming absences (status 2/4/5) for a list of person IDs.
   ///
   /// Returns raw rows from `person_attendances` joined with the parent
-  /// `attendance` row (id, date, type, typeInfo). The caller is responsible
-  /// for filtering out past dates and mapping into a domain model — the
-  /// nested attendance fields (like typeInfo) are not part of the
-  /// PersonAttendance model, so this method exposes the raw shape.
+  /// `attendance` row (id, date, type, typeInfo). Only Termine from
+  /// yesterday on are loaded (a margin for the time zone; Ionic loads the
+  /// season and keeps the dates after today), page by page past the
+  /// PostgREST row limit. The caller does the exact "upcoming" check and
+  /// maps into a domain model — the nested attendance fields (like
+  /// typeInfo) are not part of the PersonAttendance model, so this method
+  /// exposes the raw shape.
   ///
   /// Multi-tenant safety: the join uses `attendance!inner` with
   /// `attendance.tenantId = currentTenantId`, so cross-tenant rows cannot
   /// leak even though `person_attendances` has no `tenantId` column.
   Future<List<Map<String, dynamic>>> getUpcomingAbsencesForPersons(
-    List<int> personIds,
-  ) async {
+    List<int> personIds, {
+    DateTime? now,
+  }) async {
     if (personIds.isEmpty) return [];
+    final n = now ?? DateTime.now();
+    final from = DateTime(n.year, n.month, n.day - 1).toIso8601String().substring(0, 10);
     try {
-      final response = await supabase
+      final response = await fetchAllPages<dynamic>((rangeFrom, rangeTo) async => await supabase
           .from('person_attendances')
           // PARITY_R10: type name/hide_name for the Ionic absence title
           // (Utils.getTypeTitle: typeInfo, else the type name unless hidden).
           .select('*, attendance:attendance_id!inner(id, date, type, typeInfo, tenantId, attType:type_id(name, hide_name))')
           .inFilter('person_id', personIds)
           .inFilter('status', [2, 4, 5])
-          .eq('attendance.tenantId', currentTenantId);
+          .eq('attendance.tenantId', currentTenantId)
+          .gte('attendance.date', from)
+          .order('id', ascending: true) // stable paging
+          .range(rangeFrom, rangeTo) as List);
 
-      return (response as List)
+      return response
           .where((row) => row['attendance'] != null)
           .map((e) => e as Map<String, dynamic>)
           .toList();
@@ -375,14 +401,17 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
             attendance:attendance_id(
               id, date, type, typeInfo, start_time, end_time, deadline, tenantId,
               type_id, plan, extra_plans, share_plan, duration_days, place,
-              description, attachment_url, attachment_name
+              description, attachment_url, attachment_name, archived
             )
           ''')
           .inFilter('person_id', personIds)
           .eq('attendance.tenantId', currentTenantId)
           .order('attendance(date)', ascending: false);
+      // Ionic 4.17.24: archived Termine only for admins/responsible.
+      final showArchived = canSeeArchivedAttendances(currentUserRole);
       return (response as List)
           .where((row) => row['attendance'] != null)
+          .where((row) => showArchived || !isArchivedRow(row['attendance'] as Map<String, dynamic>?))
           .map((e) => Map<String, dynamic>.from(e as Map))
           .toList();
     } catch (e, stack) {
@@ -789,7 +818,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
           .eq('tenantId', currentTenantId)
           .gte('date', startOfDay.toIso8601String())
           .lt('date', endOfDay.toIso8601String())
-          .order('date');
+          .order('date', ascending: true);
 
       return (response as List)
           .map((e) => Attendance.fromJson(e as Map<String, dynamic>))
@@ -820,7 +849,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
                 'attendance:attendance_id!inner(tenantId)')
             .inFilter('attendance_id', chunk)
             .eq('attendance.tenantId', currentTenantId)
-            .order('id') // stable paging
+            .order('id', ascending: true) // stable paging
             .range(from, to) as List),
       );
       return [
@@ -864,7 +893,8 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
           .select('id, songId, person_id, otherConductor, date')
           .eq('attendance_id', attendanceId)
           .eq('tenantId', currentTenantId)
-          .order('id', ascending: true);
+          // Ionic getHistoryByAttendanceId: order('songId').
+          .order('songId', ascending: true);
       return List<Map<String, dynamic>>.from(response as List);
     } catch (e, stack) {
       handleError(e, stack, 'getHistoryForAttendance');

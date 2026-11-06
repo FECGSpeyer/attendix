@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/attendance_detail_providers.dart';
 import 'package:attendix/core/providers/attendance_providers.dart';
@@ -15,8 +16,12 @@ import 'package:attendix/core/services/offline_queue_service.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
+import 'package:attendix/core/providers/team_org_providers.dart';
 import 'package:attendix/data/models/person/person.dart';
+import 'package:attendix/features/attendance/presentation/attendance_song_history.dart';
 import 'package:attendix/features/redesign/data/rd_event_logic.dart';
+import 'package:attendix/core/providers/realtime_providers.dart';
+import 'package:attendix/features/redesign/presentation/pages/rd_event_edit_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_event_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/event/rd_pult_view.dart';
 import 'package:attendix/features/redesign/presentation/widgets/rd_split_view.dart';
@@ -33,6 +38,20 @@ import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent;
 
 import '../../factories/test_factories.dart';
 import '../../mocks/repository_mocks.dart';
+import '../../mocks/supabase_mocks.dart';
+
+MockGoTrueClient _auth() {
+  final auth = MockGoTrueClient();
+  when(() => auth.currentUser).thenReturn(null);
+  when(() => auth.onAuthStateChange).thenAnswer((_) => const Stream.empty());
+  return auth;
+}
+
+class _TenantNotifier extends CurrentTenantNotifier {
+  _TenantNotifier(super.ref) {
+    state = TestFactories.createTenant(id: 7, shortName: 'SO', longName: 'Stadtorchester');
+  }
+}
 
 String _day(int offset) {
   final d = DateTime.now().add(Duration(days: offset));
@@ -86,10 +105,18 @@ class _Harness {
     this.canViewNotes = true,
     this.plan,
     this.empty = false,
+    this.editPage = false,
+    this.rows,
   });
 
   /// Termin without persons.
   final bool empty;
+
+  /// "Bearbeiten" opens the real edit page (else a placeholder).
+  final bool editPage;
+
+  /// Rows of the Termin instead of [_rows].
+  final List<PersonAttendance> Function()? rows;
 
   /// Ablaufplan of the Termin (Attendance.plan).
   final Map<String, dynamic>? plan;
@@ -135,6 +162,16 @@ class _Harness {
           builder: (_, __) => const Scaffold(body: Text('page termine')),
           routes: [
             GoRoute(
+              path: ':id/bearbeiten',
+              builder: (_, state) => editPage
+                  ? const RdEventEditPage(attendanceId: 21)
+                  : Scaffold(body: Text('page edit ${state.pathParameters['id']}')),
+            ),
+            GoRoute(
+              path: 'mitglieder/:id',
+              builder: (_, state) => Scaffold(body: Text('page person ${state.pathParameters['id']}')),
+            ),
+            GoRoute(
               path: ':id',
               builder: (_, __) {
                 final page = RdEventPage(attendanceId: 21, initialTab: tab);
@@ -173,7 +210,8 @@ class _Harness {
         attendanceTypeForAttendanceProvider.overrideWith(
           (ref, id) async => TestFactories.createAttendanceType(id: 'p', name: 'Probe'),
         ),
-        personAttendancesForAttendanceProvider.overrideWith((ref, id) async => empty ? const [] : _rows()),
+        personAttendancesForAttendanceProvider.overrideWith((ref, id) async => empty ? const [] : (rows ?? _rows)()),
+        realtimeAttendanceListProvider.overrideWith((ref) async => const []),
         filteredPersonsForAttendanceProvider.overrideWith((ref, id) async => empty ? const [] : _persons),
         groupsProvider.overrideWith((ref) async => [
               TestFactories.createGroup(id: 10, name: 'Holz', index: 1),
@@ -183,6 +221,12 @@ class _Harness {
         mainGroupProvider.overrideWith((ref) async => null),
         attendanceGroupScopeProvider.overrideWith((ref) async => scope),
         canViewAttendanceNotesProvider.overrideWithValue(canViewNotes),
+        supabaseAuthProvider.overrideWithValue(_auth()),
+        currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
+        canViewAttendanceChecklistProvider.overrideWithValue(false),
+        canAccessFilesProvider.overrideWithValue(false),
+        protocolTypeByIdProvider.overrideWith((ref, id) => null),
+        attendanceSongEntriesProvider.overrideWith((ref, id) async => const []),
       ],
       child: MaterialApp.router(
         locale: const Locale('de'),
@@ -199,6 +243,12 @@ Future<void> _settle(WidgetTester tester) async {
   for (var i = 0; i < 10; i++) {
     await tester.pump(const Duration(milliseconds: 100));
   }
+}
+
+/// Scrolls [finder] to the middle (the bottom edge sits under the tab bar).
+Future<void> _reveal(WidgetTester tester, Finder finder) async {
+  await Scrollable.ensureVisible(tester.element(finder), alignment: 0.5);
+  await tester.pump();
 }
 
 void _size(WidgetTester tester, Size size) {
@@ -242,13 +292,16 @@ void main() {
       expect(rdRegisterGaps([_m(1, AttendanceStatus.lateExcused)]), isEmpty);
     });
 
-    test('sign-outs: excused and later, latest change first', () {
-      final list = rdSignouts([
+    test('sign-outs: away first, later apart, latest change first', () {
+      final s = rdSignouts([
         _m(1, AttendanceStatus.excused, changedAt: '2026-10-27T10:00:00'),
         _m(2, AttendanceStatus.present, changedAt: '2026-10-29T10:00:00'),
         _m(3, AttendanceStatus.lateExcused, changedAt: '2026-10-28T10:00:00'),
+        _m(4, AttendanceStatus.absent, changedAt: '2026-10-30T10:00:00'),
+        _m(5, AttendanceStatus.late, changedAt: '2026-10-26T10:00:00'),
       ]);
-      expect(list.map((m) => m.id), [3, 1]);
+      expect(s.away.map((m) => m.id), [4, 1]);
+      expect(s.later.map((m) => m.id), [3, 5]);
     });
 
     test('tapping the active button undoes it', () {
@@ -328,18 +381,24 @@ void main() {
     expect(find.text('0 zugesagt'), findsOneWidget);
     expect(find.text('2 entschuldigt'), findsWidgets);
     expect(find.text('2 ohne Antwort'), findsOneWidget);
+    // The day before: answers only, "Anwesenheit eintragen" from the Termin day on.
+    expect(find.text('Anwesenheit eintragen'), findsNothing);
+    expect(find.text('Offene erinnern (2)'), findsOneWidget);
     expect(find.textContaining('Trompete: 0 von 2 da.'), findsOneWidget);
     expect(find.textContaining('Max Huber, Jan Ott haben abgesagt.'), findsOneWidget);
-    expect(find.text('ABMELDUNGEN'), findsOneWidget);
+    // Sign-outs in the card: who and why, then who comes later.
     expect(find.text('Trompete · „Krank“'), findsOneWidget);
-    expect(find.text('Holz · „Zug“'), findsOneWidget);
+    expect(find.text('Trompete · „Arbeit“'), findsOneWidget);
+    expect(find.text('Abgemeldet'), findsNWidgets(2));
+    expect(find.text('Kommt später: Sophie Lang „Zug“'), findsOneWidget);
+    expect(find.text('Aktionen'.toUpperCase()), findsNothing);
     expect(find.text('Bitte Konzertmappe mitbringen.'), findsOneWidget);
     expect(tester.takeException(), isNull);
     expect(h.writes, isEmpty);
 
-    await tester.tap(find.text('Alle Details'));
+    await tester.tap(find.text('Bearbeiten'));
     await _settle(tester);
-    expect(find.text('page attendance 21'), findsOneWidget);
+    expect(find.text('page edit 21'), findsOneWidget);
   });
 
   testWidgets('Anwesenheit: tap writes the status, Rückgängig writes it back', (tester) async {
@@ -348,21 +407,21 @@ void main() {
     await tester.pumpWidget(h.app(tab: RdEventTab.record));
     await _settle(tester);
 
-    expect(find.text('0 da'), findsOneWidget);
-    expect(find.text('2 offen'), findsOneWidget);
-    expect(find.text('HOLZ · 2'), findsOneWidget);
+    expect(find.text('1 von 2 da'), findsOneWidget);
+    expect(find.bySemanticsLabel('Offen 2'), findsOneWidget);
+    expect(find.text('HOLZ'), findsOneWidget);
 
     final anna = find.byKey(const ValueKey('rd-record-2'));
     await tester.tap(find.descendant(of: anna, matching: find.bySemanticsLabel('Anwesend')));
     await _settle(tester);
     expect(h.writes, ['pa-2 {status: 1}']);
-    expect(find.text('1 da'), findsOneWidget);
+    expect(find.text('2 von 2 da'), findsOneWidget);
     expect(find.text('Anna Berg: Anwesend'), findsOneWidget);
 
     await tester.tap(find.text('Rückgängig'));
     await _settle(tester);
     expect(h.writes.last, 'pa-2 {status: 0}');
-    expect(find.text('0 da'), findsOneWidget);
+    expect(find.text('1 von 2 da'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -381,12 +440,12 @@ void main() {
     await _settle(tester);
     // The undo waits for the first write of the same person.
     expect(h.writes, ['pa-2 {status: 1}']);
-    expect(find.text('0 da'), findsOneWidget);
+    expect(find.text('1 von 2 da'), findsOneWidget);
 
     h.gate!.complete();
     await _settle(tester);
     expect(h.writes, ['pa-2 {status: 1}', 'pa-2 {status: 0}']);
-    expect(find.text('0 da'), findsOneWidget);
+    expect(find.text('1 von 2 da'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -433,14 +492,14 @@ void main() {
     await tap('Abwesend');
     await tap('Anwesend');
     expect(h.writes, ['pa-2 {status: 1}']);
-    expect(find.text('1 da'), findsOneWidget);
+    expect(find.text('2 von 2 da'), findsOneWidget);
 
     h.gate!.complete();
     await _settle(tester);
     // The failed first write does not roll back, the superseded "abwesend"
     // is skipped, the newest choice is written.
     expect(h.writes, ['pa-2 {status: 1}', 'pa-2 {status: 1}']);
-    expect(find.text('1 da'), findsOneWidget);
+    expect(find.text('2 von 2 da'), findsOneWidget);
     expect(find.textContaining('Netzwerk weg'), findsNothing);
     expect(tester.takeException(), isNull);
   });
@@ -468,7 +527,7 @@ void main() {
     await _settle(tester);
     expect(h.writes, ['pa-2 {status: 1}', 'pa-2 {status: 1}']);
     // "Anwesend" is what is stored, never the unsaved "Abwesend".
-    expect(find.text('1 da'), findsOneWidget);
+    expect(find.text('2 von 2 da'), findsOneWidget);
     expect(find.textContaining('Netzwerk weg'), findsOneWidget);
     await tester.pump(const Duration(seconds: 5));
   });
@@ -511,7 +570,7 @@ void main() {
     await tester.tap(find.descendant(of: anna, matching: find.bySemanticsLabel('Anwesend')));
     await _settle(tester);
     expect(h.writes, ['pa-2 {status: 1}']);
-    expect(find.text('0 da'), findsOneWidget);
+    expect(find.text('1 von 2 da'), findsOneWidget);
     expect(find.textContaining('Netzwerk weg'), findsOneWidget);
     await tester.pump(const Duration(seconds: 5));
   });
@@ -526,12 +585,15 @@ void main() {
     await _settle(tester);
     expect(h.writes.toSet(), {'pa-2 {status: 1}', 'pa-5 {status: 1}'});
     expect(find.text('2 Personen als anwesend'), findsOneWidget);
-    expect(find.text('2 da'), findsOneWidget);
+    expect(find.text('2 von 2 da'), findsOneWidget);
+    expect(find.text('1 von 1 da'), findsOneWidget);
+    // Nobody open any more: the button goes away.
+    expect(find.text('Alle Offenen als anwesend'), findsNothing);
 
     await tester.tap(find.text('Rückgängig'));
     await _settle(tester);
     expect(h.writes.skip(2).toSet(), {'pa-2 {status: 0}', 'pa-5 {status: 0}'});
-    expect(find.text('2 offen'), findsOneWidget);
+    expect(find.bySemanticsLabel('Offen 2'), findsOneWidget);
   });
 
   testWidgets('a row of another tenant is not written and reverts', (tester) async {
@@ -544,7 +606,7 @@ void main() {
     await tester.tap(find.descendant(of: eva, matching: find.bySemanticsLabel('Anwesend')));
     await _settle(tester);
     expect(h.writes, isEmpty);
-    expect(find.text('0 da'), findsOneWidget);
+    expect(find.text('0 von 1 da'), findsOneWidget);
   });
 
   testWidgets('Helfer only see their own group, without notes', (tester) async {
@@ -568,7 +630,7 @@ void main() {
     await tester.tap(find.bySemanticsLabel('Weitere Status und Notiz für Eva Wolf'));
     await _settle(tester);
     await tester.tap(find.text('Abwesend').last);
-    await tester.enterText(find.byType(TextField), 'Nicht erschienen');
+    await tester.enterText(find.byType(TextField).last, 'Nicht erschienen');
     await tester.tap(find.text('Fertig'));
     await _settle(tester);
 
@@ -706,9 +768,7 @@ void main() {
       await tester.pumpWidget(h.app(tab: RdEventTab.record));
       await _settle(tester);
 
-      await tester.tap(find.bySemanticsLabel('Person suchen'));
-      await _settle(tester);
-      await tester.tap(find.byType(TextField));
+      await tester.tap(find.byKey(const Key('rd-record-search')));
       await tester.sendKeyEvent(LogicalKeyboardKey.keyA);
       await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
       await _settle(tester);
@@ -729,7 +789,7 @@ void main() {
     await _settle(tester);
     expect(find.text('Gesamtprobe'), findsOneWidget);
     expect(find.bySemanticsLabel('Termine'), findsNothing);
-    expect(find.text('Alle Details'), findsOneWidget);
+    expect(find.text('Bearbeiten'), findsOneWidget);
   });
 
   testWidgets('fits on a 320 px phone', (tester) async {
@@ -748,14 +808,17 @@ void main() {
       ],
     };
 
-    testWidgets('Dirigent deletes the Termin after confirming', (tester) async {
+    testWidgets('Termin löschen sits at the bottom of Bearbeiten', (tester) async {
       _size(tester, const Size(393, 1400));
-      final h = _Harness();
+      final h = _Harness(editPage: true);
       when(() => h.repo.deleteAttendance(21)).thenAnswer((_) async {});
       await tester.pumpWidget(h.app());
       await _settle(tester);
+      expect(find.text('Termin löschen'), findsNothing);
 
-      await tester.ensureVisible(find.text('Termin löschen'));
+      await tester.tap(find.text('Bearbeiten'));
+      await _settle(tester);
+      await _reveal(tester, find.text('Termin löschen'));
       await tester.tap(find.text('Termin löschen'));
       await _settle(tester);
       expect(find.text('Möchtest du den Termin wirklich entfernen?'), findsOneWidget);
@@ -771,59 +834,21 @@ void main() {
       expect(find.text('page termine'), findsOneWidget);
     });
 
-    testWidgets('a failed delete stays on the Termin', (tester) async {
+    testWidgets('a Termin without persons still offers Ablauf', (tester) async {
       _size(tester, const Size(393, 1400));
-      final h = _Harness();
-      when(() => h.repo.deleteAttendance(21)).thenThrow(Exception('Netzwerk weg'));
-      await tester.pumpWidget(h.app());
-      await _settle(tester);
-      await tester.ensureVisible(find.text('Termin löschen'));
-      await tester.tap(find.text('Termin löschen'));
-      await _settle(tester);
-      await tester.tap(find.text('Fortfahren'));
-      await _settle(tester);
-      expect(find.text('page termine'), findsNothing);
-      expect(find.text('Gesamtprobe'), findsOneWidget);
-    });
-
-    testWidgets('a Termin without persons still offers Ablauf and Löschen', (tester) async {
-      _size(tester, const Size(393, 1400));
-      await tester.pumpWidget(_Harness(plan: plan, empty: true).app());
+      await tester.pumpWidget(_Harness(plan: plan, empty: true).app(tab: RdEventTab.program));
       await _settle(tester);
       expect(find.text('Ablauf ansehen'), findsOneWidget);
-      expect(find.text('Termin löschen'), findsOneWidget);
-      // "Alle Details" stays the button of the empty card, not a second row.
-      expect(find.text('Ablauf, Checkliste, Werke und Notizen'), findsNothing);
-    });
-
-    testWidgets('switching to Anwesenheit while deleting still finishes', (tester) async {
-      _size(tester, const Size(393, 1400));
-      final h = _Harness();
-      final gate = Completer<void>();
-      when(() => h.repo.deleteAttendance(21)).thenAnswer((_) => gate.future);
-      await tester.pumpWidget(h.app());
-      await _settle(tester);
-      await tester.ensureVisible(find.text('Termin löschen'));
-      await tester.tap(find.text('Termin löschen'));
-      await _settle(tester);
-      await tester.tap(find.text('Fortfahren'));
-      await tester.pump();
-      // The Überblick goes away while the delete is still running.
-      await tester.ensureVisible(find.text('Anwesenheit').first);
-      await tester.tap(find.text('Anwesenheit').first);
-      await _settle(tester);
-      expect(find.text('Termin löschen'), findsNothing);
-      gate.complete();
-      await _settle(tester);
-      expect(tester.takeException(), isNull);
-      expect(find.text('page termine'), findsOneWidget);
     });
 
     for (final role in [Role.helper, Role.viewer]) {
       testWidgets('${role.name} cannot delete', (tester) async {
         _size(tester, const Size(393, 1400));
-        await tester.pumpWidget(_Harness(role: role).app());
+        await tester.pumpWidget(_Harness(role: role, editPage: true).app());
         await _settle(tester);
+        await tester.tap(find.text('Bearbeiten'));
+        await _settle(tester);
+        expect(find.byType(RdEventEditPage), findsOneWidget);
         expect(find.text('Termin löschen'), findsNothing);
       });
     }
@@ -836,10 +861,94 @@ void main() {
     ]) {
       testWidgets('Ablauf ansehen: $name', (tester) async {
         _size(tester, const Size(393, 1400));
-        await tester.pumpWidget(h().app());
+        await tester.pumpWidget(h().app(tab: RdEventTab.program));
         await _settle(tester);
         expect(find.text('Ablauf ansehen'), shown ? findsOneWidget : findsNothing);
+        // Reiter Programm: the Ablauf itself, not only a link to it.
+        expect(find.text('Einspielen'), shown ? findsOneWidget : findsNothing);
       });
     }
+  });
+
+  group('Schritt 1: Ausnahmen, Personen-Sheet, Menü', () {
+    // Most are there (Standard "anwesend"); Max is missing.
+    List<PersonAttendance> mostlyPresent() => [
+          for (final id in [1, 2, 4, 5])
+            TestFactories.createPersonAttendance(id: 'pa-$id', attendanceId: 21, personId: id, status: AttendanceStatus.present),
+          TestFactories.createPersonAttendance(id: 'pa-3', attendanceId: 21, personId: 3, status: AttendanceStatus.absent),
+        ];
+
+    testWidgets('Anwesenheit shows only the exceptions per voice', (tester) async {
+      _size(tester, const Size(393, 852));
+      await tester.pumpWidget(_Harness(rows: mostlyPresent).app(tab: RdEventTab.record));
+      await _settle(tester);
+
+      expect(find.text('Max Huber'), findsOneWidget);
+      expect(find.text('Anna Berg'), findsNothing);
+      expect(find.text('Alle 2 anwesend'), findsOneWidget);
+      expect(find.text('1 weitere anwesend'), findsOneWidget);
+      expect(find.text('1 von 2 da'), findsOneWidget);
+      expect(find.text('Alle Offenen als anwesend'), findsNothing);
+
+      await tester.tap(find.descendant(of: find.byKey(const ValueKey('rd-more-10')), matching: find.text('Zeigen')));
+      await _settle(tester);
+      expect(find.text('Anna Berg'), findsOneWidget);
+
+      // Filter "Abwesend": only Max.
+      await tester.tap(find.byKey(const ValueKey('rd-filter-absent')));
+      await _settle(tester);
+      expect(find.text('Max Huber'), findsOneWidget);
+      expect(find.text('Anna Berg'), findsNothing);
+
+      // Search shows a present person too.
+      await tester.tap(find.byKey(const ValueKey('rd-filter-absent')));
+      await tester.enterText(find.byKey(const Key('rd-record-search')), 'Eva');
+      await _settle(tester);
+      expect(find.text('Eva Wolf'), findsOneWidget);
+      expect(find.text('Max Huber'), findsNothing);
+    });
+
+    testWidgets('person sheet: Aus Termin entfernen after confirming', (tester) async {
+      _size(tester, const Size(393, 852));
+      final rows = _rows();
+      final h = _Harness(rows: () => rows);
+      when(() => h.repo.deletePersonAttendance('pa-5')).thenAnswer((_) async => rows.removeWhere((r) => r.id == 'pa-5'));
+      await tester.pumpWidget(h.app(tab: RdEventTab.record));
+      await _settle(tester);
+
+      await tester.tap(find.bySemanticsLabel('Weitere Status und Notiz für Eva Wolf'));
+      await _settle(tester);
+      expect(find.text('Zur Person'), findsOneWidget);
+      await tester.ensureVisible(find.byKey(const Key('rd-person-remove')));
+      await tester.tap(find.byKey(const Key('rd-person-remove')));
+      await _settle(tester);
+      await tester.tap(find.text('Entfernen'));
+      await _settle(tester);
+      verify(() => h.repo.deletePersonAttendance('pa-5')).called(1);
+      expect(find.text('Eva Wolf'), findsNothing);
+    });
+
+    testWidgets('Helfer: no remove in the person sheet', (tester) async {
+      _size(tester, const Size(393, 852));
+      final h = _Harness(role: Role.helper, scope: const AttendanceGroupScope.group(30));
+      await tester.pumpWidget(h.app(tab: RdEventTab.record));
+      await _settle(tester);
+      await tester.tap(find.bySemanticsLabel('Weitere Status und Notiz für Eva Wolf'));
+      await _settle(tester);
+      expect(find.byKey(const Key('rd-person-remove')), findsNothing);
+    });
+
+    testWidgets('••• opens the Status-Übersicht', (tester) async {
+      _size(tester, const Size(393, 852));
+      await tester.pumpWidget(_Harness().app());
+      await _settle(tester);
+      await tester.tap(find.byKey(const Key('rd-event-menu')));
+      await _settle(tester);
+      expect(find.text('Als Excel exportieren'), findsOneWidget);
+      await tester.tap(find.text('Status-Übersicht'));
+      await _settle(tester);
+      expect(find.text('Gesamt: 5 Personen'), findsOneWidget);
+      expect(find.text('0 von 2 da'), findsOneWidget);
+    });
   });
 }

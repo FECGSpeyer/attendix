@@ -1,4 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
+import '../widgets/horizontal_bar_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,7 +14,9 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/date_helper.dart';
 import '../../../../core/utils/dialog_helper.dart';
+import '../../../../core/utils/global_toast.dart';
 import '../../../../core/utils/person_matcher.dart';
+import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/organisation/organisation.dart';
 import '../../../../data/models/person/person.dart';
@@ -117,6 +120,34 @@ class StatisticsPage extends ConsumerStatefulWidget {
 
 class _StatisticsPageState extends ConsumerState<StatisticsPage> {
   bool _dateRangeInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Ionic db.getPlayers: "Fehler beim Laden der Personen" instead of an
+    // empty "Mitglieder" / "Zusatzfelder" without a hint. Listener (not
+    // build) → once per failed load; activePlayersForStatsProvider toasts
+    // its own failure, so the same failure is not shown twice.
+    ref.listenManual<AsyncValue<List<Person>>>(playersProvider, (prev, next) {
+      if (!next.hasError || next.isLoading) return;
+      if (prev != null && prev.hasError && !prev.isLoading) return;
+      _showPeopleLoadFailedAfterFrame();
+    }, fireImmediately: true);
+  }
+
+  /// fireImmediately reports an already stored failure synchronously in
+  /// initState, i.e. while the tree builds; inserting the toast overlay then
+  /// throws "setState() called during build". So the toast follows the frame.
+  void _showPeopleLoadFailedAfterFrame() {
+    WidgetsBinding.instance
+      ..addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (ref.read(activePlayersForStatsProvider).hasError) return;
+        GlobalToast.error(l10nWithoutContext.dbLoadPeopleFailed);
+      })
+      // A later failure (provider refresh) may arrive between frames.
+      ..ensureVisualUpdate();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -527,7 +558,12 @@ class _TrendLineChart extends ConsumerWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: SizedBox(
+        // PARITY_STATS: Chart.js title + y axis title '%' like Ionic.
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+          StatsChartTitle(context.l10n.statsHistoryChart),
+          SizedBox(
           height: 200,
           child: LineChart(
             LineChartData(
@@ -543,8 +579,12 @@ class _TrendLineChart extends ConsumerWidget {
                       if (index < 0 || index >= data.labels.length) {
                         return const SizedBox.shrink();
                       }
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 8),
+                      // "03.11." is wider than "3.11": keep the first and
+                      // last label inside the card instead of centred on
+                      // the edge.
+                      return SideTitleWidget(
+                        axisSide: meta.axisSide,
+                        fitInside: SideTitleFitInsideData.fromTitleMeta(meta),
                         child: Text(
                           data.labels[index],
                           style: const TextStyle(fontSize: 10),
@@ -554,6 +594,8 @@ class _TrendLineChart extends ConsumerWidget {
                   ),
                 ),
                 leftTitles: AxisTitles(
+                  axisNameWidget: Text('%', style: statsAxisTitleStyle(context)),
+                  axisNameSize: 18,
                   sideTitles: SideTitles(
                     showTitles: true,
                     reservedSize: 40,
@@ -590,6 +632,8 @@ class _TrendLineChart extends ConsumerWidget {
               ],
             ),
           ),
+          ),
+          ],
         ),
       ),
     );
@@ -620,7 +664,12 @@ class _StatusPieChart extends ConsumerWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: SizedBox(
+        // PARITY_STATS: Chart.js title like Ionic.
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+          StatsChartTitle(context.l10n.statsStatusChart),
+          SizedBox(
           height: 200,
           child: Row(
             children: [
@@ -694,6 +743,8 @@ class _StatusPieChart extends ConsumerWidget {
               ),
             ],
           ),
+          ),
+          ],
         ),
       ),
     );
@@ -745,79 +796,20 @@ class _InstrumentBarChart extends ConsumerWidget {
       return const _EmptyChartPlaceholder();
     }
 
-    final chartHeight = (data.length * 30.0).clamp(150.0, 400.0);
-
+    // PARITY_STATS: Ionic horizontal bars (indexAxis y), 30 px per entry,
+    // min 300 px, x 0–100 with title '%'.
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: SizedBox(
-          height: chartHeight,
-          child: BarChart(
-            BarChartData(
-              alignment: BarChartAlignment.spaceAround,
-              maxY: 100,
-              barTouchData: BarTouchData(
-                enabled: true,
-                touchTooltipData: BarTouchTooltipData(
-                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                    return BarTooltipItem(
-                      '${data[groupIndex].name}\n${rod.toY.round()}%',
-                      const TextStyle(color: Colors.white, fontSize: 12),
-                    );
-                  },
-                ),
-              ),
-              titlesData: FlTitlesData(
-                show: true,
-                bottomTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 40,
-                    getTitlesWidget: (value, meta) {
-                      return Text('${value.toInt()}%', style: const TextStyle(fontSize: 10));
-                    },
-                  ),
-                ),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 100,
-                    getTitlesWidget: (value, meta) {
-                      final index = value.toInt();
-                      if (index < 0 || index >= data.length) return const SizedBox.shrink();
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Text(
-                          data[index].name,
-                          style: const TextStyle(fontSize: 11),
-                          textAlign: TextAlign.right,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              borderData: FlBorderData(show: false),
-              gridData: const FlGridData(show: true, drawVerticalLine: false),
-              barGroups: data.asMap().entries.map((e) {
-                return BarChartGroupData(
-                  x: e.key,
-                  barRods: [
-                    BarChartRodData(
-                      toY: e.value.percentage,
-                      color: AppColors.primary,
-                      width: 16,
-                      borderRadius: const BorderRadius.horizontal(right: Radius.circular(4)),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-            duration: const Duration(milliseconds: 150),
-          ),
+        child: StatsHorizontalBarChart(
+          title: context.l10n.statsInstrumentChart,
+          bars: [for (final d in data) (label: d.name, value: d.percentage)],
+          color: StatsChartColors.instrument,
+          maxValue: 100,
+          axisTitle: '%',
+          rowHeight: 30,
+          minHeight: 300,
+          tooltip: (b) => '${b.label}\n${b.value.round()}%',
         ),
       ),
     );
@@ -835,79 +827,18 @@ class _TopPlayersChart extends ConsumerWidget {
       return const _EmptyChartPlaceholder();
     }
 
-    final chartHeight = (data.length * 28.0).clamp(150.0, 560.0);
-
+    // PARITY_STATS: Ionic horizontal bars, 28 px per entry, min 300 px.
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: SizedBox(
-          height: chartHeight,
-          child: BarChart(
-            BarChartData(
-              alignment: BarChartAlignment.spaceAround,
-              maxY: 100,
-              barTouchData: BarTouchData(
-                enabled: true,
-                touchTooltipData: BarTouchTooltipData(
-                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                    return BarTooltipItem(
-                      '${data[groupIndex].name}\n${rod.toY.round()}%',
-                      const TextStyle(color: Colors.white, fontSize: 12),
-                    );
-                  },
-                ),
-              ),
-              titlesData: FlTitlesData(
-                show: true,
-                bottomTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 40,
-                    getTitlesWidget: (value, meta) {
-                      return Text('${value.toInt()}%', style: const TextStyle(fontSize: 10));
-                    },
-                  ),
-                ),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 90,
-                    getTitlesWidget: (value, meta) {
-                      final index = value.toInt();
-                      if (index < 0 || index >= data.length) return const SizedBox.shrink();
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Text(
-                          data[index].name,
-                          style: const TextStyle(fontSize: 10),
-                          textAlign: TextAlign.right,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              borderData: FlBorderData(show: false),
-              gridData: const FlGridData(show: true, drawVerticalLine: false),
-              barGroups: data.asMap().entries.map((e) {
-                return BarChartGroupData(
-                  x: e.key,
-                  barRods: [
-                    BarChartRodData(
-                      toY: e.value.percentage,
-                      color: AppColors.success,
-                      width: 14,
-                      borderRadius: const BorderRadius.horizontal(right: Radius.circular(4)),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-            duration: const Duration(milliseconds: 150),
-          ),
+        child: StatsHorizontalBarChart(
+          title: context.l10n.statsTop20Chart,
+          bars: [for (final d in data) (label: d.name, value: d.percentage)],
+          color: StatsChartColors.top20,
+          maxValue: 100,
+          axisTitle: '%',
+          minHeight: 300,
+          tooltip: (b) => '${b.label}\n${b.value.round()}%',
         ),
       ),
     );
@@ -931,7 +862,12 @@ class _AgeDistributionChart extends ConsumerWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: SizedBox(
+        // PARITY_STATS: Chart.js title like Ionic.
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+          StatsChartTitle(context.l10n.statsAgeChart),
+          SizedBox(
           height: 200,
           child: BarChart(
             BarChartData(
@@ -999,6 +935,8 @@ class _AgeDistributionChart extends ConsumerWidget {
             ),
             duration: const Duration(milliseconds: 150),
           ),
+          ),
+          ],
         ),
       ),
     );
@@ -1016,81 +954,18 @@ class _AvgAgePerInstrumentChart extends ConsumerWidget {
       return _EmptyChartPlaceholder(message: context.l10n.statsFlutterNoBirthdays);
     }
 
-    // BL-006: Use fold instead of reduce for safety
-    final maxAge = data.map((e) => e.percentage).fold(0.0, (a, b) => a > b ? a : b);
-    final chartHeight = (data.length * 28.0).clamp(150.0, 400.0);
-
+    // PARITY_STATS: Ionic horizontal bars, 28 px per entry, min 300 px,
+    // x axis title 'Jahre'.
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: SizedBox(
-          height: chartHeight,
-          child: BarChart(
-            BarChartData(
-              alignment: BarChartAlignment.spaceAround,
-              maxY: maxAge + 10,
-              barTouchData: BarTouchData(
-                enabled: true,
-                touchTooltipData: BarTouchTooltipData(
-                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                    return BarTooltipItem(
-                      '${data[groupIndex].name}\nØ ${rod.toY.round()} ${context.l10n.statsYears}',
-                      const TextStyle(color: Colors.white, fontSize: 12),
-                    );
-                  },
-                ),
-              ),
-              titlesData: FlTitlesData(
-                show: true,
-                bottomTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 40,
-                    getTitlesWidget: (value, meta) {
-                      return Text('${value.toInt()}', style: const TextStyle(fontSize: 10));
-                    },
-                  ),
-                ),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 110,
-                    getTitlesWidget: (value, meta) {
-                      final index = value.toInt();
-                      if (index < 0 || index >= data.length) return const SizedBox.shrink();
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Text(
-                          data[index].name,
-                          style: const TextStyle(fontSize: 10),
-                          textAlign: TextAlign.right,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              borderData: FlBorderData(show: false),
-              gridData: const FlGridData(show: true, drawVerticalLine: false),
-              barGroups: data.asMap().entries.map((e) {
-                return BarChartGroupData(
-                  x: e.key,
-                  barRods: [
-                    BarChartRodData(
-                      toY: e.value.percentage,
-                      color: AppColors.warning,
-                      width: 14,
-                      borderRadius: const BorderRadius.horizontal(right: Radius.circular(4)),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-            duration: const Duration(milliseconds: 150),
-          ),
+        child: StatsHorizontalBarChart(
+          title: context.l10n.statsAvgAgeChart,
+          bars: [for (final d in data) (label: d.name, value: d.percentage)],
+          color: StatsChartColors.avgAge,
+          axisTitle: context.l10n.statsYears,
+          minHeight: 300,
+          tooltip: (b) => '${b.label}\nØ ${b.value.round()} ${context.l10n.statsYears}',
         ),
       ),
     );
@@ -1108,82 +983,15 @@ class _DivaIndexChart extends ConsumerWidget {
       return _EmptyChartPlaceholder(message: context.l10n.statsFlutterNoUnexcused);
     }
 
-    // BL-006: Use fold instead of reduce for safety
-    final maxAbsences = data.map((e) => e.percentage).fold(0.0, (a, b) => a > b ? a : b);
-    final chartHeight = (data.length * 28.0).clamp(150.0, 420.0);
-
+    // PARITY_STATS: Ionic horizontal bars, 28 px per entry, min 250 px.
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: SizedBox(
-          height: chartHeight,
-          child: BarChart(
-            BarChartData(
-              alignment: BarChartAlignment.spaceAround,
-              maxY: maxAbsences + 2,
-              barTouchData: BarTouchData(
-                enabled: true,
-                touchTooltipData: BarTouchTooltipData(
-                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                    return BarTooltipItem(
-                      '${data[groupIndex].name}\n${context.l10n.statsFlutterAbsencesCount(rod.toY.toInt())}',
-                      const TextStyle(color: Colors.white, fontSize: 12),
-                    );
-                  },
-                ),
-              ),
-              titlesData: FlTitlesData(
-                show: true,
-                bottomTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 30,
-                    getTitlesWidget: (value, meta) {
-                      if (value != value.roundToDouble()) return const SizedBox.shrink();
-                      return Text('${value.toInt()}', style: const TextStyle(fontSize: 10));
-                    },
-                  ),
-                ),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 90,
-                    getTitlesWidget: (value, meta) {
-                      final index = value.toInt();
-                      if (index < 0 || index >= data.length) return const SizedBox.shrink();
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Text(
-                          data[index].name,
-                          style: const TextStyle(fontSize: 10),
-                          textAlign: TextAlign.right,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              borderData: FlBorderData(show: false),
-              gridData: const FlGridData(show: true, drawVerticalLine: false),
-              barGroups: data.asMap().entries.map((e) {
-                return BarChartGroupData(
-                  x: e.key,
-                  barRods: [
-                    BarChartRodData(
-                      toY: e.value.percentage,
-                      color: AppColors.danger,
-                      width: 14,
-                      borderRadius: const BorderRadius.horizontal(right: Radius.circular(4)),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-            duration: const Duration(milliseconds: 150),
-          ),
+        child: StatsHorizontalBarChart(
+          title: context.l10n.statsUnexcusedAbsences,
+          bars: [for (final d in data) (label: d.name, value: d.percentage)],
+          color: StatsChartColors.unexcused,
+          tooltip: (b) => '${b.label}\n${context.l10n.statsFlutterAbsencesCount(b.value.toInt())}',
         ),
       ),
     );
@@ -1232,13 +1040,29 @@ class _OrganisationStatsSectionState
   /// Ionic `selectedInstances`: empty = all instances.
   Set<int> _selectedTenantIds = {};
 
+  /// Load errors already reported by toast (one toast per failed load).
+  final Set<Object> _toastedErrors = Set.identity();
+
+  /// Ionic OrganisationService: a failed load shows a danger toast
+  /// („Fehler beim Laden der Organisationen“ / „… der Personen“) instead of
+  /// silently hiding the section.
+  void _toastLoadError(Object error, String Function(AppLocalizations) message) {
+    if (!_toastedErrors.add(error)) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) ToastHelper.showError(context, message(context.l10n));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final orgAsync = ref.watch(currentOrganisationProvider);
 
     return orgAsync.when(
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (e, __) {
+        _toastLoadError(e, (l10n) => l10n.svcLoadOrgsFailed);
+        return const SizedBox.shrink();
+      },
       data: (org) {
         if (org == null) return const SizedBox.shrink();
         return _buildOrgSection(org);
@@ -1247,44 +1071,45 @@ class _OrganisationStatsSectionState
   }
 
   /// Ionic `ion-select multiple interface="modal"` "Instanzen filtern".
+  ///
+  /// PARITY_UEBERSICHT: Ionic select modal – full-screen list (centred card
+  /// on wide screens) with a toolbar (label + "Schließen") and checkboxes;
+  /// the choice is taken over when the modal closes (`ionDismiss` →
+  /// filterInstances), there is no "Abbrechen".
   Future<void> _pickTenants(List<Tenant> tenants) async {
     final selection = {..._selectedTenantIds};
-    final result = await showAppDialog<Set<int>>(
-      context: context,
+    await showIonModal<void>(
+      context,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setLocal) => AppAlertDialog(
-          title: Text(ctx.l10n.statsFilterTenants),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                for (final t in tenants)
-                  if (t.id != null)
-                    CheckboxListTile(
-                      title: Text(t.longName),
-                      value: selection.contains(t.id),
-                      onChanged: (v) => setLocal(() {
-                        v == true ? selection.add(t.id!) : selection.remove(t.id);
-                      }),
-                    ),
-              ],
-            ),
+        builder: (ctx, setLocal) => Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Text(ctx.l10n.statsFilterTenants),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text(ctx.l10n.commonClose),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(ctx.l10n.commonCancel),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(ctx, selection),
-              child: Text(ctx.l10n.commonOk),
-            ),
-          ],
+          body: ListView(
+            children: [
+              for (final t in tenants)
+                if (t.id != null)
+                  CheckboxListTile(
+                    controlAffinity: ListTileControlAffinity.leading,
+                    title: Text(t.longName),
+                    value: selection.contains(t.id),
+                    onChanged: (v) => setLocal(() {
+                      v == true ? selection.add(t.id!) : selection.remove(t.id);
+                    }),
+                  ),
+            ],
+          ),
         ),
       ),
     );
-    if (result != null && mounted) setState(() => _selectedTenantIds = result);
+    if (mounted) setState(() => _selectedTenantIds = selection);
   }
 
   Widget _buildOrgSection(Organisation organisation) {
@@ -1293,13 +1118,20 @@ class _OrganisationStatsSectionState
 
     return tenantsAsync.when(
       loading: () => const Center(child: AppSpinner()),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (e, __) {
+        _toastLoadError(e, (l10n) => l10n.svcLoadOrgsFailed);
+        return const SizedBox.shrink();
+      },
       data: (tenants) {
         final l10n = context.l10n;
         // IOS_PAGES3: load all persons once (stable family key = the
         // provider's tenant list) and filter locally like Ionic
         // `filterInstances()`.
         final personsAsync = ref.watch(organisationPersonsProvider(tenants));
+        final personsError = personsAsync.error;
+        if (personsError != null) {
+          _toastLoadError(personsError, (l10n) => l10n.dbLoadPeopleFailed);
+        }
         final selected = _selectedTenantIds;
         final persons = (personsAsync.valueOrNull ?? const <Person>[])
             .where((p) => selected.isEmpty || selected.contains(p.tenantId))

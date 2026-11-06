@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/enums.dart';
+import '../../core/utils/date_helper.dart';
 import '../../core/utils/person_matcher.dart';
 import '../../core/utils/text_utils.dart';
 import '../models/person/person.dart';
@@ -333,10 +334,12 @@ class CrossTenantPersonRepository extends BaseRepository
           .eq('id', playerId)
           .inFilter('tenantId', [tenantId]); // guarded: linked tenant
 
-      final today = DateTime.now().toIso8601String().substring(0, 10);
-      final since = (pauseFrom != null && pauseFrom.length >= 10)
-          ? pauseFrom.substring(0, 10)
-          : today;
+      // Like PlayerRepository.removeFromUpcomingAttendances: since the local
+      // start of the pause day (Ionic startOf('day')), else today.
+      final since = (pauseFrom != null
+              ? DateHelper.localDayStartUtcIso(pauseFrom)
+              : null) ??
+          DateTime.now().toIso8601String().substring(0, 10);
       final attendances = await supabase
           .from('attendance')
           .select('id')

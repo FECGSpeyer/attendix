@@ -50,6 +50,33 @@ class PlanUtils {
   /// Minutes a field takes in the running total (heads take none).
   static int fieldMinutes(PlanField f) => isGroupHead(f) ? 0 : minutesOf(f);
 
+  /// Index of [field] in [fields] after the list may have changed (e.g. a
+  /// Realtime update while a dialog was open): the same object, otherwise
+  /// the row with the same `uid`, otherwise (no uid) the row with the same
+  /// `id`. -1 when the row is gone or the match is not unique (a song or
+  /// org field inserted twice shares its id), so nothing is written to the
+  /// wrong row. [openedIn] is the list the field was taken from: the `id`
+  /// fallback needs the id to have been unique there too (otherwise deleting
+  /// the edited duplicate would leave the other one as a "unique" match).
+  static int indexOfField(List<PlanField> fields, PlanField field, {List<PlanField>? openedIn}) {
+    int unique(List<PlanField> list, bool Function(PlanField f) test) {
+      var found = -1;
+      for (var i = 0; i < list.length; i++) {
+        if (!test(list[i])) continue;
+        if (found != -1) return -1;
+        found = i;
+      }
+      return found;
+    }
+
+    final same = unique(fields, (f) => identical(f, field));
+    if (same != -1) return same;
+    final uid = field.uid;
+    if (uid != null && uid.isNotEmpty) return unique(fields, (f) => f.uid == uid);
+    if (openedIn != null && unique(openedIn, (f) => f.id == field.id) == -1) return -1;
+    return unique(fields, (f) => f.id == field.id);
+  }
+
   // ---------------------------------------------------------------------------
   // Programmblöcke
   // ---------------------------------------------------------------------------
@@ -303,6 +330,20 @@ class PlanUtils {
     return DateFormat("yyyy-MM-dd'T'HH:mm").format(end);
   }
 
+  /// Ionic `ion-datetime presentation="time"` value: local ISO date time
+  /// "YYYY-MM-DDTHH:mm:00" without offset (dayjs-valid). Keeps the date of an
+  /// ISO [previous] value, otherwise today (the datetime's default date).
+  /// Readers ([parseTimeToMinutes], [formatTime]) accept it and "HH:mm".
+  /// Composed as text (no local DateTime with the picked time), so a time in a
+  /// DST gap (e.g. 02:30 on 2026-03-29 in Europe/Berlin) is kept as picked.
+  static String ionTimeValue(int hour, int minute, {String? previous, DateTime? now}) {
+    final prev = previous != null && previous.contains('T') ? DateTime.tryParse(previous.trim())?.toLocal() : null;
+    final day = prev ?? now ?? DateTime.now();
+    String two(int v) => v.toString().padLeft(2, '0');
+    return '${day.year.toString().padLeft(4, '0')}-${two(day.month)}-${two(day.day)}'
+        'T${two(hour)}:${two(minute)}:00';
+  }
+
   /// Ionic `planning.page validate`: a start time, at least one field and a
   /// duration on every field (`every(field => field.time)`).
   static PlanValidation validate(String time, List<PlanField> fields) {
@@ -502,6 +543,18 @@ class PlanUtils {
     return m > 0
         ? l10n.coreFlutterPlanStartsInHoursMin(h, m)
         : l10n.coreFlutterPlanStartsInHours(h);
+  }
+
+  /// Ionic `Utils.getPlanningTitle(type, typeInfo)`: "{planning_title}
+  /// ({Info})", planning_title, Info, type name, "Probenplan".
+  static String planningTitle({String? planningTitle, String? typeName, String? typeInfo}) {
+    final pt = planningTitle ?? '';
+    final info = typeInfo ?? '';
+    if (pt.isNotEmpty && info.isNotEmpty) return '$pt ($info)';
+    if (pt.isNotEmpty) return pt;
+    if (info.isNotEmpty) return info;
+    if ((typeName ?? '').isNotEmpty) return typeName!;
+    return l10nWithoutContext.defaultsTypesRehearsalPlan;
   }
 
   /// "Samstag, 18.10.2025"

@@ -85,7 +85,12 @@ Future<TimeOfDay?> showAppTimePicker({
   String? confirmText,
   bool useRootNavigator = true,
   TimePickerEntryMode initialEntryMode = TimePickerEntryMode.dial,
+  int minuteInterval = 1,
 }) {
+  // ion-datetime `minuteValues="0,5,…"`: only multiples of [minuteInterval].
+  TimeOfDay snap(TimeOfDay t) => minuteInterval <= 1
+      ? t
+      : TimeOfDay(hour: t.hour, minute: t.minute - t.minute % minuteInterval);
   if (!useIosLook(context)) {
     return showTimePicker(
       context: context,
@@ -96,22 +101,28 @@ Future<TimeOfDay?> showAppTimePicker({
       confirmText: confirmText,
       useRootNavigator: useRootNavigator,
       initialEntryMode: initialEntryMode,
-    );
+    ).then((t) => t == null ? null : snap(t));
   }
   return showDialog<TimeOfDay>(
     context: context,
     useRootNavigator: useRootNavigator,
     barrierDismissible: false,
     barrierColor: const Color(0x33000000),
-    builder: (ctx) => _IosTimePicker(initial: initialTime, title: helpText),
+    builder: (ctx) => _IosTimePicker(
+      initial: snap(initialTime),
+      title: helpText,
+      minuteInterval: minuteInterval < 1 ? 1 : minuteInterval,
+    ),
   );
 }
 
 class _IosTimePicker extends StatefulWidget {
-  const _IosTimePicker({required this.initial, this.title});
+  const _IosTimePicker(
+      {required this.initial, this.title, this.minuteInterval = 1});
 
   final TimeOfDay initial;
   final String? title;
+  final int minuteInterval;
 
   @override
   State<_IosTimePicker> createState() => _IosTimePickerState();
@@ -145,6 +156,7 @@ class _IosTimePickerState extends State<_IosTimePicker> {
             child: CupertinoDatePicker(
               mode: CupertinoDatePickerMode.time,
               use24hFormat: true,
+              minuteInterval: widget.minuteInterval,
               initialDateTime: DateTime(now.year, now.month, now.day,
                   widget.initial.hour, widget.initial.minute),
               onDateTimeChanged: (d) =>

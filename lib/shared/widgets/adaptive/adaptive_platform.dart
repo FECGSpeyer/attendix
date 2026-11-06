@@ -2,6 +2,8 @@ import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/redesign/rd_theme.dart';
+
 /// IOS_LOOK: true when the app should render like Ionic in iOS mode
 /// (`mode="ios"`): on iPhone/iPad – the native app and Flutter web in iOS
 /// Safari both report [TargetPlatform.iOS]. Everywhere else the app keeps the
@@ -37,6 +39,62 @@ class IosGlass {
           BoxShadow(
               color: Color(0x14000000), blurRadius: 1, offset: Offset(0, 0.5)),
         ];
+
+  /// PERF_WEB: backdrop blur of glass controls in a header (toolbar button
+  /// groups, back / close circles, tenant switcher). Ionic uses
+  /// `blur(2px)`, but behind a header control lies either the page colour
+  /// (transparent header) or the header's own blurred backdrop
+  /// ([IonTranslucentBarBackground], Cupertino nav bar). 2px more blur
+  /// changes no visible pixel there, while each [BackdropFilter] costs a
+  /// full backdrop read on every frame on the web (measured: ~18 % of the
+  /// drawing time of the iOS member list). 0 = no backdrop filter.
+  static const double headerControlBlur = 0;
+
+  /// PERF_GLASS: the default design paints its glass without a live
+  /// backdrop blur. A [BackdropFilter] re-reads and blurs everything below
+  /// it on every frame, so the tab bar, translucent headers and glass
+  /// overlays made scrolling, page transitions and the pop-in of alerts /
+  /// action sheets stutter. Instead the glass gets the solid colour it
+  /// shows over the page ([frosted]) – the way iOS itself draws bars and
+  /// sheets with "Reduce Transparency". The Beta design keeps its look.
+  static bool liveBlur(BuildContext context) => context.rdSkin != null;
+
+  /// PERF_GLASS: the static stand-in for [glass] over a blurred backdrop:
+  /// the colour the glass shows over the plain [page] colour (dimmed by
+  /// [scrim], e.g. an overlay's barrier, and brightened by
+  /// [backdropBrightness]), painted opaque. Without the blur, content
+  /// shining through a translucent tint would show up as sharp ghost text,
+  /// so the frosted surface hides it completely.
+  static Color frosted(
+    Color glass, {
+    required Color page,
+    double backdropBrightness = 1,
+    Color scrim = Colors.transparent,
+  }) {
+    final backdrop = Color.alphaBlend(scrim, page.withValues(alpha: 1));
+    final k = backdropBrightness;
+    return Color.alphaBlend(
+      glass,
+      Color.from(
+        alpha: 1,
+        red: (backdrop.r * k).clamp(0.0, 1.0),
+        green: (backdrop.g * k).clamp(0.0, 1.0),
+        blue: (backdrop.b * k).clamp(0.0, 1.0),
+      ),
+    );
+  }
+
+  /// PERF_GLASS: the page colour behind [context]: the background of the
+  /// nearest [Scaffold] (pages with their own `ion-content` colour), else
+  /// the theme's scaffold background (overlay routes).
+  static Color pageColor(BuildContext context) =>
+      Scaffold.maybeOf(context)?.widget.backgroundColor ??
+      Theme.of(context).scaffoldBackgroundColor;
+
+  /// PERF_GLASS: barrier of iOS alerts, action sheets and selects
+  /// (`--backdrop-opacity: .2`), the backdrop their [frosted] glass is
+  /// matched against.
+  static const Color overlayScrim = Color(0x33000000);
 
   /// IOS27_SWEEP: `api.glass-overlay-variables` (alert, action sheet,
   /// popover, toast): `--background: rgba(glass, .67)`; the dark theme
@@ -106,6 +164,7 @@ class IosGlassSurface extends StatelessWidget {
     this.shadows,
     this.backdropBrightness = 1,
     this.color,
+    this.scrim,
   });
 
   /// IOS27_SWEEP: an `ion-popover` surface (ionic-theme-ios27):
@@ -118,11 +177,13 @@ class IosGlassSurface extends StatelessWidget {
     required Widget child,
     BorderRadius borderRadius = const BorderRadius.all(Radius.circular(34)),
     EdgeInsetsGeometry? padding,
+    Color? scrim,
   }) =>
       IosGlassSurface(
         key: key,
         borderRadius: borderRadius,
         overlay: true,
+        scrim: scrim,
         opacity: brightness == Brightness.dark ? 0.08 : 0.42,
         blur: 12,
         backdropBrightness: brightness == Brightness.dark ? 0.9 : 1.35,
@@ -160,12 +221,63 @@ class IosGlassSurface extends StatelessWidget {
   /// Replaces the glass background colour (then [opacity] is ignored).
   final Color? color;
 
+  /// PERF_GLASS: what dims the page behind the surface (an overlay's
+  /// barrier); default [IosGlass.overlayScrim] for [overlay] surfaces,
+  /// none otherwise. Only used for the [IosGlass.frosted] tint.
+  final Color? scrim;
+
   @override
   Widget build(BuildContext context) {
-    final b = Theme.of(context).brightness;
+    final theme = Theme.of(context);
+    final b = theme.brightness;
     final bg = opacity ?? (overlay ? IosGlass.overlayOpacity(b) : 0.72);
     final shadows = this.shadows ??
         (overlay ? IosGlass.overlayShadow(shadowOpacity) : IosGlass.shadow(b));
+    final glass = color ?? IosGlass.background(b, bg);
+    final live = IosGlass.liveBlur(context);
+    final decorated = DecoratedBox(
+      decoration: BoxDecoration(
+        // blur 0 (header controls) stays translucent as before
+        color: live || (blur <= 0 && backdropBrightness == 1)
+            ? glass
+            : IosGlass.frosted(
+                glass,
+                page: IosGlass.pageColor(context),
+                backdropBrightness: backdropBrightness,
+                scrim: scrim ??
+                    (overlay ? IosGlass.overlayScrim : Colors.transparent),
+              ),
+        borderRadius: borderRadius,
+        border: Border.all(
+          color: overlay ? IosGlass.overlayBorder(b) : IosGlass.border(b),
+          width: 0.5,
+        ),
+      ),
+      child: live
+          ? padding == null
+              ? child
+              : Padding(padding: padding!, child: child)
+          // PERF_GLASS: the surface is opaque now – ink of pressed rows
+          // must paint on a Material above it, not on one behind it.
+          : Material(
+              type: MaterialType.transparency,
+              textStyle: DefaultTextStyle.of(context).style,
+              child: padding == null
+                  ? child
+                  : Padding(padding: padding!, child: child),
+            ),
+    );
+    final painter = shadows.isEmpty
+        ? null
+        : IosOuterShadowPainter(borderRadius: borderRadius, shadows: shadows);
+    if (!live) {
+      // PERF_GLASS: no backdrop pass; the clip keeps pressed rows inside
+      // the rounded corners.
+      return CustomPaint(
+        painter: painter,
+        child: ClipRRect(borderRadius: borderRadius, child: decorated),
+      );
+    }
     final blurFilter = ImageFilter.blur(sigmaX: blur, sigmaY: blur);
     final k = backdropBrightness;
     final filter = k == 1
@@ -180,26 +292,14 @@ class IosGlassSurface extends StatelessWidget {
             inner: blurFilter,
           );
     return CustomPaint(
-      painter: shadows.isEmpty
-          ? null
-          : IosOuterShadowPainter(borderRadius: borderRadius, shadows: shadows),
+      painter: painter,
       child: ClipRRect(
         borderRadius: borderRadius,
         child: BackdropFilter(
+          // PERF_WEB: blur 0 at brightness 1 is no filter at all.
+          enabled: blur > 0 || k != 1,
           filter: filter,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: color ?? IosGlass.background(b, bg),
-              borderRadius: borderRadius,
-              border: Border.all(
-                color: overlay ? IosGlass.overlayBorder(b) : IosGlass.border(b),
-                width: 0.5,
-              ),
-            ),
-            child: padding == null
-                ? child
-                : Padding(padding: padding!, child: child),
-          ),
+          child: decorated,
         ),
       ),
     );

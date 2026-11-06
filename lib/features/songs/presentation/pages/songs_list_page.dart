@@ -34,6 +34,7 @@ import '../../../../shared/widgets/common/error_state_view.dart';
 import '../../../../shared/widgets/adaptive/app_segmented_button.dart';
 import '../../../../shared/widgets/adaptive/app_toolbar.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Songs list (Ionic `songs.page`).
@@ -54,7 +55,8 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
   final _searchController = TextEditingController();
   Timer? _searchDebounce;
   String _search = '';
-  bool _pruned = false;
+  /// Instance and category ids the stored filter was last checked against.
+  String? _prunedFor;
   bool _invalidLinkToastShown = false;
 
   bool get _isPublic => widget.songSharingId != null;
@@ -215,9 +217,13 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
     final view = ref.watch(songViewOptionsProvider(data.tenantId));
     final filterNotifier = ref.read(songFilterProvider(data.tenantId).notifier);
 
-    if (!_pruned) {
-      _pruned = true;
-      final ids = data.categories.map((c) => c.id).whereType<String>().toSet();
+    // Ionic getSongs (load, refresh, realtime, after deleting a category)
+    // drops a stored category selection that no longer exists.
+    final ids = data.categories.map((c) => c.id).whereType<String>().toSet();
+    // Per instance: after a switch the new instance's filter is checked too.
+    final idsKey = '${data.tenantId}|${(ids.toList()..sort()).join(',')}';
+    if (_prunedFor != idsKey) {
+      _prunedFor = idsKey;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) filterNotifier.pruneCategories(ids);
       });
@@ -254,7 +260,16 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
         condensed: condensed,
         child: AppBar(
         title: CondenseTitle(condensed: condensed, child: Text(title)),
-        automaticallyImplyLeading: !data.isPublic,
+        // SIDE_NAV: Werke as a main area – menu button of the overlay panel.
+        // Ionic: the public share page keeps its back button (defaultHref "/").
+        leading: _isStandaloneTab
+            ? SideNavMenuButton.maybe(context)
+            : data.isPublic
+                ? BackButton(
+                    onPressed: () =>
+                        context.canPop() ? context.pop() : context.go('/login'),
+                  )
+                : null,
         // IOS_SHELL: iOS → menu button in a glass circle
         actions: [
           ToolbarButtonGroup(children: [
@@ -406,38 +421,41 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                         },
                       ),
                     ),
-                    // IOS_FORMS2: iOS → black options icon in a glass circle
-                    if (isIosLook(context))
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: Semantics(
-                          button: true,
-                          label: context.l10n.songsFlutterFilterAndView,
-                          child: GestureDetector(
-                            onTap: () => showSongFilterSheet(context, data),
-                            child: Badge(
-                              isLabelVisible: filter.hasActiveFilters,
-                              smallSize: 8,
-                              child: const IosCircleIcon(icon: Icons.tune, size: 44),
+                    // Ionic: filter popover at the options button
+                    SongFilterMenu(
+                      data: data,
+                      builder: (context, toggleMenu) => isIosLook(context)
+                          // IOS_FORMS2: iOS → black options icon in a glass circle
+                          ? Padding(
+                              padding: const EdgeInsets.only(left: 8),
+                              child: Semantics(
+                                button: true,
+                                label: context.l10n.songsFlutterFilterAndView,
+                                child: GestureDetector(
+                                  onTap: toggleMenu,
+                                  child: Badge(
+                                    isLabelVisible: filter.hasActiveFilters,
+                                    smallSize: 8,
+                                    child: const IosCircleIcon(icon: Icons.tune, size: 44),
+                                  ),
+                                ),
+                              ),
+                            )
+                          : IconButton(
+                              tooltip: context.l10n.songsFlutterFilterAndView,
+                              // PWA_PARITY: Ionic md dark icon on a white square.
+                              color: Theme.of(context).colorScheme.onSurface,
+                              style: IconButton.styleFrom(
+                                backgroundColor: Theme.of(context).colorScheme.surface,
+                                shape: const RoundedRectangleBorder(),
+                              ),
+                              icon: Badge(
+                                isLabelVisible: filter.hasActiveFilters,
+                                smallSize: 8,
+                                child: const Icon(Icons.tune),
+                              ),
+                              onPressed: toggleMenu,
                             ),
-                          ),
-                        ),
-                      )
-                    else
-                    IconButton(
-                      tooltip: context.l10n.songsFlutterFilterAndView,
-                      // PWA_PARITY: Ionic md dark icon on a white square.
-                      color: Theme.of(context).colorScheme.onSurface,
-                      style: IconButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.surface,
-                        shape: const RoundedRectangleBorder(),
-                      ),
-                      icon: Badge(
-                        isLabelVisible: filter.hasActiveFilters,
-                        smallSize: 8,
-                        child: const Icon(Icons.tune),
-                      ),
-                      onPressed: () => showSongFilterSheet(context, data),
                     ),
                   ],
                 ),

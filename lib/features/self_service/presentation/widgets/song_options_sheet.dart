@@ -18,7 +18,8 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 Future<void> openSongLink(BuildContext context, String link) async {
   final uri = Uri.tryParse(link);
   // Ionic 4.17.18 openLink: web → Utils.openInNewTab.
-  final ok = uri != null && await NativeFileService.openExternal(uri);
+  // Ionic Browser.open: in-app browser in the native app.
+  final ok = uri != null && await NativeFileService.openLinkInApp(uri);
   if (!ok && context.mounted) {
     ToastHelper.showError(context, context.l10n.signoutFlutterLinkOpenFailed);
   }
@@ -81,6 +82,8 @@ Future<void> _downloadFile(BuildContext context, SongFile file) async {
     }
     return;
   }
+  // Ionic 4.17.23: iOS app on a Mac → the browser downloads the file.
+  if (await NativeFileService.downloadInMacBrowser(file.url, file.fileName)) return;
   final url = file.url.contains('?') ? '${file.url}&download=' : '${file.url}?download=';
   // NATIVE_MISC: native app → cache dir + system viewer (Ionic downloadFileNative).
   final ok = await NativeFileService.openUrl(url, fileName: file.fileName);
@@ -105,12 +108,18 @@ Future<void> showSongOptionsSheet(
   final allFiles = song.files ?? const <SongFile>[];
   final songTitle = song.fullNumber.isEmpty ? song.name : '${song.fullNumber}. ${song.name}';
 
-  if (!hasSongNotesForPlayer(song, playerInstrumentId, isChoir: isChoir)) {
+  // Ionic `if (instrumentId && !hasNotesForInstrument)`: without an
+  // instrument (Terminliste viewer) no warning.
+  if (playerInstrumentId != null && !hasSongNotesForPlayer(song, playerInstrumentId, isChoir: isChoir)) {
     ToastHelper.showError(context, l10n.signoutNoScoresForInstrument);
   }
 
-  // Files for the player's instrument (choir: plus "Chor (alle)" files)
-  var files = allFiles.where((f) => f.instrumentId == playerInstrumentId).toList();
+  // Files for the player's instrument (choir: plus "Chor (alle)" files).
+  // Ionic compares with `=== undefined`, so without an instrument no file
+  // matches (link, choir, recording and lyrics entries remain).
+  var files = playerInstrumentId == null
+      ? <SongFile>[]
+      : allFiles.where((f) => f.instrumentId == playerInstrumentId).toList();
   if (isChoir) {
     files = [...files, ...allFiles.where((f) => isChoirAllFile(instrumentId: f.instrumentId, note: f.note))];
     final seen = <String>{};

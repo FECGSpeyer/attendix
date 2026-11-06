@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/organisation_providers.dart';
@@ -22,6 +21,7 @@ import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset, IonRefresher;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart' show scrollEndPadding, TabBarFab;
+import '../../../../core/services/native/native_file_service.dart';
 
 /// Short date "Mo, 03.11.2026" (Ionic dayjs `dd, ${dateFmt()}`).
 String orgPlanDate(String date) {
@@ -75,7 +75,9 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
   }
 
   Future<void> _subscribeCalendar(String key) async {
-    final base = '${SupabaseConfig.supabaseUrl}/functions/v1/ical-org-plans?key=$key';
+    // Ionic: calendar texts in the app language (German is the default).
+    final lang = currentLanguage() != 'de' ? '&lang=${currentLanguage()}' : '';
+    final base = '${SupabaseConfig.supabaseUrl}/functions/v1/ical-org-plans?key=$key$lang';
     final link = await showPlanActionSheet<String>(
       context,
       title: context.l10n.plansSubscribeCalendar,
@@ -98,11 +100,10 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
           TextButton(
             onPressed: () {
               final ios = !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
-              launchUrl(
+              NativeFileService.openLinkInApp(
                 Uri.parse(ios
                     ? 'https://support.apple.com/de-de/102301'
                     : 'https://support.google.com/calendar/answer/37100?hl=de&co=GENIE.Platform%3DAndroid'),
-                mode: LaunchMode.externalApplication,
               );
             },
             child: Text(ctx.l10n.plansOpenGuide),
@@ -130,7 +131,12 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
         await copyPlanLink(context, url);
       } else if (action == 'revoke') {
         final ok = await notifier.revokePublicPlanKey();
-        if (mounted && ok) ToastHelper.showSuccess(context, context.l10n.plansRevokeLink);
+        if (!mounted) return;
+        // Ionic OrganisationService.revokePublicPlanKey: danger toast on error,
+        // otherwise the admin doesn't learn that the link is still active.
+        ok
+            ? ToastHelper.showSuccess(context, context.l10n.plansRevokeLink)
+            : ToastHelper.showError(context, context.l10n.svcRevokePublicLinkFailed);
       }
       return;
     }
@@ -143,12 +149,18 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
     await copyPlanLink(context, planPublicUrl('/org-plan?key=$newKey'), message: context.l10n.plansLinkCreated);
   }
 
-  void _showHistory(List<OrgPlanEntry> past) {
+  /// Ionic: the history modal is bound to `pastPlans`, so a deleted plan
+  /// disappears right away – the page watches the plans instead of a copy.
+  void _showHistory() {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => Scaffold(
-        appBar: AppBar(title: Text(context.l10n.plansPastPlans)),
-        body: ListView(children: [for (final e in past) _entryTile(e)]),
-      ),
+      builder: (_) => Consumer(builder: (context, ref, _) {
+        final entries = ref.watch(orgPlansProvider).valueOrNull;
+        final past = entries == null ? const <OrgPlanEntry>[] : splitOrgPlanEntries(entries).past;
+        return Scaffold(
+          appBar: AppBar(title: Text(context.l10n.plansPastPlans)),
+          body: ListView(children: [for (final e in past) _entryTile(e)]),
+        );
+      }),
     ));
   }
 
@@ -287,7 +299,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                             ListTile(
                               leading: const Icon(Icons.history, color: AppColors.medium),
                               title: Text(context.l10n.plansPastPlans, style: const TextStyle(color: AppColors.medium)),
-                              onTap: () => _showHistory(split.past),
+                              onTap: _showHistory,
                             ),
                     ]),
                     if (key != null)

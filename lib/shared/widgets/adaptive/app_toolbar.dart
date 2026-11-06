@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
 
 import '../../../l10n/l10n.dart';
+import '../layout/side_nav/side_nav_layout.dart';
 import 'adaptive_platform.dart';
 
 /// IOS_LOOK: header buttons of an `ion-toolbar` in the Ionic iOS theme:
@@ -23,6 +24,12 @@ class ToolbarButtonGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // SIDE_NAV: the bell sits in the side panel while it is shown; a
+    // capsule left without buttons disappears.
+    final children = SideNavScope.isActive(context)
+        ? this.children.where((c) => c is! HiddenWithSidePanel).toList()
+        : this.children;
+    if (children.isEmpty) return const SizedBox.shrink();
     // Beta-Skin: plain header icons in the link colour, no glass capsule.
     if (!useIosLook(context) || context.rdSkin != null) {
       return Row(mainAxisSize: MainAxisSize.min, children: children);
@@ -32,7 +39,7 @@ class ToolbarButtonGroup extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: IosGlassSurface(
         borderRadius: const BorderRadius.all(Radius.circular(22)),
-        blur: 2,
+        blur: IosGlass.headerControlBlur,
         child: SizedBox(
           height: 44,
           child: IconButtonTheme(
@@ -169,7 +176,7 @@ class IosCircleIcon extends StatelessWidget {
       height: size,
       child: IosGlassSurface(
         borderRadius: BorderRadius.circular(size / 2),
-        blur: 2,
+        blur: IosGlass.headerControlBlur,
         child: Center(child: glyph),
       ),
     );

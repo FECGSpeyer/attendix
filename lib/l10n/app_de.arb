@@ -85,10 +85,6 @@
   "@adminEvaluation": {
     "description": "admin.evaluation"
   },
-  "adminFlutterAddFailed": "Fehler beim Hinzufügen",
-  "@adminFlutterAddFailed": {
-    "description": "admin.flutter.addFailed"
-  },
   "adminGb": "{value} GB",
   "@adminGb": {
     "description": "admin.gb",
@@ -620,6 +616,19 @@
   "@attListAddSongs": {
     "description": "attList.addSongs"
   },
+  "attListArchived": "Archiviert",
+  "@attListArchived": {
+    "description": "attList.archived"
+  },
+  "attListArchivedCount": "{count, plural, one {{count} archivierter Termin} other {{count} archivierte Termine}}",
+  "@attListArchivedCount": {
+    "description": "attList.archivedCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "attListAverage": "Durchschnitt",
   "@attListAverage": {
     "description": "attList.average"
@@ -800,6 +809,10 @@
   "@attListShowAll": {
     "description": "attList.showAll"
   },
+  "attListShowArchived": "Archivierte anzeigen",
+  "@attListShowArchived": {
+    "description": "attList.showArchived"
+  },
   "attListSongs": "Werke",
   "@attListSongs": {
     "description": "attList.songs"
@@ -875,6 +888,34 @@
   "attendanceAllAlreadyIncluded": "Alle Personen sind bereits in dieser Anwesenheit enthalten.",
   "@attendanceAllAlreadyIncluded": {
     "description": "attendance.allAlreadyIncluded"
+  },
+  "attendanceArchive": "Archivieren",
+  "@attendanceArchive": {
+    "description": "attendance.archive"
+  },
+  "attendanceArchiveConfirmHeader": "Termin archivieren?",
+  "@attendanceArchiveConfirmHeader": {
+    "description": "attendance.archiveConfirmHeader"
+  },
+  "attendanceArchiveConfirmMessage": "Mitglieder sehen den Termin und ihre Anwesenheit dazu dann nicht mehr. Admins und Verantwortliche sehen ihn weiterhin und können ihn jederzeit wiederherstellen.",
+  "@attendanceArchiveConfirmMessage": {
+    "description": "attendance.archiveConfirmMessage"
+  },
+  "attendanceArchiveFailed": "Der Termin konnte nicht geändert werden.",
+  "@attendanceArchiveFailed": {
+    "description": "attendance.archiveFailed"
+  },
+  "attendanceArchivedBanner": "Archiviert",
+  "@attendanceArchivedBanner": {
+    "description": "attendance.archivedBanner"
+  },
+  "attendanceArchivedBannerHint": "Für Mitglieder unsichtbar. Nur Admins und Verantwortliche sehen diesen Termin.",
+  "@attendanceArchivedBannerHint": {
+    "description": "attendance.archivedBannerHint"
+  },
+  "attendanceArchivedToast": "Termin archiviert",
+  "@attendanceArchivedToast": {
+    "description": "attendance.archivedToast"
   },
   "attendanceAssign": "Einteilen",
   "@attendanceAssign": {
@@ -1709,6 +1750,14 @@
   "@attendanceResetChecklist": {
     "description": "attendance.resetChecklist"
   },
+  "attendanceRestore": "Wiederherstellen",
+  "@attendanceRestore": {
+    "description": "attendance.restore"
+  },
+  "attendanceRestoredToast": "Termin wiederhergestellt",
+  "@attendanceRestoredToast": {
+    "description": "attendance.restoredToast"
+  },
   "attendanceRunSheetAgenda": "Ablaufplan & Tagesordnung",
   "@attendanceRunSheetAgenda": {
     "description": "attendance.runSheetAgenda"
@@ -1765,12 +1814,50 @@
   "@attendanceSignedOut": {
     "description": "attendance.signedOut"
   },
+  "attendanceSongsChip": "{count, plural, one {{count} Werk} other {{count} Werke}}",
+  "@attendanceSongsChip": {
+    "description": "attendanceSongs.chip",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "attendanceSongsCount": "Werke ({count})",
   "@attendanceSongsCount": {
     "description": "attendance.songsCount",
     "placeholders": {
       "count": {}
     }
+  },
+  "attendanceSongsNoScoresForYou": "Für dich sind keine Noten hinterlegt",
+  "@attendanceSongsNoScoresForYou": {
+    "description": "attendanceSongs.noScoresForYou"
+  },
+  "attendanceSongsOpenRunSheet": "Ablaufplan öffnen",
+  "@attendanceSongsOpenRunSheet": {
+    "description": "attendanceSongs.openRunSheet"
+  },
+  "attendanceSongsPrintAll": "Alle Noten drucken",
+  "@attendanceSongsPrintAll": {
+    "description": "attendanceSongs.printAll"
+  },
+  "attendanceSongsShow": "Werke anzeigen",
+  "@attendanceSongsShow": {
+    "description": "attendanceSongs.show"
+  },
+  "attendanceSongsTileEvents": "{count, plural, one {Nächster Termin} other {{count} Termine}}",
+  "@attendanceSongsTileEvents": {
+    "description": "attendanceSongs.tileEvents",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "attendanceSongsTitle": "Werke",
+  "@attendanceSongsTitle": {
+    "description": "attendanceSongs.title"
   },
   "attendanceSorting": "Sortierung",
   "@attendanceSorting": {
@@ -1922,6 +2009,846 @@
   "authUserNotFound": "Benutzer nicht gefunden",
   "@authUserNotFound": {
     "description": "auth.userNotFound"
+  },
+  "autoMessagesActive": "Aktiv",
+  "@autoMessagesActive": {
+    "description": "autoMessages.active"
+  },
+  "autoMessagesActiveHint": "Eine eingeschaltete Regel gilt ab jetzt. Vergangene Termine werden nicht nachgeschickt. Schau dir vorher unten die Vorschau an.",
+  "@autoMessagesActiveHint": {
+    "description": "autoMessages.activeHint"
+  },
+  "autoMessagesAllTypes": "alle Termintypen",
+  "@autoMessagesAllTypes": {
+    "description": "autoMessages.allTypes"
+  },
+  "autoMessagesAllowResponses": "Mitglied kann antworten",
+  "@autoMessagesAllowResponses": {
+    "description": "autoMessages.allowResponses"
+  },
+  "autoMessagesAllowResponsesHint": "Knöpfe „Grund nachtragen“ und „Ich war doch da“ in der Nachricht",
+  "@autoMessagesAllowResponsesHint": {
+    "description": "autoMessages.allowResponsesHint"
+  },
+  "autoMessagesChannelEmail": "E-Mail",
+  "@autoMessagesChannelEmail": {
+    "description": "autoMessages.channelEmail"
+  },
+  "autoMessagesChannelPush": "Push / Telegram",
+  "@autoMessagesChannelPush": {
+    "description": "autoMessages.channelPush"
+  },
+  "autoMessagesChannels": "Kanäle",
+  "@autoMessagesChannels": {
+    "description": "autoMessages.channels"
+  },
+  "autoMessagesChipCopy": "Kopie",
+  "@autoMessagesChipCopy": {
+    "description": "autoMessages.chipCopy"
+  },
+  "autoMessagesChipEmail": "E-Mail",
+  "@autoMessagesChipEmail": {
+    "description": "autoMessages.chipEmail"
+  },
+  "autoMessagesChipPush": "Push",
+  "@autoMessagesChipPush": {
+    "description": "autoMessages.chipPush"
+  },
+  "autoMessagesChipResponses": "Grund nachtragen",
+  "@autoMessagesChipResponses": {
+    "description": "autoMessages.chipResponses"
+  },
+  "autoMessagesCopy": "Kopie (optional)",
+  "@autoMessagesCopy": {
+    "description": "autoMessages.copy"
+  },
+  "autoMessagesCopyHint": "Eine Sammelinfo pro Termin, wer angeschrieben wurde.",
+  "@autoMessagesCopyHint": {
+    "description": "autoMessages.copyHint"
+  },
+  "autoMessagesCopyResponsibles": "Admins und Verantwortliche",
+  "@autoMessagesCopyResponsibles": {
+    "description": "autoMessages.copyResponsibles"
+  },
+  "autoMessagesCopyVoiceLeaders": "Stimmführer (nur ihre Gruppe)",
+  "@autoMessagesCopyVoiceLeaders": {
+    "description": "autoMessages.copyVoiceLeaders"
+  },
+  "autoMessagesCustomHint": "Eigener Text geht in allen Sprachen so raus, wie du ihn schreibst. Tippe auf einen Platzhalter, um ihn einzufügen.",
+  "@autoMessagesCustomHint": {
+    "description": "autoMessages.customHint"
+  },
+  "autoMessagesCustomText": "Eigener Text",
+  "@autoMessagesCustomText": {
+    "description": "autoMessages.customText"
+  },
+  "autoMessagesDays": "{count, plural, one {{count} Tag} other {{count} Tage}}",
+  "@autoMessagesDays": {
+    "description": "autoMessages.days",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "autoMessagesDecideAcceptPresent": "Status auf „anwesend“ setzen? Die Person bekommt Bescheid.",
+  "@autoMessagesDecideAcceptPresent": {
+    "description": "autoMessages.decideAcceptPresent"
+  },
+  "autoMessagesDecideAcceptReason": "Status auf „entschuldigt“ setzen? Die Person bekommt Bescheid.",
+  "@autoMessagesDecideAcceptReason": {
+    "description": "autoMessages.decideAcceptReason"
+  },
+  "autoMessagesDecideReject": "Rückmeldung ablehnen? Der Status bleibt, der Grund bleibt als Notiz stehen.",
+  "@autoMessagesDecideReject": {
+    "description": "autoMessages.decideReject"
+  },
+  "autoMessagesDecidedAccepted": "Übernommen",
+  "@autoMessagesDecidedAccepted": {
+    "description": "autoMessages.decidedAccepted"
+  },
+  "autoMessagesDecidedRejected": "Abgelehnt",
+  "@autoMessagesDecidedRejected": {
+    "description": "autoMessages.decidedRejected"
+  },
+  "autoMessagesDelay": "Wartezeit nach Terminende",
+  "@autoMessagesDelay": {
+    "description": "autoMessages.delay"
+  },
+  "autoMessagesDelayHint": "In dieser Zeit kannst du die Anwesenheit noch korrigieren oder die Nachricht für den Termin aussetzen.",
+  "@autoMessagesDelayHint": {
+    "description": "autoMessages.delayHint"
+  },
+  "autoMessagesDelayHours": "{count, plural, one {{count} Std.} other {{count} Std.}} danach",
+  "@autoMessagesDelayHours": {
+    "description": "autoMessages.delayHours",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "autoMessagesDelayMinutes": "{count} Min. danach",
+  "@autoMessagesDelayMinutes": {
+    "description": "autoMessages.delayMinutes",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "autoMessagesDelayNone": "Direkt nach Ende",
+  "@autoMessagesDelayNone": {
+    "description": "autoMessages.delayNone"
+  },
+  "autoMessagesDeleteConfirm": "Regel löschen?",
+  "@autoMessagesDeleteConfirm": {
+    "description": "autoMessages.deleteConfirm"
+  },
+  "autoMessagesDeleteHint": "Bereits verschickte Nachrichten bleiben erhalten.",
+  "@autoMessagesDeleteHint": {
+    "description": "autoMessages.deleteHint"
+  },
+  "autoMessagesDeleteRule": "Regel löschen",
+  "@autoMessagesDeleteRule": {
+    "description": "autoMessages.deleteRule"
+  },
+  "autoMessagesDisabledToast": "Regel ausgeschaltet",
+  "@autoMessagesDisabledToast": {
+    "description": "autoMessages.disabledToast"
+  },
+  "autoMessagesEnabledToast": "Regel eingeschaltet",
+  "@autoMessagesEnabledToast": {
+    "description": "autoMessages.enabledToast"
+  },
+  "autoMessagesErrChannel": "Bitte wähle mindestens einen Kanal",
+  "@autoMessagesErrChannel": {
+    "description": "autoMessages.errChannel"
+  },
+  "autoMessagesErrName": "Bitte gib der Regel einen Namen",
+  "@autoMessagesErrName": {
+    "description": "autoMessages.errName"
+  },
+  "autoMessagesErrStatus": "Bitte wähle mindestens einen Auslöser",
+  "@autoMessagesErrStatus": {
+    "description": "autoMessages.errStatus"
+  },
+  "autoMessagesErrText": "Bitte gib einen Titel und einen Text ein",
+  "@autoMessagesErrText": {
+    "description": "autoMessages.errText"
+  },
+  "autoMessagesExcuse": "Entschuldigen",
+  "@autoMessagesExcuse": {
+    "description": "autoMessages.excuse"
+  },
+  "autoMessagesExcuseAfterCheck": "Nach Bestätigung entschuldigt",
+  "@autoMessagesExcuseAfterCheck": {
+    "description": "autoMessages.excuseAfterCheck"
+  },
+  "autoMessagesExcuseInstant": "Sofort entschuldigt",
+  "@autoMessagesExcuseInstant": {
+    "description": "autoMessages.excuseInstant"
+  },
+  "autoMessagesFreqCount": "Ab wie vielen Malen",
+  "@autoMessagesFreqCount": {
+    "description": "autoMessages.freqCount"
+  },
+  "autoMessagesFreqDays": "Zeitraum",
+  "@autoMessagesFreqDays": {
+    "description": "autoMessages.freqDays"
+  },
+  "autoMessagesFreqEach": "Jedes Mal",
+  "@autoMessagesFreqEach": {
+    "description": "autoMessages.freqEach"
+  },
+  "autoMessagesFreqHintEach": "Bei jedem passenden Termin.",
+  "@autoMessagesFreqHintEach": {
+    "description": "autoMessages.freqHint.each"
+  },
+  "autoMessagesFreqHintStreak": "Erst beim {count}. Fehlen hintereinander. Danach erst wieder, wenn die Person zwischendurch da war.",
+  "@autoMessagesFreqHintStreak": {
+    "description": "autoMessages.freqHint.streak",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "autoMessagesFreqHintWindow": "Wenn jemand innerhalb von {days} Tagen zum {count}. Mal passt.",
+  "@autoMessagesFreqHintWindow": {
+    "description": "autoMessages.freqHint.window",
+    "placeholders": {
+      "days": {},
+      "count": {}
+    }
+  },
+  "autoMessagesFreqStreak": "In Folge",
+  "@autoMessagesFreqStreak": {
+    "description": "autoMessages.freqStreak"
+  },
+  "autoMessagesFreqStreakShort": "ab {count}× in Folge",
+  "@autoMessagesFreqStreakShort": {
+    "description": "autoMessages.freqStreakShort",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "autoMessagesFreqWindow": "Im Zeitraum",
+  "@autoMessagesFreqWindow": {
+    "description": "autoMessages.freqWindow"
+  },
+  "autoMessagesFreqWindowShort": "ab {count}× in {days} Tagen",
+  "@autoMessagesFreqWindowShort": {
+    "description": "autoMessages.freqWindowShort",
+    "placeholders": {
+      "count": {},
+      "days": {}
+    }
+  },
+  "autoMessagesGeneral": "Allgemein",
+  "@autoMessagesGeneral": {
+    "description": "autoMessages.general"
+  },
+  "autoMessagesGroups": "Gruppen",
+  "@autoMessagesGroups": {
+    "description": "autoMessages.groups"
+  },
+  "autoMessagesGroupsAll": "Nichts ausgewählt: gilt für alle Gruppen.",
+  "@autoMessagesGroupsAll": {
+    "description": "autoMessages.groupsAll"
+  },
+  "autoMessagesGroupsSome": "Gilt nur für Personen aus den ausgewählten Gruppen.",
+  "@autoMessagesGroupsSome": {
+    "description": "autoMessages.groupsSome"
+  },
+  "autoMessagesHistEmpty": "Diese Regel hat noch nichts verschickt.",
+  "@autoMessagesHistEmpty": {
+    "description": "autoMessages.histEmpty"
+  },
+  "autoMessagesHistRead": "gelesen",
+  "@autoMessagesHistRead": {
+    "description": "autoMessages.histRead"
+  },
+  "autoMessagesHistResponses": "Antworten",
+  "@autoMessagesHistResponses": {
+    "description": "autoMessages.histResponses"
+  },
+  "autoMessagesHistRowNone": "Niemand passte",
+  "@autoMessagesHistRowNone": {
+    "description": "autoMessages.histRowNone"
+  },
+  "autoMessagesHistRowNotRecorded": "Nicht verschickt: Anwesenheit wurde nicht erfasst",
+  "@autoMessagesHistRowNotRecorded": {
+    "description": "autoMessages.histRowNotRecorded"
+  },
+  "autoMessagesHistRowSent": "{count, plural, one {{count} Person} other {{count} Personen}} · {read} gelesen · {responses} Antworten",
+  "@autoMessagesHistRowSent": {
+    "description": "autoMessages.histRowSent",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "read": {},
+      "responses": {}
+    }
+  },
+  "autoMessagesHistRowSuspended": "Ausgesetzt von {name}",
+  "@autoMessagesHistRowSuspended": {
+    "description": "autoMessages.histRowSuspended",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "autoMessagesHistSent": "Personen angeschrieben",
+  "@autoMessagesHistSent": {
+    "description": "autoMessages.histSent"
+  },
+  "autoMessagesHistory": "Verlauf",
+  "@autoMessagesHistory": {
+    "description": "autoMessages.history"
+  },
+  "autoMessagesHowOften": "Wie oft?",
+  "@autoMessagesHowOften": {
+    "description": "autoMessages.howOften"
+  },
+  "autoMessagesIntro": "Schicke Mitgliedern automatisch eine Nachricht nach einem Termin, zum Beispiel wenn sie gefehlt haben, ohne sich abzumelden. Alle Regeln sind aus, bis du sie einschaltest.",
+  "@autoMessagesIntro": {
+    "description": "autoMessages.intro"
+  },
+  "autoMessagesLastWeek": "Letzte 7 Tage: {count, plural, one {{count} Person angeschrieben} other {{count} Personen angeschrieben}}",
+  "@autoMessagesLastWeek": {
+    "description": "autoMessages.lastWeek",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "autoMessagesLess": "Weniger",
+  "@autoMessagesLess": {
+    "description": "autoMessages.less"
+  },
+  "autoMessagesLoadFailed": "Automatische Nachrichten konnten nicht geladen werden",
+  "@autoMessagesLoadFailed": {
+    "description": "autoMessages.loadFailed"
+  },
+  "autoMessagesManualBody": "Hallo,\n\nbei {termin} am {datum} wart ihr nicht da und hattet euch nicht abgemeldet.\n\nWenn ihr einen Grund hattet, tragt ihn gern direkt in der App nach. Bitte meldet euch nächstes Mal vorher ab.\nEuer Team von {instanz}",
+  "@autoMessagesManualBody": {
+    "description": "autoMessages.manualBody",
+    "placeholders": {
+      "termin": {},
+      "datum": {},
+      "instanz": {}
+    }
+  },
+  "autoMessagesManualRecipients": "{count, plural, one {{count} unentschuldigte Person} other {{count} unentschuldigte Personen}} dieses Termins",
+  "@autoMessagesManualRecipients": {
+    "description": "autoMessages.manualRecipients",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "autoMessagesManualTitle": "Wir haben euch vermisst",
+  "@autoMessagesManualTitle": {
+    "description": "autoMessages.manualTitle"
+  },
+  "autoMessagesMessage": "Nachricht",
+  "@autoMessagesMessage": {
+    "description": "autoMessages.message"
+  },
+  "autoMessagesMore": "Mehr",
+  "@autoMessagesMore": {
+    "description": "autoMessages.more"
+  },
+  "autoMessagesName": "Name",
+  "@autoMessagesName": {
+    "description": "autoMessages.name"
+  },
+  "autoMessagesNewRule": "Neue Regel",
+  "@autoMessagesNewRule": {
+    "description": "autoMessages.newRule"
+  },
+  "autoMessagesOnlyEmail": "nur E-Mail",
+  "@autoMessagesOnlyEmail": {
+    "description": "autoMessages.onlyEmail"
+  },
+  "autoMessagesOpenTermin": "Zum Termin",
+  "@autoMessagesOpenTermin": {
+    "description": "autoMessages.openTermin"
+  },
+  "autoMessagesPanelNone": "„{rule}“: niemand passte",
+  "@autoMessagesPanelNone": {
+    "description": "autoMessages.panelNone",
+    "placeholders": {
+      "rule": {}
+    }
+  },
+  "autoMessagesPanelNotRecorded": "„{rule}“ nicht verschickt: Anwesenheit wurde nicht erfasst",
+  "@autoMessagesPanelNotRecorded": {
+    "description": "autoMessages.panelNotRecorded",
+    "placeholders": {
+      "rule": {}
+    }
+  },
+  "autoMessagesPanelPending": "„{rule}“ wird gleich geprüft",
+  "@autoMessagesPanelPending": {
+    "description": "autoMessages.panelPending",
+    "placeholders": {
+      "rule": {}
+    }
+  },
+  "autoMessagesPanelPendingHint": "Die Nachricht geht nur raus, wenn die Anwesenheit erfasst ist.",
+  "@autoMessagesPanelPendingHint": {
+    "description": "autoMessages.panelPendingHint"
+  },
+  "autoMessagesPanelResponses": "Rückmeldungen ({count} offen)",
+  "@autoMessagesPanelResponses": {
+    "description": "autoMessages.panelResponses",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "autoMessagesPanelSaysPresent": "Sagt: „Ich war doch da“",
+  "@autoMessagesPanelSaysPresent": {
+    "description": "autoMessages.panelSaysPresent"
+  },
+  "autoMessagesPanelSent": "„{rule}“ ging an {count, plural, one {{count} Person} other {{count} Personen}}",
+  "@autoMessagesPanelSent": {
+    "description": "autoMessages.panelSent",
+    "placeholders": {
+      "rule": {},
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "autoMessagesPanelSuspended": "„{rule}“ ist für diesen Termin ausgesetzt",
+  "@autoMessagesPanelSuspended": {
+    "description": "autoMessages.panelSuspended",
+    "placeholders": {
+      "rule": {}
+    }
+  },
+  "autoMessagesPanelWillSend": "„{rule}“ geht um {time} raus",
+  "@autoMessagesPanelWillSend": {
+    "description": "autoMessages.panelWillSend",
+    "placeholders": {
+      "rule": {},
+      "time": {}
+    }
+  },
+  "autoMessagesPanelWillSendHint": "Bis dahin kannst du die Anwesenheit noch korrigieren.",
+  "@autoMessagesPanelWillSendHint": {
+    "description": "autoMessages.panelWillSendHint"
+  },
+  "autoMessagesPreview": "Vorschau",
+  "@autoMessagesPreview": {
+    "description": "autoMessages.preview"
+  },
+  "autoMessagesPreviewAt": "Versand wäre am {time} gewesen",
+  "@autoMessagesPreviewAt": {
+    "description": "autoMessages.previewAt",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "autoMessagesPreviewExcluded": "Nicht angeschrieben: {excused} abgemeldet, {paused} pausiert",
+  "@autoMessagesPreviewExcluded": {
+    "description": "autoMessages.previewExcluded",
+    "placeholders": {
+      "excused": {},
+      "paused": {}
+    }
+  },
+  "autoMessagesPreviewFailed": "Vorschau konnte nicht geladen werden",
+  "@autoMessagesPreviewFailed": {
+    "description": "autoMessages.previewFailed"
+  },
+  "autoMessagesPreviewHint": "Die Vorschau verschickt nichts. Mit Häufigkeit „In Folge“ zählen auch frühere Termine.",
+  "@autoMessagesPreviewHint": {
+    "description": "autoMessages.previewHint"
+  },
+  "autoMessagesPreviewNoTermine": "Keine passenden Termine in den letzten 60 Tagen.",
+  "@autoMessagesPreviewNoTermine": {
+    "description": "autoMessages.previewNoTermine"
+  },
+  "autoMessagesPreviewNotRecorded": "Übersprungen: Anwesenheit nicht erfasst",
+  "@autoMessagesPreviewNotRecorded": {
+    "description": "autoMessages.previewNotRecorded"
+  },
+  "autoMessagesPreviewWould": "{count, plural, =0 {Niemand hätte die Nachricht bekommen} one {{count} Person hätte die Nachricht bekommen} other {{count} Personen hätten die Nachricht bekommen}}",
+  "@autoMessagesPreviewWould": {
+    "description": "autoMessages.previewWould",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "autoMessagesReasonFamily": "Familie",
+  "@autoMessagesReasonFamily": {
+    "description": "autoMessages.reason.family"
+  },
+  "autoMessagesReasonForgot": "Abmelden vergessen",
+  "@autoMessagesReasonForgot": {
+    "description": "autoMessages.reason.forgot"
+  },
+  "autoMessagesReasonOther": "Sonstiges",
+  "@autoMessagesReasonOther": {
+    "description": "autoMessages.reason.other"
+  },
+  "autoMessagesReasonSick": "Krank",
+  "@autoMessagesReasonSick": {
+    "description": "autoMessages.reason.sick"
+  },
+  "autoMessagesReasonWork": "Arbeit / Schule",
+  "@autoMessagesReasonWork": {
+    "description": "autoMessages.reason.work"
+  },
+  "autoMessagesReject": "Ablehnen",
+  "@autoMessagesReject": {
+    "description": "autoMessages.reject"
+  },
+  "autoMessagesResetToTemplate": "Auf Vorlage zurücksetzen",
+  "@autoMessagesResetToTemplate": {
+    "description": "autoMessages.resetToTemplate"
+  },
+  "autoMessagesRespAddReason": "Grund nachtragen",
+  "@autoMessagesRespAddReason": {
+    "description": "autoMessages.respAddReason"
+  },
+  "autoMessagesRespAlreadyDecided": "Deine Rückmeldung wurde schon bearbeitet",
+  "@autoMessagesRespAlreadyDecided": {
+    "description": "autoMessages.respAlreadyDecided"
+  },
+  "autoMessagesRespChange": "Rückmeldung ändern",
+  "@autoMessagesRespChange": {
+    "description": "autoMessages.respChange"
+  },
+  "autoMessagesRespDone": "Danke! Deine Rückmeldung wurde geschickt.",
+  "@autoMessagesRespDone": {
+    "description": "autoMessages.respDone"
+  },
+  "autoMessagesRespDoneInstant": "Danke! Du bist jetzt entschuldigt.",
+  "@autoMessagesRespDoneInstant": {
+    "description": "autoMessages.respDoneInstant"
+  },
+  "autoMessagesRespExpired": "Für diesen Termin ist keine Rückmeldung mehr möglich",
+  "@autoMessagesRespExpired": {
+    "description": "autoMessages.respExpired"
+  },
+  "autoMessagesRespFailed": "Rückmeldung konnte nicht gesendet werden",
+  "@autoMessagesRespFailed": {
+    "description": "autoMessages.respFailed"
+  },
+  "autoMessagesRespHadReason": "Ich hatte einen Grund",
+  "@autoMessagesRespHadReason": {
+    "description": "autoMessages.respHadReason"
+  },
+  "autoMessagesRespHint": "Die Verantwortlichen sehen deinen Grund als Notiz am Termin.",
+  "@autoMessagesRespHint": {
+    "description": "autoMessages.respHint"
+  },
+  "autoMessagesRespReason": "Grund",
+  "@autoMessagesRespReason": {
+    "description": "autoMessages.respReason"
+  },
+  "autoMessagesRespSend": "Senden",
+  "@autoMessagesRespSend": {
+    "description": "autoMessages.respSend"
+  },
+  "autoMessagesRespStateAccepted": "Übernommen",
+  "@autoMessagesRespStateAccepted": {
+    "description": "autoMessages.respState.accepted"
+  },
+  "autoMessagesRespStatePending": "Wird geprüft",
+  "@autoMessagesRespStatePending": {
+    "description": "autoMessages.respState.pending"
+  },
+  "autoMessagesRespStateRejected": "Nicht übernommen",
+  "@autoMessagesRespStateRejected": {
+    "description": "autoMessages.respState.rejected"
+  },
+  "autoMessagesRespText": "Ergänzung (optional)",
+  "@autoMessagesRespText": {
+    "description": "autoMessages.respText"
+  },
+  "autoMessagesRespTitle": "Rückmeldung",
+  "@autoMessagesRespTitle": {
+    "description": "autoMessages.respTitle"
+  },
+  "autoMessagesRespWasThere": "Ich war doch da",
+  "@autoMessagesRespWasThere": {
+    "description": "autoMessages.respWasThere"
+  },
+  "autoMessagesRespWasThereHint": "Die Verantwortlichen bekommen einen Hinweis und können die Anwesenheit korrigieren.",
+  "@autoMessagesRespWasThereHint": {
+    "description": "autoMessages.respWasThereHint"
+  },
+  "autoMessagesRespWasThereShort": "„Ich war doch da“ geht als Hinweis an die Verantwortlichen.",
+  "@autoMessagesRespWasThereShort": {
+    "description": "autoMessages.respWasThereShort"
+  },
+  "autoMessagesResponses": "Grund nachtragen",
+  "@autoMessagesResponses": {
+    "description": "autoMessages.responses"
+  },
+  "autoMessagesResponsesHint": "Antworten sind bis {days} Tage nach dem Termin möglich. „Ich war doch da“ wird immer erst geprüft.",
+  "@autoMessagesResponsesHint": {
+    "description": "autoMessages.responsesHint",
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "autoMessagesRule": "Regel",
+  "@autoMessagesRule": {
+    "description": "autoMessages.rule"
+  },
+  "autoMessagesRules": "Regeln",
+  "@autoMessagesRules": {
+    "description": "autoMessages.rules"
+  },
+  "autoMessagesSafety": "Es wird nur geschickt, wenn bei dem Termin Anwesenheit erfasst wurde. Abgemeldete, Pausierte und Ausgetretene bekommen nie eine Nachricht.",
+  "@autoMessagesSafety": {
+    "description": "autoMessages.safety"
+  },
+  "autoMessagesSampleFirstName": "Lena",
+  "@autoMessagesSampleFirstName": {
+    "description": "autoMessages.sampleFirstName"
+  },
+  "autoMessagesSampleName": "Lena Muster",
+  "@autoMessagesSampleName": {
+    "description": "autoMessages.sampleName"
+  },
+  "autoMessagesSampleTermin": "Probe",
+  "@autoMessagesSampleTermin": {
+    "description": "autoMessages.sampleTermin"
+  },
+  "autoMessagesSaveFailed": "Speichern fehlgeschlagen",
+  "@autoMessagesSaveFailed": {
+    "description": "autoMessages.saveFailed"
+  },
+  "autoMessagesSaved": "Regel gespeichert",
+  "@autoMessagesSaved": {
+    "description": "autoMessages.saved"
+  },
+  "autoMessagesSetPresent": "Auf anwesend",
+  "@autoMessagesSetPresent": {
+    "description": "autoMessages.setPresent"
+  },
+  "autoMessagesShowPreview": "Vorschau mit den letzten Terminen",
+  "@autoMessagesShowPreview": {
+    "description": "autoMessages.showPreview"
+  },
+  "autoMessagesStartFromTemplate": "Vorlagen zum Start",
+  "@autoMessagesStartFromTemplate": {
+    "description": "autoMessages.startFromTemplate"
+  },
+  "autoMessagesStatus0": "Keine Rückmeldung",
+  "@autoMessagesStatus0": {
+    "description": "autoMessages.status.0"
+  },
+  "autoMessagesStatus1": "Anwesend",
+  "@autoMessagesStatus1": {
+    "description": "autoMessages.status.1"
+  },
+  "autoMessagesStatus2": "Entschuldigt",
+  "@autoMessagesStatus2": {
+    "description": "autoMessages.status.2"
+  },
+  "autoMessagesStatus3": "Zu spät",
+  "@autoMessagesStatus3": {
+    "description": "autoMessages.status.3"
+  },
+  "autoMessagesStatus4": "Unentschuldigt",
+  "@autoMessagesStatus4": {
+    "description": "autoMessages.status.4"
+  },
+  "autoMessagesStatus5": "Verspätet entschuldigt",
+  "@autoMessagesStatus5": {
+    "description": "autoMessages.status.5"
+  },
+  "autoMessagesSuspend": "Diesmal aussetzen",
+  "@autoMessagesSuspend": {
+    "description": "autoMessages.suspend"
+  },
+  "autoMessagesTemplate": "Vorlage",
+  "@autoMessagesTemplate": {
+    "description": "autoMessages.template"
+  },
+  "autoMessagesTemplateHint": "Die Vorlage gibt es in mehreren Sprachen. Jedes Mitglied bekommt sie in seiner App-Sprache.",
+  "@autoMessagesTemplateHint": {
+    "description": "autoMessages.templateHint"
+  },
+  "autoMessagesTitle": "Automatische Nachrichten",
+  "@autoMessagesTitle": {
+    "description": "autoMessages.title"
+  },
+  "autoMessagesTplAbsentBody": "Hallo {vorname},\n\nbei {termin} am {datum} warst du nicht da und hattest dich nicht abgemeldet.\n\nIst alles in Ordnung? Wenn du einen Grund hattest, trag ihn gern direkt in der App nach.\n\nBitte melde dich nächstes Mal vorher ab, damit wir besser planen können.\nDein Team von {instanz}",
+  "@autoMessagesTplAbsentBody": {
+    "description": "autoMessages.tpl.absent.body",
+    "placeholders": {
+      "vorname": {},
+      "termin": {},
+      "datum": {},
+      "instanz": {}
+    }
+  },
+  "autoMessagesTplAbsentTitle": "Wir haben dich vermisst, {vorname}",
+  "@autoMessagesTplAbsentTitle": {
+    "description": "autoMessages.tpl.absent.title",
+    "placeholders": {
+      "vorname": {}
+    }
+  },
+  "autoMessagesTplHintAbsent": "Nach jedem Termin, bei dem jemand unentschuldigt fehlt",
+  "@autoMessagesTplHintAbsent": {
+    "description": "autoMessages.tplHint.absent"
+  },
+  "autoMessagesTplHintLate": "Wenn jemand zu spät kommt, ohne Bescheid zu geben",
+  "@autoMessagesTplHintLate": {
+    "description": "autoMessages.tplHint.late"
+  },
+  "autoMessagesTplHintNoAnswer": "Wenn jemand bis nach dem Termin nicht reagiert hat",
+  "@autoMessagesTplHintNoAnswer": {
+    "description": "autoMessages.tplHint.noAnswer"
+  },
+  "autoMessagesTplHintStreak": "Erst ab dem 2. Fehlen hintereinander",
+  "@autoMessagesTplHintStreak": {
+    "description": "autoMessages.tplHint.streak"
+  },
+  "autoMessagesTplLateBody": "Hallo {vorname},\n\nbei {termin} am {datum} bist du zu spät gekommen, ohne dich vorher zu melden.\n\nWenn du einen Grund hattest, trag ihn gern direkt in der App nach. Gib uns nächstes Mal bitte vorher Bescheid.\nDein Team von {instanz}",
+  "@autoMessagesTplLateBody": {
+    "description": "autoMessages.tpl.late.body",
+    "placeholders": {
+      "vorname": {},
+      "termin": {},
+      "datum": {},
+      "instanz": {}
+    }
+  },
+  "autoMessagesTplLateTitle": "Du warst zu spät, {vorname}",
+  "@autoMessagesTplLateTitle": {
+    "description": "autoMessages.tpl.late.title",
+    "placeholders": {
+      "vorname": {}
+    }
+  },
+  "autoMessagesTplNameAbsent": "Unentschuldigt gefehlt",
+  "@autoMessagesTplNameAbsent": {
+    "description": "autoMessages.tplName.absent"
+  },
+  "autoMessagesTplNameLate": "Zu spät ohne Abmeldung",
+  "@autoMessagesTplNameLate": {
+    "description": "autoMessages.tplName.late"
+  },
+  "autoMessagesTplNameNoAnswer": "Keine Rückmeldung",
+  "@autoMessagesTplNameNoAnswer": {
+    "description": "autoMessages.tplName.noAnswer"
+  },
+  "autoMessagesTplNameStreak": "Mehrmals in Folge gefehlt",
+  "@autoMessagesTplNameStreak": {
+    "description": "autoMessages.tplName.streak"
+  },
+  "autoMessagesTplNoAnswerBody": "Hallo {vorname},\n\nfür {termin} am {datum} haben wir keine Rückmeldung von dir bekommen.\n\nBitte gib künftig in der App Bescheid, ob du kommst. Wenn du einen Grund hattest, kannst du ihn hier nachtragen.\nDein Team von {instanz}",
+  "@autoMessagesTplNoAnswerBody": {
+    "description": "autoMessages.tpl.noAnswer.body",
+    "placeholders": {
+      "vorname": {},
+      "termin": {},
+      "datum": {},
+      "instanz": {}
+    }
+  },
+  "autoMessagesTplNoAnswerTitle": "Keine Rückmeldung zu {termin}",
+  "@autoMessagesTplNoAnswerTitle": {
+    "description": "autoMessages.tpl.noAnswer.title",
+    "placeholders": {
+      "termin": {}
+    }
+  },
+  "autoMessagesTplStreakBody": "Hallo {vorname},\n\ndu hast jetzt {anzahl} Mal in Folge gefehlt, ohne dich abzumelden, zuletzt bei {termin} am {datum}.\n\nIst alles in Ordnung? Melde dich gern bei uns. Wenn du einen Grund hattest, trag ihn direkt in der App nach.\nDein Team von {instanz}",
+  "@autoMessagesTplStreakBody": {
+    "description": "autoMessages.tpl.streak.body",
+    "placeholders": {
+      "vorname": {},
+      "anzahl": {},
+      "termin": {},
+      "datum": {},
+      "instanz": {}
+    }
+  },
+  "autoMessagesTplStreakTitle": "{vorname}, wir vermissen dich",
+  "@autoMessagesTplStreakTitle": {
+    "description": "autoMessages.tpl.streak.title",
+    "placeholders": {
+      "vorname": {}
+    }
+  },
+  "autoMessagesTrigger0": "Keine Rückmeldung",
+  "@autoMessagesTrigger0": {
+    "description": "autoMessages.trigger.0"
+  },
+  "autoMessagesTrigger3": "Zu spät ohne Abmeldung",
+  "@autoMessagesTrigger3": {
+    "description": "autoMessages.trigger.3"
+  },
+  "autoMessagesTrigger4": "Unentschuldigt gefehlt",
+  "@autoMessagesTrigger4": {
+    "description": "autoMessages.trigger.4"
+  },
+  "autoMessagesTriggerHint0": "Status nach dem Termin noch „neutral“",
+  "@autoMessagesTriggerHint0": {
+    "description": "autoMessages.triggerHint.0"
+  },
+  "autoMessagesTriggerHint3": "Status „zu spät“, nicht „verspätet entschuldigt“",
+  "@autoMessagesTriggerHint3": {
+    "description": "autoMessages.triggerHint.3"
+  },
+  "autoMessagesTriggerHint4": "Status „unentschuldigt“ nach dem Termin",
+  "@autoMessagesTriggerHint4": {
+    "description": "autoMessages.triggerHint.4"
+  },
+  "autoMessagesTypesAll": "Nichts ausgewählt: gilt für alle Termintypen.",
+  "@autoMessagesTypesAll": {
+    "description": "autoMessages.typesAll"
+  },
+  "autoMessagesTypesSome": "Gilt nur für die ausgewählten Termintypen.",
+  "@autoMessagesTypesSome": {
+    "description": "autoMessages.typesSome"
+  },
+  "autoMessagesUnreachable": "nicht erreichbar",
+  "@autoMessagesUnreachable": {
+    "description": "autoMessages.unreachable"
+  },
+  "autoMessagesUnsuspend": "Wieder einschalten",
+  "@autoMessagesUnsuspend": {
+    "description": "autoMessages.unsuspend"
+  },
+  "autoMessagesUseTemplate": "Vorlage",
+  "@autoMessagesUseTemplate": {
+    "description": "autoMessages.useTemplate"
+  },
+  "autoMessagesWhen": "Wann wird geschickt?",
+  "@autoMessagesWhen": {
+    "description": "autoMessages.when"
+  },
+  "autoMessagesWhichTermine": "Für welche Termine?",
+  "@autoMessagesWhichTermine": {
+    "description": "autoMessages.whichTermine"
+  },
+  "autoMessagesWhoCanUse": "Admins und Verantwortliche können Regeln anlegen und ändern.",
+  "@autoMessagesWhoCanUse": {
+    "description": "autoMessages.whoCanUse"
+  },
+  "autoMessagesWhoRead": "Wer hat gelesen?",
+  "@autoMessagesWhoRead": {
+    "description": "autoMessages.whoRead"
+  },
+  "autoMessagesWriteUnexcusedMenu": "Unentschuldigte anschreiben ({count})",
+  "@autoMessagesWriteUnexcusedMenu": {
+    "description": "autoMessages.writeUnexcusedMenu",
+    "placeholders": {
+      "count": {}
+    }
   },
   "bellCurrentInstance": "Aktuelle Instanz",
   "@bellCurrentInstance": {
@@ -2777,16 +3704,9 @@
   "@coreFlutterRuleOverall": {
     "description": "core.flutter.rule.overall"
   },
-  "coreFlutterRuleSinceSeasonStart": "seit Saisonstart",
+  "coreFlutterRuleSinceSeasonStart": "seit Saisonbeginn",
   "@coreFlutterRuleSinceSeasonStart": {
     "description": "core.flutter.rule.sinceSeasonStart"
-  },
-  "coreFlutterRuleStatusN": "Status {n}",
-  "@coreFlutterRuleStatusN": {
-    "description": "core.flutter.rule.statusN",
-    "placeholders": {
-      "n": {}
-    }
   },
   "coreFlutterSchoolHolidays": "Schulferien",
   "@coreFlutterSchoolHolidays": {
@@ -4054,6 +4974,10 @@
   "@extraFieldsFlutterLeaveMessage": {
     "description": "extraFields.flutter.leaveMessage"
   },
+  "extraFieldsFlutterUpdatingPersons": "Personen werden aktualisiert...",
+  "@extraFieldsFlutterUpdatingPersons": {
+    "description": "extraFields.flutter.updatingPersons"
+  },
   "extraFieldsForPersons": "Zusätzliche Felder für Personen",
   "@extraFieldsForPersons": {
     "description": "extraFields.forPersons"
@@ -4245,9 +5169,44 @@
       "name": {}
     }
   },
+  "filesDeleteSelectedHeader": "{count, plural, one {{count} Eintrag löschen?} other {{count} Einträge löschen?}}",
+  "@filesDeleteSelectedHeader": {
+    "description": "files.deleteSelectedHeader",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "filesDeleteSelectedMessage": "{count, plural, one {Der ausgewählte Eintrag wird endgültig gelöscht.} other {Die {count} ausgewählten Einträge werden endgültig gelöscht, Ordner mit ihrem ganzen Inhalt.}}",
+  "@filesDeleteSelectedMessage": {
+    "description": "files.deleteSelectedMessage",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "filesDeleteSummary": "{ok} gelöscht, {failed} fehlgeschlagen.",
+  "@filesDeleteSummary": {
+    "description": "files.deleteSummary",
+    "placeholders": {
+      "ok": {},
+      "failed": {}
+    }
+  },
   "filesDeleted": "Eintrag wurde gelöscht.",
   "@filesDeleted": {
     "description": "files.deleted"
+  },
+  "filesDeletedMany": "{count, plural, one {Eintrag wurde gelöscht.} other {{count} Einträge wurden gelöscht.}}",
+  "@filesDeletedMany": {
+    "description": "files.deletedMany",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "filesDescending": "absteigend",
   "@filesDescending": {
@@ -4364,6 +5323,33 @@
   "@filesMove": {
     "description": "files.move"
   },
+  "filesMoveBeingMoved": "Wird verschoben",
+  "@filesMoveBeingMoved": {
+    "description": "filesMove.beingMoved"
+  },
+  "filesMoveChooseTarget": "Wähle einen Zielordner.",
+  "@filesMoveChooseTarget": {
+    "description": "filesMove.chooseTarget"
+  },
+  "filesMoveCollapse": "Zuklappen",
+  "@filesMoveCollapse": {
+    "description": "filesMove.collapse"
+  },
+  "filesMoveCurrentFolder": "Aktueller Ordner",
+  "@filesMoveCurrentFolder": {
+    "description": "filesMove.currentFolder"
+  },
+  "filesMoveExists": "Im Zielordner gibt es schon „{name}“. Nichts verschoben.",
+  "@filesMoveExists": {
+    "description": "files.moveExists",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "filesMoveExpand": "Aufklappen",
+  "@filesMoveExpand": {
+    "description": "filesMove.expand"
+  },
   "filesMoveFailed": "Verschieben fehlgeschlagen: {error}",
   "@filesMoveFailed": {
     "description": "files.moveFailed",
@@ -4371,13 +5357,60 @@
       "error": {}
     }
   },
-  "filesMoveHint": "Zielordner relativ zum Tenant-Root. Leer lassen für Root.",
+  "filesMoveHint": "Tippe auf einen Ordner, um ihn als Ziel zu wählen. Mit dem Pfeil klappst du Unterordner auf.",
   "@filesMoveHint": {
-    "description": "files.moveHint"
+    "description": "filesMove.hint"
+  },
+  "filesMoveMoveHere": "{count, plural, one {Hierher verschieben} other {{count} Einträge hierher verschieben}}",
+  "@filesMoveMoveHere": {
+    "description": "filesMove.moveHere",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "filesMoveRoot": "Dateiablage",
+  "@filesMoveRoot": {
+    "description": "filesMove.root"
+  },
+  "filesMoveSummary": "{ok} verschoben, {skipped} übersprungen (gibt es im Ziel schon), {failed} fehlgeschlagen.",
+  "@filesMoveSummary": {
+    "description": "files.moveSummary",
+    "placeholders": {
+      "ok": {},
+      "skipped": {},
+      "failed": {}
+    }
+  },
+  "filesMoveTarget": "Ziel: {path}",
+  "@filesMoveTarget": {
+    "description": "filesMove.target",
+    "placeholders": {
+      "path": {}
+    }
+  },
+  "filesMoveTitle": "{count, plural, one {Verschieben} other {{count} Einträge verschieben}}",
+  "@filesMoveTitle": {
+    "description": "filesMove.title",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "filesMoved": "Eintrag wurde verschoben.",
   "@filesMoved": {
     "description": "files.moved"
+  },
+  "filesMovedMany": "{count, plural, one {Eintrag wurde verschoben.} other {{count} Einträge wurden verschoben.}}",
+  "@filesMovedMany": {
+    "description": "files.movedMany",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "filesName": "Name",
   "@filesName": {
@@ -4501,6 +5534,35 @@
   "filesSearchType": "<strong>typ:&lt;wert&gt;</strong> · Filtert nach Dateityp oder Art (z. B. <strong>typ:pdf</strong>, <strong>typ:ordner</strong>, <strong>typ:datei</strong>).",
   "@filesSearchType": {
     "description": "files.searchType"
+  },
+  "filesSelect": "Auswählen",
+  "@filesSelect": {
+    "description": "files.select"
+  },
+  "filesSelectAll": "Alle",
+  "@filesSelectAll": {
+    "description": "files.selectAll"
+  },
+  "filesSelectMultiple": "Mehrere auswählen",
+  "@filesSelectMultiple": {
+    "description": "files.selectMultiple"
+  },
+  "filesSelectNone": "Keine",
+  "@filesSelectNone": {
+    "description": "files.selectNone"
+  },
+  "filesSelectedCount": "{count, plural, =0 {Nichts ausgewählt} one {{count} ausgewählt} other {{count} ausgewählt}}",
+  "@filesSelectedCount": {
+    "description": "files.selectedCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "filesSelectionDone": "Auswahl beenden",
+  "@filesSelectionDone": {
+    "description": "files.selectionDone"
   },
   "filesSend": "Senden",
   "@filesSend": {
@@ -4806,14 +5868,6 @@
   "@generalSettingsFlutterOrShort": {
     "description": "generalSettings.flutter.orShort"
   },
-  "generalSettingsFlutterPracticeEnd": "Probenende",
-  "@generalSettingsFlutterPracticeEnd": {
-    "description": "generalSettings.flutter.practiceEnd"
-  },
-  "generalSettingsFlutterPracticeStart": "Probenbeginn",
-  "@generalSettingsFlutterPracticeStart": {
-    "description": "generalSettings.flutter.practiceStart"
-  },
   "generalSettingsFlutterRuleAdded": "Regel hinzugefügt",
   "@generalSettingsFlutterRuleAdded": {
     "description": "generalSettings.flutter.ruleAdded"
@@ -4833,10 +5887,6 @@
   "generalSettingsFlutterRuleUpdated": "Regel aktualisiert",
   "@generalSettingsFlutterRuleUpdated": {
     "description": "generalSettings.flutter.ruleUpdated"
-  },
-  "generalSettingsFlutterStatusCritical": "Status (zählt als kritisch)",
-  "@generalSettingsFlutterStatusCritical": {
-    "description": "generalSettings.flutter.statusCritical"
   },
   "generalSettingsForeignInfo": "Info-Text für fremde Termine",
   "@generalSettingsForeignInfo": {
@@ -6037,6 +7087,19 @@
       "count": {}
     }
   },
+  "messagesAutoActive": "{count, plural, =0 {Keine Regel aktiv} one {{count} Regel aktiv} other {{count} Regeln aktiv}}",
+  "@messagesAutoActive": {
+    "description": "messages.autoActive",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "messagesAutoEntry": "Automatische Nachrichten",
+  "@messagesAutoEntry": {
+    "description": "messages.autoEntry"
+  },
   "messagesCountsFailed": "Die Empfänger konnten nicht geladen werden.",
   "@messagesCountsFailed": {
     "description": "messages.countsFailed"
@@ -6387,6 +7450,51 @@
   "@messagesWriteFirst": {
     "description": "messages.writeFirst"
   },
+  "navClose": "Menü schließen",
+  "@navClose": {
+    "description": "nav.close"
+  },
+  "navCollapse": "Seitenleiste einklappen",
+  "@navCollapse": {
+    "description": "nav.collapse"
+  },
+  "navExpand": "Seitenleiste ausklappen",
+  "@navExpand": {
+    "description": "nav.expand"
+  },
+  "navGroupAccount": "Konto",
+  "@navGroupAccount": {
+    "description": "nav.groupAccount"
+  },
+  "navGroupAdmin": "Verwaltung",
+  "@navGroupAdmin": {
+    "description": "nav.groupAdmin"
+  },
+  "navGroupOverview": "Übersicht",
+  "@navGroupOverview": {
+    "description": "nav.groupOverview"
+  },
+  "navGroupTeam": "Team",
+  "@navGroupTeam": {
+    "description": "nav.groupTeam"
+  },
+  "navInstances": "{count, plural, one {{count} Instanz} other {{count} Instanzen}}",
+  "@navInstances": {
+    "description": "nav.instances",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "navLabel": "Hauptnavigation",
+  "@navLabel": {
+    "description": "nav.label"
+  },
+  "navShortcut": "Strg/⌘ + B",
+  "@navShortcut": {
+    "description": "nav.shortcut"
+  },
   "notifAnnouncements": "Mitteilungen",
   "@notifAnnouncements": {
     "description": "notif.announcements"
@@ -6601,6 +7709,10 @@
   "orgFieldsApplyChanges": "Änderungen übernehmen",
   "@orgFieldsApplyChanges": {
     "description": "orgFields.applyChanges"
+  },
+  "orgFieldsFlutterClearDefault": "Standardwert entfernen",
+  "@orgFieldsFlutterClearDefault": {
+    "description": "orgFields.flutter.clearDefault"
   },
   "orgFieldsFlutterFirstOptionDefault": "Erste Option ist der Standardwert",
   "@orgFieldsFlutterFirstOptionDefault": {
@@ -7622,6 +8734,14 @@
   "peopleFlutterHint": "Hinweis",
   "@peopleFlutterHint": {
     "description": "people.flutter.hint"
+  },
+  "peopleFlutterImportNotAssigned": "{name}: gespeichert, aber nicht zu den Terminen hinzugefügt ({error})",
+  "@peopleFlutterImportNotAssigned": {
+    "description": "people.flutter.importNotAssigned",
+    "placeholders": {
+      "name": {},
+      "error": {}
+    }
   },
   "peopleFlutterLastNameRequired": "Nachname ist erforderlich",
   "@peopleFlutterLastNameRequired": {
@@ -9046,6 +10166,14 @@
   "@personVoiceLeaderStatusOnly": {
     "description": "person.voiceLeaderStatusOnly"
   },
+  "planViewerOpenScores": "Noten öffnen",
+  "@planViewerOpenScores": {
+    "description": "planViewer.openScores"
+  },
+  "planningAddAgain": "Erneut hinzufügen",
+  "@planningAddAgain": {
+    "description": "planning.addAgain"
+  },
   "planningAddAnotherPlan": "Weiteren Ablaufplan anlegen",
   "@planningAddAnotherPlan": {
     "description": "planning.addAnotherPlan"
@@ -9230,6 +10358,14 @@
   "planningCurrent": "Aktuelle",
   "@planningCurrent": {
     "description": "planning.current"
+  },
+  "planningCurrentSongsAlreadyAddedHeader": "Bereits hinzugefügt",
+  "@planningCurrentSongsAlreadyAddedHeader": {
+    "description": "planning.currentSongsAlreadyAddedHeader"
+  },
+  "planningCurrentSongsAlreadyAddedMessage": "Alle aktuellen Werke sind schon in diesem Ablaufplan. Möchtest du sie noch einmal hinzufügen?",
+  "@planningCurrentSongsAlreadyAddedMessage": {
+    "description": "planning.currentSongsAlreadyAddedMessage"
   },
   "planningDefaultTitle": "Standardtitel verwenden",
   "@planningDefaultTitle": {
@@ -9579,6 +10715,10 @@
   "planningNext": "Nächste",
   "@planningNext": {
     "description": "planning.next"
+  },
+  "planningNoCurrentSongs": "Keine aktuellen Werke vorhanden",
+  "@planningNoCurrentSongs": {
+    "description": "planning.noCurrentSongs"
   },
   "planningNoPlan": "Kein Plan verfügbar",
   "@planningNoPlan": {
@@ -11039,7 +12179,7 @@
       }
     }
   },
-  "redesignCreateDeadline": "Abmeldeschluss",
+  "redesignCreateDeadline": "Antwort bis",
   "@redesignCreateDeadline": {
     "description": "redesign.create.deadline"
   },
@@ -11051,7 +12191,7 @@
   "@redesignCreateDeadline2d": {
     "description": "redesign.create.deadline2d"
   },
-  "redesignCreateDeadlineHint": "Danach können sich Mitglieder nicht mehr selbst an- oder abmelden.",
+  "redesignCreateDeadlineHint": "Danach kann man nicht mehr zusagen, absagen geht weiter.",
   "@redesignCreateDeadlineHint": {
     "description": "redesign.create.deadlineHint"
   },
@@ -11340,6 +12480,26 @@
   "@redesignCreateType": {
     "description": "redesign.create.type"
   },
+  "redesignEventAddPersonShort": "Person",
+  "@redesignEventAddPersonShort": {
+    "description": "redesign.event.addPersonShort"
+  },
+  "redesignEventAddTask": "Aufgabe",
+  "@redesignEventAddTask": {
+    "description": "redesign.event.addTask"
+  },
+  "redesignEventAddTaskLabel": "Aufgabe hinzufügen",
+  "@redesignEventAddTaskLabel": {
+    "description": "redesign.event.addTaskLabel"
+  },
+  "redesignEventAddWork": "Werk",
+  "@redesignEventAddWork": {
+    "description": "redesign.event.addWork"
+  },
+  "redesignEventAddWorkLabel": "Werk hinzufügen",
+  "@redesignEventAddWorkLabel": {
+    "description": "redesign.event.addWorkLabel"
+  },
   "redesignEventAllDone": "{count, plural, one {1 Person als anwesend} other {{count} Personen als anwesend}}",
   "@redesignEventAllDone": {
     "description": "redesign.event.allDone",
@@ -11353,17 +12513,74 @@
   "@redesignEventAllOpenPresent": {
     "description": "redesign.event.allOpenPresent"
   },
+  "redesignEventAllPresent": "{count, plural, one {1 anwesend} other {Alle {count} anwesend}}",
+  "@redesignEventAllPresent": {
+    "description": "redesign.event.allPresent",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignEventAllSettled": "Alles erledigt",
+  "@redesignEventAllSettled": {
+    "description": "redesign.event.allSettled"
+  },
   "redesignEventAnswers": "Rückmeldungen",
   "@redesignEventAnswers": {
     "description": "redesign.event.answers"
+  },
+  "redesignEventAnswersTitle": "Rückmeldungen mit Grund",
+  "@redesignEventAnswersTitle": {
+    "description": "redesign.event.answersTitle"
+  },
+  "redesignEventArchiveHint": "Archivieren unter •••",
+  "@redesignEventArchiveHint": {
+    "description": "redesign.event.archiveHint"
+  },
+  "redesignEventAttendancePersons": "{count, plural, one {1 Person} other {{count} Personen}}",
+  "@redesignEventAttendancePersons": {
+    "description": "redesign.event.attendancePersons",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "redesignEventBusyLeave": "Bitte warte, bis alles gespeichert ist.",
   "@redesignEventBusyLeave": {
     "description": "redesign.event.busyLeave"
   },
+  "redesignEventByGroup": "Nach Stimme",
+  "@redesignEventByGroup": {
+    "description": "redesign.event.byGroup"
+  },
+  "redesignEventChangeConductorHint": "Aus der Gruppe oder Gastdirigent",
+  "@redesignEventChangeConductorHint": {
+    "description": "redesign.event.changeConductorHint"
+  },
+  "redesignEventChangedBy": "Zuletzt geändert von {name} · {when}",
+  "@redesignEventChangedBy": {
+    "description": "redesign.event.changedBy",
+    "placeholders": {
+      "name": {},
+      "when": {}
+    }
+  },
+  "redesignEventClosing": "Abschluss",
+  "@redesignEventClosing": {
+    "description": "redesign.event.closing"
+  },
   "redesignEventCountAbsent": "{count} fehlt",
   "@redesignEventCountAbsent": {
     "description": "redesign.event.countAbsent",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventCountAbsentStarted": "{count} abwesend",
+  "@redesignEventCountAbsentStarted": {
+    "description": "redesign.event.countAbsentStarted",
     "placeholders": {
       "count": {}
     }
@@ -11375,9 +12592,30 @@
       "count": {}
     }
   },
+  "redesignEventCountExcusedStarted": "{count} entschuldigt",
+  "@redesignEventCountExcusedStarted": {
+    "description": "redesign.event.countExcusedStarted",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventCountHere": "{count} anwesend",
+  "@redesignEventCountHere": {
+    "description": "redesign.event.countHere",
+    "placeholders": {
+      "count": {}
+    }
+  },
   "redesignEventCountLate": "{count} später",
   "@redesignEventCountLate": {
     "description": "redesign.event.countLate",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventCountLateStarted": "{count} verspätet",
+  "@redesignEventCountLateStarted": {
+    "description": "redesign.event.countLateStarted",
     "placeholders": {
       "count": {}
     }
@@ -11407,13 +12645,80 @@
   "@redesignEventDelete": {
     "description": "redesign.event.delete"
   },
+  "redesignEventDeleteHint": "„Termin löschen“ steht ganz unten in „Bearbeiten“.",
+  "@redesignEventDeleteHint": {
+    "description": "redesign.event.deleteHint"
+  },
+  "redesignEventDeleteTask": "Aufgabe löschen",
+  "@redesignEventDeleteTask": {
+    "description": "redesign.event.deleteTask"
+  },
   "redesignEventDeleted": "Termin gelöscht",
   "@redesignEventDeleted": {
     "description": "redesign.event.deleted"
   },
+  "redesignEventDescription": "Beschreibung & Anhang",
+  "@redesignEventDescription": {
+    "description": "redesign.event.description"
+  },
   "redesignEventDetails": "Alle Details",
   "@redesignEventDetails": {
     "description": "redesign.event.details"
+  },
+  "redesignEventEdit": "Bearbeiten",
+  "@redesignEventEdit": {
+    "description": "redesign.event.edit"
+  },
+  "redesignEventEditBack": "Termin",
+  "@redesignEventEditBack": {
+    "description": "redesign.eventEdit.back"
+  },
+  "redesignEventEditBasics": "Grunddaten",
+  "@redesignEventEditBasics": {
+    "description": "redesign.event.editBasics"
+  },
+  "redesignEventEditDeadlineLocked": "Der Termin liegt in der Vergangenheit.",
+  "@redesignEventEditDeadlineLocked": {
+    "description": "redesign.eventEdit.deadlineLocked"
+  },
+  "redesignEventEditDeadlinePick": "Datum und Uhrzeit wählen",
+  "@redesignEventEditDeadlinePick": {
+    "description": "redesign.eventEdit.deadlinePick"
+  },
+  "redesignEventEditDeadlineSuggested": "Vorschlag: {date}",
+  "@redesignEventEditDeadlineSuggested": {
+    "description": "redesign.eventEdit.deadlineSuggested",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignEventEditFolderNone": "Keiner",
+  "@redesignEventEditFolderNone": {
+    "description": "redesign.eventEdit.folderNone"
+  },
+  "redesignEventEditHint": "Änderungen werden sofort gespeichert. Werke und Ablauf änderst du im Reiter Programm, die Vorbereitung im Überblick.",
+  "@redesignEventEditHint": {
+    "description": "redesign.eventEdit.hint"
+  },
+  "redesignEventEditSaved": "Gespeichert",
+  "@redesignEventEditSaved": {
+    "description": "redesign.eventEdit.saved"
+  },
+  "redesignEventEditTitle": "Termin bearbeiten",
+  "@redesignEventEditTitle": {
+    "description": "redesign.eventEdit.title"
+  },
+  "redesignEventExportExcel": "Als Excel exportieren",
+  "@redesignEventExportExcel": {
+    "description": "redesign.event.exportExcel"
+  },
+  "redesignEventForMembers": "Für Mitglieder",
+  "@redesignEventForMembers": {
+    "description": "redesign.event.forMembers"
+  },
+  "redesignEventHide": "Weniger",
+  "@redesignEventHide": {
+    "description": "redesign.event.hide"
   },
   "redesignEventInvited": "{count} eingeladen",
   "@redesignEventInvited": {
@@ -11426,6 +12731,14 @@
   "@redesignEventKeyboardHint": {
     "description": "redesign.event.keyboardHint"
   },
+  "redesignEventLeadersOnly": "Nur Leitung",
+  "@redesignEventLeadersOnly": {
+    "description": "redesign.event.leadersOnly"
+  },
+  "redesignEventMenu": "Weitere Aktionen",
+  "@redesignEventMenu": {
+    "description": "redesign.event.menu"
+  },
   "redesignEventMore": "Alle Details und Bearbeiten",
   "@redesignEventMore": {
     "description": "redesign.event.more"
@@ -11433,6 +12746,15 @@
   "redesignEventMoreHint": "Ablauf, Checkliste, Werke und Notizen",
   "@redesignEventMoreHint": {
     "description": "redesign.event.moreHint"
+  },
+  "redesignEventMorePresent": "{count, plural, one {1 weitere anwesend} other {{count} weitere anwesend}}",
+  "@redesignEventMorePresent": {
+    "description": "redesign.event.morePresent",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "redesignEventMoreStatus": "Weitere Status und Notiz für {name}",
   "@redesignEventMoreStatus": {
@@ -11445,6 +12767,20 @@
   "@redesignEventNeutralHint": {
     "description": "redesign.event.neutralHint"
   },
+  "redesignEventNewestFirst": "{title} · neueste zuerst",
+  "@redesignEventNewestFirst": {
+    "description": "redesign.event.newestFirst",
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "redesignEventNextInPlan": "Danach: {items}",
+  "@redesignEventNextInPlan": {
+    "description": "redesign.event.nextInPlan",
+    "placeholders": {
+      "items": {}
+    }
+  },
   "redesignEventNoMatch": "Niemand passt zur Suche.",
   "@redesignEventNoMatch": {
     "description": "redesign.event.noMatch"
@@ -11452,6 +12788,14 @@
   "redesignEventNoPersons": "Für diesen Termin sind noch keine Personen eingetragen.",
   "@redesignEventNoPersons": {
     "description": "redesign.event.noPersons"
+  },
+  "redesignEventNoPlanYet": "Noch kein Ablauf",
+  "@redesignEventNoPlanYet": {
+    "description": "redesign.event.noPlanYet"
+  },
+  "redesignEventNoReason": "ohne Grund",
+  "@redesignEventNoReason": {
+    "description": "redesign.event.noReason"
   },
   "redesignEventNotFound": "Dieser Termin wurde nicht gefunden.",
   "@redesignEventNotFound": {
@@ -11465,13 +12809,146 @@
   "@redesignEventNoteHint": {
     "description": "redesign.event.noteHint"
   },
+  "redesignEventNowInPlan": "Jetzt im Ablauf · bis {time}",
+  "@redesignEventNowInPlan": {
+    "description": "redesign.event.nowInPlan",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "redesignEventPhaseArchived": "Archiviert",
+  "@redesignEventPhaseArchived": {
+    "description": "redesign.event.phaseArchived"
+  },
+  "redesignEventPhaseRunning": "Läuft · seit {time}",
+  "@redesignEventPhaseRunning": {
+    "description": "redesign.event.phaseRunning",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "redesignEventPhaseRunningShort": "Läuft",
+  "@redesignEventPhaseRunningShort": {
+    "description": "redesign.event.phaseRunningShort"
+  },
+  "redesignEventPhaseToday": "Heute {time}",
+  "@redesignEventPhaseToday": {
+    "description": "redesign.event.phaseToday",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "redesignEventPhaseYesterday": "Gestern",
+  "@redesignEventPhaseYesterday": {
+    "description": "redesign.event.phaseYesterday"
+  },
   "redesignEventPlan": "Ablauf ansehen",
   "@redesignEventPlan": {
     "description": "redesign.event.plan"
   },
+  "redesignEventPlanCreate": "Ablauf anlegen",
+  "@redesignEventPlanCreate": {
+    "description": "redesign.event.planCreate"
+  },
+  "redesignEventPlanEdit": "Ablauf bearbeiten",
+  "@redesignEventPlanEdit": {
+    "description": "redesign.event.planEdit"
+  },
+  "redesignEventPlanEditHint": "Punkte, Zeiten, PDF und Telegram",
+  "@redesignEventPlanEditHint": {
+    "description": "redesign.event.planEditHint"
+  },
+  "redesignEventPlanEditShort": "Bearbeiten",
+  "@redesignEventPlanEditShort": {
+    "description": "redesign.event.planEditShort"
+  },
   "redesignEventPlanHint": "Ablaufplan, am Termin-Tag live",
   "@redesignEventPlanHint": {
     "description": "redesign.event.planHint"
+  },
+  "redesignEventPlanLive": "Ablauf live",
+  "@redesignEventPlanLive": {
+    "description": "redesign.event.planLive"
+  },
+  "redesignEventPlanMinutes": "{count} Min",
+  "@redesignEventPlanMinutes": {
+    "description": "redesign.event.planMinutes",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventPlanNowPill": "jetzt",
+  "@redesignEventPlanNowPill": {
+    "description": "redesign.event.planNowPill"
+  },
+  "redesignEventPlanSection": "Ablauf",
+  "@redesignEventPlanSection": {
+    "description": "redesign.event.planSection"
+  },
+  "redesignEventPlanShare": "Für Mitglieder sichtbar",
+  "@redesignEventPlanShare": {
+    "description": "redesign.event.planShare"
+  },
+  "redesignEventPlanShareHint": "Mitglieder sehen den Ablauf beim Termin",
+  "@redesignEventPlanShareHint": {
+    "description": "redesign.event.planShareHint"
+  },
+  "redesignEventPlanShared": "Ablauf für alle sichtbar",
+  "@redesignEventPlanShared": {
+    "description": "redesign.event.planShared"
+  },
+  "redesignEventPrep": "Vorbereitung · {done} von {total} erledigt",
+  "@redesignEventPrep": {
+    "description": "redesign.event.prep",
+    "placeholders": {
+      "done": {},
+      "total": {}
+    }
+  },
+  "redesignEventPresentOf": "{present} von {total} · {percent} %",
+  "@redesignEventPresentOf": {
+    "description": "redesign.event.presentOf",
+    "placeholders": {
+      "present": {},
+      "total": {},
+      "percent": {}
+    }
+  },
+  "redesignEventProgram": "Programm",
+  "@redesignEventProgram": {
+    "description": "redesign.event.program"
+  },
+  "redesignEventProgramMore": "{names} und {count} weitere",
+  "@redesignEventProgramMore": {
+    "description": "redesign.event.programMore",
+    "placeholders": {
+      "names": {},
+      "count": {}
+    }
+  },
+  "redesignEventProgramPlan": "Ablauf {range}",
+  "@redesignEventProgramPlan": {
+    "description": "redesign.event.programPlan",
+    "placeholders": {
+      "range": {}
+    }
+  },
+  "redesignEventProgramWorks": "{count, plural, one {1 Werk} other {{count} Werke}}",
+  "@redesignEventProgramWorks": {
+    "description": "redesign.event.programWorks",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignEventRecord": "Anwesenheit eintragen",
+  "@redesignEventRecord": {
+    "description": "redesign.event.record"
+  },
+  "redesignEventRecordSearchHint": "Wer fehlt? Name suchen",
+  "@redesignEventRecordSearchHint": {
+    "description": "redesign.event.recordSearchHint"
   },
   "redesignEventRegisterEmpty": "{group}: 0 von {count} da.",
   "@redesignEventRegisterEmpty": {
@@ -11491,6 +12968,33 @@
       "names": {}
     }
   },
+  "redesignEventRegisterPresent": "{present} von {total} da",
+  "@redesignEventRegisterPresent": {
+    "description": "redesign.event.registerPresent",
+    "placeholders": {
+      "present": {},
+      "total": {}
+    }
+  },
+  "redesignEventRemindOpen": "Offene erinnern",
+  "@redesignEventRemindOpen": {
+    "description": "redesign.event.remindOpen"
+  },
+  "redesignEventRemoveFromEvent": "Aus Termin entfernen",
+  "@redesignEventRemoveFromEvent": {
+    "description": "redesign.event.removeFromEvent"
+  },
+  "redesignEventRemoveHint": "{name} taucht in diesem Termin nicht mehr auf",
+  "@redesignEventRemoveHint": {
+    "description": "redesign.event.removeHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignEventRemoveWork": "Werk entfernen",
+  "@redesignEventRemoveWork": {
+    "description": "redesign.event.removeWork"
+  },
   "redesignEventSaving": "Wird gespeichert …",
   "@redesignEventSaving": {
     "description": "redesign.event.saving"
@@ -11507,21 +13011,56 @@
   "@redesignEventSearchHint": {
     "description": "redesign.event.searchHint"
   },
-  "redesignEventSignouts": "Abmeldungen",
-  "@redesignEventSignouts": {
-    "description": "redesign.event.signouts"
+  "redesignEventSectionCount": "{title} · {count}",
+  "@redesignEventSectionCount": {
+    "description": "redesign.event.sectionCount",
+    "placeholders": {
+      "title": {},
+      "count": {}
+    }
+  },
+  "redesignEventShow": "Zeigen",
+  "@redesignEventShow": {
+    "description": "redesign.event.show"
+  },
+  "redesignEventShowAll": "Alle anzeigen ({count})",
+  "@redesignEventShowAll": {
+    "description": "redesign.event.showAll",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventSignedOut": "Abgemeldet",
+  "@redesignEventSignedOut": {
+    "description": "redesign.event.signedOut"
   },
   "redesignEventStatus": "Status",
   "@redesignEventStatus": {
     "description": "redesign.event.status"
   },
+  "redesignEventStatusOverviewHint": "Alle Antworten nach Stimme und Status",
+  "@redesignEventStatusOverviewHint": {
+    "description": "redesign.event.statusOverviewHint"
+  },
   "redesignEventTabOverview": "Überblick",
   "@redesignEventTabOverview": {
     "description": "redesign.event.tabOverview"
   },
+  "redesignEventTabProgram": "Programm",
+  "@redesignEventTabProgram": {
+    "description": "redesign.event.tabProgram"
+  },
   "redesignEventTabRecord": "Anwesenheit",
   "@redesignEventTabRecord": {
     "description": "redesign.event.tabRecord"
+  },
+  "redesignEventToPerson": "Zur Person",
+  "@redesignEventToPerson": {
+    "description": "redesign.event.toPerson"
+  },
+  "redesignEventToWorkHint": "Noten und Stimmen",
+  "@redesignEventToWorkHint": {
+    "description": "redesign.event.toWorkHint"
   },
   "redesignEventToastReset": "{name}: zurückgesetzt",
   "@redesignEventToastReset": {
@@ -11545,6 +13084,32 @@
   "redesignEventUndone": "Rückgängig gemacht",
   "@redesignEventUndone": {
     "description": "redesign.event.undone"
+  },
+  "redesignEventWorkNumber": "Nr. {number}",
+  "@redesignEventWorkNumber": {
+    "description": "redesign.event.workNumber",
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "redesignEventWorkRemoved": "{name} entfernt",
+  "@redesignEventWorkRemoved": {
+    "description": "redesign.event.workRemoved",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignEventWorks": "Werke",
+  "@redesignEventWorks": {
+    "description": "redesign.event.works"
+  },
+  "redesignEventWorksLoadFailed": "Die Werke konnten nicht geladen werden.",
+  "@redesignEventWorksLoadFailed": {
+    "description": "redesign.event.worksLoadFailed"
+  },
+  "redesignEventYesterday": "gestern",
+  "@redesignEventYesterday": {
+    "description": "redesign.event.yesterday"
   },
   "redesignEventsAbsent": "Abwesend …",
   "@redesignEventsAbsent": {
@@ -11808,7 +13373,7 @@
       "mod": {}
     }
   },
-  "redesignFilesTitle": "Dateien",
+  "redesignFilesTitle": "Noten & Dateien",
   "@redesignFilesTitle": {
     "description": "redesign.files.title"
   },
@@ -11827,6 +13392,70 @@
   "redesignFilesZipPreparing": "ZIP wird erstellt …",
   "@redesignFilesZipPreparing": {
     "description": "redesign.files.zipPreparing"
+  },
+  "redesignFolderAll": "Alle Werke · {count}",
+  "@redesignFolderAll": {
+    "description": "redesign.folder.all",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignFolderEmpty": "Für {name} gibt es noch keine Noten.",
+  "@redesignFolderEmpty": {
+    "description": "redesign.folder.empty",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignFolderMissing": "fehlt",
+  "@redesignFolderMissing": {
+    "description": "redesign.folder.missing"
+  },
+  "redesignFolderNext": "Als Nächstes · {count}",
+  "@redesignFolderNext": {
+    "description": "redesign.folder.next",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignFolderNoGroup": "Dir ist noch keine Stimme zugeordnet. Wähle eine Stimme, um ihre Noten zu sehen.",
+  "@redesignFolderNoGroup": {
+    "description": "redesign.folder.noGroup"
+  },
+  "redesignFolderNoPart": "Keine Noten für {name}",
+  "@redesignFolderNoPart": {
+    "description": "redesign.folder.noPart",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignFolderNothingNext": "Für die nächsten Termine sind noch keine Werke geplant.",
+  "@redesignFolderNothingNext": {
+    "description": "redesign.folder.nothingNext"
+  },
+  "redesignFolderOpen": "Als ein PDF öffnen",
+  "@redesignFolderOpen": {
+    "description": "redesign.folder.open"
+  },
+  "redesignFolderOpenHint": "Zum Ansehen, Speichern oder Drucken",
+  "@redesignFolderOpenHint": {
+    "description": "redesign.folder.openHint"
+  },
+  "redesignFolderOther": "Andere Stimme",
+  "@redesignFolderOther": {
+    "description": "redesign.folder.other"
+  },
+  "redesignFolderPick": "Stimme wählen",
+  "@redesignFolderPick": {
+    "description": "redesign.folder.pick"
+  },
+  "redesignFolderTitle": "Meine Mappe",
+  "@redesignFolderTitle": {
+    "description": "redesign.folder.title"
+  },
+  "redesignFolderTitleLeads": "Mappen",
+  "@redesignFolderTitleLeads": {
+    "description": "redesign.folder.titleLeads"
   },
   "redesignGroupsLoadFailed": "Deine Gruppen konnten nicht geladen werden.",
   "@redesignGroupsLoadFailed": {
@@ -12177,6 +13806,10 @@
   "redesignImportErrorNotZip": "Die Datei ist keine ZIP-Datei oder beschädigt.",
   "@redesignImportErrorNotZip": {
     "description": "redesign.import.errorNotZip"
+  },
+  "redesignImportErrorOtherLibrary": "Diese Gruppe zeigt die Werke einer anderen Gruppe. Noten importieren geht nur in der Gruppe, der die Werke gehören.",
+  "@redesignImportErrorOtherLibrary": {
+    "description": "redesign.import.errorOtherLibrary"
   },
   "redesignImportErrorTooLargeWeb": "Die ZIP-Dateien sind zusammen größer als 1 GB. Das geht im Browser nicht. Nimm den Google-Drive-Link oder die App.",
   "@redesignImportErrorTooLargeWeb": {
@@ -13198,6 +14831,31 @@
   "@redesignNotifTelegramDisconnect": {
     "description": "redesign.notif.telegramDisconnect"
   },
+  "redesignOwnAnswerDays": "{count, plural, =0 {Du kannst heute noch antworten.} one {Du kannst noch 1 Tag antworten.} other {Du kannst noch {count} Tage antworten.}}",
+  "@redesignOwnAnswerDays": {
+    "description": "redesign.own.answerDays",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignOwnAskReason": "Die Leitung fragt nach dem Grund.",
+  "@redesignOwnAskReason": {
+    "description": "redesign.own.askReason"
+  },
+  "redesignOwnComeLater": "Komme später",
+  "@redesignOwnComeLater": {
+    "description": "redesign.own.comeLater"
+  },
+  "redesignOwnComingLater": "Du kommst später",
+  "@redesignOwnComingLater": {
+    "description": "redesign.own.comingLater"
+  },
+  "redesignOwnIn": "Du bist dabei",
+  "@redesignOwnIn": {
+    "description": "redesign.own.in"
+  },
   "redesignOwnInfos": "Infos zum Termin",
   "@redesignOwnInfos": {
     "description": "redesign.own.infos"
@@ -13206,13 +14864,86 @@
   "@redesignOwnMore": {
     "description": "redesign.own.more"
   },
+  "redesignOwnNoAnswer": "Noch keine Antwort",
+  "@redesignOwnNoAnswer": {
+    "description": "redesign.own.noAnswer"
+  },
+  "redesignOwnNoNotes": "Keine Noten",
+  "@redesignOwnNoNotes": {
+    "description": "redesign.own.noNotes"
+  },
+  "redesignOwnNoNotesFor": "Für deine Stimme sind keine Noten hinterlegt.",
+  "@redesignOwnNoNotesFor": {
+    "description": "redesign.own.noNotesFor"
+  },
   "redesignOwnNotFound": "Dieser Termin ist nicht mehr in deiner Liste.",
   "@redesignOwnNotFound": {
     "description": "redesign.own.notFound"
   },
+  "redesignOwnNotRecorded": "Nicht erfasst",
+  "@redesignOwnNotRecorded": {
+    "description": "redesign.own.notRecorded"
+  },
+  "redesignOwnNoteToLeaders": "Notiz an die Leitung",
+  "@redesignOwnNoteToLeaders": {
+    "description": "redesign.own.noteToLeaders"
+  },
+  "redesignOwnOpenMine": "Deine Noten öffnen",
+  "@redesignOwnOpenMine": {
+    "description": "redesign.own.openMine"
+  },
+  "redesignOwnPlanAll": "Ganz ansehen",
+  "@redesignOwnPlanAll": {
+    "description": "redesign.own.planAll"
+  },
+  "redesignOwnPlanLive": "Live-Ansicht",
+  "@redesignOwnPlanLive": {
+    "description": "redesign.own.planLive"
+  },
+  "redesignOwnPlanMore": "{count, plural, one {und 1 weiterer Punkt} other {und {count} weitere Punkte}}",
+  "@redesignOwnPlanMore": {
+    "description": "redesign.own.planMore",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignOwnPlanned": "Du bist eingeplant",
+  "@redesignOwnPlanned": {
+    "description": "redesign.own.planned"
+  },
+  "redesignOwnPrintMine": "Meine Noten als ein PDF",
+  "@redesignOwnPrintMine": {
+    "description": "redesign.own.printMine"
+  },
+  "redesignOwnPrintMineHint": "{count} von {total} Werken",
+  "@redesignOwnPrintMineHint": {
+    "description": "redesign.own.printMineHint",
+    "placeholders": {
+      "count": {},
+      "total": {}
+    }
+  },
+  "redesignOwnProgramPending": "Das Programm steht noch nicht fest.",
+  "@redesignOwnProgramPending": {
+    "description": "redesign.own.programPending"
+  },
   "redesignOwnRoute": "Route",
   "@redesignOwnRoute": {
     "description": "redesign.own.route"
+  },
+  "redesignOwnSignOut": "Abmelden",
+  "@redesignOwnSignOut": {
+    "description": "redesign.own.signOut"
+  },
+  "redesignOwnYouConduct": "Du dirigierst",
+  "@redesignOwnYouConduct": {
+    "description": "redesign.own.youConduct"
+  },
+  "redesignOwnYourAttendance": "Deine Anwesenheit",
+  "@redesignOwnYourAttendance": {
+    "description": "redesign.own.yourAttendance"
   },
   "redesignParentsAllKids": "Alle Kinder",
   "@redesignParentsAllKids": {
@@ -13364,6 +15095,353 @@
   "redesignPersonTomorrow": "morgen",
   "@redesignPersonTomorrow": {
     "description": "redesign.person.tomorrow"
+  },
+  "redesignPlanAdd": "Punkt hinzufügen",
+  "@redesignPlanAdd": {
+    "description": "redesign.plan.add"
+  },
+  "redesignPlanAddAfter": "Wird nach „{name}“ eingefügt",
+  "@redesignPlanAddAfter": {
+    "description": "redesign.plan.addAfter",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPlanAddBlock": "Block",
+  "@redesignPlanAddBlock": {
+    "description": "redesign.plan.addBlock"
+  },
+  "redesignPlanAddBlockHint": "Fasst mehrere Punkte zusammen",
+  "@redesignPlanAddBlockHint": {
+    "description": "redesign.plan.addBlockHint"
+  },
+  "redesignPlanAddCurrent": "Aktuelle Werke",
+  "@redesignPlanAddCurrent": {
+    "description": "redesign.plan.addCurrent"
+  },
+  "redesignPlanAddCurrentHint": "Die Werke, die gerade dran sind",
+  "@redesignPlanAddCurrentHint": {
+    "description": "redesign.plan.addCurrentHint"
+  },
+  "redesignPlanAddEnd": "Wird ans Ende gesetzt",
+  "@redesignPlanAddEnd": {
+    "description": "redesign.plan.addEnd"
+  },
+  "redesignPlanAddItem": "Punkt",
+  "@redesignPlanAddItem": {
+    "description": "redesign.plan.addItem"
+  },
+  "redesignPlanAddItemHint": "Mit Dauer, z. B. „Einsingen“",
+  "@redesignPlanAddItemHint": {
+    "description": "redesign.plan.addItemHint"
+  },
+  "redesignPlanAddNote": "Notiz",
+  "@redesignPlanAddNote": {
+    "description": "redesign.plan.addNote"
+  },
+  "redesignPlanAddNoteHint": "Ohne Dauer und Uhrzeit",
+  "@redesignPlanAddNoteHint": {
+    "description": "redesign.plan.addNoteHint"
+  },
+  "redesignPlanAddPlan": "Plan",
+  "@redesignPlanAddPlan": {
+    "description": "redesign.plan.addPlan"
+  },
+  "redesignPlanAddSong": "Werk aus der Liste",
+  "@redesignPlanAddSong": {
+    "description": "redesign.plan.addSong"
+  },
+  "redesignPlanAddTitle": "Hinzufügen",
+  "@redesignPlanAddTitle": {
+    "description": "redesign.plan.addTitle"
+  },
+  "redesignPlanAfterBlock": "Punkt nach dem Block einfügen",
+  "@redesignPlanAfterBlock": {
+    "description": "redesign.plan.afterBlock"
+  },
+  "redesignPlanBack": "Termin",
+  "@redesignPlanBack": {
+    "description": "redesign.plan.back"
+  },
+  "redesignPlanBlockTemplateHint": "Block · {count} Min",
+  "@redesignPlanBlockTemplateHint": {
+    "description": "redesign.plan.blockTemplateHint",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignPlanCollapse": "Block einklappen",
+  "@redesignPlanCollapse": {
+    "description": "redesign.plan.collapse"
+  },
+  "redesignPlanCollapsed": "eingeklappt",
+  "@redesignPlanCollapsed": {
+    "description": "redesign.plan.collapsed"
+  },
+  "redesignPlanCopied": "Ablauf vom {date} übernommen",
+  "@redesignPlanCopied": {
+    "description": "redesign.plan.copied",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignPlanDelete": "Löschen",
+  "@redesignPlanDelete": {
+    "description": "redesign.plan.delete"
+  },
+  "redesignPlanDeleteHint": "Mit Rückgängig",
+  "@redesignPlanDeleteHint": {
+    "description": "redesign.plan.deleteHint"
+  },
+  "redesignPlanDrag": "Ziehen zum Sortieren",
+  "@redesignPlanDrag": {
+    "description": "redesign.plan.drag"
+  },
+  "redesignPlanDuration": "Dauer",
+  "@redesignPlanDuration": {
+    "description": "redesign.plan.duration"
+  },
+  "redesignPlanDurationHint": "Die Zeiten darunter rechnen sich sofort neu",
+  "@redesignPlanDurationHint": {
+    "description": "redesign.plan.durationHint"
+  },
+  "redesignPlanDurationLabel": "Dauer von {name}: {count} Minuten",
+  "@redesignPlanDurationLabel": {
+    "description": "redesign.plan.durationLabel",
+    "placeholders": {
+      "name": {},
+      "count": {}
+    }
+  },
+  "redesignPlanEdit": "Bearbeiten",
+  "@redesignPlanEdit": {
+    "description": "redesign.plan.edit"
+  },
+  "redesignPlanEditHint": "Bezeichnung, Info, Dauer",
+  "@redesignPlanEditHint": {
+    "description": "redesign.plan.editHint"
+  },
+  "redesignPlanEmptyCopy": "Wie letzter Termin",
+  "@redesignPlanEmptyCopy": {
+    "description": "redesign.plan.emptyCopy"
+  },
+  "redesignPlanEmptyCopyHint": "Kopie vom {date} · {count}",
+  "@redesignPlanEmptyCopyHint": {
+    "description": "redesign.plan.emptyCopyHint",
+    "placeholders": {
+      "date": {},
+      "count": {}
+    }
+  },
+  "redesignPlanEmptyTemplate": "Vorlage der Organisation",
+  "@redesignPlanEmptyTemplate": {
+    "description": "redesign.plan.emptyTemplate"
+  },
+  "redesignPlanEmptyTitle": "Womit beginnen?",
+  "@redesignPlanEmptyTitle": {
+    "description": "redesign.plan.emptyTitle"
+  },
+  "redesignPlanEnd": "Ende",
+  "@redesignPlanEnd": {
+    "description": "redesign.plan.end"
+  },
+  "redesignPlanExpand": "Block aufklappen",
+  "@redesignPlanExpand": {
+    "description": "redesign.plan.expand"
+  },
+  "redesignPlanHeading": "Überschrift",
+  "@redesignPlanHeading": {
+    "description": "redesign.plan.heading"
+  },
+  "redesignPlanHint": "Tipp auf die Dauer ändert sie direkt, Tipp auf einen Punkt öffnet alles Weitere. Am Griff halten und ziehen sortiert um.",
+  "@redesignPlanHint": {
+    "description": "redesign.plan.hint"
+  },
+  "redesignPlanHours": "{count} Std.",
+  "@redesignPlanHours": {
+    "description": "redesign.plan.hours",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignPlanHoursMinutes": "{hours} Std. {minutes} Min",
+  "@redesignPlanHoursMinutes": {
+    "description": "redesign.plan.hoursMinutes",
+    "placeholders": {
+      "hours": {},
+      "minutes": {}
+    }
+  },
+  "redesignPlanInBlock": "im Block „{name}“",
+  "@redesignPlanInBlock": {
+    "description": "redesign.plan.inBlock",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPlanInsertAfter": "Punkt danach einfügen",
+  "@redesignPlanInsertAfter": {
+    "description": "redesign.plan.insertAfter"
+  },
+  "redesignPlanInvalid": "Noch nicht gespeichert: jeder Punkt braucht eine Dauer",
+  "@redesignPlanInvalid": {
+    "description": "redesign.plan.invalid"
+  },
+  "redesignPlanItemCount": "{count, plural, one {1 Punkt} other {{count} Punkte}}",
+  "@redesignPlanItemCount": {
+    "description": "redesign.plan.itemCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignPlanJoinBlock": "In den Block darüber",
+  "@redesignPlanJoinBlock": {
+    "description": "redesign.plan.joinBlock"
+  },
+  "redesignPlanLeaveBlock": "Aus dem Block nehmen",
+  "@redesignPlanLeaveBlock": {
+    "description": "redesign.plan.leaveBlock"
+  },
+  "redesignPlanLess": "5 Minuten weniger",
+  "@redesignPlanLess": {
+    "description": "redesign.plan.less"
+  },
+  "redesignPlanMinUnit": "Min",
+  "@redesignPlanMinUnit": {
+    "description": "redesign.plan.minUnit"
+  },
+  "redesignPlanMinutes": "{count} Min",
+  "@redesignPlanMinutes": {
+    "description": "redesign.plan.minutes",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignPlanMore": "Weitere Aktionen",
+  "@redesignPlanMore": {
+    "description": "redesign.plan.more"
+  },
+  "redesignPlanMore5": "5 Minuten mehr",
+  "@redesignPlanMore5": {
+    "description": "redesign.plan.more5"
+  },
+  "redesignPlanMoveDown": "Nach unten",
+  "@redesignPlanMoveDown": {
+    "description": "redesign.plan.moveDown"
+  },
+  "redesignPlanMoveUp": "Nach oben",
+  "@redesignPlanMoveUp": {
+    "description": "redesign.plan.moveUp"
+  },
+  "redesignPlanNext": "Nächster Termin",
+  "@redesignPlanNext": {
+    "description": "redesign.plan.next"
+  },
+  "redesignPlanNotes": "Notizen zum Termin",
+  "@redesignPlanNotes": {
+    "description": "redesign.plan.notes"
+  },
+  "redesignPlanOrgFieldHint": "Feld der Organisation · {count} Min",
+  "@redesignPlanOrgFieldHint": {
+    "description": "redesign.plan.orgFieldHint",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignPlanOrgHint": "Erscheint im Plan der Organisation",
+  "@redesignPlanOrgHint": {
+    "description": "redesign.plan.orgHint"
+  },
+  "redesignPlanOrgTemplateHint": "Vorlage der Organisation",
+  "@redesignPlanOrgTemplateHint": {
+    "description": "redesign.plan.orgTemplateHint"
+  },
+  "redesignPlanOther": "Weiteres",
+  "@redesignPlanOther": {
+    "description": "redesign.plan.other"
+  },
+  "redesignPlanPlanPick": "Termin wählen",
+  "@redesignPlanPlanPick": {
+    "description": "redesign.plan.planPick"
+  },
+  "redesignPlanPlanSection": "Plan „{name}“",
+  "@redesignPlanPlanSection": {
+    "description": "redesign.plan.planSection",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPlanPrev": "Vorheriger Termin",
+  "@redesignPlanPrev": {
+    "description": "redesign.plan.prev"
+  },
+  "redesignPlanPublicLink": "Öffentlicher Link",
+  "@redesignPlanPublicLink": {
+    "description": "redesign.plan.publicLink"
+  },
+  "redesignPlanPublicLinkHint": "Zum Ansehen oder Mitbearbeiten ohne Konto",
+  "@redesignPlanPublicLinkHint": {
+    "description": "redesign.plan.publicLinkHint"
+  },
+  "redesignPlanPublicLinkShared": "Geteilt · zum Ändern oder Beenden tippen",
+  "@redesignPlanPublicLinkShared": {
+    "description": "redesign.plan.publicLinkShared"
+  },
+  "redesignPlanRemoved": "„{name}“ entfernt",
+  "@redesignPlanRemoved": {
+    "description": "redesign.plan.removed",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPlanSaved": "Gespeichert",
+  "@redesignPlanSaved": {
+    "description": "redesign.plan.saved"
+  },
+  "redesignPlanSaving": "Speichert …",
+  "@redesignPlanSaving": {
+    "description": "redesign.plan.saving"
+  },
+  "redesignPlanSettings": "Für diesen Plan",
+  "@redesignPlanSettings": {
+    "description": "redesign.plan.settings"
+  },
+  "redesignPlanShareExport": "Teilen & Export",
+  "@redesignPlanShareExport": {
+    "description": "redesign.plan.shareExport"
+  },
+  "redesignPlanShareHint": "Mitglieder sehen den Ablauf im Termin",
+  "@redesignPlanShareHint": {
+    "description": "redesign.plan.shareHint"
+  },
+  "redesignPlanStart": "Beginn",
+  "@redesignPlanStart": {
+    "description": "redesign.plan.start"
+  },
+  "redesignPlanTemplateDelete": "Vorlage löschen",
+  "@redesignPlanTemplateDelete": {
+    "description": "redesign.plan.templateDelete"
+  },
+  "redesignPlanTitle": "Ablauf",
+  "@redesignPlanTitle": {
+    "description": "redesign.plan.title"
+  },
+  "redesignPlanTitleHint": "Steht über dem Ablauf und im PDF",
+  "@redesignPlanTitleHint": {
+    "description": "redesign.plan.titleHint"
+  },
+  "redesignPlanUndo": "Rückgängig",
+  "@redesignPlanUndo": {
+    "description": "redesign.plan.undo"
+  },
+  "redesignPlanUntil": "bis {time}",
+  "@redesignPlanUntil": {
+    "description": "redesign.plan.until",
+    "placeholders": {
+      "time": {}
+    }
   },
   "redesignPultAllOpen": "Alle Offenen da",
   "@redesignPultAllOpen": {
@@ -14058,6 +16136,30 @@
   "@redesignTodayYourAnswer": {
     "description": "redesign.today.yourAnswer"
   },
+  "redesignWorkAbout": "Über das Werk",
+  "@redesignWorkAbout": {
+    "description": "redesign.work.about"
+  },
+  "redesignWorkAdd": "Hinzufügen",
+  "@redesignWorkAdd": {
+    "description": "redesign.work.add"
+  },
+  "redesignWorkAddDrop": "Am Computer: Dateien einfach hierher ziehen",
+  "@redesignWorkAddDrop": {
+    "description": "redesign.work.addDrop"
+  },
+  "redesignWorkAddHint": "Stimmen, Partitur, Aufnahme oder Liedtext auswählen. Die Stimme wird am Dateinamen erkannt, bei unklaren Namen auf Seite 1.",
+  "@redesignWorkAddHint": {
+    "description": "redesign.work.addHint"
+  },
+  "redesignWorkAddPick": "Dateien wählen",
+  "@redesignWorkAddPick": {
+    "description": "redesign.work.addPick"
+  },
+  "redesignWorkAddTitle": "Noten hinzufügen",
+  "@redesignWorkAddTitle": {
+    "description": "redesign.work.addTitle"
+  },
   "redesignWorkAllFiles": "Alle Dateien",
   "@redesignWorkAllFiles": {
     "description": "redesign.work.allFiles"
@@ -14066,13 +16168,247 @@
   "@redesignWorkAllParts": {
     "description": "redesign.work.allParts"
   },
+  "redesignWorkCopiedFrom": "Kopiert aus",
+  "@redesignWorkCopiedFrom": {
+    "description": "redesign.work.copiedFrom"
+  },
+  "redesignWorkCopy": "In andere Gruppe kopieren",
+  "@redesignWorkCopy": {
+    "description": "redesign.work.copy"
+  },
+  "redesignWorkCopyHint": "In Gruppen deiner Organisation, die du leitest",
+  "@redesignWorkCopyHint": {
+    "description": "redesign.work.copyHint"
+  },
+  "redesignWorkCreateCategory": "Kategorie",
+  "@redesignWorkCreateCategory": {
+    "description": "redesign.workCreate.category"
+  },
+  "redesignWorkCreateCategoryHint": "Vorausgewählt, weil die Liste gerade auf „{name}“ gefiltert war.",
+  "@redesignWorkCreateCategoryHint": {
+    "description": "redesign.workCreate.categoryHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignWorkCreateCreate": "Anlegen",
+  "@redesignWorkCreateCreate": {
+    "description": "redesign.workCreate.create"
+  },
+  "redesignWorkCreateCreateAndAdd": "Anlegen und Noten hinzufügen",
+  "@redesignWorkCreateCreateAndAdd": {
+    "description": "redesign.workCreate.createAndAdd"
+  },
+  "redesignWorkCreateInstrumentationHint": "Welche Gruppen mitspielen, erkennt die App an den Noten, die du gleich hochlädst.",
+  "@redesignWorkCreateInstrumentationHint": {
+    "description": "redesign.workCreate.instrumentationHint"
+  },
+  "redesignWorkCreateLater": "Link, Schwierigkeit und Zusatzfelder später in „Bearbeiten“.",
+  "@redesignWorkCreateLater": {
+    "description": "redesign.workCreate.later"
+  },
+  "redesignWorkCreateNextNumber": "{number} ist die nächste freie Nummer.",
+  "@redesignWorkCreateNextNumber": {
+    "description": "redesign.workCreate.nextNumber",
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "redesignWorkCreatePrefixHint": "Präfix nur bei Bedarf, z. B. W für Weihnachten → W1.",
+  "@redesignWorkCreatePrefixHint": {
+    "description": "redesign.workCreate.prefixHint"
+  },
+  "redesignWorkCreateTitle": "Neues Werk",
+  "@redesignWorkCreateTitle": {
+    "description": "redesign.workCreate.title"
+  },
+  "redesignWorkDifficulty": "Schwierigkeit",
+  "@redesignWorkDifficulty": {
+    "description": "redesign.work.difficulty"
+  },
   "redesignWorkEdit": "Bearbeiten",
   "@redesignWorkEdit": {
     "description": "redesign.work.edit"
   },
+  "redesignWorkEditCategories": "Kategorien",
+  "@redesignWorkEditCategories": {
+    "description": "redesign.workEdit.categories"
+  },
+  "redesignWorkEditDelete": "Werk löschen",
+  "@redesignWorkEditDelete": {
+    "description": "redesign.workEdit.delete"
+  },
+  "redesignWorkEditDifficulty": "Schwierigkeit",
+  "@redesignWorkEditDifficulty": {
+    "description": "redesign.workEdit.difficulty"
+  },
+  "redesignWorkEditDifficultyNone": "Offen",
+  "@redesignWorkEditDifficultyNone": {
+    "description": "redesign.workEdit.difficultyNone"
+  },
+  "redesignWorkEditEasy": "Leicht",
+  "@redesignWorkEditEasy": {
+    "description": "redesign.workEdit.easy"
+  },
+  "redesignWorkEditFields": "Zusatzfelder",
+  "@redesignWorkEditFields": {
+    "description": "redesign.workEdit.fields"
+  },
+  "redesignWorkEditHard": "Schwer",
+  "@redesignWorkEditHard": {
+    "description": "redesign.workEdit.hard"
+  },
+  "redesignWorkEditHint": "Änderungen werden sofort gespeichert. Noten und Dateien pflegst du direkt auf der Werk-Seite.",
+  "@redesignWorkEditHint": {
+    "description": "redesign.workEdit.hint"
+  },
+  "redesignWorkEditInstrumentation": "Besetzung",
+  "@redesignWorkEditInstrumentation": {
+    "description": "redesign.workEdit.instrumentation"
+  },
+  "redesignWorkEditInstrumentationHint": "Welche Gruppen mitspielen, ergibt sich aus den hochgeladenen Noten. Fehlt eine Stimme, lädst du sie auf der Werk-Seite hoch.",
+  "@redesignWorkEditInstrumentationHint": {
+    "description": "redesign.workEdit.instrumentationHint"
+  },
+  "redesignWorkEditLink": "Link",
+  "@redesignWorkEditLink": {
+    "description": "redesign.workEdit.link"
+  },
+  "redesignWorkEditLinkHint": "Video, Hörbeispiel oder Verlag",
+  "@redesignWorkEditLinkHint": {
+    "description": "redesign.workEdit.linkHint"
+  },
+  "redesignWorkEditManageCategories": "Kategorien verwalten",
+  "@redesignWorkEditManageCategories": {
+    "description": "redesign.workEdit.manageCategories"
+  },
+  "redesignWorkEditMedium": "Mittel",
+  "@redesignWorkEditMedium": {
+    "description": "redesign.workEdit.medium"
+  },
+  "redesignWorkEditName": "Titel",
+  "@redesignWorkEditName": {
+    "description": "redesign.workEdit.name"
+  },
+  "redesignWorkEditNameEmpty": "Ohne Titel wird nicht gespeichert.",
+  "@redesignWorkEditNameEmpty": {
+    "description": "redesign.workEdit.nameEmpty"
+  },
+  "redesignWorkEditNoCategories": "Noch keine Kategorien angelegt.",
+  "@redesignWorkEditNoCategories": {
+    "description": "redesign.workEdit.noCategories"
+  },
+  "redesignWorkEditNotAllowed": "Werke bearbeiten kann nur die Leitung.",
+  "@redesignWorkEditNotAllowed": {
+    "description": "redesign.workEdit.notAllowed"
+  },
+  "redesignWorkEditNumber": "Nummer",
+  "@redesignWorkEditNumber": {
+    "description": "redesign.workEdit.number"
+  },
+  "redesignWorkEditNumberLocked": "Die Werkliste konnte nicht geladen werden, die Nummer lässt sich so nicht prüfen.",
+  "@redesignWorkEditNumberLocked": {
+    "description": "redesign.workEdit.numberLocked"
+  },
+  "redesignWorkEditNumberTaken": "Nr. {number} hat schon „{name}“. Die Nummer wird so nicht gespeichert.",
+  "@redesignWorkEditNumberTaken": {
+    "description": "redesign.workEdit.numberTaken",
+    "placeholders": {
+      "number": {},
+      "name": {}
+    }
+  },
+  "redesignWorkEditPrefix": "Präfix",
+  "@redesignWorkEditPrefix": {
+    "description": "redesign.workEdit.prefix"
+  },
+  "redesignWorkEditPrefixHint": "z. B. W",
+  "@redesignWorkEditPrefixHint": {
+    "description": "redesign.workEdit.prefixHint"
+  },
+  "redesignWorkEditTitle": "Werk bearbeiten",
+  "@redesignWorkEditTitle": {
+    "description": "redesign.workEdit.title"
+  },
   "redesignWorkFileCount": "{count, plural, one {1 Datei} other {{count} Dateien}}",
   "@redesignWorkFileCount": {
     "description": "redesign.work.fileCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignWorkFileDelete": "Löschen",
+  "@redesignWorkFileDelete": {
+    "description": "redesign.work.fileDelete"
+  },
+  "redesignWorkFileDownload": "Herunterladen",
+  "@redesignWorkFileDownload": {
+    "description": "redesign.work.fileDownload"
+  },
+  "redesignWorkFileMore": "Mehr zu {name}",
+  "@redesignWorkFileMore": {
+    "description": "redesign.work.fileMore",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignWorkFilePart": "Stimme ändern",
+  "@redesignWorkFilePart": {
+    "description": "redesign.work.filePart"
+  },
+  "redesignWorkFilePrint": "Drucken",
+  "@redesignWorkFilePrint": {
+    "description": "redesign.work.filePrint"
+  },
+  "redesignWorkFileRename": "Umbenennen",
+  "@redesignWorkFileRename": {
+    "description": "redesign.work.fileRename"
+  },
+  "redesignWorkFileShare": "Teilen",
+  "@redesignWorkFileShare": {
+    "description": "redesign.work.fileShare"
+  },
+  "redesignWorkFileTelegram": "Per Telegram an mich",
+  "@redesignWorkFileTelegram": {
+    "description": "redesign.work.fileTelegram"
+  },
+  "redesignWorkFiles": "Noten & Dateien",
+  "@redesignWorkFiles": {
+    "description": "redesign.work.files"
+  },
+  "redesignWorkForConductors": "Für die Leitung",
+  "@redesignWorkForConductors": {
+    "description": "redesign.work.forConductors"
+  },
+  "redesignWorkHistory": "Verlauf",
+  "@redesignWorkHistory": {
+    "description": "redesign.work.history"
+  },
+  "redesignWorkHistoryCount": "{count, plural, one {1 Termin} other {{count} Termine}}",
+  "@redesignWorkHistoryCount": {
+    "description": "redesign.work.historyCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignWorkInstrumentation": "Besetzung",
+  "@redesignWorkInstrumentation": {
+    "description": "redesign.work.instrumentation"
+  },
+  "redesignWorkInstrumentationHint": "aus den Noten: {names}",
+  "@redesignWorkInstrumentationHint": {
+    "description": "redesign.work.instrumentationHint",
+    "placeholders": {
+      "names": {}
+    }
+  },
+  "redesignWorkInstrumentationValue": "{count, plural, one {1 Gruppe} other {{count} Gruppen}}",
+  "@redesignWorkInstrumentationValue": {
+    "description": "redesign.work.instrumentationValue",
     "placeholders": {
       "count": {
         "type": "num"
@@ -14095,13 +16431,64 @@
   "@redesignWorkLyrics": {
     "description": "redesign.work.lyrics"
   },
+  "redesignWorkMissingMany": "{count, plural, one {1 Stimme fehlt noch} other {{count} Stimmen fehlen noch}}",
+  "@redesignWorkMissingMany": {
+    "description": "redesign.work.missingMany",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignWorkMissingOne": "{name} fehlt noch",
+  "@redesignWorkMissingOne": {
+    "description": "redesign.work.missingOne",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignWorkMissingOneHint": "In der Gruppe spielt jemand {name}, es gibt aber noch keine Noten.",
+  "@redesignWorkMissingOneHint": {
+    "description": "redesign.work.missingOneHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignWorkMissingPillMany": "{count, plural, one {1 fehlt} other {{count} fehlen}}",
+  "@redesignWorkMissingPillMany": {
+    "description": "redesign.work.missingPillMany",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignWorkMissingPillOne": "{name} fehlt",
+  "@redesignWorkMissingPillOne": {
+    "description": "redesign.work.missingPillOne",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignWorkMore": "Mehr zum Werk",
+  "@redesignWorkMore": {
+    "description": "redesign.work.more"
+  },
   "redesignWorkNever": "Noch nie",
   "@redesignWorkNever": {
     "description": "redesign.work.never"
   },
+  "redesignWorkNext": "Als Nächstes",
+  "@redesignWorkNext": {
+    "description": "redesign.work.next"
+  },
   "redesignWorkNoFiles": "Zu diesem Werk gibt es noch keine Dateien.",
   "@redesignWorkNoFiles": {
     "description": "redesign.work.noFiles"
+  },
+  "redesignWorkNoFilesYet": "Zu diesem Werk gibt es noch keine Noten.",
+  "@redesignWorkNoFilesYet": {
+    "description": "redesign.work.noFilesYet"
   },
   "redesignWorkNoPart": "Für deine Stimme gibt es noch keine Noten.",
   "@redesignWorkNoPart": {
@@ -14126,6 +16513,10 @@
   "@redesignWorkOpen": {
     "description": "redesign.work.open"
   },
+  "redesignWorkPartOwn": "deine Stimme",
+  "@redesignWorkPartOwn": {
+    "description": "redesign.work.partOwn"
+  },
   "redesignWorkPause": "Anhalten",
   "@redesignWorkPause": {
     "description": "redesign.work.pause"
@@ -14137,6 +16528,13 @@
   "redesignWorkPlay": "Abspielen",
   "@redesignWorkPlay": {
     "description": "redesign.work.play"
+  },
+  "redesignWorkPractice": "Übe-Aufnahme · {name}",
+  "@redesignWorkPractice": {
+    "description": "redesign.work.practice",
+    "placeholders": {
+      "name": {}
+    }
   },
   "redesignWorkRecording": "Aufnahme",
   "@redesignWorkRecording": {
@@ -14164,17 +16562,69 @@
       "name": {}
     }
   },
+  "redesignWorkShareLink": "Link zum Werk teilen",
+  "@redesignWorkShareLink": {
+    "description": "redesign.work.shareLink"
+  },
+  "redesignWorkShareLinkHint": "Öffentliche Seite, ohne Anmeldung",
+  "@redesignWorkShareLinkHint": {
+    "description": "redesign.work.shareLinkHint"
+  },
   "redesignWorkSlower": "Langsamer abspielen",
   "@redesignWorkSlower": {
     "description": "redesign.work.slower"
+  },
+  "redesignWorkUpload": "Hochladen",
+  "@redesignWorkUpload": {
+    "description": "redesign.work.upload"
+  },
+  "redesignWorkWithChoir": "Mit Chor",
+  "@redesignWorkWithChoir": {
+    "description": "redesign.work.withChoir"
+  },
+  "redesignWorkWithOrchestra": "Mit Orchester",
+  "@redesignWorkWithOrchestra": {
+    "description": "redesign.work.withOrchestra"
+  },
+  "redesignWorkWithSolo": "Mit Solo-Gesang",
+  "@redesignWorkWithSolo": {
+    "description": "redesign.work.withSolo"
   },
   "redesignWorkYourPart": "Deine Stimme",
   "@redesignWorkYourPart": {
     "description": "redesign.work.yourPart"
   },
+  "redesignWorkZip": "Alle Dateien als ZIP",
+  "@redesignWorkZip": {
+    "description": "redesign.work.zip"
+  },
   "redesignWorksAdd": "Werk hinzufügen",
   "@redesignWorksAdd": {
     "description": "redesign.works.add"
+  },
+  "redesignWorksAddImport": "Werkliste importieren",
+  "@redesignWorksAddImport": {
+    "description": "redesign.works.addImport"
+  },
+  "redesignWorksAddImportHint": "Excel oder CSV mit Nummer, Titel, Kategorie",
+  "@redesignWorksAddImportHint": {
+    "description": "redesign.works.addImportHint"
+  },
+  "redesignWorksAddNew": "Neues Werk",
+  "@redesignWorksAddNew": {
+    "description": "redesign.works.addNew"
+  },
+  "redesignWorksAddNewHint": "Titel und Nummer, danach direkt die Noten",
+  "@redesignWorksAddNewHint": {
+    "description": "redesign.works.addNewHint"
+  },
+  "redesignWorksAddOrg": "Aus anderer Gruppe übernehmen",
+  "@redesignWorksAddOrg": {
+    "description": "redesign.works.addOrg"
+  },
+  "redesignWorksAddOrgHint": "Werke deiner Organisation durchsuchen und kopieren",
+  "@redesignWorksAddOrgHint": {
+    "description": "redesign.works.addOrgHint"
   },
   "redesignWorksAll": "Alle · {count}",
   "@redesignWorksAll": {
@@ -14183,57 +16633,193 @@
       "count": {}
     }
   },
-  "redesignWorksAudio": "Audio",
-  "@redesignWorksAudio": {
-    "description": "redesign.works.audio"
-  },
-  "redesignWorksCurrent": "Gerade geprobt",
-  "@redesignWorksCurrent": {
-    "description": "redesign.works.current"
+  "redesignWorksAllEvents": "Alle Termine",
+  "@redesignWorksAllEvents": {
+    "description": "redesign.works.allEvents"
   },
   "redesignWorksEmpty": "Noch keine Werke.",
   "@redesignWorksEmpty": {
     "description": "redesign.works.empty"
   },
-  "redesignWorksFiles": "Dateien",
-  "@redesignWorksFiles": {
-    "description": "redesign.works.files"
+  "redesignWorksEventWorks": "{count, plural, one {1 Werk} other {{count} Werke}}",
+  "@redesignWorksEventWorks": {
+    "description": "redesign.works.eventWorks",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
-  "redesignWorksFilesLabel": "Dateien der Gruppe",
-  "@redesignWorksFilesLabel": {
-    "description": "redesign.works.filesLabel"
-  },
-  "redesignWorksFilter": "Filter & Ansicht",
+  "redesignWorksFilter": "Filter",
   "@redesignWorksFilter": {
     "description": "redesign.works.filter"
   },
-  "redesignWorksFilterActive": "Filter aktiv",
-  "@redesignWorksFilterActive": {
-    "description": "redesign.works.filterActive"
+  "redesignWorksFilterReset": "Zurücksetzen",
+  "@redesignWorksFilterReset": {
+    "description": "redesign.works.filterReset"
+  },
+  "redesignWorksFilterTitle": "Sortieren & Filtern",
+  "@redesignWorksFilterTitle": {
+    "description": "redesign.works.filterTitle"
+  },
+  "redesignWorksFolder": "Meine Mappe",
+  "@redesignWorksFolder": {
+    "description": "redesign.works.folder"
+  },
+  "redesignWorksFolders": "Mappen",
+  "@redesignWorksFolders": {
+    "description": "redesign.works.folders"
+  },
+  "redesignWorksForGroup": "Für Gruppe",
+  "@redesignWorksForGroup": {
+    "description": "redesign.works.forGroup"
+  },
+  "redesignWorksForGroupAll": "Alle",
+  "@redesignWorksForGroupAll": {
+    "description": "redesign.works.forGroupAll"
+  },
+  "redesignWorksLastOn": "Zuletzt {date}",
+  "@redesignWorksLastOn": {
+    "description": "redesign.works.lastOn",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignWorksMissingNotes": "Noten fehlen",
+  "@redesignWorksMissingNotes": {
+    "description": "redesign.works.missingNotes"
   },
   "redesignWorksMore": "Mehr",
   "@redesignWorksMore": {
     "description": "redesign.works.more"
   },
+  "redesignWorksNeverPlayed": "Noch nie gespielt",
+  "@redesignWorksNeverPlayed": {
+    "description": "redesign.works.neverPlayed"
+  },
+  "redesignWorksNeverSung": "Noch nie gesungen",
+  "@redesignWorksNeverSung": {
+    "description": "redesign.works.neverSung"
+  },
+  "redesignWorksNext": "Als Nächstes",
+  "@redesignWorksNext": {
+    "description": "redesign.works.next"
+  },
+  "redesignWorksNoFilesPill": "ohne Noten",
+  "@redesignWorksNoFilesPill": {
+    "description": "redesign.works.noFilesPill"
+  },
   "redesignWorksNoMatch": "Kein Werk passt zur Suche.",
   "@redesignWorksNoMatch": {
     "description": "redesign.works.noMatch"
   },
-  "redesignWorksPdf": "PDF",
-  "@redesignWorksPdf": {
-    "description": "redesign.works.pdf"
+  "redesignWorksOnly": "Nur zeigen",
+  "@redesignWorksOnly": {
+    "description": "redesign.works.only"
+  },
+  "redesignWorksOnlyMine": "Mit meiner Stimme",
+  "@redesignWorksOnlyMine": {
+    "description": "redesign.works.onlyMine"
+  },
+  "redesignWorksOnlyMissing": "Noten fehlen",
+  "@redesignWorksOnlyMissing": {
+    "description": "redesign.works.onlyMissing"
+  },
+  "redesignWorksOnlyRecording": "Mit Aufnahme",
+  "@redesignWorksOnlyRecording": {
+    "description": "redesign.works.onlyRecording"
+  },
+  "redesignWorksOnlySolo": "Mit Solo",
+  "@redesignWorksOnlySolo": {
+    "description": "redesign.works.onlySolo"
+  },
+  "redesignWorksOpenMine": "Meine Noten öffnen",
+  "@redesignWorksOpenMine": {
+    "description": "redesign.works.openMine"
+  },
+  "redesignWorksOpenMineHint": "{count, plural, one {Deine Stimme als PDF, auch zum Drucken} other {{count} Stimmen als ein PDF, auch zum Drucken}}",
+  "@redesignWorksOpenMineHint": {
+    "description": "redesign.works.openMineHint",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "redesignWorksResetFilter": "Filter zurücksetzen",
   "@redesignWorksResetFilter": {
     "description": "redesign.works.resetFilter"
   },
-  "redesignWorksSearch": "Titel, Komponist, Nummer",
+  "redesignWorksSearch": "Titel oder Nummer",
   "@redesignWorksSearch": {
     "description": "redesign.works.search"
   },
   "redesignWorksSearchLabel": "Werke suchen",
   "@redesignWorksSearchLabel": {
     "description": "redesign.works.searchLabel"
+  },
+  "redesignWorksShow": "{count, plural, =0 {Kein Werk passt} one {1 Werk anzeigen} other {{count} Werke anzeigen}}",
+  "@redesignWorksShow": {
+    "description": "redesign.works.show",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignWorksSort": "Sortieren",
+  "@redesignWorksSort": {
+    "description": "redesign.works.sort"
+  },
+  "redesignWorksSortLastPlayed": "Zuletzt gespielt",
+  "@redesignWorksSortLastPlayed": {
+    "description": "redesign.works.sortLastPlayed"
+  },
+  "redesignWorksSortLastSung": "Zuletzt gesungen",
+  "@redesignWorksSortLastSung": {
+    "description": "redesign.works.sortLastSung"
+  },
+  "redesignWorksSortLongestPlayed": "Am längsten nicht gespielt",
+  "@redesignWorksSortLongestPlayed": {
+    "description": "redesign.works.sortLongestPlayed"
+  },
+  "redesignWorksSortLongestSung": "Am längsten nicht gesungen",
+  "@redesignWorksSortLongestSung": {
+    "description": "redesign.works.sortLongestSung"
+  },
+  "redesignWorksSortNumber": "Nummer",
+  "@redesignWorksSortNumber": {
+    "description": "redesign.works.sortNumber"
+  },
+  "redesignWorksSortRemove": "Sortierung „{name}“ entfernen",
+  "@redesignWorksSortRemove": {
+    "description": "redesign.works.sortRemove",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignWorksSortTitle": "Titel",
+  "@redesignWorksSortTitle": {
+    "description": "redesign.works.sortTitle"
+  },
+  "redesignWorksStatusNoFiles": "noch keine Noten",
+  "@redesignWorksStatusNoFiles": {
+    "description": "redesign.works.statusNoFiles"
+  },
+  "redesignWorksStatusNoPart": "keine Noten für {name}",
+  "@redesignWorksStatusNoPart": {
+    "description": "redesign.works.statusNoPart",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignWorksStatusPart": "Deine Stimme",
+  "@redesignWorksStatusPart": {
+    "description": "redesign.works.statusPart"
+  },
+  "redesignWorksStatusRecording": "Aufnahme",
+  "@redesignWorksStatusRecording": {
+    "description": "redesign.works.statusRecording"
   },
   "registerCreate": "Instanz jetzt erstellen",
   "@registerCreate": {
@@ -15421,9 +18007,9 @@
   "@settingsLogout": {
     "description": "settings.logout"
   },
-  "settingsMessageAll": "Nachricht an alle senden",
-  "@settingsMessageAll": {
-    "description": "settings.messageAll"
+  "settingsMessagesHint": "Nachrichten senden und automatisch nachfassen",
+  "@settingsMessagesHint": {
+    "description": "settings.messagesHint"
   },
   "settingsMobile": "Handynummer",
   "@settingsMobile": {

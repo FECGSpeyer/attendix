@@ -6,3 +6,7 @@ bool isStandaloneWebApp() => false;
 bool openInNewTab(String url) => false;
 
 bool downloadBytesInBrowser(Uint8List bytes, String fileName) => false;
+
+void setUnloadWarning(Object owner, bool unsaved) {}
+
+Future<bool?> shareUrlInBrowser(String url, {String? title}) async => null;

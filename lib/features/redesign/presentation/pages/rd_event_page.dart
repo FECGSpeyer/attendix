@@ -4,50 +4,71 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/attendance_providers.dart';
+import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
-import '../../../../core/services/offline_queue_service.dart' show rootScaffoldMessengerKey;
+import '../../../../core/services/offline_queue_service.dart' show offlineQueueNotifierProvider, rootScaffoldMessengerKey;
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../core/utils/demo_guard.dart';
+import '../../../../core/utils/archived_attendance.dart';
+import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/haptic_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../data/models/church/church.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart' show AppActionSheetAction, showAppActionSheet;
+import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart' show registrationAnswerText;
 import '../../../attendance/presentation/person_attendance_writes.dart';
-import '../../../planning/presentation/attendance_plan_viewer.dart';
 import '../../../attendance/presentation/widgets/attendance_detail/attendance_grid.dart'
     show mainGroupIdOf, sortPersonsByGroup;
 import '../../../attendance/presentation/widgets/attendance_detail/status_chip.dart'
     show ionicStatusLabel;
 import '../../data/providers/rd_today_providers.dart';
 import '../../data/rd_event_logic.dart';
+import '../../data/providers/rd_phase_tick_provider.dart';
+import '../../data/rd_event_phase.dart';
 import '../../data/rd_write_queue.dart';
+import '../../../../core/providers/team_org_providers.dart' show protocolTypeByIdProvider;
+import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/services/export_service.dart';
+import '../../../attendance/presentation/attendance_add_persons.dart';
+import '../../../attendance/presentation/attendance_extra_actions.dart';
+import '../../../../core/providers/profile_providers.dart';
+import '../../../attendance/presentation/pages/attendance_detail_page.dart' show canMutateAttendanceDetail;
+import '../../../duty/presentation/widgets/duty_staffing_section.dart';
+import '../../../team_organization/presentation/widgets/attendance_protocol_section.dart';
+import '../../data/rd_event_details_logic.dart';
+import '../widgets/event/rd_event_answers.dart';
+import '../widgets/event/rd_event_sections.dart';
 import '../widgets/event/rd_pult_view.dart';
+import '../widgets/today/rd_remind_open_sheet.dart';
 import '../widgets/event/rd_record_widgets.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
+import '../widgets/event/rd_event_head.dart';
+import '../widgets/event/rd_event_now.dart';
+import '../../../planning/presentation/attendance_plan_viewer.dart' show attendanceHasPlan, openAttendancePlanViewer;
 import '../widgets/today/rd_today_common.dart';
-import '../../data/rd_dates.dart';
 
 /// Tabs of a Termin in the new design.
-enum RdEventTab { overview, record }
+enum RdEventTab { overview, program, record }
 
 /// REDESIGN: a Termin for Dirigent and Helfer (canvas D4 "Überblick", D5
-/// "Anwesenheit" with Rückgängig). Statuses and notes are written through
-/// the Termin page's write path ([PersonAttendanceWriter], as in
-/// [writePersonStatus] and [writePersonAttendance]); everything else stays on the full Termin page
-/// ("Alle Details").
+/// "Anwesenheit" with Rückgängig; concept "Termin-Bereich neu", Schritt 1:
+/// sign-outs in the answers card, Anwesenheit shows only the exceptions
+/// per voice, person sheet, ••• menu, Abschluss). Statuses and notes are
+/// written through the Termin page's write path ([PersonAttendanceWriter],
+/// as in [writePersonStatus] and [writePersonAttendance]).
 class RdEventPage extends ConsumerStatefulWidget {
   const RdEventPage({
     super.key,
@@ -61,6 +82,17 @@ class RdEventPage extends ConsumerStatefulWidget {
   @override
   ConsumerState<RdEventPage> createState() => _RdEventPageState();
 }
+
+/// Entries of the ••• menu.
+enum _MenuAction { statusOverview, church, excel, checklist, archive }
+
+/// Days of [attendance], with the type's default for all-day types (a
+/// Freizeit without own `duration_days` still runs on day 2).
+int? _effectiveDays(Attendance attendance, AttendanceType? type) => rdEffectiveDurationDays(
+      attendance.durationDays,
+      typeAllDay: type?.allDay ?? false,
+      typeDurationDays: type?.durationDays,
+    );
 
 /// What "Rückgängig" restores: the previous status per person.
 class _Undo {
@@ -80,11 +112,18 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   final Map<int, String?> _paIds = {};
   final Map<int, String?> _notes = {};
   final Map<int, String?> _changedAt = {};
+  final Map<int, String?> _changedBy = {};
+  final Map<int, Map<String, dynamic>?> _regAnswers = {};
   /// Writes in flight per person (from the tap on, so a refetch that
   /// arrives meanwhile cannot show the old status again).
   final Map<int, int> _saving = {};
   late final RdWriteQueue _queue;
   Set<int>? _rowPersonIds;
+
+  /// person_attendances removed on this device ("Aus Termin entfernen"),
+  /// like the Termin page's `_ownDeletedPaIds`: a reload that still has
+  /// the row (cache, realtime) must not bring the person back.
+  final Set<String> _ownDeletedPaIds = {};
 
   ProviderSubscription<AsyncValue<List<PersonAttendance>>>? _rowsSub;
   AppLifecycleListener? _lifecycle;
@@ -94,15 +133,22 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   String? _toast;
   int _bulkWrites = 0;
 
-  bool _searching = false;
   String _query = '';
+
+  /// Anwesenheit: chosen filter chip, voices opened with "Zeigen" and the
+  /// persons changed here (they stay in the list of exceptions, also when
+  /// set to Anwesend, so a row does not jump away under the finger).
+  RdRecordFilter _filter = RdRecordFilter.all;
+  final Set<int?> _expanded = {};
+  final Set<int> _pinned = {};
 
   /// Pultmodus: big tiles instead of the list (rd_pult_view.dart).
   bool _pult = false;
 
-  // Keyboard (canvas "Desktop"): the row the keys act on, the rows shown
-  // and their keys for scrolling.
-  int? _kbIndex;
+  // Keyboard (canvas "Desktop"): the person the keys act on (by id, so a
+  // filter that drops a changed row does not skip the next one), the rows
+  // shown and their keys for scrolling.
+  int? _kbId;
   List<RdMember> _kbRows = const [];
   List<AttendanceStatus> _kbAvailable = const [];
   final Map<int, GlobalKey> _rowKeys = {};
@@ -145,14 +191,19 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     ref.invalidate(personAttendancesForAttendanceProvider(_id));
   }
 
-  void _applyRows(List<PersonAttendance> rows) {
+  void _applyRows(List<PersonAttendance> allRows) {
     if (!mounted) return;
+    final rows = _ownDeletedPaIds.isEmpty
+        ? allRows
+        : [for (final pa in allRows) if (!_ownDeletedPaIds.contains(pa.id)) pa];
     setState(() {
       for (final pa in rows) {
         final personId = pa.personId;
         if (personId == null) continue;
         _paIds[personId] = pa.id;
         _changedAt[personId] = pa.changedAt;
+        _changedBy[personId] = pa.changedBy;
+        _regAnswers[personId] = pa.registrationAnswers;
         _initial.putIfAbsent(personId, () => pa.status);
         // Status and note only when not being changed here right now.
         if (!_saving.containsKey(personId)) {
@@ -305,7 +356,10 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     final previous = member.status;
     if (previous == status) return;
     HapticHelper.light();
-    setState(() => _statuses[member.id] = status);
+    setState(() {
+      _statuses[member.id] = status;
+      _pinned.add(member.id);
+    });
     final l10n = context.l10n;
     final text = status == AttendanceStatus.neutral
         ? l10n.redesignEventToastReset(member.name)
@@ -318,6 +372,8 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     if (open.isEmpty) return;
     HapticHelper.light();
     final previous = {for (final m in open) m.id: m.status};
+    // Not pinned: after the bulk button the list of exceptions stays short
+    // (pinning only keeps a single changed row from jumping away).
     setState(() {
       for (final m in open) {
         _statuses[m.id] = AttendanceStatus.present;
@@ -339,19 +395,309 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     _writeMany(undo.previous, current);
   }
 
+  /// The person sheet: status, note, registration answers, "Zur Person",
+  /// "Aus Termin entfernen" and who changed it last (the last two not for
+  /// Helfer, like the Termin page).
   Future<void> _openStatusSheet(RdMember member, List<AttendanceStatus> available, bool canEditNote) async {
     final l10n = context.l10n;
+    final role = ref.read(effectiveRoleProvider);
+    final isHelper = role == Role.helper;
+    final type = ref.read(attendanceTypeForAttendanceProvider(_id)).valueOrNull;
     final result = await showRdStatusSheet(
       context,
       member: member,
       subtitle: member.groupName ?? l10n.attendanceNoGroup,
       available: available,
       canEditNote: canEditNote,
+      registration: _registrationOf(member.id, type),
+      changedInfo: isHelper ? null : _changedInfo(member),
+      canOpenPerson: role.canSeePeopleTab,
+      canRemove: !isHelper && canMutateAttendanceDetail(role),
     );
     if (result == null || !mounted) return;
+    if (result.action == RdPersonSheetAction.remove) {
+      await _removePerson(member);
+      return;
+    }
     if (result.status != member.status) _setStatus(member, result.status);
     final note = result.note ?? '';
     if (canEditNote && note != (member.note ?? '')) await _writeNote(member, note);
+    if (result.action == RdPersonSheetAction.openPerson && mounted) {
+      context.push(RedesignRoutes.person(member.id));
+    }
+  }
+
+  /// Opens the person sheet for [member] as currently shown.
+  void _openMember(RdMember member) {
+    final type = ref.read(attendanceTypeForAttendanceProvider(_id)).valueOrNull;
+    final typeStatuses = type?.availableStatuses;
+    final available = (typeStatuses?.isNotEmpty ?? false) ? typeStatuses! : AttendanceStatus.values;
+    _openStatusSheet(member, available, ref.read(canViewAttendanceNotesProvider));
+  }
+
+  /// "Mitfahrt: nein · Essen: normal" (the Termin page's registration
+  /// summary); null without answers.
+  String? _registrationOf(int personId, AttendanceType? type) {
+    final fields = type?.registrationFields ?? const <RegistrationField>[];
+    final answers = _regAnswers[personId];
+    if (fields.isEmpty || answers == null || answers.isEmpty) return null;
+    final parts = <String>[];
+    for (final f in fields) {
+      final value = answers[f.id];
+      if (value == null) continue;
+      final text = registrationAnswerText(f, value);
+      parts.add('${f.label}: ${text.isEmpty ? '–' : text}');
+    }
+    return parts.isEmpty ? null : parts.join(' · ');
+  }
+
+  /// "Zuletzt geändert von Leon Jäger · Do 26.11., 19:41" (Ionic
+  /// getModifierInfo); null while the status was never changed.
+  String? _changedInfo(RdMember member) {
+    final by = member.changedBy;
+    if (by == null) return null;
+    final l10n = context.l10n;
+    final persons = ref.read(filteredPersonsForAttendanceProvider(_id)).valueOrNull ?? const <Person>[];
+    final modifier = persons.where((p) => p.appId == by).firstOrNull;
+    final name = modifier != null && modifier.fullName.trim().isNotEmpty ? modifier.fullName.trim() : l10n.commonUnknown;
+    final at = member.changedAt == null ? null : DateTime.tryParse(member.changedAt!)?.toLocal();
+    return at == null ? l10n.attendanceLastChangedBy(name) : l10n.redesignEventChangedBy(name, rdDeadlineLabel(at));
+  }
+
+  /// "Aus Termin entfernen" (Termin page `_removePersonFromAttendance`):
+  /// asks, checks the row's tenant, deletes the row.
+  Future<void> _removePerson(RdMember member) async {
+    final l10n = context.l10n;
+    // Bound before the dialog (tenant switch safety); the container
+    // outlives this page.
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    final session = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
+    final container = ProviderScope.containerOf(context, listen: false);
+    final paId = _paIds[member.id];
+    if (paId == null) {
+      ToastHelper.showError(context, l10n.attendanceFlutterNoEntry);
+      return;
+    }
+    final confirmed = await DialogHelper.showConfirmation(
+      context,
+      title: l10n.attendanceRemovePerson,
+      message: l10n.attendanceRemovePersonConfirm(member.name),
+      confirmText: l10n.commonRemove,
+      isDestructive: true,
+    );
+    if (!confirmed || !mounted || !session.isCurrent()) return;
+    try {
+      if (!repo.hasTenantId || !await repo.validatePersonAttendanceTenant(paId)) {
+        if (mounted) ToastHelper.showError(context, l10n.attendanceFlutterNoPermission);
+        return;
+      }
+      // Account switched while the check ran: never delete for the new one.
+      if (!session.isCurrent()) return;
+      _ownDeletedPaIds.add(paId);
+      await repo.deletePersonAttendance(paId);
+    } catch (e) {
+      _ownDeletedPaIds.remove(paId);
+      if (mounted) ToastHelper.showError(context, l10n.attendancePersonRemoveFailed);
+      return;
+    }
+    container.invalidate(personAttendancesForAttendanceProvider(_id));
+    // The Termin list's realtime channel only sees updates, not deletes:
+    // reload it so its counts and percentages drop the person too.
+    container.read(attendanceRefetchCounter.notifier).state++;
+    if (!mounted) return;
+    setState(() {
+      _rowPersonIds = {...?_rowPersonIds}..remove(member.id);
+      _statuses.remove(member.id);
+      _paIds.remove(member.id);
+      _notes.remove(member.id);
+      _pinned.remove(member.id);
+    });
+    ToastHelper.showSuccess(context, l10n.attendancePersonRemoved);
+  }
+
+  // ---------------------------------------------------------------------------
+  // ••• menu
+  // ---------------------------------------------------------------------------
+
+  /// "•••" next to "Bearbeiten" (concept L6): Status-Übersicht,
+  /// Gemeinde-Übersicht, Excel, Checkliste starten, Archivieren.
+  /// "Termin löschen" is at the bottom of "Bearbeiten".
+  Future<void> _openMenu(Attendance attendance, List<RdMember> members) async {
+    final l10n = context.l10n;
+    final role = ref.read(effectiveRoleProvider);
+    final type = ref.read(attendanceTypeForAttendanceProvider(_id)).valueOrNull;
+    final canMutate = canMutateAttendanceDetail(role);
+    final canArchive = canArchiveAttendance(
+      date: attendance.date,
+      durationDays: _effectiveDays(attendance, type),
+      archived: attendance.archived,
+      role: role,
+    );
+    final action = await showAppActionSheet<_MenuAction>(
+      context,
+      title: rdEventInfo(attendance, type).title,
+      message: role.isAdmin || role.isResponsible ? l10n.redesignEventDeleteHint : null,
+      actions: [
+        if (members.isNotEmpty)
+          AppActionSheetAction(
+            value: _MenuAction.statusOverview,
+            icon: Icons.bar_chart_rounded,
+            label: l10n.attendanceStatusOverview,
+            subtitle: l10n.redesignEventStatusOverviewHint,
+          ),
+        // Like Ionic: offered whenever the group has the Gemeinde field.
+        if (members.isNotEmpty && attendanceChurchFieldId(ref) != null)
+          AppActionSheetAction(
+            value: _MenuAction.church,
+            icon: Icons.business_outlined,
+            label: l10n.attendanceChurchOverview,
+          ),
+        if (members.isNotEmpty)
+          AppActionSheetAction(
+            value: _MenuAction.excel,
+            icon: Icons.table_chart_outlined,
+            label: l10n.redesignEventExportExcel,
+          ),
+        if (canMutate && ref.read(canViewAttendanceChecklistProvider) && (attendance.checklist?.isEmpty ?? true))
+          AppActionSheetAction(
+            value: _MenuAction.checklist,
+            icon: Icons.check_box_outlined,
+            label: l10n.attendanceStartChecklist,
+          ),
+        if (canArchive)
+          AppActionSheetAction(
+            value: _MenuAction.archive,
+            icon: attendance.archived ? Icons.unarchive_outlined : Icons.archive_outlined,
+            label: attendance.archived ? l10n.attendanceRestore : l10n.attendanceArchive,
+          ),
+      ],
+    );
+    if (action == null || !mounted) return;
+    switch (action) {
+      case _MenuAction.statusOverview:
+        await showRdStatusOverviewSheet(context, members: members);
+      case _MenuAction.church:
+        await showAttendanceChurchOverview(
+          context,
+          ref,
+          persons: [for (final m in members) m.person],
+          statusOf: (person) => members.firstWhere((m) => m.id == person.id).status,
+        );
+      case _MenuAction.excel:
+        await _exportExcel(attendance, members);
+      case _MenuAction.checklist:
+        await _startChecklist(attendance, type);
+      case _MenuAction.archive:
+        await _toggleArchived(attendance);
+    }
+  }
+
+  bool _menuHasActions(Attendance attendance, List<RdMember> members) {
+    if (members.isNotEmpty) return true;
+    final role = ref.watch(effectiveRoleProvider);
+    final type = ref.watch(attendanceTypeForAttendanceProvider(_id)).valueOrNull;
+    return (canMutateAttendanceDetail(role) &&
+            ref.watch(canViewAttendanceChecklistProvider) &&
+            (attendance.checklist?.isEmpty ?? true)) ||
+        canArchiveAttendance(
+          date: attendance.date,
+          durationDays: _effectiveDays(attendance, type),
+          archived: attendance.archived,
+          role: role,
+        );
+  }
+
+  /// "Checkliste starten": the type's default checklist when it has one,
+  /// else a first task.
+  Future<void> _startChecklist(Attendance attendance, AttendanceType? type) async {
+    final id = attendance.id;
+    if (id == null) return;
+    if (type != null && (type.checklist?.isNotEmpty ?? false)) {
+      await rdSaveChecklist(context, ref, id, rdDefaultChecklist(type, attendance));
+      if (mounted) ToastHelper.showSuccess(context, context.l10n.attendanceChecklistRestored);
+      return;
+    }
+    final item = await rdAskChecklistItem(context, attendance);
+    if (item == null || !mounted) return;
+    await rdSaveChecklist(context, ref, id, [item]);
+  }
+
+  /// "Als Excel exportieren" with the statuses shown on this page.
+  Future<void> _exportExcel(Attendance attendance, List<RdMember> members) async {
+    final tenant = ref.read(currentTenantProvider);
+    // Bound before the awaits (tenant switch safety).
+    final profileRepo = ref.read(profileRepositoryWithTenantProvider);
+    final canViewNotes = ref.read(canViewAttendanceNotesProvider);
+    if (tenant == null) {
+      ToastHelper.showError(context, context.l10n.attendanceFlutterDataUnavailable);
+      return;
+    }
+    ToastHelper.showInfo(context, context.l10n.attendanceFlutterCreatingExcel);
+    try {
+      final type = ref.read(attendanceTypeForAttendanceProvider(attendance.id ?? -1)).valueOrNull;
+      final churchFieldId = attendanceChurchFieldId(ref);
+      final churches = churchFieldId == null
+          ? const <Church>[]
+          : await ref.read(churchesProvider.future);
+      final persons = [for (final m in members) m.person];
+      // The Gemeinde can be an organisation field (shared value).
+      final exported = churchFieldId == null
+          ? persons
+          : await profileRepo.hydrateSharedPersonFieldValues(persons);
+      if (!mounted) return;
+      await ExportService().exportAttendanceToExcel(
+        context: context,
+        attendance: attendance,
+        typeName: type?.name ?? '',
+        persons: exported,
+        statuses: {for (final m in members) m.id: m.status},
+        // Notes stay hidden for roles that may not see them in the view.
+        notes: canViewNotes ? {for (final m in members) m.id: m.note} : const {},
+        churches: churches,
+        churchFieldId: churchFieldId,
+      );
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, context.l10n.exportFlutterFailedWith(friendlyErrorMessage(e)));
+    }
+  }
+
+  /// Ionic 4.17.24 `toggleArchived` (Termin page): archiving asks first,
+  /// restoring does not.
+  Future<void> _toggleArchived(Attendance attendance) async {
+    final l10n = context.l10n;
+    final archive = !attendance.archived;
+    // Read before the first await (tenant switch while the dialog is open).
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    final session = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
+    final container = ProviderScope.containerOf(context, listen: false);
+    if (archive) {
+      final confirmed = await DialogHelper.showConfirmation(
+        context,
+        title: l10n.attendanceArchiveConfirmHeader,
+        message: l10n.attendanceArchiveConfirmMessage,
+        confirmText: l10n.attendanceArchive,
+      );
+      if (!confirmed || !mounted) return;
+    }
+    try {
+      // Account or tenant switched while the dialog was open: no write.
+      if (!repo.hasTenantId || !session.isCurrent()) return;
+      // Current state right before the write (Termin page `_toggleArchived`):
+      // archived or restored meanwhile (other device, second tap) → no write.
+      final current = container.read(attendanceDetailProvider(_id)).valueOrNull;
+      if (current == null || current.archived == archive) return;
+      await repo.updateAttendance(_id, {
+        'archived': archive,
+        'archived_at': archive ? DateTime.now().toUtc().toIso8601String() : null,
+        'archived_by': archive ? session.userId : null,
+      });
+      container
+        ..invalidate(attendanceDetailProvider(_id))
+        ..invalidate(realtimeAttendanceListProvider);
+      if (mounted) ToastHelper.showSuccess(context, archive ? l10n.attendanceArchivedToast : l10n.attendanceRestoredToast);
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, l10n.attendanceArchiveFailed);
+    }
   }
 
   /// Note of one person for this Termin (same rules as the Termin page).
@@ -403,6 +749,56 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   // Build
   // ---------------------------------------------------------------------------
 
+  /// Whether the Reiter Programm has something: Werke (types that manage
+  /// them) or the Ablauf (everyone but Beobachter; editors can create one).
+  bool _hasProgramTab(Attendance attendance, AttendanceType? type) {
+    if (rdShowsProgram(ref, type) && attendance.id != null) return true;
+    final role = ref.watch(effectiveRoleProvider);
+    if (role == Role.viewer) return false;
+    return attendanceHasPlan(attendance) || role.canEdit;
+  }
+
+  /// Reiter Programm (concept L2): the Werke, then the Ablauf as a list with
+  /// "Ablauf ansehen", "Bearbeiten" and "Für Mitglieder sichtbar".
+  List<Widget> _programChildren(Attendance attendance, AttendanceType? type) {
+    final plan = rdPlanOf(attendance);
+    return [
+      if (rdShowsProgram(ref, type) && attendance.id != null) RdEventProgramSection(attendance: attendance, type: type),
+      RdEventPlanSection(
+        attendance: attendance,
+        preview: plan == null ? null : RdPlanTimeline(day: EventListUtils.parse(attendance.date), plan: plan),
+        range: plan == null ? '' : rdPlanRange(plan),
+      ),
+    ];
+  }
+
+  /// Start and end of the Termin (times of the Termin, else of its type).
+  ({DateTime start, DateTime end, bool hasTime})? _span(Attendance attendance, AttendanceType? type) => rdEventSpan(
+        day: EventListUtils.parse(attendance.date),
+        startTime: attendance.startTime ?? type?.startTime,
+        endTime: attendance.endTime ?? type?.endTime,
+        durationDays: _effectiveDays(attendance, type),
+      );
+
+  /// Type and phase, title, date · time · place (the same head as on the
+  /// members' Termin page).
+  Widget _head(Attendance attendance, AttendanceType? type) {
+    final info = rdEventInfo(attendance, type);
+    final span = _span(attendance, type);
+    // Head and top card follow the phase without new data.
+    if (span != null) ref.watch(rdPhaseTickProvider((start: span.start, end: span.end)));
+    return RdEventHead(
+      title: info.title,
+      phase: rdEventPhase(span, archived: attendance.archived),
+      span: span,
+      typeName: type?.name,
+      typeHighlight: type?.highlight ?? false,
+      timeRange: info.timeRange,
+      place: info.place,
+      durationDays: _effectiveDays(attendance, type),
+    );
+  }
+
   void _back() {
     if (context.canPop()) {
       context.pop();
@@ -426,6 +822,10 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     final attendanceAsync = ref.watch(attendanceDetailProvider(_id));
     final attendance = attendanceAsync.valueOrNull;
     final busy = _bulkWrites > 0;
+    final members = attendance == null ? null : _members();
+    // Gemeinde-Übersicht in the ••• menu only where persons have a BFECG
+    // Gemeinde field (read when the menu opens).
+    ref.watch(personExtraFieldsProvider);
 
     final children = <Widget>[
       Row(
@@ -435,25 +835,20 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
                 ? const SizedBox(height: 44)
                 : RdBackLink(label: l10n.redesignTabEvents, onTap: _back),
           ),
-          if (_tab == RdEventTab.record)
+          RdTextLink(
+            key: const Key('rd-event-edit'),
+            label: l10n.redesignEventEdit,
+            onTap: () => context.push(RedesignRoutes.eventEdit(_id)),
+          ),
+          if (attendance != null && members != null && _menuHasActions(attendance, members)) ...[
+            const SizedBox(width: 4),
             RdCircleButton(
-              icon: _searching ? Icons.close : Icons.search,
-              label: _searching ? l10n.redesignEventSearchClose : l10n.redesignEventSearch,
-              onPressed: () => setState(() {
-                _searching = !_searching;
-                if (!_searching) {
-                  _search.clear();
-                  _query = '';
-                }
-              }),
-            )
-          else
-            Flexible(
-              child: _TextLink(
-                label: l10n.redesignEventDetails,
-                onTap: () => context.push('/attendance/$_id'),
-              ),
+              key: const Key('rd-event-menu'),
+              icon: Icons.more_horiz,
+              label: l10n.redesignEventMenu,
+              onPressed: () => _openMenu(attendance, members),
             ),
+          ],
         ],
       ),
     ];
@@ -474,36 +869,68 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     if (pultMembers != null && pultMembers.isNotEmpty) {
       return _pultPage(attendance, pultMembers, type);
     }
+    // Reiter Programm: Werke and Ablauf (not for roles that see neither).
+    final hasProgram = _hasProgramTab(attendance, type);
+    final tabs = [
+      RdEventTab.overview,
+      if (hasProgram) RdEventTab.program,
+      RdEventTab.record,
+    ];
+    final tab = tabs.contains(_tab) ? _tab : RdEventTab.overview;
     children.addAll([
       const SizedBox(height: 4),
-      _Header(attendance: attendance, type: type),
+      _head(attendance, type),
       const SizedBox(height: 16),
       RdSegmented<RdEventTab>(
-        values: RdEventTab.values,
-        selected: _tab,
-        labelOf: (t) => t == RdEventTab.overview ? l10n.redesignEventTabOverview : l10n.redesignEventTabRecord,
+        values: tabs,
+        selected: tab,
+        labelOf: (t) => switch (t) {
+          RdEventTab.overview => l10n.redesignEventTabOverview,
+          RdEventTab.program => l10n.redesignEventTabProgram,
+          RdEventTab.record => l10n.redesignEventTabRecord,
+        },
         onChanged: (t) => setState(() => _tab = t),
       ),
       const SizedBox(height: 16),
     ]);
 
-    final members = _members();
-    if (members == null) {
+    if (tab == RdEventTab.program) {
+      children.addAll(_programChildren(attendance, type));
+    } else if (members == null) {
       children.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
     } else if (members.isEmpty) {
+      final canMutate = canMutateAttendanceDetail(ref.watch(effectiveRoleProvider));
       children.add(RdInfoCard(
         text: l10n.redesignEventNoPersons,
         icon: Icons.group_off_outlined,
-        action: RdOutlineButton(label: l10n.redesignEventMore, onPressed: () => context.push('/attendance/$_id')),
+        action: canMutate
+            ? RdOutlineButton(
+                label: l10n.attendanceAddPerson,
+                onPressed: () => addPersonsToAttendance(context, ref, attendanceId: _id, currentPersonIds: _rowPersonIds ?? const {}),
+              )
+            : null,
       ));
-      children
-        ..add(const SizedBox(height: 16))
-        ..add(_EventActions(attendance: attendance, showMore: false));
-    } else if (_tab == RdEventTab.overview) {
+      // Programm and Ablauf can be prepared before anyone is invited
+      // (Reiter Programm).
+    } else if (tab == RdEventTab.overview) {
+      final span = _span(attendance, type);
       children.add(_Overview(
         attendance: attendance,
+        type: type,
         members: members,
+        personAttendanceIds: _paIds,
+        span: span,
+        phase: rdEventPhase(span, archived: attendance.archived),
+        hasProgramTab: hasProgram,
         onRecord: () => setState(() => _tab = RdEventTab.record),
+        onPult: () => setState(() {
+          _tab = RdEventTab.record;
+          _pult = true;
+          _search.clear();
+          _query = '';
+        }),
+        onProgram: () => setState(() => _tab = RdEventTab.program),
+        onOpenMember: _openMember,
       ));
     } else {
       children.addAll(_recordChildren(members, type));
@@ -569,12 +996,12 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     }
     final rows = _kbRows;
     if (rows.isEmpty) return KeyEventResult.ignored;
+    final current = rows.indexWhere((m) => m.id == _kbId);
     if (key == LogicalKeyboardKey.arrowDown || key == LogicalKeyboardKey.arrowUp) {
-      final current = _kbIndex;
-      final next = current == null
+      final next = current < 0
           ? 0
           : (current + (key == LogicalKeyboardKey.arrowDown ? 1 : -1)).clamp(0, rows.length - 1);
-      _focusRow(next);
+      _focusRow(rows[next].id);
       return KeyEventResult.handled;
     }
     final status = switch (key) {
@@ -587,16 +1014,18 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       return KeyEventResult.ignored;
     }
     if (!_kbAvailable.contains(status)) return KeyEventResult.handled;
-    final index = (_kbIndex ?? 0).clamp(0, rows.length - 1);
+    final index = current < 0 ? 0 : current;
     final member = rows[index];
+    // The next person is chosen before the write: with a status filter the
+    // changed row leaves the list.
+    final nextId = index + 1 < rows.length ? rows[index + 1].id : member.id;
     _setStatus(member, rdToggleTarget(member.status, status, initial: _initial[member.id]));
-    _focusRow((index + 1).clamp(0, rows.length - 1));
+    _focusRow(nextId);
     return KeyEventResult.handled;
   }
 
-  void _focusRow(int index) {
-    setState(() => _kbIndex = index);
-    final id = _kbRows[index].id;
+  void _focusRow(int id) {
+    setState(() => _kbId = id);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final rowContext = _rowKeys[id]?.currentContext;
       if (rowContext != null && rowContext.mounted) {
@@ -688,106 +1117,174 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
           status: _statuses[person.id] ?? AttendanceStatus.neutral,
           note: _notes[person.id],
           changedAt: _changedAt[person.id],
+          changedBy: _changedBy[person.id],
         ),
     ];
   }
 
+  /// Anwesenheit (concept L3): most persons simply are there, so each voice
+  /// shows only its exceptions (everyone not "Anwesend", plus whoever was
+  /// changed here) and "N weitere anwesend · Zeigen". The search "Wer
+  /// fehlt?" and the filter chips show every match.
   List<Widget> _recordChildren(List<RdMember> members, AttendanceType? type) {
     final p = context.rd;
     final l10n = context.l10n;
     final typeStatuses = type?.availableStatuses;
     final available = (typeStatuses?.isNotEmpty ?? false) ? typeStatuses! : AttendanceStatus.values;
     final canViewNotes = ref.watch(canViewAttendanceNotesProvider);
-    final counts = RdStatusCounts.fromStatuses(members.map((m) => m.status));
+    final canMutate = canMutateAttendanceDetail(ref.watch(effectiveRoleProvider));
     final open = members.where((m) => m.isOpen).toList();
     final busy = _bulkWrites > 0;
-    final visible = members.where((m) => rdMemberMatches(m, _query)).toList();
+    final filter = _filter;
+    // Only the exceptions while nothing narrows the list.
+    final collapsing = filter == RdRecordFilter.all && _query.trim().isEmpty;
+
+    // Voices in the Termin page's order.
+    final groups = <int?, List<RdMember>>{};
+    for (final m in members) {
+      groups.putIfAbsent(m.person.instrument, () => []).add(m);
+    }
+
+    final entries = <({int? group, List<RdMember> list, List<RdMember> shown, int hidden})>[];
+    for (final MapEntry(key: group, value: list) in groups.entries) {
+      final matching = list.where((m) => rdFilterMatches(filter, m.status) && rdMemberMatches(m, _query)).toList();
+      if (matching.isEmpty) continue;
+      final expanded = !collapsing || _expanded.contains(group);
+      final shown = expanded
+          ? matching
+          : matching.where((m) => m.status != AttendanceStatus.present || _pinned.contains(m.id)).toList();
+      entries.add((group: group, list: list, shown: shown, hidden: matching.length - shown.length));
+    }
+    final visible = [for (final e in entries) ...e.shown];
     _kbRows = visible;
     _kbAvailable = available;
-    final kbIndex = _kbIndex == null || visible.isEmpty ? null : _kbIndex!.clamp(0, visible.length - 1);
 
-    // Group headers like the Termin page ("Holz · 4").
-    final rows = <Widget>[];
-    int? group;
+    final sections = <Widget>[];
     var first = true;
-    for (final m in visible) {
-      if (first || m.person.instrument != group) {
-        group = m.person.instrument;
-        final size = visible.where((x) => x.person.instrument == group).length;
-        rows.add(Padding(
-          padding: EdgeInsets.only(top: first ? 0 : 14),
-          child: RdGroupLabel('${m.groupName ?? l10n.attendanceNoGroup} · $size'),
-        ));
-        first = false;
-      }
-      final focused = kbIndex != null && visible[kbIndex].id == m.id;
-      rows.add(RdCard(
-        key: _rowKeys.putIfAbsent(m.id, GlobalKey.new),
-        padding: EdgeInsets.zero,
-        border: focused ? Border.all(color: p.primary, width: 2) : null,
-        child: RdRecordRow(
-          key: ValueKey('rd-record-${m.id}'),
-          member: m,
-          available: available.toSet(),
-          showNote: canViewNotes,
-          onTap: (s) => _setStatus(m, rdToggleTarget(m.status, s, initial: _initial[m.id])),
-          onMore: () => _openStatusSheet(m, available, canViewNotes),
+    for (final (:group, :list, :shown, :hidden) in entries) {
+      final here = list.where((m) => m.status.countsAsPresent).length;
+      sections.add(Padding(
+        padding: EdgeInsets.only(top: first ? 0 : 14),
+        child: Row(
+          children: [
+            Expanded(child: RdGroupLabel(list.first.groupName ?? l10n.attendanceNoGroup)),
+            Padding(
+              padding: const EdgeInsets.only(right: 4, bottom: 8),
+              child: Text(
+                l10n.redesignEventRegisterPresent(here, list.length),
+                style: RdType.meta(p, size: 13),
+              ),
+            ),
+          ],
         ),
       ));
-      rows.add(const SizedBox(height: 6));
+      first = false;
+      final rows = <Widget>[
+        for (final m in shown) _recordRow(m, available, canViewNotes),
+        if (collapsing && (hidden > 0 || _expanded.contains(group)))
+          _MoreRow(
+            key: ValueKey('rd-more-$group'),
+            text: hidden == 0
+                ? null
+                : shown.isEmpty
+                    ? l10n.redesignEventAllPresent(hidden)
+                    : l10n.redesignEventMorePresent(hidden),
+            action: hidden == 0 ? l10n.redesignEventHide : l10n.redesignEventShow,
+            onTap: () => setState(() => hidden == 0 ? _expanded.remove(group) : _expanded.add(group)),
+          ),
+      ];
+      sections.add(RdCard(
+        padding: EdgeInsets.zero,
+        child: Column(
+          children: [
+            for (var i = 0; i < rows.length; i++) ...[
+              if (i > 0) Divider(height: 1, thickness: 1, color: p.line),
+              rows[i],
+            ],
+          ],
+        ),
+      ));
     }
 
     return [
-      RdRecordCounts(counts: counts),
-      const SizedBox(height: 12),
-      Align(
-        alignment: Alignment.centerLeft,
-        child: Tooltip(
-          message: l10n.redesignPultOpenHint,
-          child: RdPillButton(
-            icon: Icons.grid_view_rounded,
-            label: l10n.redesignPultOpen,
-            onPressed: () => setState(() {
-              _pult = true;
-              _searching = false;
-              _search.clear();
-              _query = '';
-            }),
+      TextField(
+        key: const Key('rd-record-search'),
+        controller: _search,
+        onChanged: (v) => setState(() => _query = v),
+        textInputAction: TextInputAction.search,
+        decoration: InputDecoration(
+          hintText: l10n.redesignEventRecordSearchHint,
+          prefixIcon: const Icon(Icons.search),
+          suffixIcon: _query.isEmpty
+              ? null
+              : IconButton(
+                  tooltip: l10n.redesignEventSearchClose,
+                  icon: const Icon(Icons.close),
+                  onPressed: () => setState(() {
+                    _search.clear();
+                    _query = '';
+                  }),
+                ),
+          filled: true,
+          fillColor: p.surface,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(p.buttonRadius),
+            borderSide: BorderSide.none,
           ),
         ),
       ),
-      if (available.contains(AttendanceStatus.present)) ...[
+      const SizedBox(height: 12),
+      RdRecordFilterChips(
+        members: members,
+        selected: filter,
+        onChanged: (f) => setState(() => _filter = f),
+      ),
+      const SizedBox(height: 12),
+      Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          Tooltip(
+            message: l10n.redesignPultOpenHint,
+            child: RdPillButton(
+              icon: Icons.grid_view_rounded,
+              label: l10n.redesignPultOpen,
+              onPressed: () => setState(() {
+                _pult = true;
+                _search.clear();
+                _query = '';
+              }),
+            ),
+          ),
+          if (canMutate)
+            RdPillButton(
+              key: const Key('rd-record-add-person'),
+              icon: Icons.person_add_alt_1_outlined,
+              label: l10n.redesignEventAddPersonShort,
+              semanticLabel: l10n.attendanceAddPerson,
+              onPressed: () => addPersonsToAttendance(
+                context,
+                ref,
+                attendanceId: _id,
+                currentPersonIds: _rowPersonIds ?? const {},
+              ),
+            ),
+        ],
+      ),
+      // Termin-Arten with "offen" (Zusage): everyone without an entry at once.
+      if (available.contains(AttendanceStatus.present) && open.isNotEmpty) ...[
         const SizedBox(height: 12),
         RdOutlineButton(
           label: busy ? l10n.redesignEventSaving : l10n.redesignEventAllOpenPresent,
           icon: Icons.done_all,
           color: p.present,
           height: 44,
-          onPressed: open.isEmpty || busy ? null : () => _allOpenPresent(open),
-        ),
-      ],
-      if (_searching) ...[
-        const SizedBox(height: 12),
-        TextField(
-          controller: _search,
-          autofocus: true,
-          onChanged: (v) => setState(() => _query = v),
-          textInputAction: TextInputAction.search,
-          decoration: InputDecoration(
-            hintText: l10n.redesignEventSearchHint,
-            prefixIcon: const Icon(Icons.search),
-            filled: true,
-            fillColor: p.surface,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(p.buttonRadius),
-              borderSide: BorderSide.none,
-            ),
-          ),
+          onPressed: busy ? null : () => _allOpenPresent(open),
         ),
       ],
       const SizedBox(height: 16),
-      if (visible.isEmpty) RdInfoCard(text: l10n.redesignEventNoMatch, icon: Icons.search_off),
-      ...rows,
+      if (sections.isEmpty) RdInfoCard(text: l10n.redesignEventNoMatch, icon: Icons.search_off),
+      ...sections,
       // Tablets with a keyboard and desktops.
       if (MediaQuery.sizeOf(context).width >= 840 && visible.isNotEmpty) ...[
         const SizedBox(height: 10),
@@ -795,84 +1292,156 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       ],
     ];
   }
-}
 
-/// Type and day, title, date · time · place.
-class _Header extends StatelessWidget {
-  const _Header({required this.attendance, required this.type});
-
-  final Attendance attendance;
-  final AttendanceType? type;
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _recordRow(RdMember m, List<AttendanceStatus> available, bool canViewNotes) {
     final p = context.rd;
-    final l10n = context.l10n;
-    final info = rdEventInfo(attendance, type);
-    final start = info.start;
-    final locale = currentIntlLocale();
-    String day(DateTime d) =>
-        '${DateFormat.E(locale).format(d).replaceAll('.', '')} ${DateFormat.MMMd(locale).format(d)}';
-    final days = attendance.durationDays ?? 1;
-    final date = start == null
-        ? ''
-        : days > 1
-            ? '${day(start)} – ${day(rdAddDays(start, days - 1))}'
-            : day(start);
-    final meta = [date, info.timeRange, info.place].where((s) => s.isNotEmpty).join(' · ');
-    final ended = EventListUtils.hasEnded(attendance.date, attendance.durationDays);
-    final relative = start == null || ended ? null : rdRelativeDay(l10n, start);
-    final showRelative = relative == l10n.redesignTodayDayToday || relative == l10n.redesignTodayDayTomorrow;
-    final typeName = type?.name ?? '';
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (typeName.isNotEmpty || showRelative)
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: [
-              if (typeName.isNotEmpty) RdPill(typeName, tone: RdTone.primary),
-              if (showRelative) RdPill(relative!, tone: RdTone.late),
-            ],
-          ),
-        const SizedBox(height: 8),
-        Semantics(header: true, child: Text(info.title, style: RdType.title(p))),
-        if (meta.isNotEmpty) ...[
-          const SizedBox(height: 4),
-          Text(meta, style: RdType.meta(p, size: 15)),
-        ],
-      ],
+    final focused = _kbId == m.id;
+    return DecoratedBox(
+      key: _rowKeys.putIfAbsent(m.id, GlobalKey.new),
+      decoration: BoxDecoration(border: focused ? Border.all(color: p.primary, width: 2) : null),
+      child: RdRecordRow(
+        key: ValueKey('rd-record-${m.id}'),
+        member: m,
+        available: available.toSet(),
+        showNote: canViewNotes,
+        onTap: (s) => _setStatus(m, rdToggleTarget(m.status, s, initial: _initial[m.id])),
+        onMore: () => _openStatusSheet(m, available, canViewNotes),
+      ),
     );
   }
 }
 
-/// Canvas D4: answers, empty registers, sign-outs, notes, all details.
+/// "✓ 7 weitere anwesend · Zeigen" at the end of a voice.
+class _MoreRow extends StatelessWidget {
+  const _MoreRow({super.key, required this.text, required this.action, required this.onTap});
+
+  /// null once the voice is open (only "Weniger").
+  final String? text;
+  final String action;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return InkWell(
+      onTap: onTap,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 48),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          child: Row(
+            children: [
+              if (text != null) ...[
+                Icon(Icons.check_rounded, size: 18, color: p.present),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    text!,
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: p.present),
+                  ),
+                ),
+              ] else
+                const Spacer(),
+              Text(action, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: p.link)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Überblick (concept "Termin-Bereich neu", Schritt 2): the card at the top
+/// follows the phase of the Termin (Jetzt-Karte):
+/// * vorher: Rückmeldungen, who signed out and why, "Offene erinnern";
+/// * heute: the same with "Heute 19:30 · in 40 Min.", "Anwesenheit
+///   eintragen", Pultmodus and Ablauf;
+/// * läuft: Anwesenheit, "Anwesenheit eintragen", "Jetzt im Ablauf";
+/// * danach: "35 von 38 · 92 %" and the Abschluss.
+/// Below: Programm (opens the Reiter), Vorbereitung, "Für Mitglieder",
+/// "Nur Leitung", Dienst and Protokoll.
 class _Overview extends ConsumerWidget {
-  const _Overview({required this.attendance, required this.members, required this.onRecord});
+  const _Overview({
+    required this.attendance,
+    required this.type,
+    required this.members,
+    required this.personAttendanceIds,
+    required this.span,
+    required this.phase,
+    required this.hasProgramTab,
+    required this.onRecord,
+    required this.onPult,
+    required this.onProgram,
+    required this.onOpenMember,
+  });
 
   final Attendance attendance;
+  final AttendanceType? type;
   final List<RdMember> members;
+  final Map<int, String?> personAttendanceIds;
+  final ({DateTime start, DateTime end, bool hasTime})? span;
+  final RdEventPhase phase;
+  final bool hasProgramTab;
   final VoidCallback onRecord;
+  final VoidCallback onPult;
+  final VoidCallback onProgram;
+  final ValueChanged<RdMember> onOpenMember;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final p = context.rd;
     final l10n = context.l10n;
+    final role = ref.watch(effectiveRoleProvider);
     final canViewNotes = ref.watch(canViewAttendanceNotesProvider);
+    final canMutate = canMutateAttendanceDetail(role);
     final counts = RdStatusCounts.fromStatuses(members.map((m) => m.status));
-    final ended = EventListUtils.hasEnded(attendance.date, attendance.durationDays);
-    final gaps = ended ? const <RdRegisterGap>[] : rdRegisterGaps(members);
-    final signouts = rdSignouts(members);
+    final ended = EventListUtils.hasEnded(attendance.date, _effectiveDays(attendance, type));
+    final info = rdEventInfo(attendance, type);
+    final start = info.start;
+    final over = phase == RdEventPhase.after || (phase == RdEventPhase.archived && ended);
+    final started = over || phase == RdEventPhase.running || (start != null && !DateTime.now().isBefore(start));
+    final now = phase == RdEventPhase.today || phase == RdEventPhase.running;
+    final gaps = started ? const <RdRegisterGap>[] : rdRegisterGaps(members);
     final notes = (attendance.notes ?? '').trim();
-    final legend = [
-      (l10n.redesignTodayCountYes(counts.present), p.present),
-      if (counts.excused > 0) (l10n.redesignTodayCountExcused(counts.excused), p.excused),
-      if (counts.lateAnnounced > 0) (l10n.redesignTodayCountLater(counts.lateAnnounced), p.late),
-      if (counts.absent > 0) (l10n.redesignTodayCountAbsent(counts.absent), p.absent),
-      if (counts.open > 0) (l10n.redesignEventCountNoAnswer(counts.open), p.text2),
-    ];
+    final id = attendance.id;
+    final hasPlan = attendanceHasPlan(attendance) && role != Role.viewer;
+
+    // Before the start: answers; from the start on: who is there.
+    final here = members.where((m) => m.status == AttendanceStatus.present).length;
+    final late = members.where((m) => m.status == AttendanceStatus.late || m.status == AttendanceStatus.lateExcused).length;
+    final List<(String, Color)> legend = started
+        ? [
+            (l10n.redesignEventCountHere(here), p.present),
+            if (late > 0) (l10n.redesignEventCountLateStarted(late), p.late),
+            if (counts.excused > 0) (l10n.redesignEventCountExcusedStarted(counts.excused), p.excused),
+            if (counts.absent > 0) (l10n.redesignEventCountAbsentStarted(counts.absent), p.absent),
+            if (counts.open > 0) (l10n.redesignEventCountNoAnswer(counts.open), p.text2),
+          ]
+        : [
+            (l10n.redesignTodayCountYes(counts.present), p.present),
+            if (counts.excused > 0) (l10n.redesignTodayCountExcused(counts.excused), p.excused),
+            if (counts.lateAnnounced > 0) (l10n.redesignTodayCountLater(counts.lateAnnounced), p.late),
+            if (counts.absent > 0) (l10n.redesignTodayCountAbsent(counts.absent), p.absent),
+            if (counts.open > 0) (l10n.redesignEventCountNoAnswer(counts.open), p.text2),
+          ];
+    final total = counts.total;
+    final percent = total == 0 ? 0 : ((here + late) * 100 / total).round();
+    final String title;
+    final String side;
+    if (!started) {
+      title = l10n.redesignEventAnswers;
+      side = l10n.redesignEventInvited(total);
+    } else if (!over) {
+      title = l10n.redesignEventTabRecord;
+      side = l10n.redesignEventAttendancePersons(total);
+    } else {
+      title = l10n.redesignEventTabRecord;
+      side = l10n.redesignEventPresentOf(here + late, total, percent);
+    }
+    // "Heute 19:30 · in 40 Min."
+    final pill = phase == RdEventPhase.today ? rdPhasePill(l10n, phase, span: span) : null;
+    final countdown = phase == RdEventPhase.today ? rdCountdown(l10n, start, hasTime: span?.hasTime ?? false) : null;
+    final settled = over && counts.open == 0 && counts.absent == 0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -881,21 +1450,36 @@ class _Overview extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              if (pill != null) ...[
+                Text(
+                  [pill.label, if (countdown != null) countdown].join(' · ').toUpperCase(),
+                  key: const Key('rd-event-now-eyebrow'),
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.6, color: p.late),
+                ),
+                const SizedBox(height: 6),
+              ],
               Row(
                 children: [
-                  Expanded(child: Text(l10n.redesignEventAnswers, style: RdType.section(p))),
-                  Text(l10n.redesignEventInvited(counts.total), style: RdType.meta(p, size: 13)),
+                  Expanded(child: Text(title, style: RdType.section(p))),
+                  Text(side, style: RdType.meta(p, size: 13)),
                 ],
               ),
               const SizedBox(height: 12),
               RdStatusBar(
-                total: counts.total,
-                segments: [
-                  RdBarSegment(counts.present, p.present),
-                  RdBarSegment(counts.lateAnnounced, p.late),
-                  RdBarSegment(counts.excused, p.excused),
-                  RdBarSegment(counts.absent, p.absent),
-                ],
+                total: total,
+                segments: started
+                    ? [
+                        RdBarSegment(here, p.present),
+                        RdBarSegment(late, p.late),
+                        RdBarSegment(counts.excused, p.excused),
+                        RdBarSegment(counts.absent, p.absent),
+                      ]
+                    : [
+                        RdBarSegment(counts.present, p.present),
+                        RdBarSegment(counts.lateAnnounced, p.late),
+                        RdBarSegment(counts.excused, p.excused),
+                        RdBarSegment(counts.absent, p.absent),
+                      ],
                 semanticLabel: legend.map((e) => e.$1).join(', '),
               ),
               const SizedBox(height: 12),
@@ -918,207 +1502,180 @@ class _Overview extends ConsumerWidget {
                     ),
                 ],
               ),
-              const SizedBox(height: 16),
-              RdPrimaryButton(
-                label: l10n.redesignTodayRecord,
-                icon: Icons.checklist_rounded,
-                onPressed: onRecord,
-              ),
+              for (final gap in gaps) ...[
+                const SizedBox(height: 12),
+                _GapNote(gap: gap),
+              ],
+              // From the Termin day on: record, Pultmodus, Ablauf.
+              if (now) ...[
+                const SizedBox(height: 16),
+                RdPrimaryButton(
+                  label: l10n.redesignEventRecord,
+                  icon: Icons.checklist_rounded,
+                  onPressed: onRecord,
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    RdPillButton(
+                      key: const Key('rd-event-now-pult'),
+                      icon: Icons.grid_view_rounded,
+                      label: l10n.redesignPultOpen,
+                      onPressed: onPult,
+                    ),
+                    if (hasPlan)
+                      RdPillButton(
+                        key: const Key('rd-event-now-plan'),
+                        icon: Icons.view_timeline_outlined,
+                        label: phase == RdEventPhase.running ? l10n.redesignEventPlanLive : l10n.redesignEventPlanSection,
+                        onPressed: () => openAttendancePlanViewer(context, attendance),
+                      ),
+                  ],
+                ),
+              ],
+              if (phase == RdEventPhase.running && hasPlan) ...[
+                const SizedBox(height: 14),
+                if (rdPlanOf(attendance) case final plan?) RdPlanNow(day: EventListUtils.parse(attendance.date), plan: plan),
+              ],
+              // Only Termin-Arten with "offen" (Zusage) have someone to remind.
+              if (canMutate && !ended && counts.open > 0 && id != null) ...[
+                SizedBox(height: now ? 10 : 16),
+                RdOutlineButton(
+                  key: const Key('rd-event-remind-open'),
+                  label: '${l10n.redesignEventRemindOpen} (${counts.open})',
+                  icon: Icons.notifications_none,
+                  height: 44,
+                  onPressed: () => showRdRemindOpenSheet(
+                    context,
+                    attendanceId: id,
+                    title: info.title,
+                    when: rdRemindWhen(start, hasTime: (attendance.startTime ?? type?.startTime)?.isNotEmpty ?? false),
+                  ),
+                ),
+              ],
+              if (!over)
+                RdSignoutList(
+                  members: members,
+                  title: info.title,
+                  showNote: canViewNotes,
+                  started: started,
+                  onOpen: onOpenMember,
+                ),
+              if (settled) ...[
+                const SizedBox(height: 14),
+                Row(
+                  key: const Key('rd-event-settled'),
+                  children: [
+                    Icon(Icons.check_circle_outline, size: 18, color: p.present),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        [
+                          l10n.redesignEventAllSettled,
+                          if (!attendance.archived &&
+                              canArchiveAttendance(
+                                date: attendance.date,
+                                durationDays: _effectiveDays(attendance, type),
+                                archived: attendance.archived,
+                                role: role,
+                              ))
+                            l10n.redesignEventArchiveHint,
+                        ].join(' · '),
+                        style: RdType.meta(p, size: 14),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
-        for (final gap in gaps) ...[
-          const SizedBox(height: 12),
+        // After the Termin: Unentschuldigte anschreiben, automatische Nachricht.
+        if (over)
+          RdEventClosingSection(
+            attendance: attendance,
+            type: type,
+            members: members,
+            personAttendanceIds: personAttendanceIds,
+          ),
+        if (hasProgramTab) RdProgramSummary(attendance: attendance, showWorks: rdShowsProgram(ref, type), onTap: onProgram),
+        if (ref.watch(canViewAttendanceChecklistProvider) &&
+            (attendance.checklist?.isNotEmpty ?? false) &&
+            !(over && attendance.checklist!.every((c) => c.completed))) ...[
+          const SizedBox(height: 24),
+          RdEventChecklistSection(attendance: attendance),
+        ],
+        RdEventInfoSection(attendance: attendance, title: l10n.redesignEventForMembers, ended: over),
+        if (notes.isNotEmpty) ...[
+          const SizedBox(height: 24),
+          RdGroupLabel(l10n.redesignEventLeadersOnly),
           RdCard(
-            color: p.absentSoft,
             padding: const EdgeInsets.all(14),
-            child: Row(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.warning_amber_rounded, color: p.absent),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: l10n.redesignEventRegisterEmpty(gap.group, gap.members.length),
-                          style: const TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                        const TextSpan(text: ' '),
-                        TextSpan(
-                          text: l10n.redesignEventRegisterNames(
-                            gap.members.length,
-                            gap.members.map((m) => m.name).join(', '),
-                          ),
-                        ),
-                      ],
-                    ),
-                    style: TextStyle(fontSize: 14, color: p.text),
-                  ),
-                ),
+                Text(l10n.attendanceNotes, style: RdType.meta(p, size: 13)),
+                const SizedBox(height: 4),
+                Text(notes, style: RdType.body(p)),
               ],
             ),
           ),
         ],
-        if (signouts.isNotEmpty) ...[
+        // Dienstplan "Besetzung" and Protokoll as on the Termin page.
+        if (type != null && type!.dutyMode && id != null) ...[
           const SizedBox(height: 24),
-          RdGroupLabel(l10n.redesignEventSignouts),
-          RdGroupedList(
-            children: [
-              for (final m in signouts)
-                RdListRow(
-                  title: m.name,
-                  subtitle: [
-                    m.groupName ?? '',
-                    if (canViewNotes && (m.note ?? '').trim().isNotEmpty) '„${m.note!.trim()}“',
-                  ].where((s) => s.isNotEmpty).join(' · '),
-                  showChevron: false,
-                  trailing: RdPill(
-                    m.status == AttendanceStatus.excused ? l10n.redesignStatusExcused : l10n.redesignStatusLater,
-                    tone: m.status == AttendanceStatus.excused ? RdTone.excused : RdTone.late,
-                  ),
-                ),
-            ],
-          ),
+          DutyStaffingSection(attendance: attendance, attendanceType: type!),
         ],
-        if (notes.isNotEmpty) ...[
+        if (id != null && (ref.watch(protocolTypeByIdProvider(attendance.typeId))?.enableProtocol ?? false)) ...[
           const SizedBox(height: 24),
-          RdGroupLabel(l10n.attendanceNotes),
-          RdCard(
-            padding: const EdgeInsets.all(14),
-            child: Text(notes, style: RdType.body(p)),
-          ),
+          AttendanceProtocolSection(attendanceId: id, typeId: attendance.typeId),
         ],
-        const SizedBox(height: 24),
-        _EventActions(attendance: attendance),
       ],
     );
   }
 }
 
-/// Ablauf ansehen · Alle Details und Bearbeiten · Termin löschen (also
-/// shown when the Termin has no persons yet).
-class _EventActions extends ConsumerWidget {
-  const _EventActions({required this.attendance, this.showMore = true});
+/// "Trompete: 0 von 2 da. Max Huber, Jan Ott haben abgesagt."
+class _GapNote extends StatelessWidget {
+  const _GapNote({required this.gap});
 
-  final Attendance attendance;
-
-  /// False where "Alle Details" already is a button (empty Termin).
-  final bool showMore;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final p = context.rd;
-    final l10n = context.l10n;
-    final role = ref.watch(effectiveRoleProvider);
-    // Like the old Termine list: Beobachter never see the Ablaufplan; only
-    // the Dirigent (Admin, Verantwortliche) deletes a Termin.
-    final hasPlan = !role.isViewer && attendanceHasPlan(attendance);
-    final canDelete = role.isAdmin || role.isResponsible;
-    if (!hasPlan && !showMore && !canDelete) return const SizedBox.shrink();
-    return RdGroupedList(
-      children: [
-        if (hasPlan)
-          RdListRow(
-            leading: const RdRowIcon(Icons.view_timeline_outlined),
-            title: l10n.redesignEventPlan,
-            subtitle: l10n.redesignEventPlanHint,
-            onTap: () => openAttendancePlanViewer(context, attendance),
-          ),
-        if (showMore)
-          RdListRow(
-            leading: const RdRowIcon(Icons.tune),
-            title: l10n.redesignEventMore,
-            subtitle: l10n.redesignEventMoreHint,
-            onTap: () => context.push('/attendance/${attendance.id}'),
-          ),
-        if (canDelete)
-          RdListRow(
-            key: const Key('rd-event-delete'),
-            leading: RdRowIcon(Icons.delete_outline, color: p.absent, background: p.absentSoft),
-            title: l10n.redesignEventDelete,
-            titleColor: p.absent,
-            showChevron: false,
-            onTap: () => _delete(context, ref),
-          ),
-      ],
-    );
-  }
-
-  /// "Termin löschen" (old Termine list: Dirigent only, i.e. Admin and
-  /// Verantwortliche): confirm, delete, back to the Termine.
-  Future<void> _delete(BuildContext context, WidgetRef ref) async {
-    final l10n = context.l10n;
-    final id = attendance.id;
-    if (id == null || DemoGuard.blocked()) return; // DEMO_GUARD
-    // Bound before the dialog (tenant switch safety).
-    final repo = ref.read(attendanceRepositoryWithTenantProvider);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.attListRemoveConfirm),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.commonCancel)),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: context.rd.absent),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(l10n.attListContinue),
-          ),
-        ],
-      ),
-    );
-    if (confirmed != true || !context.mounted) return;
-    // The page may close while the delete runs (tab or page change): the
-    // container and router outlive this widget's ref.
-    final container = ProviderScope.containerOf(context, listen: false);
-    final router = GoRouter.of(context);
-    HapticHelper.medium();
-    try {
-      await repo.deleteAttendance(id);
-    } catch (e) {
-      if (context.mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
-      return;
-    }
-    container
-      ..invalidate(attendancesProvider)
-      ..invalidate(realtimeAttendanceListProvider)
-      ..invalidate(playerAttendancePercentagesProvider);
-    if (context.mounted) ToastHelper.showSuccess(context, l10n.redesignEventDeleted);
-    router.go(RedesignRoutes.events);
-  }
-}
-
-/// Plain text link in the header ("Alle Details").
-class _TextLink extends StatelessWidget {
-  const _TextLink({required this.label, required this.onTap});
-
-  final String label;
-  final VoidCallback onTap;
+  final RdRegisterGap gap;
 
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
-    return Semantics(
-      button: true,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 44),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Center(
-              widthFactor: 1,
-              child: Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 17, color: p.link),
+    final l10n = context.l10n;
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(color: p.absentSoft, borderRadius: BorderRadius.circular(12)),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.warning_amber_rounded, color: p.absent, size: 20),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: l10n.redesignEventRegisterEmpty(gap.group, gap.members.length),
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  const TextSpan(text: ' '),
+                  TextSpan(
+                    text: l10n.redesignEventRegisterNames(
+                      gap.members.length,
+                      gap.members.map((m) => m.name).join(', '),
+                    ),
+                  ),
+                ],
               ),
+              style: TextStyle(fontSize: 14, color: p.text),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

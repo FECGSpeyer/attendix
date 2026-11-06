@@ -24,6 +24,8 @@ import 'ion_items.dart';
 import 'plan_export_actions.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/services/native/native_file_service.dart';
+import '../../../../core/services/pdf_fonts.dart';
 
 /// Opens the Registerprobenplan modal (Ionic `isPlanModalOpen`, a sheet with
 /// breakpoints `[0, 1]`, i.e. full height).
@@ -374,10 +376,8 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
           if (mounted) ToastHelper.showError(context, l10n.svcSendMessageFailed);
         }
       } else {
-        await Printing.layoutPdf(
-          onLayout: (_) async => pdf,
-          name: '$shortName Registerprobenplan: $date.pdf',
-        );
+        // Ionic `Utils.downloadFileNative`: save, not print.
+        await NativeFileService.saveBytes(pdf, '$shortName Registerprobenplan: $date.pdf');
       }
     } catch (e) {
       if (mounted) ToastHelper.showError(context, l10n.planningFlutterExportFailed(friendlyErrorMessage(e)));
@@ -413,7 +413,7 @@ Future<Uint8List> buildRegisterPlanPdf(
         ),
       );
 
-  final doc = pw.Document();
+  final doc = await PdfFonts.document();
   doc.addPage(pw.MultiPage(
     pageFormat: PdfPageFormat.a4,
     margin: const pw.EdgeInsets.fromLTRB(14 * mm, 10 * mm, 14 * mm, 14 * mm),

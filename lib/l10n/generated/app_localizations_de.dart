@@ -73,9 +73,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get adminEvaluation => 'Auswertung';
 
   @override
-  String get adminFlutterAddFailed => 'Fehler beim Hinzufügen';
-
-  @override
   String adminGb(Object value) {
     return '$value GB';
   }
@@ -480,6 +477,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attListAddSongs => 'Werk(e) hinzufügen';
 
   @override
+  String get attListArchived => 'Archiviert';
+
+  @override
+  String attListArchivedCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count archivierte Termine',
+      one: '$count archivierter Termin',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get attListAverage => 'Durchschnitt';
 
   @override
@@ -622,6 +633,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attListShowAll => 'Alle anzeigen';
 
   @override
+  String get attListShowArchived => 'Archivierte anzeigen';
+
+  @override
   String get attListSongs => 'Werke';
 
   @override
@@ -682,6 +696,30 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get attendanceAllAlreadyIncluded =>
       'Alle Personen sind bereits in dieser Anwesenheit enthalten.';
+
+  @override
+  String get attendanceArchive => 'Archivieren';
+
+  @override
+  String get attendanceArchiveConfirmHeader => 'Termin archivieren?';
+
+  @override
+  String get attendanceArchiveConfirmMessage =>
+      'Mitglieder sehen den Termin und ihre Anwesenheit dazu dann nicht mehr. Admins und Verantwortliche sehen ihn weiterhin und können ihn jederzeit wiederherstellen.';
+
+  @override
+  String get attendanceArchiveFailed =>
+      'Der Termin konnte nicht geändert werden.';
+
+  @override
+  String get attendanceArchivedBanner => 'Archiviert';
+
+  @override
+  String get attendanceArchivedBannerHint =>
+      'Für Mitglieder unsichtbar. Nur Admins und Verantwortliche sehen diesen Termin.';
+
+  @override
+  String get attendanceArchivedToast => 'Termin archiviert';
 
   @override
   String get attendanceAssign => 'Einteilen';
@@ -1358,6 +1396,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceResetChecklist => 'Checkliste zurücksetzen';
 
   @override
+  String get attendanceRestore => 'Wiederherstellen';
+
+  @override
+  String get attendanceRestoredToast => 'Termin wiederhergestellt';
+
+  @override
   String get attendanceRunSheetAgenda => 'Ablaufplan & Tagesordnung';
 
   @override
@@ -1400,9 +1444,47 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceSignedOut => 'abgemeldet';
 
   @override
+  String attendanceSongsChip(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke',
+      one: '$count Werk',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String attendanceSongsCount(Object count) {
     return 'Werke ($count)';
   }
+
+  @override
+  String get attendanceSongsNoScoresForYou =>
+      'Für dich sind keine Noten hinterlegt';
+
+  @override
+  String get attendanceSongsOpenRunSheet => 'Ablaufplan öffnen';
+
+  @override
+  String get attendanceSongsPrintAll => 'Alle Noten drucken';
+
+  @override
+  String get attendanceSongsShow => 'Werke anzeigen';
+
+  @override
+  String attendanceSongsTileEvents(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Termine',
+      one: 'Nächster Termin',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get attendanceSongsTitle => 'Werke';
 
   @override
   String get attendanceSorting => 'Sortierung';
@@ -1528,6 +1610,705 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get authUserNotFound => 'Benutzer nicht gefunden';
+
+  @override
+  String get autoMessagesActive => 'Aktiv';
+
+  @override
+  String get autoMessagesActiveHint =>
+      'Eine eingeschaltete Regel gilt ab jetzt. Vergangene Termine werden nicht nachgeschickt. Schau dir vorher unten die Vorschau an.';
+
+  @override
+  String get autoMessagesAllTypes => 'alle Termintypen';
+
+  @override
+  String get autoMessagesAllowResponses => 'Mitglied kann antworten';
+
+  @override
+  String get autoMessagesAllowResponsesHint =>
+      'Knöpfe „Grund nachtragen“ und „Ich war doch da“ in der Nachricht';
+
+  @override
+  String get autoMessagesChannelEmail => 'E-Mail';
+
+  @override
+  String get autoMessagesChannelPush => 'Push / Telegram';
+
+  @override
+  String get autoMessagesChannels => 'Kanäle';
+
+  @override
+  String get autoMessagesChipCopy => 'Kopie';
+
+  @override
+  String get autoMessagesChipEmail => 'E-Mail';
+
+  @override
+  String get autoMessagesChipPush => 'Push';
+
+  @override
+  String get autoMessagesChipResponses => 'Grund nachtragen';
+
+  @override
+  String get autoMessagesCopy => 'Kopie (optional)';
+
+  @override
+  String get autoMessagesCopyHint =>
+      'Eine Sammelinfo pro Termin, wer angeschrieben wurde.';
+
+  @override
+  String get autoMessagesCopyResponsibles => 'Admins und Verantwortliche';
+
+  @override
+  String get autoMessagesCopyVoiceLeaders => 'Stimmführer (nur ihre Gruppe)';
+
+  @override
+  String get autoMessagesCustomHint =>
+      'Eigener Text geht in allen Sprachen so raus, wie du ihn schreibst. Tippe auf einen Platzhalter, um ihn einzufügen.';
+
+  @override
+  String get autoMessagesCustomText => 'Eigener Text';
+
+  @override
+  String autoMessagesDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Tage',
+      one: '$count Tag',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get autoMessagesDecideAcceptPresent =>
+      'Status auf „anwesend“ setzen? Die Person bekommt Bescheid.';
+
+  @override
+  String get autoMessagesDecideAcceptReason =>
+      'Status auf „entschuldigt“ setzen? Die Person bekommt Bescheid.';
+
+  @override
+  String get autoMessagesDecideReject =>
+      'Rückmeldung ablehnen? Der Status bleibt, der Grund bleibt als Notiz stehen.';
+
+  @override
+  String get autoMessagesDecidedAccepted => 'Übernommen';
+
+  @override
+  String get autoMessagesDecidedRejected => 'Abgelehnt';
+
+  @override
+  String get autoMessagesDelay => 'Wartezeit nach Terminende';
+
+  @override
+  String get autoMessagesDelayHint =>
+      'In dieser Zeit kannst du die Anwesenheit noch korrigieren oder die Nachricht für den Termin aussetzen.';
+
+  @override
+  String autoMessagesDelayHours(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Std.',
+      one: '$count Std.',
+    );
+    return '$_temp0 danach';
+  }
+
+  @override
+  String autoMessagesDelayMinutes(Object count) {
+    return '$count Min. danach';
+  }
+
+  @override
+  String get autoMessagesDelayNone => 'Direkt nach Ende';
+
+  @override
+  String get autoMessagesDeleteConfirm => 'Regel löschen?';
+
+  @override
+  String get autoMessagesDeleteHint =>
+      'Bereits verschickte Nachrichten bleiben erhalten.';
+
+  @override
+  String get autoMessagesDeleteRule => 'Regel löschen';
+
+  @override
+  String get autoMessagesDisabledToast => 'Regel ausgeschaltet';
+
+  @override
+  String get autoMessagesEnabledToast => 'Regel eingeschaltet';
+
+  @override
+  String get autoMessagesErrChannel => 'Bitte wähle mindestens einen Kanal';
+
+  @override
+  String get autoMessagesErrName => 'Bitte gib der Regel einen Namen';
+
+  @override
+  String get autoMessagesErrStatus => 'Bitte wähle mindestens einen Auslöser';
+
+  @override
+  String get autoMessagesErrText => 'Bitte gib einen Titel und einen Text ein';
+
+  @override
+  String get autoMessagesExcuse => 'Entschuldigen';
+
+  @override
+  String get autoMessagesExcuseAfterCheck => 'Nach Bestätigung entschuldigt';
+
+  @override
+  String get autoMessagesExcuseInstant => 'Sofort entschuldigt';
+
+  @override
+  String get autoMessagesFreqCount => 'Ab wie vielen Malen';
+
+  @override
+  String get autoMessagesFreqDays => 'Zeitraum';
+
+  @override
+  String get autoMessagesFreqEach => 'Jedes Mal';
+
+  @override
+  String get autoMessagesFreqHintEach => 'Bei jedem passenden Termin.';
+
+  @override
+  String autoMessagesFreqHintStreak(Object count) {
+    return 'Erst beim $count. Fehlen hintereinander. Danach erst wieder, wenn die Person zwischendurch da war.';
+  }
+
+  @override
+  String autoMessagesFreqHintWindow(Object days, Object count) {
+    return 'Wenn jemand innerhalb von $days Tagen zum $count. Mal passt.';
+  }
+
+  @override
+  String get autoMessagesFreqStreak => 'In Folge';
+
+  @override
+  String autoMessagesFreqStreakShort(Object count) {
+    return 'ab $count× in Folge';
+  }
+
+  @override
+  String get autoMessagesFreqWindow => 'Im Zeitraum';
+
+  @override
+  String autoMessagesFreqWindowShort(Object count, Object days) {
+    return 'ab $count× in $days Tagen';
+  }
+
+  @override
+  String get autoMessagesGeneral => 'Allgemein';
+
+  @override
+  String get autoMessagesGroups => 'Gruppen';
+
+  @override
+  String get autoMessagesGroupsAll =>
+      'Nichts ausgewählt: gilt für alle Gruppen.';
+
+  @override
+  String get autoMessagesGroupsSome =>
+      'Gilt nur für Personen aus den ausgewählten Gruppen.';
+
+  @override
+  String get autoMessagesHistEmpty => 'Diese Regel hat noch nichts verschickt.';
+
+  @override
+  String get autoMessagesHistRead => 'gelesen';
+
+  @override
+  String get autoMessagesHistResponses => 'Antworten';
+
+  @override
+  String get autoMessagesHistRowNone => 'Niemand passte';
+
+  @override
+  String get autoMessagesHistRowNotRecorded =>
+      'Nicht verschickt: Anwesenheit wurde nicht erfasst';
+
+  @override
+  String autoMessagesHistRowSent(num count, Object read, Object responses) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen',
+      one: '$count Person',
+    );
+    return '$_temp0 · $read gelesen · $responses Antworten';
+  }
+
+  @override
+  String autoMessagesHistRowSuspended(Object name) {
+    return 'Ausgesetzt von $name';
+  }
+
+  @override
+  String get autoMessagesHistSent => 'Personen angeschrieben';
+
+  @override
+  String get autoMessagesHistory => 'Verlauf';
+
+  @override
+  String get autoMessagesHowOften => 'Wie oft?';
+
+  @override
+  String get autoMessagesIntro =>
+      'Schicke Mitgliedern automatisch eine Nachricht nach einem Termin, zum Beispiel wenn sie gefehlt haben, ohne sich abzumelden. Alle Regeln sind aus, bis du sie einschaltest.';
+
+  @override
+  String autoMessagesLastWeek(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen angeschrieben',
+      one: '$count Person angeschrieben',
+    );
+    return 'Letzte 7 Tage: $_temp0';
+  }
+
+  @override
+  String get autoMessagesLess => 'Weniger';
+
+  @override
+  String get autoMessagesLoadFailed =>
+      'Automatische Nachrichten konnten nicht geladen werden';
+
+  @override
+  String autoMessagesManualBody(Object termin, Object datum, Object instanz) {
+    return 'Hallo,\n\nbei $termin am $datum wart ihr nicht da und hattet euch nicht abgemeldet.\n\nWenn ihr einen Grund hattet, tragt ihn gern direkt in der App nach. Bitte meldet euch nächstes Mal vorher ab.\nEuer Team von $instanz';
+  }
+
+  @override
+  String autoMessagesManualRecipients(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count unentschuldigte Personen',
+      one: '$count unentschuldigte Person',
+    );
+    return '$_temp0 dieses Termins';
+  }
+
+  @override
+  String get autoMessagesManualTitle => 'Wir haben euch vermisst';
+
+  @override
+  String get autoMessagesMessage => 'Nachricht';
+
+  @override
+  String get autoMessagesMore => 'Mehr';
+
+  @override
+  String get autoMessagesName => 'Name';
+
+  @override
+  String get autoMessagesNewRule => 'Neue Regel';
+
+  @override
+  String get autoMessagesOnlyEmail => 'nur E-Mail';
+
+  @override
+  String get autoMessagesOpenTermin => 'Zum Termin';
+
+  @override
+  String autoMessagesPanelNone(Object rule) {
+    return '„$rule“: niemand passte';
+  }
+
+  @override
+  String autoMessagesPanelNotRecorded(Object rule) {
+    return '„$rule“ nicht verschickt: Anwesenheit wurde nicht erfasst';
+  }
+
+  @override
+  String autoMessagesPanelPending(Object rule) {
+    return '„$rule“ wird gleich geprüft';
+  }
+
+  @override
+  String get autoMessagesPanelPendingHint =>
+      'Die Nachricht geht nur raus, wenn die Anwesenheit erfasst ist.';
+
+  @override
+  String autoMessagesPanelResponses(Object count) {
+    return 'Rückmeldungen ($count offen)';
+  }
+
+  @override
+  String get autoMessagesPanelSaysPresent => 'Sagt: „Ich war doch da“';
+
+  @override
+  String autoMessagesPanelSent(Object rule, num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen',
+      one: '$count Person',
+    );
+    return '„$rule“ ging an $_temp0';
+  }
+
+  @override
+  String autoMessagesPanelSuspended(Object rule) {
+    return '„$rule“ ist für diesen Termin ausgesetzt';
+  }
+
+  @override
+  String autoMessagesPanelWillSend(Object rule, Object time) {
+    return '„$rule“ geht um $time raus';
+  }
+
+  @override
+  String get autoMessagesPanelWillSendHint =>
+      'Bis dahin kannst du die Anwesenheit noch korrigieren.';
+
+  @override
+  String get autoMessagesPreview => 'Vorschau';
+
+  @override
+  String autoMessagesPreviewAt(Object time) {
+    return 'Versand wäre am $time gewesen';
+  }
+
+  @override
+  String autoMessagesPreviewExcluded(Object excused, Object paused) {
+    return 'Nicht angeschrieben: $excused abgemeldet, $paused pausiert';
+  }
+
+  @override
+  String get autoMessagesPreviewFailed =>
+      'Vorschau konnte nicht geladen werden';
+
+  @override
+  String get autoMessagesPreviewHint =>
+      'Die Vorschau verschickt nichts. Mit Häufigkeit „In Folge“ zählen auch frühere Termine.';
+
+  @override
+  String get autoMessagesPreviewNoTermine =>
+      'Keine passenden Termine in den letzten 60 Tagen.';
+
+  @override
+  String get autoMessagesPreviewNotRecorded =>
+      'Übersprungen: Anwesenheit nicht erfasst';
+
+  @override
+  String autoMessagesPreviewWould(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen hätten die Nachricht bekommen',
+      one: '$count Person hätte die Nachricht bekommen',
+      zero: 'Niemand hätte die Nachricht bekommen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get autoMessagesReasonFamily => 'Familie';
+
+  @override
+  String get autoMessagesReasonForgot => 'Abmelden vergessen';
+
+  @override
+  String get autoMessagesReasonOther => 'Sonstiges';
+
+  @override
+  String get autoMessagesReasonSick => 'Krank';
+
+  @override
+  String get autoMessagesReasonWork => 'Arbeit / Schule';
+
+  @override
+  String get autoMessagesReject => 'Ablehnen';
+
+  @override
+  String get autoMessagesResetToTemplate => 'Auf Vorlage zurücksetzen';
+
+  @override
+  String get autoMessagesRespAddReason => 'Grund nachtragen';
+
+  @override
+  String get autoMessagesRespAlreadyDecided =>
+      'Deine Rückmeldung wurde schon bearbeitet';
+
+  @override
+  String get autoMessagesRespChange => 'Rückmeldung ändern';
+
+  @override
+  String get autoMessagesRespDone =>
+      'Danke! Deine Rückmeldung wurde geschickt.';
+
+  @override
+  String get autoMessagesRespDoneInstant =>
+      'Danke! Du bist jetzt entschuldigt.';
+
+  @override
+  String get autoMessagesRespExpired =>
+      'Für diesen Termin ist keine Rückmeldung mehr möglich';
+
+  @override
+  String get autoMessagesRespFailed =>
+      'Rückmeldung konnte nicht gesendet werden';
+
+  @override
+  String get autoMessagesRespHadReason => 'Ich hatte einen Grund';
+
+  @override
+  String get autoMessagesRespHint =>
+      'Die Verantwortlichen sehen deinen Grund als Notiz am Termin.';
+
+  @override
+  String get autoMessagesRespReason => 'Grund';
+
+  @override
+  String get autoMessagesRespSend => 'Senden';
+
+  @override
+  String get autoMessagesRespStateAccepted => 'Übernommen';
+
+  @override
+  String get autoMessagesRespStatePending => 'Wird geprüft';
+
+  @override
+  String get autoMessagesRespStateRejected => 'Nicht übernommen';
+
+  @override
+  String get autoMessagesRespText => 'Ergänzung (optional)';
+
+  @override
+  String get autoMessagesRespTitle => 'Rückmeldung';
+
+  @override
+  String get autoMessagesRespWasThere => 'Ich war doch da';
+
+  @override
+  String get autoMessagesRespWasThereHint =>
+      'Die Verantwortlichen bekommen einen Hinweis und können die Anwesenheit korrigieren.';
+
+  @override
+  String get autoMessagesRespWasThereShort =>
+      '„Ich war doch da“ geht als Hinweis an die Verantwortlichen.';
+
+  @override
+  String get autoMessagesResponses => 'Grund nachtragen';
+
+  @override
+  String autoMessagesResponsesHint(Object days) {
+    return 'Antworten sind bis $days Tage nach dem Termin möglich. „Ich war doch da“ wird immer erst geprüft.';
+  }
+
+  @override
+  String get autoMessagesRule => 'Regel';
+
+  @override
+  String get autoMessagesRules => 'Regeln';
+
+  @override
+  String get autoMessagesSafety =>
+      'Es wird nur geschickt, wenn bei dem Termin Anwesenheit erfasst wurde. Abgemeldete, Pausierte und Ausgetretene bekommen nie eine Nachricht.';
+
+  @override
+  String get autoMessagesSampleFirstName => 'Lena';
+
+  @override
+  String get autoMessagesSampleName => 'Lena Muster';
+
+  @override
+  String get autoMessagesSampleTermin => 'Probe';
+
+  @override
+  String get autoMessagesSaveFailed => 'Speichern fehlgeschlagen';
+
+  @override
+  String get autoMessagesSaved => 'Regel gespeichert';
+
+  @override
+  String get autoMessagesSetPresent => 'Auf anwesend';
+
+  @override
+  String get autoMessagesShowPreview => 'Vorschau mit den letzten Terminen';
+
+  @override
+  String get autoMessagesStartFromTemplate => 'Vorlagen zum Start';
+
+  @override
+  String get autoMessagesStatus0 => 'Keine Rückmeldung';
+
+  @override
+  String get autoMessagesStatus1 => 'Anwesend';
+
+  @override
+  String get autoMessagesStatus2 => 'Entschuldigt';
+
+  @override
+  String get autoMessagesStatus3 => 'Zu spät';
+
+  @override
+  String get autoMessagesStatus4 => 'Unentschuldigt';
+
+  @override
+  String get autoMessagesStatus5 => 'Verspätet entschuldigt';
+
+  @override
+  String get autoMessagesSuspend => 'Diesmal aussetzen';
+
+  @override
+  String get autoMessagesTemplate => 'Vorlage';
+
+  @override
+  String get autoMessagesTemplateHint =>
+      'Die Vorlage gibt es in mehreren Sprachen. Jedes Mitglied bekommt sie in seiner App-Sprache.';
+
+  @override
+  String get autoMessagesTitle => 'Automatische Nachrichten';
+
+  @override
+  String autoMessagesTplAbsentBody(
+    Object vorname,
+    Object termin,
+    Object datum,
+    Object instanz,
+  ) {
+    return 'Hallo $vorname,\n\nbei $termin am $datum warst du nicht da und hattest dich nicht abgemeldet.\n\nIst alles in Ordnung? Wenn du einen Grund hattest, trag ihn gern direkt in der App nach.\n\nBitte melde dich nächstes Mal vorher ab, damit wir besser planen können.\nDein Team von $instanz';
+  }
+
+  @override
+  String autoMessagesTplAbsentTitle(Object vorname) {
+    return 'Wir haben dich vermisst, $vorname';
+  }
+
+  @override
+  String get autoMessagesTplHintAbsent =>
+      'Nach jedem Termin, bei dem jemand unentschuldigt fehlt';
+
+  @override
+  String get autoMessagesTplHintLate =>
+      'Wenn jemand zu spät kommt, ohne Bescheid zu geben';
+
+  @override
+  String get autoMessagesTplHintNoAnswer =>
+      'Wenn jemand bis nach dem Termin nicht reagiert hat';
+
+  @override
+  String get autoMessagesTplHintStreak =>
+      'Erst ab dem 2. Fehlen hintereinander';
+
+  @override
+  String autoMessagesTplLateBody(
+    Object vorname,
+    Object termin,
+    Object datum,
+    Object instanz,
+  ) {
+    return 'Hallo $vorname,\n\nbei $termin am $datum bist du zu spät gekommen, ohne dich vorher zu melden.\n\nWenn du einen Grund hattest, trag ihn gern direkt in der App nach. Gib uns nächstes Mal bitte vorher Bescheid.\nDein Team von $instanz';
+  }
+
+  @override
+  String autoMessagesTplLateTitle(Object vorname) {
+    return 'Du warst zu spät, $vorname';
+  }
+
+  @override
+  String get autoMessagesTplNameAbsent => 'Unentschuldigt gefehlt';
+
+  @override
+  String get autoMessagesTplNameLate => 'Zu spät ohne Abmeldung';
+
+  @override
+  String get autoMessagesTplNameNoAnswer => 'Keine Rückmeldung';
+
+  @override
+  String get autoMessagesTplNameStreak => 'Mehrmals in Folge gefehlt';
+
+  @override
+  String autoMessagesTplNoAnswerBody(
+    Object vorname,
+    Object termin,
+    Object datum,
+    Object instanz,
+  ) {
+    return 'Hallo $vorname,\n\nfür $termin am $datum haben wir keine Rückmeldung von dir bekommen.\n\nBitte gib künftig in der App Bescheid, ob du kommst. Wenn du einen Grund hattest, kannst du ihn hier nachtragen.\nDein Team von $instanz';
+  }
+
+  @override
+  String autoMessagesTplNoAnswerTitle(Object termin) {
+    return 'Keine Rückmeldung zu $termin';
+  }
+
+  @override
+  String autoMessagesTplStreakBody(
+    Object vorname,
+    Object anzahl,
+    Object termin,
+    Object datum,
+    Object instanz,
+  ) {
+    return 'Hallo $vorname,\n\ndu hast jetzt $anzahl Mal in Folge gefehlt, ohne dich abzumelden, zuletzt bei $termin am $datum.\n\nIst alles in Ordnung? Melde dich gern bei uns. Wenn du einen Grund hattest, trag ihn direkt in der App nach.\nDein Team von $instanz';
+  }
+
+  @override
+  String autoMessagesTplStreakTitle(Object vorname) {
+    return '$vorname, wir vermissen dich';
+  }
+
+  @override
+  String get autoMessagesTrigger0 => 'Keine Rückmeldung';
+
+  @override
+  String get autoMessagesTrigger3 => 'Zu spät ohne Abmeldung';
+
+  @override
+  String get autoMessagesTrigger4 => 'Unentschuldigt gefehlt';
+
+  @override
+  String get autoMessagesTriggerHint0 =>
+      'Status nach dem Termin noch „neutral“';
+
+  @override
+  String get autoMessagesTriggerHint3 =>
+      'Status „zu spät“, nicht „verspätet entschuldigt“';
+
+  @override
+  String get autoMessagesTriggerHint4 =>
+      'Status „unentschuldigt“ nach dem Termin';
+
+  @override
+  String get autoMessagesTypesAll =>
+      'Nichts ausgewählt: gilt für alle Termintypen.';
+
+  @override
+  String get autoMessagesTypesSome =>
+      'Gilt nur für die ausgewählten Termintypen.';
+
+  @override
+  String get autoMessagesUnreachable => 'nicht erreichbar';
+
+  @override
+  String get autoMessagesUnsuspend => 'Wieder einschalten';
+
+  @override
+  String get autoMessagesUseTemplate => 'Vorlage';
+
+  @override
+  String get autoMessagesWhen => 'Wann wird geschickt?';
+
+  @override
+  String get autoMessagesWhichTermine => 'Für welche Termine?';
+
+  @override
+  String get autoMessagesWhoCanUse =>
+      'Admins und Verantwortliche können Regeln anlegen und ändern.';
+
+  @override
+  String get autoMessagesWhoRead => 'Wer hat gelesen?';
+
+  @override
+  String autoMessagesWriteUnexcusedMenu(Object count) {
+    return 'Unentschuldigte anschreiben ($count)';
+  }
 
   @override
   String get bellCurrentInstance => 'Aktuelle Instanz';
@@ -2196,12 +2977,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coreFlutterRuleOverall => 'insgesamt';
 
   @override
-  String get coreFlutterRuleSinceSeasonStart => 'seit Saisonstart';
-
-  @override
-  String coreFlutterRuleStatusN(Object n) {
-    return 'Status $n';
-  }
+  String get coreFlutterRuleSinceSeasonStart => 'seit Saisonbeginn';
 
   @override
   String get coreFlutterSchoolHolidays => 'Schulferien';
@@ -3236,6 +4012,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?';
 
   @override
+  String get extraFieldsFlutterUpdatingPersons =>
+      'Personen werden aktualisiert...';
+
+  @override
   String get extraFieldsForPersons => 'Zusätzliche Felder für Personen';
 
   @override
@@ -3385,7 +4165,46 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String filesDeleteSelectedHeader(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Einträge löschen?',
+      one: '$count Eintrag löschen?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String filesDeleteSelectedMessage(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Die $count ausgewählten Einträge werden endgültig gelöscht, Ordner mit ihrem ganzen Inhalt.',
+      one: 'Der ausgewählte Eintrag wird endgültig gelöscht.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String filesDeleteSummary(Object ok, Object failed) {
+    return '$ok gelöscht, $failed fehlgeschlagen.';
+  }
+
+  @override
   String get filesDeleted => 'Eintrag wurde gelöscht.';
+
+  @override
+  String filesDeletedMany(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Einträge wurden gelöscht.',
+      one: 'Eintrag wurde gelöscht.',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get filesDescending => 'absteigend';
@@ -3474,16 +4293,82 @@ class AppLocalizationsDe extends AppLocalizations {
   String get filesMove => 'Verschieben';
 
   @override
+  String get filesMoveBeingMoved => 'Wird verschoben';
+
+  @override
+  String get filesMoveChooseTarget => 'Wähle einen Zielordner.';
+
+  @override
+  String get filesMoveCollapse => 'Zuklappen';
+
+  @override
+  String get filesMoveCurrentFolder => 'Aktueller Ordner';
+
+  @override
+  String filesMoveExists(Object name) {
+    return 'Im Zielordner gibt es schon „$name“. Nichts verschoben.';
+  }
+
+  @override
+  String get filesMoveExpand => 'Aufklappen';
+
+  @override
   String filesMoveFailed(Object error) {
     return 'Verschieben fehlgeschlagen: $error';
   }
 
   @override
   String get filesMoveHint =>
-      'Zielordner relativ zum Tenant-Root. Leer lassen für Root.';
+      'Tippe auf einen Ordner, um ihn als Ziel zu wählen. Mit dem Pfeil klappst du Unterordner auf.';
+
+  @override
+  String filesMoveMoveHere(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Einträge hierher verschieben',
+      one: 'Hierher verschieben',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get filesMoveRoot => 'Dateiablage';
+
+  @override
+  String filesMoveSummary(Object ok, Object skipped, Object failed) {
+    return '$ok verschoben, $skipped übersprungen (gibt es im Ziel schon), $failed fehlgeschlagen.';
+  }
+
+  @override
+  String filesMoveTarget(Object path) {
+    return 'Ziel: $path';
+  }
+
+  @override
+  String filesMoveTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Einträge verschieben',
+      one: 'Verschieben',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get filesMoved => 'Eintrag wurde verschoben.';
+
+  @override
+  String filesMovedMany(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Einträge wurden verschoben.',
+      one: 'Eintrag wurde verschoben.',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get filesName => 'Name';
@@ -3581,6 +4466,33 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get filesSearchType =>
       '<strong>typ:&lt;wert&gt;</strong> · Filtert nach Dateityp oder Art (z. B. <strong>typ:pdf</strong>, <strong>typ:ordner</strong>, <strong>typ:datei</strong>).';
+
+  @override
+  String get filesSelect => 'Auswählen';
+
+  @override
+  String get filesSelectAll => 'Alle';
+
+  @override
+  String get filesSelectMultiple => 'Mehrere auswählen';
+
+  @override
+  String get filesSelectNone => 'Keine';
+
+  @override
+  String filesSelectedCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ausgewählt',
+      one: '$count ausgewählt',
+      zero: 'Nichts ausgewählt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get filesSelectionDone => 'Auswahl beenden';
 
   @override
   String get filesSend => 'Senden';
@@ -3816,12 +4728,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsFlutterOrShort => 'ODER';
 
   @override
-  String get generalSettingsFlutterPracticeEnd => 'Probenende';
-
-  @override
-  String get generalSettingsFlutterPracticeStart => 'Probenbeginn';
-
-  @override
   String get generalSettingsFlutterRuleAdded => 'Regel hinzugefügt';
 
   @override
@@ -3836,10 +4742,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get generalSettingsFlutterRuleUpdated => 'Regel aktualisiert';
-
-  @override
-  String get generalSettingsFlutterStatusCritical =>
-      'Status (zählt als kritisch)';
 
   @override
   String get generalSettingsForeignInfo => 'Info-Text für fremde Termine';
@@ -4801,6 +5703,21 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String messagesAutoActive(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Regeln aktiv',
+      one: '$count Regel aktiv',
+      zero: 'Keine Regel aktiv',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get messagesAutoEntry => 'Automatische Nachrichten';
+
+  @override
   String get messagesCountsFailed =>
       'Die Empfänger konnten nicht geladen werden.';
 
@@ -5096,6 +6013,44 @@ class AppLocalizationsDe extends AppLocalizations {
   String get messagesWriteFirst => 'Erste Mitteilung schreiben';
 
   @override
+  String get navClose => 'Menü schließen';
+
+  @override
+  String get navCollapse => 'Seitenleiste einklappen';
+
+  @override
+  String get navExpand => 'Seitenleiste ausklappen';
+
+  @override
+  String get navGroupAccount => 'Konto';
+
+  @override
+  String get navGroupAdmin => 'Verwaltung';
+
+  @override
+  String get navGroupOverview => 'Übersicht';
+
+  @override
+  String get navGroupTeam => 'Team';
+
+  @override
+  String navInstances(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Instanzen',
+      one: '$count Instanz',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get navLabel => 'Hauptnavigation';
+
+  @override
+  String get navShortcut => 'Strg/⌘ + B';
+
+  @override
   String get notifAnnouncements => 'Mitteilungen';
 
   @override
@@ -5272,6 +6227,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get orgFieldsApplyChanges => 'Änderungen übernehmen';
+
+  @override
+  String get orgFieldsFlutterClearDefault => 'Standardwert entfernen';
 
   @override
   String get orgFieldsFlutterFirstOptionDefault =>
@@ -6092,6 +7050,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get peopleFlutterHint => 'Hinweis';
+
+  @override
+  String peopleFlutterImportNotAssigned(Object name, Object error) {
+    return '$name: gespeichert, aber nicht zu den Terminen hinzugefügt ($error)';
+  }
 
   @override
   String get peopleFlutterLastNameRequired => 'Nachname ist erforderlich';
@@ -7195,6 +8158,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personVoiceLeaderStatusOnly => 'Nur Stimmführer-Status';
 
   @override
+  String get planViewerOpenScores => 'Noten öffnen';
+
+  @override
+  String get planningAddAgain => 'Erneut hinzufügen';
+
+  @override
   String get planningAddAnotherPlan => 'Weiteren Ablaufplan anlegen';
 
   @override
@@ -7345,6 +8314,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get planningCurrent => 'Aktuelle';
+
+  @override
+  String get planningCurrentSongsAlreadyAddedHeader => 'Bereits hinzugefügt';
+
+  @override
+  String get planningCurrentSongsAlreadyAddedMessage =>
+      'Alle aktuellen Werke sind schon in diesem Ablaufplan. Möchtest du sie noch einmal hinzufügen?';
 
   @override
   String get planningDefaultTitle => 'Standardtitel verwenden';
@@ -7612,6 +8588,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get planningNext => 'Nächste';
+
+  @override
+  String get planningNoCurrentSongs => 'Keine aktuellen Werke vorhanden';
 
   @override
   String get planningNoPlan => 'Kein Plan verfügbar';
@@ -8800,7 +9779,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignCreateDeadline => 'Abmeldeschluss';
+  String get redesignCreateDeadline => 'Antwort bis';
 
   @override
   String get redesignCreateDeadline24h => '24 Std. vorher';
@@ -8810,7 +9789,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignCreateDeadlineHint =>
-      'Danach können sich Mitglieder nicht mehr selbst an- oder abmelden.';
+      'Danach kann man nicht mehr zusagen, absagen geht weiter.';
 
   @override
   String get redesignCreateDeadlineNone => 'Keiner';
@@ -9056,6 +10035,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignCreateType => 'Art';
 
   @override
+  String get redesignEventAddPersonShort => 'Person';
+
+  @override
+  String get redesignEventAddTask => 'Aufgabe';
+
+  @override
+  String get redesignEventAddTaskLabel => 'Aufgabe hinzufügen';
+
+  @override
+  String get redesignEventAddWork => 'Werk';
+
+  @override
+  String get redesignEventAddWorkLabel => 'Werk hinzufügen';
+
+  @override
   String redesignEventAllDone(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -9070,15 +10064,66 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventAllOpenPresent => 'Alle Offenen als anwesend';
 
   @override
+  String redesignEventAllPresent(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Alle $count anwesend',
+      one: '1 anwesend',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignEventAllSettled => 'Alles erledigt';
+
+  @override
   String get redesignEventAnswers => 'Rückmeldungen';
+
+  @override
+  String get redesignEventAnswersTitle => 'Rückmeldungen mit Grund';
+
+  @override
+  String get redesignEventArchiveHint => 'Archivieren unter •••';
+
+  @override
+  String redesignEventAttendancePersons(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen',
+      one: '1 Person',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get redesignEventBusyLeave =>
       'Bitte warte, bis alles gespeichert ist.';
 
   @override
+  String get redesignEventByGroup => 'Nach Stimme';
+
+  @override
+  String get redesignEventChangeConductorHint =>
+      'Aus der Gruppe oder Gastdirigent';
+
+  @override
+  String redesignEventChangedBy(Object name, Object when) {
+    return 'Zuletzt geändert von $name · $when';
+  }
+
+  @override
+  String get redesignEventClosing => 'Abschluss';
+
+  @override
   String redesignEventCountAbsent(Object count) {
     return '$count fehlt';
+  }
+
+  @override
+  String redesignEventCountAbsentStarted(Object count) {
+    return '$count abwesend';
   }
 
   @override
@@ -9087,8 +10132,23 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String redesignEventCountExcusedStarted(Object count) {
+    return '$count entschuldigt';
+  }
+
+  @override
+  String redesignEventCountHere(Object count) {
+    return '$count anwesend';
+  }
+
+  @override
   String redesignEventCountLate(Object count) {
     return '$count später';
+  }
+
+  @override
+  String redesignEventCountLateStarted(Object count) {
+    return '$count verspätet';
   }
 
   @override
@@ -9110,10 +10170,63 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventDelete => 'Termin löschen';
 
   @override
+  String get redesignEventDeleteHint =>
+      '„Termin löschen“ steht ganz unten in „Bearbeiten“.';
+
+  @override
+  String get redesignEventDeleteTask => 'Aufgabe löschen';
+
+  @override
   String get redesignEventDeleted => 'Termin gelöscht';
 
   @override
+  String get redesignEventDescription => 'Beschreibung & Anhang';
+
+  @override
   String get redesignEventDetails => 'Alle Details';
+
+  @override
+  String get redesignEventEdit => 'Bearbeiten';
+
+  @override
+  String get redesignEventEditBack => 'Termin';
+
+  @override
+  String get redesignEventEditBasics => 'Grunddaten';
+
+  @override
+  String get redesignEventEditDeadlineLocked =>
+      'Der Termin liegt in der Vergangenheit.';
+
+  @override
+  String get redesignEventEditDeadlinePick => 'Datum und Uhrzeit wählen';
+
+  @override
+  String redesignEventEditDeadlineSuggested(Object date) {
+    return 'Vorschlag: $date';
+  }
+
+  @override
+  String get redesignEventEditFolderNone => 'Keiner';
+
+  @override
+  String get redesignEventEditHint =>
+      'Änderungen werden sofort gespeichert. Werke und Ablauf änderst du im Reiter Programm, die Vorbereitung im Überblick.';
+
+  @override
+  String get redesignEventEditSaved => 'Gespeichert';
+
+  @override
+  String get redesignEventEditTitle => 'Termin bearbeiten';
+
+  @override
+  String get redesignEventExportExcel => 'Als Excel exportieren';
+
+  @override
+  String get redesignEventForMembers => 'Für Mitglieder';
+
+  @override
+  String get redesignEventHide => 'Weniger';
 
   @override
   String redesignEventInvited(Object count) {
@@ -9125,10 +10238,27 @@ class AppLocalizationsDe extends AppLocalizations {
       'Tastatur: A anwesend · V verspätet · F fehlt · ↑↓ nächste Person · ⌘Z oder Strg+Z rückgängig';
 
   @override
+  String get redesignEventLeadersOnly => 'Nur Leitung';
+
+  @override
+  String get redesignEventMenu => 'Weitere Aktionen';
+
+  @override
   String get redesignEventMore => 'Alle Details und Bearbeiten';
 
   @override
   String get redesignEventMoreHint => 'Ablauf, Checkliste, Werke und Notizen';
+
+  @override
+  String redesignEventMorePresent(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count weitere anwesend',
+      one: '1 weitere anwesend',
+    );
+    return '$_temp0';
+  }
 
   @override
   String redesignEventMoreStatus(Object name) {
@@ -9139,11 +10269,27 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventNeutralHint => 'zählt nicht';
 
   @override
+  String redesignEventNewestFirst(Object title) {
+    return '$title · neueste zuerst';
+  }
+
+  @override
+  String redesignEventNextInPlan(Object items) {
+    return 'Danach: $items';
+  }
+
+  @override
   String get redesignEventNoMatch => 'Niemand passt zur Suche.';
 
   @override
   String get redesignEventNoPersons =>
       'Für diesen Termin sind noch keine Personen eingetragen.';
+
+  @override
+  String get redesignEventNoPlanYet => 'Noch kein Ablauf';
+
+  @override
+  String get redesignEventNoReason => 'ohne Grund';
 
   @override
   String get redesignEventNotFound => 'Dieser Termin wurde nicht gefunden.';
@@ -9155,10 +10301,110 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventNoteHint => 'z. B. Grund oder Uhrzeit';
 
   @override
+  String redesignEventNowInPlan(Object time) {
+    return 'Jetzt im Ablauf · bis $time';
+  }
+
+  @override
+  String get redesignEventPhaseArchived => 'Archiviert';
+
+  @override
+  String redesignEventPhaseRunning(Object time) {
+    return 'Läuft · seit $time';
+  }
+
+  @override
+  String get redesignEventPhaseRunningShort => 'Läuft';
+
+  @override
+  String redesignEventPhaseToday(Object time) {
+    return 'Heute $time';
+  }
+
+  @override
+  String get redesignEventPhaseYesterday => 'Gestern';
+
+  @override
   String get redesignEventPlan => 'Ablauf ansehen';
 
   @override
+  String get redesignEventPlanCreate => 'Ablauf anlegen';
+
+  @override
+  String get redesignEventPlanEdit => 'Ablauf bearbeiten';
+
+  @override
+  String get redesignEventPlanEditHint => 'Punkte, Zeiten, PDF und Telegram';
+
+  @override
+  String get redesignEventPlanEditShort => 'Bearbeiten';
+
+  @override
   String get redesignEventPlanHint => 'Ablaufplan, am Termin-Tag live';
+
+  @override
+  String get redesignEventPlanLive => 'Ablauf live';
+
+  @override
+  String redesignEventPlanMinutes(Object count) {
+    return '$count Min';
+  }
+
+  @override
+  String get redesignEventPlanNowPill => 'jetzt';
+
+  @override
+  String get redesignEventPlanSection => 'Ablauf';
+
+  @override
+  String get redesignEventPlanShare => 'Für Mitglieder sichtbar';
+
+  @override
+  String get redesignEventPlanShareHint =>
+      'Mitglieder sehen den Ablauf beim Termin';
+
+  @override
+  String get redesignEventPlanShared => 'Ablauf für alle sichtbar';
+
+  @override
+  String redesignEventPrep(Object done, Object total) {
+    return 'Vorbereitung · $done von $total erledigt';
+  }
+
+  @override
+  String redesignEventPresentOf(Object present, Object total, Object percent) {
+    return '$present von $total · $percent %';
+  }
+
+  @override
+  String get redesignEventProgram => 'Programm';
+
+  @override
+  String redesignEventProgramMore(Object names, Object count) {
+    return '$names und $count weitere';
+  }
+
+  @override
+  String redesignEventProgramPlan(Object range) {
+    return 'Ablauf $range';
+  }
+
+  @override
+  String redesignEventProgramWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke',
+      one: '1 Werk',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignEventRecord => 'Anwesenheit eintragen';
+
+  @override
+  String get redesignEventRecordSearchHint => 'Wer fehlt? Name suchen';
 
   @override
   String redesignEventRegisterEmpty(Object group, Object count) {
@@ -9177,6 +10423,25 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String redesignEventRegisterPresent(Object present, Object total) {
+    return '$present von $total da';
+  }
+
+  @override
+  String get redesignEventRemindOpen => 'Offene erinnern';
+
+  @override
+  String get redesignEventRemoveFromEvent => 'Aus Termin entfernen';
+
+  @override
+  String redesignEventRemoveHint(Object name) {
+    return '$name taucht in diesem Termin nicht mehr auf';
+  }
+
+  @override
+  String get redesignEventRemoveWork => 'Werk entfernen';
+
+  @override
   String get redesignEventSaving => 'Wird gespeichert …';
 
   @override
@@ -9189,16 +10454,42 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventSearchHint => 'Name';
 
   @override
-  String get redesignEventSignouts => 'Abmeldungen';
+  String redesignEventSectionCount(Object title, Object count) {
+    return '$title · $count';
+  }
+
+  @override
+  String get redesignEventShow => 'Zeigen';
+
+  @override
+  String redesignEventShowAll(Object count) {
+    return 'Alle anzeigen ($count)';
+  }
+
+  @override
+  String get redesignEventSignedOut => 'Abgemeldet';
 
   @override
   String get redesignEventStatus => 'Status';
 
   @override
+  String get redesignEventStatusOverviewHint =>
+      'Alle Antworten nach Stimme und Status';
+
+  @override
   String get redesignEventTabOverview => 'Überblick';
 
   @override
+  String get redesignEventTabProgram => 'Programm';
+
+  @override
   String get redesignEventTabRecord => 'Anwesenheit';
+
+  @override
+  String get redesignEventToPerson => 'Zur Person';
+
+  @override
+  String get redesignEventToWorkHint => 'Noten und Stimmen';
 
   @override
   String redesignEventToastReset(Object name) {
@@ -9215,6 +10506,26 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignEventUndone => 'Rückgängig gemacht';
+
+  @override
+  String redesignEventWorkNumber(Object number) {
+    return 'Nr. $number';
+  }
+
+  @override
+  String redesignEventWorkRemoved(Object name) {
+    return '$name entfernt';
+  }
+
+  @override
+  String get redesignEventWorks => 'Werke';
+
+  @override
+  String get redesignEventWorksLoadFailed =>
+      'Die Werke konnten nicht geladen werden.';
+
+  @override
+  String get redesignEventYesterday => 'gestern';
 
   @override
   String get redesignEventsAbsent => 'Abwesend …';
@@ -9431,7 +10742,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignFilesTitle => 'Dateien';
+  String get redesignFilesTitle => 'Noten & Dateien';
 
   @override
   String get redesignFilesUpload => 'Hochladen';
@@ -9444,6 +10755,55 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignFilesZipPreparing => 'ZIP wird erstellt …';
+
+  @override
+  String redesignFolderAll(Object count) {
+    return 'Alle Werke · $count';
+  }
+
+  @override
+  String redesignFolderEmpty(Object name) {
+    return 'Für $name gibt es noch keine Noten.';
+  }
+
+  @override
+  String get redesignFolderMissing => 'fehlt';
+
+  @override
+  String redesignFolderNext(Object count) {
+    return 'Als Nächstes · $count';
+  }
+
+  @override
+  String get redesignFolderNoGroup =>
+      'Dir ist noch keine Stimme zugeordnet. Wähle eine Stimme, um ihre Noten zu sehen.';
+
+  @override
+  String redesignFolderNoPart(Object name) {
+    return 'Keine Noten für $name';
+  }
+
+  @override
+  String get redesignFolderNothingNext =>
+      'Für die nächsten Termine sind noch keine Werke geplant.';
+
+  @override
+  String get redesignFolderOpen => 'Als ein PDF öffnen';
+
+  @override
+  String get redesignFolderOpenHint => 'Zum Ansehen, Speichern oder Drucken';
+
+  @override
+  String get redesignFolderOther => 'Andere Stimme';
+
+  @override
+  String get redesignFolderPick => 'Stimme wählen';
+
+  @override
+  String get redesignFolderTitle => 'Meine Mappe';
+
+  @override
+  String get redesignFolderTitleLeads => 'Mappen';
 
   @override
   String get redesignGroupsLoadFailed =>
@@ -9762,6 +11122,10 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get redesignImportErrorNotZip =>
       'Die Datei ist keine ZIP-Datei oder beschädigt.';
+
+  @override
+  String get redesignImportErrorOtherLibrary =>
+      'Diese Gruppe zeigt die Werke einer anderen Gruppe. Noten importieren geht nur in der Gruppe, der die Werke gehören.';
 
   @override
   String get redesignImportErrorTooLargeWeb =>
@@ -10629,17 +11993,100 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignNotifTelegramDisconnect => 'Trennen';
 
   @override
+  String redesignOwnAnswerDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Du kannst noch $count Tage antworten.',
+      one: 'Du kannst noch 1 Tag antworten.',
+      zero: 'Du kannst heute noch antworten.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignOwnAskReason => 'Die Leitung fragt nach dem Grund.';
+
+  @override
+  String get redesignOwnComeLater => 'Komme später';
+
+  @override
+  String get redesignOwnComingLater => 'Du kommst später';
+
+  @override
+  String get redesignOwnIn => 'Du bist dabei';
+
+  @override
   String get redesignOwnInfos => 'Infos zum Termin';
 
   @override
   String get redesignOwnMore => 'Mehr';
 
   @override
+  String get redesignOwnNoAnswer => 'Noch keine Antwort';
+
+  @override
+  String get redesignOwnNoNotes => 'Keine Noten';
+
+  @override
+  String get redesignOwnNoNotesFor =>
+      'Für deine Stimme sind keine Noten hinterlegt.';
+
+  @override
   String get redesignOwnNotFound =>
       'Dieser Termin ist nicht mehr in deiner Liste.';
 
   @override
+  String get redesignOwnNotRecorded => 'Nicht erfasst';
+
+  @override
+  String get redesignOwnNoteToLeaders => 'Notiz an die Leitung';
+
+  @override
+  String get redesignOwnOpenMine => 'Deine Noten öffnen';
+
+  @override
+  String get redesignOwnPlanAll => 'Ganz ansehen';
+
+  @override
+  String get redesignOwnPlanLive => 'Live-Ansicht';
+
+  @override
+  String redesignOwnPlanMore(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'und $count weitere Punkte',
+      one: 'und 1 weiterer Punkt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignOwnPlanned => 'Du bist eingeplant';
+
+  @override
+  String get redesignOwnPrintMine => 'Meine Noten als ein PDF';
+
+  @override
+  String redesignOwnPrintMineHint(Object count, Object total) {
+    return '$count von $total Werken';
+  }
+
+  @override
+  String get redesignOwnProgramPending => 'Das Programm steht noch nicht fest.';
+
+  @override
   String get redesignOwnRoute => 'Route';
+
+  @override
+  String get redesignOwnSignOut => 'Abmelden';
+
+  @override
+  String get redesignOwnYouConduct => 'Du dirigierst';
+
+  @override
+  String get redesignOwnYourAttendance => 'Deine Anwesenheit';
 
   @override
   String get redesignParentsAllKids => 'Alle Kinder';
@@ -10749,6 +12196,270 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPersonTomorrow => 'morgen';
+
+  @override
+  String get redesignPlanAdd => 'Punkt hinzufügen';
+
+  @override
+  String redesignPlanAddAfter(Object name) {
+    return 'Wird nach „$name“ eingefügt';
+  }
+
+  @override
+  String get redesignPlanAddBlock => 'Block';
+
+  @override
+  String get redesignPlanAddBlockHint => 'Fasst mehrere Punkte zusammen';
+
+  @override
+  String get redesignPlanAddCurrent => 'Aktuelle Werke';
+
+  @override
+  String get redesignPlanAddCurrentHint => 'Die Werke, die gerade dran sind';
+
+  @override
+  String get redesignPlanAddEnd => 'Wird ans Ende gesetzt';
+
+  @override
+  String get redesignPlanAddItem => 'Punkt';
+
+  @override
+  String get redesignPlanAddItemHint => 'Mit Dauer, z. B. „Einsingen“';
+
+  @override
+  String get redesignPlanAddNote => 'Notiz';
+
+  @override
+  String get redesignPlanAddNoteHint => 'Ohne Dauer und Uhrzeit';
+
+  @override
+  String get redesignPlanAddPlan => 'Plan';
+
+  @override
+  String get redesignPlanAddSong => 'Werk aus der Liste';
+
+  @override
+  String get redesignPlanAddTitle => 'Hinzufügen';
+
+  @override
+  String get redesignPlanAfterBlock => 'Punkt nach dem Block einfügen';
+
+  @override
+  String get redesignPlanBack => 'Termin';
+
+  @override
+  String redesignPlanBlockTemplateHint(Object count) {
+    return 'Block · $count Min';
+  }
+
+  @override
+  String get redesignPlanCollapse => 'Block einklappen';
+
+  @override
+  String get redesignPlanCollapsed => 'eingeklappt';
+
+  @override
+  String redesignPlanCopied(Object date) {
+    return 'Ablauf vom $date übernommen';
+  }
+
+  @override
+  String get redesignPlanDelete => 'Löschen';
+
+  @override
+  String get redesignPlanDeleteHint => 'Mit Rückgängig';
+
+  @override
+  String get redesignPlanDrag => 'Ziehen zum Sortieren';
+
+  @override
+  String get redesignPlanDuration => 'Dauer';
+
+  @override
+  String get redesignPlanDurationHint =>
+      'Die Zeiten darunter rechnen sich sofort neu';
+
+  @override
+  String redesignPlanDurationLabel(Object name, Object count) {
+    return 'Dauer von $name: $count Minuten';
+  }
+
+  @override
+  String get redesignPlanEdit => 'Bearbeiten';
+
+  @override
+  String get redesignPlanEditHint => 'Bezeichnung, Info, Dauer';
+
+  @override
+  String get redesignPlanEmptyCopy => 'Wie letzter Termin';
+
+  @override
+  String redesignPlanEmptyCopyHint(Object date, Object count) {
+    return 'Kopie vom $date · $count';
+  }
+
+  @override
+  String get redesignPlanEmptyTemplate => 'Vorlage der Organisation';
+
+  @override
+  String get redesignPlanEmptyTitle => 'Womit beginnen?';
+
+  @override
+  String get redesignPlanEnd => 'Ende';
+
+  @override
+  String get redesignPlanExpand => 'Block aufklappen';
+
+  @override
+  String get redesignPlanHeading => 'Überschrift';
+
+  @override
+  String get redesignPlanHint =>
+      'Tipp auf die Dauer ändert sie direkt, Tipp auf einen Punkt öffnet alles Weitere. Am Griff halten und ziehen sortiert um.';
+
+  @override
+  String redesignPlanHours(Object count) {
+    return '$count Std.';
+  }
+
+  @override
+  String redesignPlanHoursMinutes(Object hours, Object minutes) {
+    return '$hours Std. $minutes Min';
+  }
+
+  @override
+  String redesignPlanInBlock(Object name) {
+    return 'im Block „$name“';
+  }
+
+  @override
+  String get redesignPlanInsertAfter => 'Punkt danach einfügen';
+
+  @override
+  String get redesignPlanInvalid =>
+      'Noch nicht gespeichert: jeder Punkt braucht eine Dauer';
+
+  @override
+  String redesignPlanItemCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Punkte',
+      one: '1 Punkt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignPlanJoinBlock => 'In den Block darüber';
+
+  @override
+  String get redesignPlanLeaveBlock => 'Aus dem Block nehmen';
+
+  @override
+  String get redesignPlanLess => '5 Minuten weniger';
+
+  @override
+  String get redesignPlanMinUnit => 'Min';
+
+  @override
+  String redesignPlanMinutes(Object count) {
+    return '$count Min';
+  }
+
+  @override
+  String get redesignPlanMore => 'Weitere Aktionen';
+
+  @override
+  String get redesignPlanMore5 => '5 Minuten mehr';
+
+  @override
+  String get redesignPlanMoveDown => 'Nach unten';
+
+  @override
+  String get redesignPlanMoveUp => 'Nach oben';
+
+  @override
+  String get redesignPlanNext => 'Nächster Termin';
+
+  @override
+  String get redesignPlanNotes => 'Notizen zum Termin';
+
+  @override
+  String redesignPlanOrgFieldHint(Object count) {
+    return 'Feld der Organisation · $count Min';
+  }
+
+  @override
+  String get redesignPlanOrgHint => 'Erscheint im Plan der Organisation';
+
+  @override
+  String get redesignPlanOrgTemplateHint => 'Vorlage der Organisation';
+
+  @override
+  String get redesignPlanOther => 'Weiteres';
+
+  @override
+  String get redesignPlanPlanPick => 'Termin wählen';
+
+  @override
+  String redesignPlanPlanSection(Object name) {
+    return 'Plan „$name“';
+  }
+
+  @override
+  String get redesignPlanPrev => 'Vorheriger Termin';
+
+  @override
+  String get redesignPlanPublicLink => 'Öffentlicher Link';
+
+  @override
+  String get redesignPlanPublicLinkHint =>
+      'Zum Ansehen oder Mitbearbeiten ohne Konto';
+
+  @override
+  String get redesignPlanPublicLinkShared =>
+      'Geteilt · zum Ändern oder Beenden tippen';
+
+  @override
+  String redesignPlanRemoved(Object name) {
+    return '„$name“ entfernt';
+  }
+
+  @override
+  String get redesignPlanSaved => 'Gespeichert';
+
+  @override
+  String get redesignPlanSaving => 'Speichert …';
+
+  @override
+  String get redesignPlanSettings => 'Für diesen Plan';
+
+  @override
+  String get redesignPlanShareExport => 'Teilen & Export';
+
+  @override
+  String get redesignPlanShareHint => 'Mitglieder sehen den Ablauf im Termin';
+
+  @override
+  String get redesignPlanStart => 'Beginn';
+
+  @override
+  String get redesignPlanTemplateDelete => 'Vorlage löschen';
+
+  @override
+  String get redesignPlanTitle => 'Ablauf';
+
+  @override
+  String get redesignPlanTitleHint => 'Steht über dem Ablauf und im PDF';
+
+  @override
+  String get redesignPlanUndo => 'Rückgängig';
+
+  @override
+  String redesignPlanUntil(Object time) {
+    return 'bis $time';
+  }
 
   @override
   String get redesignPultAllOpen => 'Alle Offenen da';
@@ -11319,13 +13030,158 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTodayYourAnswer => 'Deine Zusage';
 
   @override
+  String get redesignWorkAbout => 'Über das Werk';
+
+  @override
+  String get redesignWorkAdd => 'Hinzufügen';
+
+  @override
+  String get redesignWorkAddDrop =>
+      'Am Computer: Dateien einfach hierher ziehen';
+
+  @override
+  String get redesignWorkAddHint =>
+      'Stimmen, Partitur, Aufnahme oder Liedtext auswählen. Die Stimme wird am Dateinamen erkannt, bei unklaren Namen auf Seite 1.';
+
+  @override
+  String get redesignWorkAddPick => 'Dateien wählen';
+
+  @override
+  String get redesignWorkAddTitle => 'Noten hinzufügen';
+
+  @override
   String get redesignWorkAllFiles => 'Alle Dateien';
 
   @override
   String get redesignWorkAllParts => 'Alle Stimmen';
 
   @override
+  String get redesignWorkCopiedFrom => 'Kopiert aus';
+
+  @override
+  String get redesignWorkCopy => 'In andere Gruppe kopieren';
+
+  @override
+  String get redesignWorkCopyHint =>
+      'In Gruppen deiner Organisation, die du leitest';
+
+  @override
+  String get redesignWorkCreateCategory => 'Kategorie';
+
+  @override
+  String redesignWorkCreateCategoryHint(Object name) {
+    return 'Vorausgewählt, weil die Liste gerade auf „$name“ gefiltert war.';
+  }
+
+  @override
+  String get redesignWorkCreateCreate => 'Anlegen';
+
+  @override
+  String get redesignWorkCreateCreateAndAdd => 'Anlegen und Noten hinzufügen';
+
+  @override
+  String get redesignWorkCreateInstrumentationHint =>
+      'Welche Gruppen mitspielen, erkennt die App an den Noten, die du gleich hochlädst.';
+
+  @override
+  String get redesignWorkCreateLater =>
+      'Link, Schwierigkeit und Zusatzfelder später in „Bearbeiten“.';
+
+  @override
+  String redesignWorkCreateNextNumber(Object number) {
+    return '$number ist die nächste freie Nummer.';
+  }
+
+  @override
+  String get redesignWorkCreatePrefixHint =>
+      'Präfix nur bei Bedarf, z. B. W für Weihnachten → W1.';
+
+  @override
+  String get redesignWorkCreateTitle => 'Neues Werk';
+
+  @override
+  String get redesignWorkDifficulty => 'Schwierigkeit';
+
+  @override
   String get redesignWorkEdit => 'Bearbeiten';
+
+  @override
+  String get redesignWorkEditCategories => 'Kategorien';
+
+  @override
+  String get redesignWorkEditDelete => 'Werk löschen';
+
+  @override
+  String get redesignWorkEditDifficulty => 'Schwierigkeit';
+
+  @override
+  String get redesignWorkEditDifficultyNone => 'Offen';
+
+  @override
+  String get redesignWorkEditEasy => 'Leicht';
+
+  @override
+  String get redesignWorkEditFields => 'Zusatzfelder';
+
+  @override
+  String get redesignWorkEditHard => 'Schwer';
+
+  @override
+  String get redesignWorkEditHint =>
+      'Änderungen werden sofort gespeichert. Noten und Dateien pflegst du direkt auf der Werk-Seite.';
+
+  @override
+  String get redesignWorkEditInstrumentation => 'Besetzung';
+
+  @override
+  String get redesignWorkEditInstrumentationHint =>
+      'Welche Gruppen mitspielen, ergibt sich aus den hochgeladenen Noten. Fehlt eine Stimme, lädst du sie auf der Werk-Seite hoch.';
+
+  @override
+  String get redesignWorkEditLink => 'Link';
+
+  @override
+  String get redesignWorkEditLinkHint => 'Video, Hörbeispiel oder Verlag';
+
+  @override
+  String get redesignWorkEditManageCategories => 'Kategorien verwalten';
+
+  @override
+  String get redesignWorkEditMedium => 'Mittel';
+
+  @override
+  String get redesignWorkEditName => 'Titel';
+
+  @override
+  String get redesignWorkEditNameEmpty => 'Ohne Titel wird nicht gespeichert.';
+
+  @override
+  String get redesignWorkEditNoCategories => 'Noch keine Kategorien angelegt.';
+
+  @override
+  String get redesignWorkEditNotAllowed =>
+      'Werke bearbeiten kann nur die Leitung.';
+
+  @override
+  String get redesignWorkEditNumber => 'Nummer';
+
+  @override
+  String get redesignWorkEditNumberLocked =>
+      'Die Werkliste konnte nicht geladen werden, die Nummer lässt sich so nicht prüfen.';
+
+  @override
+  String redesignWorkEditNumberTaken(Object number, Object name) {
+    return 'Nr. $number hat schon „$name“. Die Nummer wird so nicht gespeichert.';
+  }
+
+  @override
+  String get redesignWorkEditPrefix => 'Präfix';
+
+  @override
+  String get redesignWorkEditPrefixHint => 'z. B. W';
+
+  @override
+  String get redesignWorkEditTitle => 'Werk bearbeiten';
 
   @override
   String redesignWorkFileCount(num count) {
@@ -11334,6 +13190,71 @@ class AppLocalizationsDe extends AppLocalizations {
       locale: localeName,
       other: '$count Dateien',
       one: '1 Datei',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignWorkFileDelete => 'Löschen';
+
+  @override
+  String get redesignWorkFileDownload => 'Herunterladen';
+
+  @override
+  String redesignWorkFileMore(Object name) {
+    return 'Mehr zu $name';
+  }
+
+  @override
+  String get redesignWorkFilePart => 'Stimme ändern';
+
+  @override
+  String get redesignWorkFilePrint => 'Drucken';
+
+  @override
+  String get redesignWorkFileRename => 'Umbenennen';
+
+  @override
+  String get redesignWorkFileShare => 'Teilen';
+
+  @override
+  String get redesignWorkFileTelegram => 'Per Telegram an mich';
+
+  @override
+  String get redesignWorkFiles => 'Noten & Dateien';
+
+  @override
+  String get redesignWorkForConductors => 'Für die Leitung';
+
+  @override
+  String get redesignWorkHistory => 'Verlauf';
+
+  @override
+  String redesignWorkHistoryCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Termine',
+      one: '1 Termin',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignWorkInstrumentation => 'Besetzung';
+
+  @override
+  String redesignWorkInstrumentationHint(Object names) {
+    return 'aus den Noten: $names';
+  }
+
+  @override
+  String redesignWorkInstrumentationValue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Gruppen',
+      one: '1 Gruppe',
     );
     return '$_temp0';
   }
@@ -11351,11 +13272,58 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorkLyrics => 'Liedtext';
 
   @override
+  String redesignWorkMissingMany(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Stimmen fehlen noch',
+      one: '1 Stimme fehlt noch',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignWorkMissingOne(Object name) {
+    return '$name fehlt noch';
+  }
+
+  @override
+  String redesignWorkMissingOneHint(Object name) {
+    return 'In der Gruppe spielt jemand $name, es gibt aber noch keine Noten.';
+  }
+
+  @override
+  String redesignWorkMissingPillMany(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fehlen',
+      one: '1 fehlt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignWorkMissingPillOne(Object name) {
+    return '$name fehlt';
+  }
+
+  @override
+  String get redesignWorkMore => 'Mehr zum Werk';
+
+  @override
   String get redesignWorkNever => 'Noch nie';
+
+  @override
+  String get redesignWorkNext => 'Als Nächstes';
 
   @override
   String get redesignWorkNoFiles =>
       'Zu diesem Werk gibt es noch keine Dateien.';
+
+  @override
+  String get redesignWorkNoFilesYet =>
+      'Zu diesem Werk gibt es noch keine Noten.';
 
   @override
   String get redesignWorkNoPart => 'Für deine Stimme gibt es noch keine Noten.';
@@ -11375,6 +13343,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorkOpen => 'Öffnen';
 
   @override
+  String get redesignWorkPartOwn => 'deine Stimme';
+
+  @override
   String get redesignWorkPause => 'Anhalten';
 
   @override
@@ -11382,6 +13353,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignWorkPlay => 'Abspielen';
+
+  @override
+  String redesignWorkPractice(Object name) {
+    return 'Übe-Aufnahme · $name';
+  }
 
   @override
   String get redesignWorkRecording => 'Aufnahme';
@@ -11403,13 +13379,55 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignWorkShareLink => 'Link zum Werk teilen';
+
+  @override
+  String get redesignWorkShareLinkHint => 'Öffentliche Seite, ohne Anmeldung';
+
+  @override
   String get redesignWorkSlower => 'Langsamer abspielen';
+
+  @override
+  String get redesignWorkUpload => 'Hochladen';
+
+  @override
+  String get redesignWorkWithChoir => 'Mit Chor';
+
+  @override
+  String get redesignWorkWithOrchestra => 'Mit Orchester';
+
+  @override
+  String get redesignWorkWithSolo => 'Mit Solo-Gesang';
 
   @override
   String get redesignWorkYourPart => 'Deine Stimme';
 
   @override
+  String get redesignWorkZip => 'Alle Dateien als ZIP';
+
+  @override
   String get redesignWorksAdd => 'Werk hinzufügen';
+
+  @override
+  String get redesignWorksAddImport => 'Werkliste importieren';
+
+  @override
+  String get redesignWorksAddImportHint =>
+      'Excel oder CSV mit Nummer, Titel, Kategorie';
+
+  @override
+  String get redesignWorksAddNew => 'Neues Werk';
+
+  @override
+  String get redesignWorksAddNewHint =>
+      'Titel und Nummer, danach direkt die Noten';
+
+  @override
+  String get redesignWorksAddOrg => 'Aus anderer Gruppe übernehmen';
+
+  @override
+  String get redesignWorksAddOrgHint =>
+      'Werke deiner Organisation durchsuchen und kopieren';
 
   @override
   String redesignWorksAll(Object count) {
@@ -11417,43 +13435,158 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignWorksAudio => 'Audio';
-
-  @override
-  String get redesignWorksCurrent => 'Gerade geprobt';
+  String get redesignWorksAllEvents => 'Alle Termine';
 
   @override
   String get redesignWorksEmpty => 'Noch keine Werke.';
 
   @override
-  String get redesignWorksFiles => 'Dateien';
+  String redesignWorksEventWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke',
+      one: '1 Werk',
+    );
+    return '$_temp0';
+  }
 
   @override
-  String get redesignWorksFilesLabel => 'Dateien der Gruppe';
+  String get redesignWorksFilter => 'Filter';
 
   @override
-  String get redesignWorksFilter => 'Filter & Ansicht';
+  String get redesignWorksFilterReset => 'Zurücksetzen';
 
   @override
-  String get redesignWorksFilterActive => 'Filter aktiv';
+  String get redesignWorksFilterTitle => 'Sortieren & Filtern';
+
+  @override
+  String get redesignWorksFolder => 'Meine Mappe';
+
+  @override
+  String get redesignWorksFolders => 'Mappen';
+
+  @override
+  String get redesignWorksForGroup => 'Für Gruppe';
+
+  @override
+  String get redesignWorksForGroupAll => 'Alle';
+
+  @override
+  String redesignWorksLastOn(Object date) {
+    return 'Zuletzt $date';
+  }
+
+  @override
+  String get redesignWorksMissingNotes => 'Noten fehlen';
 
   @override
   String get redesignWorksMore => 'Mehr';
 
   @override
+  String get redesignWorksNeverPlayed => 'Noch nie gespielt';
+
+  @override
+  String get redesignWorksNeverSung => 'Noch nie gesungen';
+
+  @override
+  String get redesignWorksNext => 'Als Nächstes';
+
+  @override
+  String get redesignWorksNoFilesPill => 'ohne Noten';
+
+  @override
   String get redesignWorksNoMatch => 'Kein Werk passt zur Suche.';
 
   @override
-  String get redesignWorksPdf => 'PDF';
+  String get redesignWorksOnly => 'Nur zeigen';
+
+  @override
+  String get redesignWorksOnlyMine => 'Mit meiner Stimme';
+
+  @override
+  String get redesignWorksOnlyMissing => 'Noten fehlen';
+
+  @override
+  String get redesignWorksOnlyRecording => 'Mit Aufnahme';
+
+  @override
+  String get redesignWorksOnlySolo => 'Mit Solo';
+
+  @override
+  String get redesignWorksOpenMine => 'Meine Noten öffnen';
+
+  @override
+  String redesignWorksOpenMineHint(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Stimmen als ein PDF, auch zum Drucken',
+      one: 'Deine Stimme als PDF, auch zum Drucken',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get redesignWorksResetFilter => 'Filter zurücksetzen';
 
   @override
-  String get redesignWorksSearch => 'Titel, Komponist, Nummer';
+  String get redesignWorksSearch => 'Titel oder Nummer';
 
   @override
   String get redesignWorksSearchLabel => 'Werke suchen';
+
+  @override
+  String redesignWorksShow(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke anzeigen',
+      one: '1 Werk anzeigen',
+      zero: 'Kein Werk passt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignWorksSort => 'Sortieren';
+
+  @override
+  String get redesignWorksSortLastPlayed => 'Zuletzt gespielt';
+
+  @override
+  String get redesignWorksSortLastSung => 'Zuletzt gesungen';
+
+  @override
+  String get redesignWorksSortLongestPlayed => 'Am längsten nicht gespielt';
+
+  @override
+  String get redesignWorksSortLongestSung => 'Am längsten nicht gesungen';
+
+  @override
+  String get redesignWorksSortNumber => 'Nummer';
+
+  @override
+  String redesignWorksSortRemove(Object name) {
+    return 'Sortierung „$name“ entfernen';
+  }
+
+  @override
+  String get redesignWorksSortTitle => 'Titel';
+
+  @override
+  String get redesignWorksStatusNoFiles => 'noch keine Noten';
+
+  @override
+  String redesignWorksStatusNoPart(Object name) {
+    return 'keine Noten für $name';
+  }
+
+  @override
+  String get redesignWorksStatusPart => 'Deine Stimme';
+
+  @override
+  String get redesignWorksStatusRecording => 'Aufnahme';
 
   @override
   String get registerCreate => 'Instanz jetzt erstellen';
@@ -12404,7 +14537,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsLogout => 'Ausloggen';
 
   @override
-  String get settingsMessageAll => 'Nachricht an alle senden';
+  String get settingsMessagesHint =>
+      'Nachrichten senden und automatisch nachfassen';
 
   @override
   String get settingsMobile => 'Handynummer';

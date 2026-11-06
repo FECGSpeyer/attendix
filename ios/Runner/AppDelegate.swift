@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import WebKit
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -29,6 +30,10 @@ import UIKit
     // MAC_FILES: iPhone/iPad app on an Apple silicon Mac (Ionic 4.17.20)
     if let registrar = flutterEngine.registrar(forPlugin: "PlatformInfoPlugin") {
       PlatformInfoPlugin.register(with: registrar)
+    }
+    // IONIC_SESSION: keep the Ionic login after the store update
+    if let registrar = flutterEngine.registrar(forPlugin: "IonicSessionPlugin") {
+      IonicSessionPlugin.register(with: registrar)
     }
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
@@ -80,11 +85,15 @@ public class PlatformInfoPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    guard call.method == "isiOSAppOnMac" else {
+    switch call.method {
+    case "isiOSAppOnMac":
+      result(ProcessInfo.processInfo.isiOSAppOnMac)
+    case "appVersion":
+      // STORE_UPDATE: installed version (--build-name) for the update check
+      result(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String)
+    default:
       result(FlutterMethodNotImplemented)
-      return
     }
-    result(ProcessInfo.processInfo.isiOSAppOnMac)
   }
 }
 // MAC_FILES end
@@ -133,3 +142,121 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   }
 }
 // SCENE end
+
+
+// IONIC_SESSION: one-time takeover of the Ionic login after the store update
+// to the Flutter app (same bundle id io.stephanus.attendix). The Ionic app
+// (Capacitor) kept the Supabase session in the WebView localStorage of
+// capacitor://localhost. A hidden WKWebView on the same (default) data store
+// opens that origin through its own scheme handler and reads the keys
+// `sb-<ref>-auth-token` and `currentTenantId`. Channel de.attendix/ionic_session,
+// method "read" -> JSON string of those keys (or nil). Dart side:
+// lib/core/services/native/ionic_session_takeover.dart.
+public class IonicSessionPlugin: NSObject, FlutterPlugin {
+  private var reader: IonicStorageReader?
+
+  public static func register(with registrar: FlutterPluginRegistrar) {
+    let channel = FlutterMethodChannel(
+      name: "de.attendix/ionic_session", binaryMessenger: registrar.messenger())
+    registrar.addMethodCallDelegate(IonicSessionPlugin(), channel: channel)
+  }
+
+  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    guard call.method == "read" else {
+      result(FlutterMethodNotImplemented)
+      return
+    }
+    // A second read while one is running: an error, not "empty" (Dart would
+    // end the takeover for good on nil).
+    guard reader == nil else {
+      result(FlutterError(code: "busy", message: "read already running", details: nil))
+      return
+    }
+    let reader = IonicStorageReader()
+    self.reader = reader
+    reader.read { [weak self] value in
+      self?.reader = nil
+      result(value)
+    }
+  }
+}
+
+final class IonicStorageReader: NSObject, WKNavigationDelegate, WKURLSchemeHandler {
+  private static let script = """
+    (function () {
+      var out = {};
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if ((k.indexOf('sb-') === 0 && k.slice(-11) === '-auth-token') || k === 'currentTenantId') {
+          out[k] = localStorage.getItem(k);
+        }
+      }
+      return JSON.stringify(out);
+    })();
+    """
+
+  private var webView: WKWebView?
+  // String (the keys as JSON) or FlutterError when the origin could not be read.
+  private var completion: ((Any?) -> Void)?
+
+  func read(completion: @escaping (Any?) -> Void) {
+    self.completion = completion
+    let config = WKWebViewConfiguration()
+    // Same store as Capacitor's WKWebView (WKWebsiteDataStore.default()).
+    config.websiteDataStore = WKWebsiteDataStore.default()
+    config.setURLSchemeHandler(self, forURLScheme: "capacitor")
+    let webView = WKWebView(frame: .zero, configuration: config)
+    webView.navigationDelegate = self
+    self.webView = webView
+    webView.load(URLRequest(url: URL(string: "capacitor://localhost/")!))
+    DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+      self?.finish(Self.unavailable("timeout"))
+    }
+  }
+
+  private static func unavailable(_ reason: String) -> FlutterError {
+    FlutterError(code: "unavailable", message: reason, details: nil)
+  }
+
+  private func finish(_ value: Any?) {
+    guard let completion = completion else { return }
+    self.completion = nil
+    webView?.navigationDelegate = nil
+    webView?.stopLoading()
+    webView = nil
+    completion(value)
+  }
+
+  func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    webView.evaluateJavaScript(Self.script) { [weak self] value, _ in
+      self?.finish((value as? String) ?? Self.unavailable("script"))
+    }
+  }
+
+  func webView(
+    _ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error
+  ) {
+    finish(Self.unavailable(error.localizedDescription))
+  }
+
+  func webView(
+    _ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!,
+    withError error: Error
+  ) {
+    finish(Self.unavailable(error.localizedDescription))
+  }
+
+  // Empty page for capacitor://localhost/ – only the origin matters.
+  func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
+    let data = Data("<!doctype html><html><body></body></html>".utf8)
+    let response = URLResponse(
+      url: urlSchemeTask.request.url ?? URL(string: "capacitor://localhost/")!,
+      mimeType: "text/html", expectedContentLength: data.count, textEncodingName: "utf-8")
+    urlSchemeTask.didReceive(response)
+    urlSchemeTask.didReceive(data)
+    urlSchemeTask.didFinish()
+  }
+
+  func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {}
+}
+// IONIC_SESSION end

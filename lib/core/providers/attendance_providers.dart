@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../utils/event_list_utils.dart';
+import '../utils/archived_attendance.dart';
+import '../utils/attendance_percentage_utils.dart' show attendanceListStartDate;
 import '../config/supabase_config.dart';
 import '../constants/enums.dart';
 import '../../data/models/attendance/attendance.dart';
@@ -66,6 +68,16 @@ final personAttendancesProvider = FutureProvider.family<List<PersonAttendance>, 
 final attendanceListTypeFilterProvider = StateProvider<String?>((ref) {
   ref.watch(currentTenantIdProvider);
   return null;
+});
+
+/// Ionic 4.17.24 att-list `showArchived`: archived Termine are hidden in the
+/// list until "Archivierte anzeigen" is switched on (admins/responsible).
+final attendanceListShowArchivedProvider = StateProvider<bool>((ref) {
+  ref.watch(currentTenantIdProvider);
+  // A role change switches it off again (only admins/responsible may see
+  // archived Termine).
+  ref.watch(currentRoleProvider);
+  return false;
 });
 
 /// Status counts (anwesend / entschuldigt / abwesend) of one Termin, used by
@@ -162,10 +174,19 @@ class CategorizedAttendances {
   final List<Attendance> upcoming;
   final List<Attendance> past;
 
+  /// Ionic 4.17.24: archived Termine of the type filter (hidden or not).
+  final int archivedCount;
+
+  /// Past Termine of the type filter incl. archived ones – archived Termine
+  /// still count in the average (Ionic `pastForAverage`).
+  final List<Attendance> pastForAverage;
+
   const CategorizedAttendances({
     this.current,
     required this.upcoming,
     required this.past,
+    this.archivedCount = 0,
+    this.pastForAverage = const [],
   });
 }
 
@@ -174,10 +195,19 @@ final categorizedAttendancesProvider = Provider<CategorizedAttendances>((ref) {
   final all = ref.watch(realtimeAttendanceListProvider).valueOrNull ?? [];
   // ATT_DETAIL: Termintyp filter of the list ("Alle anzeigen" = null)
   final typeFilter = ref.watch(attendanceListTypeFilterProvider);
-  final attendances =
+  final byType =
       typeFilter == null ? all : all.where((a) => a.typeId == typeFilter).toList();
+  // Ionic 4.17.24: archived Termine are hidden by default but keep counting
+  // in the average.
+  final showArchived = ref.watch(attendanceListShowArchivedProvider) &&
+      canSeeArchivedAttendances(ref.watch(currentRoleProvider));
+  final archivedCount = byType.where((a) => a.archived).length;
+  final attendances = showArchived ? byType : byType.where((a) => !a.archived).toList();
 
   final now = DateTime.now();
+  final pastForAverage = byType
+      .where((a) => EventListUtils.hasEnded(a.date, a.durationDays, now: now))
+      .toList();
 
   final upcoming = <Attendance>[];
   final past = <Attendance>[];
@@ -214,6 +244,8 @@ final categorizedAttendancesProvider = Provider<CategorizedAttendances>((ref) {
     current: current,
     upcoming: remainingUpcoming,
     past: past,
+    archivedCount: archivedCount,
+    pastForAverage: pastForAverage,
   );
 });
 
@@ -223,7 +255,7 @@ final averageAttendancePercentProvider = Provider<double?>((ref) {
   // BL-005: Include 0% attendances in average calculation (changed > 0 to != null)
   // LOGIC_SELF: duty Termine with nobody assigned have percentage == null
   // (attendanceListPercentage) and are left out like in Ionic applyAttendances.
-  final pastAttendances = categorized.past
+  final pastAttendances = categorized.pastForAverage
       .where((a) => a.percentage != null)
       .toList();
 
@@ -247,13 +279,19 @@ final playerAttendancePercentagesProvider =
   // the first await (attendanceTypesProvider is only reached afterwards).
   ref.watch(currentAuthUserIdProvider);
   ref.watch(attendanceRefetchCounter);
+  // Ionic `getAttendance()` → `filterArchivedForRole`: archived Termine only
+  // count for admins/responsible.
+  final showArchived = canSeeArchivedAttendances(ref.watch(currentRoleProvider));
 
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);
   if (tenant == null || tenant.id == null) return {};
 
-  final now = DateTime.now().toUtc().toIso8601String();
-  final seasonStart = tenant.seasonStart;
+  // Ionic getModifiedPlayersForList: Termine with date before now + 1 day
+  // count (dates are stored at 12:00 → today always, tomorrow from noon).
+  final tomorrow = DateTime.now().add(const Duration(days: 1)).toUtc().toIso8601String();
+  // Ionic getCurrentAttDate(): season start, fallback 2023-01-01.
+  final seasonStart = attendanceListStartDate(tenant.seasonStart);
 
   // Fetch all records using pagination to avoid the PostgREST 1000-row default limit.
   // A tenant with 50+ members and 25+ events easily exceeds 1000 person_attendances.
@@ -262,16 +300,13 @@ final playerAttendancePercentagesProvider =
   int offset = 0;
 
   while (true) {
-    var query = supabase
-        .from('person_attendances')
-        .select('person_id, status, notes, duty_state, attendance:attendance_id!inner(date, tenantId, type_id)')
-        .eq('attendance.tenantId', tenant.id!)
-        .lte('attendance.date', now);
-
     // Only count attendances from the current season
-    if (seasonStart != null) {
-      query = query.gte('attendance.date', seasonStart);
-    }
+    final query = supabase
+        .from('person_attendances')
+        .select('person_id, status, notes, duty_state, attendance:attendance_id!inner(date, tenantId, type_id, archived)')
+        .eq('attendance.tenantId', tenant.id!)
+        .lt('attendance.date', tomorrow)
+        .gte('attendance.date', seasonStart);
 
     // SOL_FIX1: stable order, otherwise pages can overlap / skip rows.
     final batch = await query
@@ -305,6 +340,10 @@ final playerAttendancePercentagesProvider =
   for (final a in allAttendances) {
     final personId = a['person_id'] as int?;
     if (personId == null) continue;
+    if (!showArchived &&
+        isArchivedRow((a['attendance'] as Map?)?.cast<String, dynamic>())) {
+      continue;
+    }
     final typeId = (a['attendance'] as Map?)?['type_id']?.toString();
     if (typeId == null || !includedTypeIds.contains(typeId)) continue;
     final dutyState = a['duty_state'];

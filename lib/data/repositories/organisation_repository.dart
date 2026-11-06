@@ -255,8 +255,8 @@ class OrganisationRepository extends BaseRepository {
           .inFilter('tenantId', tenantIds)
           .eq('pending', false)
           .isFilter('left', null)
-          .order('lastName')
-          .order('firstName');
+          .order('lastName', ascending: true)
+          .order('firstName', ascending: true);
 
       return (response as List)
           .map((e) => Person.fromJson(e as Map<String, dynamic>))
@@ -267,8 +267,22 @@ class OrganisationRepository extends BaseRepository {
     }
   }
 
+  /// Operation name of a failed tenant load in [getOrganisationsFromUser]
+  /// (Ionic toast „Fehler beim Laden der Mandanten“).
+  static const opLoadUserOrgTenants = 'getOrganisationsFromUser.tenants';
+
+  /// Operation name of a failed organisation load in
+  /// [getOrganisationsFromUser] (Ionic toast „Fehler beim Laden der
+  /// Organisationen“).
+  static const opLoadUserOrgs = 'getOrganisationsFromUser.organisations';
+
   /// Get all organisations that a user has access to
+  ///
+  /// Errors are rethrown as [RepositoryException] with operation
+  /// [opLoadUserOrgTenants] or [opLoadUserOrgs], so callers can show the
+  /// matching Ionic toast.
   Future<List<Organisation>> getOrganisationsFromUser(String userId) async {
+    final List<int> tenantIds;
     try {
       // First get all tenants the user has access to (as admin or responsible)
       final tenantsResponse = await supabase
@@ -277,12 +291,17 @@ class OrganisationRepository extends BaseRepository {
           .eq('userId', userId)
           .or('role.eq.1,role.eq.5'); // Admin or Responsible
 
-      final tenantIds = (tenantsResponse as List)
+      tenantIds = (tenantsResponse as List)
           .map((e) => e['tenantId'] as int)
           .toList();
+    } catch (e, stack) {
+      handleError(e, stack, opLoadUserOrgTenants);
+      rethrow;
+    }
 
-      if (tenantIds.isEmpty) return [];
+    if (tenantIds.isEmpty) return [];
 
+    try {
       // Get all organisations for these tenants
       final response = await supabase
           .from('tenant_group_tenants')
@@ -303,7 +322,7 @@ class OrganisationRepository extends BaseRepository {
 
       return uniqueOrgs.values.toList();
     } catch (e, stack) {
-      handleError(e, stack, 'getOrganisationsFromUser');
+      handleError(e, stack, opLoadUserOrgs);
       rethrow;
     }
   }

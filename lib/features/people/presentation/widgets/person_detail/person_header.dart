@@ -156,58 +156,33 @@ class PersonHeader extends ConsumerWidget {
     );
   }
 
+  /// Ionic onProfileImageClick: a picture opens the viewer (with
+  /// "Ersetzen" / "Entfernen" when editable); no picture + editable opens
+  /// the file chooser directly.
   Future<void> _onAvatarTap(BuildContext context, WidgetRef ref) async {
-    if (!canEdit && !_hasImage) return;
-
-    // If not editable but has image, just view it
-    if (!canEdit && _hasImage) {
-      showImageViewerSheet(
+    if (_hasImage) {
+      await showImageViewerSheet(
         context,
         url: person.img!,
         fileName: '${person.fullName}.jpg',
+        actions: [
+          if (canEdit) ...[
+            ImageViewerAction(
+              label: context.l10n.personReplace,
+              icon: Icons.photo_camera_outlined,
+              onPressed: () => _replacePhoto(context, ref),
+            ),
+            ImageViewerAction(
+              label: context.l10n.commonRemove,
+              icon: Icons.delete_outline,
+              destructive: true,
+              onPressed: () => _removePhoto(context, ref),
+            ),
+          ],
+        ],
       );
-      return;
-    }
-
-    // Capture outer context before bottom sheet builder shadows it
-    final outerContext = context;
-
-    // Show action sheet (IOS_LOOK: adaptive ion-action-sheet)
-    final action = await showAppActionSheet<String>(
-      context,
-      actions: [
-        AppActionSheetAction(
-          value: 'replace',
-          icon: Icons.photo_camera,
-          label: context.l10n.settingsReplacePhoto,
-        ),
-        if (_hasImage)
-          AppActionSheetAction(
-            value: 'remove',
-            icon: Icons.delete,
-            label: context.l10n.personRemovePhoto,
-            destructive: true,
-          ),
-        if (_hasImage)
-          AppActionSheetAction(
-            value: 'view',
-            icon: Icons.visibility,
-            label: context.l10n.settingsViewPhoto,
-          ),
-      ],
-    );
-    if (!outerContext.mounted) return;
-    switch (action) {
-      case 'replace':
-        _replacePhoto(outerContext, ref);
-      case 'remove':
-        _removePhoto(outerContext, ref);
-      case 'view':
-        showImageViewerSheet(
-          outerContext,
-          url: person.img!,
-          fileName: '${person.fullName}.jpg',
-        );
+    } else if (canEdit) {
+      await _replacePhoto(context, ref);
     }
   }
 
@@ -217,7 +192,7 @@ class PersonHeader extends ConsumerWidget {
     final supabase = ref.read(supabaseClientProvider);
     final tenant = ref.read(currentTenantProvider);
     try {
-      final image = await ref.read(personImagePickerProvider)();
+      final image = await pickPersonImage(context, ref);
 
       if (image == null) return;
 
@@ -245,10 +220,14 @@ class PersonHeader extends ConsumerWidget {
       final storagePath = profileImageStoragePath(personId);
       final legacyPath = profileImagePathFromUrl(person.img);
 
-      final publicUrl = await repo.updateImage(personId, bytes);
+      // Ionic: own picture → all instances of the account (appId).
+      final publicUrl = await repo.updateImage(personId, bytes, appId: person.appId);
 
-      // Drop a legacy `<tenantId>/<id>.jpg` object so it does not stay orphaned.
-      if (legacyPath != null && legacyPath != storagePath) {
+      // Drop a legacy `<tenantId>/<id>.jpg` object so it does not stay orphaned
+      // (never the file of another person, e.g. an adopted e-mail match).
+      if (legacyPath != null &&
+          legacyPath != storagePath &&
+          isOwnProfileImagePath(legacyPath, personId)) {
         try {
           await supabase.storage
               .from(SupabaseBuckets.profiles)
@@ -312,9 +291,13 @@ class PersonHeader extends ConsumerWidget {
       // code calls img.split and breaks on null), then delete the object
       // whose key is taken from the stored URL.
       await repo.updatePlayerFields(personId, {'img': ''});
+      // Ionic removeImage with the own appId clears every instance's row.
+      await repo.syncOwnImage(person.appId, '');
 
+      // Only the person's own file: an adopted picture (e-mail match of
+      // another instance) belongs to that person.
       final storagePath = profileImagePathFromUrl(person.img);
-      if (storagePath != null) {
+      if (storagePath != null && isOwnProfileImagePath(storagePath, personId)) {
         try {
           await supabase.storage
               .from(SupabaseBuckets.profiles)

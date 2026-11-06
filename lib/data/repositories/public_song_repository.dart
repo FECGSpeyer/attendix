@@ -107,7 +107,7 @@ class PublicSongRepository extends BaseRepository {
           .from('song_categories')
           .select('*')
           .eq('tenant_id', tenantId)
-          .order('index');
+          .order('index', ascending: true);
       return (response as List)
           .map((e) => SongCategory.fromJson(e as Map<String, dynamic>))
           .toList();
@@ -124,8 +124,8 @@ class PublicSongRepository extends BaseRepository {
           .from('instruments')
           .select('*')
           .eq('tenantId', tenantId)
-          .order('category')
-          .order('name');
+          .order('category', ascending: true)
+          .order('name', ascending: true);
       return (response as List)
           .map((e) => Group.fromJson(e as Map<String, dynamic>))
           .toList();
@@ -142,7 +142,7 @@ class PublicSongRepository extends BaseRepository {
           .from('group_categories')
           .select('*')
           .eq('tenant_id', tenantId)
-          .order('name');
+          .order('name', ascending: true);
       return (response as List)
           .map((e) => GroupCategory.fromJson(e as Map<String, dynamic>))
           .toList();

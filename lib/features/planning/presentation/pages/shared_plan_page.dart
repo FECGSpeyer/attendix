@@ -10,9 +10,10 @@ import '../../../../core/utils/plan_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../data/repositories/public_plan_repository.dart';
+import '../public_brandings.dart';
 import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_field_dialogs.dart';
-import '../widgets/plan_fields_editor.dart';
+import '../widgets/shared_plan_edit_list.dart';
 import '../widgets/plan_view_list.dart';
 import '../widgets/ion_items.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -391,7 +392,14 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
 
   void _onAttendanceUpdate(Map<String, dynamic> row) {
     final att = _att;
-    if (!mounted || att == null || row['plan'] == null) return;
+    if (!mounted || att == null) return;
+    // Ionic 4.17.24: archiving the Termin closes an open link view (the
+    // repository also refuses writes to archived Termine).
+    if (row['archived'] == true) {
+      _onLinkGone();
+      return;
+    }
+    if (row['plan'] == null) return;
     // SOL_FIX26: a delayed echo of an older own write would re-apply an
     // older state (and a follow-up save would store it): ignore it.
     if (_ownWrites.classify(row) == EchoKind.olderOwn) return;
@@ -722,6 +730,11 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
         ),
       ],
       fileName: title,
+      // Ionic exportPdf: „Titel_Wochentag, Datum“ (+ `_2x`).
+      pdfFileName: '${title}_${PlanUtils.longDate(date)}'.replaceAll('/', '.'),
+      // Ionic: branding_id of an ad-hoc plan (FECG logo + text), Termin
+      // plans and „Kein Branding“ without – never the viewer's instance.
+      branding: () => _att == null ? publicPdfBranding(_shared?.brandingId) : Future.value(null),
     );
   }
 
@@ -812,7 +825,8 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
                     trailing: IonNote(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(_time))),
                     onTap: _editStartTime,
                   ),
-                  PlanFieldsEditor(
+                  // Ionic: plain rows with trash + reorder handle.
+                  SharedPlanEditList(
                     fields: _fields,
                     startTime: PlanUtils.formatTime(_time),
                     onChanged: (f) {
@@ -826,7 +840,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
                       trailing: IonNote(context.l10n.attendanceTimeOClock(PlanUtils.formatTime(_end))),
                     ),
                 ]
-              : [PlanViewList(plan: _plan, date: date, liveMode: _live)],
+              : [PlanViewList(plan: _plan, date: date, liveMode: _live, groupRange: false)],
         ),
       ],
     );

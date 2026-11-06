@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/constants/enums.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
@@ -61,10 +60,9 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
     } else {
       _thresholdController.text = '3';
       _periodDaysController.text = '30';
-      _selectedTypeIds = widget.attendanceTypes.isNotEmpty
-          ? [widget.attendanceTypes.first.id ?? '']
-          : [];
-      _selectedStatuses = [AttendanceStatus.absent.value];
+      // Ionic getEmptyCriticalRule: no types (= "Alle Typen"), no status.
+      _selectedTypeIds = [];
+      _selectedStatuses = [];
       _thresholdType = CriticalRuleThresholdType.count;
       _periodType = CriticalRulePeriodType.days;
       _operator = CriticalRuleOperator.or;
@@ -87,8 +85,12 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
       ToastHelper.showError(context, context.l10n.generalSettingsSelectStatus);
       return;
     }
-    final threshold = int.tryParse(_thresholdController.text);
-    if (threshold == null || threshold <= 0) {
+    // Ionic number input: decimals allowed (e.g. 33.5 %); a decimal comma
+    // from the German keyboard counts as the decimal point.
+    final threshold =
+        num.tryParse(_thresholdController.text.trim().replaceAll(',', '.'));
+    // NaN/Infinity would pass `<= 0` but break the JSON encoding on save.
+    if (threshold == null || !threshold.isFinite || threshold <= 0) {
       ToastHelper.showError(context, context.l10n.generalSettingsThresholdPositive);
       return;
     }
@@ -161,69 +163,27 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
             ),
             const SizedBox(height: AppDimensions.paddingM),
 
-            // Attendance types selection
-            Text(
-              context.l10n.generalSettingsAttTypes,
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-            if (_selectedTypeIds.isEmpty)
-              Text(
-                context.l10n.generalSettingsAllTypes,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            const SizedBox(height: AppDimensions.paddingS),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: widget.attendanceTypes.map((type) {
-                final isSelected = _selectedTypeIds.contains(type.id);
-                return FilterChip(
-                  label: Text(type.name),
-                  selected: isSelected,
-                  onSelected: (selected) {
-                    setState(() {
-                      if (selected) {
-                        _selectedTypeIds.add(type.id ?? '');
-                      } else {
-                        _selectedTypeIds.remove(type.id);
-                      }
-                    });
-                  },
-                );
-              }).toList(),
+            // Ionic ion-select multiple "Anwesenheits-Typen" (placeholder
+            // "Alle Typen") and "Status".
+            AppMultiSelectFormField<String>(
+              decoration: InputDecoration(labelText: context.l10n.generalSettingsAttTypes),
+              placeholder: context.l10n.generalSettingsAllTypes,
+              options: [
+                for (final type in widget.attendanceTypes)
+                  if (type.id != null) AppSelectOption(value: type.id!, label: type.name),
+              ],
+              values: _selectedTypeIds,
+              onChanged: (v) => setState(() => _selectedTypeIds = v),
             ),
             const SizedBox(height: AppDimensions.paddingM),
-
-            // Status selection
-            Text(
-              context.l10n.generalSettingsFlutterStatusCritical,
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-            const SizedBox(height: AppDimensions.paddingS),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                AttendanceStatus.absent,
-                AttendanceStatus.late,
-                AttendanceStatus.lateExcused,
-              ].map((status) {
-                final isSelected = _selectedStatuses.contains(status.value);
-                return FilterChip(
-                  label: Text(status.label),
-                  selected: isSelected,
-                  selectedColor: status.color.withValues(alpha: 0.3),
-                  onSelected: (selected) {
-                    setState(() {
-                      if (selected) {
-                        _selectedStatuses.add(status.value);
-                      } else {
-                        _selectedStatuses.remove(status.value);
-                      }
-                    });
-                  },
-                );
-              }).toList(),
+            AppMultiSelectFormField<int>(
+              decoration: InputDecoration(labelText: context.l10n.agendaStatus),
+              options: [
+                for (final status in criticalRuleStatuses)
+                  AppSelectOption(value: status.value, label: criticalRuleStatusName(status.value, context.l10n)),
+              ],
+              values: _selectedStatuses,
+              onChanged: (v) => setState(() => _selectedStatuses = v),
             ),
             const SizedBox(height: AppDimensions.paddingM),
 
@@ -256,12 +216,13 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
                 Expanded(
                   child: TextField(
                     controller: _thresholdController,
-                    keyboardType: TextInputType.number,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    // Ionic general.page: label "Anzahl" / "Prozent"
                     decoration: InputDecoration(
-                      labelText: context.l10n.typeSettingsValue,
-                      suffixText: _thresholdType == CriticalRuleThresholdType.percentage
-                          ? '%'
-                          : 'x',
+                      labelText: _thresholdType == CriticalRuleThresholdType.percentage
+                          ? context.l10n.generalSettingsPercent
+                          : context.l10n.generalSettingsCount,
                     ),
                   ),
                 ),

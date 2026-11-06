@@ -36,9 +36,12 @@ void main() {
     });
 
     test('detail page no longer uses the unknown attendance-images bucket', () {
+      // Shared with the Beta Termin (attendance_extra_actions.dart).
       final page = read('lib/features/attendance/presentation/pages/attendance_detail_page.dart');
-      expect(page, isNot(contains('attendance-images')));
-      expect(page, contains('repo.uploadAttendanceImage(widget.attendanceId, bytes)'));
+      final shared = read('lib/features/attendance/presentation/attendance_extra_actions.dart');
+      expect(page, contains('addAttendancePhoto(context, ref, widget.attendanceId)'));
+      expect(shared, isNot(contains('attendance-images')));
+      expect(shared, contains('repo.uploadAttendanceImage(attendanceId, bytes)'));
     });
   });
 
@@ -78,6 +81,15 @@ void main() {
       expect(profileImagePathFromUrl(''), isNull);
       expect(profileImagePathFromUrl(null), isNull);
       expect(profileImagePathFromUrl('https://attendix.de/assets/default.png'), isNull);
+    });
+
+    test('only own files count as deletable (adopted pictures of others not)', () {
+      expect(isOwnProfileImagePath('42', 42), isTrue);
+      expect(isOwnProfileImagePath('7/42.jpg', 42), isTrue);
+      expect(isOwnProfileImagePath('99', 42), isFalse);
+      expect(isOwnProfileImagePath('7/142.jpg', 42), isFalse);
+      final header = read('lib/features/people/presentation/widgets/person_detail/person_header.dart');
+      expect('isOwnProfileImagePath('.allMatches(header).length, 2);
     });
 
     test('person header and registration use the Ionic key and img ""', () {
@@ -204,14 +216,15 @@ void main() {
       // SOL_FIX3 moved the paged load into a helper used by mergeChurches.
       final q = source.substring(source.indexOf('Future<int> mergeChurches'));
       expect(q, contains('fetchAllPages'));
-      expect(q, contains(".order('id')"));
+      expect(q, contains(".order('id', ascending: true)"));
     });
 
     test('extra fields', () {
       final source = read('lib/data/repositories/extra_fields_repository.dart');
-      final q = body(source, '_loadRows(String table)', 600);
+      final q = body(source, '_loadRows(', 1000);
       expect(q, contains('fetchAllPages'));
-      expect(q, contains(".eq('tenantId', currentTenantId)"));
+      expect(q, contains('final tenantId = rowTenantId ?? currentTenantId;'));
+      expect(q, contains(".eq('tenantId', tenantId)"));
       expect(q, contains(".order('id', ascending: true)"));
     });
   });
@@ -279,7 +292,7 @@ void main() {
       final manifest = read('android/app/src/main/AndroidManifest.xml');
       expect(manifest, contains('.liveplan.LivePlanMessagingService'));
       expect(manifest, contains('android:scheme="attendix" android:host="live-plan"'));
-      expect(read('android/app/src/main/kotlin/de/attendix/attendix/MainActivity.kt'),
+      expect(read('android/app/src/main/kotlin/io/stephanus/attendix/MainActivity.kt'),
           contains('LiveActivityPlugin('));
     });
   });

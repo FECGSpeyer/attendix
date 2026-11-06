@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,6 +19,7 @@ import '../../team_org_utils.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, priorityColor, outcomeColor;
 import '../widgets/quick_create_attendance.dart';
+import '../utils/route_return_reload.dart';
 import '../../../../core/services/error_reporter.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -36,7 +39,8 @@ class AgendaItemDetailPage extends ConsumerStatefulWidget {
   ConsumerState<AgendaItemDetailPage> createState() => _AgendaItemDetailPageState();
 }
 
-class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
+class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
+    with RouteReturnReload {
   final _title = TextEditingController();
   final _description = TextEditingController();
   final _duration = TextEditingController();
@@ -48,6 +52,77 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
   bool _saving = false;
 
   bool get _isNew => _itemId == 'new';
+
+  /// Ionic ngOnInit → loadItem(): the topic is loaded anew on every open
+  /// (spinner until then), so the form never starts from a stale copy.
+  late bool _fresh = _isNew;
+
+  /// The fresh load failed: no form from an older cached copy.
+  bool _loadFailed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_isNew) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(_loadFresh(firstLoad: true));
+      _reloadRelated(firstLoad: true);
+    });
+  }
+
+  /// Loads the topic anew; sets [_fresh] once settled, [_loadFailed] on error.
+  /// [firstLoad]: a load already running (first open) is kept.
+  Future<void> _loadFresh({bool firstLoad = false}) async {
+    final id = _itemId;
+    if (firstLoad) {
+      refreshUnlessLoading(ref, agendaItemByIdProvider(id));
+    } else {
+      ref.invalidate(agendaItemByIdProvider(id));
+    }
+    try {
+      await ref.read(agendaItemByIdProvider(id).future);
+      if (mounted) setState(() => _fresh = true);
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _fresh = true;
+          _loadFailed = true;
+        });
+      }
+    }
+  }
+
+  /// Pull to refresh on "Thema nicht gefunden" (e.g. after a failed load):
+  /// spinner, then a fresh load (never a form from the cached copy).
+  Future<void> _retryLoad() async {
+    setState(() {
+      _fresh = false;
+      _loadFailed = false;
+    });
+    _reloadRelated();
+    await _loadFresh();
+  }
+
+  /// Ionic loadRelated(): linked tasks and history. [firstLoad]: loads already
+  /// running (first open) are kept; otherwise always loaded anew, a running
+  /// load may predate a change (e.g. a result saved in the protocol).
+  void _reloadRelated({bool firstLoad = false}) {
+    if (firstLoad) {
+      refreshUnlessLoading(ref, agendaItemHistoryProvider(_itemId));
+      refreshUnlessLoading(ref, tasksForAgendaItemProvider(_itemId));
+    } else {
+      ref.invalidate(agendaItemHistoryProvider(_itemId));
+      ref.invalidate(tasksForAgendaItemProvider(_itemId));
+    }
+  }
+
+  /// Ionic ionViewWillEnter: back from a task or protocol → reload tasks and
+  /// history (e.g. a result set in the protocol).
+  @override
+  void onRouteReturn() {
+    if (!_isNew) _reloadRelated();
+  }
 
   @override
   void dispose() {
@@ -76,7 +151,8 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
     }
     if (_saving) return;
     setState(() => _saving = true);
-    final duration = int.tryParse(_duration.text.trim()) ?? 0;
+    // Ionic Math.round(Number(value)): "7.5" → 8.
+    final duration = num.tryParse(_duration.text.trim())?.round() ?? 0;
     final desc = _description.text.trim();
     final notifier = ref.read(agendaItemNotifierProvider.notifier);
     try {
@@ -130,11 +206,31 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
     }
   }
 
-  Future<void> _planInto(AgendaItem item) async {
+  /// Ionic binds `item` to the form via ngModel: "Einplanen" uses the current
+  /// (unsaved) title, duration and status, not the stored copy. The joined
+  /// responsible person stays as loaded (Ionic: only the id is bound).
+  AgendaItem _formItem(AgendaItem saved) {
+    final desc = _description.text.trim();
+    final duration = num.tryParse(_duration.text.trim())?.round() ?? 0;
+    return saved.copyWith(
+      title: _title.text.trim(),
+      description: desc.isEmpty ? null : desc,
+      status: _status,
+      priority: _priority,
+      responsiblePersonId: _responsibleId,
+      defaultDuration: duration > 0 ? duration : null,
+    );
+  }
+
+  Future<void> _planInto(AgendaItem saved) async {
+    final item = _formItem(saved);
     final protocolRepo = ref.read(protocolRepositoryWithTenantProvider);
     final types = await ref.read(protocolTypesProvider.future);
     List<ProtocolAttendance> upcoming = [];
     try {
+      // Ionic: getUpcomingAttendances on every tap (new/deleted Termine,
+      // current plans for "bereits eingeplant").
+      ref.invalidate(upcomingProtocolAttendancesProvider);
       upcoming = (await ref.read(upcomingProtocolAttendancesProvider.future)).take(_planChoices).toList();
     } catch (e, st) {
       ErrorReporter.report(e, st, where: 'agenda_item_detail_page');
@@ -211,8 +307,8 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
     final isLeader = ref.watch(isTeamLeaderProvider);
     final AsyncValue<AgendaItem?> itemAsync =
         _isNew ? const AsyncValue.data(null) : ref.watch(agendaItemByIdProvider(_itemId));
-    final item = itemAsync.valueOrNull;
-    if (item != null && isLeader) _fill(item);
+    final item = _loadFailed ? null : itemAsync.valueOrNull;
+    if (item != null && isLeader && _fresh) _fill(item);
     final l10n = context.l10n;
 
     return Scaffold(
@@ -235,10 +331,23 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
             )
           : null),
       // P10_SONGS_ORG: keep the form while the item reloads after a save.
-      body: itemAsync.isLoading && !itemAsync.hasValue
+      body: !_fresh || (itemAsync.isLoading && !itemAsync.hasValue)
           ? const Center(child: AppSpinner())
           : (!_isNew && item == null)
-              ? Center(child: Text(l10n.agendaFlutterNotFound))
+              ? LayoutBuilder(
+                  builder: (context, constraints) => RefreshIndicator.adaptive(
+                    onRefresh: _retryLoad,
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(
+                          height: constraints.maxHeight,
+                          child: Center(child: Text(l10n.agendaFlutterNotFound)),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
               : ListView(
                   padding: EdgeInsets.only(
                       bottom: isLeader
@@ -257,11 +366,12 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
                               : null,
                         ),
                       ]),
-                    if (!_isNew && isLeader && item?.status == 'open')
+                    // Ionic: live form status (unsaved "Erledigt" hides it).
+                    if (!_isNew && isLeader && item != null && _status == 'open')
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                         child: FilledButton.icon(
-                          onPressed: () => _planInto(item!),
+                          onPressed: () => _planInto(item),
                           icon: const Icon(Icons.calendar_today_outlined),
                           label: IonButtonLabel(l10n.agendaPlanIn),
                         ),

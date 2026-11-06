@@ -18,6 +18,7 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/adaptive/ion_toolbar_segment.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import 'package:attendix/shared/widgets/layout/side_nav/side_nav_layout.dart';
 
 /// "Übersicht" – all Termine of the user across all tenants
 /// (Ionic `selfService/overview`) in the card layout.
@@ -106,6 +107,8 @@ class _SelfServiceOverviewPageState
             ? const Border()
             : condenseBarShape(context, condensed),
         flexibleSpace: IonTranslucentBarBackground(visible: condensed),
+        // SIDE_NAV: menu button of the overlay panel (tablet portrait)
+        leading: SideNavMenuButton.maybe(context),
         title: CondenseTitle(
           condensed: condensed,
           child: Text(context.l10n.selfServiceAllEvents),

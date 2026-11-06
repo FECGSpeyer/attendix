@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
 import 'package:attendix/core/providers/group_providers.dart';
+import 'package:attendix/core/providers/organisation_providers.dart';
+import 'package:attendix/core/providers/player_providers.dart';
 import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/self_service_providers.dart';
 import 'package:attendix/core/providers/song_providers.dart';
@@ -215,6 +217,11 @@ Widget _app(Role role, _FakeFiles files, {Song song = _song, _FakeGroupNotifier?
       currentSelfServicePlayerProvider.overrideWith(
         (ref) async => TestFactories.createPerson(id: 3, tenantId: 7, instrument: 11),
       ),
+      linkedTenantsProvider.overrideWith((ref) async => const []),
+      userTenantsProvider.overrideWith((ref) async => const []),
+      currentOrganisationProvider.overrideWith((ref) async => null),
+      missingGroupsPlayerCountsProvider.overrideWithValue(null),
+      currentTenantIdProvider.overrideWithValue(7),
     ],
     child: MaterialApp.router(
       locale: const Locale('de'),
@@ -418,7 +425,7 @@ void main() {
       _desktop(tester);
       await tester.pumpWidget(_app(Role.admin, _FakeFiles()));
       await _settle(tester);
-      expect(find.text('Dateien · 3'), findsOneWidget);
+      expect(find.text('Noten & Dateien · 3'), findsOneWidget);
       expect(find.text('Hochladen'), findsOneWidget);
       expect(find.text('Alle als ZIP'), findsOneWidget);
       expect(find.text('klar.pdf'), findsOneWidget);
@@ -426,17 +433,21 @@ void main() {
       expect(find.text('Alle Stimmen'), findsNothing);
     });
 
-    testWidgets('players and narrow screens keep the old page', (tester) async {
+    testWidgets('players and phones get the list instead of the table', (tester) async {
       _desktop(tester);
       await tester.pumpWidget(_app(Role.player, _FakeFiles()));
       await _settle(tester);
       expect(find.text('Hochladen'), findsNothing);
+      expect(find.text('Hinzufügen'), findsNothing);
       expect(find.text('Alle Stimmen'), findsOneWidget);
 
       tester.view.physicalSize = const Size(393, 852);
+      await tester.pumpWidget(const SizedBox());
       await tester.pumpWidget(_app(Role.admin, _FakeFiles()));
       await _settle(tester);
-      expect(find.text('Hochladen'), findsNothing);
+      expect(find.text('Alle als ZIP'), findsNothing);
+      expect(find.text('Hinzufügen'), findsOneWidget);
+      expect(find.text('klar.pdf'), findsOneWidget);
     });
 
     testWidgets('keys: select all, delete with Rückgängig, ↓ and Entf', (tester) async {
@@ -467,7 +478,7 @@ void main() {
       expect(find.text('1 ausgewählt'), findsOneWidget);
       await tester.sendKeyEvent(LogicalKeyboardKey.delete);
       await tester.pump();
-      expect(find.text('Dateien · 2'), findsOneWidget);
+      expect(find.text('Noten & Dateien · 2'), findsOneWidget);
 
       await tester.pump(rdFileUndoDelay + const Duration(seconds: 1));
       await _settle(tester);
@@ -486,7 +497,7 @@ void main() {
       await tester.sendKeyRepeatEvent(LogicalKeyboardKey.delete);
       await tester.sendKeyUpEvent(LogicalKeyboardKey.delete);
       await tester.pump();
-      expect(find.text('Dateien · 2'), findsOneWidget);
+      expect(find.text('Noten & Dateien · 2'), findsOneWidget);
       await tester.pump(rdFileUndoDelay + const Duration(seconds: 1));
       await _settle(tester);
     });

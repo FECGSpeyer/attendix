@@ -915,7 +915,20 @@ class RiverpodLiveActivityHost implements LiveActivityHost {
   Future<void> openPlan(int attendanceId) async {
     final repo = _ref.read(planRepositoryWithTenantProvider);
     if (!repo.hasTenantId) return;
-    final attendance = await repo.getPlanAttendanceById(attendanceId);
+    var attendance = await repo.getPlanAttendanceById(attendanceId);
+    // Ionic getAttendanceById has no tenant filter: a Live Activity of an
+    // ORG-Plan of another choir / a Termin of another instance opens too.
+    if (attendance == null) {
+      // Own instances with the own role there; linked instances of the
+      // organisation without a role (archived Termine stay hidden there).
+      final tenantRoles = <int, Role?>{
+        for (final t in await _ref.read(linkedTenantsProvider.future))
+          if (t.id != null) t.id!: null,
+        for (final t in await _ref.read(userTenantsProvider.future))
+          if (t.id != null) t.id!: t.role == null ? null : Role.fromValue(t.role!),
+      };
+      attendance = await repo.getPlanAttendanceByIdInTenants(attendanceId, tenantRoles);
+    }
     if (attendance?.plan == null) return;
     final context = _ref.read(routerProvider).routerDelegate.navigatorKey.currentContext;
     if (context == null || !context.mounted) return;
@@ -924,10 +937,28 @@ class RiverpodLiveActivityHost implements LiveActivityHost {
 
   @override
   Future<void> openSharedOrgPlan(String id) async {
-    final org = await _ref.read(currentOrganisationProvider.future);
-    final orgId = org?.id;
-    if (orgId == null) return;
-    final sp = await _ref.read(orgPlanRepositoryProvider).getAdHocOrgPlan(orgId, id);
+    // Ionic reads shared_plans by id only (RLS: leader of an instance of the
+    // org). The server sends the activity to admins/responsibles of every
+    // instance of the org, so the currently selected instance may belong to
+    // another (or no) organisation: try the current organisation first, then
+    // every organisation of the user's admin/responsible instances
+    // (userOrganisationsProvider). Each read stays scoped by org_id.
+    final orgIds = <int>{};
+    try {
+      final current = (await _ref.read(currentOrganisationProvider.future))?.id;
+      if (current != null) orgIds.add(current);
+    } catch (_) {}
+    try {
+      for (final org in await _ref.read(userOrganisationsProvider.future)) {
+        if (org.id != null) orgIds.add(org.id!);
+      }
+    } catch (_) {}
+    final repo = _ref.read(orgPlanRepositoryProvider);
+    SharedPlan? sp;
+    for (final orgId in orgIds) {
+      sp = await repo.getAdHocOrgPlan(orgId, id);
+      if (sp != null) break;
+    }
     if (sp == null || sp.fields.isEmpty) return;
     final entry = OrgPlanEntry.adHoc(sp);
     final context = _ref.read(routerProvider).routerDelegate.navigatorKey.currentContext;

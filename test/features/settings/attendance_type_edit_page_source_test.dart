@@ -18,9 +18,9 @@ void main() {
 
   group('AttendanceTypeEditPage - _save() method', () {
     test('default_status uses .value (integer), not .name (string)', () {
-      // Find the update payload in _save() method
-      final saveMethod = _extractMethodBody(pageSource, '_save');
-      expect(saveMethod, isNotNull, reason: '_save method should exist');
+      // The update/insert payload is built by _buildTypeData()
+      final saveMethod = _extractMethodBody(pageSource, '_buildTypeData');
+      expect(saveMethod, isNotNull, reason: '_buildTypeData method should exist');
 
       // Should use .value for integer
       expect(
@@ -38,8 +38,8 @@ void main() {
     });
 
     test('available_statuses uses .value (integer array), not .name (string array)', () {
-      final saveMethod = _extractMethodBody(pageSource, '_save');
-      expect(saveMethod, isNotNull, reason: '_save method should exist');
+      final saveMethod = _extractMethodBody(pageSource, '_buildTypeData');
+      expect(saveMethod, isNotNull, reason: '_buildTypeData method should exist');
 
       // Should use .value for integer array
       expect(
@@ -55,13 +55,25 @@ void main() {
         reason: 'available_statuses must NOT use .name which sends strings',
       );
     });
+
+    test('a successful save makes the saved type the new baseline', () {
+      // Null-keeping rules (end_time, duration_days) compare with
+      // _originalType; a stale one turns 20:30 back into null on the
+      // next all-day save without leaving the page.
+      final save = _extractMethodBody(pageSource, '_save')!;
+      final nullCheck = save.indexOf('if (updated == null)');
+      final baseline = save.indexOf('_originalType = updated;');
+      expect(nullCheck, greaterThan(-1));
+      expect(baseline, greaterThan(nullCheck),
+          reason: 'set _originalType only after a successful update');
+    });
   });
 }
 
 /// Extract method body from source code
 String? _extractMethodBody(String source, String methodName) {
   final methodStart = RegExp(
-    '(Future<[^>]*(?:<[^>]*>)?[^>]*>|void)\\s+$methodName\\s*\\(',
+    '(Future<[^>]*(?:<[^>]*>)?[^>]*>|void|Map<String, dynamic>)\\s+$methodName\\s*\\(',
   ).firstMatch(source);
 
   if (methodStart == null) return null;

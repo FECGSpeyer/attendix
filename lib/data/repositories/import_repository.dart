@@ -34,7 +34,7 @@ class ImportRepository extends BaseRepository with TenantAwareRepository {
             .from('player')
             .select('email')
             .eq('tenantId', tenantId)
-            .order('id') // SOL_FIX1: stable paging
+            .order('id', ascending: true) // SOL_FIX1: stable paging
             .range(from, from + _pageSize - 1);
         final rows = data as List;
         for (final row in rows) {
@@ -87,7 +87,7 @@ class ImportRepository extends BaseRepository with TenantAwareRepository {
             .from('songs')
             .select('number, prefix')
             .eq('tenantId', libraryTenantId)
-            .order('id') // SOL_FIX1: stable paging
+            .order('id', ascending: true) // SOL_FIX1: stable paging
             .range(from, from + _pageSize - 1);
         final rows = data as List;
         for (final row in rows) {

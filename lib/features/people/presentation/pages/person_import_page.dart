@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -5,21 +7,25 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/import_providers.dart';
 import '../../../../core/providers/player_providers.dart';
-import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/profile_providers.dart';
+import '../../../../core/services/native/native_file_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/import_file_io.dart';
 import '../../../../core/utils/import_mapper.dart';
 import '../../../../core/utils/spreadsheet_reader.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
+import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/providers/user_registration_providers.dart';
 import '../widgets/import_widgets.dart';
+import '../../people_list_utils.dart' show accountRoleForGroup;
 import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
-import '../../../../core/utils/error_message.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../data/repositories/player_repository.dart' show PersonNotAddedToAttendancesException;
 
 enum _Step { file, mapping, preview }
 
@@ -46,16 +52,24 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
   bool _busy = false;
   String _progress = '';
 
+  /// Rows (by file row) that were saved, but could not be added to the
+  /// Termine. A second click only retries the Termine for them, so the
+  /// person is not saved twice.
+  final Map<int, Person> _savedWithoutTermine = {};
+
+  /// Rows (by file row) that are completely imported; a retry skips them.
+  final Set<int> _importedRows = {};
+
   List<Group> get _groups => ref.read(groupsProvider).valueOrNull ?? [];
 
   Future<PersonMapContext> _buildContext() async {
     final groups = await ref.read(groupsProvider.future);
     final mainGroup = await ref.read(mainGroupProvider.future);
-    final tenant = ref.read(currentTenantProvider);
+    // Ionic db.getPersonExtraFields(): organisation + instance fields.
     return PersonMapContext(
       groups: groups,
       mainGroupId: mainGroup?.id,
-      additionalFields: tenant?.additionalFields ?? const <ExtraField>[],
+      additionalFields: await _extraFields(),
     );
   }
 
@@ -86,9 +100,12 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
         return;
       }
       final ctx = await _buildContext();
+      if (!mounted) return;
       setState(() {
         _fileName = picked.name;
         _rawRows = data.rows;
+        _savedWithoutTermine.clear();
+        _importedRows.clear();
         _headers = data.headers;
         _ctx = ctx;
         _options = _buildOptions();
@@ -104,27 +121,44 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
     }
   }
 
-  Future<void> _downloadTemplate() async {
-    final tenant = ref.read(currentTenantProvider);
-    final headers =
-        buildPersonImportTemplateHeaders(tenant?.additionalFields ?? const []);
-    final groups = await ref.read(groupsProvider.future);
-    final example = [
-      'Anna',
-      'Müller',
-      '15.03.1990',
-      groups.isNotEmpty ? groups.first.name : '',
-      'anna@example.com',
-      '0170 1234567',
-      '01.01.2024',
-      '',
-    ];
-    final bytes = buildTemplateXlsx(headers, example);
-    if (bytes == null) return;
+  Future<List<ExtraField>> _extraFields() async {
+    // Read the provider before awaiting: the ref must not be used after the
+    // page was closed during the organisation query.
+    final organisation = ref.read(currentOrganisationProvider.future);
     try {
-      await saveGeneratedFile(bytes, 'Personen_Import_Vorlage.xlsx');
-    } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
+      await organisation;
+    } catch (_) {
+      // Without the organisation only the instance fields are offered.
+    }
+    if (!mounted) return const <ExtraField>[];
+    return ref.read(personListExtraFieldsProvider);
+  }
+
+  Future<void> _downloadTemplate() async {
+    // Ionic Utils.saveWorkbook: native → system file viewer, mobile web →
+    // share sheet, desktop → download; no message on failure.
+    try {
+      final groupsFuture = ref.read(groupsProvider.future);
+      final fields = await _extraFields();
+      final groups = await groupsFuture;
+      if (!mounted) return;
+      final headers = buildPersonImportTemplateHeaders(fields);
+      final example = [
+        'Anna',
+        'Müller',
+        '15.03.1990',
+        groups.isNotEmpty ? groups.first.name : '',
+        'anna@example.com',
+        '0170 1234567',
+        '01.01.2024',
+        '',
+      ];
+      final bytes = buildTemplateXlsx(headers, example);
+      if (bytes == null) return;
+      await NativeFileService.saveBytes(
+          Uint8List.fromList(bytes), 'Personen_Import_Vorlage.xlsx');
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'person_import_template');
     }
   }
 
@@ -150,7 +184,13 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
   }
 
   List<MappedPersonRow> get _importable =>
-      _mappedRows.where((r) => r.isImportable).toList();
+      _mappedRows
+          .where((r) =>
+              !_importedRows.contains(r.rowIndex) &&
+              // A saved person still missing its Termine stays retryable,
+              // even when a new duplicate check now flags it.
+              (r.isImportable || _savedWithoutTermine.containsKey(r.rowIndex)))
+          .toList();
 
   Future<void> _startImport() async {
     final toImport = _importable;
@@ -164,7 +204,6 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
       return;
     }
 
-    final importRepo = ref.read(importRepositoryWithTenantProvider);
     final playerRepo = ref.read(playerRepositoryWithTenantProvider);
     // AUTH: accounts are created server-side (attendix-user Edge Function)
     final registrationRepo =
@@ -180,27 +219,36 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
     final failed = <String>[];
     for (var i = 0; i < toImport.length; i++) {
       final row = toImport[i];
+      final name = '${row.firstName} ${row.lastName}';
       try {
-        final person = await importRepo.insertPlayer(row.data);
-        // Ionic addPlayer → addPlayerToAttendancesByDate: add the person to
-        // all Termine after their join date (best effort).
-        try {
-          await playerRepo.addPlayerToAttendancesByDate(person);
-        } catch (e, st) {
-          ErrorReporter.report(e, st, where: 'person_import_page');
-        }
-        // Accounts only when the toggle is on and an email exists.
-        if (_createAccounts &&
-            (person.email?.isNotEmpty ?? false) &&
-            registrationRepo.hasTenantId) {
-          await registrationRepo.createPlayerAccount(
-            person,
-            mainGroupId: mainGroupId,
+        final saved = _savedWithoutTermine[row.rowIndex];
+        if (saved != null) {
+          // Saved by an earlier click: only add it to the Termine.
+          await playerRepo.addPlayerToAttendancesByDate(saved);
+        } else {
+          // Ionic importPlayers → addPlayer(player, register, role): the
+          // account is registered first (a failed registration inserts no
+          // person), an existing row of that account is reactivated instead
+          // of duplicated, and the person is added to later Termine.
+          final register = _createAccounts &&
+              (row.email?.trim().isNotEmpty ?? false) &&
+              registrationRepo.hasTenantId;
+          await playerRepo.addPlayer(
+            Person.fromJson({...row.data, 'tenantId': playerRepo.currentTenantId}),
+            register: register,
+            role: accountRoleForGroup(row.instrument, mainGroupId),
           );
         }
+        _savedWithoutTermine.remove(row.rowIndex);
+        _importedRows.add(row.rowIndex);
         imported++;
+      } on PersonNotAddedToAttendancesException catch (e) {
+        _savedWithoutTermine[row.rowIndex] = e.person;
+        if (mounted) {
+          failed.add(context.l10n.peopleFlutterImportNotAssigned(name, e.cause.toString()));
+        }
       } catch (e) {
-        failed.add('${row.firstName} ${row.lastName}: $e');
+        failed.add('$name: $e');
       }
       if (mounted) {
         setState(() => _progress = context.l10n.peopleImportProgress(i + 1, toImport.length));
@@ -209,6 +257,10 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
 
     if (!mounted) return;
     setState(() => _busy = false);
+    // Also after failures: addPlayer saves the person before adding it to
+    // the Termine, so a failed row may already exist (duplicate check of a
+    // second import must see it).
+    ref.invalidate(playersProvider);
 
     final parts = [
       context.l10n.peopleImportedCount(imported),
@@ -221,9 +273,10 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
       await showImportFailures(context, title: context.l10n.peopleNotImported, lines: failed);
     }
 
-    if (imported > 0) {
-      ref.invalidate(playersProvider);
-      if (mounted) Navigator.of(context).pop(true);
+    // Ionic closes once a row was imported. Stay open while saved persons
+    // still miss their Termine, so the retry can add only those.
+    if (imported > 0 && _savedWithoutTermine.isEmpty && mounted) {
+      Navigator.of(context).pop(true);
     }
   }
 
@@ -365,7 +418,10 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (row.email != null) Text(row.email!),
-                        if (row.errors.isEmpty)
+                        // A saved row (Termine pending) keeps its group: the
+                        // retry adds the saved person to the Termine as is.
+                        if (row.errors.isEmpty &&
+                            !_savedWithoutTermine.containsKey(row.rowIndex))
                           AppDropdownButton<int>(
                             value: groups.any((g) => g.id == row.instrument)
                                 ? row.instrument

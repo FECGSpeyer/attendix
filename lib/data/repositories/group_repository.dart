@@ -21,9 +21,9 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
           .from('instruments')
           .select('*, categoryData:category(*)')
           .eq('tenantId', currentTenantId)
-          .order('category')
+          .order('category', ascending: true)
           .order('sort_order', ascending: true, nullsFirst: false)
-          .order('name');
+          .order('name', ascending: true);
 
       return (response as List)
           .map((e) => Group.fromJson(e as Map<String, dynamic>))
@@ -199,7 +199,9 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
           .from('player')
           .select('id')
           .eq('tenantId', currentTenantId)
-          .eq('instrument', groupId);
+          .eq('instrument', groupId)
+          // Ionic getPlayers(): pending registrations are not counted
+          .eq('pending', false);
       if (!includeArchived) {
         query = query.isFilter('left', null); // Only active players
       }
@@ -220,6 +222,9 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
           .select('instrument')
           .eq('tenantId', currentTenantId)
           .isFilter('left', null)
+          // Ionic instrument-list counts db.getPlayers() (left = null,
+          // pending = false): pending registrations are not counted.
+          .eq('pending', false)
           .not('instrument', 'is', null);
 
       final counts = <int, int>{};
@@ -272,7 +277,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
           .select('*')
           .eq('tenant_id', currentTenantId)
           .order('sort_order', ascending: true, nullsFirst: false)
-          .order('name');
+          .order('name', ascending: true);
 
       return (response as List)
           .map((e) => GroupCategory.fromJson(e as Map<String, dynamic>))
@@ -342,9 +347,9 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Persist new sort_order values for instruments (id -> sort_order).
-  /// Ionic: instrument-list.page.ts saveOrder()
-  Future<void> updateGroupSortOrders(Map<int, int> sortOrders) async {
+  /// Persist sort_order values for instruments (id -> sort_order, null
+  /// stays null). Ionic: instrument-list.page.ts saveOrder()
+  Future<void> updateGroupSortOrders(Map<int, int?> sortOrders) async {
     ensureNotDemo('updateGroupSortOrders'); // DEMO_GUARD
     try {
       for (final entry in sortOrders.entries) {
@@ -360,9 +365,9 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Persist new sort_order values for group categories (id -> sort_order).
-  /// Ionic: group-category.service.ts updateGroupCategorySortOrder()
-  Future<void> updateGroupCategorySortOrders(Map<int, int> sortOrders) async {
+  /// Persist sort_order values for group categories (id -> sort_order, null
+  /// stays null). Ionic: group-category.service.ts updateGroupCategorySortOrder()
+  Future<void> updateGroupCategorySortOrders(Map<int, int?> sortOrders) async {
     ensureNotDemo('updateGroupCategorySortOrders'); // DEMO_GUARD
     try {
       for (final entry in sortOrders.entries) {

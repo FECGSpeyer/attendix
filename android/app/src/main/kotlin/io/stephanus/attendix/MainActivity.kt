@@ -1,4 +1,7 @@
-package de.attendix.attendix
+// The launcher activity keeps the Ionic app's class name
+// (io.stephanus.attendix.MainActivity): launchers store home screen icons by
+// component name, a renamed launcher activity can drop them after the update.
+package io.stephanus.attendix
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -6,6 +9,8 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import com.ryanheise.audioservice.AudioServiceActivity
+import de.attendix.attendix.R
+import de.attendix.attendix.ionic.IonicSessionPlugin
 import de.attendix.attendix.liveplan.LiveActivityPlugin
 import io.flutter.embedding.engine.FlutterEngine
 
@@ -14,6 +19,8 @@ import io.flutter.embedding.engine.FlutterEngine
 class MainActivity : AudioServiceActivity() {
     // DB_REVIEW_REST (F2): Ablaufplan notification channel (Ionic LiveActivityPlugin)
     private var liveActivityPlugin: LiveActivityPlugin? = null
+    // IONIC_SESSION: keep the Ionic login after the store update
+    private var ionicSessionPlugin: IonicSessionPlugin? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,11 +34,16 @@ class MainActivity : AudioServiceActivity() {
             applicationContext,
             flutterEngine.dartExecutor.binaryMessenger,
         ).also { it.setLaunchIntent(intent) }
+        ionicSessionPlugin?.dispose()
+        ionicSessionPlugin =
+            IonicSessionPlugin(this, flutterEngine.dartExecutor.binaryMessenger)
     }
 
     override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
         liveActivityPlugin?.dispose()
         liveActivityPlugin = null
+        ionicSessionPlugin?.dispose()
+        ionicSessionPlugin = null
         super.cleanUpFlutterEngine(flutterEngine)
     }
 

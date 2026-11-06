@@ -198,6 +198,9 @@ enum RdImportReadError {
   /// Too large to hold in the browser's memory ([rdImportMaxWebBytes]).
   tooLargeWeb,
 
+  /// The group shows the Werke of another one ([rdImportOwnLibraryProvider]).
+  otherLibrary,
+
   /// No link to a folder.
   badLink,
 
@@ -221,6 +224,15 @@ enum RdImportReadError {
   forbidden,
   failed,
 }
+
+/// Whether the current group's Werke are its own. A group that shows the
+/// Werke of another one (Werk-Synchronisierung) imports nothing: the Noten
+/// would go to the other group's Werke.
+final rdImportOwnLibraryProvider = FutureProvider<bool>((ref) async {
+  final tenantId = ref.watch(currentTenantIdProvider);
+  final source = (await ref.watch(songTenantSettingsProvider.future)).songSourceTenantId;
+  return source == null || source == tenantId;
+});
 
 RdImportReadError _readErrorOf(RdDriveError error) => switch (error) {
       RdDriveError.notSetUp => RdImportReadError.notSetUp,
@@ -261,6 +273,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   KeepAliveLink? _keep;
   bool _disposed = false;
   int? _tenantId;
+  bool _otherLibrary = false;
   int? _mainGroupId;
 
   /// Werke created by an earlier run (a retry does not create them again).
@@ -312,7 +325,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     if (streamed.fold<int>(0, (n, z) => n + z.size) > rdImportMaxWebBytes) return RdImportReadError.tooLargeWeb;
     final data = await _data();
     if (_disposed) return null;
-    if (data == null) return RdImportReadError.noData;
+    if (data == null) return _otherLibrary ? RdImportReadError.otherLibrary : RdImportReadError.noData;
     state = state.copyWith(step: RdImportStep.reading, progress: 0, clearError: true);
     await _pause();
     if (streamed.isNotEmpty) {
@@ -365,7 +378,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     final data = await _data();
     if (_disposed) return null;
     final tenantId = _tenantId;
-    if (data == null || tenantId == null) return RdImportReadError.noData;
+    if (data == null || tenantId == null) return _otherLibrary ? RdImportReadError.otherLibrary : RdImportReadError.noData;
     state = state.copyWith(step: RdImportStep.reading, progress: 0, sourceName: name, fileCount: 0, clearError: true);
     final RdDriveSource source;
     try {
@@ -389,8 +402,12 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     return _readFrom(source, data);
   }
 
-  /// The Werke and groups; binds the import to the current group.
+  /// The Werke and groups; binds the import to the current group. Null
+  /// when they cannot be loaded or are another group's
+  /// ([RdImportReadError.otherLibrary]).
   Future<SongsListData?> _data() async {
+    _otherLibrary = !await ref.read(rdImportOwnLibraryProvider.future).catchError((_) => false);
+    if (_otherLibrary) return null;
     final data = await ref.read(songsListDataProvider(null).future);
     if (_disposed || data == null) return data;
     _tenantId = ref.read(currentTenantIdProvider);

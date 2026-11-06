@@ -724,7 +724,6 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   // UX_ATT: Ionic info modal (breakpoint 0.5): Veranstaltungstypen legend,
   // then Ferien and Feiertage.
   void _showHolidayInfo() {
-    final holidaysAsync = ref.read(holidaysProvider);
     final types = ref.read(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
     Widget dot(Color color) => Icon(Icons.circle, size: 18, color: color);
     Widget header(String text) => Padding(
@@ -737,49 +736,62 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
+      // Ionic breakpoints [0, 0.5, 1]: opens at half height, can go full.
       builder: (context) => DraggableScrollableSheet(
         initialChildSize: 0.5,
         minChildSize: 0.3,
-        maxChildSize: 0.9,
+        maxChildSize: 1,
         expand: false,
-        builder: (context, scrollController) => holidaysAsync.when(
-          loading: () =>
-              const Center(child: AppSpinner()),
-          error: (e, _) => Center(child: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)))),
-          data: (holidays) {
-            final hasHolidays =
-                holidays.publicHolidays.isNotEmpty || holidays.schoolHolidays.isNotEmpty;
-            return ListView(
-              controller: scrollController,
-              padding: const EdgeInsets.all(16),
-              children: [
-                header(context.l10n.attListEventTypes),
-                _InsetGroup(
-                  margin: EdgeInsets.zero,
-                  children: [
-                    for (final type in types)
-                      ListTile(
-                        dense: true,
-                        leading: dot(ColorUtils.parseNamedColor(type.color)),
-                        title: Text(type.name),
-                      ),
-                    if (hasHolidays) ...[
-                      ListTile(
-                        dense: true,
-                        leading: dot(AppColors.danger),
-                        title: Text(context.l10n.attListHolidaysOfState),
-                      ),
-                      ListTile(
-                        dense: true,
-                        leading: dot(AppColors.medium),
-                        title: Text(context.l10n.attListSchoolHolidaysOfState),
-                      ),
-                    ],
+        // Watches the holidays so the sheet fills in once they are loaded
+        // (Ionic shows the type legend right away).
+        builder: (context, scrollController) => Consumer(builder: (context, ref, _) {
+          final holidaysAsync = ref.watch(holidaysProvider);
+          final holidays = holidaysAsync.valueOrNull;
+          final hasHolidays = holidays != null &&
+              (holidays.publicHolidays.isNotEmpty || holidays.schoolHolidays.isNotEmpty);
+          return ListView(
+            controller: scrollController,
+            padding: const EdgeInsets.all(16),
+            children: [
+              header(context.l10n.attListEventTypes),
+              _InsetGroup(
+                margin: EdgeInsets.zero,
+                children: [
+                  for (final type in types)
+                    ListTile(
+                      dense: true,
+                      leading: dot(ColorUtils.parseNamedColor(type.color)),
+                      title: Text(type.name),
+                    ),
+                  if (hasHolidays) ...[
+                    ListTile(
+                      dense: true,
+                      leading: dot(AppColors.danger),
+                      title: Text(context.l10n.attListHolidaysOfState),
+                    ),
+                    ListTile(
+                      dense: true,
+                      leading: dot(AppColors.medium),
+                      title: Text(context.l10n.attListSchoolHolidaysOfState),
+                    ),
                   ],
-                ),
+                ],
+              ),
+              if (holidays == null && holidaysAsync.isLoading)
+                const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(child: AppSpinner()),
+                )
+              else if (holidaysAsync.hasError && holidays == null)
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(holidaysAsync.error!))),
+                )
+              else if (holidays != null) ...[
                 header(context.l10n.attListSchoolHolidays),
                 for (final h in holidays.schoolHolidays.where((h) => !h.isPast))
                   ListTile(
@@ -793,14 +805,28 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                     title: Text('${fmt.format(h.startDate)}: ${h.name}'),
                   ),
               ],
-            );
-          },
-        ),
+            ],
+          );
+        }),
       ),
     );
   }
 
+  /// Ionic 4.19.2: a quick double tap must not create the Termine twice
+  /// (the first tap is still checking permissions before [_isLoading]).
+  bool _creating = false;
+
   Future<void> _createAttendances() async {
+    if (_creating || _isLoading) return;
+    _creating = true;
+    try {
+      await _createAttendancesOnce();
+    } finally {
+      _creating = false;
+    }
+  }
+
+  Future<void> _createAttendancesOnce() async {
     // UI_TENANT_HOIST: bind tenant + repositories before the first await.
     final writer = AttendanceCreateWriter(ref);
     final tenant = writer.tenant;
@@ -851,7 +877,13 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         songEntries: _songEntries,
         dutyRequiredByWeekday: _dutyRequiredByWeekday,
       );
-      final ids = await writer.create(input);
+      final ids = await writer.create(
+        input,
+        // Ionic player-absence.service: toast, the Termine are still created.
+        onAbsencesLoadFailed: () {
+          if (mounted) ToastHelper.showError(context, context.l10n.svcLoadAbsencesFailed);
+        },
+      );
       final lastCreatedId = ids.isEmpty ? null : ids.last;
 
       if (!mounted) return;
@@ -860,7 +892,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       AttendanceCreateWriter.invalidateAfterCreate(ref, input);
 
       // UX_ATT: Ionic toasts attList.eventAdded / eventsAdded
-      final message = _selectedDates.length == 1
+      final message = uniqueDays(_selectedDates).length == 1
           ? context.l10n.attListEventAdded
           : context.l10n.attListEventsAdded;
       ToastHelper.showSuccess(context, message);

@@ -51,6 +51,7 @@ String rdImportReadErrorText(AppLocalizations l10n, RdImportReadError error) => 
       RdImportReadError.empty => l10n.redesignImportErrorEmpty,
       RdImportReadError.noData => l10n.redesignImportErrorNoData,
       RdImportReadError.tooLargeWeb => l10n.redesignImportErrorTooLargeWeb,
+      RdImportReadError.otherLibrary => l10n.redesignImportErrorOtherLibrary,
       RdImportReadError.badLink => l10n.redesignImportErrorBadLink,
       RdImportReadError.notFolder => l10n.redesignImportErrorNotFolder,
       RdImportReadError.dropbox => l10n.redesignImportErrorDropbox,
@@ -388,28 +389,33 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
       title: l10n.redesignImportTitle,
       step: 1,
       children: [
-        RdSectionHeader(l10n.redesignImportSourceWhere),
-        RdGroupedList(
-          children: [
-            RdListRow(
-              leading: const RdRowIcon(Icons.add_to_drive_outlined),
-              title: l10n.redesignImportSourceDrive,
-              subtitle: l10n.redesignImportSourceDriveDetail,
-              trailing: RdPill(l10n.redesignImportSourceRecommended, tone: RdTone.primary),
-              onTap: () => setState(() => _mode = _Source.drive),
-            ),
-            RdListRow(
-              leading: const RdRowIcon(Icons.folder_zip_outlined),
-              title: l10n.redesignImportSourceZip,
-              subtitle: l10n.redesignImportSourceZipDetail,
-              onTap: () => setState(() => _mode = _Source.zip),
-            ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
-          child: Text(l10n.redesignImportSourceSafe, style: RdType.meta(p, size: 13)),
-        ),
+        // Also when the page is opened by its address.
+        if (ref.watch(rdImportOwnLibraryProvider).valueOrNull == false)
+          RdInfoCard(text: l10n.redesignImportErrorOtherLibrary, icon: Icons.info_outline)
+        else ...[
+          RdSectionHeader(l10n.redesignImportSourceWhere),
+          RdGroupedList(
+            children: [
+              RdListRow(
+                leading: const RdRowIcon(Icons.add_to_drive_outlined),
+                title: l10n.redesignImportSourceDrive,
+                subtitle: l10n.redesignImportSourceDriveDetail,
+                trailing: RdPill(l10n.redesignImportSourceRecommended, tone: RdTone.primary),
+                onTap: () => setState(() => _mode = _Source.drive),
+              ),
+              RdListRow(
+                leading: const RdRowIcon(Icons.folder_zip_outlined),
+                title: l10n.redesignImportSourceZip,
+                subtitle: l10n.redesignImportSourceZipDetail,
+                onTap: () => setState(() => _mode = _Source.zip),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
+            child: Text(l10n.redesignImportSourceSafe, style: RdType.meta(p, size: 13)),
+          ),
+        ],
       ],
     );
   }

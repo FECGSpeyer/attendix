@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/dashboard/dashboard_models.dart';
 import '../../../../data/models/tenant/tenant.dart';
@@ -18,6 +18,7 @@ import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
+import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
 import '../../../../shared/widgets/adaptive/adaptive_platform.dart';
 
 /// Home dashboard tab (Ionic `home-dashboard`): configurable set of cards in a
@@ -63,6 +64,8 @@ class HomeDashboardPage extends ConsumerWidget {
       appBar: IonTranslucentAppBar(
         condensed: condensed,
         child: AppBar(
+        // SIDE_NAV: menu button of the overlay panel (tablet portrait)
+        leading: SideNavMenuButton.maybe(context),
         // P10_SELF_PLAN: shared Ionic tenant switcher (ion-buttons slot="start").
         title: tenants.length > 1
             ? TenantSwitcherTitle(
@@ -181,6 +184,8 @@ Future<void> _switchDashboardTenant(BuildContext context, WidgetRef ref, Tenant 
   await notifier.setTenant(t);
   await ref.read(currentTenantUserProvider.future);
   final role = ref.read(currentRoleProvider);
-  final metadata = ref.read(supabaseAuthProvider).currentUser?.userMetadata;
-  router.go(homeRouteFor(role, t.id, metadata));
+  // PARITY_UEBERSICHT: Ionic onTenantChange → Utils.getUrl(role), never the
+  // dashboard (Admin/Verantwortlicher land in "Personen"). The new design
+  // (Beta) keeps its own start page.
+  router.go(RedesignRoutes.active ? RedesignRoutes.today : role.defaultRoute);
 }

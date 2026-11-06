@@ -17,6 +17,8 @@ class PlanViewList extends StatefulWidget {
     required this.date,
     this.liveMode = false,
     this.fieldWarning,
+    this.songAction,
+    this.groupRange = true,
     this.onFieldTap,
     this.trailingBuilder,
     this.showStartEnd = true,
@@ -28,6 +30,14 @@ class PlanViewList extends StatefulWidget {
   final DateTime? date;
   final bool liveMode;
   final String? Function(PlanField field)? fieldWarning;
+
+  /// Ionic 4.17.26 plan viewer from a member view: rows of Werke open the
+  /// score options ("♪ Noten öffnen"). Returns null for rows without Werk.
+  final VoidCallback? Function(PlanField field)? songAction;
+
+  /// Block heads show "HH:mm – HH:mm"; false: only the start time like the
+  /// other rows (Ionic shared-plan `calculateTime`).
+  final bool groupRange;
 
   /// Edit mode of shared plans: tap on a row.
   final void Function(int index)? onFieldTap;
@@ -109,11 +119,20 @@ class _PlanViewListState extends State<PlanViewList> {
       final isDone = widget.liveMode && active >= 0 && i < active && !isActiveGroup;
 
       final lines = <Widget>[];
+      final openSong = isNote || isHead ? null : widget.songAction?.call(f);
+      if (openSong != null) {
+        lines.add(Row(mainAxisSize: MainAxisSize.min, children: [
+          const Icon(Icons.music_note_outlined, size: 16, color: AppColors.primary),
+          const SizedBox(width: 4),
+          Text(context.l10n.planViewerOpenScores,
+              style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w500, fontSize: 14)),
+        ]));
+      }
       final warning = widget.fieldWarning?.call(f);
       if (warning != null && warning.isNotEmpty) {
         lines.add(Text(warning, style: const TextStyle(color: AppColors.danger, fontSize: 14)));
       }
-      if (isHead && start != null) {
+      if (isHead && start != null && widget.groupRange) {
         final conductor = (f.conductor ?? '').isNotEmpty ? ' | ${f.conductor}' : '';
         lines.add(Text('${PlanUtils.groupRange(start, fields, i)}$conductor', style: pStyle));
       } else if (!isNote && start != null) {
@@ -145,7 +164,7 @@ class _PlanViewListState extends State<PlanViewList> {
       }
 
       Widget row = ListTile(
-        onTap: widget.onFieldTap != null ? () => widget.onFieldTap!(i) : null,
+        onTap: widget.onFieldTap != null ? () => widget.onFieldTap!(i) : openSong,
         // Ionic `.group-child`: --padding-start 34px.
         contentPadding: EdgeInsets.only(left: isChild ? 34 : 16, right: 16),
         // Ionic plan-viewer `fieldName`: "TOP n · Titel" for agenda fields.

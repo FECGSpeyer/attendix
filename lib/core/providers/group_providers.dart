@@ -9,6 +9,8 @@ import 'tenant_providers.dart';
 import '../services/tracking/tracking_event.dart';
 import '../services/tracking/tracking_service.dart';
 import '../services/offline_list_cache.dart';
+import '../utils/global_toast.dart';
+import '../../l10n/l10n.dart';
 
 /// Initialized group repository with tenant context
 final groupRepositoryWithTenantProvider = Provider<GroupRepository>((ref) {
@@ -100,7 +102,23 @@ final groupCategoriesProvider = FutureProvider<List<GroupCategory>>((ref) async 
 
   if (!repo.hasTenantId) return [];
 
-  return repo.getGroupCategories();
+  // Ionic GroupCategoryService: offline the cached categories.
+  try {
+    return await OfflineListCache.read<GroupCategory>(
+      ref,
+      tenantId: repo.currentTenantId,
+      part: 'group_categories',
+      fetch: repo.getGroupCategories,
+      toJson: (c) => c.toJson(),
+      fromJson: GroupCategory.fromJson,
+    );
+  } catch (_) {
+    // Ionic GroupCategoryService: toast wherever the categories fail
+    // (Instrumente, Planung, Anwesenheit/Plan, Lieder) – once per failed
+    // load, not on every rebuild of the callers.
+    GlobalToast.error(l10nWithoutContext.svcLoadCategoriesFailed);
+    rethrow;
+  }
 });
 
 /// Provider for player counts per group (instrument)
@@ -222,7 +240,7 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
   }
 
   /// Save instrument order (id -> sort_order)
-  Future<bool> saveGroupOrder(Map<int, int> sortOrders) async {
+  Future<bool> saveGroupOrder(Map<int, int?> sortOrders) async {
     state = const AsyncValue.loading();
     try {
       await _repo.updateGroupSortOrders(sortOrders);
@@ -237,8 +255,8 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
 
   /// Save category order and the resulting global instrument order
   Future<bool> saveCategoryOrder(
-    Map<int, int> categorySortOrders, {
-    Map<int, int> groupSortOrders = const {},
+    Map<int, int?> categorySortOrders, {
+    Map<int, int?> groupSortOrders = const {},
   }) async {
     final repo = _repo; // SOL_FIX4: bind the tenant repository before the first await.
     state = const AsyncValue.loading();

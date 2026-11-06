@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../core/config/supabase_config.dart';
 import '../../core/constants/enums.dart';
@@ -10,11 +11,13 @@ import '../../data/models/attendance/attendance.dart';
 import '../../data/models/person/person.dart';
 import '../../data/repositories/attendance_repository.dart';
 import '../../data/repositories/player_repository.dart';
+import '../../l10n/l10n.dart';
 import 'attendance_type_providers.dart';
 import 'group_providers.dart';
 import 'player_providers.dart';
 import 'profile_providers.dart';
 import 'tenant_providers.dart';
+import '../utils/global_toast.dart';
 import '../utils/paged_query.dart';
 
 /// Date range for statistics filtering
@@ -165,7 +168,15 @@ final activePlayersForStatsProvider = FutureProvider<List<Person>>((ref) async {
 
   // SOL_FIX1: per-tenant instance instead of mutating the shared one.
   final repo = ref.watch(playerRepositoryForTenantProvider(tenantId));
-  final players = await repo.getPlayers();
+  final List<Person> players;
+  try {
+    players = await repo.getPlayers();
+  } catch (_) {
+    // Ionic db.getPlayers: red toast "Fehler beim Laden der Personen" instead
+    // of empty charts without a hint (once per failed load).
+    GlobalToast.error(l10nWithoutContext.dbLoadPeopleFailed);
+    rethrow;
+  }
 
   // Filter to active players only (left is null or empty = still active, not paused)
   return players.where((p) {
@@ -334,7 +345,8 @@ final trendChartDataProvider = Provider<TrendChartData>((ref) {
     labels: last20.map((a) {
       final date = DateTime.tryParse(a.date);
       if (date == null) return '';
-      return '${date.day}.${date.month}';
+      // Ionic: dayjs(a.date).format(dateFmt('dayMonth')) → "05.03."
+      return DateFormat(dateFmt(DateFmtKind.dayMonth)).format(date);
     }).toList(),
     values: last20.map((a) => a.percentage ?? 0.0).toList(),
   );
@@ -530,14 +542,14 @@ final ageDistributionProvider = Provider<List<AgeDistributionData>>((ref) {
 
   final List<AgeDistributionData> result = [];
 
+  // Ionic stats.page keeps empty buckets between the youngest and oldest
+  // person (only empty edges are dropped, and the range starts/ends there).
   for (int i = bucketStart; i < bucketEnd; i += 3) {
     final count = ages.where((a) => a >= i && a < i + 3).length;
-    if (count > 0) {
-      result.add(AgeDistributionData(
-        label: '$i-${i + 2}',
-        count: count,
-      ));
-    }
+    result.add(AgeDistributionData(
+      label: '$i-${i + 2}',
+      count: count,
+    ));
   }
 
   return result;

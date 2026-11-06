@@ -179,6 +179,12 @@ class Attendance with _$Attendance {
     @JsonKey(name: 'attachment_name') @_FlexibleStringConverter() String? attachmentName,
     // DUTY: persons needed for this Termin (Dienst-Modus); null = type default
     @JsonKey(name: 'duty_required') @_FlexibleIntConverter() int? dutyRequired,
+    // Ionic 4.17.24: archived Termine are only visible to admins/responsible.
+    // Not in AttendanceRepository.insertColumns; archiving writes the three
+    // columns explicitly (kept in toJson for the offline list cache).
+    @_FlexibleBoolConverter() @Default(false) bool archived,
+    @JsonKey(name: 'archived_at') @_FlexibleStringConverter() String? archivedAt,
+    @JsonKey(name: 'archived_by') @_FlexibleStringConverter() String? archivedBy,
   }) = _Attendance;
 
   factory Attendance.fromJson(Map<String, dynamic> json) =>

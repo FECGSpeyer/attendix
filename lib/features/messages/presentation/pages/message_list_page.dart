@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/auto_message_providers.dart';
 import '../../../../core/providers/message_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
@@ -21,11 +22,18 @@ import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 class MessageListPage extends ConsumerWidget {
   const MessageListPage({super.key});
 
-  Future<void> _compose(BuildContext context) async {
+  Future<void> _compose(BuildContext context, WidgetRef ref) async {
     final id = await openMessageCompose(context);
     if (id != null && context.mounted) {
-      context.push('/messages/$id');
+      await _openDetail(context, ref, id);
     }
+  }
+
+  /// Ionic message-list ionViewWillEnter reloads the list each time the page
+  /// becomes visible again (read counts, "wird gesendet" status).
+  Future<void> _openDetail(BuildContext context, WidgetRef ref, Object id) async {
+    await context.push('/messages/$id');
+    if (context.mounted) ref.invalidate(messagesProvider);
   }
 
   Future<void> _delete(BuildContext context, WidgetRef ref, Message m) async {
@@ -52,11 +60,14 @@ class MessageListPage extends ConsumerWidget {
       appBar: AppBar(title: Text(l10n.messagesMessages)),
       floatingActionButton: TabBarFab.wrap(FloatingActionButton(
         tooltip: l10n.messagesNewMessage,
-        onPressed: () => _compose(context),
+        onPressed: () => _compose(context, ref),
         child: const Icon(Icons.add),
       )),
       body: RefreshIndicator.adaptive(
-        onRefresh: () => ref.refresh(messagesProvider.future),
+        onRefresh: () {
+          ref.invalidate(autoMessageRulesProvider);
+          return ref.refresh(messagesProvider.future);
+        },
         child: messagesAsync.when(
           loading: () => const Center(child: AppSpinner()),
           error:
@@ -71,9 +82,11 @@ class MessageListPage extends ConsumerWidget {
             if (messages.isEmpty) {
               return ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(AppDimensions.paddingM),
                 children: [
-                  const SizedBox(height: 48),
-                  _MessagesEmptyState(onCompose: () => _compose(context)),
+                  const _AutoMessagesEntry(),
+                  const SizedBox(height: 32),
+                  _MessagesEmptyState(onCompose: () => _compose(context, ref)),
                 ],
               );
             }
@@ -83,6 +96,7 @@ class MessageListPage extends ConsumerWidget {
               // UX_SETTINGS (WAVE 8): message-list.page.html — list header
               // "Gesendet" + one inset list of sliding detail items.
               children: [
+                const _AutoMessagesEntry(),
                 SettingsListSection(
                   title: l10n.messagesSent,
                   icons: false,
@@ -90,7 +104,7 @@ class MessageListPage extends ConsumerWidget {
                     for (final item in messages)
                       _MessageRow(
                         item: item,
-                        onTap: () => context.push('/messages/${item.message.id}'),
+                        onTap: () => _openDetail(context, ref, item.message.id),
                         onDelete: () => _delete(context, ref, item.message),
                       ),
                   ],
@@ -100,6 +114,28 @@ class MessageListPage extends ConsumerWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+/// Ionic 4.18 (302dc143): link to the automatic messages with the number
+/// of switched-on rules, above the sent messages.
+class _AutoMessagesEntry extends ConsumerWidget {
+  const _AutoMessagesEntry();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final active = ref.watch(activeAutoMessageRulesCountProvider).valueOrNull;
+    return SettingsListSection(
+      children: [
+        SettingsListTile(
+          icon: Icons.timer_outlined,
+          iconColor: AppColors.primary,
+          title: context.l10n.messagesAutoEntry,
+          subtitle: active == null ? null : context.l10n.messagesAutoActive(active),
+          onTap: () => context.push('/settings/auto-messages'),
+        ),
+      ],
     );
   }
 }

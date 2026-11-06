@@ -65,8 +65,8 @@ class RdImportSource implements RdImportFiles {
   final List<RdImportEntry> entries;
   @override
   final int junk;
-  final Map<String, ArchiveFile> _files;
-  final List<InputStreamBase> _streams;
+  final Map<String, ZipFile> _files;
+  final List<InputStream> _streams;
 
   /// The name of a ZIP without Google Drive's date and part number
   /// ("Noten-20261031T174501Z-001.zip" → "Noten").
@@ -79,24 +79,23 @@ class RdImportSource implements RdImportFiles {
   /// Opens [zips]. Throws [FormatException] when a file is no ZIP.
   static RdImportSource open(List<PlatformFile> zips) {
     final entries = <RdImportEntry>[];
-    final files = <String, ArchiveFile>{};
-    final streams = <InputStreamBase>[];
+    final files = <String, ZipFile>{};
+    final streams = <InputStream>[];
     var junk = 0;
     for (final zip in zips) {
       final path = zip.bytes != null ? null : rdPickedPath(zip);
-      final InputStreamBase? input = zip.bytes != null ? InputStream(zip.bytes!) : (path == null ? null : rdOpenZipPath(path));
+      final InputStream? input = zip.bytes != null ? InputMemoryStream(zip.bytes!) : (path == null ? null : rdOpenZipPath(path));
       if (input == null) throw FormatException(zip.name);
       streams.add(input);
-      final Archive archive;
+      final Map<String, ZipFile> inZip;
       try {
-        archive = _decode(input);
+        inZip = _filesOf(input);
       } catch (_) {
         throw FormatException(zip.name);
       }
       final stem = zipStem(zip.name);
-      for (final file in archive.files) {
-        if (!file.isFile) continue;
-        var path = file.name.replaceAll('\\', '/');
+      for (final MapEntry(key: name, value: file) in inZip.entries) {
+        var path = name.replaceAll('\\', '/');
         while (path.startsWith('/')) {
           path = path.substring(1);
         }
@@ -109,73 +108,66 @@ class RdImportSource implements RdImportFiles {
         // The same file in two parts of a split download.
         if (files.containsKey(path)) continue;
         files[path] = file;
-        entries.add(RdImportEntry(path: path, size: file.size, modified: rdZipDate(file.lastModTime)));
+        final modified = rdZipDate(file.lastModFileDate << 16 | file.lastModFileTime);
+        entries.add(RdImportEntry(path: path, size: file.uncompressedSize, modified: modified));
       }
     }
     final names = {for (final z in zips) zipStem(z.name)};
     return RdImportSource._(names.length == 1 ? names.first : names.join(', '), entries, junk, files, streams);
   }
 
-  /// Like archive's `ZipDecoder.decodeBuffer`, but nothing is unpacked here:
-  /// the decoder reads a symbolic link's target right away, and a
-  /// manipulated link entry could unpack to any size. Links are skipped.
-  static Archive _decode(InputStreamBase input) {
-    final archive = Archive();
-    for (final header in ZipDirectory.read(input).fileHeaders) {
-      final zf = header.file!;
-      final mode = (header.externalFileAttributes ?? 0) >> 16;
-      final file = ArchiveFile(zf.filename, zf.uncompressedSize!, zf, zf.compressionMethod)
-        ..mode = mode
-        ..crc32 = zf.crc32
-        ..compress = zf.compressionMethod != ZipFile.zipCompressionStore
-        ..lastModTime = zf.lastModFileDate << 16 | zf.lastModFileTime;
-      if (header.versionMadeBy >> 8 == 3) {
-        // Unix: regular file (or unknown), directory, link …
-        final type = mode & 0xF000;
-        file.isFile = type == 0x8000 || type == 0x0000;
-        file.isSymbolicLink = type == 0xA000;
-      } else {
-        file.isFile = !file.name.endsWith('/');
-      }
-      archive.addFile(file);
+  /// The files of a ZIP by name, read from its directory only. Nothing is
+  /// unpacked here: archive's `ZipDecoder` reads a symbolic link's target
+  /// right away, and a manipulated link entry could unpack to any size.
+  /// Folders and links are left out; of two entries with the same name the
+  /// last counts, as in `ZipDecoder`.
+  static Map<String, ZipFile> _filesOf(InputStream input) {
+    final directory = ZipDirectory()..read(input);
+    final files = <String, ZipFile>{};
+    for (final header in directory.fileHeaders) {
+      final file = header.file;
+      if (file == null) continue;
+      final attributes = header.externalFileAttributes;
+      final type = (attributes >> 16) & 0xF000;
+      final system = header.versionMadeBy >> 8;
+      final folder = file.filename.endsWith('/') ||
+          file.filename.endsWith('\\') ||
+          (system == 0 && attributes & 0x10 != 0) ||
+          // Unix: only regular files (or no type given), no folders or links.
+          (system == 3 && type != 0x8000 && type != 0);
+      if (!folder) files[file.filename] = file;
     }
-    return archive;
+    return files;
   }
 
   /// Content of the file at [path]. Read freshly each time, so a large
   /// import does not keep every file in memory. Only files up to the upload
-  /// limit are unpacked; a file whose length or checksum does not match the
-  /// ZIP's directory is refused ([FormatException]).
+  /// limit are unpacked, never to more than the size the ZIP declares; a
+  /// file whose length or checksum does not match the ZIP's directory is
+  /// refused ([FormatException]).
   Uint8List read(String path) {
     final file = _files[path];
     if (file == null) throw StateError('not in import: $path');
-    if (file.size > rdMaxUploadBytes) throw FormatException('too large: $path');
-    final raw = file.rawContent;
-    final Uint8List out;
-    if (raw == null) {
-      final content = file.content as List<int>;
-      out = content is Uint8List ? content : Uint8List.fromList(content);
-    } else {
-      if (raw.length > rdMaxUploadBytes + 1024 * 1024) throw FormatException('too large: $path');
-      raw.reset();
-      final data = raw.toUint8List();
-      raw.reset();
-      // Never more than the size the ZIP declares comes out: a manipulated
-      // entry stops while it is unpacked, not after.
-      final List<int> unpacked = switch (file.compressionType) {
-        ZipFile.zipCompressionStore => data,
-        ZipFile.zipCompressionDeflate => rdInflateAtMost(data, file.size) ??
-            (Inflate.stream(InputStream(data), _LimitedOutput(file.size)).output as OutputStream).getBytes(),
-        ZipFile.zipCompressionBZip2 =>
-          BZip2Decoder().decodeBuffer(InputStream(data, byteOrder: BIG_ENDIAN), output: _LimitedOutput(file.size)),
-        _ => throw FormatException('compression ${file.compressionType}: $path'),
-      };
-      out = unpacked is Uint8List ? unpacked : Uint8List.fromList(unpacked);
+    final size = file.uncompressedSize;
+    if (size > rdMaxUploadBytes || file.compressedSize > rdMaxUploadBytes + 1024 * 1024) {
+      throw FormatException('too large: $path');
     }
-    if (out.length != file.size) throw FormatException('length: $path');
-    final crc = file.crc32;
-    if (crc != null && getCrc32(out) != crc) throw FormatException('checksum: $path');
-    return out;
+    final out = OutputMemoryStream(size: size < 1 ? 1 : size);
+    file
+      ..verify = false
+      ..throwOnError = true;
+    try {
+      // Stops while unpacking once more than the declared size comes out.
+      file.decompress(out);
+    } on ArchiveLimitException {
+      throw const FormatException('unpacks to more than declared');
+    } on FormatException catch (e) {
+      throw FormatException('${e.message}: $path');
+    }
+    final bytes = out.getBytes();
+    if (bytes.length != size) throw FormatException('length: $path');
+    if (file.hasCrc32 && getCrc32(bytes) != file.crc32) throw FormatException('checksum: $path');
+    return bytes;
   }
 
   @override
@@ -215,35 +207,5 @@ class RdImportSource implements RdImportFiles {
         await s.close();
       } catch (_) {}
     }
-  }
-}
-
-/// Unpacked bytes of a ZIP entry, refused beyond [limit] (the size the ZIP
-/// declares) while they are written.
-class _LimitedOutput extends OutputStream {
-  _LimitedOutput(this.limit) : super(size: limit < 1 ? 1 : limit);
-
-  final int limit;
-
-  void _check(int more) {
-    if (length + more > limit) throw const FormatException('unpacks to more than declared');
-  }
-
-  @override
-  void writeByte(int value) {
-    _check(1);
-    super.writeByte(value);
-  }
-
-  @override
-  void writeBytes(List<int> bytes, [int? len]) {
-    _check(len ?? bytes.length);
-    super.writeBytes(bytes, len);
-  }
-
-  @override
-  void writeInputStream(InputStreamBase stream) {
-    _check(stream.length);
-    super.writeInputStream(stream);
   }
 }

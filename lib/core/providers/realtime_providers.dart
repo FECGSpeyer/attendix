@@ -12,6 +12,7 @@ import '../services/attendance_detail_cache.dart'
         purgeOfflineCachesOnAuthError; // SOL_FIX7, SOL_FIX8, SOL_FIX9, SOL_FIX10
 import '../services/offline_queue_service.dart'
     show connectivityCheckProvider, offlineQueueUserIdProvider;
+import '../utils/archived_attendance.dart';
 import '../utils/attendance_percentage_utils.dart';
 import '../../data/models/attendance/attendance.dart';
 import '../../data/models/person/person.dart';
@@ -146,6 +147,8 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
   // whose rebuild yields an unchanged `null` and never notifies this list,
   // and the offline path returns before attendanceTypesProvider is watched.
   final authUserId = ref.watch(currentAuthUserIdProvider);
+  // Ionic 4.17.24: archived Termine depend on the role (watched up front).
+  final role = ref.watch(currentRoleProvider);
   // Watch the realtime subscription so it stays alive while this provider is active.
   ref.watch(_attendanceRealtimeSubscriptionProvider);
   // Watch the refetch counter so manual invalidation triggers a refetch.
@@ -177,7 +180,9 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
     if (authUserId != null && authUserId != cacheUserId) return null;
     final cached = await cache.load(cacheUserId, tenantId);
     if (cached == null || !cacheGuard.isCurrent) return null;
-    return cached;
+    // The copy may be from before a role change: filter it for the
+    // current role as well (Ionic 4.17.24 archived Termine).
+    return filterArchivedForRole(cached, role, (a) => a.archived);
   }
 
   // LOGIC_SELF: Ionic att-list getAttendance — offline the cached list is
@@ -243,12 +248,19 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
       ),
     );
   }).toList();
+  // Ionic 4.17.24 `filterArchivedForRole`: archived Termine only for admins
+  // and responsible persons (before caching, so the offline copy matches).
+  final visible = filterArchivedForRole(
+    attendances,
+    role,
+    (a) => a.archived,
+  );
   ref.read(loadedAttendanceIdsProvider).ids =
-      attendances.map((a) => a.id).whereType<int>().toSet();
+      visible.map((a) => a.id).whereType<int>().toSet();
   if (cacheUserId != null) {
-    await cache.save(cacheUserId, tenantId, attendances, guard: cacheGuard);
+    await cache.save(cacheUserId, tenantId, visible, guard: cacheGuard);
   }
-  return attendances;
+  return visible;
 });
 
 /// Internal: manages Supabase realtime subscription for the attendance table.

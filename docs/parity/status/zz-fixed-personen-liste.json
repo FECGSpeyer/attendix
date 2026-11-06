@@ -1,0 +1,119 @@
+{
+ "batch": "zz-fixed-personen-liste",
+ "ionic": "9f9b82af",
+ "afterRound": 4,
+ "flutter": "6945c13",
+ "items": {
+  "people/list/list.page#action-982a1154": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart",
+    "lib/features/people/people_list_utils.dart"
+   ],
+   "n": "behoben in #312"
+  },
+  "people/list/list.page#action-0df20264": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart",
+    "lib/features/people/people_list_utils.dart"
+   ],
+   "n": "behoben in #312"
+  },
+  "people/bulk-edit/bulk-edit.page#field-523de84f-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ],
+   "n": "behoben in #312"
+  },
+  "people/bulk-edit/bulk-edit.page#field-817de781": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ],
+   "n": "behoben in #312"
+  },
+  "people/bulk-edit/bulk-edit.page#field-fc367be8-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ],
+   "n": "behoben in #312"
+  },
+  "people/list/list.page#db-a9ead6a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ],
+   "n": "behoben in #312"
+  },
+  "people/list/list.page#alert-76ef2f5f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ],
+   "n": "behoben in #312"
+  },
+  "people/list/list.page#modal-99a2d84a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart",
+    "lib/features/people/people_list_utils.dart"
+   ],
+   "n": "behoben in #312"
+  },
+  "people/members/members.page#field-f9de5b80": {
+   "s": "ok",
+   "f": [
+    "lib/features/members/data/providers/members_providers.dart",
+    "lib/features/people/people_list_utils.dart"
+   ],
+   "n": "behoben in #312"
+  }
+ },
+ "extraOverride": [
+  {
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "title": "Startwert 'Für alle setzen' bei Zusatzfeldern",
+   "drop": true,
+   "why": "behoben in #312"
+  },
+  {
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "title": "Personenwerte der Zusatzfelder ohne aufgefüllte Defaults",
+   "drop": true,
+   "why": "behoben in #312"
+  },
+  {
+   "unit": "people/list/list.page",
+   "title": "Zusatzfeld-Defaults nicht angewendet",
+   "drop": true,
+   "why": "behoben in #312"
+  },
+  {
+   "unit": "people/list/list.page",
+   "title": "Umlaute in Gruppen-Sortierung",
+   "drop": true,
+   "why": "behoben in #312"
+  },
+  {
+   "unit": "people/members/members.page",
+   "title": "Einteilungs-Filter ohne Default",
+   "drop": true,
+   "why": "behoben in #312"
+  },
+  {
+   "unit": "people/list/list.page",
+   "title": "Lehrer-Zeile immer 'Kein Lehrer'",
+   "drop": true,
+   "why": "behoben in #312"
+  },
+  {
+   "unit": "people/members/members.page",
+   "title": "Umlaute in der Sortierung",
+   "drop": true,
+   "why": "behoben in #312"
+  }
+ ]
+}

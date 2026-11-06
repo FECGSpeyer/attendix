@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -49,7 +50,9 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
 
   bool _isLoading = false;
   Uint8List? _profileImageBytes;
+  String? _profileImageMimeType;
   bool _hasCheckedRegistration = false;
+  bool _defaultsApplied = false;
 
   // AUTH: account block (Ionic tenant-register): password or e-mail code,
   // terms checkbox, prefill from an existing profile.
@@ -202,6 +205,11 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     final groupsAsync = ref.watch(registrationGroupsProvider(tenant.id!));
     final registrationFields = tenant.registrationFields ?? [];
     final additionalFields = tenant.additionalFields ?? [];
+    if (!_defaultsApplied) {
+      _defaultsApplied = true;
+      _formData.additionalFields.addAll(
+          registrationFieldDefaults(registrationFields, additionalFields));
+    }
     final theme = Theme.of(context);
     final ios = ionIsIos(context);
     final inputStyle = ionItemInputStyle(context);
@@ -280,7 +288,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             children: [
               if (registrationFields.contains('picture'))
                 IonItem(
-                  onTap: _pickImage,
+                  onTap: _changeImage,
                   start: CircleAvatar(
                     radius: 20,
                     backgroundColor: AppColors.light,
@@ -465,10 +473,9 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     final widgets = <Widget>[];
     final inputStyle = ionItemInputStyle(context);
 
-    for (final field in additionalFields) {
-      // Only show if in registration_fields
-      if (!registrationFields.contains(field.id)) continue;
-
+    // Ionic: in the order of registration_fields.
+    for (final field
+        in orderedRegistrationFields(registrationFields, additionalFields)) {
       switch (field.type) {
         case 'text':
         case 'textarea':
@@ -479,12 +486,15 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                 textCapitalization: TextCapitalization.sentences,
                 decoration: ionItemInputDecoration(context, field.name),
                 maxLines: field.type == 'textarea' ? 3 : 1,
-                initialValue: field.defaultValue?.toString(),
-                onSaved: (value) {
-                  if (value != null && value.isNotEmpty) {
-                    _formData.additionalFields[field.id] = value;
-                  }
-                },
+                // Ionic: text fields created without a default carry
+                // `false` (emptyField); ion-input shows that as empty and the
+                // required check below then shows the toast.
+                initialValue: field.defaultValue is bool
+                    ? ''
+                    : field.defaultValue?.toString(),
+                // Ionic stores the input value as is (validated below).
+                onSaved: (value) =>
+                    _formData.additionalFields[field.id] = value ?? '',
               ),
             ),
           );
@@ -495,22 +505,25 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
               child: TextFormField(
                 style: inputStyle,
                 decoration: ionItemInputDecoration(context, field.name),
-                keyboardType: TextInputType.number,
+                // Ionic ion-input type=number: decimals and negatives allowed.
+                keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true, signed: true),
                 initialValue: field.defaultValue?.toString(),
-                onSaved: (value) {
-                  if (value != null && value.isNotEmpty) {
-                    _formData.additionalFields[field.id] =
-                        int.tryParse(value) ?? value;
-                  }
-                },
+                // Ionic stores null for a cleared number input, otherwise the
+                // number (parseFloat); unparsable input stays a string so the
+                // check below shows the toast.
+                onSaved: (value) => _formData.additionalFields[field.id] =
+                    value == null || value.trim().isEmpty
+                        ? null
+                        : parseRegistrationNumber(value) ?? value,
               ),
             ),
           );
 
         case 'boolean':
-          final value = _formData.additionalFields[field.id] as bool? ??
-              field.defaultValue as bool? ??
-              false;
+          // Ionic ion-toggle: off until a boolean value is set.
+          final raw = _formData.additionalFields[field.id];
+          final value = raw is bool ? raw : false;
           widgets.add(
             IonItem(
               title: Text(field.name),
@@ -524,8 +537,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
 
         case 'select':
           if (field.options != null && field.options!.isNotEmpty) {
-            final current = _formData.additionalFields[field.id] as String? ??
-                field.defaultValue?.toString();
+            // Prefilled with defaultValue (Ionic field.value).
+            final current = _formData.additionalFields[field.id]?.toString();
             widgets.add(
               IonItem(
                 label: field.name,
@@ -587,15 +600,66 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
     return widgets;
   }
 
+  /// Ionic changeImg(): with a picture already chosen, ask first
+  /// ("Passbild ersetzen" / "Abbrechen").
+  Future<void> _changeImage() async {
+    if (_profileImageBytes != null) {
+      final replace = await showAppActionSheet<bool>(
+        context,
+        actions: [
+          AppActionSheetAction(
+            label: context.l10n.tenantRegisterReplacePicture,
+            value: true,
+          ),
+        ],
+      );
+      if (replace != true || !mounted) return;
+    }
+    await _pickImage();
+  }
+
+  /// Ionic onImageSelect(): `<input type="file" accept="image/*">` – the
+  /// system offers camera and photo library, the original file is uploaded
+  /// (max. 15 MB). In the browser the file input still offers both.
+  /// Content type from the file name when the picker gives none.
+  static String _mimeTypeFor(String name) {
+    final ext = name.split('.').last.toLowerCase();
+    return switch (ext) {
+      'png' => 'image/png',
+      'gif' => 'image/gif',
+      'webp' => 'image/webp',
+      'heic' => 'image/heic',
+      'heif' => 'image/heif',
+      _ => 'image/jpeg',
+    };
+  }
+
   Future<void> _pickImage() async {
     try {
       final picker = ImagePicker();
-      final image = await picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 800,
-        maxHeight: 800,
-        imageQuality: 80,
-      );
+      var source = ImageSource.gallery;
+      // Camera / gallery choice only where the plugin has a camera (not on
+      // macOS, it throws there); otherwise straight to the gallery.
+      if (!kIsWeb && picker.supportsImageSource(ImageSource.camera)) {
+        final picked = await showAppActionSheet<ImageSource>(
+          context,
+          actions: [
+            AppActionSheetAction(
+              label: context.l10n.attendanceFlutterCamera,
+              value: ImageSource.camera,
+              icon: Icons.photo_camera_outlined,
+            ),
+            AppActionSheetAction(
+              label: context.l10n.attendanceFlutterGallery,
+              value: ImageSource.gallery,
+              icon: Icons.photo_library_outlined,
+            ),
+          ],
+        );
+        if (picked == null || !mounted) return;
+        source = picked;
+      }
+      final image = await picker.pickImage(source: source);
       if (image == null) return;
 
       final bytes = await image.readAsBytes();
@@ -609,7 +673,10 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         return;
       }
 
-      setState(() => _profileImageBytes = bytes);
+      setState(() {
+        _profileImageBytes = bytes;
+        _profileImageMimeType = image.mimeType ?? _mimeTypeFor(image.name);
+      });
     } catch (e) {
       if (mounted) {
         ToastHelper.showError(context,
@@ -1073,8 +1140,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
       return context.l10n.tenantRegisterPhoneRequired;
     }
 
-    for (final field in tenant.additionalFields ?? const <ExtraField>[]) {
-      if (!registrationFields.contains(field.id)) continue;
+    for (final field in orderedRegistrationFields(
+        registrationFields, tenant.additionalFields ?? const <ExtraField>[])) {
       final value = _formData.additionalFields[field.id];
       switch (field.type) {
         case 'text':
@@ -1083,7 +1150,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             return context.l10n.tenantRegisterFieldRequired(field.name);
           }
         case 'number':
-          if (value == null || num.tryParse(value.toString()) == null) {
+          // Ionic isNaN(Number(value)): an empty value (null) passes.
+          if (value != null && num.tryParse(value.toString()) == null) {
             return context.l10n.tenantRegisterFieldNumber(field.name);
           }
         case 'date':
@@ -1091,11 +1159,11 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             return context.l10n.tenantRegisterFieldDate(field.name);
           }
         case 'boolean':
-          final boolValue = value is bool
-              ? value
-              : (field.defaultValue is bool ? field.defaultValue as bool : false);
-          _formData.additionalFields[field.id] = boolValue;
-          if (!boolValue && field.name.toLowerCase().contains('einverständnis')) {
+          // Ionic: no boolean value (no default, toggle untouched) → toast.
+          if (value is! bool) {
+            return context.l10n.tenantRegisterFieldValue(field.name);
+          }
+          if (!value && field.name.toLowerCase().contains('einverständnis')) {
             return context.l10n.tenantRegisterFieldAccept(field.name);
           }
         case 'bfecg_church':
@@ -1140,6 +1208,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
 
     // Attach profile image bytes if selected
     _formData.profileImageBytes = _profileImageBytes;
+    _formData.profileImageMimeType = _profileImageMimeType;
 
     final result = await ref.read(registrationServiceProvider).register(
           tenant: tenant,

@@ -3,6 +3,10 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_providers.dart';
+import '../../../../core/providers/attendance_type_providers.dart';
+import '../../../../core/providers/song_providers.dart';
+import '../../../../core/utils/attendance_songs.dart';
+import '../../../../data/models/song/song.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../data/models/person/person.dart';
@@ -286,6 +290,11 @@ final parentAttendanceGroupsProvider =
     Provider<List<ParentAttendanceGroup>>((ref) {
   final attendances = ref.watch(childrenAttendancesProvider).valueOrNull ?? [];
   if (attendances.isEmpty) return [];
+  final children = ref.watch(parentChildrenProvider).valueOrNull ?? const <Person>[];
+  final childOrder = {
+    for (var i = 0; i < children.length; i++)
+      if (children[i].id != null) children[i].id!: i,
+  };
 
   // Group by attendance ID
   final Map<int, List<ChildPersonAttendance>> grouped = {};
@@ -300,7 +309,11 @@ final parentAttendanceGroupsProvider =
   return grouped.entries
       .where((entry) => entry.value.isNotEmpty)
       .map((entry) {
-    final childAtts = entry.value;
+    // PARITY_SELF: Ionic lists the kids of a Termin in the order of the
+    // kids (getPlayers: instrument, isLeader desc, lastName).
+    final childAtts = [...entry.value]
+      ..sort((a, b) => (childOrder[a.childId] ?? 1 << 30)
+          .compareTo(childOrder[b.childId] ?? 1 << 30));
     final first = childAtts.first;
     return ParentAttendanceGroup(
       attendanceId: entry.key,
@@ -355,6 +368,60 @@ final pastParentAttendancesProvider =
 final currentParentAttendanceProvider = Provider<ParentAttendanceGroup?>((ref) {
   final upcoming = ref.watch(upcomingParentAttendancesProvider);
   return upcoming.where((g) => g.isRunning).firstOrNull;
+});
+
+/// Ionic 4.17.26/27: Werke selected for each Termin of the kids, by Termin id.
+final parentAttendanceSongsProvider =
+    FutureProvider<Map<int, List<AttendanceSong>>>((ref) async {
+  final attendances = await ref.watch(childrenAttendancesProvider.future);
+  final ids = attendances.map((a) => a.attendanceId).whereType<int>().toList();
+  if (ids.isEmpty) return const {};
+  final repo = ref.watch(songRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return const {};
+  List<SongHistory> history;
+  try {
+    history = await repo.getHistoryForAttendances(ids);
+  } catch (_) {
+    history = const [];
+  }
+  if (history.isEmpty) return const {};
+  final songs = await ref.watch(songsProvider.future);
+  return songsByAttendance(history, songs);
+});
+
+/// "Aktuelle Werke" of the parents page (Ionic 4.17.26 `upcomingSongs`): the
+/// Werke of the kids' Termine from today on, one group per Termin
+/// ("DD.MM.YYYY | Titel"), ascending.
+final parentUpcomingSongsProvider =
+    Provider<List<({String date, List<SongHistory> history})>>((ref) {
+  final byAttendance = ref.watch(parentAttendanceSongsProvider).valueOrNull ?? const {};
+  if (byAttendance.isEmpty) return const [];
+  final groups = ref.watch(parentAttendanceGroupsProvider);
+  final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const [];
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final upcoming = groups.where((g) {
+    final date = EventListUtils.parse(g.date);
+    if (date == null || !byAttendance.containsKey(g.attendanceId)) return false;
+    return !DateTime(date.year, date.month, date.day).isBefore(today);
+  }).toList()
+    ..sort((a, b) => (EventListUtils.parse(a.date) ?? now)
+        .compareTo(EventListUtils.parse(b.date) ?? now));
+  String title(ParentAttendanceGroup g) {
+    if (g.typeInfo != null && g.typeInfo!.isNotEmpty) return g.typeInfo!;
+    final type = types.where((t) => t.id == g.typeId).firstOrNull;
+    if (type != null && !type.hideName) return type.name;
+    return EventListUtils.readableDate(g.date);
+  }
+  return [
+    for (final g in upcoming)
+      (
+        date: '${DateFormat(dateFmt()).format(EventListUtils.parse(g.date)!)} | ${title(g)}',
+        history: [
+          for (final entry in byAttendance[g.attendanceId]!) entry.toHistory(g.attendanceId),
+        ],
+      ),
+  ];
 });
 
 /// Provider for child statistics

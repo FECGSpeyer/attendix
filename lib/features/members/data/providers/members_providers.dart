@@ -59,8 +59,13 @@ final membersGroupedProvider = FutureProvider<List<MembersGroup>>((ref) async {
   // Get all groups/instruments
   final groups = await groupRepo.getGroups();
 
+  // Ionic getModifiedPlayersForList(…, getPersonExtraFields()): missing
+  // extra field values get their defaults (no churches on this page), so
+  // e.g. persons without "Einteilung" show up under its default option.
+  final extraFields = ref.watch(personListExtraFieldsProvider);
+
   // Get all active players (getPlayers defaults: pending=false, left=null)
-  final players = await playerRepo.getPlayers();
+  final players = withExtraFieldDefaults(await playerRepo.getPlayers(), extraFields);
 
   return buildMembersGroups(players, groups);
 });

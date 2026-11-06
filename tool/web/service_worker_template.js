@@ -157,7 +157,8 @@ function engineFiles() {
     : /AppleWebKit\//.test(ua) ? 'webkit' : 'other';
   let safariWasm = false;
   if (engine === 'webkit') {
-    const m = /Version\/(\d+)\.(\d+)/.exec(ua);
+    const m = /Version\/(\d+)\.(\d+)/.exec(ua) ||
+      /\bCPU (?:iPhone )?OS (\d+)_(\d+)/.exec(ua);
     safariWasm = !!m && (+m[1] > 26 || (+m[1] === 26 && +m[2] >= 2));
   }
   let wasmGC = false;

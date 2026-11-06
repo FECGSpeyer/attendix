@@ -23,15 +23,29 @@ import 'store_update_stub.dart'
 ///   to the Play Store page.
 /// Web keeps the service-worker update flow (`app_update_service_web.dart`).
 class StoreUpdateService {
-  StoreUpdateService({http.Client? client}) : _client = client;
+  StoreUpdateService({
+    http.Client? client,
+    Future<String?> Function()? installedVersion,
+  })  : _client = client,
+        _installedVersion = installedVersion ?? nativeIosAppVersion;
 
   final http.Client? _client;
 
-  /// Bundle id / applicationId of the Flutter app.
-  static const bundleId = 'de.attendix.attendix';
+  /// Version of the installed app (native build name); falls back to
+  /// [AppConstants.appVersion] when the platform cannot tell.
+  final Future<String?> Function() _installedVersion;
+
+  /// Bundle id / applicationId: the Ionic store ID, so the Flutter app ships
+  /// as an update of the existing store apps.
+  static const bundleId = 'io.stephanus.attendix';
 
   static const playStoreUrl =
       'https://play.google.com/store/apps/details?id=$bundleId';
+
+  /// The App Store entry is shared with the Ionic app (4.x). Flutter store
+  /// releases start at 5.0.0, so a lower store version is the Ionic app and
+  /// never an update for this one.
+  static const firstFlutterStoreVersion = '5.0.0';
 
   /// Returns the action that installs the update, or null when the app is
   /// up to date (or the store could not be asked). Never throws.
@@ -58,7 +72,8 @@ class StoreUpdateService {
       if (res.statusCode != 200) return null;
       final store = parseItunesLookup(res.body);
       if (store == null) return null;
-      if (compareVersions(store.version, AppConstants.appVersion) <= 0) return null;
+      final installed = await _installedVersion() ?? AppConstants.appVersion;
+      if (!isUpdateFor(store.version, installed)) return null;
       return () => _openStore(store.url);
     } finally {
       if (_client == null) client.close();
@@ -80,6 +95,11 @@ class StoreUpdateService {
       if (kDebugMode) debugPrint('[StoreUpdate] open store failed: $e');
     }
   }
+
+  /// Whether [storeVersion] is a newer Flutter release than [appVersion].
+  static bool isUpdateFor(String storeVersion, String appVersion) =>
+      compareVersions(storeVersion, firstFlutterStoreVersion) >= 0 &&
+      compareVersions(storeVersion, appVersion) > 0;
 
   /// Parses an iTunes lookup response into store version and App Store URL.
   static ({String version, String url})? parseItunesLookup(String body) {

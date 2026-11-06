@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../data/providers/rd_today_providers.dart' show rdSignoutDataProvider;
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
-import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../self_service/presentation/pages/signout_page.dart' show signoutEventActions;
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
+import '../../data/providers/rd_phase_tick_provider.dart';
+import '../../data/rd_event_phase.dart';
+import '../widgets/event/rd_event_head.dart';
+import '../widgets/event/rd_event_now.dart';
+import '../widgets/event/rd_event_sections.dart' show RdSectionLabel;
+import '../widgets/event/rd_own_event_cards.dart';
 import '../widgets/event/rd_signout_sheet.dart';
+import '../widgets/event/rd_own_program.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/today/rd_player_today.dart' show RdOwnAnswerSection;
-import '../../data/rd_dates.dart';
 
 /// The own Termin with [id] (person_attendances id) in [data], or null.
 CrossTenantPersonAttendance? rdFindOwnEvent(SignoutData data, String id) {
@@ -37,10 +41,13 @@ bool rdIsPastOwnEvent(SignoutData data, CrossTenantPersonAttendance att) =>
 /// A [past] Termin has no answer card; like the past rows of "Meine
 /// Termine" only an excused one keeps its answer actions (Ionic opens the
 /// action sheet there and nowhere else).
+/// [onCard]: what the card at the top offers instead (default: the answer
+/// card's Zusagen / Abmelden / Später).
 ({List<SelfServiceActionType> answer, List<SelfServiceActionType> info}) rdOwnEventActions(
   SelfServiceEventActions actions,
   CrossTenantPersonAttendance att, {
   bool past = false,
+  Set<SelfServiceActionType>? onCard,
 }) {
   const infoTypes = {
     SelfServiceActionType.showPlan,
@@ -56,30 +63,36 @@ bool rdIsPastOwnEvent(SignoutData data, CrossTenantPersonAttendance att) =>
     SelfServiceActionType.enterLate,
   };
   final hasCard = !past && actions.quickActions(att) != null;
+  final shown = hasCard ? (onCard ?? cardTypes) : const <SelfServiceActionType>{};
   final canAnswer = !past || att.isExcusedStatus;
   final all = actions.buildActions(att).map((a) => a.type).toList();
   return (
     answer: [
       if (canAnswer)
         for (final t in all)
-          if (!infoTypes.contains(t) && !(hasCard && cardTypes.contains(t))) t,
+          if (!infoTypes.contains(t) && !shown.contains(t)) t,
     ],
     info: [for (final t in all) if (infoTypes.contains(t)) t],
   );
 }
 
-/// REDESIGN: an own Termin for Spieler (canvas S3): the answer card, more
-/// answer options, and the infos (Ablaufplan, Beschreibung, Anhang, Route,
-/// Dateien) as rows instead of the action sheet. Every action runs through
+/// REDESIGN: an own Termin for Spieler (concept "Termin-Bereich neu",
+/// S1–S3): the same head as the Leitung's page; a card at the top that
+/// follows the phase (before: "Du bist eingeplant" with "Abmelden" and
+/// "Komme später"; running: "Jetzt im Ablauf" with "Deine Noten öffnen";
+/// afterwards: "Deine Anwesenheit"), the Programm, the shared Ablauf and
+/// the infos as rows. Every action runs through
 /// [SelfServiceEventActions.runAction] like in "Meine Termine".
 class RdOwnEventPage extends ConsumerWidget {
-  const RdOwnEventPage({super.key, required this.personAttendanceId});
+  const RdOwnEventPage({super.key, required this.personAttendanceId, this.now});
 
   final String personAttendanceId;
 
+  /// For tests.
+  final DateTime? now;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final p = context.rd;
     final l10n = context.l10n;
     final async = ref.watch(rdSignoutDataProvider);
     final data = async.valueOrNull;
@@ -110,20 +123,49 @@ class RdOwnEventPage extends ConsumerWidget {
     final tenant = ref.watch(currentTenantProvider);
     final player = ref.watch(currentSelfServicePlayerProvider).valueOrNull;
     final actions = signoutEventActions(context, ref, tenant: tenant, player: player);
-    final past = rdIsPastOwnEvent(data!, att);
-    final split = rdOwnEventActions(actions, att, past: past);
-    final typeName = att.attendanceType?.name ?? '';
-    final start = EventListUtils.parse(att.date);
-    final locale = currentIntlLocale();
-    final days = att.effectiveDurationDays ?? 1;
-    final date = start == null
-        ? ''
-        : days > 1
-            ? '${DateFormat.MMMMEEEEd(locale).format(start)} – '
-                '${DateFormat.MMMMEEEEd(locale).format(rdAddDays(start, days - 1))}'
-            : DateFormat.MMMMEEEEd(locale).format(start);
-    final time = [att.startTime ?? '', att.endTime ?? ''].where((s) => s.isNotEmpty).join(' – ');
-    final meta = [date, time].where((s) => s.isNotEmpty).join(' · ');
+    final type = att.attendanceType;
+    final day = EventListUtils.parse(att.date);
+    final startTime = att.startTime ?? type?.startTime;
+    final endTime = att.endTime ?? type?.endTime;
+    final span = rdEventSpan(
+      day: day,
+      startTime: startTime,
+      endTime: endTime,
+      durationDays: att.effectiveDurationDays,
+    );
+    // Head and top card follow the phase without new data.
+    if (span != null && now == null) ref.watch(rdPhaseTickProvider((start: span.start, end: span.end)));
+    final phase = rdEventPhase(span, now: now);
+    final running = phase == RdEventPhase.running;
+    // Over once its end time has passed, not only from the next day on; a
+    // Termin until 01:00 still runs after midnight although the list
+    // already counts it as past.
+    final ended = !running && (rdIsPastOwnEvent(data!, att) || phase == RdEventPhase.after);
+    final own = actions.isOwn(att);
+    final qa = actions.quickActions(att);
+    final plan = !ended && att.hasPlan ? rdPlanFromJson(att.plan) : null;
+    final nowSlot = plan != null && running ? rdCurrentPlanSlot(day, plan, now: now) : null;
+    final canLate = qa != null && qa.allowLate && !qa.blocked;
+    // "Jetzt im Ablauf" only offers "Ich komme später"; everything else of
+    // the answer card stays under "Mehr".
+    final nowCard = own && nowSlot != null;
+    final split = rdOwnEventActions(
+      actions,
+      att,
+      past: ended,
+      onCard: nowCard ? {if (canLate) SelfServiceActionType.enterLate} : null,
+    );
+    final noteLink = own && !ended && !nowCard && split.answer.contains(SelfServiceActionType.editNote);
+    final answerRows = [
+      for (final t in split.answer)
+        if (!(noteLink && t == SelfServiceActionType.editNote)) t,
+    ];
+    final infoRows = [
+      for (final t in split.info)
+        if (!(plan != null && t == SelfServiceActionType.showPlan) &&
+            !(ended && t == SelfServiceActionType.openNavigation))
+          t,
+    ];
 
     Future<void> run(SelfServiceActionType type) async {
       switch (type) {
@@ -143,35 +185,73 @@ class RdOwnEventPage extends ConsumerWidget {
           onTap: () => run(type),
         );
 
+    final range = plan == null ? '' : rdPlanRange(plan);
+    final planBlock = plan == null
+        ? const <Widget>[]
+        : [
+            const SizedBox(height: 24),
+            RdSectionLabel(
+              range.isEmpty ? l10n.redesignEventPlanSection : l10n.redesignEventSectionCount(l10n.redesignEventPlanSection, range),
+              actionLabel: running ? l10n.redesignOwnPlanLive : l10n.redesignOwnPlanAll,
+              actionIcon: Icons.chevron_right,
+              onAction: () => run(SelfServiceActionType.showPlan),
+            ),
+            RdPlanTimeline(key: const Key('rd-own-plan'), day: day, plan: plan, limit: running ? null : 3, now: now),
+          ];
+    final program = att.attendanceId == null
+        ? null
+        : RdOwnProgramSection(
+            tenantId: att.tenantId,
+            attendanceId: att.attendanceId!,
+            personId: att.personId,
+            highlight: att.highlight,
+            past: ended,
+          );
+
     children.addAll([
-      if (typeName.isNotEmpty && typeName != att.eventTitle)
-        Align(
-          alignment: Alignment.centerLeft,
-          child: RdPill(typeName, tone: att.highlight ? RdTone.excused : RdTone.primary),
-        ),
-      const SizedBox(height: 8),
-      Semantics(header: true, child: Text(att.eventTitle, style: RdType.title(p))),
-      if (meta.isNotEmpty) ...[
-        const SizedBox(height: 4),
-        Text(meta, style: RdType.meta(p, size: 15)),
-      ],
+      RdEventHead(
+        title: att.eventTitle,
+        phase: phase,
+        span: span,
+        typeName: type?.name,
+        typeHighlight: att.highlight,
+        timeRange: EventListUtils.timeRange(startTime, endTime),
+        place: att.place ?? '',
+        durationDays: att.effectiveDurationDays,
+        now: now,
+      ),
       const SizedBox(height: 18),
-      if (actions.isOwn(att) && !past)
+      if (ended && own && att.isMember)
+        RdOwnAttendanceCard(attendance: att, now: now)
+      else if (nowCard)
+        RdOwnNowCard(
+          attendance: att,
+          plan: plan!,
+          now: now,
+          onLate: canLate ? () => run(SelfServiceActionType.enterLate) : null,
+        )
+      else if (!ended && own)
         RdOwnAnswerSection(
           key: ValueKey('rd-own-answer-${att.id}'),
           attendance: att,
           showHeader: false,
           showEvent: false,
+          statusFirst: true,
+          onNote: noteLink ? () => run(SelfServiceActionType.editNote) : null,
         ),
-      if (split.answer.isNotEmpty) ...[
+      // Läuft (S2): the Ablauf first, it is what members look at now.
+      if (running) ...planBlock,
+      if (program != null) program,
+      if (!running) ...planBlock,
+      if (answerRows.isNotEmpty) ...[
         const SizedBox(height: 24),
         RdGroupLabel(l10n.redesignOwnMore),
-        RdGroupedList(children: [for (final t in split.answer) row(t)]),
+        RdGroupedList(children: [for (final t in answerRows) row(t)]),
       ],
-      if (split.info.isNotEmpty) ...[
+      if (infoRows.isNotEmpty) ...[
         const SizedBox(height: 24),
         RdGroupLabel(l10n.redesignOwnInfos),
-        RdGroupedList(children: [for (final t in split.info) row(t)]),
+        RdGroupedList(children: [for (final t in infoRows) row(t)]),
       ],
     ]);
 

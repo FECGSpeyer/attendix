@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/enums.dart';
@@ -9,10 +10,13 @@ import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
+import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/attendance_songs.dart';
+import '../../../../core/utils/duty_utils.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
@@ -25,6 +29,7 @@ import '../widgets/plan_viewer_sheet.dart';
 import '../widgets/self_service_event_actions.dart';
 import '../widgets/upcoming_songs_sheet.dart';
 import '../widgets/self_service_absences.dart';
+import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../duty/presentation/widgets/duty_actions.dart';
@@ -36,6 +41,7 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import 'package:attendix/shared/widgets/layout/side_nav/side_nav_layout.dart';
 
 /// "Meine Termine" – self-service sign in/out of the current tenant
 /// (Ionic `selfService/signout`).
@@ -59,18 +65,51 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
 
   /// INTEGRATION: opens the Termin of an /open-attendance deep link once the
   /// data is loaded (Ionic consumePendingAttendanceId).
+  ///
+  /// PARITY_SELF: Ionic openAttendanceById – searches the listed Termine
+  /// (without unassigned duties). In the Dienstplan view an own duty scrolls
+  /// to "Bitte bestätigen" / "Meine Dienste" instead of the action sheet; a
+  /// duty the person is not assigned to ("wer springt ein?") opens
+  /// "Offene Dienste".
   void _openPendingAttendance(SignoutData data, SelfServiceEventActions actions) {
     final pendingId = ref.read(pendingAttendanceIdProvider);
     if (pendingId == null) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted || ref.read(pendingAttendanceIdProvider) != pendingId) return;
       ref.read(pendingAttendanceIdProvider.notifier).state = null;
-      final att = [
-        if (data.current != null) data.current!,
-        ...data.upcoming,
-        ...data.past,
-      ].where((a) => a.attendanceId == pendingId).firstOrNull;
-      if (att != null) actions.presentActions(context, att);
+      MyDutyOverview? overview;
+      try {
+        overview = await ref.read(myDutyOverviewProvider.future);
+      } catch (_) {}
+      if (!mounted) return;
+      final listed = applySignoutDutyView(data, useDutyView: false);
+      final att = [...listed.allUpcoming, ...listed.past]
+          .where((a) => a.attendanceId == pendingId)
+          .firstOrNull;
+      if (att != null &&
+          (overview?.useDutyView ?? false) &&
+          isDutyPaAttendance(att) &&
+          !isCancelledStatus(att.status)) {
+        final String? section = att.dutyState == DutyState.requested
+            ? 'duty-requests'
+            : att.attendanceId != overview!.confirmed.firstOrNull?.termin.attendance.id
+                ? 'duty-mine'
+                : null;
+        if (section != null) {
+          // The duty sections build only after the overview arrived: let
+          // that frame finish before looking for the anchor. An anchor
+          // outside the built part of the list falls back to the actions.
+          await WidgetsBinding.instance.endOfFrame;
+          if (!mounted) return;
+          if (!scrollToDutySection(section)) actions.presentActions(context, att);
+        }
+      } else if (att != null) {
+        actions.presentActions(context, att);
+      } else if (overview?.openDuties
+              .any((t) => t.attendance.id == pendingId) ??
+          false) {
+        showOpenDutiesSheet(context);
+      }
     });
   }
 
@@ -83,8 +122,17 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
   Future<void> _refresh() async {
     ref.invalidate(signoutDataProvider);
     ref.invalidate(currentSelfServicePlayerProvider);
-    ref.invalidate(upcomingSongsProvider);
+    ref.invalidate(signoutAttendanceSongsProvider);
     ref.invalidate(myTasksProvider);
+    // PARITY_SELF: Ionic handleRefresh → getAttendances → loadOpenDuties also
+    // reloads the duty Termine ("Bitte bestätigen", "Offene Dienste",
+    // "Meine Dienste", counters).
+    ref.invalidate(upcomingDutyTermineProvider);
+    // A failed Termin-type load would otherwise keep the duty overview (and
+    // with it saving an absence) failing until the next tenant switch.
+    if (ref.read(attendanceTypesProvider).hasError) {
+      ref.invalidate(attendanceTypesProvider);
+    }
     await ref.read(signoutDataProvider.future);
   }
 
@@ -157,6 +205,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       // IOS_SHELL: tenant capsule left like ion-buttons slot="start"
       centerTitle: tenants.length > 1 ? false : null,
       automaticallyImplyLeading: false,
+      // SIDE_NAV: menu button of the overlay panel (tablet portrait)
+      leading: SideNavMenuButton.maybe(context),
       // IOS_THEME2: toolbar matches the white (dark: black) Termin page.
       // PARITY_R5: iOS translucent header (blur once condensed).
       backgroundColor: isIosLook(context)
@@ -180,6 +230,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     final playerAsync = ref.watch(currentSelfServicePlayerProvider);
     final dataAsync = ref.watch(signoutDataProvider);
     ref.watch(canAccessFilesProvider);
+    // Ionic 4.17.26: "♪ n Werke" chips appear once the Werke are loaded.
+    ref.watch(signoutAttendanceSongsProvider);
     final useDutyView =
         ref.watch(myDutyOverviewProvider).valueOrNull?.useDutyView ?? false;
 
@@ -427,9 +479,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
         _GreetTile(
           icon: Icons.music_note_outlined,
           title: context.l10n.signoutCurrentSongs,
-          subtitle: songs.length == 1
-              ? context.l10n.teamOrgNextEvent
-              : context.l10n.signoutFlutterEventsCount(songs.length),
+          subtitle: context.l10n.attendanceSongsTileEvents(songs.length),
           onTap: () => showUpcomingSongsSheet(context),
         ),
       if (canPlannedAbsence)
@@ -492,7 +542,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
         title: att.eventTitle,
         meta: att.eventMeta(withDate: true, withPlace: false),
         // Ionic 4.17.14: "Nicht eingeladen" pill instead of the status
-        status: own ? EventPill.status(att.status) : const EventNotInvitedPill(),
+        status: own ? _statusPill(att) : const EventNotInvitedPill(),
         place: att.place,
         infoText: infoText,
         notInvited: showAll && !att.isMember,
@@ -503,6 +553,16 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
             : null,
       ),
     ];
+  }
+
+  /// PARITY_SELF: Ionic statusLabelOf / statusColorOf – an assigned duty that
+  /// is not confirmed yet (and not cancelled) shows "Bitte bestätigen" in
+  /// orange on the current card and in "Anstehend".
+  Widget _statusPill(CrossTenantPersonAttendance att) {
+    if (att.dutyState == DutyState.requested && !isCancelledStatus(att.status)) {
+      return EventPill(label: context.l10n.signoutPleaseConfirm, color: AppColors.warning);
+    }
+    return EventPill.status(att.status);
   }
 
   List<Widget> _buildUpcoming(SignoutData data, SelfServiceEventActions actions) {
@@ -541,7 +601,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                   EventChips(chips: actions.chips(context, att)),
                 ],
                 trailing: [
-                  if (actions.isOwn(att)) EventPill.status(att.status) else const EventNotInvitedPill(),
+                  if (actions.isOwn(att)) _statusPill(att) else const EventNotInvitedPill(),
                 ],
               ),
           ],
@@ -572,6 +632,17 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
               subtitle: att.readableDate,
               past: true,
               highlight: att.highlight,
+              // Ionic 4.17.26: "♪ n Werke" chip on past Termine too.
+              extra: [
+                if (actions.songCount(att) case final count when count > 0)
+                  EventChips(chips: [
+                    EventChip(
+                      label: context.l10n.attendanceSongsChip(count),
+                      icon: Icons.music_note_outlined,
+                      onTap: () => actions.openSongs!(att),
+                    ),
+                  ]),
+              ],
               onTap: att.isExcusedStatus ? () => actions.presentActions(context, att) : null,
               trailing: [
                 if (actions.hasFilesFolder(att))
@@ -700,7 +771,36 @@ SelfServiceEventActions signoutEventActions(
       context,
       attendance: att,
       playerInstrumentId: player?.instrument,
+      memberSongs: ref.read(songsProvider).valueOrNull ?? const [],
+    ),
+    // Ionic 4.17.26: Werke selected for the Termin.
+    songCountOf: (att) => _songsOf(ref, att).length,
+    openSongs: (att) => showAttendanceSongsSheet(
+      context,
+      title: att.eventTitle,
+      subtitle: _songsSubtitle(att),
+      entries: _songsOf(ref, att),
+      instrumentId: player?.instrument,
+      onOpenPlan: att.hasPlan
+          ? () => showPlanViewerSheet(
+                context,
+                attendance: att,
+                playerInstrumentId: player?.instrument,
+                memberSongs: ref.read(songsProvider).valueOrNull ?? const [],
+              )
+          : null,
     ),
     canAccessFiles: (_) => canAccessFiles,
   );
+}
+
+List<AttendanceSong> _songsOf(WidgetRef ref, CrossTenantPersonAttendance att) {
+  final id = att.attendanceId;
+  if (id == null) return const [];
+  return ref.read(signoutAttendanceSongsProvider).valueOrNull?[id] ?? const [];
+}
+
+String _songsSubtitle(CrossTenantPersonAttendance att) {
+  final date = EventListUtils.parse(att.date);
+  return date == null ? '' : DateFormat(dateFmt()).format(date);
 }

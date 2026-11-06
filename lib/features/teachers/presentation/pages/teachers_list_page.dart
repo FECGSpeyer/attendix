@@ -7,7 +7,6 @@ import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/teacher_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/repositories/teacher_repository.dart';
@@ -92,9 +91,6 @@ class TeachersListPage extends ConsumerWidget {
                   onTap: isAdmin
                       ? () => _openTeacherPage(context, ref, teacher)
                       : null,
-                  onDelete: isAdmin
-                      ? () => _deleteTeacher(context, ref, teacher)
-                      : null,
                 );
               },
             ),
@@ -107,12 +103,23 @@ class TeachersListPage extends ConsumerWidget {
     );
   }
 
+  /// All groups of the tenant; waits for them if no page loaded them yet.
+  Future<List<Group>> _loadGroups(WidgetRef ref) async {
+    try {
+      return await ref.read(groupsProvider.future);
+    } catch (_) {
+      return ref.read(groupsProvider).valueOrNull ?? const [];
+    }
+  }
+
   /// Ionic "Lehrer hinzufügen" sheet (breakpoint 0.7).
   Future<void> _showAddSheet(BuildContext context, WidgetRef ref) async {
-    // Ionic teachers.page: instruments without the main group
-    final groups = (ref.read(groupsProvider).valueOrNull ?? [])
+    // Ionic teachers.page: instruments without the main group. Ionic has
+    // db.groups() always loaded; here the groups may not be loaded yet.
+    final groups = (await _loadGroups(ref))
         .where((g) => g.maingroup != true)
         .toList();
+    if (!context.mounted) return;
     final result = await showModalBottomSheet<Teacher>(
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -137,7 +144,8 @@ class TeachersListPage extends ConsumerWidget {
     WidgetRef ref,
     Teacher teacher,
   ) async {
-    final groups = ref.read(groupsProvider).valueOrNull ?? [];
+    final groups = await _loadGroups(ref);
+    if (!context.mounted) return;
     final result = await Navigator.of(context, rootNavigator: true).push<Teacher>(
       MaterialPageRoute(
         fullscreenDialog: true,
@@ -168,79 +176,40 @@ class TeachersListPage extends ConsumerWidget {
       }
     }
   }
-
-  Future<void> _deleteTeacher(
-    BuildContext context,
-    WidgetRef ref,
-    Teacher teacher,
-  ) async {
-    final confirmed = await DialogHelper.showConfirmation(
-      context,
-      title: context.l10n.teachersFlutterDelete,
-      message: context.l10n.teachersFlutterDeleteConfirm(teacher.name),
-      confirmText: context.l10n.commonDelete,
-      cancelText: context.l10n.commonCancel,
-    );
-    if (!confirmed || teacher.id == null) return;
-
-    try {
-      await ref.read(teacherNotifierProvider.notifier).deleteTeacher(teacher.id!);
-      if (context.mounted) ToastHelper.showSuccess(context, context.l10n.teachersFlutterDeleted);
-    } catch (e) {
-      if (context.mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
-    }
-  }
 }
 
 class _TeacherTile extends StatelessWidget {
   final Teacher teacher;
   final VoidCallback? onTap;
 
-  /// Flutter extra (Ionic has no delete): swipe left to delete.
-  final VoidCallback? onDelete;
-
+  // Ionic teachers.page has no delete action (TeacherService.deleteTeacher
+  // has no caller), so the list offers none either.
   const _TeacherTile({
     required this.teacher,
     required this.onTap,
-    required this.onDelete,
   });
 
   @override
   Widget build(BuildContext context) {
     final count = teacher.playerCount ?? 0;
-    return Dismissible(
-      key: ValueKey(teacher.id),
-      direction:
-          onDelete != null ? DismissDirection.endToStart : DismissDirection.none,
-      confirmDismiss: (_) async {
-        onDelete?.call();
-        return false;
-      },
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 16),
-        color: AppColors.danger,
-        child: const Icon(Icons.delete, color: Colors.white),
-      ),
-      child: IonItem(
-        onTap: onTap,
-        end: [
-          IonBadge(
-            text: context.l10n.teachersPlayerCount(count),
-            color: count > 0 ? AppColors.primary : AppColors.danger,
-          ),
-        ],
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(teacher.name, style: IonText.h2(context)),
-            if (teacher.insNames?.isNotEmpty ?? false)
-              Padding(
-                padding: const EdgeInsets.only(top: 2),
-                child: Text(teacher.insNames!, style: IonText.h3(context)),
-              ),
-          ],
+    return IonItem(
+      onTap: onTap,
+      end: [
+        IonBadge(
+          text: context.l10n.teachersPlayerCount(count),
+          color: count > 0 ? AppColors.primary : AppColors.danger,
         ),
+      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(teacher.name, style: IonText.h2(context)),
+          if (teacher.insNames?.isNotEmpty ?? false)
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(teacher.insNames!, style: IonText.h3(context)),
+            ),
+        ],
       ),
     );
   }

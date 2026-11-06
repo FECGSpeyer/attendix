@@ -65,9 +65,14 @@ void main() {
     final consume = s.indexOf('PendingFileLink.consume()', authBlock);
     expect(termsCheck, greaterThan(authBlock));
     expect(consume, greaterThan(termsCheck));
-    expect(s, contains("return PendingFileLink.consume() ?? '/tenants';"));
-    expect(src('lib/features/legal/presentation/pages/terms_page.dart'),
-        contains("PendingFileLink.consume() ?? '/tenants'"));
+    // After accepting the terms the stashed link wins over the start page.
+    final termsDone = s.indexOf('if (termsAccepted && isTermsRoute) {');
+    expect(s.indexOf('PendingFileLink.consume()', termsDone),
+        lessThan(s.indexOf('homeRouteFor(', termsDone)));
+    final page = src('lib/features/legal/presentation/pages/terms_page.dart');
+    final accept = page.indexOf('Future<void> _accept()');
+    expect(page.indexOf('PendingFileLink.consume()', accept),
+        lessThan(page.indexOf('await _goHome()', accept)));
   });
 
   test('main: Teams init not awaited, update toast uses root messenger', () {
@@ -85,6 +90,9 @@ void main() {
     expect(rules, contains('frame-ancestors'));
     expect(rules, contains('teams.microsoft.com'));
     expect(rules, isNot(contains('X-Frame-Options')));
+    // PERF_WEB: cross-origin isolation → multi-threaded Skwasm renderer
+    expect(rules, contains('Cross-Origin-Opener-Policy: same-origin'));
+    expect(rules, contains('Cross-Origin-Embedder-Policy: require-corp'));
   });
 
   test('locale-dependent provider labels watch localeProvider', () {

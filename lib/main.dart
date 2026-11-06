@@ -19,6 +19,7 @@ import 'core/router/app_router.dart';
 import 'core/router/legacy_url.dart';
 import 'core/services/app_update_service.dart';
 import 'core/services/update_hint.dart';
+import 'core/services/web_safe_area.dart';
 import 'core/services/offline_queue_service.dart';
 import 'core/services/attendance_detail_cache.dart'
     show clearOfflineReadCaches, shouldClearOfflineReadCaches;
@@ -26,6 +27,8 @@ import 'core/services/public_plan_draft_storage.dart'
     show clearPublicPlanDrafts;
 import 'core/services/planning_draft_store.dart' show clearPlanningDrafts;
 import 'core/services/live_activity_service.dart';
+import 'core/services/native/ionic_session_takeover.dart';
+import 'core/services/native/shorebird_patch_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/redesign/rd_theme.dart';
 import 'core/utils/toast_helper.dart';
@@ -33,11 +36,16 @@ import 'features/auth/data/auth_link_listener.dart';
 import 'core/services/teams/teams_service.dart';
 import 'core/services/app_icon_service.dart';
 import 'core/providers/push_providers.dart';
+import 'core/providers/tenant_providers.dart' show currentTenantIdProvider;
+import 'core/services/telegram_service.dart' show notificationConfigProvider;
 import 'l10n/l10n.dart';
 import 'shared/widgets/dialogs/ion_modal.dart';
 import 'shared/widgets/adaptive/app_toolbar.dart' show IonToolbarMetrics;
+import 'shared/widgets/layout/tap_outside_dismiss.dart';
 import 'core/services/error_reporter.dart';
 import 'core/constants/app_constants.dart';
+import 'features/public_links/presentation/pages/open_file_page.dart' show PendingFileLink;
+import 'core/utils/global_toast.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,6 +77,8 @@ void main() async {
   final initialLanguage = await loadInitialLanguage();
   // REDESIGN: "Neues Design (Beta)", Farbwelt and hell/dunkel of this device
   final initialRedesign = await loadInitialRedesignSettings();
+  // Ionic setPendingLink: a shared file link survives reload / restart.
+  await PendingFileLink.restore();
 
   // Load environment variables (PWA_OFFLINE: web keeps a copy for offline starts)
   await loadAppEnv();
@@ -79,6 +89,11 @@ void main() async {
     release: AppConstants.appVersion,
     environment: dotenv.isInitialized ? dotenv.maybeGet('SENTRY_ENVIRONMENT') : null,
   );
+  // SHOREBIRD: tag events with the running code push patch (release stays
+  // the app version). Not awaited, so the start never waits for it.
+  unawaited(readShorebirdPatchNumber().then((patch) {
+    if (patch != null) ErrorReporter.setTag('shorebird_patch', '$patch');
+  }));
   final previousOnError = FlutterError.onError;
   FlutterError.onError = (details) {
     ErrorReporter.report(details.exception, details.stack, where: 'FlutterError');
@@ -91,10 +106,17 @@ void main() async {
 
   // Initialize Supabase
   await SupabaseConfig.initialize();
+  // IONIC_SESSION: keep the Ionic login after the store update (once, native)
+  await takeOverIonicSession(
+    supabaseUrl: SupabaseConfig.supabaseUrl,
+    anonKey: SupabaseConfig.supabaseAnonKey,
+  );
 
   // LINKS_STARTUP: path links (/tabs/..., /open-attendance?..) → #/... so the
   // hash-based router sees them (after Supabase read auth params from the URL)
   if (kIsWeb) promoteLegacyPathToHash();
+  // WEB_SAFE_AREA: viewport-fit=cover + browser safe area insets (web only)
+  initWebSafeArea();
   // TEAMS: detect a Microsoft Teams tab (no-op outside an iframe / on native).
   // Not awaited (REVIEW_FIX2): a non-Teams iframe would otherwise keep the
   // app blank until the SDK timeouts; SSO/theme react once it completes.
@@ -120,9 +142,16 @@ class AttendixApp extends ConsumerStatefulWidget {
 }
 
 class _AttendixAppState extends ConsumerState<AttendixApp> {
+  // SHOREBIRD: download a new code push patch silently when the app returns
+  // from the background (active from the next start, nothing visible).
+  late final AppLifecycleListener _shorebirdResumeListener;
+
   @override
   void initState() {
     super.initState();
+    _shorebirdResumeListener = AppLifecycleListener(
+      onResume: () => unawaited(checkShorebirdPatchOnResume()),
+    );
     // Start update listener (web: service worker; NATIVE_MISC: native store check)
     ref.read(appUpdateServiceProvider).startListening();
     // PROFILE_OFFLINE: replay queued offline attendance writes
@@ -163,6 +192,12 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
   }
 
   @override
+  void dispose() {
+    _shorebirdResumeListener.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // SOL_FIX4: the offline queue follows the signed-in account (recount and
     // replay only that user's writes on login / logout / account switch).
@@ -183,7 +218,17 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
             ref.read(offlineQueueNotifierProvider.notifier).onUserChanged());
       }
     });
+    // Ionic setTenant → getNotifcationConfig: the user's notifications row
+    // (default flags) exists as soon as an instance is open, so e.g. the
+    // push prompt's push_enabled update has a row to write to.
+    ref.listen(currentTenantIdProvider, (previous, next) {
+      if (next != null && next != previous) {
+        ref.read(notificationConfigProvider.future).ignore();
+      }
+    });
     final router = ref.watch(routerProvider);
+    // Ionic service toasts (GlobalToast) use the router's root context.
+    GlobalToast.contextResolver = () => router.routerDelegate.navigatorKey.currentContext;
     // PWA_UPDATE: the web app updates at the next start, without a toast.
     final updateAvailable =
         showUpdateHint(ref.watch(appUpdateAvailableProvider));
@@ -218,12 +263,21 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       // IOS_SHELL: Ionic iOS has no tooltips – hide Material tooltips (tap /
       // long-press / hover) on iOS; their semantics labels stay.
       // IOS_THEME2: Ionic md (desktop / Android) has none either.
+      // WEB_SAFE_AREA: on the web, the browser's safe area insets become
+      // MediaQuery padding (home indicator / notch), as on native.
       builder: (context, child) => TooltipVisibility(
         visible: false,
-        // PARITY_R3: Ionic ion-modal sheet sizes (600 wide on desktop).
-        child: IonModalTheme(
-          // IOS_R4: Ionic iOS toolbar height (safe area dependent)
-          child: IonToolbarMetrics(child: child ?? const SizedBox.shrink()),
+        child: WebSafeArea(
+          // PARITY_R3: Ionic ion-modal sheet sizes (600 wide on desktop).
+          child: IonModalTheme(
+            // IOS_R4: Ionic iOS toolbar height (safe area dependent)
+            child: IonToolbarMetrics(
+              // PLATFORM: tap outside a field closes the keyboard (web view).
+              child: TapOutsideToDismissKeyboard(
+                child: child ?? const SizedBox.shrink(),
+              ),
+            ),
+          ),
         ),
       ),
       // I18N_INFRA: UI language from localeProvider (de default, en optional)

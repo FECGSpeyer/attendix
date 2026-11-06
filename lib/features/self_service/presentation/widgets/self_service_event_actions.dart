@@ -68,6 +68,8 @@ class SelfServiceEventActions {
     required this.updateNote,
     this.saveRegistrationAnswers,
     this.openPlan,
+    this.songCountOf,
+    this.openSongs,
     this.canAccessFiles,
     this.currentTenantId,
     this.showAllAttendances = false,
@@ -85,6 +87,14 @@ class SelfServiceEventActions {
   final Future<bool> Function(CrossTenantPersonAttendance att, Map<String, dynamic> answers)?
       saveRegistrationAnswers;
   final Future<void> Function(CrossTenantPersonAttendance att)? openPlan;
+
+  /// Ionic 4.17.26: number of Werke selected for a Termin ("♪ n Werke" chip,
+  /// "Werke anzeigen" entry) and the Werke sheet.
+  final int Function(CrossTenantPersonAttendance att)? songCountOf;
+  final Future<void> Function(CrossTenantPersonAttendance att)? openSongs;
+
+  int songCount(CrossTenantPersonAttendance att) =>
+      openSongs == null ? 0 : (songCountOf?.call(att) ?? 0);
   final bool Function(CrossTenantPersonAttendance att)? canAccessFiles;
 
   /// ASTRA_FILES: set in the cross-tenant "Übersicht" – files of a Termin
@@ -192,6 +202,12 @@ class SelfServiceEventActions {
         EventChip(label: deadline, danger: true),
       if (att.notes != null && att.notes!.isNotEmpty)
         EventChip(label: context.l10n.signoutNoteChip(att.notes!)),
+      if (songCount(att) case final count when count > 0)
+        EventChip(
+          label: context.l10n.attendanceSongsChip(count),
+          icon: Icons.music_note_outlined,
+          onTap: () => openSongs!(att),
+        ),
       if (withPlan && att.hasPlan && openPlan != null)
         EventChip(
           label: context.l10n.signoutRunSheet,
@@ -372,10 +388,16 @@ class SelfServiceEventActions {
         isExcused && !overviewMode ? SelfServiceActionType.undoSignout : SelfServiceActionType.signIn,
       ));
     }
-    if (signInAllowed && !isExcused) {
+    // PARITY_SELF: Ionic OverviewPage only filters by the status letter:
+    // 'E' / 'A' drop Abmelden + Verspätung eintragen, 'Anmelden mit Notiz'
+    // stays; 'L' (Verspätet / Verspätung gemeldet) keeps all of them.
+    // Ionic SignoutPage additionally blocks them for every excused status.
+    if (signInAllowed && (overviewMode || !isExcused)) {
       actions.add(const SelfServiceAction(SelfServiceActionType.signInWithNote));
     }
-    final blockedBySignout = isExcused || att.text == 'A';
+    final blockedBySignout = overviewMode
+        ? att.text == 'E' || att.text == 'A'
+        : isExcused || att.text == 'A';
     if (excuseAllowed && !blockedBySignout && !(qa?.allowExcuse ?? false)) {
       actions.add(const SelfServiceAction(SelfServiceActionType.signOut));
     }
@@ -389,6 +411,9 @@ class SelfServiceEventActions {
     }
     if (att.text == 'X') {
       actions.add(const SelfServiceAction(SelfServiceActionType.editNote));
+    }
+    if (songCount(att) > 0 && !hideQuickActions) {
+      actions.add(const SelfServiceAction(SelfServiceActionType.showSongs));
     }
     if (att.hasPlan && openPlan != null && !hideQuickActions && !overviewMode) {
       actions.add(const SelfServiceAction(SelfServiceActionType.showPlan));
@@ -478,6 +503,8 @@ class SelfServiceEventActions {
         await handleSigninWithFields(context, att, editMode: true);
       case SelfServiceActionType.editNote:
         await _editNote(context, att);
+      case SelfServiceActionType.showSongs:
+        await openSongs?.call(att);
       case SelfServiceActionType.showPlan:
         await openPlan?.call(att);
       case SelfServiceActionType.showDescription:
@@ -501,6 +528,7 @@ enum SelfServiceActionType {
   enterLate(Icons.schedule),
   editRegistrationFields(Icons.assignment_outlined),
   editNote(Icons.sticky_note_2_outlined),
+  showSongs(Icons.music_note_outlined),
   showPlan(Icons.description_outlined),
   showDescription(Icons.info_outline),
   openAttachment(Icons.attach_file),
@@ -520,6 +548,7 @@ enum SelfServiceActionType {
         enterLate => l10n.signoutEnterLate,
         editRegistrationFields => l10n.signoutEditRegistrationFields,
         editNote => l10n.signoutEditNote,
+        showSongs => l10n.attendanceSongsShow,
         showPlan => l10n.signoutShowRunSheet,
         showDescription => l10n.signoutShowDescription,
         openAttachment => l10n.signoutOpenAttachment,

@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -33,17 +36,33 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
   List<PlanField> _defaultFields = [];
   int? _selected;
 
-  PlanSettingsNotifier get _notifier => ref.read(planSettingsNotifierProvider.notifier);
+  /// Captured up front (not via `ref` later) so the inline minutes can still
+  /// be saved from `dispose()` while the page is being removed.
+  late final PlanSettingsNotifier _notifier;
 
-  Future<void> _saveDefaultFields() async {
-    final ok = await _notifier.updateDefaultFields(_defaultFields);
-    if (!ok && mounted) ToastHelper.showError(context, context.l10n.plansSaveFailed);
+  /// Organisation whose Standardfelder are shown; captured with them.
+  int? _orgId;
+
+  @override
+  void initState() {
+    super.initState();
+    _notifier = ref.read(planSettingsNotifierProvider.notifier);
   }
 
+  /// Saves the current Standardfelder; `true` once the write is confirmed.
+  /// Uses no `ref`/`context` unless the page is still mounted.
+  Future<bool> _saveDefaultFields() async {
+    final orgId = _orgId;
+    if (orgId == null) return false;
+    final ok = await _notifier.saveDefaultFields(orgId, _defaultFields);
+    if (!ok && mounted) ToastHelper.showError(context, context.l10n.plansSaveFailed);
+    return ok;
+  }
+
+  /// Ionic saves the templates as edited; `end` is not computed into them
+  /// (new templates keep `end: ''`), the end is only shown.
   Future<void> _saveTemplates() async {
-    final ok = await _notifier.updatePlanningTemplates([
-      for (final t in _templates!) t.copyWith(end: _computeEnd(t)),
-    ]);
+    final ok = await _notifier.updatePlanningTemplates(_templates!);
     if (!ok && mounted) ToastHelper.showError(context, context.l10n.plansSaveFailed);
   }
 
@@ -109,6 +128,21 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     await _saveDefaultFields();
   }
 
+  /// Inline minutes of a Standardfeld. Looked up by id (the row may have been
+  /// reordered/removed meanwhile) and stored without `setState`: it is also
+  /// called from the input's `dispose()`, e.g. while this page is popped.
+  /// Nothing else on the page shows the minutes, so no rebuild is needed.
+  /// Saves even if the local value is unchanged: the input retries a value
+  /// whose earlier save failed.
+  Future<bool> _setDefaultMinutes(String id, String minutes) {
+    final index = _defaultFields.indexWhere((f) => f.id == id);
+    if (index < 0) return Future.value(true); // removed, nothing to save
+    final list = [..._defaultFields];
+    list[index] = list[index].copyWith(time: minutes);
+    _defaultFields = list;
+    return _saveDefaultFields();
+  }
+
   Future<void> _removeDefaultField(int index) async {
     setState(() => _defaultFields = [..._defaultFields]..removeAt(index));
     await _saveDefaultFields();
@@ -124,12 +158,9 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       title: context.l10n.orgTemplatesAddTemplate,
       hint: context.l10n.orgTemplatesTemplateNamePh,
       confirmText: context.l10n.attendanceAdd,
+      emptyMessage: context.l10n.orgTemplatesEnterName,
     );
-    if (title == null) return;
-    if (title.trim().isEmpty) {
-      if (mounted) ToastHelper.showWarning(context, context.l10n.orgTemplatesEnterName);
-      return;
-    }
+    if (title == null || title.trim().isEmpty) return;
     setState(() {
       _templates = [..._templates!, Plan(title: title.trim(), time: '', end: '', fields: const [])];
       _selected = _templates!.length - 1;
@@ -163,6 +194,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       initialValue: tpl.title,
       hint: context.l10n.orgTemplatesTemplateNamePh,
       confirmText: context.l10n.commonSave,
+      emptyMessage: context.l10n.orgTemplatesEnterName,
     );
     if (title == null || title.trim().isEmpty) return;
     _updateTemplate(index, tpl.copyWith(title: title.trim()));
@@ -189,17 +221,24 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     });
   }
 
-  Future<void> _addToTemplate(int index) async {
+  /// Ionic: `ion-popover` at the "Feld hinzufügen" button; the Standardfelder
+  /// follow a divider and a small bold header.
+  Future<void> _addToTemplate(int index, BuildContext buttonContext) async {
     final tpl = _templates![index];
     final isGeneral = ref.read(currentTenantProvider)?.type == 'general';
-    final action = await showPlanActionSheet<String>(
-      context,
-      actions: [
-        PlanSheetAction('field', context.l10n.typeSettingsAddField, icon: Icons.add),
-        PlanSheetAction('note', context.l10n.typeSettingsAddNoteField, icon: Icons.sticky_note_2_outlined),
-        if (!isGeneral) PlanSheetAction('song', context.l10n.orgTemplatesSongPlaceholder, icon: Icons.music_note_outlined),
+    final action = await showAppPopoverMenu<String>(
+      context: buttonContext,
+      items: [
+        AppPopoverMenuItem(value: 'field', label: context.l10n.typeSettingsAddField),
+        AppPopoverMenuItem(value: 'note', label: context.l10n.typeSettingsAddNoteField),
+        if (!isGeneral) AppPopoverMenuItem(value: 'song', label: context.l10n.orgTemplatesSongPlaceholder),
+        if (_defaultFields.isNotEmpty) AppPopoverMenuItem.header(context.l10n.orgTemplatesDefaultFields, ''),
         for (var i = 0; i < _defaultFields.length; i++)
-          PlanSheetAction('default:$i', '${_defaultFields[i].name} (${context.l10n.planningMinShort(_defaultFields[i].time)})'),
+          AppPopoverMenuItem(
+            value: 'default:$i',
+            label: _defaultFields[i].name,
+            subtitle: context.l10n.planningMinShort(_defaultFields[i].time),
+          ),
       ],
     );
     if (action == null || !mounted) return;
@@ -258,7 +297,9 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       ),
     );
     if (picked == null) return;
-    _updateTemplate(index, tpl.copyWith(time: PlanUtils.formatMinutes(picked.hour * 60 + picked.minute)));
+    // Ionic ion-datetime writes tpl.time as ISO date time; Ionic
+    // public-planning only takes it over when dayjs(tpl.time).isValid().
+    _updateTemplate(index, tpl.copyWith(time: PlanUtils.ionTimeValue(picked.hour, picked.minute, previous: tpl.time)));
     await _saveTemplates();
   }
 
@@ -321,6 +362,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       final org = orgAsync.value;
       _templates = [...?org?.planningTemplates];
       _defaultFields = [...?org?.defaultFields];
+      _orgId = org?.id;
     }
 
     return IonCondense(builder: (context, collapsed) => Scaffold(
@@ -381,7 +423,13 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text(context.l10n.planningMinShort(_defaultFields[i].time)),
+                                      // Ionic: inline number input "min", saved on blur.
+                                      _DefaultMinutesInput(
+                                        key: ValueKey('dfm-${_defaultFields[i].id}-$i'),
+                                        fieldId: _defaultFields[i].id,
+                                        value: _defaultFields[i].time,
+                                        onSubmitted: _setDefaultMinutes,
+                                      ),
                                       const SizedBox(width: 8),
                                       ReorderableDragStartListener(index: i, child: const Icon(Icons.drag_handle)),
                                     ],
@@ -463,10 +511,12 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
             _saveTemplates();
           },
         ),
-        ListTile(
-          leading: const Icon(Icons.add, color: AppColors.primary),
-          title: Text(context.l10n.typeSettingsAddField, style: const TextStyle(color: AppColors.primary)),
-          onTap: () => _addToTemplate(i),
+        Builder(
+          builder: (buttonContext) => ListTile(
+            leading: const Icon(Icons.add, color: AppColors.primary),
+            title: Text(context.l10n.typeSettingsAddField, style: const TextStyle(color: AppColors.primary)),
+            onTap: () => _addToTemplate(i, buttonContext),
+          ),
         ),
         if (end.isNotEmpty)
           ListTile(
@@ -476,5 +526,124 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
         const Divider(height: 1),
       ],
     ];
+  }
+}
+
+/// Inline minutes of a Standardfeld (Ionic `ion-input type="number"`
+/// placeholder "min", `(ionBlur)="saveDefaultFields()"`).
+///
+/// Saves debounced while typing, on blur and on dispose: on iOS/Android going
+/// back directly never blurs the field, so a blur-only save would be lost.
+/// A failed save stays pending and is retried on blur/dispose.
+class _DefaultMinutesInput extends StatefulWidget {
+  const _DefaultMinutesInput({
+    super.key,
+    required this.fieldId,
+    required this.value,
+    required this.onSubmitted,
+  });
+
+  final String fieldId;
+  final String value;
+
+  /// Called with ([fieldId], minutes); resolves to `true` once saved. Must
+  /// not call `setState` or use `ref`/`context` synchronously (also runs from
+  /// `dispose()`).
+  final Future<bool> Function(String fieldId, String minutes) onSubmitted;
+
+  @override
+  State<_DefaultMinutesInput> createState() => _DefaultMinutesInputState();
+}
+
+class _DefaultMinutesInputState extends State<_DefaultMinutesInput> {
+  late final TextEditingController _controller = TextEditingController(text: widget.value);
+  final FocusNode _focus = FocusNode();
+  Timer? _debounce;
+
+  /// Last value handed to `onSubmitted` (saved or still in flight).
+  late String _submitted = widget.value;
+
+  /// The save of [_submitted] failed: it stays pending and blur/dispose
+  /// retry it.
+  bool _failed = false;
+  int _seq = 0;
+  int _inFlight = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _focus.addListener(() {
+      if (!_focus.hasFocus) _commit();
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant _DefaultMinutesInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // An external change (e.g. the edit dialog) replaces the value; the echo
+    // of our own, maybe still unsaved, text must not mark it as saved.
+    if (widget.value != oldWidget.value && widget.value != _controller.text.trim()) {
+      _submitted = widget.value;
+      _failed = false;
+    }
+    if (!_focus.hasFocus && widget.value != _controller.text) _controller.text = widget.value;
+  }
+
+  /// Saves the current text unless it is already saved or being saved.
+  /// Only the newest submission counts (the page writes the whole list).
+  /// [force] re-sends even an already submitted value (used when leaving
+  /// while a save is still pending, so its failure can't be lost).
+  Future<void> _commit({bool force = false}) async {
+    _debounce?.cancel();
+    _debounce = null;
+    final v = _controller.text.trim();
+    if (!force && v == _submitted && !_failed) return;
+    _submitted = v;
+    _failed = false;
+    final seq = ++_seq;
+    _inFlight++;
+    try {
+      final ok = await widget.onSubmitted(widget.fieldId, v);
+      if (!ok && seq == _seq) _failed = true;
+    } finally {
+      _inFlight--;
+    }
+  }
+
+  void _onChanged(String _) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 600), _commit);
+  }
+
+  @override
+  void dispose() {
+    // Writes are coalesced, so re-sending a pending value is harmless.
+    _commit(force: _inFlight > 0 || _failed);
+    _controller.dispose();
+    _focus.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 48,
+      child: TextField(
+        controller: _controller,
+        focusNode: _focus,
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        textAlign: TextAlign.center,
+        decoration: InputDecoration(
+          hintText: context.l10n.planningMinPlaceholder,
+          isDense: true,
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(vertical: 8),
+        ),
+        onChanged: _onChanged,
+        onTapOutside: (_) => _focus.unfocus(),
+        onSubmitted: (_) => _focus.unfocus(),
+      ),
+    );
   }
 }

@@ -9,6 +9,10 @@ Für den Drive-Weg braucht es einmalig drei Dinge. Solange sie fehlen, zeigt die
 
 ## 1. Google-API-Schlüssel
 
+Schon erledigt (6.11.2026): Im Firebase-Projekt `app-attendix` sind die Drive API und die API Keys API eingeschaltet, und der Schlüssel „Attendix Werke-Import“ ist angelegt und nur für die Drive API freigegeben. Den Wert gibt es unter **APIs & Dienste › Anmeldedaten › Attendix Werke-Import › Schlüssel anzeigen**. Die vorhandenen Firebase-Schlüssel (iOS, Android, Browser) stecken in der App und dürfen dafür nicht genommen werden.
+
+Für ein anderes Projekt:
+
 1. In der [Google Cloud Console](https://console.cloud.google.com/) ein Projekt anlegen oder wählen (z. B. „Attendix“).
 2. **APIs & Dienste › Bibliothek › Google Drive API › Aktivieren**.
 3. **APIs & Dienste › Anmeldedaten › Anmeldedaten erstellen › API-Schlüssel**.

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -15,6 +16,7 @@ import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/utils/archived_attendance.dart';
 import '../../../../core/services/plan_export_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/plan_utils.dart';
@@ -36,6 +38,7 @@ import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import 'package:attendix/shared/widgets/layout/route_leave_guard.dart';
 import '../../../../data/repositories/plan_repository.dart';
@@ -43,6 +46,13 @@ import '../../../../core/services/offline_queue_service.dart' show rootScaffoldM
 import '../../../../core/config/supabase_config.dart' show currentAuthUserIdProvider;
 import '../../../../core/services/planning_draft_store.dart';
 import '../../data/planning_write_sync.dart';
+import '../../../../core/providers/redesign_providers.dart' show redesignEnabledProvider;
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
+
+part 'planning_page_beta.dart';
 
 /// Provider for songs list (for adding to plan)
 final planSongsProvider = FutureProvider<List<Song>>((ref) async {
@@ -64,6 +74,16 @@ typedef _PlanListOp = ({List<Plan> plans, int open})? Function(PlanAttendance at
 /// its position (`i<n>`) plus the plan count and the plan itself (JSON) in
 /// that copy, see [_PlanningPageState._indexOfRef].
 typedef _PlanRef = ({String key, int count, String? json});
+
+/// Ionic `modalController.create({ component: PlanningPage, cssClass:
+/// 'planningModal' })`: the Ablaufplan editor as `ion-modal` (full screen on
+/// phones, centred card on desktop) with its own close button.
+Future<void> showPlanningModal(BuildContext context, {int? attendanceId}) {
+  return showIonModal<void>(
+    context,
+    builder: (_) => PlanningPage(attendanceId: attendanceId),
+  );
+}
 
 /// Ablaufplan editor of a Termin (Ionic `PlanningPage`).
 ///
@@ -93,6 +113,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   bool _sharePlan = false;
   bool _isOrgPlan = false;
   bool _loaded = false;
+
+  /// [_init] has chosen the start Termin (or found none). Until then the
+  /// page shows its loading state instead of the editor, since edits made
+  /// before would be replaced by the loaded plan.
+  bool _started = false;
 
   /// Ionic 4.17.10: the organisation is linked to the Gemeinde App, so every
   /// row gets a stable uid when the plan is stored (kept from the last build,
@@ -175,6 +200,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   ScaffoldMessengerState? _messenger;
   OverlayState? _rootOverlay;
   bool _iosLook = false;
+
+  /// REDESIGN (Beta editor, [_PlanningBeta]): collapsed blocks and the row
+  /// whose duration field is open.
+  final Set<String> _rdCollapsed = {};
+  int? _rdDurationIndex;
 
   @override
   void initState() {
@@ -572,6 +602,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       }
       if (!mounted) return;
       setState(() {
+        _rdDurationIndex = null;
         _time = time;
         _fields = fields;
         _titleController.text = title;
@@ -688,12 +719,16 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       }
       if (!mounted) return;
       if (att == null) {
-        setState(() => _requestedNotFound = true);
+        setState(() {
+          _requestedNotFound = true;
+          _started = true;
+        });
         return;
       }
       if (!_attendances.any((a) => a.id == att!.id)) {
         _attendances = [..._attendances, att]..sort((a, b) => b.date.compareTo(a.date));
       }
+      _started = true;
       _loadAttendance(att, planIndex: widget.initialPlanIndex);
       return;
     }
@@ -704,11 +739,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       final d = DateTime.tryParse(a.date);
       return d != null && !DateTime(d.year, d.month, d.day).isBefore(todayDate);
     }).toList();
-    att = upcoming.isNotEmpty ? upcoming.last : _attendances.firstOrNull;
+    // Ionic: without an upcoming Termin none is selected.
+    att = upcoming.isNotEmpty ? upcoming.last : null;
+    _started = true;
     if (att != null) {
       _loadAttendance(att);
     } else {
-      setState(() {});
+      // Ionic keeps its start field `{ id: '', name: 'Wort ', time: '10' }`.
+      setState(() => _fields = [PlanField(id: '', name: context.l10n.planningDefaultWord, time: '10')]);
     }
   }
 
@@ -718,7 +756,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     try {
       final repo = ref.read(planRepositoryWithTenantProvider);
       if (!repo.hasTenantId) return null;
-      return await repo.getPlanAttendanceById(id);
+      // Ionic: only Termine of the role-filtered list can be opened.
+      return await repo.getPlanAttendanceById(id,
+          includeArchived: canSeeArchivedAttendances(ref.read(currentRoleProvider)));
     } catch (_) {
       return null;
     }
@@ -783,15 +823,23 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           : (isPractice ? (tenant?.practiceStart ?? '17:50') : '10:00');
       final formatted = PlanUtils.formatTime(start);
       setState(() {
+        _rdDurationIndex = null;
         _time = formatted.isEmpty ? '17:50' : formatted;
         _titleController.text = _defaultTitle(att);
-        _fields = [PlanField(id: 'Wort', name: context.l10n.planningDefaultWord.trim(), time: '10')];
+        // Ionic start field `{ id: '', name: 'Wort ', time: '10' }`.
+        _fields = [PlanField(id: '', name: context.l10n.planningDefaultWord, time: '10')];
       });
-      _applyTypeDefaultPlan(att, save: false);
+      // Ionic `onAttChange` applies the type template (or an empty list) only
+      // when there is Werke history; then `calculateEnd` → `updateAttendance`
+      // stores it (validate: at least one field). Without history the start
+      // field stays and nothing is written until the user edits the plan.
+      if (_history.isNotEmpty) {
+        _applyTypeDefaultPlan(att, save: false, clearWithoutTemplate: true);
+        _dirty = _fields.isNotEmpty;
+      } else {
+        _dirty = false;
+      }
       _savedTitle = _titleController.text.trim();
-      // Ionic `onAttChange` → `calculateEnd` → `updateAttendance` stores the
-      // default plan of a Termin without plan; keep it as a pending change.
-      _dirty = true;
       _restoredDraft = null;
       if (att.id != null) unawaited(_restoreDraft(att.id!, index));
     }
@@ -805,6 +853,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _dirty = false;
     _restoredDraft = null;
     setState(() {
+      _rdDurationIndex = null;
       _titleController.text = plan.title ?? _defaultTitle(att);
       final t = PlanUtils.formatTime(plan.time);
       if (t.isNotEmpty) _time = t;
@@ -833,6 +882,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _restoredDraft = null;
     setState(() {
       _planIndex = 0;
+      _rdDurationIndex = null;
       _titleController.text = _defaultTitle(att);
       _fields = [];
     });
@@ -853,9 +903,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       field, (songId) => _songs.where((s) => s.id == songId).firstOrNull?.beamerFile);
 
   /// Ionic `onAttChange` without plan / "Plan zurücksetzen".
-  void _applyTypeDefaultPlan(PlanAttendance att, {bool save = true}) {
+  void _applyTypeDefaultPlan(PlanAttendance att, {bool save = true, bool clearWithoutTemplate = false}) {
     final type = _typeOf(att);
     final defaults = type?.defaultPlan?.fields ?? const <PlanField>[];
+    _rdDurationIndex = null;
     if (defaults.isNotEmpty) {
       setState(() {
         final t = PlanUtils.formatTime(type?.startTime);
@@ -867,7 +918,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           prefix: _songPrefix(type),
         );
       });
-    } else if (save) {
+    } else if (save || clearWithoutTemplate) {
       setState(() => _fields = []);
     }
     if (save) _changed();
@@ -882,6 +933,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   // ---------------------------------------------------------------------------
   // Saving
   // ---------------------------------------------------------------------------
+
+  /// REDESIGN: `setState` for the Beta editor ([_PlanningBeta]).
+  void _rdSet(VoidCallback fn) => setState(fn);
 
   void _changed() {
     _fields = PlanUtils.normalizeGroups(_fields);
@@ -959,6 +1013,16 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     }
   }
 
+  /// The visible start plan of a Termin without stored plan is not written
+  /// on opening (Ionic). An explicit action that needs a stored plan (share
+  /// link, another plan) marks it as pending first, so the following
+  /// [_flushSaves] stores it.
+  void _markStartPlanPending() {
+    final att = _att;
+    if (att == null || _dirty || _fields.isEmpty || PlanUtils.allPlans(att).isNotEmpty) return;
+    _dirty = true;
+  }
+
   /// SOL_FIX24: runs [task] with the page blocked (overlay, no focus, no
   /// close) so the editor cannot change while [task] writes and reloads it.
   Future<T> _whileBusy<T>(Future<T> Function() task) async {
@@ -1017,6 +1081,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         if (mounted && baseIndex != _planIndex) setState(() => _planIndex = baseIndex);
         _savedTitle = title;
         if (editGen == _editGen) _dirty = false;
+        // REDESIGN: the Beta editor shows "Gespeichert".
+        if (mounted) setState(() {});
         // SOL_FIX26: the restored draft is stored now.
         // SOL_FIX27: removed only while it still holds the restored revision.
         final draft = _restoredDraft;
@@ -1231,6 +1297,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       ToastHelper.showWarning(context, context.l10n.planningCreateRunSheetFirst);
       return;
     }
+    // The start plan becomes the first plan, the new one the second.
+    _markStartPlanPending();
     if (!await _flushSaves() || !mounted) return;
     final choice = await showAppDialog<String>(
       context: context,
@@ -1279,13 +1347,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     }
   }
 
-  Future<void> _showPlanOptions() async {
+  /// [preset]: the action chosen in the Beta "•••" sheet (no own sheet).
+  Future<void> _showPlanOptions({String? preset}) async {
     final att = _att;
     if (att == null) return;
     final plans = PlanUtils.allPlans(att);
     final shownIndex = _planIndex;
     final loadGen = _loadGen;
-    final action = await showPlanActionSheet<String>(
+    final action = preset ?? await showPlanActionSheet<String>(
       context,
       title: context.l10n.planningPlanHeader(PlanUtils.planLabel(att, shownIndex, plans)),
       subtitle: context.l10n.planningFlutterPlanPosition(shownIndex + 1, plans.length),
@@ -1343,15 +1412,16 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           });
         case 'day':
           final options = PlanUtils.dayOptions(current);
-          final day = await showPlanActionSheet<int>(
+          // Ionic: radio alert „Tag zuordnen“ with Abbrechen / Speichern.
+          final picked = await showAppRadioAlert<int>(
             context,
             title: context.l10n.planningAssignDay,
-            actions: [
-              for (final o in options)
-                PlanSheetAction(o.day, o.label, icon: list[index].day == o.day ? Icons.check : null),
-            ],
+            options: [for (final o in options) (o.day, o.label)],
+            initialValue: list[index].day,
+            confirmText: context.l10n.commonSave,
           );
-          if (day == null || !mounted) return;
+          final day = picked?.value;
+          if (day == null || day == list[index].day || !mounted) return;
           await _whileBusy(() async {
             final open = await _writePlanOp(attId, planKey, (att, plans, i) {
               final moved = plans[i!].copyWith(day: day);
@@ -1407,10 +1477,15 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   // Adding fields
   // ---------------------------------------------------------------------------
 
+  /// A dialog opened for the plan loaded at [loadGen] still applies: no other
+  /// plan was loaded meanwhile (conflict reload, draft, other Termin).
+  bool _samePlan(int loadGen) => mounted && loadGen == _loadGen;
+
   Future<void> _addField() async {
+    final loadGen = _loadGen;
     final r = await showPlanFieldDialog(context,
         title: context.l10n.planningAddField, nameHint: context.l10n.planningEnterFreeText, initialMinutes: 20);
-    if (r == null) return;
+    if (r == null || !_samePlan(loadGen)) return;
     setState(() => _fields = [
           ..._fields,
           PlanField(id: r.name, name: r.name, conductor: r.conductor, info: r.info, time: '${r.minutes ?? 20}'),
@@ -1419,6 +1494,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   }
 
   Future<void> _addNote() async {
+    final loadGen = _loadGen;
     final r = await showPlanFieldDialog(context,
         title: context.l10n.planningAddNoteField,
         nameLabel: context.l10n.planningNote,
@@ -1427,12 +1503,13 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         withConductor: false,
         withInfo: false,
         withMinutes: false);
-    if (r == null) return;
+    if (r == null || !_samePlan(loadGen)) return;
     setState(() => _fields = [..._fields, PlanField(id: 'noteFld ${r.name}', name: r.name, conductor: '', time: '0')]);
     _changed();
   }
 
   Future<void> _addGroup() async {
+    final loadGen = _loadGen;
     final r = await showPlanFieldDialog(
       context,
       title: context.l10n.planningAddBlock,
@@ -1445,7 +1522,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       emptyNameMessage: context.l10n.planningEnterNamePlease,
       withMinutes: false,
     );
-    if (r == null || !mounted) return;
+    if (r == null || !mounted || !_samePlan(loadGen)) return;
     final head = PlanUtils.newGroupHead(r.name, conductor: r.conductor, info: r.info);
     setState(() => _fields = [..._fields, head]);
     _changed();
@@ -1457,7 +1534,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       infoHint: context.l10n.planningSubItemInfoPlaceholder,
       initialMinutes: 5,
     );
-    if (sub == null) return;
+    // The block may be gone meanwhile (deleted, other plan loaded).
+    if (sub == null || !_samePlan(loadGen) || !_fields.any((f) => f.id == head.id)) return;
     setState(() => _fields = PlanUtils.addSubItem(
           _fields,
           head.id,
@@ -1472,21 +1550,45 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _changed();
   }
 
-  void _addCurrentSongs() {
-    final added = PlanSongHelper.currentSongFields(
+  /// Ionic 4.17.25 `addCurrentSongs`: adds the current Werke missing in the
+  /// open plan; when all are already there, asks whether to add them again.
+  Future<void> _addCurrentSongs() async {
+    final prefix = _songPrefix(_typeOf(_att));
+    final all = PlanSongHelper.currentSongFields(
+      const [],
+      history: _history,
+      songs: _songs,
+      prefix: prefix,
+    );
+    if (all.isEmpty) {
+      ToastHelper.showWarning(context, context.l10n.planningNoCurrentSongs);
+      return;
+    }
+    var added = PlanSongHelper.currentSongFields(
       _fields,
       history: _history,
       songs: _songs,
-      prefix: _songPrefix(_typeOf(_att)),
+      prefix: prefix,
     );
-    if (added.isEmpty) return;
+    if (added.isEmpty) {
+      final loadGen = _loadGen;
+      final again = await showPlanConfirm(
+        context,
+        title: context.l10n.planningCurrentSongsAlreadyAddedHeader,
+        message: context.l10n.planningCurrentSongsAlreadyAddedMessage,
+        confirmText: context.l10n.planningAddAgain,
+      );
+      if (!again || !_samePlan(loadGen)) return;
+      added = all;
+    }
     setState(() => _fields = [..._fields, ...added]);
     _changed();
   }
 
   Future<void> _addSong() async {
+    final loadGen = _loadGen;
     final song = await showPlanSongPicker(context, _songs);
-    if (song == null) return;
+    if (song == null || !_samePlan(loadGen)) return;
     setState(() => _fields = [
           ..._fields,
           PlanSongHelper.songField(song, history: _history, prefix: _songPrefix(_typeOf(_att))),
@@ -1507,7 +1609,19 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       confirmText: context.l10n.commonDelete,
       destructive: true,
     );
-    if (ok) await ref.read(planSettingsNotifierProvider.notifier).deleteBlockTemplate(tpl.id);
+    if (!ok) return;
+    // Ionic tenant.service: a failed tenant update shows this toast (the
+    // only error message here; the template simply stays otherwise).
+    bool deleted;
+    try {
+      deleted = await ref.read(planSettingsNotifierProvider.notifier).deleteBlockTemplate(tpl.id);
+    } catch (_) {
+      // Reading the current templates failed (repository already reports).
+      deleted = false;
+    }
+    if (!deleted && mounted) {
+      ToastHelper.showError(context, context.l10n.svcUpdateSettingsFailed);
+    }
   }
 
   Future<void> _saveBlockTemplate(PlanField head) async {
@@ -1652,6 +1766,15 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       ],
     );
     if (action == null || !mounted) return;
+    await _runAddAction(action);
+  }
+
+  /// Runs an entry of the "+" menu (classic popover and Beta sheet).
+  Future<void> _runAddAction(String action) async {
+    final blockTemplates = ref.read(planBlockTemplatesProvider).valueOrNull ?? const <PlanBlockTemplate>[];
+    final org = ref.read(currentOrganisationProvider).valueOrNull;
+    final orgTemplates = org?.planningTemplates ?? const <Plan>[];
+    final orgFields = org?.defaultFields ?? const <PlanField>[];
     if (action.startsWith('block:')) {
       final tpl = blockTemplates.where((t) => t.id == action.substring(6)).firstOrNull;
       if (tpl != null) _insertBlockTemplate(tpl);
@@ -1663,11 +1786,13 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       return;
     }
     if (action.startsWith('tpl:')) {
-      _applyOrgTemplate(orgTemplates[int.parse(action.substring(4))]);
+      final i = int.parse(action.substring(4));
+      if (i < orgTemplates.length) _applyOrgTemplate(orgTemplates[i]);
       return;
     }
     if (action.startsWith('orgfield:')) {
-      _addOrgField(orgFields[int.parse(action.substring(9))]);
+      final i = int.parse(action.substring(9));
+      if (i < orgFields.length) _addOrgField(orgFields[i]);
       return;
     }
     switch (action) {
@@ -1678,7 +1803,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       case 'note':
         await _addNote();
       case 'current':
-        _addCurrentSongs();
+        await _addCurrentSongs();
       case 'song':
         await _addSong();
       case 'plan':
@@ -1806,36 +1931,24 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       ToastHelper.showWarning(context, context.l10n.planningChooseEventFirst);
       return;
     }
+    // The shared page needs a stored plan: store the visible start plan.
+    _markStartPlanPending();
     // SOL_FIX24: sharing keeps the editor, so an invalid plan does not block.
     if (!await _flushSaves(blockInvalid: false) || !mounted) return;
     final action = await showPlanActionSheet<String>(
       context,
       title: context.l10n.planningShareLink,
       actions: [
-        PlanSheetAction('read', context.l10n.planningReadOnlyLink, icon: Icons.link),
-        PlanSheetAction('edit', context.l10n.planningEditLink, icon: Icons.edit_note),
-        if (att!.shareKey != null)
-          PlanSheetAction('revoke', context.l10n.planningFlutterUnshareAction,
-              icon: Icons.link_off, destructive: true),
+        // Ionic shareCurrentPlan: only these two (revokeSharePlan is not
+        // reachable in Ionic).
+        PlanSheetAction('read', context.l10n.planningReadOnlyLink),
+        PlanSheetAction('edit', context.l10n.planningEditLink),
       ],
     );
     if (action == null || !mounted) return;
     try {
-      if (action == 'revoke') {
-        final ok = await showPlanConfirm(
-          context,
-          title: context.l10n.planningUnshareConfirm,
-          message: context.l10n.planningUnshareMessage,
-          confirmText: context.l10n.planningUnshare,
-          destructive: true,
-        );
-        if (!ok) return;
-        await _updateFlags({'share_key': null, 'share_edit_key': null});
-        if (mounted) ToastHelper.showSuccess(context, context.l10n.planningUnshared);
-        return;
-      }
       final edit = action == 'edit';
-      var shareKey = att.shareKey;
+      var shareKey = att!.shareKey;
       var editKey = att.shareEditKey;
       if (shareKey == null) {
         shareKey = PlanUtils.randomKey();
@@ -1941,13 +2054,15 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   }
 
   Future<void> _resetPlan() async {
+    final loadGen = _loadGen;
     final ok = await showPlanConfirm(
       context,
       title: context.l10n.planningResetPlan,
       message: context.l10n.planningResetPlanMessage,
       confirmText: context.l10n.dateDialogReset,
     );
-    if (ok && _att != null) _applyTypeDefaultPlan(_att!);
+    // Only the plan the dialog was opened for (no reload or conflict meanwhile).
+    if (ok && mounted && loadGen == _loadGen && _att != null) _applyTypeDefaultPlan(_att!);
   }
 
   Future<void> _pickTime() async {
@@ -1988,7 +2103,13 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
     // SOL_FIX26: not from the previous value while the Termine reload after
     // an invalidation (that would edit the stale plan).
-    if (!_loaded && attendancesAsync.hasValue && !attendancesAsync.isLoading && !typesAsync.isLoading) {
+    // Ionic ngOnInit loads Werke and history before choosing the start plan
+    // (the type template only applies with history); the role decides
+    // whether archived Termine can be opened.
+    final startReady = !ref.watch(currentSongsProvider).isLoading &&
+        !ref.watch(planSongsProvider).isLoading &&
+        !ref.watch(currentTenantUserProvider).isLoading;
+    if (!_loaded && startReady && attendancesAsync.hasValue && !attendancesAsync.isLoading && !typesAsync.isLoading) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && !_loaded) unawaited(_init(attendancesAsync.value!));
       });
@@ -2000,6 +2121,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         ? const <String>[]
         : [for (var i = 0; i < plans.length; i++) PlanUtils.planLabel(att, i, plans)];
 
+    final beta = ref.watch(redesignEnabledProvider);
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
@@ -2019,7 +2141,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           excluding: _busy,
           child: AbsorbPointer(
             absorbing: _busy,
-            child: Scaffold(
+            child: beta
+                ? _rdScaffold(attendancesAsync, isAdmin: role.isAdmin, blockTemplates: blockTemplates, showBeamer: showBeamer)
+                : Scaffold(
         // Ionic: modal toolbar [Link teilen, Schließen]; actions in the FAB (…).
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -2044,8 +2168,12 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         body: attendancesAsync.when(
           loading: () => const Center(child: AppSpinner()),
           error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)))),
+          // Until `_init` chose the Termin the editor is not usable (its
+          // edits would be replaced by the loaded plan).
           // SOL_FIX2: requested Termin not reachable → error, no fallback
-          data: (_) => _requestedNotFound
+          data: (_) => !_started
+              ? const Center(child: AppSpinner())
+              : _requestedNotFound
               ? Center(child: Text(context.l10n.attendanceFlutterNotFound))
               : ListView(
             padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 80)),

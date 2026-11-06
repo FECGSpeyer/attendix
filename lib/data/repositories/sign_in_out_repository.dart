@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/enums.dart';
 import '../../core/services/cross_tenant_service.dart' show CrossTenantService;
+import '../../core/utils/archived_attendance.dart';
 import '../../core/utils/event_list_utils.dart';
 import '../../core/utils/paged_query.dart';
 import '../models/attendance/attendance.dart';
@@ -19,8 +20,8 @@ final signInOutRepositoryProvider = Provider<SignInOutRepository>((ref) {
 /// Columns of `attendance` needed by the Terminlisten (signout, overview, parents).
 const String kSignoutAttendanceColumns =
     'id, date, type, typeInfo, songs, type_id, start_time, end_time, deadline, '
-    'duration_days, plan, share_plan, description, attachment_url, '
-    'attachment_name, files_folder, place, tenantId';
+    'duration_days, plan, extra_plans, share_plan, description, attachment_url, '
+    'attachment_name, files_folder, place, tenantId, archived';
 
 /// IOS_FORMS2: `attendance` columns of the Übersicht – exactly Ionic
 /// `getPersonAttendancesForTenant` (no `place`, `plan`, `share_plan`), so the
@@ -28,7 +29,7 @@ const String kSignoutAttendanceColumns =
 const String kOverviewAttendanceColumns =
     'id, date, type, typeInfo, songs, type_id, start_time, end_time, deadline, '
     'duration_days, description, attachment_url, attachment_name, '
-    'files_folder, tenantId';
+    'files_folder, tenantId, archived';
 
 /// Columns of `attendance_types` joined into the Terminlisten.
 const String kSignoutAttendanceTypeColumns =
@@ -306,6 +307,46 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// REDESIGN: Werke (history rows with song and conductor) of one own
+  /// Termin, the group of [personId] in that tenant and the tenant's type
+  /// (choir, orchestra, general …). Cross-tenant by design like "Meine Termine": every query is
+  /// filtered by the Termin's [tenantId] (one of the user's memberships).
+  Future<({List<Map<String, dynamic>> rows, int? instrumentId, String? tenantType})> getOwnProgram({
+    required int tenantId,
+    required int attendanceId,
+    required int? personId,
+  }) async {
+    try {
+      final rows = await supabase
+          .from('history')
+          .select('id, songId, person_id, otherConductor, '
+              'song:songId(id, name, number, prefix, link, instrument_ids, files), '
+              'person:person_id(firstName, lastName)')
+          .eq('attendance_id', attendanceId)
+          .eq('tenantId', tenantId)
+          .order('id', ascending: true);
+      int? instrumentId;
+      if (personId != null) {
+        final person = await supabase
+            .from('player')
+            .select('instrument')
+            .eq('id', personId)
+            .eq('tenantId', tenantId)
+            .maybeSingle();
+        instrumentId = _toInt(person?['instrument']);
+      }
+      final tenant = await supabase.from('tenants').select('type').eq('id', tenantId).maybeSingle();
+      return (
+        rows: List<Map<String, dynamic>>.from(rows as List),
+        instrumentId: instrumentId,
+        tenantType: tenant?['type'] as String?,
+      );
+    } catch (e, stack) {
+      handleError(e, stack, 'getOwnProgram');
+      rethrow;
+    }
+  }
+
   AttendanceType? _parseType(dynamic json) {
     if (json is! Map<String, dynamic>) return null;
     try {
@@ -344,8 +385,13 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
         return (page as List).cast<Map<String, dynamic>>();
       });
 
+      // Ionic 4.17.24: archived Termine only for admins/responsible – also
+      // not in the own list and average.
+      final showArchived = canSeeArchivedAttendances(currentUserRole);
       return response
           .where((json) => json['attendance'] != null)
+          .where((json) =>
+              showArchived || !isArchivedRow(json['attendance'] as Map<String, dynamic>?))
           .map((json) => _fromRows(
                 json['attendance'] as Map<String, dynamic>,
                 json,
@@ -445,6 +491,12 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
       tenantName: tenantName,
       tenantColor: tenantColor,
       plan: att['plan'] as Map<String, dynamic>?,
+      extraPlans: att['extra_plans'] is List
+          ? [
+              for (final p in att['extra_plans'] as List)
+                if (p is Map) Map<String, dynamic>.from(p),
+            ]
+          : null,
       sharePlan: att['share_plan'] == true,
       typeId: att['type_id']?.toString(),
       includeInAverage: type?.includeInAverage ?? true,
@@ -494,12 +546,16 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
       // SEC: cross-tenant by design – only the user's own memberships.
       final memberships = await supabase
           .from('tenantUsers')
-          .select('tenantId')
+          .select('tenantId, role')
           .eq('userId', userId);
       final tenantIds = <int>[];
+      // Ionic 4.17.24: archived Termine per membership role.
+      final roles = <int, Role>{};
       for (final m in memberships as List) {
         final id = _toInt(m['tenantId']);
         if (id != null && !tenantIds.contains(id)) tenantIds.add(id);
+        final role = _toInt(m['role']);
+        if (id != null && role != null) roles[id] = Role.fromValue(role);
       }
       if (tenantIds.isEmpty) return [];
 
@@ -519,6 +575,7 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
             tenantId: tenantId,
             tenant: tenantRows[tenantId],
             tenantColor: _getTenantColor(tenantId, tenantIds),
+            showArchived: canSeeArchivedAttendances(roles[tenantId]),
           ),
       ]);
 
@@ -535,6 +592,7 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
     required int tenantId,
     required Map<String, dynamic>? tenant,
     required String tenantColor,
+    bool showArchived = false,
   }) async {
     // SEC: the person of the user in this tenant (tenantId + appId).
     // SOL_FIX14: load every linked row incl. pending / left and pick the
@@ -569,6 +627,8 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
     return (rows as List)
         .where((json) => json['attendance'] != null)
         .where((json) => _toInt(json['attendance']['tenantId']) == tenantId)
+        .where((json) =>
+            showArchived || !isArchivedRow(json['attendance'] as Map<String, dynamic>?))
         // IOS_FORMS2: like Ionic, duty Termine are listed (and count for the
         // average) even when the person was not assigned.
         .map((json) => _fromRows(
@@ -644,6 +704,10 @@ class CrossTenantPersonAttendance {
   final String tenantName;
   final String tenantColor;
   final Map<String, dynamic>? plan;
+
+  /// PARITY_SELF: Ionic `attendance.extra_plans` (further plans, e.g. one per
+  /// day of a multi-day Termin) for the plan viewer's day chips.
+  final List<Map<String, dynamic>>? extraPlans;
   final bool sharePlan;
   final String? typeId;
   final bool includeInAverage;
@@ -693,6 +757,7 @@ class CrossTenantPersonAttendance {
     required this.tenantName,
     required this.tenantColor,
     this.plan,
+    this.extraPlans,
     this.sharePlan = false,
     this.typeId,
     this.includeInAverage = true,
@@ -731,6 +796,7 @@ class CrossTenantPersonAttendance {
       tenantName: tenantName,
       tenantColor: tenantColor,
       plan: plan,
+      extraPlans: extraPlans,
       sharePlan: sharePlan,
       typeId: typeId,
       includeInAverage: includeInAverage,

@@ -12,7 +12,7 @@ import '../../../../../core/services/song_file_service.dart';
 import '../../../../../core/services/zip_service.dart';
 import '../../../../../core/services/zip_service_stub.dart'
     if (dart.library.io) '../../../../../core/services/zip_service_io.dart'
-    if (dart.library.html) '../../../../../core/services/zip_service_web.dart'
+    if (dart.library.js_interop) '../../../../../core/services/zip_service_web.dart'
     as file_saver;
 import '../../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
@@ -27,7 +27,8 @@ import '../../../../../shared/widgets/adaptive/app_select.dart';
 import '../../../../songs/presentation/pages/song_detail_page.dart' show FileCategoryDialog;
 import '../../../../songs/presentation/utils/song_utils.dart';
 import '../../../../songs/presentation/widgets/file_drop/file_drop_target.dart';
-import '../../../../songs/presentation/widgets/file_upload_sheet.dart' show FileCategoryGuess, guessFileCategory, learnableTerm;
+import '../../../../songs/presentation/widgets/file_upload_sheet.dart'
+    show FileCategoryGuess, guessFileCategory, learnableTerm;
 import '../../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../../data/rd_work_files_controller.dart';
 import '../../../data/rd_work_files_logic.dart';
@@ -114,7 +115,13 @@ Future<void> rdAddWorkFiles(BuildContext context, WidgetRef ref, SongDetailData 
   if (review.isNotEmpty) {
     final result = await showAppDialog<_ReviewResult>(
       context: context,
-      builder: (_) => _ReviewDialog(items: review, groups: data.instruments, instruments: instruments, workName: data.song.name),
+      builder:
+          (_) => _ReviewDialog(
+            items: review,
+            groups: data.instruments,
+            instruments: instruments,
+            workName: data.song.name,
+          ),
     );
     if (result == null || !context.mounted) return;
     chosen.addAll(result.categories);
@@ -614,7 +621,7 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
                     ? const SizedBox(width: double.infinity)
                     : Padding(
                       padding: const EdgeInsets.only(bottom: 12),
-                      child: _UploadQueue(
+                      child: RdUploadQueue(
                         state: state,
                         groups: widget.groups,
                         onRetry: (id) => ref.read(rdWorkFilesProvider(_songId).notifier).retry(id),
@@ -843,6 +850,7 @@ class _FileRow extends StatelessWidget {
   /// null: "Sonstige …" (free text).
   final ValueChanged<_Category?> onCategory;
   final ValueChanged<bool> onRenameDone;
+
   /// The row's context comes along as anchor for the share sheet.
   final void Function(_RowAction action, BuildContext row) onAction;
 
@@ -1009,8 +1017,14 @@ class _CategoryButton extends StatelessWidget {
 }
 
 /// The upload queue: "Hochladen: 3 von 7", a bar and one row per file.
-class _UploadQueue extends StatelessWidget {
-  const _UploadQueue({required this.state, required this.groups, required this.onRetry, required this.onDismiss});
+class RdUploadQueue extends StatelessWidget {
+  const RdUploadQueue({
+    super.key,
+    required this.state,
+    required this.groups,
+    required this.onRetry,
+    required this.onDismiss,
+  });
 
   final RdWorkFilesState state;
   final List<Group> groups;
@@ -1057,59 +1071,77 @@ class _UploadQueue extends StatelessWidget {
           for (final u in state.uploads)
             Padding(
               padding: const EdgeInsets.only(top: 6),
-              child: Row(
-                children: [
-                  SizedBox(width: 28, child: _statusIcon(p, u.status)),
-                  Expanded(
-                    child: Text(
-                      u.file.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 14, color: p.text),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    width: 160,
-                    child: Text(
-                      SongUtils.fileLabel(
-                        SongFile(
-                          fileName: u.file.name,
-                          fileType: '',
-                          url: '',
-                          instrumentId: u.instrumentId,
-                          note: u.note,
-                        ),
-                        groups,
+              child: LayoutBuilder(
+                builder: (context, c) {
+                  final part = SongUtils.fileLabel(
+                    SongFile(fileName: u.file.name, fileType: '', url: '', instrumentId: u.instrumentId, note: u.note),
+                    groups,
+                  );
+                  // Phones: the part goes under the name, the status gets
+                  // only the room it needs.
+                  final compact = c.maxWidth < 520;
+                  final name = Text(
+                    u.file.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 14, color: p.text),
+                  );
+                  return Row(
+                    children: [
+                      SizedBox(width: 28, child: _statusIcon(p, u.status)),
+                      Expanded(
+                        child:
+                            compact
+                                ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    name,
+                                    Text(
+                                      part,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: RdType.meta(p, size: 13),
+                                    ),
+                                  ],
+                                )
+                                : name,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: RdType.meta(p, size: 13),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 150,
-                    child:
-                        u.status == RdUploadStatus.failed
-                            ? Align(
-                              alignment: Alignment.centerRight,
-                              child: Tooltip(
-                                message: u.error ?? '',
-                                child: RdTextLink(label: l10n.redesignCommonRetry, onTap: () => onRetry(u.id)),
-                              ),
-                            )
-                            : Text(
-                              switch (u.status) {
-                                RdUploadStatus.waiting => l10n.redesignFilesWaiting,
-                                RdUploadStatus.uploading => l10n.redesignFilesUploading,
-                                _ => l10n.redesignFilesDone,
-                              },
-                              textAlign: TextAlign.end,
-                              style: RdType.meta(p, size: 13),
-                            ),
-                  ),
-                  const SizedBox(width: 6),
-                ],
+                      const SizedBox(width: 8),
+                      if (!compact)
+                        SizedBox(
+                          width: 160,
+                          child: Text(
+                            part,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: RdType.meta(p, size: 13),
+                          ),
+                        ),
+                      SizedBox(
+                        width: compact ? null : 150,
+                        child:
+                            u.status == RdUploadStatus.failed
+                                ? Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Tooltip(
+                                    message: u.error ?? '',
+                                    child: RdTextLink(label: l10n.redesignCommonRetry, onTap: () => onRetry(u.id)),
+                                  ),
+                                )
+                                : Text(
+                                  switch (u.status) {
+                                    RdUploadStatus.waiting => l10n.redesignFilesWaiting,
+                                    RdUploadStatus.uploading => l10n.redesignFilesUploading,
+                                    _ => l10n.redesignFilesDone,
+                                  },
+                                  textAlign: TextAlign.end,
+                                  style: RdType.meta(p, size: 13),
+                                ),
+                      ),
+                      const SizedBox(width: 6),
+                    ],
+                  );
+                },
               ),
             ),
         ],
@@ -1175,10 +1207,8 @@ class _ConflictDialog extends StatelessWidget {
   }
 }
 
-typedef _ReviewResult = ({
-  Map<PlatformFile, ({int? instrumentId, String? note})> categories,
-  Map<int, List<String>> terms,
-});
+typedef _ReviewResult =
+    ({Map<PlatformFile, ({int? instrumentId, String? note})> categories, Map<int, List<String>> terms});
 
 /// "Zuordnung prüfen": the dropped files whose part was not recognised for
 /// sure, each with a part menu and "künftig so erkennen" once changed.
@@ -1196,11 +1226,17 @@ class _ReviewDialog extends StatefulWidget {
 
 class _ReviewDialogState extends State<_ReviewDialog> {
   late final Map<PlatformFile, int?> _ids = {for (final i in widget.items) i.file: i.guess.instrumentId};
+
   /// An unsure part can be confirmed for learning right away (unchecked).
   late final Map<PlatformFile, String> _terms = {
     for (final i in widget.items)
       if (i.guess.confidence == MatchConfidence.unsure && !i.guess.byVision)
-        if (learnableTerm(i.file.name, chosenId: i.guess.instrumentId, instruments: widget.instruments, workName: widget.workName)
+        if (learnableTerm(
+              i.file.name,
+              chosenId: i.guess.instrumentId,
+              instruments: widget.instruments,
+              workName: widget.workName,
+            )
             case final term?)
           i.file: term,
   };
@@ -1224,10 +1260,7 @@ class _ReviewDialogState extends State<_ReviewDialog> {
     Navigator.pop<_ReviewResult>(context, (
       categories: {
         for (final i in widget.items)
-          i.file: (
-            instrumentId: _ids[i.file],
-            note: _ids[i.file] == null ? i.guess.note : null,
-          ),
+          i.file: (instrumentId: _ids[i.file], note: _ids[i.file] == null ? i.guess.note : null),
       },
       terms: _learnedTerms(),
     ));
@@ -1276,7 +1309,12 @@ class _ReviewDialogState extends State<_ReviewDialog> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(i.file.name, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                          Text(
+                            i.file.name,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                          ),
                           Text(
                             i.guess.byVision && i.guess.confidence == MatchConfidence.sure
                                 ? l10n.songsFlutterVisionSure(_visionLabel(i.guess))
@@ -1287,11 +1325,12 @@ class _ReviewDialogState extends State<_ReviewDialog> {
                                 : l10n.songsFlutterDetectNone,
                             style: TextStyle(
                               fontSize: 12,
-                              color: i.guess.confidence == MatchConfidence.sure
-                                  ? p.present
-                                  : i.guess.confidence == MatchConfidence.unsure
-                                  ? p.late
-                                  : p.absent,
+                              color:
+                                  i.guess.confidence == MatchConfidence.sure
+                                      ? p.present
+                                      : i.guess.confidence == MatchConfidence.unsure
+                                      ? p.late
+                                      : p.absent,
                             ),
                           ),
                         ],

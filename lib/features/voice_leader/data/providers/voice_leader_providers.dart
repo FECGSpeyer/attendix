@@ -4,6 +4,7 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
+import '../../../../core/utils/people_sort.dart';
 import '../../../../data/models/person/person.dart';
 
 /// Model for a voice group member with their upcoming absences
@@ -71,7 +72,8 @@ final voiceGroupMembersProvider =
   // Load every active player in the same voice group.
   final players = await playerRepo.getPlayersByInstrument(instrumentId);
 
-  // Batch-fetch upcoming absences for all of them in a single query.
+  // Batch-fetch upcoming absences for all of them (from yesterday on, paged;
+  // the exact "after the start of today" check follows below).
   final playerIds = players
       .where((p) => p.id != null)
       .map((p) => p.id!)
@@ -79,8 +81,8 @@ final voiceGroupMembersProvider =
   final absencesRows =
       await attendanceRepo.getUpcomingAbsencesForPersons(playerIds);
 
-  // Group absences by person_id, filtering past dates in Dart so the SQL
-  // semantics stay identical to the previous implementation.
+  // Group absences by person_id; the exact date check runs in Dart like
+  // Ionic (local start of today).
   final now = DateTime.now();
   final startOfToday = DateTime(now.year, now.month, now.day);
   final absencesByPerson = <int, List<UpcomingAbsence>>{};
@@ -136,9 +138,8 @@ String voiceLeaderAbsenceTitle(Map attendance) {
 
 /// PARITY_R10: Ionic sort order (lastName, then firstName).
 int compareVoiceGroupMembers(VoiceGroupMember a, VoiceGroupMember b) {
-  // JS localeCompare ignores case; compare case-insensitively.
-  final byLast =
-      a.person.lastName.toLowerCase().compareTo(b.person.lastName.toLowerCase());
+  // JS localeCompare: case-insensitive, umlauts with their base letter.
+  final byLast = localeCompareDe(a.person.lastName, b.person.lastName);
   if (byLast != 0) return byLast;
-  return a.person.firstName.toLowerCase().compareTo(b.person.firstName.toLowerCase());
+  return localeCompareDe(a.person.firstName, b.person.firstName);
 }

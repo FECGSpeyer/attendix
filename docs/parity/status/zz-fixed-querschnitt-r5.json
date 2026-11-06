@@ -1,0 +1,43 @@
+{
+ "batch": "zz-fixed-querschnitt-r5",
+ "ionic": "1923d203",
+ "afterRound": 5,
+ "items": {
+  "x-95b3cf867d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/",
+    "test/core/utils/querschnitt_parity_test.dart"
+   ],
+   "n": "alle 50 .order() ohne Richtung mit Ionic verglichen und ascending: true gesetzt; Wächter-Test gegen neue nackte .order()"
+  },
+  "x-afb9c7a207": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart"
+   ],
+   "n": "Kinder der Eltern: instrument und lastName aufsteigend wie Ionic"
+  },
+  "x-9da1d11c08": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart"
+   ],
+   "n": "Gruppenkategorien: sort_order, dann name aufsteigend wie Ionic"
+  },
+  "songs/song/song.page#action-399b39c6": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_pdf_print.dart"
+   ],
+   "n": "Fehler beim Laden der Personen: Toast und Abbruch wie Ionic db.getPlayers"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-3207b9c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ],
+   "n": "geänderter Zahl-Standardwert wird als Zahl gespeichert (leer = null wie ion-input type=number)"
+  }
+ }
+}

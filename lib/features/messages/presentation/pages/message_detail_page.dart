@@ -2,24 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
+import '../../../../core/providers/auto_message_providers.dart';
 import '../../../../core/providers/message_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/quill_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../data/models/auto_message/auto_message.dart';
 import '../../../../data/models/message/message.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../settings/presentation/widgets/settings_list.dart';
 import '../message_format.dart';
+import '../widgets/message_termin_section.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../core/services/native/native_file_service.dart';
 
 enum _Filter { all, read, open, problems }
 
@@ -43,6 +46,52 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
 
   bool _switchingTenant = false;
 
+  /// PARITY_UEBERSICHT: Ionic load() shows one red toast "Mitteilung konnte
+  /// nicht geladen werden" when any part of loading fails (message, instance
+  /// switch, recipients, earlier messages); reset on pull-to-refresh.
+  bool _loadErrorShown = false;
+
+  void _showLoadError() {
+    if (_loadErrorShown || !mounted) return;
+    _loadErrorShown = true;
+    ToastHelper.showError(context, context.l10n.messagesLoadFailed);
+  }
+
+  static bool _failed(AsyncValue<Object?>? value) =>
+      value != null && value.hasError && !value.isLoading;
+
+  /// Toast on every load that ends in an error, also error → reload → error.
+  void _listenLoadError<T>(ProviderListenable<AsyncValue<T>> provider) {
+    ref.listen<AsyncValue<T>>(provider, (prev, next) {
+      if (_failed(next) && (prev == null || prev.isLoading || !prev.hasError)) {
+        _showLoadError();
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // ref.listen only reports changes: an error state that already exists
+    // when the page opens (e.g. a cached failed load) is reported once here.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final messageAsync = ref.read(messageByIdProvider(widget.messageId));
+      final message = messageAsync.valueOrNull;
+      var failed = _failed(messageAsync);
+      if (message != null) {
+        final role = ref.read(effectiveRoleProvider);
+        final isManager = (role.isAdmin || role.isResponsible) &&
+            message.tenantId == ref.read(currentTenantIdProvider);
+        failed = failed ||
+            _failed(isManager
+                ? ref.read(messageRecipientsProvider(message.id))
+                : ref.read(receivedMessagesProvider));
+      }
+      if (failed) _showLoadError();
+    });
+  }
+
   bool get _isManager {
     final role = ref.watch(effectiveRoleProvider);
     return role.isAdmin || role.isResponsible;
@@ -65,6 +114,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
         await ref.read(currentTenantUserProvider.future);
       } catch (_) {
         // Stay on the current instance; the message is still shown.
+        _showLoadError();
       } finally {
         if (mounted) setState(() => _switchingTenant = false);
       }
@@ -105,6 +155,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
   }
 
   Future<void> _refresh() async {
+    _loadErrorShown = false;
     ref.invalidate(messageRecipientsProvider(widget.messageId));
     ref.invalidate(messageByIdProvider(widget.messageId));
     await ref.read(messageByIdProvider(widget.messageId).future);
@@ -118,6 +169,14 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
     final isManager = _isManager &&
         (message == null || message.tenantId == ref.watch(currentTenantIdProvider));
     final l10n = context.l10n;
+    _listenLoadError(messageByIdProvider(widget.messageId));
+    if (message != null) {
+      if (isManager) {
+        _listenLoadError(messageRecipientsProvider(message.id));
+      } else {
+        _listenLoadError(receivedMessagesProvider);
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -162,9 +221,33 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
           }
           _markReadOnce();
           final showContent = _showContent ?? !isManager;
+          // AUTO_MESSAGES (Ionic 4.18): placeholders filled – members get
+          // their own copy (language + per-person values).
+          final autoInfo = ref.watch(messageAutoInfoProvider(message.id)).valueOrNull;
+          final ownInfo =
+              isManager ? null : ref.watch(ownRecipientAutoInfoProvider(message.id)).valueOrNull;
+          final display = personalizeMessage(message, autoInfo, ownInfo);
           final children = <Widget>[
-            if (isManager) _managerHeader(message, showContent),
-            if (showContent) _MessageCard(message: message, showTitle: !isManager),
+            if (isManager) _managerHeader(message, showContent, display.title),
+            if (showContent)
+              _MessageCard(
+                message: message,
+                showTitle: !isManager,
+                title: display.title,
+                html: display.html,
+              ),
+            if (!isManager && autoInfo?.attendanceId != null)
+              MessageTerminSection(messageId: message.id, info: autoInfo!, recipient: ownInfo),
+            if (isManager && autoInfo?.attendanceId != null)
+              SettingsListSection(
+                children: [
+                  SettingsListTile(
+                    icon: Icons.calendar_today_outlined,
+                    title: l10n.autoMessagesOpenTermin,
+                    onTap: () => context.push('/attendance/${autoInfo!.attendanceId}'),
+                  ),
+                ],
+              ),
             if (isManager)
               ..._managerOverview(message)
             else
@@ -182,7 +265,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
     );
   }
 
-  Widget _managerHeader(Message message, bool showContent) {
+  Widget _managerHeader(Message message, bool showContent, String title) {
     final theme = Theme.of(context);
     final meta = [
       MessageFormat.dateTime(message.createdAt),
@@ -193,7 +276,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
     // chevron-up/down in medium at the end).
     final tile = ListTile(
       title: Text(
-        message.title,
+        title,
         style: ionIsIos(context)
             ? const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)
             : theme.textTheme.titleMedium,
@@ -447,10 +530,19 @@ class _RecipientRow extends StatelessWidget {
 
 /// The formatted message body (server-rendered allowlisted HTML).
 class _MessageCard extends StatefulWidget {
-  const _MessageCard({required this.message, required this.showTitle});
+  const _MessageCard({
+    required this.message,
+    required this.showTitle,
+    required this.title,
+    required this.html,
+  });
 
   final Message message;
   final bool showTitle;
+
+  /// Title / HTML with the placeholders filled (Ionic `display`).
+  final String title;
+  final String html;
 
   @override
   State<_MessageCard> createState() => _MessageCardState();
@@ -468,7 +560,7 @@ class _MessageCardState extends State<_MessageCard> {
   @override
   void didUpdateWidget(covariant _MessageCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.message.bodyHtml != widget.message.bodyHtml) {
+    if (oldWidget.html != widget.html) {
       _controller.dispose();
       _controller = _build();
     }
@@ -476,7 +568,7 @@ class _MessageCardState extends State<_MessageCard> {
 
   QuillController _build() => QuillController(
     document: QuillUtils.documentFromNotesString(
-      widget.message.bodyHtml.isNotEmpty ? widget.message.bodyHtml : widget.message.bodyText,
+      widget.html.isNotEmpty ? widget.html : widget.message.bodyText,
     ),
     selection: const TextSelection.collapsed(offset: 0),
     readOnly: true,
@@ -491,11 +583,8 @@ class _MessageCardState extends State<_MessageCard> {
   Future<void> _openLink(String url) async {
     final uri = Uri.tryParse(url);
     if (uri == null) return;
-    try {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (_) {
-      // ignore
-    }
+    // Ionic message-detail Browser.open: in-app browser in the native app.
+    await NativeFileService.openLinkInApp(uri);
   }
 
   @override
@@ -513,7 +602,7 @@ class _MessageCardState extends State<_MessageCard> {
           children: [
             if (widget.showTitle) ...[
               Text(
-                m.title,
+                widget.title,
                 style: ios
                     ? const TextStyle(fontSize: 20.8, fontWeight: FontWeight.w700)
                     : theme.textTheme.headlineSmall,

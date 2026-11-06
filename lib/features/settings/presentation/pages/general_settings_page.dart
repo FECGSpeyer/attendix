@@ -26,6 +26,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/services/web_window.dart' show setUnloadWarning;
 
 /// German holiday regions
 const _holidayRegions = [
@@ -63,9 +64,11 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   final _shortNameController = TextEditingController();
   final _longNameController = TextEditingController();
 
-  // Times
-  final _practiceStartController = TextEditingController();
-  final _practiceEndController = TextEditingController();
+  // Ionic: practiceStart/practiceEnd are not editable on this page, only
+  // written back unchanged (default 18:00/20:00). Planning uses
+  // practiceStart as the default time of a Probe.
+  String _practiceStart = '18:00';
+  String _practiceEnd = '20:00';
 
   // Settings
   DateTime? _seasonStart;
@@ -106,10 +109,9 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
   @override
   void dispose() {
+    setUnloadWarning(this, false);
     _shortNameController.dispose();
     _longNameController.dispose();
-    _practiceStartController.dispose();
-    _practiceEndController.dispose();
     _showAllInfoTextController.dispose();
     super.dispose();
   }
@@ -127,8 +129,8 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       _longNameController.text = tenant.longName;
       // PARITY_R10: Ionic general.page defaults (practice 18:00–20:00,
       // season start db.getCurrentAttDate() → 2023-01-01) and the local date.
-      _practiceStartController.text = tenant.practiceStart ?? '18:00';
-      _practiceEndController.text = tenant.practiceEnd ?? '20:00';
+      _practiceStart = (tenant.practiceStart ?? '').isNotEmpty ? tenant.practiceStart! : '18:00';
+      _practiceEnd = (tenant.practiceEnd ?? '').isNotEmpty ? tenant.practiceEnd! : '20:00';
       _seasonStart = (tenant.seasonStart != null
               ? DateTime.tryParse(tenant.seasonStart!)?.toLocal()
               : null) ??
@@ -159,7 +161,14 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
           _selectedRegistrationFields.add(required);
         }
       }
-      _criticalRules = List.from(tenant.criticalRules ?? []);
+      // Ionic ngOnInit: legacy rules without period_type get 'days' (saved
+      // with the next save; evaluate-critical-rules then counts 30 days).
+      _criticalRules = [
+        for (final r in tenant.criticalRules ?? const <CriticalRule>[])
+          r.periodType == null
+              ? r.copyWith(periodType: CriticalRulePeriodType.days)
+              : r,
+      ];
 
     } catch (e) {
       if (mounted) {
@@ -216,13 +225,16 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         throw Exception('Kein Tenant ausgewählt');
       }
 
+      final songSharingId =
+          _songSharingEnabled ? (_songSharingId ?? const Uuid().v4()) : null;
+      final registerId =
+          _registrationEnabled ? (_registerId ?? const Uuid().v4()) : null;
+
       await supabase.from('tenants').update({
         'shortName': _shortNameController.text.trim(),
         'longName': _longNameController.text.trim(),
-        'practiceStart': _practiceStartController.text.trim().isNotEmpty
-            ? _practiceStartController.text.trim() : null,
-        'practiceEnd': _practiceEndController.text.trim().isNotEmpty
-            ? _practiceEndController.text.trim() : null,
+        'practiceStart': _practiceStart,
+        'practiceEnd': _practiceEnd,
         'seasonStart': _seasonStart?.toIso8601String().split('T')[0],
         'region': _selectedRegion.isNotEmpty ? _selectedRegion : null,
         'showHolidays': _showHolidays,
@@ -242,8 +254,8 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         'late_reasons': normalizeReasons(_lateReasons),
         // DUTY: only sent when the tenant uses the Dienstplan at all
         if (ref.read(hasDutyTypesProvider)) 'duty_view': _dutyView,
-        'song_sharing_id': _songSharingEnabled ? (_songSharingId ?? const Uuid().v4()) : null,
-        'register_id': _registrationEnabled ? (_registerId ?? const Uuid().v4()) : null,
+        'song_sharing_id': songSharingId,
+        'register_id': registerId,
         // Ionic general.page: registration off → no auto approve, no fields
         'auto_approve_registrations':
             _registrationEnabled ? _autoApproveRegistrations : false,
@@ -262,6 +274,12 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
           'operator': r.operator == CriticalRuleOperator.and ? 'AND' : 'OR',
         }).toList(),
       }).eq('id', tenantId);
+
+      // Ionic updateTenantData replaces the tenant with the saved row: a link
+      // switched off is gone (null), so switching it on again in this visit
+      // creates a NEW id instead of reviving the revoked link.
+      _songSharingId = songSharingId;
+      _registerId = registerId;
 
       // SETTINGS2: Ionic re-evaluates the Problemfall rules right away
       try {
@@ -315,11 +333,18 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   }
 
   Future<void> _selectSeasonStart() async {
+    // Ionic ion-datetime max = today, no lower bound (field-dd151934).
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final first = DateTime(1900);
+    var initial = _seasonStart ?? today;
+    if (initial.isAfter(today)) initial = today;
+    if (initial.isBefore(first)) initial = first;
     final picked = await showAppDatePicker(
       context: context,
-      initialDate: _seasonStart ?? DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
+      initialDate: initial,
+      firstDate: first,
+      lastDate: today,
       locale: Locale(currentLanguage()), // PARITY_R10: app language
     );
     if (picked != null) {
@@ -329,28 +354,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         _hasChanges = true;
       });
     }
-  }
-
-  Future<void> _selectTime(TextEditingController controller) async {
-    final initialTime = _parseTime(controller.text) ?? const TimeOfDay(hour: 19, minute: 0);
-    final picked = await showAppTimePicker(
-      context: context,
-      initialTime: initialTime,
-    );
-    if (picked != null) {
-      controller.text = '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
-      _markChanged();
-    }
-  }
-
-  TimeOfDay? _parseTime(String time) {
-    if (time.isEmpty) return null;
-    final parts = time.split(':');
-    if (parts.length != 2) return null;
-    final hour = int.tryParse(parts[0]);
-    final minute = int.tryParse(parts[1]);
-    if (hour == null || minute == null) return null;
-    return TimeOfDay(hour: hour, minute: minute);
   }
 
   List<Widget> _buildRegistrationFieldChips() {
@@ -408,6 +411,8 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Ionic beforeunload: closing/reloading the browser tab warns too.
+    setUnloadWarning(this, _hasChanges);
     return PopScope(
       canPop: !_hasChanges,
       onPopInvokedWithResult: (didPop, _) {
@@ -501,27 +506,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                         helper: context.l10n.generalSettingsSeasonHelper,
                         trailing: ionIsIos(context) ? null : const Icon(Icons.calendar_today_outlined),
                         onTap: _selectSeasonStart,
-                      ),
-                      // Flutter: Probenzeiten (Standardzeiten für neue Termine)
-                      IonStackedField(
-                        label: context.l10n.generalSettingsFlutterPracticeStart,
-                        hint: '19:00',
-                        builder: (decoration) => TextFormField(
-                          controller: _practiceStartController,
-                          decoration: decoration,
-                          readOnly: true,
-                          onTap: () => _selectTime(_practiceStartController),
-                        ),
-                      ),
-                      IonStackedField(
-                        label: context.l10n.generalSettingsFlutterPracticeEnd,
-                        hint: '21:30',
-                        builder: (decoration) => TextFormField(
-                          controller: _practiceEndController,
-                          decoration: decoration,
-                          readOnly: true,
-                          onTap: () => _selectTime(_practiceEndController),
-                        ),
                       ),
                       SettingsListTile(
                         title: context.l10n.generalSettingsAttTypes,
@@ -770,6 +754,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                       for (var index = 0; index < _criticalRules.length; index++)
                         CriticalRuleCard(
                           rule: _criticalRules[index],
+                          attendanceTypes: ref.watch(attendanceTypesProvider).valueOrNull ?? const [],
                           onEdit: () => _showEditCriticalRuleSheet(index),
                           onDelete: () => _confirmDeleteCriticalRule(index),
                         ),

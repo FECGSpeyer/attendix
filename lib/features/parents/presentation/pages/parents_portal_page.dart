@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
@@ -14,16 +15,18 @@ import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../self_service/presentation/widgets/plan_viewer_sheet.dart';
+import '../../../self_service/presentation/widgets/upcoming_songs_sheet.dart';
+import '../../../../core/utils/attendance_songs.dart';
 import '../../data/providers/parents_providers.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/parents_header_widgets.dart';
-import '../../../../core/providers/song_providers.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import 'package:attendix/shared/widgets/layout/side_nav/side_nav_layout.dart';
 
 /// Parents Portal Page (Ionic `selfService/parents`) in the card layout:
 /// children with percentage, "Heute" card with one row per child, upcoming
@@ -80,7 +83,35 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
     return name.length >= 2 ? name.substring(0, 2).toUpperCase() : name.toUpperCase();
   }
 
+  /// Ionic 4.17.26: Werke selected for the Termin.
+  List<AttendanceSong> _songsOf(ParentAttendanceGroup g) =>
+      ref.read(parentAttendanceSongsProvider).valueOrNull?[g.attendanceId] ?? const [];
+
+  Widget? _songsChip(ParentAttendanceGroup g) {
+    final count = _songsOf(g).length;
+    if (count == 0) return null;
+    return EventChip(
+      label: context.l10n.attendanceSongsChip(count),
+      icon: Icons.music_note_outlined,
+      onTap: () => _openSongs(g),
+    );
+  }
+
+  /// Ionic parents `openAttendanceSongs`: only the Werk links (`linkOnly`).
+  Future<void> _openSongs(ParentAttendanceGroup g) {
+    final date = EventListUtils.parse(g.date);
+    return showAttendanceSongsSheet(
+      context,
+      title: _title(g),
+      subtitle: date == null ? '' : DateFormat(dateFmt()).format(date),
+      entries: _songsOf(g),
+      linkOnly: true,
+      onOpenPlan: g.hasPlan ? () => _showPlanViewer(g) : null,
+    );
+  }
+
   List<Widget> _chips(ParentAttendanceGroup g) => [
+        if (_songsChip(g) case final chip?) chip,
         if (g.hasPlan)
           EventChip(
             label: context.l10n.signoutRunSheet,
@@ -109,6 +140,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
     final upcomingAll = ref.watch(upcomingParentAttendancesProvider);
     final past = ref.watch(pastParentAttendancesProvider);
     ref.watch(attendanceTypesProvider);
+    ref.watch(parentAttendanceSongsProvider);
     // PUSH: rebuild when a push tap sets the pending Termin while this page
     // is open (Ionic effect on pendingAttendanceId).
     ref.watch(pendingAttendanceIdProvider);
@@ -133,9 +165,16 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
             ? null
             : CondenseTitle(condensed: condensed, child: const ParentsTenantTitle()),
         automaticallyImplyLeading: false,
+        // SIDE_NAV: menu button of the overlay panel (tablet portrait)
         leading: multiTenant
-            ? const Align(alignment: Alignment.centerLeft, child: ParentsTenantTitle())
-            : null,
+            ? Align(
+                alignment: Alignment.centerLeft,
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  if (SideNavMenuButton.maybe(context) case final menu?) menu,
+                  const Flexible(child: ParentsTenantTitle()),
+                ]),
+              )
+            : SideNavMenuButton.maybe(context),
         leadingWidth: multiTenant ? MediaQuery.sizeOf(context).width * 0.55 : null,
         // IOS_SHELL: iOS → one glass capsule (ion-buttons slot="end")
         actions: [
@@ -198,7 +237,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
               final groups = EventListUtils.groupByMonth(upcoming, (g) => g.date);
               return IonRefresher(
                 onRefresh: () async {
-                  ref.invalidate(currentSongsProvider);
+                  ref.invalidate(parentAttendanceSongsProvider);
                   ref.invalidate(parentChildrenProvider);
                   ref.invalidate(childrenAttendancesProvider);
                   await ref.read(childrenAttendancesProvider.future);
@@ -301,6 +340,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                                   spacing: 6,
                                   runSpacing: 6,
                                   children: [
+                                    if (_songsChip(g) case final chip?) chip,
                                     for (final c in g.childAttendances)
                                       EventPill(
                                         label:
@@ -421,15 +461,10 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
   Future<void> _signIn(ParentAttendanceGroup group, List<String> ids, ChildPersonAttendance? child) async {
     // ASTRA_PARENTS: one call for all children; a failure of any child is
     // reported (Ionic aborts the loop at the first error, no success toast).
-    final entries = [
-      for (final id in ids)
-        (
-          id,
-          SignInType.fromStatus(group.childAttendances
-              .firstWhere((c) => c.id == id, orElse: () => child ?? group.childAttendances.first)
-              .status),
-        ),
-    ];
+    // PARITY_SELF: Ionic parents signin(attendance) reads the status of the
+    // Termin object (none) → always type 'signin', so the conductors get the
+    // normal sign-in notification for every child.
+    final entries = [for (final id in ids) (id, SignInType.normal)];
     final ok = await ref.read(parentSignInOutNotifierProvider.notifier).signInAll(entries);
     if (!mounted) return;
     if (!ok) {

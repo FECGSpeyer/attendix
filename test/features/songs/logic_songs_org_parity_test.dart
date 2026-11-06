@@ -144,7 +144,7 @@ void main() {
       ], type, DateTime(2026, 11, 3));
       expect(rows, hasLength(2));
       final repo = _read('lib/data/repositories/protocol_repository.dart');
-      expect(repo, contains("select('id, instrument, additional_fields, shift_id, shift_start, shift_name')"));
+      expect(repo, contains("select('id, appId, global_person_id, instrument, additional_fields, shift_id, shift_start, shift_name, paused')"));
     });
   });
 
@@ -167,7 +167,7 @@ void main() {
       final page = _read('lib/features/tenant_selection/presentation/pages/tenant_create_page.dart');
       expect(page, contains('timezone: deviceTimezone()'));
       expect(page, contains('context.l10n.dbInstanceCreated'));
-      expect(page, contains('context.go(Role.admin.defaultRoute)'));
+      expect(page, contains('router.go(Role.admin.defaultRoute)'));
     });
   });
 

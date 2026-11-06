@@ -28,6 +28,7 @@ export 'role_permission_providers.dart';
 export 'files_providers.dart';
 // END SETTINGS_EXT
 export 'message_providers.dart';
+export 'auto_message_providers.dart';
 export 'dashboard_providers.dart';
 export 'player_absence_providers.dart';
 export 'import_providers.dart';
@@ -50,3 +51,5 @@ export 'live_activity_providers.dart';
 // REDESIGN: new design (Beta)
 export 'redesign_providers.dart';
 export 'account_switch_providers.dart';
+// SHOREBIRD: code push patch number in the version label
+export 'shorebird_providers.dart';

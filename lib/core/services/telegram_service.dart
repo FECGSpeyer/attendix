@@ -195,7 +195,7 @@ class TelegramService {
 
       await _supabase.from('notifications').insert({
         ...newConfig.toJson(),
-        'created_at': newConfig.createdAt!.toIso8601String(),
+        'created_at': newConfig.createdAt!.toUtc().toIso8601String(),
       });
       return newConfig;
     }

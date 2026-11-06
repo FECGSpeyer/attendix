@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/table_names.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/utils/db_helpers.dart';
@@ -11,6 +12,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/account_repository.dart';
 import '../../../../data/repositories/player_repository.dart';
+import '../../../../data/repositories/profile_repository.dart' show syncOwnPlayerImage;
 import '../../../../data/repositories/user_registration_repository.dart';
 import '../../../auth/data/auth_flow_service.dart';
 import '../../../../l10n/l10n.dart';
@@ -29,22 +31,69 @@ final tenantByRegisterIdProvider = FutureProvider.family<Tenant?, String>((ref, 
   return Tenant.fromJson(response);
 });
 
-/// Provider for loading groups for a tenant
+/// Provider for loading groups for a tenant (Ionic GroupService.getGroups:
+/// category, sort_order (nulls last), name; then `maingroup !== true`, so
+/// groups without a maingroup value stay in the list).
 final registrationGroupsProvider = FutureProvider.family<List<Map<String, dynamic>>, int>((ref, tenantId) async {
   final supabase = ref.watch(supabaseClientProvider);
 
   final response = await supabase
       .from('instruments')
-      .select('id, name')
+      .select('id, name, maingroup')
       .eq('tenantId', tenantId)
-      .eq('maingroup', false)
-      .order('name');
+      .order('category', ascending: true)
+      .order('sort_order', ascending: true)
+      .order('name', ascending: true);
 
-  return (response as List).map((g) => {
-    'id': g['id'] as int,
-    'name': g['name'] as String,
-  }).toList();
+  return (response as List)
+      .where((g) => g['maingroup'] != true)
+      .map((g) => {
+            'id': g['id'] as int,
+            'name': g['name'] as String,
+          })
+      .toList();
 });
+
+/// Ionic tenant-register ngOnInit: the extra fields of the registration in
+/// the order of `registration_fields`.
+List<ExtraField> orderedRegistrationFields(
+  List<String> registrationFields,
+  List<ExtraField> additionalFields,
+) {
+  final fields = <ExtraField>[];
+  for (final id in registrationFields) {
+    final field = additionalFields.where((f) => f.id == id).firstOrNull;
+    if (field != null) fields.add(field);
+  }
+  return fields;
+}
+
+/// Ionic ion-input type=number (NumericValueAccessor parseFloat): the entered
+/// number, whole numbers as int. Accepts a decimal comma (German keyboards).
+/// `null` when the input is not a finite number.
+num? parseRegistrationNumber(String input) {
+  final parsed = double.tryParse(input.trim().replaceAll(',', '.'));
+  if (parsed == null || !parsed.isFinite) return null;
+  if (parsed == parsed.truncateToDouble() && parsed.abs() <= 9007199254740991) {
+    return parsed.toInt();
+  }
+  return parsed;
+}
+
+/// Ionic tenant-register ngOnInit: every registration field starts with its
+/// `defaultValue` (church: none) and register() stores each field value in
+/// `additional_fields`, so an untouched select keeps its default.
+Map<String, dynamic> registrationFieldDefaults(
+  List<String> registrationFields,
+  List<ExtraField> additionalFields,
+) {
+  return {
+    for (final field
+        in orderedRegistrationFields(registrationFields, additionalFields))
+      if (field.id != 'bfecg_church' && field.defaultValue != null)
+        field.id: field.defaultValue,
+  };
+}
 
 /// Model for registration form data
 class RegistrationFormData {
@@ -59,6 +108,9 @@ class RegistrationFormData {
   String? notes;
   Map<String, dynamic> additionalFields;
   Uint8List? profileImageBytes;
+
+  /// Content type of [profileImageBytes] (as picked, not re-encoded).
+  String? profileImageMimeType;
 
   RegistrationFormData({
     this.email = '',
@@ -228,8 +280,8 @@ class RegistrationService {
           await supabase.storage.from(SupabaseBuckets.profiles).uploadBinary(
                 storagePath,
                 formData.profileImageBytes!,
-                fileOptions: const FileOptions(
-                  contentType: 'image/jpeg',
+                fileOptions: FileOptions(
+                  contentType: formData.profileImageMimeType ?? 'image/jpeg',
                   upsert: true,
                 ),
               );
@@ -241,6 +293,11 @@ class RegistrationService {
               .update({'img': publicUrl})
               .eq('id', playerId)
               .eq('tenantId', tenantId);
+          // Ionic tenant-register: updateImage with the signed-in account →
+          // the picture goes to all of its instances.
+          if (supabase.auth.currentUser?.id == userId) {
+            await syncOwnPlayerImage(supabase, userId: userId, img: publicUrl);
+          }
         } catch (e, stack) {
           // Log but don't block registration
           debugPrint('Profile image upload failed: $e\n$stack');
@@ -332,6 +389,9 @@ Map<String, dynamic> buildRegistrationPlayerData({
     'playsSince': todayIso,
     'joined': todayIso,
     'additional_fields': formData.additionalFields,
+    // Ionic addPlayer: without a picture the row gets DEFAULT_IMAGE; a chosen
+    // picture is uploaded afterwards and sets `img` then.
+    if (formData.profileImageBytes == null) 'img': kDefaultAvatarUrl,
   };
 }
 

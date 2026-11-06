@@ -32,7 +32,7 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
           .select('*')
           .eq('person_id', personId)
           .eq('tenant_id', currentTenantId)
-          .order('from_date');
+          .order('from_date', ascending: true);
 
       return (response as List)
           .map((e) => PlayerAbsence.fromJson(e as Map<String, dynamic>))
@@ -54,7 +54,7 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
             .from('player_absences')
             .select('*')
             .eq('tenant_id', currentTenantId)
-            .order('id')
+            .order('id', ascending: true)
             .range(from, to);
         return page as List;
       });
@@ -186,16 +186,31 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
     return int.tryParse(raw?.toString() ?? '') ?? AttendanceStatus.neutral.value;
   }
 
+  /// PARITY_SELF: rows limited to [onlyIds] (person_attendances.id) when set.
+  /// Ionic "Meine Termine" only touches the Termine it lists
+  /// (`currentAttendance` + `actualAttendances`): no unassigned duties and,
+  /// in the Dienstplan view, no own duties.
+  static List<Map<String, dynamic>> limitToIds(
+    List<Map<String, dynamic>> rows,
+    Set<String>? onlyIds,
+  ) =>
+      onlyIds == null
+          ? rows
+          : rows.where((r) => onlyIds.contains(r['id']?.toString())).toList();
+
   /// Excuse all upcoming attendances in the absence range that are not yet
   /// excused (status = Entschuldigt, notes = reason). Returns the count.
+  /// [onlyIds]: see [limitToIds] (self-service).
   Future<int> excuseUpcomingAttendances({
     required int personId,
     required String fromDate,
     required String untilDate,
     required String reason,
+    Set<String>? onlyIds,
   }) async {
     try {
-      final rows = await _upcomingInRange(personId, fromDate, untilDate);
+      final rows = limitToIds(
+          await _upcomingInRange(personId, fromDate, untilDate), onlyIds);
       final toExcuse = rows
           .where((r) => _statusOf(r['status']) != AttendanceStatus.excused.value)
           .toList();
@@ -225,14 +240,19 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
   /// After deleting an absence: reset upcoming attendances in its range that
   /// are excused with exactly the absence reason back to the attendance
   /// type's default status (fallback Neutral) with empty notes.
+  /// [onlyIds]: see [limitToIds] (self-service).
   Future<int> resetExcusedAttendances({
     required PlayerAbsence absence,
+    Set<String>? onlyIds,
   }) async {
     try {
-      final rows = await _upcomingInRange(
-        absence.personId,
-        absence.fromDate,
-        absence.untilDate,
+      final rows = limitToIds(
+        await _upcomingInRange(
+          absence.personId,
+          absence.fromDate,
+          absence.untilDate,
+        ),
+        onlyIds,
       );
       final toReset = rows
           .where((r) =>

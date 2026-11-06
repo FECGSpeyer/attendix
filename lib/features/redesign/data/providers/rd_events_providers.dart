@@ -9,6 +9,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import 'rd_today_providers.dart';
 import '../rd_dates.dart';
+import '../rd_event_phase.dart';
 
 /// REDESIGN: data of the "Termine" tab. Only reads through the existing
 /// `…RepositoryWithTenantProvider`s (no new tables, no writes).
@@ -19,8 +20,10 @@ final rdUpcomingCountsProvider =
     FutureProvider.autoDispose<Map<int, RdStatusCounts>>((ref) async {
   ref.watch(attendanceRefetchCounter);
   // Refetch only when the set of upcoming Termine changes.
+  // Watch the types too, so the list is recomputed once they are loaded.
+  final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
   final key = ref.watch(realtimeAttendanceListProvider.select((v) =>
-      rdUpcoming(v.valueOrNull ?? const <Attendance>[])
+      rdUpcoming(v.valueOrNull ?? const <Attendance>[], types: types)
           .map((a) => a.id)
           .whereType<int>()
           .join(',')));
@@ -40,23 +43,33 @@ final rdUpcomingCountsProvider =
   };
 });
 
-/// Upcoming (not ended) Termine, soonest first.
-List<Attendance> rdUpcoming(List<Attendance> all, {DateTime? now}) {
+/// Days of [a]: its own `duration_days`, else the default of its all-day
+/// type from [types] (see [rdEffectiveDurationDays]).
+int? rdAttendanceDurationDays(Attendance a, List<AttendanceType> types) {
+  final type = a.typeId == null ? null : types.where((t) => t.id == a.typeId).firstOrNull;
+  return rdEffectiveDurationDays(a.durationDays,
+      typeAllDay: type?.allDay ?? false, typeDurationDays: type?.durationDays);
+}
+
+/// Upcoming (not ended) Termine, soonest first. [types] give all-day
+/// Termine without own `duration_days` the length of their type.
+List<Attendance> rdUpcoming(List<Attendance> all, {DateTime? now, List<AttendanceType> types = const []}) {
   final current = now ?? DateTime.now();
   DateTime keyOf(Attendance a) => rdStartOf(a.date, a.startTime) ?? DateTime(9999);
   return all
-      .where((a) => !EventListUtils.hasEnded(a.date, a.durationDays, now: current))
+      .where((a) => !EventListUtils.hasEnded(a.date, rdAttendanceDurationDays(a, types), now: current))
       .toList()
     ..sort((a, b) => keyOf(a).compareTo(keyOf(b)));
 }
 
 /// Termine that ended within the last [days] days, oldest first (UX D4).
-List<Attendance> rdRecentPast(List<Attendance> all, {DateTime? now, int days = 14}) {
+List<Attendance> rdRecentPast(List<Attendance> all,
+    {DateTime? now, int days = 14, List<AttendanceType> types = const []}) {
   final current = now ?? DateTime.now();
   final from = DateTime(current.year, current.month, current.day).subtract(Duration(days: days));
   DateTime keyOf(Attendance a) => rdStartOf(a.date, a.startTime) ?? DateTime(1970);
   return all
-      .where((a) => EventListUtils.hasEnded(a.date, a.durationDays, now: current) && !keyOf(a).isBefore(from))
+      .where((a) => EventListUtils.hasEnded(a.date, rdAttendanceDurationDays(a, types), now: current) && !keyOf(a).isBefore(from))
       .toList()
     ..sort((a, b) => keyOf(a).compareTo(keyOf(b)));
 }
@@ -80,7 +93,8 @@ List<int> rdUnrecordedIds(List<int> ids, Iterable<PersonAttendance> rows, {Set<i
 /// for all of them, like [rdUpcomingCountsProvider].
 final rdUnrecordedProvider = FutureProvider.autoDispose<List<int>>((ref) async {
   ref.watch(attendanceRefetchCounter);
-  final recent = ref.watch(realtimeAttendanceListProvider.select((v) => rdRecentPast(v.valueOrNull ?? const <Attendance>[])
+  final allTypes = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
+  final recent = ref.watch(realtimeAttendanceListProvider.select((v) => rdRecentPast(v.valueOrNull ?? const <Attendance>[], types: allTypes)
       .map((a) => a.id)
       .whereType<int>()
       .join(',')));
@@ -99,11 +113,11 @@ final rdUnrecordedProvider = FutureProvider.autoDispose<List<int>>((ref) async {
 });
 
 /// Ended Termine, newest first.
-List<Attendance> rdPast(List<Attendance> all, {DateTime? now}) {
+List<Attendance> rdPast(List<Attendance> all, {DateTime? now, List<AttendanceType> types = const []}) {
   final current = now ?? DateTime.now();
   DateTime keyOf(Attendance a) => rdStartOf(a.date, a.startTime) ?? DateTime(1970);
   return all
-      .where((a) => EventListUtils.hasEnded(a.date, a.durationDays, now: current))
+      .where((a) => EventListUtils.hasEnded(a.date, rdAttendanceDurationDays(a, types), now: current))
       .toList()
     ..sort((a, b) => keyOf(b).compareTo(keyOf(a)));
 }

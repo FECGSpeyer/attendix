@@ -7,6 +7,7 @@ import '../../../../data/models/person/person.dart';
 import '../../data/providers/members_providers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart';
 import '../../../people/presentation/widgets/ion/ion_widgets.dart';
 
@@ -45,6 +46,8 @@ class _MembersPageState extends ConsumerState<MembersPage> {
 
     return IonPage(
       title: context.l10n.peopleMembers,
+      // SIDE_NAV: menu button of the overlay panel (tablet portrait)
+      leading: SideNavMenuButton.maybe(context),
       // IOS_SHELL: iOS → bell in a glass circle
       actions: const [ToolbarButtonGroup(children: [NotificationBell()])],
       onRefresh: _refresh,

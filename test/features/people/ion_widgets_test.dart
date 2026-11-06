@@ -19,6 +19,27 @@ void main() {
       expect(find.byType(AppBar), findsNothing);
     });
 
+    testWidgets('PERF_GLASS: nav bar turns solid once content is under it, no blur',
+        (tester) async {
+      await tester.pumpWidget(_app(
+        TargetPlatform.iOS,
+        IonPage(title: 'Lehrer', slivers: [
+          SliverList.list(children: [
+            for (var i = 0; i < 60; i++) SizedBox(height: 40, child: Text('$i')),
+          ]),
+        ]),
+      ));
+      CupertinoSliverNavigationBar bar() => tester
+          .widget<CupertinoSliverNavigationBar>(
+              find.byType(CupertinoSliverNavigationBar));
+      expect(bar().enableBackgroundFilterBlur, isFalse);
+      expect(bar().backgroundColor!.a, lessThan(1));
+      await tester.drag(find.text('3'), const Offset(0, -300));
+      await tester.pumpAndSettle();
+      expect(bar().enableBackgroundFilterBlur, isFalse);
+      expect(bar().backgroundColor!.a, 1);
+    });
+
     testWidgets('IonPage keeps the Material AppBar elsewhere', (tester) async {
       await tester.pumpWidget(_app(
         TargetPlatform.android,

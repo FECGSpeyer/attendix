@@ -17,13 +17,19 @@ import '../../../../data/models/user_notification/user_notification.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ion_modal_handle.dart';
+import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
 
 /// Notification bell for page app bars (port of Ionic `NotificationBellComponent`).
 ///
 /// Shows the unread count of the current instance and opens the notification
 /// center (current instance / all instances) as a bottom sheet.
-class NotificationBell extends ConsumerWidget {
-  const NotificationBell({super.key});
+class NotificationBell extends ConsumerWidget implements HiddenWithSidePanel {
+  const NotificationBell({super.key, this.inSideNav = false});
+
+  /// SIDE_NAV: the bell in the side panel's head. While the side panel is
+  /// shown, the bells of the pages are hidden (Ionic
+  /// `body.side-panel-active app-notification-bell:not(.in-side-nav)`).
+  final bool inSideNav;
 
   /// REDESIGN: opens the notification centre from another button (the
   /// bell on "Heute" of the new design).
@@ -91,8 +97,19 @@ class NotificationBell extends ConsumerWidget {
   /// Opens the target of a tapped notification (switches instance if needed).
   Future<void> _navigate(BuildContext context, WidgetRef ref, UserNotification n) async {
     final router = GoRouter.of(context);
-    final targetTenant = n.targetTenantId;
-    if (targetTenant != ref.read(currentTenantIdProvider)) {
+    final isMessage = n.type == 'message' && n.messageId != null;
+    // Ionic onTap: entries without a target (criticals / birthdays) only
+    // close the sheet; route and Termin entries switch the instance only
+    // when data.tenantId is set.
+    if (!isMessage && n.route == null && n.attendanceId == null) return;
+    final explicitTenant = int.tryParse(n.data['tenantId']?.toString() ?? '');
+    // A Termin id only exists in its own instance: in "Alle Instanzen" an
+    // entry of another instance without data.tenantId still has to switch to
+    // the row's instance, otherwise the Termin is not found.
+    final int? targetTenant = isMessage || (n.route == null && n.attendanceId != null)
+        ? n.targetTenantId
+        : explicitTenant;
+    if (targetTenant != null && targetTenant != ref.read(currentTenantIdProvider)) {
       final tenants = await ref.read(userTenantsProvider.future);
       Tenant? tenant;
       for (final t in tenants) {
@@ -147,6 +164,7 @@ class NotificationBell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (!inSideNav && SideNavScope.isActive(context)) return const SizedBox.shrink();
     ref.watch(userNotificationsRealtimeProvider);
     final unread = ref.watch(unreadNotificationCountProvider).valueOrNull ?? 0;
 

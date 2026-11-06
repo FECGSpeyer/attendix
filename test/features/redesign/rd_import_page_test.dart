@@ -145,7 +145,7 @@ Uint8List _zip(Map<String, String> files) {
     final bytes = Uint8List.fromList(e.value.codeUnits);
     archive.addFile(ArchiveFile(e.key, bytes.length, bytes));
   }
-  return Uint8List.fromList(ZipEncoder().encode(archive)!);
+  return Uint8List.fromList(ZipEncoder().encode(archive));
 }
 
 final _zipBytes = _zip({
@@ -454,7 +454,7 @@ void main() {
   test('a damaged file in the ZIP is refused, not uploaded', () {
     final archive = Archive()
       ..addFile(ArchiveFile.noCompress('Noten/1 Eins/Viola.pdf', 12, Uint8List.fromList('%PDF abcdefg'.codeUnits)));
-    final bytes = Uint8List.fromList(ZipEncoder().encode(archive)!);
+    final bytes = Uint8List.fromList(ZipEncoder().encode(archive));
     // One byte of the content changed after packing.
     final at = String.fromCharCodes(bytes).indexOf('abcdefg');
     bytes[at] = 'X'.codeUnitAt(0);
@@ -464,7 +464,7 @@ void main() {
 
   test('an entry that unpacks to more than it declares stops while unpacking', () {
     final big = Uint8List(4 * 1024 * 1024);
-    final bytes = Uint8List.fromList(ZipEncoder().encode(Archive()..addFile(ArchiveFile('Noten/1 Eins/Viola.pdf', big.length, big)))!);
+    final bytes = Uint8List.fromList(ZipEncoder().encode(Archive()..addFile(ArchiveFile('Noten/1 Eins/Viola.pdf', big.length, big))));
     // Declare 100 bytes in the local header and the directory.
     final data = ByteData.sublistView(bytes);
     for (var i = 0; i + 4 <= bytes.length; i++) {
@@ -484,7 +484,7 @@ void main() {
     final bytes = Uint8List.fromList(ZipEncoder().encode(Archive()
       ..addFile(ArchiveFile('Noten/1 Eins/Viola.pdf', pdf.length, pdf))
       // No valid UTF-8: reading it as a link target would fail.
-      ..addFile(ArchiveFile.noCompress('Noten/1 Eins/Link.pdf', 3, Uint8List.fromList([0xff, 0xfe, 0xfd]))))!);
+      ..addFile(ArchiveFile.noCompress('Noten/1 Eins/Link.pdf', 3, Uint8List.fromList([0xff, 0xfe, 0xfd])))));
     // Mark the second entry as a Unix symlink in the directory.
     final data = ByteData.sublistView(bytes);
     var n = 0;
@@ -496,6 +496,18 @@ void main() {
     }
     final source = RdImportSource.open([PlatformFile(name: 'Noten.zip', size: bytes.length, bytes: bytes)]);
     expect(source.entries.map((e) => e.path), ['Noten/1 Eins/Viola.pdf']);
+  });
+
+  test('a group that shows the Werke of another one imports nothing', () async {
+    final c = ProviderContainer(overrides: [
+      ..._overrides(_FakeFiles(), _FakeSongs(), _FakeGroupNotifier()),
+      songTenantSettingsProvider.overrideWith((ref) async => const SongTenantSettings(songSourceTenantId: 9)),
+    ]);
+    addTearDown(c.dispose);
+    final sub = c.listen(rdImportProvider, (_, __) {});
+    addTearDown(sub.close);
+    expect(await c.read(rdImportProvider.notifier).read([_richZip()]), RdImportReadError.otherLibrary);
+    expect(c.read(rdImportProvider).plan, isNull);
   });
 
   test('the KI fills in sure answers, offers unsure ones and never overrides a person', () async {
@@ -619,7 +631,7 @@ void main() {
     add('Noten/1 Eins/Fassung B/Qfl1.pdf', '%PDF bb /CreationDate (D:20250301)', DateTime(2020, 1, 1));
     add('Noten/2 Zwei/Viola.pdf', '%PDF c /CreationDate (D:20190101)', DateTime(2026, 1, 1));
     add('Noten/2 Zwei/Fassung B/Xyz1.pdf', '%PDF dd /CreationDate (D:20250301)', DateTime(2020, 1, 1));
-    final bytes = Uint8List.fromList(ZipEncoder().encode(archive)!);
+    final bytes = Uint8List.fromList(ZipEncoder().encode(archive));
     final files = _FakeFiles();
     final c = ProviderContainer(overrides: _overrides(files, _FakeSongs(), _FakeGroupNotifier()));
     addTearDown(c.dispose);
@@ -671,7 +683,7 @@ void main() {
     add('Noten/1 Eins/Fassung B/Xyz1.pdf', '%PDF b /CreationDate (D:20190101)', DateTime(2026, 1, 1));
     add('Noten/2 Zwei/Viola.pdf', '%PDF c', DateTime(2026, 1, 1));
     add('Noten/2 Zwei/Qfl1.pdf', '%PDF d', DateTime(2026, 1, 1));
-    final bytes = Uint8List.fromList(ZipEncoder().encode(archive)!);
+    final bytes = Uint8List.fromList(ZipEncoder().encode(archive));
     final files = _FakeFiles();
     final c = ProviderContainer(overrides: _overrides(files, _FakeSongs(), _FakeGroupNotifier()));
     addTearDown(c.dispose);

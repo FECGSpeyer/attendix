@@ -39,6 +39,194 @@
   <link rel="icon" type="image/png" href="favicon.png"/>
 
   <title>Attendix</title>
+  <!-- SWIPE_BACK_WEB: Safari's edge swipe (and Chrome's back gesture) slides
+       the previous page in itself before it fires popstate. Mark those steps
+       so the app shows the page without playing its own transition again
+       (lib/core/services/browser_navigation.dart). Registered before the
+       Flutter engine, so the mark is set before the app handles popstate.
+       A browser that reports hasUAVisualTransition decides on its own.
+
+       iPhone Safari also drops its snapshot right after popstate, before the
+       app has drawn the page – the page swiped away flashed up for a moment.
+       So the app keeps a picture of each page it leaves (last 4) and, after
+       such a swipe, lays it over the app until the app has drawn the page
+       (attendixUaNavShown, called from the app) or 700 ms at most. -->
+  <script>
+    (function () {
+      // Browsers without PopStateEvent.hasUAVisualTransition: a swipe that
+      // starts at the screen edge and moves (or that the browser takes over,
+      // touchcancel) before popstate. A plain tap at the edge does not count.
+      var EDGE = 30;
+      var edgeStartX = -1;
+      var edgeSwipe = false;
+      var edgeEndAt = 0;
+      var opts = { capture: true, passive: true };
+      window.addEventListener('touchstart', function (e) {
+        var t = e.touches && e.touches[0];
+        edgeSwipe = false;
+        edgeStartX = !!t && e.touches.length === 1 &&
+          (t.clientX <= EDGE || t.clientX >= window.innerWidth - EDGE)
+          ? t.clientX : -1;
+      }, opts);
+      window.addEventListener('touchmove', function (e) {
+        var t = e.touches && e.touches[0];
+        if (edgeStartX >= 0 && t && Math.abs(t.clientX - edgeStartX) > 30) {
+          edgeSwipe = true;
+        }
+      }, opts);
+      function touchDone(cancelled) {
+        if (edgeStartX < 0) return;
+        if (cancelled || edgeSwipe) edgeEndAt = Date.now();
+        edgeStartX = -1;
+        edgeSwipe = false;
+      }
+      window.addEventListener('touchend', function () { touchDone(false); }, opts);
+      window.addEventListener('touchcancel', function () { touchDone(true); }, opts);
+
+      // Only Safari in a browser tab swipes through the history (the home
+      // screen app has no swipe; other browsers keep the page until drawn).
+      var snapshots = navigator.vendor === 'Apple Computer, Inc.' &&
+        navigator.maxTouchPoints > 0 && !navigator.standalone &&
+        typeof createImageBitmap === 'function';
+      var shots = [];
+      var lastHref = location.href;
+      var cover = null;
+      var coverTimer = 0;
+      // Account and group the pictures belong to (set by the app). A change
+      // starts a new generation: it drops all pictures, also ones still being
+      // taken, and none are taken until the app reports a page drawn for the
+      // new generation (attendixNavContextDrawn) and 2 s have passed – the
+      // old account's page may still be on screen. None while signed out.
+      var context = '';
+      var contextGen = 0;
+      var drawnGen = -1;
+      var captureBlockedUntil = 0;
+      window.attendixSetNavContext = function (key) {
+        if (key === context) return contextGen;
+        context = key;
+        contextGen++;
+        captureBlockedUntil = Date.now() + 2000;
+        while (shots.length) {
+          try { shots.pop().bitmap.close(); } catch (e) {}
+        }
+        removeCover();
+        return contextGen;
+      };
+      window.attendixNavContextDrawn = function (gen) {
+        if (gen === contextGen) drawnGen = gen;
+      };
+
+      function appCanvas() {
+        var pane = document.querySelector('flt-glass-pane');
+        var root = pane && (pane.shadowRoot || pane);
+        var canvases = root ? root.querySelectorAll('canvas') : [];
+        return canvases.length === 1 ? canvases[0] : null;
+      }
+      function forget(href) {
+        for (var i = shots.length - 1; i >= 0; i--) {
+          if (shots[i].href !== href) continue;
+          try { shots[i].bitmap.close(); } catch (e) {}
+          shots.splice(i, 1);
+        }
+      }
+      function capture(href) {
+        if (!context || context.indexOf('null:') === 0 ||
+            drawnGen !== contextGen || Date.now() < captureBlockedUntil) return;
+        var canvas = appCanvas();
+        if (!canvas || !canvas.width) return;
+        var takenFor = contextGen;
+        createImageBitmap(canvas).then(function (bitmap) {
+          if (takenFor !== contextGen) {
+            try { bitmap.close(); } catch (e) {}
+            return;
+          }
+          forget(href);
+          shots.push({ href: href, bitmap: bitmap });
+          while (shots.length > 4) {
+            try { shots.shift().bitmap.close(); } catch (e) {}
+          }
+        }, function () {});
+      }
+      function removeCover(mark) {
+        if (mark !== undefined && (!cover || cover.mark !== mark)) return;
+        clearTimeout(coverTimer);
+        if (cover && cover.parentNode) cover.parentNode.removeChild(cover);
+        cover = null;
+      }
+      function showCover(href, mark) {
+        var shot = null;
+        for (var i = 0; i < shots.length; i++) {
+          if (shots[i].href === href) shot = shots[i];
+        }
+        var canvas = appCanvas();
+        if (!shot || !canvas) return;
+        var rect = canvas.getBoundingClientRect();
+        removeCover();
+        var c = document.createElement('canvas');
+        c.setAttribute('aria-hidden', 'true');
+        c.width = shot.bitmap.width;
+        c.height = shot.bitmap.height;
+        c.style.cssText = 'position:fixed;z-index:2147483647;pointer-events:none;' +
+          'left:' + rect.left + 'px;top:' + rect.top + 'px;' +
+          'width:' + rect.width + 'px;height:' + rect.height + 'px;';
+        try {
+          c.getContext('2d').drawImage(shot.bitmap, 0, 0);
+        } catch (e) {
+          return;
+        }
+        document.body.appendChild(c);
+        c.mark = mark;
+        cover = c;
+        coverTimer = setTimeout(removeCover, 700, mark);
+      }
+      // The app has drawn the page of the step with this mark (frame done,
+      // two more for the GPU). An older step's call leaves a newer cover.
+      window.attendixUaNavShown = function (mark) {
+        if (!cover || cover.mark !== mark) return;
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { removeCover(mark); });
+        });
+      };
+
+      if (snapshots) {
+        var push = history.pushState;
+        history.pushState = function () {
+          try { capture(lastHref); } catch (e) {}
+          var result = push.apply(this, arguments);
+          lastHref = location.href;
+          return result;
+        };
+        var replace = history.replaceState;
+        history.replaceState = function () {
+          var result = replace.apply(this, arguments);
+          lastHref = location.href;
+          return result;
+        };
+      }
+
+      window.addEventListener('popstate', function (e) {
+        var browserAnimated = 'hasUAVisualTransition' in e
+          ? e.hasUAVisualTransition === true
+          : edgeSwipe || Date.now() - edgeEndAt < 1000;
+        edgeEndAt = 0;
+        edgeStartX = -1;
+        edgeSwipe = false;
+        if (browserAnimated) {
+          // Also the id of this step (strictly increasing).
+          window.attendixUaNavAt =
+            Math.max(Date.now(), (window.attendixUaNavAt || 0) + 1);
+        }
+        if (snapshots) {
+          try {
+            // The page being left, for a swipe forward again.
+            if (browserAnimated) capture(lastHref);
+            if (browserAnimated) showCover(location.href, window.attendixUaNavAt);
+          } catch (err) {}
+          lastHref = location.href;
+        }
+      }, true);
+    })();
+  </script>
   <link rel="manifest" href="manifest.json">
   <!-- Start loading the app code right away, in parallel with the bootstrap
        script (it would otherwise only be requested after flutter_bootstrap.js).
@@ -53,7 +241,11 @@
         : navigator.vendor === 'Apple Computer, Inc.' ? 'webkit' : 'other';
       var safariWasm = false;
       if (engine === 'webkit') {
-        var m = /Version\/(\d+)\.(\d+)/.exec(ua);
+        // PERF_WEB: the installed iPhone/iPad web app (home screen) and
+        // in-app browsers send no "Version/x.y" – there WebKit is the iOS
+        // version ("CPU iPhone OS 26_2"), so those get WebAssembly too.
+        var m = /Version\/(\d+)\.(\d+)/.exec(ua) ||
+          /\bCPU (?:iPhone )?OS (\d+)_(\d+)/.exec(ua);
         safariWasm = !!m && (+m[1] > 26 || (+m[1] === 26 && +m[2] >= 2));
       }
       window.attendixSafariWasm = safariWasm;

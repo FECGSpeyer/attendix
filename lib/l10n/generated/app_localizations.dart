@@ -212,12 +212,6 @@ abstract class AppLocalizations {
   /// **'Auswertung'**
   String get adminEvaluation;
 
-  /// admin.flutter.addFailed
-  ///
-  /// In de, this message translates to:
-  /// **'Fehler beim Hinzufügen'**
-  String get adminFlutterAddFailed;
-
   /// admin.gb
   ///
   /// In de, this message translates to:
@@ -878,6 +872,18 @@ abstract class AppLocalizations {
   /// **'Werk(e) hinzufügen'**
   String get attListAddSongs;
 
+  /// attList.archived
+  ///
+  /// In de, this message translates to:
+  /// **'Archiviert'**
+  String get attListArchived;
+
+  /// attList.archivedCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} archivierter Termin} other {{count} archivierte Termine}}'**
+  String attListArchivedCount(num count);
+
   /// attList.average
   ///
   /// In de, this message translates to:
@@ -1112,6 +1118,12 @@ abstract class AppLocalizations {
   /// **'Alle anzeigen'**
   String get attListShowAll;
 
+  /// attList.showArchived
+  ///
+  /// In de, this message translates to:
+  /// **'Archivierte anzeigen'**
+  String get attListShowArchived;
+
   /// attList.songs
   ///
   /// In de, this message translates to:
@@ -1213,6 +1225,48 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Alle Personen sind bereits in dieser Anwesenheit enthalten.'**
   String get attendanceAllAlreadyIncluded;
+
+  /// attendance.archive
+  ///
+  /// In de, this message translates to:
+  /// **'Archivieren'**
+  String get attendanceArchive;
+
+  /// attendance.archiveConfirmHeader
+  ///
+  /// In de, this message translates to:
+  /// **'Termin archivieren?'**
+  String get attendanceArchiveConfirmHeader;
+
+  /// attendance.archiveConfirmMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder sehen den Termin und ihre Anwesenheit dazu dann nicht mehr. Admins und Verantwortliche sehen ihn weiterhin und können ihn jederzeit wiederherstellen.'**
+  String get attendanceArchiveConfirmMessage;
+
+  /// attendance.archiveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Der Termin konnte nicht geändert werden.'**
+  String get attendanceArchiveFailed;
+
+  /// attendance.archivedBanner
+  ///
+  /// In de, this message translates to:
+  /// **'Archiviert'**
+  String get attendanceArchivedBanner;
+
+  /// attendance.archivedBannerHint
+  ///
+  /// In de, this message translates to:
+  /// **'Für Mitglieder unsichtbar. Nur Admins und Verantwortliche sehen diesen Termin.'**
+  String get attendanceArchivedBannerHint;
+
+  /// attendance.archivedToast
+  ///
+  /// In de, this message translates to:
+  /// **'Termin archiviert'**
+  String get attendanceArchivedToast;
 
   /// attendance.assign
   ///
@@ -2300,6 +2354,18 @@ abstract class AppLocalizations {
   /// **'Checkliste zurücksetzen'**
   String get attendanceResetChecklist;
 
+  /// attendance.restore
+  ///
+  /// In de, this message translates to:
+  /// **'Wiederherstellen'**
+  String get attendanceRestore;
+
+  /// attendance.restoredToast
+  ///
+  /// In de, this message translates to:
+  /// **'Termin wiederhergestellt'**
+  String get attendanceRestoredToast;
+
   /// attendance.runSheetAgenda
   ///
   /// In de, this message translates to:
@@ -2384,11 +2450,53 @@ abstract class AppLocalizations {
   /// **'abgemeldet'**
   String get attendanceSignedOut;
 
+  /// attendanceSongs.chip
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Werk} other {{count} Werke}}'**
+  String attendanceSongsChip(num count);
+
   /// attendance.songsCount
   ///
   /// In de, this message translates to:
   /// **'Werke ({count})'**
   String attendanceSongsCount(Object count);
+
+  /// attendanceSongs.noScoresForYou
+  ///
+  /// In de, this message translates to:
+  /// **'Für dich sind keine Noten hinterlegt'**
+  String get attendanceSongsNoScoresForYou;
+
+  /// attendanceSongs.openRunSheet
+  ///
+  /// In de, this message translates to:
+  /// **'Ablaufplan öffnen'**
+  String get attendanceSongsOpenRunSheet;
+
+  /// attendanceSongs.printAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Noten drucken'**
+  String get attendanceSongsPrintAll;
+
+  /// attendanceSongs.show
+  ///
+  /// In de, this message translates to:
+  /// **'Werke anzeigen'**
+  String get attendanceSongsShow;
+
+  /// attendanceSongs.tileEvents
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Nächster Termin} other {{count} Termine}}'**
+  String attendanceSongsTileEvents(num count);
+
+  /// attendanceSongs.title
+  ///
+  /// In de, this message translates to:
+  /// **'Werke'**
+  String get attendanceSongsTitle;
 
   /// attendance.sorting
   ///
@@ -2599,6 +2707,1089 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Benutzer nicht gefunden'**
   String get authUserNotFound;
+
+  /// autoMessages.active
+  ///
+  /// In de, this message translates to:
+  /// **'Aktiv'**
+  String get autoMessagesActive;
+
+  /// autoMessages.activeHint
+  ///
+  /// In de, this message translates to:
+  /// **'Eine eingeschaltete Regel gilt ab jetzt. Vergangene Termine werden nicht nachgeschickt. Schau dir vorher unten die Vorschau an.'**
+  String get autoMessagesActiveHint;
+
+  /// autoMessages.allTypes
+  ///
+  /// In de, this message translates to:
+  /// **'alle Termintypen'**
+  String get autoMessagesAllTypes;
+
+  /// autoMessages.allowResponses
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglied kann antworten'**
+  String get autoMessagesAllowResponses;
+
+  /// autoMessages.allowResponsesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Knöpfe „Grund nachtragen“ und „Ich war doch da“ in der Nachricht'**
+  String get autoMessagesAllowResponsesHint;
+
+  /// autoMessages.channelEmail
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail'**
+  String get autoMessagesChannelEmail;
+
+  /// autoMessages.channelPush
+  ///
+  /// In de, this message translates to:
+  /// **'Push / Telegram'**
+  String get autoMessagesChannelPush;
+
+  /// autoMessages.channels
+  ///
+  /// In de, this message translates to:
+  /// **'Kanäle'**
+  String get autoMessagesChannels;
+
+  /// autoMessages.chipCopy
+  ///
+  /// In de, this message translates to:
+  /// **'Kopie'**
+  String get autoMessagesChipCopy;
+
+  /// autoMessages.chipEmail
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail'**
+  String get autoMessagesChipEmail;
+
+  /// autoMessages.chipPush
+  ///
+  /// In de, this message translates to:
+  /// **'Push'**
+  String get autoMessagesChipPush;
+
+  /// autoMessages.chipResponses
+  ///
+  /// In de, this message translates to:
+  /// **'Grund nachtragen'**
+  String get autoMessagesChipResponses;
+
+  /// autoMessages.copy
+  ///
+  /// In de, this message translates to:
+  /// **'Kopie (optional)'**
+  String get autoMessagesCopy;
+
+  /// autoMessages.copyHint
+  ///
+  /// In de, this message translates to:
+  /// **'Eine Sammelinfo pro Termin, wer angeschrieben wurde.'**
+  String get autoMessagesCopyHint;
+
+  /// autoMessages.copyResponsibles
+  ///
+  /// In de, this message translates to:
+  /// **'Admins und Verantwortliche'**
+  String get autoMessagesCopyResponsibles;
+
+  /// autoMessages.copyVoiceLeaders
+  ///
+  /// In de, this message translates to:
+  /// **'Stimmführer (nur ihre Gruppe)'**
+  String get autoMessagesCopyVoiceLeaders;
+
+  /// autoMessages.customHint
+  ///
+  /// In de, this message translates to:
+  /// **'Eigener Text geht in allen Sprachen so raus, wie du ihn schreibst. Tippe auf einen Platzhalter, um ihn einzufügen.'**
+  String get autoMessagesCustomHint;
+
+  /// autoMessages.customText
+  ///
+  /// In de, this message translates to:
+  /// **'Eigener Text'**
+  String get autoMessagesCustomText;
+
+  /// autoMessages.days
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Tag} other {{count} Tage}}'**
+  String autoMessagesDays(num count);
+
+  /// autoMessages.decideAcceptPresent
+  ///
+  /// In de, this message translates to:
+  /// **'Status auf „anwesend“ setzen? Die Person bekommt Bescheid.'**
+  String get autoMessagesDecideAcceptPresent;
+
+  /// autoMessages.decideAcceptReason
+  ///
+  /// In de, this message translates to:
+  /// **'Status auf „entschuldigt“ setzen? Die Person bekommt Bescheid.'**
+  String get autoMessagesDecideAcceptReason;
+
+  /// autoMessages.decideReject
+  ///
+  /// In de, this message translates to:
+  /// **'Rückmeldung ablehnen? Der Status bleibt, der Grund bleibt als Notiz stehen.'**
+  String get autoMessagesDecideReject;
+
+  /// autoMessages.decidedAccepted
+  ///
+  /// In de, this message translates to:
+  /// **'Übernommen'**
+  String get autoMessagesDecidedAccepted;
+
+  /// autoMessages.decidedRejected
+  ///
+  /// In de, this message translates to:
+  /// **'Abgelehnt'**
+  String get autoMessagesDecidedRejected;
+
+  /// autoMessages.delay
+  ///
+  /// In de, this message translates to:
+  /// **'Wartezeit nach Terminende'**
+  String get autoMessagesDelay;
+
+  /// autoMessages.delayHint
+  ///
+  /// In de, this message translates to:
+  /// **'In dieser Zeit kannst du die Anwesenheit noch korrigieren oder die Nachricht für den Termin aussetzen.'**
+  String get autoMessagesDelayHint;
+
+  /// autoMessages.delayHours
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Std.} other {{count} Std.}} danach'**
+  String autoMessagesDelayHours(num count);
+
+  /// autoMessages.delayMinutes
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Min. danach'**
+  String autoMessagesDelayMinutes(Object count);
+
+  /// autoMessages.delayNone
+  ///
+  /// In de, this message translates to:
+  /// **'Direkt nach Ende'**
+  String get autoMessagesDelayNone;
+
+  /// autoMessages.deleteConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Regel löschen?'**
+  String get autoMessagesDeleteConfirm;
+
+  /// autoMessages.deleteHint
+  ///
+  /// In de, this message translates to:
+  /// **'Bereits verschickte Nachrichten bleiben erhalten.'**
+  String get autoMessagesDeleteHint;
+
+  /// autoMessages.deleteRule
+  ///
+  /// In de, this message translates to:
+  /// **'Regel löschen'**
+  String get autoMessagesDeleteRule;
+
+  /// autoMessages.disabledToast
+  ///
+  /// In de, this message translates to:
+  /// **'Regel ausgeschaltet'**
+  String get autoMessagesDisabledToast;
+
+  /// autoMessages.enabledToast
+  ///
+  /// In de, this message translates to:
+  /// **'Regel eingeschaltet'**
+  String get autoMessagesEnabledToast;
+
+  /// autoMessages.errChannel
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte wähle mindestens einen Kanal'**
+  String get autoMessagesErrChannel;
+
+  /// autoMessages.errName
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib der Regel einen Namen'**
+  String get autoMessagesErrName;
+
+  /// autoMessages.errStatus
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte wähle mindestens einen Auslöser'**
+  String get autoMessagesErrStatus;
+
+  /// autoMessages.errText
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib einen Titel und einen Text ein'**
+  String get autoMessagesErrText;
+
+  /// autoMessages.excuse
+  ///
+  /// In de, this message translates to:
+  /// **'Entschuldigen'**
+  String get autoMessagesExcuse;
+
+  /// autoMessages.excuseAfterCheck
+  ///
+  /// In de, this message translates to:
+  /// **'Nach Bestätigung entschuldigt'**
+  String get autoMessagesExcuseAfterCheck;
+
+  /// autoMessages.excuseInstant
+  ///
+  /// In de, this message translates to:
+  /// **'Sofort entschuldigt'**
+  String get autoMessagesExcuseInstant;
+
+  /// autoMessages.freqCount
+  ///
+  /// In de, this message translates to:
+  /// **'Ab wie vielen Malen'**
+  String get autoMessagesFreqCount;
+
+  /// autoMessages.freqDays
+  ///
+  /// In de, this message translates to:
+  /// **'Zeitraum'**
+  String get autoMessagesFreqDays;
+
+  /// autoMessages.freqEach
+  ///
+  /// In de, this message translates to:
+  /// **'Jedes Mal'**
+  String get autoMessagesFreqEach;
+
+  /// autoMessages.freqHint.each
+  ///
+  /// In de, this message translates to:
+  /// **'Bei jedem passenden Termin.'**
+  String get autoMessagesFreqHintEach;
+
+  /// autoMessages.freqHint.streak
+  ///
+  /// In de, this message translates to:
+  /// **'Erst beim {count}. Fehlen hintereinander. Danach erst wieder, wenn die Person zwischendurch da war.'**
+  String autoMessagesFreqHintStreak(Object count);
+
+  /// autoMessages.freqHint.window
+  ///
+  /// In de, this message translates to:
+  /// **'Wenn jemand innerhalb von {days} Tagen zum {count}. Mal passt.'**
+  String autoMessagesFreqHintWindow(Object days, Object count);
+
+  /// autoMessages.freqStreak
+  ///
+  /// In de, this message translates to:
+  /// **'In Folge'**
+  String get autoMessagesFreqStreak;
+
+  /// autoMessages.freqStreakShort
+  ///
+  /// In de, this message translates to:
+  /// **'ab {count}× in Folge'**
+  String autoMessagesFreqStreakShort(Object count);
+
+  /// autoMessages.freqWindow
+  ///
+  /// In de, this message translates to:
+  /// **'Im Zeitraum'**
+  String get autoMessagesFreqWindow;
+
+  /// autoMessages.freqWindowShort
+  ///
+  /// In de, this message translates to:
+  /// **'ab {count}× in {days} Tagen'**
+  String autoMessagesFreqWindowShort(Object count, Object days);
+
+  /// autoMessages.general
+  ///
+  /// In de, this message translates to:
+  /// **'Allgemein'**
+  String get autoMessagesGeneral;
+
+  /// autoMessages.groups
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen'**
+  String get autoMessagesGroups;
+
+  /// autoMessages.groupsAll
+  ///
+  /// In de, this message translates to:
+  /// **'Nichts ausgewählt: gilt für alle Gruppen.'**
+  String get autoMessagesGroupsAll;
+
+  /// autoMessages.groupsSome
+  ///
+  /// In de, this message translates to:
+  /// **'Gilt nur für Personen aus den ausgewählten Gruppen.'**
+  String get autoMessagesGroupsSome;
+
+  /// autoMessages.histEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Regel hat noch nichts verschickt.'**
+  String get autoMessagesHistEmpty;
+
+  /// autoMessages.histRead
+  ///
+  /// In de, this message translates to:
+  /// **'gelesen'**
+  String get autoMessagesHistRead;
+
+  /// autoMessages.histResponses
+  ///
+  /// In de, this message translates to:
+  /// **'Antworten'**
+  String get autoMessagesHistResponses;
+
+  /// autoMessages.histRowNone
+  ///
+  /// In de, this message translates to:
+  /// **'Niemand passte'**
+  String get autoMessagesHistRowNone;
+
+  /// autoMessages.histRowNotRecorded
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht verschickt: Anwesenheit wurde nicht erfasst'**
+  String get autoMessagesHistRowNotRecorded;
+
+  /// autoMessages.histRowSent
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Person} other {{count} Personen}} · {read} gelesen · {responses} Antworten'**
+  String autoMessagesHistRowSent(num count, Object read, Object responses);
+
+  /// autoMessages.histRowSuspended
+  ///
+  /// In de, this message translates to:
+  /// **'Ausgesetzt von {name}'**
+  String autoMessagesHistRowSuspended(Object name);
+
+  /// autoMessages.histSent
+  ///
+  /// In de, this message translates to:
+  /// **'Personen angeschrieben'**
+  String get autoMessagesHistSent;
+
+  /// autoMessages.history
+  ///
+  /// In de, this message translates to:
+  /// **'Verlauf'**
+  String get autoMessagesHistory;
+
+  /// autoMessages.howOften
+  ///
+  /// In de, this message translates to:
+  /// **'Wie oft?'**
+  String get autoMessagesHowOften;
+
+  /// autoMessages.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Schicke Mitgliedern automatisch eine Nachricht nach einem Termin, zum Beispiel wenn sie gefehlt haben, ohne sich abzumelden. Alle Regeln sind aus, bis du sie einschaltest.'**
+  String get autoMessagesIntro;
+
+  /// autoMessages.lastWeek
+  ///
+  /// In de, this message translates to:
+  /// **'Letzte 7 Tage: {count, plural, one {{count} Person angeschrieben} other {{count} Personen angeschrieben}}'**
+  String autoMessagesLastWeek(num count);
+
+  /// autoMessages.less
+  ///
+  /// In de, this message translates to:
+  /// **'Weniger'**
+  String get autoMessagesLess;
+
+  /// autoMessages.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Automatische Nachrichten konnten nicht geladen werden'**
+  String get autoMessagesLoadFailed;
+
+  /// autoMessages.manualBody
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo,\n\nbei {termin} am {datum} wart ihr nicht da und hattet euch nicht abgemeldet.\n\nWenn ihr einen Grund hattet, tragt ihn gern direkt in der App nach. Bitte meldet euch nächstes Mal vorher ab.\nEuer Team von {instanz}'**
+  String autoMessagesManualBody(Object termin, Object datum, Object instanz);
+
+  /// autoMessages.manualRecipients
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} unentschuldigte Person} other {{count} unentschuldigte Personen}} dieses Termins'**
+  String autoMessagesManualRecipients(num count);
+
+  /// autoMessages.manualTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Wir haben euch vermisst'**
+  String get autoMessagesManualTitle;
+
+  /// autoMessages.message
+  ///
+  /// In de, this message translates to:
+  /// **'Nachricht'**
+  String get autoMessagesMessage;
+
+  /// autoMessages.more
+  ///
+  /// In de, this message translates to:
+  /// **'Mehr'**
+  String get autoMessagesMore;
+
+  /// autoMessages.name
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get autoMessagesName;
+
+  /// autoMessages.newRule
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Regel'**
+  String get autoMessagesNewRule;
+
+  /// autoMessages.onlyEmail
+  ///
+  /// In de, this message translates to:
+  /// **'nur E-Mail'**
+  String get autoMessagesOnlyEmail;
+
+  /// autoMessages.openTermin
+  ///
+  /// In de, this message translates to:
+  /// **'Zum Termin'**
+  String get autoMessagesOpenTermin;
+
+  /// autoMessages.panelNone
+  ///
+  /// In de, this message translates to:
+  /// **'„{rule}“: niemand passte'**
+  String autoMessagesPanelNone(Object rule);
+
+  /// autoMessages.panelNotRecorded
+  ///
+  /// In de, this message translates to:
+  /// **'„{rule}“ nicht verschickt: Anwesenheit wurde nicht erfasst'**
+  String autoMessagesPanelNotRecorded(Object rule);
+
+  /// autoMessages.panelPending
+  ///
+  /// In de, this message translates to:
+  /// **'„{rule}“ wird gleich geprüft'**
+  String autoMessagesPanelPending(Object rule);
+
+  /// autoMessages.panelPendingHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Nachricht geht nur raus, wenn die Anwesenheit erfasst ist.'**
+  String get autoMessagesPanelPendingHint;
+
+  /// autoMessages.panelResponses
+  ///
+  /// In de, this message translates to:
+  /// **'Rückmeldungen ({count} offen)'**
+  String autoMessagesPanelResponses(Object count);
+
+  /// autoMessages.panelSaysPresent
+  ///
+  /// In de, this message translates to:
+  /// **'Sagt: „Ich war doch da“'**
+  String get autoMessagesPanelSaysPresent;
+
+  /// autoMessages.panelSent
+  ///
+  /// In de, this message translates to:
+  /// **'„{rule}“ ging an {count, plural, one {{count} Person} other {{count} Personen}}'**
+  String autoMessagesPanelSent(Object rule, num count);
+
+  /// autoMessages.panelSuspended
+  ///
+  /// In de, this message translates to:
+  /// **'„{rule}“ ist für diesen Termin ausgesetzt'**
+  String autoMessagesPanelSuspended(Object rule);
+
+  /// autoMessages.panelWillSend
+  ///
+  /// In de, this message translates to:
+  /// **'„{rule}“ geht um {time} raus'**
+  String autoMessagesPanelWillSend(Object rule, Object time);
+
+  /// autoMessages.panelWillSendHint
+  ///
+  /// In de, this message translates to:
+  /// **'Bis dahin kannst du die Anwesenheit noch korrigieren.'**
+  String get autoMessagesPanelWillSendHint;
+
+  /// autoMessages.preview
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschau'**
+  String get autoMessagesPreview;
+
+  /// autoMessages.previewAt
+  ///
+  /// In de, this message translates to:
+  /// **'Versand wäre am {time} gewesen'**
+  String autoMessagesPreviewAt(Object time);
+
+  /// autoMessages.previewExcluded
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht angeschrieben: {excused} abgemeldet, {paused} pausiert'**
+  String autoMessagesPreviewExcluded(Object excused, Object paused);
+
+  /// autoMessages.previewFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschau konnte nicht geladen werden'**
+  String get autoMessagesPreviewFailed;
+
+  /// autoMessages.previewHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Vorschau verschickt nichts. Mit Häufigkeit „In Folge“ zählen auch frühere Termine.'**
+  String get autoMessagesPreviewHint;
+
+  /// autoMessages.previewNoTermine
+  ///
+  /// In de, this message translates to:
+  /// **'Keine passenden Termine in den letzten 60 Tagen.'**
+  String get autoMessagesPreviewNoTermine;
+
+  /// autoMessages.previewNotRecorded
+  ///
+  /// In de, this message translates to:
+  /// **'Übersprungen: Anwesenheit nicht erfasst'**
+  String get autoMessagesPreviewNotRecorded;
+
+  /// autoMessages.previewWould
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Niemand hätte die Nachricht bekommen} one {{count} Person hätte die Nachricht bekommen} other {{count} Personen hätten die Nachricht bekommen}}'**
+  String autoMessagesPreviewWould(num count);
+
+  /// autoMessages.reason.family
+  ///
+  /// In de, this message translates to:
+  /// **'Familie'**
+  String get autoMessagesReasonFamily;
+
+  /// autoMessages.reason.forgot
+  ///
+  /// In de, this message translates to:
+  /// **'Abmelden vergessen'**
+  String get autoMessagesReasonForgot;
+
+  /// autoMessages.reason.other
+  ///
+  /// In de, this message translates to:
+  /// **'Sonstiges'**
+  String get autoMessagesReasonOther;
+
+  /// autoMessages.reason.sick
+  ///
+  /// In de, this message translates to:
+  /// **'Krank'**
+  String get autoMessagesReasonSick;
+
+  /// autoMessages.reason.work
+  ///
+  /// In de, this message translates to:
+  /// **'Arbeit / Schule'**
+  String get autoMessagesReasonWork;
+
+  /// autoMessages.reject
+  ///
+  /// In de, this message translates to:
+  /// **'Ablehnen'**
+  String get autoMessagesReject;
+
+  /// autoMessages.resetToTemplate
+  ///
+  /// In de, this message translates to:
+  /// **'Auf Vorlage zurücksetzen'**
+  String get autoMessagesResetToTemplate;
+
+  /// autoMessages.respAddReason
+  ///
+  /// In de, this message translates to:
+  /// **'Grund nachtragen'**
+  String get autoMessagesRespAddReason;
+
+  /// autoMessages.respAlreadyDecided
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Rückmeldung wurde schon bearbeitet'**
+  String get autoMessagesRespAlreadyDecided;
+
+  /// autoMessages.respChange
+  ///
+  /// In de, this message translates to:
+  /// **'Rückmeldung ändern'**
+  String get autoMessagesRespChange;
+
+  /// autoMessages.respDone
+  ///
+  /// In de, this message translates to:
+  /// **'Danke! Deine Rückmeldung wurde geschickt.'**
+  String get autoMessagesRespDone;
+
+  /// autoMessages.respDoneInstant
+  ///
+  /// In de, this message translates to:
+  /// **'Danke! Du bist jetzt entschuldigt.'**
+  String get autoMessagesRespDoneInstant;
+
+  /// autoMessages.respExpired
+  ///
+  /// In de, this message translates to:
+  /// **'Für diesen Termin ist keine Rückmeldung mehr möglich'**
+  String get autoMessagesRespExpired;
+
+  /// autoMessages.respFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Rückmeldung konnte nicht gesendet werden'**
+  String get autoMessagesRespFailed;
+
+  /// autoMessages.respHadReason
+  ///
+  /// In de, this message translates to:
+  /// **'Ich hatte einen Grund'**
+  String get autoMessagesRespHadReason;
+
+  /// autoMessages.respHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Verantwortlichen sehen deinen Grund als Notiz am Termin.'**
+  String get autoMessagesRespHint;
+
+  /// autoMessages.respReason
+  ///
+  /// In de, this message translates to:
+  /// **'Grund'**
+  String get autoMessagesRespReason;
+
+  /// autoMessages.respSend
+  ///
+  /// In de, this message translates to:
+  /// **'Senden'**
+  String get autoMessagesRespSend;
+
+  /// autoMessages.respState.accepted
+  ///
+  /// In de, this message translates to:
+  /// **'Übernommen'**
+  String get autoMessagesRespStateAccepted;
+
+  /// autoMessages.respState.pending
+  ///
+  /// In de, this message translates to:
+  /// **'Wird geprüft'**
+  String get autoMessagesRespStatePending;
+
+  /// autoMessages.respState.rejected
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht übernommen'**
+  String get autoMessagesRespStateRejected;
+
+  /// autoMessages.respText
+  ///
+  /// In de, this message translates to:
+  /// **'Ergänzung (optional)'**
+  String get autoMessagesRespText;
+
+  /// autoMessages.respTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Rückmeldung'**
+  String get autoMessagesRespTitle;
+
+  /// autoMessages.respWasThere
+  ///
+  /// In de, this message translates to:
+  /// **'Ich war doch da'**
+  String get autoMessagesRespWasThere;
+
+  /// autoMessages.respWasThereHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Verantwortlichen bekommen einen Hinweis und können die Anwesenheit korrigieren.'**
+  String get autoMessagesRespWasThereHint;
+
+  /// autoMessages.respWasThereShort
+  ///
+  /// In de, this message translates to:
+  /// **'„Ich war doch da“ geht als Hinweis an die Verantwortlichen.'**
+  String get autoMessagesRespWasThereShort;
+
+  /// autoMessages.responses
+  ///
+  /// In de, this message translates to:
+  /// **'Grund nachtragen'**
+  String get autoMessagesResponses;
+
+  /// autoMessages.responsesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Antworten sind bis {days} Tage nach dem Termin möglich. „Ich war doch da“ wird immer erst geprüft.'**
+  String autoMessagesResponsesHint(Object days);
+
+  /// autoMessages.rule
+  ///
+  /// In de, this message translates to:
+  /// **'Regel'**
+  String get autoMessagesRule;
+
+  /// autoMessages.rules
+  ///
+  /// In de, this message translates to:
+  /// **'Regeln'**
+  String get autoMessagesRules;
+
+  /// autoMessages.safety
+  ///
+  /// In de, this message translates to:
+  /// **'Es wird nur geschickt, wenn bei dem Termin Anwesenheit erfasst wurde. Abgemeldete, Pausierte und Ausgetretene bekommen nie eine Nachricht.'**
+  String get autoMessagesSafety;
+
+  /// autoMessages.sampleFirstName
+  ///
+  /// In de, this message translates to:
+  /// **'Lena'**
+  String get autoMessagesSampleFirstName;
+
+  /// autoMessages.sampleName
+  ///
+  /// In de, this message translates to:
+  /// **'Lena Muster'**
+  String get autoMessagesSampleName;
+
+  /// autoMessages.sampleTermin
+  ///
+  /// In de, this message translates to:
+  /// **'Probe'**
+  String get autoMessagesSampleTermin;
+
+  /// autoMessages.saveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Speichern fehlgeschlagen'**
+  String get autoMessagesSaveFailed;
+
+  /// autoMessages.saved
+  ///
+  /// In de, this message translates to:
+  /// **'Regel gespeichert'**
+  String get autoMessagesSaved;
+
+  /// autoMessages.setPresent
+  ///
+  /// In de, this message translates to:
+  /// **'Auf anwesend'**
+  String get autoMessagesSetPresent;
+
+  /// autoMessages.showPreview
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschau mit den letzten Terminen'**
+  String get autoMessagesShowPreview;
+
+  /// autoMessages.startFromTemplate
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlagen zum Start'**
+  String get autoMessagesStartFromTemplate;
+
+  /// autoMessages.status.0
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Rückmeldung'**
+  String get autoMessagesStatus0;
+
+  /// autoMessages.status.1
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesend'**
+  String get autoMessagesStatus1;
+
+  /// autoMessages.status.2
+  ///
+  /// In de, this message translates to:
+  /// **'Entschuldigt'**
+  String get autoMessagesStatus2;
+
+  /// autoMessages.status.3
+  ///
+  /// In de, this message translates to:
+  /// **'Zu spät'**
+  String get autoMessagesStatus3;
+
+  /// autoMessages.status.4
+  ///
+  /// In de, this message translates to:
+  /// **'Unentschuldigt'**
+  String get autoMessagesStatus4;
+
+  /// autoMessages.status.5
+  ///
+  /// In de, this message translates to:
+  /// **'Verspätet entschuldigt'**
+  String get autoMessagesStatus5;
+
+  /// autoMessages.suspend
+  ///
+  /// In de, this message translates to:
+  /// **'Diesmal aussetzen'**
+  String get autoMessagesSuspend;
+
+  /// autoMessages.template
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage'**
+  String get autoMessagesTemplate;
+
+  /// autoMessages.templateHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Vorlage gibt es in mehreren Sprachen. Jedes Mitglied bekommt sie in seiner App-Sprache.'**
+  String get autoMessagesTemplateHint;
+
+  /// autoMessages.title
+  ///
+  /// In de, this message translates to:
+  /// **'Automatische Nachrichten'**
+  String get autoMessagesTitle;
+
+  /// autoMessages.tpl.absent.body
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo {vorname},\n\nbei {termin} am {datum} warst du nicht da und hattest dich nicht abgemeldet.\n\nIst alles in Ordnung? Wenn du einen Grund hattest, trag ihn gern direkt in der App nach.\n\nBitte melde dich nächstes Mal vorher ab, damit wir besser planen können.\nDein Team von {instanz}'**
+  String autoMessagesTplAbsentBody(
+    Object vorname,
+    Object termin,
+    Object datum,
+    Object instanz,
+  );
+
+  /// autoMessages.tpl.absent.title
+  ///
+  /// In de, this message translates to:
+  /// **'Wir haben dich vermisst, {vorname}'**
+  String autoMessagesTplAbsentTitle(Object vorname);
+
+  /// autoMessages.tplHint.absent
+  ///
+  /// In de, this message translates to:
+  /// **'Nach jedem Termin, bei dem jemand unentschuldigt fehlt'**
+  String get autoMessagesTplHintAbsent;
+
+  /// autoMessages.tplHint.late
+  ///
+  /// In de, this message translates to:
+  /// **'Wenn jemand zu spät kommt, ohne Bescheid zu geben'**
+  String get autoMessagesTplHintLate;
+
+  /// autoMessages.tplHint.noAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'Wenn jemand bis nach dem Termin nicht reagiert hat'**
+  String get autoMessagesTplHintNoAnswer;
+
+  /// autoMessages.tplHint.streak
+  ///
+  /// In de, this message translates to:
+  /// **'Erst ab dem 2. Fehlen hintereinander'**
+  String get autoMessagesTplHintStreak;
+
+  /// autoMessages.tpl.late.body
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo {vorname},\n\nbei {termin} am {datum} bist du zu spät gekommen, ohne dich vorher zu melden.\n\nWenn du einen Grund hattest, trag ihn gern direkt in der App nach. Gib uns nächstes Mal bitte vorher Bescheid.\nDein Team von {instanz}'**
+  String autoMessagesTplLateBody(
+    Object vorname,
+    Object termin,
+    Object datum,
+    Object instanz,
+  );
+
+  /// autoMessages.tpl.late.title
+  ///
+  /// In de, this message translates to:
+  /// **'Du warst zu spät, {vorname}'**
+  String autoMessagesTplLateTitle(Object vorname);
+
+  /// autoMessages.tplName.absent
+  ///
+  /// In de, this message translates to:
+  /// **'Unentschuldigt gefehlt'**
+  String get autoMessagesTplNameAbsent;
+
+  /// autoMessages.tplName.late
+  ///
+  /// In de, this message translates to:
+  /// **'Zu spät ohne Abmeldung'**
+  String get autoMessagesTplNameLate;
+
+  /// autoMessages.tplName.noAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Rückmeldung'**
+  String get autoMessagesTplNameNoAnswer;
+
+  /// autoMessages.tplName.streak
+  ///
+  /// In de, this message translates to:
+  /// **'Mehrmals in Folge gefehlt'**
+  String get autoMessagesTplNameStreak;
+
+  /// autoMessages.tpl.noAnswer.body
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo {vorname},\n\nfür {termin} am {datum} haben wir keine Rückmeldung von dir bekommen.\n\nBitte gib künftig in der App Bescheid, ob du kommst. Wenn du einen Grund hattest, kannst du ihn hier nachtragen.\nDein Team von {instanz}'**
+  String autoMessagesTplNoAnswerBody(
+    Object vorname,
+    Object termin,
+    Object datum,
+    Object instanz,
+  );
+
+  /// autoMessages.tpl.noAnswer.title
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Rückmeldung zu {termin}'**
+  String autoMessagesTplNoAnswerTitle(Object termin);
+
+  /// autoMessages.tpl.streak.body
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo {vorname},\n\ndu hast jetzt {anzahl} Mal in Folge gefehlt, ohne dich abzumelden, zuletzt bei {termin} am {datum}.\n\nIst alles in Ordnung? Melde dich gern bei uns. Wenn du einen Grund hattest, trag ihn direkt in der App nach.\nDein Team von {instanz}'**
+  String autoMessagesTplStreakBody(
+    Object vorname,
+    Object anzahl,
+    Object termin,
+    Object datum,
+    Object instanz,
+  );
+
+  /// autoMessages.tpl.streak.title
+  ///
+  /// In de, this message translates to:
+  /// **'{vorname}, wir vermissen dich'**
+  String autoMessagesTplStreakTitle(Object vorname);
+
+  /// autoMessages.trigger.0
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Rückmeldung'**
+  String get autoMessagesTrigger0;
+
+  /// autoMessages.trigger.3
+  ///
+  /// In de, this message translates to:
+  /// **'Zu spät ohne Abmeldung'**
+  String get autoMessagesTrigger3;
+
+  /// autoMessages.trigger.4
+  ///
+  /// In de, this message translates to:
+  /// **'Unentschuldigt gefehlt'**
+  String get autoMessagesTrigger4;
+
+  /// autoMessages.triggerHint.0
+  ///
+  /// In de, this message translates to:
+  /// **'Status nach dem Termin noch „neutral“'**
+  String get autoMessagesTriggerHint0;
+
+  /// autoMessages.triggerHint.3
+  ///
+  /// In de, this message translates to:
+  /// **'Status „zu spät“, nicht „verspätet entschuldigt“'**
+  String get autoMessagesTriggerHint3;
+
+  /// autoMessages.triggerHint.4
+  ///
+  /// In de, this message translates to:
+  /// **'Status „unentschuldigt“ nach dem Termin'**
+  String get autoMessagesTriggerHint4;
+
+  /// autoMessages.typesAll
+  ///
+  /// In de, this message translates to:
+  /// **'Nichts ausgewählt: gilt für alle Termintypen.'**
+  String get autoMessagesTypesAll;
+
+  /// autoMessages.typesSome
+  ///
+  /// In de, this message translates to:
+  /// **'Gilt nur für die ausgewählten Termintypen.'**
+  String get autoMessagesTypesSome;
+
+  /// autoMessages.unreachable
+  ///
+  /// In de, this message translates to:
+  /// **'nicht erreichbar'**
+  String get autoMessagesUnreachable;
+
+  /// autoMessages.unsuspend
+  ///
+  /// In de, this message translates to:
+  /// **'Wieder einschalten'**
+  String get autoMessagesUnsuspend;
+
+  /// autoMessages.useTemplate
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage'**
+  String get autoMessagesUseTemplate;
+
+  /// autoMessages.when
+  ///
+  /// In de, this message translates to:
+  /// **'Wann wird geschickt?'**
+  String get autoMessagesWhen;
+
+  /// autoMessages.whichTermine
+  ///
+  /// In de, this message translates to:
+  /// **'Für welche Termine?'**
+  String get autoMessagesWhichTermine;
+
+  /// autoMessages.whoCanUse
+  ///
+  /// In de, this message translates to:
+  /// **'Admins und Verantwortliche können Regeln anlegen und ändern.'**
+  String get autoMessagesWhoCanUse;
+
+  /// autoMessages.whoRead
+  ///
+  /// In de, this message translates to:
+  /// **'Wer hat gelesen?'**
+  String get autoMessagesWhoRead;
+
+  /// autoMessages.writeUnexcusedMenu
+  ///
+  /// In de, this message translates to:
+  /// **'Unentschuldigte anschreiben ({count})'**
+  String autoMessagesWriteUnexcusedMenu(Object count);
 
   /// bell.currentInstance
   ///
@@ -3755,14 +4946,8 @@ abstract class AppLocalizations {
   /// core.flutter.rule.sinceSeasonStart
   ///
   /// In de, this message translates to:
-  /// **'seit Saisonstart'**
+  /// **'seit Saisonbeginn'**
   String get coreFlutterRuleSinceSeasonStart;
-
-  /// core.flutter.rule.statusN
-  ///
-  /// In de, this message translates to:
-  /// **'Status {n}'**
-  String coreFlutterRuleStatusN(Object n);
 
   /// core.flutter.schoolHolidays
   ///
@@ -5438,6 +6623,12 @@ abstract class AppLocalizations {
   /// **'Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?'**
   String get extraFieldsFlutterLeaveMessage;
 
+  /// extraFields.flutter.updatingPersons
+  ///
+  /// In de, this message translates to:
+  /// **'Personen werden aktualisiert...'**
+  String get extraFieldsFlutterUpdatingPersons;
+
   /// extraFields.forPersons
   ///
   /// In de, this message translates to:
@@ -5684,11 +6875,35 @@ abstract class AppLocalizations {
   /// **'Möchtest du {name} wirklich löschen?'**
   String filesDeleteMessage(Object name);
 
+  /// files.deleteSelectedHeader
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Eintrag löschen?} other {{count} Einträge löschen?}}'**
+  String filesDeleteSelectedHeader(num count);
+
+  /// files.deleteSelectedMessage
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Der ausgewählte Eintrag wird endgültig gelöscht.} other {Die {count} ausgewählten Einträge werden endgültig gelöscht, Ordner mit ihrem ganzen Inhalt.}}'**
+  String filesDeleteSelectedMessage(num count);
+
+  /// files.deleteSummary
+  ///
+  /// In de, this message translates to:
+  /// **'{ok} gelöscht, {failed} fehlgeschlagen.'**
+  String filesDeleteSummary(Object ok, Object failed);
+
   /// files.deleted
   ///
   /// In de, this message translates to:
   /// **'Eintrag wurde gelöscht.'**
   String get filesDeleted;
+
+  /// files.deletedMany
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Eintrag wurde gelöscht.} other {{count} Einträge wurden gelöscht.}}'**
+  String filesDeletedMany(num count);
 
   /// files.descending
   ///
@@ -5840,23 +7055,95 @@ abstract class AppLocalizations {
   /// **'Verschieben'**
   String get filesMove;
 
+  /// filesMove.beingMoved
+  ///
+  /// In de, this message translates to:
+  /// **'Wird verschoben'**
+  String get filesMoveBeingMoved;
+
+  /// filesMove.chooseTarget
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle einen Zielordner.'**
+  String get filesMoveChooseTarget;
+
+  /// filesMove.collapse
+  ///
+  /// In de, this message translates to:
+  /// **'Zuklappen'**
+  String get filesMoveCollapse;
+
+  /// filesMove.currentFolder
+  ///
+  /// In de, this message translates to:
+  /// **'Aktueller Ordner'**
+  String get filesMoveCurrentFolder;
+
+  /// files.moveExists
+  ///
+  /// In de, this message translates to:
+  /// **'Im Zielordner gibt es schon „{name}“. Nichts verschoben.'**
+  String filesMoveExists(Object name);
+
+  /// filesMove.expand
+  ///
+  /// In de, this message translates to:
+  /// **'Aufklappen'**
+  String get filesMoveExpand;
+
   /// files.moveFailed
   ///
   /// In de, this message translates to:
   /// **'Verschieben fehlgeschlagen: {error}'**
   String filesMoveFailed(Object error);
 
-  /// files.moveHint
+  /// filesMove.hint
   ///
   /// In de, this message translates to:
-  /// **'Zielordner relativ zum Tenant-Root. Leer lassen für Root.'**
+  /// **'Tippe auf einen Ordner, um ihn als Ziel zu wählen. Mit dem Pfeil klappst du Unterordner auf.'**
   String get filesMoveHint;
+
+  /// filesMove.moveHere
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Hierher verschieben} other {{count} Einträge hierher verschieben}}'**
+  String filesMoveMoveHere(num count);
+
+  /// filesMove.root
+  ///
+  /// In de, this message translates to:
+  /// **'Dateiablage'**
+  String get filesMoveRoot;
+
+  /// files.moveSummary
+  ///
+  /// In de, this message translates to:
+  /// **'{ok} verschoben, {skipped} übersprungen (gibt es im Ziel schon), {failed} fehlgeschlagen.'**
+  String filesMoveSummary(Object ok, Object skipped, Object failed);
+
+  /// filesMove.target
+  ///
+  /// In de, this message translates to:
+  /// **'Ziel: {path}'**
+  String filesMoveTarget(Object path);
+
+  /// filesMove.title
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Verschieben} other {{count} Einträge verschieben}}'**
+  String filesMoveTitle(num count);
 
   /// files.moved
   ///
   /// In de, this message translates to:
   /// **'Eintrag wurde verschoben.'**
   String get filesMoved;
+
+  /// files.movedMany
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Eintrag wurde verschoben.} other {{count} Einträge wurden verschoben.}}'**
+  String filesMovedMany(num count);
 
   /// files.name
   ///
@@ -6019,6 +7306,42 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'<strong>typ:&lt;wert&gt;</strong> · Filtert nach Dateityp oder Art (z. B. <strong>typ:pdf</strong>, <strong>typ:ordner</strong>, <strong>typ:datei</strong>).'**
   String get filesSearchType;
+
+  /// files.select
+  ///
+  /// In de, this message translates to:
+  /// **'Auswählen'**
+  String get filesSelect;
+
+  /// files.selectAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get filesSelectAll;
+
+  /// files.selectMultiple
+  ///
+  /// In de, this message translates to:
+  /// **'Mehrere auswählen'**
+  String get filesSelectMultiple;
+
+  /// files.selectNone
+  ///
+  /// In de, this message translates to:
+  /// **'Keine'**
+  String get filesSelectNone;
+
+  /// files.selectedCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Nichts ausgewählt} one {{count} ausgewählt} other {{count} ausgewählt}}'**
+  String filesSelectedCount(num count);
+
+  /// files.selectionDone
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl beenden'**
+  String get filesSelectionDone;
 
   /// files.send
   ///
@@ -6404,18 +7727,6 @@ abstract class AppLocalizations {
   /// **'ODER'**
   String get generalSettingsFlutterOrShort;
 
-  /// generalSettings.flutter.practiceEnd
-  ///
-  /// In de, this message translates to:
-  /// **'Probenende'**
-  String get generalSettingsFlutterPracticeEnd;
-
-  /// generalSettings.flutter.practiceStart
-  ///
-  /// In de, this message translates to:
-  /// **'Probenbeginn'**
-  String get generalSettingsFlutterPracticeStart;
-
   /// generalSettings.flutter.ruleAdded
   ///
   /// In de, this message translates to:
@@ -6445,12 +7756,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Regel aktualisiert'**
   String get generalSettingsFlutterRuleUpdated;
-
-  /// generalSettings.flutter.statusCritical
-  ///
-  /// In de, this message translates to:
-  /// **'Status (zählt als kritisch)'**
-  String get generalSettingsFlutterStatusCritical;
 
   /// generalSettings.foreignInfo
   ///
@@ -8090,6 +9395,18 @@ abstract class AppLocalizations {
   /// **'Alle {count}'**
   String messagesAllCount(Object count);
 
+  /// messages.autoActive
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Keine Regel aktiv} one {{count} Regel aktiv} other {{count} Regeln aktiv}}'**
+  String messagesAutoActive(num count);
+
+  /// messages.autoEntry
+  ///
+  /// In de, this message translates to:
+  /// **'Automatische Nachrichten'**
+  String get messagesAutoEntry;
+
   /// messages.countsFailed
   ///
   /// In de, this message translates to:
@@ -8516,6 +9833,66 @@ abstract class AppLocalizations {
   /// **'Erste Mitteilung schreiben'**
   String get messagesWriteFirst;
 
+  /// nav.close
+  ///
+  /// In de, this message translates to:
+  /// **'Menü schließen'**
+  String get navClose;
+
+  /// nav.collapse
+  ///
+  /// In de, this message translates to:
+  /// **'Seitenleiste einklappen'**
+  String get navCollapse;
+
+  /// nav.expand
+  ///
+  /// In de, this message translates to:
+  /// **'Seitenleiste ausklappen'**
+  String get navExpand;
+
+  /// nav.groupAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Konto'**
+  String get navGroupAccount;
+
+  /// nav.groupAdmin
+  ///
+  /// In de, this message translates to:
+  /// **'Verwaltung'**
+  String get navGroupAdmin;
+
+  /// nav.groupOverview
+  ///
+  /// In de, this message translates to:
+  /// **'Übersicht'**
+  String get navGroupOverview;
+
+  /// nav.groupTeam
+  ///
+  /// In de, this message translates to:
+  /// **'Team'**
+  String get navGroupTeam;
+
+  /// nav.instances
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Instanz} other {{count} Instanzen}}'**
+  String navInstances(num count);
+
+  /// nav.label
+  ///
+  /// In de, this message translates to:
+  /// **'Hauptnavigation'**
+  String get navLabel;
+
+  /// nav.shortcut
+  ///
+  /// In de, this message translates to:
+  /// **'Strg/⌘ + B'**
+  String get navShortcut;
+
   /// notif.announcements
   ///
   /// In de, this message translates to:
@@ -8833,6 +10210,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Änderungen übernehmen'**
   String get orgFieldsApplyChanges;
+
+  /// orgFields.flutter.clearDefault
+  ///
+  /// In de, this message translates to:
+  /// **'Standardwert entfernen'**
+  String get orgFieldsFlutterClearDefault;
 
   /// orgFields.flutter.firstOptionDefault
   ///
@@ -10135,6 +11518,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Hinweis'**
   String get peopleFlutterHint;
+
+  /// people.flutter.importNotAssigned
+  ///
+  /// In de, this message translates to:
+  /// **'{name}: gespeichert, aber nicht zu den Terminen hinzugefügt ({error})'**
+  String peopleFlutterImportNotAssigned(Object name, Object error);
 
   /// people.flutter.lastNameRequired
   ///
@@ -12002,6 +13391,18 @@ abstract class AppLocalizations {
   /// **'Nur Stimmführer-Status'**
   String get personVoiceLeaderStatusOnly;
 
+  /// planViewer.openScores
+  ///
+  /// In de, this message translates to:
+  /// **'Noten öffnen'**
+  String get planViewerOpenScores;
+
+  /// planning.addAgain
+  ///
+  /// In de, this message translates to:
+  /// **'Erneut hinzufügen'**
+  String get planningAddAgain;
+
   /// planning.addAnotherPlan
   ///
   /// In de, this message translates to:
@@ -12247,6 +13648,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Aktuelle'**
   String get planningCurrent;
+
+  /// planning.currentSongsAlreadyAddedHeader
+  ///
+  /// In de, this message translates to:
+  /// **'Bereits hinzugefügt'**
+  String get planningCurrentSongsAlreadyAddedHeader;
+
+  /// planning.currentSongsAlreadyAddedMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Alle aktuellen Werke sind schon in diesem Ablaufplan. Möchtest du sie noch einmal hinzufügen?'**
+  String get planningCurrentSongsAlreadyAddedMessage;
 
   /// planning.defaultTitle
   ///
@@ -12721,6 +14134,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Nächste'**
   String get planningNext;
+
+  /// planning.noCurrentSongs
+  ///
+  /// In de, this message translates to:
+  /// **'Keine aktuellen Werke vorhanden'**
+  String get planningNoCurrentSongs;
 
   /// planning.noPlan
   ///
@@ -14627,7 +16046,7 @@ abstract class AppLocalizations {
   /// redesign.create.deadline
   ///
   /// In de, this message translates to:
-  /// **'Abmeldeschluss'**
+  /// **'Antwort bis'**
   String get redesignCreateDeadline;
 
   /// redesign.create.deadline24h
@@ -14645,7 +16064,7 @@ abstract class AppLocalizations {
   /// redesign.create.deadlineHint
   ///
   /// In de, this message translates to:
-  /// **'Danach können sich Mitglieder nicht mehr selbst an- oder abmelden.'**
+  /// **'Danach kann man nicht mehr zusagen, absagen geht weiter.'**
   String get redesignCreateDeadlineHint;
 
   /// redesign.create.deadlineNone
@@ -14978,6 +16397,36 @@ abstract class AppLocalizations {
   /// **'Art'**
   String get redesignCreateType;
 
+  /// redesign.event.addPersonShort
+  ///
+  /// In de, this message translates to:
+  /// **'Person'**
+  String get redesignEventAddPersonShort;
+
+  /// redesign.event.addTask
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgabe'**
+  String get redesignEventAddTask;
+
+  /// redesign.event.addTaskLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgabe hinzufügen'**
+  String get redesignEventAddTaskLabel;
+
+  /// redesign.event.addWork
+  ///
+  /// In de, this message translates to:
+  /// **'Werk'**
+  String get redesignEventAddWork;
+
+  /// redesign.event.addWorkLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Werk hinzufügen'**
+  String get redesignEventAddWorkLabel;
+
   /// redesign.event.allDone
   ///
   /// In de, this message translates to:
@@ -14990,11 +16439,41 @@ abstract class AppLocalizations {
   /// **'Alle Offenen als anwesend'**
   String get redesignEventAllOpenPresent;
 
+  /// redesign.event.allPresent
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 anwesend} other {Alle {count} anwesend}}'**
+  String redesignEventAllPresent(num count);
+
+  /// redesign.event.allSettled
+  ///
+  /// In de, this message translates to:
+  /// **'Alles erledigt'**
+  String get redesignEventAllSettled;
+
   /// redesign.event.answers
   ///
   /// In de, this message translates to:
   /// **'Rückmeldungen'**
   String get redesignEventAnswers;
+
+  /// redesign.event.answersTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Rückmeldungen mit Grund'**
+  String get redesignEventAnswersTitle;
+
+  /// redesign.event.archiveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Archivieren unter •••'**
+  String get redesignEventArchiveHint;
+
+  /// redesign.event.attendancePersons
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Person} other {{count} Personen}}'**
+  String redesignEventAttendancePersons(num count);
 
   /// redesign.event.busyLeave
   ///
@@ -15002,11 +16481,41 @@ abstract class AppLocalizations {
   /// **'Bitte warte, bis alles gespeichert ist.'**
   String get redesignEventBusyLeave;
 
+  /// redesign.event.byGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Nach Stimme'**
+  String get redesignEventByGroup;
+
+  /// redesign.event.changeConductorHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aus der Gruppe oder Gastdirigent'**
+  String get redesignEventChangeConductorHint;
+
+  /// redesign.event.changedBy
+  ///
+  /// In de, this message translates to:
+  /// **'Zuletzt geändert von {name} · {when}'**
+  String redesignEventChangedBy(Object name, Object when);
+
+  /// redesign.event.closing
+  ///
+  /// In de, this message translates to:
+  /// **'Abschluss'**
+  String get redesignEventClosing;
+
   /// redesign.event.countAbsent
   ///
   /// In de, this message translates to:
   /// **'{count} fehlt'**
   String redesignEventCountAbsent(Object count);
+
+  /// redesign.event.countAbsentStarted
+  ///
+  /// In de, this message translates to:
+  /// **'{count} abwesend'**
+  String redesignEventCountAbsentStarted(Object count);
 
   /// redesign.event.countExcused
   ///
@@ -15014,11 +16523,29 @@ abstract class AppLocalizations {
   /// **'{count} entsch.'**
   String redesignEventCountExcused(Object count);
 
+  /// redesign.event.countExcusedStarted
+  ///
+  /// In de, this message translates to:
+  /// **'{count} entschuldigt'**
+  String redesignEventCountExcusedStarted(Object count);
+
+  /// redesign.event.countHere
+  ///
+  /// In de, this message translates to:
+  /// **'{count} anwesend'**
+  String redesignEventCountHere(Object count);
+
   /// redesign.event.countLate
   ///
   /// In de, this message translates to:
   /// **'{count} später'**
   String redesignEventCountLate(Object count);
+
+  /// redesign.event.countLateStarted
+  ///
+  /// In de, this message translates to:
+  /// **'{count} verspätet'**
+  String redesignEventCountLateStarted(Object count);
 
   /// redesign.event.countNoAnswer
   ///
@@ -15044,17 +16571,113 @@ abstract class AppLocalizations {
   /// **'Termin löschen'**
   String get redesignEventDelete;
 
+  /// redesign.event.deleteHint
+  ///
+  /// In de, this message translates to:
+  /// **'„Termin löschen“ steht ganz unten in „Bearbeiten“.'**
+  String get redesignEventDeleteHint;
+
+  /// redesign.event.deleteTask
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgabe löschen'**
+  String get redesignEventDeleteTask;
+
   /// redesign.event.deleted
   ///
   /// In de, this message translates to:
   /// **'Termin gelöscht'**
   String get redesignEventDeleted;
 
+  /// redesign.event.description
+  ///
+  /// In de, this message translates to:
+  /// **'Beschreibung & Anhang'**
+  String get redesignEventDescription;
+
   /// redesign.event.details
   ///
   /// In de, this message translates to:
   /// **'Alle Details'**
   String get redesignEventDetails;
+
+  /// redesign.event.edit
+  ///
+  /// In de, this message translates to:
+  /// **'Bearbeiten'**
+  String get redesignEventEdit;
+
+  /// redesign.eventEdit.back
+  ///
+  /// In de, this message translates to:
+  /// **'Termin'**
+  String get redesignEventEditBack;
+
+  /// redesign.event.editBasics
+  ///
+  /// In de, this message translates to:
+  /// **'Grunddaten'**
+  String get redesignEventEditBasics;
+
+  /// redesign.eventEdit.deadlineLocked
+  ///
+  /// In de, this message translates to:
+  /// **'Der Termin liegt in der Vergangenheit.'**
+  String get redesignEventEditDeadlineLocked;
+
+  /// redesign.eventEdit.deadlinePick
+  ///
+  /// In de, this message translates to:
+  /// **'Datum und Uhrzeit wählen'**
+  String get redesignEventEditDeadlinePick;
+
+  /// redesign.eventEdit.deadlineSuggested
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschlag: {date}'**
+  String redesignEventEditDeadlineSuggested(Object date);
+
+  /// redesign.eventEdit.folderNone
+  ///
+  /// In de, this message translates to:
+  /// **'Keiner'**
+  String get redesignEventEditFolderNone;
+
+  /// redesign.eventEdit.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Änderungen werden sofort gespeichert. Werke und Ablauf änderst du im Reiter Programm, die Vorbereitung im Überblick.'**
+  String get redesignEventEditHint;
+
+  /// redesign.eventEdit.saved
+  ///
+  /// In de, this message translates to:
+  /// **'Gespeichert'**
+  String get redesignEventEditSaved;
+
+  /// redesign.eventEdit.title
+  ///
+  /// In de, this message translates to:
+  /// **'Termin bearbeiten'**
+  String get redesignEventEditTitle;
+
+  /// redesign.event.exportExcel
+  ///
+  /// In de, this message translates to:
+  /// **'Als Excel exportieren'**
+  String get redesignEventExportExcel;
+
+  /// redesign.event.forMembers
+  ///
+  /// In de, this message translates to:
+  /// **'Für Mitglieder'**
+  String get redesignEventForMembers;
+
+  /// redesign.event.hide
+  ///
+  /// In de, this message translates to:
+  /// **'Weniger'**
+  String get redesignEventHide;
 
   /// redesign.event.invited
   ///
@@ -15068,6 +16691,18 @@ abstract class AppLocalizations {
   /// **'Tastatur: A anwesend · V verspätet · F fehlt · ↑↓ nächste Person · ⌘Z oder Strg+Z rückgängig'**
   String get redesignEventKeyboardHint;
 
+  /// redesign.event.leadersOnly
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Leitung'**
+  String get redesignEventLeadersOnly;
+
+  /// redesign.event.menu
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Aktionen'**
+  String get redesignEventMenu;
+
   /// redesign.event.more
   ///
   /// In de, this message translates to:
@@ -15079,6 +16714,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Ablauf, Checkliste, Werke und Notizen'**
   String get redesignEventMoreHint;
+
+  /// redesign.event.morePresent
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 weitere anwesend} other {{count} weitere anwesend}}'**
+  String redesignEventMorePresent(num count);
 
   /// redesign.event.moreStatus
   ///
@@ -15092,6 +16733,18 @@ abstract class AppLocalizations {
   /// **'zählt nicht'**
   String get redesignEventNeutralHint;
 
+  /// redesign.event.newestFirst
+  ///
+  /// In de, this message translates to:
+  /// **'{title} · neueste zuerst'**
+  String redesignEventNewestFirst(Object title);
+
+  /// redesign.event.nextInPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Danach: {items}'**
+  String redesignEventNextInPlan(Object items);
+
   /// redesign.event.noMatch
   ///
   /// In de, this message translates to:
@@ -15103,6 +16756,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Für diesen Termin sind noch keine Personen eingetragen.'**
   String get redesignEventNoPersons;
+
+  /// redesign.event.noPlanYet
+  ///
+  /// In de, this message translates to:
+  /// **'Noch kein Ablauf'**
+  String get redesignEventNoPlanYet;
+
+  /// redesign.event.noReason
+  ///
+  /// In de, this message translates to:
+  /// **'ohne Grund'**
+  String get redesignEventNoReason;
 
   /// redesign.event.notFound
   ///
@@ -15122,17 +16787,167 @@ abstract class AppLocalizations {
   /// **'z. B. Grund oder Uhrzeit'**
   String get redesignEventNoteHint;
 
+  /// redesign.event.nowInPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Jetzt im Ablauf · bis {time}'**
+  String redesignEventNowInPlan(Object time);
+
+  /// redesign.event.phaseArchived
+  ///
+  /// In de, this message translates to:
+  /// **'Archiviert'**
+  String get redesignEventPhaseArchived;
+
+  /// redesign.event.phaseRunning
+  ///
+  /// In de, this message translates to:
+  /// **'Läuft · seit {time}'**
+  String redesignEventPhaseRunning(Object time);
+
+  /// redesign.event.phaseRunningShort
+  ///
+  /// In de, this message translates to:
+  /// **'Läuft'**
+  String get redesignEventPhaseRunningShort;
+
+  /// redesign.event.phaseToday
+  ///
+  /// In de, this message translates to:
+  /// **'Heute {time}'**
+  String redesignEventPhaseToday(Object time);
+
+  /// redesign.event.phaseYesterday
+  ///
+  /// In de, this message translates to:
+  /// **'Gestern'**
+  String get redesignEventPhaseYesterday;
+
   /// redesign.event.plan
   ///
   /// In de, this message translates to:
   /// **'Ablauf ansehen'**
   String get redesignEventPlan;
 
+  /// redesign.event.planCreate
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf anlegen'**
+  String get redesignEventPlanCreate;
+
+  /// redesign.event.planEdit
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf bearbeiten'**
+  String get redesignEventPlanEdit;
+
+  /// redesign.event.planEditHint
+  ///
+  /// In de, this message translates to:
+  /// **'Punkte, Zeiten, PDF und Telegram'**
+  String get redesignEventPlanEditHint;
+
+  /// redesign.event.planEditShort
+  ///
+  /// In de, this message translates to:
+  /// **'Bearbeiten'**
+  String get redesignEventPlanEditShort;
+
   /// redesign.event.planHint
   ///
   /// In de, this message translates to:
   /// **'Ablaufplan, am Termin-Tag live'**
   String get redesignEventPlanHint;
+
+  /// redesign.event.planLive
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf live'**
+  String get redesignEventPlanLive;
+
+  /// redesign.event.planMinutes
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Min'**
+  String redesignEventPlanMinutes(Object count);
+
+  /// redesign.event.planNowPill
+  ///
+  /// In de, this message translates to:
+  /// **'jetzt'**
+  String get redesignEventPlanNowPill;
+
+  /// redesign.event.planSection
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf'**
+  String get redesignEventPlanSection;
+
+  /// redesign.event.planShare
+  ///
+  /// In de, this message translates to:
+  /// **'Für Mitglieder sichtbar'**
+  String get redesignEventPlanShare;
+
+  /// redesign.event.planShareHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder sehen den Ablauf beim Termin'**
+  String get redesignEventPlanShareHint;
+
+  /// redesign.event.planShared
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf für alle sichtbar'**
+  String get redesignEventPlanShared;
+
+  /// redesign.event.prep
+  ///
+  /// In de, this message translates to:
+  /// **'Vorbereitung · {done} von {total} erledigt'**
+  String redesignEventPrep(Object done, Object total);
+
+  /// redesign.event.presentOf
+  ///
+  /// In de, this message translates to:
+  /// **'{present} von {total} · {percent} %'**
+  String redesignEventPresentOf(Object present, Object total, Object percent);
+
+  /// redesign.event.program
+  ///
+  /// In de, this message translates to:
+  /// **'Programm'**
+  String get redesignEventProgram;
+
+  /// redesign.event.programMore
+  ///
+  /// In de, this message translates to:
+  /// **'{names} und {count} weitere'**
+  String redesignEventProgramMore(Object names, Object count);
+
+  /// redesign.event.programPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf {range}'**
+  String redesignEventProgramPlan(Object range);
+
+  /// redesign.event.programWorks
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk} other {{count} Werke}}'**
+  String redesignEventProgramWorks(num count);
+
+  /// redesign.event.record
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit eintragen'**
+  String get redesignEventRecord;
+
+  /// redesign.event.recordSearchHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wer fehlt? Name suchen'**
+  String get redesignEventRecordSearchHint;
 
   /// redesign.event.registerEmpty
   ///
@@ -15145,6 +16960,36 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {{names} hat abgesagt.} other {{names} haben abgesagt.}}'**
   String redesignEventRegisterNames(num count, Object names);
+
+  /// redesign.event.registerPresent
+  ///
+  /// In de, this message translates to:
+  /// **'{present} von {total} da'**
+  String redesignEventRegisterPresent(Object present, Object total);
+
+  /// redesign.event.remindOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Offene erinnern'**
+  String get redesignEventRemindOpen;
+
+  /// redesign.event.removeFromEvent
+  ///
+  /// In de, this message translates to:
+  /// **'Aus Termin entfernen'**
+  String get redesignEventRemoveFromEvent;
+
+  /// redesign.event.removeHint
+  ///
+  /// In de, this message translates to:
+  /// **'{name} taucht in diesem Termin nicht mehr auf'**
+  String redesignEventRemoveHint(Object name);
+
+  /// redesign.event.removeWork
+  ///
+  /// In de, this message translates to:
+  /// **'Werk entfernen'**
+  String get redesignEventRemoveWork;
 
   /// redesign.event.saving
   ///
@@ -15170,11 +17015,29 @@ abstract class AppLocalizations {
   /// **'Name'**
   String get redesignEventSearchHint;
 
-  /// redesign.event.signouts
+  /// redesign.event.sectionCount
   ///
   /// In de, this message translates to:
-  /// **'Abmeldungen'**
-  String get redesignEventSignouts;
+  /// **'{title} · {count}'**
+  String redesignEventSectionCount(Object title, Object count);
+
+  /// redesign.event.show
+  ///
+  /// In de, this message translates to:
+  /// **'Zeigen'**
+  String get redesignEventShow;
+
+  /// redesign.event.showAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle anzeigen ({count})'**
+  String redesignEventShowAll(Object count);
+
+  /// redesign.event.signedOut
+  ///
+  /// In de, this message translates to:
+  /// **'Abgemeldet'**
+  String get redesignEventSignedOut;
 
   /// redesign.event.status
   ///
@@ -15182,17 +17045,41 @@ abstract class AppLocalizations {
   /// **'Status'**
   String get redesignEventStatus;
 
+  /// redesign.event.statusOverviewHint
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Antworten nach Stimme und Status'**
+  String get redesignEventStatusOverviewHint;
+
   /// redesign.event.tabOverview
   ///
   /// In de, this message translates to:
   /// **'Überblick'**
   String get redesignEventTabOverview;
 
+  /// redesign.event.tabProgram
+  ///
+  /// In de, this message translates to:
+  /// **'Programm'**
+  String get redesignEventTabProgram;
+
   /// redesign.event.tabRecord
   ///
   /// In de, this message translates to:
   /// **'Anwesenheit'**
   String get redesignEventTabRecord;
+
+  /// redesign.event.toPerson
+  ///
+  /// In de, this message translates to:
+  /// **'Zur Person'**
+  String get redesignEventToPerson;
+
+  /// redesign.event.toWorkHint
+  ///
+  /// In de, this message translates to:
+  /// **'Noten und Stimmen'**
+  String get redesignEventToWorkHint;
 
   /// redesign.event.toastReset
   ///
@@ -15217,6 +17104,36 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Rückgängig gemacht'**
   String get redesignEventUndone;
+
+  /// redesign.event.workNumber
+  ///
+  /// In de, this message translates to:
+  /// **'Nr. {number}'**
+  String redesignEventWorkNumber(Object number);
+
+  /// redesign.event.workRemoved
+  ///
+  /// In de, this message translates to:
+  /// **'{name} entfernt'**
+  String redesignEventWorkRemoved(Object name);
+
+  /// redesign.event.works
+  ///
+  /// In de, this message translates to:
+  /// **'Werke'**
+  String get redesignEventWorks;
+
+  /// redesign.event.worksLoadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Werke konnten nicht geladen werden.'**
+  String get redesignEventWorksLoadFailed;
+
+  /// redesign.event.yesterday
+  ///
+  /// In de, this message translates to:
+  /// **'gestern'**
+  String get redesignEventYesterday;
 
   /// redesign.events.absent
   ///
@@ -15533,7 +17450,7 @@ abstract class AppLocalizations {
   /// redesign.files.title
   ///
   /// In de, this message translates to:
-  /// **'Dateien'**
+  /// **'Noten & Dateien'**
   String get redesignFilesTitle;
 
   /// redesign.files.upload
@@ -15559,6 +17476,84 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'ZIP wird erstellt …'**
   String get redesignFilesZipPreparing;
+
+  /// redesign.folder.all
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Werke · {count}'**
+  String redesignFolderAll(Object count);
+
+  /// redesign.folder.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Für {name} gibt es noch keine Noten.'**
+  String redesignFolderEmpty(Object name);
+
+  /// redesign.folder.missing
+  ///
+  /// In de, this message translates to:
+  /// **'fehlt'**
+  String get redesignFolderMissing;
+
+  /// redesign.folder.next
+  ///
+  /// In de, this message translates to:
+  /// **'Als Nächstes · {count}'**
+  String redesignFolderNext(Object count);
+
+  /// redesign.folder.noGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Dir ist noch keine Stimme zugeordnet. Wähle eine Stimme, um ihre Noten zu sehen.'**
+  String get redesignFolderNoGroup;
+
+  /// redesign.folder.noPart
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Noten für {name}'**
+  String redesignFolderNoPart(Object name);
+
+  /// redesign.folder.nothingNext
+  ///
+  /// In de, this message translates to:
+  /// **'Für die nächsten Termine sind noch keine Werke geplant.'**
+  String get redesignFolderNothingNext;
+
+  /// redesign.folder.open
+  ///
+  /// In de, this message translates to:
+  /// **'Als ein PDF öffnen'**
+  String get redesignFolderOpen;
+
+  /// redesign.folder.openHint
+  ///
+  /// In de, this message translates to:
+  /// **'Zum Ansehen, Speichern oder Drucken'**
+  String get redesignFolderOpenHint;
+
+  /// redesign.folder.other
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Stimme'**
+  String get redesignFolderOther;
+
+  /// redesign.folder.pick
+  ///
+  /// In de, this message translates to:
+  /// **'Stimme wählen'**
+  String get redesignFolderPick;
+
+  /// redesign.folder.title
+  ///
+  /// In de, this message translates to:
+  /// **'Meine Mappe'**
+  String get redesignFolderTitle;
+
+  /// redesign.folder.titleLeads
+  ///
+  /// In de, this message translates to:
+  /// **'Mappen'**
+  String get redesignFolderTitleLeads;
 
   /// redesign.groups.loadFailed
   ///
@@ -16015,6 +18010,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Die Datei ist keine ZIP-Datei oder beschädigt.'**
   String get redesignImportErrorNotZip;
+
+  /// redesign.import.errorOtherLibrary
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Gruppe zeigt die Werke einer anderen Gruppe. Noten importieren geht nur in der Gruppe, der die Werke gehören.'**
+  String get redesignImportErrorOtherLibrary;
 
   /// redesign.import.errorTooLargeWeb
   ///
@@ -17294,6 +19295,36 @@ abstract class AppLocalizations {
   /// **'Trennen'**
   String get redesignNotifTelegramDisconnect;
 
+  /// redesign.own.answerDays
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Du kannst heute noch antworten.} one {Du kannst noch 1 Tag antworten.} other {Du kannst noch {count} Tage antworten.}}'**
+  String redesignOwnAnswerDays(num count);
+
+  /// redesign.own.askReason
+  ///
+  /// In de, this message translates to:
+  /// **'Die Leitung fragt nach dem Grund.'**
+  String get redesignOwnAskReason;
+
+  /// redesign.own.comeLater
+  ///
+  /// In de, this message translates to:
+  /// **'Komme später'**
+  String get redesignOwnComeLater;
+
+  /// redesign.own.comingLater
+  ///
+  /// In de, this message translates to:
+  /// **'Du kommst später'**
+  String get redesignOwnComingLater;
+
+  /// redesign.own.in
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist dabei'**
+  String get redesignOwnIn;
+
   /// redesign.own.infos
   ///
   /// In de, this message translates to:
@@ -17306,17 +19337,113 @@ abstract class AppLocalizations {
   /// **'Mehr'**
   String get redesignOwnMore;
 
+  /// redesign.own.noAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Antwort'**
+  String get redesignOwnNoAnswer;
+
+  /// redesign.own.noNotes
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Noten'**
+  String get redesignOwnNoNotes;
+
+  /// redesign.own.noNotesFor
+  ///
+  /// In de, this message translates to:
+  /// **'Für deine Stimme sind keine Noten hinterlegt.'**
+  String get redesignOwnNoNotesFor;
+
   /// redesign.own.notFound
   ///
   /// In de, this message translates to:
   /// **'Dieser Termin ist nicht mehr in deiner Liste.'**
   String get redesignOwnNotFound;
 
+  /// redesign.own.notRecorded
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht erfasst'**
+  String get redesignOwnNotRecorded;
+
+  /// redesign.own.noteToLeaders
+  ///
+  /// In de, this message translates to:
+  /// **'Notiz an die Leitung'**
+  String get redesignOwnNoteToLeaders;
+
+  /// redesign.own.openMine
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Noten öffnen'**
+  String get redesignOwnOpenMine;
+
+  /// redesign.own.planAll
+  ///
+  /// In de, this message translates to:
+  /// **'Ganz ansehen'**
+  String get redesignOwnPlanAll;
+
+  /// redesign.own.planLive
+  ///
+  /// In de, this message translates to:
+  /// **'Live-Ansicht'**
+  String get redesignOwnPlanLive;
+
+  /// redesign.own.planMore
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {und 1 weiterer Punkt} other {und {count} weitere Punkte}}'**
+  String redesignOwnPlanMore(num count);
+
+  /// redesign.own.planned
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist eingeplant'**
+  String get redesignOwnPlanned;
+
+  /// redesign.own.printMine
+  ///
+  /// In de, this message translates to:
+  /// **'Meine Noten als ein PDF'**
+  String get redesignOwnPrintMine;
+
+  /// redesign.own.printMineHint
+  ///
+  /// In de, this message translates to:
+  /// **'{count} von {total} Werken'**
+  String redesignOwnPrintMineHint(Object count, Object total);
+
+  /// redesign.own.programPending
+  ///
+  /// In de, this message translates to:
+  /// **'Das Programm steht noch nicht fest.'**
+  String get redesignOwnProgramPending;
+
   /// redesign.own.route
   ///
   /// In de, this message translates to:
   /// **'Route'**
   String get redesignOwnRoute;
+
+  /// redesign.own.signOut
+  ///
+  /// In de, this message translates to:
+  /// **'Abmelden'**
+  String get redesignOwnSignOut;
+
+  /// redesign.own.youConduct
+  ///
+  /// In de, this message translates to:
+  /// **'Du dirigierst'**
+  String get redesignOwnYouConduct;
+
+  /// redesign.own.yourAttendance
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Anwesenheit'**
+  String get redesignOwnYourAttendance;
 
   /// redesign.parents.allKids
   ///
@@ -17503,6 +19630,456 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'morgen'**
   String get redesignPersonTomorrow;
+
+  /// redesign.plan.add
+  ///
+  /// In de, this message translates to:
+  /// **'Punkt hinzufügen'**
+  String get redesignPlanAdd;
+
+  /// redesign.plan.addAfter
+  ///
+  /// In de, this message translates to:
+  /// **'Wird nach „{name}“ eingefügt'**
+  String redesignPlanAddAfter(Object name);
+
+  /// redesign.plan.addBlock
+  ///
+  /// In de, this message translates to:
+  /// **'Block'**
+  String get redesignPlanAddBlock;
+
+  /// redesign.plan.addBlockHint
+  ///
+  /// In de, this message translates to:
+  /// **'Fasst mehrere Punkte zusammen'**
+  String get redesignPlanAddBlockHint;
+
+  /// redesign.plan.addCurrent
+  ///
+  /// In de, this message translates to:
+  /// **'Aktuelle Werke'**
+  String get redesignPlanAddCurrent;
+
+  /// redesign.plan.addCurrentHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Werke, die gerade dran sind'**
+  String get redesignPlanAddCurrentHint;
+
+  /// redesign.plan.addEnd
+  ///
+  /// In de, this message translates to:
+  /// **'Wird ans Ende gesetzt'**
+  String get redesignPlanAddEnd;
+
+  /// redesign.plan.addItem
+  ///
+  /// In de, this message translates to:
+  /// **'Punkt'**
+  String get redesignPlanAddItem;
+
+  /// redesign.plan.addItemHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Dauer, z. B. „Einsingen“'**
+  String get redesignPlanAddItemHint;
+
+  /// redesign.plan.addNote
+  ///
+  /// In de, this message translates to:
+  /// **'Notiz'**
+  String get redesignPlanAddNote;
+
+  /// redesign.plan.addNoteHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Dauer und Uhrzeit'**
+  String get redesignPlanAddNoteHint;
+
+  /// redesign.plan.addPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Plan'**
+  String get redesignPlanAddPlan;
+
+  /// redesign.plan.addSong
+  ///
+  /// In de, this message translates to:
+  /// **'Werk aus der Liste'**
+  String get redesignPlanAddSong;
+
+  /// redesign.plan.addTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Hinzufügen'**
+  String get redesignPlanAddTitle;
+
+  /// redesign.plan.afterBlock
+  ///
+  /// In de, this message translates to:
+  /// **'Punkt nach dem Block einfügen'**
+  String get redesignPlanAfterBlock;
+
+  /// redesign.plan.back
+  ///
+  /// In de, this message translates to:
+  /// **'Termin'**
+  String get redesignPlanBack;
+
+  /// redesign.plan.blockTemplateHint
+  ///
+  /// In de, this message translates to:
+  /// **'Block · {count} Min'**
+  String redesignPlanBlockTemplateHint(Object count);
+
+  /// redesign.plan.collapse
+  ///
+  /// In de, this message translates to:
+  /// **'Block einklappen'**
+  String get redesignPlanCollapse;
+
+  /// redesign.plan.collapsed
+  ///
+  /// In de, this message translates to:
+  /// **'eingeklappt'**
+  String get redesignPlanCollapsed;
+
+  /// redesign.plan.copied
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf vom {date} übernommen'**
+  String redesignPlanCopied(Object date);
+
+  /// redesign.plan.delete
+  ///
+  /// In de, this message translates to:
+  /// **'Löschen'**
+  String get redesignPlanDelete;
+
+  /// redesign.plan.deleteHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Rückgängig'**
+  String get redesignPlanDeleteHint;
+
+  /// redesign.plan.drag
+  ///
+  /// In de, this message translates to:
+  /// **'Ziehen zum Sortieren'**
+  String get redesignPlanDrag;
+
+  /// redesign.plan.duration
+  ///
+  /// In de, this message translates to:
+  /// **'Dauer'**
+  String get redesignPlanDuration;
+
+  /// redesign.plan.durationHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Zeiten darunter rechnen sich sofort neu'**
+  String get redesignPlanDurationHint;
+
+  /// redesign.plan.durationLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Dauer von {name}: {count} Minuten'**
+  String redesignPlanDurationLabel(Object name, Object count);
+
+  /// redesign.plan.edit
+  ///
+  /// In de, this message translates to:
+  /// **'Bearbeiten'**
+  String get redesignPlanEdit;
+
+  /// redesign.plan.editHint
+  ///
+  /// In de, this message translates to:
+  /// **'Bezeichnung, Info, Dauer'**
+  String get redesignPlanEditHint;
+
+  /// redesign.plan.emptyCopy
+  ///
+  /// In de, this message translates to:
+  /// **'Wie letzter Termin'**
+  String get redesignPlanEmptyCopy;
+
+  /// redesign.plan.emptyCopyHint
+  ///
+  /// In de, this message translates to:
+  /// **'Kopie vom {date} · {count}'**
+  String redesignPlanEmptyCopyHint(Object date, Object count);
+
+  /// redesign.plan.emptyTemplate
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage der Organisation'**
+  String get redesignPlanEmptyTemplate;
+
+  /// redesign.plan.emptyTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Womit beginnen?'**
+  String get redesignPlanEmptyTitle;
+
+  /// redesign.plan.end
+  ///
+  /// In de, this message translates to:
+  /// **'Ende'**
+  String get redesignPlanEnd;
+
+  /// redesign.plan.expand
+  ///
+  /// In de, this message translates to:
+  /// **'Block aufklappen'**
+  String get redesignPlanExpand;
+
+  /// redesign.plan.heading
+  ///
+  /// In de, this message translates to:
+  /// **'Überschrift'**
+  String get redesignPlanHeading;
+
+  /// redesign.plan.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Tipp auf die Dauer ändert sie direkt, Tipp auf einen Punkt öffnet alles Weitere. Am Griff halten und ziehen sortiert um.'**
+  String get redesignPlanHint;
+
+  /// redesign.plan.hours
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Std.'**
+  String redesignPlanHours(Object count);
+
+  /// redesign.plan.hoursMinutes
+  ///
+  /// In de, this message translates to:
+  /// **'{hours} Std. {minutes} Min'**
+  String redesignPlanHoursMinutes(Object hours, Object minutes);
+
+  /// redesign.plan.inBlock
+  ///
+  /// In de, this message translates to:
+  /// **'im Block „{name}“'**
+  String redesignPlanInBlock(Object name);
+
+  /// redesign.plan.insertAfter
+  ///
+  /// In de, this message translates to:
+  /// **'Punkt danach einfügen'**
+  String get redesignPlanInsertAfter;
+
+  /// redesign.plan.invalid
+  ///
+  /// In de, this message translates to:
+  /// **'Noch nicht gespeichert: jeder Punkt braucht eine Dauer'**
+  String get redesignPlanInvalid;
+
+  /// redesign.plan.itemCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Punkt} other {{count} Punkte}}'**
+  String redesignPlanItemCount(num count);
+
+  /// redesign.plan.joinBlock
+  ///
+  /// In de, this message translates to:
+  /// **'In den Block darüber'**
+  String get redesignPlanJoinBlock;
+
+  /// redesign.plan.leaveBlock
+  ///
+  /// In de, this message translates to:
+  /// **'Aus dem Block nehmen'**
+  String get redesignPlanLeaveBlock;
+
+  /// redesign.plan.less
+  ///
+  /// In de, this message translates to:
+  /// **'5 Minuten weniger'**
+  String get redesignPlanLess;
+
+  /// redesign.plan.minUnit
+  ///
+  /// In de, this message translates to:
+  /// **'Min'**
+  String get redesignPlanMinUnit;
+
+  /// redesign.plan.minutes
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Min'**
+  String redesignPlanMinutes(Object count);
+
+  /// redesign.plan.more
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Aktionen'**
+  String get redesignPlanMore;
+
+  /// redesign.plan.more5
+  ///
+  /// In de, this message translates to:
+  /// **'5 Minuten mehr'**
+  String get redesignPlanMore5;
+
+  /// redesign.plan.moveDown
+  ///
+  /// In de, this message translates to:
+  /// **'Nach unten'**
+  String get redesignPlanMoveDown;
+
+  /// redesign.plan.moveUp
+  ///
+  /// In de, this message translates to:
+  /// **'Nach oben'**
+  String get redesignPlanMoveUp;
+
+  /// redesign.plan.next
+  ///
+  /// In de, this message translates to:
+  /// **'Nächster Termin'**
+  String get redesignPlanNext;
+
+  /// redesign.plan.notes
+  ///
+  /// In de, this message translates to:
+  /// **'Notizen zum Termin'**
+  String get redesignPlanNotes;
+
+  /// redesign.plan.orgFieldHint
+  ///
+  /// In de, this message translates to:
+  /// **'Feld der Organisation · {count} Min'**
+  String redesignPlanOrgFieldHint(Object count);
+
+  /// redesign.plan.orgHint
+  ///
+  /// In de, this message translates to:
+  /// **'Erscheint im Plan der Organisation'**
+  String get redesignPlanOrgHint;
+
+  /// redesign.plan.orgTemplateHint
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage der Organisation'**
+  String get redesignPlanOrgTemplateHint;
+
+  /// redesign.plan.other
+  ///
+  /// In de, this message translates to:
+  /// **'Weiteres'**
+  String get redesignPlanOther;
+
+  /// redesign.plan.planPick
+  ///
+  /// In de, this message translates to:
+  /// **'Termin wählen'**
+  String get redesignPlanPlanPick;
+
+  /// redesign.plan.planSection
+  ///
+  /// In de, this message translates to:
+  /// **'Plan „{name}“'**
+  String redesignPlanPlanSection(Object name);
+
+  /// redesign.plan.prev
+  ///
+  /// In de, this message translates to:
+  /// **'Vorheriger Termin'**
+  String get redesignPlanPrev;
+
+  /// redesign.plan.publicLink
+  ///
+  /// In de, this message translates to:
+  /// **'Öffentlicher Link'**
+  String get redesignPlanPublicLink;
+
+  /// redesign.plan.publicLinkHint
+  ///
+  /// In de, this message translates to:
+  /// **'Zum Ansehen oder Mitbearbeiten ohne Konto'**
+  String get redesignPlanPublicLinkHint;
+
+  /// redesign.plan.publicLinkShared
+  ///
+  /// In de, this message translates to:
+  /// **'Geteilt · zum Ändern oder Beenden tippen'**
+  String get redesignPlanPublicLinkShared;
+
+  /// redesign.plan.removed
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ entfernt'**
+  String redesignPlanRemoved(Object name);
+
+  /// redesign.plan.saved
+  ///
+  /// In de, this message translates to:
+  /// **'Gespeichert'**
+  String get redesignPlanSaved;
+
+  /// redesign.plan.saving
+  ///
+  /// In de, this message translates to:
+  /// **'Speichert …'**
+  String get redesignPlanSaving;
+
+  /// redesign.plan.settings
+  ///
+  /// In de, this message translates to:
+  /// **'Für diesen Plan'**
+  String get redesignPlanSettings;
+
+  /// redesign.plan.shareExport
+  ///
+  /// In de, this message translates to:
+  /// **'Teilen & Export'**
+  String get redesignPlanShareExport;
+
+  /// redesign.plan.shareHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder sehen den Ablauf im Termin'**
+  String get redesignPlanShareHint;
+
+  /// redesign.plan.start
+  ///
+  /// In de, this message translates to:
+  /// **'Beginn'**
+  String get redesignPlanStart;
+
+  /// redesign.plan.templateDelete
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage löschen'**
+  String get redesignPlanTemplateDelete;
+
+  /// redesign.plan.title
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf'**
+  String get redesignPlanTitle;
+
+  /// redesign.plan.titleHint
+  ///
+  /// In de, this message translates to:
+  /// **'Steht über dem Ablauf und im PDF'**
+  String get redesignPlanTitleHint;
+
+  /// redesign.plan.undo
+  ///
+  /// In de, this message translates to:
+  /// **'Rückgängig'**
+  String get redesignPlanUndo;
+
+  /// redesign.plan.until
+  ///
+  /// In de, this message translates to:
+  /// **'bis {time}'**
+  String redesignPlanUntil(Object time);
 
   /// redesign.pult.allOpen
   ///
@@ -18350,6 +20927,42 @@ abstract class AppLocalizations {
   /// **'Deine Zusage'**
   String get redesignTodayYourAnswer;
 
+  /// redesign.work.about
+  ///
+  /// In de, this message translates to:
+  /// **'Über das Werk'**
+  String get redesignWorkAbout;
+
+  /// redesign.work.add
+  ///
+  /// In de, this message translates to:
+  /// **'Hinzufügen'**
+  String get redesignWorkAdd;
+
+  /// redesign.work.addDrop
+  ///
+  /// In de, this message translates to:
+  /// **'Am Computer: Dateien einfach hierher ziehen'**
+  String get redesignWorkAddDrop;
+
+  /// redesign.work.addHint
+  ///
+  /// In de, this message translates to:
+  /// **'Stimmen, Partitur, Aufnahme oder Liedtext auswählen. Die Stimme wird am Dateinamen erkannt, bei unklaren Namen auf Seite 1.'**
+  String get redesignWorkAddHint;
+
+  /// redesign.work.addPick
+  ///
+  /// In de, this message translates to:
+  /// **'Dateien wählen'**
+  String get redesignWorkAddPick;
+
+  /// redesign.work.addTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Noten hinzufügen'**
+  String get redesignWorkAddTitle;
+
   /// redesign.work.allFiles
   ///
   /// In de, this message translates to:
@@ -18362,17 +20975,329 @@ abstract class AppLocalizations {
   /// **'Alle Stimmen'**
   String get redesignWorkAllParts;
 
+  /// redesign.work.copiedFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Kopiert aus'**
+  String get redesignWorkCopiedFrom;
+
+  /// redesign.work.copy
+  ///
+  /// In de, this message translates to:
+  /// **'In andere Gruppe kopieren'**
+  String get redesignWorkCopy;
+
+  /// redesign.work.copyHint
+  ///
+  /// In de, this message translates to:
+  /// **'In Gruppen deiner Organisation, die du leitest'**
+  String get redesignWorkCopyHint;
+
+  /// redesign.workCreate.category
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorie'**
+  String get redesignWorkCreateCategory;
+
+  /// redesign.workCreate.categoryHint
+  ///
+  /// In de, this message translates to:
+  /// **'Vorausgewählt, weil die Liste gerade auf „{name}“ gefiltert war.'**
+  String redesignWorkCreateCategoryHint(Object name);
+
+  /// redesign.workCreate.create
+  ///
+  /// In de, this message translates to:
+  /// **'Anlegen'**
+  String get redesignWorkCreateCreate;
+
+  /// redesign.workCreate.createAndAdd
+  ///
+  /// In de, this message translates to:
+  /// **'Anlegen und Noten hinzufügen'**
+  String get redesignWorkCreateCreateAndAdd;
+
+  /// redesign.workCreate.instrumentationHint
+  ///
+  /// In de, this message translates to:
+  /// **'Welche Gruppen mitspielen, erkennt die App an den Noten, die du gleich hochlädst.'**
+  String get redesignWorkCreateInstrumentationHint;
+
+  /// redesign.workCreate.later
+  ///
+  /// In de, this message translates to:
+  /// **'Link, Schwierigkeit und Zusatzfelder später in „Bearbeiten“.'**
+  String get redesignWorkCreateLater;
+
+  /// redesign.workCreate.nextNumber
+  ///
+  /// In de, this message translates to:
+  /// **'{number} ist die nächste freie Nummer.'**
+  String redesignWorkCreateNextNumber(Object number);
+
+  /// redesign.workCreate.prefixHint
+  ///
+  /// In de, this message translates to:
+  /// **'Präfix nur bei Bedarf, z. B. W für Weihnachten → W1.'**
+  String get redesignWorkCreatePrefixHint;
+
+  /// redesign.workCreate.title
+  ///
+  /// In de, this message translates to:
+  /// **'Neues Werk'**
+  String get redesignWorkCreateTitle;
+
+  /// redesign.work.difficulty
+  ///
+  /// In de, this message translates to:
+  /// **'Schwierigkeit'**
+  String get redesignWorkDifficulty;
+
   /// redesign.work.edit
   ///
   /// In de, this message translates to:
   /// **'Bearbeiten'**
   String get redesignWorkEdit;
 
+  /// redesign.workEdit.categories
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorien'**
+  String get redesignWorkEditCategories;
+
+  /// redesign.workEdit.delete
+  ///
+  /// In de, this message translates to:
+  /// **'Werk löschen'**
+  String get redesignWorkEditDelete;
+
+  /// redesign.workEdit.difficulty
+  ///
+  /// In de, this message translates to:
+  /// **'Schwierigkeit'**
+  String get redesignWorkEditDifficulty;
+
+  /// redesign.workEdit.difficultyNone
+  ///
+  /// In de, this message translates to:
+  /// **'Offen'**
+  String get redesignWorkEditDifficultyNone;
+
+  /// redesign.workEdit.easy
+  ///
+  /// In de, this message translates to:
+  /// **'Leicht'**
+  String get redesignWorkEditEasy;
+
+  /// redesign.workEdit.fields
+  ///
+  /// In de, this message translates to:
+  /// **'Zusatzfelder'**
+  String get redesignWorkEditFields;
+
+  /// redesign.workEdit.hard
+  ///
+  /// In de, this message translates to:
+  /// **'Schwer'**
+  String get redesignWorkEditHard;
+
+  /// redesign.workEdit.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Änderungen werden sofort gespeichert. Noten und Dateien pflegst du direkt auf der Werk-Seite.'**
+  String get redesignWorkEditHint;
+
+  /// redesign.workEdit.instrumentation
+  ///
+  /// In de, this message translates to:
+  /// **'Besetzung'**
+  String get redesignWorkEditInstrumentation;
+
+  /// redesign.workEdit.instrumentationHint
+  ///
+  /// In de, this message translates to:
+  /// **'Welche Gruppen mitspielen, ergibt sich aus den hochgeladenen Noten. Fehlt eine Stimme, lädst du sie auf der Werk-Seite hoch.'**
+  String get redesignWorkEditInstrumentationHint;
+
+  /// redesign.workEdit.link
+  ///
+  /// In de, this message translates to:
+  /// **'Link'**
+  String get redesignWorkEditLink;
+
+  /// redesign.workEdit.linkHint
+  ///
+  /// In de, this message translates to:
+  /// **'Video, Hörbeispiel oder Verlag'**
+  String get redesignWorkEditLinkHint;
+
+  /// redesign.workEdit.manageCategories
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorien verwalten'**
+  String get redesignWorkEditManageCategories;
+
+  /// redesign.workEdit.medium
+  ///
+  /// In de, this message translates to:
+  /// **'Mittel'**
+  String get redesignWorkEditMedium;
+
+  /// redesign.workEdit.name
+  ///
+  /// In de, this message translates to:
+  /// **'Titel'**
+  String get redesignWorkEditName;
+
+  /// redesign.workEdit.nameEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Titel wird nicht gespeichert.'**
+  String get redesignWorkEditNameEmpty;
+
+  /// redesign.workEdit.noCategories
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Kategorien angelegt.'**
+  String get redesignWorkEditNoCategories;
+
+  /// redesign.workEdit.notAllowed
+  ///
+  /// In de, this message translates to:
+  /// **'Werke bearbeiten kann nur die Leitung.'**
+  String get redesignWorkEditNotAllowed;
+
+  /// redesign.workEdit.number
+  ///
+  /// In de, this message translates to:
+  /// **'Nummer'**
+  String get redesignWorkEditNumber;
+
+  /// redesign.workEdit.numberLocked
+  ///
+  /// In de, this message translates to:
+  /// **'Die Werkliste konnte nicht geladen werden, die Nummer lässt sich so nicht prüfen.'**
+  String get redesignWorkEditNumberLocked;
+
+  /// redesign.workEdit.numberTaken
+  ///
+  /// In de, this message translates to:
+  /// **'Nr. {number} hat schon „{name}“. Die Nummer wird so nicht gespeichert.'**
+  String redesignWorkEditNumberTaken(Object number, Object name);
+
+  /// redesign.workEdit.prefix
+  ///
+  /// In de, this message translates to:
+  /// **'Präfix'**
+  String get redesignWorkEditPrefix;
+
+  /// redesign.workEdit.prefixHint
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. W'**
+  String get redesignWorkEditPrefixHint;
+
+  /// redesign.workEdit.title
+  ///
+  /// In de, this message translates to:
+  /// **'Werk bearbeiten'**
+  String get redesignWorkEditTitle;
+
   /// redesign.work.fileCount
   ///
   /// In de, this message translates to:
   /// **'{count, plural, one {1 Datei} other {{count} Dateien}}'**
   String redesignWorkFileCount(num count);
+
+  /// redesign.work.fileDelete
+  ///
+  /// In de, this message translates to:
+  /// **'Löschen'**
+  String get redesignWorkFileDelete;
+
+  /// redesign.work.fileDownload
+  ///
+  /// In de, this message translates to:
+  /// **'Herunterladen'**
+  String get redesignWorkFileDownload;
+
+  /// redesign.work.fileMore
+  ///
+  /// In de, this message translates to:
+  /// **'Mehr zu {name}'**
+  String redesignWorkFileMore(Object name);
+
+  /// redesign.work.filePart
+  ///
+  /// In de, this message translates to:
+  /// **'Stimme ändern'**
+  String get redesignWorkFilePart;
+
+  /// redesign.work.filePrint
+  ///
+  /// In de, this message translates to:
+  /// **'Drucken'**
+  String get redesignWorkFilePrint;
+
+  /// redesign.work.fileRename
+  ///
+  /// In de, this message translates to:
+  /// **'Umbenennen'**
+  String get redesignWorkFileRename;
+
+  /// redesign.work.fileShare
+  ///
+  /// In de, this message translates to:
+  /// **'Teilen'**
+  String get redesignWorkFileShare;
+
+  /// redesign.work.fileTelegram
+  ///
+  /// In de, this message translates to:
+  /// **'Per Telegram an mich'**
+  String get redesignWorkFileTelegram;
+
+  /// redesign.work.files
+  ///
+  /// In de, this message translates to:
+  /// **'Noten & Dateien'**
+  String get redesignWorkFiles;
+
+  /// redesign.work.forConductors
+  ///
+  /// In de, this message translates to:
+  /// **'Für die Leitung'**
+  String get redesignWorkForConductors;
+
+  /// redesign.work.history
+  ///
+  /// In de, this message translates to:
+  /// **'Verlauf'**
+  String get redesignWorkHistory;
+
+  /// redesign.work.historyCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin} other {{count} Termine}}'**
+  String redesignWorkHistoryCount(num count);
+
+  /// redesign.work.instrumentation
+  ///
+  /// In de, this message translates to:
+  /// **'Besetzung'**
+  String get redesignWorkInstrumentation;
+
+  /// redesign.work.instrumentationHint
+  ///
+  /// In de, this message translates to:
+  /// **'aus den Noten: {names}'**
+  String redesignWorkInstrumentationHint(Object names);
+
+  /// redesign.work.instrumentationValue
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Gruppe} other {{count} Gruppen}}'**
+  String redesignWorkInstrumentationValue(num count);
 
   /// redesign.work.lastPlayed
   ///
@@ -18398,17 +21323,65 @@ abstract class AppLocalizations {
   /// **'Liedtext'**
   String get redesignWorkLyrics;
 
+  /// redesign.work.missingMany
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Stimme fehlt noch} other {{count} Stimmen fehlen noch}}'**
+  String redesignWorkMissingMany(num count);
+
+  /// redesign.work.missingOne
+  ///
+  /// In de, this message translates to:
+  /// **'{name} fehlt noch'**
+  String redesignWorkMissingOne(Object name);
+
+  /// redesign.work.missingOneHint
+  ///
+  /// In de, this message translates to:
+  /// **'In der Gruppe spielt jemand {name}, es gibt aber noch keine Noten.'**
+  String redesignWorkMissingOneHint(Object name);
+
+  /// redesign.work.missingPillMany
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 fehlt} other {{count} fehlen}}'**
+  String redesignWorkMissingPillMany(num count);
+
+  /// redesign.work.missingPillOne
+  ///
+  /// In de, this message translates to:
+  /// **'{name} fehlt'**
+  String redesignWorkMissingPillOne(Object name);
+
+  /// redesign.work.more
+  ///
+  /// In de, this message translates to:
+  /// **'Mehr zum Werk'**
+  String get redesignWorkMore;
+
   /// redesign.work.never
   ///
   /// In de, this message translates to:
   /// **'Noch nie'**
   String get redesignWorkNever;
 
+  /// redesign.work.next
+  ///
+  /// In de, this message translates to:
+  /// **'Als Nächstes'**
+  String get redesignWorkNext;
+
   /// redesign.work.noFiles
   ///
   /// In de, this message translates to:
   /// **'Zu diesem Werk gibt es noch keine Dateien.'**
   String get redesignWorkNoFiles;
+
+  /// redesign.work.noFilesYet
+  ///
+  /// In de, this message translates to:
+  /// **'Zu diesem Werk gibt es noch keine Noten.'**
+  String get redesignWorkNoFilesYet;
 
   /// redesign.work.noPart
   ///
@@ -18440,6 +21413,12 @@ abstract class AppLocalizations {
   /// **'Öffnen'**
   String get redesignWorkOpen;
 
+  /// redesign.work.partOwn
+  ///
+  /// In de, this message translates to:
+  /// **'deine Stimme'**
+  String get redesignWorkPartOwn;
+
   /// redesign.work.pause
   ///
   /// In de, this message translates to:
@@ -18457,6 +21436,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Abspielen'**
   String get redesignWorkPlay;
+
+  /// redesign.work.practice
+  ///
+  /// In de, this message translates to:
+  /// **'Übe-Aufnahme · {name}'**
+  String redesignWorkPractice(Object name);
 
   /// redesign.work.recording
   ///
@@ -18488,11 +21473,47 @@ abstract class AppLocalizations {
   /// **'{name} teilen'**
   String redesignWorkShareFile(Object name);
 
+  /// redesign.work.shareLink
+  ///
+  /// In de, this message translates to:
+  /// **'Link zum Werk teilen'**
+  String get redesignWorkShareLink;
+
+  /// redesign.work.shareLinkHint
+  ///
+  /// In de, this message translates to:
+  /// **'Öffentliche Seite, ohne Anmeldung'**
+  String get redesignWorkShareLinkHint;
+
   /// redesign.work.slower
   ///
   /// In de, this message translates to:
   /// **'Langsamer abspielen'**
   String get redesignWorkSlower;
+
+  /// redesign.work.upload
+  ///
+  /// In de, this message translates to:
+  /// **'Hochladen'**
+  String get redesignWorkUpload;
+
+  /// redesign.work.withChoir
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Chor'**
+  String get redesignWorkWithChoir;
+
+  /// redesign.work.withOrchestra
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Orchester'**
+  String get redesignWorkWithOrchestra;
+
+  /// redesign.work.withSolo
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Solo-Gesang'**
+  String get redesignWorkWithSolo;
 
   /// redesign.work.yourPart
   ///
@@ -18500,11 +21521,53 @@ abstract class AppLocalizations {
   /// **'Deine Stimme'**
   String get redesignWorkYourPart;
 
+  /// redesign.work.zip
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Dateien als ZIP'**
+  String get redesignWorkZip;
+
   /// redesign.works.add
   ///
   /// In de, this message translates to:
   /// **'Werk hinzufügen'**
   String get redesignWorksAdd;
+
+  /// redesign.works.addImport
+  ///
+  /// In de, this message translates to:
+  /// **'Werkliste importieren'**
+  String get redesignWorksAddImport;
+
+  /// redesign.works.addImportHint
+  ///
+  /// In de, this message translates to:
+  /// **'Excel oder CSV mit Nummer, Titel, Kategorie'**
+  String get redesignWorksAddImportHint;
+
+  /// redesign.works.addNew
+  ///
+  /// In de, this message translates to:
+  /// **'Neues Werk'**
+  String get redesignWorksAddNew;
+
+  /// redesign.works.addNewHint
+  ///
+  /// In de, this message translates to:
+  /// **'Titel und Nummer, danach direkt die Noten'**
+  String get redesignWorksAddNewHint;
+
+  /// redesign.works.addOrg
+  ///
+  /// In de, this message translates to:
+  /// **'Aus anderer Gruppe übernehmen'**
+  String get redesignWorksAddOrg;
+
+  /// redesign.works.addOrgHint
+  ///
+  /// In de, this message translates to:
+  /// **'Werke deiner Organisation durchsuchen und kopieren'**
+  String get redesignWorksAddOrgHint;
 
   /// redesign.works.all
   ///
@@ -18512,17 +21575,11 @@ abstract class AppLocalizations {
   /// **'Alle · {count}'**
   String redesignWorksAll(Object count);
 
-  /// redesign.works.audio
+  /// redesign.works.allEvents
   ///
   /// In de, this message translates to:
-  /// **'Audio'**
-  String get redesignWorksAudio;
-
-  /// redesign.works.current
-  ///
-  /// In de, this message translates to:
-  /// **'Gerade geprobt'**
-  String get redesignWorksCurrent;
+  /// **'Alle Termine'**
+  String get redesignWorksAllEvents;
 
   /// redesign.works.empty
   ///
@@ -18530,29 +21587,65 @@ abstract class AppLocalizations {
   /// **'Noch keine Werke.'**
   String get redesignWorksEmpty;
 
-  /// redesign.works.files
+  /// redesign.works.eventWorks
   ///
   /// In de, this message translates to:
-  /// **'Dateien'**
-  String get redesignWorksFiles;
-
-  /// redesign.works.filesLabel
-  ///
-  /// In de, this message translates to:
-  /// **'Dateien der Gruppe'**
-  String get redesignWorksFilesLabel;
+  /// **'{count, plural, one {1 Werk} other {{count} Werke}}'**
+  String redesignWorksEventWorks(num count);
 
   /// redesign.works.filter
   ///
   /// In de, this message translates to:
-  /// **'Filter & Ansicht'**
+  /// **'Filter'**
   String get redesignWorksFilter;
 
-  /// redesign.works.filterActive
+  /// redesign.works.filterReset
   ///
   /// In de, this message translates to:
-  /// **'Filter aktiv'**
-  String get redesignWorksFilterActive;
+  /// **'Zurücksetzen'**
+  String get redesignWorksFilterReset;
+
+  /// redesign.works.filterTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Sortieren & Filtern'**
+  String get redesignWorksFilterTitle;
+
+  /// redesign.works.folder
+  ///
+  /// In de, this message translates to:
+  /// **'Meine Mappe'**
+  String get redesignWorksFolder;
+
+  /// redesign.works.folders
+  ///
+  /// In de, this message translates to:
+  /// **'Mappen'**
+  String get redesignWorksFolders;
+
+  /// redesign.works.forGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Für Gruppe'**
+  String get redesignWorksForGroup;
+
+  /// redesign.works.forGroupAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get redesignWorksForGroupAll;
+
+  /// redesign.works.lastOn
+  ///
+  /// In de, this message translates to:
+  /// **'Zuletzt {date}'**
+  String redesignWorksLastOn(Object date);
+
+  /// redesign.works.missingNotes
+  ///
+  /// In de, this message translates to:
+  /// **'Noten fehlen'**
+  String get redesignWorksMissingNotes;
 
   /// redesign.works.more
   ///
@@ -18560,17 +21653,77 @@ abstract class AppLocalizations {
   /// **'Mehr'**
   String get redesignWorksMore;
 
+  /// redesign.works.neverPlayed
+  ///
+  /// In de, this message translates to:
+  /// **'Noch nie gespielt'**
+  String get redesignWorksNeverPlayed;
+
+  /// redesign.works.neverSung
+  ///
+  /// In de, this message translates to:
+  /// **'Noch nie gesungen'**
+  String get redesignWorksNeverSung;
+
+  /// redesign.works.next
+  ///
+  /// In de, this message translates to:
+  /// **'Als Nächstes'**
+  String get redesignWorksNext;
+
+  /// redesign.works.noFilesPill
+  ///
+  /// In de, this message translates to:
+  /// **'ohne Noten'**
+  String get redesignWorksNoFilesPill;
+
   /// redesign.works.noMatch
   ///
   /// In de, this message translates to:
   /// **'Kein Werk passt zur Suche.'**
   String get redesignWorksNoMatch;
 
-  /// redesign.works.pdf
+  /// redesign.works.only
   ///
   /// In de, this message translates to:
-  /// **'PDF'**
-  String get redesignWorksPdf;
+  /// **'Nur zeigen'**
+  String get redesignWorksOnly;
+
+  /// redesign.works.onlyMine
+  ///
+  /// In de, this message translates to:
+  /// **'Mit meiner Stimme'**
+  String get redesignWorksOnlyMine;
+
+  /// redesign.works.onlyMissing
+  ///
+  /// In de, this message translates to:
+  /// **'Noten fehlen'**
+  String get redesignWorksOnlyMissing;
+
+  /// redesign.works.onlyRecording
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Aufnahme'**
+  String get redesignWorksOnlyRecording;
+
+  /// redesign.works.onlySolo
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Solo'**
+  String get redesignWorksOnlySolo;
+
+  /// redesign.works.openMine
+  ///
+  /// In de, this message translates to:
+  /// **'Meine Noten öffnen'**
+  String get redesignWorksOpenMine;
+
+  /// redesign.works.openMineHint
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Deine Stimme als PDF, auch zum Drucken} other {{count} Stimmen als ein PDF, auch zum Drucken}}'**
+  String redesignWorksOpenMineHint(num count);
 
   /// redesign.works.resetFilter
   ///
@@ -18581,7 +21734,7 @@ abstract class AppLocalizations {
   /// redesign.works.search
   ///
   /// In de, this message translates to:
-  /// **'Titel, Komponist, Nummer'**
+  /// **'Titel oder Nummer'**
   String get redesignWorksSearch;
 
   /// redesign.works.searchLabel
@@ -18589,6 +21742,84 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Werke suchen'**
   String get redesignWorksSearchLabel;
+
+  /// redesign.works.show
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Kein Werk passt} one {1 Werk anzeigen} other {{count} Werke anzeigen}}'**
+  String redesignWorksShow(num count);
+
+  /// redesign.works.sort
+  ///
+  /// In de, this message translates to:
+  /// **'Sortieren'**
+  String get redesignWorksSort;
+
+  /// redesign.works.sortLastPlayed
+  ///
+  /// In de, this message translates to:
+  /// **'Zuletzt gespielt'**
+  String get redesignWorksSortLastPlayed;
+
+  /// redesign.works.sortLastSung
+  ///
+  /// In de, this message translates to:
+  /// **'Zuletzt gesungen'**
+  String get redesignWorksSortLastSung;
+
+  /// redesign.works.sortLongestPlayed
+  ///
+  /// In de, this message translates to:
+  /// **'Am längsten nicht gespielt'**
+  String get redesignWorksSortLongestPlayed;
+
+  /// redesign.works.sortLongestSung
+  ///
+  /// In de, this message translates to:
+  /// **'Am längsten nicht gesungen'**
+  String get redesignWorksSortLongestSung;
+
+  /// redesign.works.sortNumber
+  ///
+  /// In de, this message translates to:
+  /// **'Nummer'**
+  String get redesignWorksSortNumber;
+
+  /// redesign.works.sortRemove
+  ///
+  /// In de, this message translates to:
+  /// **'Sortierung „{name}“ entfernen'**
+  String redesignWorksSortRemove(Object name);
+
+  /// redesign.works.sortTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Titel'**
+  String get redesignWorksSortTitle;
+
+  /// redesign.works.statusNoFiles
+  ///
+  /// In de, this message translates to:
+  /// **'noch keine Noten'**
+  String get redesignWorksStatusNoFiles;
+
+  /// redesign.works.statusNoPart
+  ///
+  /// In de, this message translates to:
+  /// **'keine Noten für {name}'**
+  String redesignWorksStatusNoPart(Object name);
+
+  /// redesign.works.statusPart
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Stimme'**
+  String get redesignWorksStatusPart;
+
+  /// redesign.works.statusRecording
+  ///
+  /// In de, this message translates to:
+  /// **'Aufnahme'**
+  String get redesignWorksStatusRecording;
 
   /// register.create
   ///
@@ -20216,11 +23447,11 @@ abstract class AppLocalizations {
   /// **'Ausloggen'**
   String get settingsLogout;
 
-  /// settings.messageAll
+  /// settings.messagesHint
   ///
   /// In de, this message translates to:
-  /// **'Nachricht an alle senden'**
-  String get settingsMessageAll;
+  /// **'Nachrichten senden und automatisch nachfassen'**
+  String get settingsMessagesHint;
 
   /// settings.mobile
   ///

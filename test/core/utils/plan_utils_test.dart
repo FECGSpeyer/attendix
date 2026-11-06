@@ -118,6 +118,24 @@ void main() {
       expect(PlanUtils.formatTime('2026-10-28T09:35:00'), '09:35');
     });
 
+    test('template start time is stored as ion-datetime ISO value (not HH:mm)', () {
+      final v = PlanUtils.ionTimeValue(10, 5, now: DateTime(2026, 11, 5));
+      expect(v, '2026-11-05T10:05:00');
+      expect(PlanUtils.formatTime(v), '10:05');
+      // Keeps the date of an ISO value, "HH:mm" (old data) falls back to today.
+      expect(PlanUtils.ionTimeValue(8, 0, previous: '2025-01-02T10:00:00'), '2025-01-02T08:00:00');
+      expect(PlanUtils.ionTimeValue(8, 0, previous: '10:00', now: DateTime(2026, 11, 5)), '2026-11-05T08:00:00');
+    });
+
+    test('template start time in a DST gap is kept as picked (independent of machine time zone)', () {
+      // 2026-03-29 02:00–03:00 does not exist in Europe/Berlin; a local
+      // DateTime would shift 02:30 to 03:30. The value must stay 02:30.
+      expect(PlanUtils.ionTimeValue(2, 30, now: DateTime.utc(2026, 3, 29)), '2026-03-29T02:30:00');
+      expect(PlanUtils.ionTimeValue(2, 30, previous: '2026-03-29T01:00:00'), '2026-03-29T02:30:00');
+      expect(PlanUtils.ionTimeValue(2, 0, previous: '2026-03-29T10:00:00'), '2026-03-29T02:00:00');
+      expect(PlanUtils.formatTime(PlanUtils.ionTimeValue(2, 30, now: DateTime.utc(2026, 3, 29))), '02:30');
+    });
+
     test('computes start times and end (heads count 0 min)', () {
       final fields = [f('a', '20'), f('h', '0', isGroup: true), f('b', '15', groupId: 'h'), f('c', '10')];
       expect(PlanUtils.computeEnd('10:00', fields), '10:45');
@@ -203,5 +221,17 @@ void main() {
       expect(split.past.first.tenantLabel, 'Org-Plan');
       expect(split.past.last.title, 'Plan');
     });
+  });
+
+  test('indexOfField: id fallback needs a unique id when the dialog opened', () {
+    final a = f('song-1', '5');
+    final b = f('song-1', '5');
+    final opened = [a, b];
+    // Realtime: the edited duplicate (b) was deleted elsewhere, a was reloaded.
+    final current = [f('song-1', '5')];
+    expect(PlanUtils.indexOfField(current, b, openedIn: opened), -1);
+    // A row whose id was unique when opened is still found after a reload.
+    final c = f('x', '3');
+    expect(PlanUtils.indexOfField([f('x', '3')], c, openedIn: [c]), 0);
   });
 }

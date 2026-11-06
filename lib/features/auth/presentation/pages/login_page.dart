@@ -204,6 +204,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       if (mounted) await _routeAfterAuth(user);
     } on LoginFailure catch (failure) {
       if (!mounted) return;
+      if (_teamsLinkMode) {
+        // Ionic login() in linkMode: ssoLink catches the sign-in error and
+        // only shows a danger toast. No follow-up dialog, in particular no
+        // switch to the code login (it would not link the Microsoft account).
+        // Ionic AuthService.login: email_not_confirmed → "Bitte bestätige
+        // zuerst deine E-Mail-Adresse." (db-5e5596ce).
+        _showError(switch (failure.kind) {
+          LoginFailureKind.emailNotConfirmed => context.l10n.authConfirmEmailFirst,
+          LoginFailureKind.invalidCredentials => context.l10n.authInvalidCredentials,
+          _ => failure.message ?? context.l10n.authInvalidCredentials,
+        });
+        return;
+      }
       _showError(failure.message);
       switch (failure.kind) {
         case LoginFailureKind.emailNotConfirmed:
@@ -230,7 +243,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   /// TEAMS: verify the Attendix credentials, then bind the Microsoft identity
   /// so future Teams launches sign in silently (Ionic login() in linkMode).
-  /// LoginFailure from the password sign-in propagates to [_login].
+  /// LoginFailure from the password sign-in propagates to [_login], which in
+  /// link mode only shows the error toast.
   Future<void> _linkTeamsAccount() async {
     // The root messenger outlives this page (the auth redirect may already
     // have left /login when linking finishes).
@@ -312,16 +326,22 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Future<void> _routeAfterAuth(User user) async {
     // Check if user wants to skip tenant selection
     final userPrefs = UserPreferences.fromUserMetadata(user.userMetadata);
+    // A real sign-in: the "Instanzauswahl" preference applies (Ionic
+    // routeAfterAuth → setTenant(…, showSelector)).
+    InstanceSelectionGate.afterSignIn = true;
 
-    if (!userPrefs.wantInstanceSelection && userPrefs.currentTenantId != null) {
-      // Try to auto-navigate to saved tenant
-      final navigated = await _tryAutoNavigateToTenant(
-        userPrefs.currentTenantId!,
-      );
-      if (navigated) return;
+    if (!userPrefs.wantInstanceSelection) {
+      // Try to auto-navigate to the saved tenant: this device's instance
+      // first, then user_metadata (Ionic setTenant, same order as the
+      // background restore).
+      for (final id in await preferredTenantIds(userPrefs.currentTenantId)) {
+        if (await _tryAutoNavigateToTenant(id)) return;
+      }
     }
 
-    // Default: show tenant selection
+    // Default: show tenant selection. With "Instanzauswahl aktivieren" it
+    // asks with the Ionic radio alert (TenantSelectionPage), which also
+    // works when the router already replaced this page after the sign-in.
     if (mounted) {
       context.go('/tenants');
     }
@@ -525,6 +545,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
     // Ionic login.page.scss `.around` in rem: on the iPhone 1rem = 17px.
     final rem = ios ? 17.0 : 16.0;
+    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
     _measurePasswordForm();
 
     // Ionic login: background photo, centered card (60 % / 95 % under
@@ -640,60 +661,64 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               );
             },
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: rem, // .version { bottom: 1rem }
-            child: SafeArea(
-              top: false,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // NATIVE_MISC: Ionic login update-banner ("Update installieren")
-                  if (showUpdateHint(ref.watch(appUpdateAvailableProvider)))
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: FilledButton.icon(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.success,
-                          foregroundColor: Colors.white,
-                          visualDensity: VisualDensity.compact,
+          // KEYBOARD_FOOTER: while the keyboard is open the body shrinks and
+          // the line would slide over the card (Ionic leaves it behind the
+          // keyboard), so it is hidden then.
+          if (!keyboardOpen)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: rem, // .version { bottom: 1rem }
+              child: SafeArea(
+                top: false,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // NATIVE_MISC: Ionic login update-banner ("Update installieren")
+                    if (showUpdateHint(ref.watch(appUpdateAvailableProvider)))
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: FilledButton.icon(
+                          style: FilledButton.styleFrom(
+                            backgroundColor: AppColors.success,
+                            foregroundColor: Colors.white,
+                            visualDensity: VisualDensity.compact,
+                          ),
+                          onPressed: () => ref.read(appUpdateServiceProvider).applyUpdate(),
+                          icon: const Icon(Icons.cloud_download_outlined, size: 18),
+                          label: IonButtonLabel(context.l10n.loginInstallUpdate),
                         ),
-                        onPressed: () => ref.read(appUpdateServiceProvider).applyUpdate(),
-                        icon: const Icon(Icons.cloud_download_outlined, size: 18),
-                        label: IonButtonLabel(context.l10n.loginInstallUpdate),
+                      ),
+                    // Ionic always shows "Demo starten" (environment.demoMail);
+                    // LEGAL_HELP: Impressum & Datenschutz modal.
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Text.rich(
+                        TextSpan(
+                          style: footerStyle,
+                          children: [
+                            TextSpan(
+                                text: context.l10n
+                                    .loginVersion(AppConstants.displayVersion)),
+                            const TextSpan(text: ' | '),
+                            TextSpan(
+                              text: context.l10n.loginStartDemo,
+                              recognizer: _demoTap,
+                            ),
+                            const TextSpan(text: ' | '),
+                            TextSpan(
+                              text: context.l10n.loginLegal,
+                              recognizer: _legalTap,
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                  // Ionic always shows "Demo starten" (environment.demoMail);
-                  // LEGAL_HELP: Impressum & Datenschutz modal.
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Text.rich(
-                      TextSpan(
-                        style: footerStyle,
-                        children: [
-                          TextSpan(
-                              text: context.l10n
-                                  .loginVersion(AppConstants.appVersion)),
-                          const TextSpan(text: ' | '),
-                          TextSpan(
-                            text: context.l10n.loginStartDemo,
-                            recognizer: _demoTap,
-                          ),
-                          const TextSpan(text: ' | '),
-                          TextSpan(
-                            text: context.l10n.loginLegal,
-                            recognizer: _legalTap,
-                          ),
-                        ],
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

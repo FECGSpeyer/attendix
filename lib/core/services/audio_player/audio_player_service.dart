@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -45,6 +46,10 @@ class AudioQueueInfo {
 /// [AudioPlayerState] so the player bar can show next/previous buttons).
 final audioQueueInfoProvider = StateProvider<AudioQueueInfo>((_) => const AudioQueueInfo());
 
+/// REDESIGN: playback speed of [AudioPlayerService.setSpeed], so every
+/// "0,8×" button on a page shows the same value.
+final audioPlaybackSpeedProvider = StateProvider<double>((_) => 1.0);
+
 /// Cross-cutting audio playback service.
 ///
 /// Mirrors Ionic v4.0.5 `AudioPlayerService` (`audio-player.service.ts`).
@@ -89,6 +94,7 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
 
   Future<void> setSpeed(double speed) async {
     _speed = speed;
+    ref.read(audioPlaybackSpeedProvider.notifier).state = speed;
     await _player?.setSpeed(speed);
   }
 
@@ -198,7 +204,14 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
     final token = ++_loadToken;
     _setQueue(_queue, index);
     await _player?.pause();
-    final url = await item.resolveUrl();
+    final String url;
+    try {
+      url = await item.resolveUrl();
+    } catch (_) {
+      // Ionic playQueueItem: a URL that cannot be resolved resets the player.
+      if (token == _loadToken) await _stopInternal();
+      rethrow;
+    }
     if (token != _loadToken) return;
     await _load(url, item.fileName, item.title);
   }
@@ -215,6 +228,13 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
     _wireStreams(player);
 
     try {
+      // Web: the page is cross-origin isolated (COEP require-corp in
+      // web/_headers, needed for multi-threaded Skwasm). A plain <audio>
+      // request is no-cors and gets blocked because Supabase Storage sends
+      // no Cross-Origin-Resource-Policy header. As a CORS request
+      // (crossorigin="anonymous") it is allowed: Storage answers with
+      // Access-Control-Allow-Origin.
+      if (kIsWeb) await player.setWebCrossOrigin(WebCrossOrigin.anonymous);
       final loadedDuration = await player.setUrl(url);
       if (_speed != 1.0) await player.setSpeed(_speed);
 
@@ -322,8 +342,26 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
           isPlaying: false,
           currentTime: Duration.zero,
         );
+        // Ionic (HTMLAudio): after 'ended' Play (bar or lock screen) starts
+        // the track from the beginning. just_audio keeps `playing` true after
+        // completion, so play() would be a no-op – pause and rewind.
+        unawaited(_rewindAfterEnd(player));
       }
     });
+  }
+
+  Future<void> _rewindAfterEnd(AudioPlayer player) async {
+    try {
+      await player.pause();
+      if (_player != player) return;
+      await player.seek(Duration.zero);
+      if (_player != player) return;
+      // The pause above synced the lock screen at the end position; report
+      // the rewind too (like [seek]), otherwise it stays at the end.
+      _syncPositionState();
+    } catch (e) {
+      debugPrint('Audio rewind after end failed: $e');
+    }
   }
 
   Future<void> _stopInternal({bool keepQueue = false}) async {

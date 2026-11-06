@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -28,8 +30,9 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "de.attendix.attendix"
+        // Same applicationId as the Ionic app, so the Flutter app ships as an
+        // update of the Play Store app (the Kotlin namespace stays de.attendix.attendix).
+        applicationId = "io.stephanus.attendix"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -38,11 +41,34 @@ android {
         versionName = flutter.versionName
     }
 
+    // Play upload key: android/key.properties (gitignored, never committed)
+    // with storeFile, storePassword, keyAlias, keyPassword. Without it the
+    // release build is signed with the debug key (local testing only).
+    val keyProperties = Properties().apply {
+        val file = rootProject.file("key.properties")
+        if (file.exists()) file.inputStream().use { load(it) }
+    }
+    val hasUploadKey = keyProperties.getProperty("storeFile") != null
+
+    signingConfigs {
+        if (hasUploadKey) {
+            create("upload") {
+                storeFile = file(keyProperties.getProperty("storeFile"))
+                storePassword = keyProperties.getProperty("storePassword")
+                keyAlias = keyProperties.getProperty("keyAlias")
+                keyPassword = keyProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (hasUploadKey) {
+                signingConfigs.getByName("upload")
+            } else {
+                logger.warn("android/key.properties not found, release build is signed with the debug key")
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }

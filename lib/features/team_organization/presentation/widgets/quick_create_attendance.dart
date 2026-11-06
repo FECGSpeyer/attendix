@@ -8,6 +8,7 @@ import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
+import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/providers/shift_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
@@ -21,6 +22,7 @@ import '../../../../data/models/player_absence/player_absence.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../data/repositories/profile_repository.dart' show ProfileExtraField;
 import '../../../../l10n/l10n.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -218,14 +220,16 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
 
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
-  final day = await showAppDatePicker(
-    context: context,
+  // Ionic: alert "{Typ} anlegen" with a date input (today, min today) and
+  // "Abbrechen"/"Anlegen".
+  final day = await showAppDateAlert(
+    context,
+    title: context.l10n.teamOrgFlutterCreateType(type.name),
+    message: context.l10n.dateDialogWhichDay,
     initialDate: today,
     firstDate: today,
-    lastDate: today.add(const Duration(days: 3650)),
-    helpText: '${context.l10n.teamOrgFlutterCreateType(type.name)} – ${context.l10n.dateDialogWhichDay}',
+    lastDate: DateTime(2200),
     confirmText: context.l10n.commonCreate,
-    cancelText: context.l10n.commonCancel,
   );
   if (day == null || !context.mounted) return null;
   if (day.isBefore(today)) {
@@ -243,17 +247,33 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
       ErrorReporter.report(e, st, where: 'quick_create_attendance');
     }
     final results = await Future.wait([
-      repo.getPersonsForNewAttendance(),
+      // Organisation field values are shared across the organisation's
+      // groups; merge them so the type's field filter sees them.
+      repo.getPersonsForNewAttendance(
+          withSharedFields: type.additionalFieldsFilter != null),
       absenceRepo
           .getAbsencesForTenant()
           .catchError((_) => <PlayerAbsence>[]),
       dutyRepo.getUnavailabilityForTenant(),
       ref.read(shiftsProvider.future).catchError((_) => <ShiftPlan>[]),
     ]);
+    // Ionic getPersonExtraFields: organisation fields count too, so a type
+    // filtering on one does not invite everybody. Only needed for a field
+    // filter; a failed load then fails the creation (no unfiltered Termin).
+    final tenantFields = tenant?.additionalFields ?? const <ExtraField>[];
+    final orgFields = type.additionalFieldsFilter == null
+        ? const <ProfileExtraField>[]
+        : await ref.read(personExtraFieldsProvider.future);
     final persons = personsForAttendanceType(
       results[0] as List<Map<String, dynamic>>,
       type,
-      tenant?.additionalFields ?? const [],
+      [
+        ...tenantFields,
+        for (final f in orgFields)
+          if (!tenantFields.any((t) => t.id == f.id))
+            ExtraField(
+                id: f.id, name: f.name, type: f.type, defaultValue: f.defaultValue),
+      ],
     );
     final id = await repo.createAttendance(newAttendanceRow(
       type,

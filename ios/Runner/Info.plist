@@ -2,8 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Attendix greift nur auf deine Mediathek zu, wenn du selbst eine Audiodatei auswählst.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Attendix nutzt die Kamera nur, um den QR-Code einer Einladung zu scannen.</string>
+	<string>Attendix nutzt die Kamera, um Fotos für Anwesenheiten aufzunehmen und QR-Codes von Einladungen zu scannen.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Attendix nimmt keinen Ton auf. Die Angabe ist für die eingebundene Audiowiedergabe nötig.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Attendix speichert Fotos nur, wenn du das selbst auslöst.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Attendix greift auf deine Fotos zu, wenn du ein Bild auswählst, zum Beispiel ein Profilbild.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleLocalizations</key>
@@ -83,7 +93,7 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>de.attendix.attendix</string>
+			<string>io.stephanus.attendix</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>attendix</string>

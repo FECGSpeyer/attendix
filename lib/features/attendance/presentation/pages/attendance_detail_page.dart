@@ -3,12 +3,12 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/utils/archived_attendance.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
@@ -16,13 +16,10 @@ import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/team_org_providers.dart' show protocolTypeByIdProvider;
 import '../../../../core/providers/profile_providers.dart';
-import '../../../../core/utils/shift_utils.dart';
-import '../../../../core/providers/shift_providers.dart';
 import '../../../../core/utils/attendance_logic_utils.dart';
-import '../../../../data/models/shift/shift_plan.dart';
-import '../../../../shared/widgets/sheets/church_overview_sheet.dart';
+import '../../../../core/utils/event_list_utils.dart';
 import '../widgets/attendance_detail/ad_hoc_reminder_sheet.dart';
-import '../widgets/attendance_detail/add_persons_sheet.dart';
+import '../widgets/attendance_detail/auto_message_panel.dart';
 import '../widgets/attendance_detail/attendance_view_options.dart';
 import '../widgets/attendance_detail/description_attachment_sheet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,10 +41,10 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../data/models/person/person.dart';
-import '../../../../data/models/song/song.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos;
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonInsetList;
 import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../../../duty/presentation/widgets/duty_staffing_section.dart';
@@ -56,7 +53,6 @@ import '../widgets/ios_condense_header.dart';
 import '../widgets/attendance_legend_sheet.dart';
 import '../widgets/attendance_status_overview_sheet.dart';
 import '../widgets/songs_selection_sheet.dart';
-import '../../../../core/utils/demo_guard.dart';
 import '../../../team_organization/presentation/widgets/attendance_protocol_section.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
@@ -65,6 +61,9 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/display/ion_badge_text.dart';
 import '../widgets/attendance_date_change.dart';
 import '../person_attendance_writes.dart'; // REDESIGN: shared write path
+import '../attendance_song_history.dart';
+import '../attendance_add_persons.dart';
+import '../attendance_extra_actions.dart';
 export '../widgets/attendance_date_change.dart' show calendarDayDifference, shiftByCalendarDays;
 
 /// Attendance detail/taking page
@@ -109,6 +108,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   List<ChecklistItem> _localChecklist = [];
   bool _checklistLoaded = false;
 
+  /// Checklist writes in flight: a reload of the Termin meanwhile may still
+  /// carry the previous list and must not replace the local edit.
+  int _checklistSaving = 0;
+
   // Click mode: tap cycles status instead of opening picker
   // UX_ATT: Ionic default AttendanceViewMode.CLICK (tap cycles the status)
   bool _clickMode = true;
@@ -123,6 +126,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   bool _showAvatars = false;
   bool _showRegFields = true;
   bool _deletedHandled = false;
+  /// Ionic navigateBack after a failed load: only once.
+  bool _loadFailedHandled = false;
+  /// "Neu laden" (banner) is running: a failure shows the reload toast and
+  /// keeps the page (Ionic attendance.page reload), no "erneut öffnen".
+  bool _manualReloading = false;
+  /// The last "Neu laden" failed: keep showing the loaded Termin.
+  bool _manualReloadFailed = false;
   // LOGIC_ATT: person rows removed on this device (no "deletedByOther")
   final Set<String> _ownDeletedPaIds = {};
   bool _isSendingReminder = false;
@@ -178,28 +188,16 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (attendance == null || !mounted) return;
 
     // LOGIC_ATT: like Ionic (getHistoryByAttendanceId) the history table is
-    // the only source; the legacy attendance.songs/conductors arrays are
-    // neither read nor written.
+    // the only source (shared with the new design).
     try {
-      final songs = await ref.read(songsProvider.future);
-      final allConductors = await ref.read(conductorsProvider.future);
       if (!repo.hasTenantId) return;
-      final rows = await repo.getHistoryForAttendance(widget.attendanceId);
-      if (!mounted) return;
-      final fromHistory = rows.map((row) {
-        final songId = (row['songId'] as num).toInt();
-        final personId = (row['person_id'] as num?)?.toInt();
-        final other = row['otherConductor'] as String?;
-        final song = songs.where((s) => s.id == songId).firstOrNull;
-        final conductor = allConductors.where((c) => c.id == personId).firstOrNull;
-        return SongHistoryEntry(
-          songId: songId,
-          songName: song?.displayName ?? context.l10n.historyFlutterUnknownSong,
-          conductorId: personId,
-          conductorName: conductor?.fullName,
-          otherConductor: other?.isNotEmpty == true ? other : null,
-        );
-      }).toList();
+      final fromHistory = await loadAttendanceSongEntries(
+        repo: repo,
+        songsFuture: ref.read(songsProvider.future),
+        conductorsFuture: ref.read(conductorsProvider.future),
+        attendanceId: widget.attendanceId,
+      );
+      if (!mounted || fromHistory == null) return;
       setState(() => _songEntries = fromHistory);
     } catch (_) {
       // songs accordion stays empty
@@ -393,6 +391,20 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         GoRouter.of(context).go('/attendance');
       }
     });
+    // Ionic: loading failed (after retries) → danger toast
+    // „Anwesenheit konnte nicht geladen werden — bitte erneut öffnen.“ and
+    // back to the list. The error page below only shows until then.
+    ref.listen<AsyncValue<Attendance?>>(attendanceDetailProvider(widget.attendanceId), (previous, next) {
+      if (!next.hasError || next.hasValue || next.isLoading || !mounted || _loadFailedHandled) return;
+      if (_manualReloading) return;
+      _loadFailedHandled = true;
+      ToastHelper.showError(context, context.l10n.attendanceLoadFailedReopen);
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go('/attendance');
+      }
+    });
     // Toast only on a real online/offline transition (not on every
     // connectivity event, e.g. Wi-Fi <-> mobile).
     ref.listen<AsyncValue<bool>>(connectivityProvider, (previous, next) {
@@ -408,6 +420,19 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       }
     });
 
+    // Ionic onAttRealtimeChanges / resume refetch: `this.attendance` is
+    // replaced, so the checklist always shows (and edits) the current list,
+    // including changes by others.
+    ref.listen<AsyncValue<Attendance?>>(attendanceDetailProvider(widget.attendanceId), (prev, next) {
+      if (_manualReloadFailed && !next.hasError && !next.isLoading) {
+        setState(() => _manualReloadFailed = false);
+      }
+      final att = next.valueOrNull;
+      if (att == null || identical(att, prev?.valueOrNull) || !_checklistLoaded) return;
+      if (_checklistSaving > 0) return;
+      setState(() => _localChecklist = List.from(att.checklist ?? const []));
+    });
+
     final attendanceAsync = ref.watch(attendanceDetailProvider(widget.attendanceId));
     final personsAsync = ref.watch(filteredPersonsForAttendanceProvider(widget.attendanceId));
     ref.watch(filteredPersonAttendancesForAttendanceProvider(widget.attendanceId));
@@ -417,6 +442,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final availableStatuses = (typeStatuses?.isNotEmpty == true) ? typeStatuses! : AttendanceStatus.values;
 
     return attendanceAsync.when(
+      // A failed "Neu laden" keeps the loaded Termin (Ionic: toast, page stays).
+      skipError: _manualReloading || _manualReloadFailed,
       loading: () => Scaffold(
         appBar: AppBar(title: Text(context.l10n.signoutAttendance)),
         body: const Center(child: AppSpinner()),
@@ -466,6 +493,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         // IOS_DETAIL: iOS header: back and ⋮ each in a 44 pt glass circle
         final ios = useIosLook(context);
         final canPop = Navigator.of(context).canPop();
+        final inModal = IonPageModalScope.isIn(context);
         // IOS_DETAIL: the shell's floating button / FAB never covers the
         // last row (Ionic .marginBottom 5rem + tabbar-safe padding).
         final fabShown = ios && !ref.watch(effectiveRoleProvider).isViewer;
@@ -477,7 +505,26 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         return Scaffold(
           backgroundColor: Theme.of(context).brightness == Brightness.dark ? null : AppColors.light,
           appBar: AppBar(
-            leading: ios && canPop
+            // Ionic isModal (opened from the dashboard): close X at the start
+            // instead of the back button.
+            leading: inModal
+                ? (ios
+                    ? Center(
+                        child: Semantics(
+                          button: true,
+                          label: context.l10n.commonClose,
+                          child: GestureDetector(
+                            onTap: () => Navigator.of(context).maybePop(),
+                            child: const IosCircleIcon(icon: Icons.close, size: 44, iconSize: 22),
+                          ),
+                        ),
+                      )
+                    : IconButton(
+                        tooltip: context.l10n.commonClose,
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.of(context).maybePop(),
+                      ))
+                : ios && canPop
                 ? Center(
                     child: Semantics(
                       button: true,
@@ -493,7 +540,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                     ),
                   )
                 : null,
-            leadingWidth: ios && canPop ? 68 : null,
+            leadingWidth: ios && (canPop || inModal) ? 68 : null,
             title: Text(
               titlePersons == null
                   ? dateLabel
@@ -634,6 +681,18 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                       spacing: AppDimensions.paddingS,
                       children: [
                         const SizedBox(height: AppDimensions.paddingXS),
+
+                        // Ionic 4.17.24: "Archiviert" banner (medium item).
+                        if (attendance.archived) const _ArchivedBanner(),
+
+                        // AUTO_MESSAGES (Ionic 4.18): automatic messages of
+                        // this Termin + members' answers (admins/responsibles).
+                        AutoMessagePanel(
+                          key: const ValueKey('att-auto-messages'),
+                          attendance: attendance,
+                          attendanceType: attendanceType,
+                          people: _autoMessagePeople(persons),
+                        ),
 
                         GeneralInfoAccordion(
                           key: const ValueKey('att-acc-general'),
@@ -943,7 +1002,55 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       case 'reminder':
         _sendAdHocReminder();
         break;
+      case 'write_unexcused':
+        _writeUnexcused();
+        break;
+      case 'archive':
+        _toggleArchived();
+        break;
     }
+  }
+
+  // ============== AUTO_MESSAGES (Ionic 4.18) ==============
+
+  /// Persons of this Termin with their current (local) status for the
+  /// automatic-messages panel and "Unentschuldigte anschreiben".
+  List<AutoMessagePanelPerson> _autoMessagePeople(List<Person> persons) => [
+        for (final p in _personsInAttendance(persons))
+          if (p.id != null)
+            AutoMessagePanelPerson(
+              personId: p.id!,
+              personAttendanceId: _personAttendanceIds[p.id],
+              name: p.fullName.trim(),
+              status: _localStatuses[p.id] ?? AttendanceStatus.neutral,
+              left: p.left != null && p.left!.isNotEmpty,
+            ),
+      ];
+
+  int _unexcusedCount() {
+    final persons = ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull;
+    return persons == null ? 0 : unexcusedPeople(_autoMessagePeople(persons)).length;
+  }
+
+  bool _canWriteUnexcused(Attendance attendance, AttendanceType? type) {
+    final role = ref.read(effectiveRoleProvider);
+    if (!(role.isAdmin || role.isResponsible)) return false;
+    if (autoMessageTerminStart(attendance, type).isAfter(DateTime.now())) return false;
+    return _unexcusedCount() > 0;
+  }
+
+  Future<void> _writeUnexcused() async {
+    final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
+    final persons = ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull;
+    if (attendance == null || persons == null) return;
+    final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
+    await openWriteUnexcused(
+      context,
+      ref,
+      attendance: attendance,
+      typeName: type?.name ?? '',
+      people: _autoMessagePeople(persons),
+    );
   }
 
   // ============== ATT_DETAIL ==============
@@ -1022,10 +1129,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   /// Id of the `bfecg_church` extra field, if the tenant has one.
-  String? _churchFieldId() {
-    final fields = ref.read(personExtraFieldsProvider).valueOrNull ?? const [];
-    return fields.where((f) => f.type == 'bfecg_church').firstOrNull?.id;
-  }
+  String? _churchFieldId() => attendanceChurchFieldId(ref);
 
   List<AppPopoverMenuItem<String>> _buildAttDetailMenuItems(Attendance attendance) {
     final role = ref.read(effectiveRoleProvider);
@@ -1079,9 +1183,80 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       if (hasChurch) item('church', Icons.business_outlined, context.l10n.attendanceChurchOverview),
       item('legend', Icons.info_outline, context.l10n.signoutLegend),
       if (canMutate) item('reminder', Icons.notifications_outlined, context.l10n.attendanceSendReminder),
-      // Flutter-only extra (Ionic has the photo upload commented out)
-      if (canMutate) item('photo', Icons.camera_alt_outlined, context.l10n.attendanceFlutterPhoto),
+      // AUTO_MESSAGES (Ionic 4.18 b1977e29): "Unentschuldigte anschreiben (n)"
+      // for admins/responsibles once the Termin has started.
+      if (_canWriteUnexcused(attendance, type))
+        item('write_unexcused', Icons.chat_bubble_outline,
+            context.l10n.autoMessagesWriteUnexcusedMenu(_unexcusedCount())),
+      // No "Foto" entry: Ionic has the photo upload commented out, and the
+      // switch from Ionic should not add menu entries (_takePhoto stays).
+      // Ionic 4.17.24: archive past Termine (admins/responsible).
+      if (canArchiveAttendance(
+        date: attendance.date,
+        durationDays: attendance.durationDays,
+        archived: attendance.archived,
+        role: role,
+      ))
+        item(
+          'archive',
+          attendance.archived ? Icons.undo : Icons.archive_outlined,
+          attendance.archived ? context.l10n.attendanceRestore : context.l10n.attendanceArchive,
+        ),
     ];
+  }
+
+  /// Ionic 4.17.24 `toggleArchived`: archiving asks first; restoring does not.
+  Future<void> _toggleArchived() async {
+    final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
+    if (attendance == null) return;
+    final role = ref.read(effectiveRoleProvider);
+    if (!canArchiveAttendance(
+      date: attendance.date,
+      durationDays: attendance.durationDays,
+      archived: attendance.archived,
+      role: role,
+    )) {
+      return;
+    }
+    final archive = !attendance.archived;
+    // Read before the first await (tenant switch while the dialog is open).
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    final userId = ref.read(currentAuthUserIdProvider);
+    if (archive) {
+      final confirmed = await showAppDialog<bool>(
+        context: context,
+        builder: (ctx) => AppAlertDialog(
+          title: Text(context.l10n.attendanceArchiveConfirmHeader),
+          content: Text(context.l10n.attendanceArchiveConfirmMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(context.l10n.commonCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(context.l10n.attendanceArchive),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true || !mounted) return;
+    }
+    try {
+      if (!repo.hasTenantId) return;
+      await repo.updateAttendance(widget.attendanceId, {
+        'archived': archive,
+        'archived_at': archive ? DateTime.now().toUtc().toIso8601String() : null,
+        'archived_by': archive ? userId : null,
+      });
+      ref.invalidate(attendanceDetailProvider(widget.attendanceId));
+      ref.invalidate(realtimeAttendanceListProvider);
+      if (!mounted) return;
+      ToastHelper.showSuccess(
+          context, archive ? context.l10n.attendanceArchivedToast : context.l10n.attendanceRestoredToast);
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, context.l10n.attendanceArchiveFailed);
+    }
   }
 
   /// PARITY_R3: nested "Status-Filter" popover (Ionic toggleStatusFilter /
@@ -1234,104 +1409,33 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     ];
   }
 
-  /// "Person hinzufügen" (Ionic openAddPersonModal / addPersonsToAttendance).
-  Future<void> _openAddPersons() async {
-    final repo = ref.read(attendanceRepositoryWithTenantProvider);
-    final AddPersonCandidates candidates;
-    try {
-      final allPersons = await ref.read(allPersonsForAttendanceProvider.future);
-      final type = await ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId).future);
-      final groups = await ref.read(groupsProvider.future);
-      final extraFields = ref.read(personExtraFieldsProvider).valueOrNull ?? const [];
-      candidates = computeAddPersonCandidates(
-        allPersons: allPersons,
-        currentPersonIds: _personAttendanceIds.keys.toSet(),
-        type: type,
-        groups: groups,
-        extraFieldDefaults: {for (final f in extraFields) f.id: f.defaultValue},
-      );
-    } catch (_) {
-      if (mounted) ToastHelper.showError(context, context.l10n.attendanceLoadPeopleFailed);
-      return;
-    }
-    if (!mounted) return;
-    final selected = await showAddPersonsSheet(
-      context,
-      candidates: candidates,
-      groupNameOf: (p) => p.groupName ?? context.l10n.attendanceNoGroup,
-    );
-    if (selected == null || selected.isEmpty || !mounted) return;
-
-    try {
-      final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
-      final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
-      final defaultStatus = type?.defaultStatus ?? AttendanceStatus.neutral;
-      final date = DateTime.tryParse(attendance?.date ?? '') ?? DateTime.now();
-      final shifts = await ref.read(shiftsProvider.future).catchError((_) => <ShiftPlan>[]);
-      final all = [...candidates.matching, ...candidates.others];
-      final records = <PersonAttendance>[];
-      for (final personId in selected) {
-        final person = all.where((p) => p.id == personId).firstOrNull;
-        if (person == null) continue;
-        var status = defaultStatus;
-        var notes = '';
-        if (person.shiftId != null && type?.allDay != true) {
-          final result = ShiftUtils.statusByShiftOrDefault(
-            shift: ShiftUtils.findShift(shifts, person.shiftId),
-            attendanceDate: date,
-            attendanceStart: type?.startTime ?? '19:00',
-            attendanceEnd: type?.endTime ?? '21:00',
-            defaultStatus: defaultStatus,
-            shiftStart: person.shiftStart,
-            shiftName: person.shiftName,
-          );
-          status = result.status;
-          notes = result.note;
-        }
-        records.add(PersonAttendance(
-          attendanceId: widget.attendanceId,
-          personId: personId,
-          status: status,
-          notes: notes,
-        ));
-      }
-      await repo.createPersonAttendances(records);
-      ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
-      if (!mounted) return;
-      ToastHelper.showSuccess(
+  /// "Person hinzufügen" (Ionic openAddPersonModal / addPersonsToAttendance),
+  /// shared with the new design.
+  Future<void> _openAddPersons() => addPersonsToAttendance(
         context,
-        context.l10n.attendancePeopleAdded(records.length),
+        ref,
+        attendanceId: widget.attendanceId,
+        currentPersonIds: _personAttendanceIds.keys.toSet(),
       );
-    } catch (_) {
-      if (mounted) ToastHelper.showError(context, context.l10n.attendanceAddPeopleFailed);
-    }
+
+  /// Persons of the Termin the user sees in the list (Ionic `this.players`):
+  /// helpers without `attendance_all_groups` only their own group.
+  List<Person> _scopedPersonsInAttendance() {
+    final inAttendance = _personsInAttendance(
+        ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull ?? const []);
+    final groupScope = resolvedGroupScope(ref.read(attendanceGroupScopeProvider));
+    return groupScope.isAll
+        ? inAttendance
+        : inAttendance.where((p) => groupScope.allowsGroup(p.instrument)).toList();
   }
 
   /// "Gemeinde-Übersicht" of the present persons.
-  Future<void> _showChurchOverview() async {
-    final fieldId = _churchFieldId();
-    if (fieldId == null) return;
-    const present = {AttendanceStatus.present, AttendanceStatus.late, AttendanceStatus.lateExcused};
-    final persons = _personsInAttendance(
-        ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull ?? const []);
-    final churchIds = persons
-        .where((p) => present.contains(_localStatuses[p.id]))
-        .map((p) => churchIdOf(p.additionalFields, fieldId))
-        .toList();
-    List<Church> churches;
-    try {
-      churches = await ref.read(churchesProvider.future);
-    } catch (_) {
-      churches = const [];
-    }
-    if (!mounted) return;
-    await showChurchOverviewSheet(
-      context,
-      churchIds: churchIds,
-      churches: churches,
-      subtitle: context.l10n.attendancePresentPeople,
-    );
-  }
+  Future<void> _showChurchOverview() => showAttendanceChurchOverview(
+        context,
+        ref,
+        persons: _scopedPersonsInAttendance(),
+        statusOf: (p) => _localStatuses[p.id],
+      );
 
   /// "Erinnerung versenden" for the Termin or one person
   /// (`send-ad-hoc-reminder` Edge Function, push + e-mail).
@@ -1348,8 +1452,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       typeInfo: attendance.typeInfo,
       tenantLongName: tenant?.longName,
     );
-    final persons = _personsInAttendance(
-        ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull ?? const []);
+    // Ionic neutralAppIds from `this.players` (own group for restricted helpers).
+    final persons = _scopedPersonsInAttendance();
     final neutralAppIds = persons
         .where((p) =>
             (_localStatuses[p.id] ?? AttendanceStatus.neutral) == AttendanceStatus.neutral &&
@@ -1445,11 +1549,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
               ),
             ),
             OutlinedButton.icon(
-              onPressed: () {
-                ref.invalidate(allPersonsForAttendanceProvider);
-                ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
-                ref.invalidate(attendanceDetailProvider(widget.attendanceId));
-              },
+              onPressed: _reloadFromBanner,
               icon: const Icon(Icons.refresh),
               label: IonButtonLabel(context.l10n.attendanceReload),
             ),
@@ -1457,6 +1557,35 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         ),
       ),
     );
+  }
+
+  /// Ionic reload(): loads Termin and persons anew; on failure the danger
+  /// toast „Neu laden fehlgeschlagen — bitte erneut versuchen.“ and the page
+  /// stays (no navigation back).
+  Future<void> _reloadFromBanner() async {
+    if (_manualReloading) return;
+    _manualReloading = true;
+    if (_manualReloadFailed) setState(() => _manualReloadFailed = false);
+    final id = widget.attendanceId;
+    ref.invalidate(allPersonsForAttendanceProvider);
+    ref.invalidate(personAttendancesForAttendanceProvider(id));
+    ref.invalidate(attendanceDetailProvider(id));
+    try {
+      await Future.wait([
+        ref.read(attendanceDetailProvider(id).future),
+        ref.read(allPersonsForAttendanceProvider.future),
+        ref.read(personAttendancesForAttendanceProvider(id).future),
+      ]);
+    } catch (_) {
+      if (mounted) {
+        if (ref.read(attendanceDetailProvider(id)).hasError) {
+          setState(() => _manualReloadFailed = true);
+        }
+        ToastHelper.showError(context, context.l10n.attendanceReloadFailed);
+      }
+    } finally {
+      _manualReloading = false;
+    }
   }
   // ============== END ATT_DETAIL ==============
 
@@ -1572,6 +1701,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   Future<void> _removeChecklistItem(int index) async {
     if (index < 0 || index >= _localChecklist.length) return;
+    // The list may be replaced (Realtime/reload) while the dialog is open:
+    // delete by id, not by the old index.
+    final id = _localChecklist[index].id;
 
     final confirmed = await DialogHelper.showConfirmation(
       context,
@@ -1582,8 +1714,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     );
 
     if (confirmed == true && mounted) {
+      final i = _localChecklist.indexWhere((e) => e.id == id);
+      if (i < 0) return;
       setState(() {
-        _localChecklist.removeAt(index);
+        _localChecklist.removeAt(i);
       });
 
       await _saveChecklist();
@@ -1639,22 +1773,24 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   Future<void> _saveChecklist() async {
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    if (!repo.hasTenantId) return;
+    final checklistJson = _localChecklist.map((item) => item.toJson()).toList();
+    _checklistSaving++;
     try {
-      final repo = ref.read(attendanceRepositoryWithTenantProvider);
-      if (!repo.hasTenantId) return;
-      final checklistJson = _localChecklist.map((item) => item.toJson()).toList();
-
       await repo.updateAttendance(
         widget.attendanceId,
         {'checklist': checklistJson},
       );
-
-      ref.invalidate(attendanceDetailProvider(widget.attendanceId));
     } catch (e) {
       if (mounted) {
         ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
       }
+    } finally {
+      _checklistSaving--;
     }
+    // Reload either way: after a failure the list falls back to the stored one.
+    if (mounted) ref.invalidate(attendanceDetailProvider(widget.attendanceId));
   }
 
   DeadlineStatus _getDeadlineStatus(ChecklistItem item) {
@@ -1745,50 +1881,74 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (attendance == null) return;
 
     final attendanceDate = DateTime.tryParse(attendance.date);
-    final currentDeadline = attendance.deadline != null
-        ? DateTime.tryParse(attendance.deadline!)
-        : null;
+    // LOGIC_ATT: Ionic binds the deadline to ion-datetime, which ignores the
+    // offset when reading and writes the picked wall time without one, so
+    // the column holds local wall time in UTC notation (see
+    // EventListUtils.deadlineLocal). Read and write it the same way.
+    final currentDeadline = EventListUtils.deadlineLocal(attendance.deadline);
 
+    // Ionic maxDeadlineDate: Termin day at the type start time (19:30 without).
+    // Wait for a still loading type so the limit is not the 19:30 fallback.
+    AttendanceType? type;
+    try {
+      type = await ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId).future);
+    } catch (_) {
+      type = null;
+    }
+    if (!mounted) return;
+    final start = type?.startTime;
+    final startHour = start != null && start.length >= 5 ? int.tryParse(start.substring(0, 2)) ?? 19 : 19;
+    final startMin = start != null && start.length >= 5 ? int.tryParse(start.substring(3, 5)) ?? 30 : 30;
     final now = DateTime.now();
-    final initialDate = currentDeadline ?? attendanceDate?.subtract(const Duration(days: 1)) ?? now;
+    final maxDeadline = attendanceDate == null
+        ? now.add(const Duration(days: 365))
+        : DateTime(attendanceDate.year, attendanceDate.month, attendanceDate.day, startHour, startMin);
+    final firstDate = DateTime(now.year, now.month, now.day);
+    final lastDate = maxDeadline.isBefore(firstDate) ? firstDate : maxDeadline;
+
+    var initialDate = currentDeadline ?? attendanceDate?.subtract(const Duration(days: 1)) ?? now;
+    if (initialDate.isBefore(firstDate)) initialDate = firstDate;
+    if (initialDate.isAfter(lastDate)) initialDate = lastDate;
 
     final selectedDate = await showAppDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: now,
-      lastDate: attendanceDate ?? now.add(const Duration(days: 365)),
+      firstDate: firstDate,
+      lastDate: lastDate,
       helpText: context.l10n.attendanceFlutterChooseDeadline,
     );
 
     if (selectedDate == null || !mounted) return;
 
+    // Snap to the 5-minute grid first: the iOS wheel shows the snapped time
+    // and returns null when left unchanged, so that is what gets saved.
+    final rawTime = TimeOfDay.fromDateTime(currentDeadline ?? initialDate);
+    final initialTime = TimeOfDay(hour: rawTime.hour, minute: rawTime.minute - rawTime.minute % 5);
     final selectedTime = await showAppTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(initialDate),
+      initialTime: initialTime,
+      // Ionic minuteValues="0,5,10,…,55"
+      minuteInterval: 5,
     );
 
     if (!mounted) return;
 
-    final finalDeadline = DateTime(
-      selectedDate.year,
-      selectedDate.month,
-      selectedDate.day,
-      selectedTime?.hour ?? 23,
-      selectedTime?.minute ?? 59,
-    );
+    // The iOS wheel returns null when the time was left unchanged.
+    final time = selectedTime ?? initialTime;
+    var picked = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, time.hour, time.minute);
+    // ion-datetime clamps to [min, max].
+    if (picked.isAfter(maxDeadline)) picked = maxDeadline;
+    final deadlineStr = DateTime.utc(picked.year, picked.month, picked.day, picked.hour, picked.minute)
+        .toIso8601String();
 
     try {
       if (!repo.hasTenantId) return;
       await repo.updateAttendance(
         widget.attendanceId,
-        {'deadline': finalDeadline.toUtc().toIso8601String()},
+        {'deadline': deadlineStr},
       );
 
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
-
-      if (mounted) {
-        ToastHelper.showSuccess(context, context.l10n.attendanceFlutterDeadlineUpdated);
-      }
     } catch (e) {
       if (mounted) {
         ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
@@ -2075,55 +2235,12 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   /// Sync the history rows of this Termin with [_songEntries].
-  Future<void> _syncHistoryEntries(String date) async {
-    final repo = ref.read(attendanceRepositoryWithTenantProvider);
-    final attendanceId = widget.attendanceId;
-    final songEntries = List.of(_songEntries);
-
-    final rows = await repo.getHistoryForAttendance(attendanceId);
-    final plan = planHistorySync(
-      [
-        for (final r in rows)
-          (
-            id: (r['id'] as num).toInt(),
-            songId: (r['songId'] as num).toInt(),
-            personId: (r['person_id'] as num?)?.toInt(),
-            otherConductor: r['otherConductor'] as String?,
-          ),
-      ],
-      [
-        for (final e in songEntries)
-          (
-            songId: e.songId,
-            personId: e.otherConductor?.isNotEmpty == true ? null : e.conductorId,
-            otherConductor: e.otherConductor?.isNotEmpty == true ? e.otherConductor : null,
-          ),
-      ],
-    );
-
-    for (final id in plan.delete) {
-      await repo.deleteHistoryEntry(id);
-    }
-    for (final u in plan.update) {
-      await repo.updateHistoryEntry(u.id, {
-        'person_id': u.entry.personId,
-        'otherConductor': u.entry.otherConductor,
-      });
-    }
-    // Ionic addSongsToHistory: History columns songId (camelCase),
-    // person_id, otherConductor, visible: true, date of the Termin.
-    await repo.addHistoryEntries([
-      for (final e in plan.insert)
-        {
-          'songId': e.songId,
-          'attendance_id': attendanceId,
-          'date': date,
-          'person_id': e.personId,
-          'otherConductor': e.otherConductor,
-          'visible': true,
-        },
-    ]);
-  }
+  Future<void> _syncHistoryEntries(String date) => syncAttendanceSongHistory(
+        ref.read(attendanceRepositoryWithTenantProvider),
+        widget.attendanceId,
+        date,
+        _songEntries,
+      );
 
   // ATTENDANCE_SIGNOUT: conductor change, date change, place, files folder,
   // registration fields (Ionic attendance.page.ts parity)
@@ -2254,15 +2371,35 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final fields = type.registrationFields ?? const <RegistrationField>[];
     if (personAttendanceId == null || fields.isEmpty) return;
     final existing = _registrationAnswers[personId];
-    final answers = await showRegistrationFieldsSheet(
-      context,
-      fields: fields,
-      existing: existing,
-      editMode: true,
-      requireText: false,
-    );
-    if (answers == null || !mounted) return;
-    final merged = <String, dynamic>{...?existing, ...answers};
+    final Map<String, dynamic> merged;
+    if (fields.length == 1) {
+      // Ionic openRegFieldsEditor: exactly one field → showRegFieldAlert.
+      final field = fields.single;
+      final result = await showRegistrationFieldAlert(
+        context,
+        field: field,
+        // No previous answer: nothing preselected (Ionic showRegFieldAlert).
+        existing: existing?[field.id],
+      );
+      if (result == null || !mounted) return;
+      merged = <String, dynamic>{...?existing};
+      // Nothing chosen: Ionic merges `undefined`, which JSON drops.
+      if (result.value == null) {
+        merged.remove(field.id);
+      } else {
+        merged[field.id] = result.value;
+      }
+    } else {
+      final answers = await showRegistrationFieldsSheet(
+        context,
+        fields: fields,
+        existing: existing,
+        editMode: true,
+        requireText: false,
+      );
+      if (answers == null || !mounted) return;
+      merged = <String, dynamic>{...?existing, ...answers};
+    }
     try {
       // INTEGRATION: queue while offline like every Ionic updatePersonAttendance
       final queued = await offlineQueue.enqueueIfOffline(
@@ -2277,10 +2414,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           actingUserId: writeSession.userId,
         );
       }
-      if (mounted) {
-        setState(() => _registrationAnswers[personId] = merged);
-        ToastHelper.showSuccess(context, context.l10n.attendanceFlutterRegFieldsSaved);
-      }
+      // Ionic saveRegFieldAnswers: no toast.
+      if (mounted) setState(() => _registrationAnswers[personId] = merged);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
     }
@@ -2416,6 +2551,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   Future<void> _exportAttendanceToExcel() async {
+    // Bound before the awaits (tenant switch safety).
+    final profileRepo = ref.read(profileRepositoryWithTenantProvider);
+    final canViewNotes = ref.read(canViewAttendanceNotesProvider);
     try {
       final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
       final persons = ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull;
@@ -2426,15 +2564,44 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         return;
       }
 
+      // Ionic exportToExcel: the same persons as the list (helper group
+      // only), sorted by main group, group order, then name.
+      final groupScope = resolvedGroupScope(ref.read(attendanceGroupScopeProvider));
+      final inAttendance = _personsInAttendance(persons);
+      final groupPersons = groupScope.isAll
+          ? inAttendance
+          : inAttendance.where((p) => groupScope.allowsGroup(p.instrument)).toList();
+      final groups = ref.read(groupsProvider).valueOrNull ?? const [];
+      final exportPersons = sortPersonsByGroup(
+        groupPersons,
+        groups: groups,
+        mainGroupId: mainGroupIdOf(groups) ?? ref.read(mainGroupProvider).valueOrNull?.id,
+        usePersonSortOrder: false,
+      );
+
       ToastHelper.showInfo(context, context.l10n.attendanceFlutterCreatingExcel);
 
+      final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
+      final churchFieldId = _churchFieldId();
+      final churches = churchFieldId == null
+          ? const <Church>[]
+          : await ref.read(churchesProvider.future);
+      // The Gemeinde can be an organisation field (shared value).
+      final exported = churchFieldId == null
+          ? exportPersons
+          : await profileRepo.hydrateSharedPersonFieldValues(exportPersons);
+      if (!mounted) return;
       final exportService = ExportService();
       await exportService.exportAttendanceToExcel(
         context: context,
         attendance: attendance,
-        persons: _personsInAttendance(persons),
+        typeName: type?.name ?? '',
+        persons: exported,
         statuses: _localStatuses,
-        tenantName: tenant.shortName,
+        // Notes stay hidden for roles that may not see them in the view.
+        notes: canViewNotes ? _personNotes : const {},
+        churches: churches,
+        churchFieldId: churchFieldId,
       );
     } catch (e) {
       if (mounted) {
@@ -2525,76 +2692,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     );
   }
 
-  Future<void> _takePhoto() async {
-    final repo = ref.read(attendanceRepositoryWithTenantProvider);
-    final source = await showAppDialog<ImageSource>(
-      context: context,
-      builder: (ctx) => AppAlertDialog(
-        title: Text(context.l10n.attendanceFlutterAddPhoto),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: Text(context.l10n.attendanceFlutterCamera),
-              onTap: () => Navigator.of(ctx).pop(ImageSource.camera),
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: Text(context.l10n.attendanceFlutterGallery),
-              onTap: () => Navigator.of(ctx).pop(ImageSource.gallery),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(context.l10n.commonCancel),
-          ),
-        ],
-      ),
-    );
-
-    if (source == null) return;
-    if (DemoGuard.blocked()) return; // DEMO_GUARD
-
-    try {
-      final picker = ImagePicker();
-      final image = await picker.pickImage(
-        source: source,
-        maxWidth: 1920,
-        maxHeight: 1080,
-        imageQuality: 85,
-      );
-
-      if (image == null) return;
-
-      if (!mounted) return;
-      ToastHelper.showInfo(context, context.l10n.attendanceFlutterUploadingPhoto);
-
-      final bytes = await image.readAsBytes();
-
-      if (!repo.hasTenantId) {
-        if (mounted) {
-          ToastHelper.showError(context, context.l10n.historyFlutterNoTenant);
-        }
-        return;
-      }
-
-      // DB_REVIEW_REST (H4): bucket `attendances`, key `<id>`, upsert (Ionic).
-      await repo.uploadAttendanceImage(widget.attendanceId, bytes);
-
-      ref.invalidate(attendanceDetailProvider(widget.attendanceId));
-
-      if (mounted) {
-        ToastHelper.showSuccess(context, context.l10n.attendanceFlutterPhotoUploaded);
-      }
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterUploadFailedWith(friendlyErrorMessage(e)));
-      }
-    }
-  }
+  Future<void> _takePhoto() => addAttendancePhoto(context, ref, widget.attendanceId);
 
   /// Save a single person's attendance status immediately
   Future<void> _savePersonStatus(
@@ -2668,3 +2766,29 @@ bool realtimeDutyStateChanged(Map<String, dynamic> newRecord, List<PersonAttenda
   return (incoming ?? '') != (row.dutyState ?? '');
 }
 
+
+
+/// Ionic 4.17.24 `.archived-banner`: inset list with one medium-coloured item.
+class _ArchivedBanner extends StatelessWidget {
+  const _ArchivedBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return IonInsetList(
+      children: [
+        Container(
+          color: AppColors.medium,
+          child: ListTile(
+            iconColor: Colors.white,
+            textColor: Colors.white,
+            leading: const Icon(Icons.archive_outlined),
+            title: Text(context.l10n.attendanceArchivedBanner,
+                style: const TextStyle(fontWeight: FontWeight.w600)),
+            subtitle: Text(context.l10n.attendanceArchivedBannerHint,
+                style: const TextStyle(color: Colors.white)),
+          ),
+        ),
+      ],
+    );
+  }
+}

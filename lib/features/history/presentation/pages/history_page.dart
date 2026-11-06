@@ -57,6 +57,11 @@ class HistoryPage extends ConsumerStatefulWidget {
 
 class _HistoryPageState extends ConsumerState<HistoryPage> {
   String _searchQuery = '';
+
+  /// PARITY_UEBERSICHT: Ionic `selectedSongs` lives on the page: the first
+  /// Werk is preselected once (ngOnInit), the choice survives closing the
+  /// sheet and is cleared after adding. `null` = not set up yet.
+  Set<int>? _selectedSongIds;
   final _searchController = TextEditingController();
 
   @override
@@ -68,6 +73,9 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     final historyAsync = ref.watch(performanceHistoryProvider);
+    // PARITY_UEBERSICHT: Ionic loads the Werke when the page opens, so the
+    // "+" sheet opens right away.
+    ref.watch(planSongsProviderHistory);
 
     return Scaffold(
       // IOS_FORMS2: Ionic `ion-content` without colour → white page, so the
@@ -257,10 +265,18 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
   // (search + checkboxes), the Dirigent select, the Datum field with a
   // calendar button and the block button "Hinzufügen".
   Future<void> _showAddDialog() async {
-    final songsAsync = ref.read(planSongsProviderHistory);
     final conductorsAsync = ref.read(conductorsProvider);
 
-    final songs = songsAsync.valueOrNull ?? [];
+    // PARITY_UEBERSICHT: wait for the Werke if they are still loading
+    // (a plain read returned an empty list → "Keine Werke gefunden").
+    List<Song> songs;
+    try {
+      songs = ref.read(planSongsProviderHistory).valueOrNull ??
+          await ref.read(planSongsProviderHistory.future);
+    } catch (_) {
+      songs = const [];
+    }
+    if (!mounted) return;
     // P10_ATTENDANCE: wait for the conductors so the default can be set.
     final List<Person> conductors;
     final cached = conductorsAsync.valueOrNull;
@@ -282,12 +298,27 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
       return;
     }
 
-    final selectedSongIds = <int>{};
+    // Only Werke of the loaded library (e.g. after an instance switch).
+    final songIds = {for (final s in songs) s.id};
+    _selectedSongIds?.retainWhere(songIds.contains);
+    final selectedSongIds = _selectedSongIds ??= {
+      if (songs.first.id != null) songs.first.id!,
+    };
     // P10_ATTENDANCE: Ionic preselects the first active conductor
     // (historyEntry.person_id = activeConductors[0].id).
     int? selectedConductorId = defaultHistoryConductorId(conductors);
     String? otherConductor;
     DateTime selectedDate = DateTime.now();
+    // Ionic onManualDateInput: the date can also be typed (TT.MM.JJJJ);
+    // invalid input falls back to the last valid date on blur.
+    final dateController =
+        TextEditingController(text: DateFormat(dateFmt()).format(selectedDate));
+    var sheetClosed = false;
+    void applyTypedDate() {
+      final typed = parseTypedHistoryDate(dateController.text);
+      if (typed != null) selectedDate = typed;
+      dateController.text = DateFormat(dateFmt()).format(selectedDate);
+    }
 
     final result = await showModalBottomSheet<bool>(
       context: context,
@@ -386,9 +417,23 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                     l10n.attendanceDate,
                     style: const TextStyle(fontSize: 12.75),
                   ),
-                  subtitle: Text(
-                    DateFormat(dateFmt()).format(selectedDate),
-                    style: TextStyle(fontSize: 17, color: Theme.of(sheetContext).colorScheme.onSurface),
+                  subtitle: Focus(
+                    onFocusChange: (hasFocus) {
+                      if (!hasFocus && !sheetClosed) setSheetState(applyTypedDate);
+                    },
+                    child: TextField(
+                      controller: dateController,
+                      keyboardType: TextInputType.datetime,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) => setSheetState(applyTypedDate),
+                      style: TextStyle(fontSize: 17, color: Theme.of(sheetContext).colorScheme.onSurface),
+                      decoration: InputDecoration(
+                        hintText: l10n.historyDatePlaceholder,
+                        isDense: true,
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
                   ),
                   trailing: IconButton(
                     icon: Icon(Icons.calendar_today_outlined, color: AppColors.primary, semanticLabel: context.l10n.a11ySelectDate),
@@ -399,7 +444,12 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                         firstDate: DateTime(2000),
                         lastDate: DateTime.now().add(const Duration(days: 365)),
                       );
-                      if (date != null) setSheetState(() => selectedDate = date);
+                      if (date != null) {
+                        setSheetState(() {
+                          selectedDate = date;
+                          dateController.text = DateFormat(dateFmt()).format(date);
+                        });
+                      }
                     },
                   ),
                 ),
@@ -429,9 +479,19 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
       ),
     );
 
+    // A date typed without leaving the field still counts (Ionic ionBlur
+    // fires before the button tap).
+    // The controller is not disposed here: the sheet's TextField still uses
+    // it during the closing animation; without listeners it is collected.
+    sheetClosed = true;
+    applyTypedDate();
+
     if (result == true && selectedSongIds.isNotEmpty) {
+      final added = Set<int>.of(selectedSongIds);
+      // Ionic addHistoryEntry: selectedSongs = [] afterwards.
+      _selectedSongIds = <int>{};
       await _addEntries(
-        songIds: selectedSongIds,
+        songIds: added,
         conductorId: selectedConductorId,
         otherConductor: otherConductor,
         date: selectedDate,
@@ -838,5 +898,30 @@ class _HistorySongPickerState extends State<_HistorySongPicker> {
         ],
       ),
     );
+  }
+}
+
+/// Ionic `onManualDateInput`: `T.M.JJJJ` / `TT.MM.JJJJ`, day 1–31 and
+/// month 1–12; anything else is rejected (null). Other app date formats
+/// (e.g. English) are accepted too.
+@visibleForTesting
+DateTime? parseTypedHistoryDate(String input) {
+  final value = input.trim();
+  if (value.isEmpty) return null;
+  final m = RegExp(r'^(\d{1,2})\.(\d{1,2})\.(\d{4})$').firstMatch(value);
+  if (m != null) {
+    final day = int.parse(m.group(1)!);
+    final month = int.parse(m.group(2)!);
+    final year = int.parse(m.group(3)!);
+    if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+    final date = DateTime(year, month, day);
+    // 31.02. would roll over into March: such a day is rejected.
+    if (date.year != year || date.month != month || date.day != day) return null;
+    return date;
+  }
+  try {
+    return DateFormat(dateFmt()).parseStrict(value);
+  } catch (_) {
+    return null;
   }
 }
