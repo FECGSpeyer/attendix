@@ -9,33 +9,6 @@ import '../rd_widgets.dart';
 /// value. Same look as Ich › Benachrichtigungen and the sheets of
 /// "Termin anlegen"; the pages save right after "Fertig" or a switch.
 
-/// A list row with a switch on the right; tapping the row toggles too.
-class RdSwitchRow extends StatelessWidget {
-  const RdSwitchRow({super.key, required this.title, required this.value, required this.onChanged, this.subtitle});
-
-  final String title;
-  final String? subtitle;
-  final bool value;
-
-  /// Null = disabled (e.g. while saving).
-  final ValueChanged<bool>? onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    final change = onChanged;
-    return MergeSemantics(
-      child: RdListRow(
-        title: title,
-        subtitle: subtitle,
-        showChevron: false,
-        trailing: Switch.adaptive(value: value, activeTrackColor: p.primary, onChanged: change),
-        onTap: change == null ? null : () => change(!value),
-      ),
-    );
-  }
-}
-
 /// A grey note below a grouped list (one or two lines).
 class RdListNote extends StatelessWidget {
   const RdListNote(this.text, {super.key});

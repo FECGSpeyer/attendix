@@ -46,6 +46,10 @@ class RedesignRoutes {
   /// A work of the new design.
   static String work(int id) => '$works/$id';
 
+  /// Werke › "Noten importieren" (Admins and Verantwortliche, like the
+  /// entry in the Werke list).
+  static const String worksImport = '$works/import';
+
   /// "Werk bearbeiten" of the new design (replaces the old song page).
   static String workEdit(int id) => '$works/$id/bearbeiten';
 
@@ -177,6 +181,7 @@ class RedesignRoutes {
     }
     if (location == works || location.startsWith('$works/')) {
       if (!canOpenSongsTab(role)) return today;
+      if (location == worksImport && !(role.isAdmin || role.isResponsible)) return works;
       // "Neues Werk" and "Werk bearbeiten" like the old song form: Admins
       // and Verantwortliche.
       if (location == newWork && !(role.isAdmin || role.isResponsible)) return works;
