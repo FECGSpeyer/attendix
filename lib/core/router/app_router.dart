@@ -108,6 +108,8 @@ import '../../shared/widgets/adaptive/ion_button_label.dart';
 import '../providers/redesign_providers.dart';
 import 'redesign_routes.dart';
 import '../../features/redesign/presentation/shell/rd_shell.dart';
+import '../../features/redesign/presentation/pages/rd_branding_page.dart';
+import '../../features/redesign/presentation/pages/rd_general_settings_page.dart';
 import '../../features/redesign/presentation/pages/rd_today_page.dart';
 import '../../features/redesign/presentation/pages/rd_import_page.dart';
 import '../../features/redesign/presentation/pages/rd_folder_page.dart';
@@ -1222,12 +1224,15 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'notifications',
                 name: 'notifications',
-                builder: (context, state) => const NotificationsPage(),
+                // Beta: the same switches live in Ich › Benachrichtigungen.
+                builder: (context, state) =>
+                    const _BetaOr(beta: RdNotificationsPage(), classic: NotificationsPage()),
               ),
               GoRoute(
                 path: 'general',
                 name: 'general',
-                builder: (context, state) => const GeneralSettingsPage(),
+                builder: (context, state) =>
+                    const _BetaOr(beta: RdGeneralSettingsPage(), classic: GeneralSettingsPage()),
               ),
               GoRoute(
                 path: 'users',
@@ -1388,7 +1393,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'general/branding',
                 name: 'branding',
-                builder: (context, state) => const BrandingPage(),
+                builder: (context, state) => const _BetaOr(beta: RdBrandingPage(), classic: BrandingPage()),
               ),
               GoRoute(
                 path: 'general/link-persons',
