@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/conductor_providers.dart';
 import '../../../../core/providers/history_providers.dart';
@@ -175,6 +174,8 @@ class _RdWorkHistoryPageState extends ConsumerState<RdWorkHistoryPage> {
                   id: e.id ?? '$date-$i',
                   title: _songTitle(e),
                   subtitle: e.displayConductor,
+                  // Old page: the number of rehearsals (when not 0).
+                  count: e.count != 0 ? context.l10n.historyRehearsals(e.count) : null,
                   icon: Icons.music_note_outlined,
                   onTap: e.id == null ? null : () => _remove(e),
                 ),

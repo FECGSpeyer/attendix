@@ -654,20 +654,22 @@ class SongCategoryNotifier extends Notifier<AsyncValue<void>> {
 
   /// Reorder categories
   ///
-  /// [stillValid] (optional) is asked before each write; when it says no
-  /// the remaining writes are skipped and false is returned.
+  /// [stillValid] (optional) is asked once before the first write; when it
+  /// says no nothing is written. Once started, all indexes are written
+  /// through the repository bound to the origin group, so a group switch
+  /// meanwhile never leaves a half-saved order (and writes nothing into
+  /// the new group).
   Future<bool> reorder(List<SongCategory> categories, {bool Function()? stillValid}) async {
     state = const AsyncValue.loading();
     // SOL_FIX3: bind the per-tenant repository once for the whole loop.
     final repo = _repo;
+    if (stillValid != null && !stillValid()) {
+      state = const AsyncValue.data(null);
+      return false;
+    }
     try {
       for (int i = 0; i < categories.length; i++) {
         final category = categories[i];
-        if (stillValid != null && !stillValid()) {
-          state = const AsyncValue.data(null);
-          ref.invalidate(songCategoriesProvider);
-          return false;
-        }
         if (category.id != null) {
           await repo.updateSongCategory(category.id!, {'index': i});
         }
