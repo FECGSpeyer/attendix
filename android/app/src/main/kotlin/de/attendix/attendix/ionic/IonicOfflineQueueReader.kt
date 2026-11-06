@@ -2,6 +2,7 @@ package de.attendix.attendix.ionic
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.webkit.JavascriptInterface
@@ -50,19 +51,43 @@ class IonicOfflineQueueReader(private val context: Context) {
         webView = view
         view.settings.javaScriptEnabled = true
         view.settings.domStorageEnabled = true
+        view.settings.allowFileAccess = false
+        view.settings.allowContentAccess = false
         view.addJavascriptInterface(Bridge(view), BRIDGE)
         view.webViewClient = object : WebViewClient() {
+            // Only https://localhost is answered (locally, empty page); every
+            // other request gets an empty 403 and never reaches the network.
             override fun shouldInterceptRequest(
                 view: WebView,
                 request: WebResourceRequest,
-            ): WebResourceResponse? {
-                if (request.url.host != "localhost") return null
+            ): WebResourceResponse {
+                if (!isLocalOrigin(request.url)) {
+                    return WebResourceResponse(
+                        "text/plain",
+                        "utf-8",
+                        403,
+                        "Forbidden",
+                        emptyMap(),
+                        ByteArrayInputStream(ByteArray(0)),
+                    )
+                }
                 return WebResourceResponse(
                     "text/html",
                     "utf-8",
                     ByteArrayInputStream("<!doctype html><html><body></body></html>".toByteArray()),
                 )
             }
+
+            // No navigation away from https://localhost/ (the bridge must
+            // never be reachable from another page).
+            override fun shouldOverrideUrlLoading(
+                view: WebView,
+                request: WebResourceRequest,
+            ): Boolean = request.url.toString() != URL
+
+            @Deprecated("Deprecated in Java")
+            override fun shouldOverrideUrlLoading(view: WebView, url: String?): Boolean =
+                url != URL
 
             override fun onPageFinished(view: WebView, url: String?) {
                 if (webView !== view) return
@@ -78,7 +103,7 @@ class IonicOfflineQueueReader(private val context: Context) {
             }
         }
         handler.postDelayed({ fail("timeout") }, 5000)
-        view.loadUrl("https://localhost/")
+        view.loadUrl(URL)
     }
 
     // Called by the script on a WebView background thread.
@@ -87,6 +112,8 @@ class IonicOfflineQueueReader(private val context: Context) {
         fun deliver(value: String?, error: String?) {
             handler.post {
                 if (webView !== view) return@post
+                // Only the script on https://localhost/ may answer.
+                if (view.url?.startsWith(URL) != true) return@post
                 if (value != null) finish(value) else fail(error ?: "script")
             }
         }
@@ -110,6 +137,12 @@ class IonicOfflineQueueReader(private val context: Context) {
 
     private companion object {
         const val BRIDGE = "AttendixIonicQueue"
+        const val URL = "https://localhost/"
+
+        // https://localhost with the default port only.
+        fun isLocalOrigin(url: Uri): Boolean =
+            url.scheme == "https" && url.host == "localhost" &&
+                (url.port == -1 || url.port == 443)
 
         // Same function as ios/Runner/AppDelegate.swift
         // (ionicOfflineQueueReadFunction): opening a database that does not
