@@ -136,7 +136,7 @@ void main() {
       expect(page, contains('imageBytes: _pickedImage'));
       expect(page, contains('pickPersonImage(context, ref)'));
       final header = _read(
-          'lib/features/people/presentation/widgets/person_detail/person_header.dart');
+          'lib/features/people/presentation/widgets/person_detail/person_photo_actions.dart');
       expect(header, contains('pickPersonImage(context, ref)'));
       expect(header, contains('repo.updateImage(personId, bytes, appId: person.appId)'));
       expect(header, isNot(contains('ImagePicker()')));

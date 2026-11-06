@@ -24,9 +24,7 @@ import '../../../duty/presentation/pages/unavailability_page.dart';
 import '../../../../core/providers/cross_tenant_person_providers.dart';
 import '../../../../core/utils/text_utils.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
-import '../../../../core/utils/person_matcher.dart' show RankedMatch;
 import '../widgets/person_match_suggestions.dart';
-import 'package:uuid/uuid.dart';
 import '../widgets/person_transfer_sheet.dart';
 import '../widgets/pause_person_sheet.dart';
 import '../widgets/archive_person_modal.dart';
@@ -40,6 +38,7 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../person_stats.dart';
+import '../../person_write.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/church_providers.dart';
@@ -496,13 +495,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   void _close([PersonModalResult? result]) => _closePage(result);
 
   /// Ionic getOrganisationPersonKey
-  String? get _personKey {
-    final g = widget.person.globalPersonId;
-    if (g != null && g.isNotEmpty) return 'global:$g';
-    final a = widget.person.appId;
-    if (a != null && a.isNotEmpty) return 'app:$a';
-    return null;
-  }
+  String? get _personKey => organisationPersonKey(widget.person);
 
   /// Ionic getSharedPersonFieldValues: organisation field values are shared
   /// across the tenants of an organisation.
@@ -569,15 +562,13 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     if (_sharedFieldsLoadFailed) {
       throw StateError(l10nWithoutContext.svcLoadSharedFieldsFailed);
     }
-    final local = Map<String, dynamic>.from(_additionalFieldValues);
-    final key = _personKey;
-    if (_orgFieldIds.isEmpty || _orgId == null || key == null) return local;
-    final shared = <String, dynamic>{
-      for (final id in _orgFieldIds)
-        if (local.containsKey(id)) id: local.remove(id),
-    };
-    await repo.updateSharedFieldValues(_orgId!, key, shared);
-    return local;
+    return saveSharedPersonFields(
+      repo,
+      values: _additionalFieldValues,
+      orgFieldIds: _orgFieldIds,
+      orgId: _orgId,
+      personKey: _personKey,
+    );
   }
 
   void _initDraft() {
@@ -781,8 +772,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final emailChanged =
         (widget.person.email ?? '') != (_draft.email ?? '');
     final newEmail = _draft.email?.trim() ?? '';
-    final emailValid =
-        RegExp(r'^[\w-\.+]+@([\w-]+\.)+[\w-]{2,}$').hasMatch(newEmail);
+    final emailValid = isValidPersonEmail(newEmail);
     if (newEmail.isNotEmpty && emailChanged && !emailValid) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -796,32 +786,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     var createAccount = false;
     var assignVoiceLeaderRole = false;
     if (emailChanged && emailValid && widget.person.appId == null) {
-      final create = await showAppDialog<bool>(
-        context: context,
-        builder: (ctx) => AppAlertDialog(
-          title: Text(context.l10n.personEmailAdded),
-          content: Text(context.l10n.personCreateAccountNow),
-          // Ionic updatePlayer(): only "Abbrechen" (nothing saved) and "Ja"
-          // (register the account, then save).
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: Text(context.l10n.commonCancel),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: Text(context.l10n.commonYes),
-            ),
-          ],
-        ),
-      );
-      if (create != true || !mounted) return;
+      // Ionic updatePlayer(): only "Abbrechen" (nothing saved) and "Ja"
+      // (register the account, then save).
+      final create = await confirmCreateAccountForNewEmail(context);
+      if (!create || !mounted) return;
       createAccount = true;
     } else if (!isGeneral &&
         widget.person.appId != null &&
         !widget.person.isLeader &&
         _isLeader) {
-      final choice = await _showVoiceLeaderDialog();
+      final choice = await showVoiceLeaderRoleDialog(
+          context, '${_draft.firstName} ${_draft.lastName}');
       if (!mounted) return;
       if (choice == null) {
         setState(() {
@@ -844,29 +819,16 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       final List<Map<String, dynamic>> newHistoryEntries = [];
       final solved = _problemSolved;
       if (solved) {
-        newHistoryEntries.add({
-          'date': DateTime.now().toUtc().toIso8601String(),
-          'text': _problemNotes,
-          'type': PlayerHistoryType.criticalPerson.value,
-        });
+        newHistoryEntries.add(personProblemSolvedEntry(_problemNotes));
       }
       if (_selectedGroupId != person.instrument) {
         final groups = await ref.read(groupsMapProvider.future);
-        final oldGroupName = groups[person.instrument] ?? 'Unbekannt';
-        final newGroupName = groups[_selectedGroupId] ?? 'Unbekannt';
-        newHistoryEntries.add({
-          'date': DateTime.now().toUtc().toIso8601String(),
-          'text': '$oldGroupName -> $newGroupName',
-          'type': PlayerHistoryType.instrumentChange.value,
-        });
+        newHistoryEntries.add(
+            personGroupChangeEntry(groups, person.instrument, _selectedGroupId));
       }
 
       if ((_draft.notes ?? '') != (person.notes ?? '')) {
-        newHistoryEntries.add({
-          'date': DateTime.now().toUtc().toIso8601String(),
-          'text': person.notes ?? 'Keine Notiz',
-          'type': PlayerHistoryType.notes.value,
-        });
+        newHistoryEntries.add(personNotesChangeEntry(person.notes));
       }
 
       final existingHistory = person.history.map((h) => h.toJson()).toList();
@@ -895,10 +857,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         'history': updatedHistory,
         // Ionic writes `additional_fields: localAdditionalFields` ({}).
         'additional_fields': localAdditional,
-        if (solved) ...{
-          'isCritical': false,
-          'lastSolve': DateTime.now().toUtc().toIso8601String(),
-        },
+        if (solved) ...personProblemSolvedColumns(),
       });
       ref.read(trackingServiceProvider).track(TrackingEvent.playerUpdated);
 
@@ -1036,33 +995,6 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     return main?.id != null && main!.id == _selectedGroupId;
   }
 
-  /// Ionic: person.enableVoiceLeader alert. Returns true = save with role,
-  /// false = status only, null = cancel.
-  Future<bool?> _showVoiceLeaderDialog() {
-    final name = '${_draft.firstName} ${_draft.lastName}';
-    return showAppDialog<bool>(
-      context: context,
-      builder: (ctx) => AppAlertDialog(
-        title: Text(context.l10n.personEnableVoiceLeader),
-        content: Text(context.l10n.personVoiceLeaderMessage(name)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(context.l10n.commonCancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(context.l10n.personVoiceLeaderStatusOnly),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(context.l10n.personSaveWithRole),
-          ),
-        ],
-      ),
-    );
-  }
-
   /// Ionic continueUpdatingPlayer(): main group ⇄ responsible role and
   /// voice leader role assignment/removal.
   Future<void> _syncRolesAfterSave({
@@ -1076,42 +1008,18 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final auth = ref.read(authServiceProvider);
 
     try {
-      final mainId = (await mainGroupFuture)?.id;
-      final oldGroup = widget.person.instrument;
-      if (mainId != null &&
-          ((oldGroup != _selectedGroupId && _selectedGroupId == mainId) ||
-              oldGroup == mainId)) {
-        final role = await auth.getUserRole(userId: appId, tenantId: tenantId);
-        if (role != Role.admin) {
-          await auth.updateUserRole(
-            userId: appId,
-            tenantId: tenantId,
-            newRole: _selectedGroupId == mainId ? Role.responsible : Role.player,
-          );
-        }
-      }
-
-      if (!isGeneral) {
-        if (assignVoiceLeaderRole) {
-          final role = await auth.getUserRole(userId: appId, tenantId: tenantId);
-          await auth.updateUserRole(
-            userId: appId,
-            tenantId: tenantId,
-            newRole: role == Role.helper
-                ? Role.voiceLeaderHelper
-                : Role.voiceLeader,
-          );
-        } else if (widget.person.isLeader && !_isLeader) {
-          final role = await auth.getUserRole(userId: appId, tenantId: tenantId);
-          if (role == Role.voiceLeader) {
-            await auth.updateUserRole(
-                userId: appId, tenantId: tenantId, newRole: Role.player);
-          } else if (role == Role.voiceLeaderHelper) {
-            await auth.updateUserRole(
-                userId: appId, tenantId: tenantId, newRole: Role.helper);
-          }
-        }
-      }
+      await syncPersonRoles(
+        auth,
+        appId: appId,
+        tenantId: tenantId,
+        mainGroupId: (await mainGroupFuture)?.id,
+        oldGroupId: widget.person.instrument,
+        newGroupId: _selectedGroupId,
+        wasLeader: widget.person.isLeader,
+        isLeader: _isLeader,
+        isGeneral: isGeneral,
+        assignVoiceLeaderRole: assignVoiceLeaderRole,
+      );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1178,64 +1086,21 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   /// Ionic searchPerson(): find this person in a linked tenant, adopt the
   /// email and link both rows via a shared global_person_id.
   Future<void> _searchPersonInOtherInstance() async {
-    final playerRepo = ref.read(playerRepositoryWithTenantProvider);
-    final repo = ref.read(crossTenantPersonRepositoryWithTenantProvider);
-    final person = widget.person;
-    final personId = person.id;
-    if (personId == null) return;
-    final List<int> linkedIds;
-    final List<RankedMatch<CrossTenantPersonCandidate>> matches;
     try {
-      linkedIds = await ref.read(linkedTenantIdsProvider.future);
-      matches = await repo.getPossiblePersonsByName(
-        _draft.firstName,
-        _draft.lastName,
-        linkedTenantIds: linkedIds,
-      );
-    } catch (_) {
-      // Ionic getPossiblePersonsByName: error toast.
-      if (mounted) ToastHelper.showError(context, context.l10n.dbLoadPeopleFailed);
-      return;
-    }
-    if (!mounted) return;
-    if (matches.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.l10n.personNoMatchOther),
-          backgroundColor: AppColors.danger,
+      final linked = await searchPersonInOtherInstance(
+        context,
+        ref,
+        widget.person,
+        firstName: _draft.firstName,
+        lastName: _draft.lastName,
+        onNoMatch: () => ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(context.l10n.personNoMatchOther),
+            backgroundColor: AppColors.danger,
+          ),
         ),
       );
-      return;
-    }
-
-    final chosen = await showAppActionSheet<CrossTenantPersonCandidate>(
-      context,
-      title: context.l10n.personChooseEntry,
-      actions: [
-        for (final m in matches)
-          AppActionSheetAction(
-            value: m.candidate,
-            icon: Icons.person_search,
-            label: m.candidate.label,
-            subtitle: m.reason,
-          ),
-      ],
-    );
-    if (chosen == null || !mounted) return;
-    final email = chosen.person.email?.trim();
-    if (email == null || email.isEmpty) return;
-
-    try {
-      final globalId = chosen.person.globalPersonId ?? const Uuid().v4();
-      await playerRepo
-          .updatePlayerFields(personId, {
-        'email': email,
-        'global_person_id': globalId,
-      });
-      if (chosen.person.globalPersonId == null && chosen.person.id != null) {
-        await repo.setGlobalPersonId([chosen.person.id!], globalId,
-            linkedTenantIds: linkedIds);
-      }
+      if (!linked) return;
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
       if (mounted) {

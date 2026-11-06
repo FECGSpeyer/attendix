@@ -1,12 +1,25 @@
 {
   "versions": [
     {
-      "version": "0.50.0",
+      "version": "0.53.0",
       "date": "6.11.2026",
       "changes": [
         "✨ Beta: Ad-hoc-Planung (Planung ohne Termin) mit Titel, Datum, Vorlage und Branding in einer Karte, Punkte direkt im Beta-Editor bearbeiten",
         "✨ Beta: Planungsvorlagen und Org-Pläne als Verwaltungslisten, Org-Pläne jetzt unter Verwaltung › Termine",
         "✨ Beta: „Meine Pläne“, Neuer Plan und Vorlage wiederherstellen als Beta-Blätter"
+      ]
+    },
+    {
+      "version": "0.52.0",
+      "date": "6.11.2026",
+      "changes": [
+        "✨ Beta: Verwaltung › Rollen und Rechte als Beta-Seite, jeder Schalter speichert sofort",
+        "✨ Beta: „Neue Person“ und „Person bearbeiten“ als Beta-Seiten, Änderungen werden sofort gespeichert",
+        "✨ Beta: Person bearbeiten fragt bei neuer E-Mail wie bisher nach dem Konto; Daten aus einem E-Mail-Treffer werden erst nach „Ja“ übernommen",
+        "✨ Beta: Verwaltung › Lehrer und Zusatzfelder als eigene Listen mit Bearbeiten-Seiten, Änderungen werden sofort gespeichert",
+        "✨ Beta: Verwaltung › Admins, Eltern, Beobachter, Archiv und Freigaben als einheitliche Verwaltungslisten",
+        "💄 Beta: Alle Bearbeiten-Seiten (Termin, Werk, Gruppe, Person) haben dieselbe Kopfzeile mit „Fertig“",
+        "🐛 Lehrer, Admins, Eltern und Beobachter hinzufügen oder entfernen: ein Gruppenwechsel während des Dialogs ändert nie die neue Gruppe"
       ]
     },
     {

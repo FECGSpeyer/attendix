@@ -18,15 +18,9 @@ import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../export/presentation/pages/export_page.dart' show showExportModal;
 import '../../../../history/presentation/pages/history_page.dart' show showHistoryModal;
-import '../../../../settings/presentation/pages/left_players_page.dart' show showArchiveSheet;
-import '../../../../settings/presentation/pages/parents_page.dart' show showParentsSheet;
-import '../../../../settings/presentation/pages/pending_players_page.dart'
-    show showPendingPersonsSheet;
 import '../../../../settings/presentation/pages/settings_page.dart'
     show createMissingAccounts, playersOfCurrentTenant;
-import '../../../../settings/presentation/pages/viewers_page.dart' show showViewersSheet;
 import '../../../../settings/presentation/widgets/calendar_subscription_dialog.dart';
-import '../../../../settings/presentation/widgets/settings_admins_sheet.dart';
 import '../../../../settings/presentation/widgets/vorkurs_certificates.dart';
 import '../../../../songs/presentation/widgets/song_categories_sheet.dart';
 import '../../../data/rd_manage_logic.dart';
@@ -237,24 +231,26 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
   ref.read(rdManageRecentProvider.notifier).push(entry);
   void push(String location) => context.push(location);
   switch (entry) {
+    // Lists in the template "Verwaltungsliste" (rd_manage_list.dart); the
+    // old sheets stay in the normal app.
     case RdManageEntry.approvals:
-      showPendingPersonsSheet(context);
+      push(RedesignRoutes.approvals);
     case RdManageEntry.bulkMembers:
       push(RedesignRoutes.bulkMembers);
     case RdManageEntry.rolesPermissions:
-      push('/settings/role-permissions');
+      push(RedesignRoutes.rolePermissions);
     case RdManageEntry.admins:
-      showAdminsSheet(context);
+      push(RedesignRoutes.admins);
     case RdManageEntry.parents:
-      showParentsSheet(context);
+      push(RedesignRoutes.parents);
     case RdManageEntry.viewers:
-      showViewersSheet(context);
+      push(RedesignRoutes.viewers);
     case RdManageEntry.teachers:
-      push('/settings/teachers');
+      push(RedesignRoutes.teachers);
     case RdManageEntry.missingAccounts:
       createMissingAccounts(context, ref, ref.read(rdMissingAccountsProvider));
     case RdManageEntry.archive:
-      showArchiveSheet(context);
+      push(RedesignRoutes.archive);
     case RdManageEntry.myVoice:
       push('/settings/voice-leader');
     // Lists in the template "Verwaltungsliste" (rd_manage_list.dart); the
@@ -264,7 +260,7 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
     case RdManageEntry.shiftPlans:
       push(RedesignRoutes.shiftPlans);
     case RdManageEntry.extraFields:
-      push('/settings/general/extra-fields');
+      push(RedesignRoutes.extraFields);
     case RdManageEntry.runSheets:
       push('/planning');
     case RdManageEntry.adHocPlanning:

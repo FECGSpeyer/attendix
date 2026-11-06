@@ -13,8 +13,6 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../../settings/presentation/pages/pending_players_page.dart'
-    show showPendingPersonsSheet;
 import '../../../data/providers/rd_events_providers.dart' show rdAttendanceDurationDays, rdUnrecordedProvider;
 import '../../../data/providers/rd_members_providers.dart';
 import '../../../data/providers/rd_today_providers.dart';
@@ -285,7 +283,7 @@ class _AttentionSection extends ConsumerWidget {
           title: l10n.redesignTodayPending(pending),
           subtitle: l10n.redesignTodayPendingHint,
           trailing: RdCountBadge(pending),
-          onTap: () => showPendingPersonsSheet(context),
+          onTap: () => context.push(RedesignRoutes.approvals),
         ),
       if (critical > 0)
         RdListRow(
