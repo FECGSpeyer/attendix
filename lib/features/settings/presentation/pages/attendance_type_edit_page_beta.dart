@@ -11,7 +11,20 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
     final l10n = context.l10n;
     // Changes made on a sub-page show there too.
     WidgetsBinding.instance.addPostFrameCallback((_) => _rdTick.value++);
-    if (_hasChanges && !_rdBlocked && !(_rdSaveTimer?.isActive ?? false)) _rdScheduleSave();
+    _rdNotifier ??= ref.read(attendanceTypeNotifierProvider.notifier);
+    _rdContainer ??= ProviderScope.containerOf(context, listen: false);
+    if (!_rdListening) {
+      _rdListening = true;
+      for (final c in [_planningTitleController, _durationDaysController, _customDeadlineController]) {
+        c.addListener(_rdOnText);
+      }
+    }
+    final json = _rdJson();
+    _rdSavedJson ??= json;
+    if (json != _rdSavedJson && json != _rdFailedJson && !_rdSaving && !(_rdSaveTimer?.isActive ?? false)) {
+      _hasChanges = true;
+      _rdScheduleSave();
+    }
     final statuses = _AttendanceTypeEditPageState._statusOrder.where(_availableStatuses.contains).toList();
     final defaultStatus =
         _availableStatuses.contains(_defaultStatus) ? _defaultStatus : (statuses.firstOrNull ?? _defaultStatus);
@@ -223,8 +236,12 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
   void _rdSet(VoidCallback fn) => _update(() {
     fn();
     _hasChanges = true;
-    _rdBlocked = false;
   });
+
+  /// Text fields of the classic sections change without setState.
+  void _rdOnText() {
+    if (mounted) _update(() {});
+  }
 
   void _rdSetDays(int days) => _rdSet(() {
     _durationDays = days;
@@ -266,35 +283,46 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
     }
     final notifier = ref.read(attendanceTypeNotifierProvider.notifier);
     final data = _buildTypeData();
+    final json = _rdJson();
+    if (json == _rdSavedJson) {
+      _hasChanges = false;
+      return;
+    }
     _update(() {
       _rdInvalid = false;
       _rdSaving = true;
       _hasChanges = false;
     });
     try {
-      final updated = await notifier.updateType(widget.typeId!, data);
+      final id = widget.typeId!;
+      final save = _rdChain.then((_) => notifier.updateType(id, data));
+      _rdChain = save.then((_) {}, onError: (_) {});
+      final updated = await save;
+      if (updated != null) _rdInvalidateCaches();
       if (!mounted) return;
-      ref.invalidate(protocolTypesProvider);
-      ref.invalidate(planAttendanceTypesProvider);
       if (updated == null) {
         ToastHelper.showError(context, context.l10n.typeSettingsUpdateFailed);
         // Tried again with the next change, not in a loop.
         _update(() {
           _hasChanges = true;
-          _rdBlocked = true;
+          _rdFailedJson = json;
         });
         return;
       }
+      _rdSavedJson = json;
+      _rdFailedJson = null;
       _originalType = updated;
       await _offerDutyView();
     } on DemoModeException {
-      // DEMO_GUARD: the demo warning toast was already shown.
+      // DEMO_GUARD: the demo warning toast was already shown; not again for
+      // the same state.
+      _rdFailedJson = json;
     } catch (_) {
       if (mounted) {
         ToastHelper.showError(context, context.l10n.typeSettingsUpdateFailed);
         _update(() {
           _hasChanges = true;
-          _rdBlocked = true;
+          _rdFailedJson = json;
         });
       }
     } finally {

@@ -13,7 +13,7 @@ extension _ShiftDetailBeta on _ShiftDetailPageState {
     final targets = ref.watch(shiftCopyTargetTenantsProvider).valueOrNull ?? const [];
     final shift = shiftAsync.valueOrNull;
     if (shift != null) _initializeFromShift(shift);
-    final isUsed = usageCount.hasError || (usageCount.valueOrNull ?? 0) > 0;
+    final isUsed = _rdLocked(usageCount);
 
     final children = <Widget>[
       Row(
@@ -200,7 +200,9 @@ extension _ShiftDetailBeta on _ShiftDetailPageState {
       _isLoading = true;
       _hasChanges = false;
     });
-    final result = await notifier.updateShift(_rdPlan());
+    final save = _rdChain.then((_) => notifier.updateShift(_rdPlan()));
+    _rdChain = save.then((_) {}, onError: (_) {});
+    final result = await save;
     if (!mounted) return;
     _update(() => _isLoading = false);
     if (result == null) {
@@ -335,90 +337,103 @@ extension _ShiftDetailBeta on _ShiftDetailPageState {
     }
   }
 
+  /// Locked while the usage is unknown (loading or failed) or persons use it.
+  bool _rdLocked(AsyncValue<int> usage) => usage.isLoading || usage.hasError || (usage.valueOrNull ?? 0) > 0;
+
+  /// Checked again right before a change of a Feste Schicht.
+  bool get _rdLockedNow => _rdLocked(ref.read(shiftUsageCountProvider(widget.shiftId)));
+
   /// Feste Schicht: name and start date; locked once persons use the plan.
-  Future<void> _rdFixedSheet(int index, ShiftPlan shift, bool isUsed) async {
+  /// The lock follows the usage check while the sheet is open.
+  Future<void> _rdFixedSheet(int index, ShiftPlan shift, bool openedLocked) async {
     if (index >= _shifts.length) return;
     final l10n = context.l10n;
     final controller = TextEditingController(text: _shifts[index].name);
     final remove = await showRdPlanSheet<bool>(
       context,
       title: _shifts[index].name.isEmpty ? l10n.shiftsFlutterAddShift : _shifts[index].name,
-      subtitle: isUsed ? l10n.redesignShiftLocked : null,
+      subtitle: openedLocked ? l10n.redesignShiftLocked : null,
       builder:
           (ctx, pop) => [
-            StatefulBuilder(
-              builder: (ctx, setSheet) {
-                if (index >= _shifts.length) return const SizedBox.shrink();
-                final p = ctx.rd;
-                final s = _shifts[index];
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    RdGroupedList(
+            Consumer(
+              builder: (ctx, sheetRef, _) {
+                final isUsed = _rdLocked(sheetRef.watch(shiftUsageCountProvider(widget.shiftId)));
+                return StatefulBuilder(
+                  builder: (ctx, setSheet) {
+                    if (index >= _shifts.length) return const SizedBox.shrink();
+                    final p = ctx.rd;
+                    final s = _shifts[index];
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        RdFieldRow(
-                          label: l10n.typeSettingsName,
-                          child: TextField(
-                            controller: controller,
-                            enabled: !isUsed,
-                            style: TextStyle(fontSize: 17, color: p.text),
-                            decoration: rdInputDecoration(p, l10n.typeSettingsName),
-                            onChanged: (v) {
-                              _updateShiftName(index, v);
-                              _rdChanged();
-                            },
-                          ),
+                        RdGroupedList(
+                          children: [
+                            RdFieldRow(
+                              label: l10n.typeSettingsName,
+                              child: TextField(
+                                controller: controller,
+                                enabled: !isUsed,
+                                style: TextStyle(fontSize: 17, color: p.text),
+                                decoration: rdInputDecoration(p, l10n.typeSettingsName),
+                                onChanged: (v) {
+                                  if (_rdLockedNow) return;
+                                  _updateShiftName(index, v);
+                                  _rdChanged();
+                                },
+                              ),
+                            ),
+                            RdListRow(
+                              title: l10n.shiftsStartDate,
+                              value: _rdDate(s.date),
+                              showChevron: !isUsed,
+                              onTap:
+                                  isUsed
+                                      ? null
+                                      : () async {
+                                        final current = DateTime.tryParse(s.date) ?? DateTime.now();
+                                        final picked = await showAppDatePicker(
+                                          context: ctx,
+                                          initialDate: current,
+                                          firstDate: DateTime(2000),
+                                          lastDate: DateTime(2100),
+                                        );
+                                        if (picked == null || !mounted || _rdLockedNow) return;
+                                        _updateShiftDate(index, picked);
+                                        _rdChanged();
+                                        setSheet(() {});
+                                      },
+                            ),
+                            RdListRow(
+                              leading: const RdRowIcon(Icons.calculate_outlined),
+                              title: l10n.shiftsExample,
+                              onTap: () => _showPreview(context, shift, _shifts[index]),
+                            ),
+                          ],
                         ),
-                        RdListRow(
-                          title: l10n.shiftsStartDate,
-                          value: _rdDate(s.date),
-                          showChevron: !isUsed,
-                          onTap:
-                              isUsed
-                                  ? null
-                                  : () async {
-                                    final current = DateTime.tryParse(s.date) ?? DateTime.now();
-                                    final picked = await showAppDatePicker(
-                                      context: ctx,
-                                      initialDate: current,
-                                      firstDate: DateTime(2000),
-                                      lastDate: DateTime(2100),
-                                    );
-                                    if (picked == null || !mounted) return;
-                                    _updateShiftDate(index, picked);
-                                    _rdChanged();
-                                    setSheet(() {});
-                                  },
-                        ),
-                        RdListRow(
-                          leading: const RdRowIcon(Icons.calculate_outlined),
-                          title: l10n.shiftsExample,
-                          onTap: () => _showPreview(context, shift, _shifts[index]),
-                        ),
-                      ],
-                    ),
-                    if (!isUsed) ...[
-                      const SizedBox(height: 16),
-                      RdGroupedList(
-                        children: [
-                          RdListRow(
-                            leading: RdRowIcon(Icons.delete_outline, color: p.absent, background: p.absentSoft),
-                            title: l10n.redesignShiftRemoveFixed,
-                            titleColor: p.absent,
-                            showChevron: false,
-                            onTap: () => pop(true),
+                        if (!isUsed) ...[
+                          const SizedBox(height: 16),
+                          RdGroupedList(
+                            children: [
+                              RdListRow(
+                                leading: RdRowIcon(Icons.delete_outline, color: p.absent, background: p.absentSoft),
+                                title: l10n.redesignShiftRemoveFixed,
+                                titleColor: p.absent,
+                                showChevron: false,
+                                onTap: () => pop(true),
+                              ),
+                            ],
                           ),
                         ],
-                      ),
-                    ],
-                  ],
+                      ],
+                    );
+                  },
                 );
               },
             ),
           ],
     );
     controller.dispose();
-    if (remove == true && mounted && index < _shifts.length) {
+    if (remove == true && mounted && index < _shifts.length && !_rdLockedNow) {
       _deleteShiftInstance(index);
       _rdChanged();
     }

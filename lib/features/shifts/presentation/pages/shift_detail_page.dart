@@ -58,6 +58,9 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
   Timer? _rdSaveTimer;
   ShiftNotifier? _rdNotifier;
 
+  /// REDESIGN: saves run one after another, also the flush on dispose.
+  Future<void> _rdChain = Future.value();
+
   void _update(VoidCallback fn) => setState(fn);
 
   @override
@@ -84,10 +87,12 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
   @override
   void dispose() {
     // REDESIGN: a change made right before leaving is still saved.
-    if ((_rdSaveTimer?.isActive ?? false) && _hasChanges && _nameController.text.trim().isNotEmpty) {
-      unawaited(_rdNotifier?.updateShift(_rdPlan()));
-    }
     _rdSaveTimer?.cancel();
+    final notifier = _rdNotifier;
+    if (notifier != null && _hasChanges && _nameController.text.trim().isNotEmpty) {
+      final plan = _rdPlan();
+      unawaited(_rdChain.then((_) => notifier.updateShift(plan)).then((_) {}, onError: (_) {}));
+    }
     _nameController.dispose();
     _descriptionController.dispose();
     for (final c in [..._durationControllers, ..._repeatControllers]) {

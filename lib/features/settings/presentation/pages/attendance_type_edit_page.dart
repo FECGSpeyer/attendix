@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -167,8 +168,28 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   bool _rdSaving = false;
   bool _rdInvalid = false;
 
-  /// A failed save is tried again with the next change, not in a loop.
-  bool _rdBlocked = false;
+  /// What was last loaded or saved, and what last failed. A change is any
+  /// difference in the saved data, whichever editor made it (also the
+  /// classic sub-editors and text fields without setState). A failed state
+  /// is not retried in a loop; any further change is saved again.
+  String? _rdSavedJson;
+  String? _rdFailedJson;
+  bool _rdListening = false;
+
+  /// Saves run one after another, also the flush on dispose, so an older
+  /// state never overwrites a newer one.
+  Future<void> _rdChain = Future.value();
+
+  /// Captured with the notifier: invalidates the plan and protocol type
+  /// lists also when a save ends after the page is gone.
+  ProviderContainer? _rdContainer;
+
+  void _rdInvalidateCaches() {
+    _rdContainer?.invalidate(protocolTypesProvider);
+    _rdContainer?.invalidate(planAttendanceTypesProvider);
+  }
+
+  String _rdJson() => jsonEncode(_buildTypeData(), toEncodable: (o) => o.toString());
 
   /// Captured with the first change: a pending save still runs on dispose.
   AttendanceTypeNotifier? _rdNotifier;
@@ -308,14 +329,23 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   @override
   void dispose() {
     // REDESIGN: a change made right before leaving is still saved.
-    final pending = _rdSaveTimer?.isActive ?? false;
     _rdSaveTimer?.cancel();
-    if (pending &&
-        _hasChanges &&
-        _rdNotifier != null &&
+    final notifier = _rdNotifier;
+    if (notifier != null &&
+        _rdSavedJson != null &&
         _nameController.text.trim().isNotEmpty &&
         _availableStatuses.length >= 2) {
-      unawaited(_rdNotifier!.updateType(widget.typeId!, _buildTypeData()).catchError((_) => null));
+      final json = _rdJson();
+      if (json != _rdSavedJson && json != _rdFailedJson) {
+        final data = _buildTypeData();
+        final id = widget.typeId!;
+        final invalidate = _rdInvalidateCaches;
+        unawaited(
+          _rdChain.then((_) => notifier.updateType(id, data)).then((r) {
+            if (r != null) invalidate();
+          }, onError: (_) {}),
+        );
+      }
     }
     _rdTick.dispose();
     setUnloadWarning(this, false);
