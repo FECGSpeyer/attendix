@@ -10,6 +10,11 @@ import 'ion_items.dart';
 import 'plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import 'rd_plan_widgets.dart';
+
+part 'plan_fields_editor_beta.dart';
 
 /// A row of the editor: a field, or the "Unterpunkt hinzufügen" row closing an open block.
 class _EditorRow {
@@ -90,6 +95,9 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
   List<PlanField> get _fields => widget.fields;
 
   int? get _startMinutes => PlanUtils.parseTimeToMinutes(widget.startTime);
+
+  /// setState for the Beta extension (part file).
+  void _update(VoidCallback fn) => setState(fn);
 
   void _emit(List<PlanField> fields) => widget.onChanged(PlanUtils.normalizeGroups(fields));
 
@@ -427,6 +435,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
 
   @override
   Widget build(BuildContext context) {
+    if (context.rdSkin != null) return _rdBuild(context);
     if (_fields.isEmpty) {
       return Padding(
         padding: const EdgeInsets.all(24),

@@ -1316,7 +1316,12 @@
         "viewNow": "Jetzt",
         "viewWhich": "Welcher Plan",
         "download": "Herunterladen",
-        "telegram": "Per Telegram"
+        "telegram": "Per Telegram",
+        "orgPlansIntro": "Abläufe aller Gruppen in „{org}“",
+        "templatesIntro": "Gelten für alle Gruppen der Organisation „{org}“.",
+        "orgPlansUpcoming": "Anstehend",
+        "addDefaultField": "Standardfeld hinzufügen",
+        "templateHint": "Vorlage · sofort gespeichert"
       },
       "messages": {
         "intro": "Alles, was an die Gruppe ging, mit Lesestatus.",
@@ -2695,7 +2700,12 @@
         "viewNow": "Now",
         "viewWhich": "Which plan",
         "download": "Download",
-        "telegram": "Via Telegram"
+        "telegram": "Via Telegram",
+        "orgPlansIntro": "Run sheets of all groups in “{org}”",
+        "templatesIntro": "Apply to all groups of the organisation “{org}”.",
+        "orgPlansUpcoming": "Upcoming",
+        "addDefaultField": "Add default field",
+        "templateHint": "Template · saved right away"
       },
       "messages": {
         "intro": "Everything sent to the group, with read status.",
