@@ -18332,7 +18332,7 @@ abstract class AppLocalizations {
   /// redesign.import.aiOptionDetail
   ///
   /// In de, this message translates to:
-  /// **'Die unbekannten Stimmnamen und einige Dateinamen gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.'**
+  /// **'Unbekannte Stimmnamen, einige Dateinamen und die Namen unsicherer Werk-Ordner gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.'**
   String get redesignImportAiOptionDetail;
 
   /// redesign.import.answerNewGroup

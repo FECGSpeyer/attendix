@@ -78,6 +78,15 @@ void main() {
       final m = rdMatchWork('12 Halleluja', more);
       expect(m.kind, RdMatchKind.titleOnly);
       expect(m.songId, 5);
+      // Same number, only the letters fit: to check, and the very title
+      // under another number comes first.
+      const blessing = [
+        RdImportSong(id: 6, number: 12, name: 'Morgensegen'),
+        RdImportSong(id: 7, number: 40, name: 'Abendsegen'),
+      ];
+      expect(rdMatchWork('12 Morgensegn', blessing).kind, RdMatchKind.numberOnly);
+      expect(rdMatchWork('12 Abendsegen', blessing).songId, 7);
+      expect(rdMatchWork('12 Abendsegen', blessing).kind, RdMatchKind.titleOnly);
     });
 
     test('the Werk the KI names for an unsure folder is to be checked', () {
@@ -91,6 +100,10 @@ void main() {
       expect(rdWorkState(plan, const RdImportDecisions(), byAi).flags, contains(RdWorkFlag.unsureMatch));
       // A sure match stays.
       expect(plan.works.firstWhere((w) => w.folderName == '120 Wie wunderbar').match.songId, 3);
+      // Without the hint the key changes back; decisions follow the folder.
+      final before = _plan(entries, songs: songs);
+      final moved = rdImportMovedWorks(plan, before);
+      expect(moved, {byAi.key: before.works.firstWhere((w) => w.folderName == '157 Jesus ruft dich').key});
     });
 
     test('several Werke fit as well: to check, not the first one', () {

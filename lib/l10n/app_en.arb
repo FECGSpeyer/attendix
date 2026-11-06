@@ -3033,7 +3033,7 @@
   "redesignImportAiNone": "The AI found no sure suggestions.",
   "redesignImportAiOffered": "Suggestions from the AI are marked with ✦.",
   "redesignImportAiOption": "Suggestions from AI",
-  "redesignImportAiOptionDetail": "The unknown part names and some file names are sent to the AI. Sure suggestions are filled in, all can be changed.",
+  "redesignImportAiOptionDetail": "Unknown part names, some file names and the names of unsure work folders are sent to the AI. Sure suggestions are filled in, all can be changed.",
   "redesignImportAnswerNewGroup": "New group “{name}”",
   "redesignImportAnswerNone": "No part",
   "redesignImportAnswerOther": "Other …",

@@ -11158,7 +11158,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignImportAiOptionDetail =>
-      'The unknown part names and some file names are sent to the AI. Sure suggestions are filled in, all can be changed.';
+      'Unknown part names, some file names and the names of unsure work folders are sent to the AI. Sure suggestions are filled in, all can be changed.';
 
   @override
   String redesignImportAnswerNewGroup(Object name) {

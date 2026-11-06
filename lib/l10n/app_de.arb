@@ -14005,7 +14005,7 @@
   "@redesignImportAiOption": {
     "description": "redesign.import.aiOption"
   },
-  "redesignImportAiOptionDetail": "Die unbekannten Stimmnamen und einige Dateinamen gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.",
+  "redesignImportAiOptionDetail": "Unbekannte Stimmnamen, einige Dateinamen und die Namen unsicherer Werk-Ordner gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.",
   "@redesignImportAiOptionDetail": {
     "description": "redesign.import.aiOptionDetail"
   },

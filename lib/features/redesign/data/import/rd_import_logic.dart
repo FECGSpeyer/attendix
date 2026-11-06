@@ -161,16 +161,22 @@ List<String> _titleWords(String text) {
 /// spellings ("Hallelujah" / "Haleluja"), shared groups of three letters
 /// (Dice), whichever is higher.
 double rdImportTitleSimilarity(String a, String b) {
+  final s = _titleSimilarity(a, b);
+  return s.words > s.letters ? s.words : s.letters;
+}
+
+/// Shared words and shared groups of three letters of two titles (Dice).
+({double words, double letters}) _titleSimilarity(String a, String b) {
   final wa = rdImportTitleWords(a);
   final wb = rdImportTitleWords(b);
-  if (wa.isEmpty || wb.isEmpty) return 0;
+  if (wa.isEmpty || wb.isEmpty) return (words: 0, letters: 0);
   final sa = wa.toSet();
   final sb = wb.toSet();
   final words = 2 * sa.intersection(sb).length / (sa.length + sb.length);
   final ta = _trigrams(wa);
   final tb = _trigrams(wb);
   final letters = ta.isEmpty || tb.isEmpty ? 0.0 : 2 * ta.intersection(tb).length / (ta.length + tb.length);
-  return words > letters ? words : letters;
+  return (words: words, letters: letters);
 }
 
 /// Groups of three letters of a title's words (" ha", "hal", …, "ja ").
@@ -228,14 +234,18 @@ class RdWorkMatch {
 /// The Werk in Attendix a folder belongs to.
 RdWorkMatch rdMatchWork(String folderName, List<RdImportSong> songs) {
   final parsed = rdParseWorkName(folderName);
-  // The best fitting song; [tie] when another one fits as well.
-  ({RdImportSong song, double sim, bool tie})? bestOf(Iterable<RdImportSong> candidates, String title) {
-    final scored = [for (final s in candidates) (song: s, sim: rdImportTitleSimilarity(title, s.name))]
-      ..sort((a, b) => b.sim.compareTo(a.sim));
+  // The best fitting song; [tie] when another one fits as well; [words]
+  // how far its words alone fit.
+  ({RdImportSong song, double sim, double words, bool tie})? bestOf(Iterable<RdImportSong> candidates, String title) {
+    final scored = [
+      for (final s in candidates)
+        if (_titleSimilarity(title, s.name) case final t)
+          (song: s, sim: t.words > t.letters ? t.words : t.letters, words: t.words),
+    ]..sort((a, b) => b.sim.compareTo(a.sim));
     if (scored.isEmpty) return null;
     final best = scored.first;
     final tie = scored.length > 1 && scored[1].sim >= best.sim - 0.02;
-    return (song: best.song, sim: best.sim, tie: tie);
+    return (song: best.song, sim: best.sim, words: best.words, tie: tie);
   }
 
   final hasTitle = rdImportTitleWords(parsed.title).isNotEmpty;
@@ -247,15 +257,21 @@ RdWorkMatch rdMatchWork(String folderName, List<RdImportSong> songs) {
     final candidates = samePrefix.isNotEmpty ? samePrefix : (parsed.prefix == null ? sameNumber : const <RdImportSong>[]);
     if (candidates.isNotEmpty) {
       final best = bestOf(candidates, parsed.title)!;
-      if (!hasTitle || best.sim >= 0.4) {
+      // A Werk with this very title under another number comes first
+      // ("12 Abendsegen" is not the 12 "Morgensegen" when "Abendsegen" is
+      // there too).
+      final byTitle = hasTitle && best.sim < 0.999 ? bestOf(songs, parsed.title) : null;
+      final exactElsewhere = byTitle != null && byTitle.sim >= 0.999;
+      if (!hasTitle || (best.words >= 0.4 && !exactElsewhere)) {
         // Without a title, or two Werke with this number fitting as well.
         final ambiguous = candidates.length > 1 && (!hasTitle || best.tie);
         return RdWorkMatch(ambiguous ? RdMatchKind.ambiguous : RdMatchKind.sure, best.song.id);
       }
-      final byTitle = bestOf(songs, parsed.title);
-      if (byTitle != null && byTitle.sim >= 0.75) {
+      if (byTitle != null && byTitle.sim >= 0.75 && byTitle.sim > best.sim) {
         return RdWorkMatch(byTitle.tie ? RdMatchKind.ambiguous : RdMatchKind.titleOnly, byTitle.song.id);
       }
+      // The title fits only by its letters (a typo, or another Werk with
+      // similar words): to be checked, never sure.
       return RdWorkMatch(RdMatchKind.numberOnly, best.song.id);
     }
   }
@@ -1494,6 +1510,32 @@ List<String> rdImportWorksToAsk(RdImportPlan plan) => {
           for (final f in w.folders)
             if (f.isNotEmpty) f.split('/').last,
     }.toList();
+
+/// Werke whose key changed from [before] to [after], old key → new key: the
+/// KI's hint came or went, so "new:…" became "song:…~…" or back. What the
+/// person decided about such a Werk stays with its folder.
+Map<String, String> rdImportMovedWorks(RdImportPlan before, RdImportPlan after) {
+  final oldKeyOf = {
+    for (final w in before.works)
+      for (final f in w.folders) f: w.key,
+  };
+  final oldKeys = {for (final w in before.works) w.key};
+  final newKeys = {for (final w in after.works) w.key};
+  final moved = <String, String>{};
+  final split = <String>{};
+  for (final w in after.works) {
+    if (oldKeys.contains(w.key)) continue;
+    final olds = {
+      for (final f in w.folders)
+        if (oldKeyOf[f] case final k? when !newKeys.contains(k)) k,
+    };
+    if (olds.length != 1) continue;
+    // One old Werk now in two: nothing is carried over.
+    if (moved.containsKey(olds.single)) split.add(olds.single);
+    moved[olds.single] = w.key;
+  }
+  return moved..removeWhere((k, _) => split.contains(k));
+}
 
 /// The new groups the files go to as decided so far, to pick them for other
 /// files too before they exist ("Neue Gruppe: Oboe").

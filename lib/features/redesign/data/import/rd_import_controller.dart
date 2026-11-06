@@ -709,23 +709,39 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   /// same part only after an answer are Fassungen too.
   void _replan() {
     final input = _input;
-    if (input == null || state.plan == null) return;
-    final d = state.decisions;
-    state = state.copyWith(
-      plan: rdBuildImportPlan(
-        input.entries,
-        songs: input.songs,
-        instruments: input.instruments,
-        isChoir: input.isChoir,
-        hashes: input.hashes,
-        dates: input.dates,
-        junk: input.junk,
-        answers: d.answers,
-        categories: d.categories,
-        aiWorks: _aiWorks,
-        cache: input.cache,
-      ),
+    final before = state.plan;
+    if (input == null || before == null) return;
+    var d = state.decisions;
+    final plan = rdBuildImportPlan(
+      input.entries,
+      songs: input.songs,
+      instruments: input.instruments,
+      isChoir: input.isChoir,
+      hashes: input.hashes,
+      dates: input.dates,
+      junk: input.junk,
+      answers: d.answers,
+      categories: d.categories,
+      aiWorks: _aiWorks,
+      cache: input.cache,
     );
+    // A Werk whose key changed (KI hint came or went) keeps what the person
+    // decided about it: target, skip, Fassung, "Passt so".
+    final moved = rdImportMovedWorks(before, plan);
+    if (moved.isNotEmpty) {
+      String to(String key) => moved[key] ?? key;
+      d = d.copyWith(
+        targets: {for (final e in d.targets.entries) to(e.key): e.value},
+        fassungen: {for (final e in d.fassungen.entries) to(e.key): e.value},
+        confirmed: {for (final k in d.confirmed) to(k)},
+        recheck: {for (final k in d.recheck) to(k)},
+      );
+      for (final e in moved.entries) {
+        final selection = _confirmedAs.remove(e.key);
+        if (selection != null) _confirmedAs[e.value] = selection;
+      }
+    }
+    state = state.copyWith(plan: plan, decisions: d);
     _dropStaleConfirmations();
   }
 
