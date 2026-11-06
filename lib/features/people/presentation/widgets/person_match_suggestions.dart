@@ -117,18 +117,22 @@ class _Badge extends StatelessWidget {
 
 /// Dialog shown when the entered email is already used in a linked tenant
 /// (Ionic onEmailBlur). Returns the person whose data should be adopted.
+/// [usedBy] / [usedMany] replace the messages (the Beta says "Gruppe").
 Future<CrossTenantPersonCandidate?> showEmailTakenDialog(
   BuildContext context,
-  List<CrossTenantPersonCandidate> matches,
-) {
+  List<CrossTenantPersonCandidate> matches, {
+  String Function(String name)? usedBy,
+  String? usedMany,
+}) {
   if (matches.length == 1) {
     final m = matches.first;
+    final name = '${m.person.firstName} ${m.person.lastName}';
     return showAppDialog<CrossTenantPersonCandidate>(
       context: context,
       builder: (ctx) => AppAlertDialog(
         title: Text(context.l10n.personEmailTaken),
         content: Text(
-          context.l10n.personEmailUsedBy('${m.person.firstName} ${m.person.lastName}'),
+          usedBy?.call(name) ?? context.l10n.personEmailUsedBy(name),
         ),
         actions: [
           TextButton(
@@ -151,7 +155,7 @@ Future<CrossTenantPersonCandidate?> showEmailTakenDialog(
         Padding(
           padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
           child: Text(
-            context.l10n.personEmailUsedMany,
+            usedMany ?? context.l10n.personEmailUsedMany,
           ),
         ),
         for (final m in matches)

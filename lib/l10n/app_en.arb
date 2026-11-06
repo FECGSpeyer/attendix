@@ -3062,6 +3062,8 @@
   "redesignPersonFormCreateButton": "Add person",
   "redesignPersonFormEditTitle": "Edit {name}",
   "redesignPersonFormEmailHint": "Gets access to the app with it",
+  "redesignPersonFormEmailUsedBy": "This email is used by {name} in another group. Take over the data?",
+  "redesignPersonFormEmailUsedMany": "This email is already used in other groups. Whose data should be taken over?",
   "redesignPersonFormExistingUserHint": "If an account already exists for this e-mail address, it is added to this group automatically.",
   "redesignPersonFormLiveHint": "Changes are saved right away.",
   "redesignPersonFormMatchDismiss": "Hide",

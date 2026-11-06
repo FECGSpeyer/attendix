@@ -546,7 +546,9 @@
         "noMatchOther": "In deinen anderen Gruppen wurde keine passende Person gefunden.",
         "transferOther": "In andere Gruppe übertragen",
         "copyOther": "In andere Gruppe kopieren",
-        "otherGroups": "Andere Gruppen"
+        "otherGroups": "Andere Gruppen",
+        "emailUsedBy": "Diese E-Mail wird in einer anderen Gruppe von {name} verwendet. Daten übernehmen?",
+        "emailUsedMany": "Diese E-Mail wird bereits in anderen Gruppen verwendet. Daten welcher Person übernehmen?"
       },
       "works": {
         "search": "Titel oder Nummer",
@@ -1534,7 +1536,9 @@
         "noMatchOther": "No matching person was found in your other groups.",
         "transferOther": "Transfer to another group",
         "copyOther": "Copy to another group",
-        "otherGroups": "Other groups"
+        "otherGroups": "Other groups",
+        "emailUsedBy": "This email is used by {name} in another group. Take over the data?",
+        "emailUsedMany": "This email is already used in other groups. Whose data should be taken over?"
       },
       "works": {
         "search": "Title or number",

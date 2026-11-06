@@ -14186,6 +14186,17 @@
   "@redesignPersonFormEmailHint": {
     "description": "redesign.personForm.emailHint"
   },
+  "redesignPersonFormEmailUsedBy": "Diese E-Mail wird in einer anderen Gruppe von {name} verwendet. Daten übernehmen?",
+  "@redesignPersonFormEmailUsedBy": {
+    "description": "redesign.personForm.emailUsedBy",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPersonFormEmailUsedMany": "Diese E-Mail wird bereits in anderen Gruppen verwendet. Daten welcher Person übernehmen?",
+  "@redesignPersonFormEmailUsedMany": {
+    "description": "redesign.personForm.emailUsedMany"
+  },
   "redesignPersonFormExistingUserHint": "Gibt es für die E-Mail-Adresse schon ein Konto, wird es automatisch dieser Gruppe zugewiesen.",
   "@redesignPersonFormExistingUserHint": {
     "description": "redesign.personForm.existingUserHint"

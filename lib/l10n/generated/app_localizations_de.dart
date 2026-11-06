@@ -11395,6 +11395,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPersonFormEmailHint => 'Bekommt damit Zugang zur App';
 
   @override
+  String redesignPersonFormEmailUsedBy(Object name) {
+    return 'Diese E-Mail wird in einer anderen Gruppe von $name verwendet. Daten übernehmen?';
+  }
+
+  @override
+  String get redesignPersonFormEmailUsedMany =>
+      'Diese E-Mail wird bereits in anderen Gruppen verwendet. Daten welcher Person übernehmen?';
+
+  @override
   String get redesignPersonFormExistingUserHint =>
       'Gibt es für die E-Mail-Adresse schon ein Konto, wird es automatisch dieser Gruppe zugewiesen.';
 
