@@ -26,11 +26,21 @@ void _back(BuildContext context, String fallback) => rdHelpBack(context, fallbac
 @visibleForTesting
 void rdHelpBack(BuildContext context, String fallback) {
   final matches = GoRouter.of(context).routerDelegate.currentConfiguration.matches;
-  if (matches.isNotEmpty && matches.last is ImperativeRouteMatch && context.canPop()) {
+  if (_lastIsPushed(matches) && context.canPop()) {
     context.pop();
   } else {
     context.go(fallback);
   }
+}
+
+/// Whether the top page was pushed. Pages inside a `ShellRoute` sit in the
+/// shell's own match list, so follow the shells down.
+bool _lastIsPushed(List<RouteMatchBase> matches) {
+  if (matches.isEmpty) return false;
+  final last = matches.last;
+  if (last is ImperativeRouteMatch) return true;
+  if (last is ShellRouteMatch) return _lastIsPushed(last.matches);
+  return false;
 }
 
 /// Search field like on the Verwaltung page.
