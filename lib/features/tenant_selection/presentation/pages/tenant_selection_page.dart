@@ -90,6 +90,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     // the widget was disposed"): use the captured container and router.
     final container = ProviderScope.containerOf(context, listen: false);
     final router = GoRouter.of(context);
+    final route = ModalRoute.of(context);
 
     try {
       // Wait for tenants to load
@@ -140,6 +141,11 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       // Get notifier BEFORE navigation (widget may be disposed after go())
       final prefsNotifier =
           container.read(userPreferencesNotifierProvider.notifier);
+
+      // An account switch opens this page from inside the tab shell: going
+      // back into the shell before this page is fully shown left "Heute"
+      // blank (old and new shell shared their navigator key).
+      await untilRouteShown(route);
 
       // Navigate FIRST (also when the router already replaced this page)
       goReplacingHistory(

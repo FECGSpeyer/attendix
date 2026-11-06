@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.44.2",
+      "date": "6.11.2026",
+      "changes": [
+        "🐛 Beta-Design: Nach „Konto wechseln“ bzw. „Konto hinzufügen“ blieb „Heute“ manchmal komplett leer, bis man den Tab gewechselt hat"
+      ]
+    },
+    {
       "version": "0.44.0",
       "date": "6.11.2026",
       "changes": [
