@@ -1,0 +1,14 @@
+{
+  "de": {
+    "rdWm": {
+      "categoriesIntro": "Kategorien ordnen die Werke, etwa nach Anlass oder Kirchenjahr.",
+      "worksCount": "{count, plural, one {{count} Werk} other {{count} Werke}}"
+    }
+  },
+  "en": {
+    "rdWm": {
+      "categoriesIntro": "Categories sort the works, e.g. by occasion or church year.",
+      "worksCount": "{count, plural, one {{count} work} other {{count} works}}"
+    }
+  }
+}

@@ -9678,6 +9678,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdSettingsUndo => 'Undo';
 
   @override
+  String get rdWmCategoriesIntro =>
+      'Categories sort the works, e.g. by occasion or church year.';
+
+  @override
+  String rdWmWorksCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count works',
+      one: '$count work',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String redesignAbsenceAffects(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

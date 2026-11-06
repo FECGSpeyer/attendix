@@ -2664,6 +2664,8 @@
   "rdSettingsShortNameHint": "Used in front of export file names",
   "rdSettingsTeachersHint": "Manage the players' teachers",
   "rdSettingsUndo": "Undo",
+  "rdWmCategoriesIntro": "Categories sort the works, e.g. by occasion or church year.",
+  "rdWmWorksCount": "{count, plural, one {{count} work} other {{count} works}}",
   "redesignAbsenceAffects": "{count, plural, =0 {You have no events in this period.} one {This affects 1 event} other {This affects {count} events}}",
   "redesignAbsenceChooseEnd": "Tap the last day.",
   "redesignAbsenceChooseStart": "Tap the first day.",

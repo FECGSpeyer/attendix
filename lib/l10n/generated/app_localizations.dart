@@ -16115,6 +16115,18 @@ abstract class AppLocalizations {
   /// **'Rückgängig'**
   String get rdSettingsUndo;
 
+  /// rdWm.categoriesIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorien ordnen die Werke, etwa nach Anlass oder Kirchenjahr.'**
+  String get rdWmCategoriesIntro;
+
+  /// rdWm.worksCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Werk} other {{count} Werke}}'**
+  String rdWmWorksCount(num count);
+
   /// redesign.absence.affects
   ///
   /// In de, this message translates to:

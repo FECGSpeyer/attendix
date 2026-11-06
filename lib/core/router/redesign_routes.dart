@@ -131,6 +131,9 @@ class RedesignRoutes {
   static String extraFieldEdit({required bool song, required String id}) =>
       '$extraFields/${song ? 'werke' : 'personen'}/${Uri.encodeComponent(id)}';
 
+  /// Verwaltung › Werk-Kategorien (replaces the old categories sheet).
+  static const String workCategories = '$manage/werk-kategorien';
+
   /// Ich › Benachrichtigungen.
   static const String notifications = '$me/benachrichtigungen';
 
