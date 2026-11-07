@@ -1449,8 +1449,11 @@ RdWorkTarget rdDefaultTarget(RdImportPlan plan, RdImportWork work) {
 /// [work] as a new Werk (also one found in Attendix but chosen "Als neues
 /// Werk anlegen"): its number from [_numbersOf]; in a Sammlung its Kürzel.
 RdWorkTarget rdNewWorkTarget(RdImportPlan plan, RdImportWork work) {
+  // A Werk found in Attendix has its name as title: a new one is named after the folder.
   final parsed = rdParseWorkName(work.folderName).title;
-  final name = work.title.isNotEmpty ? work.title : (parsed.isEmpty ? work.folderName : parsed);
+  final name = work.match.songId == null && work.title.isNotEmpty
+      ? work.title
+      : (parsed.isEmpty ? work.folderName : parsed);
   final number = _numbersOf(plan)[work.key];
   return RdWorkTarget.create(name: name, number: number, prefix: number == null ? plan.newPrefix : plan.newPrefix ?? work.prefix);
 }

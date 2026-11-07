@@ -9,7 +9,6 @@ import '../../data/models/song/song_additional_field.dart';
 import '../../data/models/tenant/tenant.dart';
 import '../../data/repositories/repositories.dart';
 import '../config/supabase_config.dart';
-import '../services/offline_queue_service.dart' show connectivityCheckProvider;
 import '../utils/choir_file_utils.dart';
 import 'group_providers.dart';
 import 'locale_provider.dart';
@@ -778,7 +777,7 @@ class SongCollectionNotifier extends Notifier<AsyncValue<void>> {
   }
 
   /// Deletes Sammlung [id] together with its Werke and their files (after
-  /// a test import: hundreds of Werke). The Werke are read fresh, four
+  /// a test import: hundreds of Werke). The Werke are read from the server, four
   /// deleted at a time; [onProgress] after each. The Sammlung goes only when
   /// a fresh read finds no Werk left in it (one added meanwhile is deleted in
   /// another round): those that failed stay in it. [ok] = the Sammlung is
@@ -792,12 +791,8 @@ class SongCollectionNotifier extends Notifier<AsyncValue<void>> {
     var deleted = 0;
     var failed = 0;
     try {
-      // Offline the cached list would say nothing about what is left.
-      if (!await ref.read(connectivityCheckProvider)()) throw StateError('offline');
-      Future<List<int>> left() async => [
-            for (final s in await repo.getSongs())
-              if (s.collectionId == id && s.id != null) s.id!,
-          ];
+      // From the server only: a cached list would say nothing about what is left.
+      Future<List<int>> left() => repo.getSongIdsInCollection(id);
       var total = 0;
       for (var round = 0; round < 3; round++) {
         final queue = await left();

@@ -1,6 +1,5 @@
 import 'package:attendix/core/providers/song_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
-import 'package:attendix/core/services/offline_queue_service.dart';
 import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/data/repositories/song_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,6 +29,12 @@ class _FakeSongRepo extends SongRepository {
   Future<List<Song>> getSongs() async => [for (final s in songs) if (!deletedSongs.contains(s.id)) s];
 
   @override
+  Future<List<int>> getSongIdsInCollection(int collectionId) async => [
+        for (final s in await getSongs())
+          if (s.collectionId == collectionId) s.id!,
+      ];
+
+  @override
   Future<void> deleteSong(int id) async {
     if (failing.contains(id)) throw Exception('offline');
     deletedSongs.add(id);
@@ -48,7 +53,6 @@ void main() {
     late _FakeSongRepo repo;
     final container = ProviderContainer(overrides: [
       currentTenantIdProvider.overrideWithValue(7),
-      connectivityCheckProvider.overrideWithValue(() async => true),
       songRepositoryWithTenantProvider.overrideWith((ref) => repo = _FakeSongRepo(ref)),
     ]);
     addTearDown(container.dispose);

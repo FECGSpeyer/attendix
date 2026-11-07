@@ -420,6 +420,11 @@ void main() {
       expect(summary.newWorks, 1);
       expect(summary.open, 1); // 120: number fits, title not
       expect(summary.openQuestions, 0);
+      // Made new by hand instead of the Werk found: named after its folder.
+      final found = _plan([_e('Noten/120 Wie wunderbar ist Jesus/Viola.pdf')], songs: songs);
+      final sure = found.works.single;
+      expect((sure.match.kind, sure.title), (RdMatchKind.sure, 'Wie wunderbar'));
+      expect(rdNewWorkTarget(found, sure).name, 'Wie wunderbar ist Jesus');
     });
 
     test('into a Sammlung: new Werke get its Kürzel, numbers of the whole group count', () {
