@@ -10,10 +10,8 @@ import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../../../core/constants/enums.dart' show AttendanceStatus;
+import '../../../../../core/providers/player_absence_providers.dart' show playerAbsenceRepositoryWithTenantProvider;
 import '../../../../../data/repositories/player_absence_repository.dart' show PlayerAbsenceRepository;
-import '../../../../people/presentation/widgets/person_detail/upcoming_appointments_accordion.dart'
-    show upcomingAttendancesProvider;
 import '../../../../people/presentation/widgets/planned_absences.dart' show AbsenceInput;
 import '../../../../self_service/presentation/widgets/self_service_absences.dart';
 import '../rd_widgets.dart';
@@ -96,27 +94,27 @@ Future<AbsenceInput?> showRdAbsenceInputSheet(
   );
 }
 
-/// Coming Termine of [upcoming] (rows of `upcomingAttendancesProvider`)
-/// that an absence from [from] to [until] excuses: in the period, not ended
-/// and not excused yet (`excuseUpcomingAttendances`).
-List<Map<String, dynamic>> rdOtherTermineInRange(
-  List<Map<String, dynamic>> upcoming,
-  DateTime from,
-  DateTime until, {
-  DateTime? now,
-}) {
-  final fromIso = DateFormat('yyyy-MM-dd').format(from);
-  final untilIso = DateFormat('yyyy-MM-dd').format(until);
-  return upcoming.where((a) {
-    if (a['status'] == AttendanceStatus.excused.value) return false;
-    return PlayerAbsenceRepository.isUpcomingInAbsenceRange(
-      a['date']?.toString() ?? '',
-      null,
-      fromIso,
-      untilIso,
-      now: now,
-    );
-  }).toList();
+/// Termine the save of an absence for someone else excuses
+/// ([PlayerAbsenceRepository.upcomingToExcuse], the query of the save):
+/// key (personId, from, until) as `yyyy-MM-dd`.
+final rdOtherAbsenceTermineProvider = FutureProvider.autoDispose
+    .family<List<({String? date, String title})>, (int, String, String)>((ref, key) async {
+      final repo = ref.watch(playerAbsenceRepositoryWithTenantProvider);
+      if (!repo.hasTenantId) return const [];
+      final rows = await repo.upcomingToExcuse(personId: key.$1, fromDate: key.$2, untilDate: key.$3);
+      return [
+        for (final r in rows)
+          if (r['attendance'] case final Map<String, dynamic> a)
+            (date: a['date']?.toString(), title: rdAbsenceTermTitle(a)),
+      ];
+    });
+
+/// Title of a Termin row like "Kommende Termine": its Info, else the type.
+String rdAbsenceTermTitle(Map<String, dynamic> attendance) {
+  final info = attendance['typeInfo']?.toString() ?? '';
+  if (info.isNotEmpty) return info;
+  final type = attendance['attType'];
+  return type is Map ? (type['name']?.toString() ?? '') : '';
 }
 
 const _pause = 'pause';
@@ -165,10 +163,7 @@ class _AbsenceSheetState extends ConsumerState<_AbsenceSheet> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Semantics(
-              header: true,
-              child: Text(widget.title ?? l10n.redesignAbsenceTitle, style: RdType.cardTitle(p)),
-            ),
+            Semantics(header: true, child: Text(widget.title ?? l10n.redesignAbsenceTitle, style: RdType.cardTitle(p))),
             if (widget.canSelfPause) ...[
               const SizedBox(height: 14),
               RdSegmented<bool>(
@@ -202,38 +197,38 @@ class _AbsenceSheetState extends ConsumerState<_AbsenceSheet> {
     final from = _from;
     final until = _until;
     String day(DateTime d) => DateFormat.MMMd(locale).format(d);
-    final period = from == null
-        ? l10n.redesignAbsenceChooseStart
-        : until == null
+    final period =
+        from == null
+            ? l10n.redesignAbsenceChooseStart
+            : until == null
             ? '${day(from)} · ${l10n.redesignAbsenceChooseEnd}'
             : '${day(from)} – ${day(until)}';
     final other = widget.personId;
     final List<({String? date, String title})>? affected;
     if (other != null) {
       // Someone else: their coming Termine the save excuses.
-      final upcoming = ref.watch(upcomingAttendancesProvider(other)).valueOrNull;
-      affected = from == null || until == null || upcoming == null
-          ? null
-          : [
-              for (final a in rdOtherTermineInRange(upcoming, from, until))
-                (date: a['date']?.toString(), title: a['meetingName']?.toString() ?? ''),
-            ];
+      final fmt = DateFormat('yyyy-MM-dd');
+      affected =
+          from == null || until == null
+              ? null
+              : ref.watch(rdOtherAbsenceTermineProvider((other, fmt.format(from), fmt.format(until)))).valueOrNull;
     } else {
       // Same Termine the save changes (selfServiceAbsenceCandidateIds): no
       // unassigned duties, no own duties in the Dienstplan view.
       final data = ref.watch(signoutDataProvider).valueOrNull;
       final duty = ref.watch(myDutyOverviewProvider).valueOrNull;
-      affected = from == null || until == null || data == null || duty == null
-          ? null
-          : [
-              for (final a in rdTermineInRange(
-                absenceCandidates(data, useDutyView: duty.useDutyView),
-                from,
-                until,
-                tenantId: ref.watch(currentTenantIdProvider),
-              ))
-                (date: a.date, title: a.eventTitle),
-            ];
+      affected =
+          from == null || until == null || data == null || duty == null
+              ? null
+              : [
+                for (final a in rdTermineInRange(
+                  absenceCandidates(data, useDutyView: duty.useDutyView),
+                  from,
+                  until,
+                  tenantId: ref.watch(currentTenantIdProvider),
+                ))
+                  (date: a.date, title: a.eventTitle),
+              ];
     }
 
     return [
@@ -243,12 +238,16 @@ class _AbsenceSheetState extends ConsumerState<_AbsenceSheet> {
           month: _month,
           from: from,
           until: until,
+          // Someone else (old input): also a period that already started,
+          // from last year on.
+          firstDay: widget.personId == null ? null : DateTime(DateTime.now().year - 1),
           onMonth: (m) => setState(() => _month = m),
-          onDay: (d) => setState(() {
-            final next = rdNextRange(_from, _until, d);
-            _from = next.from;
-            _until = next.until;
-          }),
+          onDay:
+              (d) => setState(() {
+                final next = rdNextRange(_from, _until, d);
+                _from = next.from;
+                _until = next.until;
+              }),
         ),
       ),
       const SizedBox(height: 14),
@@ -258,16 +257,18 @@ class _AbsenceSheetState extends ConsumerState<_AbsenceSheet> {
             title: l10n.redesignAbsencePeriod,
             value: period,
             showChevron: false,
-            trailing: from == null
-                ? null
-                : IconButton(
-                    tooltip: l10n.redesignAbsenceReset,
-                    icon: Icon(Icons.cancel_outlined, color: p.text2),
-                    onPressed: () => setState(() {
-                      _from = null;
-                      _until = null;
-                    }),
-                  ),
+            trailing:
+                from == null
+                    ? null
+                    : IconButton(
+                      tooltip: l10n.redesignAbsenceReset,
+                      icon: Icon(Icons.cancel_outlined, color: p.text2),
+                      onPressed:
+                          () => setState(() {
+                            _from = null;
+                            _until = null;
+                          }),
+                    ),
           ),
         ],
       ),
@@ -279,11 +280,7 @@ class _AbsenceSheetState extends ConsumerState<_AbsenceSheet> {
           runSpacing: 8,
           children: [
             for (final r in reasons)
-              RdChoiceChip(
-                label: r,
-                selected: _reason.text.trim() == r,
-                onTap: () => setState(() => _reason.text = r),
-              ),
+              RdChoiceChip(label: r, selected: _reason.text.trim() == r, onTap: () => setState(() => _reason.text = r)),
           ],
         ),
         const SizedBox(height: 10),
@@ -296,10 +293,7 @@ class _AbsenceSheetState extends ConsumerState<_AbsenceSheet> {
           hintText: l10n.redesignAbsenceReasonHint,
           filled: true,
           fillColor: p.surface,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(p.buttonRadius),
-            borderSide: BorderSide.none,
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(p.buttonRadius), borderSide: BorderSide.none),
         ),
       ),
       if (affected != null) ...[
@@ -319,13 +313,17 @@ class _AbsenceSheetState extends ConsumerState<_AbsenceSheet> {
               if (affected.isNotEmpty) ...[
                 const SizedBox(height: 4),
                 Text(
-                  affected.take(6).map((a) {
-                    final d = EventListUtils.parse(a.date);
-                    final date = d == null
-                        ? ''
-                        : '${DateFormat.E(locale).format(d).replaceAll('.', '')} ${DateFormat('d.M.').format(d)}';
-                    return '$date ${a.title}'.trim();
-                  }).join(' · '),
+                  affected
+                      .take(6)
+                      .map((a) {
+                        final d = EventListUtils.parse(a.date);
+                        final date =
+                            d == null
+                                ? ''
+                                : '${DateFormat.E(locale).format(d).replaceAll('.', '')} ${DateFormat('d.M.').format(d)}';
+                        return '$date ${a.title}'.trim();
+                      })
+                      .join(' · '),
                   style: RdType.meta(p, size: 13),
                 ),
               ],
@@ -333,26 +331,22 @@ class _AbsenceSheetState extends ConsumerState<_AbsenceSheet> {
           ),
         ),
       ],
-      if (widget.hint != null) ...[
-        const SizedBox(height: 14),
-        RdHintBox(widget.hint!),
-      ],
+      if (widget.hint != null) ...[const SizedBox(height: 14), RdHintBox(widget.hint!)],
       const SizedBox(height: 18),
       RdPrimaryButton(
         label: l10n.redesignAbsenceSubmit,
-        onPressed: _valid
-            ? () => Navigator.of(context).pop(AbsenceInput(
-                  reason: _reason.text.trim(),
-                  fromDate: _iso(_from!),
-                  untilDate: _iso(_until!),
-                ))
-            : null,
+        onPressed:
+            _valid
+                ? () => Navigator.of(
+                  context,
+                ).pop(AbsenceInput(reason: _reason.text.trim(), fromDate: _iso(_from!), untilDate: _iso(_until!)))
+                : null,
       ),
     ];
   }
 }
 
-/// Month view with a selectable period (today and later).
+/// Month view with a selectable period (from [firstDay], default today).
 class _MonthGrid extends StatelessWidget {
   const _MonthGrid({
     required this.month,
@@ -360,7 +354,11 @@ class _MonthGrid extends StatelessWidget {
     required this.until,
     required this.onMonth,
     required this.onDay,
+    this.firstDay,
   });
+
+  /// First day that can be picked (default today).
+  final DateTime? firstDay;
 
   final DateTime month;
   final DateTime? from;
@@ -375,14 +373,14 @@ class _MonthGrid extends StatelessWidget {
     final locale = currentIntlLocale();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final thisMonth = DateTime(now.year, now.month);
+    final first = firstDay ?? today;
+    final thisMonth = DateTime(first.year, first.month);
     final days = DateUtils.getDaysInMonth(month.year, month.month);
     final lead = DateTime(month.year, month.month).weekday - 1; // Monday first
     final monday = DateTime(2024, 1, 1); // a Monday
     final last = until ?? from;
 
-    bool inRange(DateTime d) =>
-        from != null && last != null && !d.isBefore(from!) && !d.isAfter(last);
+    bool inRange(DateTime d) => from != null && last != null && !d.isBefore(from!) && !d.isAfter(last);
 
     return Column(
       children: [
@@ -390,19 +388,10 @@ class _MonthGrid extends StatelessWidget {
           children: [
             IconButton(
               tooltip: l10n.redesignAbsencePrevMonth,
-              onPressed: month.isAfter(thisMonth)
-                  ? () => onMonth(DateTime(month.year, month.month - 1))
-                  : null,
+              onPressed: month.isAfter(thisMonth) ? () => onMonth(DateTime(month.year, month.month - 1)) : null,
               icon: const Icon(Icons.chevron_left),
             ),
-            Expanded(
-              child: Center(
-                child: Text(
-                  DateFormat.yMMMM(locale).format(month),
-                  style: RdType.section(p),
-                ),
-              ),
-            ),
+            Expanded(child: Center(child: Text(DateFormat.yMMMM(locale).format(month), style: RdType.section(p)))),
             IconButton(
               tooltip: l10n.redesignAbsenceNextMonth,
               onPressed: () => onMonth(DateTime(month.year, month.month + 1)),
@@ -432,46 +421,49 @@ class _MonthGrid extends StatelessWidget {
             children: [
               for (var i = 0; i < 7; i++)
                 Expanded(
-                  child: Builder(builder: (context) {
-                    final n = week * 7 + i - lead + 1;
-                    if (n < 1 || n > days) return const SizedBox(height: 40);
-                    final d = DateTime(month.year, month.month, n);
-                    final past = d.isBefore(today);
-                    final selected = inRange(d);
-                    final edge = d == from || d == last;
-                    return Semantics(
-                      button: !past,
-                      selected: selected,
-                      label: DateFormat.yMMMMEEEEd(locale).format(d),
-                      excludeSemantics: true,
-                      child: InkWell(
-                        onTap: past ? null : () => onDay(d),
-                        borderRadius: BorderRadius.circular(10),
-                        child: Container(
-                          height: 40,
-                          margin: const EdgeInsets.all(1),
-                          decoration: BoxDecoration(
-                            color: edge ? p.primary : (selected ? p.soft : null),
-                            borderRadius: BorderRadius.circular(10),
-                            border: d == today && !edge ? Border.all(color: p.primary, width: 1.5) : null,
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            '$n',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: edge ? FontWeight.w700 : FontWeight.w500,
-                              color: edge
-                                  ? p.onPrimary
-                                  : past
-                                      ? p.text2.withValues(alpha: 0.5)
-                                      : (selected ? p.softText : p.text),
+                  child: Builder(
+                    builder: (context) {
+                      final n = week * 7 + i - lead + 1;
+                      if (n < 1 || n > days) return const SizedBox(height: 40);
+                      final d = DateTime(month.year, month.month, n);
+                      final past = d.isBefore(first);
+                      final selected = inRange(d);
+                      final edge = d == from || d == last;
+                      return Semantics(
+                        button: !past,
+                        selected: selected,
+                        label: DateFormat.yMMMMEEEEd(locale).format(d),
+                        excludeSemantics: true,
+                        child: InkWell(
+                          onTap: past ? null : () => onDay(d),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            height: 40,
+                            margin: const EdgeInsets.all(1),
+                            decoration: BoxDecoration(
+                              color: edge ? p.primary : (selected ? p.soft : null),
+                              borderRadius: BorderRadius.circular(10),
+                              border: d == today && !edge ? Border.all(color: p.primary, width: 1.5) : null,
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              '$n',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: edge ? FontWeight.w700 : FontWeight.w500,
+                                color:
+                                    edge
+                                        ? p.onPrimary
+                                        : past
+                                        ? p.text2.withValues(alpha: 0.5)
+                                        : (selected ? p.softText : p.text),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
+                      );
+                    },
+                  ),
                 ),
             ],
           ),

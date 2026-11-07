@@ -117,8 +117,11 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
     );
     if (!confirmed || !mounted || !_sameGroup || _saving) return;
     final deleted = draft.original!;
+    // Same lock as "Fertig": no save (and no offer of this rule) meanwhile.
+    setState(() => _saving = true);
     final ok = await notifier.deleteUnavailability(deleted);
     if (!mounted) return;
+    setState(() => _saving = false);
     if (!ok) {
       ToastHelper.showError(context, l10n.dutyFlutterDeleteFailed);
       return;

@@ -22,15 +22,15 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../factories/test_factories.dart';
 
 Widget _app(List<Override> overrides, Widget home) => ProviderScope(
-      overrides: overrides,
-      child: MaterialApp(
-        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
-        locale: const Locale('de'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: home,
-      ),
-    );
+  overrides: overrides,
+  child: MaterialApp(
+    theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+    locale: const Locale('de'),
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: home,
+  ),
+);
 
 void main() {
   group('Verlauf helpers', () {
@@ -50,42 +50,50 @@ void main() {
     test('historyWithoutEntry removes exactly the matching change', () {
       const a = PlayerHistoryEntry(date: '2026-10-01T10:00:00Z', type: 1, text: 'Urlaub');
       const b = PlayerHistoryEntry(date: '2026-10-01T10:00:00Z', type: 1, text: 'Krank');
-      final left = historyWithoutEntry(
-        [a, b],
-        {'date': '2026-10-01T10:00:00Z', 'type': 1, 'text': 'Urlaub'},
-      );
+      final left = historyWithoutEntry([a, b], {'date': '2026-10-01T10:00:00Z', 'type': 1, 'text': 'Urlaub'});
       expect(left, [b.toJson()]);
     });
   });
 
-  test('Abwesenheit für andere: counts coming, not yet excused Termine in the period', () {
-    final now = DateTime(2026, 11, 7, 8);
-    final upcoming = <Map<String, dynamic>>[
-      {'date': '2026-11-08', 'meetingName': 'Probe', 'status': 0},
-      {'date': '2026-11-09', 'meetingName': 'Konzert', 'status': 2}, // already excused
-      {'date': '2026-11-20', 'meetingName': 'Später', 'status': 1}, // outside
-    ];
-    final hit = rdOtherTermineInRange(upcoming, DateTime(2026, 11, 8), DateTime(2026, 11, 10), now: now);
-    expect(hit.map((a) => a['meetingName']), ['Probe']);
+  test('Abwesenheit für andere: Termin title like "Kommende Termine"', () {
+    expect(
+      rdAbsenceTermTitle({
+        'typeInfo': 'Generalprobe',
+        'attType': {'name': 'Probe'},
+      }),
+      'Generalprobe',
+    );
+    expect(
+      rdAbsenceTermTitle({
+        'typeInfo': null,
+        'attType': {'name': 'Probe'},
+      }),
+      'Probe',
+    );
   });
 
   testWidgets('Gemeinde wählen: Beta sheet with search, "Nicht gelistet" and a check mark', (tester) async {
     String? result = 'unset';
     const churches = [Church(id: 'a', name: 'FECG Speyer'), Church(id: 'b', name: 'Gemeinde Lahr')];
-    await tester.pumpWidget(_app(
-      [redesignEnabledProvider.overrideWithValue(true)],
-      Builder(
-        builder: (context) => TextButton(
-          onPressed: () async => result = await showChurchPickerSheet(
-            context,
-            title: 'Gemeinde',
-            churches: churches,
-            selectedId: 'a',
-          ),
-          child: const Text('open'),
+    await tester.pumpWidget(
+      _app(
+        [redesignEnabledProvider.overrideWithValue(true)],
+        Builder(
+          builder:
+              (context) => TextButton(
+                onPressed:
+                    () async =>
+                        result = await showChurchPickerSheet(
+                          context,
+                          title: 'Gemeinde',
+                          churches: churches,
+                          selectedId: 'a',
+                        ),
+                child: const Text('open'),
+              ),
         ),
       ),
-    ));
+    );
     await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
     expect(find.byType(RdChurchPicker), findsOneWidget);
@@ -110,8 +118,8 @@ void main() {
     tester.view.physicalSize = const Size(430, 2400);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    await tester.pumpWidget(_app(
-      [
+    await tester.pumpWidget(
+      _app([
         currentTenantIdProvider.overrideWithValue(42),
         attendanceTypesProvider.overrideWith(
           (ref) async => [TestFactories.createAttendanceType(id: 't1', name: 'Gottesdienst')],
@@ -121,9 +129,8 @@ void main() {
             PersonUnavailability(id: 'r1', tenantId: 42, personId: 1, weekdays: [3], reason: 'Kinderstunde'),
           ],
         ),
-      ],
-      const RdUnavailabilityPage(personId: 1, personName: 'Lea Jäger', forOther: true),
-    ));
+      ], const RdUnavailabilityPage(personId: 1, personName: 'Lea Jäger', forOther: true)),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('Nicht verfügbar'), findsOneWidget);
