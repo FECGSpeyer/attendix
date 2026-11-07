@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.81.0",
+      "version": "0.83.0",
       "date": "7.11.2026",
       "changes": [
         "✨ Noten-Import: Viele offene Fragen werden nach Instrument gebündelt, eine ganze Gruppe geht mit „Alle als …“",
@@ -12,6 +12,28 @@
         "⚡ Noten-Import: Das geöffnete Werk wird zuerst gelesen; die KI bekommt gelernte Gruppennamen, Dateinamen und die übrigen Dateien des Werks",
         "🐛 Noten-Import: Erkennt jetzt auch „Viole“, „Coro“, „S. A./T. B.“, „V-ni/V-le/V-c/C-b“ und „Vokal“; Becken, Triangel, Glocken und Pauke ohne eigene Gruppe gehen ins Schlagwerk",
         "🐛 Noten-Import: Eine Gruppe namens „Schlagwerk“, „Bratsche“ oder „Piano“ wird als solche erkannt; ein nummerierter Werk-Ordner wie „12 Le viole“ zählt nicht als Stimmen-Ordner"
+      ]
+    },
+    {
+      "version": "0.82.0",
+      "date": "7.11.2026",
+      "changes": [
+        "💄 Beta: Verlauf einer Person mit Durchschnitts-Karte, Umschalter „Seit Saisonbeginn | Alles“ und Listen mit Datumskachel und farbigem Status statt Akkordeons; Tippen öffnet den Termin",
+        "💄 Beta: Abwesenheit für andere im selben Blatt wie Ich › Abwesenheit („Abwesenheit für Lea“, Monatsraster, „Betrifft N Termine“)",
+        "💄 Beta: „Nicht verfügbar“ als Bearbeiten-Seite mit einem Abschnitt je Regel (Wochentage, Termine, Grund, Gilt bis)",
+        "💄 Beta: Gemeinde wählen im Beta-Auswahlblatt mit Suche und Häkchen",
+        "🐛 Abwesenheit für andere wird nach einem Gruppenwechsel nicht mehr in der neuen Gruppe gespeichert"
+      ]
+    },
+    {
+      "version": "0.81.0",
+      "date": "7.11.2026",
+      "changes": [
+        "💄 Beta: Dienst-Besetzung, Person einteilen, Protokoll und Aufgaben auf der Termin-Seite im Beta-Design",
+        "💄 Beta: Kritische Regel als Beta-Seite mit Abschnitten, Segmenten und Zählern",
+        "🐛 Beta: Kritische Regel öffnete sich als leeres graues Blatt",
+        "💄 Beta: Gruppen-Kategorien als Verwaltungsliste wie die Werk-Kategorien",
+        "💄 Beta: Gemeinsame Zusatzfelder der Organisation als Verwaltungsliste mit Bearbeiten-Seite"
       ]
     },
     {

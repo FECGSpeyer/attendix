@@ -141,6 +141,10 @@ class RedesignRoutes {
   static String extraFieldEdit({required bool song, required String id}) =>
       '$extraFields/${song ? 'werke' : 'personen'}/${Uri.encodeComponent(id)}';
 
+  /// Gruppen › Kategorien (replaces the old group categories sheet; its own
+  /// path because `gruppen/:id` is a group).
+  static const String groupCategories = '$manage/gruppen-kategorien';
+
   /// Verwaltung › Werk-Kategorien (replaces the old categories sheet).
   static const String workCategories = '$manage/werk-kategorien';
 
@@ -168,6 +172,7 @@ class RedesignRoutes {
     rolePermissions,
     extraFields,
     workCategories,
+    groupCategories,
   };
 
   /// Pages for super admins only (the old admins sheet: `role.isAdmin`).

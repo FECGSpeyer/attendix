@@ -411,7 +411,38 @@
         "reasonHint": "z. B. Urlaub",
         "affects": "{count, plural, =0 {In diesem Zeitraum hast du keine Termine.} one {Das betrifft 1 Termin} other {Das betrifft {count} Termine}}",
         "submit": "Abwesenheit eintragen",
-        "reset": "Zeitraum zurücksetzen"
+        "reset": "Zeitraum zurücksetzen",
+        "forOther": "Abwesenheit für {name}",
+        "affectsOther": "{count, plural, =0 {In diesem Zeitraum stehen keine Termine an.} one {Das betrifft 1 Termin} other {Das betrifft {count} Termine}}"
+      },
+      "history": {
+        "average": "Durchschnitt",
+        "averageLate": "Durchschnitt · {count}× zu spät",
+        "season": "Seit Saisonbeginn",
+        "all": "Alles",
+        "upcoming": "Kommende Termine",
+        "list": "Verlauf",
+        "empty": "Noch keine Einträge.",
+        "present": "Anwesend",
+        "neutral": "Neutral",
+        "more": "Weitere Aktionen",
+        "remove": "Eintrag löschen"
+      },
+      "unavailability": {
+        "title": "Nicht verfügbar",
+        "intro": "{name} wird an diesen Tagen nicht für Dienste vorgeschlagen und bei neuen Terminen automatisch abgemeldet.",
+        "introSelf": "Du wirst an diesen Tagen nicht für Dienste vorgeschlagen und bei neuen Terminen automatisch abgemeldet.",
+        "rule": "Regel {number}",
+        "weekdays": "Wochentage",
+        "termine": "Termine",
+        "all": "Alle",
+        "reason": "Grund",
+        "optional": "Optional",
+        "until": "Gilt bis",
+        "unlimited": "Unbefristet",
+        "pickDate": "Datum wählen …",
+        "add": "Regel hinzufügen",
+        "delete": "Regel löschen"
       },
       "create": {
         "title": "Neuer Termin",
@@ -1446,6 +1477,23 @@
         "forgot": "Passwort vergessen?",
         "resetIntro": "Wir schicken dir einen Link, mit dem du ein neues Passwort setzt.",
         "resetSend": "Link senden"
+      },
+      "groupCategories": {
+        "intro": "Kategorien fassen Gruppen zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Gruppen.",
+        "count": "{count, plural, one {{count} Gruppe} other {{count} Gruppen}}",
+        "back": "Gruppen"
+      },
+      "duty": {
+        "title": "Dienst",
+        "fill": "{occupied} von {required}",
+        "requested": "Angefragt",
+        "confirmed": "Bestätigt",
+        "declined": "Abgesagt",
+        "signedOut": "Abgemeldet",
+        "cannot": "Kann nicht",
+        "more": "Mehr zu {name}",
+        "protocolTitle": "Protokoll",
+        "tasksTitle": "Aufgaben aus diesem Termin"
       }
     }
   },
@@ -1861,7 +1909,38 @@
         "reasonHint": "e.g. holiday",
         "affects": "{count, plural, =0 {You have no events in this period.} one {This affects 1 event} other {This affects {count} events}}",
         "submit": "Enter absence",
-        "reset": "Reset period"
+        "reset": "Reset period",
+        "forOther": "Absence for {name}",
+        "affectsOther": "{count, plural, =0 {There are no events in this period.} one {This affects 1 event} other {This affects {count} events}}"
+      },
+      "history": {
+        "average": "Average",
+        "averageLate": "Average · {count}× late",
+        "season": "Since season start",
+        "all": "Everything",
+        "upcoming": "Upcoming events",
+        "list": "History",
+        "empty": "No entries yet.",
+        "present": "Present",
+        "neutral": "Neutral",
+        "more": "More actions",
+        "remove": "Delete entry"
+      },
+      "unavailability": {
+        "title": "Not available",
+        "intro": "{name} will not be suggested for duties on these days and is signed out of new events automatically.",
+        "introSelf": "You will not be suggested for duties on these days and are signed out of new events automatically.",
+        "rule": "Rule {number}",
+        "weekdays": "Weekdays",
+        "termine": "Events",
+        "all": "All",
+        "reason": "Reason",
+        "optional": "Optional",
+        "until": "Valid until",
+        "unlimited": "Unlimited",
+        "pickDate": "Choose date …",
+        "add": "Add rule",
+        "delete": "Delete rule"
       },
       "create": {
         "title": "New event",
@@ -2896,6 +2975,23 @@
         "forgot": "Forgot password?",
         "resetIntro": "We will send you a link to set a new password.",
         "resetSend": "Send link"
+      },
+      "groupCategories": {
+        "intro": "Categories bundle groups, e.g. brass or soprano and alto. Their order also applies to the groups.",
+        "count": "{count, plural, one {{count} group} other {{count} groups}}",
+        "back": "Groups"
+      },
+      "duty": {
+        "title": "Duty",
+        "fill": "{occupied} of {required}",
+        "requested": "Requested",
+        "confirmed": "Confirmed",
+        "declined": "Declined",
+        "signedOut": "Signed out",
+        "cannot": "Can't",
+        "more": "More for {name}",
+        "protocolTitle": "Minutes",
+        "tasksTitle": "Tasks from this event"
       }
     }
   }

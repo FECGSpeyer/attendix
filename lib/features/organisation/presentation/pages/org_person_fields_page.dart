@@ -17,7 +17,8 @@ import '../../../settings/presentation/widgets/ion_condense.dart';
 import '../../../settings/presentation/widgets/settings_list.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
-Map<String, String> _fieldTypes(AppLocalizations l10n) => <String, String>{
+/// Types of an org extra field with their names (old add sheet).
+Map<String, String> orgFieldTypes(AppLocalizations l10n) => <String, String>{
       'text': l10n.typeSettingsText,
       'textarea': l10n.extraFieldsTextarea,
       'number': l10n.extraFieldsNumber,
@@ -26,7 +27,7 @@ Map<String, String> _fieldTypes(AppLocalizations l10n) => <String, String>{
       'select': l10n.extraFieldsSelect,
     };
 
-String _typeName(AppLocalizations l10n, String type) => _fieldTypes(l10n)[type] ?? l10n.commonUnknown;
+String orgFieldTypeName(AppLocalizations l10n, String type) => orgFieldTypes(l10n)[type] ?? l10n.commonUnknown;
 
 /// Field id of an org-wide extra field (Ionic `org_<orgId>_<name>`).
 String orgFieldId(int orgId, String name) =>
@@ -245,7 +246,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
       key: ValueKey(f.id),
       title: Text(f.name),
       subtitle: Text([
-        l10n.extraFieldsTypeLine(_typeName(l10n, f.type)),
+        l10n.extraFieldsTypeLine(orgFieldTypeName(l10n, f.type)),
         l10n.extraFieldsDisplayLine(mode),
         if (f.visibleToPlayers) '${l10n.extraFieldsVisible}${f.editableByPlayers ? l10n.extraFieldsEditableSuffix : ''}',
       ].join('\n')),
@@ -275,8 +276,8 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
 /// string: „5“, or „“ when cleared (the browser number input also yields „“
 /// for text, NaN and Infinity). An empty string keeps persons without a value
 /// empty instead of showing 0 (getFieldTypeDefaultValue only falls back for
-/// null). Readers accept string and number (old data).
-@visibleForTesting
+/// null). Readers accept string and number (old data). Also used by the
+/// Beta form.
 String numberFieldDefaultText(String text) {
   final trimmed = text.trim();
   final value = num.tryParse(trimmed);
@@ -415,7 +416,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(context.l10n.typeSettingsType),
-                  trailing: Text(_typeName(context.l10n, _type)),
+                  trailing: Text(orgFieldTypeName(context.l10n, _type)),
                 )
               else
                 AppDropdownFormField<String>(
@@ -423,7 +424,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                   value: _type,
                   decoration: InputDecoration(labelText: context.l10n.typeSettingsType),
                   items: [
-                    for (final e in _fieldTypes(context.l10n).entries) DropdownMenuItem(value: e.key, child: Text(e.value)),
+                    for (final e in orgFieldTypes(context.l10n).entries) DropdownMenuItem(value: e.key, child: Text(e.value)),
                   ],
                   onChanged: (v) => _onTypeChanged(v ?? 'text'),
                 ),

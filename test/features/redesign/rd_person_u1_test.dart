@@ -53,7 +53,12 @@ final _auth = () {
 ThemeData _beta() => buildRdTheme(RdFarbwelt.petrol, Brightness.light).copyWith(platform: TargetPlatform.iOS);
 ThemeData _ionic() => AppTheme.forPlatform(Brightness.light, TargetPlatform.iOS, web: false);
 
-Future<void> _pump(WidgetTester tester, ThemeData theme, Widget home) async {
+Future<void> _pump(
+  WidgetTester tester,
+  ThemeData theme,
+  Widget home, {
+  List<Map<String, dynamic>> history = const [],
+}) async {
   await tester.pumpWidget(ProviderScope(
     overrides: [
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
@@ -71,7 +76,7 @@ Future<void> _pump(WidgetTester tester, ThemeData theme, Widget home) async {
       personProvider(1).overrideWith((ref) async => _person),
       personAttendanceStatsProvider(1).overrideWith(
           (ref) async => {'total': 0, 'attended': 0, 'percentage': 0, 'lateCount': 0, 'lateCountExcused': 0}),
-      personHistoryProvider(1).overrideWith((ref) async => const []),
+      personHistoryProvider(1).overrideWith((ref) async => history),
       upcomingAttendancesProvider(1).overrideWith((ref) async => [
             {'date': '2026-11-03', 'meetingName': 'Probe', 'status': 1, 'notes': null},
           ]),
@@ -141,7 +146,51 @@ void main() {
       expect(find.text('Verlauf'), findsOneWidget);
       expect(find.text('Anna Beispiel'), findsOneWidget);
       expect(find.textContaining('Probe'), findsOneWidget);
-      expect(find.text('Historie'), findsOneWidget);
+      // Beta lists instead of the old accordions.
+      expect(find.text('Historie'), findsNothing);
+      expect(find.byType(IonAccordion), findsNothing);
+      expect(find.text('KOMMENDE TERMINE'), findsOneWidget);
+      expect(find.text('Zugesagt'), findsOneWidget);
+      expect(find.text('Durchschnitt'), findsOneWidget);
+    });
+
+    testWidgets('history: status pills, ⋯ deletes changes of the person', (tester) async {
+      await _pump(
+        tester,
+        _beta(),
+        const RdPersonHistoryPage(personId: 1),
+        history: [
+          {
+            'date': '2026-10-28',
+            'attendanceId': 7,
+            'meetingName': 'Konzert',
+            'text': 'X',
+            'type': PlayerHistoryType.attendance.value,
+            'notes': null,
+            'status': 1,
+          },
+          {
+            'date': '2026-10-21',
+            'attendanceId': 6,
+            'meetingName': 'Probe alt',
+            'text': 'E',
+            'type': PlayerHistoryType.attendance.value,
+            'notes': 'Krank',
+            'status': 2,
+          },
+          {'date': '2026-10-01T10:00:00Z', 'title': '', 'text': 'Urlaub', 'type': 1, 'notes': null},
+        ],
+      );
+      expect(find.text('VERLAUF'), findsOneWidget);
+      expect(find.text('Konzert'), findsOneWidget);
+      expect(find.text('Anwesend'), findsOneWidget);
+      expect(find.text('Entschuldigt'), findsOneWidget);
+      expect(find.textContaining('Krank'), findsOneWidget);
+      // Only the change of the person (not a Termin) can be deleted.
+      expect(find.byTooltip('Weitere Aktionen'), findsOneWidget);
+      await tester.tap(find.byTooltip('Weitere Aktionen'));
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.text('Eintrag löschen'), findsOneWidget);
     });
 
     test('route of the new design', () {
@@ -280,7 +329,7 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
       expect(calls, 2);
       expect(find.text('Anna Beispiel'), findsOneWidget);
-      expect(find.text('Historie'), findsOneWidget);
+      expect(find.text('VERLAUF'), findsOneWidget);
 
       await tester.fling(find.text('Verlauf'), const Offset(0, 400), 1000);
       await tester.pumpAndSettle();

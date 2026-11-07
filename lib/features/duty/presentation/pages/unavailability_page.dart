@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/duty_providers.dart';
+import '../../../../core/providers/redesign_providers.dart' show redesignEnabledProvider;
+import '../../../redesign/presentation/pages/rd_unavailability_page.dart' show RdUnavailabilityPage;
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
@@ -18,12 +20,18 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Opens "Regelmäßig verhindert" for a person (as a full screen dialog).
+/// REDESIGN: in the Beta the page "Nicht verfügbar" ([RdUnavailabilityPage]).
 Future<void> openUnavailabilityPage(
   BuildContext context, {
   required int personId,
   String personName = '',
   bool forOther = false,
 }) {
+  if (ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider)) {
+    return Navigator.of(context, rootNavigator: true).push(MaterialPageRoute<void>(
+      builder: (_) => RdUnavailabilityPage(personId: personId, personName: personName, forOther: forOther),
+    ));
+  }
   return Navigator.of(context, rootNavigator: true).push(MaterialPageRoute<void>(
     fullscreenDialog: true,
     builder: (_) => UnavailabilityPage(personId: personId, personName: personName, forOther: forOther),

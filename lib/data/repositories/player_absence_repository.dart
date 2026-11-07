@@ -126,7 +126,7 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
   ) async {
     final response = await supabase
         .from('person_attendances')
-        .select('id, status, notes, duty_state, attendance:attendance_id!inner(date, duration_days, type_id, tenantId, attType:type_id(duty_mode))')
+        .select('id, status, notes, duty_state, attendance:attendance_id!inner(date, duration_days, type_id, typeInfo, tenantId, attType:type_id(duty_mode, name))')
         .eq('person_id', personId)
         .eq('attendance.tenantId', currentTenantId)
         // One day of slack: the exact local-day check happens below.
@@ -201,6 +201,23 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
   /// Excuse all upcoming attendances in the absence range that are not yet
   /// excused (status = Entschuldigt, notes = reason). Returns the count.
   /// [onlyIds]: see [limitToIds] (self-service).
+  /// Rows [excuseUpcomingAttendances] would excuse (same query and checks):
+  /// coming Termine of [personId] in the period, not excused yet. Preview of
+  /// the Beta sheet "Abwesenheit für …".
+  Future<List<Map<String, dynamic>>> upcomingToExcuse({
+    required int personId,
+    required String fromDate,
+    required String untilDate,
+  }) async {
+    try {
+      final rows = await _upcomingInRange(personId, fromDate, untilDate);
+      return rows.where((r) => _statusOf(r['status']) != AttendanceStatus.excused.value).toList();
+    } catch (e, stack) {
+      handleError(e, stack, 'upcomingToExcuse');
+      rethrow;
+    }
+  }
+
   Future<int> excuseUpcomingAttendances({
     required int personId,
     required String fromDate,

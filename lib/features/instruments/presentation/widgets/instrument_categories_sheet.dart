@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/group_providers.dart';
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/instrument_sort.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -448,8 +451,13 @@ class _CategoryTile extends StatelessWidget {
   }
 }
 
-/// Shows the instrument categories management sheet
-Future<void> showInstrumentCategoriesSheet(BuildContext context) {
+/// Shows the instrument categories management sheet. In the Beta the page
+/// Gruppen › Kategorien opens instead.
+Future<void> showInstrumentCategoriesSheet(BuildContext context) async {
+  if (ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider)) {
+    await context.push(RedesignRoutes.groupCategories);
+    return;
+  }
   return showModalBottomSheet(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar

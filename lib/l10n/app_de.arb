@@ -12080,6 +12080,38 @@
   "@rdOrgCreate": {
     "description": "rdOrg.create"
   },
+  "rdOrgFieldDelete": "Feld löschen",
+  "@rdOrgFieldDelete": {
+    "description": "rdOrg.fieldDelete"
+  },
+  "rdOrgFieldDeleteHint": "Die Werte bei allen Personen der Organisation werden mit gelöscht.",
+  "@rdOrgFieldDeleteHint": {
+    "description": "rdOrg.fieldDeleteHint"
+  },
+  "rdOrgFieldEdit": "Feld",
+  "@rdOrgFieldEdit": {
+    "description": "rdOrg.fieldEdit"
+  },
+  "rdOrgFieldNew": "Neues Feld",
+  "@rdOrgFieldNew": {
+    "description": "rdOrg.fieldNew"
+  },
+  "rdOrgFieldTypeFixed": "Der Typ lässt sich nach dem Anlegen nicht mehr ändern.",
+  "@rdOrgFieldTypeFixed": {
+    "description": "rdOrg.fieldTypeFixed"
+  },
+  "rdOrgFieldsAdd": "Feld hinzufügen",
+  "@rdOrgFieldsAdd": {
+    "description": "rdOrg.fieldsAdd"
+  },
+  "rdOrgFieldsEmpty": "Noch keine gemeinsamen Zusatzfelder.",
+  "@rdOrgFieldsEmpty": {
+    "description": "rdOrg.fieldsEmpty"
+  },
+  "rdOrgFieldsSaving": "Änderung wird gespeichert …",
+  "@rdOrgFieldsSaving": {
+    "description": "rdOrg.fieldsSaving"
+  },
   "rdOrgFilter": "Filter",
   "@rdOrgFilter": {
     "description": "rdOrg.filter"
@@ -12528,6 +12560,74 @@
   "@rdSettingsRegisterFieldsHint": {
     "description": "rdSettings.registerFieldsHint"
   },
+  "rdSettingsRuleAnd": "Und",
+  "@rdSettingsRuleAnd": {
+    "description": "rdSettings.rule.and"
+  },
+  "rdSettingsRuleCounts": "Was zählt",
+  "@rdSettingsRuleCounts": {
+    "description": "rdSettings.rule.counts"
+  },
+  "rdSettingsRuleDays": "Tage",
+  "@rdSettingsRuleDays": {
+    "description": "rdSettings.rule.days"
+  },
+  "rdSettingsRuleEditTitle": "Regel",
+  "@rdSettingsRuleEditTitle": {
+    "description": "rdSettings.rule.editTitle"
+  },
+  "rdSettingsRuleName": "Name",
+  "@rdSettingsRuleName": {
+    "description": "rdSettings.rule.name"
+  },
+  "rdSettingsRuleNewTitle": "Neue Regel",
+  "@rdSettingsRuleNewTitle": {
+    "description": "rdSettings.rule.newTitle"
+  },
+  "rdSettingsRuleOr": "Oder",
+  "@rdSettingsRuleOr": {
+    "description": "rdSettings.rule.or"
+  },
+  "rdSettingsRulePeriod": "Zeitraum",
+  "@rdSettingsRulePeriod": {
+    "description": "rdSettings.rule.period"
+  },
+  "rdSettingsRulePeriodAll": "Immer",
+  "@rdSettingsRulePeriodAll": {
+    "description": "rdSettings.rule.periodAll"
+  },
+  "rdSettingsRulePeriodAllHint": "Gezählt wird die gesamte Historie.",
+  "@rdSettingsRulePeriodAllHint": {
+    "description": "rdSettings.rule.periodAllHint"
+  },
+  "rdSettingsRulePeriodDays": "Letzte Tage",
+  "@rdSettingsRulePeriodDays": {
+    "description": "rdSettings.rule.periodDays"
+  },
+  "rdSettingsRulePeriodSeason": "Saison",
+  "@rdSettingsRulePeriodSeason": {
+    "description": "rdSettings.rule.periodSeason"
+  },
+  "rdSettingsRulePeriodSeasonHint": "Gezählt wird ab dem Saisonbeginn.",
+  "@rdSettingsRulePeriodSeasonHint": {
+    "description": "rdSettings.rule.periodSeasonHint"
+  },
+  "rdSettingsRuleStatusHint": "Diese Status zählen. Mindestens einer muss gewählt sein.",
+  "@rdSettingsRuleStatusHint": {
+    "description": "rdSettings.rule.statusHint"
+  },
+  "rdSettingsRuleThreshold": "Kritisch ab",
+  "@rdSettingsRuleThreshold": {
+    "description": "rdSettings.rule.threshold"
+  },
+  "rdSettingsRuleTypes": "Terminarten",
+  "@rdSettingsRuleTypes": {
+    "description": "rdSettings.rule.types"
+  },
+  "rdSettingsRuleValueInvalid": "Bitte eine Zahl größer als 0 eingeben.",
+  "@rdSettingsRuleValueInvalid": {
+    "description": "rdSettings.rule.valueInvalid"
+  },
   "rdSettingsSaveFailed": "Konnte nicht gespeichert werden. Bitte versuche es noch einmal.",
   "@rdSettingsSaveFailed": {
     "description": "rdSettings.saveFailed"
@@ -12625,6 +12725,15 @@
       }
     }
   },
+  "redesignAbsenceAffectsOther": "{count, plural, =0 {In diesem Zeitraum stehen keine Termine an.} one {Das betrifft 1 Termin} other {Das betrifft {count} Termine}}",
+  "@redesignAbsenceAffectsOther": {
+    "description": "redesign.absence.affectsOther",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "redesignAbsenceChooseEnd": "Tippe auf den letzten Tag.",
   "@redesignAbsenceChooseEnd": {
     "description": "redesign.absence.chooseEnd"
@@ -12632,6 +12741,13 @@
   "redesignAbsenceChooseStart": "Tippe auf den ersten Tag.",
   "@redesignAbsenceChooseStart": {
     "description": "redesign.absence.chooseStart"
+  },
+  "redesignAbsenceForOther": "Abwesenheit für {name}",
+  "@redesignAbsenceForOther": {
+    "description": "redesign.absence.forOther",
+    "placeholders": {
+      "name": {}
+    }
   },
   "redesignAbsenceNextMonth": "Nächster Monat",
   "@redesignAbsenceNextMonth": {
@@ -13405,6 +13521,53 @@
   "redesignCreateType": "Art",
   "@redesignCreateType": {
     "description": "redesign.create.type"
+  },
+  "redesignDutyCannot": "Kann nicht",
+  "@redesignDutyCannot": {
+    "description": "redesign.duty.cannot"
+  },
+  "redesignDutyConfirmed": "Bestätigt",
+  "@redesignDutyConfirmed": {
+    "description": "redesign.duty.confirmed"
+  },
+  "redesignDutyDeclined": "Abgesagt",
+  "@redesignDutyDeclined": {
+    "description": "redesign.duty.declined"
+  },
+  "redesignDutyFill": "{occupied} von {required}",
+  "@redesignDutyFill": {
+    "description": "redesign.duty.fill",
+    "placeholders": {
+      "occupied": {},
+      "required": {}
+    }
+  },
+  "redesignDutyMore": "Mehr zu {name}",
+  "@redesignDutyMore": {
+    "description": "redesign.duty.more",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignDutyProtocolTitle": "Protokoll",
+  "@redesignDutyProtocolTitle": {
+    "description": "redesign.duty.protocolTitle"
+  },
+  "redesignDutyRequested": "Angefragt",
+  "@redesignDutyRequested": {
+    "description": "redesign.duty.requested"
+  },
+  "redesignDutySignedOut": "Abgemeldet",
+  "@redesignDutySignedOut": {
+    "description": "redesign.duty.signedOut"
+  },
+  "redesignDutyTasksTitle": "Aufgaben aus diesem Termin",
+  "@redesignDutyTasksTitle": {
+    "description": "redesign.duty.tasksTitle"
+  },
+  "redesignDutyTitle": "Dienst",
+  "@redesignDutyTitle": {
+    "description": "redesign.duty.title"
   },
   "redesignEventAddPersonShort": "Person",
   "@redesignEventAddPersonShort": {
@@ -14471,6 +14634,23 @@
   "@redesignFolderTitleLeads": {
     "description": "redesign.folder.titleLeads"
   },
+  "redesignGroupCategoriesBack": "Gruppen",
+  "@redesignGroupCategoriesBack": {
+    "description": "redesign.groupCategories.back"
+  },
+  "redesignGroupCategoriesCount": "{count, plural, one {{count} Gruppe} other {{count} Gruppen}}",
+  "@redesignGroupCategoriesCount": {
+    "description": "redesign.groupCategories.count",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignGroupCategoriesIntro": "Kategorien fassen Gruppen zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Gruppen.",
+  "@redesignGroupCategoriesIntro": {
+    "description": "redesign.groupCategories.intro"
+  },
   "redesignGroupEditCategory": "Kategorie",
   "@redesignGroupEditCategory": {
     "description": "redesign.groupEdit.category"
@@ -14634,6 +14814,53 @@
   "redesignHelpSearch": "Frage oder Stichwort suchen",
   "@redesignHelpSearch": {
     "description": "redesign.help.search"
+  },
+  "redesignHistoryAll": "Alles",
+  "@redesignHistoryAll": {
+    "description": "redesign.history.all"
+  },
+  "redesignHistoryAverage": "Durchschnitt",
+  "@redesignHistoryAverage": {
+    "description": "redesign.history.average"
+  },
+  "redesignHistoryAverageLate": "Durchschnitt · {count}× zu spät",
+  "@redesignHistoryAverageLate": {
+    "description": "redesign.history.averageLate",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignHistoryEmpty": "Noch keine Einträge.",
+  "@redesignHistoryEmpty": {
+    "description": "redesign.history.empty"
+  },
+  "redesignHistoryList": "Verlauf",
+  "@redesignHistoryList": {
+    "description": "redesign.history.list"
+  },
+  "redesignHistoryMore": "Weitere Aktionen",
+  "@redesignHistoryMore": {
+    "description": "redesign.history.more"
+  },
+  "redesignHistoryNeutral": "Neutral",
+  "@redesignHistoryNeutral": {
+    "description": "redesign.history.neutral"
+  },
+  "redesignHistoryPresent": "Anwesend",
+  "@redesignHistoryPresent": {
+    "description": "redesign.history.present"
+  },
+  "redesignHistoryRemove": "Eintrag löschen",
+  "@redesignHistoryRemove": {
+    "description": "redesign.history.remove"
+  },
+  "redesignHistorySeason": "Seit Saisonbeginn",
+  "@redesignHistorySeason": {
+    "description": "redesign.history.season"
+  },
+  "redesignHistoryUpcoming": "Kommende Termine",
+  "@redesignHistoryUpcoming": {
+    "description": "redesign.history.upcoming"
   },
   "redesignImportAiConfirmButton": "Übernehmen",
   "@redesignImportAiConfirmButton": {
@@ -18167,6 +18394,68 @@
   "redesignTypesListIntro": "Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.",
   "@redesignTypesListIntro": {
     "description": "redesign.typesList.intro"
+  },
+  "redesignUnavailabilityAdd": "Regel hinzufügen",
+  "@redesignUnavailabilityAdd": {
+    "description": "redesign.unavailability.add"
+  },
+  "redesignUnavailabilityAll": "Alle",
+  "@redesignUnavailabilityAll": {
+    "description": "redesign.unavailability.all"
+  },
+  "redesignUnavailabilityDelete": "Regel löschen",
+  "@redesignUnavailabilityDelete": {
+    "description": "redesign.unavailability.delete"
+  },
+  "redesignUnavailabilityIntro": "{name} wird an diesen Tagen nicht für Dienste vorgeschlagen und bei neuen Terminen automatisch abgemeldet.",
+  "@redesignUnavailabilityIntro": {
+    "description": "redesign.unavailability.intro",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignUnavailabilityIntroSelf": "Du wirst an diesen Tagen nicht für Dienste vorgeschlagen und bei neuen Terminen automatisch abgemeldet.",
+  "@redesignUnavailabilityIntroSelf": {
+    "description": "redesign.unavailability.introSelf"
+  },
+  "redesignUnavailabilityOptional": "Optional",
+  "@redesignUnavailabilityOptional": {
+    "description": "redesign.unavailability.optional"
+  },
+  "redesignUnavailabilityPickDate": "Datum wählen …",
+  "@redesignUnavailabilityPickDate": {
+    "description": "redesign.unavailability.pickDate"
+  },
+  "redesignUnavailabilityReason": "Grund",
+  "@redesignUnavailabilityReason": {
+    "description": "redesign.unavailability.reason"
+  },
+  "redesignUnavailabilityRule": "Regel {number}",
+  "@redesignUnavailabilityRule": {
+    "description": "redesign.unavailability.rule",
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "redesignUnavailabilityTermine": "Termine",
+  "@redesignUnavailabilityTermine": {
+    "description": "redesign.unavailability.termine"
+  },
+  "redesignUnavailabilityTitle": "Nicht verfügbar",
+  "@redesignUnavailabilityTitle": {
+    "description": "redesign.unavailability.title"
+  },
+  "redesignUnavailabilityUnlimited": "Unbefristet",
+  "@redesignUnavailabilityUnlimited": {
+    "description": "redesign.unavailability.unlimited"
+  },
+  "redesignUnavailabilityUntil": "Gilt bis",
+  "@redesignUnavailabilityUntil": {
+    "description": "redesign.unavailability.until"
+  },
+  "redesignUnavailabilityWeekdays": "Wochentage",
+  "@redesignUnavailabilityWeekdays": {
+    "description": "redesign.unavailability.weekdays"
   },
   "redesignViewersListAdd": "Beobachter einladen",
   "@redesignViewersListAdd": {
