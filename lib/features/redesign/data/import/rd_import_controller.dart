@@ -1174,10 +1174,11 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     });
   }
 
-  /// Uploads the files of the ready Werke: new groups and Werke first, then
-  /// the files (three Werke at a time; each upload keeps the Besetzung of
-  /// its Werk) and saves the part names chosen by hand as terms of the
-  /// groups. [only] = paths of an earlier run that failed (retry).
+  /// Uploads the files of the ready Werke: new groups first, then the files
+  /// (three Werke at a time, a new Werk created before its first file; each
+  /// upload keeps the Besetzung of its Werk) and saves the part names chosen
+  /// by hand as terms of the groups. [only] = paths of an earlier run that
+  /// failed or was cancelled (retry). [cancelUpload] stops it.
   Future<void> upload({Set<String>? only}) async {
     final plan = state.plan;
     final source = _source;
@@ -1230,51 +1231,52 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         progress = progress.copyWith(newGroups: progress.newGroups + 1);
       }
 
-      // 2. New Werke.
-      final songIds = <String, int>{};
-      for (final work in {for (final i in items) i.work}) {
-        final target = rdTargetOf(plan, decisions, work);
-        if (target.songId != null) {
-          songIds[work.key] = target.songId!;
-          continue;
-        }
-        final created = _created[work.key];
-        if (created != null) {
-          songIds[work.key] = created;
-          continue;
-        }
-        if (tenantChanged()) return;
-        if (_cancel) break;
-        try {
-          final song = await songs.createSong(
-              // A new Werk chosen by hand gets the Sammlung's Kürzel too.
-              Song(name: target.name!, number: target.number, prefix: target.prefix ?? plan.newPrefix, collectionId: state.collectionId));
-          if (song.id == null) throw StateError('no id');
-          _created[work.key] = songIds[work.key] = song.id!;
-          progress = progress.copyWith(newWorks: progress.newWorks + 1);
-        } catch (e) {
-          for (final i in items.where((i) => i.work == work)) {
-            failures.add(RdImportFailure(path: i.file.path, work: work.title, error: friendlyErrorMessage(e)));
-          }
-        }
-      }
-      // 3. The files, three Werke at a time, each Werk file by file.
+      // 2. The files, three Werke at a time, each Werk file by file; a new
+      // Werk is created right before its first file (a cancel leaves no
+      // empty Werke).
       final failed = {for (final f in failures) f.path};
       final byWork = <String, List<RdUploadItem>>{};
       for (final i in items) {
-        if (failed.contains(i.file.path) || songIds[i.work.key] == null) continue;
+        if (failed.contains(i.file.path)) continue;
         byWork.putIfAbsent(i.work.key, () => []).add(i);
       }
       final queue = byWork.values.toList();
       var done = failures.length;
       progress = progress.copyWith(filesSince: DateTime.now(), filesFrom: done);
       _show(progress.copyWith(done: done, failures: [...failures], cancelled: _cancel));
+
+      /// The Werk of [list]: found, created before, or created now; null
+      /// when that failed (then its files failed too).
+      Future<int?> songOf(List<RdUploadItem> list) async {
+        final work = list.first.work;
+        final target = rdTargetOf(plan, decisions, work);
+        if (target.songId != null) return target.songId;
+        final created = _created[work.key];
+        if (created != null) return created;
+        try {
+          final song = await songs.createSong(
+              // A new Werk chosen by hand gets the Sammlung's Kürzel too.
+              Song(name: target.name!, number: target.number, prefix: target.prefix ?? plan.newPrefix, collectionId: state.collectionId));
+          if (song.id == null) throw StateError('no id');
+          progress = progress.copyWith(newWorks: progress.newWorks + 1);
+          return _created[work.key] = song.id!;
+        } catch (e) {
+          for (final i in list) {
+            failures.add(RdImportFailure(path: i.file.path, work: work.title, error: friendlyErrorMessage(e)));
+          }
+          done += list.length;
+          return null;
+        }
+      }
+
       Future<void> worker() async {
         while (queue.isNotEmpty) {
+          if (tenantChanged() || _cancel) return;
           final list = queue.removeAt(0);
+          final songId = await songOf(list);
+          if (songId == null) continue;
           for (final item in list) {
             if (tenantChanged() || _cancel) return;
-            final songId = songIds[item.work.key]!;
             progress = progress.copyWith(current: '${item.file.name} · ${item.work.title}', succeeded: succeeded.length);
             _show(progress.copyWith(done: done, failures: [...failures], cancelled: _cancel));
             try {
@@ -1321,7 +1323,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         }
       }
 
-      // 4. Part names chosen by hand become terms of their groups.
+      // 3. Part names chosen by hand become terms of their groups.
       final uploaded = items.where((i) => succeeded.contains(i.file.path)).toList();
       final groups = await ref.read(groupsProvider.future).catchError((_) => existingGroups);
       final instruments = [
