@@ -40,23 +40,17 @@ class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
 
   bool get _isSuperAdmin => ref.read(effectiveRoleProvider) == Role.admin;
 
-  /// The list this page last stored for [_confirmedOrg]; the next change
-  /// builds on it, not on a provider value that may still be reloading.
-  List<OrgExtraField>? _confirmed;
-  int? _confirmedOrg;
-
   /// The fields of organisation [orgId] as stored now: waits for a running
-  /// (re)load; null when another organisation is current.
+  /// (re)load (a write invalidates the organisation, so this is the
+  /// reloaded list); null when another organisation is current.
   Future<List<OrgExtraField>?> _fieldsFor(int orgId) async {
     final org = await ref.read(currentOrganisationProvider.future);
     if (!mounted || org?.id != orgId) return null;
-    final confirmed = _confirmedOrg == orgId ? _confirmed : null;
-    return [...?(confirmed ?? org!.additionalFields)];
+    return [...?org!.additionalFields];
   }
 
   /// Synchronous check for the form (name taken): the shown list.
   List<OrgExtraField> _shownFields(int orgId) {
-    if (_confirmedOrg == orgId && _confirmed != null) return _confirmed!;
     final org = rdLoadedValue(ref.read(currentOrganisationProvider));
     return org?.id == orgId ? (org!.additionalFields ?? const []) : const [];
   }
@@ -91,10 +85,9 @@ class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
           }
           // Written only into [orgId] (checked again right before the write).
           final ok = await notifier.updateOrgExtraFields(next, deleted, orgId: orgId);
-          if (ok) {
-            _confirmed = List.unmodifiable(next);
-            _confirmedOrg = orgId;
-          }
+          // The queue moves on only once the stored list is loaded again,
+          // so the next change builds on it.
+          if (ok && mounted) await ref.read(currentOrganisationProvider.future).catchError((Object _) => null);
           if (mounted) {
             if (ok) {
               ToastHelper.showSuccess(context, success ?? l10n.orgFieldsSaved);
