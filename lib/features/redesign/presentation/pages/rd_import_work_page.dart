@@ -398,12 +398,8 @@ class _TargetSheetState extends State<_TargetSheet> {
                             ? current
                             : fallback.isNew
                                 ? fallback
-                                : RdWorkTarget.create(
-                                    name: rdParseWorkName(widget.work.folderName).title.isEmpty
-                                        ? widget.work.folderName
-                                        : rdParseWorkName(widget.work.folderName).title,
-                                    prefix: widget.plan.newPrefix,
-                                  ),
+                                // With a free number too (in a Sammlung the next one).
+                                : rdNewWorkTarget(widget.plan, widget.work),
                       ),
                     ),
                     RdListRow(

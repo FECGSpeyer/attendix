@@ -2462,6 +2462,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Die Sammlung konnte nicht gelöscht werden.';
 
   @override
+  String get collectionsDeleteImportRunning =>
+      'Gerade läuft ein Noten-Import. Lösche die Werke, wenn er fertig ist.';
+
+  @override
   String collectionsDeleteKeepWorks(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

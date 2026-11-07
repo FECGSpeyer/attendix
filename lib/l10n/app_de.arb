@@ -3043,6 +3043,10 @@
   "@collectionsDeleteFailed": {
     "description": "collections.deleteFailed"
   },
+  "collectionsDeleteImportRunning": "Gerade läuft ein Noten-Import. Lösche die Werke, wenn er fertig ist.",
+  "@collectionsDeleteImportRunning": {
+    "description": "collections.deleteImportRunning"
+  },
   "collectionsDeleteKeepWorks": "{count, plural, one {Das Werk ins Repertoire verschieben} other {Die {count} Werke ins Repertoire verschieben}}",
   "@collectionsDeleteKeepWorks": {
     "description": "collections.deleteKeepWorks",

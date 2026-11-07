@@ -4061,6 +4061,12 @@ abstract class AppLocalizations {
   /// **'Die Sammlung konnte nicht gelöscht werden.'**
   String get collectionsDeleteFailed;
 
+  /// collections.deleteImportRunning
+  ///
+  /// In de, this message translates to:
+  /// **'Gerade läuft ein Noten-Import. Lösche die Werke, wenn er fertig ist.'**
+  String get collectionsDeleteImportRunning;
+
   /// collections.deleteKeepWorks
   ///
   /// In de, this message translates to:

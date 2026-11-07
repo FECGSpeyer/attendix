@@ -657,6 +657,7 @@
   "collectionsDeleteChoose": "What should happen to the pieces in \"{name}\"?",
   "collectionsDeleteConfirm": "Delete \"{name}\"? Its pieces go back to the repertoire.",
   "collectionsDeleteFailed": "The collection could not be deleted.",
+  "collectionsDeleteImportRunning": "A sheet music import is running. Delete the pieces when it is done.",
   "collectionsDeleteKeepWorks": "{count, plural, one {Move the piece to the repertoire} other {Move the {count} pieces to the repertoire}}",
   "collectionsDeleteWithWorks": "{count, plural, one {Delete the piece with its sheet music} other {Delete all {count} pieces with their sheet music}}",
   "collectionsDeleteWorksConfirm": "Delete for good",

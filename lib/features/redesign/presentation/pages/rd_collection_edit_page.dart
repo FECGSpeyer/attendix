@@ -12,6 +12,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
+import '../../data/import/rd_import_controller.dart' show rdImportRunProvider;
 import '../../data/rd_collections_logic.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
@@ -186,6 +187,11 @@ class _RdCollectionEditPageState extends ConsumerState<RdCollectionEditPage> {
       final value = choice?.value;
       if (value == null || !mounted) return;
       withWorks = value;
+      // A Noten-Import running meanwhile could add Werke to it.
+      if (withWorks && (ref.read(rdImportRunProvider)?.finished == false)) {
+        ToastHelper.showError(context, l10n.collectionsDeleteImportRunning);
+        return;
+      }
       if (withWorks) {
         final sure = await DialogHelper.showConfirmation(
           context,

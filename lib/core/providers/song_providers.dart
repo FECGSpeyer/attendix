@@ -9,6 +9,7 @@ import '../../data/models/song/song_additional_field.dart';
 import '../../data/models/tenant/tenant.dart';
 import '../../data/repositories/repositories.dart';
 import '../config/supabase_config.dart';
+import '../services/offline_queue_service.dart' show connectivityCheckProvider;
 import '../utils/choir_file_utils.dart';
 import 'group_providers.dart';
 import 'locale_provider.dart';
@@ -779,8 +780,9 @@ class SongCollectionNotifier extends Notifier<AsyncValue<void>> {
   /// Deletes Sammlung [id] together with its Werke and their files (after
   /// a test import: hundreds of Werke). The Werke are read fresh, four
   /// deleted at a time; [onProgress] after each. The Sammlung goes only when
-  /// every Werk is gone: those that failed stay in it. [ok] = the Sammlung
-  /// is deleted; [failed] Werke could not be deleted.
+  /// a fresh read finds no Werk left in it (one added meanwhile is deleted in
+  /// another round): those that failed stay in it. [ok] = the Sammlung is
+  /// deleted; [failed] Werke could not be deleted.
   Future<({bool ok, int deleted, int failed})> deleteWithWorks(
     int id, {
     void Function(int done, int total)? onProgress,
@@ -790,28 +792,40 @@ class SongCollectionNotifier extends Notifier<AsyncValue<void>> {
     var deleted = 0;
     var failed = 0;
     try {
-      final queue = [
-        for (final s in await repo.getSongs())
-          if (s.collectionId == id && s.id != null) s.id!,
-      ];
-      final total = queue.length;
-      Future<void> worker() async {
-        while (queue.isNotEmpty) {
-          final songId = queue.removeLast();
-          try {
-            await repo.deleteSong(songId);
-            deleted++;
-          } catch (_) {
-            failed++;
+      // Offline the cached list would say nothing about what is left.
+      if (!await ref.read(connectivityCheckProvider)()) throw StateError('offline');
+      Future<List<int>> left() async => [
+            for (final s in await repo.getSongs())
+              if (s.collectionId == id && s.id != null) s.id!,
+          ];
+      var total = 0;
+      for (var round = 0; round < 3; round++) {
+        final queue = await left();
+        if (queue.isEmpty) break;
+        total += queue.length;
+        Future<void> worker() async {
+          while (queue.isNotEmpty) {
+            final songId = queue.removeLast();
+            try {
+              await repo.deleteSong(songId);
+              deleted++;
+            } catch (_) {
+              failed++;
+            }
+            onProgress?.call(deleted + failed, total);
           }
-          onProgress?.call(deleted + failed, total);
+        }
+
+        await Future.wait([for (var i = 0; i < 4; i++) worker()]);
+        if (failed > 0) {
+          state = const AsyncValue.data(null);
+          return (ok: false, deleted: deleted, failed: failed);
         }
       }
-
-      await Future.wait([for (var i = 0; i < 4; i++) worker()]);
-      if (failed > 0) {
+      final rest = await left();
+      if (rest.isNotEmpty) {
         state = const AsyncValue.data(null);
-        return (ok: false, deleted: deleted, failed: failed);
+        return (ok: false, deleted: deleted, failed: rest.length);
       }
       await repo.deleteSongCollection(id);
       state = const AsyncValue.data(null);

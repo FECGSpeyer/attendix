@@ -1443,14 +1443,23 @@ RdWorkTarget rdDefaultTarget(RdImportPlan plan, RdImportWork work) {
   final id = work.match.songId;
   if (id != null) return RdWorkTarget.song(id);
   if (work.key == 'loose') return const RdWorkTarget.skip();
+  return rdNewWorkTarget(plan, work);
+}
+
+/// [work] as a new Werk (also one found in Attendix but chosen "Als neues
+/// Werk anlegen"): its number from [_numbersOf]; in a Sammlung its Kürzel.
+RdWorkTarget rdNewWorkTarget(RdImportPlan plan, RdImportWork work) {
+  final parsed = rdParseWorkName(work.folderName).title;
+  final name = work.title.isNotEmpty ? work.title : (parsed.isEmpty ? work.folderName : parsed);
   final number = _numbersOf(plan)[work.key];
-  // In a Sammlung new Werke get its Kürzel.
-  return RdWorkTarget.create(name: work.title, number: number, prefix: number == null ? plan.newPrefix : plan.newPrefix ?? work.prefix);
+  return RdWorkTarget.create(name: name, number: number, prefix: number == null ? plan.newPrefix : plan.newPrefix ?? work.prefix);
 }
 
 /// Folder numbers of new Werke still free (in the order of the Werke: the
 /// first keeps a number twice in the folders), then in a Sammlung with a
-/// Kürzel the next free numbers for the others. Once per plan.
+/// Kürzel the next free numbers for the others. Werke found in Attendix
+/// come after all new ones (a number for when one is made new by hand).
+/// Once per plan.
 final _numbers = Expando<Map<String, int?>>();
 
 Map<String, int?> _numbersOf(RdImportPlan plan) => _numbers[plan] ??= () {
@@ -1461,8 +1470,13 @@ Map<String, int?> _numbersOf(RdImportPlan plan) => _numbers[plan] ??= () {
       };
       final numbers = <String, int?>{};
       final without = <RdImportWork>[];
-      for (final w in plan.works) {
-        if (w.match.songId != null || w.key == 'loose') continue;
+      final works = [
+        for (final w in plan.works)
+          if (w.key != 'loose' && w.match.songId == null) w,
+        for (final w in plan.works)
+          if (w.key != 'loose' && w.match.songId != null) w,
+      ];
+      for (final w in works) {
         final n = w.number;
         if (n != null && used.add(rdImportNumberKey(plan.newPrefix ?? w.prefix, n))) {
           numbers[w.key] = n;

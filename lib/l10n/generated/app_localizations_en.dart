@@ -2438,6 +2438,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get collectionsDeleteFailed => 'The collection could not be deleted.';
 
   @override
+  String get collectionsDeleteImportRunning =>
+      'A sheet music import is running. Delete the pieces when it is done.';
+
+  @override
   String collectionsDeleteKeepWorks(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

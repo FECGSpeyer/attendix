@@ -87,12 +87,16 @@ class _FakeFiles implements SongFileService {
 
 /// Werke: creates new ones, reports the Besetzung before/after the upload.
 class _FakeSongs implements SongRepository {
+  /// Creating a Werk waits for it.
+  Completer<void>? gate;
+
   final created = <Song>[];
   final updates = <int, Map<String, dynamic>>{};
   int _reads = 0;
 
   @override
   Future<Song> createSong(Song song) async {
+    await gate?.future;
     created.add(song);
     return song.copyWith(id: 900 + created.length);
   }
@@ -422,6 +426,26 @@ void main() {
     await controller.upload(only: {for (final f in upload.failures) f.path});
     expect(c.read(rdImportProvider).upload!.failures, isEmpty);
     expect(files.uploads, hasLength(4));
+  });
+
+  test('"Abbrechen" while a new Werk is created: it still gets its first file', () async {
+    final files = _FakeFiles();
+    final songs = _FakeSongs()..gate = Completer<void>();
+    final c = ProviderContainer(overrides: _overrides(files, songs, _FakeGroupNotifier()));
+    addTearDown(c.dispose);
+    final sub = c.listen(rdImportProvider, (_, __) {});
+    addTearDown(sub.close);
+    final controller = c.read(rdImportProvider.notifier);
+    await controller.read([_zipFile()]);
+    controller.answer('kazoo', const RdImportCategory(newGroup: 'Saxophon'));
+    final running = controller.upload();
+    await pumpEventQueue();
+    controller.cancelUpload();
+    songs.gate!.complete();
+    await running;
+    final upload = c.read(rdImportProvider).upload!;
+    expect(files.uploads.where((u) => u.startsWith('901 ')), hasLength(1));
+    expect((upload.succeeded, upload.failures.where((f) => f.cancelled).length), (3, 1));
   });
 
   test('time left from the pace of the files so far', () {

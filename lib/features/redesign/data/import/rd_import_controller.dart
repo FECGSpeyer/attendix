@@ -1245,21 +1245,21 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       progress = progress.copyWith(filesSince: DateTime.now(), filesFrom: done);
       _show(progress.copyWith(done: done, failures: [...failures], cancelled: _cancel));
 
-      /// The Werk of [list]: found, created before, or created now; null
-      /// when that failed (then its files failed too).
-      Future<int?> songOf(List<RdUploadItem> list) async {
+      /// The Werk of [list]: found, created before, or created now ([fresh]);
+      /// null when that failed (then its files failed too).
+      Future<({int id, bool fresh})?> songOf(List<RdUploadItem> list) async {
         final work = list.first.work;
         final target = rdTargetOf(plan, decisions, work);
-        if (target.songId != null) return target.songId;
+        if (target.songId != null) return (id: target.songId!, fresh: false);
         final created = _created[work.key];
-        if (created != null) return created;
+        if (created != null) return (id: created, fresh: false);
         try {
           final song = await songs.createSong(
               // A new Werk chosen by hand gets the Sammlung's Kürzel too.
               Song(name: target.name!, number: target.number, prefix: target.prefix ?? plan.newPrefix, collectionId: state.collectionId));
           if (song.id == null) throw StateError('no id');
           progress = progress.copyWith(newWorks: progress.newWorks + 1);
-          return _created[work.key] = song.id!;
+          return (id: _created[work.key] = song.id!, fresh: true);
         } catch (e) {
           for (final i in list) {
             failures.add(RdImportFailure(path: i.file.path, work: work.title, error: friendlyErrorMessage(e)));
@@ -1273,10 +1273,14 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         while (queue.isNotEmpty) {
           if (tenantChanged() || _cancel) return;
           final list = queue.removeAt(0);
-          final songId = await songOf(list);
-          if (songId == null) continue;
+          final song = await songOf(list);
+          if (song == null) continue;
+          final songId = song.id;
           for (final item in list) {
-            if (tenantChanged() || _cancel) return;
+            if (tenantChanged()) return;
+            // A Werk created just now still gets its first file (no empty
+            // Werk when "Abbrechen" came meanwhile).
+            if (_cancel && !(song.fresh && item == list.first)) return;
             progress = progress.copyWith(current: '${item.file.name} · ${item.work.title}', succeeded: succeeded.length);
             _show(progress.copyWith(done: done, failures: [...failures], cancelled: _cancel));
             try {
