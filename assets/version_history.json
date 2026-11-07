@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.76.0",
+      "date": "7.11.2026",
+      "changes": [
+        "💄 Beta: Verlauf einer Person mit Durchschnitts-Karte, Umschalter „Seit Saisonbeginn | Alles“ und Listen mit Datumskachel und farbigem Status statt Akkordeons; Tippen öffnet den Termin",
+        "💄 Beta: Abwesenheit für andere im selben Blatt wie Ich › Abwesenheit („Abwesenheit für Lea“, Monatsraster, „Betrifft N Termine“)",
+        "💄 Beta: „Nicht verfügbar“ als Bearbeiten-Seite mit einem Abschnitt je Regel (Wochentage, Termine, Grund, Gilt bis)",
+        "💄 Beta: Gemeinde wählen im Beta-Auswahlblatt mit Suche und Häkchen",
+        "🐛 Abwesenheit für andere wird nach einem Gruppenwechsel nicht mehr in der neuen Gruppe gespeichert"
+      ]
+    },
+    {
       "version": "0.72.0",
       "date": "7.11.2026",
       "changes": [
