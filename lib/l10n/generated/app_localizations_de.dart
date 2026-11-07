@@ -12053,6 +12053,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Die Ordner werden mit den Werken dieser Sammlung verglichen, neue Werke bekommen ihr Kürzel.';
 
   @override
+  String get redesignImportCollectionNotLoaded =>
+      'Die Sammlung ist angelegt, konnte aber nicht geladen werden. Wähle sie bitte gleich noch einmal.';
+
+  @override
   String get redesignImportCollectionTitle => 'In welche Sammlung?';
 
   @override
@@ -12346,6 +12350,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportFlagPartExists => 'Stimme schon da';
 
   @override
+  String get redesignImportFlagProposal => '✦ Vorschlag prüfen';
+
+  @override
+  String get redesignImportFlagProposalLabel =>
+      'Von der KI auf der ersten Seite vorgeschlagen, bitte prüfen';
+
+  @override
+  String get redesignImportFlagProposals => '✦ KI-Vorschläge prüfen';
+
+  @override
   String get redesignImportFlagRecheck => 'Erneut prüfen';
 
   @override
@@ -12391,6 +12405,37 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String redesignImportGroupAllAs(Object name) {
+    return 'Alle als $name';
+  }
+
+  @override
+  String get redesignImportGroupAnswered => 'Beantwortet';
+
+  @override
+  String redesignImportGroupNames(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Namen',
+      one: '1 Name',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignImportGroupOpen(Object count) {
+    return '$count offen';
+  }
+
+  @override
+  String get redesignImportGroupUnclear => 'Unklar';
+
+  @override
+  String get redesignImportGroupUnclearDetail =>
+      'Ohne Tipp, bitte einzeln beantworten';
 
   @override
   String get redesignImportKeepOpen =>
@@ -12509,6 +12554,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String redesignImportQuestionWhere(Object count, Object works) {
     return '$count Dateien, z. B. in $works';
+  }
+
+  @override
+  String redesignImportQuestionsAnswered(Object answered, Object total) {
+    return '$answered von $total beantwortet';
   }
 
   @override

@@ -436,6 +436,28 @@ void main() {
     });
   });
 
+  test('questions by what they most likely mean: unclear first, then by files', () {
+    const q = [
+      RdImportQuestion(key: 'trp', label: 'Trp', fileCount: 3, works: [], suggestion: 10),
+      RdImportQuestion(key: 'tromp', label: 'Tromp.', fileCount: 9, works: [], suggestion: 10),
+      RdImportQuestion(key: 'x', label: 'X', fileCount: 1, works: []),
+      RdImportQuestion(key: 'ob', label: 'Ob', fileCount: 2, works: [], newGroup: 'Oboe'),
+      RdImportQuestion(key: 'trumpet', label: 'Trumpet', fileCount: 1, works: []),
+    ];
+    final groups = rdImportQuestionGroups(q, ai: {'trumpet': const RdImportCategory(instrumentId: 10)});
+    expect([for (final g in groups) g.category], [null, const RdImportCategory(instrumentId: 10), const RdImportCategory(newGroup: 'Oboe')]);
+    expect([for (final g in groups) g.questions.map((x) => x.key).join(',')], ['x', 'trp,tromp,trumpet', 'ob']);
+    expect(groups[1].fileCount, 13);
+    // An answer, also the KI's, decides the group before the proposal.
+    final answered = rdImportQuestionGroups(
+      q,
+      answers: {'tromp': const RdImportCategory(instrumentId: 11)},
+      ai: {'trumpet': const RdImportCategory(instrumentId: 10), 'ob': const RdImportCategory(instrumentId: 12)},
+    );
+    expect([for (final g in answered) g.questions.map((x) => x.key).join(',')], ['x', 'tromp', 'trp,trumpet', 'ob']);
+    expect(answered.last.category, const RdImportCategory(instrumentId: 12));
+  });
+
   group('a part for several groups ("Posaune und Tuba")', () {
     const brass = [InstrumentInfo(id: 20, name: 'Posaune'), InstrumentInfo(id: 21, name: 'Tuba')];
     RdImportPlan plan(List<InstrumentInfo> instruments, {List<RdImportSong> songs = const []}) => rdBuildImportPlan(
@@ -557,6 +579,9 @@ void main() {
     RdFileState state(String name) => rdFileState(plan, d, work, work.files.firstWhere((f) => f.name == name));
     expect((state('Tag.pdf').category, state('Tag.pdf').unclear), (const RdImportCategory(instrumentId: 11), false));
     expect((state('Nacht.pdf').category, state('Nacht.pdf').unclear), (const RdImportCategory(newGroup: 'Oboe'), true));
+    // The KI's proposal is flagged as such, not as "Stimme unklar".
+    expect(state('Nacht.pdf').proposedByAi, isTrue);
+    expect(rdWorkState(plan, d, work).flags, {RdWorkFlag.aiProposal});
     expect(rdImportPagesToRead(plan, d), isEmpty);
     // Chosen by hand, the read no longer counts.
     final byHand = RdImportDecisions(categories: {'Noten/Eins/Tag.pdf': RdImportCategory.other});

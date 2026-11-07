@@ -47,7 +47,8 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
   if (any(['liedtext', 'songtext', 'lyrics', 'text', 'texte', 'words', 'текст', 'tekst', 'слова', 'slova'])) {
     return (instrumentId: 2, note: null);
   }
-  if (any(['chor', 'choir', 'choral', 'chorsatz', 'хор', 'khor', 'хоровая'])) {
+  // "S. A." / "T. B.": the choir's voices in two sheets.
+  if (any(['chor', 'choir', 'choral', 'chorsatz', 'coro', 'cori', 'satb', 's a t b', 's a', 't b', 'хор', 'khor', 'хоровая'])) {
     return (instrumentId: null, note: kChoirAllNote);
   }
   return null;
@@ -158,8 +159,13 @@ FileCategoryGuess guessFileCategory(
   // A full score stays one even when a part is named ("Mit Harfe -
   // Generalpartitur"); a plain "Partitur" does not ("Werk - Partitur - Oboe"
   // is the oboe part taken from the score).
-  if (InstrumentMatcher.tokenize(fileName.toLowerCase()).any(partiturCompounds.contains)) {
+  final tokens = InstrumentMatcher.tokenize(fileName.toLowerCase());
+  if (tokens.any(partiturCompounds.contains)) {
     return const FileCategoryGuess(instrumentId: null, note: 'Partitur', confidence: MatchConfidence.sure);
+  }
+  // A "Vocal score" is the Klavierauszug, not a "Gesang" part.
+  if (RegExp(r'(^| )vocal scores?( |$)').hasMatch(tokens.join(' '))) {
+    return const FileCategoryGuess(instrumentId: null, note: 'Klavierauszug', confidence: MatchConfidence.sure);
   }
   final match = instruments.isEmpty ? PartMatch.none : InstrumentMatcher.detect(fileName, instruments);
   if (match.instrumentId != null) {

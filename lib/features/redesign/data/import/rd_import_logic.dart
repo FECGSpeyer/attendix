@@ -353,7 +353,11 @@ bool _isStructural(String name, List<InstrumentInfo> instruments) {
   if (_versionWordsN.contains(words.first)) return true;
   if (instruments.isNotEmpty) {
     final match = InstrumentMatcher.detect('$name.pdf', instruments);
-    if (match.instrumentId != null && match.confidence == MatchConfidence.sure) return true;
+    if (match.instrumentId != null && match.confidence == MatchConfidence.sure) {
+      // A number before more than the part is a Werk ("12 Le viole").
+      final term = match.term;
+      return rdParseWorkName(name).number == null || term == null || InstrumentMatcher.namesOnlyPart(name, term);
+    }
   }
   return false;
 }
@@ -1485,6 +1489,10 @@ class RdFileState {
   /// The part the KI read on page 1, while nobody chose one ([unclear]
   /// still when it is not sure).
   final RdImportPageRead? pageRead;
+
+  /// [unclear], but the KI proposed the part from page 1: shown as its
+  /// proposal to check, not as "Stimme unklar".
+  bool get proposedByAi => unclear && pageRead != null;
 }
 
 RdImportCategory _categoryOf(RdImportPlan plan, RdImportDecisions d, RdImportFile f, RdImportWork work) =>
@@ -1609,6 +1617,10 @@ enum RdWorkFlag {
 
   /// Files without a clear part.
   unclear,
+
+  /// Files with a part the KI proposed from page 1, not sure enough to be
+  /// taken without a look.
+  aiProposal,
 }
 
 class RdWorkState {
@@ -1646,7 +1658,8 @@ RdWorkState rdWorkState(RdImportPlan plan, RdImportDecisions d, RdImportWork wor
     if (!d.targets.containsKey(work.key) && work.match.kind != RdMatchKind.sure && work.match.songId != null) RdWorkFlag.unsureMatch,
     if (work.fassungen.length > 1) RdWorkFlag.fassungen,
     if (files.values.any((f) => f.reason == RdSkipReason.partExists)) RdWorkFlag.partExists,
-    if (files.values.any((f) => f.unclear)) RdWorkFlag.unclear,
+    if (files.values.any((f) => f.unclear && !f.proposedByAi)) RdWorkFlag.unclear,
+    if (files.values.any((f) => f.proposedByAi)) RdWorkFlag.aiProposal,
   };
   return RdWorkState(
     target: target,
@@ -1918,4 +1931,41 @@ DateTime? rdZipDate(int dosDateTime) {
   final day = date & 0x1f;
   if (date == 0 || month < 1 || month > 12 || day < 1) return null;
   return DateTime(year, month, day, (time >> 11) & 0x1f, (time >> 5) & 0x3f, (time & 0x1f) * 2);
+}
+
+/// Questions about names that most likely mean the same ([category]: the
+/// answer, the KI's answer, the proposed new group or the matcher's guess;
+/// null when nobody has a guess), to answer many with one tap ("Alle als
+/// Trompete").
+class RdImportQuestionGroup {
+  const RdImportQuestionGroup(this.category, this.questions);
+
+  final RdImportCategory? category;
+  final List<RdImportQuestion> questions;
+
+  int get fileCount => questions.fold(0, (n, q) => n + q.fileCount);
+}
+
+/// [questions] by what they most likely mean: the answer given ([answers],
+/// also the ones the KI filled in), the KI's answer ([ai]), the proposed
+/// new group, the matcher's guess. The group without a guess comes first,
+/// then the ones with the most files. An answered question goes to the
+/// group of its answer, so "Alle als …" never takes another one.
+List<RdImportQuestionGroup> rdImportQuestionGroups(
+  List<RdImportQuestion> questions, {
+  Map<String, RdImportCategory> answers = const {},
+  Map<String, RdImportCategory> ai = const {},
+}) {
+  final byCategory = <RdImportCategory?, List<RdImportQuestion>>{};
+  for (final q in questions) {
+    final guess = answers[q.key] ??
+        ai[q.key] ??
+        q.proposed ??
+        (q.suggestion == null ? null : RdImportCategory(instrumentId: q.suggestion));
+    byCategory.putIfAbsent(guess, () => []).add(q);
+  }
+  final groups = [for (final e in byCategory.entries) RdImportQuestionGroup(e.key, e.value)];
+  int rank(RdImportQuestionGroup g) => g.category == null ? 0 : 1;
+  groups.sort((a, b) => rank(a) != rank(b) ? rank(a).compareTo(rank(b)) : b.fileCount.compareTo(a.fileCount));
+  return groups;
 }

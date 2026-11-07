@@ -858,7 +858,15 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   /// The run whose loop is going ([_readPages]); null when none is.
   int? _pagesLoop;
 
+  /// The Werk open in the review ([readFirst]): its pages are read next.
+  String? _readFirst;
+
+  /// The Werk [workKey] is opened in the review: the KI reads its unclear
+  /// pages before those of the other Werke.
+  void readFirst(String workKey) => _readFirst = workKey;
+
   void _clearPages() {
+    _readFirst = null;
     _pagesRun++;
     _pageReads = const {};
     _pagesTried.clear();
@@ -895,24 +903,53 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         final paths = [
           for (final p in rdImportPagesToRead(plan, state.decisions))
             if (!_pagesTried.contains(p) && PartVisionService.supports(p)) p,
-        ].take(rdImportMaxPageReads - _pagesTried.length).toList();
-        if (paths.isEmpty) return;
-        total += paths.length;
+        ];
+        // The budget is spent on what is taken, so a Werk opened later is
+        // read too when its pages lie beyond the first ones.
+        var left = rdImportMaxPageReads - _pagesTried.length;
+        if (paths.isEmpty || left <= 0) return;
+        total += paths.length < left ? paths.length : left;
         show();
-        var next = 0;
+        final pending = [...paths];
+        final workOf = {
+          for (final w in plan.works)
+            for (final f in w.files) f.path: w.key,
+        };
+        // The Werk open now first, then in the order of the Werke.
+        String? take() {
+          if (pending.isEmpty || left <= 0) return null;
+          left--;
+          final first = _readFirst;
+          final i = first == null ? -1 : pending.indexWhere((p) => workOf[p] == first);
+          return pending.removeAt(i < 0 ? 0 : i);
+        }
+
         Future<void> worker() async {
-          while (next < paths.length && !stopped()) {
-            final path = paths[next++];
+          while (!stopped()) {
+            final path = take();
+            if (path == null) return;
             RdImportPageRead? read;
             var limit = false;
             try {
               final image = await _pageImage(source, path);
-              final found = image == null || stopped() ? null : await vision.readImage(image, tenantId: tenantId);
+              final work = plan.work(workOf[path] ?? '');
+              final found = image == null || stopped()
+                  ? null
+                  : await vision.readImage(
+                      image,
+                      tenantId: tenantId,
+                      fileName: path.split('/').last,
+                      others: [
+                        for (final f in work?.files ?? const <RdImportFile>[])
+                          if (f.path != path) f.name,
+                      ],
+                    );
               if (found != null) {
                 read = rdImportPageRead(
                   groupId: found.groupId,
                   label: found.label,
                   sure: found.sure,
+                  kind: found.kind,
                   instruments: plan.instruments,
                   isChoir: plan.isChoir,
                 );
@@ -1030,6 +1067,15 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       answer == null ? answers.remove(questionKey) : answers[questionKey] = answer;
       return d.copyWith(answers: answers);
     });
+  }
+
+  /// Gives every question in [answers] its answer at once ("Alle als
+  /// Trompete"); the KI's answers among them count as taken.
+  void answerAll(Map<String, RdImportCategory> answers) {
+    if (answers.isEmpty) return;
+    final filled = state.aiFilled.difference(answers.keys.toSet());
+    if (filled.length != state.aiFilled.length) state = state.copyWith(aiFilled: filled);
+    _decide((d) => d.copyWith(answers: {...d.answers, ...answers}));
   }
 
   void setSkipWordBesidePdf(bool value) => _decide((d) => d.copyWith(skipWordBesidePdf: value));

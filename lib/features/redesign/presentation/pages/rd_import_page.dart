@@ -6,13 +6,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/pwa_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/utils/instrument_matcher.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../../shared/widgets/layout/route_leave_guard.dart';
@@ -79,6 +82,13 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   /// The questions were opened from the review ("Fragen beantworten"):
   /// back goes there, also after "Alle Fragen zeigen".
   bool _fromReview = false;
+
+  /// Groups of questions opened or closed by hand ([rdImportQuestionGroups],
+  /// by their title); the unclear one is open, the others closed at first.
+  final Map<String, bool> _groupOpen = {};
+
+  /// From this many questions on they are shown by instrument.
+  static const _groupFrom = 8;
 
   /// "Zur Prüfung" was tapped and the plan is made again (a second or so
   /// with thousands of files): the button says so meanwhile.
@@ -450,11 +460,58 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
 
   /// "In welche Sammlung?": Repertoire and every Sammlung, as on "Neues
   /// Werk"; nothing while the group has no Sammlungen.
+  /// "Neue Sammlung" is being made ([_addCollection]).
+  bool _addingCollection = false;
+
+  /// "+ Neue Sammlung" in the choice: made as on the Sammlungen page (name,
+  /// suggested Kürzel) and chosen for the import right away.
+  Future<void> _addCollection() async {
+    if (_addingCollection) return;
+    final l10n = context.l10n;
+    final name = await DialogHelper.showTextInput(
+      context,
+      title: l10n.collectionsAddTitle,
+      hint: l10n.collectionsAddHint,
+      confirmText: l10n.collectionsAdd,
+    );
+    final trimmed = name?.trim() ?? '';
+    if (trimmed.isEmpty || !mounted) return;
+    setState(() => _addingCollection = true);
+    final created = await ref
+        .read(songCollectionNotifierProvider.notifier)
+        .add(SongCollection(name: trimmed, prefix: rdCollectionPrefixSuggestion(trimmed)));
+    if (!mounted) return;
+    // Its Kürzel counts for the new Werke: chosen only once the list has it.
+    final loaded = created?.id == null
+        ? null
+        : await ref
+            .read(songCollectionsProvider.future)
+            .then<List<SongCollection>?>((list) => list)
+            .catchError((_) => null);
+    if (!mounted) return;
+    setState(() => _addingCollection = false);
+    if (created?.id == null) {
+      ToastHelper.showError(context, l10n.collectionsAddFailed);
+      return;
+    }
+    if (loaded == null || !loaded.any((c) => c.id == created!.id)) {
+      ToastHelper.showError(context, l10n.redesignImportCollectionNotLoaded);
+      return;
+    }
+    // Only before the review: afterwards the target stays as it is.
+    final step = ref.read(rdImportProvider).step;
+    if (step != RdImportStep.source && step != RdImportStep.reading && step != RdImportStep.questions) return;
+    _controller.setCollection(created!.id);
+  }
+
   List<Widget> _collectionChoice(BuildContext context, RdImportState state) {
     final p = context.rd;
     final l10n = context.l10n;
     final collections = [...?ref.watch(songCollectionsProvider).valueOrNull?.where((c) => c.id != null)];
-    if (collections.isEmpty) return const [];
+    final role = ref.watch(effectiveRoleProvider);
+    // Who may make Sammlungen on their page may make one here too.
+    final canAdd = role.isAdmin || role.isResponsible;
+    if (collections.isEmpty && !canAdd) return const [];
     final chosen = rdCollectionById(collections, state.collectionId);
     return [
       const SizedBox(height: 20),
@@ -469,7 +526,15 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
               label: c?.name ?? l10n.collectionsRepertoire,
               icon: rdCollectionIcon(c),
               selected: c?.id == chosen?.id,
-              onTap: () => _controller.setCollection(c?.id),
+              onTap: _addingCollection ? null : () => _controller.setCollection(c?.id),
+            ),
+          if (canAdd)
+            RdChoiceChip(
+              key: const Key('rd-import-collection-new'),
+              label: l10n.collectionsAddTitle,
+              icon: Icons.add,
+              selected: false,
+              onTap: _addingCollection ? null : _addCollection,
             ),
         ],
       ),
@@ -478,9 +543,11 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
         child: Text(
           [
             l10n.redesignImportCollectionHint,
-            if (rdCollectionBanner(l10n, chosen, ref.watch(groupsProvider).valueOrNull ?? const [])
-                case final audience?)
-              audience,
+            // Groups are only read for a Sammlung that not everybody sees.
+            if (chosen != null)
+              if (rdCollectionBanner(l10n, chosen, ref.watch(groupsProvider).valueOrNull ?? const [])
+                  case final audience?)
+                audience,
           ].join(' '),
           style: RdType.meta(p, size: 13),
         ),
@@ -802,21 +869,59 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
                 ),
               ),
             ),
-          for (final q in questions) ...[
-            _QuestionCard(
-              plan: plan,
-              question: q,
-              // A known instrument without a group: its new group counts
-              // until the person answers.
-              answer: d.answers[q.key] ?? q.proposed,
-              proposedOnly: !d.answers.containsKey(q.key) && q.proposed != null,
-              newGroups: pendingGroups,
-              ai: state.useAi ? state.ai[q.key]?.category : null,
-              filled: state.aiFilled.contains(q.key),
-              onAnswer: (a) => _controller.answer(q.key, a),
+          if (openOnly == null && questions.length >= _groupFrom) ...[
+            // Many names: by the instrument they most likely mean, to take
+            // a whole group with one tap.
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Text(
+                l10n.redesignImportQuestionsAnswered(questions.length - unanswered, questions.length),
+                style: RdType.meta(p, size: 13),
+              ),
             ),
-            const SizedBox(height: 10),
-          ],
+            for (final g in rdImportQuestionGroups(
+              questions,
+              answers: d.answers,
+              ai: {
+                if (state.useAi)
+                  for (final e in state.ai.entries) e.key: e.value.category,
+              },
+            )) ...[
+              Builder(builder: (context) {
+                final title = g.category == null
+                    ? l10n.redesignImportGroupUnclear
+                    : g.category!.newGroup != null
+                        ? l10n.redesignImportAnswerNewGroup(g.category!.newGroup!)
+                        : rdImportCategoryLabel(context, plan, g.category!);
+                final open = _groupOpen[title] ?? g.category == null;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _QuestionGroupCard(
+                      title: title,
+                      group: g,
+                      decisions: d,
+                      aiFilled: state.aiFilled,
+                      open: open,
+                      onToggle: () => setState(() => _groupOpen[title] = !open),
+                      onAll: _controller.answerAll,
+                    ),
+                    if (open)
+                      for (final q in g.questions)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12, top: 8),
+                          child: _questionCard(state, q, pendingGroups),
+                        ),
+                  ],
+                );
+              }),
+              const SizedBox(height: 10),
+            ],
+          ] else
+            for (final q in questions) ...[
+              _questionCard(state, q, pendingGroups),
+              const SizedBox(height: 10),
+            ],
           if (openOnly != null && questions.length < plan.questions.length)
             Align(
               alignment: Alignment.centerLeft,
@@ -854,9 +959,26 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
         RdPrimaryButton(
           label: _preparing ? l10n.redesignImportPreparing : l10n.redesignImportToReview,
           loading: _preparing,
-          onPressed: _toReview,
+          // A Sammlung being made is the target: on only once it is chosen.
+          onPressed: _addingCollection ? null : _toReview,
         ),
       ],
+    );
+  }
+
+  Widget _questionCard(RdImportState state, RdImportQuestion q, List<String> pendingGroups) {
+    final d = state.decisions;
+    return _QuestionCard(
+      plan: state.plan!,
+      question: q,
+      // A known instrument without a group: its new group counts until the
+      // person answers.
+      answer: d.answers[q.key] ?? q.proposed,
+      proposedOnly: !d.answers.containsKey(q.key) && q.proposed != null,
+      newGroups: pendingGroups,
+      ai: state.useAi ? state.ai[q.key]?.category : null,
+      filled: state.aiFilled.contains(q.key),
+      onAnswer: (a) => _controller.answer(q.key, a),
     );
   }
 
@@ -1006,9 +1128,12 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
                     final pills when pills.isNotEmpty => Wrap(spacing: 6, runSpacing: 6, children: pills),
                     _ => null,
                   },
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(builder: (_) => RdImportWorkPage(workKey: w.key)),
-                  ),
+                  onTap: () {
+                    _controller.readFirst(w.key);
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(builder: (_) => RdImportWorkPage(workKey: w.key)),
+                    );
+                  },
                 ),
             ],
           ),
@@ -1215,6 +1340,109 @@ List<(Uri, LaunchMode)> rdDriveLaunches(
 /// Gruppe", "Ohne Zuordnung", "Andere …" last. They work like radio
 /// buttons: tapping the chosen answer keeps it, and tapping the one the KI
 /// filled in takes it as the person's own (the ✦ goes).
+/// The head of a group of questions ([rdImportQuestionGroups]): what they
+/// most likely mean, how many names and files, what is still open, and
+/// "Alle als …" for the ones nobody answered by hand.
+class _QuestionGroupCard extends StatelessWidget {
+  const _QuestionGroupCard({
+    required this.title,
+    required this.group,
+    required this.decisions,
+    required this.aiFilled,
+    required this.open,
+    required this.onToggle,
+    required this.onAll,
+  });
+
+  final String title;
+  final RdImportQuestionGroup group;
+  final RdImportDecisions decisions;
+  final Set<String> aiFilled;
+  final bool open;
+  final VoidCallback onToggle;
+  final ValueChanged<Map<String, RdImportCategory>> onAll;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final c = group.category;
+    final questions = group.questions;
+    final openCount = questions.where((q) => decisions.answers[q.key] == null && q.proposed == null).length;
+    // Answers given by hand stay; the KI's and the proposed ones are taken.
+    final toTake = <String, RdImportCategory>{
+      if (c != null)
+        for (final q in questions)
+          if (!decisions.answers.containsKey(q.key) || aiFilled.contains(q.key)) q.key: c,
+    };
+    final names = questions.take(6).map((q) => q.label).join(', ');
+    final Widget status;
+    if (openCount > 0) {
+      status = RdPill(l10n.redesignImportGroupOpen(openCount), tone: RdTone.late);
+    } else if (toTake.isEmpty) {
+      status = Semantics(
+        label: l10n.redesignImportGroupAnswered,
+        child: ExcludeSemantics(child: Icon(Icons.check_circle, size: 20, color: p.present)),
+      );
+    } else {
+      status = ExcludeSemantics(child: Icon(Icons.auto_awesome, size: 18, color: p.primary));
+    }
+    return RdCard(
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Semantics(
+            button: true,
+            expanded: open,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(8),
+              onTap: onToggle,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: p.text)),
+                        const SizedBox(height: 2),
+                        Text(
+                          [l10n.redesignImportGroupNames(questions.length), l10n.redesignImportFoundFiles(group.fileCount)].join(' · '),
+                          style: RdType.meta(p, size: 13),
+                        ),
+                      ],
+                    ),
+                  ),
+                  status,
+                  const SizedBox(width: 6),
+                  ExcludeSemantics(child: Icon(open ? Icons.expand_less : Icons.expand_more, color: p.text2)),
+                ],
+              ),
+            ),
+          ),
+          if (!open) ...[
+            const SizedBox(height: 6),
+            Text(
+              questions.length > 6 ? '$names …' : names,
+              style: RdType.meta(p, size: 13),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+          if (c == null) ...[
+            const SizedBox(height: 6),
+            Text(l10n.redesignImportGroupUnclearDetail, style: RdType.meta(p, size: 13)),
+          ],
+          if (toTake.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            RdOutlineButton(label: l10n.redesignImportGroupAllAs(title), height: 40, onPressed: () => onAll(toTake)),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
 class _QuestionCard extends StatelessWidget {
   const _QuestionCard({
     required this.plan,

@@ -57,7 +57,7 @@ class InstrumentMatcher {
     'flöte': ['flute', 'flauto', 'flauti', 'querflöte', 'flote', 'флейта', 'флейты', 'fleita', 'flauta'],
     'blockflöte': ['recorder', 'блокфлейта', 'blokfleita', 'flauto dolce'],
     'oboe': ['hautbois', 'oboi', 'гобой', 'гобои', 'goboi', 'goboj'],
-    'englischhorn': ['english horn', 'cor anglais', 'corno inglese'],
+    'englischhorn': ['english horn', 'cor anglais', 'corno inglese', 'cor ang', 'cor angl', 'cor ingl', 'corno ingl'],
     'klarinette': ['clarinet', 'clarinetto', 'clarinetti', 'clarinette', 'кларнет', 'кларнеты', 'klarnet'],
     'bassklarinette': ['bass clarinet', 'bassclarinet', 'clarinetto basso', 'clarinette basse'],
     'fagott': ['bassoon', 'fagotto', 'fagotti', 'basson', 'фагот', 'фаготы'],
@@ -91,9 +91,10 @@ class InstrumentMatcher {
     'becken': ['cymbals', 'тарелки', 'tarelki', 'piatti'],
     'triangel': ['triangle', 'треугольник', 'treugolnik', 'triangolo'],
     'pauke': ['timpani', 'pauken', 'kettledrum', 'timbales', 'литавры', 'litavry', 'litavri'],
+    'röhrenglocken': ['chimes', 'tubular bells', 'campane tubolari', 'campane', 'колокола', 'kolokola'],
     'glockenspiel': [
       'mallets', 'xylophon', 'xylophone', 'vibraphon', 'vibraphone', 'marimba',
-      'ксилофон', 'ksilofon', 'xilofono', 'колокольчики', 'kolokolchiki', 'campanelli',
+      'ксилофон', 'ksilofon', 'xilofono', 'колокольчики', 'kolokolchiki', 'campanelli', 'campanella',
       'marimbaphon', 'маримба', 'вибрафон', 'vibrafon', 'vibrafono',
     ],
 
@@ -111,6 +112,9 @@ class InstrumentMatcher {
     'e-bass': ['ebass', 'bass guitar', 'electric bass', 'bassgitarre'],
     'mandoline': ['mandolin', 'мандолина', 'mandolina', 'mandolino'],
     'banjo': ['банджо', 'bandzho'],
+
+    // A sung part outside a choir (solo, melody).
+    'gesang': ['vokal', 'vocal', 'vocals', 'вокал', 'singstimme', 'gesangsstimme'],
 
     // Choir voices
     'sopran': ['soprano', 'сопрано'],
@@ -251,8 +255,27 @@ class InstrumentMatcher {
     if (best == null) return PartMatch.none;
 
     final tie = second != null && second.score == best.score;
-    final confidence = best.weak || tie ? MatchConfidence.unsure : MatchConfidence.sure;
+    // "Cor." only loses its ambiguity; other reasons to ask stay.
+    final weak = best.weak && !(best.onlyAmbiguous && best.term == 'cor' && _corIsHorn(filename, instruments));
+    final confidence = weak || tie ? MatchConfidence.unsure : MatchConfidence.sure;
     return PartMatch(instrumentId: best.id, confidence: confidence, term: best.term);
+  }
+
+  /// "Cor." (Corno) is a horn, unless the tenant also has cornets or an
+  /// English horn ("Solo Cor." in a brass band) or the name names another
+  /// instrument ("Cor anglais").
+  static bool _corIsHorn(String filename, List<InstrumentInfo> instruments) {
+    const others = {'kornett', 'englischhorn'};
+    if (instruments.any((i) => _termsOf(i).families.any(others.contains))) return false;
+    final named = knownGroups(filename);
+    return named.isEmpty || (named.length == 1 && named.single == 'Horn');
+  }
+
+  /// Whether [name] says nothing but the part [term] with numbers and
+  /// tuning ("1. Violine", "Horn in F"), not "12 Le viole" (a Werk).
+  static bool namesOnlyPart(String name, String term) {
+    final own = tokenize(term).toSet();
+    return tokenize(name).every((w) => own.contains(w) || _tokenNumber(w) != null || _tuningWords.contains(w));
   }
 
   /// Lower-case words of [text]: umlauts folded (ö → oe), split at every
@@ -261,6 +284,7 @@ class InstrumentMatcher {
   static List<String> tokenize(String text) => _words(text).tokens;
 
   static final RegExp _letterDigit = RegExp(r'(\p{L})(\d)', unicode: true);
+  static final RegExp _hyphenAbbreviation = RegExp(r'(?<![\p{L}])(v|c)-(ni|le|c|b)(?![\p{L}])', unicode: true);
   static final RegExp _digitLetter = RegExp(r'(\d)(\p{L})', unicode: true);
   static final RegExp _wordPattern = RegExp(r'[\p{L}\p{N}]+', unicode: true);
   static final RegExp _hardGap = RegExp(r'[-–_/()\[\]+&,;]');
@@ -276,6 +300,8 @@ class InstrumentMatcher {
     final cached = _wordsCache[text];
     if (cached != null) return cached;
     final folded = _fold(text.toLowerCase())
+        // Russian-style string abbreviations: "V-ni", "V-le", "V-c", "C-b".
+        .replaceAllMapped(_hyphenAbbreviation, (m) => '${m[1]}${m[2]}')
         .replaceAllMapped(_letterDigit, (m) => '${m[1]} ${m[2]}')
         .replaceAllMapped(_digitLetter, (m) => '${m[1]} ${m[2]}');
     final tokens = <String>[];
@@ -346,6 +372,9 @@ class InstrumentMatcher {
       // last part of the name beats one in the title before it.
       if (lastSection > 0 && m.start >= lastSection) score += 40;
       var weak = c.weak || m.compound;
+      // Unsure for another reason than an ambiguous term ("Cor" for Horn 1
+      // without a number stays unsure).
+      var otherWeak = m.compound;
       if (m.compound) score -= 50;
       // The words are part of a longer name of another instrument
       // ("English Horn" for the group Horn): only unsure.
@@ -356,6 +385,7 @@ class InstrumentMatcher {
               f.end >= m.end &&
               f.end - f.start > m.end - m.start)) {
         weak = true;
+        otherWeak = true;
         score -= 50;
       }
 
@@ -364,7 +394,10 @@ class InstrumentMatcher {
         if (n == null) {
           // "Violine.pdf" with groups Violine 1 / Violine 2; a synonym the
           // group was given by hand ("zweite") stands for this group.
-          if (!c.synonym) weak = true;
+          if (!c.synonym) {
+            weak = true;
+            otherWeak = true;
+          }
         } else if (n != groupNumber) {
           continue;
         } else {
@@ -372,7 +405,7 @@ class InstrumentMatcher {
         }
       }
       if (best == null || score > best.score || (score == best.score && best.weak && !weak)) {
-        best = _Hit(id, score, weak, tokens.sublist(m.start, m.end).join(' '));
+        best = _Hit(id, score, weak, tokens.sublist(m.start, m.end).join(' '), onlyAmbiguous: weak && !otherWeak);
       }
     }
     return best;
@@ -404,6 +437,13 @@ class InstrumentMatcher {
     for (final family in families) {
       _addFamilyTerms(candidates, family, own: 60);
     }
+    // Becken, Triangel, Pauke … are played by the percussion group when
+    // they have no group of their own (scored below a group of their own).
+    if (families.contains('schlagzeug')) {
+      for (final part in _percussionParts) {
+        _addFamilyTerms(candidates, part, own: 30, terms: 30, short: 20);
+      }
+    }
     if (_termsCache.length > 2000) _termsCache.clear();
     return _termsCache[key] = (groupNumber: groupNumber, families: families, candidates: candidates);
   }
@@ -424,15 +464,20 @@ class InstrumentMatcher {
 
   /// The terms of [family]: its translations, abbreviations and the family
   /// name itself (scored [own]: "1. Geige" → violine).
-  static void _addFamilyTerms(List<_Candidate> candidates, String family, {required int own}) {
+  static void _addFamilyTerms(List<_Candidate> candidates, String family, {required int own, int terms = 60, int short = 40}) {
     for (final t in translations[family] ?? const <String>[]) {
-      _addCandidate(candidates, t, 60);
+      _addCandidate(candidates, t, terms);
     }
     for (final a in abbreviations[family] ?? const <String>[]) {
-      _addCandidate(candidates, a, 40);
+      _addCandidate(candidates, a, short);
     }
     _addCandidate(candidates, family, own);
   }
+
+  /// Instruments a percussion group plays when they have no group.
+  static const List<String> _percussionParts = [
+    'kleine trommel', 'große trommel', 'becken', 'triangel', 'pauke', 'röhrenglocken', 'glockenspiel',
+  ];
 
   /// Families that are no group of their own (a type of file) and the choir
   /// voices, which only choirs get as new groups.
@@ -464,14 +509,9 @@ class InstrumentMatcher {
   static String? knownGroup(String filename, {bool isChoir = false}) {
     final words = _words(_stripExtension(filename));
     if (words.tokens.isEmpty) return null;
-    final familySpans = _familySpans(words.tokens);
     _Hit? best;
     _Hit? second;
-    for (var i = 0; i < _familyGroups.length; i++) {
-      final g = _familyGroups[i];
-      if (!isChoir && _voiceFamilies.contains(g.family)) continue;
-      final hit = _scoreTerms(words, i, g.terms, familySpans);
-      if (hit == null) continue;
+    for (final (:hit, start: _, end: _) in _knownHits(words, isChoir: isChoir)) {
       if (best == null || hit.score > best.score) {
         second = best;
         best = hit;
@@ -497,17 +537,31 @@ class InstrumentMatcher {
   static List<String> knownGroups(String name, {bool isChoir = false}) {
     final words = _words(_stripExtension(name));
     if (words.tokens.isEmpty) return const [];
+    final found = [
+      for (final h in _knownHits(words, isChoir: isChoir))
+        if (!h.hit.weak) h,
+    ]..sort((a, b) => a.start.compareTo(b.start));
+    return [for (final f in found) _familyGroups[f.hit.id].name];
+  }
+
+  /// The dictionary groups named in [words]. A word read as two
+  /// instruments counts for the better one only ("Viole" is the violas,
+  /// not "Viol." + plural).
+  static List<({_Hit hit, int start, int end})> _knownHits(_Words words, {required bool isChoir}) {
     final familySpans = _familySpans(words.tokens);
-    final found = <({int at, String name})>[];
+    final hits = <({_Hit hit, int start, int end})>[];
     for (var i = 0; i < _familyGroups.length; i++) {
       final g = _familyGroups[i];
-      if (!isChoir && _voiceFamilies.contains(g.family)) continue;
+      if (isChoir ? g.family == 'gesang' : _voiceFamilies.contains(g.family)) continue;
       final hit = _scoreTerms(words, i, g.terms, familySpans);
-      if (hit == null || hit.weak) continue;
-      found.add((at: _find(words.tokens, tokenize(hit.term))?.start ?? 0, name: g.name));
+      if (hit == null) continue;
+      final at = _find(words.tokens, tokenize(hit.term));
+      hits.add((hit: hit, start: at?.start ?? 0, end: at?.end ?? 0));
     }
-    found.sort((a, b) => a.at.compareTo(b.at));
-    return [for (final f in found) f.name];
+    return [
+      for (final h in hits)
+        if (!hits.any((o) => o.hit.score > h.hit.score && o.start <= h.start && o.end >= h.end && o.end > o.start)) h,
+    ];
   }
 
   /// Families a group with [nameTokens] belongs to.
@@ -519,11 +573,31 @@ class InstrumentMatcher {
       if (k.isEmpty) continue;
       if (_find(nameTokens, tokenize(key)) != null ||
           (k.length >= 4 && !k.contains(' ') && nameTokens.any((t) => t.endsWith(k) && t != k && !_isOwnFamily(t))) ||
-          name == k) {
+          name == k ||
+          _termFamily[name] == key) {
         yield key;
       }
     }
   }
+
+  /// A group named with a term of one family only ("Schlagwerk", "Bratsche",
+  /// "Piano") belongs to that family.
+  static final Map<String, String> _termFamily = () {
+    final families = <String, Set<String>>{};
+    for (final e in translations.entries) {
+      // "Dirigent" is a group, not a score.
+      if (_noGroupFamilies.contains(e.key)) continue;
+      for (final t in e.value) {
+        final term = tokenize(t).join(' ');
+        if (term.isEmpty || _ambiguousTerms.contains(term)) continue;
+        families.putIfAbsent(term, () => {}).add(e.key);
+      }
+    }
+    return {
+      for (final e in families.entries)
+        if (e.value.length == 1) e.key: e.value.single,
+    };
+  }();
 
   /// The family keys as words ("kleine trommel").
   static final Set<String> _familyKeys = {for (final key in translations.keys) tokenize(key).join(' ')};
@@ -794,12 +868,15 @@ typedef _Candidate = ({List<String> term, int base, bool weak, bool explicitNumb
 typedef _InstrumentTerms = ({int? groupNumber, Set<String> families, List<_Candidate> candidates});
 
 class _Hit {
-  _Hit(this.id, this.score, this.weak, this.term);
+  _Hit(this.id, this.score, this.weak, this.term, {this.onlyAmbiguous = false});
 
   final int id;
   final int score;
   final bool weak;
   final String term;
+
+  /// Unsure only because [term] also means something else.
+  final bool onlyAmbiguous;
 }
 
 /// Simple info class for instrument matching

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:attendix/core/providers/group_providers.dart' show mergeSynonyms;
 import 'package:attendix/core/services/part_vision_service.dart';
+import 'package:attendix/core/utils/choir_file_utils.dart';
 import 'package:attendix/core/utils/instrument_matcher.dart';
 import 'package:attendix/features/songs/presentation/widgets/file_upload_sheet.dart';
 import 'package:file_picker/file_picker.dart';
@@ -92,6 +93,36 @@ void main() {
       expect(_confidence('English Horn.pdf', _orchestra), MatchConfidence.unsure);
       expect(_confidence('Bass Clarinet.pdf', _orchestra), MatchConfidence.unsure);
       expect(_confidence('French Horn 2.pdf', _orchestra), MatchConfidence.sure);
+    });
+
+    test('"Cor." is a horn unless cornets or an English horn could be meant', () {
+      expect((_label('6 Полный радости -2Cor..pdf', _orchestra), _confidence('2 Cor. in F.pdf', _orchestra)),
+          ('Horn', MatchConfidence.sure));
+      expect(_confidence('Cor anglais.pdf', _orchestra), MatchConfidence.unsure);
+      expect(_confidence('Solo Cor.pdf', [..._orchestra, 'Kornett']), MatchConfidence.unsure);
+      expect(InstrumentMatcher.knownGroup('Святая ночь - Chimes.pdf'), 'Röhrenglocken');
+      // Without a number for "Horn 1" it stays a question.
+      expect(_confidence('Cor.pdf', ['Horn 1', 'Horn 2']), MatchConfidence.unsure);
+      expect(_confidence('Cor. ang..pdf', _orchestra), MatchConfidence.unsure);
+      expect(_label('Cor. ang..pdf', [..._orchestra, 'Englischhorn']), 'Englischhorn');
+    });
+
+    test('names from real imports: Viole, V-ni, a group named "Schlagwerk"', () {
+      final groups = ['Violine 1', 'Violine 2', 'Viola', 'Cello', 'Kontrabass', 'Schlagwerk', 'Pauke'];
+      expect(_label('Наши межи - Viole.pdf', groups), 'Viola');
+      expect(InstrumentMatcher.knownGroup('Viole.pdf'), 'Viola');
+      expect([for (final n in ['10 - V-ni I.pdf', '11 - V-ni II.pdf', '12 - V-le.pdf', '13 - V-c.pdf', '14 - C-b.pdf']) _label(n, groups)],
+          ['Violine 1', 'Violine 2', 'Viola', 'Cello', 'Kontrabass']);
+      // Percussion without a group of its own goes to "Schlagwerk"; the
+      // timpani keep their own group.
+      expect([for (final n in ['Percussion 1.pdf', 'Cymbals.pdf', 'Triangolo.pdf', 'Bass Drum.pdf', 'Timpani.pdf']) _label(n, groups)],
+          ['Schlagwerk', 'Schlagwerk', 'Schlagwerk', 'Schlagwerk', 'Pauke']);
+      expect(_label('Glockenspiel.pdf', [...groups, 'Glockenspiel']), 'Glockenspiel');
+      // "Dirigent" stays a group of its own, not the score.
+      expect(_label('Full Score.pdf', ['Dirigent', 'Violine']), 'Partitur');
+      expect([_label('07 - Coro.pdf', groups), _label('Наши межи - S. A..pdf', groups)], [kChoirAllNote, kChoirAllNote]);
+      // A "Vocal score" is no "Gesang" part.
+      expect(_label('Vocal score.pdf', [...groups, 'Gesang']), 'Klavierauszug');
     });
 
     test('a more specific group wins', () {

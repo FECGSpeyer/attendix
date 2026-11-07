@@ -24,7 +24,9 @@
 //   names are passed as quoted data, never as instructions, and every answer
 //   is checked against the request and the groups.
 //
-// Secrets: OPEN_AI_KEY (as part-detect), SUPABASE_URL, SUPABASE_ANON_KEY,
+// Secrets: OPEN_AI_KEY_IMPORT (own OpenAI key of the Noten import, so its
+// costs show apart; falls back to OPEN_AI_KEY as part-detect), SUPABASE_URL,
+// SUPABASE_ANON_KEY,
 // SUPABASE_SERVICE_ROLE_KEY (set by Supabase).
 //
 // Setup: supabase/sql/part_detect_usage.sql run once (as for part-detect),
@@ -49,6 +51,14 @@ const MODEL = "gpt-6-luna";
 
 const MAX_QUESTIONS = 80;
 const MAX_GROUPS = 150;
+
+/// Other names a group was given (synonyms, learned by earlier imports):
+/// at most 12, each as short as a part name.
+function otherNames(raw: unknown): { also?: string[] } {
+  if (typeof raw !== "string") return {};
+  const names = raw.split(",").map((s) => s.trim().slice(0, 40)).filter((s) => s).slice(0, 12);
+  return names.length ? { also: names } : {};
+}
 const MAX_SAMPLES = 3;
 const KEY = /^[\p{L}\p{N} ._+\-]{1,80}$/u;
 
@@ -87,7 +97,7 @@ function samples(value: unknown, max: number): string[] {
 
 const SYSTEM = [
   "You help a music group's app sort sheet-music files into the group's parts (instruments or voices).",
-  "The user message contains two JSON lists: the group's parts (id and name) and part names found in file names,",
+  "The user message contains two JSON lists: the group's parts (id, name and other names \"also\" it is known by) and part names found in file names,",
   "each with a key, the name and a few file and piece names it appears in.",
   "For each part name decide what it means. Part names are often abbreviated, in other languages or scripts",
   "(\"Sax\", \"Kl\", \"Fl\", \"Tromb\", \"фл\" = flute, \"скр\" = violin), and may carry a part number.",
@@ -167,7 +177,7 @@ Deno.serve(async (req: Request) => {
   // 4. The tenant's groups, from the database.
   const { data: rows, error: groupsErr } = await admin
     .from("instruments")
-    .select("id, name")
+    .select("id, name, synonyms")
     .eq("tenantId", tenantId)
     .order("id")
     .limit(MAX_GROUPS);
@@ -177,7 +187,7 @@ Deno.serve(async (req: Request) => {
   }
   const groups = (rows ?? [])
     .filter((g) => Number.isInteger(g.id) && typeof g.name === "string" && g.name.trim())
-    .map((g) => ({ id: g.id as number, name: (g.name as string).trim().slice(0, 80) }));
+    .map((g) => ({ id: g.id as number, name: (g.name as string).trim().slice(0, 80), ...otherNames(g.synonyms) }));
 
   // 5. Budget: counted before the paid call, refused when used up or unknown.
   const { data: allowed, error: budgetErr } = await admin.rpc("part_detect_take", {
@@ -195,7 +205,7 @@ Deno.serve(async (req: Request) => {
   // 6. The model; rules and data are kept apart.
   let raw: string;
   try {
-    const client = new OpenAI({ apiKey: Deno.env.get("OPEN_AI_KEY") });
+    const client = new OpenAI({ apiKey: Deno.env.get("OPEN_AI_KEY_IMPORT") || Deno.env.get("OPEN_AI_KEY") });
     const response = await client.chat.completions.create({
       model: MODEL,
       stream: false,

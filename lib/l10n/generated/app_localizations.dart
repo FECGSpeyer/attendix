@@ -19589,6 +19589,12 @@ abstract class AppLocalizations {
   /// **'Die Ordner werden mit den Werken dieser Sammlung verglichen, neue Werke bekommen ihr Kürzel.'**
   String get redesignImportCollectionHint;
 
+  /// redesign.import.collectionNotLoaded
+  ///
+  /// In de, this message translates to:
+  /// **'Die Sammlung ist angelegt, konnte aber nicht geladen werden. Wähle sie bitte gleich noch einmal.'**
+  String get redesignImportCollectionNotLoaded;
+
   /// redesign.import.collectionTitle
   ///
   /// In de, this message translates to:
@@ -20009,6 +20015,24 @@ abstract class AppLocalizations {
   /// **'Stimme schon da'**
   String get redesignImportFlagPartExists;
 
+  /// redesign.import.flagProposal
+  ///
+  /// In de, this message translates to:
+  /// **'✦ Vorschlag prüfen'**
+  String get redesignImportFlagProposal;
+
+  /// redesign.import.flagProposalLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Von der KI auf der ersten Seite vorgeschlagen, bitte prüfen'**
+  String get redesignImportFlagProposalLabel;
+
+  /// redesign.import.flagProposals
+  ///
+  /// In de, this message translates to:
+  /// **'✦ KI-Vorschläge prüfen'**
+  String get redesignImportFlagProposals;
+
   /// redesign.import.flagRecheck
   ///
   /// In de, this message translates to:
@@ -20050,6 +20074,42 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {1 Werk} other {{count} Werke}}'**
   String redesignImportFoundWorks(num count);
+
+  /// redesign.import.groupAllAs
+  ///
+  /// In de, this message translates to:
+  /// **'Alle als {name}'**
+  String redesignImportGroupAllAs(Object name);
+
+  /// redesign.import.groupAnswered
+  ///
+  /// In de, this message translates to:
+  /// **'Beantwortet'**
+  String get redesignImportGroupAnswered;
+
+  /// redesign.import.groupNames
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Name} other {{count} Namen}}'**
+  String redesignImportGroupNames(num count);
+
+  /// redesign.import.groupOpen
+  ///
+  /// In de, this message translates to:
+  /// **'{count} offen'**
+  String redesignImportGroupOpen(Object count);
+
+  /// redesign.import.groupUnclear
+  ///
+  /// In de, this message translates to:
+  /// **'Unklar'**
+  String get redesignImportGroupUnclear;
+
+  /// redesign.import.groupUnclearDetail
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Tipp, bitte einzeln beantworten'**
+  String get redesignImportGroupUnclearDetail;
 
   /// redesign.import.keepOpen
   ///
@@ -20224,6 +20284,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count} Dateien, z. B. in {works}'**
   String redesignImportQuestionWhere(Object count, Object works);
+
+  /// redesign.import.questionsAnswered
+  ///
+  /// In de, this message translates to:
+  /// **'{answered} von {total} beantwortet'**
+  String redesignImportQuestionsAnswered(Object answered, Object total);
 
   /// redesign.import.questionsIntro
   ///

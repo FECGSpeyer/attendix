@@ -192,14 +192,23 @@ class PartVisionService {
   }
 
   /// What part-detect reads on [image] (from [firstPage]) for [tenantId]:
-  /// the group, the part name printed and how sure it is. Null on every
-  /// failure; throws [PartVisionLimit] once the day's budget is used up.
-  Future<PartPageRead?> readImage(Uint8List image, {required int tenantId}) async {
+  /// the group, the part name printed and how sure it is. [fileName] and
+  /// the names of the [others] files of the same Werk are hints for the KI.
+  /// Null on every failure; throws [PartVisionLimit] once the day's budget
+  /// is used up.
+  Future<PartPageRead?> readImage(
+    Uint8List image, {
+    required int tenantId,
+    String? fileName,
+    List<String> others = const [],
+  }) async {
     if (_unavailable || image.length > maxImageBytes || currentTenant() != tenantId) return null;
     try {
       final response = await _client().functions.invoke(_function, body: {
         'tenantId': tenantId,
         'image': base64Encode(image),
+        if (fileName != null) 'fileName': fileName,
+        if (others.isNotEmpty) 'others': others.take(30).toList(),
       }).timeout(timeout);
       return PartPageRead.parse(response.data);
     } on FunctionException catch (e) {
@@ -221,7 +230,7 @@ class PartVisionService {
 
 /// What part-detect read on a first page.
 class PartPageRead {
-  const PartPageRead({this.groupId, this.label, this.sure = false});
+  const PartPageRead({this.groupId, this.label, this.sure = false, this.kind});
 
   /// The function's answer; null when it is none.
   static PartPageRead? parse(dynamic data) {
@@ -236,12 +245,17 @@ class PartPageRead {
     if (map is! Map) return null;
     final raw = map['groupId'];
     final label = map['label'];
+    final kind = map['kind'];
     return PartPageRead(
       groupId: raw is int ? raw : int.tryParse('${raw ?? ''}'),
       label: label is String && label.trim().isNotEmpty ? label.trim() : null,
       sure: map['confidence'] == 'high',
+      kind: kind is String && kinds.contains(kind) ? kind : null,
     );
   }
+
+  /// What a page can be ([kind]).
+  static const Set<String> kinds = {'part', 'score', 'piano', 'choir', 'lyrics', 'other'};
 
   /// One of the tenant's groups.
   final int? groupId;
@@ -249,6 +263,10 @@ class PartPageRead {
   /// The part name as printed ("1. Violine").
   final String? label;
   final bool sure;
+
+  /// What the page is, when the KI is sure of it: "part", "score" (a full
+  /// score, which names no part), "piano" (Klavierauszug), "lyrics", "other".
+  final String? kind;
 }
 
 /// The day's budget of part-detect is used up.

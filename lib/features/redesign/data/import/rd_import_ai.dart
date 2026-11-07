@@ -83,18 +83,42 @@ RdImportCategory? rdImportAiCategory(Map<String, dynamic> answer, {required Set<
 /// [label] the part name as printed) as the file's part: the group, else
 /// what the label names (a group, Partitur …, one known instrument without
 /// a group: "Neue Gruppe"); null when it names nothing usable. Only a sure
-/// read of a group is taken without a look.
+/// read of a group, and a page the KI is sure is a score, piano score,
+/// choral setting (with a group for it) or text ([kind]), is taken without
+/// a look.
 RdImportPageRead? rdImportPageRead({
   int? groupId,
   String? label,
   required bool sure,
   required List<InstrumentInfo> instruments,
   required bool isChoir,
+  String? kind,
 }) {
   final text = (label ?? '').trim();
+  // A choral setting: in a choir all voices ("Chor"), else the group for
+  // singing if there is one, otherwise "Chor" as a new group to check.
+  if (kind == 'choir') {
+    final read = text.isEmpty ? null : text;
+    if (isChoir) return RdImportPageRead(const RdImportCategory(note: kChoirAllNote), label: read, sure: true);
+    if (groupId == null || !instruments.any((i) => i.id == groupId)) {
+      final singing = instruments.where((i) => const {'chor', 'choir', 'gesang'}.contains(i.name.trim().toLowerCase()));
+      return singing.isEmpty
+          ? RdImportPageRead(const RdImportCategory(newGroup: kChoirAllNote), label: read)
+          : RdImportPageRead(RdImportCategory(instrumentId: singing.first.id), label: read, sure: true);
+    }
+  }
   if (groupId != null && instruments.any((i) => i.id == groupId)) {
     return RdImportPageRead(RdImportCategory(instrumentId: groupId), label: text.isEmpty ? null : text, sure: sure);
   }
+  // A full score names no part: the kind of page says it (only sent when
+  // the KI is sure of it).
+  final byKind = switch (kind) {
+    'score' => const RdImportCategory(note: 'Partitur'),
+    'piano' => const RdImportCategory(note: 'Klavierauszug'),
+    'lyrics' => const RdImportCategory(instrumentId: InstrumentMatcher.lyricsId),
+    _ => null,
+  };
+  if (byKind != null) return RdImportPageRead(byKind, label: text.isEmpty ? null : text, sure: true);
   if (text.isEmpty || text.length > 80) return null;
   // As a file name: a label like "1. Vl" has no file ending to strip.
   final asName = '$text.pdf';

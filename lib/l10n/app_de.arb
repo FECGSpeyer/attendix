@@ -14980,6 +14980,10 @@
   "@redesignImportCollectionHint": {
     "description": "redesign.import.collectionHint"
   },
+  "redesignImportCollectionNotLoaded": "Die Sammlung ist angelegt, konnte aber nicht geladen werden. Wähle sie bitte gleich noch einmal.",
+  "@redesignImportCollectionNotLoaded": {
+    "description": "redesign.import.collectionNotLoaded"
+  },
   "redesignImportCollectionTitle": "In welche Sammlung?",
   "@redesignImportCollectionTitle": {
     "description": "redesign.import.collectionTitle"
@@ -15301,6 +15305,18 @@
   "@redesignImportFlagPartExists": {
     "description": "redesign.import.flagPartExists"
   },
+  "redesignImportFlagProposal": "✦ Vorschlag prüfen",
+  "@redesignImportFlagProposal": {
+    "description": "redesign.import.flagProposal"
+  },
+  "redesignImportFlagProposalLabel": "Von der KI auf der ersten Seite vorgeschlagen, bitte prüfen",
+  "@redesignImportFlagProposalLabel": {
+    "description": "redesign.import.flagProposalLabel"
+  },
+  "redesignImportFlagProposals": "✦ KI-Vorschläge prüfen",
+  "@redesignImportFlagProposals": {
+    "description": "redesign.import.flagProposals"
+  },
   "redesignImportFlagRecheck": "Erneut prüfen",
   "@redesignImportFlagRecheck": {
     "description": "redesign.import.flagRecheck"
@@ -15346,6 +15362,41 @@
         "type": "num"
       }
     }
+  },
+  "redesignImportGroupAllAs": "Alle als {name}",
+  "@redesignImportGroupAllAs": {
+    "description": "redesign.import.groupAllAs",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignImportGroupAnswered": "Beantwortet",
+  "@redesignImportGroupAnswered": {
+    "description": "redesign.import.groupAnswered"
+  },
+  "redesignImportGroupNames": "{count, plural, one {1 Name} other {{count} Namen}}",
+  "@redesignImportGroupNames": {
+    "description": "redesign.import.groupNames",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportGroupOpen": "{count} offen",
+  "@redesignImportGroupOpen": {
+    "description": "redesign.import.groupOpen",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignImportGroupUnclear": "Unklar",
+  "@redesignImportGroupUnclear": {
+    "description": "redesign.import.groupUnclear"
+  },
+  "redesignImportGroupUnclearDetail": "Ohne Tipp, bitte einzeln beantworten",
+  "@redesignImportGroupUnclearDetail": {
+    "description": "redesign.import.groupUnclearDetail"
   },
   "redesignImportKeepOpen": "Lass diese Seite offen, bis alles hochgeladen ist. Was schon oben ist, bleibt auch bei einem Abbruch erhalten.",
   "@redesignImportKeepOpen": {
@@ -15483,6 +15534,14 @@
     "placeholders": {
       "count": {},
       "works": {}
+    }
+  },
+  "redesignImportQuestionsAnswered": "{answered} von {total} beantwortet",
+  "@redesignImportQuestionsAnswered": {
+    "description": "redesign.import.questionsAnswered",
+    "placeholders": {
+      "answered": {},
+      "total": {}
     }
   },
   "redesignImportQuestionsIntro": "Diese Stimmnamen kennt Attendix noch nicht. Deine Antwort gilt für alle Dateien mit diesem Namen – beim nächsten Import weiß Attendix es schon.",

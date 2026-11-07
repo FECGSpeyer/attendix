@@ -11927,6 +11927,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'The folders are compared with the works of this collection, new works get its prefix.';
 
   @override
+  String get redesignImportCollectionNotLoaded =>
+      'The collection was created but could not be loaded. Please choose it again in a moment.';
+
+  @override
   String get redesignImportCollectionTitle => 'Into which collection?';
 
   @override
@@ -12218,6 +12222,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportFlagPartExists => 'Part already there';
 
   @override
+  String get redesignImportFlagProposal => '✦ Check suggestion';
+
+  @override
+  String get redesignImportFlagProposalLabel =>
+      'Suggested by the AI from the first page, please check';
+
+  @override
+  String get redesignImportFlagProposals => '✦ Check AI suggestions';
+
+  @override
   String get redesignImportFlagRecheck => 'Check again';
 
   @override
@@ -12263,6 +12277,37 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String redesignImportGroupAllAs(Object name) {
+    return 'All as $name';
+  }
+
+  @override
+  String get redesignImportGroupAnswered => 'Answered';
+
+  @override
+  String redesignImportGroupNames(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count names',
+      one: '1 name',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignImportGroupOpen(Object count) {
+    return '$count open';
+  }
+
+  @override
+  String get redesignImportGroupUnclear => 'Unclear';
+
+  @override
+  String get redesignImportGroupUnclearDetail =>
+      'No guess, please answer one by one';
 
   @override
   String get redesignImportKeepOpen =>
@@ -12378,6 +12423,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String redesignImportQuestionWhere(Object count, Object works) {
     return '$count files, e.g. in $works';
+  }
+
+  @override
+  String redesignImportQuestionsAnswered(Object answered, Object total) {
+    return '$answered of $total answered';
   }
 
   @override
