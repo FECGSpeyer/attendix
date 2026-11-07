@@ -879,7 +879,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   /// it is not reading.
   String? _pagesNote(BuildContext context, RdImportState state) {
     final pages = state.pages;
-    if (!state.useAi || pages.total == 0) return null;
+    if (!state.useAi) return null;
     if (pages.limit) return context.l10n.redesignImportPagesLimit;
     return pages.done < pages.total ? context.l10n.redesignImportPagesReading(pages.done, pages.total) : null;
   }

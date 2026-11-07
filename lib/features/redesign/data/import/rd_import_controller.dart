@@ -836,17 +836,19 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   /// What the KI read on page 1, by path ([rdBuildImportPlan] `pageReads`).
   Map<String, RdImportPageRead> _pageReads = const {};
 
-  /// Paths whose first page was read or is being read (each once).
+  /// Paths whose first page was read (or could not be): not read again.
   final Set<String> _pagesTried = {};
 
   /// First pages rendered, the last [_keptPages] (the preview opens at once).
   final Map<String, Uint8List> _pageImages = {};
   static const _keptPages = 40;
 
-  bool _pagesBusy = false;
-
-  /// Counts the page reads: a change of the import stops the running one.
+  /// Counts the page reads: a new import, the KI switched off or the upload
+  /// ends the running one; its late answers are dropped.
   int _pagesRun = 0;
+
+  /// The run whose loop is going ([_readPages]); null when none is.
+  int? _pagesLoop;
 
   void _clearPages() {
     _pagesRun++;
@@ -859,21 +861,25 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   /// a time, at most [rdImportMaxPageReads] per import) while the review is
   /// shown; Werke with "Passt so" are left alone. A sure read of a group
   /// takes the file out of "Stimme unklar" (✦ Seite 1); other reads are
-  /// proposed, and the file stays to be checked.
+  /// proposed, and the file stays to be checked. A file whose read was cut
+  /// off is read another time.
   Future<void> _readPages() async {
     final source = _source;
     final tenantId = _tenantId;
-    if (_pagesBusy || source == null || tenantId == null) return;
     final run = _pagesRun;
-    bool stopped() =>
-        _disposed ||
-        run != _pagesRun ||
-        !identical(_source, source) ||
-        !state.useAi ||
-        state.pages.limit ||
-        state.step != RdImportStep.review;
+    if (_pagesLoop == run || source == null || tenantId == null) return;
+    bool current() =>
+        !_disposed &&
+        run == _pagesRun &&
+        identical(_source, source) &&
+        state.useAi &&
+        state.step == RdImportStep.review;
+    bool stopped() => !current() || state.pages.limit;
     final vision = ref.read(partVisionServiceProvider);
-    _pagesBusy = true;
+    var done = 0;
+    var total = 0;
+    void show({bool? limit}) => state = state.copyWith(pages: (done: done, total: total, limit: limit ?? state.pages.limit));
+    _pagesLoop = run;
     try {
       while (!stopped()) {
         final plan = state.plan;
@@ -883,13 +889,14 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
             if (!_pagesTried.contains(p) && PartVisionService.supports(p)) p,
         ].take(rdImportMaxPageReads - _pagesTried.length).toList();
         if (paths.isEmpty) return;
-        _pagesTried.addAll(paths);
-        state = state.copyWith(pages: (done: state.pages.done, total: state.pages.total + paths.length, limit: false));
+        total += paths.length;
+        show();
         var next = 0;
         Future<void> worker() async {
           while (next < paths.length && !stopped()) {
             final path = paths[next++];
             RdImportPageRead? read;
+            var limit = false;
             try {
               final image = await _pageImage(source, path);
               final found = image == null || stopped() ? null : await vision.readImage(image, tenantId: tenantId);
@@ -903,27 +910,36 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
                 );
               }
             } on PartVisionLimit {
-              if (run == _pagesRun) state = state.copyWith(pages: (done: state.pages.done, total: state.pages.total, limit: true));
+              limit = true;
             }
-            if (run != _pagesRun || _disposed) return;
+            // Late (upload begun, KI off, other import): dropped, read again
+            // another time.
+            if (!current()) return;
+            if (limit) {
+              show(limit: true);
+              return;
+            }
+            _pagesTried.add(path);
+            done++;
+            show();
             if (read != null && !_confirmedNow(path)) {
               _pageReads = {..._pageReads, path: read};
               _replan();
+              // A part found can make Fassungen whose dates are not read yet.
+              unawaited(_completeDates());
             }
-            state = state.copyWith(pages: (done: state.pages.done + 1, total: state.pages.total, limit: state.pages.limit));
           }
         }
 
         await Future.wait([for (var i = 0; i < 4; i++) worker()]);
-        // Not read (stopped): another time, and out of the count.
-        final left = paths.skip(next).toList();
-        if (left.isNotEmpty && run == _pagesRun) {
-          _pagesTried.removeAll(left);
-          state = state.copyWith(pages: (done: state.pages.done, total: state.pages.total - left.length, limit: state.pages.limit));
-        }
       }
     } finally {
-      _pagesBusy = false;
+      if (_pagesLoop == run) _pagesLoop = null;
+      // Nothing is being read any more: the count goes.
+      if (run == _pagesRun && !_disposed) {
+        done = total = 0;
+        show();
+      }
     }
   }
 
@@ -1071,6 +1087,8 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     if (only != null) items = items.where((i) => only.contains(i.file.path)).toList();
     if (items.isEmpty) return;
 
+    // Pages still being read do not change what is uploaded.
+    _pagesRun++;
     _keep ??= ref.keepAlive();
     var progress = RdImportUpload(total: items.length);
     state = state.copyWith(step: RdImportStep.uploading, upload: progress);
