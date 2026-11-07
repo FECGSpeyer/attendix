@@ -6,6 +6,9 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/cross_tenant_person_providers.dart';
 import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
@@ -14,6 +17,7 @@ import '../../../../l10n/l10n.dart';
 import 'ion/ion_widgets.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../redesign/presentation/widgets/members/rd_pause_sheets.dart';
 
 final _fmt = DateFormat('dd.MM.yyyy');
 
@@ -39,8 +43,16 @@ String buildPauseHistoryText(String reason, {DateTime? from, DateTime? until}) {
   return segments.isEmpty ? reason : '$reason (${segments.join(' ')})';
 }
 
-/// Shows the pause sheet. Returns null when cancelled.
+/// Shows the pause sheet. Returns null when cancelled. In the Beta the
+/// sheet of the new design ([showRdPauseSheet]).
 Future<PauseInput?> showPauseSheet(BuildContext context, Person person) {
+  if (RedesignRoutes.active) {
+    return showRdPauseSheet(
+      context,
+      title: context.l10n.rdPeoplePauseTitle('${person.firstName} ${person.lastName}'.trim()),
+      hint: context.l10n.rdPeoplePauseHint,
+    );
+  }
   return showModalBottomSheet<PauseInput>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -200,8 +212,16 @@ Future<bool> pausePersonFlow(
 }) async {
   final repo = ref.read(playerRepositoryWithTenantProvider);
   final crossRepo = ref.read(crossTenantPersonRepositoryWithTenantProvider);
+  final beta = RedesignRoutes.active;
+  final tenantId = ref.read(currentTenantIdProvider);
   final input = await showPauseSheet(context, person);
   if (input == null || !context.mounted) return false;
+  // TENANT (Beta): the group changed while the sheet was open, so write
+  // nothing (the person belongs to the old group).
+  if (beta && ref.read(currentTenantIdProvider) != tenantId) {
+    ToastHelper.showError(context, context.l10n.rdPeopleGroupSwitched);
+    return false;
+  }
 
   final messenger = ScaffoldMessenger.of(context);
   final text = buildPauseHistoryText(input.reason,
@@ -247,6 +267,7 @@ Future<bool> pausePersonFlow(
 
     final selected = await _askPauseInOtherTenants(context, person, others);
     if (selected == null || selected.isEmpty) return true;
+    if (beta && ref.read(currentTenantIdProvider) != tenantId) return true;
 
     final entry = {
       'date': DateTime.now().toUtc().toIso8601String(),
@@ -290,6 +311,13 @@ Future<List<LinkedTenantRef>?> _askPauseInOtherTenants(
   Person person,
   List<LinkedTenantRef> tenants,
 ) {
+  if (RedesignRoutes.active) {
+    return showRdPauseOthersSheet(
+      context,
+      name: '${person.firstName} ${person.lastName}'.trim(),
+      tenants: tenants,
+    );
+  }
   final selected = <int>{};
   return showAppDialog<List<LinkedTenantRef>>(
     context: context,

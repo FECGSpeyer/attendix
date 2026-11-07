@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.80.0",
+      "date": "7.11.2026",
+      "changes": [
+        "💄 Beta: Freigaben › „Anfrage prüfen“ als eigene Seite mit Hinweis auf mögliche Doppelung, Angaben zum Bearbeiten, „Ablehnen“ und „Aufnehmen“",
+        "💄 Beta: „Pausieren“ als neues Blatt mit Grund-Auswahl, „Ab“ und „Bis“; danach „Auch in anderen Gruppen pausieren?“ mit Häkchen je Gruppe",
+        "💄 Beta: Ich › „Pausieren“ im selben Blatt (ohne „Ab“)",
+        "💄 Beta: Person übertragen / kopieren mit „Zielgruppe“ und „Register“ als Auswahlzeilen",
+        "🐛 Beta: Nach einem Gruppenwechsel wird beim Pausieren, Übertragen oder Freigeben nichts mehr in die falsche Gruppe geschrieben"
+      ]
+    },
+    {
       "version": "0.79.0",
       "date": "7.11.2026",
       "changes": [

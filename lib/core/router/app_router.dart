@@ -159,6 +159,7 @@ import '../../features/redesign/presentation/pages/rd_admins_page.dart';
 import '../../features/redesign/presentation/pages/rd_archive_page.dart';
 import '../../features/redesign/presentation/pages/rd_parents_page.dart';
 import '../../features/redesign/presentation/pages/rd_pending_page.dart';
+import '../../features/redesign/presentation/pages/rd_pending_review_page.dart';
 import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea;
 import '../../features/redesign/presentation/pages/rd_manage_page.dart';
 import '../../features/redesign/presentation/widgets/rd_split_view.dart';
@@ -976,6 +977,16 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'freigaben',
                     builder: (context, state) => const RdPendingPage(),
+                    routes: [
+                      GoRoute(
+                        path: ':id',
+                        builder: (context, state) {
+                          final id = int.tryParse(state.pathParameters['id'] ?? '');
+                          if (id == null) return const RdPendingPage();
+                          return RdPendingReviewPage(key: ValueKey('rd-review-$id'), personId: id);
+                        },
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: ':area',
