@@ -17,7 +17,9 @@ import '../../../../shared/widgets/debug/debug_role_fab.dart';
 import '../../../../shared/widgets/dialogs/native_app_ad.dart';
 import '../../../../shared/widgets/layout/root_back_button_scope.dart';
 import '../../../../shared/widgets/layout/route_leave_guard.dart';
+import '../../data/import/rd_import_controller.dart';
 import '../../data/rd_manage_logic.dart';
+import '../widgets/import/rd_import_widgets.dart' show rdImportTimeLeftText;
 import '../widgets/manage/rd_manage_entries.dart';
 import '../widgets/rd_group_switch.dart';
 import '../widgets/rd_desktop.dart';
@@ -121,15 +123,107 @@ class RdShell extends ConsumerWidget {
     );
   }
 
-  /// Page plus the mini audio player (and on iOS the update notice) above
-  /// the bar.
+  /// Page plus the mini audio player, a running Noten-Import and (on iOS)
+  /// the update notice above the bar.
   Widget _withPlayer(Widget page) => Column(
         children: [
           Expanded(child: page),
           const AudioPlayerWidget(),
+          const _RdImportBar(),
           const _RdUpdateBar(),
         ],
       );
+}
+
+/// The Noten-Import going on in the background (the page was left), then
+/// its result until seen: tap opens the import page, × closes it. Not on
+/// the import page itself, which shows the same.
+class _RdImportBar extends ConsumerWidget {
+  const _RdImportBar();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final run = ref.watch(rdImportRunProvider);
+    if (run == null) return const SizedBox.shrink();
+    if (GoRouterState.of(context).matchedLocation == RedesignRoutes.worksImport) return const SizedBox.shrink();
+    final p = context.rd;
+    final l10n = context.l10n;
+    final value = run.total == 0 ? 0.0 : run.done / run.total;
+    final complete = run.failures.isEmpty && !run.aborted && !run.cancelled;
+    final left = run.finished ? null : rdImportTimeLeftText(l10n, run);
+    final text = !run.finished
+        ? [l10n.redesignImportBarRunning((value * 100).round()), if (left != null) left].join(' · ')
+        : complete
+        ? l10n.redesignImportBarDone(run.succeeded)
+        : l10n.redesignImportBarIncomplete;
+    void open() => RdShell.navigate(context, ref, RedesignRoutes.worksImport);
+    return SafeArea(
+      top: false,
+      bottom: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+        child: Material(
+          key: const Key('rd-import-bar'),
+          color: p.toastBg,
+          borderRadius: BorderRadius.circular(p.buttonRadius),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: open,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 14, right: 4),
+                  child: Row(
+                    children: [
+                      Icon(
+                        !run.finished
+                            ? Icons.cloud_upload_outlined
+                            : complete
+                            ? Icons.check_circle_outline
+                            : Icons.error_outline,
+                        size: 20,
+                        color: p.toastText,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          text,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(fontSize: 14, color: p.toastText),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: open,
+                        style: TextButton.styleFrom(foregroundColor: p.toastAction, minimumSize: const Size(44, 44)),
+                        child: Text(l10n.redesignImportBarOpen, style: const TextStyle(fontWeight: FontWeight.w600)),
+                      ),
+                      if (run.finished)
+                        IconButton(
+                          tooltip: l10n.commonClose,
+                          icon: Icon(Icons.close, size: 18, color: p.toastText),
+                          onPressed: () => ref.read(rdImportProvider.notifier).resultSeen(),
+                        )
+                      else
+                        const SizedBox(width: 8),
+                    ],
+                  ),
+                ),
+                if (!run.finished)
+                  LinearProgressIndicator(
+                    value: value,
+                    minHeight: 3,
+                    color: p.toastAction,
+                    backgroundColor: p.toastText.withValues(alpha: 0.15),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 /// Closed "Neue Version verfügbar" notice (until the next start).

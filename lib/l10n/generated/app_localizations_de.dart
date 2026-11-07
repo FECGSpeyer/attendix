@@ -2448,6 +2448,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get collectionsDelete => 'Sammlung löschen';
 
   @override
+  String collectionsDeleteChoose(Object name) {
+    return 'Was soll mit den Werken in „$name“ passieren?';
+  }
+
+  @override
   String collectionsDeleteConfirm(Object name) {
     return '„$name“ löschen? Ihre Werke kommen ins Repertoire zurück.';
   }
@@ -2455,6 +2460,80 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get collectionsDeleteFailed =>
       'Die Sammlung konnte nicht gelöscht werden.';
+
+  @override
+  String get collectionsDeleteImportRunning =>
+      'Gerade läuft ein Noten-Import. Lösche die Werke, wenn er fertig ist.';
+
+  @override
+  String collectionsDeleteKeepWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Die $count Werke ins Repertoire verschieben',
+      one: 'Das Werk ins Repertoire verschieben',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String collectionsDeleteWithWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Alle $count Werke samt Noten löschen',
+      one: 'Das Werk samt Noten löschen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get collectionsDeleteWorksConfirm => 'Endgültig löschen';
+
+  @override
+  String collectionsDeleteWorksFailed(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count Werke konnten nicht gelöscht werden. Sie bleiben mit der Sammlung erhalten.',
+      one:
+          '1 Werk konnte nicht gelöscht werden. Es bleibt mit der Sammlung erhalten.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String collectionsDeleteWorksMessage(Object name) {
+    return 'Die Werke in „$name“ werden mit allen Noten und Dateien gelöscht, danach die Sammlung. Das lässt sich nicht rückgängig machen.';
+  }
+
+  @override
+  String collectionsDeleteWorksTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke endgültig löschen?',
+      one: '1 Werk endgültig löschen?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String collectionsDeletedWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Sammlung und $count Werke gelöscht',
+      one: 'Sammlung und 1 Werk gelöscht',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String collectionsDeletingWorks(Object done, Object total) {
+    return 'Wird gelöscht … $done von $total';
+  }
 
   @override
   String get collectionsEditHint => 'Änderungen werden sofort gespeichert.';
@@ -12024,7 +12103,44 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportAnswerOther => 'Andere …';
 
   @override
-  String get redesignImportBusy => 'Bitte warte, bis alles hochgeladen ist.';
+  String redesignImportBarDone(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Noten-Import fertig: $count Dateien hochgeladen',
+      one: 'Noten-Import fertig: 1 Datei hochgeladen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportBarIncomplete =>
+      'Noten-Import beendet, nicht alles hochgeladen';
+
+  @override
+  String get redesignImportBarOpen => 'Ansehen';
+
+  @override
+  String redesignImportBarRunning(Object percent) {
+    return 'Noten-Import · $percent %';
+  }
+
+  @override
+  String get redesignImportCancel => 'Import abbrechen';
+
+  @override
+  String get redesignImportCancelKeep => 'Weiter hochladen';
+
+  @override
+  String get redesignImportCancelMessage =>
+      'Die Dateien, die gerade hochgeladen werden, kommen noch an. Was schon oben ist, bleibt. Den Rest kannst du danach hochladen.';
+
+  @override
+  String get redesignImportCancelTitle => 'Import abbrechen?';
+
+  @override
+  String get redesignImportCancelling =>
+      'Wird abgebrochen … die laufenden Dateien kommen noch an.';
 
   @override
   String get redesignImportCategoryFiles => 'Andere Dateien';
@@ -12064,7 +12180,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportConfirmKeepOpen =>
-      'Lass die Seite offen, bis alles fertig ist.';
+      'Währenddessen kannst du in der App weiterarbeiten. Lass die App offen, bis alles fertig ist.';
 
   @override
   String redesignImportConfirmMessage(num files, Object works) {
@@ -12135,6 +12251,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportDoneAnother => 'Weitere Noten importieren';
 
   @override
+  String redesignImportDoneCancelled(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Abgebrochen. $count Dateien wurden nicht hochgeladen.',
+      one: 'Abgebrochen. 1 Datei wurde nicht hochgeladen.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignImportDoneFailed => 'Fehlgeschlagen';
 
   @override
@@ -12147,10 +12274,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportDoneNewWorks => 'Neue Werke';
 
   @override
+  String get redesignImportDoneNotUploaded => 'Nicht hochgeladen';
+
+  @override
   String get redesignImportDoneOpen => 'Nicht geprüft, nicht übernommen';
 
   @override
   String get redesignImportDoneRetry => 'Fehlgeschlagene erneut hochladen';
+
+  @override
+  String get redesignImportDoneRetryRest => 'Restliche Dateien hochladen';
 
   @override
   String get redesignImportDoneSkipped => 'Weggelassen';
@@ -12439,7 +12572,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportKeepOpen =>
-      'Lass diese Seite offen, bis alles hochgeladen ist. Was schon oben ist, bleibt auch bei einem Abbruch erhalten.';
+      'Du kannst die Seite verlassen und in der App weiterarbeiten. Der Upload läuft weiter, solange die App offen ist. Den Stand siehst du unten am Bildschirm.';
 
   @override
   String get redesignImportLearnFailed =>
@@ -12471,6 +12604,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportNewGroupTitle => 'Neue Gruppe anlegen';
+
+  @override
+  String get redesignImportNumberNone =>
+      'Der Ordner hat keine Nummer, deshalb bekommt das Werk die nächste freie.';
+
+  @override
+  String redesignImportNumberTaken(Object number) {
+    return '$number ist schon vergeben, deshalb bekommt das Werk die nächste freie Nummer.';
+  }
 
   @override
   String redesignImportOpenHint(num count) {
@@ -12779,6 +12921,20 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportTargetTitle => 'Ziel in Attendix';
+
+  @override
+  String redesignImportTimeLeft(num minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'noch etwa $minutes Minuten',
+      one: 'noch etwa 1 Minute',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportTimeLeftShort => 'noch weniger als eine Minute';
 
   @override
   String get redesignImportTitle => 'Noten importieren';

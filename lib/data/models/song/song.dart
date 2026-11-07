@@ -191,11 +191,11 @@ extension SongCollectionX on SongCollection {
 
 /// Extension for Song
 extension SongExtension on Song {
-  /// Full song number with prefix
+  /// Full song number with prefix; empty without a number (a Kürzel alone
+  /// says nothing: "T" in the list of a Sammlung).
   String get fullNumber {
-    final p = prefix ?? '';
-    final n = number?.toString() ?? '';
-    return '$p$n'.trim();
+    if (number == null) return '';
+    return '${prefix ?? ''}$number'.trim();
   }
   
   /// Display name with number

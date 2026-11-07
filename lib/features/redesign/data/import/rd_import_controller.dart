@@ -27,11 +27,14 @@ enum RdImportStep { source, reading, questions, review, uploading, done }
 
 /// A file that could not be uploaded.
 class RdImportFailure {
-  const RdImportFailure({required this.path, required this.work, required this.error});
+  const RdImportFailure({required this.path, required this.work, required this.error, this.cancelled = false});
 
   final String path;
   final String work;
   final String error;
+
+  /// Not uploaded because the import was cancelled (no error).
+  final bool cancelled;
 }
 
 /// Progress and result of the upload.
@@ -48,6 +51,9 @@ class RdImportUpload {
     this.finished = false,
     this.learnFailed = false,
     this.aborted = false,
+    this.cancelled = false,
+    this.filesSince,
+    this.filesFrom = 0,
   });
 
   final int total;
@@ -70,6 +76,15 @@ class RdImportUpload {
   /// Stopped because the group was switched meanwhile.
   final bool aborted;
 
+  /// Cancelled by hand ("Abbrechen"): the files being uploaded still
+  /// arrive, the others are not uploaded.
+  final bool cancelled;
+
+  /// When the files started (after new groups and Werke) and how many were
+  /// [done] then: for the time left ([rdImportTimeLeft]).
+  final DateTime? filesSince;
+  final int filesFrom;
+
   RdImportUpload copyWith({
     int? done,
     int? succeeded,
@@ -81,6 +96,9 @@ class RdImportUpload {
     bool? finished,
     bool? learnFailed,
     bool? aborted,
+    bool? cancelled,
+    DateTime? filesSince,
+    int? filesFrom,
   }) =>
       RdImportUpload(
         total: total,
@@ -94,8 +112,31 @@ class RdImportUpload {
         finished: finished ?? this.finished,
         learnFailed: learnFailed ?? this.learnFailed,
         aborted: aborted ?? this.aborted,
+        cancelled: cancelled ?? this.cancelled,
+        filesSince: filesSince ?? this.filesSince,
+        filesFrom: filesFrom ?? this.filesFrom,
       );
+
 }
+
+/// About how long the upload still takes at [now], from the pace of the
+/// files so far; null until a few files are done (the first ones say
+/// little).
+Duration? rdImportTimeLeft(RdImportUpload upload, DateTime now) {
+  final since = upload.filesSince;
+  final done = upload.done - upload.filesFrom;
+  if (since == null || upload.finished || done < 3) return null;
+  final elapsed = now.difference(since);
+  if (elapsed < const Duration(seconds: 5)) return null;
+  final left = upload.total - upload.done;
+  if (left <= 0) return Duration.zero;
+  return elapsed * (left / done);
+}
+
+/// The upload of the Noten-Import while it runs, and its result until it
+/// was seen: the bar in the shell shows it on every other page (the upload
+/// goes on when the import page is left). Written by [RdImportController].
+final rdImportRunProvider = StateProvider<RdImportUpload?>((ref) => null);
 
 class RdImportState {
   const RdImportState({
@@ -289,8 +330,13 @@ String _uploadError(Object e) {
 
 class RdImportController extends AutoDisposeNotifier<RdImportState> {
   RdImportFiles? _source;
+  /// Held from the start of an upload until its result was seen
+  /// ([resultSeen]): the upload goes on when the page is left.
   KeepAliveLink? _keep;
   bool _disposed = false;
+
+  /// "Abbrechen" was tapped during the upload.
+  bool _cancel = false;
   int? _tenantId;
   bool _otherLibrary = false;
   int? _mainGroupId;
@@ -326,11 +372,19 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       _disposed = true;
       _source?.close();
     });
+    // The result of an import does not go along into another group.
+    ref.listen(currentTenantIdProvider, (previous, next) {
+      if (previous == next) return;
+      Future.microtask(() {
+        if (!_disposed && state.step == RdImportStep.done) resultSeen();
+      });
+    });
     return const RdImportState();
   }
 
   /// Back to the start (another ZIP).
   void restart() {
+    resultSeen();
     _aiRun++;
     _clearPages();
     _dated.clear();
@@ -1120,10 +1174,11 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     });
   }
 
-  /// Uploads the files of the ready Werke: new groups and Werke first, then
-  /// the files (three Werke at a time; each upload keeps the Besetzung of
-  /// its Werk) and saves the part names chosen by hand as terms of the
-  /// groups. [only] = paths of an earlier run that failed (retry).
+  /// Uploads the files of the ready Werke: new groups first, then the files
+  /// (three Werke at a time, a new Werk created before its first file; each
+  /// upload keeps the Besetzung of its Werk) and saves the part names chosen
+  /// by hand as terms of the groups. [only] = paths of an earlier run that
+  /// failed or was cancelled (retry). [cancelUpload] stops it.
   Future<void> upload({Set<String>? only}) async {
     final plan = state.plan;
     final source = _source;
@@ -1144,8 +1199,9 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     // Pages still being read do not change what is uploaded.
     _pagesRun++;
     _keep ??= ref.keepAlive();
+    _cancel = false;
     var progress = RdImportUpload(total: items.length);
-    state = state.copyWith(step: RdImportStep.uploading, upload: progress);
+    _show(progress, step: RdImportStep.uploading);
     final failures = <RdImportFailure>[];
     final succeeded = <String>{};
     bool tenantChanged() => _disposed || ref.read(currentTenantIdProvider) != tenantId;
@@ -1158,6 +1214,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       for (final name in rdImportNewGroups(items)) {
         if (_createdGroups.containsKey(name)) continue;
         if (tenantChanged()) return;
+        if (_cancel) break;
         final same = existingGroups.where((g) => g.name.trim().toLowerCase() == name.trim().toLowerCase() && g.id != null);
         if (same.isNotEmpty) {
           _createdGroups[name] = same.first.id!;
@@ -1174,52 +1231,58 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         progress = progress.copyWith(newGroups: progress.newGroups + 1);
       }
 
-      // 2. New Werke.
-      final songIds = <String, int>{};
-      for (final work in {for (final i in items) i.work}) {
+      // 2. The files, three Werke at a time, each Werk file by file; a new
+      // Werk is created right before its first file (a cancel leaves no
+      // empty Werke).
+      final failed = {for (final f in failures) f.path};
+      final byWork = <String, List<RdUploadItem>>{};
+      for (final i in items) {
+        if (failed.contains(i.file.path)) continue;
+        byWork.putIfAbsent(i.work.key, () => []).add(i);
+      }
+      final queue = byWork.values.toList();
+      var done = failures.length;
+      progress = progress.copyWith(filesSince: DateTime.now(), filesFrom: done);
+      _show(progress.copyWith(done: done, failures: [...failures], cancelled: _cancel));
+
+      /// The Werk of [list]: found, created before, or created now ([fresh]);
+      /// null when that failed (then its files failed too).
+      Future<({int id, bool fresh})?> songOf(List<RdUploadItem> list) async {
+        final work = list.first.work;
         final target = rdTargetOf(plan, decisions, work);
-        if (target.songId != null) {
-          songIds[work.key] = target.songId!;
-          continue;
-        }
+        if (target.songId != null) return (id: target.songId!, fresh: false);
         final created = _created[work.key];
-        if (created != null) {
-          songIds[work.key] = created;
-          continue;
-        }
-        if (tenantChanged()) return;
+        if (created != null) return (id: created, fresh: false);
         try {
           final song = await songs.createSong(
               // A new Werk chosen by hand gets the Sammlung's Kürzel too.
               Song(name: target.name!, number: target.number, prefix: target.prefix ?? plan.newPrefix, collectionId: state.collectionId));
           if (song.id == null) throw StateError('no id');
-          _created[work.key] = songIds[work.key] = song.id!;
           progress = progress.copyWith(newWorks: progress.newWorks + 1);
+          return (id: _created[work.key] = song.id!, fresh: true);
         } catch (e) {
-          for (final i in items.where((i) => i.work == work)) {
+          for (final i in list) {
             failures.add(RdImportFailure(path: i.file.path, work: work.title, error: friendlyErrorMessage(e)));
           }
+          done += list.length;
+          return null;
         }
       }
-      state = state.copyWith(upload: progress.copyWith(failures: [...failures]));
 
-      // 3. The files, three Werke at a time, each Werk file by file.
-      final failed = {for (final f in failures) f.path};
-      final byWork = <String, List<RdUploadItem>>{};
-      for (final i in items) {
-        if (failed.contains(i.file.path) || songIds[i.work.key] == null) continue;
-        byWork.putIfAbsent(i.work.key, () => []).add(i);
-      }
-      final queue = byWork.values.toList();
-      var done = failures.length;
       Future<void> worker() async {
         while (queue.isNotEmpty) {
+          if (tenantChanged() || _cancel) return;
           final list = queue.removeAt(0);
+          final song = await songOf(list);
+          if (song == null) continue;
+          final songId = song.id;
           for (final item in list) {
             if (tenantChanged()) return;
-            final songId = songIds[item.work.key]!;
+            // A Werk created just now still gets its first file (no empty
+            // Werk when "Abbrechen" came meanwhile).
+            if (_cancel && !(song.fresh && item == list.first)) return;
             progress = progress.copyWith(current: '${item.file.name} · ${item.work.title}', succeeded: succeeded.length);
-            state = state.copyWith(upload: progress.copyWith(done: done, failures: [...failures]));
+            _show(progress.copyWith(done: done, failures: [...failures], cancelled: _cancel));
             try {
               // A part for several groups is stored once per group.
               final several = item.stores.length > 1;
@@ -1253,8 +1316,18 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         progress = progress.copyWith(done: done, failures: [...failures], aborted: true);
         return;
       }
+      // Cancelled: what was not uploaded can be uploaded later ("Restliche
+      // Dateien hochladen").
+      if (_cancel) {
+        final failed = {for (final f in failures) f.path};
+        for (final i in items) {
+          if (!succeeded.contains(i.file.path) && !failed.contains(i.file.path)) {
+            failures.add(RdImportFailure(path: i.file.path, work: i.work.title, error: '', cancelled: true));
+          }
+        }
+      }
 
-      // 4. Part names chosen by hand become terms of their groups.
+      // 3. Part names chosen by hand become terms of their groups.
       final uploaded = items.where((i) => succeeded.contains(i.file.path)).toList();
       final groups = await ref.read(groupsProvider.future).catchError((_) => existingGroups);
       final instruments = [
@@ -1274,6 +1347,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         learned: learnFailed ? 0 : terms.values.fold<int>(0, (n, list) => n + list.length),
         learnFailed: learnFailed,
         finished: true,
+        cancelled: _cancel,
       );
     } catch (e) {
       // Every file not uploaded yet can be tried again.
@@ -1294,14 +1368,39 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         ref.invalidate(songsListDataProvider);
         ref.invalidate(groupsProvider);
         final switched = ref.read(currentTenantIdProvider) != tenantId;
-        state = state.copyWith(
+        // Kept until the result was seen (the page may have been left),
+        // not into another group.
+        _show(
+          progress.copyWith(succeeded: succeeded.length, finished: true, aborted: progress.aborted || switched),
           step: RdImportStep.done,
-          upload: progress.copyWith(succeeded: succeeded.length, finished: true, aborted: progress.aborted || switched),
         );
+        if (switched) resultSeen();
       }
-      _keep?.close();
-      _keep = null;
     }
+  }
+
+  /// The upload for the page and for the bar in the shell.
+  void _show(RdImportUpload upload, {RdImportStep? step}) {
+    state = state.copyWith(step: step, upload: upload);
+    ref.read(rdImportRunProvider.notifier).state = upload;
+  }
+
+  /// "Abbrechen" during the upload: the files being uploaded still arrive,
+  /// no other one starts; the part names of those uploaded are learned.
+  void cancelUpload() {
+    final upload = state.upload;
+    if (state.step != RdImportStep.uploading || upload == null || _cancel) return;
+    _cancel = true;
+    _show(upload.copyWith(cancelled: true));
+  }
+
+  /// The result was seen (on the page, or its bar was closed): the import
+  /// goes once no page shows it any more.
+  void resultSeen() {
+    if (state.step == RdImportStep.uploading) return;
+    if (ref.read(rdImportRunProvider) != null) ref.read(rdImportRunProvider.notifier).state = null;
+    _keep?.close();
+    _keep = null;
   }
 }
 

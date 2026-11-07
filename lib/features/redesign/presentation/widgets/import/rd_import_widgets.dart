@@ -8,6 +8,7 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/choir_file_utils.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/app_dialog.dart';
+import '../../../data/import/rd_import_controller.dart' show RdImportUpload, rdImportTimeLeft;
 import '../../../data/import/rd_import_logic.dart';
 import '../rd_widgets.dart';
 
@@ -414,4 +415,12 @@ String rdImportWorkSubtitle(BuildContext context, RdImportPlan plan, RdImportWor
     if (state.skipCount > 0) l10n.redesignImportReviewCounts(state.skipCount),
     if (name != null && name.isNotEmpty && plain(name) != plain(work.folderName)) l10n.redesignImportReviewTarget(name),
   ].join(' · ');
+}
+
+/// "noch etwa 3 Minuten" for [upload] now; null while it cannot be said yet.
+String? rdImportTimeLeftText(AppLocalizations l10n, RdImportUpload upload) {
+  final left = rdImportTimeLeft(upload, DateTime.now());
+  if (left == null) return null;
+  if (left < const Duration(minutes: 1)) return l10n.redesignImportTimeLeftShort;
+  return l10n.redesignImportTimeLeft((left.inSeconds / 60).ceil());
 }

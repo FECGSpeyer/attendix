@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.84.0",
+      "date": "7.11.2026",
+      "changes": [
+        "✨ Sammlungen: Beim Löschen einer Sammlung lassen sich ihre Werke samt Noten mitlöschen (mit zweiter Rückfrage)",
+        "✨ Noten-Import: Neue Werke in einer Sammlung mit Kürzel bekommen die nächste freie Nummer, wenn der Ordner keine hat oder sie schon vergeben ist",
+        "✨ Noten-Import: Der Upload lässt sich abbrechen, läuft beim Verlassen der Seite weiter (Leiste unten mit Stand und Ergebnis) und zeigt die Restzeit",
+        "🐛 Noten-Import: Ein Abbruch hinterlässt keine leeren Werke; neue Werke entstehen erst vor ihrer ersten Datei",
+        "🐛 Werke: Ein Kürzel ohne Nummer steht nicht mehr allein in der Liste"
+      ]
+    },
+    {
       "version": "0.83.1",
       "date": "7.11.2026",
       "changes": [

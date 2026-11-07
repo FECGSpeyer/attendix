@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import '../../../../core/utils/choir_file_utils.dart' show kChoirAllNote;
 import '../../../../core/utils/instrument_matcher.dart';
 import '../../../../data/models/song/song.dart';
@@ -1434,27 +1436,68 @@ class RdImportDecisions {
 }
 
 /// Proposed target of [work]: the Werk found, or a new Werk with the folder's
-/// number when that number is still free.
+/// number when that number is still free. Into a Sammlung with a Kürzel a
+/// new Werk without a free number gets the next one after the highest
+/// (Leon, 07.11.2026): no Werk there stays without a number.
 RdWorkTarget rdDefaultTarget(RdImportPlan plan, RdImportWork work) {
   final id = work.match.songId;
   if (id != null) return RdWorkTarget.song(id);
   if (work.key == 'loose') return const RdWorkTarget.skip();
-  final number = work.number;
-  String norm(String? p) => (p ?? '').trim().toUpperCase();
-  // In a Sammlung new Werke get its Kürzel.
-  String? prefixOf(RdImportWork w) => plan.newPrefix ?? w.prefix;
-  final prefix = prefixOf(work);
-  final taken = number != null &&
-      (plan.takenNumbers.contains(rdImportNumberKey(prefix, number)) ||
-          plan.songs.values.any((s) => s.number == number && norm(s.prefix) == norm(prefix)) ||
-          plan.works.any((w) =>
-              w != work &&
-              w.match.songId == null &&
-              w.number == number &&
-              norm(prefixOf(w)) == norm(prefix) &&
-              plan.works.indexOf(w) < plan.works.indexOf(work)));
-  return RdWorkTarget.create(name: work.title, number: taken ? null : number, prefix: taken ? plan.newPrefix : prefix);
+  return rdNewWorkTarget(plan, work);
 }
+
+/// [work] as a new Werk (also one found in Attendix but chosen "Als neues
+/// Werk anlegen"): its number from [_numbersOf]; in a Sammlung its Kürzel.
+RdWorkTarget rdNewWorkTarget(RdImportPlan plan, RdImportWork work) {
+  // A Werk found in Attendix has its name as title: a new one is named after the folder.
+  final parsed = rdParseWorkName(work.folderName).title;
+  final name = work.match.songId == null && work.title.isNotEmpty
+      ? work.title
+      : (parsed.isEmpty ? work.folderName : parsed);
+  final number = _numbersOf(plan)[work.key];
+  return RdWorkTarget.create(name: name, number: number, prefix: number == null ? plan.newPrefix : plan.newPrefix ?? work.prefix);
+}
+
+/// Folder numbers of new Werke still free (in the order of the Werke: the
+/// first keeps a number twice in the folders), then in a Sammlung with a
+/// Kürzel the next free numbers for the others. Werke found in Attendix
+/// come after all new ones (a number for when one is made new by hand).
+/// Once per plan.
+final _numbers = Expando<Map<String, int?>>();
+
+Map<String, int?> _numbersOf(RdImportPlan plan) => _numbers[plan] ??= () {
+      final used = {
+        ...plan.takenNumbers,
+        for (final s in plan.songs.values)
+          if (s.number != null) rdImportNumberKey(s.prefix, s.number!),
+      };
+      final numbers = <String, int?>{};
+      final without = <RdImportWork>[];
+      final works = [
+        for (final w in plan.works)
+          if (w.key != 'loose' && w.match.songId == null) w,
+        for (final w in plan.works)
+          if (w.key != 'loose' && w.match.songId != null) w,
+      ];
+      for (final w in works) {
+        final n = w.number;
+        if (n != null && used.add(rdImportNumberKey(plan.newPrefix ?? w.prefix, n))) {
+          numbers[w.key] = n;
+        } else {
+          numbers[w.key] = null;
+          without.add(w);
+        }
+      }
+      final prefix = plan.newPrefix?.trim() ?? '';
+      if (prefix.isNotEmpty && without.isNotEmpty) {
+        final head = '${prefix.toUpperCase()}|';
+        var next = used.where((k) => k.startsWith(head)).fold<int>(0, (m, k) => math.max(m, int.tryParse(k.substring(head.length)) ?? 0));
+        for (final w in without) {
+          numbers[w.key] = ++next;
+        }
+      }
+      return numbers;
+    }();
 
 RdWorkTarget rdTargetOf(RdImportPlan plan, RdImportDecisions d, RdImportWork work) =>
     d.targets[work.key] ?? rdDefaultTarget(plan, work);

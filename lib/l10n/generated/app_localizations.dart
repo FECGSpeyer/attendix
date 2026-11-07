@@ -4043,6 +4043,12 @@ abstract class AppLocalizations {
   /// **'Sammlung löschen'**
   String get collectionsDelete;
 
+  /// collections.deleteChoose
+  ///
+  /// In de, this message translates to:
+  /// **'Was soll mit den Werken in „{name}“ passieren?'**
+  String collectionsDeleteChoose(Object name);
+
   /// collections.deleteConfirm
   ///
   /// In de, this message translates to:
@@ -4054,6 +4060,60 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Die Sammlung konnte nicht gelöscht werden.'**
   String get collectionsDeleteFailed;
+
+  /// collections.deleteImportRunning
+  ///
+  /// In de, this message translates to:
+  /// **'Gerade läuft ein Noten-Import. Lösche die Werke, wenn er fertig ist.'**
+  String get collectionsDeleteImportRunning;
+
+  /// collections.deleteKeepWorks
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Das Werk ins Repertoire verschieben} other {Die {count} Werke ins Repertoire verschieben}}'**
+  String collectionsDeleteKeepWorks(num count);
+
+  /// collections.deleteWithWorks
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Das Werk samt Noten löschen} other {Alle {count} Werke samt Noten löschen}}'**
+  String collectionsDeleteWithWorks(num count);
+
+  /// collections.deleteWorksConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Endgültig löschen'**
+  String get collectionsDeleteWorksConfirm;
+
+  /// collections.deleteWorksFailed
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk konnte nicht gelöscht werden. Es bleibt mit der Sammlung erhalten.} other {{count} Werke konnten nicht gelöscht werden. Sie bleiben mit der Sammlung erhalten.}}'**
+  String collectionsDeleteWorksFailed(num count);
+
+  /// collections.deleteWorksMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Die Werke in „{name}“ werden mit allen Noten und Dateien gelöscht, danach die Sammlung. Das lässt sich nicht rückgängig machen.'**
+  String collectionsDeleteWorksMessage(Object name);
+
+  /// collections.deleteWorksTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk endgültig löschen?} other {{count} Werke endgültig löschen?}}'**
+  String collectionsDeleteWorksTitle(num count);
+
+  /// collections.deletedWorks
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Sammlung und 1 Werk gelöscht} other {Sammlung und {count} Werke gelöscht}}'**
+  String collectionsDeletedWorks(num count);
+
+  /// collections.deletingWorks
+  ///
+  /// In de, this message translates to:
+  /// **'Wird gelöscht … {done} von {total}'**
+  String collectionsDeletingWorks(Object done, Object total);
 
   /// collections.editHint
   ///
@@ -19541,11 +19601,59 @@ abstract class AppLocalizations {
   /// **'Andere …'**
   String get redesignImportAnswerOther;
 
-  /// redesign.import.busy
+  /// redesign.import.barDone
   ///
   /// In de, this message translates to:
-  /// **'Bitte warte, bis alles hochgeladen ist.'**
-  String get redesignImportBusy;
+  /// **'{count, plural, one {Noten-Import fertig: 1 Datei hochgeladen} other {Noten-Import fertig: {count} Dateien hochgeladen}}'**
+  String redesignImportBarDone(num count);
+
+  /// redesign.import.barIncomplete
+  ///
+  /// In de, this message translates to:
+  /// **'Noten-Import beendet, nicht alles hochgeladen'**
+  String get redesignImportBarIncomplete;
+
+  /// redesign.import.barOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Ansehen'**
+  String get redesignImportBarOpen;
+
+  /// redesign.import.barRunning
+  ///
+  /// In de, this message translates to:
+  /// **'Noten-Import · {percent} %'**
+  String redesignImportBarRunning(Object percent);
+
+  /// redesign.import.cancel
+  ///
+  /// In de, this message translates to:
+  /// **'Import abbrechen'**
+  String get redesignImportCancel;
+
+  /// redesign.import.cancelKeep
+  ///
+  /// In de, this message translates to:
+  /// **'Weiter hochladen'**
+  String get redesignImportCancelKeep;
+
+  /// redesign.import.cancelMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Die Dateien, die gerade hochgeladen werden, kommen noch an. Was schon oben ist, bleibt. Den Rest kannst du danach hochladen.'**
+  String get redesignImportCancelMessage;
+
+  /// redesign.import.cancelTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Import abbrechen?'**
+  String get redesignImportCancelTitle;
+
+  /// redesign.import.cancelling
+  ///
+  /// In de, this message translates to:
+  /// **'Wird abgebrochen … die laufenden Dateien kommen noch an.'**
+  String get redesignImportCancelling;
 
   /// redesign.import.categoryFiles
   ///
@@ -19610,7 +19718,7 @@ abstract class AppLocalizations {
   /// redesign.import.confirmKeepOpen
   ///
   /// In de, this message translates to:
-  /// **'Lass die Seite offen, bis alles fertig ist.'**
+  /// **'Währenddessen kannst du in der App weiterarbeiten. Lass die App offen, bis alles fertig ist.'**
   String get redesignImportConfirmKeepOpen;
 
   /// redesign.import.confirmMessage
@@ -19691,6 +19799,12 @@ abstract class AppLocalizations {
   /// **'Weitere Noten importieren'**
   String get redesignImportDoneAnother;
 
+  /// redesign.import.doneCancelled
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Abgebrochen. 1 Datei wurde nicht hochgeladen.} other {Abgebrochen. {count} Dateien wurden nicht hochgeladen.}}'**
+  String redesignImportDoneCancelled(num count);
+
   /// redesign.import.doneFailed
   ///
   /// In de, this message translates to:
@@ -19715,6 +19829,12 @@ abstract class AppLocalizations {
   /// **'Neue Werke'**
   String get redesignImportDoneNewWorks;
 
+  /// redesign.import.doneNotUploaded
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht hochgeladen'**
+  String get redesignImportDoneNotUploaded;
+
   /// redesign.import.doneOpen
   ///
   /// In de, this message translates to:
@@ -19726,6 +19846,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Fehlgeschlagene erneut hochladen'**
   String get redesignImportDoneRetry;
+
+  /// redesign.import.doneRetryRest
+  ///
+  /// In de, this message translates to:
+  /// **'Restliche Dateien hochladen'**
+  String get redesignImportDoneRetryRest;
 
   /// redesign.import.doneSkipped
   ///
@@ -20114,7 +20240,7 @@ abstract class AppLocalizations {
   /// redesign.import.keepOpen
   ///
   /// In de, this message translates to:
-  /// **'Lass diese Seite offen, bis alles hochgeladen ist. Was schon oben ist, bleibt auch bei einem Abbruch erhalten.'**
+  /// **'Du kannst die Seite verlassen und in der App weiterarbeiten. Der Upload läuft weiter, solange die App offen ist. Den Stand siehst du unten am Bildschirm.'**
   String get redesignImportKeepOpen;
 
   /// redesign.import.learnFailed
@@ -20164,6 +20290,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Neue Gruppe anlegen'**
   String get redesignImportNewGroupTitle;
+
+  /// redesign.import.numberNone
+  ///
+  /// In de, this message translates to:
+  /// **'Der Ordner hat keine Nummer, deshalb bekommt das Werk die nächste freie.'**
+  String get redesignImportNumberNone;
+
+  /// redesign.import.numberTaken
+  ///
+  /// In de, this message translates to:
+  /// **'{number} ist schon vergeben, deshalb bekommt das Werk die nächste freie Nummer.'**
+  String redesignImportNumberTaken(Object number);
 
   /// redesign.import.openHint
   ///
@@ -20596,6 +20734,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Ziel in Attendix'**
   String get redesignImportTargetTitle;
+
+  /// redesign.import.timeLeft
+  ///
+  /// In de, this message translates to:
+  /// **'{minutes, plural, one {noch etwa 1 Minute} other {noch etwa {minutes} Minuten}}'**
+  String redesignImportTimeLeft(num minutes);
+
+  /// redesign.import.timeLeftShort
+  ///
+  /// In de, this message translates to:
+  /// **'noch weniger als eine Minute'**
+  String get redesignImportTimeLeftShort;
 
   /// redesign.import.title
   ///

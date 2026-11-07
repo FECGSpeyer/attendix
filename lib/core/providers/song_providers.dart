@@ -776,6 +776,66 @@ class SongCollectionNotifier extends Notifier<AsyncValue<void>> {
     }
   }
 
+  /// Deletes Sammlung [id] together with its Werke and their files (after
+  /// a test import: hundreds of Werke). The Werke are read from the server, four
+  /// deleted at a time; [onProgress] after each. The Sammlung goes only when
+  /// a fresh read finds no Werk left in it (one added meanwhile is deleted in
+  /// another round): those that failed stay in it. [ok] = the Sammlung is
+  /// deleted; [failed] Werke could not be deleted.
+  Future<({bool ok, int deleted, int failed})> deleteWithWorks(
+    int id, {
+    void Function(int done, int total)? onProgress,
+  }) async {
+    final repo = _repo;
+    state = const AsyncValue.loading();
+    var deleted = 0;
+    var failed = 0;
+    try {
+      // From the server only: a cached list would say nothing about what is left.
+      Future<List<int>> left() => repo.getSongIdsInCollection(id);
+      var total = 0;
+      for (var round = 0; round < 3; round++) {
+        final queue = await left();
+        if (queue.isEmpty) break;
+        total += queue.length;
+        Future<void> worker() async {
+          while (queue.isNotEmpty) {
+            final songId = queue.removeLast();
+            try {
+              await repo.deleteSong(songId);
+              deleted++;
+            } catch (_) {
+              failed++;
+            }
+            onProgress?.call(deleted + failed, total);
+          }
+        }
+
+        await Future.wait([for (var i = 0; i < 4; i++) worker()]);
+        if (failed > 0) {
+          state = const AsyncValue.data(null);
+          return (ok: false, deleted: deleted, failed: failed);
+        }
+      }
+      final rest = await left();
+      if (rest.isNotEmpty) {
+        state = const AsyncValue.data(null);
+        return (ok: false, deleted: deleted, failed: rest.length);
+      }
+      await repo.deleteSongCollection(id);
+      state = const AsyncValue.data(null);
+      return (ok: true, deleted: deleted, failed: 0);
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return (ok: false, deleted: deleted, failed: failed);
+    } finally {
+      ref.invalidate(songCollectionsProvider);
+      ref.invalidate(songsProvider);
+      ref.invalidate(currentSongsProvider);
+      ref.read(songCollectionChangesProvider.notifier).state++;
+    }
+  }
+
   /// Changes the prefix of Sammlung [id] and of its Werke with the old one,
   /// all or nothing. [clash] when a number would then be taken twice.
   Future<({bool ok, bool clash})> renamePrefix(int id, String prefix) async {

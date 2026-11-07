@@ -3025,6 +3025,13 @@
   "@collectionsDelete": {
     "description": "collections.delete"
   },
+  "collectionsDeleteChoose": "Was soll mit den Werken in „{name}“ passieren?",
+  "@collectionsDeleteChoose": {
+    "description": "collections.deleteChoose",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "collectionsDeleteConfirm": "„{name}“ löschen? Ihre Werke kommen ins Repertoire zurück.",
   "@collectionsDeleteConfirm": {
     "description": "collections.deleteConfirm",
@@ -3035,6 +3042,74 @@
   "collectionsDeleteFailed": "Die Sammlung konnte nicht gelöscht werden.",
   "@collectionsDeleteFailed": {
     "description": "collections.deleteFailed"
+  },
+  "collectionsDeleteImportRunning": "Gerade läuft ein Noten-Import. Lösche die Werke, wenn er fertig ist.",
+  "@collectionsDeleteImportRunning": {
+    "description": "collections.deleteImportRunning"
+  },
+  "collectionsDeleteKeepWorks": "{count, plural, one {Das Werk ins Repertoire verschieben} other {Die {count} Werke ins Repertoire verschieben}}",
+  "@collectionsDeleteKeepWorks": {
+    "description": "collections.deleteKeepWorks",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "collectionsDeleteWithWorks": "{count, plural, one {Das Werk samt Noten löschen} other {Alle {count} Werke samt Noten löschen}}",
+  "@collectionsDeleteWithWorks": {
+    "description": "collections.deleteWithWorks",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "collectionsDeleteWorksConfirm": "Endgültig löschen",
+  "@collectionsDeleteWorksConfirm": {
+    "description": "collections.deleteWorksConfirm"
+  },
+  "collectionsDeleteWorksFailed": "{count, plural, one {1 Werk konnte nicht gelöscht werden. Es bleibt mit der Sammlung erhalten.} other {{count} Werke konnten nicht gelöscht werden. Sie bleiben mit der Sammlung erhalten.}}",
+  "@collectionsDeleteWorksFailed": {
+    "description": "collections.deleteWorksFailed",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "collectionsDeleteWorksMessage": "Die Werke in „{name}“ werden mit allen Noten und Dateien gelöscht, danach die Sammlung. Das lässt sich nicht rückgängig machen.",
+  "@collectionsDeleteWorksMessage": {
+    "description": "collections.deleteWorksMessage",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "collectionsDeleteWorksTitle": "{count, plural, one {1 Werk endgültig löschen?} other {{count} Werke endgültig löschen?}}",
+  "@collectionsDeleteWorksTitle": {
+    "description": "collections.deleteWorksTitle",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "collectionsDeletedWorks": "{count, plural, one {Sammlung und 1 Werk gelöscht} other {Sammlung und {count} Werke gelöscht}}",
+  "@collectionsDeletedWorks": {
+    "description": "collections.deletedWorks",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "collectionsDeletingWorks": "Wird gelöscht … {done} von {total}",
+  "@collectionsDeletingWorks": {
+    "description": "collections.deletingWorks",
+    "placeholders": {
+      "done": {},
+      "total": {}
+    }
   },
   "collectionsEditHint": "Änderungen werden sofort gespeichert.",
   "@collectionsEditHint": {
@@ -14942,9 +15017,49 @@
   "@redesignImportAnswerOther": {
     "description": "redesign.import.answerOther"
   },
-  "redesignImportBusy": "Bitte warte, bis alles hochgeladen ist.",
-  "@redesignImportBusy": {
-    "description": "redesign.import.busy"
+  "redesignImportBarDone": "{count, plural, one {Noten-Import fertig: 1 Datei hochgeladen} other {Noten-Import fertig: {count} Dateien hochgeladen}}",
+  "@redesignImportBarDone": {
+    "description": "redesign.import.barDone",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportBarIncomplete": "Noten-Import beendet, nicht alles hochgeladen",
+  "@redesignImportBarIncomplete": {
+    "description": "redesign.import.barIncomplete"
+  },
+  "redesignImportBarOpen": "Ansehen",
+  "@redesignImportBarOpen": {
+    "description": "redesign.import.barOpen"
+  },
+  "redesignImportBarRunning": "Noten-Import · {percent} %",
+  "@redesignImportBarRunning": {
+    "description": "redesign.import.barRunning",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "redesignImportCancel": "Import abbrechen",
+  "@redesignImportCancel": {
+    "description": "redesign.import.cancel"
+  },
+  "redesignImportCancelKeep": "Weiter hochladen",
+  "@redesignImportCancelKeep": {
+    "description": "redesign.import.cancelKeep"
+  },
+  "redesignImportCancelMessage": "Die Dateien, die gerade hochgeladen werden, kommen noch an. Was schon oben ist, bleibt. Den Rest kannst du danach hochladen.",
+  "@redesignImportCancelMessage": {
+    "description": "redesign.import.cancelMessage"
+  },
+  "redesignImportCancelTitle": "Import abbrechen?",
+  "@redesignImportCancelTitle": {
+    "description": "redesign.import.cancelTitle"
+  },
+  "redesignImportCancelling": "Wird abgebrochen … die laufenden Dateien kommen noch an.",
+  "@redesignImportCancelling": {
+    "description": "redesign.import.cancelling"
   },
   "redesignImportCategoryFiles": "Andere Dateien",
   "@redesignImportCategoryFiles": {
@@ -14992,7 +15107,7 @@
   "@redesignImportConfirmButton": {
     "description": "redesign.import.confirmButton"
   },
-  "redesignImportConfirmKeepOpen": "Lass die Seite offen, bis alles fertig ist.",
+  "redesignImportConfirmKeepOpen": "Währenddessen kannst du in der App weiterarbeiten. Lass die App offen, bis alles fertig ist.",
   "@redesignImportConfirmKeepOpen": {
     "description": "redesign.import.confirmKeepOpen"
   },
@@ -15064,6 +15179,15 @@
   "@redesignImportDoneAnother": {
     "description": "redesign.import.doneAnother"
   },
+  "redesignImportDoneCancelled": "{count, plural, one {Abgebrochen. 1 Datei wurde nicht hochgeladen.} other {Abgebrochen. {count} Dateien wurden nicht hochgeladen.}}",
+  "@redesignImportDoneCancelled": {
+    "description": "redesign.import.doneCancelled",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "redesignImportDoneFailed": "Fehlgeschlagen",
   "@redesignImportDoneFailed": {
     "description": "redesign.import.doneFailed"
@@ -15080,6 +15204,10 @@
   "@redesignImportDoneNewWorks": {
     "description": "redesign.import.doneNewWorks"
   },
+  "redesignImportDoneNotUploaded": "Nicht hochgeladen",
+  "@redesignImportDoneNotUploaded": {
+    "description": "redesign.import.doneNotUploaded"
+  },
   "redesignImportDoneOpen": "Nicht geprüft, nicht übernommen",
   "@redesignImportDoneOpen": {
     "description": "redesign.import.doneOpen"
@@ -15087,6 +15215,10 @@
   "redesignImportDoneRetry": "Fehlgeschlagene erneut hochladen",
   "@redesignImportDoneRetry": {
     "description": "redesign.import.doneRetry"
+  },
+  "redesignImportDoneRetryRest": "Restliche Dateien hochladen",
+  "@redesignImportDoneRetryRest": {
+    "description": "redesign.import.doneRetryRest"
   },
   "redesignImportDoneSkipped": "Weggelassen",
   "@redesignImportDoneSkipped": {
@@ -15398,7 +15530,7 @@
   "@redesignImportGroupUnclearDetail": {
     "description": "redesign.import.groupUnclearDetail"
   },
-  "redesignImportKeepOpen": "Lass diese Seite offen, bis alles hochgeladen ist. Was schon oben ist, bleibt auch bei einem Abbruch erhalten.",
+  "redesignImportKeepOpen": "Du kannst die Seite verlassen und in der App weiterarbeiten. Der Upload läuft weiter, solange die App offen ist. Den Stand siehst du unten am Bildschirm.",
   "@redesignImportKeepOpen": {
     "description": "redesign.import.keepOpen"
   },
@@ -15433,6 +15565,17 @@
   "redesignImportNewGroupTitle": "Neue Gruppe anlegen",
   "@redesignImportNewGroupTitle": {
     "description": "redesign.import.newGroupTitle"
+  },
+  "redesignImportNumberNone": "Der Ordner hat keine Nummer, deshalb bekommt das Werk die nächste freie.",
+  "@redesignImportNumberNone": {
+    "description": "redesign.import.numberNone"
+  },
+  "redesignImportNumberTaken": "{number} ist schon vergeben, deshalb bekommt das Werk die nächste freie Nummer.",
+  "@redesignImportNumberTaken": {
+    "description": "redesign.import.numberTaken",
+    "placeholders": {
+      "number": {}
+    }
   },
   "redesignImportOpenHint": "{count, plural, one {1 Werk ist noch nicht geprüft und wird nicht hochgeladen.} other {{count} Werke sind noch nicht geprüft und werden nicht hochgeladen.}}",
   "@redesignImportOpenHint": {
@@ -15795,6 +15938,19 @@
   "redesignImportTargetTitle": "Ziel in Attendix",
   "@redesignImportTargetTitle": {
     "description": "redesign.import.targetTitle"
+  },
+  "redesignImportTimeLeft": "{minutes, plural, one {noch etwa 1 Minute} other {noch etwa {minutes} Minuten}}",
+  "@redesignImportTimeLeft": {
+    "description": "redesign.import.timeLeft",
+    "placeholders": {
+      "minutes": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportTimeLeftShort": "noch weniger als eine Minute",
+  "@redesignImportTimeLeftShort": {
+    "description": "redesign.import.timeLeftShort"
   },
   "redesignImportTitle": "Noten importieren",
   "@redesignImportTitle": {

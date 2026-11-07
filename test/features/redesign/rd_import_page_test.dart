@@ -44,6 +44,9 @@ class _FakeFiles implements SongFileService {
   /// Paths that fail.
   final failing = <String>{};
 
+  /// Uploads wait for it (files under way).
+  Completer<void>? gate;
+
   @override
   Future<String> uploadFile({
     required int songId,
@@ -53,6 +56,7 @@ class _FakeFiles implements SongFileService {
     int? mainGroupId,
     bool keepBesetzung = false,
   }) async {
+    await gate?.future;
     if (failing.contains(file.name)) throw Exception('Speicher voll');
     keeps.add(keepBesetzung);
     uploads.add('$songId ${file.name} ${file.bytes?.length} $instrumentId ${note ?? '-'}');
@@ -83,12 +87,16 @@ class _FakeFiles implements SongFileService {
 
 /// Werke: creates new ones, reports the Besetzung before/after the upload.
 class _FakeSongs implements SongRepository {
+  /// Creating a Werk waits for it.
+  Completer<void>? gate;
+
   final created = <Song>[];
   final updates = <int, Map<String, dynamic>>{};
   int _reads = 0;
 
   @override
   Future<Song> createSong(Song song) async {
+    await gate?.future;
     created.add(song);
     return song.copyWith(id: 900 + created.length);
   }
@@ -390,6 +398,64 @@ void main() {
     expect(copies.map((c) => (c['file'] as Map)['id']), unorderedEquals(['a000000001', 'a000000002', 'b000000001', 'b000000002']));
     expect(copies.every((c) => c['tenantId'] == 7), isTrue);
     expect(files.keeps, everyElement(isTrue));
+  });
+
+  test('"Abbrechen": the files under way arrive, the rest later; the result stays until seen', () async {
+    final files = _FakeFiles()..gate = Completer<void>();
+    final c = ProviderContainer(overrides: _overrides(files, _FakeSongs(), _FakeGroupNotifier()));
+    addTearDown(c.dispose);
+    final sub = c.listen(rdImportProvider, (_, __) {});
+    addTearDown(sub.close);
+    final controller = c.read(rdImportProvider.notifier);
+    await controller.read([_zipFile()]);
+    controller.answer('kazoo', const RdImportCategory(newGroup: 'Saxophon'));
+    final running = controller.upload();
+    await pumpEventQueue();
+    expect(c.read(rdImportRunProvider)!.finished, isFalse);
+    controller.cancelUpload();
+    expect(c.read(rdImportProvider).upload!.cancelled, isTrue);
+    files.gate!.complete();
+    await running;
+    // One file of each Werk was under way.
+    final upload = c.read(rdImportProvider).upload!;
+    expect((upload.cancelled, upload.succeeded, upload.failures.where((f) => f.cancelled).length), (true, 2, 2));
+    expect(c.read(rdImportRunProvider), same(upload));
+    controller.resultSeen();
+    expect(c.read(rdImportRunProvider), isNull);
+
+    await controller.upload(only: {for (final f in upload.failures) f.path});
+    expect(c.read(rdImportProvider).upload!.failures, isEmpty);
+    expect(files.uploads, hasLength(4));
+  });
+
+  test('"Abbrechen" while a new Werk is created: it still gets its first file', () async {
+    final files = _FakeFiles();
+    final songs = _FakeSongs()..gate = Completer<void>();
+    final c = ProviderContainer(overrides: _overrides(files, songs, _FakeGroupNotifier()));
+    addTearDown(c.dispose);
+    final sub = c.listen(rdImportProvider, (_, __) {});
+    addTearDown(sub.close);
+    final controller = c.read(rdImportProvider.notifier);
+    await controller.read([_zipFile()]);
+    controller.answer('kazoo', const RdImportCategory(newGroup: 'Saxophon'));
+    final running = controller.upload();
+    await pumpEventQueue();
+    controller.cancelUpload();
+    songs.gate!.complete();
+    await running;
+    final upload = c.read(rdImportProvider).upload!;
+    expect(files.uploads.where((u) => u.startsWith('901 ')), hasLength(1));
+    expect((upload.succeeded, upload.failures.where((f) => f.cancelled).length), (3, 1));
+  });
+
+  test('time left from the pace of the files so far', () {
+    final since = DateTime(2026, 11, 7, 12);
+    final run = const RdImportUpload(total: 100).copyWith(filesSince: since, filesFrom: 10, done: 30);
+    // Too few files or too early: nothing said yet.
+    expect(rdImportTimeLeft(run.copyWith(done: 12), since.add(const Duration(minutes: 1))), isNull);
+    expect(rdImportTimeLeft(run, since.add(const Duration(seconds: 3))), isNull);
+    // 20 files in 2 minutes, 70 left.
+    expect(rdImportTimeLeft(run, since.add(const Duration(minutes: 2))), const Duration(minutes: 7));
   });
 
   test('only uploaded files count; a stop before the first upload leaves every file to retry', () async {

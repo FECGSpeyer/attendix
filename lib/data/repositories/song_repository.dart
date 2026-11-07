@@ -767,6 +767,30 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
 
   /// Deletes a Sammlung; its Werke fall back to "Repertoire" (on delete
   /// set null).
+  /// Ids of the Werke in Sammlung [collectionId], from the server only (no
+  /// offline copy): a failed load throws. For deleting a Sammlung.
+  Future<List<int>> getSongIdsInCollection(int collectionId) async {
+    final tenantId = songTenantId;
+    try {
+      final ids = <int>[];
+      for (var from = 0;; from += _pageSize) {
+        final rows = await supabase
+            .from('songs')
+            .select('id')
+            .eq('tenantId', tenantId)
+            .eq('collection_id', collectionId)
+            .order('id', ascending: true)
+            .range(from, from + _pageSize - 1) as List;
+        ids.addAll(rows.map((r) => (r as Map<String, dynamic>)['id'] as int));
+        if (rows.length < _pageSize) break;
+      }
+      return ids;
+    } catch (e, stack) {
+      handleError(e, stack, 'getSongIdsInCollection');
+      rethrow;
+    }
+  }
+
   Future<void> deleteSongCollection(int id) async {
     ensureNotDemo('deleteSongCollection'); // DEMO_GUARD
     try {
