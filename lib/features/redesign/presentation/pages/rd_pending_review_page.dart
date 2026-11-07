@@ -16,6 +16,7 @@ import '../../../../core/utils/tenant_label_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../data/models/person/person.dart';
+import '../../../../data/models/tenant/tenant.dart' show ExtraField;
 import '../../../../data/repositories/extra_fields_repository.dart' show extraFieldDefaultValue;
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart' show showAppConfirm;
@@ -23,6 +24,7 @@ import '../../../people/person_write.dart';
 import '../../../people/presentation/pages/person_detail_page.dart' show personProvider;
 import '../../../people/presentation/widgets/duplicate_candidates_card.dart' show duplicateCandidatesProvider;
 import '../widgets/event/rd_form_widgets.dart';
+import '../widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/members/rd_person_form.dart';
 import '../widgets/rd_widgets.dart';
@@ -62,6 +64,10 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
   Map<String, dynamic> _additional = {};
   final Set<String> _touchedExtra = {};
 
+  /// Zusatzfelder that only hold a default (no stored value yet); they get
+  /// it again once the field definitions or Gemeinden are loaded.
+  final Set<String> _defaulted = {};
+
   /// Organisation fields; null when they could not be loaded (then nothing
   /// is approved, like the old page).
   Future<SharedPersonFields?>? _shared;
@@ -90,7 +96,11 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
 
   void _fill(Person person) {
     if (_person != null) return;
-    _tenantId = ref.read(currentTenantIdProvider);
+    final tenantId = ref.read(currentTenantIdProvider);
+    // A person of another group (value left from before a switch) is never
+    // bound to this one.
+    if (tenantId == null || person.tenantId != tenantId) return;
+    _tenantId = tenantId;
     _person = person;
     _draft = person;
     _first.text = person.firstName;
@@ -98,21 +108,26 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
     _email.text = person.email ?? '';
     _phone.text = person.phone ?? '';
     _notes.text = person.notes ?? '';
-    // Old page (_withExtraDefaults): missing Zusatzfeld values get their
-    // default and are written with the approval.
-    final fields = ref.read(personListExtraFieldsProvider);
+    _additional = Map<String, dynamic>.from(person.additionalFields ?? const {});
+    _shared = _loadShared(person);
+  }
+
+  /// Old page (_withExtraDefaults): missing Zusatzfeld values get their
+  /// default and are written with the approval. Runs on every build, so
+  /// definitions and Gemeinden loaded later still count; edited and stored
+  /// values stay.
+  void _applyDefaults(List<ExtraField> fields, List<Church> churches) {
     final churchIds = <Object>[
-      for (final c in ref.read(churchesProvider).valueOrNull ?? const <Church>[])
+      for (final c in churches)
         if (c.id != null) c.id!,
     ];
-    final values = Map<String, dynamic>.from(person.additionalFields ?? const {});
-    _additional = {
-      ...values,
-      for (final f in fields)
-        if (values[f.id] == null)
-          f.id: extraFieldDefaultValue(f.type, defaultValue: f.defaultValue, options: f.options, churchIds: churchIds),
-    };
-    _shared = _loadShared(person);
+    for (final f in fields) {
+      if (_touchedExtra.contains(f.id)) continue;
+      if (_additional[f.id] != null && !_defaulted.contains(f.id)) continue;
+      _additional[f.id] =
+          extraFieldDefaultValue(f.type, defaultValue: f.defaultValue, options: f.options, churchIds: churchIds);
+      _defaulted.add(f.id);
+    }
   }
 
   Future<SharedPersonFields?> _loadShared(Person person) async {
@@ -121,7 +136,10 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
       if (mounted) {
         setState(() {
           for (final e in shared.values.entries) {
-            if (shared.fieldIds.contains(e.key) && !_touchedExtra.contains(e.key)) _additional[e.key] = e.value;
+            if (shared.fieldIds.contains(e.key) && !_touchedExtra.contains(e.key)) {
+              _additional[e.key] = e.value;
+              if (e.value != null) _defaulted.remove(e.key);
+            }
           }
         });
       }
@@ -215,9 +233,6 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
       ToastHelper.showError(context, l10n.rdPeopleGroupSwitched);
       return;
     }
-    final additional = Map<String, dynamic>.from(_additional);
-    final fields = _draftFields(draft);
-    final changed = _changed.isNotEmpty;
     setState(() => _busy = true);
     try {
       final shared = await _shared;
@@ -230,6 +245,11 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
         ToastHelper.showError(context, l10n.rdPeopleGroupSwitched);
         return;
       }
+      // Copied once the organisation values are loaded (old approval flow).
+      final additional = Map<String, dynamic>.from(_additional);
+      final edited = _draft ?? draft;
+      final fields = _draftFields(edited);
+      final changed = _changed.isNotEmpty;
       if (changed) {
         final local = await saveSharedPersonFields(
           profileRepo,
@@ -244,9 +264,9 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
       // The notifier reads its repositories right away: still this group.
       if (!_sameTenant()) throw StateError('group switched');
       await notifier.approvePlayer(person.copyWith(
-        instrument: draft.instrument,
-        joined: draft.joined,
-        email: _textOrNull(draft.email),
+        instrument: edited.instrument,
+        joined: edited.joined,
+        email: _textOrNull(edited.email),
         additionalFields: additional,
       ));
       _refresh(id);
@@ -350,8 +370,16 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final async = ref.watch(personProvider(widget.personId));
-    final loaded = async.valueOrNull;
+    // Only a value that surely belongs to the current group (not one kept
+    // while reloading after a group switch).
+    final loaded = rdLoadedValue(async);
     if (loaded != null && loaded.pending) _fill(loaded);
+    if (_person != null) {
+      _applyDefaults(
+        ref.watch(personListExtraFieldsProvider),
+        ref.watch(churchesProvider).valueOrNull ?? const <Church>[],
+      );
+    }
     final person = _person;
     final draft = _draft;
     final tenantId = ref.watch(currentTenantIdProvider);

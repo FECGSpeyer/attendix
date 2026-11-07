@@ -46,6 +46,7 @@ final _auth = () {
 
 final _pending = Person(
   id: 7,
+  tenantId: 1,
   firstName: 'Neu',
   lastName: 'Ling',
   email: 'neu@test.de',
@@ -58,6 +59,7 @@ Future<void> _pump(WidgetTester tester, Widget home, {List<RankedMatch<Person>> 
   await tester.pumpWidget(ProviderScope(
     overrides: [
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
+      currentTenantIdProvider.overrideWithValue(1),
       supabaseAuthProvider.overrideWithValue(_auth),
       currentUserProvider.overrideWith((ref) => Stream.value(null)),
       currentAuthUserIdProvider.overrideWithValue(null),
