@@ -15505,6 +15505,17 @@
   "@redesignImportNewGroupTitle": {
     "description": "redesign.import.newGroupTitle"
   },
+  "redesignImportNumberNone": "Der Ordner hat keine Nummer, deshalb bekommt das Werk die nächste freie.",
+  "@redesignImportNumberNone": {
+    "description": "redesign.import.numberNone"
+  },
+  "redesignImportNumberTaken": "{number} ist schon vergeben, deshalb bekommt das Werk die nächste freie Nummer.",
+  "@redesignImportNumberTaken": {
+    "description": "redesign.import.numberTaken",
+    "placeholders": {
+      "number": {}
+    }
+  },
   "redesignImportOpenHint": "{count, plural, one {1 Werk ist noch nicht geprüft und wird nicht hochgeladen.} other {{count} Werke sind noch nicht geprüft und werden nicht hochgeladen.}}",
   "@redesignImportOpenHint": {
     "description": "redesign.import.openHint",

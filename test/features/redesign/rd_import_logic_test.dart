@@ -423,16 +423,31 @@ void main() {
     });
 
     test('into a Sammlung: new Werke get its Kürzel, numbers of the whole group count', () {
-      final entries = [_e('Noten/157 Jesus ruft dich/Viola.pdf'), _e('Noten/12 Neu/Viola.pdf')];
+      final entries = [
+        _e('Noten/157 Jesus ruft dich/Viola.pdf'),
+        _e('Noten/12 Neu/Viola.pdf'),
+        _e('Noten/O ich armer Sünder/Viola.pdf'),
+        _e('Noten/HZ 157 Die wahre Liebe/Viola.pdf'),
+      ];
       final plan = rdBuildImportPlan(entries,
           songs: const [],
           instruments: _instruments,
           isChoir: false,
           newPrefix: 'S',
           takenNumbers: {rdImportNumberKey('s', 12)});
-      RdWorkTarget target(String title) => rdDefaultTarget(plan, plan.works.firstWhere((w) => w.title == title));
-      expect((target('Jesus ruft dich').prefix, target('Jesus ruft dich').number), ('S', 157));
-      expect((target('Neu').prefix, target('Neu').number), ('S', null));
+      (String?, int?) target(String title) {
+        final t = rdDefaultTarget(plan, plan.works.firstWhere((w) => w.title == title));
+        return (t.prefix, t.number);
+      }
+
+      // 157 for one of the two; taken, twice in the folders or none: the
+      // next free ones after the highest.
+      expect({target('Jesus ruft dich'), target('Die wahre Liebe')}, contains(('S', 157)));
+      final all = {for (final t in ['Jesus ruft dich', 'Die wahre Liebe', 'Neu', 'O ich armer Sünder']) target(t)};
+      expect(all, {('S', 157), ('S', 158), ('S', 159), ('S', 160)});
+      // Into the Repertoire a Werk without number stays without.
+      final repertoire = rdBuildImportPlan(entries, songs: const [], instruments: _instruments, isChoir: false);
+      expect(rdDefaultTarget(repertoire, repertoire.works.firstWhere((w) => w.title == 'O ich armer Sünder')).number, isNull);
     });
   });
 

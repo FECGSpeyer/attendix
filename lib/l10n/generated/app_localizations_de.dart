@@ -12548,6 +12548,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportNewGroupTitle => 'Neue Gruppe anlegen';
 
   @override
+  String get redesignImportNumberNone =>
+      'Der Ordner hat keine Nummer, deshalb bekommt das Werk die nächste freie.';
+
+  @override
+  String redesignImportNumberTaken(Object number) {
+    return '$number ist schon vergeben, deshalb bekommt das Werk die nächste freie Nummer.';
+  }
+
+  @override
   String redesignImportOpenHint(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

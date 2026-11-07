@@ -12418,6 +12418,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportNewGroupTitle => 'Create new group';
 
   @override
+  String get redesignImportNumberNone =>
+      'The folder has no number, so the piece gets the next free one.';
+
+  @override
+  String redesignImportNumberTaken(Object number) {
+    return '$number is already taken, so the piece gets the next free number.';
+  }
+
+  @override
   String redesignImportOpenHint(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

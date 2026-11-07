@@ -145,6 +145,13 @@ class RdImportWorkPage extends ConsumerWidget {
             RdMatchKind.byAi => l10n.redesignImportMatchByAi,
             _ => null,
           };
+    // A number the import gave, not the folder's own.
+    final target = ws.target;
+    final numberHint = !target.isNew || target.number == null || target.number == work.number
+        ? null
+        : work.number == null
+            ? l10n.redesignImportNumberNone
+            : l10n.redesignImportNumberTaken('${plan.newPrefix ?? work.prefix ?? ''}${work.number}');
 
     return RdImportFrame(
       backLabel: l10n.redesignImportStepReview,
@@ -166,6 +173,10 @@ class RdImportWorkPage extends ConsumerWidget {
                     if (matchHint != null) ...[
                       const SizedBox(height: 4),
                       Text(matchHint, style: RdType.meta(p, size: 13).copyWith(color: p.late)),
+                    ],
+                    if (numberHint != null) ...[
+                      const SizedBox(height: 4),
+                      Text(numberHint, style: RdType.meta(p, size: 13)),
                     ],
                   ],
                 ),

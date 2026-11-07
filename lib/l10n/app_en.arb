@@ -3348,6 +3348,8 @@
   "redesignImportMenuHint": "Folder from Google Drive, Dropbox or your computer",
   "redesignImportNewGroupMessage": "Attendix creates the group only when uploading.",
   "redesignImportNewGroupTitle": "Create new group",
+  "redesignImportNumberNone": "The folder has no number, so the piece gets the next free one.",
+  "redesignImportNumberTaken": "{number} is already taken, so the piece gets the next free number.",
   "redesignImportOpenHint": "{count, plural, one {1 work is not reviewed yet and will not be uploaded.} other {{count} works are not reviewed yet and will not be uploaded.}}",
   "redesignImportOptionFassung": "Suggest the newest version",
   "redesignImportOptionFassungDetail": "If a work has several versions, the newest one is suggested. You decide in the review.",

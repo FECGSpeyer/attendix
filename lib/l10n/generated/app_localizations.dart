@@ -20219,6 +20219,18 @@ abstract class AppLocalizations {
   /// **'Neue Gruppe anlegen'**
   String get redesignImportNewGroupTitle;
 
+  /// redesign.import.numberNone
+  ///
+  /// In de, this message translates to:
+  /// **'Der Ordner hat keine Nummer, deshalb bekommt das Werk die nächste freie.'**
+  String get redesignImportNumberNone;
+
+  /// redesign.import.numberTaken
+  ///
+  /// In de, this message translates to:
+  /// **'{number} ist schon vergeben, deshalb bekommt das Werk die nächste freie Nummer.'**
+  String redesignImportNumberTaken(Object number);
+
   /// redesign.import.openHint
   ///
   /// In de, this message translates to:
