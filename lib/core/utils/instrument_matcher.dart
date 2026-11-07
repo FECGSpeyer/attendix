@@ -621,7 +621,7 @@ class InstrumentMatcher {
   /// no separator between ("Soprano Cornet", not "Die Geige - Sopran").
   static bool _adjacent(_Words words, ({int start, int end}) a, ({int start, int end}) b) {
     final (first, second) = a.start <= b.start ? (a, b) : (b, a);
-    return first.end > first.start && second.start == first.end && second.start < words.tokens.length && !words.hardBefore[second.start];
+    return first.end > first.start && second.start == first.end && second.start < words.tokens.length && !words.hardBefore[second.start] && !words.sectionBefore[second.start];
   }
 
   /// Families a group with [nameTokens] belongs to.

@@ -138,6 +138,8 @@ void main() {
       // A group of that kind stays; a Sopran apart from the instrument too.
       expect(_label('Sopran Saxophon.pdf', ['Sopran Saxophon', 'Saxophon']), 'Sopran Saxophon');
       expect(_label('Die Geige - Sopran.pdf', ['Sopran', 'Violine']), 'Sopran');
+      expect(_label('Die Geige — Sopran.pdf', ['Sopran', 'Violine']), 'Sopran');
+      expect(InstrumentMatcher.knownGroups('Die Geige — Sopran.pdf'), contains('Sopran'));
       expect(InstrumentMatcher.knownGroup('Alt.pdf'), isNull);
     });
 
