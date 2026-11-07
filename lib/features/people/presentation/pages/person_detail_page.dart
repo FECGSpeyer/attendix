@@ -170,6 +170,8 @@ final personHistoryProvider =
 
     return {
       'date': attendance?['date']?.toString(),
+      // Beta "Verlauf": a tap opens the Termin.
+      'attendanceId': attendance?['id'],
       'meetingName': meetingName,
       'text': displayStatus,
       'type': PlayerHistoryType.attendance.value,

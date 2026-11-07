@@ -94,7 +94,7 @@ void main() {
     test('absence excuse/reset write the duty fields', () {
       final src = _read('lib/data/repositories/player_absence_repository.dart');
       expect(src, contains('duty_state, attendance:attendance_id!inner('));
-      expect(src, contains('attType:type_id(duty_mode)'));
+      expect(src, contains('attType:type_id(duty_mode, name)'));
       final excuse = _method(src, 'Future<int> excuseUpcomingAttendances(');
       expect(excuse, contains('..._dutySync(row, AttendanceStatus.excused)'));
       final reset = _method(src, 'Future<int> resetExcusedAttendances(');

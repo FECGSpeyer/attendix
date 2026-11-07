@@ -9,6 +9,7 @@ import '../../../../../core/providers/player_providers.dart';
 import '../../../../../core/providers/realtime_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../data/models/person/person.dart' show PlayerHistoryEntry;
 import '../../../../../core/utils/toast_helper.dart';
 import '../../pages/person_detail_page.dart';
 import '../../../../../core/utils/demo_guard.dart';
@@ -88,13 +89,7 @@ class HistorieAccordion extends ConsumerWidget {
                 : null;
 
         // Filter to current season unless "show all" is active
-        final filteredHistory =
-            (seasonStart != null && !showAll)
-                ? history.where((item) {
-                  final date = DateTime.tryParse(item['date'] ?? '');
-                  return date == null || !date.isBefore(seasonStart);
-                }).toList()
-                : history;
+        final filteredHistory = filterHistoryBySeason(history, seasonStart, showAll: showAll);
 
         return Column(
           children: [
@@ -308,22 +303,7 @@ class HistorieAccordion extends ConsumerWidget {
 
       if (person == null || tenant == null) return;
 
-      // Remove the matching history entry by date and type
-      final itemDate = item['date']?.toString();
-      final itemType = item['type'] as int?;
-      final itemText = item['text']?.toString() ?? '';
-
-      final updatedHistory =
-          person.history
-              .where((h) {
-                // Match by date, type, and text to find exact entry
-                if (h.date == itemDate && h.type == itemType) {
-                  if ((h.text ?? '') == itemText) return false;
-                }
-                return true;
-              })
-              .map((h) => h.toJson())
-              .toList();
+      final updatedHistory = historyWithoutEntry(person.history, item);
 
       await repo.updatePlayerFields(person.id!, {'history': updatedHistory});
 
@@ -341,8 +321,41 @@ class HistorieAccordion extends ConsumerWidget {
     }
   }
 
-  /// Ionic onHisItemClicked for NOTES entries.
-  Future<void> _showOldNote(BuildContext context, DateTime date, String note) {
+  Future<void> _showOldNote(BuildContext context, DateTime date, String note) =>
+      showOldHistoryNote(context, date, note);
+}
+
+/// Entries of [personHistoryProvider] from [seasonStart] on (all with
+/// [showAll] or without a season start; entries without a date stay).
+List<Map<String, dynamic>> filterHistoryBySeason(
+  List<Map<String, dynamic>> history,
+  DateTime? seasonStart, {
+  required bool showAll,
+}) {
+  if (seasonStart == null || showAll) return history;
+  return history.where((item) {
+    final date = DateTime.tryParse(item['date'] ?? '');
+    return date == null || !date.isBefore(seasonStart);
+  }).toList();
+}
+
+/// The person's history as JSON without the entry [item] of
+/// [personHistoryProvider] (matched by date, type and text).
+List<Map<String, dynamic>> historyWithoutEntry(
+  List<PlayerHistoryEntry> history,
+  Map<String, dynamic> item,
+) {
+  final itemDate = item['date']?.toString();
+  final itemType = item['type'] as int?;
+  final itemText = item['text']?.toString() ?? '';
+  return history
+      .where((h) => !(h.date == itemDate && h.type == itemType && (h.text ?? '') == itemText))
+      .map((h) => h.toJson())
+      .toList();
+}
+
+/// Ionic onHisItemClicked for NOTES entries.
+Future<void> showOldHistoryNote(BuildContext context, DateTime date, String note) {
     return showAppDialog<void>(
       context: context,
       builder:
@@ -368,7 +381,6 @@ class HistorieAccordion extends ConsumerWidget {
             ],
           ),
     );
-  }
 }
 
 /// Title of a player history entry (Ionic person.page.html history section).
