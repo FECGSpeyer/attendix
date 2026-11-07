@@ -935,7 +935,13 @@ void main() {
     await tester.pump();
     expect(find.text('Schritt 2 von 4 · Stimmen'), findsOneWidget);
     expect(find.text('„Kazoo“ gehört zu …'), findsOneWidget);
+    // The proposed name is taken as it is; another one under "Andere …".
     await tester.tap(find.text('Neue Gruppe „Kazoo“'));
+    await tester.pumpAndSettle();
+    expect(find.byType(TextField), findsNothing);
+    await tester.tap(find.text('Andere …'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Neue Gruppe anlegen …'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'Saxophon');
     await tester.tap(find.text('Neue Gruppe anlegen').last);

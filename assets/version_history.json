@@ -4,7 +4,8 @@
       "version": "0.83.1",
       "date": "7.11.2026",
       "changes": [
-        "🐛 Noten-Import: Eine einzelne Datei wie „Klavier - Oboe“ schlägt nicht mehr für alle „Oboe“-Dateien „Klavier + Oboe“ vor"
+        "🐛 Noten-Import: Eine einzelne Datei wie „Klavier - Oboe“ schlägt nicht mehr für alle „Oboe“-Dateien „Klavier + Oboe“ vor",
+        "💄 Noten-Import: „Neue Gruppe „…““ bei einer Frage gilt sofort; einen anderen Namen gibt es unter „Andere …“ › „Neue Gruppe anlegen …“"
       ]
     },
     {

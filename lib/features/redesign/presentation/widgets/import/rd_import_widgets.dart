@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/choir_file_utils.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../data/import/rd_import_logic.dart';
 import '../rd_widgets.dart';
 
@@ -130,10 +131,15 @@ String rdImportCategoryLabel(BuildContext context, RdImportPlan plan, RdImportCa
   return c.note ?? l10n.redesignImportCategoryOther;
 }
 
+/// Picked "Neue Gruppe anlegen …" in [rdPickImportCategory].
+const _nameNewGroup = RdImportCategory(note: '\u0000newGroup');
+
 /// Sheet with every category, the groups ("Stimmen", with the [newGroups]
 /// still to be created) apart from the other kinds of files; returns the
 /// one picked. [header] stands above them (the file's first page);
 /// [several] (a part for several groups, "Posaune + Tuba") comes first.
+/// With [newGroupName] the groups end with "Neue Gruppe anlegen …", which
+/// asks for the name (filled in with it).
 Future<RdImportCategory?> rdPickImportCategory(
   BuildContext context,
   RdImportPlan plan, {
@@ -142,14 +148,40 @@ Future<RdImportCategory?> rdPickImportCategory(
   List<String> newGroups = const [],
   Widget? header,
   RdImportCategory? several,
-}) {
+  String? newGroupName,
+}) async {
+  final l10n = context.l10n;
   final options = [
     if (several != null) (several, rdImportCategoryLabel(context, plan, several)),
     ...rdImportCategoryOptions(context, plan, newGroups: newGroups),
   ];
   final partCount = plan.instruments.length + newGroups.length + (several == null ? 0 : 1);
-  final parts = options.take(partCount).toList();
+  final parts = [
+    ...options.take(partCount),
+    if (newGroupName != null) (_nameNewGroup, '${l10n.redesignImportNewGroupTitle} …'),
+  ];
   final files = options.skip(partCount).toList();
+  final picked = await _pickImportCategorySheet(context, title: title, current: current, header: header, parts: parts, files: files);
+  if (picked != _nameNewGroup || !context.mounted) return picked;
+  final name = await showAppPrompt(
+    context,
+    title: l10n.redesignImportNewGroupTitle,
+    message: l10n.redesignImportNewGroupMessage,
+    initialValue: newGroupName,
+    confirmText: l10n.redesignImportNewGroupTitle,
+  );
+  final trimmed = name?.trim() ?? '';
+  return trimmed.isEmpty ? null : RdImportCategory(newGroup: trimmed);
+}
+
+Future<RdImportCategory?> _pickImportCategorySheet(
+  BuildContext context, {
+  required String title,
+  required RdImportCategory? current,
+  required Widget? header,
+  required List<(RdImportCategory, String)> parts,
+  required List<(RdImportCategory, String)> files,
+}) {
   return showRdSheet<RdImportCategory>(
     context,
     Builder(builder: (context) {
