@@ -22,7 +22,6 @@ import '../../../../../data/models/tenant/tenant.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../songs/data/song_print_service.dart';
-import '../../../../songs/presentation/pages/song_detail_page.dart' show FileCategoryDialog;
 import '../../../../songs/presentation/utils/song_utils.dart';
 import '../../../../songs/presentation/widgets/copy_to_tenant_sheet.dart';
 import '../../../../songs/presentation/widgets/group_pdf_print.dart';
@@ -30,6 +29,8 @@ import '../../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../../data/rd_work_files_controller.dart';
 import '../../../data/rd_work_files_logic.dart';
 import '../../rd_actions.dart';
+import '../../../../../core/theme/redesign/rd_theme.dart';
+import 'rd_file_category_sheet.dart';
 
 /// REDESIGN: what a tap and "•••" do with the files of a Werk on the
 /// phone (canvas "Werke neu gedacht", boards 5 and 6). A tap opens the file
@@ -153,23 +154,17 @@ Future<void> rdShowWorkFileActions(
     case _FileAction.part:
       // Ionic category modal: Chor (alle) (choirs) / Sonstige (Freitext) /
       // Aufnahme / Liedtext / groups.
-      final result = await showAppDialog<({int? instrumentId, String? note})>(
-        context: button,
-        builder:
-            (_) => FileCategoryDialog(
-              instruments: data.instruments,
-              isChoir: data.isChoir,
-              initialInstrumentId:
-                  data.isChoir &&
-                          file.instrumentId == null &&
-                          ((file.note ?? '').isEmpty || isChoirAllFile(note: file.note))
-                      ? kChoirAllOptionValue
-                      : file.instrumentId,
-              initialNote:
-                  isChoirAllFile(instrumentId: file.instrumentId, note: file.note) && data.isChoir
-                      ? ''
-                      : (file.note ?? ''),
-            ),
+      final result = await showRdFileCategorySheet(
+        button,
+        title: file.fileName,
+        instruments: data.instruments,
+        isChoir: data.isChoir,
+        initialInstrumentId:
+            data.isChoir && file.instrumentId == null && ((file.note ?? '').isEmpty || isChoirAllFile(note: file.note))
+                ? kChoirAllOptionValue
+                : file.instrumentId,
+        initialNote:
+            isChoirAllFile(instrumentId: file.instrumentId, note: file.note) && data.isChoir ? '' : (file.note ?? ''),
       );
       if (result == null) return;
       if (result.instrumentId == file.instrumentId && (result.instrumentId != null || result.note == file.note)) {
@@ -284,7 +279,12 @@ Future<void> rdShowWorkMenu(
         isScrollControlled: true,
         useSafeArea: true,
         enableDrag: false, // not closable while copying
-        builder: (_) => CopyToTenantSheet(song: song, availableTenants: copyTargets),
+        // No Material drag handle: it could drag the sheet closed while
+        // copying (the sheet draws a decorative one itself).
+        backgroundColor: button.rd.bg,
+        builder:
+            (_) =>
+                SafeArea(top: false, child: CopyToTenantSheet(song: song, availableTenants: copyTargets, beta: true)),
       );
     case _WorkAction.groupPdfs:
       await printGroupPdfs(context: button, ref: ref, song: song, files: files, groups: groups);

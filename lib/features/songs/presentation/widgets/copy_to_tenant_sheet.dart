@@ -13,6 +13,9 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 
 /// `instrument_ids` of a copied song (Ionic copySongToTenant): the mapped
 /// target instrument ids of the copied files, without null and the reserved
@@ -32,7 +35,13 @@ class CopyToTenantSheet extends ConsumerStatefulWidget {
     super.key,
     required this.song,
     required this.availableTenants,
+    this.beta = false,
   });
+
+  /// REDESIGN: the Beta look (canvas "Datei-Dialoge im Werk"): target
+  /// group as a row, what comes along below, progress in the button.
+  /// Same copy as the old sheet.
+  final bool beta;
 
   @override
   ConsumerState<CopyToTenantSheet> createState() => _CopyToTenantSheetState();
@@ -63,7 +72,116 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
   // be closed before the copy is complete.
   @override
   Widget build(BuildContext context) =>
-      PopScope(canPop: !_isCopying, child: _buildSheet(context));
+      PopScope(canPop: !_isCopying, child: widget.beta ? _buildBeta(context) : _buildSheet(context));
+
+  Widget _buildBeta(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final target = widget.availableTenants.where((t) => t.id == _targetTenantId).firstOrNull;
+    final files = widget.song.files ?? const [];
+    const shown = 2;
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Decorative grab bar only (the sheet cannot be dragged closed).
+          Center(
+            child: Container(
+              width: 36,
+              height: 5,
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(color: p.line, borderRadius: BorderRadius.circular(3)),
+            ),
+          ),
+          // Like RdSheetHead, but "Abbrechen" is off while copying.
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 96,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton(
+                      key: const Key('rd-copy-cancel'),
+                      onPressed: _isCopying ? null : () => Navigator.of(context).pop(),
+                      child: Text(
+                        l10n.redesignCommonCancel,
+                        style: TextStyle(color: _isCopying ? p.text2 : p.link, fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Semantics(
+                    header: true,
+                    child: Text(
+                      l10n.songsCopySong,
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: RdType.section(p),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 96),
+              ],
+            ),
+          ),
+          RdGroupedList(
+            children: [
+              RdListRow(
+                key: const Key('rd-copy-target'),
+                title: l10n.personTargetGroup,
+                value: target?.longName ?? '',
+                onTap: _isCopying || widget.availableTenants.length < 2 ? null : _pickTarget,
+                showChevron: widget.availableTenants.length > 1,
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Text(l10n.songsCopyInfo(widget.song.name), style: RdType.meta(p, size: 13)),
+          ),
+          if (files.isNotEmpty) ...[
+            const SizedBox(height: 18),
+            RdGroupLabel(l10n.songsFlutterFilesWillBeCopied(files.length)),
+            RdGroupedList(
+              children: [
+                for (final f in files.take(shown)) RdListRow(title: f.fileName, showChevron: false),
+                if (files.length > shown)
+                  RdListRow(title: l10n.filesAndMore(files.length - shown), showChevron: false, titleColor: p.text2),
+              ],
+            ),
+          ],
+          const SizedBox(height: 20),
+          RdPrimaryButton(
+            key: const Key('rd-copy-start'),
+            label: _isCopying ? _progressMessage : l10n.songsCopy,
+            loading: _isCopying,
+            onPressed: _isCopying ? null : _copySong,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickTarget() async {
+    final picked = await showRdChoiceSheet<int>(
+      context,
+      title: context.l10n.personTargetGroup,
+      selected: _targetTenantId,
+      options: [
+        for (final t in widget.availableTenants)
+          if (t.id != null) (t.id!, t.longName),
+      ],
+    );
+    if (picked == null || !mounted || _isCopying) return;
+    setState(() => _targetTenantId = picked);
+  }
 
   Widget _buildSheet(BuildContext context) {
     return DraggableScrollableSheet(
