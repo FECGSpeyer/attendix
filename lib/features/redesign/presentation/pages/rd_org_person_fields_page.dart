@@ -11,6 +11,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/organisation/organisation.dart';
 import '../../../../data/models/plan/plan.dart';
+import '../../../../data/repositories/org_plan_repository.dart' show orgPlanRepositoryProvider;
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../organisation/presentation/pages/org_person_fields_page.dart'
@@ -96,7 +97,8 @@ class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
     String? success,
   }) async {
     final l10n = context.l10n;
-    final read = ProviderScope.containerOf(context, listen: false).read;
+    final container = ProviderScope.containerOf(context, listen: false);
+    final read = container.read;
     String? error;
     final ok = await _serialOrgFieldWrite(() async {
       try {
@@ -117,9 +119,22 @@ class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
           }
         }
         // Written only into [orgId] (checked again right before the write).
-        final stored = await read(
+        var stored = await read(
           planSettingsNotifierProvider.notifier,
         ).updateOrgExtraFields(next, deleted, orgId: orgId);
+        if (!stored) {
+          // A step may have been stored (e.g. the fields but not the removal
+          // of the values): load again, so the next change never builds on
+          // the old list.
+          container.invalidate(currentOrganisationProvider);
+          final now = await read(currentOrganisationProvider.future);
+          final ids = {for (final f in now?.additionalFields ?? const <OrgExtraField>[]) f.id};
+          if (now?.id == orgId && deleted.isNotEmpty && deleted.every((id) => !ids.contains(id))) {
+            // The field is gone: remove its values once more.
+            await read(orgPlanRepositoryProvider).deletePersonFieldValues(orgId, deleted);
+            stored = true;
+          }
+        }
         if (stored) {
           // The queue moves on once the stored list is loaded again, so the
           // next change builds on it; a failed reload shows the error below.
