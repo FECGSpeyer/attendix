@@ -39,7 +39,11 @@ import 'rd_folder_page.dart' show rdEventLabel;
 
 /// Search text of the Werke list, shared by every copy of the list (the
 /// split view builds a new one when the first Werk opens).
-final rdWorksQueryProvider = StateProvider<String>((ref) => '');
+final rdWorksQueryProvider = StateProvider<String>((ref) {
+  // A search does not follow into another group or account.
+  ref.watch(currentTenantIdProvider);
+  return '';
+});
 
 /// REDESIGN: tab "Werke" (canvas "Werke neu gedacht", board "Liste"):
 /// search, "Als Nächstes" (members: the own Noten for the next Termin,
@@ -184,7 +188,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
           context,
           rootNavigator: true,
         ).push<bool>(MaterialPageRoute(fullscreenDialog: true, builder: (_) => const SongImportPage()));
-        if (imported == true) {
+        if (imported == true && mounted) {
           ref.invalidate(songsProvider);
           ref.invalidate(songsListDataProvider);
         }
@@ -457,7 +461,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
             child: Row(
               children: [
                 RdChoiceChip(
-                  label: l10n.redesignWorksAll(data.songs.length),
+                  label: l10n.redesignWorksAll(listData.songs.length),
                   selected: filter.category == null,
                   onTap: () => filterNotifier.setCategory(null),
                 ),

@@ -54,7 +54,7 @@ class _RdOrgSongsPageState extends ConsumerState<RdOrgSongsPage> with OrgSongsLo
       });
     }
     final header = <Widget>[
-      RdBackLink(label: l10n.commonBack, onTap: _back),
+      RdBackLink(label: l10n.rdOrgBack, onTap: _back),
       const SizedBox(height: 4),
       Semantics(header: true, child: Text(l10n.rdOrgWorks, style: RdType.largeTitle(p))),
       const SizedBox(height: 12),

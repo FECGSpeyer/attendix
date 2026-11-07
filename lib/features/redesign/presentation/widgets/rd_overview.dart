@@ -56,8 +56,11 @@ class RdWorksOverviewPanel extends ConsumerWidget {
     // With Sammlungen: the Werke of the one the list shows.
     final collections = ref.watch(rdVisibleCollectionsProvider);
     final o = rdWorksOverview(
-      collections == null || collections.isEmpty
+      collections == null
           ? data.songs
+          // No visible Sammlung: only the Werke outside every Sammlung.
+          : collections.isEmpty
+          ? rdVisibleWorks(data.songs, collections)
           : rdWorksIn(
             rdVisibleWorks(data.songs, collections),
             rdShownCollectionId(ref.watch(rdWorksCollectionProvider), collections),
