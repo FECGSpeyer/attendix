@@ -26,6 +26,11 @@ void main() {
           '/settings/team-organization');
     });
 
+    test('uses the link table for every Ionic tab (no song-share fallback)', () {
+      expect(mapIonicRoute('/tabs/player'), '/people');
+      expect(mapIonicRoute('/tabs/list?tenantId=3'), '/attendance?tenantId=3');
+    });
+
     test('leaves Flutter routes untouched', () {
       expect(mapIonicRoute('/settings/tasks/1'), '/settings/tasks/1');
     });

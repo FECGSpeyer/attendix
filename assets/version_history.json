@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.72.1",
+      "date": "7.11.2026",
+      "changes": [
+        "🐛 Benachrichtigungen: Einträge mit Ionic-Route öffnen dieselbe Seite wie Links und Pushes (eine Zuordnungstabelle)",
+        "🐛 Alte Ionic-Links auf den Werke-Import öffnen die Werkeliste statt eines leeren Werks"
+      ]
+    },
+    {
       "version": "0.72.0",
       "date": "7.11.2026",
       "changes": [
