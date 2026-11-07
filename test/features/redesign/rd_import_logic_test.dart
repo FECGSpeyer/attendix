@@ -538,6 +538,10 @@ void main() {
       final viole = rdBuildImportPlan([_e('Noten/12 Le viole/Le viole - Vl II.pdf')], songs: const [], instruments: strings, isChoir: false);
       expect(rdWorkState(viole, const RdImportDecisions(), viole.works.single).files.values.single.category,
           const RdImportCategory(instrumentId: 32));
+      // The Werk number is no part number: which Violine stays open.
+      final air = rdBuildImportPlan([_e('Noten/02 Air/02 Air Violine und Cello.pdf')],
+          songs: const [], instruments: [...strings, const InstrumentInfo(id: 31, name: 'Cello')], isChoir: false);
+      expect(rdWorkState(air, const RdImportDecisions(), air.works.single).files.values.single.unclear, isTrue);
     });
   });
 

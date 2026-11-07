@@ -922,8 +922,11 @@ String rdImportWithoutWorkName(String name, String? workName) {
       .map(RegExp.escape)
       .toList();
   if (words.isEmpty) return stem;
+  // With the Werk number in front of it ("02 Air Violine und Cello"): no
+  // part number.
   stem = stem.replaceAll(
-    RegExp('(?<![\\p{L}\\p{N}])${words.join(r'[\s_\-.,]+')}(?![\\p{L}\\p{N}])', caseSensitive: false, unicode: true),
+    RegExp('(?:^\\s*\\d+[\\s._\\-]*)?(?<![\\p{L}\\p{N}])${words.join(r'[\s_\-.,]+')}(?![\\p{L}\\p{N}])',
+        caseSensitive: false, unicode: true),
     ' ',
   );
   final rest = stem.replaceAll(RegExp(r'^[\s\-–.,()]+|[\s\-–.,()]+$'), '').trim();
