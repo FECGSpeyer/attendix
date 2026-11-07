@@ -76,6 +76,10 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   /// null = the questions step with everything.
   Set<String>? _openOnly;
 
+  /// The questions were opened from the review ("Fragen beantworten"):
+  /// back goes there, also after "Alle Fragen zeigen".
+  bool _fromReview = false;
+
   /// "Zur Prüfung" was tapped and the plan is made again (a second or so
   /// with thousands of files): the button says so meanwhile.
   bool _preparing = false;
@@ -296,7 +300,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
       case RdImportStep.reading:
       case RdImportStep.done:
         _leave();
-      case RdImportStep.questions when _openOnly != null:
+      case RdImportStep.questions when _fromReview:
         await _toReview();
       case RdImportStep.questions:
         if (await _confirmDiscard() && mounted) {
@@ -323,6 +327,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
       _error = null;
       _filter = null;
       _openOnly = null;
+      _fromReview = false;
     });
     _controller.restart();
   }
@@ -719,7 +724,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
       ],
     );
     return RdImportFrame(
-      backLabel: openOnly == null ? l10n.redesignImportStepSource : l10n.redesignImportStepReview,
+      backLabel: _fromReview ? l10n.redesignImportStepReview : l10n.redesignImportStepSource,
       onBack: _back,
       title: l10n.redesignImportTitle,
       step: 2,
@@ -875,6 +880,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     setState(() {
       _filter = null;
       _openOnly = null;
+      _fromReview = false;
       _preparing = true;
     });
     // Show "Wird vorbereitet …" before the work blocks the page.
@@ -944,10 +950,13 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
             action: RdOutlineButton(
               label: l10n.redesignImportReviewAnswer,
               onPressed: () {
-                setState(() => _openOnly = {
-                      for (final q in plan.questions)
-                        if (d.answers[q.key] == null && q.proposed == null) q.key,
-                    });
+                setState(() {
+                  _openOnly = {
+                    for (final q in plan.questions)
+                      if (d.answers[q.key] == null && q.proposed == null) q.key,
+                  };
+                  _fromReview = true;
+                });
                 _controller.goTo(RdImportStep.questions);
               },
             ),

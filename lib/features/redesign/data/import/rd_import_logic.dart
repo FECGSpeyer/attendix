@@ -936,7 +936,8 @@ bool _maybeSeveral(String name, FileCategoryGuess guess, List<InstrumentInfo> in
       } else if (group(byName) != null && byName.confidence == MatchConfidence.sure) {
         c = RdImportCategory(instrumentId: group(byName));
       } else if (group(own) == null && group(byName) == null) {
-        c = RdImportCategory(newGroup: n);
+        // As for one part: "Violine 1" keeps its number.
+        c = RdImportCategory(newGroup: names.length == 1 ? InstrumentMatcher.knownGroup(piece, isChoir: isChoir) ?? n : n);
       } else {
         sure = false;
         c = RdImportCategory(instrumentId: group(own) ?? group(byName));
@@ -1140,7 +1141,7 @@ RdImportPlan rdBuildImportPlan(
     for (final f in live) {
       keys.putIfAbsent(f.fassungKey, () => <String>{});
       // A part for several groups counts for each of them.
-      for (final c in _decided(f, categories, answers, instruments, title, pageReads).each) {
+      for (final c in _decided(f, categories, answers, instruments, title, pageReads, isChoir).each) {
         final clash = rdImportClashKey(c);
         if (clash != null) keys[f.fassungKey]!.add(clash);
       }
@@ -1454,7 +1455,7 @@ class RdFileState {
 }
 
 RdImportCategory _categoryOf(RdImportPlan plan, RdImportDecisions d, RdImportFile f, RdImportWork work) =>
-    _decided(f, d.categories, d.answers, plan.instruments, work.title, plan.pageReads);
+    _decided(f, d.categories, d.answers, plan.instruments, work.title, plan.pageReads, plan.isChoir);
 
 /// The part of [f]: chosen by hand, else the answer to its question (with
 /// the file's own part number), else what the KI read on page 1, else the
@@ -1466,6 +1467,7 @@ RdImportCategory _decided(
   List<InstrumentInfo> instruments,
   String workTitle,
   Map<String, RdImportPageRead> pageReads,
+  bool isChoir,
 ) {
   final own = categories[f.path];
   if (own != null) return own;
@@ -1475,9 +1477,40 @@ RdImportCategory _decided(
     if (id != null && id > InstrumentMatcher.lyricsId) {
       return RdImportCategory(instrumentId: rdImportSiblingGroup(id, f.name, instruments, workName: workTitle));
     }
+    if (answer.isSeveral) return _severalOf(answer, f, instruments, isChoir);
     return answer;
   }
   return pageReads[f.path]?.category ?? f.guessed;
+}
+
+/// An answer for several groups as file [f] has it: one answer is given for
+/// "Posaune 1 und Tuba" and "Posaune 2 und Tuba", so a group of the same
+/// instrument that the file's own name gives for sure ("Posaune 2", "Violine
+/// 2 (neu)") takes the place of the answer's.
+RdImportCategory _severalOf(RdImportCategory answer, RdImportFile f, List<InstrumentInfo> instruments, bool isChoir) {
+  var own = f.several;
+  if (own.isEmpty) {
+    final named = rdImportNamedGroups(f.name, instruments, isChoir: isChoir);
+    if (named.sure) own = named.groups;
+  }
+  if (own.isEmpty) return answer;
+  String? instrument(RdImportCategory c) {
+    final name = c.newGroup ?? instruments.where((g) => g.id == c.instrumentId).firstOrNull?.name;
+    final known = name == null ? const <String>[] : InstrumentMatcher.knownGroups(name, isChoir: isChoir);
+    return known.length == 1 ? known.single : null;
+  }
+
+  final mine = <String, RdImportCategory>{
+    for (final c in own)
+      if (instrument(c) case final k?) k: c,
+  };
+  final groups = <RdImportCategory>[];
+  for (final c in answer.groups) {
+    final k = instrument(c);
+    final g = (k == null ? null : mine[k]) ?? c;
+    if (!groups.contains(g)) groups.add(g);
+  }
+  return groups.length > 1 ? RdImportCategory.several(groups) : groups.single;
 }
 
 RdFileState rdFileState(RdImportPlan plan, RdImportDecisions d, RdImportWork work, RdImportFile f) {
@@ -1765,7 +1798,7 @@ List<String> rdImportPendingGroups(RdImportPlan plan, RdImportDecisions d) {
   for (final work in plan.works) {
     for (final f in work.files) {
       if (f.hardSkip != null) continue;
-      for (final c in _decided(f, d.categories, d.answers, plan.instruments, work.title, plan.pageReads).each) {
+      for (final c in _decided(f, d.categories, d.answers, plan.instruments, work.title, plan.pageReads, plan.isChoir).each) {
         final name = c.newGroup;
         if (name == null || existing.contains(name.trim().toLowerCase())) continue;
         names.putIfAbsent(name.trim().toLowerCase(), () => name);

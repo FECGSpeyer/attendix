@@ -513,6 +513,23 @@ void main() {
         isChoir: false,
       );
       expect(versions.works.single.fassungen, hasLength(2));
+
+      // One question for "Posaune 1 und Tuba" and "Posaune 2 und Tuba": each
+      // file keeps its Posaune; a new Violine keeps its number.
+      final two = rdBuildImportPlan(
+        [_e('Noten/1 Eins/Posaune 1 und Tuba.pdf'), _e('Noten/2 Zwei/Posaune 2 und Tuba.pdf')],
+        songs: const [],
+        instruments: numbered.take(2).toList(),
+        isChoir: false,
+      );
+      final q = two.questions.single;
+      final answered = RdImportDecisions(answers: {q.key: q.proposed!});
+      expect([for (final w in two.works) rdWorkState(two, answered, w).files.values.single.category], [
+        const RdImportCategory.several([RdImportCategory(instrumentId: 20), RdImportCategory(newGroup: 'Tuba')]),
+        const RdImportCategory.several([RdImportCategory(instrumentId: 22), RdImportCategory(newGroup: 'Tuba')]),
+      ]);
+      expect(only('Violine 2 und Cello.pdf', const []).category,
+          const RdImportCategory.several([RdImportCategory(newGroup: 'Violine 2'), RdImportCategory(newGroup: 'Cello')]));
     });
   });
 
