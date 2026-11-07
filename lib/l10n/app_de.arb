@@ -14696,7 +14696,7 @@
   "@redesignImportAiOption": {
     "description": "redesign.import.aiOption"
   },
-  "redesignImportAiOptionDetail": "Unbekannte Stimmnamen, einige Dateinamen und die Namen unsicherer Werk-Ordner gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.",
+  "redesignImportAiOptionDetail": "Unbekannte Stimmnamen, einige Dateinamen, die Namen unsicherer Werk-Ordner und bei unklaren Stimmen ein Bild der ersten Seite gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.",
   "@redesignImportAiOptionDetail": {
     "description": "redesign.import.aiOptionDetail"
   },
@@ -15055,6 +15055,14 @@
   "@redesignImportFlagNew": {
     "description": "redesign.import.flagNew"
   },
+  "redesignImportFlagPage": "✦ Seite 1",
+  "@redesignImportFlagPage": {
+    "description": "redesign.import.flagPage"
+  },
+  "redesignImportFlagPageLabel": "Stimme von der KI auf der ersten Seite gelesen",
+  "@redesignImportFlagPageLabel": {
+    "description": "redesign.import.flagPageLabel"
+  },
   "redesignImportFlagPartExists": "Stimme schon da",
   "@redesignImportFlagPartExists": {
     "description": "redesign.import.flagPartExists"
@@ -15170,6 +15178,25 @@
   "@redesignImportOptionsTitle": {
     "description": "redesign.import.optionsTitle"
   },
+  "redesignImportPageRead": "✦ Auf Seite 1 gelesen: „{label}“",
+  "@redesignImportPageRead": {
+    "description": "redesign.import.pageRead",
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "redesignImportPagesLimit": "Die KI kann heute keine weiteren Seiten lesen. Unklare Stimmen bitte selbst zuordnen.",
+  "@redesignImportPagesLimit": {
+    "description": "redesign.import.pagesLimit"
+  },
+  "redesignImportPagesReading": "✦ Die KI liest die erste Seite unklarer Stimmen: {done} von {total}",
+  "@redesignImportPagesReading": {
+    "description": "redesign.import.pagesReading",
+    "placeholders": {
+      "done": {},
+      "total": {}
+    }
+  },
   "redesignImportPickNew": "Als neues Werk anlegen",
   "@redesignImportPickNew": {
     "description": "redesign.import.pickNew"
@@ -15189,6 +15216,25 @@
   "redesignImportPreparing": "Wird vorbereitet …",
   "@redesignImportPreparing": {
     "description": "redesign.import.preparing"
+  },
+  "redesignImportPreviewDrive": "In Google Drive öffnen",
+  "@redesignImportPreviewDrive": {
+    "description": "redesign.import.previewDrive"
+  },
+  "redesignImportPreviewNone": "Für diese Datei gibt es hier keine Vorschau.",
+  "@redesignImportPreviewNone": {
+    "description": "redesign.import.previewNone"
+  },
+  "redesignImportPreviewOf": "Erste Seite von {name}",
+  "@redesignImportPreviewOf": {
+    "description": "redesign.import.previewOf",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignImportPreviewZoom": "Tippen zum Vergrößern",
+  "@redesignImportPreviewZoom": {
+    "description": "redesign.import.previewZoom"
   },
   "redesignImportQuestionTitle": "„{name}“ gehört zu …",
   "@redesignImportQuestionTitle": {

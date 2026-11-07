@@ -8,6 +8,7 @@ import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/services/offline_queue_service.dart';
 import '../../../../core/utils/attendance_logic_utils.dart';
+import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/player_absence/player_absence.dart';
@@ -30,6 +31,20 @@ DateTime shiftByCalendarDays(DateTime value, int days) {
   final l = value.isUtc ? value.toLocal() : value;
   final moved = DateTime(l.year, l.month, l.day + days, l.hour, l.minute, l.second, l.millisecond, l.microsecond);
   return value.isUtc ? moved.toUtc() : moved;
+}
+
+/// Moves a stored deadline (local wall time in UTC notation) by [days]
+/// calendar days, keeping its wall time across DST changes.
+String? shiftDeadline(String? deadline, int days) {
+  if (deadline == null || deadline.isEmpty) return deadline;
+  final parsed = DateTime.tryParse(deadline);
+  if (parsed == null) return deadline;
+  // A value without zone is local time: store it the usual way first.
+  final stored = parsed.isUtc ? parsed : DateTime.parse(EventListUtils.deadlineToStore(parsed));
+  // UTC calendar arithmetic on the wall-time components: no local DST gap
+  // can move the time (02:30 stays 02:30).
+  return DateTime.utc(stored.year, stored.month, stored.day + days, stored.hour, stored.minute, stored.second)
+      .toIso8601String();
 }
 
 /// Ionic `hasNonDefaultStatus`: someone deviates from the type's default.
@@ -168,7 +183,8 @@ Future<bool> promptAttendanceDateChange(
     writeSession.ensureCurrent();
     await repo.updateAttendance(attendanceId, {
       'date': normalizedIso,
-      if (attendance.deadline != null) 'deadline': shift(attendance.deadline),
+      // The deadline is local wall time in UTC notation: move its wall time.
+      if (attendance.deadline != null) 'deadline': shiftDeadline(attendance.deadline, days),
       if (checklist != null) 'checklist': checklist,
     });
     writeSession.ensureCurrent();

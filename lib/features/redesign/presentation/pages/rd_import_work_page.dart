@@ -78,6 +78,14 @@ class RdImportWorkPage extends ConsumerWidget {
                             current: fs.category,
                             title: f.name,
                             newGroups: rdImportPendingGroups(plan, d),
+                            header: _previewable(f)
+                                ? RdImportPagePreview(
+                                    name: f.name,
+                                    page: () => controller.pagePreview(f.path),
+                                    link: controller.viewLink(f.path),
+                                    read: fs.pageRead?.label,
+                                  )
+                                : null,
                           );
                           if (picked != null) controller.setCategory(f.path, picked);
                         },
@@ -104,7 +112,16 @@ class RdImportWorkPage extends ConsumerWidget {
                 ],
               ),
             ),
-            if (fs.unclear) ...[const SizedBox(width: 8), RdPill(l10n.redesignImportFlagUnclear, tone: RdTone.late)],
+            if (fs.unclear)
+              ...[const SizedBox(width: 8), RdPill(l10n.redesignImportFlagUnclear, tone: RdTone.late)]
+            else if (fs.pageRead != null && fs.take)
+              ...[
+                const SizedBox(width: 8),
+                Semantics(
+                  label: l10n.redesignImportFlagPageLabel,
+                  child: ExcludeSemantics(child: RdPill(l10n.redesignImportFlagPage, tone: RdTone.primary)),
+                ),
+              ],
           ],
         ),
       );
@@ -233,6 +250,9 @@ class RdImportWorkPage extends ConsumerWidget {
     final above = path(folder.substring(0, folder.lastIndexOf('/')));
     return above.isEmpty ? null : above;
   }
+
+  /// A file whose first page can be shown (PDF, photo).
+  static bool _previewable(RdImportFile f) => const {'pdf', 'png', 'jpg', 'jpeg'}.contains(f.entry.extension);
 
   /// Sub-folder of [f] inside the Werk ("Alt", "Dirigenten › Stimmen").
   static String _folderOf(RdImportWork work, RdImportFile f) =>

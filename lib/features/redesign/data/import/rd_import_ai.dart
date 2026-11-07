@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/utils/choir_file_utils.dart';
 import '../../../../core/utils/instrument_matcher.dart';
+import '../../../songs/presentation/widgets/file_upload_sheet.dart' show guessFileCategory;
 import 'rd_import_logic.dart';
 
 /// REDESIGN: suggestions of the KI for the questions of "Noten importieren".
@@ -76,6 +77,39 @@ RdImportCategory? rdImportAiCategory(Map<String, dynamic> answer, {required Set<
       return RdImportCategory.other;
   }
   return null;
+}
+
+/// What part-detect read on page 1 ([groupId] of the tenant's groups,
+/// [label] the part name as printed) as the file's part: the group, else
+/// what the label names (a group, Partitur …, one known instrument without
+/// a group: "Neue Gruppe"); null when it names nothing usable. Only a sure
+/// read of a group is taken without a look.
+RdImportPageRead? rdImportPageRead({
+  int? groupId,
+  String? label,
+  required bool sure,
+  required List<InstrumentInfo> instruments,
+  required bool isChoir,
+}) {
+  final text = (label ?? '').trim();
+  if (groupId != null && instruments.any((i) => i.id == groupId)) {
+    return RdImportPageRead(RdImportCategory(instrumentId: groupId), label: text.isEmpty ? null : text, sure: sure);
+  }
+  if (text.isEmpty || text.length > 80) return null;
+  // As a file name: a label like "1. Vl" has no file ending to strip.
+  final asName = '$text.pdf';
+  final guess = guessFileCategory(asName, instruments: instruments, isChoir: false);
+  if (guess.confidence == MatchConfidence.sure && (guess.instrumentId != null || guess.note != null)) {
+    return RdImportPageRead(RdImportCategory(instrumentId: guess.instrumentId, note: guess.note), label: text);
+  }
+  final known = InstrumentMatcher.knownGroups(asName, isChoir: isChoir);
+  if (known.length != 1) return null;
+  final name = known.single;
+  final existing = instruments.where((i) => i.name.trim().toLowerCase() == name.toLowerCase()).firstOrNull;
+  return RdImportPageRead(
+    existing != null ? RdImportCategory(instrumentId: existing.id) : RdImportCategory(newGroup: name),
+    label: text,
+  );
 }
 
 class RdImportAi {
