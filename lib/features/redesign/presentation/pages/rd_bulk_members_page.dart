@@ -18,6 +18,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../people/presentation/widgets/pause_person_sheet.dart' show buildPauseHistoryText;
 import '../../data/rd_members_logic.dart';
 import '../../../settings/presentation/pages/left_players_page.dart' show leftPlayersProvider;
+import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_manage_entries.dart' show rdManagePendingProvider;
 import '../widgets/manage/rd_settings_sheets.dart' show showRdChoiceSheet, showRdTextSheet;
 import '../widgets/rd_widgets.dart';
@@ -302,10 +303,7 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
         ),
         const SizedBox(height: 12),
         if (peopleAsync.isLoading && people.isEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 48),
-            child: Center(child: CircularProgressIndicator(color: p.primary)),
-          ),
+          RdInfoCard(text: l10n.redesignTodayLoading, loading: true),
         for (final s in sections)
           if (s.people.any((x) => rdPersonMatches(x, _query, register: s.title))) ...[
             const SizedBox(height: 12),

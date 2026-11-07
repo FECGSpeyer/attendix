@@ -8,6 +8,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../settings/presentation/pages/handover_detail_page.dart';
 import '../../../settings/presentation/pages/handover_page.dart';
+import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
 import 'rd_handover_page.dart' show RdStepButton;
@@ -99,9 +100,7 @@ class _RdHandoverDetailPageState extends ConsumerState<RdHandoverDetailPage> wit
           const SizedBox(height: 4),
           Semantics(header: true, child: Text(l10n.rdOrgStep2Title, style: RdType.largeTitle(p))),
           if (!ready)
-            Center(
-              child: Padding(padding: const EdgeInsets.all(32), child: CircularProgressIndicator(color: p.primary)),
-            )
+            RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
           else ...[
             const SizedBox(height: 4),
             Text(l10n.rdOrgStep2Sub(data.tenant.longName, data.persons.length), style: RdType.meta(p)),
