@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.71.3",
+      "date": "7.11.2026",
+      "changes": [
+        "🐛 Antwortfrist überall gleich: „Frist an“ auf der Terminseite speichert die Vorgabezeit als Ortszeit (wie Datumswahl und Abmeldung), Elternseite und Übersichts-Hinweis zeigen und prüfen die Frist zur richtigen Uhrzeit"
+      ]
+    },
+    {
       "version": "0.71.2",
       "date": "7.11.2026",
       "changes": [

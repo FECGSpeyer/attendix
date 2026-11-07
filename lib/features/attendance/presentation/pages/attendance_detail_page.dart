@@ -1847,7 +1847,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           // LOGIC_ATT: Ionic onDeadlineToggleChanged (day before at type
           // start hour + 2, or the Termin day when that is already past)
           final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
-          deadlineStr = defaultDeadline(attendanceDate, type?.startTime).toUtc().toIso8601String();
+          // Stored as local wall time in UTC notation like every other write.
+          deadlineStr = EventListUtils.deadlineToStore(defaultDeadline(attendanceDate, type?.startTime));
         }
       }
     }
