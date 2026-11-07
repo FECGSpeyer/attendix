@@ -279,7 +279,8 @@ Future<void> rdShowWorkMenu(
         isScrollControlled: true,
         useSafeArea: true,
         enableDrag: false, // not closable while copying
-        showDragHandle: true,
+        // No Material drag handle: it could drag the sheet closed while
+        // copying (the sheet draws a decorative one itself).
         backgroundColor: button.rd.bg,
         builder:
             (_) =>

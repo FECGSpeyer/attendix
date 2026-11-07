@@ -86,6 +86,15 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Decorative grab bar only (the sheet cannot be dragged closed).
+          Center(
+            child: Container(
+              width: 36,
+              height: 5,
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(color: p.line, borderRadius: BorderRadius.circular(3)),
+            ),
+          ),
           // Like RdSheetHead, but "Abbrechen" is off while copying.
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
