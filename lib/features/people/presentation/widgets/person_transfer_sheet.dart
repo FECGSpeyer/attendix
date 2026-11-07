@@ -6,6 +6,7 @@ import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -15,6 +16,8 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/player_repository.dart' show HandoverResult;
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../redesign/presentation/widgets/manage/rd_settings_sheets.dart' show showRdChoiceSheet;
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import 'ion/ion_widgets.dart';
 
 /// Ionic person.page transfer modal (sheet, breakpoint 0.5): "Kopieren von
@@ -26,6 +29,11 @@ Future<bool> showPersonTransferSheet(
   Person person, {
   required bool copy,
 }) async {
+  if (RedesignRoutes.active) {
+    // REDESIGN: the same flow in a sheet of the new design.
+    final done = await showRdSheet<bool>(context, _PersonTransferSheet(person: person, copy: copy, beta: true));
+    return done ?? false;
+  }
   final done = await showModalBottomSheet<bool>(
     context: context,
     useRootNavigator: true,
@@ -37,10 +45,13 @@ Future<bool> showPersonTransferSheet(
 }
 
 class _PersonTransferSheet extends ConsumerStatefulWidget {
-  const _PersonTransferSheet({required this.person, required this.copy});
+  const _PersonTransferSheet({required this.person, required this.copy, this.beta = false});
 
   final Person person;
   final bool copy;
+
+  /// Drawn in the new design (Beta).
+  final bool beta;
 
   @override
   ConsumerState<_PersonTransferSheet> createState() => _PersonTransferSheetState();
@@ -100,7 +111,14 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
         return;
       }
 
-      final confirmed = await showAppDialog<bool>(
+      final confirmed = widget.beta
+          ? await showAppConfirm(
+              context,
+              title: copy ? l10n.personCopyPerson : l10n.personTransferPerson,
+              message: copy ? l10n.personCopyConfirm : l10n.personTransferConfirm,
+              confirmText: l10n.commonYes,
+            )
+          : await showAppDialog<bool>(
         context: context,
         builder: (ctx) => AppAlertDialog(
           title: Text(copy ? l10n.personCopyPerson : l10n.personTransferPerson),
@@ -118,6 +136,11 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
         ),
       );
       if (confirmed != true || !mounted) return;
+      // TENANT (Beta): after a group change nothing is handed over.
+      if (widget.beta && ref.read(currentTenantIdProvider) != source.id) {
+        ToastHelper.showError(context, l10n.rdPeopleGroupSwitched);
+        return;
+      }
 
       final result = await repo.handoverPlayer(
         player: person,
@@ -161,6 +184,7 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
       });
     }
     final name = '${widget.person.firstName} ${widget.person.lastName}';
+    if (widget.beta) return _buildBeta(context, tenants, name.trim());
 
     return ConstrainedBox(
       constraints: BoxConstraints(minHeight: MediaQuery.sizeOf(context).height * 0.5),
@@ -241,6 +265,93 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// REDESIGN: "{Name} übertragen / kopieren" with "Zielgruppe" and
+  /// "Register" as choice rows, a note and the primary button.
+  Widget _buildBeta(BuildContext context, List<Tenant> tenants, String name) {
+    final l10n = context.l10n;
+    final target = tenants.where((t) => t.id == _tenantId).firstOrNull;
+    final group = _groups.where((g) => g.id == _groupId).firstOrNull;
+    final tenantOptions = [
+      for (final t in tenants)
+        if (t.id != null) (t.id!, t.longName),
+    ];
+    final groupOptions = [
+      for (final g in _groups)
+        if (g.id != null) (g.id!, g.name),
+    ];
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          RdSheetTitle(widget.copy ? l10n.rdPeopleCopyTitle(name) : l10n.rdPeopleTransferTitle(name)),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (tenantOptions.isEmpty)
+                  RdHintBox(l10n.rdPeopleTransferNoTargets)
+                else ...[
+                  RdGroupedList(
+                    children: [
+                      RdListRow(
+                        key: const Key('rd-transfer-target'),
+                        title: l10n.rdPeopleTransferTarget,
+                        value: target?.longName ?? l10n.rdPeopleTransferChoose,
+                        onTap: _busy
+                            ? null
+                            : () async {
+                                final id = await showRdChoiceSheet<int>(
+                                  context,
+                                  title: l10n.rdPeopleTransferTarget,
+                                  options: tenantOptions,
+                                  selected: _tenantId,
+                                );
+                                if (id == null || id == _tenantId || !mounted) return;
+                                setState(() => _tenantId = id);
+                                _loadGroups(id);
+                              },
+                      ),
+                      RdListRow(
+                        key: const Key('rd-transfer-register'),
+                        title: l10n.rdPeopleTransferRegister,
+                        value: group?.name ??
+                            (groupOptions.isEmpty ? l10n.rdPeopleTransferNoRegisters : l10n.rdPeopleTransferChoose),
+                        onTap: _busy || groupOptions.isEmpty
+                            ? null
+                            : () async {
+                                final id = await showRdChoiceSheet<int>(
+                                  context,
+                                  title: l10n.rdPeopleTransferRegister,
+                                  options: groupOptions,
+                                  selected: _groupId,
+                                );
+                                if (id != null && mounted) setState(() => _groupId = id);
+                              },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  RdHintBox(widget.copy ? l10n.rdPeopleCopyHint : l10n.rdPeopleTransferHint),
+                  const SizedBox(height: 18),
+                  RdPrimaryButton(
+                    key: const Key('rd-transfer-submit'),
+                    label: widget.copy ? l10n.peopleFlutterHandoverCopy : l10n.handoverTransfer,
+                    loading: _busy,
+                    onPressed: _tenantId == null || _groupId == null ? null : () => _transfer(tenants),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
