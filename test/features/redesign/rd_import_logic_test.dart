@@ -436,6 +436,54 @@ void main() {
     });
   });
 
+  group('a part for several groups ("Posaune und Tuba")', () {
+    const brass = [InstrumentInfo(id: 20, name: 'Posaune'), InstrumentInfo(id: 21, name: 'Tuba')];
+    RdImportPlan plan(List<InstrumentInfo> instruments, {List<RdImportSong> songs = const []}) => rdBuildImportPlan(
+          [_e('Noten/120 Wie wunderbar/Posaune und Tuba.pdf')],
+          songs: songs,
+          instruments: instruments,
+          isChoir: false,
+        );
+
+    test('goes to each group, without a question when both exist', () {
+      final p = plan(brass);
+      final s = rdWorkState(p, const RdImportDecisions(), p.works.single).files.values.single;
+      expect(s.category, const RdImportCategory.several([RdImportCategory(instrumentId: 20), RdImportCategory(instrumentId: 21)]));
+      expect(s.unclear, isFalse);
+      expect(p.questions, isEmpty);
+      final items = rdImportUploads(p, RdImportDecisions(confirmed: {p.works.single.key}));
+      expect(items.single.stores, [const RdImportCategory(instrumentId: 20), const RdImportCategory(instrumentId: 21)]);
+      // "Nur Posaune" by hand is not learned as a term of Posaune.
+      final onlyPosaune = RdImportDecisions(
+        categories: {p.works.single.files.single.path: const RdImportCategory(instrumentId: 20)},
+        confirmed: {p.works.single.key},
+      );
+      expect(rdImportLearnedTerms(p, onlyPosaune, rdImportUploads(p, onlyPosaune), instruments: brass), isEmpty);
+    });
+
+    test('a missing group is proposed as new and asked about; a combined group stays one', () {
+      final p = plan([brass.first]);
+      expect(p.questions.single.proposed,
+          const RdImportCategory.several([RdImportCategory(instrumentId: 20), RdImportCategory(newGroup: 'Tuba')]));
+      final items = rdImportUploads(p, RdImportDecisions(confirmed: {p.works.single.key}));
+      expect(rdImportNewGroups(items), ['Tuba']);
+
+      final combined = plan(const [InstrumentInfo(id: 23, name: 'Posaune/Tuba')]);
+      expect(rdWorkState(combined, const RdImportDecisions(), combined.works.single).files.values.single.category,
+          const RdImportCategory(instrumentId: 23));
+    });
+
+    test('the Werk in Attendix gets only the part it lacks; left out when it has both', () {
+      SongFile file(int id) => SongFile(fileName: 'p$id.pdf', fileType: 'application/pdf', url: 'u', instrumentId: id);
+      final half = plan(brass, songs: [RdImportSong(id: 1, number: 120, name: 'Wie wunderbar', files: [file(20)])]);
+      final d = RdImportDecisions(confirmed: {half.works.single.key});
+      expect(rdImportUploads(half, d).single.stores, [const RdImportCategory(instrumentId: 21)]);
+
+      final full = plan(brass, songs: [RdImportSong(id: 1, number: 120, name: 'Wie wunderbar', files: [file(20), file(21)])]);
+      expect(rdWorkState(full, const RdImportDecisions(), full.works.single).files.values.single.reason, RdSkipReason.partExists);
+    });
+  });
+
   test('page 1 read by the KI: sure takes the file out of "Stimme unklar", unsure is proposed', () {
     final entries = [_e('Noten/Eins/Tag.pdf'), _e('Noten/Eins/Nacht.pdf'), _e('Noten/Eins/Viola.pdf')];
     const d = RdImportDecisions();

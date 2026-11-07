@@ -19097,6 +19097,12 @@ abstract class AppLocalizations {
   /// **'Neue Gruppe: {name}'**
   String redesignImportCategoryNewGroup(Object name);
 
+  /// redesign.import.categoryNewShort
+  ///
+  /// In de, this message translates to:
+  /// **'{name} (neu)'**
+  String redesignImportCategoryNewShort(Object name);
+
   /// redesign.import.categoryOther
   ///
   /// In de, this message translates to:

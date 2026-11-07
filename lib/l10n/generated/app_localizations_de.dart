@@ -11755,6 +11755,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String redesignImportCategoryNewShort(Object name) {
+    return '$name (neu)';
+  }
+
+  @override
   String get redesignImportCategoryOther => 'Sonstige';
 
   @override

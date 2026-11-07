@@ -78,6 +78,7 @@ class RdImportWorkPage extends ConsumerWidget {
                             current: fs.category,
                             title: f.name,
                             newGroups: rdImportPendingGroups(plan, d),
+                            several: f.guessed.isSeveral ? f.guessed : null,
                             header: _previewable(f)
                                 ? RdImportPagePreview(
                                     name: f.name,

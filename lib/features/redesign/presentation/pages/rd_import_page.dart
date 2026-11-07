@@ -1215,7 +1215,7 @@ class _QuestionCard extends StatelessWidget {
     // each instrument is offered on its own, the group if there is one.
     final parts = question.newGroup == null ? InstrumentMatcher.knownGroups(label, isChoir: plan.isChoir) : const <String>[];
     final split = parts.length > 1;
-    final partChoices = <RdImportCategory>[
+    final eachPart = <RdImportCategory>[
       if (split)
         for (final name in parts)
           if (InstrumentMatcher.detect(name, plan.instruments) case final m
@@ -1223,7 +1223,14 @@ class _QuestionCard extends StatelessWidget {
             RdImportCategory(instrumentId: m.instrumentId)
           else
             RdImportCategory(newGroup: name),
-    ].where((c) => c != suggestion).toSet().toList();
+    ].toSet().toList();
+    // The file goes to every group it names (Leon, 07.11.2026): offered
+    // first, then each one alone.
+    final both = eachPart.length > 1 ? RdImportCategory.several(eachPart) : null;
+    final partChoices = [
+      if (both != null) both,
+      ...eachPart.where((c) => c != suggestion),
+    ];
     // The KI's guess gets its own chip unless one of the fixed ones is it.
     final aiChip = ai != null &&
         ai != suggestion &&
@@ -1258,7 +1265,7 @@ class _QuestionCard extends StatelessWidget {
         selected: answer == c,
         onTap: onTap ??
             () {
-              if (answer != c || filled) onAnswer(c);
+              if (answer != c || filled || proposedOnly) onAnswer(c);
             },
       );
     }

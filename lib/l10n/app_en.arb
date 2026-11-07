@@ -3161,6 +3161,7 @@
   "redesignImportCategoryFiles": "Other files",
   "redesignImportCategoryLabel": "Change part",
   "redesignImportCategoryNewGroup": "New group: {name}",
+  "redesignImportCategoryNewShort": "{name} (new)",
   "redesignImportCategoryOther": "Other",
   "redesignImportCategoryParts": "Parts",
   "redesignImportCollectionHint": "The folders are compared with the works of this collection, new works get its prefix.",

@@ -14611,6 +14611,13 @@
       "name": {}
     }
   },
+  "redesignImportCategoryNewShort": "{name} (neu)",
+  "@redesignImportCategoryNewShort": {
+    "description": "redesign.import.categoryNewShort",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "redesignImportCategoryOther": "Sonstige",
   "@redesignImportCategoryOther": {
     "description": "redesign.import.categoryOther"

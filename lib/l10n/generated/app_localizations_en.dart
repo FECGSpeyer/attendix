@@ -11630,6 +11630,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String redesignImportCategoryNewShort(Object name) {
+    return '$name (new)';
+  }
+
+  @override
   String get redesignImportCategoryOther => 'Other';
 
   @override
