@@ -112,6 +112,7 @@ class RdImportState {
     this.ai = const {},
     this.aiFilled = const {},
     this.readingDates = false,
+    this.collectionId,
   });
 
   final RdImportStep step;
@@ -150,6 +151,10 @@ class RdImportState {
   /// "Passt so" and the upload wait.
   final bool readingDates;
 
+  /// Sammlung the Noten go into (null: Repertoire): Werke are compared
+  /// with its Werke, new ones are created in it with its Kürzel.
+  final int? collectionId;
+
   RdImportState copyWith({
     RdImportStep? step,
     String? sourceName,
@@ -166,6 +171,8 @@ class RdImportState {
     Map<String, RdImportAiAnswer>? ai,
     Set<String>? aiFilled,
     bool? readingDates,
+    int? collectionId,
+    bool toRepertoire = false,
   }) =>
       RdImportState(
         step: step ?? this.step,
@@ -182,6 +189,7 @@ class RdImportState {
         ai: ai ?? this.ai,
         aiFilled: aiFilled ?? this.aiFilled,
         readingDates: readingDates ?? this.readingDates,
+        collectionId: toRepertoire ? null : (collectionId ?? this.collectionId),
       );
 }
 
@@ -285,7 +293,10 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   /// What the plan is built from (built again when parts are decided).
   ({
     List<RdImportEntry> entries,
+    List<Song> allSongs,
     List<RdImportSong> songs,
+    String? newPrefix,
+    Set<String> takenNumbers,
     List<InstrumentInfo> instruments,
     bool isChoir,
     Map<String, String> hashes,
@@ -313,7 +324,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     _input = null;
     _created.clear();
     _createdGroups.clear();
-    state = const RdImportState();
+    state = RdImportState(collectionId: state.collectionId);
   }
 
   /// Reads [zips], compares duplicate candidates and the dates of Werke
@@ -416,6 +427,57 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     return data;
   }
 
+  /// The Werke of the chosen Sammlung (Repertoire: those without one), its
+  /// Kürzel for new Werke and the numbers in use in the whole group.
+  ({List<RdImportSong> songs, String? newPrefix, Set<String> takenNumbers}) _target(List<Song> all) {
+    final id = state.collectionId;
+    final collection = id == null ? null : ref.read(songCollectionsProvider).valueOrNull?.where((c) => c.id == id).firstOrNull;
+    return (
+      songs: [
+        for (final s in all)
+          if (s.id != null && s.collectionId == id)
+            RdImportSong(id: s.id!, name: s.name, number: s.number, prefix: s.prefix, files: s.files ?? const []),
+      ],
+      newPrefix: collection?.prefix.trim(),
+      takenNumbers: {
+        for (final s in all)
+          if (s.number != null) rdImportNumberKey(s.prefix, s.number!),
+      },
+    );
+  }
+
+  /// Chooses the Sammlung the Noten go into (null: Repertoire). After
+  /// reading, the Werke are compared again with its Werke; what was decided
+  /// about Werke starts over, the parts stay.
+  void setCollection(int? id) {
+    if (id == state.collectionId) return;
+    state = id == null ? state.copyWith(toRepertoire: true) : state.copyWith(collectionId: id);
+    final input = _input;
+    if (input == null || state.plan == null) return;
+    final target = _target(input.allSongs);
+    _input = (
+      entries: input.entries,
+      allSongs: input.allSongs,
+      songs: target.songs,
+      newPrefix: target.newPrefix,
+      takenNumbers: target.takenNumbers,
+      instruments: input.instruments,
+      isChoir: input.isChoir,
+      hashes: input.hashes,
+      dates: input.dates,
+      junk: input.junk,
+      cache: RdImportPlanCache(),
+    );
+    _confirmedAs.clear();
+    _aiWorks = const {};
+    _worksRun++;
+    state = state.copyWith(
+      decisions: state.decisions.copyWith(targets: const {}, fassungen: const {}, confirmed: const {}, recheck: const {}),
+    );
+    _replan();
+    unawaited(_matchWorks());
+  }
+
   Future<RdImportReadError?> _readFrom(RdImportFiles source, SongsListData data) async {
     if (_disposed) {
       await source.close();
@@ -430,10 +492,8 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     _source = source;
     state = state.copyWith(sourceName: source.name, fileCount: source.entries.length);
 
-    final songs = [
-      for (final s in data.songs)
-        if (s.id != null) RdImportSong(id: s.id!, name: s.name, number: s.number, prefix: s.prefix, files: s.files ?? const []),
-    ];
+    final target = _target(data.songs);
+    final songs = target.songs;
     final instruments = [
       for (final g in data.instruments)
         if (g.id != null) InstrumentInfo(id: g.id!, name: g.name, synonyms: g.synonyms),
@@ -447,7 +507,13 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     final dates = <String, DateTime>{};
     final cache = RdImportPlanCache();
     final toDate =
-        rdImportPathsToDate(rdBuildImportPlan(source.entries, songs: songs, instruments: instruments, isChoir: isChoir, cache: cache));
+        rdImportPathsToDate(rdBuildImportPlan(source.entries,
+            songs: songs,
+            instruments: instruments,
+            isChoir: isChoir,
+            cache: cache,
+            newPrefix: target.newPrefix,
+            takenNumbers: target.takenNumbers));
     final hashing = toHash.toSet();
     final dating = toDate.toSet();
     final work = {...hashing, ...dating}.toList()..sort();
@@ -458,19 +524,22 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     if (_disposed) return null;
     // Dates of Werke that only show Fassungen once duplicates are known.
     var plan = rdBuildImportPlan(source.entries,
-        songs: songs, instruments: instruments, isChoir: isChoir, hashes: hashes, dates: dates, junk: source.junk, cache: cache);
+        songs: songs, instruments: instruments, isChoir: isChoir, hashes: hashes, dates: dates, junk: source.junk, cache: cache, newPrefix: target.newPrefix, takenNumbers: target.takenNumbers);
     final missing = rdImportPathsToDate(plan).where((p) => !dates.containsKey(p) && !_dated.contains(p)).toList();
     if (missing.isNotEmpty) {
       _dated.addAll(missing);
       await _inspect(source, missing, hashes, dates, hash: (_) => false, date: (_) => true);
       if (_disposed) return null;
       plan = rdBuildImportPlan(source.entries,
-          songs: songs, instruments: instruments, isChoir: isChoir, hashes: hashes, dates: dates, junk: source.junk, cache: cache);
+          songs: songs, instruments: instruments, isChoir: isChoir, hashes: hashes, dates: dates, junk: source.junk, cache: cache, newPrefix: target.newPrefix, takenNumbers: target.takenNumbers);
     }
     if (_disposed) return null;
     _input = (
       entries: source.entries,
+      allSongs: data.songs,
       songs: songs,
+      newPrefix: target.newPrefix,
+      takenNumbers: target.takenNumbers,
       instruments: instruments,
       isChoir: isChoir,
       hashes: hashes,
@@ -631,21 +700,16 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   void _applyAi() {
     final answers = {...state.decisions.answers};
     final filled = {...state.aiFilled};
-    final proposed = {for (final q in state.plan?.questions ?? const <RdImportQuestion>[]) q.key: q.proposed};
     for (final e in state.ai.entries) {
+      // Also when the known instrument proposes the same new group: the
+      // answer shows as the KI's (✦) and is confirmed like the others.
       if (!e.value.sure || answers.containsKey(e.key)) continue;
-      // The KI says what the known instrument already proposes: nothing to
-      // confirm.
-      if (proposed[e.key] != null && _sameGroupName(proposed[e.key]!, e.value.category)) continue;
       answers[e.key] = e.value.category;
       filled.add(e.key);
     }
     state = state.copyWith(decisions: state.decisions.copyWith(answers: answers), aiFilled: filled);
     _dropStaleConfirmations();
   }
-
-  static bool _sameGroupName(RdImportCategory a, RdImportCategory b) =>
-      a.newGroup != null && b.newGroup != null && a.newGroup!.trim().toLowerCase() == b.newGroup!.trim().toLowerCase();
 
   /// Switches the KI suggestions; off takes back the answers it filled in.
   void setUseAi(bool value) {
@@ -724,6 +788,8 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       categories: d.categories,
       aiWorks: _aiWorks,
       cache: input.cache,
+      newPrefix: input.newPrefix,
+      takenNumbers: input.takenNumbers,
     );
     // A Werk whose key changed (KI hint came or went) keeps what the person
     // decided about it: target, skip, Fassung, "Passt so".
@@ -899,7 +965,8 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         }
         if (tenantChanged()) return;
         try {
-          final song = await songs.createSong(Song(name: target.name!, number: target.number, prefix: target.prefix));
+          final song = await songs.createSong(
+              Song(name: target.name!, number: target.number, prefix: target.prefix, collectionId: state.collectionId));
           if (song.id == null) throw StateError('no id');
           _created[work.key] = songIds[work.key] = song.id!;
           progress = progress.copyWith(newWorks: progress.newWorks + 1);

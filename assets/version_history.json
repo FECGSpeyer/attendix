@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.71.0",
+      "date": "7.11.2026",
+      "changes": [
+        "✨ Noten-Import: Ziel-Sammlung wählbar (Repertoire, Streicher …); Werke werden mit dieser Sammlung verglichen, neue bekommen ihr Kürzel",
+        "🐛 Noten-Import: Schlägt die KI dieselbe neue Gruppe vor wie das erkannte Instrument (z. B. „Oboe“), ist sie wieder mit ✦ markiert",
+        "🐛 Noten-Import: Ein Tipp auf die vorgeschlagene neue Gruppe übernimmt sie, statt den Namensdialog zu öffnen",
+        "🐛 Noten-Import: Keine Gruppe mehr aus zwei Instrumenten („Posaune und Tuba“), stattdessen beide einzeln zur Wahl"
+      ]
+    },
+    {
       "version": "0.70.0",
       "date": "6.11.2026",
       "changes": [

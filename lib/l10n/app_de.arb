@@ -14619,6 +14619,14 @@
   "@redesignImportCategoryParts": {
     "description": "redesign.import.categoryParts"
   },
+  "redesignImportCollectionHint": "Die Ordner werden mit den Werken dieser Sammlung verglichen, neue Werke bekommen ihr Kürzel.",
+  "@redesignImportCollectionHint": {
+    "description": "redesign.import.collectionHint"
+  },
+  "redesignImportCollectionTitle": "In welche Sammlung?",
+  "@redesignImportCollectionTitle": {
+    "description": "redesign.import.collectionTitle"
+  },
   "redesignImportConfirmButton": "Übernehmen",
   "@redesignImportConfirmButton": {
     "description": "redesign.import.confirmButton"

@@ -11761,6 +11761,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportCategoryParts => 'Stimmen';
 
   @override
+  String get redesignImportCollectionHint =>
+      'Die Ordner werden mit den Werken dieser Sammlung verglichen, neue Werke bekommen ihr Kürzel.';
+
+  @override
+  String get redesignImportCollectionTitle => 'In welche Sammlung?';
+
+  @override
   String get redesignImportConfirmButton => 'Übernehmen';
 
   @override
