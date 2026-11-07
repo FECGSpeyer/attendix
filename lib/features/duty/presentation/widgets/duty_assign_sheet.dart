@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
@@ -37,6 +42,12 @@ Future<List<String>?> showDutyAssignSheet(
   required List<DutyCandidate> candidates,
   String monthLabel = '',
 }) {
+  if (ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider)) {
+    return showRdSheet<List<String>>(
+      context,
+      _DutyAssignSheet(title: title, openPlaces: openPlaces, candidates: candidates, monthLabel: monthLabel),
+    );
+  }
   return showModalBottomSheet<List<String>>(
     context: context,
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -66,14 +77,15 @@ class _DutyAssignSheet extends StatefulWidget {
     required this.openPlaces,
     required this.candidates,
     required this.monthLabel,
-    required this.scrollController,
+    this.scrollController,
   });
 
   final String title;
   final int openPlaces;
   final List<DutyCandidate> candidates;
   final String monthLabel;
-  final ScrollController scrollController;
+  /// Null in the Beta sheet ([showRdSheet] sizes itself).
+  final ScrollController? scrollController;
 
   @override
   State<_DutyAssignSheet> createState() => _DutyAssignSheetState();
@@ -115,8 +127,84 @@ class _DutyAssignSheetState extends State<_DutyAssignSheet> {
     return '$duties$month$sameDay';
   }
 
+  /// REDESIGN: same list in the Beta sheet: title and Termin line on top,
+  /// round check marks like other Beta choices, the hint below, one primary
+  /// button.
+  Widget _buildBeta(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RdSheetTitle(l10n.attendanceAssignPerson),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+          child: Text(
+            '${widget.title} · ${l10n.dutyPlacesFree(widget.openPlaces)}',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: RdType.meta(p, size: 13),
+          ),
+        ),
+        Flexible(
+          child: ListView(
+            shrinkWrap: true,
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            children: [
+              if (_sorted.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(l10n.dutyAllAssigned, textAlign: TextAlign.center, style: RdType.meta(p, size: 14)),
+                )
+              else
+                RdGroupedList(
+                  children: [
+                    for (final c in _sorted)
+                      Semantics(
+                        checked: _selected.contains(c.personAttendanceId),
+                        child: RdListRow(
+                          leading: Icon(
+                            _selected.contains(c.personAttendanceId) ? Icons.check_circle : Icons.radio_button_unchecked,
+                            color: _selected.contains(c.personAttendanceId) ? p.primary : p.text2,
+                          ),
+                          title: c.name,
+                          titleColor: c.unavailableNote.isNotEmpty ? p.text2 : null,
+                          subtitle: _subtitle(c),
+                          showChevron: false,
+                          onTap: () => setState(() {
+                            if (!_selected.remove(c.personAttendanceId)) _selected.add(c.personAttendanceId);
+                          }),
+                        ),
+                      ),
+                  ],
+                ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(4, 10, 4, 0),
+                child: Text(l10n.dutyAssignHint, style: RdType.meta(p, size: 13)),
+              ),
+              if (_selected.length > widget.openPlaces)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+                  child: Text(l10n.dutyOverbooked, style: RdType.meta(p, size: 13).copyWith(color: p.late)),
+                ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+          child: RdPrimaryButton(
+            label: _confirmLabel,
+            onPressed: _selected.isEmpty ? null : () => Navigator.of(context).pop(_selected.toList()),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (widget.scrollController == null) return _buildBeta(context);
     final places = context.l10n.dutyPlacesFree(widget.openPlaces);
     return Column(
       children: [

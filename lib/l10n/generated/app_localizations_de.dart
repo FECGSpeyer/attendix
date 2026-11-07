@@ -9675,6 +9675,32 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdOrgCreate => 'Organisation erstellen oder verknüpfen';
 
   @override
+  String get rdOrgFieldDelete => 'Feld löschen';
+
+  @override
+  String get rdOrgFieldDeleteHint =>
+      'Die Werte bei allen Personen der Organisation werden mit gelöscht.';
+
+  @override
+  String get rdOrgFieldEdit => 'Feld';
+
+  @override
+  String get rdOrgFieldNew => 'Neues Feld';
+
+  @override
+  String get rdOrgFieldTypeFixed =>
+      'Der Typ lässt sich nach dem Anlegen nicht mehr ändern.';
+
+  @override
+  String get rdOrgFieldsAdd => 'Feld hinzufügen';
+
+  @override
+  String get rdOrgFieldsEmpty => 'Noch keine gemeinsamen Zusatzfelder.';
+
+  @override
+  String get rdOrgFieldsSaving => 'Änderung wird gespeichert …';
+
+  @override
   String get rdOrgFilter => 'Filter';
 
   @override
@@ -9821,6 +9847,104 @@ class AppLocalizationsDe extends AppLocalizations {
       'Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen.';
 
   @override
+  String get rdPeopleCopyHint =>
+      'Die Person wird in der Zielgruppe angelegt und bleibt hier aktiv.';
+
+  @override
+  String rdPeopleCopyTitle(Object name) {
+    return '$name kopieren';
+  }
+
+  @override
+  String get rdPeopleGroupSwitched =>
+      'Die Gruppe wurde gewechselt. Es wurde nichts gespeichert.';
+
+  @override
+  String get rdPeoplePauseFrom => 'Ab';
+
+  @override
+  String get rdPeoplePauseHint =>
+      'Ein Start in der Vergangenheit nimmt die Person auch aus den Terminen ab diesem Tag. Mit Enddatum wird sie danach automatisch wieder aktiv.';
+
+  @override
+  String get rdPeoplePauseNoEnd => 'Ohne Ende';
+
+  @override
+  String rdPeoplePauseOthersHint(Object name) {
+    return '$name ist auch in diesen Gruppen. Wähle, wo die Pause ebenfalls gelten soll.';
+  }
+
+  @override
+  String get rdPeoplePauseOthersTitle => 'Auch in anderen Gruppen pausieren?';
+
+  @override
+  String get rdPeoplePauseReasonHint => 'Grund eingeben';
+
+  @override
+  String get rdPeoplePauseSelfHint =>
+      'Solange du pausierst, stehst du in keinem neuen Termin. Mit Enddatum bist du danach automatisch wieder dabei.';
+
+  @override
+  String rdPeoplePauseTitle(Object name) {
+    return '$name pausieren';
+  }
+
+  @override
+  String get rdPeoplePauseToday => 'Heute';
+
+  @override
+  String get rdPeoplePauseUntil => 'Bis';
+
+  @override
+  String get rdPeopleReviewApprove => 'Aufnehmen';
+
+  @override
+  String get rdPeopleReviewDetails => 'Angaben';
+
+  @override
+  String get rdPeopleReviewDone => 'Diese Anfrage ist schon erledigt.';
+
+  @override
+  String get rdPeopleReviewDuplicateHint =>
+      'Diese Person gibt es hier vielleicht schon. Zusammenführen übernimmt die Anmeldung in die vorhandene Person.';
+
+  @override
+  String get rdPeopleReviewDuplicateTitle => 'Mögliche Doppelung';
+
+  @override
+  String rdPeopleReviewRequestedOn(Object date) {
+    return 'Anfrage vom $date';
+  }
+
+  @override
+  String get rdPeopleReviewTitle => 'Anfrage prüfen';
+
+  @override
+  String get rdPeopleTransferChoose => 'Auswählen';
+
+  @override
+  String get rdPeopleTransferHint =>
+      'Die Person wird in der Zielgruppe angelegt und hier archiviert.';
+
+  @override
+  String get rdPeopleTransferNoRegisters => 'Keine Register';
+
+  @override
+  String get rdPeopleTransferNoTargets =>
+      'Es gibt keine anderen Gruppen in deiner Organisation.';
+
+  @override
+  String get rdPeopleTransferRegister => 'Register';
+
+  @override
+  String get rdPeopleTransferTarget => 'Zielgruppe';
+
+  @override
+  String rdPeopleTransferTitle(Object name) {
+    return '$name übertragen';
+  }
+
+  @override
   String get rdSettingsAddRule => 'Regel hinzufügen';
 
   @override
@@ -9927,6 +10051,61 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get rdSettingsRegisterFieldsHint =>
       'Alle gewählten Felder sind Pflicht. Vorname, Nachname und Gruppe sind immer dabei.';
+
+  @override
+  String get rdSettingsRuleAnd => 'Und';
+
+  @override
+  String get rdSettingsRuleCounts => 'Was zählt';
+
+  @override
+  String get rdSettingsRuleDays => 'Tage';
+
+  @override
+  String get rdSettingsRuleEditTitle => 'Regel';
+
+  @override
+  String get rdSettingsRuleName => 'Name';
+
+  @override
+  String get rdSettingsRuleNewTitle => 'Neue Regel';
+
+  @override
+  String get rdSettingsRuleOr => 'Oder';
+
+  @override
+  String get rdSettingsRulePeriod => 'Zeitraum';
+
+  @override
+  String get rdSettingsRulePeriodAll => 'Immer';
+
+  @override
+  String get rdSettingsRulePeriodAllHint =>
+      'Gezählt wird die gesamte Historie.';
+
+  @override
+  String get rdSettingsRulePeriodDays => 'Letzte Tage';
+
+  @override
+  String get rdSettingsRulePeriodSeason => 'Saison';
+
+  @override
+  String get rdSettingsRulePeriodSeasonHint =>
+      'Gezählt wird ab dem Saisonbeginn.';
+
+  @override
+  String get rdSettingsRuleStatusHint =>
+      'Diese Status zählen. Mindestens einer muss gewählt sein.';
+
+  @override
+  String get rdSettingsRuleThreshold => 'Kritisch ab';
+
+  @override
+  String get rdSettingsRuleTypes => 'Terminarten';
+
+  @override
+  String get rdSettingsRuleValueInvalid =>
+      'Bitte eine Zahl größer als 0 eingeben.';
 
   @override
   String get rdSettingsSaveFailed =>
@@ -10691,6 +10870,40 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignCreateType => 'Art';
+
+  @override
+  String get redesignDutyCannot => 'Kann nicht';
+
+  @override
+  String get redesignDutyConfirmed => 'Bestätigt';
+
+  @override
+  String get redesignDutyDeclined => 'Abgesagt';
+
+  @override
+  String redesignDutyFill(Object occupied, Object required) {
+    return '$occupied von $required';
+  }
+
+  @override
+  String redesignDutyMore(Object name) {
+    return 'Mehr zu $name';
+  }
+
+  @override
+  String get redesignDutyProtocolTitle => 'Protokoll';
+
+  @override
+  String get redesignDutyRequested => 'Angefragt';
+
+  @override
+  String get redesignDutySignedOut => 'Abgemeldet';
+
+  @override
+  String get redesignDutyTasksTitle => 'Aufgaben aus diesem Termin';
+
+  @override
+  String get redesignDutyTitle => 'Dienst';
 
   @override
   String get redesignEventAddPersonShort => 'Person';
@@ -11540,6 +11753,24 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignFolderTitleLeads => 'Nach Stimme';
 
   @override
+  String get redesignGroupCategoriesBack => 'Gruppen';
+
+  @override
+  String redesignGroupCategoriesCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Gruppen',
+      one: '$count Gruppe',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignGroupCategoriesIntro =>
+      'Kategorien fassen Gruppen zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Gruppen.';
+
+  @override
   String get redesignGroupEditCategory => 'Kategorie';
 
   @override
@@ -11804,6 +12035,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String redesignImportCategoryNewGroup(Object name) {
     return 'Neue Gruppe: $name';
+  }
+
+  @override
+  String redesignImportCategoryNewShort(Object name) {
+    return '$name (neu)';
   }
 
   @override
@@ -12294,6 +12530,20 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String redesignImportQuestionsOpenTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count offene Fragen',
+      one: '1 offene Frage',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportQuestionsShowAll => 'Alle Fragen zeigen';
 
   @override
   String redesignImportQuestionsTitle(num count) {

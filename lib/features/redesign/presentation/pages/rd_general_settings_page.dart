@@ -23,11 +23,11 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/presentation/pages/general_settings_page.dart'
     show holidayRegions, initialRegistrationFields, normalizeReasons, normalizeShowAllInfoText;
-import '../../../settings/presentation/widgets/critical_rule_sheet.dart';
 import '../../data/rd_manage_logic.dart' show RdManageArea;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
+import 'rd_critical_rule_page.dart';
 
 /// REDESIGN: Verwaltung › Gruppe › Allgemein (canvas "Beta: Gruppe und
 /// Daten", board "G1 Allgemeine Einstellungen"). The settings of the old
@@ -329,19 +329,11 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
       ToastHelper.showError(context, l10n.generalSettingsFlutterNoTypes);
       return;
     }
-    CriticalRule? saved;
-    await showModalBottomSheet<void>(
-      context: context,
-      useRootNavigator: true,
-      isScrollControlled: true,
-      builder:
-          (_) => CriticalRuleSheet(
-            rule: index == null ? null : _rules(t)[index],
-            attendanceTypes: types,
-            onSave: (rule) => saved = rule,
-          ),
+    final rule = await openRdCriticalRulePage(
+      context,
+      rule: index == null ? null : _rules(t)[index],
+      attendanceTypes: types,
     );
-    final rule = saved;
     if (rule == null || !mounted) return;
     final current = ref.read(currentTenantProvider);
     if (current == null) return;

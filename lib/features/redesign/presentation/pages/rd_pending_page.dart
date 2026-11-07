@@ -12,9 +12,9 @@ import '../widgets/manage/rd_manage_list.dart';
 
 /// REDESIGN: Verwaltung › Freigaben in the template "Verwaltungsliste"
 /// (replaces the old pending sheet while the Beta is on; leads only). The
-/// persons waiting for approval (live) with their e-mail; a tap opens the
-/// old review page `/people/:id` (duplicate check, approve / decline), as
-/// the old sheet did. Once the last person is done the page goes back to
+/// persons waiting for approval (live) with their e-mail; a tap opens
+/// "Anfrage prüfen" ([RedesignRoutes.approvalReview]: duplicate check,
+/// approve / decline). Once the last person is done the page goes back to
 /// the Verwaltung.
 class RdPendingPage extends ConsumerStatefulWidget {
   const RdPendingPage({super.key});
@@ -54,7 +54,7 @@ class _RdPendingPageState extends ConsumerState<RdPendingPage> {
   }
 
   Future<void> _open(int id) async {
-    await context.push('/people/$id');
+    await context.push(RedesignRoutes.approvalReview(id));
     // The list follows the realtime provider (like the old sheet); it may
     // have been emptied while the review page was on top.
     if (mounted && _leaveWhenBack) _leaveIfDone();

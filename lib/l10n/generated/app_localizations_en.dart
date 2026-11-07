@@ -9570,6 +9570,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdOrgCreate => 'Create or link organisation';
 
   @override
+  String get rdOrgFieldDelete => 'Delete field';
+
+  @override
+  String get rdOrgFieldDeleteHint =>
+      'The values of all persons of the organisation are deleted too.';
+
+  @override
+  String get rdOrgFieldEdit => 'Field';
+
+  @override
+  String get rdOrgFieldNew => 'New field';
+
+  @override
+  String get rdOrgFieldTypeFixed =>
+      'The type cannot be changed after the field was created.';
+
+  @override
+  String get rdOrgFieldsAdd => 'Add field';
+
+  @override
+  String get rdOrgFieldsEmpty => 'No shared extra fields yet.';
+
+  @override
+  String get rdOrgFieldsSaving => 'Saving change …';
+
+  @override
   String get rdOrgFilter => 'Filter';
 
   @override
@@ -9716,6 +9742,104 @@ class AppLocalizationsEn extends AppLocalizations {
       'Only admins and leads of a group in an organisation can search works across the organisation.';
 
   @override
+  String get rdPeopleCopyHint =>
+      'The person is created in the target group and stays active here.';
+
+  @override
+  String rdPeopleCopyTitle(Object name) {
+    return 'Copy $name';
+  }
+
+  @override
+  String get rdPeopleGroupSwitched =>
+      'The group was switched. Nothing was saved.';
+
+  @override
+  String get rdPeoplePauseFrom => 'From';
+
+  @override
+  String get rdPeoplePauseHint =>
+      'A start in the past also removes the person from the events from that day. With an end date they become active again automatically.';
+
+  @override
+  String get rdPeoplePauseNoEnd => 'No end';
+
+  @override
+  String rdPeoplePauseOthersHint(Object name) {
+    return '$name is also in these groups. Choose where the pause should apply as well.';
+  }
+
+  @override
+  String get rdPeoplePauseOthersTitle => 'Also pause in other groups?';
+
+  @override
+  String get rdPeoplePauseReasonHint => 'Enter a reason';
+
+  @override
+  String get rdPeoplePauseSelfHint =>
+      'While you are paused you are not part of any new event. With an end date you are back automatically afterwards.';
+
+  @override
+  String rdPeoplePauseTitle(Object name) {
+    return 'Pause $name';
+  }
+
+  @override
+  String get rdPeoplePauseToday => 'Today';
+
+  @override
+  String get rdPeoplePauseUntil => 'Until';
+
+  @override
+  String get rdPeopleReviewApprove => 'Accept';
+
+  @override
+  String get rdPeopleReviewDetails => 'Details';
+
+  @override
+  String get rdPeopleReviewDone => 'This request has already been handled.';
+
+  @override
+  String get rdPeopleReviewDuplicateHint =>
+      'This person may already exist here. Merging moves the registration into the existing person.';
+
+  @override
+  String get rdPeopleReviewDuplicateTitle => 'Possible duplicate';
+
+  @override
+  String rdPeopleReviewRequestedOn(Object date) {
+    return 'Request from $date';
+  }
+
+  @override
+  String get rdPeopleReviewTitle => 'Review request';
+
+  @override
+  String get rdPeopleTransferChoose => 'Choose';
+
+  @override
+  String get rdPeopleTransferHint =>
+      'The person is created in the target group and archived here.';
+
+  @override
+  String get rdPeopleTransferNoRegisters => 'No sections';
+
+  @override
+  String get rdPeopleTransferNoTargets =>
+      'There are no other groups in your organisation.';
+
+  @override
+  String get rdPeopleTransferRegister => 'Section';
+
+  @override
+  String get rdPeopleTransferTarget => 'Target group';
+
+  @override
+  String rdPeopleTransferTitle(Object name) {
+    return 'Transfer $name';
+  }
+
+  @override
   String get rdSettingsAddRule => 'Add rule';
 
   @override
@@ -9820,6 +9944,60 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get rdSettingsRegisterFieldsHint =>
       'All selected fields are required. First name, last name and group are always included.';
+
+  @override
+  String get rdSettingsRuleAnd => 'And';
+
+  @override
+  String get rdSettingsRuleCounts => 'What counts';
+
+  @override
+  String get rdSettingsRuleDays => 'Days';
+
+  @override
+  String get rdSettingsRuleEditTitle => 'Rule';
+
+  @override
+  String get rdSettingsRuleName => 'Name';
+
+  @override
+  String get rdSettingsRuleNewTitle => 'New rule';
+
+  @override
+  String get rdSettingsRuleOr => 'Or';
+
+  @override
+  String get rdSettingsRulePeriod => 'Period';
+
+  @override
+  String get rdSettingsRulePeriodAll => 'Always';
+
+  @override
+  String get rdSettingsRulePeriodAllHint => 'The whole history is counted.';
+
+  @override
+  String get rdSettingsRulePeriodDays => 'Last days';
+
+  @override
+  String get rdSettingsRulePeriodSeason => 'Season';
+
+  @override
+  String get rdSettingsRulePeriodSeasonHint =>
+      'Counted from the start of the season.';
+
+  @override
+  String get rdSettingsRuleStatusHint =>
+      'These statuses count. Choose at least one.';
+
+  @override
+  String get rdSettingsRuleThreshold => 'Critical from';
+
+  @override
+  String get rdSettingsRuleTypes => 'Event types';
+
+  @override
+  String get rdSettingsRuleValueInvalid =>
+      'Please enter a number greater than 0.';
 
   @override
   String get rdSettingsSaveFailed => 'Could not be saved. Please try again.';
@@ -10579,6 +10757,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignCreateType => 'Type';
+
+  @override
+  String get redesignDutyCannot => 'Can\'t';
+
+  @override
+  String get redesignDutyConfirmed => 'Confirmed';
+
+  @override
+  String get redesignDutyDeclined => 'Declined';
+
+  @override
+  String redesignDutyFill(Object occupied, Object required) {
+    return '$occupied of $required';
+  }
+
+  @override
+  String redesignDutyMore(Object name) {
+    return 'More for $name';
+  }
+
+  @override
+  String get redesignDutyProtocolTitle => 'Minutes';
+
+  @override
+  String get redesignDutyRequested => 'Requested';
+
+  @override
+  String get redesignDutySignedOut => 'Signed out';
+
+  @override
+  String get redesignDutyTasksTitle => 'Tasks from this event';
+
+  @override
+  String get redesignDutyTitle => 'Duty';
 
   @override
   String get redesignEventAddPersonShort => 'Person';
@@ -11421,6 +11633,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignFolderTitleLeads => 'By part';
 
   @override
+  String get redesignGroupCategoriesBack => 'Groups';
+
+  @override
+  String redesignGroupCategoriesCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count groups',
+      one: '$count group',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignGroupCategoriesIntro =>
+      'Categories bundle groups, e.g. brass or soprano and alto. Their order also applies to the groups.';
+
+  @override
   String get redesignGroupEditCategory => 'Category';
 
   @override
@@ -11679,6 +11909,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String redesignImportCategoryNewGroup(Object name) {
     return 'New group: $name';
+  }
+
+  @override
+  String redesignImportCategoryNewShort(Object name) {
+    return '$name (new)';
   }
 
   @override
@@ -12164,6 +12399,20 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String redesignImportQuestionsOpenTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count open questions',
+      one: '1 open question',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportQuestionsShowAll => 'Show all questions';
 
   @override
   String redesignImportQuestionsTitle(num count) {

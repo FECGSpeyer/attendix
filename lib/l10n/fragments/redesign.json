@@ -1097,6 +1097,8 @@
         "foundExisting": "{count} schon in Attendix",
         "foundNew": "{count, plural, one {1 neues Werk} other {{count} neue Werke}}",
         "questionsTitle": "{count, plural, one {1 Frage zu euren Stimmen} other {{count} Fragen zu euren Stimmen}}",
+        "questionsOpenTitle": "{count, plural, one {1 offene Frage} other {{count} offene Fragen}}",
+        "questionsShowAll": "Alle Fragen zeigen",
         "questionsIntro": "Diese Stimmnamen kennt Attendix noch nicht. Deine Antwort gilt für alle Dateien mit diesem Namen – beim nächsten Import weiß Attendix es schon.",
         "questionsNone": "Alle Stimmen sind bekannt.",
         "questionTitle": "„{name}“ gehört zu …",
@@ -1168,6 +1170,7 @@
         "reasonByHand": "Von dir weggelassen",
         "categoryOther": "Sonstige",
         "categoryNewGroup": "Neue Gruppe: {name}",
+        "categoryNewShort": "{name} (neu)",
         "categoryLabel": "Stimme ändern",
         "takeLabel": "„{name}“ übernehmen",
         "confirmWork": "Passt so",
@@ -1463,6 +1466,23 @@
         "forgot": "Passwort vergessen?",
         "resetIntro": "Wir schicken dir einen Link, mit dem du ein neues Passwort setzt.",
         "resetSend": "Link senden"
+      },
+      "groupCategories": {
+        "intro": "Kategorien fassen Gruppen zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Gruppen.",
+        "count": "{count, plural, one {{count} Gruppe} other {{count} Gruppen}}",
+        "back": "Gruppen"
+      },
+      "duty": {
+        "title": "Dienst",
+        "fill": "{occupied} von {required}",
+        "requested": "Angefragt",
+        "confirmed": "Bestätigt",
+        "declined": "Abgesagt",
+        "signedOut": "Abgemeldet",
+        "cannot": "Kann nicht",
+        "more": "Mehr zu {name}",
+        "protocolTitle": "Protokoll",
+        "tasksTitle": "Aufgaben aus diesem Termin"
       }
     }
   },
@@ -2564,6 +2584,8 @@
         "foundExisting": "{count} already in Attendix",
         "foundNew": "{count, plural, one {1 new work} other {{count} new works}}",
         "questionsTitle": "{count, plural, one {1 question about your parts} other {{count} questions about your parts}}",
+        "questionsOpenTitle": "{count, plural, one {1 open question} other {{count} open questions}}",
+        "questionsShowAll": "Show all questions",
         "questionsIntro": "Attendix does not know these part names yet. Your answer applies to all files with this name – next time Attendix will know it.",
         "questionsNone": "All parts are known.",
         "questionTitle": "“{name}” belongs to …",
@@ -2635,6 +2657,7 @@
         "reasonByHand": "Left out by you",
         "categoryOther": "Other",
         "categoryNewGroup": "New group: {name}",
+        "categoryNewShort": "{name} (new)",
         "categoryLabel": "Change part",
         "takeLabel": "Import “{name}”",
         "confirmWork": "Looks good",
@@ -2930,6 +2953,23 @@
         "forgot": "Forgot password?",
         "resetIntro": "We will send you a link to set a new password.",
         "resetSend": "Send link"
+      },
+      "groupCategories": {
+        "intro": "Categories bundle groups, e.g. brass or soprano and alto. Their order also applies to the groups.",
+        "count": "{count, plural, one {{count} group} other {{count} groups}}",
+        "back": "Groups"
+      },
+      "duty": {
+        "title": "Duty",
+        "fill": "{occupied} of {required}",
+        "requested": "Requested",
+        "confirmed": "Confirmed",
+        "declined": "Declined",
+        "signedOut": "Signed out",
+        "cannot": "Can't",
+        "more": "More for {name}",
+        "protocolTitle": "Minutes",
+        "tasksTitle": "Tasks from this event"
       }
     }
   }

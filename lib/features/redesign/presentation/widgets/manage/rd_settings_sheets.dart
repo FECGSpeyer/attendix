@@ -115,10 +115,12 @@ Future<String?> showRdTextSheet(
   int maxLines = 1,
   int? maxLength,
   TextCapitalization capitalization = TextCapitalization.sentences,
+  TextInputType? keyboardType,
 }) {
   return showRdSettingsSheet<String>(
     context,
     (_) => _TextSheet(
+      keyboardType: keyboardType,
       title: title,
       initial: initial,
       hint: hint,
@@ -141,6 +143,7 @@ class _TextSheet extends StatefulWidget {
     required this.maxLines,
     required this.maxLength,
     required this.capitalization,
+    this.keyboardType,
   });
 
   final String title;
@@ -151,6 +154,7 @@ class _TextSheet extends StatefulWidget {
   final int maxLines;
   final int? maxLength;
   final TextCapitalization capitalization;
+  final TextInputType? keyboardType;
 
   @override
   State<_TextSheet> createState() => _TextSheetState();
@@ -198,6 +202,7 @@ class _TextSheetState extends State<_TextSheet> {
                   maxLength: widget.maxLength,
                   minLines: 1,
                   textCapitalization: widget.capitalization,
+                  keyboardType: widget.keyboardType,
                   textInputAction: widget.maxLines == 1 ? TextInputAction.done : TextInputAction.newline,
                   onSubmitted: widget.maxLines == 1 ? (_) => _done() : null,
                   decoration: InputDecoration(

@@ -120,8 +120,12 @@ class RedesignRoutes {
   static const String archive = '$manage/archiv';
 
   /// Verwaltung › Freigaben: persons waiting for approval (replaces the old
-  /// pending sheet; a person still opens the old review page).
+  /// pending sheet).
   static const String approvals = '$manage/freigaben';
+
+  /// Freigaben › "Anfrage prüfen" of a person (replaces the old review
+  /// page `/people/:id` in the Beta; leads only like [approvals]).
+  static String approvalReview(int id) => '$approvals/$id';
 
   /// Verwaltung › Lehrer (replaces `/settings/teachers` in the Beta).
   static const String teachers = '$manage/lehrer';
@@ -136,6 +140,10 @@ class RedesignRoutes {
   /// list (persons or works) is part of the path.
   static String extraFieldEdit({required bool song, required String id}) =>
       '$extraFields/${song ? 'werke' : 'personen'}/${Uri.encodeComponent(id)}';
+
+  /// Gruppen › Kategorien (replaces the old group categories sheet; its own
+  /// path because `gruppen/:id` is a group).
+  static const String groupCategories = '$manage/gruppen-kategorien';
 
   /// Verwaltung › Werk-Kategorien (replaces the old categories sheet).
   static const String workCategories = '$manage/werk-kategorien';
@@ -164,6 +172,7 @@ class RedesignRoutes {
     rolePermissions,
     extraFields,
     workCategories,
+    groupCategories,
   };
 
   /// Pages for super admins only (the old admins sheet: `role.isAdmin`).

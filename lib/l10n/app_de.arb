@@ -12080,6 +12080,38 @@
   "@rdOrgCreate": {
     "description": "rdOrg.create"
   },
+  "rdOrgFieldDelete": "Feld löschen",
+  "@rdOrgFieldDelete": {
+    "description": "rdOrg.fieldDelete"
+  },
+  "rdOrgFieldDeleteHint": "Die Werte bei allen Personen der Organisation werden mit gelöscht.",
+  "@rdOrgFieldDeleteHint": {
+    "description": "rdOrg.fieldDeleteHint"
+  },
+  "rdOrgFieldEdit": "Feld",
+  "@rdOrgFieldEdit": {
+    "description": "rdOrg.fieldEdit"
+  },
+  "rdOrgFieldNew": "Neues Feld",
+  "@rdOrgFieldNew": {
+    "description": "rdOrg.fieldNew"
+  },
+  "rdOrgFieldTypeFixed": "Der Typ lässt sich nach dem Anlegen nicht mehr ändern.",
+  "@rdOrgFieldTypeFixed": {
+    "description": "rdOrg.fieldTypeFixed"
+  },
+  "rdOrgFieldsAdd": "Feld hinzufügen",
+  "@rdOrgFieldsAdd": {
+    "description": "rdOrg.fieldsAdd"
+  },
+  "rdOrgFieldsEmpty": "Noch keine gemeinsamen Zusatzfelder.",
+  "@rdOrgFieldsEmpty": {
+    "description": "rdOrg.fieldsEmpty"
+  },
+  "rdOrgFieldsSaving": "Änderung wird gespeichert …",
+  "@rdOrgFieldsSaving": {
+    "description": "rdOrg.fieldsSaving"
+  },
   "rdOrgFilter": "Filter",
   "@rdOrgFilter": {
     "description": "rdOrg.filter"
@@ -12273,6 +12305,129 @@
   "@rdOrgWorksNoPermission": {
     "description": "rdOrg.worksNoPermission"
   },
+  "rdPeopleCopyHint": "Die Person wird in der Zielgruppe angelegt und bleibt hier aktiv.",
+  "@rdPeopleCopyHint": {
+    "description": "rdPeople.copyHint"
+  },
+  "rdPeopleCopyTitle": "{name} kopieren",
+  "@rdPeopleCopyTitle": {
+    "description": "rdPeople.copyTitle",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdPeopleGroupSwitched": "Die Gruppe wurde gewechselt. Es wurde nichts gespeichert.",
+  "@rdPeopleGroupSwitched": {
+    "description": "rdPeople.groupSwitched"
+  },
+  "rdPeoplePauseFrom": "Ab",
+  "@rdPeoplePauseFrom": {
+    "description": "rdPeople.pauseFrom"
+  },
+  "rdPeoplePauseHint": "Ein Start in der Vergangenheit nimmt die Person auch aus den Terminen ab diesem Tag. Mit Enddatum wird sie danach automatisch wieder aktiv.",
+  "@rdPeoplePauseHint": {
+    "description": "rdPeople.pauseHint"
+  },
+  "rdPeoplePauseNoEnd": "Ohne Ende",
+  "@rdPeoplePauseNoEnd": {
+    "description": "rdPeople.pauseNoEnd"
+  },
+  "rdPeoplePauseOthersHint": "{name} ist auch in diesen Gruppen. Wähle, wo die Pause ebenfalls gelten soll.",
+  "@rdPeoplePauseOthersHint": {
+    "description": "rdPeople.pauseOthersHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdPeoplePauseOthersTitle": "Auch in anderen Gruppen pausieren?",
+  "@rdPeoplePauseOthersTitle": {
+    "description": "rdPeople.pauseOthersTitle"
+  },
+  "rdPeoplePauseReasonHint": "Grund eingeben",
+  "@rdPeoplePauseReasonHint": {
+    "description": "rdPeople.pauseReasonHint"
+  },
+  "rdPeoplePauseSelfHint": "Solange du pausierst, stehst du in keinem neuen Termin. Mit Enddatum bist du danach automatisch wieder dabei.",
+  "@rdPeoplePauseSelfHint": {
+    "description": "rdPeople.pauseSelfHint"
+  },
+  "rdPeoplePauseTitle": "{name} pausieren",
+  "@rdPeoplePauseTitle": {
+    "description": "rdPeople.pauseTitle",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdPeoplePauseToday": "Heute",
+  "@rdPeoplePauseToday": {
+    "description": "rdPeople.pauseToday"
+  },
+  "rdPeoplePauseUntil": "Bis",
+  "@rdPeoplePauseUntil": {
+    "description": "rdPeople.pauseUntil"
+  },
+  "rdPeopleReviewApprove": "Aufnehmen",
+  "@rdPeopleReviewApprove": {
+    "description": "rdPeople.reviewApprove"
+  },
+  "rdPeopleReviewDetails": "Angaben",
+  "@rdPeopleReviewDetails": {
+    "description": "rdPeople.reviewDetails"
+  },
+  "rdPeopleReviewDone": "Diese Anfrage ist schon erledigt.",
+  "@rdPeopleReviewDone": {
+    "description": "rdPeople.reviewDone"
+  },
+  "rdPeopleReviewDuplicateHint": "Diese Person gibt es hier vielleicht schon. Zusammenführen übernimmt die Anmeldung in die vorhandene Person.",
+  "@rdPeopleReviewDuplicateHint": {
+    "description": "rdPeople.reviewDuplicateHint"
+  },
+  "rdPeopleReviewDuplicateTitle": "Mögliche Doppelung",
+  "@rdPeopleReviewDuplicateTitle": {
+    "description": "rdPeople.reviewDuplicateTitle"
+  },
+  "rdPeopleReviewRequestedOn": "Anfrage vom {date}",
+  "@rdPeopleReviewRequestedOn": {
+    "description": "rdPeople.reviewRequestedOn",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "rdPeopleReviewTitle": "Anfrage prüfen",
+  "@rdPeopleReviewTitle": {
+    "description": "rdPeople.reviewTitle"
+  },
+  "rdPeopleTransferChoose": "Auswählen",
+  "@rdPeopleTransferChoose": {
+    "description": "rdPeople.transferChoose"
+  },
+  "rdPeopleTransferHint": "Die Person wird in der Zielgruppe angelegt und hier archiviert.",
+  "@rdPeopleTransferHint": {
+    "description": "rdPeople.transferHint"
+  },
+  "rdPeopleTransferNoRegisters": "Keine Register",
+  "@rdPeopleTransferNoRegisters": {
+    "description": "rdPeople.transferNoRegisters"
+  },
+  "rdPeopleTransferNoTargets": "Es gibt keine anderen Gruppen in deiner Organisation.",
+  "@rdPeopleTransferNoTargets": {
+    "description": "rdPeople.transferNoTargets"
+  },
+  "rdPeopleTransferRegister": "Register",
+  "@rdPeopleTransferRegister": {
+    "description": "rdPeople.transferRegister"
+  },
+  "rdPeopleTransferTarget": "Zielgruppe",
+  "@rdPeopleTransferTarget": {
+    "description": "rdPeople.transferTarget"
+  },
+  "rdPeopleTransferTitle": "{name} übertragen",
+  "@rdPeopleTransferTitle": {
+    "description": "rdPeople.transferTitle",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "rdSettingsAddRule": "Regel hinzufügen",
   "@rdSettingsAddRule": {
     "description": "rdSettings.addRule"
@@ -12404,6 +12559,74 @@
   "rdSettingsRegisterFieldsHint": "Alle gewählten Felder sind Pflicht. Vorname, Nachname und Gruppe sind immer dabei.",
   "@rdSettingsRegisterFieldsHint": {
     "description": "rdSettings.registerFieldsHint"
+  },
+  "rdSettingsRuleAnd": "Und",
+  "@rdSettingsRuleAnd": {
+    "description": "rdSettings.rule.and"
+  },
+  "rdSettingsRuleCounts": "Was zählt",
+  "@rdSettingsRuleCounts": {
+    "description": "rdSettings.rule.counts"
+  },
+  "rdSettingsRuleDays": "Tage",
+  "@rdSettingsRuleDays": {
+    "description": "rdSettings.rule.days"
+  },
+  "rdSettingsRuleEditTitle": "Regel",
+  "@rdSettingsRuleEditTitle": {
+    "description": "rdSettings.rule.editTitle"
+  },
+  "rdSettingsRuleName": "Name",
+  "@rdSettingsRuleName": {
+    "description": "rdSettings.rule.name"
+  },
+  "rdSettingsRuleNewTitle": "Neue Regel",
+  "@rdSettingsRuleNewTitle": {
+    "description": "rdSettings.rule.newTitle"
+  },
+  "rdSettingsRuleOr": "Oder",
+  "@rdSettingsRuleOr": {
+    "description": "rdSettings.rule.or"
+  },
+  "rdSettingsRulePeriod": "Zeitraum",
+  "@rdSettingsRulePeriod": {
+    "description": "rdSettings.rule.period"
+  },
+  "rdSettingsRulePeriodAll": "Immer",
+  "@rdSettingsRulePeriodAll": {
+    "description": "rdSettings.rule.periodAll"
+  },
+  "rdSettingsRulePeriodAllHint": "Gezählt wird die gesamte Historie.",
+  "@rdSettingsRulePeriodAllHint": {
+    "description": "rdSettings.rule.periodAllHint"
+  },
+  "rdSettingsRulePeriodDays": "Letzte Tage",
+  "@rdSettingsRulePeriodDays": {
+    "description": "rdSettings.rule.periodDays"
+  },
+  "rdSettingsRulePeriodSeason": "Saison",
+  "@rdSettingsRulePeriodSeason": {
+    "description": "rdSettings.rule.periodSeason"
+  },
+  "rdSettingsRulePeriodSeasonHint": "Gezählt wird ab dem Saisonbeginn.",
+  "@rdSettingsRulePeriodSeasonHint": {
+    "description": "rdSettings.rule.periodSeasonHint"
+  },
+  "rdSettingsRuleStatusHint": "Diese Status zählen. Mindestens einer muss gewählt sein.",
+  "@rdSettingsRuleStatusHint": {
+    "description": "rdSettings.rule.statusHint"
+  },
+  "rdSettingsRuleThreshold": "Kritisch ab",
+  "@rdSettingsRuleThreshold": {
+    "description": "rdSettings.rule.threshold"
+  },
+  "rdSettingsRuleTypes": "Terminarten",
+  "@rdSettingsRuleTypes": {
+    "description": "rdSettings.rule.types"
+  },
+  "rdSettingsRuleValueInvalid": "Bitte eine Zahl größer als 0 eingeben.",
+  "@rdSettingsRuleValueInvalid": {
+    "description": "rdSettings.rule.valueInvalid"
   },
   "rdSettingsSaveFailed": "Konnte nicht gespeichert werden. Bitte versuche es noch einmal.",
   "@rdSettingsSaveFailed": {
@@ -13298,6 +13521,53 @@
   "redesignCreateType": "Art",
   "@redesignCreateType": {
     "description": "redesign.create.type"
+  },
+  "redesignDutyCannot": "Kann nicht",
+  "@redesignDutyCannot": {
+    "description": "redesign.duty.cannot"
+  },
+  "redesignDutyConfirmed": "Bestätigt",
+  "@redesignDutyConfirmed": {
+    "description": "redesign.duty.confirmed"
+  },
+  "redesignDutyDeclined": "Abgesagt",
+  "@redesignDutyDeclined": {
+    "description": "redesign.duty.declined"
+  },
+  "redesignDutyFill": "{occupied} von {required}",
+  "@redesignDutyFill": {
+    "description": "redesign.duty.fill",
+    "placeholders": {
+      "occupied": {},
+      "required": {}
+    }
+  },
+  "redesignDutyMore": "Mehr zu {name}",
+  "@redesignDutyMore": {
+    "description": "redesign.duty.more",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignDutyProtocolTitle": "Protokoll",
+  "@redesignDutyProtocolTitle": {
+    "description": "redesign.duty.protocolTitle"
+  },
+  "redesignDutyRequested": "Angefragt",
+  "@redesignDutyRequested": {
+    "description": "redesign.duty.requested"
+  },
+  "redesignDutySignedOut": "Abgemeldet",
+  "@redesignDutySignedOut": {
+    "description": "redesign.duty.signedOut"
+  },
+  "redesignDutyTasksTitle": "Aufgaben aus diesem Termin",
+  "@redesignDutyTasksTitle": {
+    "description": "redesign.duty.tasksTitle"
+  },
+  "redesignDutyTitle": "Dienst",
+  "@redesignDutyTitle": {
+    "description": "redesign.duty.title"
   },
   "redesignEventAddPersonShort": "Person",
   "@redesignEventAddPersonShort": {
@@ -14364,6 +14634,23 @@
   "@redesignFolderTitleLeads": {
     "description": "redesign.folder.titleLeads"
   },
+  "redesignGroupCategoriesBack": "Gruppen",
+  "@redesignGroupCategoriesBack": {
+    "description": "redesign.groupCategories.back"
+  },
+  "redesignGroupCategoriesCount": "{count, plural, one {{count} Gruppe} other {{count} Gruppen}}",
+  "@redesignGroupCategoriesCount": {
+    "description": "redesign.groupCategories.count",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignGroupCategoriesIntro": "Kategorien fassen Gruppen zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Gruppen.",
+  "@redesignGroupCategoriesIntro": {
+    "description": "redesign.groupCategories.intro"
+  },
   "redesignGroupEditCategory": "Kategorie",
   "@redesignGroupEditCategory": {
     "description": "redesign.groupEdit.category"
@@ -14670,6 +14957,13 @@
   "redesignImportCategoryNewGroup": "Neue Gruppe: {name}",
   "@redesignImportCategoryNewGroup": {
     "description": "redesign.import.categoryNewGroup",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignImportCategoryNewShort": "{name} (neu)",
+  "@redesignImportCategoryNewShort": {
+    "description": "redesign.import.categoryNewShort",
     "placeholders": {
       "name": {}
     }
@@ -15207,6 +15501,19 @@
         "type": "num"
       }
     }
+  },
+  "redesignImportQuestionsOpenTitle": "{count, plural, one {1 offene Frage} other {{count} offene Fragen}}",
+  "@redesignImportQuestionsOpenTitle": {
+    "description": "redesign.import.questionsOpenTitle",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportQuestionsShowAll": "Alle Fragen zeigen",
+  "@redesignImportQuestionsShowAll": {
+    "description": "redesign.import.questionsShowAll"
   },
   "redesignImportQuestionsTitle": "{count, plural, one {1 Frage zu euren Stimmen} other {{count} Fragen zu euren Stimmen}}",
   "@redesignImportQuestionsTitle": {

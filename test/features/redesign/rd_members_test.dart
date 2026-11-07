@@ -127,6 +127,10 @@ Widget _membersApp(Role role, MockPlayerRepository repo, {List<Person>? people, 
         path: '/people/:id',
         builder: (_, state) => Scaffold(body: Text('page old ${state.pathParameters['id']}')),
       ),
+      GoRoute(
+        path: '/ich/verwaltung/freigaben/:id',
+        builder: (_, state) => Scaffold(body: Text('page review ${state.pathParameters['id']}')),
+      ),
       GoRoute(path: '/statistics', builder: (_, __) => const Scaffold(body: Text('page stats'))),
     ],
   );
@@ -170,6 +174,10 @@ Widget _personApp(Role role, MockPlayerRepository repo, {Person? person, int id 
       GoRoute(
         path: '/people/:id',
         builder: (_, state) => Scaffold(body: Text('page old ${state.pathParameters['id']}')),
+      ),
+      GoRoute(
+        path: '/ich/verwaltung/freigaben/:id',
+        builder: (_, state) => Scaffold(body: Text('page review ${state.pathParameters['id']}')),
       ),
     ],
   );
@@ -499,7 +507,7 @@ void main() {
       expect(find.text('emil@example.org'), findsOneWidget);
       await tester.tap(find.text('Emil Funk'));
       await _settle(tester);
-      expect(find.text('page old 5'), findsOneWidget);
+      expect(find.text('page review 5'), findsOneWidget);
     });
 
     testWidgets('admin lifts expired pauses on open and may add persons', (tester) async {
@@ -606,7 +614,7 @@ void main() {
       expect(find.text('Pausieren'), findsNothing);
       await tester.tap(find.text('Prüfen und freigeben'));
       await _settle(tester);
-      expect(find.text('page old 1'), findsOneWidget);
+      expect(find.text('page review 1'), findsOneWidget);
     });
 
     testWidgets('unknown person shows a hint', (tester) async {

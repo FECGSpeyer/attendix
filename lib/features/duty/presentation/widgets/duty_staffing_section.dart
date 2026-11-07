@@ -21,6 +21,12 @@ import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosL
 import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
+
+part 'duty_staffing_beta.dart';
 
 /// ASTRA_DUTY_GROUPS: Ionic attendance.page.ts builds the Besetzung block from
 /// `this.players`, i.e. the person rows after the helper group filter of
@@ -82,6 +88,18 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
     final fillColor = dutyFillColor(dutyFill(players, _required));
     final l10n = context.l10n;
     final neededText = l10n.attendanceNeeded(_required);
+    if (ref.watch(redesignEnabledProvider)) {
+      return _buildBeta(
+        players: players,
+        occupants: occupants,
+        available: available,
+        presentUnassigned: presentUnassigned,
+        unavailable: unavailable,
+        canManage: canManage,
+        canViewNotes: canViewNotes,
+        myPersonId: myPersonId,
+      );
+    }
 
     // PARITY_R9: an `ion-item-group` of Ionic's inset list, not an
     // ion-card – md shows a flat block with radius 16 and no shadow.

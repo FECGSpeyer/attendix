@@ -22,6 +22,8 @@ void main() {
       '/tabs/attendance/42/protocol': '/settings/protocol/42',
       '/tabs/songs-tab': '/songs-tab',
       '/tabs/songs-tab/7': '/songs-tab/7',
+      '/tabs/songs-tab/import': '/songs-tab',
+      '/tabs/settings/songs/import': '/settings/songs',
       '/tabs/settings': '/settings',
       '/tabs/settings/teachers': '/settings/teachers',
       '/tabs/settings/instruments': '/settings/instruments',

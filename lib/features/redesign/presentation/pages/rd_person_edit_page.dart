@@ -1186,7 +1186,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
           action: RdPrimaryButton(
             key: const Key('rd-person-review'),
             label: l10n.redesignPersonReview,
-            onPressed: () => context.push('/people/$_personId'),
+            onPressed: () => context.push(RedesignRoutes.approvalReview(_personId)),
           ),
         ),
       ]);

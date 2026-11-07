@@ -12,6 +12,7 @@ import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/demo_guard.dart' show DemoModeException;
@@ -19,6 +20,7 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../people/presentation/widgets/planned_absences.dart';
+import '../../../redesign/presentation/widgets/members/rd_pause_sheets.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../core/utils/error_message.dart';
@@ -116,13 +118,33 @@ Future<void> saveSelfServiceAbsence(
 /// "Pausieren" sheet + save (Ionic openPauseModal / confirmPause).
 Future<void> selfServicePause(BuildContext context, WidgetRef ref, Person player) async {
   final repo = ref.read(playerRepositoryWithTenantProvider);
-  final result = await showModalBottomSheet<({String reason, DateTime? until})>(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
-    builder: (context) => const _SelfPauseSheet(),
-  );
+  final beta = RedesignRoutes.active;
+  final boundTenantId = ref.read(currentTenantIdProvider);
+  final ({String reason, DateTime? until})? result;
+  if (beta) {
+    // REDESIGN: the pause sheet of the new design without "Ab".
+    final input = await showRdPauseSheet(
+      context,
+      title: context.l10n.signoutPause,
+      hint: context.l10n.rdPeoplePauseSelfHint,
+      withFrom: false,
+      untilYears: 5,
+    );
+    result = input == null ? null : (reason: input.reason, until: input.until);
+  } else {
+    result = await showModalBottomSheet<({String reason, DateTime? until})>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (context) => const _SelfPauseSheet(),
+    );
+  }
   if (result == null || !context.mounted) return;
+  // TENANT (Beta): nothing is written after a group change.
+  if (beta && ref.read(currentTenantIdProvider) != boundTenantId) {
+    ToastHelper.showError(context, context.l10n.rdPeopleGroupSwitched);
+    return;
+  }
 
   final untilIso = result.until == null ? null : DateFormat('yyyy-MM-dd').format(result.until!);
   final pauseText = result.until == null

@@ -298,6 +298,10 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   /// Werke created by an earlier run (a retry does not create them again).
   final Map<String, int> _created = {};
 
+  /// Groups a file for several groups was already stored for ("path|group"):
+  /// a retry stores it only for the others.
+  final Set<String> _storedParts = {};
+
   /// Groups created by an earlier run.
   final Map<String, int> _createdGroups = {};
 
@@ -336,6 +340,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     _input = null;
     _created.clear();
     _createdGroups.clear();
+    _storedParts.clear();
     state = RdImportState(collectionId: state.collectionId);
   }
 
@@ -685,14 +690,17 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   Future<void> _suggest() async {
     final plan = state.plan;
     final tenantId = _tenantId;
-    if (plan == null || tenantId == null || !state.useAi || plan.questions.isEmpty) return;
+    // A part for several groups ("Posaune und Tuba") goes to all of them:
+    // the KI would name only one.
+    final questions = plan?.questions.where((q) => q.several.isEmpty).toList() ?? const <RdImportQuestion>[];
+    if (plan == null || tenantId == null || !state.useAi || questions.isEmpty) return;
     final run = ++_aiRun;
     state = state.copyWith(aiStatus: RdImportAiStatus.loading);
     ({Map<String, RdImportAiAnswer> answers, RdImportAiStatus status}) result;
     try {
       result = await ref.read(rdImportAiProvider).suggest(
         tenantId,
-        plan.questions,
+        questions,
         groups: {for (final g in plan.instruments) g.id},
         isChoir: plan.isChoir,
       );
@@ -1111,7 +1119,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         }
         final group = await groupNotifier.createGroup({'name': name, 'maingroup': false});
         if (group?.id == null) {
-          for (final i in items.where((i) => i.category.newGroup == name)) {
+          for (final i in items.where((i) => i.stores.any((c) => c.newGroup == name))) {
             failures.add(RdImportFailure(path: i.file.path, work: i.work.title, error: name));
           }
           continue;
@@ -1167,16 +1175,24 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
             progress = progress.copyWith(current: '${item.file.name} · ${item.work.title}', succeeded: succeeded.length);
             state = state.copyWith(upload: progress.copyWith(done: done, failures: [...failures]));
             try {
-              final c = item.category;
-              await source.upload(
-                service,
-                songId: songId,
-                path: item.file.path,
-                fileName: item.file.name,
-                instrumentId: c.newGroup != null ? _createdGroups[c.newGroup] : c.instrumentId,
-                note: c.note,
-                mainGroupId: _mainGroupId,
-              );
+              // A part for several groups is stored once per group.
+              final several = item.stores.length > 1;
+              for (final c in item.stores) {
+                final instrumentId = c.newGroup != null ? _createdGroups[c.newGroup] : c.instrumentId;
+                final part = '${item.file.path}|$instrumentId';
+                if (several && _storedParts.contains(part)) continue;
+                if (tenantChanged()) return;
+                await source.upload(
+                  service,
+                  songId: songId,
+                  path: item.file.path,
+                  fileName: item.file.name,
+                  instrumentId: instrumentId,
+                  note: c.note,
+                  mainGroupId: _mainGroupId,
+                );
+                if (several) _storedParts.add(part);
+              }
               succeeded.add(item.file.path);
             } catch (e) {
               failures.add(RdImportFailure(path: item.file.path, work: item.work.title, error: _uploadError(e)));

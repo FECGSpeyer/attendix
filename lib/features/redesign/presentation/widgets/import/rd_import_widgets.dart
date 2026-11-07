@@ -115,6 +115,12 @@ List<(RdImportCategory, String)> rdImportCategoryOptions(
 /// Name of [c] as shown.
 String rdImportCategoryLabel(BuildContext context, RdImportPlan plan, RdImportCategory c) {
   final l10n = context.l10n;
+  if (c.isSeveral) {
+    // "Posaune + Tuba (neu)"
+    return c.groups
+        .map((g) => g.newGroup != null ? l10n.redesignImportCategoryNewShort(g.newGroup!) : rdImportCategoryLabel(context, plan, g))
+        .join(' + ');
+  }
   if (c.newGroup != null) return l10n.redesignImportCategoryNewGroup(c.newGroup!);
   if (c.instrumentId == 1) return l10n.songsRecording;
   if (c.instrumentId == 2) return l10n.songsLyrics;
@@ -126,7 +132,8 @@ String rdImportCategoryLabel(BuildContext context, RdImportPlan plan, RdImportCa
 
 /// Sheet with every category, the groups ("Stimmen", with the [newGroups]
 /// still to be created) apart from the other kinds of files; returns the
-/// one picked. [header] stands above them (the file's first page).
+/// one picked. [header] stands above them (the file's first page);
+/// [several] (a part for several groups, "Posaune + Tuba") comes first.
 Future<RdImportCategory?> rdPickImportCategory(
   BuildContext context,
   RdImportPlan plan, {
@@ -134,9 +141,13 @@ Future<RdImportCategory?> rdPickImportCategory(
   RdImportCategory? current,
   List<String> newGroups = const [],
   Widget? header,
+  RdImportCategory? several,
 }) {
-  final options = rdImportCategoryOptions(context, plan, newGroups: newGroups);
-  final partCount = plan.instruments.length + newGroups.length;
+  final options = [
+    if (several != null) (several, rdImportCategoryLabel(context, plan, several)),
+    ...rdImportCategoryOptions(context, plan, newGroups: newGroups),
+  ];
+  final partCount = plan.instruments.length + newGroups.length + (several == null ? 0 : 1);
   final parts = options.take(partCount).toList();
   final files = options.skip(partCount).toList();
   return showRdSheet<RdImportCategory>(
