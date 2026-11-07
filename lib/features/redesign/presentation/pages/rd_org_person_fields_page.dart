@@ -19,6 +19,16 @@ import '../widgets/manage/rd_manage_list.dart';
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
 
+Future<void>? _orgFieldWrites;
+
+/// Runs [task] after every earlier write of the shared fields (also of a
+/// closed page); never throws.
+Future<bool> _serialOrgFieldWrite(Future<bool> Function() task) {
+  final result = (_orgFieldWrites ?? Future<void>.value()).then((_) => task()).catchError((Object _) => false);
+  _orgFieldWrites = result.then((_) {});
+  return result;
+}
+
 /// REDESIGN: Organisation › Gemeinsame Zusatzfelder in the template
 /// "Verwaltungsliste" (like Verwaltung › Zusatzfelder; replaces
 /// `/settings/org-settings/person-fields` while the Beta is on). A tap opens
@@ -34,72 +44,64 @@ class RdOrgPersonFieldsPage extends ConsumerStatefulWidget {
 }
 
 class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
-  /// The last write of this page; each write waits for the one before, so
-  /// every list is built from what the previous write stored.
-  Future<void> _writes = Future.value();
-
-  bool get _isSuperAdmin => ref.read(effectiveRoleProvider) == Role.admin;
-
-  /// The fields of organisation [orgId] as stored now: waits for a running
-  /// (re)load (a write invalidates the organisation, so this is the
-  /// reloaded list); null when another organisation is current.
-  Future<List<OrgExtraField>?> _fieldsFor(int orgId) async {
-    final org = await ref.read(currentOrganisationProvider.future);
-    if (!mounted || org?.id != orgId) return null;
-    return [...?org!.additionalFields];
-  }
-
   /// Synchronous check for the form (name taken): the shown list.
   List<OrgExtraField> _shownFields(int orgId) {
     final org = rdLoadedValue(ref.read(currentOrganisationProvider));
     return org?.id == orgId ? (org!.additionalFields ?? const []) : const [];
   }
 
-  /// Saves the list [change] builds from the fields stored now (null: no
-  /// write); [deleted] ids get their values removed. Old page `_save`
-  /// checks. Returns whether it was stored.
+  /// Saves the list [change] builds from the fields of [orgId] as stored
+  /// then (null: no write); [deleted] ids get their values removed. Old page
+  /// `_save` checks. Runs through [_orgFieldWrites] with the provider
+  /// container, so a change confirmed with "Fertig" is also stored when the
+  /// page is left meanwhile. Returns whether it was stored.
   Future<bool> _write(
     int orgId,
     List<OrgExtraField>? Function(List<OrgExtraField> stored) change, {
     List<String> deleted = const [],
     String? success,
-  }) {
+  }) async {
     final l10n = context.l10n;
-    final notifier = ref.read(planSettingsNotifierProvider.notifier);
-    final result = _writes
-        .then((_) async {
-          if (!mounted || !_isSuperAdmin) return false;
-          final stored = await _fieldsFor(orgId);
-          if (stored == null || !mounted) return false;
-          final next = change(stored);
-          if (next == null) return false;
-          for (final f in next) {
-            if (f.name.trim().isEmpty || !f.id.startsWith('org_${orgId}_')) {
-              ToastHelper.showError(context, l10n.orgFieldsInvalid);
-              return false;
-            }
-            if (f.type == 'select' && f.options.isEmpty) {
-              ToastHelper.showError(context, l10n.orgFieldsNeedsOptions(f.name));
-              return false;
-            }
-          }
-          // Written only into [orgId] (checked again right before the write).
-          final ok = await notifier.updateOrgExtraFields(next, deleted, orgId: orgId);
-          // The queue moves on only once the stored list is loaded again,
-          // so the next change builds on it.
-          if (ok && mounted) await ref.read(currentOrganisationProvider.future).catchError((Object _) => null);
-          if (mounted) {
-            if (ok) {
-              ToastHelper.showSuccess(context, success ?? l10n.orgFieldsSaved);
-            } else {
-              ToastHelper.showError(context, l10n.extraFieldsSaveFailed);
-            }
-          }
-          return ok;
-        })
-        .catchError((Object _) => false);
-    _writes = result.then((_) {});
-    return result;
+    final read = ProviderScope.containerOf(context, listen: false).read;
+    String? error;
+    final ok = await _serialOrgFieldWrite(() async {
+      if (read(effectiveRoleProvider) != Role.admin) return false;
+      // Waits for a running (re)load: after a write this is the reloaded list.
+      final org = await read(currentOrganisationProvider.future);
+      if (org?.id != orgId) return false;
+      final next = change([...?org!.additionalFields]);
+      if (next == null) return false;
+      for (final f in next) {
+        if (f.name.trim().isEmpty || !f.id.startsWith('org_${orgId}_')) {
+          error = l10n.orgFieldsInvalid;
+          return false;
+        }
+        if (f.type == 'select' && f.options.isEmpty) {
+          error = l10n.orgFieldsNeedsOptions(f.name);
+          return false;
+        }
+      }
+      // Written only into [orgId] (checked again right before the write).
+      final stored = await read(
+        planSettingsNotifierProvider.notifier,
+      ).updateOrgExtraFields(next, deleted, orgId: orgId);
+      if (stored) {
+        // The queue moves on once the stored list is loaded again, so the
+        // next change builds on it.
+        await read(currentOrganisationProvider.future).catchError((Object _) => null);
+      } else {
+        error = l10n.extraFieldsSaveFailed;
+      }
+      return stored;
+    });
+    if (mounted) {
+      if (ok) {
+        ToastHelper.showSuccess(context, success ?? l10n.orgFieldsSaved);
+      } else if (error != null) {
+        ToastHelper.showError(context, error!);
+      }
+    }
+    return ok;
   }
 
   Future<void> _add(int orgId) async {
@@ -113,7 +115,7 @@ class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
   }
 
   Future<void> _edit(int orgId, OrgExtraField field) async {
-    if (!_isSuperAdmin) return;
+    if (ref.read(effectiveRoleProvider) != Role.admin) return;
     final result = await _openForm(context, initial: field);
     if (!mounted || result == null) return;
     if (result == _delete) {
