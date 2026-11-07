@@ -240,11 +240,18 @@ class InstrumentMatcher {
     }
 
     final familySpans = _familySpans(tokens);
+    final hits = [
+      for (final instrument in instruments)
+        if (_scoreInstrument(words, instrument, familySpans) case final hit?) (hit: hit, instrument: instrument),
+    ];
+    // "Sopran" beside an instrument names its kind ("Soprano Cornet",
+    // "Sopran Saxophon"), not the group of the singers.
+    bool soprano(InstrumentInfo i) => _termsOf(i).families.contains('sopran');
+    final instrumentNamed = hits.any((h) => !h.hit.weak && !soprano(h.instrument));
     _Hit? best;
     _Hit? second;
-    for (final instrument in instruments) {
-      final hit = _scoreInstrument(words, instrument, familySpans);
-      if (hit == null) continue;
+    for (final (:hit, :instrument) in hits) {
+      if (instrumentNamed && soprano(instrument)) continue;
       if (best == null || hit.score > best.score) {
         second = best;
         best = hit;

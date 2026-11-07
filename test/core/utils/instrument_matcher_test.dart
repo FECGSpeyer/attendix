@@ -131,6 +131,10 @@ void main() {
       // Beside an instrument "Sopran" names its kind.
       expect(InstrumentMatcher.knownGroups('Sopran Saxophon.pdf'), isNot(contains('Sopran')));
       expect(InstrumentMatcher.knownGroups('Soprano Cornet.pdf'), isNot(contains('Sopran')));
+      // Also with a group Sopran.
+      expect(_label('Soprano Cornet.pdf', ['Sopran', 'Kornett']), 'Kornett');
+      expect(_label('Sopran Saxophon.pdf', ['Sopran', 'Saxophon']), 'Saxophon');
+      expect(_label('Sopran.pdf', ['Sopran', 'Kornett']), 'Sopran');
       expect(InstrumentMatcher.knownGroup('Alt.pdf'), isNull);
     });
 
