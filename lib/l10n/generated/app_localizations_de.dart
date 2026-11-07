@@ -12120,6 +12120,37 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String redesignImportGroupAllAs(Object name) {
+    return 'Alle als $name';
+  }
+
+  @override
+  String get redesignImportGroupAnswered => 'Beantwortet';
+
+  @override
+  String redesignImportGroupNames(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Namen',
+      one: '1 Name',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignImportGroupOpen(Object count) {
+    return '$count offen';
+  }
+
+  @override
+  String get redesignImportGroupUnclear => 'Unklar';
+
+  @override
+  String get redesignImportGroupUnclearDetail =>
+      'Ohne Tipp, bitte einzeln beantworten';
+
+  @override
   String get redesignImportKeepOpen =>
       'Lass diese Seite offen, bis alles hochgeladen ist. Was schon oben ist, bleibt auch bei einem Abbruch erhalten.';
 
@@ -12236,6 +12267,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String redesignImportQuestionWhere(Object count, Object works) {
     return '$count Dateien, z. B. in $works';
+  }
+
+  @override
+  String redesignImportQuestionsAnswered(Object answered, Object total) {
+    return '$answered von $total beantwortet';
   }
 
   @override

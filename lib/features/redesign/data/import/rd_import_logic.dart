@@ -1928,3 +1928,31 @@ DateTime? rdZipDate(int dosDateTime) {
   if (date == 0 || month < 1 || month > 12 || day < 1) return null;
   return DateTime(year, month, day, (time >> 11) & 0x1f, (time >> 5) & 0x3f, (time & 0x1f) * 2);
 }
+
+/// Questions about names that most likely mean the same ([category]: the
+/// proposed new group, the KI's answer or the matcher's guess; null when
+/// nobody has a guess), to answer many with one tap ("Alle als Trompete").
+class RdImportQuestionGroup {
+  const RdImportQuestionGroup(this.category, this.questions);
+
+  final RdImportCategory? category;
+  final List<RdImportQuestion> questions;
+
+  int get fileCount => questions.fold(0, (n, q) => n + q.fileCount);
+}
+
+/// [questions] by what they most likely mean ([ai]: the KI's answers by
+/// key). The group without a guess comes first, then the ones with the
+/// most files. A question stays in its group when it is answered, so
+/// nothing moves while the person answers.
+List<RdImportQuestionGroup> rdImportQuestionGroups(List<RdImportQuestion> questions, Map<String, RdImportCategory> ai) {
+  final byCategory = <RdImportCategory?, List<RdImportQuestion>>{};
+  for (final q in questions) {
+    final guess = q.proposed ?? ai[q.key] ?? (q.suggestion == null ? null : RdImportCategory(instrumentId: q.suggestion));
+    byCategory.putIfAbsent(guess, () => []).add(q);
+  }
+  final groups = [for (final e in byCategory.entries) RdImportQuestionGroup(e.key, e.value)];
+  int rank(RdImportQuestionGroup g) => g.category == null ? 0 : 1;
+  groups.sort((a, b) => rank(a) != rank(b) ? rank(a).compareTo(rank(b)) : b.fileCount.compareTo(a.fileCount));
+  return groups;
+}

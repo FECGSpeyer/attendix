@@ -436,6 +436,20 @@ void main() {
     });
   });
 
+  test('questions by what they most likely mean: unclear first, then by files', () {
+    const q = [
+      RdImportQuestion(key: 'trp', label: 'Trp', fileCount: 3, works: [], suggestion: 10),
+      RdImportQuestion(key: 'tromp', label: 'Tromp.', fileCount: 9, works: [], suggestion: 10),
+      RdImportQuestion(key: 'x', label: 'X', fileCount: 1, works: []),
+      RdImportQuestion(key: 'ob', label: 'Ob', fileCount: 2, works: [], newGroup: 'Oboe'),
+      RdImportQuestion(key: 'trumpet', label: 'Trumpet', fileCount: 1, works: []),
+    ];
+    final groups = rdImportQuestionGroups(q, {'trumpet': const RdImportCategory(instrumentId: 10)});
+    expect([for (final g in groups) g.category], [null, const RdImportCategory(instrumentId: 10), const RdImportCategory(newGroup: 'Oboe')]);
+    expect([for (final g in groups) g.questions.map((x) => x.key).join(',')], ['x', 'trp,tromp,trumpet', 'ob']);
+    expect(groups[1].fileCount, 13);
+  });
+
   group('a part for several groups ("Posaune und Tuba")', () {
     const brass = [InstrumentInfo(id: 20, name: 'Posaune'), InstrumentInfo(id: 21, name: 'Tuba')];
     RdImportPlan plan(List<InstrumentInfo> instruments, {List<RdImportSong> songs = const []}) => rdBuildImportPlan(

@@ -11993,6 +11993,37 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String redesignImportGroupAllAs(Object name) {
+    return 'All as $name';
+  }
+
+  @override
+  String get redesignImportGroupAnswered => 'Answered';
+
+  @override
+  String redesignImportGroupNames(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count names',
+      one: '1 name',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignImportGroupOpen(Object count) {
+    return '$count open';
+  }
+
+  @override
+  String get redesignImportGroupUnclear => 'Unclear';
+
+  @override
+  String get redesignImportGroupUnclearDetail =>
+      'No guess, please answer one by one';
+
+  @override
   String get redesignImportKeepOpen =>
       'Keep this page open until everything is uploaded. What is already up stays there if it stops.';
 
@@ -12106,6 +12137,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String redesignImportQuestionWhere(Object count, Object works) {
     return '$count files, e.g. in $works';
+  }
+
+  @override
+  String redesignImportQuestionsAnswered(Object answered, Object total) {
+    return '$answered of $total answered';
   }
 
   @override

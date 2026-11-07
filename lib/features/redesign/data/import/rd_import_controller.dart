@@ -1065,6 +1065,15 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     });
   }
 
+  /// Gives every question in [answers] its answer at once ("Alle als
+  /// Trompete"); the KI's answers among them count as taken.
+  void answerAll(Map<String, RdImportCategory> answers) {
+    if (answers.isEmpty) return;
+    final filled = state.aiFilled.difference(answers.keys.toSet());
+    if (filled.length != state.aiFilled.length) state = state.copyWith(aiFilled: filled);
+    _decide((d) => d.copyWith(answers: {...d.answers, ...answers}));
+  }
+
   void setSkipWordBesidePdf(bool value) => _decide((d) => d.copyWith(skipWordBesidePdf: value));
 
   void setProposeFassung(bool value) => _decide((d) => d.copyWith(proposeFassung: value));

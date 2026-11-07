@@ -184,6 +184,7 @@ List<Override> _overrides(_FakeFiles files, _FakeSongs songs, _FakeGroupNotifier
       groupNotifierProvider.overrideWith(() => groups),
       groupsProvider.overrideWith((ref) async => groupsFail ? throw Exception('Gruppen nicht geladen') : _groups),
       songsProvider.overrideWith((ref) async => const [_wunderbar, _via, _gott]),
+      songCollectionsProvider.overrideWith((ref) async => const <SongCollection>[]),
       songsListDataProvider(null).overrideWith((ref) async => SongsListData(
             tenantId: 7,
             tenantType: 'orchestra',
@@ -942,6 +943,7 @@ void main() {
     expect(find.text('Neue Gruppe „Saxophon“'), findsOneWidget);
 
     await tester.ensureVisible(find.text('Zur Prüfung'));
+    await tester.pump();
     await tester.tap(find.text('Zur Prüfung'));
     await tester.pump();
     // Right away, before the plan is made again.
@@ -1112,6 +1114,7 @@ void main() {
 
     // The KI's answers are confirmed before the review.
     await tester.ensureVisible(find.text('Zur Prüfung'));
+    await tester.pump();
     await tester.tap(find.text('Zur Prüfung'));
     await tester.pumpAndSettle();
     expect(find.text('Vorschläge der KI übernehmen?'), findsOneWidget);
