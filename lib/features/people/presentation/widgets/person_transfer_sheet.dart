@@ -64,6 +64,15 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
   bool _busy = false;
   int _groupLoad = 0;
 
+  /// TENANT (Beta): the group the sheet was opened in (source of the person).
+  int? _sourceTenantId;
+
+  @override
+  void initState() {
+    super.initState();
+    _sourceTenantId = ref.read(currentTenantIdProvider);
+  }
+
   Future<void> _loadGroups(int tenantId) async {
     final seq = ++_groupLoad;
     setState(() {
@@ -88,6 +97,13 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
     final person = widget.person;
     final copy = widget.copy;
     final l10n = context.l10n;
+    // TENANT (Beta): the person belongs to the group the sheet was opened
+    // in; after a switch before "Übertragen" nothing is handed over.
+    if (widget.beta &&
+        (source.id != _sourceTenantId || (person.tenantId != null && person.tenantId != source.id))) {
+      ToastHelper.showError(context, l10n.rdPeopleGroupSwitched);
+      return;
+    }
 
     setState(() => _busy = true);
     try {
@@ -137,7 +153,7 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
       );
       if (confirmed != true || !mounted) return;
       // TENANT (Beta): after a group change nothing is handed over.
-      if (widget.beta && ref.read(currentTenantIdProvider) != source.id) {
+      if (widget.beta && ref.read(currentTenantIdProvider) != _sourceTenantId) {
         ToastHelper.showError(context, l10n.rdPeopleGroupSwitched);
         return;
       }

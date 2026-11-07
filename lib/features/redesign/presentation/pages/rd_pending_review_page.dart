@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/group_providers.dart';
+import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
@@ -67,6 +68,10 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
   /// Zusatzfelder that only hold a default (no stored value yet); they get
   /// it again once the field definitions or Gemeinden are loaded.
   final Set<String> _defaulted = {};
+
+  /// The organisation values were loaded (or failed): only then the
+  /// Zusatzfelder are shown, so their inputs start from the stored values.
+  bool _sharedDone = false;
 
   /// Organisation fields; null when they could not be loaded (then nothing
   /// is approved, like the old page).
@@ -135,6 +140,7 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
       final shared = await loadSharedPersonFields(ref, ref.read(profileRepositoryWithTenantProvider), person);
       if (mounted) {
         setState(() {
+          _sharedDone = true;
           for (final e in shared.values.entries) {
             if (shared.fieldIds.contains(e.key) && !_touchedExtra.contains(e.key)) {
               _additional[e.key] = e.value;
@@ -145,7 +151,10 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
       }
       return shared;
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, context.l10n.svcLoadSharedFieldsFailed);
+      if (mounted) {
+        setState(() => _sharedDone = true);
+        ToastHelper.showError(context, context.l10n.svcLoadSharedFieldsFailed);
+      }
       return null;
     }
   }
@@ -374,15 +383,21 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
     // while reloading after a group switch).
     final loaded = rdLoadedValue(async);
     if (loaded != null && loaded.pending) _fill(loaded);
-    if (_person != null) {
+    final tenantId = ref.watch(currentTenantIdProvider);
+    final orgAsync = ref.watch(currentOrganisationProvider);
+    final churchesAsync = ref.watch(churchesProvider);
+    // Defaults only from the definitions of the bound group.
+    if (_person != null && tenantId == _tenantId) {
       _applyDefaults(
         ref.watch(personListExtraFieldsProvider),
-        ref.watch(churchesProvider).valueOrNull ?? const <Church>[],
+        churchesAsync.valueOrNull ?? const <Church>[],
       );
     }
+    // The Zusatzfelder start once their values and definitions are loaded
+    // (their text inputs keep what they started with).
+    final extrasReady = _sharedDone && !orgAsync.isLoading && !churchesAsync.isLoading;
     final person = _person;
     final draft = _draft;
-    final tenantId = ref.watch(currentTenantIdProvider);
 
     final back = RdBackLink(
       label: l10n.redesignManagePendingTitle,
@@ -423,7 +438,7 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
         RdGroupLabel(l10n.rdPeopleReviewDetails),
         _details(context, draft),
         const SizedBox(height: 12),
-        _moreFields(draft),
+        extrasReady ? _moreFields(draft) : RdInfoCard(text: l10n.redesignTodayLoading, loading: true),
         const SizedBox(height: 24),
         Row(
           children: [
