@@ -5,6 +5,7 @@ import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../core/utils/date_helper.dart';
+import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import 'attendance_accordion.dart';
@@ -147,7 +148,7 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
 
     String? formattedDeadline;
     if (hasDeadline && widget.attendance.deadline != null) {
-      final deadline = DateTime.tryParse(widget.attendance.deadline!);
+      final deadline = EventListUtils.deadlineLocal(widget.attendance.deadline);
       if (deadline != null) {
         formattedDeadline = DateFormat('${dateFmt()} HH:mm').format(deadline);
       }
