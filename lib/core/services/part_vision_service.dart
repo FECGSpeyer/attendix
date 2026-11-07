@@ -192,14 +192,23 @@ class PartVisionService {
   }
 
   /// What part-detect reads on [image] (from [firstPage]) for [tenantId]:
-  /// the group, the part name printed and how sure it is. Null on every
-  /// failure; throws [PartVisionLimit] once the day's budget is used up.
-  Future<PartPageRead?> readImage(Uint8List image, {required int tenantId}) async {
+  /// the group, the part name printed and how sure it is. [fileName] and
+  /// the names of the [others] files of the same Werk are hints for the KI.
+  /// Null on every failure; throws [PartVisionLimit] once the day's budget
+  /// is used up.
+  Future<PartPageRead?> readImage(
+    Uint8List image, {
+    required int tenantId,
+    String? fileName,
+    List<String> others = const [],
+  }) async {
     if (_unavailable || image.length > maxImageBytes || currentTenant() != tenantId) return null;
     try {
       final response = await _client().functions.invoke(_function, body: {
         'tenantId': tenantId,
         'image': base64Encode(image),
+        if (fileName != null) 'fileName': fileName,
+        if (others.isNotEmpty) 'others': others.take(30).toList(),
       }).timeout(timeout);
       return PartPageRead.parse(response.data);
     } on FunctionException catch (e) {

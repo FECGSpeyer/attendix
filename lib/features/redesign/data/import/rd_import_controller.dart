@@ -928,7 +928,18 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
             var limit = false;
             try {
               final image = await _pageImage(source, path);
-              final found = image == null || stopped() ? null : await vision.readImage(image, tenantId: tenantId);
+              final work = plan.work(workOf[path] ?? '');
+              final found = image == null || stopped()
+                  ? null
+                  : await vision.readImage(
+                      image,
+                      tenantId: tenantId,
+                      fileName: path.split('/').last,
+                      others: [
+                        for (final f in work?.files ?? const <RdImportFile>[])
+                          if (f.path != path) f.name,
+                      ],
+                    );
               if (found != null) {
                 read = rdImportPageRead(
                   groupId: found.groupId,
