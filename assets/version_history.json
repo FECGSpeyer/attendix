@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.74.0",
+      "date": "7.11.2026",
+      "changes": [
+        "💄 Beta: Kritische Regel als Beta-Seite mit Abschnitten, Segmenten und Zählern",
+        "🐛 Beta: Kritische Regel öffnete sich als leeres graues Blatt",
+        "💄 Beta: Gruppen-Kategorien als Verwaltungsliste wie die Werk-Kategorien",
+        "💄 Beta: Gemeinsame Zusatzfelder der Organisation als Verwaltungsliste mit Bearbeiten-Seite"
+      ]
+    },
+    {
       "version": "0.72.0",
       "date": "7.11.2026",
       "changes": [
