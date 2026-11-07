@@ -40,12 +40,7 @@ class _Draft {
 /// right away after a confirmation. The group is held when the page opens:
 /// after a group switch nothing is written.
 class RdUnavailabilityPage extends ConsumerStatefulWidget {
-  const RdUnavailabilityPage({
-    super.key,
-    required this.personId,
-    this.personName = '',
-    this.forOther = false,
-  });
+  const RdUnavailabilityPage({super.key, required this.personId, this.personName = '', this.forOther = false});
 
   final int personId;
   final String personName;
@@ -63,6 +58,10 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
   List<_Draft>? _drafts;
   bool _saving = false;
 
+  /// Saved rules whose "also planned Termine?" question was not asked yet;
+  /// kept when a later save fails, so a retry still asks it.
+  final List<PersonUnavailability> _toOffer = [];
+
   @override
   void initState() {
     super.initState();
@@ -71,7 +70,7 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
 
   bool get _sameGroup => _tenantId != null && ref.read(currentTenantIdProvider) == _tenantId;
 
-  bool get _dirty => _drafts?.any((d) => d.changed) ?? false;
+  bool get _dirty => _toOffer.isNotEmpty || (_drafts?.any((d) => d.changed) ?? false);
 
   List<AttendanceType> get _types =>
       (ref.read(attendanceTypesProvider).valueOrNull ?? const []).where((t) => t.visible).toList();
@@ -170,7 +169,7 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
       return;
     }
     // Navigator.pop ignores the PopScope (which only catches back).
-    if (changed.isEmpty || !_sameGroup) {
+    if ((changed.isEmpty && _toOffer.isEmpty) || !_sameGroup) {
       navigator.pop();
       return;
     }
@@ -178,7 +177,6 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
     final repo = ref.read(dutyRepositoryWithTenantProvider);
     final types = _types;
     setState(() => _saving = true);
-    final saved = <PersonUnavailability>[];
     for (final draft in changed) {
       if (!_sameGroup) break;
       final result = await notifier.saveUnavailability(draft.rule.copyWith(reason: draft.rule.reason.trim()));
@@ -191,10 +189,11 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
       draft
         ..rule = result
         ..original = result;
-      saved.add(result);
+      _toOffer.add(result);
     }
-    for (final rule in saved) {
+    while (_toOffer.isNotEmpty) {
       if (!mounted || !_sameGroup) break;
+      final rule = _toOffer.removeAt(0);
       // P10_SELF_PLAN: Ionic passes the visible types.
       final (:count, :dates) = await repo.countFutureMatches(rule, types);
       if (!mounted) return;
@@ -202,17 +201,22 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
         ToastHelper.showSuccess(context, l10n.dutySaved);
         continue;
       }
-      final preview = dates.take(4).map((d) {
-            final date = DateTime.tryParse(d)?.toLocal();
-            return date == null ? d : DateFormat(dateFmt(DateFmtKind.dayMonth)).format(date);
-          }).join(', ') +
+      final preview =
+          dates
+              .take(4)
+              .map((d) {
+                final date = DateTime.tryParse(d)?.toLocal();
+                return date == null ? d : DateFormat(dateFmt(DateFmtKind.dayMonth)).format(date);
+              })
+              .join(', ') +
           (count > 4 ? ' …' : '');
       final apply = await showAppConfirm(
         context,
         title: l10n.dutyAlsoPlanned,
-        message: widget.forOther
-            ? l10n.dutyAlsoPlannedOther(count, preview, widget.personName.split(' ').first)
-            : l10n.dutyAlsoPlannedSelf(count, preview),
+        message:
+            widget.forOther
+                ? l10n.dutyAlsoPlannedOther(count, preview, widget.personName.split(' ').first)
+                : l10n.dutyAlsoPlannedSelf(count, preview),
         confirmText: l10n.dutyAlsoPlannedButton,
         cancelText: l10n.dutyOnlyNew,
       );
@@ -255,36 +259,40 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
               RdEditTopBar(
                 title: l10n.redesignUnavailabilityTitle,
                 onDone: _done,
-                leading: _saving
-                    ? Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 12),
-                          child: SizedBox(
-                            width: 18,
-                            height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: p.primary),
+                leading:
+                    _saving
+                        ? Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 12),
+                            child: SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: p.primary),
+                            ),
                           ),
-                        ),
-                      )
-                    : null,
+                        )
+                        : null,
               ),
               Expanded(
-                child: RdFormBody(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
-                      child: Text(
-                        widget.forOther
-                            ? l10n.redesignUnavailabilityIntro(widget.personName)
-                            : l10n.redesignUnavailabilityIntroSelf,
-                        style: RdType.body(p).copyWith(color: p.text2),
+                // Locked while saving: a change made now would not be saved.
+                child: AbsorbPointer(
+                  absorbing: _saving,
+                  child: RdFormBody(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+                        child: Text(
+                          widget.forOther
+                              ? l10n.redesignUnavailabilityIntro(widget.personName)
+                              : l10n.redesignUnavailabilityIntroSelf,
+                          style: RdType.body(p).copyWith(color: p.text2),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    if (drafts == null)
-                      rulesAsync.hasError
-                          ? RdInfoCard(
+                      const SizedBox(height: 8),
+                      if (drafts == null)
+                        rulesAsync.hasError
+                            ? RdInfoCard(
                               text: l10n.redesignTodayLoadFailed,
                               icon: Icons.cloud_off_outlined,
                               action: RdOutlineButton(
@@ -292,25 +300,26 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
                                 onPressed: () => ref.invalidate(unavailabilityByPersonProvider(widget.personId)),
                               ),
                             )
-                          : RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
-                    else ...[
-                      if (drafts.isEmpty) ...[
-                        const SizedBox(height: 14),
-                        RdInfoCard(
-                          icon: Icons.event_busy_outlined,
-                          text: widget.forOther ? l10n.dutyNoRuleOther : l10n.dutyNoRuleSelf,
+                            : RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
+                      else ...[
+                        if (drafts.isEmpty) ...[
+                          const SizedBox(height: 14),
+                          RdInfoCard(
+                            icon: Icons.event_busy_outlined,
+                            text: widget.forOther ? l10n.dutyNoRuleOther : l10n.dutyNoRuleSelf,
+                          ),
+                        ],
+                        for (final (i, d) in drafts.indexed) _ruleSection(i, d),
+                        const SizedBox(height: 22),
+                        RdOutlineButton(
+                          icon: Icons.add,
+                          label: l10n.redesignUnavailabilityAdd,
+                          onPressed: _saving ? null : _add,
                         ),
+                        RdListNote(l10n.dutyRuleHint),
                       ],
-                      for (final (i, d) in drafts.indexed) _ruleSection(i, d),
-                      const SizedBox(height: 22),
-                      RdOutlineButton(
-                        icon: Icons.add,
-                        label: l10n.redesignUnavailabilityAdd,
-                        onPressed: _saving ? null : _add,
-                      ),
-                      RdListNote(l10n.dutyRuleHint),
                     ],
-                  ],
+                  ),
                 ),
               ),
             ],
@@ -324,15 +333,14 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
     final p = context.rd;
     final l10n = context.l10n;
     final rule = draft.rule;
-    final types = (ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[])
-        .where((t) => t.visible && t.id != null)
-        .toList();
+    final types =
+        (ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[])
+            .where((t) => t.visible && t.id != null)
+            .toList();
     final short = weekdayShortNames;
     final long = weekdayLongNames;
-    Widget label(String text) => Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Text(text, style: RdType.meta(p, size: 13)),
-        );
+    Widget label(String text) =>
+        Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(text, style: RdType.meta(p, size: 13)));
 
     return Padding(
       key: draft.key,
