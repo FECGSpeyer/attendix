@@ -6,9 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/pwa_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/utils/instrument_matcher.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
@@ -18,8 +20,10 @@ import '../../data/import/rd_import_ai.dart';
 import '../../data/import/rd_import_controller.dart';
 import '../../data/import/rd_import_drive.dart';
 import '../../data/import/rd_import_logic.dart';
+import '../../data/rd_collections_logic.dart';
 import '../widgets/import/rd_import_widgets.dart';
 import '../widgets/rd_widgets.dart';
+import '../widgets/works/rd_collections_ui.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import 'rd_import_work_page.dart';
 
@@ -425,9 +429,50 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
             padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
             child: Text(l10n.redesignImportSourceSafe, style: RdType.meta(p, size: 13)),
           ),
+          ..._collectionChoice(context, ref.watch(rdImportProvider)),
         ],
       ],
     );
+  }
+
+  /// "In welche Sammlung?": Repertoire and every Sammlung, as on "Neues
+  /// Werk"; nothing while the group has no Sammlungen.
+  List<Widget> _collectionChoice(BuildContext context, RdImportState state) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final collections = [...?ref.watch(songCollectionsProvider).valueOrNull?.where((c) => c.id != null)];
+    if (collections.isEmpty) return const [];
+    final chosen = rdCollectionById(collections, state.collectionId);
+    return [
+      const SizedBox(height: 20),
+      RdSectionHeader(l10n.redesignImportCollectionTitle),
+      Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final c in [null, ...collections])
+            RdChoiceChip(
+              key: Key('rd-import-collection-${c?.id ?? 'repertoire'}'),
+              label: c?.name ?? l10n.collectionsRepertoire,
+              icon: rdCollectionIcon(c),
+              selected: c?.id == chosen?.id,
+              onTap: () => _controller.setCollection(c?.id),
+            ),
+        ],
+      ),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+        child: Text(
+          [
+            l10n.redesignImportCollectionHint,
+            if (rdCollectionBanner(l10n, chosen, ref.watch(groupsProvider).valueOrNull ?? const [])
+                case final audience?)
+              audience,
+          ].join(' '),
+          style: RdType.meta(p, size: 13),
+        ),
+      ),
+    ];
   }
 
   Widget _sourceDrive(BuildContext context) {
@@ -693,6 +738,8 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
             ],
           ),
         ),
+        // Changing it compares the Werke again (their decisions start over).
+        ..._collectionChoice(context, state),
         const SizedBox(height: 20),
         if (plan.questions.isEmpty) ...[
           RdCard(child: Text(l10n.redesignImportQuestionsNone, style: RdType.body(p))),
@@ -740,6 +787,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
               // A known instrument without a group: its new group counts
               // until the person answers.
               answer: d.answers[q.key] ?? q.proposed,
+              proposedOnly: !d.answers.containsKey(q.key) && q.proposed != null,
               newGroups: pendingGroups,
               ai: state.useAi ? state.ai[q.key]?.category : null,
               filled: state.aiFilled.contains(q.key),
@@ -1119,6 +1167,7 @@ class _QuestionCard extends StatelessWidget {
     required this.onAnswer,
     this.ai,
     this.filled = false,
+    this.proposedOnly = false,
     this.newGroups = const [],
   });
 
@@ -1136,6 +1185,10 @@ class _QuestionCard extends StatelessWidget {
   /// Whether [answer] was filled in by the KI and not taken yet.
   final bool filled;
 
+  /// Whether [answer] is only the new group a known instrument proposes
+  /// (nobody answered yet): a tap takes it, the name opens only after.
+  final bool proposedOnly;
+
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
@@ -1145,15 +1198,32 @@ class _QuestionCard extends StatelessWidget {
     final newName = question.newGroup ?? (label.isEmpty ? label : label[0].toUpperCase() + label.substring(1));
     final ai = this.ai;
     final newGroup = answer?.newGroup != null && answer != ai ? answer! : RdImportCategory(newGroup: newName);
-    final picked = answer != null &&
-            answer != suggestion &&
-            answer != ai &&
-            answer?.newGroup == null &&
-            answer != RdImportCategory.other
-        ? answer
-        : null;
+    // A name with two instruments ("Posaune und Tuba") is never one group:
+    // each instrument is offered on its own, the group if there is one.
+    final parts = question.newGroup == null ? InstrumentMatcher.knownGroups(label, isChoir: plan.isChoir) : const <String>[];
+    final split = parts.length > 1;
+    final partChoices = <RdImportCategory>[
+      if (split)
+        for (final name in parts)
+          if (InstrumentMatcher.detect(name, plan.instruments) case final m
+              when m.instrumentId != null && m.confidence == MatchConfidence.sure)
+            RdImportCategory(instrumentId: m.instrumentId)
+          else
+            RdImportCategory(newGroup: name),
+    ].where((c) => c != suggestion).toSet().toList();
     // The KI's guess gets its own chip unless one of the fixed ones is it.
-    final aiChip = ai != null && ai != suggestion && ai != RdImportCategory.other && ai != newGroup;
+    final aiChip = ai != null &&
+        ai != suggestion &&
+        ai != RdImportCategory.other &&
+        (split ? !partChoices.contains(ai) : ai != newGroup);
+    final shown = {
+      if (suggestion != null) suggestion,
+      if (aiChip) ai,
+      ...partChoices,
+      if (!split && newName.isNotEmpty) newGroup,
+      RdImportCategory.other,
+    };
+    final picked = answer != null && !shown.contains(answer) ? answer : null;
     Future<void> pickOther() async {
       final c = await rdPickImportCategory(
         context,
@@ -1196,16 +1266,18 @@ class _QuestionCard extends StatelessWidget {
               if (suggestion != null) chip(suggestion, rdImportCategoryLabel(context, plan, suggestion)),
               if (aiChip)
                 chip(ai, ai.newGroup != null ? l10n.redesignImportAnswerNewGroup(ai.newGroup!) : rdImportCategoryLabel(context, plan, ai)),
+              for (final c in partChoices)
+                chip(c, c.newGroup != null ? l10n.redesignImportAnswerNewGroup(c.newGroup!) : rdImportCategoryLabel(context, plan, c)),
               if (picked != null)
                 RdChoiceChip(label: rdImportCategoryLabel(context, plan, picked), selected: true, onTap: pickOther),
-              if (newName.isNotEmpty)
+              if (!split && newName.isNotEmpty)
                 chip(
                   newGroup,
                   l10n.redesignImportAnswerNewGroup(newGroup.newGroup!),
                   onTap: () async {
-                    // The KI's new group is taken as it is; a chosen one
-                    // opens the name again to rename it.
-                    if (answer == newGroup && filled) return onAnswer(newGroup);
+                    // The KI's or the proposed new group is taken as it
+                    // is; a chosen one opens the name again to rename it.
+                    if (answer == newGroup && (filled || proposedOnly)) return onAnswer(newGroup);
                     final name = await showAppPrompt(
                       context,
                       title: l10n.redesignImportNewGroupTitle,

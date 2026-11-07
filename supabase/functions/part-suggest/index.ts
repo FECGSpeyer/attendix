@@ -39,9 +39,10 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 /// Roles that edit the tenant (app: `Role.canEdit`).
 const EDIT_ROLES = [1, 4, 5, 9];
 
-/// Shared with part-detect: calls per day (UTC) per account and per tenant.
-const DAILY_LIMIT_USER = 200;
-const DAILY_LIMIT_TENANT = 500;
+/// Calls per day (UTC) per tenant, shared with part-detect and work-match.
+/// No limit per account (Leon, 07.11.2026): only the tenant's counts.
+const DAILY_LIMIT_USER = 2_147_483_647;
+const DAILY_LIMIT_TENANT = 2000;
 
 /// Text model: the newest GPT Luna (Leon, 06.11.2026).
 const MODEL = "gpt-6-luna";

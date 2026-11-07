@@ -491,6 +491,25 @@ class InstrumentMatcher {
     return group.name;
   }
 
+  /// The instruments (dictionary groups) [name] names for sure, in the
+  /// order they appear: two or more for a part like "Posaune und Tuba",
+  /// which is never one group.
+  static List<String> knownGroups(String name, {bool isChoir = false}) {
+    final words = _words(_stripExtension(name));
+    if (words.tokens.isEmpty) return const [];
+    final familySpans = _familySpans(words.tokens);
+    final found = <({int at, String name})>[];
+    for (var i = 0; i < _familyGroups.length; i++) {
+      final g = _familyGroups[i];
+      if (!isChoir && _voiceFamilies.contains(g.family)) continue;
+      final hit = _scoreTerms(words, i, g.terms, familySpans);
+      if (hit == null || hit.weak) continue;
+      found.add((at: _find(words.tokens, tokenize(hit.term))?.start ?? 0, name: g.name));
+    }
+    found.sort((a, b) => a.at.compareTo(b.at));
+    return [for (final f in found) f.name];
+  }
+
   /// Families a group with [nameTokens] belongs to.
   static Iterable<String> _familiesOf(List<String> nameTokens) sync* {
     if (nameTokens.isEmpty) return;
@@ -651,10 +670,14 @@ class InstrumentMatcher {
     return parts.length > 1 ? parts.last : '';
   }
 
+  /// [filename] without its ending (".pdf"); a dot inside a name ("Posaune
+  /// u. Tuba", "Vl. 2") is no ending.
   static String _stripExtension(String filename) {
-    final dot = filename.lastIndexOf('.');
-    return dot > 0 && filename.length - dot <= 6 ? filename.substring(0, dot) : filename;
+    final ending = _ending.firstMatch(filename);
+    return ending != null && ending.start > 0 ? filename.substring(0, ending.start) : filename;
   }
+
+  static final _ending = RegExp(r'\.[A-Za-z0-9]{1,5}$');
 
   /// The part of [filename] that names the part, to remember it as a
   /// synonym of a group: the Werk name, leading numbers and the extension
