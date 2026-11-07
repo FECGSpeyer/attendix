@@ -507,6 +507,19 @@ void main() {
       );
       expect(p.questions.single.key, 'oboe');
       expect(p.questions.single.proposed, const RdImportCategory(newGroup: 'Oboe'));
+
+      // The same parts in other numbers still count together.
+      final numbered = rdBuildImportPlan(
+        [for (final n in [1, 2, 3]) _e('Noten/$n Werk $n/Posaune $n und Tuba.pdf')],
+        songs: const [],
+        instruments: const [
+          InstrumentInfo(id: 30, name: 'Posaune 1'),
+          InstrumentInfo(id: 31, name: 'Posaune 2'),
+          InstrumentInfo(id: 32, name: 'Posaune 3'),
+        ],
+        isChoir: false,
+      );
+      expect(numbered.questions.single.proposed?.groups, hasLength(2));
     });
 
     test('the Werk in Attendix gets only the part it lacks; left out when it has both', () {
