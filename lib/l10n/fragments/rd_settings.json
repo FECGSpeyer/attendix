@@ -50,7 +50,26 @@
       "brandingLogoSaved": "Logo gespeichert",
       "brandingLogoRemoved": "Logo entfernt",
       "brandingNoText": "Kein Text",
-      "brandingRemoveLogo": "Logo entfernen?"
+      "brandingRemoveLogo": "Logo entfernen?",
+      "rule": {
+        "newTitle": "Neue Regel",
+        "editTitle": "Regel",
+        "name": "Name",
+        "counts": "Was zählt",
+        "types": "Terminarten",
+        "statusHint": "Diese Status zählen. Mindestens einer muss gewählt sein.",
+        "threshold": "Kritisch ab",
+        "period": "Zeitraum",
+        "periodDays": "Letzte Tage",
+        "periodSeason": "Saison",
+        "periodAll": "Immer",
+        "periodSeasonHint": "Gezählt wird ab dem Saisonbeginn.",
+        "periodAllHint": "Gezählt wird die gesamte Historie.",
+        "days": "Tage",
+        "or": "Oder",
+        "and": "Und",
+        "valueInvalid": "Bitte eine Zahl größer als 0 eingeben."
+      }
     }
   },
   "en": {
@@ -104,7 +123,26 @@
       "brandingLogoSaved": "Logo saved",
       "brandingLogoRemoved": "Logo removed",
       "brandingNoText": "No text",
-      "brandingRemoveLogo": "Remove logo?"
+      "brandingRemoveLogo": "Remove logo?",
+      "rule": {
+        "newTitle": "New rule",
+        "editTitle": "Rule",
+        "name": "Name",
+        "counts": "What counts",
+        "types": "Event types",
+        "statusHint": "These statuses count. Choose at least one.",
+        "threshold": "Critical from",
+        "period": "Period",
+        "periodDays": "Last days",
+        "periodSeason": "Season",
+        "periodAll": "Always",
+        "periodSeasonHint": "Counted from the start of the season.",
+        "periodAllHint": "The whole history is counted.",
+        "days": "Days",
+        "or": "Or",
+        "and": "And",
+        "valueInvalid": "Please enter a number greater than 0."
+      }
     }
   }
 }

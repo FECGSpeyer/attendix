@@ -9675,6 +9675,32 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdOrgCreate => 'Organisation erstellen oder verknüpfen';
 
   @override
+  String get rdOrgFieldDelete => 'Feld löschen';
+
+  @override
+  String get rdOrgFieldDeleteHint =>
+      'Die Werte bei allen Personen der Organisation werden mit gelöscht.';
+
+  @override
+  String get rdOrgFieldEdit => 'Feld';
+
+  @override
+  String get rdOrgFieldNew => 'Neues Feld';
+
+  @override
+  String get rdOrgFieldTypeFixed =>
+      'Der Typ lässt sich nach dem Anlegen nicht mehr ändern.';
+
+  @override
+  String get rdOrgFieldsAdd => 'Feld hinzufügen';
+
+  @override
+  String get rdOrgFieldsEmpty => 'Noch keine gemeinsamen Zusatzfelder.';
+
+  @override
+  String get rdOrgFieldsSaving => 'Änderung wird gespeichert …';
+
+  @override
   String get rdOrgFilter => 'Filter';
 
   @override
@@ -10025,6 +10051,61 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get rdSettingsRegisterFieldsHint =>
       'Alle gewählten Felder sind Pflicht. Vorname, Nachname und Gruppe sind immer dabei.';
+
+  @override
+  String get rdSettingsRuleAnd => 'Und';
+
+  @override
+  String get rdSettingsRuleCounts => 'Was zählt';
+
+  @override
+  String get rdSettingsRuleDays => 'Tage';
+
+  @override
+  String get rdSettingsRuleEditTitle => 'Regel';
+
+  @override
+  String get rdSettingsRuleName => 'Name';
+
+  @override
+  String get rdSettingsRuleNewTitle => 'Neue Regel';
+
+  @override
+  String get rdSettingsRuleOr => 'Oder';
+
+  @override
+  String get rdSettingsRulePeriod => 'Zeitraum';
+
+  @override
+  String get rdSettingsRulePeriodAll => 'Immer';
+
+  @override
+  String get rdSettingsRulePeriodAllHint =>
+      'Gezählt wird die gesamte Historie.';
+
+  @override
+  String get rdSettingsRulePeriodDays => 'Letzte Tage';
+
+  @override
+  String get rdSettingsRulePeriodSeason => 'Saison';
+
+  @override
+  String get rdSettingsRulePeriodSeasonHint =>
+      'Gezählt wird ab dem Saisonbeginn.';
+
+  @override
+  String get rdSettingsRuleStatusHint =>
+      'Diese Status zählen. Mindestens einer muss gewählt sein.';
+
+  @override
+  String get rdSettingsRuleThreshold => 'Kritisch ab';
+
+  @override
+  String get rdSettingsRuleTypes => 'Terminarten';
+
+  @override
+  String get rdSettingsRuleValueInvalid =>
+      'Bitte eine Zahl größer als 0 eingeben.';
 
   @override
   String get rdSettingsSaveFailed =>
@@ -10772,6 +10853,40 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignCreateType => 'Art';
+
+  @override
+  String get redesignDutyCannot => 'Kann nicht';
+
+  @override
+  String get redesignDutyConfirmed => 'Bestätigt';
+
+  @override
+  String get redesignDutyDeclined => 'Abgesagt';
+
+  @override
+  String redesignDutyFill(Object occupied, Object required) {
+    return '$occupied von $required';
+  }
+
+  @override
+  String redesignDutyMore(Object name) {
+    return 'Mehr zu $name';
+  }
+
+  @override
+  String get redesignDutyProtocolTitle => 'Protokoll';
+
+  @override
+  String get redesignDutyRequested => 'Angefragt';
+
+  @override
+  String get redesignDutySignedOut => 'Abgemeldet';
+
+  @override
+  String get redesignDutyTasksTitle => 'Aufgaben aus diesem Termin';
+
+  @override
+  String get redesignDutyTitle => 'Dienst';
 
   @override
   String get redesignEventAddPersonShort => 'Person';
@@ -11619,6 +11734,24 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignFolderTitleLeads => 'Nach Stimme';
+
+  @override
+  String get redesignGroupCategoriesBack => 'Gruppen';
+
+  @override
+  String redesignGroupCategoriesCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Gruppen',
+      one: '$count Gruppe',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignGroupCategoriesIntro =>
+      'Kategorien fassen Gruppen zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Gruppen.';
 
   @override
   String get redesignGroupEditCategory => 'Kategorie';

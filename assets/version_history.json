@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.81.0",
+      "date": "7.11.2026",
+      "changes": [
+        "💄 Beta: Dienst-Besetzung, Person einteilen, Protokoll und Aufgaben auf der Termin-Seite im Beta-Design",
+        "💄 Beta: Kritische Regel als Beta-Seite mit Abschnitten, Segmenten und Zählern",
+        "🐛 Beta: Kritische Regel öffnete sich als leeres graues Blatt",
+        "💄 Beta: Gruppen-Kategorien als Verwaltungsliste wie die Werk-Kategorien",
+        "💄 Beta: Gemeinsame Zusatzfelder der Organisation als Verwaltungsliste mit Bearbeiten-Seite"
+      ]
+    },
+    {
       "version": "0.80.0",
       "date": "7.11.2026",
       "changes": [

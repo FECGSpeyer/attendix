@@ -15899,6 +15899,54 @@ abstract class AppLocalizations {
   /// **'Organisation erstellen oder verknüpfen'**
   String get rdOrgCreate;
 
+  /// rdOrg.fieldDelete
+  ///
+  /// In de, this message translates to:
+  /// **'Feld löschen'**
+  String get rdOrgFieldDelete;
+
+  /// rdOrg.fieldDeleteHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Werte bei allen Personen der Organisation werden mit gelöscht.'**
+  String get rdOrgFieldDeleteHint;
+
+  /// rdOrg.fieldEdit
+  ///
+  /// In de, this message translates to:
+  /// **'Feld'**
+  String get rdOrgFieldEdit;
+
+  /// rdOrg.fieldNew
+  ///
+  /// In de, this message translates to:
+  /// **'Neues Feld'**
+  String get rdOrgFieldNew;
+
+  /// rdOrg.fieldTypeFixed
+  ///
+  /// In de, this message translates to:
+  /// **'Der Typ lässt sich nach dem Anlegen nicht mehr ändern.'**
+  String get rdOrgFieldTypeFixed;
+
+  /// rdOrg.fieldsAdd
+  ///
+  /// In de, this message translates to:
+  /// **'Feld hinzufügen'**
+  String get rdOrgFieldsAdd;
+
+  /// rdOrg.fieldsEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine gemeinsamen Zusatzfelder.'**
+  String get rdOrgFieldsEmpty;
+
+  /// rdOrg.fieldsSaving
+  ///
+  /// In de, this message translates to:
+  /// **'Änderung wird gespeichert …'**
+  String get rdOrgFieldsSaving;
+
   /// rdOrg.filter
   ///
   /// In de, this message translates to:
@@ -16498,6 +16546,108 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Alle gewählten Felder sind Pflicht. Vorname, Nachname und Gruppe sind immer dabei.'**
   String get rdSettingsRegisterFieldsHint;
+
+  /// rdSettings.rule.and
+  ///
+  /// In de, this message translates to:
+  /// **'Und'**
+  String get rdSettingsRuleAnd;
+
+  /// rdSettings.rule.counts
+  ///
+  /// In de, this message translates to:
+  /// **'Was zählt'**
+  String get rdSettingsRuleCounts;
+
+  /// rdSettings.rule.days
+  ///
+  /// In de, this message translates to:
+  /// **'Tage'**
+  String get rdSettingsRuleDays;
+
+  /// rdSettings.rule.editTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Regel'**
+  String get rdSettingsRuleEditTitle;
+
+  /// rdSettings.rule.name
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get rdSettingsRuleName;
+
+  /// rdSettings.rule.newTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Regel'**
+  String get rdSettingsRuleNewTitle;
+
+  /// rdSettings.rule.or
+  ///
+  /// In de, this message translates to:
+  /// **'Oder'**
+  String get rdSettingsRuleOr;
+
+  /// rdSettings.rule.period
+  ///
+  /// In de, this message translates to:
+  /// **'Zeitraum'**
+  String get rdSettingsRulePeriod;
+
+  /// rdSettings.rule.periodAll
+  ///
+  /// In de, this message translates to:
+  /// **'Immer'**
+  String get rdSettingsRulePeriodAll;
+
+  /// rdSettings.rule.periodAllHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gezählt wird die gesamte Historie.'**
+  String get rdSettingsRulePeriodAllHint;
+
+  /// rdSettings.rule.periodDays
+  ///
+  /// In de, this message translates to:
+  /// **'Letzte Tage'**
+  String get rdSettingsRulePeriodDays;
+
+  /// rdSettings.rule.periodSeason
+  ///
+  /// In de, this message translates to:
+  /// **'Saison'**
+  String get rdSettingsRulePeriodSeason;
+
+  /// rdSettings.rule.periodSeasonHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gezählt wird ab dem Saisonbeginn.'**
+  String get rdSettingsRulePeriodSeasonHint;
+
+  /// rdSettings.rule.statusHint
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Status zählen. Mindestens einer muss gewählt sein.'**
+  String get rdSettingsRuleStatusHint;
+
+  /// rdSettings.rule.threshold
+  ///
+  /// In de, this message translates to:
+  /// **'Kritisch ab'**
+  String get rdSettingsRuleThreshold;
+
+  /// rdSettings.rule.types
+  ///
+  /// In de, this message translates to:
+  /// **'Terminarten'**
+  String get rdSettingsRuleTypes;
+
+  /// rdSettings.rule.valueInvalid
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte eine Zahl größer als 0 eingeben.'**
+  String get rdSettingsRuleValueInvalid;
 
   /// rdSettings.saveFailed
   ///
@@ -17626,6 +17776,66 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Art'**
   String get redesignCreateType;
+
+  /// redesign.duty.cannot
+  ///
+  /// In de, this message translates to:
+  /// **'Kann nicht'**
+  String get redesignDutyCannot;
+
+  /// redesign.duty.confirmed
+  ///
+  /// In de, this message translates to:
+  /// **'Bestätigt'**
+  String get redesignDutyConfirmed;
+
+  /// redesign.duty.declined
+  ///
+  /// In de, this message translates to:
+  /// **'Abgesagt'**
+  String get redesignDutyDeclined;
+
+  /// redesign.duty.fill
+  ///
+  /// In de, this message translates to:
+  /// **'{occupied} von {required}'**
+  String redesignDutyFill(Object occupied, Object required);
+
+  /// redesign.duty.more
+  ///
+  /// In de, this message translates to:
+  /// **'Mehr zu {name}'**
+  String redesignDutyMore(Object name);
+
+  /// redesign.duty.protocolTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Protokoll'**
+  String get redesignDutyProtocolTitle;
+
+  /// redesign.duty.requested
+  ///
+  /// In de, this message translates to:
+  /// **'Angefragt'**
+  String get redesignDutyRequested;
+
+  /// redesign.duty.signedOut
+  ///
+  /// In de, this message translates to:
+  /// **'Abgemeldet'**
+  String get redesignDutySignedOut;
+
+  /// redesign.duty.tasksTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgaben aus diesem Termin'**
+  String get redesignDutyTasksTitle;
+
+  /// redesign.duty.title
+  ///
+  /// In de, this message translates to:
+  /// **'Dienst'**
+  String get redesignDutyTitle;
 
   /// redesign.event.addPersonShort
   ///
@@ -18916,6 +19126,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Nach Stimme'**
   String get redesignFolderTitleLeads;
+
+  /// redesign.groupCategories.back
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen'**
+  String get redesignGroupCategoriesBack;
+
+  /// redesign.groupCategories.count
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Gruppe} other {{count} Gruppen}}'**
+  String redesignGroupCategoriesCount(num count);
+
+  /// redesign.groupCategories.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorien fassen Gruppen zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Gruppen.'**
+  String get redesignGroupCategoriesIntro;
 
   /// redesign.groupEdit.category
   ///
