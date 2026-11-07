@@ -246,7 +246,7 @@ class PartPageRead {
   }
 
   /// What a page can be ([kind]).
-  static const Set<String> kinds = {'part', 'score', 'piano', 'lyrics', 'other'};
+  static const Set<String> kinds = {'part', 'score', 'piano', 'choir', 'lyrics', 'other'};
 
   /// One of the tenant's groups.
   final int? groupId;

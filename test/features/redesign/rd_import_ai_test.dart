@@ -62,6 +62,14 @@ void main() {
     expect((score.category, score.sure), (const RdImportCategory(note: 'Partitur'), true));
     expect(read(kind: 'piano')!.category, const RdImportCategory(note: 'Klavierauszug'));
     expect(read(kind: 'part'), isNull);
+    // A choral setting: the group for singing, else "Chor" to check; in a choir all voices.
+    final choir = read(kind: 'choir')!;
+    expect((choir.category, choir.sure), (const RdImportCategory(newGroup: 'Chor'), false));
+    const withChoir = [...groups, InstrumentInfo(id: 20, name: 'Gesang')];
+    expect(rdImportPageRead(sure: false, instruments: withChoir, isChoir: false, kind: 'choir')!.category,
+        const RdImportCategory(instrumentId: 20));
+    expect(rdImportPageRead(groupId: 10, sure: true, instruments: groups, isChoir: true, kind: 'choir')!.category,
+        const RdImportCategory(note: kChoirAllNote));
     expect(PartPageRead.parse({'groupId': null, 'label': null, 'confidence': 'low', 'kind': 'score'})!.kind, 'score');
     expect(PartPageRead.parse({'kind': 'delete everything'})!.kind, isNull);
   });
