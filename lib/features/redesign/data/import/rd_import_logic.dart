@@ -908,7 +908,8 @@ bool _maybeSeveral(String name, FileCategoryGuess guess, List<InstrumentInfo> in
   if (id != null && id <= InstrumentMatcher.lyricsId) return false;
   final named = InstrumentMatcher.knownGroups(name, isChoir: isChoir);
   if (named.length < 2) return false;
-  if (isChoir && named.length >= 3 && InstrumentMatcher.knownGroups(name).isEmpty) return false;
+  // (no instrument besides the voices; outside a choir only "Sopran" counts)
+  if (isChoir && named.length >= 3 && InstrumentMatcher.knownGroups(name).every((g) => g == 'Sopran')) return false;
   if (id != null && guess.confidence == MatchConfidence.sure) {
     final own = instruments.where((g) => g.id == id).firstOrNull;
     if (own != null && InstrumentMatcher.knownGroups(own.name, isChoir: isChoir).length > 1) return false;
@@ -1284,6 +1285,12 @@ RdImportPlan rdBuildImportPlan(
     if (list.length < 2 && newGroups.isEmpty && severals.isEmpty) continue;
     String top(Map<String, int> counts) => (counts.entries.toList()..sort((a, b) => b.value.compareTo(a.value))).first.key;
     final suggestion = suggestions.isEmpty ? null : (suggestions.entries.toList()..sort((a, b) => b.value.compareTo(a.value))).first.key;
+    // A part for several groups is the answer only when at least half of
+    // the files are one (in any numbers: "Posaune 1 und Tuba" … "Posaune 3
+    // und Tuba"): a single "Klavier - Oboe" does not decide for 96 files
+    // "Oboe".
+    final severalFiles = list.where((q) => q.file.several.isNotEmpty).length;
+    final several = severals.isEmpty ? null : (severals.entries.toList()..sort((a, b) => b.value.compareTo(a.value))).first;
     questions.add(RdImportQuestion(
       key: entry.key,
       label: labels.isEmpty ? entry.key : top(labels),
@@ -1292,7 +1299,7 @@ RdImportPlan rdBuildImportPlan(
       files: {for (final q in list) q.file.name}.take(3).toList(),
       suggestion: suggestion,
       newGroup: newGroups.isEmpty ? null : top(newGroups),
-      several: severals.isEmpty ? const [] : (severals.entries.toList()..sort((a, b) => b.value.compareTo(a.value))).first.key.groups,
+      several: several == null || severalFiles * 2 < list.length ? const [] : several.key.groups,
     ));
   }
   questions.sort((a, b) => b.fileCount != a.fileCount ? b.fileCount.compareTo(a.fileCount) : a.label.compareTo(b.label));

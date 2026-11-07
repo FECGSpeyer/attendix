@@ -495,6 +495,33 @@ void main() {
           const RdImportCategory(instrumentId: 23));
     });
 
+    test('one such file among many for one group does not decide the question', () {
+      final p = rdBuildImportPlan(
+        [
+          for (final w in ['1 Eins', '2 Zwei', '3 Drei']) _e('Noten/$w/Oboe.pdf'),
+          _e('Noten/4 Vier/Klavier - Oboe.pdf'),
+        ],
+        songs: const [],
+        instruments: const [],
+        isChoir: false,
+      );
+      expect(p.questions.single.key, 'oboe');
+      expect(p.questions.single.proposed, const RdImportCategory(newGroup: 'Oboe'));
+
+      // The same parts in other numbers still count together.
+      final numbered = rdBuildImportPlan(
+        [for (final n in [1, 2, 3]) _e('Noten/$n Werk $n/Posaune $n und Tuba.pdf')],
+        songs: const [],
+        instruments: const [
+          InstrumentInfo(id: 30, name: 'Posaune 1'),
+          InstrumentInfo(id: 31, name: 'Posaune 2'),
+          InstrumentInfo(id: 32, name: 'Posaune 3'),
+        ],
+        isChoir: false,
+      );
+      expect(numbered.questions.single.proposed?.groups, hasLength(2));
+    });
+
     test('the Werk in Attendix gets only the part it lacks; left out when it has both', () {
       SongFile file(int id) => SongFile(fileName: 'p$id.pdf', fileType: 'application/pdf', url: 'u', instrumentId: id);
       final half = plan(brass, songs: [RdImportSong(id: 1, number: 120, name: 'Wie wunderbar', files: [file(20)])]);

@@ -123,6 +123,24 @@ void main() {
       expect([_label('07 - Coro.pdf', groups), _label('Наши межи - S. A..pdf', groups)], [kChoirAllNote, kChoirAllNote]);
       // A "Vocal score" is no "Gesang" part.
       expect(_label('Vocal score.pdf', [...groups, 'Gesang']), 'Klavierauszug');
+      // Outside a choir too a soprano gets a group of its own; "Alt" and
+      // "Bass" stay instruments there.
+      expect(InstrumentMatcher.knownGroup('Wo sind sie alle SOS. sib 6 - Sopran SOS .pdf'), 'Sopran');
+      expect(InstrumentMatcher.knownGroups('Soprano Sax.pdf'), isNot(contains('Sopran')));
+      expect(InstrumentMatcher.knownGroups('Sop. Cornet.pdf'), isNot(contains('Sopran')));
+      // Beside an instrument "Sopran" names its kind.
+      expect(InstrumentMatcher.knownGroups('Sopran Saxophon.pdf'), isNot(contains('Sopran')));
+      expect(InstrumentMatcher.knownGroups('Soprano Cornet.pdf'), isNot(contains('Sopran')));
+      // Also with a group Sopran.
+      expect(_label('Soprano Cornet.pdf', ['Sopran', 'Kornett']), 'Kornett');
+      expect(_label('Sopran Saxophon.pdf', ['Sopran', 'Saxophon']), 'Saxophon');
+      expect(_label('Sopran.pdf', ['Sopran', 'Kornett']), 'Sopran');
+      // A group of that kind stays; a Sopran apart from the instrument too.
+      expect(_label('Sopran Saxophon.pdf', ['Sopran Saxophon', 'Saxophon']), 'Sopran Saxophon');
+      expect(_label('Die Geige - Sopran.pdf', ['Sopran', 'Violine']), 'Sopran');
+      expect(_label('Die Geige — Sopran.pdf', ['Sopran', 'Violine']), 'Sopran');
+      expect(InstrumentMatcher.knownGroups('Die Geige — Sopran.pdf'), contains('Sopran'));
+      expect(InstrumentMatcher.knownGroup('Alt.pdf'), isNull);
     });
 
     test('a more specific group wins', () {

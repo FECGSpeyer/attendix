@@ -1515,6 +1515,7 @@ class _QuestionCard extends StatelessWidget {
         current: answer,
         title: l10n.redesignImportQuestionTitle(label),
         newGroups: newGroups,
+        newGroupName: newGroup.newGroup,
       );
       if (c != null) onAnswer(c);
     }
@@ -1554,24 +1555,9 @@ class _QuestionCard extends StatelessWidget {
                 chip(c, c.newGroup != null ? l10n.redesignImportAnswerNewGroup(c.newGroup!) : rdImportCategoryLabel(context, plan, c)),
               if (picked != null)
                 RdChoiceChip(label: rdImportCategoryLabel(context, plan, picked), selected: true, onTap: pickOther),
-              if (!split && newName.isNotEmpty)
-                chip(
-                  newGroup,
-                  l10n.redesignImportAnswerNewGroup(newGroup.newGroup!),
-                  onTap: () async {
-                    // The KI's or the proposed new group is taken as it
-                    // is; a chosen one opens the name again to rename it.
-                    if (answer == newGroup && (filled || proposedOnly)) return onAnswer(newGroup);
-                    final name = await showAppPrompt(
-                      context,
-                      title: l10n.redesignImportNewGroupTitle,
-                      message: l10n.redesignImportNewGroupMessage,
-                      initialValue: newGroup.newGroup,
-                      confirmText: l10n.redesignImportNewGroupTitle,
-                    );
-                    if (name != null && name.trim().isNotEmpty) onAnswer(RdImportCategory(newGroup: name.trim()));
-                  },
-                ),
+              // Taken as it is (Leon, 07.11.2026); another name under
+              // "Andere …" › "Neue Gruppe anlegen …".
+              if (!split && newName.isNotEmpty) chip(newGroup, l10n.redesignImportAnswerNewGroup(newGroup.newGroup!)),
               chip(RdImportCategory.other, l10n.redesignImportAnswerNone),
               RdChoiceChip(label: l10n.redesignImportAnswerOther, selected: false, onTap: pickOther),
             ],

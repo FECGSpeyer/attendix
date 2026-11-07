@@ -56,6 +56,8 @@ void main() {
     final oboe = read(label: 'Oboe 1')!;
     expect((oboe.category, oboe.sure), (const RdImportCategory(newGroup: 'Oboe'), false));
     expect(read(label: 'Posaune u. Tuba'), isNull);
+    // A sung voice in an orchestra: a group per voice (Leon, 07.11.2026).
+    expect(read(label: 'Sopran')!.category, const RdImportCategory(newGroup: 'Sopran'));
     expect(read(label: ''), isNull);
     // A full score names no part: the kind of page the KI is sure of counts.
     final score = read(kind: 'score')!;

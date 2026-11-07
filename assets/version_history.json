@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.83.1",
+      "date": "7.11.2026",
+      "changes": [
+        "🐛 Noten-Import: Eine einzelne Datei wie „Klavier - Oboe“ schlägt nicht mehr für alle „Oboe“-Dateien „Klavier + Oboe“ vor",
+        "💄 Noten-Import: „Neue Gruppe „…““ bei einer Frage gilt sofort; einen anderen Namen gibt es unter „Andere …“ › „Neue Gruppe anlegen …“",
+        "🐛 Noten-Import: „Sopran“ wird auch im Orchester als eigene Gruppe vorgeschlagen (aus dem Dateinamen und von Seite 1)"
+      ]
+    },
+    {
       "version": "0.83.0",
       "date": "7.11.2026",
       "changes": [
