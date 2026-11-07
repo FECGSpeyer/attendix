@@ -13379,6 +13379,53 @@
   "@redesignCreateType": {
     "description": "redesign.create.type"
   },
+  "redesignDutyCannot": "Kann nicht",
+  "@redesignDutyCannot": {
+    "description": "redesign.duty.cannot"
+  },
+  "redesignDutyConfirmed": "Bestätigt",
+  "@redesignDutyConfirmed": {
+    "description": "redesign.duty.confirmed"
+  },
+  "redesignDutyDeclined": "Abgesagt",
+  "@redesignDutyDeclined": {
+    "description": "redesign.duty.declined"
+  },
+  "redesignDutyFill": "{occupied} von {required}",
+  "@redesignDutyFill": {
+    "description": "redesign.duty.fill",
+    "placeholders": {
+      "occupied": {},
+      "required": {}
+    }
+  },
+  "redesignDutyMore": "Mehr zu {name}",
+  "@redesignDutyMore": {
+    "description": "redesign.duty.more",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignDutyProtocolTitle": "Protokoll",
+  "@redesignDutyProtocolTitle": {
+    "description": "redesign.duty.protocolTitle"
+  },
+  "redesignDutyRequested": "Angefragt",
+  "@redesignDutyRequested": {
+    "description": "redesign.duty.requested"
+  },
+  "redesignDutySignedOut": "Abgemeldet",
+  "@redesignDutySignedOut": {
+    "description": "redesign.duty.signedOut"
+  },
+  "redesignDutyTasksTitle": "Aufgaben aus diesem Termin",
+  "@redesignDutyTasksTitle": {
+    "description": "redesign.duty.tasksTitle"
+  },
+  "redesignDutyTitle": "Dienst",
+  "@redesignDutyTitle": {
+    "description": "redesign.duty.title"
+  },
   "redesignEventAddPersonShort": "Person",
   "@redesignEventAddPersonShort": {
     "description": "redesign.event.addPersonShort"

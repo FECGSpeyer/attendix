@@ -15,6 +15,9 @@ import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import '../../team_org_utils.dart';
 import 'agenda_picker_sheet.dart';
 import '../../../../core/services/error_reporter.dart';
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
 
 /// Status line of the protocol card (Ionic attendance.page "Protokoll"):
 /// "Noch nicht begonnen" / "Freigegeben am …[ · geändert am …]" /
@@ -100,6 +103,9 @@ class AttendanceProtocolSection extends ConsumerWidget {
     final protocol = protocolAsync.valueOrNull;
     final tasks = ref.watch(tasksForAttendanceProvider(attendanceId)).valueOrNull ?? const <TeamTask>[];
     final published = protocol?.status == 'published';
+    if (ref.watch(redesignEnabledProvider)) {
+      return _buildBeta(context, ref, protocol: protocol, loading: protocolAsync.isLoading, isLeader: isLeader, tasks: tasks);
+    }
 
     // PARITY_R9: an `ion-item-group` of Ionic's inset list, not an
     // ion-card – md shows a flat block with radius 16 and no shadow.
@@ -157,6 +163,94 @@ class AttendanceProtocolSection extends ConsumerWidget {
           ],
         ],
       ),
+    );
+  }
+
+  /// REDESIGN: "Protokoll" and "Aufgaben aus diesem Termin" as Beta grouped
+  /// lists with pills on the Beta Termin page; same rows, rights and targets
+  /// as the classic card.
+  Widget _buildBeta(
+    BuildContext context,
+    WidgetRef ref, {
+    required Protocol? protocol,
+    required bool loading,
+    required bool isLeader,
+    required List<TeamTask> tasks,
+  }) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final published = protocol?.status == 'published';
+    final open = '/settings/protocol/$attendanceId';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RdGroupLabel(l10n.redesignDutyProtocolTitle),
+        RdGroupedList(
+          children: [
+            RdListRow(
+              leading: const RdRowIcon(Icons.description_outlined),
+              title: l10n.attendanceProtocol,
+              subtitle: loading && protocol == null ? '…' : protocolCardStatus(protocol),
+              showChevron: false,
+              trailing: protocol == null
+                  ? null
+                  : RdPill(
+                      published ? l10n.attendancePublished : l10n.attendanceDraft,
+                      tone: published ? RdTone.present : RdTone.late,
+                    ),
+            ),
+            if (isLeader)
+              RdListRow(
+                leading: Icon(protocol != null ? Icons.edit_outlined : Icons.play_circle_outline, color: p.primary),
+                title: protocol != null ? l10n.attendanceOpenProtocol : l10n.attendanceStartSession,
+                titleColor: p.primary,
+                onTap: () => _push(context, ref, open),
+              )
+            else if (published)
+              RdListRow(
+                leading: Icon(Icons.chrome_reader_mode_outlined, color: p.primary),
+                title: l10n.attendanceReadProtocol,
+                titleColor: p.primary,
+                onTap: () => _push(context, ref, open),
+              ),
+          ],
+        ),
+        if (tasks.isNotEmpty) ...[
+          const SizedBox(height: 18),
+          RdGroupLabel(l10n.redesignDutyTasksTitle),
+          RdGroupedList(
+            children: [
+              for (final task in tasks) _taskRowBeta(context, ref, task),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _taskRowBeta(BuildContext context, WidgetRef ref, TeamTask task) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final done = task.status == 'completed';
+    final who = task.responsiblePerson.fullName.isNotEmpty ? task.responsiblePerson.fullName : l10n.attendanceNobodyAssigned;
+    final due = DateTime.tryParse(task.dueDate ?? '');
+    final subtitle = due != null && !done
+        ? '$who ${l10n.attendanceDueOn(DateFormat(dateFmt(DateFmtKind.dayMonth)).format(due))}'
+        : who;
+    return RdListRow(
+      leading: Icon(done ? Icons.check_circle : Icons.radio_button_unchecked, color: done ? p.present : p.text2),
+      title: task.title,
+      titleColor: done ? p.text2 : null,
+      subtitle: subtitle,
+      trailing: RdPill(
+        taskStatusLabel(task.status),
+        tone: switch (task.status) {
+          'completed' => RdTone.present,
+          'in_progress' => RdTone.primary,
+          _ => RdTone.late,
+        },
+      ),
+      onTap: () => _push(context, ref, '/settings/tasks/${task.id}'),
     );
   }
 

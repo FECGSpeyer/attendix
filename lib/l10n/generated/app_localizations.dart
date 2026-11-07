@@ -17609,6 +17609,66 @@ abstract class AppLocalizations {
   /// **'Art'**
   String get redesignCreateType;
 
+  /// redesign.duty.cannot
+  ///
+  /// In de, this message translates to:
+  /// **'Kann nicht'**
+  String get redesignDutyCannot;
+
+  /// redesign.duty.confirmed
+  ///
+  /// In de, this message translates to:
+  /// **'Bestätigt'**
+  String get redesignDutyConfirmed;
+
+  /// redesign.duty.declined
+  ///
+  /// In de, this message translates to:
+  /// **'Abgesagt'**
+  String get redesignDutyDeclined;
+
+  /// redesign.duty.fill
+  ///
+  /// In de, this message translates to:
+  /// **'{occupied} von {required}'**
+  String redesignDutyFill(Object occupied, Object required);
+
+  /// redesign.duty.more
+  ///
+  /// In de, this message translates to:
+  /// **'Mehr zu {name}'**
+  String redesignDutyMore(Object name);
+
+  /// redesign.duty.protocolTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Protokoll'**
+  String get redesignDutyProtocolTitle;
+
+  /// redesign.duty.requested
+  ///
+  /// In de, this message translates to:
+  /// **'Angefragt'**
+  String get redesignDutyRequested;
+
+  /// redesign.duty.signedOut
+  ///
+  /// In de, this message translates to:
+  /// **'Abgemeldet'**
+  String get redesignDutySignedOut;
+
+  /// redesign.duty.tasksTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgaben aus diesem Termin'**
+  String get redesignDutyTasksTitle;
+
+  /// redesign.duty.title
+  ///
+  /// In de, this message translates to:
+  /// **'Dienst'**
+  String get redesignDutyTitle;
+
   /// redesign.event.addPersonShort
   ///
   /// In de, this message translates to:

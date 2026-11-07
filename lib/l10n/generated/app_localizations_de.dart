@@ -10754,6 +10754,40 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignCreateType => 'Art';
 
   @override
+  String get redesignDutyCannot => 'Kann nicht';
+
+  @override
+  String get redesignDutyConfirmed => 'Bestätigt';
+
+  @override
+  String get redesignDutyDeclined => 'Abgesagt';
+
+  @override
+  String redesignDutyFill(Object occupied, Object required) {
+    return '$occupied von $required';
+  }
+
+  @override
+  String redesignDutyMore(Object name) {
+    return 'Mehr zu $name';
+  }
+
+  @override
+  String get redesignDutyProtocolTitle => 'Protokoll';
+
+  @override
+  String get redesignDutyRequested => 'Angefragt';
+
+  @override
+  String get redesignDutySignedOut => 'Abgemeldet';
+
+  @override
+  String get redesignDutyTasksTitle => 'Aufgaben aus diesem Termin';
+
+  @override
+  String get redesignDutyTitle => 'Dienst';
+
+  @override
   String get redesignEventAddPersonShort => 'Person';
 
   @override

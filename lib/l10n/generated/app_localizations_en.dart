@@ -10641,6 +10641,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignCreateType => 'Type';
 
   @override
+  String get redesignDutyCannot => 'Can\'t';
+
+  @override
+  String get redesignDutyConfirmed => 'Confirmed';
+
+  @override
+  String get redesignDutyDeclined => 'Declined';
+
+  @override
+  String redesignDutyFill(Object occupied, Object required) {
+    return '$occupied of $required';
+  }
+
+  @override
+  String redesignDutyMore(Object name) {
+    return 'More for $name';
+  }
+
+  @override
+  String get redesignDutyProtocolTitle => 'Minutes';
+
+  @override
+  String get redesignDutyRequested => 'Requested';
+
+  @override
+  String get redesignDutySignedOut => 'Signed out';
+
+  @override
+  String get redesignDutyTasksTitle => 'Tasks from this event';
+
+  @override
+  String get redesignDutyTitle => 'Duty';
+
+  @override
   String get redesignEventAddPersonShort => 'Person';
 
   @override
