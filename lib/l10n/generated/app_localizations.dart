@@ -19775,6 +19775,18 @@ abstract class AppLocalizations {
   /// **'{count, plural, one {Noch 1 Frage offen. Ohne Antwort ordnest du diese Stimme in jedem Werk einzeln zu.} other {Noch {count} Fragen offen. Ohne Antwort ordnest du diese Stimmen in jedem Werk einzeln zu.}}'**
   String redesignImportQuestionsOpen(num count);
 
+  /// redesign.import.questionsOpenTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 offene Frage} other {{count} offene Fragen}}'**
+  String redesignImportQuestionsOpenTitle(num count);
+
+  /// redesign.import.questionsShowAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Fragen zeigen'**
+  String get redesignImportQuestionsShowAll;
+
   /// redesign.import.questionsTitle
   ///
   /// In de, this message translates to:

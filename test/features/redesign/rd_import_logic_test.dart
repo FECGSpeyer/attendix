@@ -482,6 +482,38 @@ void main() {
       final full = plan(brass, songs: [RdImportSong(id: 1, number: 120, name: 'Wie wunderbar', files: [file(20), file(21)])]);
       expect(rdWorkState(full, const RdImportDecisions(), full.works.single).files.values.single.reason, RdSkipReason.partExists);
     });
+
+    test('same name at one group only, part numbers, Fassungen and choir voices', () {
+      // The file is at Posaune by name already: Tuba still gets it.
+      final named = plan(brass, songs: [
+        RdImportSong(id: 1, number: 120, name: 'Wie wunderbar', files: [
+          SongFile(fileName: 'Posaune und Tuba.pdf', fileType: 'application/pdf', url: 'u', instrumentId: 20),
+        ]),
+      ]);
+      expect(rdImportUploads(named, RdImportDecisions(confirmed: {named.works.single.key})).single.stores,
+          [const RdImportCategory(instrumentId: 21)]);
+
+      const numbered = [InstrumentInfo(id: 20, name: 'Posaune 1'), InstrumentInfo(id: 22, name: 'Posaune 2'), InstrumentInfo(id: 21, name: 'Tuba')];
+      RdFileState only(String name, List<InstrumentInfo> instruments, {bool isChoir = false}) {
+        final p = rdBuildImportPlan([_e('Noten/1 Eins/$name')], songs: const [], instruments: instruments, isChoir: isChoir);
+        return rdWorkState(p, const RdImportDecisions(), p.works.single).files.values.single;
+      }
+
+      expect(only('Posaune 2 und Tuba.pdf', numbered).category,
+          const RdImportCategory.several([RdImportCategory(instrumentId: 22), RdImportCategory(instrumentId: 21)]));
+      // Which Posaune is not sure: asked, not given to one group.
+      expect(only('Posaune und Tuba.pdf', numbered).unclear, isTrue);
+      expect(only('Sopran und Tenor.pdf', const [], isChoir: true).category,
+          const RdImportCategory.several([RdImportCategory(newGroup: 'Sopran'), RdImportCategory(newGroup: 'Tenor')]));
+
+      final versions = rdBuildImportPlan(
+        [_e('Noten/120 Wie wunderbar/A/Posaune und Tuba.pdf'), _e('Noten/120 Wie wunderbar/B/Posaune und Tuba.pdf', size: 2000)],
+        songs: const [],
+        instruments: brass,
+        isChoir: false,
+      );
+      expect(versions.works.single.fassungen, hasLength(2));
+    });
   });
 
   test('page 1 read by the KI: sure takes the file out of "Stimme unklar", unsure is proposed', () {

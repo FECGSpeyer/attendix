@@ -12119,6 +12119,20 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String redesignImportQuestionsOpenTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count open questions',
+      one: '1 open question',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportQuestionsShowAll => 'Show all questions';
+
+  @override
   String redesignImportQuestionsTitle(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

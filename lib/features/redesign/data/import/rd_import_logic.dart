@@ -506,6 +506,17 @@ bool _atSong(RdImportSong song, RdImportCategory c) {
       song.files.any((x) => rdImportClashKey(RdImportCategory(instrumentId: x.instrumentId, note: x.instrumentId == null ? x.note : null)) == clash);
 }
 
+/// Whether the Werk [song] has a file named [name] already; for a part for
+/// several groups only when every group has it ("Posaune und Tuba.pdf" at
+/// Posaune only: Tuba still gets it).
+bool _sameName(RdImportSong song, String name, RdImportCategory c) {
+  final same = song.files.where((x) => x.fileName == name);
+  if (!c.isSeveral) return same.isNotEmpty;
+  return c.groups.every((g) => same.any((x) =>
+      rdImportClashKey(RdImportCategory(instrumentId: x.instrumentId, note: x.instrumentId == null ? x.note : null)) ==
+      rdImportClashKey(g)));
+}
+
 /// Roman numerals as part numbers ("Violine II").
 const Map<String, int> _roman = {'i': 1, 'ii': 2, 'iii': 3, 'iv': 4, 'v': 5, 'vi': 6};
 
@@ -863,40 +874,77 @@ class RdImportPlanCache {
     if (newGroup != null && groupNames.contains(newGroup.toLowerCase())) newGroup = null;
     if (newGroup != null && choirOnly) guess = const FileCategoryGuess(instrumentId: null, note: null, confidence: MatchConfidence.none);
   }
-  final several = newGroup == null ? _severalGroups(e.name, guess, instruments, isChoir) : const <RdImportCategory>[];
+  var several = const <RdImportCategory>[];
+  if (newGroup == null && _maybeSeveral(e.name, guess, instruments, isChoir, choirOnly: choirOnly)) {
+    final named = rdImportNamedGroups(e.name, instruments, isChoir: isChoir);
+    if (named.groups.length > 1) {
+      if (named.sure) {
+        several = named.groups;
+      } else if (guess.confidence == MatchConfidence.sure) {
+        // An instrument whose group is not sure ("Posaune 1 und Tuba" with
+        // only "Posaune 1/2" … ): asked, not taken for one group.
+        guess = FileCategoryGuess(instrumentId: guess.instrumentId, note: guess.note, confidence: MatchConfidence.unsure);
+      }
+    }
+  }
   return (guess: guess, newGroup: newGroup, several: several);
 }
 
-/// The groups of a part that names two or more instruments ("Posaune und
-/// Tuba"): the file goes to each of them, a known instrument without a group
-/// to a new group. Empty when the name is a group of its own
-/// ("Posaune/Tuba"), a recording, text or note like Partitur, a sheet with
-/// three or more choir voices (the choir), or when an instrument's group is
-/// not sure (several groups "Posaune 1", "Posaune 2": asked).
-List<RdImportCategory> _severalGroups(String name, FileCategoryGuess guess, List<InstrumentInfo> instruments, bool isChoir) {
+/// Whether a part named [name] may go to several groups: it names two or
+/// more instruments and is not a group of its own ("Posaune/Tuba"), a
+/// recording, text or note like Partitur, nor a sheet with three or more
+/// choir voices (the choir).
+bool _maybeSeveral(String name, FileCategoryGuess guess, List<InstrumentInfo> instruments, bool isChoir, {required bool choirOnly}) {
   final id = guess.instrumentId;
-  if (guess.note != null || (id != null && id <= InstrumentMatcher.lyricsId)) return const [];
+  // In a choir a sheet of voices without groups is "Chor" only for now.
+  if (guess.note != null && !choirOnly) return false;
+  if (id != null && id <= InstrumentMatcher.lyricsId) return false;
   final named = InstrumentMatcher.knownGroups(name, isChoir: isChoir);
-  if (named.length < 2) return const [];
-  if (isChoir && named.length >= 3 && InstrumentMatcher.knownGroups(name).isEmpty) return const [];
+  if (named.length < 2) return false;
+  if (isChoir && named.length >= 3 && InstrumentMatcher.knownGroups(name).isEmpty) return false;
   if (id != null && guess.confidence == MatchConfidence.sure) {
     final own = instruments.where((g) => g.id == id).firstOrNull;
-    if (own != null && InstrumentMatcher.knownGroups(own.name, isChoir: isChoir).length > 1) return const [];
+    if (own != null && InstrumentMatcher.knownGroups(own.name, isChoir: isChoir).length > 1) return false;
   }
+  return true;
+}
+
+/// The groups of the instruments [name] names ("Posaune 1 und Tuba"): each
+/// matched with its own number where it is written apart, a known
+/// instrument without a group as a new group. [sure] is false when a group
+/// is not sure (several groups "Posaune 1", "Posaune 2" for "Posaune"); the
+/// likely one is in [groups] then.
+({List<RdImportCategory> groups, bool sure}) rdImportNamedGroups(
+  String name,
+  List<InstrumentInfo> instruments, {
+  required bool isChoir,
+}) {
+  final stem = name.replaceFirst(RegExp(r'\.[A-Za-z0-9]{1,5}$'), '');
+  final pieces = stem.split(RegExp(r'\s+(?:und|u\.?|and|&|\+)\s+|\s*[,;&+]\s*|\s+[-–]\s+', caseSensitive: false));
   final groups = <RdImportCategory>[];
-  for (final n in named) {
-    final m = InstrumentMatcher.detect(n, instruments);
-    final RdImportCategory c;
-    if (m.instrumentId != null && m.instrumentId! > InstrumentMatcher.lyricsId && m.confidence == MatchConfidence.sure) {
-      c = RdImportCategory(instrumentId: m.instrumentId);
-    } else if (m.instrumentId == null) {
-      c = RdImportCategory(newGroup: n);
-    } else {
-      return const [];
+  var sure = true;
+  int? group(PartMatch m) => m.instrumentId != null && m.instrumentId! > InstrumentMatcher.lyricsId ? m.instrumentId : null;
+  for (final piece in pieces) {
+    final names = InstrumentMatcher.knownGroups(piece, isChoir: isChoir);
+    for (final n in names) {
+      // A piece for one instrument is matched with its number ("Posaune 1").
+      final own = InstrumentMatcher.detect(names.length == 1 ? piece : n, instruments);
+      final byName = names.length == 1 ? InstrumentMatcher.detect(n, instruments) : own;
+      final RdImportCategory c;
+      if (group(own) != null && own.confidence == MatchConfidence.sure) {
+        c = RdImportCategory(instrumentId: group(own));
+      } else if (group(byName) != null && byName.confidence == MatchConfidence.sure) {
+        c = RdImportCategory(instrumentId: group(byName));
+      } else if (group(own) == null && group(byName) == null) {
+        c = RdImportCategory(newGroup: n);
+      } else {
+        sure = false;
+        c = RdImportCategory(instrumentId: group(own) ?? group(byName));
+      }
+      if (!groups.contains(c)) groups.add(c);
     }
-    if (!groups.contains(c)) groups.add(c);
   }
-  return groups.length > 1 ? groups : const [];
+  return (groups: groups, sure: sure);
 }
 
 RdImportPlan rdBuildImportPlan(
@@ -1090,9 +1138,12 @@ RdImportPlan rdBuildImportPlan(
     final live = files.where((f) => f.hardSkip == null).toList();
     final keys = <String, Set<String>>{};
     for (final f in live) {
-      final clash = rdImportClashKey(_decided(f, categories, answers, instruments, title, pageReads));
       keys.putIfAbsent(f.fassungKey, () => <String>{});
-      if (clash != null) keys[f.fassungKey]!.add(clash);
+      // A part for several groups counts for each of them.
+      for (final c in _decided(f, categories, answers, instruments, title, pageReads).each) {
+        final clash = rdImportClashKey(c);
+        if (clash != null) keys[f.fassungKey]!.add(clash);
+      }
     }
     final competing = <String>{};
     final keyList = keys.keys.toList();
@@ -1450,7 +1501,7 @@ RdFileState rdFileState(RdImportPlan plan, RdImportDecisions d, RdImportWork wor
               _categoryOf(plan, d, x, work).instrumentId == InstrumentMatcher.lyricsId));
   if (otherFassung) {
     reason = RdSkipReason.otherFassung;
-  } else if (song != null && song.files.any((x) => x.fileName == f.name)) {
+  } else if (song != null && _sameName(song, f.name, category)) {
     reason = RdSkipReason.sameName;
   } else if (d.skipWordBesidePdf && f.besidePdf) {
     reason = RdSkipReason.wordNextToPdf;
@@ -1541,7 +1592,8 @@ RdWorkState rdWorkState(RdImportPlan plan, RdImportDecisions d, RdImportWork wor
 String rdWorkSelection(RdImportPlan plan, RdImportDecisions d, RdImportWork work) {
   final s = rdWorkState(plan, d, work);
   final t = s.target;
-  String category(RdImportCategory c) => '${c.instrumentId}|${c.note}|${c.newGroup}';
+  String category(RdImportCategory c) =>
+      c.isSeveral ? '[${c.groups.map(category).join(',')}]' : '${c.instrumentId}|${c.note}|${c.newGroup}';
   return [
     'target ${t.skip}|${t.songId}|${t.prefix}|${t.number}|${t.name}',
     'fassung ${rdFassungOf(d, work)}',
