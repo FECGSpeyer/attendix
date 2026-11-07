@@ -11731,7 +11731,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignImportAiOptionDetail =>
-      'Unknown part names, some file names and the names of unsure work folders are sent to the AI. Sure suggestions are filled in, all can be changed.';
+      'Unknown part names, some file names, the names of unsure work folders and, for unclear parts, a picture of the first page are sent to the AI. Sure suggestions are filled in, all can be changed.';
 
   @override
   String redesignImportAnswerNewGroup(Object name) {
@@ -12050,6 +12050,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportFlagNew => 'New';
 
   @override
+  String get redesignImportFlagPage => '✦ Page 1';
+
+  @override
+  String get redesignImportFlagPageLabel =>
+      'Part read by the AI on the first page';
+
+  @override
   String get redesignImportFlagPartExists => 'Part already there';
 
   @override
@@ -12163,6 +12170,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportOptionsTitle => 'For this import';
 
   @override
+  String redesignImportPageRead(Object label) {
+    return '✦ Read on page 1: “$label”';
+  }
+
+  @override
+  String get redesignImportPagesLimit =>
+      'The AI can\'t read more pages today. Please assign unclear parts yourself.';
+
+  @override
+  String redesignImportPagesReading(Object done, Object total) {
+    return '✦ The AI is reading page 1 of unclear parts: $done of $total';
+  }
+
+  @override
   String get redesignImportPickNew => 'Create as new work';
 
   @override
@@ -12176,6 +12197,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignImportPreparing => 'Preparing …';
+
+  @override
+  String get redesignImportPreviewDrive => 'Open in Google Drive';
+
+  @override
+  String get redesignImportPreviewNone => 'No preview for this file here.';
+
+  @override
+  String redesignImportPreviewOf(Object name) {
+    return 'First page of $name';
+  }
+
+  @override
+  String get redesignImportPreviewZoom => 'Tap to enlarge';
 
   @override
   String redesignImportQuestionTitle(Object name) {

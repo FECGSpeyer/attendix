@@ -11857,7 +11857,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportAiOptionDetail =>
-      'Unbekannte Stimmnamen, einige Dateinamen und die Namen unsicherer Werk-Ordner gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.';
+      'Unbekannte Stimmnamen, einige Dateinamen, die Namen unsicherer Werk-Ordner und bei unklaren Stimmen ein Bild der ersten Seite gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.';
 
   @override
   String redesignImportAnswerNewGroup(Object name) {
@@ -12178,6 +12178,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportFlagNew => 'Neu';
 
   @override
+  String get redesignImportFlagPage => '✦ Seite 1';
+
+  @override
+  String get redesignImportFlagPageLabel =>
+      'Stimme von der KI auf der ersten Seite gelesen';
+
+  @override
   String get redesignImportFlagPartExists => 'Stimme schon da';
 
   @override
@@ -12293,6 +12300,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportOptionsTitle => 'Für diesen Import';
 
   @override
+  String redesignImportPageRead(Object label) {
+    return '✦ Auf Seite 1 gelesen: „$label“';
+  }
+
+  @override
+  String get redesignImportPagesLimit =>
+      'Die KI kann heute keine weiteren Seiten lesen. Unklare Stimmen bitte selbst zuordnen.';
+
+  @override
+  String redesignImportPagesReading(Object done, Object total) {
+    return '✦ Die KI liest die erste Seite unklarer Stimmen: $done von $total';
+  }
+
+  @override
   String get redesignImportPickNew => 'Als neues Werk anlegen';
 
   @override
@@ -12306,6 +12327,21 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportPreparing => 'Wird vorbereitet …';
+
+  @override
+  String get redesignImportPreviewDrive => 'In Google Drive öffnen';
+
+  @override
+  String get redesignImportPreviewNone =>
+      'Für diese Datei gibt es hier keine Vorschau.';
+
+  @override
+  String redesignImportPreviewOf(Object name) {
+    return 'Erste Seite von $name';
+  }
+
+  @override
+  String get redesignImportPreviewZoom => 'Tippen zum Vergrößern';
 
   @override
   String redesignImportQuestionTitle(Object name) {

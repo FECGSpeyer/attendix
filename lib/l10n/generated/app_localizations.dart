@@ -19274,7 +19274,7 @@ abstract class AppLocalizations {
   /// redesign.import.aiOptionDetail
   ///
   /// In de, this message translates to:
-  /// **'Unbekannte Stimmnamen, einige Dateinamen und die Namen unsicherer Werk-Ordner gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.'**
+  /// **'Unbekannte Stimmnamen, einige Dateinamen, die Namen unsicherer Werk-Ordner und bei unklaren Stimmen ein Bild der ersten Seite gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.'**
   String get redesignImportAiOptionDetail;
 
   /// redesign.import.answerNewGroup
@@ -19739,6 +19739,18 @@ abstract class AppLocalizations {
   /// **'Neu'**
   String get redesignImportFlagNew;
 
+  /// redesign.import.flagPage
+  ///
+  /// In de, this message translates to:
+  /// **'✦ Seite 1'**
+  String get redesignImportFlagPage;
+
+  /// redesign.import.flagPageLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Stimme von der KI auf der ersten Seite gelesen'**
+  String get redesignImportFlagPageLabel;
+
   /// redesign.import.flagPartExists
   ///
   /// In de, this message translates to:
@@ -19877,6 +19889,24 @@ abstract class AppLocalizations {
   /// **'Für diesen Import'**
   String get redesignImportOptionsTitle;
 
+  /// redesign.import.pageRead
+  ///
+  /// In de, this message translates to:
+  /// **'✦ Auf Seite 1 gelesen: „{label}“'**
+  String redesignImportPageRead(Object label);
+
+  /// redesign.import.pagesLimit
+  ///
+  /// In de, this message translates to:
+  /// **'Die KI kann heute keine weiteren Seiten lesen. Unklare Stimmen bitte selbst zuordnen.'**
+  String get redesignImportPagesLimit;
+
+  /// redesign.import.pagesReading
+  ///
+  /// In de, this message translates to:
+  /// **'✦ Die KI liest die erste Seite unklarer Stimmen: {done} von {total}'**
+  String redesignImportPagesReading(Object done, Object total);
+
   /// redesign.import.pickNew
   ///
   /// In de, this message translates to:
@@ -19906,6 +19936,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Wird vorbereitet …'**
   String get redesignImportPreparing;
+
+  /// redesign.import.previewDrive
+  ///
+  /// In de, this message translates to:
+  /// **'In Google Drive öffnen'**
+  String get redesignImportPreviewDrive;
+
+  /// redesign.import.previewNone
+  ///
+  /// In de, this message translates to:
+  /// **'Für diese Datei gibt es hier keine Vorschau.'**
+  String get redesignImportPreviewNone;
+
+  /// redesign.import.previewOf
+  ///
+  /// In de, this message translates to:
+  /// **'Erste Seite von {name}'**
+  String redesignImportPreviewOf(Object name);
+
+  /// redesign.import.previewZoom
+  ///
+  /// In de, this message translates to:
+  /// **'Tippen zum Vergrößern'**
+  String get redesignImportPreviewZoom;
 
   /// redesign.import.questionTitle
   ///

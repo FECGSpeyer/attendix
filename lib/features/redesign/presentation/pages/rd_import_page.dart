@@ -875,6 +875,15 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     };
   }
 
+  /// How far the KI got with the first pages of unclear parts; null when
+  /// it is not reading.
+  String? _pagesNote(BuildContext context, RdImportState state) {
+    final pages = state.pages;
+    if (!state.useAi) return null;
+    if (pages.limit) return context.l10n.redesignImportPagesLimit;
+    return pages.done < pages.total ? context.l10n.redesignImportPagesReading(pages.done, pages.total) : null;
+  }
+
   // -------------------------------------------------------------------------
   // 3 Prüfen
 
@@ -910,6 +919,10 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
             ),
           ),
           const SizedBox(height: 16),
+        ],
+        if (_pagesNote(context, state) case final note?) ...[
+          Text(note, style: RdType.meta(p, size: 13)),
+          const SizedBox(height: 8),
         ],
         // The upload stays at the top: the list can be long.
         if (state.readingDates) ...[

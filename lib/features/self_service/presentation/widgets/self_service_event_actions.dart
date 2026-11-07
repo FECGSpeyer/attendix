@@ -114,8 +114,9 @@ class SelfServiceEventActions {
     final deadline = att.deadline;
     if (deadline == null || deadline.isEmpty) return null;
     if (!overviewMode) return EventListUtils.deadlineText(deadline, now: now);
-    // Ionic overview: dayjs(deadline) – the instant in local time.
-    final parsed = DateTime.tryParse(deadline)?.toLocal();
+    // Local wall time like the sign-out check (Ionic's overview chip read
+    // the stored value as an instant and showed it 1-2 h late).
+    final parsed = EventListUtils.deadlineLocal(deadline);
     if (parsed == null) return null;
     final current = now ?? DateTime.now();
     if (!current.isBefore(parsed) || parsed.difference(current).inDays > 3) return null;

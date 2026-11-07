@@ -12,6 +12,9 @@
 //   head   {file: Ref}                       → {data: base64, size}
 //          first and last 256 KB (the dates inside a PDF), the whole file
 //          when it is smaller
+//   file   {file: Ref}                       → {data: base64, size}
+//          the whole file up to 10 MB: page 1 of a part nobody can tell from
+//          its name is shown in the review and read by part-detect
 //   copy   {file: Ref, songId, storageName, contentType?} → {path}
 //          (a file that changed since its size was read is refused: "changed")
 //          stores the file at songs/<tenantId>/<songId>/<storageName>; an
@@ -58,6 +61,9 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024;
 
 /// Bytes read from each end of a PDF for its dates (rdPdfDate).
 const HEAD_WINDOW = 256 * 1024;
+
+/// Largest file sent back whole (action "file", rdDriveMaxViewBytes).
+const MAX_VIEW_BYTES = 10 * 1024 * 1024;
 
 const MAX_FOLDERS_PER_CALL = 25;
 const MAX_PAGES_PER_FOLDER = 20;
@@ -389,6 +395,21 @@ Deno.serve(async (req: Request) => {
           data.set(head, 0);
           data.set(tail, head.length);
         }
+        return json({ data: base64(data), size: m.size });
+      }
+
+      case "file": {
+        const file = ref(body.file);
+        if (!file) return fail("bad_request", 400);
+        const m = await meta(file, charge);
+        if (m.mimeType.startsWith("application/vnd.google-apps.")) return fail("not_a_file", 400);
+        if (m.size > MAX_VIEW_BYTES) return fail("too_large", 413);
+        if (m.size === 0) return json({ data: "", size: 0 });
+        // The bytes before the download; a file that grew since is refused.
+        const refusedBytes = await take(0, m.size);
+        if (refusedBytes) return refusedBytes;
+        const res = await drive(charge, file.id, { alt: "media" }, [file]);
+        const data = await readAtMost(res, m.size);
         return json({ data: base64(data), size: m.size });
       }
 

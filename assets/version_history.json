@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.74.0",
+      "version": "0.76.0",
       "date": "7.11.2026",
       "changes": [
         "💄 Beta: Dienst-Besetzung, Person einteilen, Protokoll und Aufgaben auf der Termin-Seite im Beta-Design",
@@ -9,6 +9,30 @@
         "🐛 Beta: Kritische Regel öffnete sich als leeres graues Blatt",
         "💄 Beta: Gruppen-Kategorien als Verwaltungsliste wie die Werk-Kategorien",
         "💄 Beta: Gemeinsame Zusatzfelder der Organisation als Verwaltungsliste mit Bearbeiten-Seite"
+      ]
+    },
+    {
+      "version": "0.74.1",
+      "date": "7.11.2026",
+      "changes": [
+        "🐛 Antwortfrist überall gleich: „Frist an“ auf der Terminseite speichert die Vorgabezeit als Ortszeit (wie Datumswahl und Abmeldung), Elternseite und Übersichts-Hinweis zeigen und prüfen die Frist zur richtigen Uhrzeit"
+      ]
+    },
+    {
+      "version": "0.74.0",
+      "date": "7.11.2026",
+      "changes": [
+        "✨ Noten-Import: In der Werk-Prüfung zeigt die Stimmen-Auswahl die erste Seite der Datei (zum Vergrößern antippen), bei Drive-Dateien ohne Vorschau ein Link zu Google Drive",
+        "✨ Noten-Import: Die KI liest bei unklaren Stimmen die erste Seite; sicher erkannte bekommen „✦ Seite 1“, unsichere werden vorgeschlagen und bleiben zu prüfen",
+        "✨ Werke-Import (Drive): Dateien bis 10 MB lassen sich ganz laden (für Vorschau und KI)"
+      ]
+    },
+    {
+      "version": "0.73.0",
+      "date": "7.11.2026",
+      "changes": [
+        "✨ Beta: „Stimme ändern“ einer Werk-Datei als Blatt „Für wen ist die Datei?“ mit gruppierter Auswahl; Freitext nur bei „Sonstige“",
+        "✨ Beta: „Werk in andere Gruppe kopieren“ als Blatt mit Ziel-Gruppe als Zeile, Dateiliste und Fortschritt im Knopf"
       ]
     },
     {
