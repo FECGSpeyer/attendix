@@ -103,6 +103,8 @@ void main() {
       expect(InstrumentMatcher.knownGroup('Святая ночь - Chimes.pdf'), 'Röhrenglocken');
       // Without a number for "Horn 1" it stays a question.
       expect(_confidence('Cor.pdf', ['Horn 1', 'Horn 2']), MatchConfidence.unsure);
+      expect(_confidence('Cor. ang..pdf', _orchestra), MatchConfidence.unsure);
+      expect(_label('Cor. ang..pdf', [..._orchestra, 'Englischhorn']), 'Englischhorn');
     });
 
     test('names from real imports: Viole, V-ni, a group named "Schlagwerk"', () {
@@ -119,6 +121,8 @@ void main() {
       // "Dirigent" stays a group of its own, not the score.
       expect(_label('Full Score.pdf', ['Dirigent', 'Violine']), 'Partitur');
       expect([_label('07 - Coro.pdf', groups), _label('Наши межи - S. A..pdf', groups)], [kChoirAllNote, kChoirAllNote]);
+      // A "Vocal score" is no "Gesang" part.
+      expect(_label('Vocal score.pdf', [...groups, 'Gesang']), 'Klavierauszug');
     });
 
     test('a more specific group wins', () {

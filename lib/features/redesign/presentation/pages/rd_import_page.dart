@@ -480,6 +480,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     final created = await ref
         .read(songCollectionNotifierProvider.notifier)
         .add(SongCollection(name: trimmed, prefix: rdCollectionPrefixSuggestion(trimmed)));
+    if (!mounted) return;
     // Its Kürzel counts for the new Werke: chosen only once the list has it.
     final loaded = created?.id == null
         ? null

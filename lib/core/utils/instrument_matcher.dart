@@ -57,7 +57,7 @@ class InstrumentMatcher {
     'flöte': ['flute', 'flauto', 'flauti', 'querflöte', 'flote', 'флейта', 'флейты', 'fleita', 'flauta'],
     'blockflöte': ['recorder', 'блокфлейта', 'blokfleita', 'flauto dolce'],
     'oboe': ['hautbois', 'oboi', 'гобой', 'гобои', 'goboi', 'goboj'],
-    'englischhorn': ['english horn', 'cor anglais', 'corno inglese'],
+    'englischhorn': ['english horn', 'cor anglais', 'corno inglese', 'cor ang', 'cor angl', 'cor ingl', 'corno ingl'],
     'klarinette': ['clarinet', 'clarinetto', 'clarinetti', 'clarinette', 'кларнет', 'кларнеты', 'klarnet'],
     'bassklarinette': ['bass clarinet', 'bassclarinet', 'clarinetto basso', 'clarinette basse'],
     'fagott': ['bassoon', 'fagotto', 'fagotti', 'basson', 'фагот', 'фаготы'],
