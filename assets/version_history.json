@@ -1,6 +1,18 @@
 {
   "versions": [
     {
+      "version": "0.80.0",
+      "date": "7.11.2026",
+      "changes": [
+        "✨ Noten-Import: Viele offene Fragen werden nach Instrument gebündelt, eine ganze Gruppe geht mit „Alle als …“",
+        "✨ Noten-Import: In Schritt 1 lässt sich direkt eine neue Sammlung für den Import anlegen",
+        "✨ Noten-Import: Vorschläge der KI stehen als „✦ Vorschlag prüfen“ im Werk",
+        "✨ Noten-Import: Partitur, Klavierauszug und Chorsatz werden auf Seite 1 erkannt",
+        "🐛 Noten-Import: „Cor.“ zählt als Horn (wenn es kein Kornett/Englischhorn gibt), „Chimes“ als Röhrenglocken",
+        "⚡ Noten-Import: Das geöffnete Werk wird zuerst gelesen; die KI bekommt gelernte Gruppennamen, Dateinamen und die übrigen Dateien des Werks"
+      ]
+    },
+    {
       "version": "0.79.0",
       "date": "7.11.2026",
       "changes": [
