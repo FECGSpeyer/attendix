@@ -1,11 +1,23 @@
 {
   "versions": [
     {
-      "version": "0.72.0",
+      "version": "0.73.0",
       "date": "7.11.2026",
       "changes": [
         "✨ Beta: „Stimme ändern“ einer Werk-Datei als Blatt „Für wen ist die Datei?“ mit gruppierter Auswahl; Freitext nur bei „Sonstige“",
         "✨ Beta: „Werk in andere Gruppe kopieren“ als Blatt mit Ziel-Gruppe als Zeile, Dateiliste und Fortschritt im Knopf"
+      ]
+    },
+    {
+      "version": "0.72.0",
+      "date": "7.11.2026",
+      "changes": [
+        "✨ Noten-Import: Ziel-Sammlung wählbar (Repertoire, Streicher …); Werke werden mit dieser Sammlung verglichen, neue bekommen ihr Kürzel",
+        "🐛 Noten-Import: Schlägt die KI dieselbe neue Gruppe vor wie das erkannte Instrument (z. B. „Oboe“), ist sie wieder mit ✦ markiert",
+        "🐛 Noten-Import: Ein Tipp auf die vorgeschlagene neue Gruppe übernimmt sie, statt den Namensdialog zu öffnen",
+        "🐛 Noten-Import: Keine Gruppe mehr aus zwei Instrumenten („Posaune und Tuba“, „Posaune u. Tuba“), stattdessen beide einzeln zur Wahl",
+        "🐛 Noten-Import: Neues Werk von Hand bekommt in einer Sammlung deren Kürzel; nach Sammlungswechsel zählen die Fassungs-Daten der PDFs",
+        "🔧 KI-Tageslimit nur noch pro Gruppe (2000 Aufrufe), keins mehr pro Person"
       ]
     },
     {

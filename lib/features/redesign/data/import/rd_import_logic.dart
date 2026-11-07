@@ -706,6 +706,8 @@ class RdImportPlan {
     required this.instruments,
     required this.junk,
     this.isChoir = false,
+    this.newPrefix,
+    this.takenNumbers = const {},
   });
 
   final List<RdImportWork> works;
@@ -720,6 +722,14 @@ class RdImportPlan {
 
   /// System files left out on reading.
   final int junk;
+
+  /// Kürzel of new Werke: the Sammlung's, when the Noten go into one (null:
+  /// Repertoire, the folder's own prefix).
+  final String? newPrefix;
+
+  /// Numbers in use anywhere in the group ([rdImportNumberKey]), also in
+  /// other Sammlungen than [songs].
+  final Set<String> takenNumbers;
 
   int get fileCount => works.fold(0, (sum, w) => sum + w.files.length);
 
@@ -805,6 +815,8 @@ RdImportPlan rdBuildImportPlan(
   Map<String, RdImportCategory> categories = const {},
   Map<String, int> aiWorks = const {},
   RdImportPlanCache? cache,
+  String? newPrefix,
+  Set<String> takenNumbers = const {},
 }) {
   final folderOf = cache == null
       ? rdFindWorkFolders(entries, songs: songs, instruments: instruments)
@@ -1094,8 +1106,13 @@ RdImportPlan rdBuildImportPlan(
     instruments: instruments,
     isChoir: isChoir,
     junk: junk,
+    newPrefix: newPrefix,
+    takenNumbers: takenNumbers,
   );
 }
+
+/// Key of a Werk number for [RdImportPlan.takenNumbers] ("S|12").
+String rdImportNumberKey(String? prefix, int number) => '${(prefix ?? '').trim().toUpperCase()}|$number';
 
 // ---------------------------------------------------------------------------
 // Decisions and what follows from them
@@ -1218,15 +1235,19 @@ RdWorkTarget rdDefaultTarget(RdImportPlan plan, RdImportWork work) {
   if (work.key == 'loose') return const RdWorkTarget.skip();
   final number = work.number;
   String norm(String? p) => (p ?? '').trim().toUpperCase();
+  // In a Sammlung new Werke get its Kürzel.
+  String? prefixOf(RdImportWork w) => plan.newPrefix ?? w.prefix;
+  final prefix = prefixOf(work);
   final taken = number != null &&
-      (plan.songs.values.any((s) => s.number == number && norm(s.prefix) == norm(work.prefix)) ||
+      (plan.takenNumbers.contains(rdImportNumberKey(prefix, number)) ||
+          plan.songs.values.any((s) => s.number == number && norm(s.prefix) == norm(prefix)) ||
           plan.works.any((w) =>
               w != work &&
               w.match.songId == null &&
               w.number == number &&
-              norm(w.prefix) == norm(work.prefix) &&
+              norm(prefixOf(w)) == norm(prefix) &&
               plan.works.indexOf(w) < plan.works.indexOf(work)));
-  return RdWorkTarget.create(name: work.title, number: taken ? null : number, prefix: taken ? null : work.prefix);
+  return RdWorkTarget.create(name: work.title, number: taken ? null : number, prefix: taken ? plan.newPrefix : prefix);
 }
 
 RdWorkTarget rdTargetOf(RdImportPlan plan, RdImportDecisions d, RdImportWork work) =>

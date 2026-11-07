@@ -971,6 +971,58 @@ void main() {
     semantics.dispose();
   });
 
+  testWidgets('questions: a known instrument\'s new group shows the KI\'s ✦ and a tap takes it', (tester) async {
+    tester.view.physicalSize = const Size(430, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final bytes = _zip({'Noten/120 Wie wunderbar/Oboe.pdf': '%PDF oboe', 'Noten/120 Wie wunderbar/Viola.pdf': '%PDF viola'});
+    final zip = PlatformFile(name: 'Noten.zip', size: bytes.length, bytes: bytes);
+    Future<ProviderContainer> open(RdImportAi ai) async {
+      await tester.pumpWidget(ProviderScope(
+        key: UniqueKey(),
+        overrides: _overrides(_FakeFiles(), _FakeSongs(), _FakeGroupNotifier(), null, false, ai),
+        child: MaterialApp(
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+          home: const RdImportPage(),
+        ),
+      ));
+      await tester.pump();
+      final container = ProviderScope.containerOf(tester.element(find.byType(RdImportPage)));
+      await tester.runAsync(() async {
+        await container.read(rdImportProvider.notifier).read([zip]);
+        await Future<void>.delayed(Duration.zero);
+      });
+      await tester.pump();
+      return container;
+    }
+
+    RdChoiceChip chip() =>
+        tester.widget<RdChoiceChip>(find.ancestor(of: find.text('Neue Gruppe „Oboe“'), matching: find.byType(RdChoiceChip)));
+
+    // The KI says the same as the known instrument: still its answer (✦).
+    var container = await open(RdImportAi((_) async => {
+          'answers': [
+            {'key': 'oboe', 'kind': 'new', 'newGroup': 'Oboe', 'confidence': 'high'},
+          ],
+        }));
+    expect(chip().selected, isTrue);
+    expect(chip().icon, Icons.auto_awesome);
+    expect(container.read(rdImportProvider).aiFilled, {'oboe'});
+
+    // Without the KI the proposal is preselected; a tap takes it, no name
+    // dialog.
+    container = await open(_noAi);
+    expect(chip().selected, isTrue);
+    expect(chip().icon, isNull);
+    await tester.tap(find.text('Neue Gruppe „Oboe“'));
+    await tester.pumpAndSettle();
+    expect(find.byType(TextField), findsNothing);
+    expect(container.read(rdImportProvider).decisions.answers['oboe'], const RdImportCategory(newGroup: 'Oboe'));
+  });
+
   testWidgets('questions: the KI\'s answer is marked and can be switched off', (tester) async {
     tester.view.physicalSize = const Size(430, 1600);
     tester.view.devicePixelRatio = 1;
