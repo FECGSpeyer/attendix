@@ -251,6 +251,8 @@ void main() {
     expect(InstrumentMatcher.knownGroup('Bariton.pdf'), isNull);
     // Two instruments: no single group.
     expect(InstrumentMatcher.knownGroup('Oboe - Englischhorn.pdf'), isNull);
+    expect(InstrumentMatcher.knownGroups('An diesem schönen Tag - Posaune und Tuba.pdf'), ['Posaune', 'Tuba']);
+    expect(InstrumentMatcher.knownGroups('Posaune u. Tuba'), ['Posaune', 'Tuba']);
     // Voices only for choirs.
     expect(InstrumentMatcher.knownGroup('Tenor.pdf'), isNull);
     expect(InstrumentMatcher.knownGroup('Tenor.pdf', isChoir: true), 'Tenor');
