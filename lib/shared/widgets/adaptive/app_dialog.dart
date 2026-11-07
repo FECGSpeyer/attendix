@@ -1309,6 +1309,73 @@ class _RadioAlertState<T> extends State<_RadioAlert<T>> {
     void cancel() => Navigator.of(context).pop();
     void confirm() => Navigator.of(context).pop(AppRadioAlertResult<T>(_value));
     final maxHeight = MediaQuery.sizeOf(context).height * 0.5;
+    final rd = context.rdSkin;
+    if (rd != null) {
+      // Beta-Skin: message and options on the title's 22pt edge, the
+      // checked option primary with a checkmark.
+      final message = widget.message;
+      return AppAlertDialog(
+        title: Text(widget.title),
+        contentPadding: const EdgeInsets.only(bottom: 14),
+        content: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: maxHeight),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (message != null && message.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(22, 0, 22, 8),
+                    child: Text(message),
+                  ),
+                for (final (value, label) in widget.options)
+                  InkWell(
+                    onTap: () => setState(() => _value = value),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 22),
+                      child: Container(
+                        constraints: const BoxConstraints(minHeight: 48),
+                        padding: const EdgeInsets.symmetric(vertical: 11),
+                        decoration: BoxDecoration(
+                          border: Border(top: BorderSide(color: rd.line, width: 0.5)),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                label,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  height: 1.3,
+                                  fontWeight: value == _value ? FontWeight.w600 : FontWeight.w400,
+                                  color: value == _value ? rd.primary : rd.text,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            value == _value
+                                ? Icon(Icons.check, size: 22, color: rd.primary)
+                                : const SizedBox(width: 22),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          IosAlertButton(
+            onPressed: cancel,
+            destructive: widget.cancelDestructive,
+            child: Text(cancelText),
+          ),
+          IosAlertButton(onPressed: confirm, child: Text(confirmText)),
+        ],
+      );
+    }
     if (useIosLook(context)) {
       // Ionic iOS radio alert: rows with the label (primary when checked)
       // and a checkmark at the end.

@@ -216,6 +216,11 @@ bool isRelevantSongDelete(Map<String, dynamic> oldRecord, List<Song>? songs) {
   return songs.any((s) => s.id == id);
 }
 
+/// True while a Sammlung is deleted with its Werke: the realtime changes
+/// then do not reload [songsProvider] after every Werk (that is done once at
+/// the end).
+final songsBulkDeleteRunningProvider = StateProvider<bool>((ref) => false);
+
 /// Realtime subscription on the songs table of the effective song tenant.
 /// Watch it from a page to refresh [songsProvider] on changes.
 final songsRealtimeProvider = Provider.autoDispose<void>((ref) {
@@ -229,6 +234,7 @@ final songsRealtimeProvider = Provider.autoDispose<void>((ref) {
   void refresh() {
     debounce?.cancel();
     debounce = Timer(const Duration(milliseconds: 300), () {
+      if (ref.read(songsBulkDeleteRunningProvider)) return;
       ref.invalidate(songsProvider);
     });
   }
@@ -790,6 +796,7 @@ class SongCollectionNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     var deleted = 0;
     var failed = 0;
+    final bulk = ref.read(songsBulkDeleteRunningProvider.notifier)..state = true;
     try {
       // From the server only: a cached list would say nothing about what is left.
       Future<List<int>> left() => repo.getSongIdsInCollection(id);
@@ -829,6 +836,7 @@ class SongCollectionNotifier extends Notifier<AsyncValue<void>> {
       state = AsyncValue.error(e, stack);
       return (ok: false, deleted: deleted, failed: failed);
     } finally {
+      bulk.state = false;
       ref.invalidate(songCollectionsProvider);
       ref.invalidate(songsProvider);
       ref.invalidate(currentSongsProvider);
