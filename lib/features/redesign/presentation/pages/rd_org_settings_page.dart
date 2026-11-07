@@ -10,7 +10,6 @@ import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/plan_beamer.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/organisation/organisation.dart';
@@ -21,6 +20,7 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../organisation/presentation/pages/org_settings_page.dart' show createGemeindeAppKey;
 import '../../../organisation/presentation/widgets/org_link_dialogs.dart';
 import '../../data/rd_manage_logic.dart' show RdManageArea;
+import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
 
@@ -159,13 +159,20 @@ class _RdOrgSettingsPageState extends ConsumerState<RdOrgSettingsPage> {
     if (orgAsync.isLoading && org == null) {
       return RdPage(children: [
         ..._header(context),
-        Center(child: Padding(padding: const EdgeInsets.all(32), child: CircularProgressIndicator(color: p.primary))),
+        RdInfoCard(text: l10n.redesignTodayLoading, loading: true),
       ]);
     }
     if (orgAsync.hasError && org == null) {
       return RdPage(children: [
         ..._header(context),
-        RdListNote(l10n.planningFlutterErrorWith(friendlyErrorMessage(orgAsync.error!))),
+        RdInfoCard(
+          text: l10n.redesignTodayLoadFailed,
+          icon: Icons.cloud_off_outlined,
+          action: RdOutlineButton(
+            label: l10n.redesignCommonRetry,
+            onPressed: () => ref.invalidate(currentOrganisationProvider),
+          ),
+        ),
       ]);
     }
     if (org == null) {

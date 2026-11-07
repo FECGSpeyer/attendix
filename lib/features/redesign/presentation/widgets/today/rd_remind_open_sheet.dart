@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/utils/toast_helper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -109,12 +110,16 @@ class _RemindSheetState extends ConsumerState<_RemindSheet> {
     }
     if (!mounted) return;
     setState(() => _sending = false);
-    final messenger = ScaffoldMessenger.maybeOf(context);
-    final text = failed == 0
-        ? l10n.redesignRemindSent(sent)
-        : (sent == 0 ? l10n.redesignRemindFailed : l10n.redesignRemindPartlyFailed(sent, failed));
-    if (failed == 0) Navigator.of(context).pop();
-    messenger?.showSnackBar(SnackBar(content: Text(text)));
+    // Toast on the root overlay: stays visible after the sheet closes.
+    if (failed == 0) {
+      ToastHelper.showSuccess(context, l10n.redesignRemindSent(sent));
+      Navigator.of(context).pop();
+    } else {
+      ToastHelper.showError(
+        context,
+        sent == 0 ? l10n.redesignRemindFailed : l10n.redesignRemindPartlyFailed(sent, failed),
+      );
+    }
   }
 
   @override

@@ -11,6 +11,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
 import '../../../profile/presentation/widgets/profile_helpers.dart' show profileRoleName;
+import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/join/rd_join_sheet.dart';
 import '../widgets/rd_widgets.dart';
 
@@ -56,7 +57,7 @@ class RdTenantsView extends StatelessWidget {
         Text(l10n.redesignTenantsIntro, style: RdType.meta(p, size: 14)),
         const SizedBox(height: 16),
         if (tenants.isLoading && list.isEmpty)
-          const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator()))
+          RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
         else if (tenants.hasError && list.isEmpty)
           RdCard(
             child: Column(

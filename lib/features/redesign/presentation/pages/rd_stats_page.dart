@@ -10,6 +10,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../export/presentation/pages/export_page.dart' show showExportModal;
 import '../../data/rd_stats_logic.dart';
+import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/rd_widgets.dart';
 
 /// REDESIGN: Verwaltung › Auswertung (canvas "Statistik"): range chips,
@@ -107,12 +108,16 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
         ),
         const SizedBox(height: 16),
         if (attendancesAsync.isLoading && !attendancesAsync.hasValue)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 48),
-            child: Center(child: CircularProgressIndicator(color: p.primary)),
-          )
+          RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
         else if (attendancesAsync.hasError)
-          RdCard(child: Text(l10n.redesignStatsLoadFailed, style: RdType.body(p)))
+          RdInfoCard(
+            text: l10n.redesignTodayLoadFailed,
+            icon: Icons.cloud_off_outlined,
+            action: RdOutlineButton(
+              label: l10n.redesignCommonRetry,
+              onPressed: () => ref.invalidate(filteredAttendancesForStatsProvider),
+            ),
+          )
         else if (stats.totalAttendances == 0)
           RdCard(child: Text(l10n.redesignStatsEmpty, style: RdType.body(p)))
         else ...[

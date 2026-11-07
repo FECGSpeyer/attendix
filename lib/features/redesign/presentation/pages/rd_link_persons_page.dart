@@ -7,6 +7,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../settings/presentation/pages/link_persons_page.dart';
+import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/rd_widgets.dart';
 
 /// REDESIGN: Organisation › Personen verknüpfen (canvas "Beta: Gruppe und
@@ -47,7 +48,7 @@ class _RdLinkPersonsPageState extends ConsumerState<RdLinkPersonsPage> with Link
         Semantics(header: true, child: Text(l10n.linkPersonsTitle, style: RdType.largeTitle(p))),
         const SizedBox(height: 8),
         if (loading)
-          Center(child: Padding(padding: const EdgeInsets.all(32), child: CircularProgressIndicator(color: p.primary)))
+          RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
         else if (groups.isEmpty) ...[
           const SizedBox(height: 10),
           RdCard(

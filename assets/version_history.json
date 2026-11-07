@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.71.2",
+      "date": "7.11.2026",
+      "changes": [
+        "💄 Beta: Verwaltungs- und Einstellungsseiten laden mit derselben Ladekarte wie die Listen; Ladefehler mit „Erneut versuchen“",
+        "💄 Beta: Erinnern, „Link kopiert“ und Eltern-Fehler als normale Meldung (auch über offenen Blättern sichtbar)",
+        "💄 Beta: Gruppenauswahl beim Mitteilung schreiben mit den gleichen Chips wie überall"
+      ]
+    },
+    {
       "version": "0.71.1",
       "date": "7.11.2026",
       "changes": [

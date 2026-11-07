@@ -18,6 +18,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/presentation/pages/branding_page.dart' show kMaxLogoBytes;
 import '../../data/rd_manage_logic.dart' show RdManageArea;
+import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
 
@@ -180,13 +181,23 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
       return RdPage(
         children: [
           ...header,
-          Center(child: Padding(padding: const EdgeInsets.all(32), child: CircularProgressIndicator(color: p.primary))),
+          RdInfoCard(text: l10n.redesignTodayLoading, loading: true),
         ],
       );
     }
     if (orgAsync.hasError && org == null) {
       return RdPage(
-        children: [...header, RdListNote(l10n.settingsFlutterLoadFailed(friendlyErrorMessage(orgAsync.error!)))],
+        children: [
+          ...header,
+          RdInfoCard(
+            text: l10n.redesignTodayLoadFailed,
+            icon: Icons.cloud_off_outlined,
+            action: RdOutlineButton(
+              label: l10n.redesignCommonRetry,
+              onPressed: () => ref.invalidate(brandingOrganisationProvider),
+            ),
+          ),
+        ],
       );
     }
     if (org == null) {
