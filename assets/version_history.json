@@ -4,7 +4,7 @@
       "version": "0.71.1",
       "date": "7.11.2026",
       "changes": [
-        "🐛 Beta: Antwortfrist beim Anlegen und Bearbeiten eines Termins wird als Ortszeit gespeichert (vorher 1–2 Std. zu früh); Elternkarte prüft „abgelaufen“ zur richtigen Zeit",
+        "🐛 Beta: Antwortfrist beim Anlegen und Bearbeiten eines Termins wird als Ortszeit gespeichert (vorher 1–2 Std. zu früh)",
         "🐛 Beta: iOS-Zeitrad übernimmt die angezeigte Vorgabezeit (Beginn/Ende, Frist) statt nichts oder 23:59",
         "🐛 Beta: Filter „nur offene“ fällt weg, wenn nichts mehr offen ist; eigenes Antwort-Blatt zeigt Fehler statt Endlos-Laden; lange Termintypen überlaufen die Karte nicht",
         "🐛 Beta: Archivieren aktualisiert Mitglieder-, Archiv- und Account-Listen sofort; Register-Wechsel mehrerer Personen nimmt Stimmführer und deren Rolle weg",

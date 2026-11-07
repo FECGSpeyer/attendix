@@ -92,8 +92,8 @@ class ChildPersonAttendance {
   bool get isUpcoming => date != null && !isPast;
 
   bool get isDeadlinePassed {
-    // Stored as local wall time in UTC notation (see EventListUtils).
-    final deadlineDate = EventListUtils.deadlineLocal(deadline);
+    if (deadline == null) return false;
+    final deadlineDate = DateTime.tryParse(deadline!);
     if (deadlineDate == null) return false;
     return DateTime.now().isAfter(deadlineDate);
   }
@@ -107,7 +107,8 @@ class ChildPersonAttendance {
   }
 
   String? get deadlineText {
-    final deadlineDate = EventListUtils.deadlineLocal(deadline);
+    if (deadline == null) return null;
+    final deadlineDate = DateTime.tryParse(deadline!);
     if (deadlineDate == null) return null;
 
     final now = DateTime.now();
@@ -178,8 +179,8 @@ class ParentAttendanceGroup {
   bool get isRunning => EventListUtils.isRunning(date, durationDays);
 
   bool get isDeadlinePassed {
-    // Stored as local wall time in UTC notation (see EventListUtils).
-    final deadlineDate = EventListUtils.deadlineLocal(deadline);
+    if (deadline == null) return false;
+    final deadlineDate = DateTime.tryParse(deadline!);
     if (deadlineDate == null) return false;
     return DateTime.now().isAfter(deadlineDate);
   }
@@ -191,7 +192,8 @@ class ParentAttendanceGroup {
   }
 
   String? get deadlineText {
-    final deadlineDate = EventListUtils.deadlineLocal(deadline);
+    if (deadline == null) return null;
+    final deadlineDate = DateTime.tryParse(deadline!);
     if (deadlineDate == null) return null;
 
     final now = DateTime.now();

@@ -127,6 +127,7 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
     final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
     final mainGroup = ref.read(mainGroupProvider.future);
     final groups = ref.read(groupsProvider).valueOrNull ?? const [];
+    final general = ref.read(currentTenantProvider)?.type == 'general';
     final groupId = await showRdChoiceSheet<int>(
       context,
       title: l10n.redesignBulkPickGroup,
@@ -135,25 +136,37 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
     if (groupId == null || !mounted) return;
     final names = {for (final g in groups) g.id: g.name};
     final mainId = (await mainGroup)?.id;
-    final general = ref.read(currentTenantProvider)?.type == 'general';
     if (!mounted) return;
     await _run(boundRepo: repo, persons.where((p) => p.instrument != groupId).toList(), (repo, p) async {
-      // Ionic continueUpdatingPlayer: joining or leaving the main group
-      // makes the account Verantwortlicher or Spieler (admins stay). Done
-      // before the Register change: if it fails the person stays in the old
-      // Register and a retry repeats both steps; if the Register change
-      // fails, the old role is restored.
+      // Ionic continueUpdatingPlayer (syncPersonRoles): joining or leaving
+      // the main group makes the account Verantwortlicher or Spieler (admins
+      // stay); a moved Stimmführer loses the Stimmführer role. Both role
+      // changes come before the Register change: if one fails the person
+      // stays in the old Register (counted as failed, a retry repeats every
+      // step); if the Register change fails, the old role is restored.
       final appId = p.appId;
       Role? previousRole;
-      if (appId != null && mainId != null && (groupId == mainId || p.instrument == mainId)) {
-        final role = await registration.getTenantUserRole(appId);
-        final next = groupId == mainId ? Role.responsible : Role.player;
-        if (role != null && role != Role.admin && role != next) {
-          await registration.updateTenantUserRole(appId, next);
-          previousRole = role;
-        }
-      }
       try {
+        if (appId != null && mainId != null && (groupId == mainId || p.instrument == mainId)) {
+          final role = await registration.getTenantUserRole(appId);
+          final next = groupId == mainId ? Role.responsible : Role.player;
+          if (role != null && role != Role.admin && role != next) {
+            await registration.updateTenantUserRole(appId, next);
+            previousRole = role;
+          }
+        }
+        if (p.isLeader && appId != null && !general) {
+          final role = await registration.getTenantUserRole(appId);
+          final next = switch (role) {
+            Role.voiceLeader => Role.player,
+            Role.voiceLeaderHelper => Role.helper,
+            _ => null,
+          };
+          if (next != null) {
+            await registration.updateTenantUserRole(appId, next);
+            previousRole ??= role;
+          }
+        }
         await _changeGroup(repo, p, groupId, names);
       } catch (_) {
         if (appId != null && previousRole != null) {
@@ -164,21 +177,6 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
           }
         }
         rethrow;
-      }
-      // Like the person page: a moved Stimmführer is no longer one, and the
-      // account loses the Stimmführer role (syncPersonRoles).
-      if (p.isLeader && appId != null && !general) {
-        try {
-          final role = await registration.getTenantUserRole(appId);
-          final next = switch (role) {
-            Role.voiceLeader => Role.player,
-            Role.voiceLeaderHelper => Role.helper,
-            _ => null,
-          };
-          if (next != null) await registration.updateTenantUserRole(appId, next);
-        } catch (_) {
-          // The Register change is stored; the role can be fixed on the person page.
-        }
       }
     });
   }

@@ -57,7 +57,9 @@ class RdWorksOverviewPanel extends ConsumerWidget {
     final collections = ref.watch(rdVisibleCollectionsProvider);
     final o = rdWorksOverview(
       collections == null
-          ? data.songs
+          // Visibility unknown (loading/failed): members only see the Werke
+          // outside every Sammlung, leads all.
+          ? (role.isConductor ? data.songs : rdVisibleWorks(data.songs, const []))
           // No visible Sammlung: only the Werke outside every Sammlung.
           : collections.isEmpty
           ? rdVisibleWorks(data.songs, collections)

@@ -640,7 +640,11 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
   /// the database all of them.
   SongsListData _scoped(SongsListData data) {
     final visible = ref.read(rdVisibleCollectionsProvider);
-    if (visible == null) return data;
+    if (visible == null) {
+      // Visibility unknown (loading/failed): members only see the Werke
+      // outside every Sammlung, leads all.
+      return ref.read(effectiveRoleProvider).isConductor ? data : data.withSongs(rdVisibleWorks(data.songs, const []));
+    }
     final songs = rdVisibleWorks(data.songs, visible);
     if (visible.isEmpty || _query.trim().isNotEmpty) return data.withSongs(songs);
     final chosen = rdShownCollectionId(ref.read(rdWorksCollectionProvider), visible);

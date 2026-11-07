@@ -111,16 +111,22 @@ class RdWorkPage extends ConsumerWidget {
     final collection = rdCollectionById(collections ?? const [], song.collectionId);
     // A Werk of a Sammlung hidden from the viewer (e.g. "Nur Leitung"),
     // opened from a link or the overview: not shown, like in the list.
-    final visible =
-        data.isPublic || ref.watch(effectiveRoleProvider).isConductor ? null : ref.watch(rdVisibleCollectionsProvider);
-    if (song.collectionId != null && visible != null && !visible.any((c) => c.id == song.collectionId)) {
-      return RdPage(
-        children: [
-          Row(children: [Expanded(child: back)]),
-          const SizedBox(height: 8),
-          RdInfoCard(text: l10n.redesignWorkNotFound, icon: Icons.music_off_outlined),
-        ],
-      );
+    // While the visibility is unknown (Sammlungen loading or failed) a
+    // member does not see it either.
+    if (!data.isPublic && song.collectionId != null && !ref.watch(effectiveRoleProvider).isConductor) {
+      final visible = ref.watch(rdVisibleCollectionsProvider);
+      if (visible == null || !visible.any((c) => c.id == song.collectionId)) {
+        final loading = visible == null && ref.watch(songCollectionsProvider).isLoading;
+        return RdPage(
+          children: [
+            Row(children: [Expanded(child: back)]),
+            const SizedBox(height: 8),
+            loading
+                ? RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
+                : RdInfoCard(text: l10n.redesignWorkNotFound, icon: Icons.music_off_outlined),
+          ],
+        );
+      }
     }
     final groupId = ref.watch(currentSelfServicePlayerProvider).valueOrNull?.instrument;
     final ownGroup = groups.where((g) => g.id == groupId).firstOrNull;
