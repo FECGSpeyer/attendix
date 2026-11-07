@@ -580,10 +580,15 @@ class InstrumentMatcher {
         if (!hits.any((o) => o.hit.score > h.hit.score && o.start <= h.start && o.end >= h.end && o.end > o.start)) h,
     ];
     // One group once.
-    return [
+    final once = [
       for (final h in kept)
         if (!kept.any((o) => o.hit.id == h.hit.id && (o.hit.score > h.hit.score || (o.hit.score == h.hit.score && o.start < h.start)))) h,
     ];
+    // Outside a choir "Sopran" beside an instrument names its kind
+    // ("Sopran Saxophon", "Soprano Cornet"), not a sung voice.
+    bool isSoprano(({_Hit hit, int start, int end}) h) => _familyGroups[h.hit.id].family == 'sopran';
+    if (!isChoir && once.any((h) => !isSoprano(h) && !h.hit.weak)) return [for (final h in once) if (!isSoprano(h)) h];
+    return once;
   }
 
   /// Families a group with [nameTokens] belongs to.

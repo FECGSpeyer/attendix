@@ -162,7 +162,9 @@ Future<RdImportCategory?> rdPickImportCategory(
   ];
   final files = options.skip(partCount).toList();
   final picked = await _pickImportCategorySheet(context, title: title, current: current, header: header, parts: parts, files: files);
-  if (picked != _nameNewGroup || !context.mounted) return picked;
+  if (picked != _nameNewGroup) return picked;
+  // The question went meanwhile (a KI answer moved it): nothing taken.
+  if (!context.mounted) return null;
   final name = await showAppPrompt(
     context,
     title: l10n.redesignImportNewGroupTitle,

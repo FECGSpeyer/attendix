@@ -128,6 +128,9 @@ void main() {
       expect(InstrumentMatcher.knownGroup('Wo sind sie alle SOS. sib 6 - Sopran SOS .pdf'), 'Sopran');
       expect(InstrumentMatcher.knownGroups('Soprano Sax.pdf'), isNot(contains('Sopran')));
       expect(InstrumentMatcher.knownGroups('Sop. Cornet.pdf'), isNot(contains('Sopran')));
+      // Beside an instrument "Sopran" names its kind.
+      expect(InstrumentMatcher.knownGroups('Sopran Saxophon.pdf'), isNot(contains('Sopran')));
+      expect(InstrumentMatcher.knownGroups('Soprano Cornet.pdf'), isNot(contains('Sopran')));
       expect(InstrumentMatcher.knownGroup('Alt.pdf'), isNull);
     });
 
