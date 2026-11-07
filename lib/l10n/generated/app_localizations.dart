@@ -19541,6 +19541,24 @@ abstract class AppLocalizations {
   /// **'Stimme schon da'**
   String get redesignImportFlagPartExists;
 
+  /// redesign.import.flagProposal
+  ///
+  /// In de, this message translates to:
+  /// **'✦ Vorschlag prüfen'**
+  String get redesignImportFlagProposal;
+
+  /// redesign.import.flagProposalLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Von der KI auf der ersten Seite vorgeschlagen, bitte prüfen'**
+  String get redesignImportFlagProposalLabel;
+
+  /// redesign.import.flagProposals
+  ///
+  /// In de, this message translates to:
+  /// **'✦ KI-Vorschläge prüfen'**
+  String get redesignImportFlagProposals;
+
   /// redesign.import.flagRecheck
   ///
   /// In de, this message translates to:

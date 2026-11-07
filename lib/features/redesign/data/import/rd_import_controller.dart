@@ -913,6 +913,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
                   groupId: found.groupId,
                   label: found.label,
                   sure: found.sure,
+                  kind: found.kind,
                   instruments: plan.instruments,
                   isChoir: plan.isChoir,
                 );

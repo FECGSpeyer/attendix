@@ -221,7 +221,7 @@ class PartVisionService {
 
 /// What part-detect read on a first page.
 class PartPageRead {
-  const PartPageRead({this.groupId, this.label, this.sure = false});
+  const PartPageRead({this.groupId, this.label, this.sure = false, this.kind});
 
   /// The function's answer; null when it is none.
   static PartPageRead? parse(dynamic data) {
@@ -236,12 +236,17 @@ class PartPageRead {
     if (map is! Map) return null;
     final raw = map['groupId'];
     final label = map['label'];
+    final kind = map['kind'];
     return PartPageRead(
       groupId: raw is int ? raw : int.tryParse('${raw ?? ''}'),
       label: label is String && label.trim().isNotEmpty ? label.trim() : null,
       sure: map['confidence'] == 'high',
+      kind: kind is String && kinds.contains(kind) ? kind : null,
     );
   }
+
+  /// What a page can be ([kind]).
+  static const Set<String> kinds = {'part', 'score', 'piano', 'lyrics', 'other'};
 
   /// One of the tenant's groups.
   final int? groupId;
@@ -249,6 +254,10 @@ class PartPageRead {
   /// The part name as printed ("1. Violine").
   final String? label;
   final bool sure;
+
+  /// What the page is, when the KI is sure of it: "part", "score" (a full
+  /// score, which names no part), "piano" (Klavierauszug), "lyrics", "other".
+  final String? kind;
 }
 
 /// The day's budget of part-detect is used up.

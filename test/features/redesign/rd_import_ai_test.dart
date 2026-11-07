@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:attendix/core/services/part_vision_service.dart';
 import 'package:attendix/core/utils/choir_file_utils.dart';
 import 'package:attendix/core/utils/instrument_matcher.dart';
 import 'package:attendix/features/redesign/data/import/rd_import_ai.dart';
@@ -46,8 +47,8 @@ void main() {
 
   test('page 1: a group of the tenant, else what the printed name says', () {
     const groups = [InstrumentInfo(id: 10, name: 'Violine 1'), InstrumentInfo(id: 14, name: 'Flöte')];
-    RdImportPageRead? read({int? groupId, String? label, bool sure = true}) =>
-        rdImportPageRead(groupId: groupId, label: label, sure: sure, instruments: groups, isChoir: false);
+    RdImportPageRead? read({int? groupId, String? label, bool sure = true, String? kind}) =>
+        rdImportPageRead(groupId: groupId, label: label, sure: sure, instruments: groups, isChoir: false, kind: kind);
     final group = read(groupId: 14, label: 'Flöte 2')!;
     expect((group.category, group.sure, group.label), (const RdImportCategory(instrumentId: 14), true, 'Flöte 2'));
     expect(read(groupId: 99, label: 'Partitur')!.category, const RdImportCategory(note: 'Partitur'));
@@ -56,6 +57,13 @@ void main() {
     expect((oboe.category, oboe.sure), (const RdImportCategory(newGroup: 'Oboe'), false));
     expect(read(label: 'Posaune u. Tuba'), isNull);
     expect(read(label: ''), isNull);
+    // A full score names no part: the kind of page the KI is sure of counts.
+    final score = read(kind: 'score')!;
+    expect((score.category, score.sure), (const RdImportCategory(note: 'Partitur'), true));
+    expect(read(kind: 'piano')!.category, const RdImportCategory(note: 'Klavierauszug'));
+    expect(read(kind: 'part'), isNull);
+    expect(PartPageRead.parse({'groupId': null, 'label': null, 'confidence': 'low', 'kind': 'score'})!.kind, 'score');
+    expect(PartPageRead.parse({'kind': 'delete everything'})!.kind, isNull);
   });
 
   group('suggest', () {

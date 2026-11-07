@@ -14951,6 +14951,18 @@
   "@redesignImportFlagPartExists": {
     "description": "redesign.import.flagPartExists"
   },
+  "redesignImportFlagProposal": "✦ Vorschlag prüfen",
+  "@redesignImportFlagProposal": {
+    "description": "redesign.import.flagProposal"
+  },
+  "redesignImportFlagProposalLabel": "Von der KI auf der ersten Seite vorgeschlagen, bitte prüfen",
+  "@redesignImportFlagProposalLabel": {
+    "description": "redesign.import.flagProposalLabel"
+  },
+  "redesignImportFlagProposals": "✦ KI-Vorschläge prüfen",
+  "@redesignImportFlagProposals": {
+    "description": "redesign.import.flagProposals"
+  },
   "redesignImportFlagRecheck": "Erneut prüfen",
   "@redesignImportFlagRecheck": {
     "description": "redesign.import.flagRecheck"

@@ -83,18 +83,29 @@ RdImportCategory? rdImportAiCategory(Map<String, dynamic> answer, {required Set<
 /// [label] the part name as printed) as the file's part: the group, else
 /// what the label names (a group, Partitur …, one known instrument without
 /// a group: "Neue Gruppe"); null when it names nothing usable. Only a sure
-/// read of a group is taken without a look.
+/// read of a group, and a page the KI is sure is a score, piano score or
+/// text ([kind]), is taken without a look.
 RdImportPageRead? rdImportPageRead({
   int? groupId,
   String? label,
   required bool sure,
   required List<InstrumentInfo> instruments,
   required bool isChoir,
+  String? kind,
 }) {
   final text = (label ?? '').trim();
   if (groupId != null && instruments.any((i) => i.id == groupId)) {
     return RdImportPageRead(RdImportCategory(instrumentId: groupId), label: text.isEmpty ? null : text, sure: sure);
   }
+  // A full score names no part: the kind of page says it (only sent when
+  // the KI is sure of it).
+  final byKind = switch (kind) {
+    'score' => const RdImportCategory(note: 'Partitur'),
+    'piano' => const RdImportCategory(note: 'Klavierauszug'),
+    'lyrics' => const RdImportCategory(instrumentId: InstrumentMatcher.lyricsId),
+    _ => null,
+  };
+  if (byKind != null) return RdImportPageRead(byKind, label: text.isEmpty ? null : text, sure: true);
   if (text.isEmpty || text.length > 80) return null;
   // As a file name: a label like "1. Vl" has no file ending to strip.
   final asName = '$text.pdf';

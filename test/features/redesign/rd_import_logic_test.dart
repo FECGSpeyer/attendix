@@ -557,6 +557,9 @@ void main() {
     RdFileState state(String name) => rdFileState(plan, d, work, work.files.firstWhere((f) => f.name == name));
     expect((state('Tag.pdf').category, state('Tag.pdf').unclear), (const RdImportCategory(instrumentId: 11), false));
     expect((state('Nacht.pdf').category, state('Nacht.pdf').unclear), (const RdImportCategory(newGroup: 'Oboe'), true));
+    // The KI's proposal is flagged as such, not as "Stimme unklar".
+    expect(state('Nacht.pdf').proposedByAi, isTrue);
+    expect(rdWorkState(plan, d, work).flags, {RdWorkFlag.aiProposal});
     expect(rdImportPagesToRead(plan, d), isEmpty);
     // Chosen by hand, the read no longer counts.
     final byHand = RdImportDecisions(categories: {'Noten/Eins/Tag.pdf': RdImportCategory.other});

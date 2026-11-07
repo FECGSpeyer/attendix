@@ -344,6 +344,7 @@ List<Widget> rdImportFlagPills(BuildContext context, RdWorkState state) {
       if (state.flags.contains(RdWorkFlag.fassungen)) RdPill(l10n.redesignImportFlagFassungen, tone: RdTone.late),
       if (state.flags.contains(RdWorkFlag.partExists)) RdPill(l10n.redesignImportFlagPartExists, tone: RdTone.late),
       if (state.flags.contains(RdWorkFlag.unclear)) RdPill(l10n.redesignImportFlagUnclear, tone: RdTone.late),
+      if (state.flags.contains(RdWorkFlag.aiProposal)) RdPill(l10n.redesignImportFlagProposals, tone: RdTone.excused),
     ],
   ];
 }

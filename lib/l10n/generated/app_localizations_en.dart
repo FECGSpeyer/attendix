@@ -11936,6 +11936,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportFlagPartExists => 'Part already there';
 
   @override
+  String get redesignImportFlagProposal => '✦ Check suggestion';
+
+  @override
+  String get redesignImportFlagProposalLabel =>
+      'Suggested by the AI from the first page, please check';
+
+  @override
+  String get redesignImportFlagProposals => '✦ Check AI suggestions';
+
+  @override
   String get redesignImportFlagRecheck => 'Check again';
 
   @override

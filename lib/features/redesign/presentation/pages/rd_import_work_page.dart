@@ -113,7 +113,15 @@ class RdImportWorkPage extends ConsumerWidget {
                 ],
               ),
             ),
-            if (fs.unclear)
+            if (fs.proposedByAi)
+              ...[
+                const SizedBox(width: 8),
+                Semantics(
+                  label: l10n.redesignImportFlagProposalLabel,
+                  child: ExcludeSemantics(child: RdPill(l10n.redesignImportFlagProposal, tone: RdTone.excused)),
+                ),
+              ]
+            else if (fs.unclear)
               ...[const SizedBox(width: 8), RdPill(l10n.redesignImportFlagUnclear, tone: RdTone.late)]
             else if (fs.pageRead != null && fs.take)
               ...[

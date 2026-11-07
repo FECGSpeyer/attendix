@@ -12063,6 +12063,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportFlagPartExists => 'Stimme schon da';
 
   @override
+  String get redesignImportFlagProposal => '✦ Vorschlag prüfen';
+
+  @override
+  String get redesignImportFlagProposalLabel =>
+      'Von der KI auf der ersten Seite vorgeschlagen, bitte prüfen';
+
+  @override
+  String get redesignImportFlagProposals => '✦ KI-Vorschläge prüfen';
+
+  @override
   String get redesignImportFlagRecheck => 'Erneut prüfen';
 
   @override

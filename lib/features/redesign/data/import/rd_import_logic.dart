@@ -1485,6 +1485,10 @@ class RdFileState {
   /// The part the KI read on page 1, while nobody chose one ([unclear]
   /// still when it is not sure).
   final RdImportPageRead? pageRead;
+
+  /// [unclear], but the KI proposed the part from page 1: shown as its
+  /// proposal to check, not as "Stimme unklar".
+  bool get proposedByAi => unclear && pageRead != null;
 }
 
 RdImportCategory _categoryOf(RdImportPlan plan, RdImportDecisions d, RdImportFile f, RdImportWork work) =>
@@ -1609,6 +1613,10 @@ enum RdWorkFlag {
 
   /// Files without a clear part.
   unclear,
+
+  /// Files with a part the KI proposed from page 1, not sure enough to be
+  /// taken without a look.
+  aiProposal,
 }
 
 class RdWorkState {
@@ -1646,7 +1654,8 @@ RdWorkState rdWorkState(RdImportPlan plan, RdImportDecisions d, RdImportWork wor
     if (!d.targets.containsKey(work.key) && work.match.kind != RdMatchKind.sure && work.match.songId != null) RdWorkFlag.unsureMatch,
     if (work.fassungen.length > 1) RdWorkFlag.fassungen,
     if (files.values.any((f) => f.reason == RdSkipReason.partExists)) RdWorkFlag.partExists,
-    if (files.values.any((f) => f.unclear)) RdWorkFlag.unclear,
+    if (files.values.any((f) => f.unclear && !f.proposedByAi)) RdWorkFlag.unclear,
+    if (files.values.any((f) => f.proposedByAi)) RdWorkFlag.aiProposal,
   };
   return RdWorkState(
     target: target,
