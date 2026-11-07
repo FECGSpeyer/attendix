@@ -147,12 +147,21 @@ class PartVisionService {
       final image = await compute(reencodeImage, bytes);
       return deadline.isOver ? null : image;
     }
+    final image = await _renderPdf(bytes, () => deadline.isOver);
+    return deadline.isOver ? null : image;
+  }
+
+  /// Page 1 of the PDF [bytes] as a JPEG [_renderWidth] wide; null once
+  /// [stop] says true.
+  static Future<Uint8List?> _renderPdf(Uint8List bytes, bool Function() stop) async {
+    // Elsewhere (Linux, tests) pdfx fails in a way no caller can catch.
+    if (!await hasPdfSupport()) return null;
     final doc = await PdfDocument.openData(bytes);
     try {
-      if (deadline.isOver) return null;
+      if (stop()) return null;
       final page = await doc.getPage(1);
       try {
-        if (deadline.isOver) return null;
+        if (stop()) return null;
         final image = await page.render(
           width: _renderWidth.toDouble(),
           height: _renderWidth * page.height / page.width,
@@ -160,7 +169,7 @@ class PartVisionService {
           backgroundColor: '#FFFFFF',
           quality: 70,
         );
-        return deadline.isOver ? null : image?.bytes;
+        return image?.bytes;
       } finally {
         await page.close();
       }
@@ -169,11 +178,82 @@ class PartVisionService {
     }
   }
 
+  /// Page 1 of [bytes] (the file [fileName], see [supports]) as part-detect
+  /// gets it; null when it cannot be read.
+  static Future<Uint8List?> firstPage(Uint8List bytes, String fileName) async {
+    if (!supports(fileName)) return null;
+    try {
+      if (!fileName.toLowerCase().endsWith('.pdf')) return await compute(reencodeImage, bytes);
+      return await _renderPdf(bytes, () => false).timeout(timeout);
+    } catch (e) {
+      if (kDebugMode) debugPrint('[part-detect] render: $e');
+      return null;
+    }
+  }
+
+  /// What part-detect reads on [image] (from [firstPage]) for [tenantId]:
+  /// the group, the part name printed and how sure it is. Null on every
+  /// failure; throws [PartVisionLimit] once the day's budget is used up.
+  Future<PartPageRead?> readImage(Uint8List image, {required int tenantId}) async {
+    if (_unavailable || image.length > maxImageBytes || currentTenant() != tenantId) return null;
+    try {
+      final response = await _client().functions.invoke(_function, body: {
+        'tenantId': tenantId,
+        'image': base64Encode(image),
+      }).timeout(timeout);
+      return PartPageRead.parse(response.data);
+    } on FunctionException catch (e) {
+      if (e.status == 404) _unavailable = true;
+      if (e.status == 429) throw const PartVisionLimit();
+      return null;
+    } catch (e) {
+      if (kDebugMode) debugPrint('[part-detect] $e');
+      return null;
+    }
+  }
+
   static Future<Uint8List?> _bytes(PlatformFile file) async {
     if (file.bytes != null) return file.bytes;
     if (kIsWeb || file.path == null) return null;
     return File(file.path!).readAsBytes();
   }
+}
+
+/// What part-detect read on a first page.
+class PartPageRead {
+  const PartPageRead({this.groupId, this.label, this.sure = false});
+
+  /// The function's answer; null when it is none.
+  static PartPageRead? parse(dynamic data) {
+    dynamic map = data;
+    if (data is String) {
+      try {
+        map = jsonDecode(data);
+      } on FormatException {
+        return null;
+      }
+    }
+    if (map is! Map) return null;
+    final raw = map['groupId'];
+    final label = map['label'];
+    return PartPageRead(
+      groupId: raw is int ? raw : int.tryParse('${raw ?? ''}'),
+      label: label is String && label.trim().isNotEmpty ? label.trim() : null,
+      sure: map['confidence'] == 'high',
+    );
+  }
+
+  /// One of the tenant's groups.
+  final int? groupId;
+
+  /// The part name as printed ("1. Violine").
+  final String? label;
+  final bool sure;
+}
+
+/// The day's budget of part-detect is used up.
+class PartVisionLimit implements Exception {
+  const PartVisionLimit();
 }
 
 /// Time left for one file; over once it ran out or the caller gave up.

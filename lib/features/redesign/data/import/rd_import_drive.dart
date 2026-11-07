@@ -157,6 +157,9 @@ class RdDriveException implements Exception {
   String toString() => 'RdDriveException(${error.name})';
 }
 
+/// Largest Drive file loaded whole to look at (werke-import MAX_VIEW_BYTES).
+const int rdDriveMaxViewBytes = 10 * 1024 * 1024;
+
 /// Calls of the `werke-import` Edge Function.
 class RdDriveApi {
   RdDriveApi(this._invoke);
@@ -232,6 +235,12 @@ class RdDriveApi {
   /// The first and last 256 KB of [file] (the whole file when smaller).
   Future<Uint8List> head(int tenantId, RdDriveRef file) async {
     final data = await _call({'action': 'head', 'tenantId': tenantId, 'file': file.toJson()});
+    return base64Decode((data['data'] as String?) ?? '');
+  }
+
+  /// The whole [file] (at most [rdDriveMaxViewBytes]).
+  Future<Uint8List> file(int tenantId, RdDriveRef file) async {
+    final data = await _call({'action': 'file', 'tenantId': tenantId, 'file': file.toJson()});
     return base64Decode((data['data'] as String?) ?? '');
   }
 
@@ -378,6 +387,37 @@ class RdDriveSource implements RdImportFiles {
       mainGroupId: mainGroupId,
       keepBesetzung: true,
     );
+  }
+
+  /// Read whole by "head" (it sends files up to twice its window whole).
+  static const _headWhole = 512 * 1024;
+
+  /// Whole files that failed in a row; from three on (an older function
+  /// without "file", Drive refusing) none is asked for any more.
+  int _wholeFailures = 0;
+
+  @override
+  Future<Uint8List?> content(String path) async {
+    final item = _item(path);
+    if (item.isGoogleFile || item.size > rdDriveMaxViewBytes) return null;
+    try {
+      if (item.size <= _headWhole) return await _api.head(_tenantId, item.ref);
+      if (_wholeFailures >= 3) return null;
+      final data = await _api.file(_tenantId, item.ref);
+      _wholeFailures = 0;
+      return data;
+    } catch (_) {
+      if (item.size > _headWhole) _wholeFailures++;
+      return null;
+    }
+  }
+
+  @override
+  Uri? viewLink(String path) {
+    final item = _files[path];
+    if (item == null) return null;
+    final key = item.resourceKey;
+    return Uri.https('drive.google.com', '/file/d/${item.id}/view', key == null ? null : {'resourcekey': key});
   }
 
   @override
