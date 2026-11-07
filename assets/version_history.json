@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.84.1",
+      "date": "7.11.2026",
+      "changes": [
+        "🐛 Sammlungen: Beim Löschen mit Werken lädt die App die Werkliste nicht mehr nach jedem Werk neu, sondern einmal am Ende",
+        "💄 Beta: Auswahl-Dialoge (z. B. „Sammlung löschen“) mit Text und Optionen an einer Kante"
+      ]
+    },
+    {
       "version": "0.84.0",
       "date": "7.11.2026",
       "changes": [

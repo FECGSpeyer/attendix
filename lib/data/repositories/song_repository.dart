@@ -765,8 +765,6 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Deletes a Sammlung; its Werke fall back to "Repertoire" (on delete
-  /// set null).
   /// Ids of the Werke in Sammlung [collectionId], from the server only (no
   /// offline copy): a failed load throws. For deleting a Sammlung.
   Future<List<int>> getSongIdsInCollection(int collectionId) async {
@@ -791,6 +789,8 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// Deletes a Sammlung; its Werke fall back to "Repertoire" (on delete
+  /// set null).
   Future<void> deleteSongCollection(int id) async {
     ensureNotDemo('deleteSongCollection'); // DEMO_GUARD
     try {

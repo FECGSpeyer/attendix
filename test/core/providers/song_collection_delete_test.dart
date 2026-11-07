@@ -60,12 +60,16 @@ void main() {
     container.read(songRepositoryWithTenantProvider);
 
     repo.failing.add(2);
+    final running = <bool>[];
+    container.listen(songsBulkDeleteRunningProvider, (_, next) => running.add(next));
     final progress = <(int, int)>[];
     final failed = await notifier.deleteWithWorks(3, onProgress: (done, total) => progress.add((done, total)));
     expect((failed.ok, failed.deleted, failed.failed), (false, 2, 1));
     expect(repo.deletedSongs, {1, 5});
     expect(repo.deletedCollections, isEmpty);
     expect(progress.last, (3, 3));
+    // No reload of the Werke after every one: once at the end.
+    expect(running, [true, false]);
 
     // A Werk added meanwhile goes too, before the Sammlung.
     repo.failing.clear();
