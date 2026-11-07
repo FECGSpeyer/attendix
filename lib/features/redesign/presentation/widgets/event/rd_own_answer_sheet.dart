@@ -37,7 +37,8 @@ class _OwnAnswerSheet extends ConsumerWidget {
     final p = context.rd;
     final l10n = context.l10n;
     // Looked up on every build so the card follows the answer just given.
-    final data = ref.watch(rdSignoutDataProvider).valueOrNull;
+    final async = ref.watch(rdSignoutDataProvider);
+    final data = async.valueOrNull;
     final att = data == null ? null : rdFindOwnEvent(data, personAttendanceId);
 
     return Padding(
@@ -49,7 +50,12 @@ class _OwnAnswerSheet extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           child:
               att == null
-                  ? RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
+                  ? (data == null && !async.hasError
+                      ? RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
+                      : RdInfoCard(
+                        text: async.hasError ? l10n.redesignTodayLoadFailed : l10n.redesignOwnNotFound,
+                        icon: Icons.event_busy_outlined,
+                      ))
                   : Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,

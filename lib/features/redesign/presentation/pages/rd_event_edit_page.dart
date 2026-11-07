@@ -33,6 +33,7 @@ import '../../data/rd_create_logic.dart' show rdRecentPlaces;
 import '../../data/rd_event_details_logic.dart';
 import '../../data/rd_event_phase.dart' show rdEffectiveDurationDays;
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
+import '../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart';
@@ -223,7 +224,11 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
       hour: int.tryParse(parts.first) ?? (start ? 17 : 20),
       minute: parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0,
     );
-    final picked = await showAppTimePicker(context: context, initialTime: initial);
+    final iosLook = useIosLook(context);
+    var picked = await showAppTimePicker(context: context, initialTime: initial);
+    // The iOS wheel returns null when the shown time was confirmed unchanged:
+    // with no time yet, that shown default is the choice.
+    if (picked == null && iosLook && current == null) picked = initial;
     if (picked == null || !mounted) return;
     // #232: session of the acting user, captured before the first write.
     final writeSession = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
@@ -296,7 +301,7 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
       case 'none':
         await _write({'deadline': null});
       case 'suggested':
-        await _write({'deadline': suggested!.toUtc().toIso8601String()});
+        await _write({'deadline': EventListUtils.deadlineToStore(suggested!)});
       case 'pick':
         await _pickDeadlineDate(att);
     }
@@ -305,7 +310,7 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
   /// Day and time of the Abmeldeschluss (Termin page: from now until the Termin).
   Future<void> _pickDeadlineDate(Attendance att) async {
     final date = DateTime.tryParse(att.date);
-    final current = att.deadline == null ? null : DateTime.tryParse(att.deadline!)?.toLocal();
+    final current = EventListUtils.deadlineLocal(att.deadline);
     final now = DateTime.now();
     var initial = current ?? date?.subtract(const Duration(days: 1)) ?? now;
     final last = date ?? now.add(const Duration(days: 365));
@@ -321,8 +326,10 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     if (day == null || !mounted) return;
     final time = await showAppTimePicker(context: context, initialTime: TimeOfDay.fromDateTime(initial));
     if (!mounted) return;
-    final value = DateTime(day.year, day.month, day.day, time?.hour ?? 23, time?.minute ?? 59);
-    await _write({'deadline': value.toUtc().toIso8601String()});
+    // The iOS wheel returns null when the shown time was confirmed unchanged.
+    final t = time ?? TimeOfDay.fromDateTime(initial);
+    final value = DateTime(day.year, day.month, day.day, t.hour, t.minute);
+    await _write({'deadline': EventListUtils.deadlineToStore(value)});
   }
 
   Future<void> _pickFolder(Attendance att) async {

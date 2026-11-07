@@ -99,4 +99,11 @@ void main() {
       expect(data.percentage, 50);
     });
   });
+
+  test('deadlineToStore writes local wall time that deadlineLocal reads back', () {
+    final local = DateTime(2026, 11, 20, 18, 0);
+    final stored = EventListUtils.deadlineToStore(local);
+    expect(stored, '2026-11-20T18:00:00.000Z');
+    expect(EventListUtils.deadlineLocal(stored), local);
+  });
 }
