@@ -110,6 +110,8 @@ import 'redesign_routes.dart';
 import '../../features/redesign/presentation/shell/rd_shell.dart';
 import '../../features/redesign/presentation/pages/rd_export_page.dart';
 import '../../features/redesign/presentation/pages/rd_work_categories_page.dart';
+import '../../features/redesign/presentation/pages/rd_group_categories_page.dart';
+import '../../features/redesign/presentation/pages/rd_org_person_fields_page.dart';
 import '../../features/redesign/presentation/pages/rd_work_history_page.dart';
 import '../../features/redesign/presentation/pages/rd_handover_detail_page.dart';
 import '../../features/redesign/presentation/pages/rd_handover_page.dart';
@@ -895,6 +897,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                     builder: (context, state) => const RdWorkCategoriesPage(),
                   ),
                   GoRoute(
+                    path: 'gruppen-kategorien',
+                    builder: (context, state) => const RdGroupCategoriesPage(),
+                  ),
+                  GoRoute(
                     path: 'gruppen',
                     builder: (context, state) => const RdGroupsPage(),
                     routes: [
@@ -1375,7 +1381,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'person-fields',
                     name: 'orgPersonFields',
-                    builder: (context, state) => const OrgPersonFieldsPage(),
+                    builder: (context, state) => const _BetaOr(beta: RdOrgPersonFieldsPage(), classic: OrgPersonFieldsPage()),
                   ),
                   // Ionic 4.17.13: Werke in der Organisation suchen (?q=)
                   GoRoute(

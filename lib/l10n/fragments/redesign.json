@@ -1421,6 +1421,11 @@
         "forgot": "Passwort vergessen?",
         "resetIntro": "Wir schicken dir einen Link, mit dem du ein neues Passwort setzt.",
         "resetSend": "Link senden"
+      },
+      "groupCategories": {
+        "intro": "Kategorien fassen Gruppen zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Gruppen.",
+        "count": "{count, plural, one {{count} Gruppe} other {{count} Gruppen}}",
+        "back": "Gruppen"
       }
     }
   },
@@ -2846,6 +2851,11 @@
         "forgot": "Forgot password?",
         "resetIntro": "We will send you a link to set a new password.",
         "resetSend": "Send link"
+      },
+      "groupCategories": {
+        "intro": "Categories bundle groups, e.g. brass or soprano and alto. Their order also applies to the groups.",
+        "count": "{count, plural, one {{count} group} other {{count} groups}}",
+        "back": "Groups"
       }
     }
   }

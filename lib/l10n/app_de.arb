@@ -12080,6 +12080,34 @@
   "@rdOrgCreate": {
     "description": "rdOrg.create"
   },
+  "rdOrgFieldDelete": "Feld löschen",
+  "@rdOrgFieldDelete": {
+    "description": "rdOrg.fieldDelete"
+  },
+  "rdOrgFieldDeleteHint": "Die Werte bei allen Personen der Organisation werden mit gelöscht.",
+  "@rdOrgFieldDeleteHint": {
+    "description": "rdOrg.fieldDeleteHint"
+  },
+  "rdOrgFieldEdit": "Feld",
+  "@rdOrgFieldEdit": {
+    "description": "rdOrg.fieldEdit"
+  },
+  "rdOrgFieldNew": "Neues Feld",
+  "@rdOrgFieldNew": {
+    "description": "rdOrg.fieldNew"
+  },
+  "rdOrgFieldTypeFixed": "Der Typ lässt sich nach dem Anlegen nicht mehr ändern.",
+  "@rdOrgFieldTypeFixed": {
+    "description": "rdOrg.fieldTypeFixed"
+  },
+  "rdOrgFieldsAdd": "Feld hinzufügen",
+  "@rdOrgFieldsAdd": {
+    "description": "rdOrg.fieldsAdd"
+  },
+  "rdOrgFieldsEmpty": "Noch keine gemeinsamen Zusatzfelder.",
+  "@rdOrgFieldsEmpty": {
+    "description": "rdOrg.fieldsEmpty"
+  },
   "rdOrgFilter": "Filter",
   "@rdOrgFilter": {
     "description": "rdOrg.filter"
@@ -12404,6 +12432,74 @@
   "rdSettingsRegisterFieldsHint": "Alle gewählten Felder sind Pflicht. Vorname, Nachname und Gruppe sind immer dabei.",
   "@rdSettingsRegisterFieldsHint": {
     "description": "rdSettings.registerFieldsHint"
+  },
+  "rdSettingsRuleAnd": "Und",
+  "@rdSettingsRuleAnd": {
+    "description": "rdSettings.rule.and"
+  },
+  "rdSettingsRuleCounts": "Was zählt",
+  "@rdSettingsRuleCounts": {
+    "description": "rdSettings.rule.counts"
+  },
+  "rdSettingsRuleDays": "Tage",
+  "@rdSettingsRuleDays": {
+    "description": "rdSettings.rule.days"
+  },
+  "rdSettingsRuleEditTitle": "Regel",
+  "@rdSettingsRuleEditTitle": {
+    "description": "rdSettings.rule.editTitle"
+  },
+  "rdSettingsRuleName": "Name",
+  "@rdSettingsRuleName": {
+    "description": "rdSettings.rule.name"
+  },
+  "rdSettingsRuleNewTitle": "Neue Regel",
+  "@rdSettingsRuleNewTitle": {
+    "description": "rdSettings.rule.newTitle"
+  },
+  "rdSettingsRuleOr": "Oder",
+  "@rdSettingsRuleOr": {
+    "description": "rdSettings.rule.or"
+  },
+  "rdSettingsRulePeriod": "Zeitraum",
+  "@rdSettingsRulePeriod": {
+    "description": "rdSettings.rule.period"
+  },
+  "rdSettingsRulePeriodAll": "Immer",
+  "@rdSettingsRulePeriodAll": {
+    "description": "rdSettings.rule.periodAll"
+  },
+  "rdSettingsRulePeriodAllHint": "Gezählt wird die gesamte Historie.",
+  "@rdSettingsRulePeriodAllHint": {
+    "description": "rdSettings.rule.periodAllHint"
+  },
+  "rdSettingsRulePeriodDays": "Letzte Tage",
+  "@rdSettingsRulePeriodDays": {
+    "description": "rdSettings.rule.periodDays"
+  },
+  "rdSettingsRulePeriodSeason": "Saison",
+  "@rdSettingsRulePeriodSeason": {
+    "description": "rdSettings.rule.periodSeason"
+  },
+  "rdSettingsRulePeriodSeasonHint": "Gezählt wird ab dem Saisonbeginn.",
+  "@rdSettingsRulePeriodSeasonHint": {
+    "description": "rdSettings.rule.periodSeasonHint"
+  },
+  "rdSettingsRuleStatusHint": "Diese Status zählen. Mindestens einer muss gewählt sein.",
+  "@rdSettingsRuleStatusHint": {
+    "description": "rdSettings.rule.statusHint"
+  },
+  "rdSettingsRuleThreshold": "Kritisch ab",
+  "@rdSettingsRuleThreshold": {
+    "description": "rdSettings.rule.threshold"
+  },
+  "rdSettingsRuleTypes": "Terminarten",
+  "@rdSettingsRuleTypes": {
+    "description": "rdSettings.rule.types"
+  },
+  "rdSettingsRuleValueInvalid": "Bitte eine Zahl größer als 0 eingeben.",
+  "@rdSettingsRuleValueInvalid": {
+    "description": "rdSettings.rule.valueInvalid"
   },
   "rdSettingsSaveFailed": "Konnte nicht gespeichert werden. Bitte versuche es noch einmal.",
   "@rdSettingsSaveFailed": {
@@ -14347,6 +14443,23 @@
   "redesignFolderTitleLeads": "Nach Stimme",
   "@redesignFolderTitleLeads": {
     "description": "redesign.folder.titleLeads"
+  },
+  "redesignGroupCategoriesBack": "Gruppen",
+  "@redesignGroupCategoriesBack": {
+    "description": "redesign.groupCategories.back"
+  },
+  "redesignGroupCategoriesCount": "{count, plural, one {{count} Gruppe} other {{count} Gruppen}}",
+  "@redesignGroupCategoriesCount": {
+    "description": "redesign.groupCategories.count",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignGroupCategoriesIntro": "Kategorien fassen Gruppen zusammen, etwa Blechbläser oder Sopran und Alt. Ihre Reihenfolge gilt auch für die Gruppen.",
+  "@redesignGroupCategoriesIntro": {
+    "description": "redesign.groupCategories.intro"
   },
   "redesignGroupEditCategory": "Kategorie",
   "@redesignGroupEditCategory": {

@@ -44,7 +44,14 @@
       "handoverConfirm": "Möchtest du {count} Personen wirklich an „{tenant}“ übergeben? {note}",
       "noOtherGroups": "Die Organisation hat keine weitere Gruppe.",
       "takeOver": "Übernehmen",
-      "worksNoPermission": "Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen."
+      "worksNoPermission": "Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen.",
+      "fieldNew": "Neues Feld",
+      "fieldEdit": "Feld",
+      "fieldsAdd": "Feld hinzufügen",
+      "fieldsEmpty": "Noch keine gemeinsamen Zusatzfelder.",
+      "fieldDelete": "Feld löschen",
+      "fieldDeleteHint": "Die Werte bei allen Personen der Organisation werden mit gelöscht.",
+      "fieldTypeFixed": "Der Typ lässt sich nach dem Anlegen nicht mehr ändern."
     }
   },
   "en": {
@@ -92,7 +99,14 @@
       "handoverConfirm": "Do you really want to hand over {count} people to “{tenant}”? {note}",
       "noOtherGroups": "The organisation has no other group.",
       "takeOver": "Take over",
-      "worksNoPermission": "Only admins and leads of a group in an organisation can search works across the organisation."
+      "worksNoPermission": "Only admins and leads of a group in an organisation can search works across the organisation.",
+      "fieldNew": "New field",
+      "fieldEdit": "Field",
+      "fieldsAdd": "Add field",
+      "fieldsEmpty": "No shared extra fields yet.",
+      "fieldDelete": "Delete field",
+      "fieldDeleteHint": "The values of all persons of the organisation are deleted too.",
+      "fieldTypeFixed": "The type cannot be changed after the field was created."
     }
   }
 }
