@@ -15013,9 +15013,49 @@
   "@redesignImportAnswerOther": {
     "description": "redesign.import.answerOther"
   },
-  "redesignImportBusy": "Bitte warte, bis alles hochgeladen ist.",
-  "@redesignImportBusy": {
-    "description": "redesign.import.busy"
+  "redesignImportBarDone": "{count, plural, one {Noten-Import fertig: 1 Datei hochgeladen} other {Noten-Import fertig: {count} Dateien hochgeladen}}",
+  "@redesignImportBarDone": {
+    "description": "redesign.import.barDone",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportBarIncomplete": "Noten-Import beendet, nicht alles hochgeladen",
+  "@redesignImportBarIncomplete": {
+    "description": "redesign.import.barIncomplete"
+  },
+  "redesignImportBarOpen": "Ansehen",
+  "@redesignImportBarOpen": {
+    "description": "redesign.import.barOpen"
+  },
+  "redesignImportBarRunning": "Noten-Import · {percent} %",
+  "@redesignImportBarRunning": {
+    "description": "redesign.import.barRunning",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "redesignImportCancel": "Import abbrechen",
+  "@redesignImportCancel": {
+    "description": "redesign.import.cancel"
+  },
+  "redesignImportCancelKeep": "Weiter hochladen",
+  "@redesignImportCancelKeep": {
+    "description": "redesign.import.cancelKeep"
+  },
+  "redesignImportCancelMessage": "Die Dateien, die gerade hochgeladen werden, kommen noch an. Was schon oben ist, bleibt. Den Rest kannst du danach hochladen.",
+  "@redesignImportCancelMessage": {
+    "description": "redesign.import.cancelMessage"
+  },
+  "redesignImportCancelTitle": "Import abbrechen?",
+  "@redesignImportCancelTitle": {
+    "description": "redesign.import.cancelTitle"
+  },
+  "redesignImportCancelling": "Wird abgebrochen … die laufenden Dateien kommen noch an.",
+  "@redesignImportCancelling": {
+    "description": "redesign.import.cancelling"
   },
   "redesignImportCategoryFiles": "Andere Dateien",
   "@redesignImportCategoryFiles": {
@@ -15063,7 +15103,7 @@
   "@redesignImportConfirmButton": {
     "description": "redesign.import.confirmButton"
   },
-  "redesignImportConfirmKeepOpen": "Lass die Seite offen, bis alles fertig ist.",
+  "redesignImportConfirmKeepOpen": "Währenddessen kannst du in der App weiterarbeiten. Lass die App offen, bis alles fertig ist.",
   "@redesignImportConfirmKeepOpen": {
     "description": "redesign.import.confirmKeepOpen"
   },
@@ -15135,6 +15175,15 @@
   "@redesignImportDoneAnother": {
     "description": "redesign.import.doneAnother"
   },
+  "redesignImportDoneCancelled": "{count, plural, one {Abgebrochen. 1 Datei wurde nicht hochgeladen.} other {Abgebrochen. {count} Dateien wurden nicht hochgeladen.}}",
+  "@redesignImportDoneCancelled": {
+    "description": "redesign.import.doneCancelled",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "redesignImportDoneFailed": "Fehlgeschlagen",
   "@redesignImportDoneFailed": {
     "description": "redesign.import.doneFailed"
@@ -15151,6 +15200,10 @@
   "@redesignImportDoneNewWorks": {
     "description": "redesign.import.doneNewWorks"
   },
+  "redesignImportDoneNotUploaded": "Nicht hochgeladen",
+  "@redesignImportDoneNotUploaded": {
+    "description": "redesign.import.doneNotUploaded"
+  },
   "redesignImportDoneOpen": "Nicht geprüft, nicht übernommen",
   "@redesignImportDoneOpen": {
     "description": "redesign.import.doneOpen"
@@ -15158,6 +15211,10 @@
   "redesignImportDoneRetry": "Fehlgeschlagene erneut hochladen",
   "@redesignImportDoneRetry": {
     "description": "redesign.import.doneRetry"
+  },
+  "redesignImportDoneRetryRest": "Restliche Dateien hochladen",
+  "@redesignImportDoneRetryRest": {
+    "description": "redesign.import.doneRetryRest"
   },
   "redesignImportDoneSkipped": "Weggelassen",
   "@redesignImportDoneSkipped": {
@@ -15469,7 +15526,7 @@
   "@redesignImportGroupUnclearDetail": {
     "description": "redesign.import.groupUnclearDetail"
   },
-  "redesignImportKeepOpen": "Lass diese Seite offen, bis alles hochgeladen ist. Was schon oben ist, bleibt auch bei einem Abbruch erhalten.",
+  "redesignImportKeepOpen": "Du kannst die Seite verlassen und in der App weiterarbeiten. Der Upload läuft weiter, solange die App offen ist. Den Stand siehst du unten am Bildschirm.",
   "@redesignImportKeepOpen": {
     "description": "redesign.import.keepOpen"
   },
@@ -15877,6 +15934,19 @@
   "redesignImportTargetTitle": "Ziel in Attendix",
   "@redesignImportTargetTitle": {
     "description": "redesign.import.targetTitle"
+  },
+  "redesignImportTimeLeft": "{minutes, plural, one {noch etwa 1 Minute} other {noch etwa {minutes} Minuten}}",
+  "@redesignImportTimeLeft": {
+    "description": "redesign.import.timeLeft",
+    "placeholders": {
+      "minutes": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportTimeLeftShort": "noch weniger als eine Minute",
+  "@redesignImportTimeLeftShort": {
+    "description": "redesign.import.timeLeftShort"
   },
   "redesignImportTitle": "Noten importieren",
   "@redesignImportTitle": {

@@ -113,6 +113,9 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   /// Leaving was confirmed (or nothing is lost): the guard lets go.
   bool _leaving = false;
 
+  /// The result of the upload was shown ([RdImportController.resultSeen]).
+  bool _seen = false;
+
   RdImportController get _controller => ref.read(rdImportProvider.notifier);
 
   @override
@@ -129,15 +132,13 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     super.dispose();
   }
 
-  /// Stay while uploading; ask before throwing away answers and decisions
-  /// (also while the dates of Fassungen are read after the questions).
+  /// Ask before throwing away answers and decisions (also while the dates
+  /// of Fassungen are read after the questions); the upload goes on when
+  /// the page is left (the bar in the shell shows it).
   Future<bool> _onLeave() async {
     if (_leaving || !mounted) return true;
     final state = ref.read(rdImportProvider);
     switch (state.step) {
-      case RdImportStep.uploading:
-        ToastHelper.showInfo(context, context.l10n.redesignImportBusy);
-        return false;
       case RdImportStep.reading when state.plan != null:
       case RdImportStep.questions:
       case RdImportStep.review:
@@ -146,6 +147,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
         return ok;
       case RdImportStep.source:
       case RdImportStep.reading:
+      case RdImportStep.uploading:
       case RdImportStep.done:
         return true;
     }
@@ -294,7 +296,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   }
 
   /// Back link and system back: one step back; leaving the answers asks
-  /// first, during the upload it waits.
+  /// first; during the upload the page is left, the upload goes on.
   Future<void> _back() async {
     final state = ref.read(rdImportProvider);
     switch (state.step) {
@@ -308,6 +310,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
         _controller.goTo(RdImportStep.questions);
       case RdImportStep.source:
       case RdImportStep.reading:
+      case RdImportStep.uploading:
       case RdImportStep.done:
         _leave();
       case RdImportStep.questions when _fromReview:
@@ -322,8 +325,6 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
         }
       case RdImportStep.review:
         _controller.goTo(RdImportStep.questions);
-      case RdImportStep.uploading:
-        ToastHelper.showInfo(context, context.l10n.redesignImportBusy);
     }
   }
 
@@ -340,6 +341,20 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
       _fromReview = false;
     });
     _controller.restart();
+  }
+
+  /// "Import abbrechen": asked first; the files under way still arrive.
+  Future<void> _cancelUpload() async {
+    final l10n = context.l10n;
+    final ok = await showAppConfirm(
+      context,
+      title: l10n.redesignImportCancelTitle,
+      message: l10n.redesignImportCancelMessage,
+      confirmText: l10n.redesignImportCancel,
+      cancelText: l10n.redesignImportCancelKeep,
+      destructive: true,
+    );
+    if (ok && mounted) _controller.cancelUpload();
   }
 
   Future<void> _startUpload() async {
@@ -366,7 +381,19 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     // The Werke stay loaded while the assistant is open.
     ref.watch(songsListDataProvider(null));
     final state = ref.watch(rdImportProvider);
-    final canPop = (state.step == RdImportStep.source && _mode == null) || state.step == RdImportStep.done;
+    final canPop = (state.step == RdImportStep.source && _mode == null) ||
+        state.step == RdImportStep.uploading ||
+        state.step == RdImportStep.done;
+    // The result is seen here: the bar in the shell goes, and the import
+    // with the page.
+    if (state.step == RdImportStep.done && !_seen) {
+      _seen = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _controller.resultSeen();
+      });
+    } else if (state.step != RdImportStep.done) {
+      _seen = false;
+    }
     final page = switch (state.step) {
       RdImportStep.source => _source(context),
       RdImportStep.reading => _reading(context, state),
@@ -1157,6 +1184,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
 
     if (!finished) {
       final value = upload.total == 0 ? 0.0 : upload.done / upload.total;
+      final left = rdImportTimeLeftText(l10n, upload);
       return RdImportFrame(
         title: l10n.redesignImportTitle,
         step: 4,
@@ -1172,7 +1200,10 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text(l10n.redesignImportUploadProgress(upload.done, upload.total), style: RdType.meta(p)),
+                Text(
+                  [l10n.redesignImportUploadProgress(upload.done, upload.total), if (left != null) left].join(' · '),
+                  style: RdType.meta(p),
+                ),
                 const SizedBox(height: 12),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(999),
@@ -1187,11 +1218,18 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
               ],
             ),
           ),
+          const SizedBox(height: 16),
+          if (upload.cancelled)
+            Text(l10n.redesignImportCancelling, style: RdType.meta(p, size: 13), textAlign: TextAlign.center)
+          else
+            RdOutlineButton(label: l10n.redesignImportCancel, icon: Icons.close, onPressed: _cancelUpload),
         ],
       );
     }
 
-    final failures = upload.failures;
+    // Not uploaded because of "Abbrechen" apart from those that failed.
+    final failures = [for (final f in upload.failures) if (!f.cancelled) f];
+    final notUploaded = upload.failures.length - failures.length;
     // Retrying and the open Werke still need the shared folder.
     final needsLink = retry.isNotEmpty || summary.open > 0;
     return RdImportFrame(
@@ -1205,10 +1243,13 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: failures.isEmpty ? p.presentSoft : p.lateSoft,
+                  color: upload.failures.isEmpty ? p.presentSoft : p.lateSoft,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(failures.isEmpty ? Icons.check : Icons.priority_high, color: failures.isEmpty ? p.present : p.late),
+                child: Icon(
+                  upload.failures.isEmpty ? Icons.check : Icons.priority_high,
+                  color: upload.failures.isEmpty ? p.present : p.late,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -1227,6 +1268,9 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
         if (upload.aborted) ...[
           const SizedBox(height: 12),
           RdCard(child: Text(l10n.redesignImportDoneAborted, style: RdType.body(p).copyWith(color: p.absent))),
+        ] else if (upload.cancelled) ...[
+          const SizedBox(height: 12),
+          RdCard(child: Text(l10n.redesignImportDoneCancelled(notUploaded), style: RdType.body(p))),
         ],
         if (upload.learnFailed) ...[
           const SizedBox(height: 12),
@@ -1240,6 +1284,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
             RdListRow(title: l10n.redesignImportDoneLearned, value: '${upload.learned}', showChevron: false),
             RdListRow(title: l10n.redesignImportDoneSkipped, value: '${summary.skip}', showChevron: false),
             if (summary.open > 0) RdListRow(title: l10n.redesignImportDoneOpen, value: '${summary.open}', showChevron: false),
+            if (notUploaded > 0) RdListRow(title: l10n.redesignImportDoneNotUploaded, value: '$notUploaded', showChevron: false),
             if (failures.isNotEmpty)
               RdListRow(title: l10n.redesignImportDoneFailed, value: '${failures.length}', showChevron: false, titleColor: p.absent),
           ],
@@ -1256,14 +1301,14 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
                 ),
             ],
           ),
-          if (retry.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            RdOutlineButton(
-              label: l10n.redesignImportDoneRetry,
-              icon: Icons.refresh,
-              onPressed: () => _controller.upload(only: retry),
-            ),
-          ],
+        ],
+        if (retry.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          RdOutlineButton(
+            label: notUploaded > 0 ? l10n.redesignImportDoneRetryRest : l10n.redesignImportDoneRetry,
+            icon: Icons.refresh,
+            onPressed: () => _controller.upload(only: retry),
+          ),
         ],
         if (summary.open > 0) ...[
           const SizedBox(height: 16),

@@ -11971,7 +11971,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportAnswerOther => 'Other …';
 
   @override
-  String get redesignImportBusy => 'Please wait until everything is uploaded.';
+  String redesignImportBarDone(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Sheet music import done: $count files uploaded',
+      one: 'Sheet music import done: 1 file uploaded',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportBarIncomplete =>
+      'Sheet music import ended, not everything uploaded';
+
+  @override
+  String get redesignImportBarOpen => 'View';
+
+  @override
+  String redesignImportBarRunning(Object percent) {
+    return 'Sheet music import · $percent %';
+  }
+
+  @override
+  String get redesignImportCancel => 'Cancel import';
+
+  @override
+  String get redesignImportCancelKeep => 'Keep uploading';
+
+  @override
+  String get redesignImportCancelMessage =>
+      'The files being uploaded right now still arrive. What is already up stays. You can upload the rest afterwards.';
+
+  @override
+  String get redesignImportCancelTitle => 'Cancel the import?';
+
+  @override
+  String get redesignImportCancelling =>
+      'Cancelling … the files under way still arrive.';
 
   @override
   String get redesignImportCategoryFiles => 'Other files';
@@ -12011,7 +12048,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignImportConfirmKeepOpen =>
-      'Keep this page open until everything is done.';
+      'Meanwhile you can keep working in the app. Keep the app open until everything is done.';
 
   @override
   String redesignImportConfirmMessage(num files, Object works) {
@@ -12082,6 +12119,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportDoneAnother => 'Import more sheet music';
 
   @override
+  String redesignImportDoneCancelled(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Cancelled. $count files were not uploaded.',
+      one: 'Cancelled. 1 file was not uploaded.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignImportDoneFailed => 'Failed';
 
   @override
@@ -12094,10 +12142,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportDoneNewWorks => 'New works';
 
   @override
+  String get redesignImportDoneNotUploaded => 'Not uploaded';
+
+  @override
   String get redesignImportDoneOpen => 'Not reviewed, not imported';
 
   @override
   String get redesignImportDoneRetry => 'Upload failed files again';
+
+  @override
+  String get redesignImportDoneRetryRest => 'Upload the remaining files';
 
   @override
   String get redesignImportDoneSkipped => 'Left out';
@@ -12384,7 +12438,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignImportKeepOpen =>
-      'Keep this page open until everything is uploaded. What is already up stays there if it stops.';
+      'You can leave this page and keep working in the app. The upload goes on while the app is open. You see how far it is at the bottom of the screen.';
 
   @override
   String get redesignImportLearnFailed =>
@@ -12729,6 +12783,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignImportTargetTitle => 'Work in Attendix';
+
+  @override
+  String redesignImportTimeLeft(num minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'about $minutes minutes left',
+      one: 'about 1 minute left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportTimeLeftShort => 'less than a minute left';
 
   @override
   String get redesignImportTitle => 'Import sheet music';

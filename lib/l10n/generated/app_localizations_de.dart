@@ -12099,7 +12099,44 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportAnswerOther => 'Andere …';
 
   @override
-  String get redesignImportBusy => 'Bitte warte, bis alles hochgeladen ist.';
+  String redesignImportBarDone(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Noten-Import fertig: $count Dateien hochgeladen',
+      one: 'Noten-Import fertig: 1 Datei hochgeladen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportBarIncomplete =>
+      'Noten-Import beendet, nicht alles hochgeladen';
+
+  @override
+  String get redesignImportBarOpen => 'Ansehen';
+
+  @override
+  String redesignImportBarRunning(Object percent) {
+    return 'Noten-Import · $percent %';
+  }
+
+  @override
+  String get redesignImportCancel => 'Import abbrechen';
+
+  @override
+  String get redesignImportCancelKeep => 'Weiter hochladen';
+
+  @override
+  String get redesignImportCancelMessage =>
+      'Die Dateien, die gerade hochgeladen werden, kommen noch an. Was schon oben ist, bleibt. Den Rest kannst du danach hochladen.';
+
+  @override
+  String get redesignImportCancelTitle => 'Import abbrechen?';
+
+  @override
+  String get redesignImportCancelling =>
+      'Wird abgebrochen … die laufenden Dateien kommen noch an.';
 
   @override
   String get redesignImportCategoryFiles => 'Andere Dateien';
@@ -12139,7 +12176,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportConfirmKeepOpen =>
-      'Lass die Seite offen, bis alles fertig ist.';
+      'Währenddessen kannst du in der App weiterarbeiten. Lass die App offen, bis alles fertig ist.';
 
   @override
   String redesignImportConfirmMessage(num files, Object works) {
@@ -12210,6 +12247,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportDoneAnother => 'Weitere Noten importieren';
 
   @override
+  String redesignImportDoneCancelled(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Abgebrochen. $count Dateien wurden nicht hochgeladen.',
+      one: 'Abgebrochen. 1 Datei wurde nicht hochgeladen.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignImportDoneFailed => 'Fehlgeschlagen';
 
   @override
@@ -12222,10 +12270,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportDoneNewWorks => 'Neue Werke';
 
   @override
+  String get redesignImportDoneNotUploaded => 'Nicht hochgeladen';
+
+  @override
   String get redesignImportDoneOpen => 'Nicht geprüft, nicht übernommen';
 
   @override
   String get redesignImportDoneRetry => 'Fehlgeschlagene erneut hochladen';
+
+  @override
+  String get redesignImportDoneRetryRest => 'Restliche Dateien hochladen';
 
   @override
   String get redesignImportDoneSkipped => 'Weggelassen';
@@ -12514,7 +12568,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportKeepOpen =>
-      'Lass diese Seite offen, bis alles hochgeladen ist. Was schon oben ist, bleibt auch bei einem Abbruch erhalten.';
+      'Du kannst die Seite verlassen und in der App weiterarbeiten. Der Upload läuft weiter, solange die App offen ist. Den Stand siehst du unten am Bildschirm.';
 
   @override
   String get redesignImportLearnFailed =>
@@ -12863,6 +12917,20 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportTargetTitle => 'Ziel in Attendix';
+
+  @override
+  String redesignImportTimeLeft(num minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'noch etwa $minutes Minuten',
+      one: 'noch etwa 1 Minute',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportTimeLeftShort => 'noch weniger als eine Minute';
 
   @override
   String get redesignImportTitle => 'Noten importieren';

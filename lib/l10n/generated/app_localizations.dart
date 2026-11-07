@@ -19595,11 +19595,59 @@ abstract class AppLocalizations {
   /// **'Andere …'**
   String get redesignImportAnswerOther;
 
-  /// redesign.import.busy
+  /// redesign.import.barDone
   ///
   /// In de, this message translates to:
-  /// **'Bitte warte, bis alles hochgeladen ist.'**
-  String get redesignImportBusy;
+  /// **'{count, plural, one {Noten-Import fertig: 1 Datei hochgeladen} other {Noten-Import fertig: {count} Dateien hochgeladen}}'**
+  String redesignImportBarDone(num count);
+
+  /// redesign.import.barIncomplete
+  ///
+  /// In de, this message translates to:
+  /// **'Noten-Import beendet, nicht alles hochgeladen'**
+  String get redesignImportBarIncomplete;
+
+  /// redesign.import.barOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Ansehen'**
+  String get redesignImportBarOpen;
+
+  /// redesign.import.barRunning
+  ///
+  /// In de, this message translates to:
+  /// **'Noten-Import · {percent} %'**
+  String redesignImportBarRunning(Object percent);
+
+  /// redesign.import.cancel
+  ///
+  /// In de, this message translates to:
+  /// **'Import abbrechen'**
+  String get redesignImportCancel;
+
+  /// redesign.import.cancelKeep
+  ///
+  /// In de, this message translates to:
+  /// **'Weiter hochladen'**
+  String get redesignImportCancelKeep;
+
+  /// redesign.import.cancelMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Die Dateien, die gerade hochgeladen werden, kommen noch an. Was schon oben ist, bleibt. Den Rest kannst du danach hochladen.'**
+  String get redesignImportCancelMessage;
+
+  /// redesign.import.cancelTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Import abbrechen?'**
+  String get redesignImportCancelTitle;
+
+  /// redesign.import.cancelling
+  ///
+  /// In de, this message translates to:
+  /// **'Wird abgebrochen … die laufenden Dateien kommen noch an.'**
+  String get redesignImportCancelling;
 
   /// redesign.import.categoryFiles
   ///
@@ -19664,7 +19712,7 @@ abstract class AppLocalizations {
   /// redesign.import.confirmKeepOpen
   ///
   /// In de, this message translates to:
-  /// **'Lass die Seite offen, bis alles fertig ist.'**
+  /// **'Währenddessen kannst du in der App weiterarbeiten. Lass die App offen, bis alles fertig ist.'**
   String get redesignImportConfirmKeepOpen;
 
   /// redesign.import.confirmMessage
@@ -19745,6 +19793,12 @@ abstract class AppLocalizations {
   /// **'Weitere Noten importieren'**
   String get redesignImportDoneAnother;
 
+  /// redesign.import.doneCancelled
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Abgebrochen. 1 Datei wurde nicht hochgeladen.} other {Abgebrochen. {count} Dateien wurden nicht hochgeladen.}}'**
+  String redesignImportDoneCancelled(num count);
+
   /// redesign.import.doneFailed
   ///
   /// In de, this message translates to:
@@ -19769,6 +19823,12 @@ abstract class AppLocalizations {
   /// **'Neue Werke'**
   String get redesignImportDoneNewWorks;
 
+  /// redesign.import.doneNotUploaded
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht hochgeladen'**
+  String get redesignImportDoneNotUploaded;
+
   /// redesign.import.doneOpen
   ///
   /// In de, this message translates to:
@@ -19780,6 +19840,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Fehlgeschlagene erneut hochladen'**
   String get redesignImportDoneRetry;
+
+  /// redesign.import.doneRetryRest
+  ///
+  /// In de, this message translates to:
+  /// **'Restliche Dateien hochladen'**
+  String get redesignImportDoneRetryRest;
 
   /// redesign.import.doneSkipped
   ///
@@ -20168,7 +20234,7 @@ abstract class AppLocalizations {
   /// redesign.import.keepOpen
   ///
   /// In de, this message translates to:
-  /// **'Lass diese Seite offen, bis alles hochgeladen ist. Was schon oben ist, bleibt auch bei einem Abbruch erhalten.'**
+  /// **'Du kannst die Seite verlassen und in der App weiterarbeiten. Der Upload läuft weiter, solange die App offen ist. Den Stand siehst du unten am Bildschirm.'**
   String get redesignImportKeepOpen;
 
   /// redesign.import.learnFailed
@@ -20662,6 +20728,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Ziel in Attendix'**
   String get redesignImportTargetTitle;
+
+  /// redesign.import.timeLeft
+  ///
+  /// In de, this message translates to:
+  /// **'{minutes, plural, one {noch etwa 1 Minute} other {noch etwa {minutes} Minuten}}'**
+  String redesignImportTimeLeft(num minutes);
+
+  /// redesign.import.timeLeftShort
+  ///
+  /// In de, this message translates to:
+  /// **'noch weniger als eine Minute'**
+  String get redesignImportTimeLeftShort;
 
   /// redesign.import.title
   ///
