@@ -1,0 +1,452 @@
+{
+ "batch": "zz-verify6-sonnet-24",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "selfService/parents/parents.page#action-d04c7e28": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:480-489"
+   ],
+   "n": "Gründe: Tenant oder Standard (absenceReasonsOf/lateReasonsOf); isToday = Termindatum heute; Absage/Verspätung für gewählte Kinder, signOut isParents=true.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#action-d29165b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:113-136"
+   ],
+   "n": "Chip nur bei Beschreibung, öffnet Beschreibungs-Sheet.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#action-ea934dc1": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:266-270",
+    "lib/features/parents/data/providers/parents_providers.dart:309-316"
+   ],
+   "n": "Reihenfolge der Kinder je Termin jetzt wie Ionic (Sortierung nach childOrder = Instrument, isLeader, Nachname); Zeile und Aktionsblatt (Reihenfolge, Filter nach Status/Late erlaubt) gleich.",
+   "v": "korrigiert"
+  },
+  "selfService/parents/parents.page#action-f2490e18": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:113-136"
+   ],
+   "n": "Chip nur bei share_plan und Plan mit Feldern (hasPlan).",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#action-fe13ebcd": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:272-281"
+   ],
+   "n": "Nur bei kids != 1, öffnet Aktionsblatt für alle Kinder.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#embed-8aa4a4c3": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:188"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#modal-f1fcb99c": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:505-535",
+    "lib/features/self_service/presentation/widgets/plan_viewer_sheet.dart:384-452",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:223-244"
+   ],
+   "n": "Vollbild-Modal, Plan inkl. extra_plans/duration_days wie Ionic. Unterschied nur im Export: Ionic Titel = Plantitel oder getPlanningTitle(Typ, typeInfo); Flutter übergibt keine typeId (PlanAttendance in showPlanViewerSheet), Titel/Dateiname fallen auf typeInfo bzw. \"Ablaufplan\" zurück.",
+   "v": "korrigiert"
+  },
+  "selfService/parents/parents.page#text-1b40f902": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:328"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-29268b7c": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:259",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:65-77"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-341f8082": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:260",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:732-753"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-45095c3b": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:58-63",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:294"
+   ],
+   "n": "Titel jetzt wie Ionic: typeInfo, sonst Typname (nicht bei hide_name), sonst lesbares Datum (Ionic getTypeTitle + getReadableDate-Fallback). Früherer Unterschied behoben.",
+   "v": "korrigiert"
+  },
+  "selfService/parents/parents.page#text-45095c3b-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:58-63",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:333"
+   ],
+   "n": "Titel jetzt wie Ionic: typeInfo, sonst Typname (nicht bei hide_name), sonst lesbares Datum (Ionic getTypeTitle + getReadableDate-Fallback). Früherer Unterschied behoben.",
+   "v": "korrigiert"
+  },
+  "selfService/parents/parents.page#text-ec0de4fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:58-63",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:258"
+   ],
+   "n": "Titel jetzt wie Ionic: typeInfo, sonst Typname (nicht bei hide_name), sonst lesbares Datum (Ionic getTypeTitle + getReadableDate-Fallback). Früherer Unterschied behoben.",
+   "v": "korrigiert"
+  },
+  "selfService/parents/parents.page#text-50b4b4e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:292-293"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-50b4b4e0-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:331-332"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-51c19dc2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:285"
+   ],
+   "n": "Ohne laufende Termine wie Ionic.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-525b7dae": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/parents/data/providers/parents_providers.dart:395-425"
+   ],
+   "n": "Gruppenkopf \"TT.MM.JJJJ | Titel\": Titel jetzt wie Ionic (auch bei hide_name). Rest-Unterschied: Fallback-Datum (hide_name ohne typeInfo) ohne Typ/Mehrtages-Spanne (readableDate(g.date) statt Ionic getReadableDate mit Typ), nur Anzeige.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-574b264e": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:285"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-896db40b": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:171-217",
+    "lib/features/parents/data/providers/parents_providers.dart:428-460"
+   ],
+   "n": "Farbe >=75 grün, >=50 gelb, sonst rot; Prozent über alle vergangenen Termine, shift_excused_as_present berücksichtigt wie Ionic.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-8f78a1b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:254"
+   ],
+   "n": "Flutter immer \"Heute\"; Ionic-Zweig \"Nächster Termin\" ist toter Code (currentAttendance ist immer laufend).",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-afd4ff21": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:149-152",
+    "lib/data/repositories/player_repository.dart:253-272"
+   ],
+   "n": "Kinder wie Ionic getPlayers(PARENT): tenantId, parent_id, pending=false, left null, Sortierung instrument/isLeader desc/lastName.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-b3b0e9f9": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:292-293"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-b3b0e9f9-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:331-332"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-cb64c81a": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:344-349",
+    "lib/features/parents/data/providers/parents_providers.dart:309-316"
+   ],
+   "n": "'Vorname · Status' (vergangene Form); Kinderreihenfolge jetzt wie Ionic sortiert.",
+   "v": "korrigiert"
+  },
+  "selfService/parents/parents.page#text-d711fc20": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:255-257"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-e91e7329": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:255-257"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-eb70b83e": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:295",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:65-77"
+   ],
+   "n": "Zeit und Ort, Datum nur bei Mehrtägigen.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-fc884c7b": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:328",
+    "lib/features/parents/data/providers/parents_providers.dart:354-365"
+   ],
+   "n": "max. 10 wie Ionic.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-ff4a6508": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:286-287"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#toast-18f5fd94": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:478-503"
+   ],
+   "n": "Toast \"parentsThanksLate\"/\"parentsThanksSignout\" nur bei Erfolg; bei Fehler zusätzlich Fehler-Toast (besser als Ionic).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-39d272cd-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:196-200"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-92b05db6": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:209"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#alert-1e78c190": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:564-691",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:288-330"
+   ],
+   "n": "Kopf = Feldname; Text/Ja-Nein (Standard Nein)/Optionen/Checkboxen; Anmelde-Modus nur \"Anmelden\", nicht wegtippbar; Bearbeiten \"Abbrechen\"/\"Speichern\"; leeres Textfeld -> Hinweis signout.fillField.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#alert-cf2e9968": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:256-295",
+    "lib/data/repositories/player_absence_repository.dart:244-292",
+    "lib/core/providers/player_absence_providers.dart:121-136"
+   ],
+   "n": "Alert Titel/Text, Abbrechen/Löschen (destruktiv); löscht Abwesenheit (tenant_id-gefiltert), setzt nur kommende, beim Selbstservice angezeigte Termine im Zeitraum mit Status Entschuldigt und Notiz = Grund auf Standardstatus des Typs (sonst Neutral) und leere Notiz zurück; Toast \"Abwesenheit gelöscht\"; Fehlerfall Toast.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#alert-f9609962": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:155-170",
+    "lib/data/repositories/player_repository.dart:882-911"
+   ],
+   "n": "Sichtbar bei player_self_pause der Spieler-Rolle und paused; Pausierung beenden/Text/Abbrechen+Reaktivieren; Historie \"Selbst reaktiviert\" (UNPAUSED), paused=false, paused_until=null, tenantId-Filter, wieder in kommende Termine.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#embed-77581ed3": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:201"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#loading-19b27361": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:256-295"
+   ],
+   "n": "Ionic: Lade-Overlay beim Löschen der Abwesenheit / Flutter: kein blockierendes Overlay (Ergebnis-Toast folgt).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#modal-2b19c5d0": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:19-26",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:249",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:354"
+   ],
+   "n": "Ionic UnavailabilityModalComponent (Vollbild, personId) / Flutter Vollbild-Seite mit personId; beide Einstiege (Dienst-Sheet und Liste); Neuladen über Provider-Invalidierung.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#toast-36f88117": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:310",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:305"
+   ],
+   "n": "Einzelfeld-Dialog: gleicher Warn-Toast \"Bitte ... ausfüllen\". Ionic: auch im Mehrfeld-Modal Toast / Flutter: dort roter Hinweistext im Sheet mit gleichem Text; Nutzer erfährt dasselbe.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#toast-479275a1": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:168"
+   ],
+   "n": "Ionic: \"Fehler beim updaten des Spielers\" (danger, aus updatePlayer) / Flutter: \"Fehler: <Fehlertext>\" (friendlyErrorMessage). Gleiche Bedeutung; Flutter meldet zudem Fehler beim Wiedereintragen in Termine.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#toast-dd2b303a": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:329"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#toast-f428f7f6": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:339"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#toast-f735d008": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:150"
+   ],
+   "n": "Referenz korrigiert (war :115). Ionic: Pausieren-Fehler Toast mit Fehlertext (z. B. \"Fehler beim updaten des Spielers\", danger) / Flutter: \"Fehler: <Fehlertext>\" rot. Gleiche Bedeutung.",
+   "v": "korrigiert"
+  },
+  "selfService/signout/signout.page#toast-f998f8b6": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:435"
+   ],
+   "n": "Referenz korrigiert (war :395). Warn-Toast signout.giveReason, Sheet bleibt offen; Flutter trimmt den Grund (Ionic nicht), nur Leerzeichen-Eingabe betroffen.",
+   "v": "korrigiert"
+  },
+  "services/attendance-type/attendance-type.service#toast-8252c8d0": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:177",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:301"
+   ],
+   "n": "Ionic: Toast \"Fehler beim Laden des Anwesenheitstyps\" (danger). Flutter: getTypeById fängt den Fehler und gibt null zurück, die Seite zeigt \"Typ nicht gefunden\" statt Toast; Nutzer sieht, dass nichts geladen wurde.",
+   "v": "bestätigt"
+  },
+  "services/attendance-type/attendance-type.service#toast-853b9ecb": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:73"
+   ],
+   "n": "Ionic: Toast \"Fehler beim Laden der Anwesenheitstypen\" (danger) / Flutter: kein Toast; Typen-Seite zeigt \"Fehler: ...\" im Inhalt, andere Stellen nutzen den Provider-Fehler still.",
+   "v": "bestätigt"
+  },
+  "services/attendance-type/attendance-type.service#toast-fb1159a4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1839"
+   ],
+   "n": "Referenz korrigiert (Erstellen liegt in attendance_type_edit_page, nicht in der Liste). Ionic: Service-Toast \"Fehler beim Hinzufügen des Anwesenheitstyps\" + Seiten-Toast \"Fehler beim Erstellen...\" / Flutter: nur \"Fehler beim Erstellen des Anwesenheitstyps\" - gleiche Bedeutung.",
+   "v": "korrigiert"
+  },
+  "services/auth/auth.service#toast-29996129": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:425",
+    "lib/features/auth/presentation/pages/login_page.dart:407-411"
+   ],
+   "n": "Erreichbar über Login-Dialog \"E-Mail nicht bestätigt\" -> Erneut senden; Fehler-Toast \"Fehler beim Senden der Bestätigungs-E-Mail\" (rot).",
+   "v": "bestätigt"
+  },
+  "services/auth/auth.service#toast-5bce91d5": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:423",
+    "lib/features/auth/presentation/pages/login_page.dart:409-410"
+   ],
+   "n": "Erfolgs-Toast \"Bestätigungs-E-Mail wurde erneut gesendet\".",
+   "v": "bestätigt"
+  },
+  "services/auth/auth.service#toast-c252a214": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:207-215",
+    "lib/features/auth/data/auth_flow_service.dart:80-86"
+   ],
+   "n": "Nur Teams-Verknüpfungsmodus (TeamsService.ssoLink -> authSvc.login). Flutter zeigt dort jetzt \"Ungültige Anmeldedaten\" (authInvalidCredentials) wie Ionic; kein Code-Login-Hinweis danach, Ionic ssoLink fängt den Fehler ebenfalls ohne Folgedialog. Früherer Unterschied behoben.",
+   "v": "korrigiert"
+  }
+ },
+ "extra": [
+  {
+   "unit": "selfService/parents/parents.page",
+   "title": "Mehrere laufende Termine: andere Auswahl der Heute-Karte",
+   "n": "Ionic: currentAttendance = erster laufender Termin der nach Datum absteigend sortierten Liste (spätester Beginn). Flutter: currentParentAttendanceProvider nimmt den ersten laufenden der aufsteigend sortierten Liste (frühester Beginn). Nur bei mehreren gleichzeitig laufenden Terminen (z. B. Freizeit + Probe heute) wird ein anderer angezeigt; die übrigen laufenden fallen in beiden Apps weg.",
+   "sev": "niedrig",
+   "ionic": "src/app/selfService/parents/parents.page.ts:196",
+   "f": [
+    "lib/features/parents/data/providers/parents_providers.dart:368-371"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,54 @@
+{
+  "batch": "zz-verify4-b27-settings-other",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "settings/delete-account/delete-account.page#action-ffefb702": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:212",
+        "lib/features/settings/presentation/pages/delete_account_page.dart:33"
+      ],
+      "n": "Roter Button „Konto endgültig löschen“, aktiv nur bei passendem Code (trim + Großschreibung wie canDelete), keine Rollenbedingung in beiden Apps (Link für alle Rollen in Einstellungen). Flutter zusätzlich während des Löschens deaktiviert mit Spinner statt Ionic-Ladeoverlay.",
+      "v": "bestätigt"
+    },
+    "settings/files/files-move-modal/files-move-modal.component#action-c0b95fe6": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/files_move_modal.dart:136",
+        "lib/features/settings/presentation/widgets/files_move_modal.dart:259",
+        "lib/features/settings/data/file_move.dart:40"
+      ],
+      "n": "„Hierher verschieben“ / „# Einträge hierher verschieben“, aktiv nur bei gewähltem Ziel und canMoveInto (nicht in verschobenen Ordner, nicht aktueller Ort) – gleiche Hilfsfunktionen. Verschieben nur für Admin/Verantwortlich erreichbar (canEditFiles) wie Ionic.",
+      "v": "bestätigt"
+    },
+    "settings/files/files.page#text-7c9c40ef": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1142",
+        "lib/features/settings/presentation/pages/files_page.dart:1192",
+        "lib/core/providers/role_permission_providers.dart:143"
+      ],
+      "n": "Nur Admin/Verantwortlich (canEditFilesFor = Ionic canEditFiles) mit geladener Belegung (RPC files_used_bytes nur für diese Rollen) und Limit tenants.files_max_bytes: „Speicher: {used} von {max} belegt“ + Status-Zusatz, gleiche Größenformatierung.",
+      "v": "bestätigt"
+    },
+    "settings/files/files.page#text-9dbd2f61": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1194"
+      ],
+      "n": "Ohne Limit „Speicher: {used} belegt“; gleiche Rollen-/Ladebedingung wie text-7c9c40ef.",
+      "v": "bestätigt"
+    },
+    "settings/files/files.page#media-b8018f1d": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1202",
+        "lib/features/settings/presentation/pages/files_page.dart:1206"
+      ],
+      "n": "Fortschrittsbalken used/max, rot ab 90 %, sonst Primärfarbe, nur mit Limit und nur Admin/Verantwortlich (Flutter zusätzlich max > 0, Limit 0 ohne praktische Bedeutung).",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

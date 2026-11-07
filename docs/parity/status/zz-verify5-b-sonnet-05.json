@@ -1,0 +1,339 @@
+{
+ "batch": "zz-verify5-b-sonnet-05",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "planning/planning.page#action-ab4a027d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:110",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:355-400"
+   ],
+   "v": "bestätigt",
+   "n": "Reorder, Unterpunkt-Zeile, Tagesordnungs-Marker mit „Themen aufnehmen“ (nur wenn onAddTopics), Block-Badge „{min} min“, Beamer-Status, Ein-/Ausrücken: noch vorhanden und gleich."
+  },
+  "planning/planning.page#action-e299f9d8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1983",
+    "lib/features/planning/presentation/pages/planning_page.dart:2151"
+   ],
+   "v": "bestätigt",
+   "n": "FAB öffnet Export-Sheet „Aktionen“ mit Export/Telegram (nur mit Feldern) und Registerprobenplan (Chor/Orchester)."
+  },
+  "planning/planning.page#alert-1b3d0c36": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:200",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:212"
+   ],
+   "v": "bestätigt",
+   "n": "Notiz bearbeiten: Dialog, leer → „Bitte gib einen Punkt ein.“ bleibt offen, Abbrechen/Updaten."
+  },
+  "planning/planning.page#alert-54b86574": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:303",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:197"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/planning.page#alert-a1e2ff95": {
+   "s": "na",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1930"
+   ],
+   "v": "bestätigt",
+   "n": "toter Code: revokeSharePlan() ohne Aufrufer. Flutter-Freigabe-Sheet hat jetzt nur noch „Nur-Lesen-Link“/„Bearbeiten-Link“ wie Ionic, das frühere zusätzliche „Freigabe aufheben“ ist weg."
+  },
+  "planning/planning.page#alert-b54330ab": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1351",
+    "lib/features/planning/presentation/pages/planning_page.dart:1395",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:322"
+   ],
+   "v": "bestätigt",
+   "n": "Plan umbenennen: Titel, Hinweis, Platzhalter Auto-Name, leer = Label entfernt."
+  },
+  "planning/planning.page#alert-c2d6f9d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1261"
+   ],
+   "v": "bestätigt",
+   "n": "„Weiteren Plan hinzufügen“: Abbrechen/Leer/Kopie, gleiche Voraussetzungen und Toasts (kein Termin, ungültiger Plan), Kopie ohne TOPs."
+  },
+  "planning/planning.page#modal-744bb40f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2020",
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:33"
+   ],
+   "v": "bestätigt",
+   "n": "Registerprobenplan nur für Chor/Orchester über Aktionen-Sheet, Vollhöhe."
+  },
+  "planning/planning.page#toast-179f4ddc": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1253",
+    "lib/features/planning/presentation/pages/planning_page.dart:950"
+   ],
+   "v": "bestätigt",
+   "n": "_validate() ohne Toast, danach Warnung „Lege zuerst einen Ablauf …“."
+  },
+  "planning/planning.page#toast-1e88b54e": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1248"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/planning.page#toast-35bdc992": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1918"
+   ],
+   "v": "bestätigt",
+   "n": "Ohne Termin Warn-Toast „Bitte wähle zuerst einen Termin aus.“"
+  },
+  "planning/planning.page#toast-7ad4ec64": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:152"
+   ],
+   "v": "bestätigt",
+   "n": "Ohne Web-Share: Link in Zwischenablage + Erfolgs-Toast „Link kopiert“; nativ Share-Sheet mit Fallback."
+  },
+  "protocols/protocol/protocol.page#action-798b4676": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1273"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-968c0895": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1089",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1116",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1148",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:812"
+   ],
+   "v": "bestätigt",
+   "n": "Nur Leitung (isTeamLeader), nur Handy-Layout; flush, Server-Merge, dann Freigabe-Sheet; Flutter zeigt zusätzlich Fehler-Toast wenn Speichern scheitert (besser)."
+  },
+  "protocols/protocol/protocol.page#action-c6f17db5-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1281"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-5235a889": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1279"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-9a10cea7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1272"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#toast-89ae3e7d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:806"
+   ],
+   "v": "bestätigt",
+   "n": "„PDF konnte nicht erstellt werden“ (danger) im catch von _sharePdf."
+  },
+  "public-planning/my-plans/my-plans.component#alert-c33e32bf": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1054",
+    "lib/data/repositories/plan_repository.dart:298"
+   ],
+   "v": "bestätigt",
+   "n": "Dialog gleich; Löschen auf shared_plans per id, zusätzlich creator_user_id (nur eigene Pläne, unkritisch); Fehler-Toast „plans.deleteFailed“ vorhanden."
+  },
+  "public-planning/public-planning.page#action-0e3eca3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:200",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:543"
+   ],
+   "v": "bestätigt",
+   "n": "Name, „HH:mm | Ausführender“, Info; Tippen → Bearbeiten-Dialog mit Löschen/Abbrechen/Speichern."
+  },
+  "public-planning/public-planning.page#action-1b52d60d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:155",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:533"
+   ],
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-3c7894ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:440",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:494"
+   ],
+   "v": "bestätigt",
+   "n": "Org-Felder nur eingeloggt und wenn vorhanden, „{Name} {min} min“, hängt Kopie an."
+  },
+  "public-planning/public-planning.page#action-5b03242a": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:110",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:355"
+   ],
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-94254d7f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:497",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:512"
+   ],
+   "v": "bestätigt",
+   "n": "Blockvorlagen nur eingeloggt, „{name} {min} min“, Einfügen mit neuen IDs."
+  },
+  "public-planning/public-planning.page#action-f0588d57": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:590",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:197"
+   ],
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#alert-9f6c8399": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:303"
+   ],
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#alert-b65125be": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:404",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:369"
+   ],
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#alert-f51251df": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:420",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:369"
+   ],
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#field-3e7a1873": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:985"
+   ],
+   "v": "korrigiert",
+   "n": "Ionic: \"Ende\"-Zeile hängt an `@if (end)`; `end` wird in ngOnInit/calculateEnd immer gesetzt, also auch bei leerem Ablauf (Ende = Start). Flutter: nur bei `_fields.isNotEmpty` (public_planning_page.dart ~Z.985). Nur nach Löschen aller Felder sichtbar, Funktion (Ende nur Anzeige) gleich."
+  },
+  "public-planning/public-planning.page#field-51c31589-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:980",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:816"
+   ],
+   "v": "bestätigt",
+   "n": "Startzeit-Chip mit 24h-Zeitwahl."
+  },
+  "public-planning/public-planning.page#field-51c31589-3": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:985"
+   ],
+   "v": "korrigiert",
+   "n": "Ionic: \"Ende\"-Zeile hängt an `@if (end)`; `end` wird in ngOnInit/calculateEnd immer gesetzt, also auch bei leerem Ablauf (Ende = Start). Flutter: nur bei `_fields.isNotEmpty` (public_planning_page.dart ~Z.985). Nur nach Löschen aller Felder sichtbar, Funktion (Ende nur Anzeige) gleich."
+  },
+  "public-planning/public-planning.page#modal-419a4f08-3": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:985"
+   ],
+   "v": "korrigiert",
+   "n": "Ionic: \"Ende\"-Zeile hängt an `@if (end)`; `end` wird in ngOnInit/calculateEnd immer gesetzt, also auch bei leerem Ablauf (Ende = Start). Flutter: nur bei `_fields.isNotEmpty` (public_planning_page.dart ~Z.985). Nur nach Löschen aller Felder sichtbar, Funktion (Ende nur Anzeige) gleich."
+  },
+  "public-planning/public-planning.page#popover-f538a440": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:470",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:500"
+   ],
+   "v": "bestätigt",
+   "n": "Menü unter dem „+“: Punkt/Block/Notiz, Lieder nur eingeloggt (nicht general), Org-Felder, Blockvorlagen."
+  },
+  "public-planning/public-planning.page#text-2f8b1a6d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:979"
+   ],
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#text-778c4c4e": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:508"
+   ],
+   "v": "bestätigt"
+  },
+  "register/register.page#action-a59eb784-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:346",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:392"
+   ],
+   "v": "bestätigt",
+   "n": "Hilfe-Button öffnet Popover mit mainGroupInfoHtml."
+  },
+  "register/register.page#alert-f158c7c9": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:525",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:398",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:380"
+   ],
+   "v": "bestätigt",
+   "n": "Nur ohne Instanz (Menü Abmelden/Konto löschen); Texte, Buttons, deleteAccount, Erfolg/Fehler-Toast, /login gleich. Overlay fehlt (anderer Eintrag)."
+  },
+  "register/register.page#field-3125940a": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:325"
+   ],
+   "v": "bestätigt"
+  },
+  "register/register.page#field-38a5af18": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:357"
+   ],
+   "v": "bestätigt"
+  },
+  "register/register.page#text-57d96556": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:143"
+   ],
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

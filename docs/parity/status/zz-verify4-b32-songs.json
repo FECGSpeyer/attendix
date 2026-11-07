@@ -1,0 +1,16 @@
+{
+  "batch": "zz-verify4-b32-songs",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "songs/songs.page#action-dc1e2c52": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/songs_list_page.dart:521"
+      ],
+      "n": "Ionic: 100er-Blöcke mit Nachladen beim Scrollen (deaktiviert, wenn alle angezeigt) / Flutter: SliverList über alle gefilterten Werke (natives Lazy-Rendering); alle Werke erreichbar. Keine Rollen-/Mandantenabhängigkeit.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

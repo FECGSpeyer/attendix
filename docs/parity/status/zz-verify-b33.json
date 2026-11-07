@@ -1,0 +1,220 @@
+{
+  "batch": "zz-verify-b33",
+  "ionic": "9f9b82af",
+  "flutter": "1aba6be",
+  "items": {
+    "duty/duty-distribute-modal/duty-distribute-modal.component#alert-500b3722": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/duty/presentation/pages/duty_distribute_page.dart:236"
+      ],
+      "n": "Titel „{Vorname} tauschen“ / „Person wählen“, Untertitel „{Titel} · {Datum}“, „Niemand (Platz offen lassen)“ nur beim Tauschen, Einträge „Name (Anzahl)“ nach Anzahl sortiert, Toast „Niemand sonst …“ bei leerer Auswahl ohne current wie Ionic. Ionic: ion-alert mit Radio-Liste und „Abbrechen“/„Übernehmen“, Auswahl gilt erst mit „Übernehmen“ / Flutter: SimpleDialog (iOS-Look: Karte mit Zeilen) ohne Radios und ohne Buttons, Tipp übernimmt sofort, Abbrechen nur durch Tippen daneben. Nebenbei: Datum im Untertitel ohne führende Null („Mo, 3.2.“ statt „Mo, 03.02.“, siehe text-e73248fa).",
+      "v": "bestätigt"
+    },
+    "duty/duty-distribute-modal/duty-distribute-modal.component#modal-8334d587-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/duty_distribute_page.dart:96",
+        "lib/features/duty/presentation/pages/duty_distribute_page.dart:379"
+      ],
+      "n": "„Bis“-Chip öffnet showAppDatePicker (Plattform-Datumsdialog) statt Inline-ion-modal mit ion-datetime; Startwert Monatsende des Folgemonats wie Ionic. Bedienunterschiede des Pickers gehören zu field-bca25190.",
+      "v": "bestätigt"
+    },
+    "duty/unavailability-modal/unavailability-modal.component#logic-8717ad43": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/duty/presentation/pages/unavailability_page.dart:65",
+        "lib/features/duty/presentation/pages/unavailability_page.dart:82",
+        "lib/features/duty/presentation/pages/unavailability_page.dart:101",
+        "lib/features/duty/presentation/pages/unavailability_page.dart:122",
+        "lib/features/duty/presentation/pages/unavailability_page.dart:153",
+        "lib/core/providers/duty_providers.dart:90",
+        "lib/core/providers/duty_providers.dart:306",
+        "lib/data/repositories/duty_repository.dart:375"
+      ],
+      "n": "Sichtbare Typen (visible), Laden pro Person + tenant_id, Typen-/Bis-Text, Neu mit Vorauswahl der Dienst-Typen, Bearbeiten als Kopie, Wochentage sortiert, Speichern mit Wochentag-Pflicht (tenant_id, person_id, weekdays, type_ids, reason, valid_until, created_by = aktueller Nutzer), Angebot „Auch geplante“ mit Vorschau (max. 4 Daten „DD.MM.“, „ …“), Vorname bei forOther, Update person_attendances (Entschuldigt, notes, changed_by/at) nur für passende Zeilen, Löschen mit Neuladen wie Ionic; Fehlertexte „Fehler beim Speichern“/„Fehler beim Löschen“ gleich. Abweichungen: Update-Fehler bei „Auch geplante“ meldet grünes „0 Termine angepasst“ (mittel), Ladefehler ohne Button, Typnamen unsichtbarer Typen (siehe extra Erstprüfer). Flutter trimmt zusätzlich den Grund.",
+      "v": "bestätigt"
+    },
+    "instruments/instrument-list/instrument-list.page#toast-4c623e8a": {
+      "s": "missing",
+      "sev": "mittel",
+      "f": [
+        "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:281"
+      ],
+      "n": "Ionic: leerer Name → roter Toast „Bitte gib einem Namen an“, Alert bleibt offen (return false) / Flutter: „Hinzufügen“ bei leerem (getrimmtem) Namen tut nichts, Dialog bleibt offen, kein Hinweis.",
+      "v": "bestätigt"
+    },
+    "instruments/instrument-list/instrument-list.page#toast-30c6ec59": {
+      "s": "missing",
+      "sev": "mittel",
+      "f": [
+        "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:320"
+      ],
+      "n": "Ionic: leerer Name → roter Toast „Bitte gib einem Namen an“, Alert bleibt offen / Flutter: „Speichern“ bei leerem Namen tut nichts, Dialog bleibt offen, kein Hinweis.",
+      "v": "bestätigt"
+    },
+    "instruments/instrument-list/instrument-list.page#loading-7d7ff756": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:54"
+      ],
+      "n": "Ionic: blockierendes Overlay „Reihenfolge wird gespeichert...“ (max. 5 s) / Flutter: kein Ladehinweis, Liste bleibt bedienbar; zudem springt die Liste nach dem Häkchen bis zum Ende von Speichern + Neuladen auf die alte Reihenfolge zurück (_reorderSections = null vor dem await).",
+      "v": "bestätigt"
+    },
+    "instruments/instrument-list/instrument-list.page#toast-e4f5c17f": {
+      "s": "missing",
+      "sev": "mittel",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:57"
+      ],
+      "n": "Ionic: grüner Toast „Reihenfolge gespeichert“ nach dem Speichern der Gruppen-Reihenfolge / Flutter: _toggleReorder zeigt nur bei Fehler einen Toast (das Kategorien-Sheet hat die Erfolgsmeldung, die Gruppenliste nicht).",
+      "v": "bestätigt"
+    },
+    "instruments/instrument-list/instrument-list.page#toast-a428ffb5": {
+      "s": "ok",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:58"
+      ],
+      "n": "Roter Toast „Fehler beim Speichern der Reihenfolge“ bei Fehler (auch Demo-Sperre). Ionic zeigt davor zusätzlich den Service-Toast „Fehler beim updaten des Instruments“ (Service-Batch).",
+      "v": "bestätigt"
+    },
+    "instruments/instrument-list/instrument-list.page#action-623e8e94": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:392"
+      ],
+      "n": "Nur Admin/Verantwortliche (Sheet-Button), nur außerhalb des Sortiermodus, öffnet „Kategorie bearbeiten“ wie Ionic. Ionic: Stift-Icon in warning-Farbe (orange) / Flutter: Icons.edit in Standardfarbe.",
+      "v": "bestätigt"
+    },
+    "instruments/instrument-list/instrument-list.page#action-d2efa7e3": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:278",
+        "lib/data/repositories/group_repository.dart:216"
+      ],
+      "n": "Titel „{Name} (Hauptgruppe)“ / „Name (Stimmung)“ / nur Name bei Chor/Allgemein, Schlüssel-Zeile, sort_order-Badge, Badge „n Personen“ (rot bei 0), Tipp öffnet Bearbeiten nur für Admin/Verantwortliche und nicht im Sortiermodus wie Ionic. Abweichung Anzahl: Ionic zählt aus db.getPlayers() (left = null, pending = false) / Flutter getPlayerCountsForGroups filtert nur left = null – ausstehende Registrierungen (tenant-register setzt instrument) werden mitgezählt, Badge zeigt zu hohe Zahl bzw. nicht rot. Erstprüfer „mittel“ → „hoch“: falsche Daten, gleicher Fehlertyp wie teachers action-5b603f4a (dort hoch). Kosmetisch: leere Stimmung „(C)“ statt „()“.",
+      "v": "korrigiert"
+    },
+    "instruments/instrument-list/instrument-list.page#text-1de3fac0": {
+      "s": "ok",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:407"
+      ],
+      "n": "Feldlabel „Gruppe“ im Sheet „Gruppe hinzufügen“ (nur Admin/Verantwortliche).",
+      "v": "bestätigt"
+    },
+    "instruments/instrument/instrument.page#logic-2c2cd89a": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:437",
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:517",
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:730",
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:755"
+      ],
+      "n": "Felder und Sichtbarkeiten (Chor/Allgemein/Hauptgruppe), Synonym-Generierung (Name-Pflicht, Erfolg/Fehler-Toast), Aktualisieren mit Erfolgs-Toast und Löschen vorhanden. Abweichungen: Speichern/Löschen erst nach dem Schließen in der Liste (Eingaben bei Fehler verloren, mittel), geschriebene Werte (Trimmen, null statt '', tuning/clefs immer), Löschprüfung nach statt vor der Bestätigung (toast-39c411aa) – siehe extra Erstprüfer und Items.",
+      "v": "bestätigt"
+    },
+    "instruments/instrument/instrument.page#toast-283b4da3": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:604"
+      ],
+      "n": "Gleicher Text „Bitte gib einen Namen an!“, Seite bleibt offen. Ionic: roter Toast / Flutter: roter Validierungstext unter dem Namensfeld; Flutter wertet reine Leerzeichen ebenfalls als leer.",
+      "v": "bestätigt"
+    },
+    "instruments/instrument/instrument.page#toast-39c411aa": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:458",
+        "lib/data/repositories/group_repository.dart:244"
+      ],
+      "n": "Gleicher Text. Ionic: Prüfung sofort beim Tippen auf „Entfernen“ (getPlayers(true): inkl. ausgetretene, ohne ausstehende), Toast ohne Bestätigungsdialog, Seite bleibt offen / Flutter: erst Dialog „Gruppe wirklich löschen?“, nach „Ja“ schließt die Seite, dann Prüfung in der Liste (playerCounts, danach deleteGroup mit Archivierten) und Toast; zählt auch ausstehende Registrierungen und zeigt den Text bei jedem Löschfehler.",
+      "v": "bestätigt"
+    },
+    "instruments/instrument/instrument.page#alert-cb09ce26": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:755"
+      ],
+      "n": "Titel „Bestätigen“, Text „Gruppe wirklich löschen?“, „Abbrechen“/„Ja“, „Ja“ löscht und schließt. Ionic: „Abbrechen“ mit role destructive (iOS rot) / Flutter: beide neutral. Zeitpunkt (Dialog auch bei zugeordneten Personen) siehe toast-39c411aa.",
+      "v": "bestätigt"
+    },
+    "teacher/teacher.page#field-fc1d0925": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/teachers/presentation/pages/teachers_list_page.dart:385",
+        "lib/features/teachers/presentation/pages/teachers_list_page.dart:296",
+        "lib/features/teachers/presentation/pages/teachers_list_page.dart:140"
+      ],
+      "n": "Label „Instrumente“, Mehrfachauswahl aus allen Gruppen (inkl. Hauptgruppe), Anzeige der gewählten Namen; Ionic ion-select interface=modal / Flutter Dialog mit Checkboxen „Abbrechen“/„OK“ (niedrig). Übersehen: _openTeacherPage übergibt ref.read(groupsProvider).valueOrNull ?? [] als feste Liste; groupsProvider wird weder von Lehrerliste (groupsMapProvider), Personenliste noch Einstellungen geladen. Nach App-Start ohne vorherigen Besuch einer Seite mit groupsProvider (z. B. Gruppen, Termin-Detail) zeigt das Feld beim ersten Öffnen keine Namen und der Auswahldialog ist leer; erst beim nächsten Öffnen gefüllt (read startet das Laden, keepAlive). Gespeicherte Instrumente bleiben beim Speichern erhalten. Ionic: db.groups() immer geladen.",
+      "v": "korrigiert"
+    },
+    "teacher/teacher.page#field-1cbc213b": {
+      "s": "ok",
+      "f": [
+        "lib/features/teachers/presentation/pages/teachers_list_page.dart:392"
+      ],
+      "n": "Schalter „Privatlehrer“ mit gespeichertem Wert vorbelegt, wird als private gespeichert.",
+      "v": "bestätigt"
+    },
+    "teachers/teachers.page#toast-449601dc": {
+      "s": "ok",
+      "f": [
+        "lib/features/teachers/presentation/pages/teachers_list_page.dart:341"
+      ],
+      "n": "Gleiche Bedingung (ungetrimmter Name < 3 Zeichen oder kein Instrument, nur beim Anlegen), roter Toast „Bitte fülle alle Felder aus...“, Sheet bleibt offen.",
+      "v": "bestätigt"
+    },
+    "teachers/teachers.page#text-d1de992e-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/widgets/ion/ion_widgets.dart:1083"
+      ],
+      "n": "IonPage zeigt auf iOS den kondensierten großen Titel „Lehrer“.",
+      "v": "bestätigt"
+    },
+    "teachers/teachers.page#action-5b603f4a": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/teachers/presentation/pages/teachers_list_page.dart:195",
+        "lib/data/repositories/teacher_repository.dart:115"
+      ],
+      "n": "Name, Instrumentnamen, Badge „{n} Spieler“ (rot bei 0), Sortierung nach Name, Tipp öffnet Bearbeiten nur für Admin/Verantwortliche wie Ionic. Ionic: n = aktive Personen (db.getPlayers: left = null, pending = false) / Flutter: getStudentCounts zählt alle Personen mit diesem Lehrer inkl. ausgetretener und ausstehender – zu hohe Zahlen, Badge nicht rot.",
+      "v": "bestätigt"
+    },
+    "teachers/teachers.page#field-8a21ddb5": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/teachers/presentation/pages/teachers_list_page.dart:392",
+        "lib/data/repositories/teacher_repository.dart:57"
+      ],
+      "n": "Flutter besser: Ionic: addTeacher bekommt private.value der ion-toggle (Formularwert, Standard „on“), pri === 'true' ist nie wahr → neue Lehrer immer private = false (Ionic-Paket nicht im Container, Standardwert laut Ionic-API) / Flutter: speichert den Schalterzustand.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": [
+    {
+      "unit": "teachers/teachers.page",
+      "title": "„Lehrer hinzufügen“: Instrumentliste leer nach App-Start",
+      "n": "Ionic: Auswahl „Instrumente“ zeigt immer alle Gruppen ohne Hauptgruppe (db.groups() beim Tenant-Start geladen) / Flutter: _showAddSheet nimmt ref.read(groupsProvider).valueOrNull ?? [] als feste Liste; groupsProvider lädt weder die Lehrerliste (groupsMapProvider) noch Personenliste/Einstellungen. Ohne vorherigen Besuch einer Seite mit groupsProvider ist der Auswahldialog beim ersten Öffnen leer → kein Instrument wählbar, „Hinzufügen“ endet mit „Bitte fülle alle Felder aus...“; erst nach erneutem Öffnen gefüllt. Betrifft field-cfeef758 (Erstprüfer: diff/niedrig, nur Dialogform).",
+      "sev": "mittel",
+      "ionic": "src/app/teachers/teachers.page.ts:34",
+      "f": [
+        "lib/features/teachers/presentation/pages/teachers_list_page.dart:113",
+        "lib/core/providers/group_providers.dart:42"
+      ]
+    }
+  ]
+}

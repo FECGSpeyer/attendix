@@ -1,0 +1,84 @@
+{
+  "batch": "zz-verify4-b33-teachers-instruments-duty",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "duty/duty-distribute-modal/duty-distribute-modal.component#alert-500b3722": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/pages/duty_distribute_page.dart:238",
+        "lib/features/duty/presentation/pages/duty_distribute_page.dart:249",
+        "lib/shared/widgets/adaptive/app_dialog.dart:927"
+      ],
+      "n": "Behebung bestätigt: jetzt Alert mit Radio-Liste, Titel „{Vorname} tauschen“ / „Person wählen“, Untertitel „{Titel} · {Datum}“, „Niemand (Platz offen lassen)“ zuerst nur beim Tauschen, Einträge „Name (Anzahl)“ aufsteigend nach Anzahl, dann Name; „Abbrechen“ / „Übernehmen“, Auswahl gilt erst mit „Übernehmen“ (ohne Auswahl keine Änderung), offene Plätze neu berechnet; Toast „Niemand sonst …“ wenn keine Option. Datumsformat ohne führende Null bleibt eigenes Item (text-e73248fa).",
+      "v": "bestätigt"
+    },
+    "instruments/instrument-list/instrument-list.page#toast-4c623e8a": {
+      "s": "ok",
+      "f": [
+        "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:282",
+        "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:285"
+      ],
+      "n": "Behebung bestätigt: „Hinzufügen“ mit leerem Namen zeigt roten Toast „Bitte gib einem Namen an“, Dialog bleibt offen (wie return false). Flutter trimmt (nur Leerzeichen → Toast, Ionic würde „ “ speichern) – unerheblich.",
+      "v": "bestätigt"
+    },
+    "instruments/instrument-list/instrument-list.page#toast-30c6ec59": {
+      "s": "ok",
+      "f": [
+        "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:324",
+        "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:327"
+      ],
+      "n": "Behebung bestätigt: „Speichern“ mit leerem Namen zeigt roten Toast „Bitte gib einem Namen an“, Dialog bleibt offen.",
+      "v": "bestätigt"
+    },
+    "instruments/instrument-list/instrument-list.page#toast-e4f5c17f": {
+      "s": "ok",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:59"
+      ],
+      "n": "Behebung bestätigt: nach Verlassen des Sortiermodus und Speichern der Gruppen-Reihenfolge grüner Toast „Reihenfolge gespeichert“, bei Fehler „instruments.orderFailed“ wie Ionic.",
+      "v": "bestätigt"
+    },
+    "instruments/instrument-list/instrument-list.page#action-d2efa7e3": {
+      "s": "ok",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:286",
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:155",
+        "lib/data/repositories/group_repository.dart:218"
+      ],
+      "n": "Behebung bestätigt: Personenzahl zählt nur left = null und pending = false (wie db.getPlayers), Badge rot bei 0; leere Stimmung jetzt „()“ wie Ionic. Titel/Hauptgruppe/Schlüssel/sort_order-Badge gleich; Tipp öffnet Bearbeiten nur für Admin/Verantwortlich und nicht im Sortiermodus.",
+      "v": "bestätigt"
+    },
+    "instruments/instrument/instrument.page#toast-39c411aa": {
+      "s": "ok",
+      "f": [
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:779",
+        "lib/features/instruments/presentation/pages/instruments_list_page.dart:785",
+        "lib/data/repositories/group_repository.dart:193"
+      ],
+      "n": "Behebung bestätigt: Prüfung sofort beim Löschen (Personen inkl. ausgetretene, ohne ausstehende = getPlayers(true)), bei Treffer roter Toast, kein Bestätigungsdialog, Seite bleibt offen; sonst „Gruppe wirklich löschen?“ → Ja → löschen und schließen. Rest: schlägt die Zählabfrage fehl, geht Flutter weiter zum Dialog (Ionic bricht ab) – Randfall.",
+      "v": "bestätigt"
+    },
+    "teacher/teacher.page#field-fc1d0925": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/teachers/presentation/pages/teachers_list_page.dart:151",
+        "lib/features/teachers/presentation/pages/teachers_list_page.dart:308",
+        "lib/features/teachers/presentation/pages/teachers_list_page.dart:313"
+      ],
+      "n": "Ladefehler behoben: _openTeacherPage wartet jetzt auf groupsProvider (_loadGroups), Namen und Auswahl immer gefüllt; Mehrfachauswahl aller Gruppen inkl. Hauptgruppe, Label „Instrumente“. Nicht behoben, aber schon vorher als niedrig vermerkt: Ionic ion-select interface=modal (eigene Vollbild-Auswahlseite) / Flutter Dialog mit Checkboxen und „Abbrechen“/„OK“. Der Fix setzte „ok“, die Darstellungsabweichung besteht weiter → diff niedrig.",
+      "v": "korrigiert"
+    },
+    "teachers/teachers.page#action-5b603f4a": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/teacher_repository.dart:115",
+        "lib/features/teachers/presentation/pages/teachers_list_page.dart:242"
+      ],
+      "n": "Behebung bestätigt: getStudentCounts zählt nur left = null und pending = false (wie db.getPlayers), Badge „{n} Spieler“ rot bei 0; Tipp öffnet Bearbeiten nur für Admin/Verantwortlich.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

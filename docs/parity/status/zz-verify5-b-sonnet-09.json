@@ -1,0 +1,306 @@
+{
+ "batch": "zz-verify5-b-sonnet-09",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "settings/general/general.page#text-3cadc6db": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_card.dart:37"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#text-6bf3b772": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:118"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#text-6bf3b772-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:118"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#text-ac492500": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:116"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#text-df744576": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:477"
+   ],
+   "n": "Zeilenverweis verschoben (jetzt :477), Label „Saisonbeginn“ im Abschnitt Anwesenheiten unverändert.",
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#action-3db27495": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:124"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#action-fc68a5f1": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:103"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#text-7ef3058c": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:102"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#text-7ef3058c-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:101"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#toast-11bf6169": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:458"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#toast-38146a50": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:144-153"
+   ],
+   "n": "Zeilen verschoben; Toasts copiedAssigned/copiedNoMatch(Warnung)/copied entsprechen Ionic-Bedingungen.",
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#toast-e8d0589a": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:144-153"
+   ],
+   "n": "Zeilen verschoben; Toasts copiedAssigned/copiedNoMatch(Warnung)/copied entsprechen Ionic-Bedingungen.",
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shifts.page#nav-8e9080ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:34-38",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:536"
+   ],
+   "n": "Ionic navigateBack zu Allgemein / Flutter context.pop(); bei Direktlink landet man unter /settings – unkritisch.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-06fe01ff": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:334-338"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-174badcb": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/registration_fields_editor.dart:91-93"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-2608135b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:720-760"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-7ac15547": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:159-166",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:559-567"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-9220acaf": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:339-345"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-9242896d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1596-1620"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#action-fb3aac9e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1586-1630"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#alert-67f98937": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1746-1778"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-30cdf8c8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:967-974"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-4bd5f276": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:375-385"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-5409bc4e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:952-966"
+   ],
+   "v": "bestätigt",
+   "n": "Optionen Aus/1/2/3/7 Tage gleich. Default-Abweichung beim Einschalten siehe field-8aa4fd37."
+  },
+  "settings/general/type/type.page#field-8aa4fd37": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:892-918",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1934",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1805-1824",
+    "lib/data/repositories/attendance_type_repository.dart:121-127"
+   ],
+   "n": "Ionic onDutyToggle setzt duty_confirm_reminder_days auf 2 (Tage), wenn noch undefined (neuer Typ; Insert ohne Schlüssel -> DB-Default 2). Flutter setzt es beim Einschalten nicht; _buildTypeData schreibt den Schlüssel immer, bei neuem Typ als null -> „Aus“. Neue Dienst-Typen schicken so keine Erinnerung an Unbestätigte, bis es manuell gesetzt wird. Rest (duty_required>=1, Status Neutral/Anwesend/Entschuldigt, Standard Neutral) stimmt.",
+   "v": "korrigiert"
+  },
+  "settings/general/type/type.page#field-8fba8ce6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:601-612"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-91bd7675": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:128-148"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-98265cec": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:576-586"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-b74def74": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:944-950"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-ccf8bbf1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:149-155"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-e4e83761": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:976-992"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-fdd20919": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:548-558"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#modal-8afdfb0b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1266-1285",
+    "lib/shared/widgets/adaptive/app_pickers.dart:79-100"
+   ],
+   "v": "bestätigt",
+   "n": "Zeitwahl-Dialog statt ion-datetime; 5-Minuten-Raster fehlt weiterhin (_pickTime übergibt kein minuteInterval, nur Look/Eingabe, niedrig)."
+  },
+  "settings/general/type/type.page#modal-8afdfb0b-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1266-1285",
+    "lib/shared/widgets/adaptive/app_pickers.dart:79-100"
+   ],
+   "v": "bestätigt",
+   "n": "Wie Start: Dialog statt Modal; kein 5-Minuten-Raster."
+  },
+  "settings/general/type/type.page#nav-3a5f04bf": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1776-1780"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#nav-41b5d1ca": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:2000-2006"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-058a3ea5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:686"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-08ed915a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:648"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-0b9f9349": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:427"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-5f58aecb": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:81-90",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1191-1212"
+   ],
+   "v": "bestätigt",
+   "n": "Info-Karte im Erinnerungen-Sheet (showModalBottomSheet), erscheint nur bei aktiver Terminerinnerung wie Ionic."
+  }
+ },
+ "extra": []
+}

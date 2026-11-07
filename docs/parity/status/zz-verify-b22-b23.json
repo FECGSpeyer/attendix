@@ -1,0 +1,449 @@
+{
+  "batch": "zz-verify-b22-b23",
+  "ionic": "9f9b82af",
+  "flutter": "1aba6be",
+  "items": {
+    "settings/general/branding/branding.page#toast-6b4f5e61": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:49-54"
+      ],
+      "n": "Text 'Bitte wähle eine Bilddatei aus.' und Farbe gleich, Größenprüfung (2 MB) davor wie Ionic. Ionic: Prüfung über MIME-Typ (image/*) – jedes Bildformat (z. B. TIFF, AVIF, ICO) geht / Flutter: Prüfung über Dateiendung png/jpg/jpeg/gif/webp/svg/bmp/heic/heif – andere Bildformate (v. a. im Web) lösen diesen Toast aus.",
+      "v": "bestätigt"
+    },
+    "settings/general/branding/branding.page#toast-c1d1cda9": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:79-80",
+        "lib/data/repositories/organisation_settings_repository.dart:112-121"
+      ],
+      "n": "Flutter besser: Ionic removeOrgLogo wertet {error} von storage.remove nicht aus (storage-js liefert Fehler zurück statt zu werfen) → Fehler-Toast praktisch nie, stattdessen 'Logo entfernt. Speichern nicht vergessen.' / Flutter: storage_client 2.4.1 remove wirft StorageException → Fehler-Toast (friendlyErrorMessage), Logo bleibt sichtbar.",
+      "v": "bestätigt"
+    },
+    "settings/general/branding/branding.page#action-a79d6f49": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:119-122"
+      ],
+      "n": "Pfeil-zurück links gleich. Flutter besser: Ionic navigiert immer nach /tabs/settings/org-settings (auch wenn aus Allgemeine Einstellungen geöffnet, general.page.html:54) / Flutter maybePop → zurück zur aufrufenden Seite (Allgemeine Einstellungen oder Organisation).",
+      "v": "bestätigt"
+    },
+    "settings/general/branding/branding.page#field-339f58a0": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:42"
+      ],
+      "n": "Ionic: <input type=file accept=image/*> – in der iOS-App Systemmenü Fotomediathek / Foto aufnehmen / Datei auswählen / Flutter: FilePicker FileType.image öffnet auf iOS direkt PHPicker (file_picker 8.3.7, nur Fotomediathek, keine Kamera, keine Dateien-App). Web/Android: Bildauswahl wie Ionic.",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#logic-27aa04c0": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:88-208",
+        "lib/data/repositories/extra_fields_repository.dart:56-175"
+      ],
+      "n": "Laden aus additional_fields/song_additional_fields, ID aus Name, Validierung beim Speichern (gleiche Texte), Reorder, Löschen mit Dialog, tenants-Update beider Spalten und Bereinigung (fehlende Werte mit Default, ungültige Auswahl ersetzen, gelöschte Felder entfernen) wie Ionic; haveFieldsChanged/navigateBack toter Code. Abweichungen: Personen-Bereinigung erfasst auch archivierte/ausstehende Personen, Werk-Bereinigung nur eigene Instanz statt song_source_tenant (beide extra, mittel); Prüfung beim Hinzufügen erst nach Schließen und X verwirft (eigene Items); Zurück mit Rückfrage (nav/action-Items).",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-924f922c": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:123-128",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:320-332"
+      ],
+      "n": "Text gleich. Ionic: Prüfung im offenen Modal, Modal bleibt mit allen Eingaben offen / Flutter: Sheet gibt das Feld erst zurück (Navigator.pop), Prüfung danach – Toast erscheint, Sheet zu, Name/Optionen/Standardwert verloren.",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-945683f7": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:308-311"
+      ],
+      "n": "Im offenen Sheet, Text gleich. Reihenfolge: Flutter prüft leere Optionen vor der ID-Doppelung (Ionic umgekehrt) – ohne sichtbare Folge.",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-918527db": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:118-122"
+      ],
+      "n": "Text gleich. Ionic: Prüfung im offenen Modal (z. B. Name nur aus Sonderzeichen), Modal bleibt offen / Flutter: Prüfung erst nach Schließen des Sheets – Toast erscheint, Eingaben verloren.",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#alert-bc12427a": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:240-264",
+        "lib/data/repositories/extra_fields_repository.dart:137-155"
+      ],
+      "n": "Personenfelder gleich (Titel 'Option löschen?', Text mit Option, Abbrechen/Löschen, Werte auf neue erste Option, Toast '{n} Personen aktualisiert' bei n>0). Ionic: Dialog auch bei bestehender Option eines Werkfeldes (danach nur entfernen) / Flutter: bei Werkfeldern kein Dialog (Bedingung isPerson). Fehlerfall: Ionic ignoriert Fehler einzelner Zeilen und entfernt die Option, Ladefehler 'Fehler beim Laden der Personen' / Flutter bricht beim ersten Fehler ab ('Fehler beim updaten der Zusatzfelder'), Option bleibt.",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#alert-89775995": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:266-293",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:219-223",
+        "lib/data/repositories/extra_fields_repository.dart:158-175"
+      ],
+      "n": "Dialog (Titel 'Werte zurücksetzen?', Text mit Name, Abbrechen/Zurücksetzen) und Ablauf gleich. Anderer geschriebener Wert: BFECG-Gemeinde-Feld aus Flutter (defaultValue null, Controller '') → Flutter setzt alle Personen auf '' / Ionic auf erste Gemeinde (churches[0].id). In Ionic angelegte Textfelder mit defaultValue false → Flutter schreibt String 'false' (in Personen sichtbar) / Ionic false. Fehler: Ionic zählt nur erfolgreiche Updates, Flutter bricht beim ersten Fehler ab.",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#nav-6dc5f926": {
+      "s": "na",
+      "n": "toter Code: navigateBack() wird weder im Template noch im TS aufgerufen; der Zurück-Pfeil nutzt goBack() (extra-fields.page.html:4).",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#action-e8512bfd": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:541-546",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:165-208"
+      ],
+      "n": "Häkchen rechts oben → Speichern mit gleicher Validierung, Overlay, Toasts; Bereinigungsunterschiede siehe logic-27aa04c0.",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#action-05925936": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:656-660",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:678-682"
+      ],
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#modal-67f7ba0c": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:132-140",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:214-238",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:320-332",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:352",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:474-477"
+      ],
+      "n": "Trigger Stift, Bottom-Sheet mit Kopie des Feldes. Ionic: jedes Schließen (X, Wischen, Hintergrund) übernimmt die Änderungen über ionModalDidDismiss → closeEditExtraFieldModal, ohne Prüfung bis zum Speichern / Flutter: nur der zusätzliche Button 'Übernehmen' übernimmt (mit Prüfung Name/Optionen), X/Wischen/Hintergrund verwerfen still alle Änderungen.",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#action-5fa87742": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:352"
+      ],
+      "n": "Ionic: X übernimmt die Änderungen in die Liste / Flutter: X schließt ohne Übernehmen – Änderungen still verloren; per Dialog gelöschte Optionen sind in der DB schon umgestellt, bleiben aber in der Felddefinition.",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#text-06537600": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:356-361",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:46-47"
+      ],
+      "n": "Flutter besser: Ionic getFieldTypeName kennt bfecg_church nicht → 'Unbekannt' / Flutter 'BFECG Gemeinde'; übrige Typen gleich.",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#field-26cfdf12": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:219-223",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:456-463",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:318"
+      ],
+      "n": "Label 'Standardwert', Zahlentastatur gleich. Ionic: in Ionic angelegte Textfelder haben defaultValue false (emptyField) → ion-input zeigt leer / Flutter zeigt 'false' als Text und speichert beim Übernehmen den String 'false' (neue Personen erhalten 'false').",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#modal-3b9ec807": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:113-115",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:214-238",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:344-354"
+      ],
+      "n": "Beides Bottom-Sheet 'Neues Feld hinzufügen'. Ionic: volle Höhe (initialBreakpoint 1), kein Schließen-Button, Entwurf bleibt nach Wegwischen für das nächste Öffnen / Flutter: Inhaltshöhe mit X-Button, Formular bei jedem Öffnen leer.",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#field-cf72db04": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:456-463",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:318",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:494-497"
+      ],
+      "n": "Label 'Standardwert (optional)' gleich. Flutter besser: Ionic speichert bei unverändertem Typ 'Text' und leerem Feld defaultValue false (emptyField) und füllt Werke beim Speichern mit false / Flutter speichert ''.",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#modal-48c8bdd3": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:132-140",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:214-238",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:320-332",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:352",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:474-477"
+      ],
+      "n": "Trigger Stift, Bottom-Sheet mit Kopie des Werkfeldes. Ionic: jedes Schließen (X, Wischen, Hintergrund) übernimmt die Änderungen (ionModalDidDismiss → closeEditExtraFieldModal('song')) / Flutter: nur 'Übernehmen' übernimmt (mit Prüfung), X/Wischen verwerfen still.",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#text-0d0d3a83-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:347-349"
+      ],
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#action-38045a06": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:352"
+      ],
+      "n": "Ionic: X übernimmt die Änderungen in die Werkfeld-Liste / Flutter: X schließt ohne Übernehmen – Änderungen still verloren.",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#field-9589321d": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:427-439"
+      ],
+      "n": "Platzhalter 'Wert eingeben...', Hilfetext 'Erste Option ist der Standardwert' bei der ersten Option.",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#action-e93b0747": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:240-264",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:440-443"
+      ],
+      "n": "Ionic: Löschen einer gespeicherten Option eines Werkfeldes → Dialog 'Option löschen?' (Abbrechen/Löschen), danach nur entfernen / Flutter: kein Dialog (nur bei Personenfeldern), Option sofort entfernt. Neue Optionen in beiden sofort weg.",
+      "v": "bestätigt"
+    },
+    "settings/general/extra-fields/extra-fields.page#field-618124b8": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:219-223",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:456-463",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:318"
+      ],
+      "n": "Label 'Standardwert' gleich. Ionic: Alt-Werkfelder mit defaultValue false zeigen ein leeres Feld / Flutter zeigt 'false' als Text und speichert beim Übernehmen den String 'false' (neue Werke erhalten 'false').",
+      "v": "bestätigt"
+    },
+    "settings/general/general.page#logic-8f812cbf": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:119-178",
+        "lib/features/settings/presentation/pages/general_settings_page.dart:184-311",
+        "lib/features/settings/presentation/pages/general_settings_page.dart:313-317",
+        "lib/features/settings/presentation/pages/general_settings_page.dart:901-931"
+      ],
+      "n": "Laden (Defaults Saisonbeginn 2023-01-01, Probenzeiten 18:00/20:00, Gründe-Defaults, Registrierungsfelder), Validierung (Name, Kürzel, Gruppen bei Registrierung), tenants-Update, evaluate-critical-rules, Speichern-Dialog mit 'Neu laden', Ungespeichert-Dialog (Abbrechen/Verwerfen/Speichern), Regel-Validierung und hasDutyTypes wie Ionic. Abweichungen in eigenen Items (Formate beim Schreiben, Info-Text, Statusliste, Beschreibung) und als extra: Probenzeiten nur in Flutter editierbar (mittel), Änderungserkennung, Regeln bearbeiten, Gründe sortieren, Legacy-period_type.",
+      "v": "bestätigt"
+    },
+    "settings/general/general.page#db-dd1f5988": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:268-273"
+      ],
+      "n": "Gleicher Aufruf functions.invoke('evaluate-critical-rules') nach dem Tenant-Update; Fehler wird ignoriert (supabase-js liefert error, Flutter wirft → catch).",
+      "v": "bestätigt"
+    },
+    "settings/general/general.page#text-349c82ea": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:469-471"
+      ],
+      "v": "bestätigt"
+    },
+    "settings/general/general.page#action-d6f67aed": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:530-533"
+      ],
+      "n": "Ziel /settings/types (Anwesenheits-Typen-Liste).",
+      "v": "bestätigt"
+    },
+    "settings/general/general.page#field-7b209ad2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:554-561",
+        "lib/core/providers/duty_providers.dart:56-58",
+        "lib/features/settings/presentation/pages/general_settings_page.dart:246"
+      ],
+      "n": "Nur wenn ein Typ duty_mode hat, gleiche Position (nach 'Alle Termine für Mitglieder sichtbar'), Texte gleich; duty_view wird nur dann gespeichert.",
+      "v": "bestätigt"
+    },
+    "settings/general/general.page#field-34705c68": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/settings/presentation/widgets/reasons_list_editor.dart:83-97"
+      ],
+      "n": "Ionic: jeder Abwesenheitsgrund ist ein direkt editierbares Eingabefeld (Platzhalter 'Grund eingeben...') / Flutter: Gründe nur als Text mit Drag-Griff und Papierkorb, bestehende Gründe nicht bearbeitbar (nur löschen und neu anlegen); Platzhalter-Key ungenutzt. (f-Zeilen geschärft: reasons_list_editor.dart hat nur 126 Zeilen.)",
+      "v": "bestätigt"
+    },
+    "settings/general/general.page#action-578da7ee": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/settings/presentation/widgets/reasons_list_editor.dart:100-113",
+        "lib/features/settings/presentation/widgets/reasons_list_editor.dart:24-49"
+      ],
+      "n": "Ionic: 'Grund hinzufügen' hängt eine leere Eingabezeile an / Flutter: öffnet Dialog 'Grund hinzufügen' (Feld 'Grund', Buttons 'Abbrechen'/'Hinzufügen'); leere und doppelte Gründe werden verworfen. (f-Zeilen geschärft.)",
+      "v": "bestätigt"
+    },
+    "settings/general/general.page#field-0d3aad25": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/settings/presentation/widgets/reasons_list_editor.dart:83-97"
+      ],
+      "n": "Ionic: jeder Verspätungsgrund ist ein direkt editierbares Eingabefeld (Platzhalter 'Grund eingeben...') / Flutter: Gründe nur als Text, bestehende Gründe nicht bearbeitbar (nur löschen und neu anlegen); Platzhalter fehlt. (f-Zeilen geschärft.)",
+      "v": "bestätigt"
+    },
+    "settings/general/general.page#action-50952c99": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/settings/presentation/widgets/reasons_list_editor.dart:100-113",
+        "lib/features/settings/presentation/widgets/reasons_list_editor.dart:24-49"
+      ],
+      "n": "Ionic: hängt eine leere Eingabezeile an / Flutter: öffnet Dialog 'Grund hinzufügen' (Feld 'Grund', 'Abbrechen'/'Hinzufügen'); leere und doppelte Gründe werden verworfen. (f-Zeilen geschärft.)",
+      "v": "bestätigt"
+    },
+    "settings/general/general.page#field-8155f670": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:733-749",
+        "lib/features/settings/presentation/pages/general_settings_page.dart:32-50"
+      ],
+      "n": "Nur bei 'Ferien/Feiertage anzeigen', Label 'Bundesland für Ferien/Feiertage', 16 Länder in gleicher Reihenfolge. Flutter: zusätzliche erste Option 'Keine Feiertage' (speichert region = null); Tenant ohne region zeigt diese statt leerer Auswahl.",
+      "v": "bestätigt"
+    },
+    "settings/general/general.page#field-6d77eb19": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:64-66",
+        "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:165-194"
+      ],
+      "n": "Ionic: Mehrfach-Select 'Anwesenheits-Typen', Standard leer = Platzhalter 'Alle Typen' / Flutter: FilterChips, bei neuer Regel ist der erste Typ vorausgewählt – ohne Abwählen wird attendance_type_ids=[erster Typ] gespeichert und die Regel gilt nur dafür statt für alle; 'Alle Typen' nur als Hinweis bei leerer Auswahl.",
+      "v": "bestätigt"
+    },
+    "settings/general/general.page#field-7d3ff9d8": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:198-227",
+        "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:67"
+      ],
+      "n": "Ionic: Optionen Anwesend, Abwesend, Entschuldigt, Verspätet, Verspätet (entsch.), Standard leer, Label 'Status' / Flutter: nur Abwesend, Verspätet, Verspätet (entsch.) – Regeln auf Anwesend/Entschuldigt nicht anlegbar; 'Abwesend' vorausgewählt; Label 'Status (zählt als kritisch)'; Chips statt Select.",
+      "v": "bestätigt"
+    },
+    "settings/general/general.page#action-2a371131": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:82-122",
+        "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:351-358",
+        "lib/features/settings/presentation/pages/general_settings_page.dart:828-834"
+      ],
+      "n": "Gleicher Button 'Regel hinzufügen' unten im Sheet, gleiche Validierungen (Status, Schwelle > 0, Tage > 0), Sheet schließt, Regel wird angehängt. Flutter zeigt danach zusätzlich Toast 'Regel hinzugefügt'.",
+      "v": "bestätigt"
+    },
+    "settings/general/general.page#text-e7ca4bc1": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/settings/presentation/widgets/critical_rule_card.dart:27-32",
+        "lib/data/models/tenant/tenant.dart:139-161"
+      ],
+      "n": "Ionic: '{Name}: 3x Abwesend, Verspätet in 30 Tagen (Probe, Konzert)' bzw. '(Alle Typen)', 'seit Saisonbeginn', 'insgesamt' / Flutter: Typen fehlen ganz, Status mit ' / ' getrennt, 'seit Saisonstart', Anwesend/Entschuldigt/Neutral erscheinen als 'Status 1'/'Status 2'/'Status 0', Legacy-Regeln ohne period_type als 'insgesamt' statt 'in X Tagen'.",
+      "v": "bestätigt"
+    },
+    "settings/general/link-persons/link-persons.page#toast-66b53e5c": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/link_persons_page.dart:136-141"
+      ],
+      "n": "Verknüpfen ohne Auswahl → Warn-Toast 'Bitte mindestens eine Übereinstimmung auswählen' (orange wie Ionic warning).",
+      "v": "bestätigt"
+    },
+    "settings/general/shifts/shift/shift.page#logic-c5f7ff6e": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/shifts/presentation/pages/shift_detail_page.dart:65-76",
+        "lib/features/shifts/presentation/pages/shift_detail_page.dart:434-466",
+        "lib/core/providers/shift_providers.dart:108-133",
+        "lib/features/shifts/presentation/widgets/shift_preview_sheet.dart:44-87"
+      ],
+      "n": "Laden (Plan, Nutzung, andere Instanzen), Speichern (Name-Pflicht, Update shifts), Löschen (vorher künftige Schicht-Entschuldigungen der Personen zurücksetzen, dann löschen), Kopieren und Beispielrechnung (Start Montag nächster Woche bzw. Anfangsdatum, 30 Tage, (+1)) wie Ionic. Abweichungen in Items (Dauer neuer Abschnitt, Trim, Grenzen, Texte) und extra (Cache), alle niedrig/mittel in Items.",
+      "v": "bestätigt"
+    },
+    "settings/general/shifts/shift/shift.page#toast-0db7cc2f": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/shifts/presentation/pages/shift_detail_page.dart:459-463"
+      ],
+      "n": "Ionic: 'Fehler beim Speichern des Schichtplans' (davor Service-Toast 'svc.updateShiftFailed') / Flutter: 'Fehler: {Fehlermeldung}'.",
+      "v": "bestätigt"
+    },
+    "settings/general/shifts/shift/shift.page#alert-9674aef6": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/shifts/presentation/pages/shift_detail_page.dart:468-506"
+      ],
+      "n": "Titel 'Schichtplan löschen' und Buttons Abbrechen/Löschen (rot) gleich, Wirkung gleich. Ionic-Text warnt, dass zugehörige Schichten gelöscht werden, zugewiesene Personen die Zuordnung verlieren und es nicht rückgängig zu machen ist / Flutter: nur 'Möchtest du diesen Schichtplan wirklich löschen?' bzw. '{n} Mitglieder nutzen diesen Schichtplan. Möchtest du ihn trotzdem löschen?' (Singular falsch: '1 Mitglied nutzen').",
+      "v": "bestätigt"
+    },
+    "settings/general/shifts/shift/shift.page#alert-8f8ff7ae": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/shifts/presentation/pages/shift_detail_page.dart:521-539",
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:56-136",
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:250-266"
+      ],
+      "n": "Ionic: Alert 'In Instanz kopieren' mit Text 'Wähle die Ziel-Instanz, in die der Schichtplan kopiert werden soll.', Radio-Liste (longName, nichts vorausgewählt), Buttons Abbrechen/Weiter / Flutter: Bottom-Sheet 'In Instanz kopieren' mit X, Dropdown 'Ziel-Instanz' (erste vorausgewählt), Schalter Zuweisungen, Hinweis- und Vorschaukarte, Button 'Kopieren'.",
+      "v": "bestätigt"
+    },
+    "settings/general/shifts/shift/shift.page#alert-0ef2eadc": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:139-156",
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:326-406"
+      ],
+      "n": "Ionic: zweiter Alert 'Zuweisungen kopieren?' ('Der Schichtplan ist n Personen zugewiesen. Sollen diese Zuweisungen auch in „X“ übernommen werden?') mit Abbrechen/Nur Schichtplan/Mit Zuweisungen, nur wenn zugewiesene Personen mit appId existieren / Flutter: Schalter 'Zuweisungen kopieren' (Standard aus) im Sheet mit Hinweis 'n Personen nutzen diesen Schichtplan…', sichtbar bei jeder Zuweisung (auch ohne appId). Kopierlogik (appId-Abgleich, nur aktive Personen, Anwesenheiten) gleich.",
+      "v": "bestätigt"
+    },
+    "settings/general/shifts/shift/shift.page#field-d445039d": {
+      "s": "ok",
+      "f": [
+        "lib/features/shifts/presentation/pages/shift_detail_page.dart:236-240"
+      ],
+      "n": "Label 'Beschreibung', Satzanfang groß; Flutter speichert getrimmt (siehe Speichern-Item).",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

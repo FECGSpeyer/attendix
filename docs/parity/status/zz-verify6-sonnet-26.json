@@ -1,0 +1,489 @@
+{
+ "batch": "zz-verify6-sonnet-26",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "services/organisation/organisation.service#toast-5fe434c5": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:67",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:91"
+   ],
+   "n": "Toast \"Fehler beim Speichern der Gemeinde-App-Einstellungen\" (svcSaveGemeindeAppFailed) beim Umschalten und beim Schlüssel-Erzeugen.",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#toast-68cfa05e": {
+   "s": "diff",
+   "f": [
+    "lib/core/providers/organisation_providers.dart:11",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:140"
+   ],
+   "n": "Ionic: Toast \"Fehler beim Laden der Organisation\". Flutter: kein Toast; Organisations-Seite zeigt \"Fehler: <Meldung>\" im Inhalt, andere Stellen still. Inline-Meldung vorhanden, daher niedrig.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/organisation/organisation.service#toast-7072cf99": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:57"
+   ],
+   "n": "Ionic \"Fehler beim Entfernen der Organisation\" / Flutter roter Toast \"Fehler beim Trennen\" (gleiche Bedeutung).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/organisation/organisation.service#toast-7072cf99-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:57"
+   ],
+   "n": "Wie toast-7072cf99: Flutter \"Fehler beim Trennen\" (gleiche Bedeutung).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/organisation/organisation.service#toast-81a862a6": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:917",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:311",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:243"
+   ],
+   "n": "Ionic \"Fehler beim Speichern der gemeinsamen Zusatzfelder\" / Flutter: Fehler propagiert, Aufrufer zeigt roten Hinweis (Personendetail \"Fehler beim aktualisieren des Spielers: …\", Mehrfachbearbeitung \"Fehler beim Speichern\", Profil \"Fehler beim Aktualisieren des Profils\"). Fehler wird gemeldet, nur anderer Text.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/organisation/organisation.service#toast-83e4423b": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:66"
+   ],
+   "n": "Ionic \"Fehler beim Speichern der Planvorlagen\" / Flutter \"Fehler beim Speichern\" (rot).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/organisation/organisation.service#toast-8e502223": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:270"
+   ],
+   "n": "Ionic Toast \"Fehler beim Laden der Organisationspläne\" / Flutter \"Fehler: <Meldung>\" im Seiteninhalt (sichtbar).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/organisation/organisation.service#toast-8e502223-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:270"
+   ],
+   "n": "Wie toast-8e502223: Inline-Fehler statt Toast.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/organisation/organisation.service#toast-c69e2a47": {
+   "s": "diff",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1083",
+    "lib/features/settings/presentation/pages/link_persons_page.dart:121"
+   ],
+   "n": "Ionic: Toast \"Fehler beim Laden der Personen\". Flutter: Personen verknüpfen zeigt Toast \"Fehler beim Laden: …\", aber Statistik (Organisationsabschnitt) ist bei Fehler komplett still (valueOrNull ?? [] -> leere/0-Zahlen). Fehlermeldung fehlt, daher mindestens mittel.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "services/organisation/organisation.service#toast-d74063e5": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:118"
+   ],
+   "n": "Ionic \"Fehler beim Speichern der Organisations-Zusatzfelder\" / Flutter \"Fehler beim Speichern\" (rot).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/organisation/organisation.service#toast-db3d69ea": {
+   "s": "diff",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1019",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1075",
+    "lib/features/settings/presentation/pages/link_persons_page.dart:121"
+   ],
+   "n": "Ionic: Toast \"Fehler beim Laden der Organisationen\". Flutter: Statistik blendet Org-Abschnitt bei Fehler still aus (SizedBox.shrink), kein Hinweis; nur Personen verknüpfen meldet. Fehlende Fehlermeldung, mindestens mittel.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "services/organisation/organisation.service#toast-f4cd350d": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:41"
+   ],
+   "n": "Ionic \"Fehler beim Umbenennen der Organisation\" / Flutter \"Fehler beim Speichern\" (rot).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/organisation/organisation.service#toast-fed350fd": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:58"
+   ],
+   "n": "Ionic \"Fehler beim Speichern der Standardfelder\" / Flutter \"Fehler beim Speichern\".",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/player-absence/player-absence.service#toast-41ab2170": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/attendance_create_writes.dart:134",
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:146",
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:149"
+   ],
+   "n": "Ionic: Toast \"Fehler beim Laden der Abwesenheiten\" bei jedem Aufrufer. Flutter: Termin anlegen komplett still (catch -> leere Liste, geplante Abwesenheiten werden nicht auf Entschuldigt gesetzt, ohne Hinweis); Datum ändern \"Termin konnte nicht geladen werden\" (bricht ab); Startseitenkarte \"Fehler beim Laden\". Beim Anlegen fehlt jede Meldung, mindestens mittel.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "services/player-absence/player-absence.service#toast-a5d07cbf": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:280"
+   ],
+   "n": "Ionic \"Fehler beim Löschen der Abwesenheit\" / Flutter \"Abwesenheit konnte nicht gelöscht werden\" (gleiche Bedeutung).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/player-absence/player-absence.service#toast-fd2fd528": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:240",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:96"
+   ],
+   "n": "Ionic \"Fehler beim Speichern der Abwesenheit\" / Flutter \"Abwesenheit konnte nicht gespeichert werden\" (gleiche Bedeutung).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/player/player.service#toast-243104ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:386"
+   ],
+   "n": "Flutter zeigt beim Zurücksetzen der Werte jetzt denselben Toast \"Fehler beim Laden der Personen\" (dbLoadPeopleFailed). Erste Wertung diff ist durch Änderung erledigt.",
+   "v": "korrigiert"
+  },
+  "services/player/player.service#toast-7d6f3e4f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:354"
+   ],
+   "n": "Flutter zeigt bei Option-Löschen/Werte-Migration jetzt denselben Toast \"Fehler beim Laden der Personen\" (dbLoadPeopleFailed), Dialog bleibt gesperrt bis fertig, Abbruch. Erste Wertung diff ist durch Änderung erledigt.",
+   "v": "korrigiert"
+  },
+  "services/player/player.service#toast-a7a067dd": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:295"
+   ],
+   "n": "Ionic Toast \"Fehler beim Laden des Benutzers\" / Flutter Fehleransicht \"Fehler: <Meldung>\" mit Wiederholen-Button (sichtbar).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/player/player.service#toast-a7a067dd-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:329"
+   ],
+   "n": "Ionic Toast wenn keine Person gefunden / Flutter Seitentext \"Für dein Konto wurde in dieser Instanz keine Person gefunden.\" (sichtbar).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/print/print.service#loading-091f77ad": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/data/song_print_service.dart:60",
+    "lib/features/songs/presentation/widgets/group_pdf_print.dart:85"
+   ],
+   "n": "Ionic blockierendes Overlay beim Zusammenführen. Flutter: Overlay \"PDF wird erstellt\" nur im Gruppen-PDF-Druck; andere Aufrufer ohne Overlay, nur interner Doppelstart-Schutz. Nur Ladeanzeige.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/print/print.service#toast-b351a56a": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/widgets/current_songs_sheet.dart:64",
+    "lib/features/songs/presentation/widgets/group_files_sheet.dart:53",
+    "lib/features/songs/presentation/widgets/group_pdf_print.dart:100",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1303"
+   ],
+   "n": "Ionic Warnung \"Keine druckbaren Noten (PDF/Bild) gefunden.\" Flutter: gleicher Text in Aktuelle Stücke, Gruppenmappe und Gruppen-PDF-Druck (jetzt auch dort, mit Überspringen-Hinweis); Stückdetail \"Datei konnte nicht gedruckt werden\", Selbstbedienung \"Keine druckbaren Noten gefunden.\" Warnung überall vorhanden, nur Text leicht anders.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/push/push.service#alert-a69276d0": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/push_providers.dart:266",
+    "lib/core/services/push/push_service.dart:208"
+   ],
+   "n": "Dialog Titel oder \"Benachrichtigung\", Text, \"OK\"/\"Anzeigen\" -> navigateFromData; Tracking PushReceived. iOS-Systembanner im Vordergrund ohne Plugin-Quellen nicht prüfbar.",
+   "v": "bestätigt"
+  },
+  "services/shift/shift.service#toast-2cfee317": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:508"
+   ],
+   "n": "Ionic \"Fehler beim Löschen der Schicht\" / Flutter \"Fehler beim Löschen des Schichtplans\" (gleiche Bedeutung).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/shift/shift.service#toast-574abc71": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:139"
+   ],
+   "n": "Ionic Toast \"Fehler beim Suchen der Personen in Ziel-Instanz\" / Flutter: Fehler im Kopiervorgang führt zu Toast \"Fehler beim Kopieren des Schichtplans.\" (Overlay wird geschlossen). Fehler wird gemeldet.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/shift/shift.service#toast-7ef37344": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:96",
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:167"
+   ],
+   "n": "Ionic: Toast \"Fehler beim Überprüfen der Schichtverwendung\". Flutter: Fehler des Usage-Providers wird stumm als 0 (nicht benutzt) behandelt, keine Meldung; Löschen/Bearbeiten der Definitionen bleibt freigegeben. Fehlende Fehlermeldung, mindestens mittel.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "services/shift/shift.service#toast-8a42eed5": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:469"
+   ],
+   "n": "Ionic \"Fehler beim Aktualisieren der Schicht\" / Flutter \"Fehler: <Fehlertext>\" (rot).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/shift/shift.service#toast-b0942088": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:79"
+   ],
+   "n": "Flutter lädt die Personen mit Schicht jetzt vor dem Kopieren, bei Fehler Toast \"Fehler beim Laden der Personen mit Schicht\" (svcLoadShiftPeopleFailed) und Abbruch. Gleiche Meldung wie Ionic; erste Wertung diff überholt.",
+   "v": "korrigiert"
+  },
+  "services/shift/shift.service#toast-cb1e402a": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:206",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:139"
+   ],
+   "n": "Ionic \"Fehler beim Hinzufügen der Schicht\" / Flutter \"Fehler beim Erstellen: <Fehlertext>\" bzw. beim Kopieren \"Fehler beim Kopieren des Schichtplans.\" (gemeldet).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/teams/teams.service#toast-74546254": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:258"
+   ],
+   "n": "Rote Meldung mit Server-Fehlertext bzw. \"Verknüpfung fehlgeschlagen\" (svcLinkFailed) nach ssoLink. Flutter zeigt sie auch bei fehlendem Token/verifyOtp-Fehler (Ionic dort ohne Toast, besser).",
+   "v": "bestätigt"
+  },
+  "services/telegram/telegram.service#loading-752e4954": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:154",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2102",
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:344"
+   ],
+   "n": "Ionic blockierendes Lade-Overlay beim Telegram-Versand. Flutter: kein Overlay (Registerprobenplan nur _busy). Nur Ladeanzeige.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/telegram/telegram.service#toast-9359ba11": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1077",
+    "lib/features/settings/presentation/pages/files_page.dart:400"
+   ],
+   "n": "Ionic \"Fehler beim Senden der Nachricht, versuche es später erneut!\" / Flutter Werk-Seite \"Fehler: <Fehler>\", Dateiablage \"Telegram-Versand fehlgeschlagen: <Fehler>\". Fehler wird gemeldet.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/telegram/telegram.service#toast-d48335d8": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:374",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:167",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2110"
+   ],
+   "n": "Ionic Erfolgstoast \"Nachricht wurde erfolgreich gesendet!\". Flutter: Registerprobenplan gleicher Text; Planung \"Plan wird per Telegram gesendet...\" (nach Abschluss), Terminseite \"Plan per Telegram gesendet\". Erfolg bestätigt, anderer Text.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/telegram/telegram.service#toast-d81870f7": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:376",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:170",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2114"
+   ],
+   "n": "Ionic \"Fehler beim Senden der Nachricht, versuche es später erneut!\". Flutter: Registerprobenplan gleicher Text; Planung \"Fehler beim Export: <Fehler>\", Terminseite \"Fehler beim Senden: <Fehler>\". Fehler wird gemeldet.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/telegram/telegram.service#toast-fb958f4a": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1320",
+    "lib/features/settings/presentation/pages/files_page.dart:398"
+   ],
+   "n": "Ionic \"Nachricht wurde erfolgreich gesendet!\" / Flutter Dateiablage gleich, Werk-Seite \"Datei per Telegram gesendet\" (gleiche Bedeutung).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#action-1551fcba": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:389",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:392"
+   ],
+   "n": "Merge-Button je Gemeinde im aufgeklappten Bereich (Icon, öffnet Ziel-Auswahl); zusätzlich deaktiviert während Speichern.",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#action-6be3dfaa": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:263",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:266"
+   ],
+   "n": "push(\"/dashboard\") = Usage Dashboard (Ionic /tabs/dashboard); Route nur für Super-Developer.",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#action-91aecc64": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:401",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:406",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:93"
+   ],
+   "n": "\"Gemeinde hinzufügen\" -> Eingabe-Dialog, leer = \"Bitte gib gültige Werte ein.\", Lade-Overlay, Toast.",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#action-94ed76ef": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:384",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:387",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:128"
+   ],
+   "n": "Umbenennen-Button (Stift) je Gemeinde; Dialog, leerer Name bricht ab, Toast/Fehler wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#action-99bed056": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:253"
+   ],
+   "n": "Zurück über AppBar-Back (Route unter /settings).",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#action-a0f21844": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:353",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:358",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:234"
+   ],
+   "n": "\"Alle Duplikate zusammenführen\" nur bei Duplikaten, öffnet Bestätigung.",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#action-c192fed9": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:332",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:340",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:342"
+   ],
+   "n": "\"Zusammenführen\"-Button je Duplikat, nur bei Duplikaten.",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#alert-104dadf1": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:147",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:239",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:156"
+   ],
+   "n": "Titel \"Alle Duplikate zusammenführen\", Nachricht {total} Duplikat(e) in {groups} Gruppe(n), Abbrechen/\"Alle zusammenführen\" destruktiv; sequentielles Merge aller Paare, Toast mergedAll(updated,total). Seite nur Super-Developer (Route-Guard).",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#alert-a83fabc5": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:170",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:174",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:207"
+   ],
+   "n": "Titel \"„{name}“ zusammenführen mit...\", Radio je andere Gemeinde (erste vorgewählt), Abbrechen/Zusammenführen -> Bestätigung.",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#alert-d95dbe90": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:209",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:211",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:147"
+   ],
+   "n": "Titel \"Bestätigen\", Nachricht mergeMoveMessage, Abbrechen/Zusammenführen destruktiv; Merge (Ziel, Quelle) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#alert-e0b718fa": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:342",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:344",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:147"
+   ],
+   "n": "Titel \"Gemeinden zusammenführen\", Nachricht mergeMessage(Duplikat, Ziel), Abbrechen/Zusammenführen destruktiv; danach Liste neu (invalidate), Duplikate neu berechnet.",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#field-e645a227": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:274",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:278",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:61"
+   ],
+   "n": "Zahlenfeld \"Maximaler Speicher\" mit Platzhalter/Hinweis, speichert bei Blur/Enter, leer = unbegrenzt, ungültig -> Warnung, deaktiviert während Speichern; Fehler setzt alten Wert zurück.",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#loading-2cf2d119": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:106",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:114"
+   ],
+   "n": "Blockierendes Spinner-Overlay beim Anlegen jetzt vorhanden (PopScope canPop false); Fehler zeigt Meldung. Erste Wertung diff überholt.",
+   "v": "korrigiert"
+  },
+  "settings/administration/administration.page#loading-6b2cf021": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:147",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:156",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:392"
+   ],
+   "n": "Ionic blockierendes Overlay \"Gemeinden werden zusammengeführt...\" / Flutter: kein Overlay, nur Buttons deaktiviert (saving), Ergebnis-Toast folgt. Nur Ladeanzeige.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#loading-9b43bea8": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:147",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:156",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:340"
+   ],
+   "n": "Wie loading-6b2cf021: kein Overlay/Text beim Zusammenführen, nur Buttons deaktiviert. Nur Ladeanzeige.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  }
+ },
+ "extra": []
+}

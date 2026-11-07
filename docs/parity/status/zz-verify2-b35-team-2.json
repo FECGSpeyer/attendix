@@ -1,0 +1,51 @@
+{
+ "batch": "zz-verify2-b35-team-2",
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
+ "items": {
+  "team-organization/topics-tab/topics-tab.component#action-82525c3b": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:319",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:160",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:226",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:273"
+   ],
+   "v": "korrigiert",
+   "n": "Rollen gleich: das Prüfen-Sheet gibt es nur in der Leitungsansicht (Admin/Verantwortlich; Ionic isTeamLeader ↔ Flutter _LeaderTopics über isTeamLeaderProvider). Dialog „Vorschlag übernehmen“ mit Prioritäts-Radios (Vorbelegung item.priority), Abbrechen/Übernehmen; Schreiben gleich (proposal_status accepted, priority, decision_note null, mit tenant_id) + team-notify proposal_decided, Toast „Übernommen“. Ionic: loadLeader schließt das Sheet nach der letzten Entscheidung automatisch (!pending.length → isReviewOpen=false). / Flutter: das Sheet bleibt offen mit „Alle Vorschläge sind entschieden.“ und muss per X geschlossen werden. Außerdem zeichnet setState des Tabs das Sheet nicht neu, sodass der Button während des Speicherns nicht sichtbar deaktiviert ist; ein Doppelaufruf wird aber durch _deciding abgefangen."
+  },
+  "team-organization/topics-tab/topics-tab.component#text-6db4964a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:33",
+    "lib/core/providers/team_org_providers.dart:139"
+   ],
+   "v": "bestätigt",
+   "n": "Gleicher Text, Bedingung in beiden: weder Leitung noch im Kreis. inCircle = teamOrg aktiv && (Leitung || Person nicht ausgetreten && isInAnyCircle). Eltern und Bewerber nie im Kreis; Helfer, Stimmführer, Spieler und Beobachter je nach Gruppe des Typs bzw. nur mit eigenem player-Datensatz – in beiden gleich. Icon forum statt chatbubbles. Hinweis (gemeinsamer Code, eigener Batch): Flutter getPlayerByAppId nutzt maybeSingle und wirft bei zwei player-Zeilen mit gleicher appId; Ionic nimmt die aktive Zeile. Betroffene sähen hier diesen Text statt der Mitgliederansicht."
+  },
+  "x-16d25a9962": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:64",
+    "lib/core/providers/team_org_providers.dart:245",
+    "lib/core/providers/team_org_providers.dart:255",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1024"
+   ],
+   "v": "bestätigt",
+   "n": "Bestätigt. Ionic: ionViewWillEnter → reloadActive bei jeder Rückkehr, und @switch erzeugt den Tab bei jedem Segmentwechsel neu (ngOnInit → reload). Flutter: TabBarView mit app-weit gecachten Providern (protocolsProvider, upcomingProtocolAttendancesProvider, agendaItemsProvider, teamTasksProvider, alle ohne autoDispose); neu geladen wird nur nach eigenen Mutationen oder per Pull-to-Refresh. protocolsProvider wird nur bei Freigabe invalidiert, neue Entwürfe und Ergebnisse („vertagt“ für die Themen-Sortierung) bleiben also alt. Außerhalb der Team-Org angelegte oder gelöschte Termine („Nächster Termin“) und Änderungen anderer erscheinen nicht."
+  },
+  "x-608f593171": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:94",
+    "lib/core/providers/team_org_providers.dart:245"
+   ],
+   "v": "bestätigt",
+   "n": "Bestätigt. Ionic getProtocols schluckt DB-Fehler (data ?? []), der Tab fängt Exceptions ab (rows=[]) → Leerzustand „Noch keine Protokolle“, Pull-to-Refresh holt neu. Flutter: error-Zweig zeigt nur zentriert „Protokoll konnte nicht geladen werden.“ (Singular), ohne RefreshIndicator. protocolsProvider (nicht autoDispose) bleibt im Fehler, bis ihn etwas invalidiert. Leitung kann das über Pull-to-Refresh im Themen-Tab, Mitglieder (deren Themen-Refresh invalidiert nur agendaItemsProvider) erst per App-Neustart oder Instanzwechsel. Die ehrliche Fehlermeldung ist besser, fehlendes Neuladen schlechter → mittel."
+  }
+ },
+ "extra": []
+}

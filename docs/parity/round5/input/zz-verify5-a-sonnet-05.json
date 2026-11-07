@@ -1,0 +1,312 @@
+{
+ "batch": "zz-verify5-a-sonnet-05",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 149,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "bar"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"instrumentBarData\"",
+     "[options]=\"instrumentBarOptions\""
+    ],
+    "id": "stats/stats.page#media-315d630a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:758",
+     "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart"
+    ],
+    "n": "behoben in #298 (waagrechte Balken mit Namen, Achsentitel)",
+    "v": null,
+    "src": "zz-fixed-uebersicht.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 164,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "bar"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"divaIndexData\"",
+     "[options]=\"divaIndexOptions\""
+    ],
+    "id": "stats/stats.page#media-42266499"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:945",
+     "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart"
+    ],
+    "n": "behoben in #298 (waagrechte Balken mit Namen, Achsentitel)",
+    "v": null,
+    "src": "zz-fixed-uebersicht.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 134,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "bar"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"top20Data\"",
+     "[options]=\"top20Options\""
+    ],
+    "id": "stats/stats.page#media-57ebfc11"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:789",
+     "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart"
+    ],
+    "n": "behoben in #298 (waagrechte Balken mit Namen, Achsentitel)",
+    "v": null,
+    "src": "zz-fixed-uebersicht.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 225,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "bar"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"avgAgePerInstrumentData\"",
+     "[options]=\"avgAgePerInstrumentOptions\""
+    ],
+    "id": "stats/stats.page#media-9766bdb9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:916",
+     "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart"
+    ],
+    "n": "behoben in #298 (waagrechte Balken mit Namen, Achsentitel)",
+    "v": null,
+    "src": "zz-fixed-uebersicht.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 104,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "line"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"attendanceTrendData\"",
+     "[options]=\"attendanceTrendOptions\""
+    ],
+    "id": "stats/stats.page#media-ac43f03a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:535"
+    ],
+    "n": "behoben in #298 (Titel „Anwesenheitsverlauf (letzte 20 Termine)“)",
+    "v": null,
+    "src": "zz-fixed-uebersicht.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "tabs/side-nav/side-nav.component.ts",
+    "line": 144,
+    "method": "SideNavComponent.runAction",
+    "cond": [
+     "(action === 'planning')"
+    ],
+    "component": "PlanningPage",
+    "props": [],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": "'planningModal'",
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "bd77929f",
+    "mbody": "c5df4527",
+    "id": "tabs/side-nav/side-nav.component#modal-186fad14"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart",
+     "lib/features/planning/presentation/pages/planning_page.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "tasks/task-detail/task-detail.page.html",
+    "line": 21,
+    "cond": [],
+    "tag": "ion-refresher",
+    "attrs": {
+     "slot": "fixed"
+    },
+    "events": [
+     "(ionRefresh)=handleRefresh($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "tasks/task-detail/task-detail.page#action-df7b76e8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "team-organization/team-organization.page",
+   "ionic": {
+    "ts": "team-organization/team-organization.page.ts",
+    "html": "team-organization/team-organization.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/team-organization.page.html",
+    "line": 24,
+    "cond": [],
+    "tag": "ion-refresher",
+    "attrs": {
+     "slot": "fixed"
+    },
+    "events": [
+     "(ionRefresh)=handleRefresh($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "team-organization/team-organization.page#action-411a87d7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/team_organization_page.dart",
+     "lib/core/providers/team_org_providers.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  }
+ ]
+}

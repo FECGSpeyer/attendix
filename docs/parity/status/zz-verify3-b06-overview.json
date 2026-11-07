@@ -1,0 +1,189 @@
+{
+ "batch": "zz-verify3-b06-overview",
+ "ionic": "9f9b82af",
+ "flutter": "b218510",
+ "items": {
+  "messages/message-detail/message-detail.page#modal-187e9b6a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:17",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:95",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:183",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:184"
+   ],
+   "v": "bestätigt",
+   "n": "Vollbild-Dialog (fullscreenDialog) wie Ionic-Modal ohne Sheet; übergibt messageId, Termin-Label und kind; danach Toast 'respDone'/'respDoneInstant' und Neuladen. Rollen: isManager = Admin/Verantwortlich UND Mitteilung gehört zur aktuellen Instanz (Ionic message-detail.page.ts:95, Flutter _isManager + tenantId-Vergleich). Nur Nicht-Manager (Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber) mit eigener Empfängerzeile (person_attendance_id), allow_responses, ≤ RESPONSE_DAYS+1 Tage nach Termin und ohne bzw. mit offener Antwort – Flutter MessageTerminSection nur bei !isManager, _canRespond gleich."
+  },
+  "messages/message-detail/message-detail.page#alert-183a4e8d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:92",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:131",
+    "lib/core/utils/dialog_helper.dart:12"
+   ],
+   "v": "bestätigt",
+   "n": "'Mitteilung löschen?' + Hinweistext, 'Abbrechen' / 'Löschen' (rot); danach Löschen (messages, eq id + tenantId) und Navigation. Papierkorb nur bei isManager && message in beiden; Rollen: isManager = Admin/Verantwortlich UND Mitteilung gehört zur aktuellen Instanz (Ionic message-detail.page.ts:95, Flutter _isManager + tenantId-Vergleich)."
+  },
+  "messages/message-detail/message-detail.page#nav-9c26e0e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:104"
+   ],
+   "v": "bestätigt",
+   "n": "context.go('/settings/messages') statt navigateByUrl('/tabs/settings/messages'); gleiches Ziel, Liste lädt neu (messagesProvider invalidiert). Nur Manager wie Ionic."
+  },
+  "messages/message-detail/message-detail.page#toast-fac5b4e7": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:106"
+   ],
+   "v": "bestätigt",
+   "n": "Fehler-Toast 'Fehler beim Löschen' (danger), Seite bleibt. Nur Manager wie Ionic."
+  },
+  "messages/message-detail/message-detail.page#action-312b066f": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:563",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:568",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:526"
+   ],
+   "v": "bestätigt",
+   "n": "Inhalt (personalisiertes HTML) als schreibgeschützter Quill-Editor (HtmlToDelta; Ionic-Editor hat nur StarterKit/Unterstrichen/Link, keine Bilder). Tippen auf Link: flutter_quill 11.6 readOnly → TapGestureRecognizer → onLaunchUrl → NativeFileService.openLinkInApp (nativ In-App-Browser, Web neuer Tab) wie Browser.open. Sichtbar bei showContent (Nicht-Manager sofort, Manager nach Aufklappen) gleich."
+  },
+  "messages/message-detail/message-detail.page#text-1f52bc34": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:166"
+   ],
+   "n": "Antwort-Hinweis '<Status> · <Grund>' mit Krank / Arbeit / Schule / Familie / Abmelden vergessen / Sonstiges; nur Nicht-Manager mit eigener Antwort – gleich."
+  },
+  "messages/message-detail/message-detail.page#text-2053c566": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:167"
+   ],
+   "n": "'· Ich war doch da' bei kind 'was_present'; nur Nicht-Manager mit eigener Antwort – gleich."
+  },
+  "messages/message-list/message-list.page#alert-04a6d14c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:39",
+    "lib/features/messages/presentation/pages/message_list_page.dart:40",
+    "lib/core/utils/dialog_helper.dart:12"
+   ],
+   "v": "bestätigt",
+   "n": "Wischaktion Papierkorb → 'Mitteilung löschen?' + Hinweis, 'Abbrechen' / 'Löschen' (rot) → löschen, Liste aktualisiert. Seite nur Admin/Verantwortlich (Ionic: Einstieg Einstellungen/Sidepanel isAdmin; Flutter: Route-Guard _isAdminOrResponsible) – gleich."
+  },
+  "messages/message-list/message-list.page#toast-b632ba90": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:50"
+   ],
+   "v": "bestätigt",
+   "n": "Fehler-Toast 'Fehler beim Löschen' (danger). Nur Admin/Verantwortlich wie Ionic."
+  },
+  "notifications/notifications.page#db-f59556e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:79",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:82"
+   ],
+   "v": "bestätigt",
+   "n": "Realtime auf 'notifications' (Filter id = eigene User-Id), übernimmt die neue Zeile. Läuft für jede Rolle, die die Seite öffnet: Ionic Einstellungen → 'Benachrichtigungen' ohne Rollenbedingung (isAdmin aus ngOnInit steuert nur Schalter), Flutter Eintrag ebenfalls immer, Route ohne Guard – gleich."
+  },
+  "notifications/notifications.page#db-dd73b098": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:82"
+   ],
+   "v": "bestätigt",
+   "n": "Kanalname 'noti-changes-<userId>' statt 'noti-changes'; ohne Nutzerwirkung. Rollen wie db-f59556e9."
+  },
+  "stats/stats.page#media-ac43f03a": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:516",
+    "lib/core/providers/statistics_providers.dart:323"
+   ],
+   "n": "Daten gleich (letzte 20 Termine nach Datum, Prozent, Label dd.MM., Y 0–100, gefüllte Linie). Ionic: Diagrammtitel 'Anwesenheitsverlauf (letzte 20 Termine)', Y-Achsentitel '%', Tooltip 'Anwesenheit %: x' / Flutter: kein Diagrammtitel – Hinweis 'letzte 20 Termine' fehlt; Y-Beschriftung '0%…100%'. Ohne Termine im Zeitraum Ionic leeres Diagramm, Flutter Leerzustand statt Abschnitt."
+  },
+  "stats/stats.page#media-542fed8c": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:603",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:692"
+   ],
+   "n": "Zählung gleich (Verspätet inkl. verspätet entschuldigt, gerundete Prozente). Ionic: voller Kreis, Titel 'Statusverteilung (in %)', Legende oben 'Anwesend (x%)', 'Entschuldigt (x%)', 'Verspätet (x%)', 'Abwesend (x%)' / Flutter: Ring mit Prozent auf den Segmenten, Legende rechts nur Statusnamen, kein Titel."
+  },
+  "stats/stats.page#media-57ebfc11": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:831",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:877",
+    "lib/core/providers/statistics_providers.dart:391"
+   ],
+   "n": "Daten gleich (aktive Personen 'Vorname N.', Anwesend+Verspätet+verspätet entsch., Top 20). Ionic: waagrechte Balken mit Namen an jedem Balken, X 0–100 '%', Titel 'Top 20 - Anwesenheits-Elite 🏆' / Flutter: fl_chart 0.69.2 (pub-cache) kann BarChart nicht drehen: senkrechte Balken, untere Achse ohne Beschriftung, die Namen werden als leftTitles an den Y-Teilstrichen gezeichnet (data[Wert], z. B. data[0] bei 0) und stehen damit nicht an ihren Balken; Zuordnung nur per Tooltip beim Antippen."
+  },
+  "stats/stats.page#media-315d630a": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:741",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:787",
+    "lib/core/providers/statistics_providers.dart:359"
+   ],
+   "n": "Daten gleich (Quote je Gruppe über aktive Personen, absteigend). Ionic: waagrechte Balken mit Gruppennamen, X 0–100 '%', Titel 'Anwesenheitsquote nach Instrument' / Flutter: fl_chart 0.69.2 (pub-cache) kann BarChart nicht drehen: senkrechte Balken, untere Achse ohne Beschriftung, die Namen werden als leftTitles an den Y-Teilstrichen gezeichnet (data[Wert], z. B. data[0] bei 0) und stehen damit nicht an ihren Balken; Zuordnung nur per Tooltip beim Antippen."
+  },
+  "stats/stats.page#media-42266499": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1104",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1153",
+    "lib/core/providers/statistics_providers.dart:443"
+   ],
+   "n": "Daten gleich (Status Abwesend je aktiver Person, Top 15). Ionic: waagrechte Balken mit Namen, Titel 'Unentschuldigte Abwesenheiten' / Flutter: fl_chart 0.69.2 (pub-cache) kann BarChart nicht drehen: senkrechte Balken, untere Achse ohne Beschriftung, die Namen werden als leftTitles an den Y-Teilstrichen gezeichnet (data[Wert], z. B. data[0] bei 0) und stehen damit nicht an ihren Balken; Zuordnung nur per Tooltip beim Antippen. Bei Y-Max = max+2 stehen die Namen an den Werten 0, 1, 2 … und wirken wie Achsenwerte."
+  },
+  "stats/stats.page#media-c58a7f02": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:921",
+    "lib/core/providers/statistics_providers.dart:500"
+   ],
+   "n": "Senkrechte Balken je 3-Jahres-Gruppe 'x-y', Y in 1er-Schritten, nur aktive Personen mit Geburtstag – wie Ionic. Ionic: Titel 'Altersverteilung 🎂' im Diagramm, ohne Geburtstage leeres Diagramm / Flutter: nur gleichlautende Abschnittsüberschrift, Platzhalter 'Keine Geburtsdaten vorhanden'."
+  },
+  "stats/stats.page#media-9766bdb9": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1012",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1060",
+    "lib/core/providers/statistics_providers.dart:550"
+   ],
+   "n": "Daten gleich ('Gruppe (Anzahl)', Ø-Alter gerundet, absteigend). Ionic: waagrechte Balken mit Gruppenlabel, X-Achsentitel 'Jahre', Titel 'Durchschnittsalter pro Instrument' / Flutter: fl_chart 0.69.2 (pub-cache) kann BarChart nicht drehen: senkrechte Balken, untere Achse ohne Beschriftung, die Namen werden als leftTitles an den Y-Teilstrichen gezeichnet (data[Wert], z. B. data[0] bei 0) und stehen damit nicht an ihren Balken; Zuordnung nur per Tooltip beim Antippen."
+  },
+  "stats/stats.page#media-50089e70": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/statistics/presentation/widgets/field_stats_section.dart:110",
+    "lib/features/statistics/presentation/widgets/field_stats_section.dart:170"
+   ],
+   "n": "Ring mit Feldname als Titel, Farben je Option, Zeilenliste darunter gleich. Ionic: Chart.js-Legende 'Option (x%)' über dem Ring, Tooltip 'N Personen (x%)' / Flutter: keine Legende am Ring, Prozent auf Segmenten ab 8 %, kein Tooltip."
+  },
+  "stats/stats.page#media-78100fc0": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/widgets/field_stats_section.dart:120",
+    "lib/features/statistics/presentation/widgets/field_stats_section.dart:252",
+    "lib/core/utils/field_stats.dart:214"
+   ],
+   "n": "Titel '{Feld} nach Gruppe (in %)', je Gruppe 'Name (Anzahl)' ein waagrechter 100-%-Stapelbalken, Legende unten, nur ohne Gruppenfilter und bei > 1 Gruppe – wie Ionic; Flutter eigene Balken (Tooltip je Segment) ohne %-Achse."
+  }
+ },
+ "extra": []
+}

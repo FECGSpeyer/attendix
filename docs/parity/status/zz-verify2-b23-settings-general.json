@@ -1,0 +1,19 @@
+{
+  "batch": "zz-verify2-b23-settings-general",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "x-759bccbc9e": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:510",
+        "lib/features/settings/presentation/pages/general_settings_page.dart:520",
+        "lib/features/settings/presentation/pages/general_settings_page.dart:224"
+      ],
+      "n": "Befund real. Ionic: practiceStart/practiceEnd nicht in der UI, nur mitgespeichert (Default 18:00/20:00); genutzt als Standardzeit in der Planung. Flutter: zusätzliche Felder 'Probenbeginn'/'Probenende' mit Zeitauswahl im Abschnitt 'Anwesenheiten' – Admin/Verantwortlich können einen Wert ändern, der in Ionic nicht editierbar ist.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

@@ -1,0 +1,259 @@
+{
+  "batch": "zz-verify3-b12-planning-org",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "planning/plan-viewer/plan-viewer.component#effect-51032d7f": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/planning/presentation/pages/plan_viewer_page.dart:106",
+        "lib/features/planning/presentation/pages/plan_viewer_page.dart:87",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:91",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:179"
+      ],
+      "n": "Mehrere Pläne: Teilen-Sheet (Nur …/Alle n Pläne) → Export gleich aufgebaut (PDF, 2x A5, Telegram nur mit Chat-ID, Bild nur bei „Nur …“), Branding immer. roleGuarded nur wegen role:„destructive“; Viewer-Export für jede Rolle, die den Viewer öffnet. Ionic: exportAttendancePlans überspringt Pläne ohne Einträge, Titel-Fallback getPlanningTitle(Typ, typeInfo), Untertitel planSubtitle (bei Tagesplänen ohne eigenes Label nur Datum), Dateiname mit „_alle“, PDF per downloadFileNative / Flutter: leere Pläne werden als leere Seiten mitexportiert, Titel-Fallback typeInfo/Typname bzw. „Ablaufplan“, Untertitel immer „Datum · Label“, Dateiname ohne „_alle“, PDF im Druckdialog. Telegram-Toasts wie toast-41712142. Aus der Terminliste ohne Chips nicht erreichbar (bekannter Befund „Weitere Ablaufpläne fehlen im Viewer“)."
+    },
+    "planning/planning.page#alert-54b86574": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/widgets/plan_fields_editor.dart:303",
+        "lib/features/planning/presentation/widgets/plan_fields_editor.dart:197"
+      ],
+      "v": "bestätigt",
+      "n": "roleGuarded nur wegen role:„cancel“, keine Rollenprüfung in confirmDeleteGroup. „Block löschen?“, „„{name}“ hat n Unterpunkte.“, „Abbrechen“/„Nur Block auflösen“/„Alles löschen“ (rot), ohne Unterpunkte direkt gelöscht – gleich. Zugang Editor gleich: Ionic Einstellungen (Admin/Verantwortlich) bzw. Termin/Viewer (Dirigent+Helfer inkl. Stimmführer-Helfer), Flutter /planning-Gate route_access.dart:110 (Admin/Verantwortlich, Helfer/SF-Helfer nur mit attendanceId)."
+    },
+    "planning/planning.page#alert-7d28e1b3": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1558",
+        "lib/features/planning/presentation/pages/planning_page.dart:1680",
+        "lib/core/providers/plan_providers.dart:215",
+        "lib/data/repositories/plan_repository.dart:183"
+      ],
+      "v": "bestätigt",
+      "n": "Papierkorb in beiden nur für ADMIN (Ionic isAdmin = role ADMIN, Flutter role.isAdmin). „Vorlage löschen?“, Text mit Name, „Abbrechen“/„Löschen“ (rot); schreibt tenants.plan_block_templates ohne die Vorlage (eq id = Instanz) – gleich."
+    },
+    "planning/planning.page#toast-68f53270": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1509",
+        "lib/features/planning/presentation/pages/planning_page.dart:1518",
+        "lib/features/planning/presentation/pages/planning_page.dart:1665"
+      ],
+      "v": "bestätigt",
+      "n": "Eintrag nur bei Instanztyp ≠ general (beide); keine Rollenprüfung. „Keine aktuellen Werke vorhanden“ (warning) wenn keine Werke der Historie existieren. Quelle/Reihenfolge der Historie: bekannter Befund „Reihenfolge der aktuellen Werke“."
+    },
+    "planning/planning.page#alert-28ec2e49": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1529",
+        "lib/features/planning/presentation/widgets/plan_song_helper.dart:35"
+      ],
+      "v": "bestätigt",
+      "n": "roleGuarded nur wegen role:„cancel“; Instanztyp ≠ general wie Ionic. Alle aktuellen Werke schon im offenen Plan → „Bereits hinzugefügt“, Text gleich, „Abbrechen“/„Erneut hinzufügen“ fügt alle erneut an (20 min, Dirigent, Präfix nach Termintyp)."
+    },
+    "planning/planning.page#effect-4dc197ef": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1985",
+        "lib/features/planning/presentation/pages/planning_page.dart:1994",
+        "lib/features/planning/presentation/pages/planning_page.dart:1928"
+      ],
+      "n": "„PDF exportieren (alle Pläne)“ nur mit Feldern und >1 Plan (beide), vorher Speichern, Titel je Plan (eigener Titel sonst getPlanningTitle), Branding nach Schalter – gleich; keine Rollen-/Mandantenbedingung. Ionic: Pläne ohne Einträge werden übersprungen, Untertitel planSubtitle (Tagespläne ohne eigenes Label nur Datum), PDF-Download „{Titel}_{Plandatum}_alle.pdf“ / Flutter: leere Pläne als leere Seiten, Untertitel immer „Datum · Label“, Druckdialog mit „{Titel}_{Termindatum}“."
+    },
+    "planning/planning.page#toast-0eda0832": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:917",
+        "lib/features/planning/presentation/pages/planning_page.dart:1967"
+      ],
+      "v": "bestätigt",
+      "n": "Keine Rollenbedingung. „Bitte wähle mindestens ein Feld aus.“ (warning) bei fehlender Startzeit/ohne Felder beim Export/Telegram (beforeExport)."
+    },
+    "planning/planning.page#toast-49787446": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:917",
+        "lib/features/planning/presentation/pages/planning_page.dart:1967"
+      ],
+      "v": "bestätigt",
+      "n": "Keine Rollenbedingung. „Bitte fülle alle erforderlichen Felder aus.“ (warning), wenn ein Feld keine Dauer hat."
+    },
+    "planning/planning.page#toast-35bdc992": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1870"
+      ],
+      "v": "bestätigt",
+      "n": "Link-Knopf in beiden für jede Rolle mit Editor-Zugang; ohne Termin „Bitte wähle zuerst einen Termin aus.“ (warning)."
+    },
+    "planning/planning.page#alert-a1e2ff95": {
+      "s": "na",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1884"
+      ],
+      "v": "bestätigt",
+      "n": "toter Code: revokeSharePlan() hat in src keinen Aufrufer (nur Definition planning.page.ts:1008). Flutters zusätzliches „Freigabe aufheben“ (auch für Helfer) ist in actionsheet-0c53b41c (diff mittel) erfasst."
+    },
+    "planning/planning.page#effect-160cbfb2": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/widgets/register_plan_sheet.dart:353",
+        "lib/features/planning/presentation/widgets/register_plan_sheet.dart:242",
+        "lib/features/planning/presentation/pages/planning_page.dart:1956"
+      ],
+      "v": "bestätigt",
+      "n": "Registerprobenplan nur bei Instanztyp choir/orchestra (beide), Telegram-Knöpfe nur mit Chat-ID (beide). PDF-Bytes an sendPlanPerTelegram „Registerprobenplan_DD_MM_YYYY“, Erfolgs-/Fehler-Toast wie TelegramService."
+    },
+    "planning/planning.page#effect-c1658399": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/widgets/register_plan_sheet.dart:358"
+      ],
+      "v": "bestätigt",
+      "n": "Als Bild: erste PDF-Seite als PNG (Ionic pdf.js, Flutter Printing.raster) und asImage an Telegram; gleiche Bedingungen (choir/orchestra, Chat-ID)."
+    },
+    "planning/planning.page#toast-1e88b54e": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1248"
+      ],
+      "v": "bestätigt",
+      "n": "roleGuarded nur wegen role:„cancel“ im folgenden Alert. Ohne Termin „Bitte wähle zuerst einen Termin aus.“ (warning); Menüeintrag nur mit Termin (beide)."
+    },
+    "planning/planning.page#toast-179f4ddc": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1253"
+      ],
+      "v": "bestätigt",
+      "n": "Ungültiger offener Plan → „Lege zuerst einen Ablauf für diesen Plan an.“ (warning); keine Rollenbedingung."
+    },
+    "planning/planning.page#alert-b54330ab": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1350",
+        "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:326"
+      ],
+      "v": "bestätigt",
+      "n": "roleGuarded nur wegen role:„cancel“. „Plan umbenennen“, „Leer lassen für den automatischen Namen.“, Feld mit aktuellem Label und Auto-Name als Platzhalter, „Abbrechen“/„Speichern“, leer → Label entfernt; Speichern aller Pläne mit Tagen."
+    },
+    "planning/planning.page#alert-e644d562": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1401"
+      ],
+      "v": "bestätigt",
+      "n": "roleGuarded nur wegen role:„cancel“. „Plan löschen?“, „Der Plan „{label}“ wird gelöscht.“, „Abbrechen“/„Löschen“ (rot); danach Nachbarplan geladen."
+    },
+    "planning/planning.page#action-d8619c2b": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1665"
+      ],
+      "v": "bestätigt",
+      "n": "Bedingung Instanztyp ≠ general in beiden (Ionic isGeneral = tenant.type, Flutter currentTenantProvider.type); keine Rollenbedingung im Menü."
+    },
+    "planning/planning.page#action-09d2cf03": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1666",
+        "lib/features/planning/presentation/pages/planning_page.dart:1542"
+      ],
+      "v": "bestätigt",
+      "n": "Nur mit Werken und Instanztyp ≠ general (beide); öffnet „Werk auswählen“, fügt Werk mit 20 min und Präfix nach Termintyp an."
+    },
+    "planning/planning.page#text-c14e181a": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1674"
+      ],
+      "v": "bestätigt",
+      "n": "„Programmblöcke“ nur wenn die Instanz Bausteinvorlagen hat (tenants.plan_block_templates), für jede Rolle mit Editor-Zugang."
+    },
+    "planning/planning.page#action-6b842de4": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1674",
+        "lib/features/planning/presentation/pages/planning_page.dart:1553",
+        "lib/features/planning/presentation/pages/planning_page.dart:1680"
+      ],
+      "v": "bestätigt",
+      "n": "„{Name} {n} min“ fügt eine Kopie des Blocks an (alle Rollen mit Editor-Zugang); Papierkorb-Symbol nur ADMIN in beiden."
+    },
+    "planning/planning.page#text-92612b82": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1695"
+      ],
+      "v": "bestätigt",
+      "n": "„Vorlagen“ nur mit Org-Vorlagen (organisation.planning_templates), keine Rollenbedingung."
+    },
+    "planning/planning.page#action-c9cebc20": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1696",
+        "lib/features/planning/presentation/pages/planning_page.dart:1579"
+      ],
+      "v": "bestätigt",
+      "n": "Org-Vorlage ersetzt den Ablauf ohne Rückfrage (Platzhalter mit Präfix „Nr. “, Startzeit der Vorlage) – gleich."
+    },
+    "planning/planning.page#text-feff39c2": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1699"
+      ],
+      "v": "bestätigt",
+      "n": "„Felder“ nur mit Org-Standardfeldern, keine Rollenbedingung."
+    },
+    "planning/planning.page#action-8653a152": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:1701",
+        "lib/features/planning/presentation/pages/planning_page.dart:1590"
+      ],
+      "v": "bestätigt",
+      "n": "„{Name} {min} min“ fügt Kopie des Org-Felds an."
+    },
+    "planning/planning.page#action-9c4fc925": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/widgets/plan_fields_editor.dart:403",
+        "lib/features/planning/presentation/pages/planning_page.dart:1610",
+        "lib/features/planning/presentation/pages/planning_page.dart:2172"
+      ],
+      "v": "bestätigt",
+      "n": "canAddTopics in beiden: Termin gewählt, Plan 1, Termintyp mit Protokoll und Teamleitung (Admin/Verantwortlich; Helfer nicht). Knopf „Themen aufnehmen“ am Tagesordnungs-Platzhalter öffnet den Themen-Picker."
+    },
+    "planning/planning.page#action-9ddba146": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/widgets/plan_fields_editor.dart:549",
+        "lib/features/planning/presentation/widgets/plan_fields_editor.dart:554",
+        "lib/core/utils/plan_utils.dart:130"
+      ],
+      "v": "bestätigt",
+      "n": "Wisch-Option „Einrücken“/„Ausrücken“ (grau) nur bei canIndent (gleiche Regel), keine Rollenbedingung."
+    },
+    "public-planning/my-plans/my-plans.component#alert-c33e32bf": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:1054",
+        "lib/data/repositories/plan_repository.dart:245"
+      ],
+      "v": "bestätigt",
+      "n": "„Meine Pläne“ nur eingeloggt; eingeloggt nur Admin/Verantwortlich (Ionic isUrlAccessAllowed /tabs/settings/planung, Flutter app_router.dart:182). „Plan löschen“, „„{Titel}“ endgültig löschen?“ (Fallback „Ablaufplan“), „Abbrechen“/„Löschen“ (rot); delete shared_plans per id, Flutter zusätzlich eq creator_user_id (Liste zeigt ohnehin nur eigene Pläne)."
+    },
+    "public-planning/my-plans/my-plans.component#toast-16f262e1": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/public_planning_page.dart:1068"
+      ],
+      "v": "bestätigt",
+      "n": "Löschfehler → „Fehler beim Löschen“ (danger); gleiche Rollen wie alert-c33e32bf."
+    }
+  },
+  "extra": []
+}

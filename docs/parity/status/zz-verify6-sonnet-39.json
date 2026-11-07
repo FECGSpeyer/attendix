@@ -1,0 +1,344 @@
+{
+ "batch": "zz-verify6-sonnet-39",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "team-organization/topics-tab/topics-tab.component#action-8d43340c": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:312",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:240"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Bestätigt (Referenz auf aktuelle Zeilen korrigiert). Ionic: [disabled]=isDeciding / Flutter: Sheet-Consumer baut bei setState(_deciding) nicht neu, Button bleibt während des Speicherns aktiv; zweiter Dialog möglich, _decide-Guard verhindert Doppelschreiben. Gleicher Schreibvorgang, nur Leitung -> niedrig."
+  },
+  "team-organization/topics-tab/topics-tab.component#action-a3959875": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:395",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:398"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#action-a454cdde": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:411",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:416"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#action-a6616d6f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:452",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:453",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:115"
+   ],
+   "v": "bestätigt",
+   "n": "Button deaktiviert während Anlegen (enabled: !_creatingAttendance); Schnellanlage + Auswahl des neuen Termins; nur Leitung."
+  },
+  "team-organization/topics-tab/topics-tab.component#action-a9fd8aa7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:422",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:428"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#action-db6a6c6f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:467",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:495"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#actionsheet-8e3d3c47": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:69",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:406"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#actionsheet-f0556e68": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:128",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:428"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#field-12915c8b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:737"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#field-a7c2d1da": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:732"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#field-ab65ddc9": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:506",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:508"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#modal-0f4cf4d0": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:559",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:670"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Ionic: Sheet volle Höhe / Flutter: Bottom-Sheet inhaltshoch, mit Tastaturabstand; gleiche Funktion, nur Mitglieder im Kreis."
+  },
+  "team-organization/topics-tab/topics-tab.component#modal-f91a5777": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:240",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:246"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Ionic: volle Höhe, schließt automatisch nach letzter Entscheidung / Flutter: 85 % Höhe, bleibt offen, zeigt „Alle Vorschläge sind entschieden.“, per X schließbar -> niedrig."
+  },
+  "team-organization/topics-tab/topics-tab.component#text-0a7991a6": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:463"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-1373b371": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:297"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-15024791": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:596"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-1e54bcf8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:285"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-1e977710": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:293"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-3367c740": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:432"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-35aed666": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:404"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-569e6f57": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:606"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-59b7f7b0-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:725"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-5af62190": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:445"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-5ea5f4d9": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:296"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-5ea5f4d9-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:590"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-62bc2cc3": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:273"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Ionic: kurz sichtbar vor Auto-Schließen / Flutter: Sheet bleibt mit Text anstelle des Hinweises offen -> niedrig."
+  },
+  "team-organization/topics-tab/topics-tab.component#text-6db4964a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:38",
+    "lib/core/providers/team_org_providers.dart:139"
+   ],
+   "v": "bestätigt",
+   "n": "Gleicher Text und gleiche Bedingung (weder Leitung noch im Kreis). Rollen: Leitung = Admin/Verantwortlicher; Kreis ohne Eltern/Bewerber, sonst Gruppe des Typs oder keine Gruppe; ausgetretene Personen raus - in beiden gleich. Icon forum statt chatbubbles."
+  },
+  "team-organization/topics-tab/topics-tab.component#text-8ee75432": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:448"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-921d34f9": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:290"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-a13b4369": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:460"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-c03f0b71": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:273"
+   ],
+   "v": "bestätigt",
+   "n": "Hinweis wortgleich, solange Vorschläge offen sind."
+  },
+  "team-organization/topics-tab/topics-tab.component#text-d2385962": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:262"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-d8a32d79": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:499"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-ea18beab": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:720"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-fd9c6263": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:600"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-11df5505": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:153"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Text „Thema bleibt im Themenspeicher“ gleich. Ionic: grüner Erfolgs-Toast / Flutter: Info-Toast (showInfo) -> niedrig."
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-40fc1c31": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:234"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-6b9b25ac": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:232"
+   ],
+   "v": "bestätigt",
+   "n": "Erfolgs-Toast „Übernommen“/„Abgelehnt“; DB-Update + team-notify proposal_decided wie Ionic (Flutter wartet auf notify, Fehler dort wird verschluckt)."
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-7dbb4368": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:155"
+   ],
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-b78247a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:701"
+   ],
+   "v": "bestätigt",
+   "n": "Fehler-Toast „suggestionFailed“ rot bei Fehler; Referenz von 689 auf 701 korrigiert. Erfolgs-Toast kommt nach Sheet-Schließen (568)."
+  },
+  "terms/terms.page#action-0217fb55": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:201"
+   ],
+   "v": "bestätigt"
+  },
+  "terms/terms.page#action-88056e97": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:230"
+   ],
+   "v": "bestätigt"
+  },
+  "terms/terms.page#action-c5b88349": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:216"
+   ],
+   "v": "bestätigt"
+  },
+  "terms/terms.page#field-b576bf25": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:208"
+   ],
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

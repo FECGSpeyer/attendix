@@ -1,0 +1,103 @@
+{
+ "batch": "zz-fixed-gruppen-einstellungen-r6",
+ "ionic": "1923d203",
+ "afterRound": 6,
+ "flutter": "2acb693",
+ "items": {
+  "instruments/instrument-list/instrument-list.page#action-13fe6ace": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart",
+    "lib/data/repositories/group_repository.dart",
+    "lib/core/providers/group_providers.dart"
+   ],
+   "n": "Häkchen ohne Verschieben schreibt die vorhandenen sort_order unverändert (null bleibt null) wie Ionic saveOrder; erst nach echtem Verschieben 1..n. PR #344."
+  },
+  "instruments/instrument-list/instrument-list.page#action-b5b9e69f": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ],
+   "n": "Kategorien: ohne Verschieben nur vorhandene Kategorie-sort_order unverändert schreiben, Gruppen bleiben unberührt; nach Verschieben wie Ionic saveCategoryOrder. PR #344."
+  },
+  "x-d0c116c654": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ],
+   "n": "Sortiermodus ohne Verschieben nummeriert nicht mehr neu (gleicher Fix wie action-13fe6ace). PR #344."
+  },
+  "x-718f3b20d0": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ],
+   "n": "Gruppe bearbeiten: '' bleibt '', unberührtes null bleibt null; Stimmung/Tonumfang/Schlüssel nur wenn sichtbar und geändert, Synonyme nur wenn sichtbar. Kein „C“/[g] mehr bei Chor/Allgemein/Hauptgruppe. PR #344."
+  },
+  "settings/general/general.page#field-cf813d87": {
+   "s": "ok",
+   "f": [
+    "lib/data/models/tenant/tenant.dart",
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart"
+   ],
+   "n": "thresholdValue ist num, Dezimalwerte (33.5) bleiben erhalten; Feld „Anzahl“/„Prozent“ mit Dezimaltastatur, Komma erlaubt; nur endliche Werte > 0. PR #344."
+  },
+  "settings/general/general.page#toast-ae9cf87e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart"
+   ],
+   "n": "Toast nur noch bei Wert <= 0 oder ungültig (NaN/Infinity abgelehnt); Dezimaleingabe wird gespeichert wie Ionic. PR #344."
+  },
+  "x-42634188f9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ],
+   "n": "Altregeln ohne period_type bekommen beim Laden 'days' und werden so gespeichert wie Ionic ngOnInit. PR #344."
+  },
+  "x-54642cef92": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ],
+   "n": "Nach dem Speichern werden song_sharing_id/register_id auf die geschriebenen Werte gesetzt; Wiedereinschalten nach Abschalten erzeugt eine neue UUID wie Ionic. PR #344."
+  },
+  "x-698d8902b1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Termintyp speichern: reminders immer als Liste (auch []), wie Ionic. PR #344."
+  },
+  "x-f8e7ccbb61": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "end_time bleibt bei ganztägigen, duration_days bei nicht ganztägigen Typen erhalten; nur unberührtes null bleibt null, Ausgangszustand wird nach jedem Speichern aktualisiert. PR #344."
+  },
+  "services/shift/shift.service#toast-7ef37344": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ],
+   "n": "Ladefehler der Schichtverwendung zeigt „Fehler beim Überprüfen der Schichtverwendung“, feste Schichten bleiben gesperrt. PR #344."
+  },
+  "services/tenant/tenant.service#db-a71d98ce": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/role_permission_repository.dart",
+    "lib/core/providers/role_permission_providers.dart"
+   ],
+   "n": "Demo-Konto: Dateiablage-Freigabe gesperrt (ensureNotDemo), die Sperre greift vor der ersten Änderung, wenn files_shared mitgespeichert wird. PR #344."
+  },
+  "songs/songs.page#action-761fe550": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart"
+   ],
+   "n": "Werk hinzufügen schreibt leeren Link als '' wie Ionic. PR #344."
+  }
+ }
+}

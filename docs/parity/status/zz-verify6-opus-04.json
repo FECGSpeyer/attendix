@@ -1,0 +1,436 @@
+{
+ "batch": "zz-verify6-opus-04",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "attendance/attendance/attendance.page#toast-3c53fce6": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1244",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1198"
+   ],
+   "v": "bestätigt",
+   "n": "Weiter gleich: grüner Toast „Termin archiviert“ / „Termin wiederhergestellt“ nach dem Update archived/archived_at/archived_by (tenant-gefiltertes Repo). Rolle wie Ionic canArchiveAttendance (nur Admin/Verantwortlich, beendet oder archiviert), Archivieren mit Bestätigung. Fundstelle von 1193 auf 1244 korrigiert."
+  },
+  "attendance/attendance/attendance.page#toast-d7a6342e": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1247"
+   ],
+   "v": "bestätigt",
+   "n": "Roter Toast „Der Termin konnte nicht geändert werden.“ bei Fehler im catch, wie Ionic. Fundstelle 1196 → 1247."
+  },
+  "attendance/attendance/attendance.page#toast-d8dd95d2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1471",
+    "lib/data/repositories/attendance_repository.dart:1024"
+   ],
+   "v": "bestätigt",
+   "n": "Grüner Toast „Erinnerung versendet“ nach erfolgreichem send-ad-hoc-reminder (gleicher Body inkl. playerAppIds nur bei „nur Offene“). Fundstelle 1410 → 1471."
+  },
+  "attendance/attendance/attendance.page#toast-f2ad9095": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1473"
+   ],
+   "v": "bestätigt",
+   "n": "Roter Toast „Fehler beim Versenden“ bei Fehler der Edge Function (FunctionException wird geworfen). Fundstelle 1412 → 1473."
+  },
+  "x-33b53c7e65": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:62"
+   ],
+   "v": "bestätigt",
+   "n": "Weiter real: computeAddPersonCandidates sortiert gleiche Gruppen mit String.compareTo (Z. 62/64), Ionic mit localeCompare – Umlaute/Kleinbuchstaben stehen in Flutter hinten. Nur Reihenfolge, gleiche Personen."
+  },
+  "x-443cc37b67": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1403",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1407",
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:57",
+    "lib/features/attendance/presentation/attendance_add_persons.dart:51"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser, weiter real: currentPersonIds = alle Zeilen des Termins (_personAttendanceIds), Ionic nur this.players (bei eingeschränktem Stimmführer-Helfer nur eigene Gruppe → Doppelzeilen möglich). Gruppenname/Sortierung über alle Gruppen inkl. Hauptgruppe, Ionic this.instruments ohne Hauptgruppe („Keine Gruppe“, ganz unten)."
+  },
+  "x-4dd0cff1ed": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2390",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2444"
+   ],
+   "v": "korrigiert",
+   "n": "Weiter real (Ionic attendance.page.ts:1533–1537): nach Info/Notizen/Zeiten/Frist setzt Ionic alle history-Zeilen des Termins auf visible = save_in_history, wenn die erste abweicht; Flutter liest save_in_history nirgends und schreibt visible nie um. Betroffen sind Termine mit save_in_history false (migrierte Besprechungs-Platzhalter, sql/migrate_meetings_to_protocols.sql) oder null: in Ionic verschwinden deren Werke nach einer Info-Änderung aus der Werkhistorie, in Flutter bleiben sie sichtbar. Abweichender DB-Wert (history.visible) und andere Historie-Anzeige → nicht niedrig, mittel (selten)."
+  },
+  "x-5905254b84": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:620",
+    "lib/core/providers/role_permission_providers.dart:227",
+    "lib/core/providers/role_permission_providers.dart:246"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser, weiter real: eingeschränkter Helfer/Stimmführer-Helfer ohne geladenes Profil, mit Ladefehler oder Profil ohne Gruppe sieht in Ionic alle Gruppen (Fallback ungefiltert), in Flutter niemanden (AttendanceGroupScope.denied, auch während des Ladens). Flutter hält damit die konfigurierte Einschränkung „nur eigene Gruppe“ ein; im Normalfall (Profil mit Gruppe) gleich. Fehlt die Berechtigungszeile, sehen beide alle."
+  },
+  "x-7bed677ddc": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:640",
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_view_options.dart:124"
+   ],
+   "v": "bestätigt",
+   "n": "Weiter real: sortPersonsByField sortiert mit List.sort (ab 33 Einträgen instabil) über die Personenliste; bei gleichem Feldwert ist die Reihenfolge in Flutter nicht mehr Hauptgruppe/Gruppe/Name wie in Ionic (stabile Sortierung von this.players). Sortierkriterium selbst gleich."
+  },
+  "x-b6a4d5b9be": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:306",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:315",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:360"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser, weiter real: INSERT von anderen Geräten lädt die Zeilen neu (neue Person erscheint), UPDATE übernimmt auch changed_by/changed_at; Ionic ignoriert INSERT (players[-1]) und aktualisiert nur status/notes/duty_state."
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#alert-ca65276f": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:280",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:299",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:308",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:325"
+   ],
+   "v": "bestätigt",
+   "n": "Rollen gleich: Panel nur Admin/Verantwortlich (Ionic isManager, Flutter role.isAdmin||isResponsible) und erst ab Terminbeginn. Dialog: Titel = Name, Text je nach Art (anwesend/Grund/ablehnen), Buttons „Abbrechen“ / „Auf anwesend“|„Entschuldigen“|„Ablehnen“ (rot); Edge Function attendance-response {action: decide, responseId, accept}, danach Erfolgs- bzw. Fehler-Toast wie Ionic."
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#nav-bd2317ce": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:268",
+    "lib/core/router/app_router.dart:1053"
+   ],
+   "v": "bestätigt",
+   "n": "Ohne message_id: push /settings/auto-messages/{ruleId}?tab=history, Route liest tab → Verlauf-Reiter (AutoMessageRulePage initialTab history), wie Ionic /tabs/settings/auto-messages/:id?tab=history."
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#nav-e5389e36": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:266",
+    "lib/core/router/app_router.dart:966"
+   ],
+   "v": "bestätigt",
+   "n": "Mit message_id: push /messages/{id} (MessageDetailPage), wie Ionic /tabs/messages/:id; Button „Wer hat gelesen?“ nur bei Status sent."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#loading-e612daf1": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:319",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:305"
+   ],
+   "v": "bestätigt",
+   "n": "Weiter so: Ionic blockierendes Overlay „Verteile Dienste…“ / Flutter ersetzt den Body durch Spinner mit gleichem Text, das X in der AppBar bleibt bedienbar. Nur Ladeanzeige."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#loading-ef16b6da": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:319",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:340",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:299",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:311"
+   ],
+   "v": "bestätigt",
+   "n": "Weiter so: Ionic blockierendes Overlay „Teile ein…“ / Flutter Body-Spinner mit gleichem Text, Speichern-Button deaktiviert, „Zurück“ und „Neu verteilen“ bleiben während des Speicherns bedienbar (Speicherschleife läuft über die alte Zeilenliste weiter). Nur Ladeanzeige."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#logic-488dd772": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:78",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:107",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:152",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:161",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:204",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:222",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:262",
+    "lib/core/utils/duty_utils.dart:253"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Stand geprüft: Defaults (nächster Monat, alle Dienst-Typen, max 2 (1–10), nicht zweimal am Tag), Kandidaten (ohne Dienst, nicht abgesagt, keine Verhinderung), distributeDuties identisch, Zählung Basis + geplant über alle Dienst-Typen, Summen, Tauschen/„Niemand“/„Niemand sonst“, Speichern je Termin über assign (gleiche Spalten, duty-notify), Toast und Schließen. Abweichungen nur niedrig: Gleicher-Tag-Sperre zählt mehr Termine (x-d3edffbcbe), Speichern läuft nach Fehler weiter (x-41b22d1e2d), Ladefehler sichtbar (x-9bddce3977), Namens-Tiebreak (x-3829883249)."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#toast-2f70fc41": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:109"
+   ],
+   "v": "bestätigt",
+   "n": "Gelber Toast „Bitte wähle mindestens einen Termintyp“ ohne gewählten Typ. Rolle: Seite nur über den Button in der Terminliste für Admin/Verantwortlich mit Dienst-Typen (attendance_list_page:395, Ionic isConductor && hasDutyTypes). Fundstelle 108 → 109."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#toast-79fe0ace": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:284"
+   ],
+   "v": "bestätigt",
+   "n": "Grüner Toast „{n} Dienst(e) eingeteilt. Alle bekommen eine Push-Nachricht.“ nach erfolgreichem Einteilen, danach Schließen mit true; Dauer Standard statt 4 s. Bei Fehler wie Ionic kein Erfolgstoast. Fundstelle 291 → 284."
+  },
+  "x-3829883249": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:229",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:462"
+   ],
+   "v": "bestätigt",
+   "n": "Weiter real: Tausch-Optionen und „Dienste pro Person“ bei Gleichstand mit String.compareTo statt localeCompare (Umlaute nach Z, Kleinbuchstaben nach Großbuchstaben). Nur Reihenfolge."
+  },
+  "x-41b22d1e2d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:271",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:280"
+   ],
+   "v": "bestätigt",
+   "n": "Weiter real: Ionic bricht beim ersten fehlerhaften Termin ab (assign zeigt „Fehler beim Einteilen“ und wirft), Flutter teilt die übrigen Termine trotzdem ein und zeigt danach einmal „Fehler beim Einteilen“; Seite bleibt in beiden offen. Geschrieben werden nur die in der Vorschau bestätigten Einteilungen mit gleichen Werten, nur im Fehlerfall mehr davon → niedrig."
+  },
+  "x-9bddce3977": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:146"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser, weiter real: Ionic verschluckt Ladefehler (getUpcomingDutyTermine → [], getDutyCounts → leere Map) und zeigt „Im Zeitraum gibt es keine Termine mit Dienst-Modus.“ bzw. verteilt ohne Basiszählung; Flutter zeigt roten Toast „Fehler: …“ und bleibt im Regeln-Schritt."
+  },
+  "x-d3edffbcbe": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:124",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:174"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser, weiter real: Flutter lädt alle Dienst-Typen und gibt voll besetzte sowie nicht gewählte Termine mit open 0 mit, deren Eingeteilte blockieren bei „Nicht zweimal am selben Tag“ den Tag; Ionic filtert sie vorher heraus. Vorschlag kann abweichen, Vorschau bleibt änderbar."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#alert-b577ca37": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:122",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:140",
+    "lib/data/repositories/duty_repository.dart:423",
+    "lib/data/repositories/duty_repository.dart:464",
+    "lib/core/providers/duty_providers.dart:308"
+   ],
+   "v": "bestätigt",
+   "n": "Geänderte duty_repository.dart geprüft: _futureMatches liest person_attendances (person_id, attendance.tenantId, ab heute), gleicher Filter (sichtbare Typen, kein Dienst, Standardstatus, Entschuldigt erlaubt, Regel passt); Übernehmen schreibt status Entschuldigt, notes unavailabilityNote, changed_by/at für dieselben ids. Lese-Fehler → 0 wie Ionic, Update-Fehler → roter Toast „Fehler beim Übernehmen in geplante Termine“ wie Ionic. Titel, Text (selbst/für andere mit Vorname, Vorschau max. 4 + „ …“), Buttons „Nur neue Termine“ / „Auch geplante“ gleich."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#logic-8717ad43": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:148",
+    "lib/data/repositories/duty_repository.dart:464",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:234",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:237"
+   ],
+   "v": "bestätigt",
+   "n": "Weiter zutreffend: sichtbare Typen, Neu mit Dienst-Typen, Wochentag-Pflicht, Speichern (tenant_id, created_by, Fehler „Fehler beim Speichern“), Vorschau, Vorname bei forOther, Löschen mit Bestätigung, Übernehmen mit Fehler-Toast. Übrig niedrig: x-1017c7460d (Ladefehler ohne Button), x-21dc916f43 (Typnamen unsichtbarer Typen), Grund wird getrimmt."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#toast-b910e419": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:128"
+   ],
+   "v": "bestätigt",
+   "n": "Grüner Toast „Gespeichert“, wenn keine geplanten Termine passen (countFutureMatches mit sichtbaren Typen, Fehler → 0 in beiden). Erreichbarkeit unverändert, im Modal keine Rollenprüfung. Fundstelle 127 → 128."
+  },
+  "x-1017c7460d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:237"
+   ],
+   "v": "bestätigt",
+   "n": "Weiter real: Ionic Toast „Fehler beim Laden der Verfügbarkeit“, dann leere Liste mit Button „Regel hinzufügen“ / Flutter nur „Fehler: …“ im Body, ohne Button. Fehler wird in beiden gemeldet."
+  },
+  "x-21dc916f43": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:234",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:260"
+   ],
+   "v": "bestätigt",
+   "n": "Weiter real: Regel-Liste nutzt alle Termintypen (attendanceTypesProvider), Ionic typesText nur sichtbare → Namen unsichtbarer Typen erscheinen in Flutter zusätzlich."
+  },
+  "export/export.page#effect-b206f4b4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/services/export_service.dart:179",
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "v": "bestätigt",
+   "n": "Weiter so: nativ Datei in Cache schreiben und öffnen, Desktop-Browser Download wie Ionic; mobiler Browser/PWA: Ionic Web-Share-Sheet (navigator.share), Flutter Printing.sharePdf = im Web nur Anchor-Download (printing 5.15.1 printing_web.dart:249)."
+  },
+  "export/export.page#effect-b5cfc616": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/services/export_service.dart:89",
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "v": "bestätigt",
+   "n": "Weiter so: Spieler-PDF nativ (iOS/Android) in Cache schreiben und öffnen wie Ionic, Desktop-Browser Download; mobiler Browser/PWA: Ionic Teilen-Dialog (navigator.share), Flutter nur Anchor-Download (Printing.sharePdf web)."
+  },
+  "export/export.page#logic-fc4181cd": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/export/export_fields.dart:12",
+    "lib/features/export/export_fields.dart:70",
+    "lib/features/export/export_fields.dart:102",
+    "lib/features/export/export_fields.dart:148",
+    "lib/features/export/presentation/pages/export_page.dart:82",
+    "lib/features/export/presentation/pages/export_page.dart:346",
+    "lib/core/services/export_service.dart:185",
+    "lib/core/services/export_service.dart:424"
+   ],
+   "v": "bestätigt",
+   "n": "Geänderte export_service.dart geprüft: PDF max. 8 neueste Termine aufsteigend (sublist der aufsteigenden Liste = Ionic erste 8 absteigend + reverse), Statuscodes X/A/E/L(auch spät entschuldigt)/N, leer wenn nicht im Termin, Farben je Code, Dateinamen „…_Spielerliste_Stand_…“/„…_Anwesenheit_Stand_…“, Sheet „Anwesenheit“, Titel/„Stand:“ gleich. Rest wie im ersten Urteil; Abweichungen nur Flutter-Zusatzmeldungen."
+  },
+  "history/history.page#logic-41631a29": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/providers/history_providers.dart:18",
+    "lib/features/history/history_utils.dart:22",
+    "lib/features/history/presentation/pages/history_page.dart:238",
+    "lib/features/history/presentation/pages/history_page.dart:249",
+    "lib/features/history/presentation/pages/history_page.dart:908"
+   ],
+   "v": "bestätigt",
+   "n": "Gegen aktuellen Stand geprüft: history (tenantId, visible=true, date desc), Termindatum vor Eintragsdatum, Dirigentennamen inkl. ausgetretene, Probenzähler, Gruppierung TT.MM.JJJJ, Datumseingabe, Löschen mit Haptik + Bestätigung, Einfügen mehrerer Werke mit visible=true und person_id/otherConductor gleich. Zusätzlich niedrig: Flutter setzt das Datum bei jedem Öffnen von „Werk(e) hinzufügen“ auf heute, Ionic behält das zuletzt gewählte Datum solange die Seite offen ist; Suche findet in Flutter auch Nummer/Dirigent. Sonst siehe extra."
+  },
+  "x-74a55a2af4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:755",
+    "lib/data/models/history/history_entry.dart:42"
+   ],
+   "v": "bestätigt",
+   "n": "Weiter real: fehlendes Werk → „Unbekanntes Werk“, fehlender Dirigent → „Unbekannt“; Ionic zeigt leeren Namen bzw. leer hinter „|“."
+  },
+  "x-7ddfeabbe3": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:249"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser, weiter real: Gruppen in DB-Reihenfolge (date desc) = neueste zuerst; Ionic sortiert mit dayjs('DD.MM.YYYY') ohne customParseFormat, browserabhängig."
+  },
+  "x-b33e35745e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:138",
+    "lib/features/history/presentation/pages/history_page.dart:578",
+    "lib/features/history/presentation/pages/history_page.dart:618",
+    "lib/features/history/presentation/pages/history_page.dart:297"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser, weiter real: Toasts „{n} Werke hinzugefügt“ / „Eintrag gelöscht“, Fehlertoasts beim Hinzufügen/Löschen, Fehleransicht mit „Erneut versuchen“, Hinweis bei leerer Werkbibliothek statt Ionic-Absturz (songs[0].id)."
+  },
+  "home-dashboard/components/absences-card/absences-card.component#logic-443db571": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/dashboard_providers.dart:252",
+    "lib/core/utils/dashboard_utils.dart:193",
+    "lib/core/utils/dashboard_utils.dart:240",
+    "lib/data/repositories/dashboard_repository.dart:124",
+    "lib/data/repositories/dashboard_repository.dart:36"
+   ],
+   "v": "bestätigt",
+   "n": "Geänderte dashboard_repository.dart geprüft: player_absences nach tenant_id (seitenweise, alle Zeilen) + alle nicht-pending Personen der Instanz inkl. ausgetretene (seitenweise). Logik unverändert gleich: Beginn oder Ende nach heute−28 Tage, pausierte nicht ausgetretene Personen mit letztem Pausiert-Eintrag, absteigend nach Beginn, Untertitel wie Ionic. Fehlerfall: Flutter Fehlerzeile, Ionic Toast + leere Karte."
+  },
+  "home-dashboard/components/current-songs-card/current-songs-card.component#logic-844e5465": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/providers/dashboard_providers.dart:275",
+    "lib/core/utils/dashboard_logic.dart:157",
+    "lib/data/repositories/dashboard_repository.dart:148",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:315"
+   ],
+   "v": "bestätigt",
+   "n": "Gleiche Abfrage (history mit Werk/Dirigent/Termin, tenantId, ab heute), Gruppierung „Datum | Typinfo“, ein Eintrag je Werk, Nummer prefix+number, Untertitel und relative Tage wie Ionic; Sortierunterschied siehe extra. Neu gesehen (niedrig, siehe extra): Untergrenze ist UTC-Mitternacht statt lokaler Mitternacht → manuell für heute eingetragene Werke (Datum 00:00Z) fehlen."
+  },
+  "home-dashboard/components/current-songs-card/current-songs-card.component#nav-dac62404": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:335",
+    "lib/core/router/route_access.dart:46"
+   ],
+   "v": "bestätigt",
+   "n": "Dashboard nur für Admin/Verantwortliche (showDashboardTabProvider, Route /home-dashboard); für sie canOpenSongsTab → push /songs-tab/:id wie Ionic /tabs/songs-tab/:id."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#logic-4b019c62": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/providers/dashboard_providers.dart:260",
+    "lib/core/utils/dashboard_logic.dart:107",
+    "lib/data/repositories/dashboard_repository.dart:62",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:45"
+   ],
+   "v": "bestätigt",
+   "n": "Geänderte Dateien geprüft: getEventsAroundToday liest je 5 Termine vor (Saisonstart) / ab heute mit Personen, tenantId; letzter/nächster über hasEnded auf der Gesamtliste, Zählungen und Prozent wie Ionic, Öffnen nur Admin/Verantwortlich/Helfer/Stimmführer-Helfer als Seiten-Modal, danach Neuladen. Sortierunterschied (Abgemeldete mit compareTo) siehe extra."
+  },
+  "home-dashboard/home-dashboard.page#loading-bee7e5e1": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:180"
+   ],
+   "v": "bestätigt",
+   "n": "Weiter so: Ionic blockierendes Lade-Overlay während des Instanzwechsels / Flutter kein Overlay, UI bleibt bis zur Navigation bedienbar. Ziel (role.defaultRoute) gleich."
+  },
+  "home-dashboard/home-dashboard.page#logic-a918ee9c": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:42",
+    "lib/core/providers/dashboard_providers.dart:218",
+    "lib/core/providers/dashboard_providers.dart:298",
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:180"
+   ],
+   "v": "bestätigt",
+   "n": "Weiter zutreffend: Kartenkonfiguration je Instanz, sichtbare Karten in Reihenfolge, „Meine Aufgaben“ nur mit Teamorganisation, Pull-to-Refresh lädt alle Karten inkl. Aufgaben neu, Instanzwechsel nur bei anderer Instanz → Startseite der Rolle, 1/2/3 Spalten ab 768/1200 px. Unterschiede siehe extra."
+  }
+ },
+ "extra": [
+  {
+   "unit": "home-dashboard/components/current-songs-card/current-songs-card.component",
+   "title": "„Aktuelle Werke“: heutige manuelle Einträge fehlen",
+   "n": "Ionic: getCurrentSongs filtert date > dayjs().startOf('day').toISOString() (lokale Mitternacht, z. B. 23:00Z Vortag) / Flutter: gt('date', DateTime(heute).toIso8601String()) ohne Zeitzone → Postgres wertet als 00:00Z. Termine liegen auf 12 Uhr (beide gleich), aber in der Werkhistorie für heute eingetragene Werke (Flutter speichert 'YYYY-MM-DD' = 00:00Z, Ionic-Datumswahl ebenso) erscheinen in Flutter nicht, in Ionic schon. Randfall.",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:3128",
+   "f": [
+    "lib/data/repositories/dashboard_repository.dart:171",
+    "lib/features/history/presentation/pages/history_page.dart:560"
+   ]
+  }
+ ]
+}

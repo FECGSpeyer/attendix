@@ -1,0 +1,2420 @@
+{
+ "batch": "zz-verify5-a-opus-03",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "register/tenant-register/tenant-register.page",
+   "ionic": {
+    "ts": "register/tenant-register/tenant-register.page.ts",
+    "html": "register/tenant-register/tenant-register.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "register/tenant-register/tenant-register.page.ts",
+    "line": 456,
+    "method": "TenantRegisterPage.validate",
+    "cond": [
+     "(typeof field.value !== 'boolean')",
+     "(field.type === FieldType.BOOLEAN)",
+     "!(field.type === FieldType.DATE)",
+     "!(field.type === FieldType.NUMBER)"
+    ],
+    "message": {
+     "keys": [
+      "tenantRegister.fieldValue"
+     ],
+     "de": [
+      "Bitte geben Sie einen gültigen Wert für das Feld \"{field}\" ein."
+     ],
+     "literals": [],
+     "expr": "translate('tenantRegister.fieldValue', { field: field.name })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "020e2465",
+    "mbody": "167c118b",
+    "roleGuarded": true,
+    "id": "register/tenant-register/tenant-register.page#toast-23c76f81"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+    ],
+    "n": "behoben in #296",
+    "v": null,
+    "src": "zz-fixed-app.json",
+    "flutterAt": "c9dd1aa"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "selfService/overview/overview.page",
+   "ionic": {
+    "ts": "selfService/overview/overview.page.ts",
+    "html": "selfService/overview/overview.page.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "selfService/overview/overview.page.ts",
+    "line": 275,
+    "method": "OverviewPage.presentActionSheetForChoice",
+    "cond": [],
+    "header": null,
+    "subHeader": null,
+    "buttons": [
+     {
+      "expr": "buttons",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "src": "a81daf9a",
+    "mbody": "773d1896",
+    "roleGuarded": true,
+    "id": "selfService/overview/overview.page#actionsheet-1394033e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:391"
+    ],
+    "n": "behoben in #298",
+    "v": null,
+    "src": "zz-fixed-selbstservice.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/overview/overview.page",
+   "ionic": {
+    "ts": "selfService/overview/overview.page.ts",
+    "html": "selfService/overview/overview.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "selfService/overview/overview.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:58-71",
+     "ngOnInit:73-84",
+     "loadAttendances:86-90",
+     "processAttendances:92-113",
+     "calculateStats:115-126",
+     "groupByTenant:128-158",
+     "handleRefresh:160-163",
+     "onGroupingChange:165-167",
+     "presentActionSheetForChoice:173-280",
+     "showNoteAlertForSignin:282-305",
+     "signin:307-318",
+     "onExcuseConfirm:320-333",
+     "showNoteAlert:335-361",
+     "attHasPassed:363-365",
+     "attIsInFuture:367-369",
+     "isAttToday:371-373",
+     "getReadableDate:375-377",
+     "showDeadlineInfo:379-384",
+     "getDeadlineText:386-390",
+     "getBadgeColor:392-401",
+     "getBadgeText:403-405",
+     "hasFilesFolder:407-409",
+     "openFilesFolder:411-419",
+     "openAttachment:421-425",
+     "openDescription:427-430",
+     "get upcomingGroups:431-436",
+     "get pastPreview:438-440",
+     "weekday:442-444",
+     "day:446-448",
+     "getEventTitle:450-452",
+     "getEventMeta:455-463",
+     "statusColorOf:465-467",
+     "statusLabelOf:469-471",
+     "isSigninOpen:473-479",
+     "quickActions:482-494",
+     "quickSignout:496-500",
+     "openRoute:502-506"
+    ],
+    "bodies": {
+     "constructor": "1a7632f4",
+     "ngOnInit": "fb18ad25",
+     "loadAttendances": "3e1ff873",
+     "processAttendances": "5bd34d13",
+     "calculateStats": "6dbd5baf",
+     "groupByTenant": "8164d93c",
+     "handleRefresh": "8a20fae9",
+     "onGroupingChange": "ee756c9f",
+     "presentActionSheetForChoice": "773d1896",
+     "showNoteAlertForSignin": "7ed2df29",
+     "signin": "7e386c0a",
+     "onExcuseConfirm": "8cae2cd0",
+     "showNoteAlert": "a47fa0b0",
+     "attHasPassed": "373a8591",
+     "attIsInFuture": "caf73528",
+     "isAttToday": "c27321fb",
+     "getReadableDate": "b8fe322b",
+     "showDeadlineInfo": "8fef411e",
+     "getDeadlineText": "d76b4509",
+     "getBadgeColor": "d77b4829",
+     "getBadgeText": "faa84fd9",
+     "hasFilesFolder": "02b2c441",
+     "openFilesFolder": "5eb057f1",
+     "openAttachment": "ba6d7173",
+     "openDescription": "3914e6d8",
+     "get upcomingGroups": "8b16562d",
+     "get pastPreview": "7896023d",
+     "weekday": "f88e8aa0",
+     "day": "e7c6d43d",
+     "getEventTitle": "279ac586",
+     "getEventMeta": "41c64097",
+     "statusColorOf": "c71525bf",
+     "statusLabelOf": "edfb9eec",
+     "isSigninOpen": "c33324f0",
+     "quickActions": "dd38e6f5",
+     "quickSignout": "c6dcbfcb",
+     "openRoute": "5a8b4ce3"
+    },
+    "id": "selfService/overview/overview.page#logic-1ed68b7a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/providers/self_service_providers.dart:17-155",
+     "lib/data/repositories/sign_in_out_repository.dart:535-640",
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:373-428"
+    ],
+    "n": "Laden (Mitgliedschaften, Person je Instanz, seasonStart, Typen), Aufteilung anstehend/vergangen, aktueller Termin, Prozent/Verspätungen (include_in_average, shift_excused_as_present der aktuellen Instanz), Gruppierung nach Instanz, Schnellaktionen, Frist-Chip und DB-Schreibvorgänge entsprechen Ionic. Abweichungen: Aktionsblatt bei Entschuldigt/Verspätung gemeldet (hoch), strengere Typfilter, archivierte Termine, Personenwahl, changed_by, Dienst-Sync anderer Instanzen, Farbanzahl, Fehlerbehandlung – siehe extra.",
+    "sev": "hoch",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/sign_in_out_repository.dart",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "selfService/overview/overview.page",
+   "ionic": {
+    "ts": "selfService/overview/overview.page.ts",
+    "html": "selfService/overview/overview.page.html"
+   },
+   "extra": {
+    "id": "x-9e43a66882",
+    "title": "Aktionsblatt bei Entschuldigt / Verspätung gemeldet",
+    "n": "Befund echt. Ionic Übersicht: Entschuldigt (E) → „Anmelden“ + „Anmelden mit Notiz“; Verspätung gemeldet (text 'L') → zusätzlich „Abmelden“ + „Verspätung eintragen“, nach Fristende bleiben diese beiden. / Flutter overviewMode: isExcusedStatus blendet „Anmelden mit Notiz“ aus und sperrt „Abmelden“/„Verspätung eintragen“ → kein direkter Wechsel von „Verspätung gemeldet“ zu Abmelden, nach Frist nur Toast „keine Aktionen“.",
+    "sev": "hoch",
+    "ionic": "src/app/selfService/overview/overview.page.ts:218",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:377",
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:391",
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:394"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-selbstservice.json",
+    "n": "behoben in #298"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "selfService/parents/parents.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:59-82",
+     "onTenantChange:84-91",
+     "ngOnInit:93-95",
+     "waitForAttendance:97-109",
+     "initialize:111-173",
+     "organizeAttendances:175-205",
+     "get pastPreview:207-209",
+     "weekday:211-213",
+     "day:215-217",
+     "isRunning:219-221",
+     "isHighlighted:223-225",
+     "getEventTitle:227-229",
+     "getEventMeta:232-242",
+     "initials:244-246",
+     "statusColorOf:248-250",
+     "statusLabelOf:252-254",
+     "openAttendanceById:256-261",
+     "openAttachment:263-267",
+     "openDescription:269-272",
+     "calculateKidStats:274-302",
+     "getReadableDate:304-311",
+     "getStatusText:313-328",
+     "openActionSheet:330-421",
+     "onExcuseConfirm:423-430",
+     "signin:432-441",
+     "refreshPersonAttendances:443-461",
+     "handleRefresh:463-466",
+     "openSongLink:468-472",
+     "loadAttendanceSongs:475-504",
+     "songsOf:506-508",
+     "openAttendanceSongs:510-529",
+     "hasPlan:531-533",
+     "openPlanViewer:535-550"
+    ],
+    "bodies": {
+     "constructor": "e64beaad",
+     "onTenantChange": "a99fac6c",
+     "ngOnInit": "a9afccd9",
+     "waitForAttendance": "c713f7b8",
+     "initialize": "d3bccc2d",
+     "organizeAttendances": "684b3199",
+     "get pastPreview": "e50e1f07",
+     "weekday": "f88e8aa0",
+     "day": "e7c6d43d",
+     "isRunning": "91a4c21a",
+     "isHighlighted": "907ad49f",
+     "getEventTitle": "98728d52",
+     "getEventMeta": "347a2a6b",
+     "initials": "10941e95",
+     "statusColorOf": "65e0cabd",
+     "statusLabelOf": "cae91b6b",
+     "openAttendanceById": "572212d7",
+     "openAttachment": "ba6d7173",
+     "openDescription": "eb36c64f",
+     "calculateKidStats": "ff2d64d3",
+     "getReadableDate": "18df5bb3",
+     "getStatusText": "83a77722",
+     "openActionSheet": "a925d9d0",
+     "onExcuseConfirm": "e487c2e0",
+     "signin": "6dee7e91",
+     "refreshPersonAttendances": "15a953b9",
+     "handleRefresh": "30df9445",
+     "openSongLink": "cdf6bdd3",
+     "loadAttendanceSongs": "fa8198aa",
+     "songsOf": "7cb4f381",
+     "openAttendanceSongs": "050ec352",
+     "hasPlan": "344c62f1",
+     "openPlanViewer": "8bdd8a97"
+    },
+    "id": "selfService/parents/parents.page#logic-ed920d8b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/parents/data/providers/parents_providers.dart:219-452",
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:399-534"
+    ],
+    "n": "Kinder (parent_id, nicht pending/left), Termine aller Kinder (archiviert nur für Admin/Verantwortliche), aktueller/anstehende/vergangene (max. 10, Vorschau 3), Kinder-Prozent (vergangene, shift_excused_as_present), Werke je Termin und 'Aktuelle Werke', Aktionsblatt-Regeln und DB-Schreibvorgänge entsprechen Ionic. Abweichungen: Benachrichtigung bei 'Verspätung gemeldet', Kinder-Reihenfolge, hide_name im Titel, Wahl des laufenden Termins, keine 2020-Untergrenze, changed_by, Fehlerbehandlung, leere Zustände, Ablaufplan ohne Felder – siehe extra.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/parents/data/providers/parents_providers.dart",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "extra": {
+    "id": "x-3b9835638f",
+    "title": "Benachrichtigung bei Anmeldung nach 'Verspätung gemeldet'",
+    "n": "Befund echt. Ionic parents.signin: attendance ist das zusammengebaute Termin-Objekt ohne status → Typ immer 'signin' → quick-processor benachrichtigt. / Flutter: Typ je Kindstatus, bei „Verspätung gemeldet“ 'lateSignIn'; quick-processor kennt nur 'lateSignin' → keine Push-/Telegram-Benachrichtigung. DB-Schreibung gleich.",
+    "sev": "mittel",
+    "ionic": "src/app/selfService/parents/parents.page.ts:434",
+    "f": [
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:468",
+     "lib/data/repositories/sign_in_out_repository.dart:670"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-selbstservice.json",
+    "n": "behoben in #298"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "selfService/parents/parents.page",
+   "ionic": {
+    "ts": "selfService/parents/parents.page.ts",
+    "html": "selfService/parents/parents.page.html"
+   },
+   "extra": {
+    "id": "x-afb9c7a207",
+    "title": "Reihenfolge der Kinder",
+    "n": "Befund echt. Ionic getPlayers (PARENT): order instrument, isLeader desc, lastName; Kinder je Termin in dieser Reihenfolge (stabile Sortierung). / Flutter getChildrenForParent nur order lastName; Kinder je Termin in DB-Reihenfolge von getPersonAttendancesForPersons (nur nach Termin-Datum sortiert).",
+    "sev": "mittel",
+    "ionic": "src/app/services/db.service.ts:1586",
+    "f": [
+     "lib/data/repositories/player_repository.dart:222",
+     "lib/features/parents/data/providers/parents_providers.dart:254"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-selbstservice.json",
+    "n": "behoben in #298"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/signout/signout.page.html",
+    "line": 108,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)"
+    ],
+    "tag": "ion-refresher",
+    "attrs": {
+     "slot": "fixed"
+    },
+    "events": [
+     "(ionRefresh)=handleRefresh($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "selfService/signout/signout.page#action-47659591"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:122"
+    ],
+    "n": "behoben in #298",
+    "v": null,
+    "src": "zz-fixed-selbstservice.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/signout/signout.page.html",
+    "line": 530,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (!useDutyView || showOtherTermine)",
+     "@if (actualAttendances?.length)",
+     "@for (group of upcomingGroups; track group.key)",
+     "@for (att of group.items; track att.attendance_id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=presentActionSheetForChoice(att)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[class.not-member]=\"showAllAttendances && !att.isMember\""
+    ],
+    "icons": [
+     "headset-outline",
+     "eye-outline"
+    ],
+    "keys": [
+     "signout.duty",
+     "signout.notInvited"
+    ],
+    "de": [
+     "Dienst",
+     "Nicht eingeladen"
+    ],
+    "literals": [],
+    "text": "{{ weekday(att.date) }} {{ day(att.date) }} {{ getEventTitle(att) }} {{ 'signout.duty' | transloco }} {{ meta }} {{ showAllAttendancesInfoText }} {{ statusLabelOf(att) }} {{ 'signout.notInvited' | tr…",
+    "id": "selfService/signout/signout.page#action-836ea596"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:548"
+    ],
+    "n": "behoben in #298",
+    "v": null,
+    "src": "zz-fixed-selbstservice.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "selfService/signout/signout.page.html",
+    "line": 711,
+    "cond": [
+     "@else (not isApplicant)",
+     "in <ion-modal isOpen=\"isAbsenceModalOpen\">"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "[disabled]": "\"!absenceReason || !absenceFrom || !absenceUntil\""
+    },
+    "events": [
+     "(click)=confirmAbsence()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "calendar-outline"
+    ],
+    "keys": [
+     "signout.enterAbsence"
+    ],
+    "de": [
+     "Abwesenheit eintragen"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.enterAbsence' | transloco }}",
+    "id": "selfService/signout/signout.page#action-89fbd54f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_absence_repository.dart:189",
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:47"
+    ],
+    "n": "behoben in #298",
+    "v": null,
+    "src": "zz-fixed-selbstservice.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:97-122",
+     "onTenantChange:124-131",
+     "ngOnInit:133-135",
+     "waitForStableViewport:142-161",
+     "waitForPersonAttendance:163-177",
+     "initialize:179-225",
+     "onExcuseConfirm:227-249",
+     "showNoteAlertForSignin:251-279",
+     "signin:281-296",
+     "getAttendances:298-365",
+     "attIdOf:367-369",
+     "loadAttendanceSongs:372-399",
+     "songsOf:401-403",
+     "openAttendanceSongs:405-424",
+     "typeOf:428-430",
+     "isUnassignedDuty:433-435",
+     "isDutyPa:437-439",
+     "applyDutyView:441-455",
+     "loadOpenDuties:457-473",
+     "applyDutyLayout:476-491",
+     "get otherTermineCount:493-495",
+     "get otherTermineNames:497-502",
+     "dutyTeam:505-512",
+     "isUrgentDuty:514-520",
+     "get openDutiesPreview:522-526",
+     "scrollToSection:528-530",
+     "openUnavailability:532-542",
+     "dutyMeta:544-547",
+     "dutyTitle:549-551",
+     "confirmDuty:553-557",
+     "declineDuty:559-561",
+     "takeDuty:563-579",
+     "openAttendanceById:581-596",
+     "hasFilesFolder:598-600",
+     "openFilesFolder:602-609",
+     "openAttachment:611-615",
+     "openRoute:617-621",
+     "openDescription:623-626",
+     "presentActionSheetForChoice:632-829",
+     "getRegistrationFields:833-835",
+     "handleSigninWithFields:837-861",
+     "showSingleFieldAlert:863-910",
+     "confirmRegistrationAnswers:912-933",
+     "cancelRegFieldsEdit:935-939",
+     "toggleMultiSelectOption:941-945",
+     "get upcomingGroups:949-954",
+     "get pastAttendances:957-962",
+     "get pastPreview:964-966",
+     "weekday:968-970",
+     "day:972-974",
+     "getEventTitle:976-978",
+     "getEventMeta:981-991",
+     "isOwnAttendance:994-996",
+     "percColor:998-1000",
+     "statusColorOf:1002-1007",
+     "statusLabelOf:1009-1014",
+     "isSigninOpen:1016-1022",
+     "quickActions:1025-1039",
+     "quickSignout:1041-1044",
+     "attIsInFuture:1046-1048",
+     "isExcusedStatus:1050-1052",
+     "isAttToday:1054-1056",
+     "getReadableDate:1058-1060",
+     "ionViewWillEnter:1062-1068",
+     "handleRefresh:1070-1074",
+     "openPlanViewer:1077-1094",
+     "hasPlan:1096-1098",
+     "getSongNames:1100-1104",
+     "openSongLink:1106-1110",
+     "openSongOptions:1112-1114",
+     "printAllCurrentFiles:1116-1119",
+     "showDeadlineInfo:1121-1123",
+     "getDeadlineText:1125-1135",
+     "hasSongNotesForPlayer:1141-1143",
+     "openPauseModal:1145-1149",
+     "dismissPauseModal:1151-1155",
+     "confirmPause:1157-1191",
+     "dismissAbsenceModal:1193-1198",
+     "resetAbsenceRange:1200-1203",
+     "onAbsenceDatePick:1205-1222",
+     "get absenceHighlightedDates:1224-1238",
+     "confirmAbsence:1240-1289",
+     "deleteAbsence:1291-1336",
+     "confirmUnpause:1338-1370"
+    ],
+    "bodies": {
+     "constructor": "fe6ada26",
+     "onTenantChange": "a99fac6c",
+     "ngOnInit": "a9afccd9",
+     "waitForStableViewport": "b441ffa7",
+     "waitForPersonAttendance": "d9390d6c",
+     "initialize": "cdc80dd4",
+     "onExcuseConfirm": "0fbde54d",
+     "showNoteAlertForSignin": "61347c98",
+     "signin": "d47cb372",
+     "getAttendances": "978864fa",
+     "attIdOf": "a4e8e2fa",
+     "loadAttendanceSongs": "9ec02fb5",
+     "songsOf": "3c5a62a6",
+     "openAttendanceSongs": "9e3a8fe2",
+     "typeOf": "a4787ee5",
+     "isUnassignedDuty": "8b2db7ce",
+     "isDutyPa": "dcee8252",
+     "applyDutyView": "e5db8eb7",
+     "loadOpenDuties": "f3d5e0bf",
+     "applyDutyLayout": "488d50eb",
+     "get otherTermineCount": "c2022d09",
+     "get otherTermineNames": "6bf8b6c3",
+     "dutyTeam": "bb34da19",
+     "isUrgentDuty": "c9133419",
+     "get openDutiesPreview": "a86b63f1",
+     "scrollToSection": "0da7d742",
+     "openUnavailability": "d29fb21a",
+     "dutyMeta": "e3fb386e",
+     "dutyTitle": "71f99b9c",
+     "confirmDuty": "4fe3f420",
+     "declineDuty": "f402b5d1",
+     "takeDuty": "0e73bea7",
+     "openAttendanceById": "4c9888ee",
+     "hasFilesFolder": "6129b2f6",
+     "openFilesFolder": "bc20b307",
+     "openAttachment": "ba6d7173",
+     "openRoute": "5e1601da",
+     "openDescription": "fd71e2c0",
+     "presentActionSheetForChoice": "b194e193",
+     "getRegistrationFields": "ad824248",
+     "handleSigninWithFields": "6fd6d63b",
+     "showSingleFieldAlert": "cd42392f",
+     "confirmRegistrationAnswers": "0af641c0",
+     "cancelRegFieldsEdit": "9e6a5882",
+     "toggleMultiSelectOption": "b2b48c97",
+     "get upcomingGroups": "e11c6a44",
+     "get pastAttendances": "c788a342",
+     "get pastPreview": "ffcc7eb0",
+     "weekday": "f88e8aa0",
+     "day": "e7c6d43d",
+     "getEventTitle": "35fa4584",
+     "getEventMeta": "e65d3358",
+     "isOwnAttendance": "eb463bdb",
+     "percColor": "7758ef15",
+     "statusColorOf": "3fd35955",
+     "statusLabelOf": "925d4820",
+     "isSigninOpen": "6a9c37f5",
+     "quickActions": "0114b1d9",
+     "quickSignout": "b8f45632",
+     "attIsInFuture": "1202ffee",
+     "isExcusedStatus": "d224c9df",
+     "isAttToday": "4a126cd6",
+     "getReadableDate": "729cbb47",
+     "ionViewWillEnter": "031877a4",
+     "handleRefresh": "310e6460",
+     "openPlanViewer": "f9a3e63c",
+     "hasPlan": "77e9d3a7",
+     "getSongNames": "a217320f",
+     "openSongLink": "cdf6bdd3",
+     "openSongOptions": "35fd1dc5",
+     "printAllCurrentFiles": "cb0722f0",
+     "showDeadlineInfo": "6e195ad8",
+     "getDeadlineText": "8c4db4b5",
+     "hasSongNotesForPlayer": "1d682616",
+     "openPauseModal": "2f3b8b5f",
+     "dismissPauseModal": "4dee1801",
+     "confirmPause": "b70f3a83",
+     "dismissAbsenceModal": "7fb63575",
+     "resetAbsenceRange": "caaf75e4",
+     "onAbsenceDatePick": "8a7fcfdf",
+     "get absenceHighlightedDates": "9c3767e4",
+     "confirmAbsence": "cc9dce7b",
+     "deleteAbsence": "624ba78a",
+     "confirmUnpause": "f24d5589"
+    },
+    "id": "selfService/signout/signout.page#logic-382df5cb"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:66",
+     "lib/core/providers/signout_providers.dart:90",
+     "lib/core/providers/signout_providers.dart:168",
+     "lib/core/providers/duty_providers.dart:148",
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:373",
+     "lib/data/repositories/player_absence_repository.dart:191",
+     "lib/features/self_service/presentation/pages/signout_page.dart:87"
+    ],
+    "n": "Laden/Aufteilen (aktuell/anstehend/vergangen), Prozent, Verspätungen, Dienst-Filter (applyDutyView/applyDutyLayout), Offene Dienste, Anmeldefelder, Aktionsblatt-Regeln, Pause/Abwesenheit, Notizen stimmen überein. Geprüfte Abweichungen: extra_plans fehlen in kSignoutAttendanceColumns und werden nicht an showPlanViewerSheet übergeben (hoch); Abwesenheit eintragen/löschen schreibt per Query alle eigenen kommenden Zeilen im Zeitraum statt currentAttendance+actualAttendances (Ionic: ohne nicht zugeteilte Dienste, in der Dienstplan-Ansicht ohne eigene Dienste) (hoch); Pull-to-Refresh ohne upcomingDutyTermineProvider; keine 'Bitte bestätigen'-Pill; Push-Öffnen ohne Dienst-Logik; kleinere Punkte siehe extra.",
+    "sev": "hoch",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart",
+    "lib/core/providers/signout_providers.dart",
+    "lib/core/providers/duty_providers.dart",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart",
+    "lib/data/repositories/player_absence_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "selfService/signout/signout.page.html",
+    "line": 323,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "#": "descriptionModal"
+    },
+    "events": [],
+    "bindings": [
+     "[initialBreakpoint]=\"0.6\"",
+     "[breakpoints]=\"[0, 0.6, 1]\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "selfService/signout/signout.page#modal-819b10ac"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:431"
+    ],
+    "n": "behoben in #298",
+    "v": null,
+    "src": "zz-fixed-selbstservice.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 490,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (!useDutyView || showOtherTermine)",
+     "@if (currentAttendance)",
+     "@if (isOwnAttendance(currentAttendance))"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-pill ev-today__status"
+    },
+    "bindings": [
+     "[ngClass]=\"'ion-color-' + statusColorOf(currentAttendance)\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ statusLabelOf(currentAttendance) }}"
+    ],
+    "text": "{{ statusLabelOf(currentAttendance) }}",
+    "id": "selfService/signout/signout.page#text-7ab3ea5e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:548"
+    ],
+    "n": "behoben in #298",
+    "v": null,
+    "src": "zz-fixed-selbstservice.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "extra": {
+    "id": "x-1962646a5f",
+    "title": "Abwesenheit: andere Zeilen entschuldigt/zurückgesetzt",
+    "n": "Befund real: _upcomingInRange nimmt alle eigenen kommenden person_attendances im Zeitraum (inkl. nicht zugeteilter Dienstzeilen, in Dienstplan-Ansicht auch eigene Dienste) zum Entschuldigen bzw. Zurücksetzen; Ionic nur geladene Liste nach applyDutyView/applyDutyLayout. Eigener Dienst wird in Flutter so still abgesagt (kein understaffed). Teilweise Flutter besser: Ionic bricht im \"alle Termine\"-Modus am ersten fremden Termin (id null) ab. Auch bei action-89fbd54f bzw. alert-cf2e9968 (dort mittel) – einmal beheben.",
+    "sev": "hoch",
+    "ionic": "src/app/selfService/signout/signout.page.ts:1240",
+    "f": [
+     "lib/data/repositories/player_absence_repository.dart:122",
+     "lib/data/repositories/player_absence_repository.dart:191",
+     "lib/data/repositories/player_absence_repository.dart:228"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-selbstservice.json",
+    "n": "behoben in #298"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "extra": {
+    "id": "x-f56fb3f1cc",
+    "title": "Push/Deep-Link öffnet Termin ohne Dienst-Logik",
+    "n": "Befund real, Sev zu niedrig. Push \"Wer springt ein?\" (duty_understaffed/duty_urgent, laut duty-notify an Springer ohne duty_state): Ionic → Zeile per applyDutyView gefiltert → Sheet \"Offene Dienste\" mit \"Übernehme ich\" (take). Flutter sucht in ungefilterten signoutData → Aktionsblatt der nicht zugeteilten Dienstzeile; \"Anmelden\" schreibt status=Anwesend ohne duty_state → Dienst bleibt unterbesetzt, Nutzer glaubt eingesprungen zu sein (duty_filled-Push: Ionic nichts, Flutter ebenso Aktionsblatt). Eigener Dienst in Dienstplan-Ansicht: Aktionsblatt statt Scrollen, funktional gleichwertig.",
+    "sev": "hoch",
+    "ionic": "src/app/selfService/signout/signout.page.ts:581",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:66",
+     "lib/core/services/push/push_navigation.dart:134",
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:434"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-selbstservice.json",
+    "n": "behoben in #298"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/attendance-type/attendance-type.service",
+   "ionic": {
+    "ts": "services/attendance-type/attendance-type.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance-type/attendance-type.service.ts",
+    "line": 77,
+    "method": "AttendanceTypeService.deleteAttendanceType",
+    "cond": [],
+    "table": "attendance_types",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "11e5a9fe",
+    "mbody": "616ce1df",
+    "id": "services/attendance-type/attendance-type.service#db-c4d1a223"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_type_repository.dart",
+     "lib/core/providers/attendance_type_providers.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance-type/attendance-type.service",
+   "ionic": {
+    "ts": "services/attendance-type/attendance-type.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/attendance-type/attendance-type.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "getAttendanceTypes:12-28",
+     "getAttendanceType:30-43",
+     "updateAttendanceType:45-59",
+     "addAttendanceType:61-74",
+     "deleteAttendanceType:76-86",
+     "addDefaultAttendanceTypes:88-99"
+    ],
+    "bodies": {
+     "getAttendanceTypes": "8f3e9f91",
+     "getAttendanceType": "f84684b7",
+     "updateAttendanceType": "5a656f6f",
+     "addAttendanceType": "e7d5eb48",
+     "deleteAttendanceType": "616ce1df",
+     "addDefaultAttendanceTypes": "afa58ab8"
+    },
+    "id": "services/attendance-type/attendance-type.service#logic-f7488593"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/attendance_type_repository.dart:26",
+     "lib/data/repositories/attendance_type_repository.dart:44",
+     "lib/data/repositories/attendance_type_repository.dart:102",
+     "lib/data/repositories/attendance_type_repository.dart:121",
+     "lib/data/repositories/attendance_type_repository.dart:174",
+     "lib/core/providers/attendance_type_providers.dart:40"
+    ],
+    "n": "Laden (tenant_id, nach index), Einzel-Laden, Anlegen, Aktualisieren gleich (nach Mutation neu geladen). Löschen: Flutter verweigert das Löschen eines verwendeten Typs (siehe extra 'Verwendeter Anwesenheitstyp nicht löschbar'). addDefaultAttendanceTypes ist hier toter Code (DbService hat eigene Implementierung).",
+    "sev": "hoch",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_type_repository.dart",
+    "lib/core/providers/attendance_type_providers.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/cross-tenant/cross-tenant.service",
+   "ionic": {
+    "ts": "services/cross-tenant/cross-tenant.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/cross-tenant/cross-tenant.service.ts",
+    "line": 236,
+    "method": "CrossTenantService.getUsersFromTenant",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.loadUsersFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Benutzer"
+     ],
+     "literals": [],
+     "expr": "translate('svc.loadUsersFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "22353601",
+    "mbody": "ca932b7e",
+    "roleGuarded": true,
+    "id": "services/cross-tenant/cross-tenant.service#toast-119dd1e0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/people_list_page.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 2305,
+    "method": "DbService.checkAndUnpausePlayers",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenantId', this.tenant().id)",
+     "eq('paused', true)",
+     "not('paused_until', 'is', null)",
+     "lte('paused_until', today)"
+    ],
+    "tenantFilter": true,
+    "src": "6992c4e2",
+    "mbody": "14ad147e",
+    "roleGuarded": true,
+    "id": "services/db.service#db-6ed0d891"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart",
+     "lib/features/people/presentation/pages/people_list_page.dart",
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt-runde3.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 2641,
+    "method": "DbService.getAttendance",
+    "cond": [
+     "!(withPersonAttendance)"
+    ],
+    "table": "attendance",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenantId', this.tenant().id)",
+     "gt('date', all ? dayjs('2020-01-01').toISOString() : this.getCurrentAttDate())",
+     "order('date', { ascending: false, })"
+    ],
+    "tenantFilter": true,
+    "src": "a9666360",
+    "mbody": "f921516c",
+    "roleGuarded": true,
+    "id": "services/db.service#db-cc6767aa-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/plan_repository.dart",
+     "lib/core/providers/plan_providers.dart",
+     "lib/core/providers/attendance_providers.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt-runde3.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 2752,
+    "method": "DbService.getAllUpcomingAttendancesForSignout",
+    "cond": [],
+    "table": "attendance",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, date, type, typeInfo, songs, type_id, start_time, end_time, deadline, duration_days, plan, extra_plans, share_plan, description, attachment_url, attachmen…",
+    "filters": [
+     "eq('tenantId', this.tenant().id)",
+     "gt('date', dayjs().startOf('day').subtract(31, 'day').toISOString())",
+     "order('date', { ascending: true })"
+    ],
+    "tenantFilter": true,
+    "src": "ad86f90d",
+    "mbody": "6b5b21c0",
+    "roleGuarded": true,
+    "id": "services/db.service#db-ffa8e5a7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/sign_in_out_repository.dart:23",
+     "lib/features/self_service/presentation/widgets/plan_viewer_sheet.dart:406"
+    ],
+    "n": "behoben in #298 (extra_plans in kSignoutAttendanceColumns, bis in den Plan-Viewer durchgereicht)",
+    "v": null,
+    "src": "zz-fixed-selbstservice.json",
+    "flutterAt": "a0550a4"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "services/db.service.ts",
+    "line": 3290,
+    "method": "DbService.deleteInstance",
+    "cond": [
+     "(this.tenantUser())"
+    ],
+    "call": "Utils.getUrl",
+    "args": "this.tenantUser().role",
+    "src": "b7ac0086",
+    "mbody": "5b81a8b5",
+    "roleGuarded": true,
+    "id": "services/db.service#effect-3e8f334d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/db.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "teamOrgEnabled:82-82",
+     "isTeamLeader:83-83",
+     "teamPerson:85-85",
+     "inTeamCircle:87-90",
+     "constructor:134-154",
+     "getSupabase:156-158",
+     "encodeFilename:160-176",
+     "uploadSongFile:178-224",
+     "downloadSongFile:226-237",
+     "downloadSongFileFromTenant:239-247",
+     "uploadSongFileToTenant:249-279",
+     "copySongToTenant:281-369",
+     "deleteSongFile:371-398",
+     "checkToken:400-410",
+     "waitForSession:414-419",
+     "doCheckToken:421-429",
+     "setTenant:431-540",
+     "getWantedTenant:542-574",
+     "isBeta:576-578",
+     "canAccessFiles:584-599",
+     "canEditFiles:601-603",
+     "isSuperDeveloper:605-607",
+     "getTenants:609-626",
+     "updateTenantData:628-633",
+     "updateOrgName:635-641",
+     "updateOrgBranding:643-649",
+     "updateOrgExtraFields:651-657",
+     "updateOrgPlanningTemplates:659-665",
+     "updateOrgGemeindeApp:667-673",
+     "updateOrgDefaultFields:675-681",
+     "getPersonExtraFields:683-691",
+     "getOrganisationPersonKey:693-695",
+     "getSharedPersonFieldValues:697-702",
+     "hydrateSharedPersonFieldValues:704-721",
+     "updateSharedPersonFieldValues:723-731",
+     "deleteSharedPersonFieldValues:733-737",
+     "getBrandingSource:741-747",
+     "getTenantsByUserId:749-751",
+     "getTenantUserById:753-755",
+     "logout:757-761",
+     "getShowSongsTab:763-767",
+     "setShowSongsTab:769-777",
+     "getShowOrgPlansTab:779-783",
+     "setShowOrgPlansTab:785-793",
+     "getShowDashboardTab:795-799",
+     "setShowDashboardTab:801-809",
+     "getDashboardCardConfig:811-823",
+     "resetDashboardCardConfig:825-829",
+     "setDashboardCardConfig:831-838",
+     "deleteAccount:846-854",
+     "clearState:857-863",
+     "deleteViewer:865-883",
+     "getViewers:885-887",
+     "deleteParent:889-907",
+     "getParents:909-911",
+     "createViewer:913-928",
+     "createParent:930-951",
+     "registerUser:953-1048",
+     "informUserAboutApproval:1050-1052",
+     "informUserAboutReject:1054-1056",
+     "addUserToTenant:1058-1060",
+     "updateTenantUser:1062-1074",
+     "getAppIdByEmail:1076-1181",
+     "createAccount:1183-1210",
+     "changePassword:1212-1215",
+     "login:1217-1272",
+     "sendEmailOtp:1280-1332",
+     "verifyEmailOtp:1339-1389",
+     "routeAfterAuth:1397-1414",
+     "register:1416-1449",
+     "getPlayerProfile:1451-1453",
+     "updateProfile:1455-1530",
+     "getCurrentAttDate:1532-1534",
+     "setCurrentAttDate:1536-1538",
+     "getRoleFromTenantUser:1540-1553",
+     "getPlayerByAppId:1555-1557",
+     "getPlayers:1559-1624",
+     "getPlayersByGroup:1626-1628",
+     "getPendingPersons:1630-1632",
+     "resetPassword:1634-1649",
+     "resendConfirmationEmail:1651-1653",
+     "updatePassword:1660-1698",
+     "getLeftPlayers:1700-1702",
+     "getPlayersWithoutAccount:1704-1706",
+     "getConductors:1708-1714",
+     "addPlayer:1716-1849",
+     "addPlayerToAttendancesByDate:1851-1907",
+     "addPlayerToUpcomingAttendances:1909-1976",
+     "removePlayerFromUpcomingAttendances:1978-2001",
+     "syncPlayerWithUpcomingAttendances:2023-2103",
+     "playerMatchesAttendanceType:2106-2125",
+     "syncPlayerWithUpcomingAttendancesByAdditionalFields:2127-2217",
+     "updatePlayer:2219-2278",
+     "pausePlayerInOtherTenant:2280-2300",
+     "checkAndUnpausePlayers:2302-2335",
+     "updateShiftAssignmentsForPerson:2337-2377",
+     "updateShiftAssignmentsForAttendance:2393-2450",
+     "updatePlayerHistory:2452-2455",
+     "setGlobalPersonId:2457-2468",
+     "removePlayer:2470-2476",
+     "removeUserFromTenant:2483-2534",
+     "removeEmailFromAuth:2536-2542",
+     "archivePlayer:2544-2565",
+     "getGroups:2567-2569",
+     "getMainGroup:2571-2573",
+     "addGroup:2575-2582",
+     "updateGroup:2584-2589",
+     "removeGroup:2591-2596",
+     "addAttendance:2598-2601",
+     "addPersonAttendances:2603-2605",
+     "deletePersonAttendances:2607-2609",
+     "getAttendance:2611-2659",
+     "getUpcomingAttendances:2662-2677",
+     "getAttendancesByDate:2679-2690",
+     "getAttendanceById:2692-2694",
+     "getAttendanceByIdRobust:2696-2701",
+     "updateAttendance:2703-2706",
+     "removeAttendance:2708-2711",
+     "getPersonAttendances:2713-2749",
+     "getAllUpcomingAttendancesForSignout:2751-2796",
+     "getParentAttendances:2798-2803",
+     "updatePersonAttendance:2805-2807",
+     "deletePersonAttendanceById:2809-2811",
+     "getHistory:2813-2815",
+     "updateHistoryDatesForAttendance:2818-2828",
+     "getHistoryByAttendanceId:2830-2832",
+     "getHistoryForAttendances:2834-2836",
+     "updateHistoryEntry:2838-2841",
+     "addHistoryEntry:2843-2846",
+     "removeHistoryEntry:2848-2851",
+     "addSongsToHistory:2853-2855",
+     "getHistoryBySongId:2857-2859",
+     "getTeachers:2861-2863",
+     "addTeacher:2865-2868",
+     "updateTeacher:2870-2873",
+     "effectiveSongTenantId:2875-2877",
+     "getSongs:2879-2881",
+     "getSong:2883-2885",
+     "addSong:2887-2890",
+     "removeSong:2892-2895",
+     "editSong:2897-2900",
+     "getSongCategories:2902-2906",
+     "addSongCategory:2908-2912",
+     "updateSongCategory:2914-2919",
+     "removeSongCategory:2921-2925",
+     "getAgendaItems:2929-2931",
+     "getAgendaItem:2933-2935",
+     "getAgendaItemsByIds:2937-2939",
+     "addAgendaItem:2941-2944",
+     "proposeAgendaItem:2947-2957",
+     "updateAgendaItem:2959-2962",
+     "deleteAgendaItem:2964-2967",
+     "getAgendaItemHistory:2969-2971",
+     "getProtocolForAttendance:2975-2977",
+     "getProtocols:2980-2982",
+     "saveProtocolSection:2984-2987",
+     "publishProtocol:2989-2992",
+     "deleteProtocol:2994-2997",
+     "loadTeamPerson:3002-3015",
+     "getMyTasks:3017-3021",
+     "notifyTeam:3024-3031",
+     "getTasks:3035-3037",
+     "getTask:3039-3041",
+     "getTasksForProtocol:3043-3045",
+     "getTasksForAgendaItem:3047-3049",
+     "getTasksForAttendance:3051-3053",
+     "addTask:3055-3058",
+     "updateTask:3060-3063",
+     "deleteTask:3065-3068",
+     "signout:3070-3072",
+     "signin:3074-3076",
+     "updateAttendanceNote:3078-3080",
+     "sendPlanPerTelegram:3082-3084",
+     "sendSongPerTelegram:3086-3088",
+     "notifyPerTelegram:3090-3092",
+     "removeImage:3094-3097",
+     "updateImage:3099-3102",
+     "updateAttImage:3104-3107",
+     "getCurrentSongs:3109-3186",
+     "getUpcomingHistory:3189-3217",
+     "getNotifcationConfig:3219-3221",
+     "updateNotificationConfig:3223-3225",
+     "getUserNotifications:3227-3229",
+     "getAllUserNotifications:3231-3233",
+     "getUnreadNotificationCount:3235-3237",
+     "markNotificationRead:3239-3241",
+     "markNotificationUnread:3243-3245",
+     "deleteNotification:3247-3249",
+     "markMatchingNotificationsRead:3251-3253",
+     "markNotificationsReadByAttendance:3255-3257",
+     "markAllNotificationsRead:3259-3261",
+     "markAllNotificationsReadAllTenants:3263-3265",
+     "deleteAllNotifications:3267-3269",
+     "deleteAllNotificationsAllTenants:3271-3273",
+     "deleteInstance:3275-3296",
+     "setFavoriteTenant:3298-3312",
+     "createInstance:3314-3360",
+     "addDefaultAttendanceTypes:3362-3373",
+     "getPossiblePersonsByName:3375-3378",
+     "getPossiblePersonsByEmail:3380-3383",
+     "getPossibleDuplicatesInTenant:3385-3387",
+     "mergePendingPlayerIntoExisting:3395-3430",
+     "getLinkedTenants:3432-3446",
+     "getUserRolesForTenants:3448-3450",
+     "getTenantsFromUser:3452-3471",
+     "getUsersFromTenant:3473-3475",
+     "getPersonIdFromTenant:3477-3479",
+     "isDemo:3481-3483",
+     "checkDemoRestriction:3489-3494",
+     "getGroupCategories:3496-3498",
+     "addGroupCategory:3500-3503",
+     "updateGroupCategory:3505-3508",
+     "updateGroupCategorySortOrder:3510-3513",
+     "deleteGroupCategory:3515-3518",
+     "getHolidays:3520-3522",
+     "getAdmins:3524-3526",
+     "createAdmin:3528-3531",
+     "activatePlayer:3533-3551",
+     "createOrganisation:3553-3558",
+     "linkTenantToOrganisation:3560-3564",
+     "unlinkTenantFromOrganisation:3566-3569",
+     "getOrganisationFromTenant:3571-3573",
+     "getInstancesOfOrganisations:3575-3577",
+     "getAllPersonsFromOrganisation:3579-3581",
+     "getOrganisationsFromUser:3583-3585",
+     "getTenantsFromOrganisation:3587-3589",
+     "handoverPersons:3591-3608",
+     "importPlayers:3618-3644",
+     "getExistingEmails:3651-3683",
+     "getExistingNumbers:3690-3719",
+     "importSongs:3725-3747",
+     "personExistsInTenant:3751-3779",
+     "handoverPerson:3781-3854",
+     "getAttendanceTypes:3856-3858",
+     "refreshAttendanceTypes:3866-3870",
+     "getAttendanceType:3872-3874",
+     "updateAttendanceType:3876-3881",
+     "addAttendanceType:3883-3888",
+     "deleteAttendanceType:3890-3894",
+     "getTenantBySongSharingId:3896-3898",
+     "getTenantByRegisterId:3900-3902",
+     "loadShifts:3904-3907",
+     "isShiftUsed:3909-3911",
+     "addShift:3913-3918",
+     "addShiftToTenant:3920-3923",
+     "getPlayersWithShift:3925-3927",
+     "assignShiftToPlayersInTenant:3929-3937",
+     "updateShiftAttendancesInTenant:3939-3953",
+     "updateShift:3955-3960",
+     "deleteShift:3962-3968",
+     "getChurches:3970-3972",
+     "createChurch:3974-3979",
+     "renameChurch:3981-3985",
+     "mergeChurches:3987-3992",
+     "sendQuestion:3994-3996",
+     "sendFeedback:3998-4000",
+     "crossTenantAttendances:4003-4003",
+     "crossTenantAttendancesLoading:4004-4004",
+     "getTenantColor:4031-4042",
+     "getPersonIdForTenant:4047-4059",
+     "getPersonAttendancesForTenant:4064-4102",
+     "getAttendanceTypesForTenants:4107-4136",
+     "loadAllPersonAttendancesAcrossTenants:4142-4197",
+     "getCrossTenantAttendanceType:4202-4204",
+     "clearCrossTenantCache:4209-4212",
+     "getPermissionForRole:4216-4218",
+     "updateRolePermission:4220-4225",
+     "getPlayerAbsences:4227-4229",
+     "getPlayerAbsencesForTenant:4231-4233",
+     "addPlayerAbsence:4235-4238",
+     "deletePlayerAbsence:4240-4243"
+    ],
+    "bodies": {
+     "teamOrgEnabled": "13df1e0d",
+     "isTeamLeader": "99420f75",
+     "teamPerson": "9303c623",
+     "inTeamCircle": "cc02fcb2",
+     "constructor": "e20080b1",
+     "getSupabase": "6880e4d9",
+     "encodeFilename": "7bea1f1a",
+     "uploadSongFile": "94730bfb",
+     "downloadSongFile": "c738c2da",
+     "downloadSongFileFromTenant": "57ca285e",
+     "uploadSongFileToTenant": "1ea40ebe",
+     "copySongToTenant": "2e43bb02",
+     "deleteSongFile": "311ca8f9",
+     "checkToken": "25874092",
+     "waitForSession": "0d895b07",
+     "doCheckToken": "4eb20879",
+     "setTenant": "b0b0f870",
+     "getWantedTenant": "d16c39d0",
+     "isBeta": "b2818cf3",
+     "canAccessFiles": "f8e9ce86",
+     "canEditFiles": "568b2b54",
+     "isSuperDeveloper": "27868c90",
+     "getTenants": "3e802437",
+     "updateTenantData": "3d9c9436",
+     "updateOrgName": "ef97d963",
+     "updateOrgBranding": "db9beafa",
+     "updateOrgExtraFields": "2b42c967",
+     "updateOrgPlanningTemplates": "4ac35fe3",
+     "updateOrgGemeindeApp": "b0494edf",
+     "updateOrgDefaultFields": "6f56268d",
+     "getPersonExtraFields": "cd38b655",
+     "getOrganisationPersonKey": "3290ba94",
+     "getSharedPersonFieldValues": "826232ab",
+     "hydrateSharedPersonFieldValues": "c6d9c8b6",
+     "updateSharedPersonFieldValues": "4a559baa",
+     "deleteSharedPersonFieldValues": "3dbf59cf",
+     "getBrandingSource": "4f18f8b3",
+     "getTenantsByUserId": "9b682550",
+     "getTenantUserById": "f507e0b5",
+     "logout": "8c19b1a4",
+     "getShowSongsTab": "c67a3e64",
+     "setShowSongsTab": "eb86149b",
+     "getShowOrgPlansTab": "b0bbd77c",
+     "setShowOrgPlansTab": "f23aa715",
+     "getShowDashboardTab": "054dad4b",
+     "setShowDashboardTab": "3a044b24",
+     "getDashboardCardConfig": "20065191",
+     "resetDashboardCardConfig": "b766ec97",
+     "setDashboardCardConfig": "feb83e25",
+     "deleteAccount": "fd89f46c",
+     "clearState": "f4e4cc99",
+     "deleteViewer": "f2ea19ba",
+     "getViewers": "b28c398a",
+     "deleteParent": "4d915662",
+     "getParents": "cb9cbbce",
+     "createViewer": "a79cedb4",
+     "createParent": "e5bb3294",
+     "registerUser": "902d6a47",
+     "informUserAboutApproval": "fe725a8b",
+     "informUserAboutReject": "ad2672bb",
+     "addUserToTenant": "474766ae",
+     "updateTenantUser": "4f420b4b",
+     "getAppIdByEmail": "aec57cd6",
+     "createAccount": "76debe04",
+     "changePassword": "8b2f9f33",
+     "login": "467e6dc8",
+     "sendEmailOtp": "48bab732",
+     "verifyEmailOtp": "612aa9cb",
+     "routeAfterAuth": "67854b2a",
+     "register": "42dead46",
+     "getPlayerProfile": "9f00a2d1",
+     "updateProfile": "2ec600ef",
+     "getCurrentAttDate": "1e1cde68",
+     "setCurrentAttDate": "3c3ff4b8",
+     "getRoleFromTenantUser": "c301a4e7",
+     "getPlayerByAppId": "4af41b70",
+     "getPlayers": "435d8d9d",
+     "getPlayersByGroup": "43fb10dc",
+     "getPendingPersons": "6512857d",
+     "resetPassword": "cd4e8d37",
+     "resendConfirmationEmail": "1eaa2a58",
+     "updatePassword": "8e3b1fb6",
+     "getLeftPlayers": "29f1c4bb",
+     "getPlayersWithoutAccount": "fc3152b9",
+     "getConductors": "0a88d624",
+     "addPlayer": "5c6579b3",
+     "addPlayerToAttendancesByDate": "2fdefd34",
+     "addPlayerToUpcomingAttendances": "5d996cd0",
+     "removePlayerFromUpcomingAttendances": "f2c1785e",
+     "syncPlayerWithUpcomingAttendances": "d711f9e3",
+     "playerMatchesAttendanceType": "390f48ad",
+     "syncPlayerWithUpcomingAttendancesByAdditionalFields": "b43b10b2",
+     "updatePlayer": "ff42fbd7",
+     "pausePlayerInOtherTenant": "f48d56f2",
+     "checkAndUnpausePlayers": "14ad147e",
+     "updateShiftAssignmentsForPerson": "3c56b19f",
+     "updateShiftAssignmentsForAttendance": "6f63feb5",
+     "updatePlayerHistory": "215c5a67",
+     "setGlobalPersonId": "1da40898",
+     "removePlayer": "78c751fd",
+     "removeUserFromTenant": "2cf39eae",
+     "removeEmailFromAuth": "6cf18d25",
+     "archivePlayer": "671bdc55",
+     "getGroups": "89c31802",
+     "getMainGroup": "ab16ef34",
+     "addGroup": "d8868651",
+     "updateGroup": "725df855",
+     "removeGroup": "e2b73527",
+     "addAttendance": "49846f7e",
+     "addPersonAttendances": "c160a9ba",
+     "deletePersonAttendances": "185f1e3d",
+     "getAttendance": "f921516c",
+     "getUpcomingAttendances": "1effaea8",
+     "getAttendancesByDate": "8c915c56",
+     "getAttendanceById": "b8b34075",
+     "getAttendanceByIdRobust": "51dd8dad",
+     "updateAttendance": "89177c01",
+     "removeAttendance": "2f044f95",
+     "getPersonAttendances": "7d2b572c",
+     "getAllUpcomingAttendancesForSignout": "6b5b21c0",
+     "getParentAttendances": "e7ad3102",
+     "updatePersonAttendance": "7a3652f7",
+     "deletePersonAttendanceById": "26381ec2",
+     "getHistory": "f99dedb6",
+     "updateHistoryDatesForAttendance": "65843c69",
+     "getHistoryByAttendanceId": "0cd273c4",
+     "getHistoryForAttendances": "7001bddd",
+     "updateHistoryEntry": "820e0535",
+     "addHistoryEntry": "ec77eaf1",
+     "removeHistoryEntry": "d814339d",
+     "addSongsToHistory": "d81bcdf8",
+     "getHistoryBySongId": "2cf0fdf0",
+     "getTeachers": "2ace69c4",
+     "addTeacher": "445e5195",
+     "updateTeacher": "fcd360be",
+     "effectiveSongTenantId": "29595396",
+     "getSongs": "83e7f59f",
+     "getSong": "6b371c90",
+     "addSong": "b337c441",
+     "removeSong": "297f61c8",
+     "editSong": "dda79512",
+     "getSongCategories": "eef57416",
+     "addSongCategory": "5e1cce17",
+     "updateSongCategory": "b562bc74",
+     "removeSongCategory": "bd8d2a5e",
+     "getAgendaItems": "54fab3be",
+     "getAgendaItem": "3fcd44aa",
+     "getAgendaItemsByIds": "cc7ad5bc",
+     "addAgendaItem": "1f52eb85",
+     "proposeAgendaItem": "36f58d65",
+     "updateAgendaItem": "f3adda3b",
+     "deleteAgendaItem": "634b87c5",
+     "getAgendaItemHistory": "c383e6d9",
+     "getProtocolForAttendance": "fedadb34",
+     "getProtocols": "d5641ba6",
+     "saveProtocolSection": "a3496d13",
+     "publishProtocol": "917a2933",
+     "deleteProtocol": "766103c1",
+     "loadTeamPerson": "f4060610",
+     "getMyTasks": "9287eaca",
+     "notifyTeam": "02b0158b",
+     "getTasks": "ec566e1f",
+     "getTask": "f63e9129",
+     "getTasksForProtocol": "bda48694",
+     "getTasksForAgendaItem": "e2ebde4c",
+     "getTasksForAttendance": "3d94362e",
+     "addTask": "258a38e7",
+     "updateTask": "80a32413",
+     "deleteTask": "ba058e4c",
+     "signout": "794b5076",
+     "signin": "469959e3",
+     "updateAttendanceNote": "4ee2f1b6",
+     "sendPlanPerTelegram": "80b7dd30",
+     "sendSongPerTelegram": "23345e38",
+     "notifyPerTelegram": "3d21be12",
+     "removeImage": "5bbfd989",
+     "updateImage": "70443e5b",
+     "updateAttImage": "d3d95c7a",
+     "getCurrentSongs": "d39a50e4",
+     "getUpcomingHistory": "a3c8b38d",
+     "getNotifcationConfig": "82c5bb43",
+     "updateNotificationConfig": "afbed804",
+     "getUserNotifications": "d3c03546",
+     "getAllUserNotifications": "50a5a065",
+     "getUnreadNotificationCount": "965ec9c6",
+     "markNotificationRead": "8da1dfac",
+     "markNotificationUnread": "2bf3c68f",
+     "deleteNotification": "5fca4d6b",
+     "markMatchingNotificationsRead": "275e1ccd",
+     "markNotificationsReadByAttendance": "4d769447",
+     "markAllNotificationsRead": "e6d0a021",
+     "markAllNotificationsReadAllTenants": "87d5da9f",
+     "deleteAllNotifications": "a99614c9",
+     "deleteAllNotificationsAllTenants": "251ff2c4",
+     "deleteInstance": "5b81a8b5",
+     "setFavoriteTenant": "93b38d53",
+     "createInstance": "d825507b",
+     "addDefaultAttendanceTypes": "afa58ab8",
+     "getPossiblePersonsByName": "154a4aaa",
+     "getPossiblePersonsByEmail": "ab5dadc6",
+     "getPossibleDuplicatesInTenant": "09eca263",
+     "mergePendingPlayerIntoExisting": "a351e3cb",
+     "getLinkedTenants": "ebcb2a6b",
+     "getUserRolesForTenants": "1974b4ae",
+     "getTenantsFromUser": "74d7ebc0",
+     "getUsersFromTenant": "6d374b4b",
+     "getPersonIdFromTenant": "27d9d37e",
+     "isDemo": "932fb950",
+     "checkDemoRestriction": "1b423c33",
+     "getGroupCategories": "33becc78",
+     "addGroupCategory": "ed8af9f6",
+     "updateGroupCategory": "648151df",
+     "updateGroupCategorySortOrder": "f6ddd676",
+     "deleteGroupCategory": "2cfbf1be",
+     "getHolidays": "668a2a3c",
+     "getAdmins": "174695b0",
+     "createAdmin": "df32f465",
+     "activatePlayer": "4d6b4280",
+     "createOrganisation": "96861004",
+     "linkTenantToOrganisation": "dc1e347a",
+     "unlinkTenantFromOrganisation": "16a15b1e",
+     "getOrganisationFromTenant": "f73fd970",
+     "getInstancesOfOrganisations": "0b899415",
+     "getAllPersonsFromOrganisation": "5c49f711",
+     "getOrganisationsFromUser": "ce0aded2",
+     "getTenantsFromOrganisation": "f2f1b296",
+     "handoverPersons": "aaa950e8",
+     "importPlayers": "9948b795",
+     "getExistingEmails": "eb35fd86",
+     "getExistingNumbers": "a52b8f7a",
+     "importSongs": "778cc772",
+     "personExistsInTenant": "78495022",
+     "handoverPerson": "99d1414b",
+     "getAttendanceTypes": "616669de",
+     "refreshAttendanceTypes": "a939a594",
+     "getAttendanceType": "4ffd00c0",
+     "updateAttendanceType": "dd7744d0",
+     "addAttendanceType": "75c6c0ab",
+     "deleteAttendanceType": "4bc46937",
+     "getTenantBySongSharingId": "94aad076",
+     "getTenantByRegisterId": "69d0cafc",
+     "loadShifts": "b3ed2191",
+     "isShiftUsed": "7c0027df",
+     "addShift": "244439d2",
+     "addShiftToTenant": "c8e68a9e",
+     "getPlayersWithShift": "554fdcc4",
+     "assignShiftToPlayersInTenant": "84e00111",
+     "updateShiftAttendancesInTenant": "87ef9a9d",
+     "updateShift": "c7567228",
+     "deleteShift": "847d9e9b",
+     "getChurches": "dfd436ed",
+     "createChurch": "b4705af2",
+     "renameChurch": "1df18ddb",
+     "mergeChurches": "b48b532e",
+     "sendQuestion": "93769756",
+     "sendFeedback": "a3de9fa2",
+     "crossTenantAttendances": "5a909ea3",
+     "crossTenantAttendancesLoading": "7c1c5671",
+     "getTenantColor": "314a9b3c",
+     "getPersonIdForTenant": "10924615",
+     "getPersonAttendancesForTenant": "6ee286b0",
+     "getAttendanceTypesForTenants": "a0569344",
+     "loadAllPersonAttendancesAcrossTenants": "fbfed8a5",
+     "getCrossTenantAttendanceType": "ff652114",
+     "clearCrossTenantCache": "b308474c",
+     "getPermissionForRole": "7da6a02c",
+     "updateRolePermission": "262531ad",
+     "getPlayerAbsences": "630413be",
+     "getPlayerAbsencesForTenant": "5accb719",
+     "addPlayerAbsence": "df84cbfb",
+     "deletePlayerAbsence": "27b79b08"
+    },
+    "id": "services/db.service#logic-0e1c2e0b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/providers/tenant_providers.dart:41",
+     "lib/features/auth/presentation/pages/login_page.dart:312",
+     "lib/data/repositories/user_registration_repository.dart:101",
+     "lib/data/repositories/user_registration_repository.dart:349",
+     "lib/data/repositories/player_repository.dart:584",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:343"
+    ],
+    "n": "Selbst geprüft: Song-Dateien, setTenant/Startseite, Auth, Konten (registerUser/getAppIdByEmail/createAccount), Personen (add/update/archive/activate, Termin-Sync inkl. relevant_groups/additional_fields_filter/Schicht), Instanzen, Übergabe, Dateiablage-Rechte weitgehend gleich portiert. Höchste Abweichung bleibt der Vorrang Server-Metadaten vs. lokaler Instanz-Cache (mittel). Zusätzlich zu den 4 Extras des Erstreviews: Ionic getAppIdByEmail sucht per Teilstring (%email%) und removeEmailFromAuth ruft danach getAppIdByEmail auf (siehe extra, beides Flutter besser).",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/tenant_providers.dart",
+    "lib/features/auth/presentation/pages/login_page.dart",
+    "lib/data/repositories/player_repository.dart",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "nav",
+    "file": "services/db.service.ts",
+    "line": 3290,
+    "method": "DbService.deleteInstance",
+    "cond": [
+     "(this.tenantUser())"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "Utils.getUrl(this.tenantUser().role)",
+    "src": "01a3e62a",
+    "mbody": "5b81a8b5",
+    "roleGuarded": true,
+    "id": "services/db.service#nav-51ad9728"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-ca607be234",
+    "title": "Zusammenführen: Rolle des übernommenen Kontos",
+    "n": "Befund real. Ionic mergePendingPlayerIntoExisting: updateTenantUser({role: PLAYER}) und Freigabe-Mail mit Rolle Mitglied, unabhängig von der Gruppe (wie approvePlayer). Flutter: accountRoleFor → Verantwortlich, wenn die Zielperson in der Hauptgruppe ist, sonst Spieler; schreibt diese Rolle in tenantUsers und die Mail. Ein zusammengeführtes Konto der Hauptgruppe erhält damit Verantwortlich-Rechte, die es in Ionic nicht hätte. Normales Genehmigen setzt in Flutter weiter Spieler.",
+    "sev": "hoch",
+    "ionic": "src/app/services/db.service.ts:3416",
+    "f": [
+     "lib/data/repositories/player_repository.dart:1953",
+     "lib/data/repositories/player_repository.dart:1969",
+     "lib/data/repositories/player_repository.dart:1979"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-querschnitt.json",
+    "n": "behoben in #295"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/files/files.service",
+   "ionic": {
+    "ts": "services/files/files.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/files/files.service.ts",
+    "line": 327,
+    "method": "FilesService.uploadFile",
+    "cond": [],
+    "table": "storage:this.bucket",
+    "op": "upload",
+    "payload": "key, file, { upsert: overwrite, contentType: file.type || undefined }",
+    "filters": [],
+    "src": "a7dbf5c3",
+    "mbody": "0a29ba2b",
+    "id": "services/files/files.service#db-68243270"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/utils/nfkd_fold.dart",
+     "lib/data/repositories/files_repository.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/files/files.service",
+   "ionic": {
+    "ts": "services/files/files.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/files/files.service.ts",
+    "line": 400,
+    "method": "FilesService.renameEntry",
+    "cond": [],
+    "table": "storage:this.bucket",
+    "op": "move",
+    "payload": "oldKey, newKey",
+    "filters": [],
+    "src": "31d747aa",
+    "mbody": "1c6ba469",
+    "id": "services/files/files.service#db-77218a19"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/utils/nfkd_fold.dart",
+     "lib/data/repositories/files_repository.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/files/files.service",
+   "ionic": {
+    "ts": "services/files/files.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/files/files.service.ts",
+    "line": 299,
+    "method": "FilesService.createFolder",
+    "cond": [],
+    "table": "storage:this.bucket",
+    "op": "upload",
+    "payload": "key, new Blob(['']), { upsert: false, contentType: 'text/plain' }",
+    "filters": [],
+    "src": "c9e472d8",
+    "mbody": "6328bd0a",
+    "id": "services/files/files.service#db-c711efdc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/utils/nfkd_fold.dart",
+     "lib/data/repositories/files_repository.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/files/files.service",
+   "ionic": {
+    "ts": "services/files/files.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/files/files.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "normalizeRelativePath:33-39",
+     "transliterateCyrillic:41-45",
+     "replaceGermanChars:47-56",
+     "avoidWindowsReservedName:58-68",
+     "sanitizeExtension:70-76",
+     "sanitizeSegment:78-98",
+     "sanitizeFileName:100-116",
+     "getUploadFileName:118-120",
+     "getShareLink:127-136",
+     "getFolderOpenParams:142-148",
+     "setPendingLink:150-156",
+     "consumePendingLink:158-166",
+     "tenantPrefix:168-171",
+     "toRelativePath:173-176",
+     "isFolderItem:178-180",
+     "listRaw:182-192",
+     "collectFileKeysRecursive:194-214",
+     "removeKeys:216-229",
+     "getNameFromPath:231-235",
+     "getParentPath:237-242",
+     "moveFolder:244-259",
+     "listEntries:261-287",
+     "createFolder:289-306",
+     "getUsedBytes:309-317",
+     "uploadFile:319-336",
+     "downloadFile:338-352",
+     "getSignedFileUrl:354-365",
+     "deleteEntry:367-377",
+     "renameEntry:379-405",
+     "moveEntry:407-433"
+    ],
+    "bodies": {
+     "normalizeRelativePath": "d1046f44",
+     "transliterateCyrillic": "8ba48c12",
+     "replaceGermanChars": "f635ce97",
+     "avoidWindowsReservedName": "33639a35",
+     "sanitizeExtension": "0978df27",
+     "sanitizeSegment": "cb2868ff",
+     "sanitizeFileName": "c7b38d8a",
+     "getUploadFileName": "3f0351e7",
+     "getShareLink": "0bb16885",
+     "getFolderOpenParams": "14d009f9",
+     "setPendingLink": "3f3e30a6",
+     "consumePendingLink": "59468a72",
+     "tenantPrefix": "840422a9",
+     "toRelativePath": "dbd10a03",
+     "isFolderItem": "77be9857",
+     "listRaw": "632f3214",
+     "collectFileKeysRecursive": "195e067c",
+     "removeKeys": "50fa44f5",
+     "getNameFromPath": "20349018",
+     "getParentPath": "60900715",
+     "moveFolder": "2fb0a917",
+     "listEntries": "ba5e4284",
+     "createFolder": "6328bd0a",
+     "getUsedBytes": "960e3b37",
+     "uploadFile": "0a29ba2b",
+     "downloadFile": "6d02d5d0",
+     "getSignedFileUrl": "73d6ca68",
+     "deleteEntry": "7d8ab291",
+     "renameEntry": "1c6ba469",
+     "moveEntry": "fd9ac592"
+    },
+    "id": "services/files/files.service#logic-efa4d0f6"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/files_repository.dart:85",
+     "lib/data/repositories/files_repository.dart:180",
+     "lib/features/public_links/presentation/pages/open_file_page.dart:15",
+     "lib/features/settings/presentation/pages/files_page.dart:147"
+    ],
+    "n": "Bucket, Pfade, Share-Link, Upload/Download/Verschieben/Löschen entsprechen FilesRepository. Abweichungen: Namensbereinigung (db-Items), ausstehender Datei-Link nicht persistiert, Sortierung nach Name, Listing-Paging (Extras).",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/files_repository.dart",
+    "lib/features/public_links/presentation/pages/open_file_page.dart",
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/group-category/group-category.service",
+   "ionic": {
+    "ts": "services/group-category/group-category.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/group-category/group-category.service.ts",
+    "line": 18,
+    "method": "GroupCategoryService.getGroupCategories",
+    "cond": [],
+    "plugin": "Network",
+    "call": "getStatus",
+    "args": "",
+    "src": "a6015b27",
+    "mbody": "8350c3f2",
+    "id": "services/group-category/group-category.service#native-d88b5602"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/providers/group_providers.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/help/help-content.service",
+   "ionic": {
+    "ts": "services/help/help-content.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/help/help-content.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "getCategories:38-40",
+     "getArticlesByCategory:42-44",
+     "getArticle:46-48",
+     "getAllGlossaryTerms:50-52",
+     "getGlossaryTerm:54-56",
+     "findGlossaryTermByName:59-64",
+     "search:66-74"
+    ],
+    "bodies": {
+     "getCategories": "ba1c4a9a",
+     "getArticlesByCategory": "980e89e1",
+     "getArticle": "0ed2c6fe",
+     "getAllGlossaryTerms": "54b0a9b8",
+     "getGlossaryTerm": "67938f85",
+     "findGlossaryTermByName": "698305c9",
+     "search": "21cd5b8c"
+    },
+    "id": "services/help/help-content.service#logic-93285162"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/help/data/help_content_service.dart:62",
+     "lib/features/help/data/help_content_service.dart:123"
+    ],
+    "n": "Kategorien/Artikel/Glossar-Zugriff gleich, Glossar-Sortierung praktisch gleich (Umlaut-Collation statt localeCompare); die Suche unterscheidet sich (Extra).",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/help/data/help_content_service.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/help/help-content.service",
+   "ionic": {
+    "ts": "services/help/help-content.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-8c653dac0c",
+    "title": "Hilfe-Suche: andere Treffer und Reihenfolge",
+    "n": "Befund real. Ionic: Fuse.js (Gewichte Titel 2/Stichworte 1,5/Text 1, threshold 0.35, ignoreLocation, ganze Eingabe als ein Muster, Fehler proportional zur Länge). Flutter: eigene Suche, jedes Wort muss als Teilstring oder (ab 4 Zeichen) mit höchstens 1 Tippfehler vorkommen, eigene Punktzahl. Mehrwort-Suchen und Tippfehler liefern andere Treffer und Reihenfolge.",
+    "sev": "mittel",
+    "ionic": "src/app/services/help/help-content.service.ts:18",
+    "f": [
+     "lib/features/help/data/help_content_service.dart:62",
+     "lib/features/help/data/help_content_service.dart:123"
+    ],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-querschnitt-hilfe-matcher.json",
+    "n": "behoben in #295 (aus #327)"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/history/history.service",
+   "ionic": {
+    "ts": "services/history/history.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/history/history.service.ts",
+    "line": 68,
+    "method": "HistoryService.updateHistoryEntry",
+    "cond": [],
+    "table": "history",
+    "op": "update",
+    "payload": "dbFields as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "42bd62a1",
+    "mbody": "4ce52104",
+    "id": "services/history/history.service#db-1996dec2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:914",
+     "lib/features/attendance/presentation/attendance_song_history.dart:85"
+    ],
+    "n": "Dirigent-Änderung gleich (person_id, otherConductor). Ionic ruft updateHistoryEntry zusätzlich bei jeder Termin-Info-Änderung mit {visible: attendance.save_in_history}, wenn die Einträge abweichen (attendance.page.ts:1521-1524; Alt-Termine mit save_in_history false/null → Werke verschwinden aus der Historie) / Flutter schreibt visible nie.",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/history/history.service",
+   "ionic": {
+    "ts": "services/history/history.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/history/history.service.ts",
+    "line": 28,
+    "method": "HistoryService.getHistoryByAttendanceId",
+    "cond": [],
+    "table": "history",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "eq('attendance_id', attendanceId)",
+     "order('songId', { ascending: true })"
+    ],
+    "tenantFilter": true,
+    "src": "34b4e1fe",
+    "mbody": "51da1b55",
+    "id": "services/history/history.service#db-1c319cab"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/holiday/holiday.service",
+   "ionic": {
+    "ts": "services/holiday/holiday.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/holiday/holiday.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "getHolidays:10-29"
+    ],
+    "bodies": {
+     "getHolidays": "42319345"
+    },
+    "id": "services/holiday/holiday.service#logic-ca1c3edf"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/services/holiday_service.dart:122",
+     "lib/core/services/holiday_service.dart:168",
+     "lib/core/providers/holiday_providers.dart:13",
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:784"
+    ],
+    "n": "Laden der Feiertage/Ferien (Jahresbeginn bis Ende Folgejahr) gleich; die Vergangen-Markierung unterscheidet sich (Extra).",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/holiday_service.dart",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 48,
+    "method": "ImageService.updateImage",
+    "cond": [
+     "(appId && currentUserId === appId)"
+    ],
+    "table": "player",
+    "op": "update",
+    "payload": "{ img: data.publicUrl }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ appId })"
+    ],
+    "tenantFilter": false,
+    "src": "6b85ee89",
+    "mbody": "36ea5476",
+    "id": "services/image/image.service#db-58f14585"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/profile_repository.dart",
+     "lib/data/repositories/player_repository.dart",
+     "lib/features/people/presentation/widgets/person_detail/person_header.dart",
+     "lib/core/providers/registration_providers.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 14,
+    "method": "ImageService.removeImage",
+    "cond": [
+     "(appId && currentUserId === appId)",
+     "(!newUser)"
+    ],
+    "table": "player",
+    "op": "update",
+    "payload": "{ img: '' }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ appId })"
+    ],
+    "tenantFilter": false,
+    "src": "d4edf889",
+    "mbody": "6da28d13",
+    "id": "services/image/image.service#db-a8a5f597"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/profile_repository.dart",
+     "lib/data/repositories/player_repository.dart",
+     "lib/features/people/presentation/widgets/person_detail/person_header.dart",
+     "lib/core/providers/registration_providers.dart"
+    ],
+    "n": "behoben in #295",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-update/live-update.service",
+   "ionic": {
+    "ts": "services/live-update/live-update.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/live-update/live-update.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "updateAvailable:58-58",
+     "constructor:66-66",
+     "init:72-92",
+     "deleteUnusedBundles:100-115",
+     "checkForUpdate:117-174",
+     "fetchManifest:176-193",
+     "bundleVersion:196-198",
+     "compareVersions:201-212",
+     "satisfiesMin:215-217",
+     "markAvailable:223-226",
+     "applyUpdate:229-232"
+    ],
+    "bodies": {
+     "updateAvailable": "69013cc4",
+     "constructor": "d0beae59",
+     "init": "05cc8e39",
+     "deleteUnusedBundles": "94f1c25a",
+     "checkForUpdate": "d2ac95f3",
+     "fetchManifest": "d930a92c",
+     "bundleVersion": "3a92615e",
+     "compareVersions": "79b0240f",
+     "satisfiesMin": "4bf83913",
+     "markAvailable": "fe496bbe",
+     "applyUpdate": "fc68edf3"
+    },
+    "id": "services/live-update/live-update.service#logic-2b61e241"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/services/native/store_update_service.dart:52",
+     "lib/features/auth/presentation/pages/login_page.dart:660",
+     "lib/features/settings/presentation/pages/settings_page.dart:552"
+    ],
+    "n": "OTA-Bundles gibt es in Flutter nicht; Ersatz StoreUpdateService mit 'Update installieren' auf Login/Einstellungen (Extra).",
+    "sev": "mittel",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-update/live-update.service",
+   "ionic": {
+    "ts": "services/live-update/live-update.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-6fc37335ce",
+    "title": "Updates nur über den Store statt OTA",
+    "n": "Befund real, technisch bedingt (Dart-Code nicht per OTA austauschbar ohne z. B. Shorebird). Ionic: lädt signiertes Web-Bundle still, aktiviert beim nächsten Kaltstart bzw. sofort auf /login, /register; 'Update installieren' lädt neu. Flutter: prüft beim Kaltstart App Store/Play und bietet 'Update installieren' (Store-Seite bzw. Play In-App-Update) auf Login- und Einstellungsseite; sonst nur automatische Store-Updates des Betriebssystems. Hotfixes erreichen Nutzer erst nach Store-Freigabe.",
+    "sev": "mittel",
+    "ionic": "src/app/services/live-update/live-update.service.ts:117",
+    "f": [
+     "lib/core/services/native/store_update_service.dart:52",
+     "lib/features/auth/presentation/pages/login_page.dart:658",
+     "lib/features/settings/presentation/pages/settings_page.dart:552"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/login.guard",
+   "ionic": {
+    "ts": "services/login.guard.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "services/login.guard.ts",
+    "line": 21,
+    "method": "LoginGuard.canActivate",
+    "cond": [
+     "?(useDashboard)",
+     "(this.db.tenantUser())"
+    ],
+    "call": "Utils.getUrl",
+    "args": "role",
+    "src": "d707b28e",
+    "mbody": "30fcfc6e",
+    "roleGuarded": true,
+    "id": "services/login.guard#effect-45cebb67"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/providers/user_preferences_provider.dart",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+    ],
+    "n": "behoben in #284 (InstanceSelectionGate)",
+    "v": null,
+    "src": "zz-fixed-querschnitt.json",
+    "flutterAt": null
+   }
+  }
+ ]
+}

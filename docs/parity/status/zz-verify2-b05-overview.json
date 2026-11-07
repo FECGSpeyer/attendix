@@ -1,0 +1,38 @@
+{
+  "batch": "zz-verify2-b05-overview",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "home-dashboard/home-dashboard.page#action-98d61d4f": {
+      "s": "ok",
+      "f": ["lib/features/dashboard/presentation/pages/home_dashboard_page.dart:71", "lib/shared/widgets/tenant/tenant_switcher_title.dart:51", "lib/core/providers/tenant_providers.dart:176"],
+      "n": "Bedingung nur Anzahl Instanzen > 1 (alle tenantUsers-Zeilen des Users, jede Rolle) wie Ionic db.tenants(); Seite selbst in beiden nur Admin/Verantwortliche (Ionic isUrlAccessAllowed, Flutter _protectedRoutes '/home-dashboard'). Langname + Pfeil nach unten links in der Toolbar.",
+      "v": "bestätigt"
+    },
+    "home-dashboard/home-dashboard.page#popover-9bf258c6": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/tenant/tenant_switcher_title.dart:118", "lib/shared/widgets/tenant/tenant_switcher_title.dart:212"],
+      "n": "Popover Breite 220, schließt bei Auswahl (md PopupMenu, iOS Glas-Popover); gleiche Bedingung > 1 Instanz.",
+      "v": "bestätigt"
+    },
+    "home-dashboard/home-dashboard.page#action-80e399a8": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/tenant/tenant_switcher_title.dart:146", "lib/shared/widgets/tenant/tenant_switcher_title.dart:365", "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:180"],
+      "n": "Eintrag je Instanz (Langname), Badge „Aktuell“ bei der aktuellen; gleiche Instanz → nichts. Wechsel per setTenant (inkl. user_metadata). Ladeoverlay und Ziel nach dem Wechsel sind eigene Items (loading-bee7e5e1, nav-1c9dc137, beide diff).",
+      "v": "bestätigt"
+    },
+    "home-dashboard/home-dashboard.page#text-4fcb2ddf": {
+      "s": "ok",
+      "f": ["lib/features/dashboard/presentation/pages/home_dashboard_page.dart:75"],
+      "n": "Titel „Dashboard“ bei ≤ 1 Instanz (bis userTenantsProvider geladen ist ebenfalls, nur kurz).",
+      "v": "bestätigt"
+    },
+    "home-dashboard/home-dashboard.page#text-4fcb2ddf-2": {
+      "s": "ok",
+      "f": ["lib/features/dashboard/presentation/pages/home_dashboard_page.dart:49", "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:52"],
+      "n": "Großer Titel nur bei ≤ 1 Instanz und nur im iOS-Look (Ionic collapse=\"condense\" ist iOS-only).",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

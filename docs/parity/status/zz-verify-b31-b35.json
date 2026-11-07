@@ -1,0 +1,266 @@
+{
+  "batch": "zz-verify-b31-b35",
+  "ionic": "9f9b82af",
+  "flutter": "1aba6be",
+  "items": {
+    "songs/song/song.page#logic-84499787": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:98-160",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:911-1204",
+        "lib/core/providers/song_providers.dart:434-504",
+        "lib/core/providers/song_providers.dart:141-147",
+        "lib/core/services/song_file_service.dart:295-299",
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:446-465",
+        "lib/features/songs/presentation/widgets/single_file_upload_sheet.dart:181-211"
+      ],
+      "n": "Methoden selbst nachgeprüft (Laden inkl. Rollen/Freigabe-Link, Datei-Merge, Konflikte, Kategorie, Sortierung/Badges, Teilen, Löschen mit Sync-Namen, Kopieren, Gruppen-Druck, Aufnahme-FAB). Extras des Erstreviews bestätigt: _update bricht bei laufendem Speichern ab (_saving) → Änderung geht verloren (hoch); _init nur einmal pro Werk → Besetzung nach Upload/Datei löschen/Alle löschen/Kategorie veraltet, nächstes Speichern schreibt alte Gruppen zurück (Ionic: DbService upload/deleteSongFile setzen instrument_ids aus den Dateien, Seite lädt neu) (hoch); kein Neuladen nach Teil-Fehler (mittel); Telegram-Texte, Fehlermeldungen, Zusatzfunktionen (niedrig). Neu: Werk und Werkhistorie aus Sitzungs-Cache (extra, mittel). Randfall Kopieren: Flutter mappt Gruppen auch in Chören und für die Hauptgruppe (groupsProvider), Ionic nur this.instruments (Orchester ohne Hauptgruppe), sonst null.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#effect-8cf392b2": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:967-972",
+        "lib/core/services/zip_service.dart:15-59",
+        "lib/core/services/zip_service_io.dart:9-18",
+        "lib/core/services/zip_service_web.dart:7-31"
+      ],
+      "n": "Ionic: ZIP „{Werkname|songs}.zip“ (Dateien per Storage-Download), nativ Cache + FileViewer, mobiles Web Teilen-Menü, Desktop Anchor-Download; ein Ladefehler bricht ab / Flutter: ZIP „{bereinigter_Name}_files.zip“ (Leerzeichen → _), nativ Teilen-Dialog (share_plus), Web immer Anchor-Download; nicht ladbare Dateien werden übersprungen, doppelte Namen „ (2)“. Fehlendes Overlay separat (loading-f3d45d0c).",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#actionsheet-de68e818": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:1094-1170"
+      ],
+      "n": "Header „Datei Aktionen“, Buttons/Icons/Reihenfolge und readOnly-Bedingungen gleich. Unterschiede: Herunterladen – Ionic isPlatform('ios') blendet es auch auf iPhone/iPad im Browser/PWA aus, Flutter nur in der nativen iOS-App (!kIsWeb && Platform.isIOS); „Abbrechen“ in Ionic rot (role destructive, close-outline), in Flutter normal (cancelDestructive nicht gesetzt); Drucken – Ionic Overlay „Datei wird geladen...“, bei 0 Seiten „Keine druckbaren Noten (PDF/Bild) gefunden.“, bei Merge-Fehler „Fehler beim Zusammenführen der Noten.“ / Flutter ohne Overlay, bei 0 Seiten „Datei konnte nicht gedruckt werden“; Telegram in der Freigabe-Ansicht: Ionic eingeloggt mit Chat-ID sichtbar, Flutter nie.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#alert-877b5429": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:176-202",
+        "lib/core/providers/song_providers.dart:181-192",
+        "lib/core/utils/dialog_helper.dart:12-48"
+      ],
+      "n": "Titel „Werk löschen“, Text mit Sync-Namen bzw. Fallback „der Quellinstanz“, sonst „Soll das Werk wirklich gelöscht werden?“, Abbrechen/Löschen, Ziel /settings/songs gleich. Ionic: „Abbrechen“ role destructive (rot), „Löschen“ normal / Flutter: „Abbrechen“ normal, „Löschen“ rot gefüllt. Overlay „Werk wird gelöscht...“ fehlt (eigenes Item loading-a35a4f12).",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#toast-394c8bb6": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/songs/presentation/widgets/group_pdf_print.dart:29-36",
+        "lib/core/providers/player_providers.dart:89-95",
+        "lib/data/repositories/player_repository.dart:1332-1339"
+      ],
+      "n": "Text „Keine Gruppen mit zugewiesenen Personen gefunden“ und Farbe (warning) gleich. Bedingung weicht ab: Flutter zählt pausierte Personen mit (nur pending=false, left=null) → Gruppen nur mit pausierten Personen: Ionic dieser Toast, Flutter druckt. Zudem wird playerCountByInstrumentProvider nie invalidiert (Stand vom ersten Laden der Sitzung) – Ionic lädt die Personen pro Seitenaufruf.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-e14adf08": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:333",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:547-571",
+        "lib/core/providers/song_providers.dart:455-457"
+      ],
+      "n": "Eingeloggt gleich (Felder des aktuellen Tenants, Text „Zusatzfelder“). Ionic: Abschnitt nur mit db.tenant()?.song_additional_fields – öffentliche Freigabe-Ansicht ohne Login nie, eingeloggt die Felder des eigenen Tenants / Flutter: Freigabe-Ansicht zeigt die Zusatzfelder des geteilten Tenants mit Werten (read-only), auch ohne Login – Werte damit über den Link öffentlich sichtbar.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#action-399b39c6": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:1022-1043",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:993-999",
+        "lib/features/songs/presentation/widgets/group_pdf_print.dart:15-61",
+        "lib/core/providers/player_providers.dart:89-95",
+        "lib/data/repositories/player_repository.dart:1332-1339",
+        "lib/features/songs/data/song_print_service.dart:57-117"
+      ],
+      "n": "Eintrag „Gruppen-PDFs drucken“, Icon, Bedingung (bearbeitbar, Dateien vorhanden, im …-Menü) gleich. Ionic zählt je Gruppe Personen ohne left und ohne paused (getPlayers(true) pro Seitenaufruf) / Flutter (playerCountByInstrumentProvider): pending=false, left=null – pausierte Personen zählen mit → mehr Kopien, Gruppen nur mit Pausierten werden gedruckt; Provider ohne autoDispose wird nie invalidiert → Zählung veraltet über die Sitzung. Außerdem kein Overlay „PDF wird erstellt...“, bei 0 Seiten keine Warnung „Keine druckbaren Noten (PDF/Bild) gefunden.“ und bei übersprungenen Dateien keine Warnung „x Datei(en) konnten nicht eingebunden werden.“.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-d7775be7": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_beamer_file_section.dart:32"
+      ],
+      "n": "Dateiname der SongBeamer-Datei als Titel. Abweichende Sichtbarkeit der Sektion (Freigabe-Ansicht eingeloggt) ist im Kopf-Item text-3cb4b466 erfasst.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#action-2b4e019d": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:374",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:841-875"
+      ],
+      "n": "Text „Werk in andere Instanz kopieren“, Icon, Position (nach Herkunft) und Bedingung (andere Instanzen der Organisation mit Admin/Verantwortlich, ohne aktuelle; auch für Nur-Lese-Rollen) gleich. Ionic zeigt den Eintrag auch in der öffentlichen Freigabe-Ansicht, wenn eingeloggt / Flutter dort nie.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#action-7999bdf1": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:76-80",
+        "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:245-372",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:864-870"
+      ],
+      "n": "Erstreview nur Position. Ionic: X rechts; während des Kopierens deckt das Lade-Overlay das Modal ab, Schließen unmöglich / Flutter: X links und auch während des Kopierens aktiv (ebenso Herunterziehen/Tippen daneben, kein isDismissible:false/PopScope). Schließen bricht _copySong beim nächsten setState ab (nach dispose wirft setState auch im Release) → Werk in der Zielinstanz mit nur einem Teil der Dateien, instrument_ids leer, keine Meldung. Erstreview hat das nur im Item loading-49593403 als niedrig.",
+      "v": "korrigiert"
+    },
+    "songs/song/song.page#modal-81e9f13d": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:1174-1204",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:1241-1296"
+      ],
+      "n": "Ionic: Sheet-Modal (Breakpoint 1) mit Toolbar „Kategorie ändern“, „Abbrechen“ oben rechts, Radio-Liste, Freitext mit Löschen-Knopf, „Speichern“ als Block-Button / Flutter: AlertDialog mit Titel, Radio-Liste, Freitext-Feld und Aktionen „Abbrechen“/„Speichern“ unten. Vorbelegung (Chor (alle)) und geschriebene Werte (files + instrument_ids ohne 1/2/Hauptgruppe) gleich.",
+      "v": "bestätigt"
+    },
+    "tasks/task-detail/task-detail.page#nav-6c8e01ad": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/pages/task_detail_page.dart:53-57",
+        "lib/core/router/app_router.dart:1029-1034"
+      ],
+      "n": "Nach erfolgreichem Löschen Toast und context.go('/settings/team-organization') = Ionic navigateBack('/tabs/settings/team-organization'); Aufgabenliste per Notifier invalidiert.",
+      "v": "bestätigt"
+    },
+    "tasks/task-detail/task-detail.page#action-b4ae1052": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/pages/task_detail_page.dart:83-87"
+      ],
+      "n": "Rotes Papierkorb-Icon rechts neben Bearbeiten, nur Leitung (Admin/Verantwortlich) und geladene Aufgabe; Bestätigung „Aufgabe löschen?“ mit Abbrechen/Löschen.",
+      "v": "bestätigt"
+    },
+    "tasks/task-detail/task-detail.page#action-df7b76e8": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/team_organization/presentation/pages/task_detail_page.dart:116-137",
+        "lib/core/providers/team_org_providers.dart:173-180"
+      ],
+      "n": "Ionic: Refresher in jedem Zustand, auch bei „Diese Aufgabe gibt es nicht mehr…“; Aufgabe wird bei jedem Öffnen neu geladen / Flutter: RefreshIndicator nur bei geladener Aufgabe; taskByIdProvider (family ohne autoDispose) behält Fehler bzw. null → nach einem Ladefehler auch beim erneuten Öffnen dauerhaft „nicht verfügbar“ ohne Neuladen; geladene Aufgaben kommen beim erneuten Öffnen aus dem Cache (Änderungen anderer erst nach Pull-to-Refresh).",
+      "v": "bestätigt"
+    },
+    "team-organization/protocols-tab/protocols-tab.component#logic-58a7de00": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/protocols_tab.dart:49-83",
+        "lib/features/team_organization/presentation/widgets/protocols_tab.dart:92-112",
+        "lib/data/repositories/protocol_repository.dart:48-66"
+      ],
+      "n": "Zeilen (Titel/Untertitel/Datum mit Wochentag/Entwurf/„geändert am“), Sortierung nach Termindatum, Suche (alle Wörter), Monatsgruppen und Freigabetext gleich (zusätzlicher Ionic-Suchtoken Datum ohne Wochentag ist in dateText enthalten). Abweichung beim Ladefehler (extra des Erstreviews, mittel): Ionic Leerzustand mit Refresher / Flutter „Protokoll konnte nicht geladen werden.“ ohne Pull-to-Refresh, protocolsProvider bleibt im Fehler.",
+      "v": "bestätigt"
+    },
+    "team-organization/tasks-tab/tasks-tab.component#toast-1b91ff64": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/tasks_tab.dart:77-79",
+        "lib/core/providers/team_org_providers.dart:163-171",
+        "lib/data/repositories/task_repository.dart:24-55"
+      ],
+      "n": "Ionic: roter Toast „Aufgaben konnten nicht geladen werden“, bisherige Liste bleibt, Refresher nutzbar (TaskService schluckt DB-Fehler ohnehin → leere Liste) / Flutter: kein Toast; derselbe Text zentriert anstelle des ganzen Tabs (auch nach fehlgeschlagenem Refresh), nicht scrollbar → kein Pull-to-Refresh; teamTasksProvider (ohne autoDispose) bleibt bis zur nächsten Aufgaben-Mutation im Fehler, Mitglieder bis zum Neustart.",
+      "v": "bestätigt"
+    },
+    "team-organization/tasks-tab/tasks-tab.component#text-f8c29ade": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/tasks_tab.dart:146-153",
+        "lib/features/team_organization/team_org_utils.dart:358-403"
+      ],
+      "n": "Gruppen Überfällig/Woche/Später/Ohne Datum/Erledigt mit gleichen Texten, Reihenfolge und Sortierung; Überfällig rot, Anzahl als Note.",
+      "v": "bestätigt"
+    },
+    "team-organization/team-organization.page#logic-cb8d3ed3": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/team_organization/presentation/pages/team_organization_page.dart:30-34",
+        "lib/features/team_organization/presentation/pages/team_organization_page.dart:64-71",
+        "lib/core/providers/team_org_providers.dart:163-255"
+      ],
+      "n": "Start-Tab aus ?tab= (tasks/topics/protocols) und Laden der Person gleich. Abweichung (extra des Erstreviews bestätigt): Ionic lädt den aktiven Tab bei jeder Rückkehr (ionViewWillEnter) und bei jedem Segmentwechsel neu / Flutter: Tabs lesen app-weit gecachte Provider ohne autoDispose, neu nur nach eigenen Mutationen oder Pull-to-Refresh.",
+      "v": "bestätigt"
+    },
+    "team-organization/team-organization.page#action-411a87d7": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/tasks_tab.dart:107-108",
+        "lib/core/providers/team_org_providers.dart:163-171",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:385-390",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:571-572",
+        "lib/features/team_organization/presentation/widgets/protocols_tab.dart:111-112"
+      ],
+      "n": "Ionic: ein Refresher für die Seite, lädt den aktiven Tab neu, Mitglieder-Aufgaben frisch per getMyTasks / Flutter: RefreshIndicator je Tab (nur im Datenzustand); im Aufgaben-Tab für Mitglieder wirkungslos – invalidate(teamTasksProvider) liefert das gecachte myTasksProvider.future, neu zugewiesene Aufgaben erscheinen nicht. Themen (Leitung: Themen, Protokolle, Termine) und Protokolle laden neu. Fehlerzustände ohne Refresh siehe Toast-Items.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#toast-f0d73e65": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:368-370",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:595-600",
+        "lib/core/providers/team_org_providers.dart:203-210"
+      ],
+      "n": "Ionic: roter Toast „Themen konnten nicht geladen werden“, Inhalt bleibt (getAgendaItems schluckt DB-Fehler → leer) / Flutter: kein Toast; Leitung: derselbe Text zentriert anstelle des Tabs, ohne Pull-to-Refresh, agendaItemsProvider bleibt im Fehler; Mitglieder: Text unter der Vorschlagskarte, Pull-to-Refresh möglich.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#alert-07626e40": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:160-190",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:226-238",
+        "lib/core/providers/team_org_providers.dart:373-378"
+      ],
+      "n": "„Vorschlag übernehmen“, „Mit welcher Priorität kommt das Thema in den Themenspeicher?“, Radios Hoch/Mittel/Niedrig vorbelegt mit Priorität (Default medium), Abbrechen/Übernehmen; schreibt agenda_items proposal_status=accepted, priority, decision_note=null (id + tenant_id), danach team-notify proposal_decided und Toast.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#modal-f91a5777": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:240-251",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:267-275"
+      ],
+      "n": "Titel „Vorschläge“, X links gleich. Ionic: Sheet in voller Höhe (Breakpoint 1); schließt automatisch, sobald nach einer Entscheidung keine Vorschläge mehr offen sind (loadLeader: isReviewOpen=false) / Flutter: Bottom-Sheet 85 % Höhe, bleibt nach der letzten Entscheidung offen.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#text-62bc2cc3": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:270-275"
+      ],
+      "n": "Ionic: unter dem Hinweis, praktisch nur kurz beim automatischen Schließen sichtbar / Flutter: Sheet bleibt offen und zeigt „Alle Vorschläge sind entschieden.“ dauerhaft anstelle des Hinweises.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": [
+    {
+      "unit": "songs/song/song.page",
+      "title": "Werk und Werkhistorie aus Sitzungs-Cache",
+      "n": "Ionic: ngOnInit lädt Werk (getSong) und Werkhistorie (getHistoryBySongId) bei jedem Öffnen frisch / Flutter: songDetailDataProvider liest songByIdProvider und songHistoryProvider(songId) (FutureProvider.family ohne autoDispose); invalidiert nur durch Änderungen auf dieser Seite bzw. den songNotifier. Änderungen anderer Personen/Geräte (Dateien, Felder) und Historie-Änderungen über die Termin-Seite (invalidiert nur songHistoryProvider(null)) erscheinen beim erneuten Öffnen erst nach Pull-to-Refresh; Realtime aktualisiert nur songsProvider.",
+      "sev": "mittel",
+      "ionic": "src/app/songs/song/song.page.ts:147",
+      "f": [
+        "lib/core/providers/song_providers.dart:141-147",
+        "lib/core/providers/song_providers.dart:160-168",
+        "lib/core/providers/song_providers.dart:471-485",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2098-2099"
+      ]
+    }
+  ]
+}

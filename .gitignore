@@ -60,6 +60,7 @@ app.*.map.json
 # PUSH: Firebase config files (not committed, like Ionic; see docs/push-setup.md)
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
+.tmp-parity/
 
 # Golden test failure output (flutter test writes diff images here)
 test/**/failures/

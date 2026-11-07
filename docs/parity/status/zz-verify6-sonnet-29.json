@@ -1,0 +1,427 @@
+{
+ "batch": "zz-verify6-sonnet-29",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "settings/files/files.page#action-3c274606": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1085-1090"
+   ],
+   "v": "bestätigt",
+   "n": "Zurück-Pfeil: pop bzw. /settings (Ionic navigateBack /tabs/settings)."
+  },
+  "settings/files/files.page#action-42b3d799": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1135-1138",
+    "lib/features/settings/presentation/pages/files_page.dart:51-62",
+    "lib/features/settings/presentation/pages/files_page.dart:143-148"
+   ],
+   "v": "bestätigt",
+   "n": "Eintrag „Name“ mit Icon, Ordner zuerst – gleich. Ionic: localeCompare(Sprache, base) / Flutter: toLowerCase().compareTo (Codepoint: Umlaute/Akzente hinter z). Gilt auch für die Standardsortierung.",
+   "sev": "niedrig"
+  },
+  "settings/files/files.page#action-4c8c34ab": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1143-1146"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-54fc9b6c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1139-1142"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-64a83941": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1217",
+    "lib/features/settings/presentation/pages/files_page.dart:318-323"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: openSegment behält den Suchbegriff / Flutter: _navigateTo leert das Suchfeld.",
+   "sev": "niedrig"
+  },
+  "settings/files/files.page#action-65e414cc": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:358"
+   ],
+   "v": "bestätigt",
+   "n": "Titel = Dateiname (showImageViewerSheet fileName)."
+  },
+  "settings/files/files.page#action-6d64975f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1168-1172"
+   ],
+   "v": "bestätigt",
+   "n": "Footer nur im Auswahlmodus, deaktiviert ohne Auswahl."
+  },
+  "settings/files/files.page#action-9231c827": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1174-1178"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-a5bf7664": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1060-1065"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-ac60d4db": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1053-1056"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-bdaec002": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:945-953",
+    "lib/features/settings/presentation/pages/files_page.dart:329-333"
+   ],
+   "v": "bestätigt",
+   "n": "Texte/Icon/Effekt gleich („Ordner öffnen“, „Aufnahme abspielen“, „Datei öffnen/downloaden“); bei Ordner öffnen behält Ionic den Suchbegriff, Flutter leert ihn.",
+   "sev": "niedrig"
+  },
+  "settings/files/files.page#action-d9c2fc1d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1146-1153",
+    "lib/features/settings/presentation/pages/files_page.dart:1030-1034"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-dec822a9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1196"
+   ],
+   "v": "bestätigt",
+   "n": "RefreshIndicator lädt Einträge neu."
+  },
+  "settings/files/files.page#alert-2f654766": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:737-790"
+   ],
+   "v": "bestätigt",
+   "n": "„Speicher voll“ mit benötigt/frei/max, „OK“ / „Mehr Speicher anfragen“; nur beim Upload mit Speicherlimit (canEditFiles)."
+  },
+  "settings/files/files.page#field-23c77ab6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:799"
+   ],
+   "v": "bestätigt",
+   "n": "FilePicker (Mehrfachauswahl); Upload nur mit canEdit (Admin/Verantwortlich) wie Ionic."
+  },
+  "settings/files/files.page#field-5bd09165": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1293",
+    "lib/features/settings/presentation/pages/files_page.dart:51-62"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic normalisiert per NFKD und entfernt Akzente („cafe“ findet „Café“) / Flutter ersetzt nur ä/ö/ü/ß, Akzente werden nicht ignoriert.",
+   "sev": "niedrig"
+  },
+  "settings/files/files.page#media-53111c26": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:298-315",
+    "lib/features/settings/presentation/pages/files_page.dart:1364"
+   ],
+   "v": "bestätigt",
+   "n": "Vorschaubild statt Icon für Bilddateien (gleiche Endungen), signierte URL 3600 s; Fallback-Icon."
+  },
+  "settings/files/files.page#popover-7cf1e4d9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1101-1155"
+   ],
+   "v": "bestätigt",
+   "n": "PopupMenuButton statt ion-popover: Hochladen/Ordner/Mehrere auswählen nur canEdit, Link teilen, Sortierung, Name/Datum/Größe/Richtung – gleiche Reihenfolge."
+  },
+  "settings/files/files.page#text-308e6820": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:880-917",
+    "lib/features/settings/presentation/pages/files_page.dart:919-940"
+   ],
+   "v": "korrigiert",
+   "n": "Korrigiert: Text typ:<wert> · Filtert nach Dateityp oder Art … jetzt mit fettem Beispiel (_strongSpans) wie Ionic innerHTML, im Popover am Hilfe-Button; frühere Abweichung „kein Fettdruck“ besteht nicht mehr."
+  },
+  "settings/files/files.page#text-4f3365df": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:880-917",
+    "lib/features/settings/presentation/pages/files_page.dart:919-940"
+   ],
+   "v": "korrigiert",
+   "n": "Korrigiert: Text datum:<wert> · Filtert nach Änderungsdatum … jetzt mit fettem Beispiel (_strongSpans) wie Ionic innerHTML, im Popover am Hilfe-Button; frühere Abweichung „kein Fettdruck“ besteht nicht mehr."
+  },
+  "settings/files/files.page#text-cd4b6647": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:880-917",
+    "lib/features/settings/presentation/pages/files_page.dart:919-940"
+   ],
+   "v": "korrigiert",
+   "n": "Korrigiert: Text Filter sind kombinierbar … jetzt mit fettem Beispiel (_strongSpans) wie Ionic innerHTML, im Popover am Hilfe-Button; frühere Abweichung „kein Fettdruck“ besteht nicht mehr."
+  },
+  "settings/files/files.page#text-55b1e283": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1069"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#text-6acb38db": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1328"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#text-6c970750": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1058"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#text-75644c0c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1324"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#text-7ded9a32": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1132"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#text-c86920a6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:255-266",
+    "lib/features/settings/presentation/pages/files_page.dart:1132"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-e5e719e1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:214-217"
+   ],
+   "v": "bestätigt",
+   "n": "Warn-Toast „Die verlinkte Datei wurde nicht gefunden.“ bei ?open= ohne Treffer."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-2279dc11": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:694-735"
+   ],
+   "v": "bestätigt",
+   "n": "Name, „Typ: …“ (nicht bei bfecg_church), „Anzeige: …“, „Für Mitglieder sichtbar (bearbeitbar)“, Stift/Papierkorb, Sortiergriff ab 2 Feldern gleich. Ionic: Augen-Icon vor „Für Mitglieder sichtbar“ / Flutter: ohne Icon.",
+   "sev": "niedrig"
+  },
+  "settings/general/extra-fields/extra-fields.page#action-2348e9b6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:725"
+   ],
+   "v": "bestätigt",
+   "n": "Löschen mit Bestätigung (Titel/Text/„Löschen“), dann nur lokal entfernt bis „Speichern“ (Werke)."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-2a285919": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:694-735",
+    "lib/core/router/app_router.dart:1253-1257"
+   ],
+   "v": "bestätigt",
+   "n": "Werk-Zusatzfelder: Name, „Typ“, „Anzeige“, Stift/Papierkorb, Griff ab 2 Feldern; Reihenfolge lokal bis „Speichern“. Keine Rollenbedingung im Abschnitt; Seite nur über Allgemeine Einstellungen."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-6c3f7ab8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:652-656"
+   ],
+   "v": "bestätigt",
+   "n": "Block-Button „Speichern“ + Haken in der Toolbar (Z. 630-634), beide _save."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-a20ffd04": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:622-626",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:591-612"
+   ],
+   "v": "bestätigt",
+   "n": "Pfeil-zurück vorhanden; Flutter besser: Rückfrage bei ungespeicherten Änderungen (Ionic verwirft still); beim Speichern blockiert.",
+   "sev": "niedrig"
+  },
+  "settings/general/extra-fields/extra-fields.page#action-a6d1009b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:721"
+   ],
+   "v": "bestätigt",
+   "n": "Stift öffnet Bearbeiten-Sheet (Werk)."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-dcfca024": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:721"
+   ],
+   "v": "bestätigt",
+   "n": "Stift öffnet Bearbeiten-Sheet (Person)."
+  },
+  "settings/general/extra-fields/extra-fields.page#action-e80b8cdb": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:725"
+   ],
+   "v": "bestätigt",
+   "n": "Löschen mit Bestätigung (Person)."
+  },
+  "settings/general/extra-fields/extra-fields.page#field-1dbe68d1": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:541-549",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:179-185"
+   ],
+   "v": "bestätigt",
+   "n": "Label „Standardwert (optional)“, Zahlentastatur bei Zahl gleich. Flutter besser: Ionic startet mit defaultValue false (emptyField): bleibt Typ „Text“ und Feld leer, speichert Ionic false und befüllt Personen mit false / Flutter speichert .",
+   "sev": "niedrig"
+  },
+  "settings/general/extra-fields/extra-fields.page#field-cf72db04": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:541-549"
+   ],
+   "v": "bestätigt",
+   "n": "Label „Standardwert (optional)“ gleich. Flutter besser: Ionic speichert bei Typ „Text“ und leerem Feld defaultValue false und füllt Werke mit false / Flutter speichert .",
+   "sev": "niedrig"
+  },
+  "settings/general/extra-fields/extra-fields.page#field-e584f2a8": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:448-466"
+   ],
+   "v": "bestätigt",
+   "n": "Optionen Text/Zahl/Ja-Nein/Auswahl in gleicher Reihenfolge, Typwechsel setzt Standard zurück (Zahl → 0). Ionic: „BFECG Gemeinde“ bei db.isBeta() = Instanz 12 ODER Benutzer-E-Mail endet auf developer@attendix.de / Flutter: nur Instanz 12. Ionic setzt beim Wechsel auf BFECG die erste Gemeinde als defaultValue, Flutter null (beim Speichern/Sanitize fällt es auf die erste Gemeinde zurück).",
+   "sev": "niedrig"
+  },
+  "settings/general/extra-fields/extra-fields.page#loading-a708240a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:667-690",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:660"
+   ],
+   "v": "bestätigt",
+   "n": "Overlay mit Spinner und „Felder werden gespeichert...“, Eingaben gesperrt (AbsorbPointer), Zurück gesperrt (PopScope)."
+  },
+  "settings/general/extra-fields/extra-fields.page#modal-3b9ec807": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:309-315",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:427-436"
+   ],
+   "v": "bestätigt",
+   "n": "Beides Bottom-Sheet „Neues Feld hinzufügen“. Ionic: volle Höhe, kein X, Entwurf bleibt nach Wegwischen / Flutter: Inhaltshöhe mit X, Formular bei jedem Öffnen leer.",
+   "sev": "niedrig"
+  },
+  "settings/general/extra-fields/extra-fields.page#modal-e091cca3": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:309-315",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:427-436"
+   ],
+   "v": "bestätigt",
+   "n": "Beides Bottom-Sheet. Ionic: volle Höhe, ohne X, Entwurf bleibt erhalten / Flutter: Inhaltshöhe mit X, Formular jedes Mal leer.",
+   "sev": "niedrig"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-06537600": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:441-446",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:34-53"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser: Ionic getFieldTypeName kennt bfecg_church nicht → „Unbekannt“ / Flutter „BFECG Gemeinde“; übrige Typen gleich.",
+   "sev": "niedrig"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-b6ab4515": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:694"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-b6ab4515-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:694"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-1b391737": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:225"
+   ],
+   "v": "bestätigt",
+   "n": "„Fehler beim Speichern …“ (extraFieldsSaveFailed) bei Exception."
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-7c30c93f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:58-68"
+   ],
+   "v": "bestätigt",
+   "n": "Auswahl ohne Option: Toast mit Feldname beim Speichern (validateExtraFields)."
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-ca61b0b3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:58-68"
+   ],
+   "v": "bestätigt",
+   "n": "Leere Option: Toast beim Speichern."
+  },
+  "settings/general/general.page#action-2951fe6e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:651-662"
+   ],
+   "v": "bestätigt",
+   "n": "„Zusatzfelder“, Notiz „n Feld/Felder“ bzw. „Keine“, Ziel /settings/general/extra-fields."
+  },
+  "settings/general/general.page#action-2a371131": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:80-119",
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:312",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:765-792"
+   ],
+   "v": "bestätigt",
+   "n": "Button „Regel hinzufügen“ unten im Sheet, gleiche Validierungen (Status, Schwelle > 0, Tage > 0), Sheet schließt, Regel angehängt. Flutter zeigt zusätzlich Toast „Regel hinzugefügt“; ohne Anwesenheitstypen öffnet das Sheet nicht (Toast), Ionic erlaubt es (Regel gilt dann für „Alle Typen“) – praktisch ohne Folgen.",
+   "sev": "niedrig"
+  }
+ },
+ "extra": []
+}

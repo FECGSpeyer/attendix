@@ -1,0 +1,428 @@
+{
+ "batch": "zz-verify5-a-opus-04",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "services/login.guard#nav-2cb09388": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/user_preferences_provider.dart:18",
+    "lib/core/router/app_router.dart:334",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:80",
+    "lib/core/utils/dashboard_logic.dart:56"
+   ],
+   "n": "Fix greift: 'Instanzauswahl aktivieren' wirkt nur nach echtem Login (AuthChangeEvent.signedIn setzt afterSignIn; Wiederherstellung meldet in gotrue 2.18.0 initialSession/tokenRefreshed). Kaltstart mit Sitzung über /login → Router bzw. /tenants-Autonavigation öffnet die gespeicherte Instanz und geht direkt zu homeRouteFor (Dashboard für Admin/Verantwortlich mit showDashboardTab, sonst Startseite der Rolle) – wie LoginGuard (checkToken ohne showSelector, Utils.getUrl).",
+   "v": "bestätigt"
+  },
+  "services/notification/notification.service#db-8470a157": {
+   "s": "ok",
+   "f": [
+    "lib/main.dart:205",
+    "lib/core/services/telegram_service.dart:181",
+    "lib/core/services/telegram_service.dart:196"
+   ],
+   "n": "Fix greift: main.dart liest bei jedem Instanzwechsel notificationConfigProvider, der die fehlende notifications-Zeile anlegt (wie Ionic setTenant → getNotifcationConfig) – der Push-Prompt findet die Zeile für push_enabled vor. Werte gleich (id, enabled false, telegram_chat_id '', birthdays/signins/signouts/updates/registrations/criticals/reminders/checklist/tasks/messages true, push_enabled/push_and_telegram false), created_at jetzt UTC. Rest ohne Wirkung: enabled_tenants explizit null.",
+   "v": "bestätigt"
+  },
+  "services/print/print.service#logic-e07957d3": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/data/song_print_service.dart:60",
+    "lib/features/songs/data/song_print_service.dart:84",
+    "lib/core/services/native/native_file_service.dart:181",
+    "lib/features/songs/presentation/widgets/group_pdf_print.dart:72"
+   ],
+   "n": "Weiter gültig nach Änderung (nur onMerged-Callback neu): Sammeln, Kopien, Bilder auf A4, übersprungene zählen, Doppeldruck-Sperre, nativer Druckdialog mit Viewer-Fallback wie Ionic. Abweichungen: PDF-Seiten mit 150 dpi gerastert statt Vektorseiten (x-6a833a4976, mittel); blockierender Ladehinweis nur beim Gruppen-PDF-Druck, nicht bei Einzeldatei/Mappe/aktuellen Noten ('Datei wird geladen...'/'PDFs werden zusammengeführt...'); mobiler Browser öffnet die PDF im neuen Tab (printing_web _getPdf) statt Teilen/Download; Download nur über die öffentliche URL; Desktop-Browser-Druckfehler ohne Download-Fallback und Toast.",
+   "v": "bestätigt",
+   "sev": "mittel"
+  },
+  "x-6a833a4976": {
+   "s": "diff",
+   "f": [
+    "lib/features/songs/data/song_print_service.dart:84"
+   ],
+   "n": "Weiter real: Printing.raster(bytes, dpi: 150) → je Seite ein PNG in neues PDF (song_print_service.dart:84–90) statt Ionic pdf-lib copyPages (Vektorseiten). Unschärferer Notendruck, größere Dateien, viel Speicher bei großen Mappen.",
+   "v": "bestätigt",
+   "sev": "mittel"
+  },
+  "services/push/push.service#alert-a499f987": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_service.dart:265",
+    "lib/core/services/push/push_service.dart:312",
+    "lib/core/providers/push_providers.dart:228"
+   ],
+   "n": "Fix greift: Android 13+ meldet ohne POST_NOTIFICATIONS 'denied'; _checkPermission wertet das als prompt, solange die App die Berechtigung nicht selbst angefragt hat → Dialog 'Push-Benachrichtigungen' mit 'Später'/'Aktivieren' erscheint wie Ionic; Zurück/Barriere zählt wie Ionic role cancel als 'Später' (markShown). Wirkung gleich (Flag, initPush, notifications.push_enabled=true), nur nativ, nach Login/wiederhergestellter Sitzung. Hinweis: das Ionic-Flag push_prompt_shown wird bei der Übernahme nicht migriert – wer in Ionic 'Später' gewählt hat, sieht den Dialog nach dem Store-Update einmal erneut.",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#native-7521b3d9": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_service.dart:276",
+    "lib/core/services/push/push_service.dart:312"
+   ],
+   "n": "Fix greift: promptAndEnable prüft wie Capacitor checkPermissions (granted → Flag + initPush, denied → nur Flag, prompt → Dialog); Android 13+ 'nie gefragt' wird über das Flag push_permission_requested als prompt erkannt, nach eigener Anfrage bleibt denied denied (wie Capacitor).",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#native-9bb3502f": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_service.dart:337",
+    "lib/core/services/push/push_service.dart:344"
+   ],
+   "n": "Fix greift: initPush (auch über Benachrichtigungen → Push einschalten) fragt bei prompt die Systemberechtigung an, sonst nur bei granted weiter – auf Android 13+ ohne bisherige Anfrage jetzt Systemabfrage und Token wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/push/push.service#native-c30ca494": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_service.dart:347",
+    "lib/core/services/push/push_service.dart:325",
+    "lib/core/services/push/firebase_push_messaging_client.dart:83"
+   ],
+   "n": "requestPermission bei prompt (iOS notDetermined, Android 13+ noch nicht angefragt, merkt sich die Anfrage); Ergebnis ≠ granted → Abbruch wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/shift/shift.service#logic-8cc479ce": {
+   "s": "ok",
+   "f": [
+    "lib/data/models/shift/shift_plan.dart:22",
+    "lib/data/repositories/shift_repository.dart:17",
+    "lib/core/providers/shift_providers.dart:77",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:68",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:237"
+   ],
+   "n": "Erstprüfung überholt: beide Abweichungen behoben – Segmente werden beim Laden stabil nach index sortiert (Konverter in shift_plan.dart, gilt für Liste und Detail), Kopieren fragt/zählt nur Personen mit appId (getPlayersWithShift). loadShifts/addShift/updateShift/deleteShift/isShiftUsed, Zuweisen aktiver Zielpersonen per appId (shift_id/shift_name/shift_start), Neuberechnung künftiger Termine (nicht ganztägig, nur Entschuldigt bei Default-Status) wie Ionic, Flutter zusätzlich mit tenantId-Filtern. Ohne Gewicht: scheitert ein einzelnes Personen-Update, meldet Flutter 'Kopieren fehlgeschlagen' (Ionic zählt die Person nur nicht).",
+   "v": "korrigiert"
+  },
+  "services/teacher/teacher.service#logic-32d6a1c3": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/teacher_repository.dart:14",
+    "lib/data/repositories/teacher_repository.dart:49",
+    "lib/data/repositories/teacher_repository.dart:75",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:185"
+   ],
+   "n": "Erstprüfung überholt: Lösch-Aktion entfernt (x-0df39acfdc), deleteTeacher hat im normalen Design keinen Aufrufer mehr – wie Ionic toter Code. getTeachers (nach Name), Anlegen/Bearbeiten mit denselben Feldern (name, number, notes, private, instruments) gleich; Flutter zusätzlich tenantId-Filter.",
+   "v": "korrigiert"
+  },
+  "x-0df39acfdc": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:185"
+   ],
+   "n": "Behoben, Befund zurückgezogen: Lehrerliste ohne Wisch-Löschen; deleteTeacher nur noch in Repository/Notifier ohne Aufrufer im normalen Design – keine zusätzliche Schreibmöglichkeit mehr.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#toast-3c8301fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:56",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:58"
+   ],
+   "n": "Fix greift: roter Toast 'Automatische Nachrichten konnten nicht geladen werden' bei Fehler der Regeln oder der Läufe (einmal je Ladevorgang, auch bei Vorab-Fehler); Seite bleibt mit Intro, 'Neue Regel' und Vorlagen bedienbar wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#effect-c39ff4df": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:430",
+    "lib/features/settings/presentation/pages/files_page.dart:435",
+    "lib/features/settings/presentation/pages/files_page.dart:449",
+    "lib/core/utils/system_share/system_share_stub.dart:2",
+    "lib/core/utils/system_share/system_share_web.dart:11"
+   ],
+   "n": "Fix greift im Browser (Web Share API zuerst, Abbruch tut nichts, sonst Kopieren + Toast 'Link kopiert', sonst Link-Toast) und in der iOS-App (WKWebView hat navigator.share). Android-App: Ionic-WebView hat kein navigator.share → Ionic kopiert den Link mit Toast 'Link kopiert' / Flutter öffnet nativ immer das Teilen-Sheet (canUseSystemShareSheet = true). Gleiche Funktion, anderer Weg.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "settings/general/extra-fields/extra-fields.page#alert-89775995": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:365",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:383",
+    "lib/data/repositories/extra_fields_repository.dart:194"
+   ],
+   "n": "Fix greift: geschriebener Wert wie Utils.getFieldTypeDefaultValue mit dem bearbeiteten Standardwert (Auswahl → erste Option; Gemeinde-Feld → gespeicherter Wert, sonst erste Gemeinde; unverändertes Alt-Feld behält false statt 'false'); alle Personen der Instanz, gleiche Werte übersprungen, einzelne Update-Fehler nicht gezählt, Toast '{n} Personen aktualisiert', Ladefehler 'Fehler beim Laden der Personen'. Dialog (Titel, Text mit Name, Abbrechen/Zurücksetzen) nur bei bestehenden Personenfeldern wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#alert-bc12427a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:319",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:351",
+    "lib/data/repositories/extra_fields_repository.dart:171"
+   ],
+   "n": "Fix greift: Dialog 'Option löschen?' jetzt auch für gespeicherte Optionen von Werkfeldern (danach nur entfernen); Personenfelder: Werte auf neue erste Option, einzelne Fehler übersprungen, Toast bei n>0; Ladefehler → Toast, Option bleibt (wie Ionic, splice im try).",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#logic-27aa04c0": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:172",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:206",
+    "lib/data/repositories/extra_fields_repository.dart:124",
+    "lib/data/repositories/extra_fields_repository.dart:133"
+   ],
+   "n": "Nach Änderung: Personen-Bereinigung nur noch aktive, nicht ausstehende Personen (wie db.getPlayers(), gepaged), Prüfung beim Hinzufügen im offenen Sheet. Laden, ID aus Name, Validierungstexte, Reorder, tenants-Update beider Spalten, Default-/Auswahl-Korrektur wie Ionic. Übrig nur: Werk-Bereinigung nur bei eigener Werkbibliothek – mit song_source_tenant schreibt Ionic die eigenen Felddefinitionen in die Werke der Quell-Instanz (x-a3d381bce7, Flutter besser, niedrig). Erstprüfung mittel durch Fixes überholt.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "settings/general/general.page#logic-8f812cbf": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:119",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:184",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:224",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:260"
+   ],
+   "n": "Probenbeginn/-ende nicht mehr editierbar, nur unverändert mitgeschrieben (x-759bccbc9e behoben). Laden mit Defaults, Validierung (Name, Kürzel, Gruppen bei Registrierung), tenants-Update, evaluate-critical-rules, Dialog 'Neu laden', Ungespeichert-Dialog wie Ionic. Übrig nur niedrig-Extras: Dirty-Flag statt JSON-Vergleich, Regel bearbeiten und Gründe sortieren nur in Flutter, Legacy-Regeln ohne period_type werden ohne period_type gespeichert (Ionic ergänzt 'days').",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "x-759bccbc9e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:67",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:132",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:224"
+   ],
+   "n": "Behoben, Befund zurückgezogen: keine Felder 'Probenbeginn'/'Probenende' mehr; Werte werden geladen (Default 18:00/20:00) und unverändert mitgespeichert wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#action-34770ae6": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:98",
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart:116",
+    "lib/core/providers/shift_providers.dart:77",
+    "lib/core/providers/shift_providers.dart:96"
+   ],
+   "n": "Fix greift: Kopieren-Icon nur, wenn Ziele existieren = eigene Instanzen derselben Organisation (tenant_group_tenants), Rolle dort ≠ Beobachter, ohne aktuelle – wie linkedTenants/getTenantsFromUser; beim Laden/Fehler ausgeblendet, vor dem Schreiben erneut geprüft.",
+   "v": "bestätigt"
+  },
+  "settings/general/shifts/shift/shift.page#alert-8f8ff7ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:56",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:159",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:221"
+   ],
+   "n": "Fix greift: Alert 'In Instanz kopieren' mit Text 'Wähle die Ziel-Instanz, in die der Schichtplan kopiert werden soll.', Radio-Liste (longName, nichts vorausgewählt), Abbrechen/Weiter; Weiter ohne Auswahl → Warn-Toast, Alert bleibt; danach Zuweisungs-Alert nur bei Personen mit Account, sonst direkt kopieren. Reihenfolge der Instanzen (Favoriten, longName statt DB-Reihenfolge) unerheblich.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-e2cc3102": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1440",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1266",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1354"
+   ],
+   "n": "Nach Änderung: 'Start' im Ablaufplan immer sichtbar (nicht mehr nur bei 'Werke verwalten'), nur bei ganztägigen Typen editierbar, schreibt start_time und berechnet 'Ende' neu wie Ionic. Übrig: Zeitauswahl im 1-Minuten-Raster statt minuteValues 0,5,…,55 (showAppTimePicker ohne minuteInterval).",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#logic-20147d19": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:263",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1319",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:100",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1890"
+   ],
+   "n": "Nach Änderung: doppelte Feld-IDs behoben (Zeilen-uid + Zähler als Key, x-0ad1beb81e), Agenda-Marker-Zeit wird beim Laden auf 0 gesetzt, Ablaufplan immer sichtbar. Laden/Speichern/Validierung, Ungespeichert-Dialog, onDutyToggle/onProtocolToggle, Dienstplan-Angebot, Erinnerungen/Anmeldefelder/Checkliste im Kern wie Ionic. Übrig nur niedrig-Extras: end_time null bei ganztägig bzw. duration_days null sonst, reminders null statt [], Dirty-Flag statt JSON-Vergleich, System-Zurück fragt nach, Nutzungshinweis, >168 h abgelehnt, veralteter Filter-Key.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "x-0ad1beb81e": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:100",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:449",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1319",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1331"
+   ],
+   "n": "Behoben, Befund zurückgezogen: PlanFieldsEditor vergibt eindeutige Zeilen-Keys (uid je Zeile, bei Wiederholung '#n'); gleiche ids (zweimal 'Pause', Werk-Platzhalter) führen nicht mehr zu doppelten GlobalKeys im ReorderableListView. Lokale uids werden beim Speichern wieder entfernt, gespeicherte Daten unverändert.",
+   "v": "bestätigt"
+  },
+  "settings/handover-detail/handover-detail.page#logic-1c212d0f": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_detail_page.dart:27",
+    "lib/features/settings/presentation/pages/handover_detail_page.dart:61",
+    "lib/features/settings/presentation/pages/handover_detail_page.dart:129",
+    "lib/data/repositories/player_repository.dart:1635"
+   ],
+   "n": "Nach Änderung: Zielgruppen wie GroupService.getGroups nach category, sort_order (nulls last), name sortiert (x-6fbc5fbd93 behoben) → gleiche Reihenfolge und Vorbelegung. Auto-Zuordnung, Gruppenwahl, Bestätigung, Übergabe je Person mit Fehlerliste, Tracking, Rücknavigation gleich. Übrig: Flutter besser: Ladefehler der Zielgruppen mit Toast (x-c62672af53, niedrig).",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "x-6fbc5fbd93": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:1635",
+    "lib/features/settings/presentation/pages/handover_detail_page.dart:27"
+   ],
+   "n": "Behoben, Befund zurückgezogen: getTargetTenantGroups sortiert .order('category').order('sort_order', nullsFirst: false).order('name') wie Ionic getGroups; Auswahldialog und Vorbelegung (erste passende bzw. erste Gruppe) gleich.",
+   "v": "bestätigt"
+  },
+  "settings/handover/handover.page#logic-8f08a3c7": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:58",
+    "lib/features/settings/presentation/pages/handover_page.dart:101",
+    "lib/features/settings/presentation/pages/handover_page.dart:125",
+    "lib/features/people/people_list_utils.dart:60"
+   ],
+   "n": "Erstprüfung überholt: Personenliste jetzt über sortPeopleByGroup in der Reihenfolge von getModifiedPlayersForList (Hauptgruppe zuerst, Gruppen-sort_order, Gruppenname, Personen-sort_order, Nachname; x-bb2ef2fc5d behoben). Hauptgruppen-, Älter/Jünger- und Gruppenfilter, Ziel-Instanzen mit Default erste Instanz/erste Gruppe, 'Keine anderen Instanzen'-Toast, Alle auswählen und Übergabe nur der gefilterten Auswahl wie Ionic.",
+   "v": "korrigiert"
+  },
+  "x-bb2ef2fc5d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:125",
+    "lib/features/people/people_list_utils.dart:60"
+   ],
+   "n": "Behoben, Befund zurückgezogen: handover_page sortiert mit sortPeopleByGroup (Hauptgruppe, Gruppen-sort_order, Gruppenname, Personen-sort_order, Nachname mit localeCompare) wie Utils.getModifiedPlayersForList.",
+   "v": "bestätigt"
+  },
+  "settings/help/content/index#logic-45b4ee2c": {
+   "s": "diff",
+   "f": [
+    "lib/features/help/data/help_content_service.dart:89",
+    "lib/features/help/data/help_content.dart:240",
+    "lib/features/help/data/help_content.dart:268",
+    "lib/features/help/data/help_content_en.dart:162"
+   ],
+   "n": "localizeHelp-Logik gleich (nur en, sonst Deutsch; Kategorie/Artikel/Glossar überlagert, deutscher Begriff als Alias). Eigener Textvergleich gegen Ionic 1923d203: alle 88 deutschen Artikel (Titel+Text), Kategorien und Glossar sowie alle 122 englischen Einträge identisch bis auf songs-add (de und en bewusst umformuliert: Dateien öffnen in der App, x-ed039cfb84, niedrig). plan-beamer behoben (x-8d00ffba99). Erstprüfung mittel dadurch überholt.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "x-8d00ffba99": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/data/help_content.dart:240",
+    "lib/features/help/data/help_content_en.dart:142"
+   ],
+   "n": "Behoben, Befund zurückgezogen: Artikel plan-beamer enthält wieder „Dort siehst du die ORG-Pläne der nächsten 8 Wochen und zusätzlich die letzten 20 vergangenen.“ (en: „There you see the org plans of the next 8 weeks plus the 20 most recent past ones.“), Text identisch mit Ionic 1923d203.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-100a2fb9": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:258",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:309"
+   ],
+   "n": "Nach Änderung: Sheet bleibt nach dem Speichern offen, Toast 'Profil aktualisiert', Fehler 'Fehler beim Aktualisieren des Profils'; Felder (Name, Telefon, Geburtstag mit correctBirthday nur bei Änderung, Zusatzfelder inkl. Org-Feldern, Gemeinde) gleich. Übrig: Ionic zeigt Eingaben schon ungespeichert live auf der Hero-Karte und behält sie bis zum Neuladen / Flutter erst nach dem Speichern, beim Schließen verfallen sie; Flutter trimmt Namen/Telefon. Gleiche Funktion → niedrig.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "settings/settings/settings.page#field-f65b81d3": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:164",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:186",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:198"
+   ],
+   "n": "Nach Änderung: iOS/Android-App bieten Galerie oder Kamera (wie Ionic input type=file in der App), PWA die Browser-Dateiauswahl. Übrig: Flutter verkleinert auf max. 1200 px/Qualität 85 vor der 2-MB-Prüfung (Ionic lädt das Original hoch, lehnt > 2 MB ab – Flutter besser), keine Option 'Datei auswählen' in der iOS-App.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "settings/settings/settings.page#text-7dea9c51": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/version_history_sheet.dart:166",
+    "assets/version_history.json:1"
+   ],
+   "n": "Weiter gültig: Kopf 'Version x (Datum)' gleich, Inhalt verschieden – Ionic version-history.json (4.19.9 … 1.4.0, 326 Einträge) / Flutter assets/version_history.json mit eigener Flutter-Historie (0.41.25 … 0.1.0, 131 Einträge).",
+   "v": "bestätigt",
+   "sev": "mittel"
+  },
+  "settings/settings/settings.page#text-87e51c97": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:549",
+    "lib/core/constants/app_constants.dart:10"
+   ],
+   "n": "Weiter gültig: Ionic-Badge package.json-Version 4.19.9 / Flutter AppConstants.appVersion 0.41.25 – Nutzer sehen eine niedrigere, andere Versionsnummer.",
+   "v": "bestätigt",
+   "sev": "mittel"
+  },
+  "settings/settings/settings.page#text-8938a6a0": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/version_history_sheet.dart:176",
+    "lib/shared/widgets/sheets/version_history_sheet.dart:178",
+    "assets/version_history.json:1"
+   ],
+   "n": "Weiter gültig: gleiche Darstellung (je Änderung eine Zeile), aber andere Einträge – Ionic 4.19.x-Historie / Flutter eigene Historie (aktuell 0.41.25, 131 Versionen).",
+   "v": "bestätigt",
+   "sev": "mittel"
+  },
+  "settings/settings/settings.page#text-b8c80f4b": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/version_history_sheet.dart:167",
+    "assets/version_history.json:1"
+   ],
+   "n": "Weiter gültig: Fallback 'Version x' ohne Datum im Code, erscheint nie (alle 131 Flutter-Einträge haben ein Datum) / Ionic zeigt ihn für 56 alte Einträge. Ursache wie text-7dea9c51.",
+   "v": "bestätigt",
+   "sev": "mittel"
+  },
+  "settings/voice-leader/voice-leader.page#logic-767b1744": {
+   "s": "diff",
+   "f": [
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:62",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:140",
+    "lib/data/repositories/attendance_repository.dart:351",
+    "lib/data/repositories/player_repository.dart:201"
+   ],
+   "n": "Nach Änderung: Sortierung mit localeCompareDe (Umlaute wie Grundbuchstabe, x-6eff6305bb behoben), Abwesenheiten gepaged ab gestern und tenant-gefiltert, genaue Prüfung 'nach heute 0 Uhr' in Dart (x-7da9b986f8 behoben). Profil per appId, aktive Mitglieder der Gruppe, Status 2/4/5, Sortierung nach Datum, Titel (typeInfo/Typname), Badge-Farben, Einteilung, Pull-to-Refresh wie Ionic. Übrig nur niedrig-Extras: archivierte Termine nicht ausgeblendet, Fall ohne Spielerprofil.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "x-6eff6305bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:140",
+    "lib/core/utils/people_sort.dart:8"
+   ],
+   "n": "Behoben, Befund zurückgezogen: compareVoiceGroupMembers nutzt localeCompareDe (Umlaute/Akzente auf Grundbuchstaben gefaltet, groß/klein egal) für Nach- und Vorname wie localeCompare.",
+   "v": "bestätigt"
+  },
+  "x-7da9b986f8": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:351",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart:81"
+   ],
+   "n": "Behoben, Befund zurückgezogen: getUpcomingAbsencesForPersons lädt mit fetchAllPages (order id), !inner-Join mit attendance.tenantId und date ≥ gestern; die genaue Prüfung 'nach heute 0 Uhr' folgt in Dart – keine Kappung bei > 1000 Zeilen mehr.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#effect-228109d7": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:714",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:737",
+    "lib/features/planning/presentation/public_brandings.dart:28",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:127"
+   ],
+   "n": "Hauptlücke behoben: Branding aus branding_id des Ad-hoc-Plans (FECG-Logo + Text), Termin-Pläne und 'Kein Branding' ohne, nie das Instanz-Branding des Betrachters; Datei 'Titel_Wochentag, Datum(_2x).pdf'. Übrig (niedrig): bei mehreren Plänen fehlt im Dateinamen ' · Planname' (Ionic nimmt den ganzen Untertitel); Flutter besser: ohne Felder Warn-Toast 'Kein Plan verfügbar' (Ionic stumm), Untertitel bei einem Plan immer Plandatum (Ionic bei Zeit 'HH:mm' das heutige Datum).",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "shared/notification-bell/notification-bell.component#logic-a18396dd": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:98",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:104",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:279",
+    "lib/core/providers/message_providers.dart:193"
+   ],
+   "n": "Nach Änderung: Einträge ohne Ziel (Problemfall/Geburtstag) schließen nur, ohne Instanzwechsel; Routen-Einträge wechseln nur mit data.tenantId – wie Ionic (mittel-Grund behoben). Badge, Öffnen mit Fallback 'Alle' und Toast, Realtime, Alle markieren/löschen, Umschalten, Tippen → gelesen + Navigation je Rolle gleich. Übrig: Flutter besser: Termin-Einträge ohne data.tenantId wechseln auf die Instanz der Zeile (Ionic sucht den Termin in der aktuellen Instanz); Fehler-Toasts bei Markieren/Löschen (x-1288ff4e83, niedrig).",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  }
+ },
+ "extra": []
+}

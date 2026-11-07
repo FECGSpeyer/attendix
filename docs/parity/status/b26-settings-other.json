@@ -1,0 +1,1402 @@
+{
+ "batch": "b26-settings-other",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "settings/administration/administration.page#logic-8ed9a172": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:60",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:92",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:113",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:132",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:155",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:216",
+    "lib/core/providers/dashboard_providers.dart:336",
+    "lib/core/utils/dashboard_logic.dart:288"
+   ],
+   "n": "Laden (Limit/Belegung/Gemeinden), toGb-Rundung, Validierung, findDuplicates-Normalisierung und Merge-Abläufe entsprechen Ionic. Abweichungen siehe extra (Fehlertoast Speicherlimit, Duplikat-Neuberechnung nach Hinzufügen).",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#toast-22cb7d57": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:64",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:65"
+   ]
+  },
+  "settings/administration/administration.page#toast-4886e3c8": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:79",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:83"
+   ],
+   "n": "Texte gleich (\"Speicher: unbegrenzt\" / \"Speicherlimit: {gb} GB\"). Ionic: {gb} = rohe JS-Zahl mit Dezimalpunkt, ungerundet (\"2.5\") / Flutter: _fmtGb mit Dezimalkomma, auf 2 Stellen gerundet (\"2,5\").",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#alert-8fd4640e": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:93",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:98",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:100",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:101"
+   ],
+   "n": "Titel \"Gemeinde hinzufügen\", Platzhalter \"Name der Gemeinde\", Buttons \"Abbrechen\"/\"Hinzufügen\" gleich. Ionic: leerer Name → Alert bleibt offen und zeigt Meldung \"Bitte gib gültige Werte ein.\" im Alert (return false) / Flutter: Dialog schließt, Warn-Toast mit demselben Text. Flutter trimmt zusätzlich (Ionic legt auch nur aus Leerzeichen bestehende Namen ungetrimmt an).",
+   "sev": "mittel"
+  },
+  "settings/administration/administration.page#loading-2cf2d119": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:104"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay (ohne Text, max. 3 s) beim Anlegen / Flutter: kein Overlay, keine Sperre.",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#toast-88c6cb3b": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:107"
+   ]
+  },
+  "settings/administration/administration.page#toast-da425369": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:109"
+   ],
+   "n": "Ionic: roter Toast mit der rohen Fehlermeldung (error.message), zusätzlich Service-Toast \"Fehler beim Erstellen der Kirche\" / Flutter: nur roter Toast \"Fehler beim Hinzufügen\" (adminFlutterAddFailed).",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#alert-e0b718fa": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:327",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:328",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:329",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:330",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:331",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:332",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:133",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:138"
+   ]
+  },
+  "settings/administration/administration.page#loading-9b43bea8": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:141",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:207",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:325"
+   ],
+   "n": "Ionic: blockierendes Overlay \"Gemeinden werden zusammengeführt...\" / Flutter: kein Overlay und kein Text, nur Merge-/Umbenennen-Buttons während saving deaktiviert.",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#toast-bde9f729": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:151"
+   ]
+  },
+  "settings/administration/administration.page#toast-200705ff": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:143",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:144"
+   ]
+  },
+  "settings/administration/administration.page#alert-104dadf1": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:219",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:224",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:225",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:226",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:227",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:228"
+   ]
+  },
+  "settings/administration/administration.page#loading-cf07fdc8": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:141",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:343"
+   ],
+   "n": "Ionic: blockierendes Overlay \"Gemeinden werden zusammengeführt...\" / Flutter: kein Overlay, nur Buttons während saving deaktiviert.",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#toast-32957c22": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:145",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:148",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:150",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:151"
+   ],
+   "n": "Ionic: \"Alle zusammenführen\" zeigt immer \"{updated} Person(en) aktualisiert, {total} Duplikat(e) entfernt\" / Flutter: bei genau 1 Duplikat (pairs.length == 1) stattdessen \"Zusammengeführt: {count} Person(en) aktualisiert\".",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#toast-cf3b95c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:143",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:144"
+   ]
+  },
+  "settings/administration/administration.page#alert-c786a931": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:114",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:115",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:116",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:117",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:118",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:119",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:121",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:122"
+   ]
+  },
+  "settings/administration/administration.page#toast-485cc32a": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:128"
+   ]
+  },
+  "settings/administration/administration.page#toast-97519bf6": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:129"
+   ]
+  },
+  "settings/administration/administration.page#alert-a83fabc5": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:156",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:158",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:159",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:163",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:170",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:180",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:184",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:186"
+   ]
+  },
+  "settings/administration/administration.page#alert-d95dbe90": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:194",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:196",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:197",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:198",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:138"
+   ]
+  },
+  "settings/administration/administration.page#loading-6b2cf021": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:141",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:377"
+   ],
+   "n": "Ionic: blockierendes Overlay \"Gemeinden werden zusammengeführt...\" / Flutter: kein Overlay, nur Buttons während saving deaktiviert.",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#toast-f4fcfa29": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:151"
+   ]
+  },
+  "settings/administration/administration.page#toast-96d13755": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:143",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:144"
+   ]
+  },
+  "settings/administration/administration.page#action-99bed056": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:238"
+   ]
+  },
+  "settings/administration/administration.page#text-631dc3bc": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:238"
+   ]
+  },
+  "settings/administration/administration.page#text-631dc3bc-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:243"
+   ]
+  },
+  "settings/administration/administration.page#text-3aa3993e": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:246"
+   ]
+  },
+  "settings/administration/administration.page#action-6be3dfaa": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:248",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:249",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:250",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:251"
+   ],
+   "n": "push('/dashboard') = Usage Dashboard (Ionic /tabs/dashboard)."
+  },
+  "settings/administration/administration.page#text-e786293d": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:256"
+   ]
+  },
+  "settings/administration/administration.page#field-e645a227": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:259",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:260",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:261",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:262",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:266",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:267",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:269",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:48",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:49"
+   ]
+  },
+  "settings/administration/administration.page#text-afa4f9f7": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:272",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:274"
+   ]
+  },
+  "settings/administration/administration.page#text-af90065a": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:24",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:276"
+   ],
+   "n": "Ionic: number-Pipe ohne LOCALE_ID (en-US) → \"1.5 GB\" / Flutter: Dezimalkomma \"1,5 GB\".",
+   "sev": "niedrig"
+  },
+  "settings/administration/administration.page#text-32d94065": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:282",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:283"
+   ]
+  },
+  "settings/administration/administration.page#text-d38cc1b6": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:292",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:301"
+   ]
+  },
+  "settings/administration/administration.page#text-45ab2e3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:305"
+   ]
+  },
+  "settings/administration/administration.page#text-ca681383": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:312"
+   ]
+  },
+  "settings/administration/administration.page#text-20db3e5c": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:313"
+   ]
+  },
+  "settings/administration/administration.page#action-c192fed9": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:317",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:318",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:323",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:324",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:327"
+   ]
+  },
+  "settings/administration/administration.page#action-a0f21844": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:338",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:339",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:340",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:342",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:343"
+   ]
+  },
+  "settings/administration/administration.page#text-485fe851": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:351",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:352",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:357"
+   ]
+  },
+  "settings/administration/administration.page#text-ab5ef6e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:360",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:365"
+   ]
+  },
+  "settings/administration/administration.page#action-94ed76ef": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:369",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:371",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:372"
+   ]
+  },
+  "settings/administration/administration.page#action-1551fcba": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:374",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:376",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:377"
+   ]
+  },
+  "settings/administration/administration.page#action-91aecc64": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:386",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:387",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:390",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:391"
+   ]
+  },
+  "settings/auto-messages/list/auto-message-list.page#logic-37f87a77": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:30",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:36",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:38",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:44",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:93",
+    "lib/features/messages/presentation/auto_message_texts.dart:100",
+    "lib/features/messages/presentation/auto_message_texts.dart:125",
+    "lib/features/messages/presentation/auto_message_texts.dart:92",
+    "lib/core/providers/auto_message_providers.dart:37",
+    "lib/core/providers/auto_message_providers.dart:54"
+   ],
+   "n": "Laden (Regeln nach created_at, Läufe 7 Tage status=sent, Summe recipient_count), summary/chips/delayText, open/create, toggle inkl. Zurücksetzen bei Fehler entsprechen Ionic. Abweichung: kein Neuladen bei jedem Wiedereintritt (siehe extra); Fehlerfall siehe Toast-Item.",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/list/auto-message-list.page#toast-3c8301fd": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:98",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:118"
+   ],
+   "n": "Ionic: roter Toast \"Automatische Nachrichten konnten nicht geladen werden\" (auch wenn nur getRecentRuns scheitert); Seite bleibt mit \"Neue Regel\", Vorlagen und Hinweis bedienbar / Flutter: kein Toast; bei Fehler der Regeln ersetzt ein zentrierter Hinweistext den gesamten Inhalt (kein \"Neue Regel\"-Button, keine Vorlagen); Fehler beim Laden der Läufe wird still ignoriert.",
+   "sev": "mittel"
+  },
+  "settings/auto-messages/list/auto-message-list.page#nav-23b2dfd0": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:36",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:112"
+   ]
+  },
+  "settings/auto-messages/list/auto-message-list.page#nav-8a6fbd8f": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:38",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:39",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:40",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:41"
+   ]
+  },
+  "settings/auto-messages/list/auto-message-list.page#toast-8dc92ec6": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:53",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:54",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:55"
+   ]
+  },
+  "settings/auto-messages/list/auto-message-list.page#toast-af684f5a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:58",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:59",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:61"
+   ]
+  },
+  "settings/auto-messages/list/auto-message-list.page#action-96b96381": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:73"
+   ]
+  },
+  "settings/auto-messages/list/auto-message-list.page#text-17d56fb2": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:73"
+   ]
+  },
+  "settings/auto-messages/list/auto-message-list.page#action-2037e486": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:74",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:75",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:30"
+   ]
+  },
+  "settings/auto-messages/list/auto-message-list.page#text-a1066ac4": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:88",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:89"
+   ]
+  },
+  "settings/auto-messages/list/auto-message-list.page#text-1d130ac5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:101",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:103"
+   ]
+  },
+  "settings/auto-messages/list/auto-message-list.page#action-dba3737d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:107",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:110",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:111",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:112",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:185",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:193",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:206"
+   ]
+  },
+  "settings/auto-messages/list/auto-message-list.page#field-bf877017": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:109",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:113",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:114",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:224",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:225",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:226"
+   ]
+  },
+  "settings/auto-messages/list/auto-message-list.page#text-22b63d11": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:118",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:119"
+   ]
+  },
+  "settings/auto-messages/list/auto-message-list.page#action-7aa7e12a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:122",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:123",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:124",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:125"
+   ]
+  },
+  "settings/auto-messages/list/auto-message-list.page#text-7616322c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:130"
+   ]
+  },
+  "settings/auto-messages/list/auto-message-list.page#action-2de680a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:133",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:134",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:135",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:136",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:137"
+   ]
+  },
+  "settings/auto-messages/list/auto-message-list.page#text-0caeba15": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:141"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#logic-e4bf4b56": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:77",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:118",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:144",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:156",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:164",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:175",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:199",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:222",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:235",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:249",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:272",
+    "lib/core/providers/auto_message_providers.dart:127",
+    "lib/data/models/auto_message/auto_message.dart:81",
+    "lib/data/models/auto_message/auto_message.dart:189",
+    "lib/data/models/auto_message/auto_message.dart:212",
+    "lib/data/repositories/auto_message_repository.dart:65"
+   ],
+   "n": "Defaults, Vorlagen-Presets, Status/Typ/Gruppen-Toggles (leer → null), Stepper-Grenzen (2–50, 1–365, ±7), delayLabel, Textmodus/Reset, Platzhalter, Vorschau, problems, saveRule (enabled_at-Stempel, created_by), Löschen, Verlauf und Summen entsprechen Ionic. Abweichungen siehe extra.",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#toast-31bb7a6e": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:109",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:110",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:872"
+   ],
+   "n": "Flutter besser: Laden der Regel scheitert → gleicher roter Toast. Ionic zeigt den Toast auch, wenn nur der Verlauf (loadHistory) scheitert, und dann im Verlauf 0/0/0 + \"Diese Regel hat noch nichts verschickt.\" / Flutter: kein Toast, im Tab Verlauf Hinweis \"Automatische Nachrichten konnten nicht geladen werden\".",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#toast-6b7dde03": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:252",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:253",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:254",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:235",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:236",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:237",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:238",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:239",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:240",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:241",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:242",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:243",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:244",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:245"
+   ],
+   "n": "Flutter besser: gleiche Prüfungen/Reihenfolge, erster Fehler als Warn-Toast. Ionic akzeptiert beim eigenen Text einen Body, der nur Leerzeichen enthält (prüft nur auf \"text\"-Knoten) / Flutter verlangt nicht-leeren Text (TiptapConverter.hasText).",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#toast-34d74721": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:263"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#nav-61929704": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:264"
+   ],
+   "n": "Ionic: navigateByUrl('/tabs/settings/auto-messages') → immer zur Regel-Liste / Flutter: context.pop() → zurück zur vorherigen Seite. Gleich beim Aufruf aus der Liste; beim Aufruf aus dem Termin-Panel (?tab=history) landet Flutter wieder auf dem Termin statt auf der Liste.",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#toast-3fda15ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:265",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:266"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#alert-9c3672dd": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:277",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:278",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:279",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:280",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:281",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:282",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:286"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#nav-4f4f5283": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:287",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:288"
+   ],
+   "n": "Ionic: navigateByUrl('/tabs/settings/auto-messages') → immer zur Regel-Liste / Flutter: context.pop() → zurück zur vorherigen Seite. Gleich beim Aufruf aus der Liste; beim Aufruf aus dem Termin-Panel (?tab=history) landet Flutter wieder auf dem Termin statt auf der Liste.",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#toast-6aab2a50": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:289",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:290"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#nav-a0e783c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:924",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:925",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:926",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:927"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-490549d0": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:300"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-00c9eef8": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:301"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-9e34c1e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:302",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:303",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:307",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:309",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:310",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:313"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-b324328d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:876",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:892",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:897"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-5e0e3b93": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:892"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-605dd4f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:877",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:893"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-f8541de1": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:893"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-67638bdf": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:878",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:894"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-fd68f1a2": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:894"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-36aa01c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:902",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:903"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-10a37b5c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:908",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:910",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:911",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:912",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:917",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:918",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:921",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:923",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:924",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:927"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-ad6a48bc": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:359"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-dcc8d540": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:364",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:365",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:366",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:369"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-86d54e18": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:375",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:376",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:377",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:378"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-fc73bc02": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:382"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-d31f0533": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:386"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-87563a8e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:389",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:390",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:391",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:393",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:394",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:395",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:403"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-3f080ffa": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:410"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-6087954c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:411",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:413",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:416",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:420",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:423",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:424"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-01954ff0": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:427",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:432"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-1335b5e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:434",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:436",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:959",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:961"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-99a9cfb0": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:433",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:964"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-9b2e8e42": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:439",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:441",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:965",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:967"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-f6ee86c6": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:445",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:447"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-a0e778a3": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:450",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:451"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-9dc55767": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:448"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-2ba38d74": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:454",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:456"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-0819182b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:462",
+    "lib/features/messages/presentation/auto_message_texts.dart:82"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-b069a66d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:465"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-a6c6d396": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:348",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:350",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:468",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:469",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:471",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:472",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:475"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-2676777b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:480",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:481",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:482",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:483"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-9c429bcd": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:487"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-9ccfb60b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:352",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:490",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:491",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:493",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:494",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:497"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-7ad6028c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:502",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:503",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:504",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:505"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-21530294": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:512",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:513",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:514",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:516",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:517",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:519",
+    "lib/data/models/auto_message/auto_message.dart:33",
+    "lib/features/messages/presentation/auto_message_texts.dart:96"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-a48abb79": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:523"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-f169770b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:526",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:536",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:540"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-f6a959cd": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:549"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-821c7006": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:550",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:552",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:553",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:555",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:556",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:144"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-f07aa849": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:563",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:564",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:567",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:568",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:570"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-ad39a8c9": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:174",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:574",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:580"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-5e3550a7": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:193",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:582",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:583"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-1df8701c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:593"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-bfacb04a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:600",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:601",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:602",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:605"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-efce6677": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:613",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:617",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:653",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:133"
+   ],
+   "n": "Editor an gleicher Stelle, Inhalt wird in body_json übernommen. Ionic-Toolbar (app-message-editor): B, I, U, S | H (H2-Umschalter) | Liste, nummerierte Liste | Link, Rückgängig / Flutter (Quill): B, I, U, S, Überschrift-Auswahl (Quill-Header-Dropdown), Listen, Link – kein Rückgängig-Button (showUndo: false).",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-5ab0462f": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:664",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:666",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:667",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:164",
+    "lib/features/messages/presentation/auto_message_texts.dart:156"
+   ],
+   "n": "Gleiche Platzhalter \"{vorname}\" … \"{anzahl}\" in gleicher Reihenfolge, Einfügen an der Cursorposition. Ionic: Chips outline (Rahmen primary, transparent) / Flutter: gefüllt hell-primary ohne Rahmen (AutoMessageChip selected:true).",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-0feada82": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:670",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:671"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-7600b17d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:672",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:676",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:678",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:156"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-115b7e1e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:688"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-1943755d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:692",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:695",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:696",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:698"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-c03e8960": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:693",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:695",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:696",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:698"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-f57382c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:713"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-cb3ce0f1": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:722",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:723",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:724",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:725",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:728",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:731",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:735"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-d1817d01": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:716",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:717",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:718",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:719",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:720"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-0e19135e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:739",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:740"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-2ea3e80a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:744"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-6f78a8d5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:747",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:748",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:750",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:751"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-e5ef0cbd": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:753",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:754",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:756",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:757"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-1fd81b04": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:761"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-2d04584b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:764"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-cab12068": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:767",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:768",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:769",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:772",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:773",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:199"
+   ],
+   "n": "Gleicher Text \"Vorschau mit den letzten Terminen\", outline, volle Breite, während Laden deaktiviert mit Spinner. Ionic: ohne Icon / Flutter: zusätzliches Augen-Icon (visibility_outlined).",
+   "sev": "niedrig"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-0428f12c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:777"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-8c5c58ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:805"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-98712f30": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:799",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:801",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:811",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:812"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-4eef9834": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:818",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:820"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-15e0e4b5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:824",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:825"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-0f142178": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:830",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:832",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:833"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-946e1029": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:840",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:842"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-5f839d06": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:843",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:845",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:846",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:847"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-6ad37b5c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:851",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:854"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-d67231b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:860"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-534cc13a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:780",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:784",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:786",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:789"
+   ]
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-51800515": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:318",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:319",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:322",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:323",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:327"
+   ]
+  },
+  "settings/dashboard/dashboard-settings.page#logic-300baefb": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:38",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:48",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:51",
+    "lib/core/providers/dashboard_providers.dart:124",
+    "lib/core/providers/dashboard_providers.dart:144",
+    "lib/core/providers/dashboard_providers.dart:161",
+    "lib/core/providers/dashboard_providers.dart:184",
+    "lib/core/providers/dashboard_providers.dart:190",
+    "lib/core/utils/dashboard_logic.dart:22",
+    "lib/core/utils/dashboard_logic.dart:64"
+   ],
+   "n": "Laden aus user_metadata (showDashboardTab_<tenant>, dashboardCards_<tenant> mit Merge neuer/unbekannter Karten), shownCards-Filter \"Meine Aufgaben\" nur mit Teamorganisation, Umschalten, Zurücksetzen und Umsortieren (versteckte Karten ans Ende) entsprechen Ionic. Abweichung nur in der Fehlerbehandlung (extra).",
+   "sev": "niedrig"
+  },
+  "settings/dashboard/dashboard-settings.page#action-bf97393a": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:57"
+   ]
+  },
+  "settings/dashboard/dashboard-settings.page#text-0426985e": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:58"
+   ]
+  },
+  "settings/dashboard/dashboard-settings.page#action-a250964f": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:60",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:64",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:65"
+   ]
+  },
+  "settings/dashboard/dashboard-settings.page#text-c917e108": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:73"
+   ]
+  },
+  "settings/dashboard/dashboard-settings.page#field-85ba4347": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:76",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:77",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:78",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:79",
+    "lib/core/providers/dashboard_providers.dart:144"
+   ]
+  },
+  "settings/dashboard/dashboard-settings.page#text-340370bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:83"
+   ]
+  },
+  "settings/dashboard/dashboard-settings.page#action-aba26fff": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:87",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:91",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:92",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:97",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:98",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:103",
+    "lib/core/providers/dashboard_providers.dart:190"
+   ],
+   "n": "Ziehgriff nur im Sortiermodus (Ionic: ion-reorder-group disabled)."
+  },
+  "settings/dashboard/dashboard-settings.page#field-02b78b96": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:104",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:105",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:106",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:108",
+    "lib/core/providers/dashboard_providers.dart:179"
+   ]
+  },
+  "settings/dashboard/dashboard-settings.page#action-e885690f": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:122",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:123",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:124",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:125",
+    "lib/core/providers/dashboard_providers.dart:184"
+   ]
+  },
+  "settings/dashboard/dashboard-settings.page#text-3fd612ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:131",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:134"
+   ]
+  }
+ },
+ "extra": [
+  {
+   "unit": "settings/administration/administration.page",
+   "title": "Fehlertoast beim Speichern des Speicherlimits",
+   "n": "Ionic: updateTenantData-Fehler zeigt Service-Toast \"Fehler beim Aktualisieren der Einstellungen\" (svc.updateSettingsFailed) und setzt Feld zurück / Flutter: setzt Feld zurück und zeigt \"Fehler beim Speichern\" (svcSaveFailed).",
+   "sev": "niedrig",
+   "ionic": "src/app/services/tenant/tenant.service.ts:54",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:86",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:88"
+   ]
+  },
+  {
+   "unit": "settings/administration/administration.page",
+   "title": "Duplikate nach Hinzufügen einer Gemeinde",
+   "n": "Flutter besser: Ionic lädt nach openChurchInput nur this.churches neu, ruft findDuplicates() nicht auf → Duplikat-Hinweis erscheint erst beim nächsten Öffnen / Flutter berechnet findChurchDuplicates bei jedem Build neu.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/administration/administration.page.ts:86",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:216"
+   ]
+  },
+  {
+   "unit": "settings/auto-messages/list/auto-message-list.page",
+   "title": "Kein Neuladen beim Wiedereintritt",
+   "n": "Ionic: ionViewWillEnter lädt Regeln und \"Letzte 7 Tage\" bei jedem Zurückkehren/Tabwechsel neu / Flutter: Neuladen nur nach Speichern/Löschen/Umschalten (Invalidierung von autoMessageRulesProvider) oder Pull-to-Refresh; \"Letzte 7 Tage\" (autoMessageLastWeekProvider) bleibt bis zum Pull-to-Refresh unverändert.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/auto-messages/list/auto-message-list.page.ts:35",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:30",
+    "lib/core/providers/auto_message_providers.dart:54"
+   ]
+  },
+  {
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "title": "Verlaufstitel bei ausgeblendeten Termintypen",
+   "n": "Flutter besser: Ionic sucht den Typnamen für Verlaufszeilen ohne typeInfo nur in den sichtbaren Typen (this.types = visible !== false) → bei ausgeblendetem Typ leerer Titel \"· 01.02.2026\" / Flutter nutzt alle Termintypen und zeigt den Namen.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/auto-messages/rule/auto-message-rule.page.ts:330",
+   "f": [
+    "lib/core/providers/auto_message_providers.dart:136",
+    "lib/core/providers/auto_message_providers.dart:149"
+   ]
+  },
+  {
+   "unit": "settings/auto-messages/rule/auto-message-rule.page",
+   "title": "Regel-ID nicht gefunden",
+   "n": "Ionic: getRule liefert null → Formular \"Neue Regel\" mit leerem Namen und tenantId 0 aus defaultAutoMessageRule(0); Speichern scheitert vermutlich (RLS) / Flutter: Formular \"Neue Regel\" mit leerem Namen und aktuellem Tenant; Speichern legt eine neue Regel an.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/auto-messages/rule/auto-message-rule.page.ts:51",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:62",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:82",
+    "lib/data/repositories/auto_message_repository.dart:87"
+   ]
+  },
+  {
+   "unit": "settings/dashboard/dashboard-settings.page",
+   "title": "Fehler beim Speichern der Dashboard-Einstellungen",
+   "n": "Flutter besser: Ionic wertet das Ergebnis von supabase.auth.updateUser nicht aus (supabase-js wirft nicht; kein Hinweis, Schalter/Reihenfolge bleiben lokal geändert, obwohl nicht gespeichert) / Flutter setzt den Zustand zurück und zeigt roten Toast (dashSettingsFlutterSaveFailed).",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:801",
+   "f": [
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:38",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:42",
+    "lib/core/providers/dashboard_providers.dart:155"
+   ]
+  }
+ ]
+}

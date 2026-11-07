@@ -1,0 +1,269 @@
+{
+ "batch": "zz-scope-optik",
+ "ionic": "1923d203",
+ "flutter": "8004a44",
+ "afterRound": 4,
+ "note": "Leon 05.11.2026: Es zählt, dass jede Ionic-Funktion da ist und gleich funktioniert; reine Optik/Anordnung ist niedrig. Offene mittel-Punkte, die nur Optik betreffen, hier auf niedrig gesetzt (Nachtrag ohne s).",
+ "items": {
+  "settings/administration/administration.page#alert-8fd4640e": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gemeinde anlegen geht gleich, Leer-Meldung mit gleichem Text und Fehler werden gemeldet; nur Dialog bleibt nicht offen, kein Overlay, anderer Fehlertext. – Befund: Titel „Gemeinde hinzufügen“, Platzhalter „Name der Gemeinde“, Buttons „Abbrechen“/„Hinzufügen“ gleich. Ionic: leerer Name → Alert bleibt offen mit Meldung „Bitte gib gültige Werte ein.“ (return false); beim Anlegen blockierendes Lade-Overlay; Fehler-Toast mit Rohmeldung error.message / Flutter: Dialog schließt, Warn-Toast mit demselben Text; kein Overlay; Fehler-Toast „Fehler beim Hinzufügen“. Flutter trimmt (Ionic legt Namen aus Leerzeichen ungetrimmt an)."
+  },
+  "settings/files/files.page#popover-f66de769": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleicher Hilfetext, nur Dialog statt Popover und ohne Fettdruck. – Befund: Ionic: Popover am Hilfe-Button (schließt durch Tippen daneben), Beispiele fett / Flutter: zentrierter Alert-Dialog mit OK-Button, gleiche Texte ohne Fettdruck. Erstprüfer: niedrig – Wechsel Popover → Dialog ist ein anderer Dialogtyp (laut Brief mittel, wie bei popover-92206ccb/help-article popover-c1b18c0d bewertet)."
+  },
+  "settings/files/files.page#popover-92206ccb": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleiche Einträge, Reihenfolge und Bedingungen, nur Action Sheet statt Popover. – Befund: Ionic: Popover am ⋯-Button / Flutter: Action Sheet von unten mit zusätzlichem „Abbrechen“, „Löschen“ rot; Einträge, Reihenfolge und Bedingungen (Telegram nur mit Chat, Bearbeiten nur mit Rechten) gleich."
+  },
+  "settings/general/general.page#action-578da7ee": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Grund hinzufügen per Dialog statt leerer Zeile; leere Gründe verwirft auch Ionic beim Speichern. – Befund: Ionic: 'Grund hinzufügen' hängt eine leere Eingabezeile an / Flutter: öffnet Dialog 'Grund hinzufügen' (Feld 'Grund', Buttons 'Abbrechen'/'Hinzufügen'); leere und doppelte Gründe werden verworfen. (f-Zeilen geschärft.)"
+  },
+  "settings/general/general.page#action-50952c99": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Grund hinzufügen per Dialog statt leerer Zeile; leere Gründe verwirft auch Ionic beim Speichern. – Befund: Ionic: hängt eine leere Eingabezeile an / Flutter: öffnet Dialog 'Grund hinzufügen' (Feld 'Grund', 'Abbrechen'/'Hinzufügen'); leere und doppelte Gründe werden verworfen. (f-Zeilen geschärft.)"
+  },
+  "settings/general/shifts/shift/shift.page#alert-0ef2eadc": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleiche Wahl (nur Schichtplan oder mit Zuweisungen) und gleiche Kopierlogik, nur Schalter im Sheet statt zweitem Alert. – Befund: Ionic: zweiter Alert 'Zuweisungen kopieren?' ('Der Schichtplan ist n Personen zugewiesen. Sollen diese Zuweisungen auch in „X“ übernommen werden?') mit Abbrechen/Nur Schichtplan/Mit Zuweisungen, nur wenn zugewiesene Personen mit appId existieren / Flutter: Schalter 'Zuweisungen kopieren' (Standard aus) im Sheet mit Hinweis 'n Personen nutzen diesen Schichtplan…', sichtbar bei jeder Zuweisung (auch ohne appId). Kopierlogik (appId-Abgleich, nur aktive Personen, Anwesenheiten) gleich."
+  },
+  "settings/general/type/type.page#action-2be774f4": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Abbrechen der Neuanlage ist möglich, nur „Abbrechen“ im Namensdialog statt X im Modal. – Befund: Ionic: „X“ (close-outline) im Neu-Modal (dismiss, ggf. Rückfrage) / Flutter: kein Neu-Modal, „Abbrechen“ im Namensdialog „Neuer Anwesenheitstyp“."
+  },
+  "settings/general/type/type.page#action-d5d47659": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Erinnerungen sind gleich konfigurierbar, nur inline statt über Eintrag mit Sheet. – Befund: Ionic: Eintrag „Erinnerungen konfigurieren“ mit „{count} Erinnerung(en) aktiv“ bzw. „Keine Erinnerungen konfiguriert“ und Badge „n/3“, öffnet Sheet / Flutter: kein Eintrag, Erinnerungs-Editor direkt inline unter dem Schalter."
+  },
+  "settings/general/type/type.page#modal-0895b1d0": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleicher Inhalt inline statt im Sheet-Modal. – Befund: Ionic: Sheet-Modal (Breakpoints 0/1) / Flutter: gleicher Inhalt (Info-Karte, aktive Erinnerungen n/3, Schnellauswahl, eigene Stunden, Max-Hinweis) inline in der Seite (TypeRemindersEditor)."
+  },
+  "settings/general/type/type.page#popover-31d23755": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleiche 9 Farben und Auswahl, nur Dialog statt Popover. – Befund: Ionic: Popover am Farb-Eintrag mit 3er-Raster / Flutter: zentrierter Dialog mit Farb-Raster; 9 Farben, Reihenfolge und graue Markierung der Auswahl gleich, Tippen übernimmt und schließt."
+  },
+  "settings/general/type/type.page#text-2c11308c": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleiche Filter-Einstellungen, nur auf zwei Abschnitte verteilt; Hinweis auf „Filter“ findet sich im Abschnitt „Zusatzfeld-Filter“ wieder. – Befund: Ionic: ein Abschnitt „Filter“ (Relevante Gruppen + Zusatzfeld-Filter) / Flutter: zwei Abschnitte „Relevante Gruppen“ und „Zusatzfeld-Filter“, Überschrift „Filter“ fehlt; der Dienstplan-Hinweis (circleHint) verweist weiter auf „unter „Filter““."
+  },
+  "settings/general/type/type.page#field-e6aa9e5e": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleiche Auswahl und gleiche gespeicherte relevant_groups, nur FilterChips und kürzerer Hinweis mit gleicher Bedeutung. – Befund: Ionic: Mehrfach-Select „Relevante Gruppen“ mit Hilfetext „Nur die relevanten Gruppen werden … Wenn keine Gruppe ausgewählt ist, werden alle Gruppen berücksichtigt.“, Optionen group.name / Flutter: Abschnittstitel + FilterChips mit shortName ?? name, nur Kurzhinweis „Leer = gilt für alle Gruppen“. Geschriebene relevant_groups gleich."
+  },
+  "settings/general/type/type.page#field-ba7f8aa7": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Minuten bleiben änderbar, nur über den Bearbeiten-Dialog statt inline. – Befund: Ionic: Minuten-Eingabe direkt in der Zeile (Platzhalter „min“, Ende-Neuberechnung bei Blur) / Flutter: Minuten nur als Text „{n} Min.“, änderbar nur im Bearbeiten-Dialog „Dauer (Minuten)“."
+  },
+  "settings/general/type/type.page#field-4366c1dd": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): To-Do anlegen geht gleich, nur per Dialog statt Inline-Eingabe. – Befund: Ionic: Inline-Eingabe „Neues To-Do“ (Platzhalter „To-Do Text eingeben...“) im Abschnitt / Flutter: erst Button, dann Dialog „Neues To-Do“ mit Feld „Aufgabe“ (Platzhalter „z.B. Noten vorbereiten“)."
+  },
+  "settings/general/type/type.page#field-557c3624": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleiche Deadline-Werte speicherbar, nur freies Stundenfeld statt Vorgaben-Auswahl. – Befund: Ionic: Auswahl „Deadline“ (Action-Sheet): Keine Deadline, 1 Stunde/1 Tag/2 Tage/1 Woche vorher, Benutzerdefiniert... (+ Stundenfeld) / Flutter: freies Zahlenfeld „Frist (Stunden vorher, optional)“ (z.B. 24 für 1 Tag) im Dialog, keine Vorgaben. Gespeichertes deadlineHours gleichwertig."
+  },
+  "settings/general/type/type.page#action-bab9d008": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleiche Aktion, nur Outline-Button mit Dialog statt Inline-Eingabe. – Befund: Ionic: gefüllter Block-Button „To-Do hinzufügen“ fügt das inline eingegebene To-Do hinzu (disabled ohne Text) / Flutter: Outline-Button „To-Do hinzufügen“ öffnet einen Dialog."
+  },
+  "settings/general/type/type.page#field-d34df4b8": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Checkliste ist ohne Schalter gleich nutzbar (leer = keine), gespeicherter Wert beim Anlegen gleichwertig. – Befund: Schalter „Checkliste aktivieren“ mit Hilfetext („Aktiviere die Checkliste … bei neuen Terminen übernommen.“) fehlt; Flutter zeigt die Checkliste immer, Ausschalten (= alle To-Dos auf einmal entfernen) nicht möglich; leere Liste wird als null gespeichert (Ionic: [] – beim Termin-Anlegen gleichwertig)."
+  },
+  "settings/help/article/help-article.page#popover-c1b18c0d": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleicher Inhalt, nur zentrierter Dialog mit Schließen-Button statt Popover. – Befund: Inhalt gleich (Begriff als Titel, Definition als Markdown). Ionic: Popover am angetippten Begriff verankert, schließt durch Tippen daneben, ohne Button / Flutter: zentrierter Dialog (AppAlertDialog) mit Button „Schließen“."
+  },
+  "settings/settings/settings.page#modal-574f5f7c": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Ablaufpläne öffnen als Seite statt Modal, gleiche Funktion und Rückkehr. – Befund: Ionic: 'Ablaufpläne' öffnet PlanningPage als Karten-Modal (presentingElement, cssClass planningModal, Schließen-X) / Flutter: context.push('/planning') – normale Seite im Shell mit Zurück-Pfeil (Statistik/Export/Verlauf öffnet Flutter dagegen als Modal)."
+  },
+  "settings/settings/settings.page#modal-35a628ef": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Archivierte Person öffnet als Seite statt Modal, schreibgeschützt mit Reaktivieren wie in Ionic. – Befund: Ionic: Tippen auf archivierte Person öffnet PersonPage als Karten-Modal (readOnly, hasLeft), Archivliste wird nur nach 'activated' neu geladen / Flutter: context.push('/people/<id>') als Seite über dem Archiv-Sheet (Shell-Navigator); Seite für ausgetretene Personen schreibgeschützt mit FAB 'Person reaktivieren', Liste wird danach immer invalidiert."
+  },
+  "settings/settings/settings.page#modal-2d9ef553": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Registrierung öffnet als Vollbildseite statt Modal, gleiche Funktion. – Befund: Ionic: '+' schließt das Instanzen-Sheet und öffnet RegisterPage als Karten-Modal / Flutter: Sheet zu, router.push('/tenants/new') – Vollbildseite außerhalb des Shells."
+  },
+  "settings/settings/settings.page#modal-fb3873fe": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Ausstehende Person öffnet als Seite statt Modal, Freigabe-Aktionen wie in Ionic per FAB. – Befund: Ionic: Tippen auf ausstehende Person öffnet PersonPage als Karten-Modal (approveMode) / Flutter: context.push('/people/<id>') als normale Seite über dem Sheet; Freigabe-Aktionen dort über FAB für pending; Liste per Realtime aktuell."
+  },
+  "people/list/list.page#modal-38ba21ec": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Nur Darstellung als Seite statt Modal, Inhalt und Leserechte gleich. – Befund: Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') bzw. '/people/new' als normale Seite im Shell. Leserecht für Betrachter in der Detailseite gleich."
+  },
+  "people/list/list.page#modal-11a551b4": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Nur Dialogtyp anders, Felder und geschriebene Daten gleich. – Befund: Ionic: eigenes Vollbild-Modal (Titel + X, Datumsfeld, Notiz, FAB unten rechts, backdropDismiss false) / Flutter: AlertDialog (nicht wegtippbar) mit Datum-Zeile, Notizfeld und 'Abbrechen'/'Archivieren'. Geschriebene Daten (left, Historie, Zugang entziehen) gleich."
+  },
+  "people/person/person.page#alert-692c7626": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Texte, Fehlermeldungsart und Toast anders, Ablauf, Pflichtgrund und DB-Wirkung gleich. – Befund: Ionic: Header „Person ablehnen“, subHeader „Gib einen Grund an.“, Textarea ohne Label; leerer Grund → Meldung „Bitte gib einen Grund an!“ im Alert; Buttons Abbrechen/„Ablehnen“ / Flutter: ohne subHeader, zusätzlicher Text „{Name} wird abgelehnt und archiviert.“, Feld „Grund *“ mit Hinweis „Warum wird die Person abgelehnt?“, leerer Grund → SnackBar; „Ablehnen“ rot; danach Toast „Person wurde abgelehnt“ statt „Die Spielerdaten wurden erfolgreich aktualisiert.“ DB-Wirkung gleich."
+  },
+  "people/person/person.page#action-40313396": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleiche Aktionen (Ersetzen/Entfernen/Ansehen) nur in einem Aktionsblatt statt im Bildbetrachter angeordnet. – Befund: Ionic: Tipp auf Avatar öffnet bei vorhandenem Bild den Bildbetrachter (darin Ersetzen/Entfernen), ohne Bild (bearbeitbar) direkt die Dateiauswahl / Flutter (bearbeitbar): Aktionsblatt „Passbild ersetzen“/„Passbild entfernen“/„Passbild ansehen“, auch ohne Bild (dann nur „ersetzen“); nur Leser: Betrachter wie Ionic. Kamera-Badge gleich."
+  },
+  "people/person/person.page#modal-ecac8535": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Bildbetrachter weiterhin erreichbar, nur über einen Eintrag im Aktionsblatt. – Befund: Ionic: Bildbetrachter-Modal öffnet direkt beim Tipp auf den Avatar / Flutter: für Bearbeiter nur über Aktionsblatt „Passbild ansehen“ (Vollbild-Viewer), für Leser direkt."
+  },
+  "people/person/person.page#action-ea218e71": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): 'Ersetzen' vorhanden, nur an anderer Stelle (Aktionsblatt statt Betrachter). – Befund: Ionic: Button „Ersetzen“ im Bildbetrachter (wenn !readOnly) / Flutter: „Passbild ersetzen“ nur im Avatar-Aktionsblatt, Viewer ohne Aktionen."
+  },
+  "people/person/person.page#field-3abdeaf8": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Datum per Kalender (mit Jahresauswahl) statt Texteingabe wählbar, gespeicherter Wert gleich; nur Warnfarbe bleibt bis Neuöffnen. – Befund: Ionic: Texteingabe TT.MM.JJJJ (Platzhalter „TT.MM.JJJJ“, Übernahme bei Blur) plus Kalender-Button (Rad) / Flutter: Zeile nur antippbar → Datumsauswahl, keine direkte Texteingabe (iOS-Look nur Monatskalender; Material-Picker hat Eingabemodus). Warnfarbe (correctBirthday) bleibt in Flutter bis zum Neuöffnen, Ionic entfernt sie sofort."
+  },
+  "people/person/person.page#field-6c24372b": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Datum per Kalender statt Texteingabe wählbar, Funktion gleich. – Befund: Ionic: Texteingabe TT.MM.JJJJ (Platzhalter „TT.MM.JJJJ“, Übernahme bei Blur) plus Kalender-Button / Flutter: Zeile nur antippbar → Datumsauswahl, keine direkte Texteingabe (iOS-Look nur Kalender; Material-Picker hat Eingabemodus)."
+  },
+  "people/person/person.page#field-0755eef9": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Datum per Kalender statt Texteingabe wählbar, Funktion gleich. – Befund: Ionic: Texteingabe TT.MM.JJJJ (Platzhalter „TT.MM.JJJJ“, Übernahme bei Blur) plus Kalender-Button / Flutter: Zeile nur antippbar → Datumsauswahl, keine direkte Texteingabe (iOS-Look nur Kalender; Material-Picker hat Eingabemodus)."
+  },
+  "people/person/person.page#modal-b80602d8": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Nur Dialog statt Sheet, Inhalt gleich. – Befund: Inhalt gleich (accountHelp nur ohne appId, existingUserHint). Ionic: Sheet-Modal (Breakpoint 0.5) mit Toolbar „Hilfe“ und X / Flutter: AlertDialog „Hilfe“ mit „Schließen“."
+  },
+  "people/person/person.page#modal-75561fb4": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Nur Dialogtyp und Feldbeschriftung anders, Archivieren mit Datum und Notiz gleich. – Befund: Ionic: Vollbild-Modal (nicht per Hintergrund schließbar) mit Toolbar „{Name} Archivieren“, X und Archiv-FAB / Flutter: AlertDialog mit gleichem Titel, Buttons Abbrechen/„Archivieren“; Notizfeld „Grund (optional)“ statt „Notiz“."
+  },
+  "services/cross-tenant/cross-tenant.service#toast-119dd1e0": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Beim Auswählen gibt es einen Fehler-Toast (nur anderer Text), beim Wiederherstellen ist der Fehlschlag am Filter 'Alle anzeigen' sichtbar. – Befund: Filter 'Mitglied anderer Instanz'. Ionic: Toast 'Fehler beim Laden der Benutzer' (danger) beim Auswählen und beim Wiederherstellen des gespeicherten Filters / Flutter: beim Auswählen Fehler-Toast 'Fehler: <Fehlermeldung>' (anderer Text), beim Wiederherstellen still (Filter bleibt 'Alle anzeigen'). Erstprüfer: 'missing, still ignoriert' – Auswahl-Pfad mit Toast übersehen."
+  },
+  "services/db.service#alert-f27cc642": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Vollseite statt Radio-Alert, jede Instanz (auch die gespeicherte, die 'Abbrechen' öffnet) ist direkt wählbar. – Befund: Ionic: Radio-Alert \"Instanz auswählen\" / \"Bitte wähle die Instanz aus, die du öffnen möchtest:\" mit \"Abbrechen\" (öffnet gespeicherte bzw. erste Instanz) und \"Öffnen\" / Flutter: bei wantInstanceSelection nach Login die Vollseite /tenants mit Instanzliste, kein Abbrechen."
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-c2019029": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleiche Ordnerwahl, nur Position/Beschriftung anders; der Ordnername steht im Pfad oben, auch während des Ladens wird der dort angezeigte Ordner gewählt. – Befund: Ionic: oberste Listenzeile in primary mit checkmark-circle „Diesen Ordner wählen: {Ordnername}“, beim Laden deaktiviert / Flutter: FilledButton mit Häkchen am unteren Rand „Diesen Ordner wählen“ ohne Ordnernamen, auch während des Ladens aktiv (liefert dann den vorherigen Ordner); in beiden nur außerhalb des Hauptordners."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-ce98be7f": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Bei leerem Namen bleibt der Dialog offen und nichts wird angelegt; nur der Hinweistext fehlt, das Ergebnis ist sichtbar. – Befund: Titel, Platzhalter „Name der Vorlage...“, „Abbrechen“/„Hinzufügen“ gleich. Ionic: leerer Name → Meldung „Bitte einen Namen eingeben.“ im Dialog / Flutter: „Hinzufügen“ tut bei leerem Namen nichts, keine Meldung (der Toast in Z.130 ist unerreichbar, showPlanTextPrompt gibt nie leer zurück)."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-e458236c": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Bei leerem Namen bleibt der Dialog offen und nichts wird umbenannt; nur der Hinweistext fehlt. – Befund: Titel „Vorlage umbenennen“, Vorbelegung, Platzhalter, „Abbrechen“/„Speichern“ gleich. Ionic: leerer Name → Meldung „Bitte einen Namen eingeben.“ / Flutter: Button tut nichts, keine Meldung."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#field-d3412616": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Minuten der Standardfelder sind weiterhin änderbar, nur über den Bearbeiten-Dialog statt inline – andere Platzierung. – Befund: Ionic: Zahlenfeld „min“ direkt in jeder Standardfeld-Zeile, speichert beim Verlassen / Flutter: nur Anzeige „20 min“, Minuten nur über den Bearbeiten-Dialog (Tippen auf die Zeile) änderbar. (In den Vorlagenfeldern hat Flutter das Inline-Feld, PlanFieldsEditor _MinutesInput.)"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#popover-21e36ab9": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleiche Einträge in gleicher Reihenfolge, nur Aktionsblatt statt Popover und ohne Trenner. – Befund: Einträge und Reihenfolge gleich (Feld hinzufügen, Notizfeld hinzufügen, Werk-Platzhalter nur wenn nicht general, dann Standardfelder mit Minuten). Ionic: Popover am Button „Feld hinzufügen“ / Flutter: Aktionsblatt (showPlanActionSheet) von unten, Standardfelder als „Name (20 min)“ ohne Trenner/Überschrift."
+  },
+  "org-settings/org-settings.page#alert-14d3ff8c": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Bei leerem Namen bleibt der Dialog offen und nichts wird gespeichert; nur der Hinweistext fehlt. – Befund: Titel „Organisation umbenennen“, Vorbelegung, Platzhalter, „Abbrechen“/„Speichern“, Speichern des getrimmten Namens gleich. Ionic: leerer Name → Meldung „Bitte gib einen gültigen Namen ein.“ / Flutter: „Speichern“ tut nichts, keine Meldung (Warn-Toast Z.39 unerreichbar)."
+  },
+  "planning/planning.page#modal-bbd6596e": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Nur Dialogtyp (AlertDialog statt Vollbild-Modal), gleiche Felder und gleiches Ergebnis. – Befund: Ionic: Feld bearbeiten als Vollbild-Modal PlanFieldEditComponent / Flutter: AlertDialog (showPlanFieldDialog)."
+  },
+  "planning/planning.page#actionsheet-0c53b41c": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Alle Ionic-Optionen vorhanden, Flutter hat nur zusätzlich „Freigabe aufheben“ und Icons. – Befund: Ionic: „Nur-Lesen-Link“, „Bearbeitungs-Link“, „Abbrechen“ / Flutter: zusätzlich „Freigabe aufheben“ wenn bereits ein shareKey existiert, dazu Icons."
+  },
+  "planning/planning.page#alert-75ab0ccf": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleiche Tagesoptionen und gleiches Ergebnis, nur Aktionsblatt statt Radio-Alert mit Speichern. – Befund: Ionic: Radio-Alert „Tag zuordnen“ mit Abbrechen/Speichern / Flutter: Action-Sheet, Auswahl wird sofort übernommen."
+  },
+  "public-planning/public-planning.page#alert-53b00c7b": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Löschen bleibt per Wischen möglich, „Updaten“ statt „Speichern“ und zusätzliches Minutenfeld – keine fehlende Funktion. – Befund: Titel „Feld bearbeiten“, Name/Ausführender/Info bzw. bei Notizen nur Notiz, Leername-Prüfung gleich. Ionic: Buttons „Löschen“ (rot, entfernt das Feld sofort) / „Abbrechen“ / „Speichern“, keine Dauer im Dialog / Flutter: kein „Löschen“ (nur per Wischen), Bestätigen heißt „Updaten“, zusätzliches Feld „Minuten“, Feldbeschriftungen statt reiner Platzhalter, Info-Hinweis „Info-Text (optional)...“."
+  },
+  "shared-plan/shared-plan.page#action-ec0c1511": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Bearbeitungsmodus bietet alle Ionic-Funktionen plus Extras (Minuten, Einrücken, Block-Optionen); Block-Zeitraum ist nur Mehrinformation. – Befund: Umsortieren nur im Bearbeitungsmodus, Block-Kopf samt Unterpunkten, danach Speichern; Ansicht mit Zeit | Ausführender, Info, „{min} min“ bzw. Countdown-Badge – gleich. Ionic Bearbeitungsmodus: einfache Zeilen (Name, Zeit, Info, Papierkorb, Griff), keine Minutenangabe, Tippen auf Block-Kopf öffnet den Feld-Dialog / Flutter: PlanFieldsEditor mit Minuten-Eingabefeld je Zeile, Wisch-Optionen „Einrücken“/„Ausrücken“/Löschen, Block ein-/ausklappen, „Unterpunkt hinzufügen“-Zeilen, Block-Optionen-Sheet, Hinweis „Keine Programmpunkte“. Ansicht: Block-Kopf Ionic nur Startzeit / Flutter Zeitraum „HH:mm – HH:mm“."
+  },
+  "shared-plan/shared-plan.page#action-a9ede0e6": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Löschen per Wischen statt Papierkorb-Button; „Nur Block auflösen“ liefert das Ionic-Ergebnis, die Rückfrage ist eine Absicherung. – Befund: Ionic: roter Papierkorb-Button an jeder Zeile im Bearbeitungsmodus, löscht sofort; beim Block-Kopf werden die Unterpunkte ohne Rückfrage normale Felder / Flutter: kein sichtbarer Button, Löschen nur per Wischen; Block-Kopf mit Unterpunkten → Rückfrage „Block löschen?“ (Nur Block auflösen / Alles löschen)."
+  },
+  "attendance/att-list/att-list.page#alert-c973a254": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): „Anderer Dirigent“ wird inline statt per Dialog eingegeben, gleiches Ergebnis. – Befund: Ionic: Auswahl „Anderer Dirigent“ öffnet Alert „Dirigent eingeben“ (Input-Placeholder „Dirigent“, „Abbrechen“/„Speichern“), danach Textfeld nur mit gespeichertem Namen / Flutter: kein Dialog, sofort Inline-Textfeld mit Hinweis „Dirigent eingeben“."
+  },
+  "attendance/attendance/attendance.page#toast-821c46bb": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleicher Fehlertext als Fehlerseite mit „Neu laden“ statt Toast mit Auto-Zurück; Fehler bleibt nicht unbemerkt. – Befund: Ionic: Termin nicht ladbar (nach Retries/Fallback) → Toast (danger) „Anwesenheit konnte nicht geladen werden — bitte erneut öffnen.“ und automatisch zurück (navigateBack), für alle Rollen. Flutter: kein Toast, kein Zurück; Fehlerseite mit demselben Text und Button „Neu laden“ (alle Rollen gleich)."
+  },
+  "attendance/attendance/attendance.page#alert-aadedcba": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): „Anderer Dirigent“ wird inline statt per Dialog eingegeben, gleiches Ergebnis. – Befund: Ionic: Auswahl „Anderer Dirigent“ im Werke-Modal der Detailseite öffnet Alert „Dirigent eingeben“ (Placeholder „Dirigent“, Abbrechen/Speichern) / Flutter: dasselbe SongsSelectionSheet wie beim Anlegen, kein Dialog, Inline-Textfeld mit Hinweis „Dirigent eingeben“."
+  },
+  "attendance/attendance/attendance.page#alert-9b3e485d": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Sheet statt Alert bei einem Anmeldefeld mit gleichen Eingabearten und gleichem Speichern; zusätzlicher Toast. – Befund: Ionic: bei genau einem Anmeldefeld ein Alert mit Feldname als Header (Text-Input, Ja/Nein-Radios, Optionen als Radios/Checkboxen; Abbrechen/Speichern) / Flutter: immer das Sheet „Anmeldefelder“ (Schalter/Dropdown/Checkboxen); zusätzlich Toast „Anmeldefelder gespeichert“. Schreiben (Merge in registration_answers) gleich."
+  },
+  "songs/song/song.page#modal-81e9f13d": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): AlertDialog statt Sheet-Modal, gleiche Auswahl, Vorbelegung und gespeicherte Werte. – Befund: Ionic: Sheet-Modal (Breakpoint 1) mit Toolbar „Kategorie ändern“, „Abbrechen“ oben rechts, Radio-Liste, Freitext mit Löschen-Knopf, „Speichern“ als Block-Button / Flutter: AlertDialog mit Titel, Radio-Liste, Freitext-Feld und Aktionen „Abbrechen“/„Speichern“ unten. Vorbelegung (Chor (alle)) und geschriebene Werte (files + instrument_ids ohne 1/2/Hauptgruppe) gleich."
+  },
+  "songs/songs.page#popover-21a14c45": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleiche Filter- und Ansichtsoptionen, nur Bottom-Sheet mit Überschriften und Chips statt Popover. – Befund: Ionic: Popover am Filter-Button, Einträge nur mit Icons, ohne Überschriften (Sortierung, Schwierigkeit, Chor & Orchester, Solo, Kategorien, Instrumente, Ansicht, Zusatzfeld-Filter) / Flutter: Bottom-Sheet „Filter & Ansicht“ mit Abschnittsüberschriften (Sortierung, Schwierigkeitsgrad, Kategorien, Gruppen, Ansicht), Kategorien/Gruppen als Chips, „Zurücksetzen“ bei aktiven Filtern und Schließen-Button."
+  },
+  "app.component#nav-3a7bceb6-2": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Recovery-Link öffnet eine eigene Seite statt eines Alerts mit gleicher Funktion; das abweichende Ziel danach ist in x-fde4d51685 erfasst. – Befund: Ionic: Recovery-Link → /login; LoginGuard leitet Nutzer mit Instanz weiter auf die Startseite, der Alert erscheint dort / Flutter: Recovery-Link → Seite /new-password."
+  },
+  "register/register.page#popover-f947f492": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Gleicher Infotext, nur Dialog statt Popover. – Befund: Ionic: Info-Popover am Info-Icon (Hauptgruppe) / Flutter: AlertDialog mit gleichem Text und OK-Button."
+  },
+  "register/tenant-register/tenant-register.page#actionsheet-ab6f737a": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Das Action-Sheet bot nur „Ersetzen“/„Abbrechen“; das Bild ist bis zum Absenden nur lokal und die Auswahl lässt sich abbrechen, Ergebnis gleich. – Befund: Ionic: bei vorhandenem Passbild Action-Sheet „Passbild ersetzen“/„Abbrechen“ vor der Dateiauswahl / Flutter: kein Action-Sheet, Tap öffnet direkt die Auswahl."
+  },
+  "tabs/side-nav/side-nav.component#modal-186fad14": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Ablaufpläne öffnen als normale Seite statt als Modal, Funktion gleich. – Befund: Ionic: „Ablaufpläne“ öffnet PlanningPage als Modal / Flutter: context.push('/planning') – normale Seite im Shell."
+  },
+  "x-bc26763c9d": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Nur die Größe des Logos im App-Icon weicht ab. – Befund: Nachgemessen: Ionic-Vordergrund (192 px, volles Icon) Logo-Höhe 150 px = 78 %, mit 16,7 % Inset → Logo ≈ 52 % der 108-dp-Ebene ≈ 78 % der sichtbaren 72 dp. Flutter-Vordergrund (432 px, transparent) Logo 251 px = 58 % und zusätzlich 16 % Inset → ≈ 39 % der Ebene ≈ 59 % der sichtbaren Fläche; Logo rund ein Viertel kleiner. Türkis #3EA5AE gleich. Dauerhaft auf jedem Android-8+-Homescreen sichtbar, daher mittel statt rein kosmetisch."
+  },
+  "x-8140fe9e0d": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Pushes kommen gleich an, nur als Heads-up-Banner statt still in der Leiste. – Befund: Echt; Pfad korrigiert (MainActivity liegt auf 2157fa0 unter kotlin/de/attendix/attendix, nicht io/stephanus/attendix). Ionic legt keinen Kanal 'default' an (nur live_plan), kein default_notification_channel_id → FCM-Fallback-Kanal mit IMPORTANCE_DEFAULT (kein Heads-up). Flutter: Kanal 'default' „Benachrichtigungen“ IMPORTANCE_HIGH beim Activity-Start + Manifest-Default → alle Pushes als Heads-up-Banner; Stummschaltung o. Ä. am alten Fallback-Kanal gilt nicht mehr. Entspricht der Absicht von send-push.ts (channel_id 'default'), ist aber sichtbar anders."
+  },
+  "home-dashboard/components/absences-card/absences-card.component#modal-6daf3e85": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Person öffnet als Seite statt als Modal, Bearbeitbarkeit und Neuladen gleich. – Befund: Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') als normale Detailseite im Shell. Bearbeitbarkeit gleich (Dashboard nur Admin/Verantwortlicher; Route /home-dashboard ebenso geschützt), danach Neuladen der Personenkarten."
+  },
+  "home-dashboard/components/birthdays-card/birthdays-card.component#modal-388a556f": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Person öffnet als Seite statt als Modal, Bearbeitbarkeit und Neuladen gleich. – Befund: Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') als normale Detailseite im Shell. Bearbeitbarkeit gleich (Dashboard nur Admin/Verantwortlicher; Route /home-dashboard ebenso geschützt), danach Neuladen der Personenkarten."
+  },
+  "home-dashboard/components/critical-persons-card/critical-persons-card.component#modal-160799e3": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Person öffnet als Seite statt als Modal, Bearbeitbarkeit und Neuladen gleich. – Befund: Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') als normale Detailseite im Shell. Bearbeitbarkeit gleich (Dashboard nur Admin/Verantwortlicher; Route /home-dashboard ebenso geschützt), danach Neuladen der Personenkarten."
+  },
+  "home-dashboard/components/member-changes-card/member-changes-card.component#modal-04f3c3d5": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Person öffnet als Seite statt als Modal, Bearbeitbarkeit und Neuladen gleich. – Befund: Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') als normale Detailseite im Shell. Bearbeitbarkeit gleich (Dashboard nur Admin/Verantwortlicher; Route /home-dashboard ebenso geschützt), danach Neuladen der Personenkarten."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#modal-29087654": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Termin öffnet als Seite statt als Modal, Rollen und Neuladen gleich. – Befund: Ionic: AttendancePage als Modal (isModal, iOS Karten-Modal, md Vollbild) / Flutter: context.push('/attendance/<id>') als normale Seite. Rollenbedingung (Admin, Verantwortlicher, Helfer, Stimmführer-Helfer) und Neuladen danach gleich."
+  },
+  "stats/stats.page#field-2d5da58e": {
+   "sev": "niedrig",
+   "n": "Nur Optik (Leon 05.11.2026): Mehrfachauswahl als Dialog mit Abbrechen statt als Modal, Anzeige und Filterwirkung gleich. – Befund: Ionic: ion-select multiple interface='modal' (Auswahlliste als Modal, Übernahme beim Schließen, kein Abbrechen) / Flutter: AlertDialog mit Checkboxen und 'Abbrechen'/'OK'. Anzeige der gewählten Namen und Filterwirkung (Personen und deren Instanzen nur aus der Auswahl) gleich."
+  }
+ }
+}

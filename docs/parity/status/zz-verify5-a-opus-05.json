@@ -1,0 +1,399 @@
+{
+ "batch": "zz-verify5-a-opus-05",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "songs/import/import.page#logic-587858e7": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:117",
+    "lib/features/songs/presentation/pages/song_import_page.dart:159",
+    "lib/data/repositories/import_repository.dart:80",
+    "lib/data/repositories/import_repository.dart:109",
+    "lib/core/utils/spreadsheet_reader.dart:46",
+    "lib/core/utils/spreadsheet_reader.dart:195",
+    "lib/core/utils/xls_reader.dart:35"
+   ],
+   "n": "Erstprüfung hoch wegen .xls-Ablehnung und Formelzellen – beides behoben: readSpreadsheet erkennt BIFF8/OLE2 am Inhalt und liest .xls über xls_reader.dart; FormulaCellValue liefert cachedValue (berechneter Wert wie SheetJS). 3 Schritte, Auto-Mapping, Pflichtfelder, Duplikate (tenantId = Werkquelle), Insert in songs gleich. Rest niedrig: Flutter besser: DB-Insert-Fehler werden als Fehlerzeile „<Titel>: <Fehler>“ gezählt (Ionic zählt sie als importiert); Fehlergrund technisch formatiert.",
+   "v": "korrigiert"
+  },
+  "x-1c8ba119fa": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/spreadsheet_reader.dart:195"
+   ],
+   "n": "Behoben: cellToDart nimmt bei FormulaCellValue den gespeicherten Wert (cachedValue, excel_community 2.6.2), Text-Formeln (t=\"str\") den gespeicherten Text – wie SheetJS. Befund erledigt.",
+   "v": "bestätigt"
+  },
+  "x-9564139e1c": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/spreadsheet_reader.dart:46",
+    "lib/core/utils/xls_reader.dart:22",
+    "lib/core/utils/xls_reader.dart:35",
+    "lib/core/utils/import_file_io.dart:13"
+   ],
+   "n": "Behoben: .xls wird gelesen – Inhalt entscheidet (isOle2File) → eigener BIFF8-Leser (SST/LABEL/NUMBER/RK/MULRK/BOOLERR/FORMULA+STRING, Datumsformate); Meldung nur noch bei unlesbarer Datei.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-399b39c6": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1165",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1200",
+    "lib/features/songs/presentation/widgets/group_pdf_print.dart:30",
+    "lib/data/repositories/player_repository.dart:1365"
+   ],
+   "n": "Zählung jetzt richtig (tenantId, pending=false, left=null, ohne pausierte; frisch geladen). Aber Fehlermeldung fehlt: Ionic printSongFiles → db.getPlayers zeigt bei Fehler Toast „Fehler beim Laden der Personen“ (danger) und bricht ab / Flutter: await playerCountByInstrumentProvider.future ohne try/catch, _printGroupPdfs nicht in _run → unbehandelter Fehler, Nutzer erfährt nichts. Erstprüfung „ok“ übersah das.",
+   "v": "korrigiert"
+  },
+  "songs/song/song.page#logic-84499787": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:120",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:151",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:217",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:238",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1102",
+    "lib/core/providers/song_providers.dart:435"
+   ],
+   "n": "Erstprüfung hoch (Speichern während _saving verworfen, Besetzung nach Datei-Änderung veraltet) – behoben: Speicher-Warteschlange _enqueue/_saveQueue holt Änderungen nach; _init gleicht instrument_ids bei geändertem Dateischlüssel (_filesKey) neu ab; nach Upload (auch Teil-Fehler) wird neu geladen; initState invalidiert songByIdProvider/songHistoryProvider. Rest niedrig: Telegram-/Fehlertexte, Zusatzfunktionen, Kopieren mappt Gruppen auch bei Chören. Fehlender Fehler-Toast beim Gruppen-Druck siehe action-399b39c6.",
+   "v": "korrigiert"
+  },
+  "songs/song/song.page#text-e14adf08": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:495"
+   ],
+   "n": "Überschrift „Zusatzfelder“ nur mit Zusatzfeldern des Tenants (Flutter zusätzlich nicht auf der öffentlichen Seite).",
+   "v": "bestätigt"
+  },
+  "x-1a9462e316": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1083",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1102"
+   ],
+   "n": "Behoben: nach dem Upload-Sheet ruft _upload immer widget.onChanged() (auch bei Teil-Fehlern) → Werk und Dateiliste werden neu geladen wie Ionic performUpload.",
+   "v": "bestätigt"
+  },
+  "x-47806f440c": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:151",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:166",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:238"
+   ],
+   "n": "Behoben: _init vergleicht den Dateischlüssel (_filesKey) und übernimmt instrument_ids nach Upload/Löschen/Alle löschen neu → „Besetzung“ aktuell, kein Zurückschreiben alter Gruppen.",
+   "v": "bestätigt"
+  },
+  "x-65c1fb4b3b": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:217",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:268"
+   ],
+   "n": "Behoben: Speichern läuft über die Warteschlange _enqueue/_saveQueue; eine Änderung während laufendem Speichern wird danach geschrieben statt verworfen.",
+   "v": "bestätigt"
+  },
+  "x-6e2b231559": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:125",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:126"
+   ],
+   "n": "Behoben: initState invalidiert songByIdProvider(id) und songHistoryProvider(id) → bei jedem Öffnen frisch geladen wie Ionic.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#field-4796fb04": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:153",
+    "lib/core/providers/song_providers.dart:353"
+   ],
+   "n": "Eingeloggt gleich: Auswahl je SELECT-Zusatzfeld, Platzhalter = Feldname, „Alle“ + Optionen. Abweichung öffentliche Freigabeseite: Ionic zeigt Felder aus db.tenant() (eingeloggter Tenant, ohne Login keine), Flutter die Zusatzfelder des freigebenden Tenants. Nur Randfall, niedrig.",
+   "v": "korrigiert"
+  },
+  "songs/songs.page#field-5c68cf0f": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart:153",
+    "lib/core/providers/song_providers.dart:353"
+   ],
+   "n": "Eingeloggt gleich: Ja/Nein-Filter je BOOLEAN-Zusatzfeld („Alle“/„Ja“/„Nein“, Platzhalter = Feldname). Abweichung öffentliche Freigabeseite: Ionic db.tenant() des eingeloggten Nutzers, Flutter Felder des freigebenden Tenants. Niedrig.",
+   "v": "korrigiert"
+  },
+  "songs/songs.page#logic-673d2fb4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:225",
+    "lib/core/providers/song_filter_providers.dart:92",
+    "lib/core/providers/song_providers.dart:353"
+   ],
+   "n": "mittel kam von der Kategorie-Bereinigung nur beim ersten Aufbau – behoben (pruneCategories bei jeder Änderung der Kategorie-IDs, _prunedFor). Rest niedrig: Dirigentenname-Quelle, Suchreset-Eigenheit, Lade-/Fehler-/Leerzustand, öffentliche Seite mit Zusatzfeldern des freigebenden Tenants.",
+   "v": "korrigiert"
+  },
+  "x-e99fb6352e": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:225",
+    "lib/core/providers/song_filter_providers.dart:92"
+   ],
+   "n": "Behoben: pruneCategories läuft bei jeder geänderten Kategorie-ID-Menge (_prunedFor = idsKey) → gelöschte Kategorie fällt aus dem Filter wie Ionic getSongs.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#logic-49d4b21b": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart:48",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:774",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:932",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:535"
+   ],
+   "n": "hoch kam von senkrechten fl_chart-Balken ohne zuordenbare Namen – behoben: eigene StatsHorizontalBarChart mit Namen am Balken, Tooltip, Diagramm- und Achsentiteln („%“/„Jahre“). Datenbasis und Berechnungen gleich. Rest niedrig: Darstellung eigener Widgets statt Chart.js.",
+   "v": "korrigiert"
+  },
+  "x-6a02894975": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart:48",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:774",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:804"
+   ],
+   "n": "Behoben: waagerechte Balken mit dem Namen je Balken (StatsHorizontalBarChart) statt fl_chart-leftTitles an Y-Teilstrichen.",
+   "v": "bestätigt"
+  },
+  "x-ab8ae02d16": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:535",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:641",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:779",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:936"
+   ],
+   "n": "Behoben: Diagrammtitel über StatsChartTitle (ARB-Texte der Ionic-Titel) und Achsentitel „%“ bzw. „Jahre“.",
+   "v": "bestätigt"
+  },
+  "team-organization/protocols-tab/protocols-tab.component#logic-58a7de00": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart",
+    "lib/core/providers/team_org_providers.dart:460",
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:61"
+   ],
+   "n": "Neuladen beim Tab-Wechsel und bei Rückkehr auf die Seite (reloadTeamOrgTab) wie Ionic reload/ionViewWillEnter; Laden/Anlegen/Öffnen der Protokolle gleich.",
+   "v": "bestätigt"
+  },
+  "team-organization/tasks-tab/tasks-tab.component#toast-1b91ff64": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:62",
+    "lib/core/providers/team_org_providers.dart:460"
+   ],
+   "n": "Fehler-Toast beim Laden der Aufgaben über ref.listen(teamTasksProvider) bei AsyncError.",
+   "v": "bestätigt"
+  },
+  "team-organization/team-organization.page#logic-cb8d3ed3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:61",
+    "lib/core/providers/team_org_providers.dart:460"
+   ],
+   "n": "Tabs, Neuladen des aktiven Tabs bei Wechsel und Rückkehr (RouteReturnReload) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-f0d73e65": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:358",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:575"
+   ],
+   "n": "Fehler-Toast beim Laden der Themen über ref.listen(agendaItemsProvider) bei AsyncError.",
+   "v": "bestätigt"
+  },
+  "terms/terms.page#logic-e0824f5f": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:62",
+    "lib/core/utils/dashboard_logic.dart:56"
+   ],
+   "n": "Pflicht-Haken mit Fehler-Toast, Sitzung abgelaufen → /login + Warnung, Speichern von terms_accepted_at, danach Startseite der Rolle. Randfall: mit aktivierter Dashboard-Startseite geht Flutter auf /home-dashboard (wie Ionic nach dem Login), Ionic accept direkt auf getUrl(role).",
+   "v": "bestätigt"
+  },
+  "terms/terms.page#nav-4df0f2ac": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:62",
+    "lib/core/utils/dashboard_logic.dart:56"
+   ],
+   "n": "Ziel = Startseite der Rolle (role.defaultRoute, ohne Instanz /register). Randfall Dashboard-Startseite wie bei logic-e0824f5f.",
+   "v": "bestätigt"
+  },
+  "utilities/Utils#effect-178a8abf": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/services/plan_export_service.dart:131",
+    "lib/core/services/native/native_file_service.dart:167",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:114"
+   ],
+   "n": "Native gleich (Datei in Cache schreiben und im Systemviewer öffnen). Abweichungen: mobiles Web/PWA: Ionic downloadFileNative öffnet dort das Web-Share-Sheet (navigator.share, Utils.ts:1855-1868), Flutter lädt per Anker herunter (shareBytes = Printing.sharePdf, native_file_service.dart:35); Dateiname Ionic „<Typ>_<Wochentag, TT.MM.JJJJ>_2x.pdf“, Flutter „<Titel>_TT_MM_JJJJ_2x.pdf“ (planning_page.dart:1976).",
+   "v": "korrigiert"
+  },
+  "utilities/Utils#effect-178a8abf-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/services/plan_export_service.dart:131",
+    "lib/core/services/native/native_file_service.dart:167",
+    "lib/features/planning/presentation/pages/planning_page.dart:1976"
+   ],
+   "n": "Native gleich. Abweichungen: mobiles Web/PWA: Ionic downloadFileNative öffnet dort das Web-Share-Sheet (navigator.share, Utils.ts:1855-1868), Flutter lädt per Anker herunter (shareBytes = Printing.sharePdf, native_file_service.dart:35); Dateiname Ionic „<Typ>_<Wochentag, TT.MM.JJJJ>.pdf“, Flutter „<Titel>_TT_MM_JJJJ.pdf“.",
+   "v": "korrigiert"
+  },
+  "utilities/Utils#effect-576bec88-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/services/plan_export_service.dart:61",
+    "lib/core/services/plan_export_service.dart:134",
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "n": "PDF (2x A5) wird erzeugt und an saveBytes übergeben (NotoSans wie Ionic). Abweichung wie effect-178a8abf: mobiles Web/PWA: Ionic downloadFileNative öffnet dort das Web-Share-Sheet (navigator.share, Utils.ts:1855-1868), Flutter lädt per Anker herunter (shareBytes = Printing.sharePdf, native_file_service.dart:35); Dateiname anders formatiert.",
+   "v": "korrigiert"
+  },
+  "utilities/Utils#effect-576bec88-4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/services/plan_export_service.dart:61",
+    "lib/core/services/plan_export_service.dart:134",
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "n": "PDF (A4) wird erzeugt und an saveBytes übergeben. Abweichung wie effect-178a8abf-2: mobiles Web/PWA: Ionic downloadFileNative öffnet dort das Web-Share-Sheet (navigator.share, Utils.ts:1855-1868), Flutter lädt per Anker herunter (shareBytes = Printing.sharePdf, native_file_service.dart:35); Dateiname anders formatiert.",
+   "v": "korrigiert"
+  },
+  "utilities/Utils#effect-b60c4449": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/services/plan_export_service.dart:131",
+    "lib/core/services/native/native_file_service.dart:167",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:166"
+   ],
+   "n": "Mehrere Pläne als ein PDF, Dateiname „<Titel>_TT_MM_JJJJ_alle“ wie Ionic; native gleich. Abweichung: mobiles Web/PWA: Ionic downloadFileNative öffnet dort das Web-Share-Sheet (navigator.share, Utils.ts:1855-1868), Flutter lädt per Anker herunter (shareBytes = Printing.sharePdf, native_file_service.dart:35).",
+   "v": "korrigiert"
+  },
+  "utilities/Utils#effect-fad4e9cc": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:150",
+    "lib/core/services/plan_export_service.dart:131",
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "n": "Einzelplan aus dem Termin exportiert, native gleich. Abweichungen: mobiles Web/PWA: Ionic downloadFileNative öffnet dort das Web-Share-Sheet (navigator.share, Utils.ts:1855-1868), Flutter lädt per Anker herunter (shareBytes = Printing.sharePdf, native_file_service.dart:35); Ionic speichert über createPlanExport als „<Typ>_<Wochentag, TT.MM.JJJJ>.pdf“, Flutter „<Titel>_TT_MM_JJJJ.pdf“.",
+   "v": "korrigiert"
+  },
+  "utilities/Utils#logic-1c33d253": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/services/pdf_fonts.dart:14",
+    "lib/core/services/plan_export_service.dart:61",
+    "lib/features/people/people_list_utils.dart:78",
+    "lib/core/providers/attendance_providers.dart:291",
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "n": "hoch kam von der PDF-Schrift (Helvetica ohne Kyrillisch/„“/–/€) – behoben: PdfFonts.document() bettet NotoSans ein wie Ionic; Gruppensortierung jetzt localeCompareDe, Zeitfenster der Quote mit .lt(attendance.date, morgen). Rest niedrig: mobiles Web ohne Share-Sheet, Dateinamen der Plan-PDFs, kleine Abweichungen aus dem Erstbefund.",
+   "v": "korrigiert"
+  },
+  "x-562b23ba0c": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/zip_service_io.dart:27",
+    "lib/core/utils/share_origin.dart:10"
+   ],
+   "n": "Behoben: shareXFiles bekommt sharePositionOrigin ?? shareOriginFor() → iPad-Popover verankert, Teilen bricht nicht mehr ab.",
+   "v": "bestätigt"
+  },
+  "utilities/attendance-date-dialog#alert-6ec992cf": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:225",
+    "lib/shared/widgets/adaptive/app_dialog.dart:1122"
+   ],
+   "n": "Datumsabfrage beim Anlegen eines Protokoll-Termins über showAppDateAlert mit gleichen Texten und Buttons.",
+   "v": "bestätigt"
+  },
+  "utilities/attendance-date-dialog#alert-fb943686": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:94",
+    "lib/shared/widgets/adaptive/app_dialog.dart:1122"
+   ],
+   "n": "Datum ändern über showAppDateAlert mit gleichen Texten und Buttons.",
+   "v": "bestätigt"
+  },
+  "utilities/instrument-matcher#logic-602c073f": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/utils/instrument_matcher.dart:106",
+    "lib/core/utils/instrument_matcher.dart:135",
+    "lib/core/utils/instrument_matcher.dart:212",
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:133"
+   ],
+   "n": "mittel kam von fehlenden Ionic-Begriffen – ergänzt (Akkordeon/Bajan, Mandoline, Banjo, Celesta, Triangel, Becken, Blockflöte, skripka/fleita/truba/valtorna/litavry, Kürzel к-б/ф-но/уд). Rest: anderer Algorithmus (Punktbewertung statt erster Teilstring-Treffer), Liedtext-/Aufnahme-Stichwörter vor den Gruppen – nur Vorbelegung im Upload-Dialog, dort änderbar → niedrig.",
+   "v": "korrigiert"
+  },
+  "x-327176cf3d": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/instrument_matcher.dart:106",
+    "lib/core/utils/instrument_matcher.dart:112",
+    "lib/core/utils/instrument_matcher.dart:135"
+   ],
+   "n": "Behoben: die in Flutter fehlenden Ionic-Übersetzungen und -Kürzel sind ergänzt; verbleibende Algorithmus-Unterschiede sind im logic-Item (niedrig) erfasst.",
+   "v": "bestätigt"
+  },
+  "utilities/spreadsheet-reader#logic-cc538ad0": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/spreadsheet_reader.dart:41",
+    "lib/core/utils/spreadsheet_reader.dart:52",
+    "lib/core/utils/spreadsheet_reader.dart:46",
+    "lib/core/utils/spreadsheet_reader.dart:195",
+    "lib/core/utils/xls_reader.dart:35"
+   ],
+   "n": "Beide Erstbefunde behoben: .xls über BIFF8-Leser (Inhalt entscheidet wie SheetJS read()), Formelzellen liefern den gespeicherten Wert. CSV gleich (UTF-8 strikt, BOM, Fallback Windows-1252). Erstprüfung mittel ist überholt.",
+   "v": "korrigiert"
+  },
+  "x-689f15c9e6": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/spreadsheet_reader.dart:46",
+    "lib/core/utils/xls_reader.dart:35",
+    "lib/core/utils/import_file_io.dart:13"
+   ],
+   "n": "Behoben: .xls wird für Personen- und Werk-Import gelesen (xls_reader.dart).",
+   "v": "bestätigt"
+  },
+  "x-b0bfc0b3f4": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/spreadsheet_reader.dart:195"
+   ],
+   "n": "Behoben: numerische Formelzellen liefern cachedValue (berechneter Wert), nicht den Formeltext.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

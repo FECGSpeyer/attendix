@@ -1,0 +1,2237 @@
+{
+ "batch": "zz-verify5c-sonnet-25",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auth/auth.service",
+   "ionic": {
+    "ts": "services/auth/auth.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/auth/auth.service.ts",
+    "line": 93,
+    "method": "AuthService.login",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "auth.invalidCredentials"
+     ],
+     "de": [
+      "Ungültige Anmeldedaten"
+     ],
+     "literals": [],
+     "expr": "translate('auth.invalidCredentials')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "eaf9c134",
+    "mbody": "c825b586",
+    "id": "services/auth/auth.service#toast-c252a214-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:80",
+     "lib/features/auth/presentation/pages/login_page.dart:207"
+    ],
+    "n": "Nur im Teams-Verknüpfungsmodus erreichbar (TeamsService.ssoLink → authSvc.login); der normale Login läuft über DbService.login (eigene Unit). Code invalid_credentials: Ionic 'Ungültige Anmeldedaten' / Flutter 'E-Mail oder Passwort falsch. Falls du kein Passwort gesetzt hast, nutze den Anmelde-Code per E-Mail.'",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auth/auth.service",
+   "ionic": {
+    "ts": "services/auth/auth.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/auth/auth.service.ts",
+    "line": 84,
+    "method": "AuthService.login",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "auth.userNotFound"
+     ],
+     "de": [
+      "Benutzer nicht gefunden"
+     ],
+     "literals": [],
+     "expr": "translate('auth.userNotFound')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "79281c53",
+    "mbody": "c825b586",
+    "id": "services/auth/auth.service#toast-d3b70253"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:103",
+     "lib/features/auth/presentation/pages/login_page.dart:207"
+    ],
+    "n": "Nur im Teams-Verknüpfungsmodus erreichbar (TeamsService.ssoLink → authSvc.login); der normale Login läuft über DbService.login (eigene Unit). Ionic: 'Benutzer nicht gefunden' / Flutter: 'Kein Konto mit dieser E-Mail-Adresse gefunden. Bitte registriere dich zuerst.' (danach in beiden der Registrieren-Dialog).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auth/auth.service",
+   "ionic": {
+    "ts": "services/auth/auth.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/auth/auth.service.ts",
+    "line": 87,
+    "method": "AuthService.login",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "auth.confirmEmailFirst"
+     ],
+     "de": [
+      "Bitte bestätige zuerst deine E-Mail-Adresse."
+     ],
+     "literals": [],
+     "expr": "translate('auth.confirmEmailFirst')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "0282771e",
+    "mbody": "c825b586",
+    "id": "services/auth/auth.service#toast-fe3978a5"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:108",
+     "lib/features/auth/presentation/pages/login_page.dart:209"
+    ],
+    "n": "Nur im Teams-Verknüpfungsmodus erreichbar (TeamsService.ssoLink → authSvc.login). Notiz des Erstprüfers korrigiert: ssoLink fängt den Fehler ab (catch → false), daher zeigt Ionic NUR den Toast 'Bitte bestätige zuerst deine E-Mail-Adresse.' und KEINEN Erneut-senden-Dialog / Flutter: kein Toast; die LoginFailure wird bis _login durchgereicht und öffnet den Dialog 'E-Mail nicht bestätigt' mit 'Erneut senden' (Flutter besser).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/church/church.service",
+   "ionic": {
+    "ts": "services/church/church.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/church/church.service.ts",
+    "line": 49,
+    "method": "ChurchService.createChurch",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.createChurchFailed"
+     ],
+     "de": [
+      "Fehler beim Erstellen der Kirche"
+     ],
+     "literals": [],
+     "expr": "translate('svc.createChurchFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "ad52aa88",
+    "mbody": "f4b0f6a6",
+    "id": "services/church/church.service#toast-014c9654"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:109",
+     "lib/features/registration/presentation/pages/tenant_registration_page.dart:1136"
+    ],
+    "n": "Ionic: 'Fehler beim Erstellen der Kirche' (+ Seiten-Toast mit Rohfehlertext) / Flutter: Administration 'Fehler beim Hinzufügen', Registrierung 'Fehler beim Erstellen der Gemeinde.'",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/church/church.service",
+   "ionic": {
+    "ts": "services/church/church.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/church/church.service.ts",
+    "line": 33,
+    "method": "ChurchService.updateChurch",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.updateChurchFailed"
+     ],
+     "de": [
+      "Fehler beim Aktualisieren der Gemeinde"
+     ],
+     "literals": [],
+     "expr": "translate('svc.updateChurchFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f49881ac",
+    "mbody": "3adf9990",
+    "id": "services/church/church.service#toast-a0b536b6"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/dashboard/presentation/pages/administration_page.dart:127"
+    ],
+    "n": "Ionic: Service-Toast 'Fehler beim Aktualisieren der Gemeinde' und danach 'Fehler beim Umbenennen' / Flutter: nur 'Fehler beim Umbenennen'.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "loading",
+    "file": "services/db.service.ts",
+    "line": 1635,
+    "method": "DbService.resetPassword",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "cd4e8d37",
+    "id": "services/db.service#loading-3aae5e12"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:120"
+    ],
+    "n": "Ionic: blockierendes Loading-Overlay beim Passwort-Zurücksetzen / Flutter: kein Overlay.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1369,
+    "method": "DbService.verifyEmailOtp",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.tooManyAttempts"
+     ],
+     "de": [
+      "Zu viele Versuche. Bitte versuche es später erneut."
+     ],
+     "literals": [],
+     "expr": "translate('db.tooManyAttempts')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "9f439426",
+    "mbody": "612aa9cb",
+    "id": "services/db.service#toast-04641214"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:186",
+     "lib/features/auth/presentation/pages/login_page.dart:294"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1253,
+    "method": "DbService.login",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.loginFailed"
+     ],
+     "de": [
+      "Fehler beim Anmelden"
+     ],
+     "literals": [],
+     "expr": "translate('db.loginFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f6d692d2",
+    "mbody": "467e6dc8",
+    "id": "services/db.service#toast-0f5651ec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:76",
+     "lib/features/auth/presentation/pages/login_page.dart:114"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1324,
+    "method": "DbService.sendEmailOtp",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.codeSendFailed"
+     ],
+     "de": [
+      "Der Code konnte nicht gesendet werden. Bitte versuche es erneut."
+     ],
+     "literals": [],
+     "expr": "translate('db.codeSendFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f20695e6",
+    "mbody": "48bab732",
+    "id": "services/db.service#toast-0f56a005"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:152",
+     "lib/features/auth/presentation/pages/login_page.dart:262"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 3309,
+    "method": "DbService.setFavoriteTenant",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.favoriteFailed"
+     ],
+     "de": [
+      "Fehler beim Setzen des Favoriten, bitte versuche es später erneut."
+     ],
+     "literals": [],
+     "expr": "translate('db.favoriteFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "3e2c487f",
+    "mbody": "93b38d53",
+    "id": "services/db.service#toast-11486c7a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:254"
+    ],
+    "n": "Ionic: \"Fehler beim Setzen des Favoriten, bitte versuche es später erneut.\" / Flutter: \"Fehler beim Speichern\".",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 904,
+    "method": "DbService.deleteParent",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.deleteParentFailed"
+     ],
+     "de": [
+      "Fehler beim Löschen des Elternteils"
+     ],
+     "literals": [],
+     "expr": "translate('db.deleteParentFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "e4d0ae22",
+    "mbody": "4d915662",
+    "id": "services/db.service#toast-137537bd"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/parent_repository.dart:110",
+     "lib/features/settings/presentation/pages/parents_page.dart:234"
+    ],
+    "n": "Ionic: Toast \"Fehler beim Löschen des Elternteils\" (danger) / Flutter: \"Fehler: Fehler beim Löschen des Elternteils\" (Präfix aus settingsFlutterErrorDetail).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/parent_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 3370,
+    "method": "DbService.addDefaultAttendanceTypes",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.addDefaultTypesFailed"
+     ],
+     "de": [
+      "Fehler beim Hinzufügen der Standard Anwesenheitstypen"
+     ],
+     "literals": [],
+     "expr": "translate('db.addDefaultTypesFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "5f5c4af7",
+    "mbody": "afa58ab8",
+    "id": "services/db.service#toast-1fe396ca"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:598"
+    ],
+    "n": "Ionic: \"Fehler beim Hinzufügen der Standard Anwesenheitstypen\" / Flutter: einheitlich \"Fehler beim Erstellen der Instanz: {Fehler}\".",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1372,
+    "method": "DbService.verifyEmailOtp",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.codeInvalid"
+     ],
+     "de": [
+      "Der Code ist ungültig. Bitte überprüfe deine Eingabe."
+     ],
+     "literals": [],
+     "expr": "translate('db.codeInvalid')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "2932c299",
+    "mbody": "612aa9cb",
+    "id": "services/db.service#toast-322b828c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:181",
+     "lib/features/auth/presentation/pages/login_page.dart:284"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1300,
+    "method": "DbService.sendEmailOtp",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.invalidEmail"
+     ],
+     "de": [
+      "Ungültige E-Mail Adresse"
+     ],
+     "literals": [],
+     "expr": "translate('db.invalidEmail')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "d900e1fa",
+    "mbody": "48bab732",
+    "id": "services/db.service#toast-328fdcac"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:152",
+     "lib/features/auth/presentation/pages/login_page.dart:262"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1644,
+    "method": "DbService.resetPassword",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.resetPasswordFailed"
+     ],
+     "de": [
+      "Fehler beim Zurücksetzen des Passworts. Versuche es später erneut"
+     ],
+     "literals": [],
+     "expr": "translate('db.resetPasswordFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "8536ceec",
+    "mbody": "cd4e8d37",
+    "id": "services/db.service#toast-3cbc9139"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:438",
+     "lib/features/auth/presentation/pages/login_page.dart:131"
+    ],
+    "n": "Ionic: \"Fehler beim Zurücksetzen des Passworts. Versuche es später erneut\" / Flutter: \"Fehler beim Zurücksetzen des Passworts\" (authResetFailed).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 880,
+    "method": "DbService.deleteViewer",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.deleteViewerFailed"
+     ],
+     "de": [
+      "Fehler beim Löschen des Beobachters"
+     ],
+     "literals": [],
+     "expr": "translate('db.deleteViewerFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "912cb1e7",
+    "mbody": "f2ea19ba",
+    "id": "services/db.service#toast-4ca4cded"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/viewer_repository.dart:64",
+     "lib/features/settings/presentation/pages/viewers_page.dart:204"
+    ],
+    "n": "Ionic: \"Fehler beim Löschen des Beobachters\" / Flutter: mit Präfix \"Fehler: \".",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/viewer_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1366,
+    "method": "DbService.verifyEmailOtp",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.codeExpired"
+     ],
+     "de": [
+      "Der Code ist abgelaufen. Bitte fordere einen neuen an."
+     ],
+     "literals": [],
+     "expr": "translate('db.codeExpired')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "03a5b87c",
+    "mbody": "612aa9cb",
+    "id": "services/db.service#toast-5053953a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:181",
+     "lib/features/auth/presentation/pages/login_page.dart:284"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1297,
+    "method": "DbService.sendEmailOtp",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.tooManyRequests"
+     ],
+     "de": [
+      "Zu viele Anfragen. Bitte warte einen Moment und versuche es erneut."
+     ],
+     "literals": [],
+     "expr": "translate('db.tooManyRequests')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "966fed19",
+    "mbody": "48bab732",
+    "id": "services/db.service#toast-5a318fd2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:152",
+     "lib/features/auth/presentation/pages/login_page.dart:262"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 870,
+    "method": "DbService.deleteViewer",
+    "cond": [],
+    "message": {
+     "keys": [
+      "db.removeAuthEmailFailed"
+     ],
+     "de": [
+      "Fehler beim Entfernen der E-Mail aus der Authentifizierung"
+     ],
+     "literals": [],
+     "expr": "translate('db.removeAuthEmailFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "0fc265d4",
+    "mbody": "f2ea19ba",
+    "id": "services/db.service#toast-6a8168f4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/viewer_repository.dart:64",
+     "lib/features/settings/presentation/pages/viewers_page.dart:204"
+    ],
+    "n": "Ionic: \"Fehler beim Entfernen der E-Mail aus der Authentifizierung\" / Flutter: \"Fehler: Fehler beim Entfernen der E-Mail aus der Authentifizierung\".",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/viewer_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1648,
+    "method": "DbService.resetPassword",
+    "cond": [],
+    "message": {
+     "keys": [
+      "db.resetPasswordSent"
+     ],
+     "de": [
+      "Eine E-Mail mit weiteren Anweisungen wurde dir zugesandt"
+     ],
+     "literals": [],
+     "expr": "translate('db.resetPasswordSent')"
+    },
+    "color": "success",
+    "duration": "4000",
+    "src": "62bcd97e",
+    "mbody": "cd4e8d37",
+    "id": "services/db.service#toast-6e31e7d2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:430",
+     "lib/features/auth/presentation/pages/login_page.dart:120"
+    ],
+    "n": "Ionic: \"Eine E-Mail mit weiteren Anweisungen wurde dir zugesandt\" (4 s) / Flutter: \"E-Mail zum Zurücksetzen des Passworts wurde gesendet\".",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1228,
+    "method": "DbService.login",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.accountDisabled"
+     ],
+     "de": [
+      "Dein Konto wurde deaktiviert. Bitte wende dich an den Administrator deiner Instanz."
+     ],
+     "literals": [],
+     "expr": "translate('db.accountDisabled')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "d1b61dba",
+    "mbody": "467e6dc8",
+    "id": "services/db.service#toast-79f266ea"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:76",
+     "lib/features/auth/presentation/pages/login_page.dart:114"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1231,
+    "method": "DbService.login",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.tooManyLogins"
+     ],
+     "de": [
+      "Zu viele Anmeldeversuche. Bitte versuche es später erneut."
+     ],
+     "literals": [],
+     "expr": "translate('db.tooManyLogins')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "6851d931",
+    "mbody": "467e6dc8",
+    "id": "services/db.service#toast-7a069dcd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:76",
+     "lib/features/auth/presentation/pages/login_page.dart:114"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1310,
+    "method": "DbService.sendEmailOtp",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.otpUnavailable"
+     ],
+     "de": [
+      "Anmeldung per Code ist derzeit nicht möglich."
+     ],
+     "literals": [],
+     "expr": "translate('db.otpUnavailable')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "c7f3dcb6",
+    "mbody": "48bab732",
+    "id": "services/db.service#toast-7ff478f0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:152",
+     "lib/features/auth/presentation/pages/login_page.dart:262"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1247,
+    "method": "DbService.login",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.weakPasswordRequirements"
+     ],
+     "de": [
+      "Das Passwort erfüllt nicht die Sicherheitsanforderungen."
+     ],
+     "literals": [],
+     "expr": "translate('db.weakPasswordRequirements')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "ba1fdd30",
+    "mbody": "467e6dc8",
+    "id": "services/db.service#toast-93dda176"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:76",
+     "lib/features/auth/presentation/pages/login_page.dart:114"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1307,
+    "method": "DbService.sendEmailOtp",
+    "cond": [
+     "(!allowCreate)",
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.noAccount"
+     ],
+     "de": [
+      "Kein Konto mit dieser E-Mail-Adresse gefunden. Bitte registriere dich zuerst."
+     ],
+     "literals": [],
+     "expr": "translate('db.noAccount')"
+    },
+    "color": "danger",
+    "duration": "5000",
+    "src": "ca739036",
+    "mbody": "48bab732",
+    "id": "services/db.service#toast-a9895a84"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:152",
+     "lib/features/auth/presentation/pages/login_page.dart:262"
+    ],
+    "n": "Text gleich (\"Kein Konto mit dieser E-Mail-Adresse gefunden…\"); Ionic 5 s / Flutter 3 s (iOS 4 s).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1313,
+    "method": "DbService.sendEmailOtp",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.noAccount"
+     ],
+     "de": [
+      "Kein Konto mit dieser E-Mail-Adresse gefunden. Bitte registriere dich zuerst."
+     ],
+     "literals": [],
+     "expr": "translate('db.noAccount')"
+    },
+    "color": "danger",
+    "duration": "5000",
+    "src": "ca739036",
+    "mbody": "48bab732",
+    "id": "services/db.service#toast-a9895a84-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:171",
+     "lib/features/auth/presentation/pages/login_page.dart:279"
+    ],
+    "n": "Text gleich (\"Kein Konto mit dieser E-Mail-Adresse gefunden…\"); Ionic 5 s / Flutter 3 s (md) bzw. 4 s (iOS).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1319,
+    "method": "DbService.sendEmailOtp",
+    "cond": [
+     "(!allowCreate)",
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.noAccount"
+     ],
+     "de": [
+      "Kein Konto mit dieser E-Mail-Adresse gefunden. Bitte registriere dich zuerst."
+     ],
+     "literals": [],
+     "expr": "translate('db.noAccount')"
+    },
+    "color": "danger",
+    "duration": "5000",
+    "src": "ca739036",
+    "mbody": "48bab732",
+    "id": "services/db.service#toast-a9895a84-3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:174",
+     "lib/features/auth/presentation/pages/login_page.dart:279"
+    ],
+    "n": "Text gleich; Ionic 5 s / Flutter 3 s (md) bzw. 4 s (iOS).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1237,
+    "method": "DbService.login",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.invalidPassword"
+     ],
+     "de": [
+      "Ungültiges Passwort"
+     ],
+     "literals": [],
+     "expr": "translate('db.invalidPassword')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "31714a81",
+    "mbody": "467e6dc8",
+    "id": "services/db.service#toast-bdbdd56a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:76",
+     "lib/features/auth/presentation/pages/login_page.dart:114"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1268,
+    "method": "DbService.login",
+    "cond": [
+     "!(data.user)"
+    ],
+    "message": {
+     "keys": [
+      "db.enterCorrectData"
+     ],
+     "de": [
+      "Bitte gib die richtigen Daten an!"
+     ],
+     "literals": [],
+     "expr": "translate('db.enterCorrectData')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "7a5929f0",
+    "mbody": "467e6dc8",
+    "id": "services/db.service#toast-bdede9c9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:334",
+     "lib/features/auth/presentation/pages/login_page.dart:190"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1234,
+    "method": "DbService.login",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.invalidEmail"
+     ],
+     "de": [
+      "Ungültige E-Mail Adresse"
+     ],
+     "literals": [],
+     "expr": "translate('db.invalidEmail')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "d900e1fa",
+    "mbody": "467e6dc8",
+    "id": "services/db.service#toast-c31e6f3d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:76",
+     "lib/features/auth/presentation/pages/login_page.dart:114"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1240,
+    "method": "DbService.login",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.noAccount"
+     ],
+     "de": [
+      "Kein Konto mit dieser E-Mail-Adresse gefunden. Bitte registriere dich zuerst."
+     ],
+     "literals": [],
+     "expr": "translate('db.noAccount')"
+    },
+    "color": "danger",
+    "duration": "5000",
+    "src": "ca739036",
+    "mbody": "467e6dc8",
+    "id": "services/db.service#toast-c7143ae5"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:76",
+     "lib/features/auth/presentation/pages/login_page.dart:114"
+    ],
+    "n": "Text gleich (\"Kein Konto mit dieser E-Mail-Adresse gefunden…\"); Ionic 5 s / Flutter 3 s (iOS 4 s).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1225,
+    "method": "DbService.login",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.wrongCredentials"
+     ],
+     "de": [
+      "E-Mail oder Passwort falsch. Falls du kein Passwort gesetzt hast, nutze den Anmelde-Code per E-Mail."
+     ],
+     "literals": [],
+     "expr": "translate('db.wrongCredentials')"
+    },
+    "color": "danger",
+    "duration": "5000",
+    "src": "a3418986",
+    "mbody": "467e6dc8",
+    "id": "services/db.service#toast-c8873abd"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:76",
+     "lib/features/auth/presentation/pages/login_page.dart:207"
+    ],
+    "n": "Text gleich (\"E-Mail oder Passwort falsch. …\"); Ionic 5 s / Flutter 3 s (md) bzw. 4 s (iOS).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1250,
+    "method": "DbService.login",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.wrongCredentials"
+     ],
+     "de": [
+      "E-Mail oder Passwort falsch. Falls du kein Passwort gesetzt hast, nutze den Anmelde-Code per E-Mail."
+     ],
+     "literals": [],
+     "expr": "translate('db.wrongCredentials')"
+    },
+    "color": "danger",
+    "duration": "5000",
+    "src": "a3418986",
+    "mbody": "467e6dc8",
+    "id": "services/db.service#toast-c8873abd-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/data/auth_flow_service.dart:76",
+     "lib/features/auth/presentation/pages/login_page.dart:114"
+    ],
+    "n": "Text gleich (\"E-Mail oder Passwort falsch…\"); Ionic 5 s / Flutter 3 s (iOS 4 s).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1521,
+    "method": "DbService.updateProfile",
+    "cond": [
+     "(updateError)",
+     "(additional_fields?.bfecg_church && additional_fields.bfecg_church !== churchId)",
+     "(players && players.length > 0)",
+     "(churchId)"
+    ],
+    "message": {
+     "keys": [
+      "db.updateChurchFailed"
+     ],
+     "de": [
+      "Fehler beim Aktualisieren der Kirchenzuordnung"
+     ],
+     "literals": [],
+     "expr": "translate('db.updateChurchFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "208f941e",
+    "mbody": "2ec600ef",
+    "id": "services/db.service#toast-ca28f528"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:258"
+    ],
+    "n": "Ionic: \"Fehler beim Aktualisieren der Kirchenzuordnung\" / Flutter: allgemeines \"Fehler beim Aktualisieren des Profils\".",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 894,
+    "method": "DbService.deleteParent",
+    "cond": [],
+    "message": {
+     "keys": [
+      "db.removeAuthEmailFailed"
+     ],
+     "de": [
+      "Fehler beim Entfernen der E-Mail aus der Authentifizierung"
+     ],
+     "literals": [],
+     "expr": "translate('db.removeAuthEmailFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "0fc265d4",
+    "mbody": "4d915662",
+    "id": "services/db.service#toast-dcde7a3a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/parent_repository.dart:81"
+    ],
+    "n": "Ionic: \"Fehler beim Entfernen der E-Mail aus der Authentifizierung\" / Flutter: mit Präfix \"Fehler: \".",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/parent_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/db.service.ts",
+    "line": 1330,
+    "method": "DbService.sendEmailOtp",
+    "cond": [],
+    "message": {
+     "keys": [
+      "db.codeSent"
+     ],
+     "de": [
+      "Wir haben dir einen Code per E-Mail gesendet."
+     ],
+     "literals": [],
+     "expr": "translate('db.codeSent')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "b8a94cd3",
+    "mbody": "48bab732",
+    "id": "services/db.service#toast-f7183302"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:262"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/duty/duty.service.ts",
+    "line": 265,
+    "method": "DutyService.saveUnavailability",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.saveFailed"
+     ],
+     "de": [
+      "Fehler beim Speichern"
+     ],
+     "literals": [],
+     "expr": "translate('svc.saveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "a5caefb4",
+    "mbody": "ab1c4094",
+    "id": "services/duty/duty.service#toast-0685f722"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:117"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/duty/duty.service.ts",
+    "line": 231,
+    "method": "DutyService.getUnavailabilityForPerson",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.loadAvailabilityFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Verfügbarkeit"
+     ],
+     "literals": [],
+     "expr": "translate('svc.loadAvailabilityFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "649db699",
+    "mbody": "feec96d6",
+    "id": "services/duty/duty.service#toast-14e51b33"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:233"
+    ],
+    "n": "Ionic: Toast 'Fehler beim Laden der Verfügbarkeit' (danger) und leere Liste / Flutter: kein Toast, die Verfügbarkeits-Seite zeigt inline 'Fehler: {Fehler}'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/duty/duty.service.ts",
+    "line": 74,
+    "method": "DutyService.assign",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.assignFailed"
+     ],
+     "de": [
+      "Fehler beim Einteilen"
+     ],
+     "literals": [],
+     "expr": "translate('svc.assignFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "b4f459a6",
+    "mbody": "78850880",
+    "id": "services/duty/duty.service#toast-6d512f3f-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:287"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/duty/duty.service",
+   "ionic": {
+    "ts": "services/duty/duty.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/duty/duty.service.ts",
+    "line": 274,
+    "method": "DutyService.deleteUnavailability",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.deleteFailed"
+     ],
+     "de": [
+      "Fehler beim Löschen"
+     ],
+     "literals": [],
+     "expr": "translate('svc.deleteFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "edec3b16",
+    "mbody": "eb7d0da5",
+    "id": "services/duty/duty.service#toast-6ffa5539"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:163"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/feedback/feedback.service",
+   "ionic": {
+    "ts": "services/feedback/feedback.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/feedback/feedback.service.ts",
+    "line": 22,
+    "method": "FeedbackService.sendQuestion",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.sendQuestionFailed"
+     ],
+     "de": [
+      "Fehler beim Senden der Frage"
+     ],
+     "literals": [],
+     "expr": "translate('svc.sendQuestionFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "a395ee40",
+    "mbody": "6a80dec1",
+    "id": "services/feedback/feedback.service#toast-1a78dc16"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/sheets/feedback_sheet.dart:103",
+     "lib/features/settings/presentation/pages/files_page.dart:714"
+    ],
+    "n": "Flutter besser: im Feedback-Sheet gleicher Toast 'Fehler beim Senden der Frage' (danger) / bei der Datei-Anfrage (Dateien-Seite) zeigt Ionic diesen und den Seiten-Toast übereinander, Flutter nur den Seiten-Toast.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/group-category/group-category.service",
+   "ionic": {
+    "ts": "services/group-category/group-category.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/group-category/group-category.service.ts",
+    "line": 33,
+    "method": "GroupCategoryService.getGroupCategories",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.loadCategoriesFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Kategorien"
+     ],
+     "literals": [],
+     "expr": "translate('svc.loadCategoriesFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "77ec81c8",
+    "mbody": "8350c3f2",
+    "id": "services/group-category/group-category.service#toast-e1869ba2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:144"
+    ],
+    "n": "Ionic: Toast 'Fehler beim Laden der Kategorien' (danger) überall / Flutter: im Kategorien-Sheet inline 'Fehler: {Fehler}' mit Erneut-Button, an anderen Stellen still.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/group-category/group-category.service",
+   "ionic": {
+    "ts": "services/group-category/group-category.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/group-category/group-category.service.ts",
+    "line": 84,
+    "method": "GroupCategoryService.updateGroupCategorySortOrder",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.updateCategoryOrderFailed"
+     ],
+     "de": [
+      "Fehler beim Aktualisieren der Kategoriereihenfolge"
+     ],
+     "literals": [],
+     "expr": "translate('svc.updateCategoryOrderFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "dd882ec8",
+    "mbody": "84bd7068",
+    "id": "services/group-category/group-category.service#toast-ec60df9e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:62"
+    ],
+    "n": "Ionic: Service-Toast 'Fehler beim Aktualisieren der Kategoriereihenfolge' plus Seiten-Toast 'Fehler beim Speichern der Reihenfolge' / Flutter: nur 'Fehler beim Speichern der Reihenfolge'.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/group/group.service",
+   "ionic": {
+    "ts": "services/group/group.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/group/group.service.ts",
+    "line": 61,
+    "method": "GroupService.updateGroup",
+    "cond": [
+     "(error.code === '23505')",
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.onlyOneMainGroup"
+     ],
+     "de": [
+      "Es kann nur eine Hauptgruppe existieren"
+     ],
+     "literals": [],
+     "expr": "translate('svc.onlyOneMainGroup')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "09da9bc0",
+    "mbody": "2512796c",
+    "id": "services/group/group.service#toast-0fbc7e49"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/group_repository.dart:143",
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:477"
+    ],
+    "n": "Ionic: 'Es kann nur eine Hauptgruppe existieren' / Flutter: Repository wirft svcOnlyOneMainGroup, die Instrumente-Seite zeigt aber immer 'Fehler beim Speichern'. Kaum erreichbar, da der Bearbeiten-Dialog maingroup nicht ändert.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/group_repository.dart",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/group/group.service",
+   "ionic": {
+    "ts": "services/group/group.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/group/group.service.ts",
+    "line": 63,
+    "method": "GroupService.updateGroup",
+    "cond": [
+     "!(error.code === '23505')",
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.updateGroupFailed"
+     ],
+     "de": [
+      "Fehler beim updaten des Instruments"
+     ],
+     "literals": [],
+     "expr": "translate('svc.updateGroupFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "27f8dda3",
+    "mbody": "2512796c",
+    "id": "services/group/group.service#toast-eff6b54e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:477"
+    ],
+    "n": "Ionic: 'Fehler beim updaten des Instruments' / Flutter: 'Fehler beim Speichern'.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/history/history.service",
+   "ionic": {
+    "ts": "services/history/history.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/history/history.service.ts",
+    "line": 74,
+    "method": "HistoryService.updateHistoryEntry",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.updateEntryFailed"
+     ],
+     "de": [
+      "Fehler beim Updaten des Eintrags"
+     ],
+     "literals": [],
+     "expr": "translate('svc.updateEntryFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "c8d76558",
+    "mbody": "4ce52104",
+    "id": "services/history/history.service#toast-2c4284b3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2102"
+    ],
+    "n": "Ionic: 'Fehler beim Updaten des Eintrags' / Flutter: 'Fehler beim Speichern: {Fehler}'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "modal",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 298,
+    "method": "LiveActivityService.openSharedOrgPlan",
+    "cond": [],
+    "component": "PlanViewerComponent",
+    "props": [
+     "attendance",
+     "plan",
+     "isPractice",
+     "songs",
+     "defaultLive"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "a3da511c",
+    "mbody": "3650229e",
+    "id": "services/live-activity/live-activity.service#modal-e1ddab08"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/live_activity_service.dart:935"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/notification/notification.service",
+   "ionic": {
+    "ts": "services/notification/notification.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/notification/notification.service.ts",
+    "line": 62,
+    "method": "NotificationService.updateNotificationConfig",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.updateConfigFailed"
+     ],
+     "de": [
+      "Fehler beim Updaten der Konfiguration, bitte versuche es später erneut."
+     ],
+     "literals": [],
+     "expr": "translate('svc.updateConfigFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "56ae06f1",
+    "mbody": "ff956911",
+    "id": "services/notification/notification.service#toast-29a202cf"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:112"
+    ],
+    "n": "Ionic: 'Fehler beim Updaten der Konfiguration, bitte versuche es später erneut.' / Flutter: 'Fehler beim Aktualisieren der Konfiguration' (ohne Hinweis, es später erneut zu versuchen); Schalter wird zurückgesetzt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 328,
+    "method": "OrganisationService.generatePublicPlanKey",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.createPublicLinkFailed"
+     ],
+     "de": [
+      "Fehler beim Erstellen des öffentlichen Links"
+     ],
+     "literals": [],
+     "expr": "translate('svc.createPublicLinkFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "3d11c7c0",
+    "mbody": "dd3e893a",
+    "id": "services/organisation/organisation.service#toast-1f659229"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:141"
+    ],
+    "n": "Ionic: \"Fehler beim Erstellen des öffentlichen Links\". / Flutter: \"Fehler beim Erstellen des Links\".",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 103,
+    "method": "OrganisationService.deletePersonFieldValues",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.deleteSharedFieldValuesFailed"
+     ],
+     "de": [
+      "Fehler beim Löschen der gemeinsamen Zusatzfeldwerte"
+     ],
+     "literals": [],
+     "expr": "translate('svc.deleteSharedFieldValuesFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "8e8f8f15",
+    "mbody": "e778f8dc",
+    "id": "services/organisation/organisation.service#toast-46c2798a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:116"
+    ],
+    "n": "Ionic: \"Fehler beim Löschen der gemeinsamen Zusatzfeldwerte\". / Flutter: \"Fehler beim Speichern\" (rot).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,660 @@
+{
+ "batch": "b07-people",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "people/bulk-edit/bulk-edit.page#logic-84c1649d": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:77-247"
+   ],
+   "sev": "mittel",
+   "n": "Laden/Feldliste, Wertermittlung, changedCount, Speichern (player-Update bzw. tenant_group_person_fields-Upsert für Org-Felder) und Termin-Sync entsprechen Ionic. Abweichungen: Startwert von 'Für alle setzen', Sichtbarkeit der Zusatzfelder, Zahlentyp, zusätzlicher Fehler-Toast (siehe extra)."
+  },
+  "people/bulk-edit/bulk-edit.page#toast-a80bef04": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:170-172",
+    "lib/core/utils/toast_helper.dart:65-67"
+   ],
+   "n": "showDemoRestricted → dbDemoRestricted 'Diese Funktion ist im Demo-Modus nicht verfügbar.', orange."
+  },
+  "people/bulk-edit/bulk-edit.page#toast-797d2d80": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:235-238"
+   ],
+   "n": "peopleFlutterBulkUpdated '{count} Person(en) aktualisiert', grün."
+  },
+  "people/bulk-edit/bulk-edit.page#toast-2d9620c7": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:240-243"
+   ]
+  },
+  "people/bulk-edit/bulk-edit.page#text-ec74692a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:265"
+   ]
+  },
+  "people/bulk-edit/bulk-edit.page#action-5c670508": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:268-271"
+   ],
+   "sev": "niedrig",
+   "n": "Flutter besser: Ionic: X schließt das Modal immer (auch während Speichern) / Flutter: X während _isSaving deaktiviert."
+  },
+  "people/bulk-edit/bulk-edit.page#field-3f70cbe7": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:282-322"
+   ],
+   "sev": "niedrig",
+   "n": "Flutter besser: Label 'Feld auswählen', Platzhalter 'Feld wählen...', 'Standard-Felder' (deaktiviert) + Gruppe/Stimmführer/Notizen/Telefon, 'Zusatzfelder' + Felder gleich. Ionic: Zusatzfeld-Block nur wenn db.tenant().additional_fields.length > 0 (Org-Felder fehlen also, wenn der Tenant keine eigenen Felder hat) / Flutter: sobald irgendein Zusatzfeld (Org oder Tenant) existiert (hasExtra)."
+  },
+  "people/bulk-edit/bulk-edit.page#text-91a4384e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:349"
+   ]
+  },
+  "people/bulk-edit/bulk-edit.page#field-90ab5ff6": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:504-513",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:115-121"
+   ],
+   "n": "Gruppen-Dropdown, Platzhalter 'Gruppe wählen...', Startwert erste Gruppe."
+  },
+  "people/bulk-edit/bulk-edit.page#field-9dd7902a": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:514-518"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: ion-toggle mit Beschriftung 'Stimmführer' / Flutter: nur Switch rechts ohne Beschriftung. Startwert false in beiden."
+  },
+  "people/bulk-edit/bulk-edit.page#field-2be5734e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:519-520"
+   ]
+  },
+  "people/bulk-edit/bulk-edit.page#field-399cfe3f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:521-525"
+   ]
+  },
+  "people/bulk-edit/bulk-edit.page#field-523de84f": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:573-574",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:123-133"
+   ],
+   "sev": "niedrig",
+   "n": "Eingabefeld mit Platzhalter = Feldname gleich. Startwert: Ionic immer '' (getFieldTypeDefaultValue ohne defaultValue) / Flutter: konfigurierter Standardwert des Feldes, sonst ''."
+  },
+  "people/bulk-edit/bulk-edit.page#field-523de84f-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:531-536",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:131"
+   ],
+   "sev": "mittel",
+   "n": "Zahlenfeld mit Platzhalter = Feldname. Startwert: Ionic 0 / Flutter: Standardwert des Feldes, sonst leer (null) → 'Für alle setzen' schreibt null statt 0."
+  },
+  "people/bulk-edit/bulk-edit.page#field-817de781": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:537-541",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:125"
+   ],
+   "sev": "mittel",
+   "n": "Ionic: ion-toggle mit Beschriftung = Feldname, Startwert true / Flutter: Switch ohne Beschriftung, Startwert Standardwert des Feldes, sonst false → 'Für alle setzen' ohne Änderung schreibt false statt true."
+  },
+  "people/bulk-edit/bulk-edit.page#field-fc367be8": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:542-545",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:126-130"
+   ],
+   "sev": "niedrig",
+   "n": "Dropdown mit Optionen in Reihenfolge, Platzhalter = Feldname gleich. Startwert: Ionic immer erste Option / Flutter: Standardwert des Feldes, sonst erste Option."
+  },
+  "people/bulk-edit/bulk-edit.page#field-d2bdf3b7": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:573-574",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:469-485"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: ion-textarea mit autoGrow (mehrzeilig) / Flutter: einzeiliges TextFormField (default-Zweig). Startwert Ionic '' / Flutter Standardwert des Feldes oder ''."
+  },
+  "people/bulk-edit/bulk-edit.page#field-fc367be8-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:546-551",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:132"
+   ],
+   "sev": "mittel",
+   "n": "Gemeinde-Dropdown gleich. Startwert: Ionic erste Gemeinde (churches[0].id) / Flutter: Standardwert des Feldes, sonst '' → Dropdown leer, 'Für alle setzen' schreibt ''."
+  },
+  "people/bulk-edit/bulk-edit.page#field-523de84f-3": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:552-572",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:132"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: natives input type=date (leerbar), Startwert new Date().toISOString() (vom Datumsfeld nicht angezeigt, wird aber bei 'Für alle setzen' geschrieben) / Flutter: Button mit Datumsauswahl ('Kein Datum gewählt'), nicht leerbar, Startwert Standardwert oder '' → schreibt ''."
+  },
+  "people/bulk-edit/bulk-edit.page#action-ac3f725b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:353-361",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:154-161"
+   ],
+   "n": "Outline-Button 'Für alle setzen' mit done_all-Icon; setzt alle Werte auf den Sammelwert."
+  },
+  "people/bulk-edit/bulk-edit.page#text-44853193": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:377"
+   ]
+  },
+  "people/bulk-edit/bulk-edit.page#text-24646e77": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:413"
+   ]
+  },
+  "people/bulk-edit/bulk-edit.page#text-f4a32189": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:414"
+   ]
+  },
+  "people/bulk-edit/bulk-edit.page#field-e33a38c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:504-513"
+   ],
+   "n": "Platzhalter 'Gruppe...'."
+  },
+  "people/bulk-edit/bulk-edit.page#field-40247d7a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:514-518"
+   ]
+  },
+  "people/bulk-edit/bulk-edit.page#field-0c27356e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:519-520"
+   ]
+  },
+  "people/bulk-edit/bulk-edit.page#field-82a98603": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:521-525"
+   ]
+  },
+  "people/bulk-edit/bulk-edit.page#field-4964deb8": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:573-574"
+   ]
+  },
+  "people/bulk-edit/bulk-edit.page#field-4964deb8-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:531-536",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:475-479"
+   ],
+   "sev": "niedrig",
+   "n": "Flutter besser: Ionic: (ionChange) $event.detail.value liefert bei ion-input einen String → Zusatzfeld wird als \"5\" gespeichert (laut Ionic-Core; @ionic/angular nicht im Container) / Flutter: parst zu num (Komma erlaubt), leer → null. Ionic übernimmt erst bei Blur, Flutter bei jedem Tastendruck."
+  },
+  "people/bulk-edit/bulk-edit.page#field-40247d7a-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:537-541"
+   ]
+  },
+  "people/bulk-edit/bulk-edit.page#field-0e4833d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:542-545"
+   ]
+  },
+  "people/bulk-edit/bulk-edit.page#field-4964deb8-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:573-574"
+   ],
+   "n": "Pro Person in beiden einzeilig (Ionic ion-input)."
+  },
+  "people/bulk-edit/bulk-edit.page#field-0e4833d3-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:546-551"
+   ]
+  },
+  "people/bulk-edit/bulk-edit.page#field-4964deb8-4": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:552-572"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: natives input type=date (Wert leerbar) / Flutter: Button mit Datumsauswahl, zeigt 'Kein Datum gewählt' bzw. Datum, Wert kann nicht geleert werden. Format yyyy-MM-dd gleich."
+  },
+  "people/bulk-edit/bulk-edit.page#action-a2a2fcd3": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:423-440"
+   ],
+   "sev": "niedrig",
+   "n": "Texte 'Speichern...' / '# Änderung(en) speichern' / 'Keine Änderungen' und Deaktivierung gleich. Ionic: Spinner vor 'Speichern...' / Flutter: nur Text."
+  },
+  "people/bulk-edit/bulk-edit.page#text-48f2cb53": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:326-344"
+   ],
+   "n": "Icon edit_note statt create-outline (48px, grau)."
+  },
+  "people/import/import.page#logic-5814da2d": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:52-224"
+   ],
+   "sev": "hoch",
+   "n": "Schritte Datei/Zuordnung/Vorschau, Zähler (bereit/Hinweis/Duplikat/fehlerhaft/ungeklärte Gruppe), Duplikat-Prüfung (player.email, tenantId, paginiert), Rolle (Hauptgruppe → RESPONSIBLE), Konten nur mit E-Mail, Fortschritt und Ergebnis gleich. Abweichungen: Org-Zusatzfelder fehlen als Ziel/Vorlage, .xls nicht lesbar, Vorlagen-Ausgabe nativ, Fehlertexte (siehe extra)."
+  },
+  "people/import/import.page#loading-3194637c": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:82",
+    "lib/features/people/presentation/pages/person_import_page.dart:262-284"
+   ],
+   "sev": "niedrig",
+   "n": "Flutter blockiert mit Overlay (Spinner) und deaktiviertem X, aber ohne Text 'Datei wird gelesen...' (peopleReadingFile ungenutzt)."
+  },
+  "people/import/import.page#toast-18af3f0b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:85-87"
+   ]
+  },
+  "people/import/import.page#toast-1363216a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:99-103",
+    "lib/core/utils/spreadsheet_reader.dart:155-161"
+   ],
+   "n": "Gleicher Text, rot. Für .xls kommt stattdessen ein eigener Text (siehe field-bdcf25e7)."
+  },
+  "people/import/import.page#toast-9635ec11": {
+   "s": "na",
+   "n": "toter Code: 'Weiter' ist bei !canProceedFromMapping deaktiviert (import.page.html:128), proceedToPreview wird sonst nicht aufgerufen. Flutter hat denselben Guard (person_import_page.dart:133-135, 292)."
+  },
+  "people/import/import.page#loading-b32cfbfa": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:137",
+    "lib/features/people/presentation/pages/person_import_page.dart:262-284"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: blockierendes Overlay 'Daten werden geprüft...' / Flutter: Overlay nur mit Spinner (peopleCheckingData ungenutzt), 'Zurück' in der unteren Leiste bleibt bedienbar."
+  },
+  "people/import/import.page#toast-775db1e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:146-148"
+   ]
+  },
+  "people/import/import.page#toast-ab4a2819": {
+   "s": "na",
+   "n": "toter Code: Import-Button ist bei !importableRows.length deaktiviert (import.page.html:136). Flutter hat denselben Guard (person_import_page.dart:158-160, 297)."
+  },
+  "people/import/import.page#toast-b3bb9f9f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:163-166",
+    "lib/core/utils/toast_helper.dart:65-67"
+   ],
+   "n": "dbDemoRestricted, gleicher Text, orange."
+  },
+  "people/import/import.page#loading-bab0752f": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:174-177",
+    "lib/features/people/presentation/pages/person_import_page.dart:200-202",
+    "lib/features/people/presentation/pages/person_import_page.dart:262-284"
+   ],
+   "sev": "niedrig",
+   "n": "Fortschritt '{done} / {total} importiert...' wird angezeigt und aktualisiert, aber Ionic blockiert den ganzen Bildschirm / Flutter: Overlay nur über dem Inhalt, 'Zurück' in der unteren Leiste bleibt während des Imports bedienbar."
+  },
+  "people/import/import.page#toast-e3036216": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:212-219"
+   ],
+   "n": "'N Personen importiert.' + ggf. 'M fehlgeschlagen.', grün bzw. orange."
+  },
+  "people/import/import.page#toast-790b310b": {
+   "s": "na",
+   "n": "toter Code: db.importPlayers fängt Fehler pro Zeile (db.service.ts:3634-3641), Demo wird vorher abgefangen (import.page.ts:207); der äußere catch wird praktisch nie erreicht. Flutter fängt ebenfalls pro Zeile (person_import_page.dart:183-199)."
+  },
+  "people/import/import.page#alert-3b9d1c7b": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:198",
+    "lib/features/people/presentation/pages/person_import_page.dart:220",
+    "lib/features/people/presentation/widgets/import_widgets.dart:226-243"
+   ],
+   "sev": "niedrig",
+   "n": "Titel 'Nicht importierte Personen', max. 10 Zeilen '• Vorname Nachname: Grund', '… und N weitere', Button 'OK' gleich. Grund: Ionic error.message / Flutter '$e' (z. B. 'RepositoryException: … (operation: …, code: …)')."
+  },
+  "people/import/import.page#text-e0a87666": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:232"
+   ]
+  },
+  "people/import/import.page#action-9212f462": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:235-238"
+   ],
+   "n": "Während busy deaktiviert (Ionic: Overlay blockiert)."
+  },
+  "people/import/import.page#text-da6273ad": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:245",
+    "lib/features/people/presentation/widgets/import_widgets.dart:30"
+   ],
+   "sev": "niedrig",
+   "n": "Text gleich. Ionic: grau (medium, 0.9rem) / Flutter: normale Textfarbe. Der Text nennt .xls, das Flutter ablehnt (siehe field-bdcf25e7)."
+  },
+  "people/import/import.page#action-d036dd10": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:35-40",
+    "lib/features/people/presentation/pages/person_import_page.dart:78-80"
+   ],
+   "n": "cloud_upload-Icon und Text in Primärfarbe."
+  },
+  "people/import/import.page#field-bdcf25e7": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/import_file_io.dart:10-21",
+    "lib/core/utils/spreadsheet_reader.dart:43-47"
+   ],
+   "sev": "hoch",
+   "n": "Auswahl .xlsx/.xls/.csv gleich. Ionic: SheetJS liest auch .xls / Flutter: .xls wird abgelehnt mit 'Das alte Excel-Format (.xls) wird nicht unterstützt. Bitte als .xlsx oder .csv speichern.' – obwohl der Einleitungstext .xls nennt."
+  },
+  "people/import/import.page#action-2d35c2c8": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:42-46",
+    "lib/features/people/presentation/pages/person_import_page.dart:108-130",
+    "lib/core/services/zip_service_io.dart:9-18",
+    "lib/core/services/zip_service_web.dart:7-31"
+   ],
+   "sev": "mittel",
+   "n": "Datei 'Personen_Import_Vorlage.xlsx', Blatt 'Import', Beispielzeile gleich. Ionic: Spalten inkl. Org-Zusatzfelder (getPersonExtraFields); nativ Datei öffnen (FileViewer), mobiles Web Share-Sheet / Flutter: nur Tenant-Zusatzfelder; nativ Share-Sheet mit Text 'Song-Dateien', Web immer Download."
+  },
+  "people/import/import.page#text-ac3c014f": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:85-88"
+   ],
+   "sev": "niedrig",
+   "n": "'— N Zeilen' gleich. Ionic: grau (medium) / Flutter: normale Textfarbe."
+  },
+  "people/import/import.page#text-432acf42": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:86"
+   ],
+   "sev": "niedrig",
+   "n": "Dateiname fett gleich. Ionic: grau (medium) / Flutter: normale Textfarbe."
+  },
+  "people/import/import.page#text-9a34d1ef": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:90"
+   ],
+   "sev": "niedrig",
+   "n": "Text gleich. Ionic: grau (medium, 0.9rem) / Flutter: normale Textfarbe."
+  },
+  "people/import/import.page#field-2d96b151": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:92-107",
+    "lib/features/people/presentation/pages/person_import_page.dart:63-76"
+   ],
+   "sev": "mittel",
+   "n": "Dropdown je Spalte mit Spaltenname als Label, Platzhalter 'Feld wählen...', Optionen Ignorieren/Vorname/Nachname/Name/Geburtsdatum/Gruppe/E-Mail/Telefon/Eingetreten/Notizen in gleicher Reihenfolge. Ionic: danach alle Zusatzfelder inkl. Org-Felder / Flutter: nur Tenant-Zusatzfelder."
+  },
+  "people/import/import.page#text-6d4d3de0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:108-112"
+   ]
+  },
+  "people/import/import.page#text-42f1f865": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:144"
+   ]
+  },
+  "people/import/import.page#text-c4db8661": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:145"
+   ]
+  },
+  "people/import/import.page#text-1bf901f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:146-147"
+   ]
+  },
+  "people/import/import.page#text-24ac6bdd": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:148"
+   ]
+  },
+  "people/import/import.page#text-a0e302fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:324-331"
+   ]
+  },
+  "people/import/import.page#field-147e444a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:335-339"
+   ]
+  },
+  "people/import/import.page#text-ebd216e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:340-347"
+   ]
+  },
+  "people/import/import.page#text-2d988dd6": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:359"
+   ]
+  },
+  "people/import/import.page#field-018f6a18": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:364-385"
+   ],
+   "sev": "niedrig",
+   "n": "Gruppen-Dropdown pro Zeile (nicht bei Fehlern), Auswahl setzt groupResolved, gleich. Ionic: Label 'Gruppe' immer über dem Wert, ungeklärte Gruppe mit orangem Rahmen / Flutter: 'Gruppe' nur als Hinweis bei leerem Wert, ungeklärte Gruppe als orange Schrift."
+  },
+  "people/import/import.page#text-14720394": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:386-387"
+   ]
+  },
+  "people/import/import.page#text-1ce09c5c": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:183-184"
+   ]
+  },
+  "people/import/import.page#text-4f6ed3a2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:185-186"
+   ]
+  },
+  "people/import/import.page#action-0ebf9e46": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:289-290",
+    "lib/features/people/presentation/widgets/import_widgets.dart:215"
+   ]
+  },
+  "people/import/import.page#action-a2aac1cb": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:291-292",
+    "lib/features/people/presentation/widgets/import_widgets.dart:217"
+   ]
+  },
+  "people/import/import.page#action-3ba65881": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:294-295",
+    "lib/features/people/presentation/widgets/import_widgets.dart:215"
+   ]
+  },
+  "people/import/import.page#action-0df4f9a4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:296-297",
+    "lib/features/people/presentation/widgets/import_widgets.dart:217"
+   ]
+  }
+ },
+ "extra": [
+  {
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "title": "Startwert 'Für alle setzen' bei Zusatzfeldern",
+   "n": "Ionic: getFieldTypeDefaultValue(type, undefined, …) ignoriert den Feld-Standardwert: Boolean true, Zahl 0, Auswahl erste Option, Gemeinde erste Gemeinde, Datum jetzt (ISO), Text '' / Flutter: Feld-Standardwert, sonst Boolean false, Zahl null, Auswahl erste Option, Gemeinde/Datum/Text ''. 'Für alle setzen' ohne Anpassung schreibt damit andere Werte.",
+   "sev": "mittel",
+   "ionic": "src/app/people/bulk-edit/bulk-edit.page.ts:106-126",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:115-134"
+   ]
+  },
+  {
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "title": "Zusatzfelder-Abschnitt Sichtbarkeit",
+   "n": "Flutter besser: Ionic: Zusatzfelder (inkl. Org-Felder) nur im Auswahlfeld, wenn der Tenant selbst additional_fields hat / Flutter: immer, wenn Org- oder Tenant-Felder existieren.",
+   "sev": "niedrig",
+   "ionic": "src/app/people/bulk-edit/bulk-edit.page.html:24",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:255",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:306-319"
+   ]
+  },
+  {
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "title": "Zahlen-Zusatzfeld pro Person als String",
+   "n": "Flutter besser: Ionic: Einzelwert aus ionChange ist String (\"5\"), Sammelwert über NumericValueAccessor Zahl; changedCount vergleicht strikt / Flutter: immer num (oder null).",
+   "sev": "niedrig",
+   "ionic": "src/app/people/bulk-edit/bulk-edit.page.html:135-138",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:475-479"
+   ]
+  },
+  {
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "title": "Fehler beim Org-Feld-Speichern: zusätzlicher Toast",
+   "n": "Ionic: orgSvc.updatePersonFieldValues zeigt bei Fehler zusätzlich 'Fehler beim Speichern der gemeinsamen Zusatzfelder' (danger), danach 'Fehler beim Speichern' / Flutter: nur 'Fehler beim Speichern'.",
+   "sev": "niedrig",
+   "ionic": "src/app/services/organisation/organisation.service.ts:88-91",
+   "f": [
+    "lib/data/repositories/profile_repository.dart:281-319",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:240-243"
+   ]
+  },
+  {
+   "unit": "people/import/import.page",
+   "title": "Org-Zusatzfelder beim Import nicht verfügbar",
+   "n": "Ionic: Kontext/Ziele/Vorlage aus db.getPersonExtraFields() (Org-Felder + Tenant-Felder) / Flutter: nur currentTenant.additionalFields → Spalten für Org-Zusatzfelder können weder automatisch noch manuell zugeordnet werden, ihre Werte werden nicht importiert, die Vorlage enthält sie nicht.",
+   "sev": "hoch",
+   "ionic": "src/app/people/import/import.page.ts:57-63",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:52-61",
+    "lib/features/people/presentation/pages/person_import_page.dart:108-111"
+   ]
+  },
+  {
+   "unit": "people/import/import.page",
+   "title": ".xls-Dateien nicht lesbar",
+   "n": "Ionic: readSpreadsheetFile/SheetJS liest .xlsx, .xls und .csv / Flutter: .xls wird mit Hinweistext abgelehnt (nur .xlsx/.csv).",
+   "sev": "hoch",
+   "ionic": "src/app/people/import/import.page.ts:101-104",
+   "f": [
+    "lib/core/utils/spreadsheet_reader.dart:43-47"
+   ]
+  },
+  {
+   "unit": "people/import/import.page",
+   "title": "Vorlage herunterladen: Ausgabe",
+   "n": "Ionic: nativ Datei in Cache schreiben und mit FileViewer öffnen, mobiles Web über Web-Share-API, Desktop Download / Flutter: nativ Share-Sheet mit Text 'Song-Dateien', Web immer Anker-Download; Flutter zeigt bei Fehler 'Fehler: …' (Ionic: kein Hinweis).",
+   "sev": "mittel",
+   "ionic": "src/app/utilities/Utils.ts:1220-1237",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:123-129",
+    "lib/core/services/zip_service_io.dart:9-18"
+   ]
+  },
+  {
+   "unit": "people/import/import.page",
+   "title": "Fehlergrund im Fehlerdialog technisch",
+   "n": "Ionic: reason = error.message ?? 'Unbekannter Fehler' / Flutter: '$e' inkl. Klassenname/Operation/Code (z. B. 'RepositoryException: … (operation: createPlayer, code: 23505)').",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:3638-3640",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:197-199"
+   ]
+  },
+  {
+   "unit": "people/import/import.page",
+   "title": "Liste wird auch ohne Import neu geladen",
+   "n": "Flutter besser: Ionic: Personenliste nur neu geladen, wenn mindestens eine Person importiert wurde / Flutter: invalidiert playersProvider immer (auch teilweise gespeicherte, fehlgeschlagene Zeilen erscheinen).",
+   "sev": "niedrig",
+   "ionic": "src/app/people/import/import.page.ts:236-238",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:207-210"
+   ]
+  }
+ ]
+}

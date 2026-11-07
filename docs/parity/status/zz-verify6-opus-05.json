@@ -1,0 +1,402 @@
+{
+ "batch": "zz-verify6-opus-05",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "home-dashboard/home-dashboard.page#text-4fcb2ddf": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:75"
+   ],
+   "n": "Unverändert: bei ≤ 1 Instanz Toolbar-Titel „Dashboard“ (CondenseTitle, Z. 75–76), bei > 1 Instanz der Instanz-Umschalter (TenantSwitcherTitle) wie Ionic @else. Solange userTenantsProvider lädt kurz „Dashboard“.",
+   "v": "bestätigt"
+  },
+  "home-dashboard/home-dashboard.page#text-4fcb2ddf-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:49",
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:52"
+   ],
+   "n": "Großer Titel „Dashboard“ nur bei ≤ 1 Instanz (largeTitle = tenants.length <= 1) und nur im iOS-Look (IonLargeTitle), wie Ionic collapse=\"condense\".",
+   "v": "bestätigt"
+  },
+  "x-c6f9466555": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/providers/team_org_providers.dart:277",
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:53",
+    "lib/core/providers/dashboard_providers.dart:304"
+   ],
+   "n": "Besteht weiter: Ionic ionViewWillEnter lädt „Meine Aufgaben“ bei jeder Rückkehr aufs Dashboard neu / Flutter: myTasksProvider wird nur bei eigenen Änderungen (TeamTaskNotifier._invalidate), Abmeldung und Pull-to-Refresh (refreshDashboardCards) neu geladen; kein RouteReturnReload auf dem Dashboard. Von anderen zugewiesene/erledigte Aufgaben erst nach Herunterziehen. Funktion bleibt erreichbar → niedrig.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#action-09922adb": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:429",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:374",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:349",
+    "lib/data/repositories/group_repository.dart:94"
+   ],
+   "n": "Flutter besser: Rolle gleich (FAB nur Admin/Verantwortlicher). Insert in instruments: name, maingroup false, category nur wenn gesetzt, tenantId, tuning „C“, clefs [g] (createGroup putIfAbsent) wie Ionic group.service addGroup; leerer Name → „Bitte gib einem Namen an“. Ionic speichert den Namen ungetrimmt (nur Leerzeichen wird angelegt) und prüft den Insert-Fehler nicht / Flutter trimmt, lehnt Leerzeichen-Namen ab und zeigt bei Fehler „Fehler beim Hinzufügen“ (x-5824d283fc). f-Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#action-13fe6ace": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:101",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:38",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:49",
+    "lib/core/router/app_router.dart:168"
+   ],
+   "n": "Rolle (nur Admin/Verantwortlicher, Route-Guard jetzt app_router.dart:168), Icon swap_vert ↔ Häkchen, Ziehen innerhalb der Kategorie und Toasts „Reihenfolge gespeichert“/„Fehler…“ wie Ionic. Erstprüfer übersah beim Handler: Häkchen ohne Verschieben – Ionic saveOrder schreibt nur vorhandene sort_order unverändert (null bleibt null) / Flutter _toggleReorder → computeGlobalSortOrder schreibt immer 1..n an alle Gruppen (gleiche Abweichung wie x-d0c116c654). Andere DB-Werte → mittel (sichtbare Reihenfolge bleibt gleich, Badges erscheinen/ändern sich).",
+   "v": "korrigiert"
+  },
+  "instruments/instrument-list/instrument-list.page#action-3f2a74e6": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:122",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:260"
+   ],
+   "n": "Besteht weiter: Ionic Plus-Button auch im Sortiermodus / Flutter blendet ihn im Sortiermodus aus (if (!_isReordering)). Dialog „Neue Kategorie“ (Kategoriename, Abbrechen/Hinzufügen, leer → Toast, Dialog bleibt offen), Insert group_categories name+tenant_id, Fehler-Toast wie Ionic; Flutter trimmt den Namen (Flutter besser).",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#action-623e8e94": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:408",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:305"
+   ],
+   "n": "Nur im Kategorien-Sheet (Admin/Verantwortliche), nur außerhalb des Sortiermodus; öffnet „Kategorie bearbeiten“ mit Name vorbefüllt, Abbrechen/Speichern, leer → Toast, Update name mit id + tenant_id, Fehler-Toast wie Ionic. Ionic: Stift-Icon orange (warning) / Flutter: Icons.edit in Standardfarbe. f-Zeile korrigiert (392 → 408).",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#action-a01ef8cf": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:197",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:400"
+   ],
+   "n": "Sortieren per Ziehen und Speichern beim Häkchen wie Ionic. Ionic: Zeile mit Griff-Icon im Sortiermodus und Badge der gespeicherten sort_order (immer) / Flutter: Karten; außerhalb des Sortiermodus Kategorie-Icon statt sort_order-Badge, im Sortiermodus Positionsnummer im Kreis, Ziehen per Long-Press (Standard-Griff). Reihenfolge selbst sichtbar → niedrig. f-Zeile korrigiert (384 → 400).",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#action-b5b9e69f": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:112",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:28",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:43"
+   ],
+   "n": "Icon swap_vert ↔ Häkchen, Beenden speichert Kategorie-sort_order und daraus die globale Gruppen-sort_order (1..n, wie Ionic saveCategoryOrder), Toast „Reihenfolge gespeichert“ bzw. „Fehler beim Speichern der Reihenfolge“. Erstprüfer übersah: Häkchen ohne Verschieben – Ionic schreibt nur vorhandene Kategorie-sort_order unverändert (null bleibt null) / Flutter vergibt immer 1..n an alle Kategorien (Z. 43–49). Andere DB-Werte → mittel; sichtbare Reihenfolge bleibt gleich, später neu angelegte Kategorien landen dann aber hinter statt alphabetisch zwischen den bisher unnummerierten.",
+   "v": "korrigiert"
+  },
+  "instruments/instrument-list/instrument-list.page#action-e7701887": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:113"
+   ],
+   "n": "Icons.sell_outlined statt pricetags-outline, nur Admin/Verantwortlicher, öffnet das Kategorien-Sheet (showInstrumentCategoriesSheet). f-Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#field-a89a567a": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:411"
+   ],
+   "n": "Platzhalter „z.B. Mädchen, Posaune, Alt 1, etc.“ (hintText) unter dem Label „Gruppe“, Großschreibung Satzanfang wie autocapitalize=sentences. f-Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#field-c9279f21": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:414"
+   ],
+   "n": "Nur wenn Kategorien existieren; Label „Kategorie“, Optionen „Keine“ + Kategorien in Provider-Reihenfolge, Standard „Keine“ bei jedem Öffnen (neuer State). f-Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#logic-8072fecc": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:76",
+    "lib/core/utils/instrument_sort.dart:54",
+    "lib/core/utils/instrument_sort.dart:86",
+    "lib/core/providers/group_providers.dart:233",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:28"
+   ],
+   "n": "isAdmin = Admin/Verantwortlicher, isChoir/isGeneral, Gruppierung nach Kategorie (Sektionen nach sort_order, dann Name; Gruppen nach sort_order, dann Name), Personenanzahl (left null, pending false), globale Neu-Nummerierung nach Verschieben, Kategorien-CRUD, Gruppe hinzufügen, Bearbeiten nur Admin wie Ionic. sev nach höchstem extra: x-d0c116c654 (Gruppen) ist mittel, dazu die gleiche Neu-Nummerierung der Kategorien ohne Verschieben (action-b5b9e69f). Weitere extras: x-5824d283fc, x-a43d5a3f61 (niedrig), Sektionsname-Vergleich (extra unten).",
+   "v": "korrigiert"
+  },
+  "instruments/instrument-list/instrument-list.page#modal-1bead9c9": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:447",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:156"
+   ],
+   "n": "Nur für Admin/Verantwortliche (onEdit null sonst; im Sortiermodus kein Öffnen wie Ionic), übergibt die Gruppe (plus Kategorien, Tenant-Typ). Ionic: iOS Karten-Modal (presentingElement), md Vollbild / Flutter: Vollbild-Dialog (fullscreenDialog) überall. Neuladen nach Speichern/Löschen in beiden (Notifier invalidiert groupsProvider, Seite die Personenanzahl). f-Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#modal-c7ef6c60": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:165",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:336"
+   ],
+   "n": "FAB nur Admin/Verantwortlicher; Bottom-Sheet in Inhaltshöhe statt 80 %, Kategorie bei jedem Öffnen „Keine“ (neuer State, Ionic willPresent). f-Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#modal-e8e040b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:427",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:71"
+   ],
+   "n": "Nur Admin/Verantwortlicher. Sheet startet bei 60 % (Ionic Stufen 0/0,6/1, Flutter 0,3–0,9, Herunterziehen schließt); Flutter zusätzlich X-Button und Leer-Hinweis „Keine Kategorien“. f-Zeile korrigiert (411 → 427).",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#text-1de3fac0": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:410"
+   ],
+   "n": "Feldlabel „Gruppe“ (labelText) im Sheet „Gruppe hinzufügen“ (nur Admin/Verantwortliche). f-Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#text-49ad7035": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:191"
+   ],
+   "n": "Gleicher Text „Ziehe die Kategorien, um die Reihenfolge anzupassen. …“ nur im Sortiermodus. Ionic: ion-item mit primary-Hintergrund und weißem Info-Icon / Flutter: normale ListTile mit primary-farbenem Info-Icon.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#text-971d4e5a": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:402"
+   ],
+   "n": "Titel „Gruppe hinzufügen“ oben im Sheet. f-Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#text-9789226a": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:105"
+   ],
+   "n": "„Kategorien“ (Flutter mit Kategorie-Icon davor).",
+   "v": "bestätigt"
+  },
+  "x-5824d283fc": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:349"
+   ],
+   "n": "Flutter besser: Ionic groupSvc.addGroup prüft den Insert-Fehler nicht, Sheet schließt ohne Meldung / Flutter: createGroup → null, Sheet schließt, roter Toast „Fehler beim Hinzufügen“. f-Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "x-a43d5a3f61": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:85",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:120"
+   ],
+   "n": "Flutter besser: Ionic kein ion-refresher auf der Gruppenliste / Flutter: onRefresh lädt Gruppen, Kategorien und Personenanzahlen neu.",
+   "v": "bestätigt"
+  },
+  "x-d0c116c654": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:49"
+   ],
+   "n": "Besteht weiter: Ionic saveOrder schreibt beim Häkchen ohne Verschieben nur vorhandene sort_order unverändert (null bleibt null) / Flutter computeGlobalSortOrder schreibt beim Verlassen immer 1..n an alle Gruppen. Bewertung korrigiert: abweichende DB-Werte sind nie niedrig → mittel (sichtbare Reihenfolge bleibt, Badges ändern sich, unnummerierte Gruppen bekommen Werte, später neue Gruppen sortieren dann ans Ende statt alphabetisch).",
+   "v": "korrigiert"
+  },
+  "x-718f3b20d0": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:720",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:729"
+   ],
+   "n": "Besteht weiter (_save): Ionic schreibt notes, range, tuning, clefs, name, maingroup, category, synonyms wie geladen/eingegeben ('' bleibt '', versteckte Felder unverändert) / Flutter trimmt, schreibt leere range/synonyms/notes als null und tuning/clefs immer – bei Chor/Allgemein/Hauptgruppe (Felder versteckt) wird tuning null zu „C“ und clefs null/[] zu [g]. Bewertung korrigiert: andere DB-Werte, teils in Feldern, die der Nutzer nicht sieht → mittel.",
+   "v": "korrigiert"
+  },
+  "login/legal-modal/legal-modal.component#logic-3f4d04f2": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:139"
+   ],
+   "n": "Referenz war ungültig (Datei hat 162 Zeilen). showLegalModal (Z. 139–161): Titel „Impressum & Datenschutz“, X-Button schließt (Ionic dismiss), Inhalt LegalContentView; aufgerufen von Login, Registrieren, Terms und Instanz-Registrierung wie Ionic.",
+   "v": "bestätigt"
+  },
+  "login/login.page#logic-b2bfd6ff": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:190",
+    "lib/features/auth/presentation/pages/login_page.dart:273",
+    "lib/features/auth/presentation/pages/login_page.dart:295",
+    "lib/features/auth/presentation/pages/login_page.dart:349",
+    "lib/features/auth/presentation/pages/login_page.dart:120"
+   ],
+   "n": "Passwort-Login mit Fehlercodes → „E-Mail nicht bestätigt“ / „Code-Login?“ / „Kein Konto“, Teams-Verknüpfung, Code anfordern (shouldCreateUser false, ungültige E-Mail → Toast), Code prüfen, 30-s-Cooldown, Demo, Impressum, Passwort-Reset, Registrieren (Toast bzw. Weiterleitung) wie Ionic. Abweichungen nur niedrig: x-e022710cfa, x-ffab6fe794 (Inline-Prüfung der E-Mail im Passwortmodus). f präzisiert.",
+   "v": "bestätigt"
+  },
+  "x-e022710cfa": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:349"
+   ],
+   "n": "Besteht weiter: Ionic RegisterModalComponent startet mit leerer E-Mail / Flutter _openRegister übergibt die eingegebene E-Mail (showRegisterModal email → Feld vorbefüllt).",
+   "v": "bestätigt"
+  },
+  "x-ffab6fe794": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:770",
+    "lib/features/auth/presentation/pages/login_page.dart:275"
+   ],
+   "n": "Code-Anforderung inzwischen wie Ionic: ungültige E-Mail → roter Toast „Bitte eine gültige E-Mail Adresse eingeben.“ (_requestCode Z. 275). Verbleibende Abweichung im Passwortmodus: Ionic prüft das E-Mail-Format nicht (Server-Fehler-Toast, ggf. Code-Login-Dialog) / Flutter validiert beim Anmelden inline am Feld („Bitte gib deine E-Mail-Adresse ein.“ bzw. „Bitte eine gültige E-Mail Adresse eingeben.“) und sendet nicht. Flutter besser, niedrig.",
+   "v": "korrigiert"
+  },
+  "messages/message-compose/message-compose.component#loading-a5f8925e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:488",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:307"
+   ],
+   "n": "Während _sending deckt ein Overlay (black26, Karte mit Spinner „Wird versendet …“) den Inhalt ab, „Abbrechen“ deaktiviert. Erreichbarkeit nur Admin/Verantwortlich (Mitteilungen-Liste /settings/messages, Auto-Nachrichten-Panel) wie Ionic. f-Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#logic-2f8f942d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:88",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:115",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:180",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:188",
+    "lib/core/providers/message_providers.dart:97"
+   ],
+   "n": "Gleich: Entwurf je Tenant ('message-draft-<tenantId>', Titel+Inhalt bei jeder Änderung, nicht im Preset-Modus), Preset mit festen Empfängern/Titel/Inhalt, canSend (Titel, Text, ≥1 Kanal, Gruppen bzw. alle, >0 Empfänger), Zähler mit Request-Schutz (leere Gruppenauswahl → 0 ohne Abfrage), Bestätigungsdialog, send-message mit tenantId/Titel getrimmt/Kanälen/playerIds/attendanceId, Rückgabe der ID. Entwurf als Quill-Delta in SharedPreferences statt Tiptap-JSON in localStorage (alter Ionic-Entwurf wird nicht übernommen). Unterschiede siehe x-b299242fe2.",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#toast-56426039": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:270"
+   ],
+   "n": "Erfolg-Toast „Mitteilung wird versendet“, Entwurf gelöscht, Dialog schließt mit der ID. Nur Admin/Verantwortlich wie Ionic. f-Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "messages/message-compose/message-compose.component#toast-9c6ed681": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:265"
+   ],
+   "n": "Fehler-Toast „Fehler beim Versenden, bitte versuche es erneut.“, Dialog bleibt offen. Nur Admin/Verantwortlich wie Ionic. f-Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "x-b299242fe2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:157"
+   ],
+   "n": "Flutter besser: Ionic löscht nach Versand im Preset-Modus („Unentschuldigte anschreiben“) trotzdem den normalen Entwurf 'message-draft-<tenantId>' / Flutter _clearDraft überspringt Preset, normaler Entwurf bleibt.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#modal-187e9b6a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:17",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:95",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:183",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:240"
+   ],
+   "n": "Vollbild-Dialog wie Ionic-Modal ohne Sheet; übergibt messageId, Termin-Label und kind; danach Toast respDone/respDoneInstant und Neuladen. isManager = Admin/Verantwortlich UND Mitteilung der aktuellen Instanz (Z. 169); MessageTerminSection nur bei !isManager mit attendance_id (Z. 239–240), _canRespond (allow_responses, eigene person_attendance_id, ≤ RESPONSE_DAYS+1 Tage, keine oder offene Antwort) wie Ionic. f-Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#nav-35f52631": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:247"
+   ],
+   "n": "Nur Manager bei Mitteilung mit attendance_id: „Termin öffnen“ → context.push('/attendance/<id>') wie navigateByUrl('/tabs/attendance/<id>'). f-Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#nav-c6479685": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:670"
+   ],
+   "n": "„Frühere Mitteilungen“ (Nicht-Manager, max. 5 ohne die aktuelle) → context.push('/messages/<id>') wie navigateByUrl('/tabs/messages/<id>'). f-Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "x-17b8eb5c2b": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "android/app/src/main/AndroidManifest.xml:16",
+    "android/app/src/main/AndroidManifest.xml:18",
+    "android/app/src/main/AndroidManifest.xml:102",
+    "android/app/build.gradle.kts:19"
+   ],
+   "n": "Besteht weiter: configChanges inkl. fontScale/density/layoutDirection, kein supportsRtl, windowSoftInputMode=adjustResize, hardwareAccelerated, <queries> PROCESS_TEXT, Namespace de.attendix.attendix, Java 11 (Ionic: io.stephanus.attendix, Java 21). applicationId und Activity-Klasse io.stephanus.attendix.MainActivity gleich. Ohne sichtbare Wirkung. f-Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "x-184c4525e6": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "android/app/src/main/AndroidManifest.xml:4"
+   ],
+   "n": "Besteht weiter: keine VIBRATE-Berechtigung im Flutter-Manifest und in keinem Plugin-Manifest im Pub-Cache; HapticFeedback braucht sie nicht. Wegfall einer normalen Berechtigung, unkritisch.",
+   "v": "bestätigt"
+  },
+  "x-2f444d5285": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png:1",
+    "pubspec.yaml:167"
+   ],
+   "n": "Geprüft: Ionic ic_launcher.png (RGBA) türkises Quadrat mit weißem Rand und transparenten Ecken / Flutter (RGB, flutter_launcher_icons) randlos türkis. Nur API 24/25 ohne adaptive Icons. f-Zeile in pubspec aktualisiert.",
+   "v": "bestätigt"
+  },
+  "x-409941f468": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "android/app/src/main/kotlin/io/stephanus/attendix/MainActivity.kt:58"
+   ],
+   "n": "Besteht weiter: MainActivity legt nur den Kanal „default“ an, löscht 'PushDefaultForegroundChannel' (Capacitor) und den FCM-Fallback-Kanal nicht (kein deleteNotificationChannel im Code) → alte Kanäle bleiben nach dem Update in den App-Einstellungen. f-Zeile korrigiert (50 → 58).",
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "title": "Sektionen ohne sort_order: Namensvergleich",
+   "n": "Ionic: Kategorie-Sektionen ohne sort_order nach a.name.localeCompare(b.name) (Umlaut Ü bei U) / Flutter groupInstrumentsByCategory: toLowerCase().compareTo (Code-Einheiten, „Übrige“ hinter „Z…“). Nur bei unnummerierten Kategorien mit Umlaut am Anfang.",
+   "sev": "niedrig",
+   "ionic": "src/app/instruments/instrument-list/instrument-list.page.ts:150",
+   "f": [
+    "lib/core/utils/instrument_sort.dart:79"
+   ]
+  }
+ ]
+}

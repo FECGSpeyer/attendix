@@ -1,0 +1,446 @@
+{
+ "batch": "zz-verify6-sonnet-08",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "instruments/instrument-list/instrument-list.page#toast-c584c476": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:373-376"
+   ],
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#action-34028dbf": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:586-593"
+   ],
+   "n": "Schließen-Button (X) oben rechts schließt die Seite ohne Speichern.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#action-ed85ded8": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:692-697"
+   ],
+   "n": "Funken-Button im Synonymfeld, ohne Namen Toast „Bitte gib zuerst einen Namen an!“ (:519), sonst synonyms-gpt. Sichtbarkeit gleich (nicht Allgemein/Hauptgruppe). Seite nur Admin/Verantwortlicher geöffnet (:152).",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#alert-cb09ce26": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:779-806"
+   ],
+   "n": "Titel „Bestätigen“, Text „Gruppe wirklich löschen?“, Abbrechen/Ja, Ja löscht (deleteGroup) und schließt. Ionic: „Abbrechen“ role destructive (nur iOS rot) / Flutter beide neutral. Gleiche Auswahl und Wirkung.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#field-34f95dcc": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:676-696"
+   ],
+   "n": "Synonyme-Feld mit Hilfetext, gleiche Bedingung (nicht Allgemein, nicht Hauptgruppe, auch Chor).",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#field-47841cc6": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:641-645"
+   ],
+   "n": "Tonumfang, ausgeblendet bei Chor/Allgemein/Hauptgruppe wie Ionic. Leerer Wert wird als null gespeichert (Ionic: leerer String) – gleiche Wirkung.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#field-5a416954": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:613-625"
+   ],
+   "n": "Optionen „Keine“ + Kategorien, speichert category (null = keine).",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#field-679fa215": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:628-639"
+   ],
+   "n": "Stimmung C/Es/B/F, gleiche Sichtbarkeit. Ionic: Popover, leerer Wert bleibt leer / Flutter: Dropdown, leerer Wert wird als „C“ angezeigt und beim Speichern „C“. Neue Gruppen haben in Ionic immer tuning „C“ (group.service:39), leer nur bei Altdaten → Randfall, niedrig.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#field-ae69e131": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:646-672"
+   ],
+   "n": "Violin-/Bass-/Altschlüssel Mehrfachauswahl. Ionic: Popover, alle abwählbar (leeres Array möglich), Label „Stimmung“ / Flutter: FilterChips „Notenschlüssel“, mindestens einer bleibt gewählt. Neue Gruppen haben immer [g]; niedrig.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#field-efd74495": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:600-611"
+   ],
+   "n": "Namensfeld, vorbefüllt, gleiche Bedingung.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#field-fcf5031f": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:701-707"
+   ],
+   "n": "Notizenfeld, gleiche Sichtbarkeit, wird gespeichert.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#loading-2112917a": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:683-694"
+   ],
+   "n": "Ionic: blockierendes Overlay „Synonyme werden generiert...“ / Flutter: Spinner im Synonymfeld statt Funken-Button, kein Text, Seite bedienbar.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#text-60ebf1b1": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:585"
+   ],
+   "n": "Ionic: Titel an instrument.name gebunden (ändert sich beim Tippen) / Flutter: fester Titel mit ursprünglichem Namen.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#text-8d4cfc9c": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:616"
+   ],
+   "n": "Label „Kategorie“.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#text-ba9457df": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:680"
+   ],
+   "n": "Label „Synonyme“, gleiche Bedingung.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#text-c378b60d": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:643"
+   ],
+   "n": "Label „Tonumfang“, gleiche Bedingung.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#text-ee26db51": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:603"
+   ],
+   "n": "Label „Name“.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#toast-283b4da3": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:604-609"
+   ],
+   "n": "Gleicher Text „Bitte gib einen Namen an!“, Speichern wird abgebrochen. Ionic: roter Toast / Flutter: Validierungstext am Feld; Flutter trimmt (nur Leerzeichen = leer).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#toast-30af5db1": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:529"
+   ],
+   "n": "Toast „Fehler beim Generieren der Synonyme“ (rot).",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#toast-39c411aa": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:779-785",
+    "lib/data/repositories/group_repository.dart:193-215"
+   ],
+   "n": "Zählung sofort beim Löschen inkl. ausgetretener, ohne pending (wie getPlayers(true)); Treffer → roter Toast, kein Dialog. Randfall: Zählfehler → Flutter geht zum Dialog weiter (Ionic bricht ab); Löschen scheitert dann ohnehin am FK.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#toast-547cd222": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:527"
+   ],
+   "n": "Erfolgstoast „Synonyme erfolgreich generiert!“, Feld wird befüllt.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#toast-5c66f01d": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:519-522"
+   ],
+   "n": "Roter Toast „Bitte gib zuerst einen Namen an!“ bei leerem/Whitespace-Namen.",
+   "v": "bestätigt"
+  },
+  "login/legal-modal/legal-modal.component#action-bf1f94b8": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:150-156"
+   ],
+   "n": "Schließen-Button (X) im Modal.",
+   "v": "bestätigt"
+  },
+  "login/legal-modal/legal-modal.component#embed-8f9b9e91": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:158"
+   ],
+   "n": "LegalContentView im Modal-Body.",
+   "v": "bestätigt"
+  },
+  "login/legal-modal/legal-modal.component#text-67a39ad6": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:148"
+   ],
+   "n": "Titel „Impressum & Datenschutz“ (legalTitle).",
+   "v": "bestätigt"
+  },
+  "login/login.page#action-02346026": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:675-690",
+    "lib/core/services/update_hint.dart:11"
+   ],
+   "n": "Sichtbar nur bei verfügbarem Update, Label „Update installieren“ (grün, Wolken-Icon). Ionic: installiert OTA-Live-Update (Capgo) / Flutter: applyUpdate öffnet Store/Neuladen. Plattformbedingt, niedrig. (Erstnotiz „Nach Updates suchen“ unzutreffend.)",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "login/login.page#action-1966836a": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:859-863",
+    "lib/features/auth/presentation/widgets/otp_widgets.dart:297-321"
+   ],
+   "n": "„Code erneut senden“ / „Erneut senden ({s}s)“, 30 s Cooldown, deaktiviert währenddessen, ruft requestCode.",
+   "v": "bestätigt"
+  },
+  "login/login.page#action-4356dbd3": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:182-188",
+    "lib/features/auth/presentation/pages/login_page.dart:762-770",
+    "lib/features/auth/presentation/pages/login_page.dart:813"
+   ],
+   "n": "Ionic: Enter am Formular ruft login() sofort, auch aus dem E-Mail-Feld / Flutter: E-Mail-Feld springt weiter zum Passwort, Enter im Passwortfeld sendet (mit Validierung). OTP-Modus Enter gleich (Code senden / verifizieren).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "login/login.page#action-6a4ae84b": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:706-709",
+    "lib/features/auth/presentation/pages/login_page.dart:136-137"
+   ],
+   "n": "Link „Impressum & Datenschutz“ öffnet Legal-Modal.",
+   "v": "bestätigt"
+  },
+  "login/login.page#action-70cf3742": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:847"
+   ],
+   "n": "„Code senden“, aktiv nur bei gefüllter E-Mail (_canSubmit), ruft requestCode.",
+   "v": "bestätigt"
+  },
+  "login/login.page#action-9df2d240": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:834-838",
+    "lib/features/auth/presentation/pages/login_page.dart:101-109"
+   ],
+   "n": "„Anmelden“ / im Teams-Link-Modus „Verknüpfen & anmelden“, aktiv nur bei E-Mail+Passwort.",
+   "v": "bestätigt"
+  },
+  "login/login.page#action-a353b6d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:829-830"
+   ],
+   "n": "„Passwort vergessen?“ nur im Passwort-Modus, öffnet Reset-Dialog.",
+   "v": "bestätigt"
+  },
+  "login/login.page#action-a6d6b3b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:701-704",
+    "lib/features/auth/presentation/pages/login_page.dart:153-170"
+   ],
+   "n": "„Demo starten“ loggt mit Demo-Zugang ein.",
+   "v": "bestätigt"
+  },
+  "login/login.page#action-af3f04b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:828"
+   ],
+   "n": "„Registrieren“ im Passwort-Modus öffnet Register-Modal.",
+   "v": "bestätigt"
+  },
+  "login/login.page#action-af3f04b0-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:844"
+   ],
+   "n": "„Registrieren“ im Code-Modus vor Code-Versand.",
+   "v": "bestätigt"
+  },
+  "login/login.page#action-b6cdb175": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:856"
+   ],
+   "n": "„Anmelden“ im Code-Modus nach Versand, aktiv nur mit Code.",
+   "v": "bestätigt"
+  },
+  "login/login.page#action-f30ee364": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:786-806"
+   ],
+   "n": "Auge-Button schaltet Passwort sichtbar/unsichtbar.",
+   "v": "bestätigt"
+  },
+  "login/login.page#alert-1434e49d": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:426-433"
+   ],
+   "n": "Dialog „Anmeldung fehlgeschlagen“ / Text, Abbrechen / „Code per E-Mail“ wechselt in OTP-Modus.",
+   "v": "bestätigt"
+  },
+  "login/login.page#alert-219aeb1d": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:365-413",
+    "lib/features/auth/presentation/pages/login_page.dart:190-243"
+   ],
+   "n": "Dialog „E-Mail nicht bestätigt“ mit Text, vorbefülltem E-Mail-Feld, Abbrechen / Erneut senden (leer → Warn-Toast). Teams-Link-Modus: Flutter zeigt jetzt wie Ionic nur einen Toast ohne Dialog (:207-217). Vorheriger Unterschied behoben; Toast-Text im Link-Modus siehe Extra.",
+   "v": "korrigiert"
+  },
+  "login/login.page#alert-6a20446e": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:120-132",
+    "lib/features/auth/presentation/widgets/reset_password_dialog.dart:30-90",
+    "lib/features/auth/data/auth_flow_service.dart:430-440"
+   ],
+   "n": "Alert „Passwort zurücksetzen“, E-Mail vorbefüllt, Abbrechen/Zurücksetzen → resetPasswordForEmail (redirect attendix.de/resetPassword), grüner/roter Toast. Toast-Wortlaut leicht anders („E-Mail zum Zurücksetzen … gesendet“ statt „Eine E-Mail mit weiteren Anweisungen wurde dir zugesandt“), kein Loading-Overlay; gleiche Bedeutung.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "login/login.page#field-4e867a58": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:850-854"
+   ],
+   "n": "6-stelliges Code-Feld nur im Code-Modus nach Versand, auto-Verifizierung bei Vollständigkeit.",
+   "v": "bestätigt"
+  },
+  "login/login.page#field-970a3c41": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:786-818"
+   ],
+   "n": "Passwortfeld nur im Passwort-Modus, Label/Platzhalter „Passwort“.",
+   "v": "bestätigt"
+  },
+  "login/login.page#field-d0883640": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:753-780"
+   ],
+   "n": "E-Mail-Feld, schreibgeschützt im Code-Modus nach Versand. Flutter prüft zusätzlich das E-Mail-Format beim Anmelden (Ionic: Supabase-Fehler-Toast) – niedrig.",
+   "v": "bestätigt"
+  },
+  "login/login.page#field-d44519e1": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:745-749",
+    "lib/features/auth/presentation/pages/login_page.dart:172-180"
+   ],
+   "n": "Segment „Passwort“ / „Code per E-Mail“; Wechsel setzt Code-Zustand und Cooldown zurück.",
+   "v": "bestätigt"
+  },
+  "login/login.page#loading-256b5e4d": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:190-243",
+    "lib/features/auth/presentation/pages/login_page.dart:504-509"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay / Flutter: Spinner im Button, Button gesperrt, übrige Felder bedienbar.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "login/login.page#loading-5b2e7ab2": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:153-170"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay / Flutter: Spinner im Button, gesperrt per _isLoading.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "login/login.page#loading-65905d50": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:295-312"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay / Flutter: Spinner im Button, OTP-Feld deaktiviert.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "login/login.page#loading-850f8e3f": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:273-293"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay / Flutter: Spinner im Button, Resend/Segment deaktiviert.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "login/login.page#modal-103ea590": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:136-137",
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:143-161"
+   ],
+   "n": "Legal-Modal (Impressum & Datenschutz) öffnet über Link.",
+   "v": "bestätigt"
+  },
+  "login/login.page#modal-54e99890": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:349-363"
+   ],
+   "n": "Ionic: Registrieren-Modal leer / Flutter: Registrieren-Modal mit der eingegebenen E-Mail vorbefüllt; Ergebnis (Toast/Anmeldung) gleich.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "login/login.page",
+   "title": "Teams-Link-Modus: falsche Fehlermeldung bei unbestätigter E-Mail",
+   "n": "Ionic: ssoLink → authSvc.login zeigt bei email_not_confirmed den Toast „Bitte bestätige zuerst deine E-Mail-Adresse.“ (auth.confirmEmailFirst) / Flutter: im Link-Modus hat LoginFailure(emailNotConfirmed) keine Nachricht, daher Toast „Ungültige Anmeldedaten“ (authInvalidCredentials). Nutzer erfährt nicht den Grund. Nur Teams-Verknüpfung.",
+   "sev": "mittel",
+   "ionic": "src/app/services/auth/auth.service.ts:86",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:207-217"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,367 @@
+{
+ "batch": "zz-verify6-opus-13",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "register/tenant-register/tenant-register.page#nav-bda70e96": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:746-771",
+    "lib/core/router/app_router.dart:333-354"
+   ],
+   "n": "Referenzen aktualisiert (alt :706 / :337 verschoben). Angemeldet + bereits Mitglied (tenantUsers tenantId+userId) → Warn-Toast 'Sie sind bereits in dieser Instanz registriert.' + context.go('/login'); Router leitet Angemeldete wie Ionic-LoginGuard weiter (Terms-Gate → Startseite der aktuellen Instanz bzw. /tenants). Prüfung läuft auch nach Login-Dialog/Code-Bestätigung (_hasCheckedRegistration=false).",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#nav-daa5b1d7": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:161-170",
+    "lib/core/utils/dashboard_logic.dart:56-61"
+   ],
+   "n": "Ionic goHome: Utils.getUrl(role) (Admin/Verantwortlich immer /tabs/player) / Flutter: homeRouteFor → bei aktivem Dashboard-Tab /home-dashboard, sonst role.defaultRoute (gleiche Ziele). Rolle none → /login, der Router landet dann ebenfalls auf /signout. Nur andere Startseite, Funktion gleich.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#nav-e95f0182": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:161-170"
+   ],
+   "n": "Nicht angemeldet oder ohne aktuelle Instanz → context.go('/login') (Z. 168) wie Ionic. Rolle-none-Abweichung bei nav-daa5b1d7 erfasst.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-1e23f15b-4": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:681-700"
+   ],
+   "n": "Kirchenfeld-Label = field.name (nur bei leerem Namen Ersatz 'Gemeinde'), nur wenn bfecg_church in registration_fields. Referenz aktualisiert (alt :628-642).",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-3463a358": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/church_picker.dart:80-84",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:704-716"
+   ],
+   "n": "Titel des Kirchen-Pickers = Feldname (title: name). Referenz aktualisiert.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-39166ec9": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:859-865"
+   ],
+   "n": "Nur angemeldet: 'Du bist angemeldet als {email}.' mit E-Mail des aktuellen Nutzers; keine Rollenprüfung (öffentliche Seite) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-3e7afcd9": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:272-276"
+   ],
+   "n": "Intro-Text in der Karte unter dem Instanznamen.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-45cdc765": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:957",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:964-1006"
+   ],
+   "n": "Nur ohne Anmeldung: 'Ich akzeptiere die Nutzungsbedingungen und habe die [Datenschutzerklärung] gelesen.' mit Link (showLegalModal).",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-52f381d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:318-328"
+   ],
+   "n": "Label 'Nachname'.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-585b0932": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:915-924"
+   ],
+   "n": "'Passwort bestätigen' nur ohne Anmeldung im Passwort-Modus.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-5e6eb63c": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:903-914"
+   ],
+   "n": "'Passwort' nur ohne Anmeldung im Passwort-Modus.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-64a3929d": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:413-423"
+   ],
+   "n": "'Bemerkungen (optional)' immer bei gültigem Link, keine Rollen-/Mandantenbedingung.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-6e5a14fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:891-902"
+   ],
+   "n": "'E-Mail Adresse' nur ohne Anmeldung.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-6e76de7c": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:307-317"
+   ],
+   "n": "Label 'Vorname'.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-af1fd87d": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:329-338"
+   ],
+   "n": "Nur wenn registration_fields 'birthDate' enthält – wie Ionic.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-b64d7643": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:355"
+   ],
+   "n": "Abschnitt 'Weitere Informationen'.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-cec7e3b3": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:728-742"
+   ],
+   "n": "Nur bei Wert '' (Nicht gelistet): 'Gemeinde nicht gelistet? Bitte Namen eingeben' mit Platzhalter.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-e0756481": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:339-350"
+   ],
+   "n": "Nur wenn registration_fields 'phone' enthält – wie Ionic.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-ee3a0a59": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:262-264"
+   ],
+   "n": "longName in der Karte; Flutter fällt bei leerem longName auf shortName zurück.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-02f7573a": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1148-1151",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:208-212",
+    "lib/features/registration/data/providers/registration_providers.dart:73-83"
+   ],
+   "n": "Erstprüfung überholt: defaultValue wird jetzt übernommen (registrationFieldDefaults). Gleiche Bedingung wie Ionic (kein/ungültiges Datum → 'Bitte geben Sie ein gültiges Datum für das Feld \"{field}\" ein.', rot); mit Standarddatum in beiden kein Toast. Dass Flutter eine Datumsauswahl anbietet (Ionic kein Eingabeelement), ist in x-189b5776c0 erfasst.",
+   "v": "korrigiert"
+  },
+  "register/tenant-register/tenant-register.page#toast-218aaea9": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/data/providers/registration_providers.dart:173-185",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1213-1221"
+   ],
+   "n": "E-Mail existiert, Passwort falsch → 'Fehler beim Erstellen des Accounts: Deine E-Mail-Adresse existiert bereits. Bitte melde dich an.' unverändert (beginnt mit dbCreateAccountFailed), rot, 4 s wie Ionic.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-3163772f": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:148-152",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:174-185"
+   ],
+   "n": "Ionic: Toast 'Ungültiger Freigabe-Link.' (Standardfarbe success) auf sonst leerer Seite / Flutter: Fehleransicht 'Ungültiger Registrierungslink.' mit Button 'Zur Anmeldung', kein Toast. Nutzer erfährt dasselbe.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-4ef3175e": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1122-1124",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1172-1178"
+   ],
+   "n": "registration_fields enthält 'picture' und kein Bild gewählt → 'Bitte wählen Sie ein Passbild aus.', gleiche Stelle der Prüfreihenfolge, rot.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-67ca0f0d": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1111-1113"
+   ],
+   "n": "Nur ohne Anmeldung, nach Zustimmungs- und E-Mail-Prüfung: 'Das Passwort muss mindestens 6 Zeichen lang sein.'",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-84240372": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1108-1110"
+   ],
+   "n": "Nur ohne Anmeldung, nach der Zustimmungsprüfung, 'Bitte eine gültige E-Mail Adresse eingeben.' (Flutter prüft die getrimmte Adresse).",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-b1bce191": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1101-1103",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:436-440",
+    "lib/features/registration/data/providers/registration_providers.dart:36-54"
+   ],
+   "n": "In beiden praktisch unerreichbar (Knopf bei fehlenden Gruppen deaktiviert). Hinweis der Erstprüfung überholt: Gruppen werden jetzt wie Ionic mit maingroup != true gefiltert (null bleibt drin).",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-b918f4e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1143-1147",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:497-512"
+   ],
+   "n": "Erstprüfung überholt: leeres Zahlenfeld wird jetzt als null gespeichert und besteht wie Ionic (Number(null)=0); nicht numerischer Wert → 'Bitte geben Sie eine gültige Zahl für das Feld \"{field}\" ein.' Nur der Theoriefall defaultValue undefined (Ionic-Toast) weicht ab.",
+   "v": "korrigiert"
+  },
+  "register/tenant-register/tenant-register.page#toast-bd259c1e": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:480-495",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1138-1142",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:246-253"
+   ],
+   "n": "Alter Randfall behoben (onSaved schreibt jetzt immer value ?? ''). Neu: Textfelder, die in Ionic mit Typ Text ohne Standardwert angelegt wurden, haben defaultValue false (emptyField). Ionic: ion-input zeigt leer, unberührt → Toast 'Bitte füllen Sie das Feld \"{field}\" aus.' / Flutter: initialValue defaultValue?.toString() → Feld mit 'false' vorbelegt, kein Toast, 'false' wird in additional_fields gespeichert. Fehlende Pflichtprüfung + anderer DB-Wert.",
+   "v": "korrigiert"
+  },
+  "register/tenant-register/tenant-register.page#toast-c0b51c1d": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1105-1107",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:436-440"
+   ],
+   "n": "Nur ohne Anmeldung (Ionic !db.user / Flutter !_isLoggedIn), erste Prüfung, rot. Im Code-Modus vor der Bestätigung ist der Registrieren-Knopf in Flutter deaktiviert (Ionic: Knopf aktiv → dieser Toast bzw. 'Passwort zu kurz'); betrifft den Knopf, nicht den Toast.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-c871f0d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1114-1116"
+   ],
+   "n": "Nur ohne Anmeldung, nach Längenprüfung, 'Die Passwörter stimmen nicht überein.'",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-e04d5d24": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1213-1221",
+    "lib/features/registration/data/providers/registration_providers.dart:321-327"
+   ],
+   "n": "Ionic: 'Fehler bei der Registrierung: <technische Meldung>' (6 s) / Flutter: bei unerwarteten Fehlern 'Fehler bei der Registrierung: Fehler beim Registrieren. Bitte versuche es erneut.', 4 s; Meldungen 'Fehler beim Erstellen des Accounts: …' ohne Präfix. Fehler wird gemeldet, nur Detailtext anders.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-f19a42f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1118-1120",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:315",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:326"
+   ],
+   "n": "Für angemeldet und nicht angemeldet; Flutter trimmt die Namen (nur Leerzeichen gilt als leer, siehe x-3a348a3a0e).",
+   "v": "bestätigt"
+  },
+  "x-189b5776c0": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:480-495",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:556-584"
+   ],
+   "n": "Flutter besser: Ionic-Template rendert für Typ 'textarea' und 'date' kein Eingabeelement (leeres ion-item), Validierung prüft nur den Default – ein Textarea-Feld mit Default '' blockiert die Registrierung in Ionic / Flutter: mehrzeiliges Textfeld bzw. Datumsauswahl, Default vorbelegt.",
+   "v": "bestätigt"
+  },
+  "x-3a348a3a0e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:315",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:326",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1118-1120"
+   ],
+   "n": "Flutter besser: Ionic speichert firstName/lastName ungetrimmt und akzeptiert reine Leerzeichen / Flutter: onSaved trimmt, reine Leerzeichen scheitern an 'Bitte geben Sie Ihren Vor- und Nachnamen an.'",
+   "v": "bestätigt"
+  },
+  "x-5f87a1fa54": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/registration/data/providers/registration_providers.dart:173-195",
+    "lib/data/repositories/user_registration_repository.dart:113-135",
+    "lib/data/repositories/user_registration_repository.dart:409-430"
+   ],
+   "n": "Flutter besser: Ionic: E-Mail existiert + Passwort stimmt → addUserToTenant direkt (bei bestehender Mitgliedschaft zweiter tenantUsers-Eintrag oder Insert-Fehler, danach ggf. Überschreiben der player-Zeile) / Flutter: registerUser(selfRegister) → Mitglied mit Personenzeile: Fehler 'bereits in diesem Mandanten als …', Admin: kein zweiter Eintrag; sonst addUserToTenant wie Ionic.",
+   "v": "bestätigt"
+  },
+  "x-eed3ad9724": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/registration/data/providers/registration_providers.dart:347-380",
+    "lib/core/utils/import_mapper.dart:330"
+   ],
+   "n": "Ionic: addPlayer schreibt img = DEFAULT_IMAGE (https://ionicframework.com/docs/img/demos/avatar.svg), wenn kein Passbild gewählt / Flutter: buildRegistrationPlayerData setzt kein img (DB-Default). Anderer DB-Wert → nach Vorgabe nicht niedrig; sichtbar ohne Folgen (Ionic liest img || DEFAULT_IMAGE, Flutter wertet .svg als kein Bild). Fix trivial: 'img': kDefaultAvatarUrl wie import_mapper.",
+   "v": "korrigiert"
+  },
+  "selfService/overview/overview.page#action-3ebb3e71": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:171-176",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:858-868"
+   ],
+   "n": "Bedingungen/Funktion gleich (canSignin = text != 'X' && Frist offen; signIn mit SignInType.fromStatus, keine Anmeldefelder in der Übersicht, Toast 'Schön, dass du kommst'). Ionic: zugesagt = solid grün aber disabled (50 % Deckkraft) / Flutter: grün in voller Farbe, Tippen wirkungslos.",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#action-b04641d5": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:184-190",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:858-868"
+   ],
+   "n": "Bedingungen/Funktion gleich (allowExcuse, blocked = entschuldigt/verspätet-entschuldigt oder 'A', Grund-Auswahl → signOut). Ionic: 'Entschuldigt' → gelb, aber disabled (gedimmt) / Flutter: gelb in voller Farbe, onPressed ?? () {} → Tippen wirkungslos.",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#action-d9485f56": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:177-183",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:858-868"
+   ],
+   "n": "Bedingungen/Funktion gleich (allowLate, blocked, Grund-Auswahl isLate). Ionic: 'Verspätung gemeldet' → rosa gefüllt, aber disabled (gedimmt) / Flutter: rosa in voller Farbe, Tippen wirkungslos.",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#nav-0075de44": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:25-37",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:128-141"
+   ],
+   "n": "Guard hasFilesFolder (files_folder + Dateirecht der Termin-Instanz). Andere Instanz: /open-file?tenantId&path&folder=1 wie Ionic; aktuelle Instanz direkt /settings/files?path (Ionic auch hier über /open-file → replaceUrl /tabs/settings/files), gleiches Ziel, Pfad wird in FilesPage normalisiert.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

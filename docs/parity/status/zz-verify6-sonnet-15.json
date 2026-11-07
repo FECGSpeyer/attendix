@@ -1,0 +1,458 @@
+{
+ "batch": "zz-verify6-sonnet-15",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "people/list/list.page#text-c3ef87c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:98"
+   ],
+   "v": "bestätigt"
+  },
+  "people/list/list.page#text-ccf5d7d7": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:440",
+    "lib/features/people/presentation/pages/people_list_page.dart:678"
+   ],
+   "v": "bestätigt",
+   "n": "Normalfall gleich. Ionic: ohne Gruppe Trenner ' (n)' ohne Namen, Gruppierung nach Gruppen-ID / Flutter: 'Keine Gruppe (n)', Gruppierung nach Gruppenname. Nur Randfall, gleiche Funktion.",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#text-d297b676": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:142"
+   ],
+   "v": "bestätigt"
+  },
+  "people/list/list.page#toast-4d69c1c0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1424"
+   ],
+   "v": "bestätigt",
+   "n": "Fehler beim Wieder-Aktivieren: roter Toast 'Fehler: <Text>' wie Ionic (Fehlertext)."
+  },
+  "people/list/list.page#toast-8b738017": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1488"
+   ],
+   "v": "bestätigt",
+   "n": "Fehler beim Entfernen: roter Toast mit lesbarer Meldung statt rohem Fehlerobjekt."
+  },
+  "people/list/list.page#toast-9a849d38": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1239",
+    "lib/data/repositories/player_repository.dart:1884"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser: Ionic prüft {error} der Updates nicht und meldet praktisch immer 'Reihenfolge gespeichert'; Flutter zeigt bei Fehlschlag roten Toast 'Fehler beim Speichern der Reihenfolge'. Flutter schreibt sort_order nur für verschobene Gruppen (mit tenantId-Filter), Ionic für alle Personen mit sort_order (ohne tenantId).",
+   "sev": "niedrig"
+  },
+  "people/list/list.page#toast-aac6b1fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1486"
+   ],
+   "v": "bestätigt",
+   "n": "'Person wurde entfernt.' grüner Toast."
+  },
+  "people/members/members.page#field-f68af1a6": {
+   "s": "diff",
+   "f": [
+    "lib/features/members/presentation/pages/members_page.dart:59",
+    "lib/features/members/data/providers/members_providers.dart:133"
+   ],
+   "v": "korrigiert",
+   "n": "Platzhalter 'Person suchen...' und Suche in Vor-/Nachname/Gruppenname gleich. Flutter vergleicht auch gegen den Ersatztext 'Ohne Gruppe' (Ionic filtert vor dem Ersatznamen), Suche 'ohne' findet dort nur in Flutter Personen ohne Gruppe.",
+   "sev": "niedrig"
+  },
+  "people/members/members.page#text-fcd72565": {
+   "s": "ok",
+   "f": [
+    "lib/features/members/presentation/pages/members_page.dart:113",
+    "lib/features/members/data/providers/members_providers.dart:21"
+   ],
+   "v": "bestätigt",
+   "n": "Trenner '<Gruppe> (n)' nach Filterung; unbekannte Gruppe 'Ohne Gruppe'."
+  },
+  "people/person/person.page#action-02594b69": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:372",
+    "lib/features/people/presentation/widgets/person_detail/date_input_row.dart:51"
+   ],
+   "v": "korrigiert",
+   "n": "Ionic: Textfeld mit TT.MM.JJJJ-Eingabe + Kalender-Button am Feld / Flutter: DateInputRow (Eingabe TT.MM.JJJJ, bei Unschärfe übernommen, Kalender-Button öffnet Datumsauswahl, max heute); nur bearbeitbar bei Admin/Verantwortlich wie [disabled]=readOnly."
+  },
+  "people/person/person.page#action-02594b69-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:372",
+    "lib/features/people/presentation/widgets/person_detail/date_input_row.dart:51"
+   ],
+   "v": "korrigiert",
+   "n": "Ionic: Textfeld mit TT.MM.JJJJ-Eingabe + Kalender-Button am Feld / Flutter: DateInputRow (Eingabe TT.MM.JJJJ, bei Unschärfe übernommen, Kalender-Button öffnet Datumsauswahl, max heute); nur bearbeitbar bei Admin/Verantwortlich wie [disabled]=readOnly. Bedingung !general && !Chor && !Hauptgruppe gleich (acc:176)."
+  },
+  "people/person/person.page#action-02594b69-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:372",
+    "lib/features/people/presentation/widgets/person_detail/date_input_row.dart:51"
+   ],
+   "v": "korrigiert",
+   "n": "Ionic: Textfeld mit TT.MM.JJJJ-Eingabe + Kalender-Button am Feld / Flutter: DateInputRow (Eingabe TT.MM.JJJJ, bei Unschärfe übernommen, Kalender-Button öffnet Datumsauswahl, max heute); nur bearbeitbar bei Admin/Verantwortlich wie [disabled]=readOnly."
+  },
+  "people/person/person.page#action-078fae20": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:130"
+   ],
+   "v": "bestätigt",
+   "n": "Löschen-Button (highlight_off) am 'Pausiert ab' nur wenn gesetzt, setzt auf 'Ab heute'."
+  },
+  "people/person/person.page#action-1d820b6c": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:204"
+   ],
+   "v": "bestätigt",
+   "n": "Button 'Abwesenheit eintragen' deaktiviert ohne Grund/Von/Bis; schreibt player_absences + entschuldigt kommende Termine im Zeitraum, Toast mit Anzahl; Bereich nur Admin/Verantwortlich (canEdit)."
+  },
+  "people/person/person.page#action-227003e4": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:181"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: löscht nur 'Bis' / Flutter: Button an 'Bis' löscht Von und Bis (Zeitraum-Auswahl). Gleiche Funktion (neu wählen).",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#action-22e55c57": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/archive_person_modal.dart:64"
+   ],
+   "v": "korrigiert",
+   "n": "X-Button in der Toolbar wie Ionic (Vollbild-Modal, backdropDismiss false)."
+  },
+  "people/person/person.page#action-29def6f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:160",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:164"
+   ],
+   "v": "bestätigt",
+   "n": "Tipp auf Avatar: mit Bild Viewer, ohne Bild + canEdit direkt Dateiauswahl; Kamera-Badge nur canEdit."
+  },
+  "people/person/person.page#action-35f05e9d": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:171",
+    "lib/features/people/presentation/widgets/planned_absences.dart:181"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: eigener Löschen-Button am 'Von'-Datum (nur Von) / Flutter: kein Button an 'Von', Button an 'Bis' löscht beide. Gleiche Funktion.",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#action-49c5b592": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:145"
+   ],
+   "v": "bestätigt",
+   "n": "X schließt das Sheet ohne zu speichern."
+  },
+  "people/person/person.page#action-5615e0d7": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:164",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:179",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:19"
+   ],
+   "v": "bestätigt",
+   "n": "Viewer hat jetzt 'Ersetzen' und 'Entfernen' (nur canEdit) wie Ionic. Unterschied: Viewer-Titel '<Vorname Nachname>.jpg' statt 'Passbild'; Bild-URL ohne ?quality=20-Entfernung (Flutter-URLs enthalten es nicht).",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#action-59bee702": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:144"
+   ],
+   "v": "bestätigt",
+   "n": "Löschen-Button am 'Pausiert bis' nur wenn gesetzt."
+  },
+  "people/person/person.page#action-7114e66d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/archive_person_modal.dart:71"
+   ],
+   "v": "korrigiert",
+   "n": "FAB mit Archiv-Icon (archive_outlined) wie Ionic; schreibt Austrittsdatum (UTC-ISO) + Notiz."
+  },
+  "people/person/person.page#action-82d36162": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:104"
+   ],
+   "v": "bestätigt",
+   "n": "X schließt das Pausieren-Sheet."
+  },
+  "people/person/person.page#action-8ce3b7a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:2003"
+   ],
+   "v": "bestätigt",
+   "n": "Button 'Fertig' nur beim Namen-Bearbeiten (canEdit && _editingName), beendet die Namensbearbeitung."
+  },
+  "people/person/person.page#action-bf4fde99": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1484",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1372",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1411",
+    "lib/data/repositories/player_repository.dart:1211",
+    "lib/data/repositories/player_repository.dart:1260",
+    "lib/core/providers/player_providers.dart:231"
+   ],
+   "v": "bestätigt",
+   "n": "Ausstehende Person: Sheet Genehmigen/Ablehnen. Genehmigen: pending=false, History 'Person genehmigt von <E-Mail>', Rolle PLAYER, Mail, Termine ab Beitritt; Problemfall-Lösung/Änderungen mitgeschrieben. Ablehnen: Grund Pflicht, pending=false, left, History, Zugang entfernen (Admin/andere aktive Person bleibt), Ablehnungsmail. Ladeoverlay fehlt (niedrig)."
+  },
+  "people/person/person.page#action-c704728e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:175",
+    "lib/data/repositories/player_repository.dart:837"
+   ],
+   "v": "bestätigt",
+   "n": "Button 'Pausieren' erst mit Grund; schreibt paused=true, paused_until, History 'Grund (ab … bis …)' (tenantId-Filter), entfernt aus Terminen ab 'ab' bzw. heute, Nachfrage für andere Instanzen."
+  },
+  "people/person/person.page#action-f401ebe4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:743",
+    "lib/features/people/presentation/widgets/church_picker_sheet.dart:10"
+   ],
+   "v": "bestätigt",
+   "n": "Kirchenfeld: Label Kirchenname/'Nicht gelistet'/'Bitte wählen', Auswahl mit Suche; nur canEdit (Admin/Verantwortlich) bearbeitbar wie [disabled]=readOnly."
+  },
+  "people/person/person.page#actionsheet-e75017a9": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1161"
+   ],
+   "v": "bestätigt",
+   "n": "Titel 'Eintrag wählen', Einträge 'Vorname Nachname · Gruppe (Instanz)' (+ Grund als Untertitel); gewählt: E-Mail + global_person_id schreiben, Kandidat nachtragen, Toast 'E-Mail aktualisiert'. Schreibt nur E-Mail/global_person_id (Ionic ganze Person inkl. ungespeicherter Änderungen)."
+  },
+  "people/person/person.page#actionsheet-eadcf3f0": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1484"
+   ],
+   "v": "bestätigt",
+   "n": "Bedingung/Texte/Reihenfolge/Wirkung gleich. Ionic: keine Icons, 'Abbrechen' destructive / Flutter: Icons (grün/rot), 'Abbrechen' normal.",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#alert-04050354": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:345",
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:233"
+   ],
+   "v": "bestätigt",
+   "n": "Notiz-Eintrag antippen: 'Notiz geändert', Datum, 'Alte Notiz: …', OK."
+  },
+  "people/person/person.page#alert-18f6a225": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:255"
+   ],
+   "v": "bestätigt",
+   "n": "'Passbild entfernen' / Frage, Abbrechen / Entfernen (rot); nur canEdit; erreichbar jetzt über den Viewer wie Ionic; img='' + Storage löschen."
+  },
+  "people/person/person.page#alert-40883a4d": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1922",
+    "lib/features/people/presentation/pages/person_create_page.dart:140"
+   ],
+   "v": "bestätigt",
+   "n": "Detailseite gleich ('Änderungen verwerfen?', Abbrechen / Ja; nicht im Genehmigen-Modus). Flutter besser: Neu-Seite fragt bei jeder Eingabe nach, Ionic schließt das Neu-Modal immer ohne Rückfrage.",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#alert-692c7626": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1411",
+    "lib/data/repositories/player_repository.dart:1260"
+   ],
+   "v": "bestätigt",
+   "n": "Ablehnen-Alert: Titel, 'Gib einen Grund an.', Textarea, leer: Meldung im Alert; Schreiben wie Ionic. Ladeoverlay fehlt (niedrig)."
+  },
+  "people/person/person.page#alert-75bf15c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1678",
+    "lib/data/repositories/player_repository.dart:1510",
+    "lib/data/repositories/player_repository.dart:665"
+   ],
+   "v": "bestätigt",
+   "n": "Alert 'Account entfernen' Abbrechen/Ja; Button nur canEdit; entfernt tenantUsers-Zugang (Admin / andere aktive Person bleibt), setzt email+appId null (tenantId-Filter), Toast, schließt."
+  },
+  "people/person/person.page#alert-a6876225": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:227",
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:276"
+   ],
+   "v": "bestätigt",
+   "n": "Wischen-Löschen nur canEdit und kein Termin-Eintrag; 'Eintrag unwiderruflich entfernen?' Abbrechen/Ja; entfernt Eintrag (Datum+Typ+Text, genauer als Ionic nur Datum); Toasts wie Ionic."
+  },
+  "people/person/person.page#field-016207ea": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:552",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:576"
+   ],
+   "v": "korrigiert",
+   "n": "Ionic: Schicht-Auswahl (Unterschicht) ohne Leer-Option / Flutter: zusätzliche Option 'Keine Schicht zugewiesen' (noneLabel) und Anzeige 'Nicht ausgewählt'; Nutzer kann shift_name auf null setzen, was Ionic nicht schreibt. Fix: noneLabel entfernen.",
+   "sev": "mittel"
+  },
+  "people/person/person.page#field-020d2981": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:203",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:405",
+    "lib/features/people/presentation/pages/person_detail_page.dart:642"
+   ],
+   "v": "bestätigt",
+   "n": "Schalter 'Stimmführer' bei !general && !Hauptgruppe für alle Rollen sichtbar, nur canEdit änderbar; Gruppenwechsel setzt ihn zurück wie Ionic."
+  },
+  "people/person/person.page#field-03332121": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/archive_person_modal.dart:83"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: natives Datumsfeld (type=date) / Flutter: Zeile mit Datum + Datumsauswahl 2000-2100, Standard heute.",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-049486aa": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:793",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:797"
+   ],
+   "v": "bestätigt",
+   "n": "Bearbeiten per Tipp → Editor-Sheet (4 Zeilen) statt Inline-Textarea; nur canEdit.",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-247f92a0": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:793",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:797"
+   ],
+   "v": "bestätigt",
+   "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; nur canEdit.",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-31cb4e6e": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:131"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: Inline-Kalender im Aufklapp-Bereich, max = heute / Flutter: Datumsdialog beim Tipp, lastDate heute, frühestens vor 5 Jahren.",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-31ccb60b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:116"
+   ],
+   "v": "bestätigt",
+   "n": "Platzhalter 'Gib einen Grund für die Pause an...', Feld mit Autogrow, Grund Pflicht."
+  },
+  "people/person/person.page#field-37f5b4b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:160"
+   ],
+   "v": "bestätigt",
+   "n": "Platzhalter 'z.B. Urlaub, Krankheit...', Autogrow."
+  },
+  "people/person/person.page#field-3c608429": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:96"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: zwei Inline-Kalender (Von/Bis) / Flutter: ein Zeitraum-Dialog (showDateRangePicker) für Von und Bis, Vorjahr bis +3 Jahre.",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-4b77b853": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:232",
+    "lib/features/people/presentation/pages/person_create_page.dart:382"
+   ],
+   "v": "bestätigt",
+   "n": "Detail: Tipp → Editor-Sheet mit Pflicht-Validierung statt Inline-Eingabe (Fertig-Button vorhanden); Neu-Seite: Textfelder mit Namensvorschlägen wie Ionic; nur canEdit.",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-4bf62b27": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:291",
+    "lib/features/people/presentation/pages/person_detail_page.dart:639"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: Label 'Gruppe', Modal-Select / Flutter: Label je Mandantentyp 'Stimme'/'Instrument'/'Gruppe', Auswahl-Sheet; Wechsel setzt Stimmführer zurück wie Ionic; nur canEdit.",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-503d0cfb": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:591"
+   ],
+   "v": "bestätigt",
+   "n": "Startdatum der Schicht: Kalender, markiert Änderung."
+  },
+  "people/person/person.page#field-50c752ee": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:841"
+   ],
+   "v": "bestätigt",
+   "n": "Bearbeiten per Tipp → Auswahl-Sheet statt Inline-Select; fehlende Werte werden wie in Ionic mit Standard/erster Option vorbelegt (_withExtraDefaults).",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-6acc513f": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:881",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:206"
+   ],
+   "v": "bestätigt",
+   "n": "Bedingung (Chor && !Hauptgruppe) und Bearbeitung nur Admin/Verantwortlich gleich; Tipp → Editor-Sheet statt Inline-Eingabe; leer + nicht bearbeitbar ausgeblendet.",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-6cfcad0a": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:372",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:392"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: ion-datetime Rad, max = heute / Flutter: Datumsauswahl, lastDate = heute; zusätzlich Texteingabe TT.MM.JJJJ.",
+   "sev": "niedrig"
+  }
+ },
+ "extra": []
+}

@@ -1,0 +1,767 @@
+{
+ "batch": "zz-verify5-b-opus-14",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "terms/terms.page",
+   "ionic": {
+    "ts": "terms/terms.page.ts",
+    "html": "terms/terms.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "terms/terms.page.ts",
+    "line": 55,
+    "method": "TermsPage.accept",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "terms.saveFailed"
+     ],
+     "de": [
+      "Fehler beim Speichern. Bitte versuche es erneut."
+     ],
+     "literals": [],
+     "expr": "translate('terms.saveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f452db39",
+    "mbody": "ee8ce7f2",
+    "roleGuarded": true,
+    "id": "terms/terms.page#toast-be2dc843"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/legal/presentation/pages/terms_page.dart:64-68",
+     "lib/data/repositories/account_repository.dart:61-70"
+    ],
+    "n": "updateUser-Fehler → „Fehler beim Speichern. Bitte versuche es erneut.“ rot.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/legal/presentation/pages/terms_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "terms/terms.page",
+   "ionic": {
+    "ts": "terms/terms.page.ts",
+    "html": "terms/terms.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "terms/terms.page.ts",
+    "line": 49,
+    "method": "TermsPage.accept",
+    "cond": [
+     "(refreshError)"
+    ],
+    "message": {
+     "keys": [
+      "terms.sessionExpired"
+     ],
+     "de": [
+      "Deine Sitzung ist abgelaufen. Bitte melde dich erneut an."
+     ],
+     "literals": [],
+     "expr": "translate('terms.sessionExpired')"
+    },
+    "color": "warning",
+    "duration": "4000",
+    "src": "c26de026",
+    "mbody": "ee8ce7f2",
+    "roleGuarded": true,
+    "id": "terms/terms.page#toast-f7e63a46"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/legal/presentation/pages/terms_page.dart:62-63"
+    ],
+    "n": "„Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.“ als Warn-Toast.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/legal/presentation/pages/terms_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 1051,
+    "method": "Utils.createMultiPlanExport",
+    "cond": [],
+    "call": "Utils.createPlanExport",
+    "args": "{ ...plan.props, asBlob: true, asImage: false }, plan.title",
+    "src": "bc5e1908",
+    "mbody": "72cdc746",
+    "id": "utilities/Utils#effect-28c159d1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/plan_export_service.dart:59",
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:121"
+    ],
+    "n": "Mehrere Pläne = mehrere Seiten in einem PDF.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/plan_export_service.dart",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 1711,
+    "method": "Utils.openInNewTab",
+    "cond": [
+     "(!Utils.isStandaloneWebApp() && window.open(url, '_blank'))"
+    ],
+    "call": "window.open",
+    "args": "url, '_blank'",
+    "src": "19a8d9ff",
+    "mbody": "8dec7818",
+    "id": "utilities/Utils#effect-468e81fe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/web_window_web.dart:36"
+    ],
+    "n": "window.open, in installierter Web-App echter Link-Klick.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/web_window_web.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 947,
+    "method": "Utils.createPlanExport",
+    "cond": [
+     "(props.asBlob)",
+     "(props.sideBySide)"
+    ],
+    "call": "doc.output",
+    "args": "'blob'",
+    "src": "e5784968",
+    "mbody": "eedb9b65",
+    "id": "utilities/Utils#effect-576bec88"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:125",
+     "lib/core/services/plan_export_service.dart:59"
+    ],
+    "n": "2x-A5-PDF als Bytes für Telegram (telegram2x, Name mit „_2x“).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart",
+    "lib/core/services/plan_export_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 1033,
+    "method": "Utils.createPlanExport",
+    "cond": [
+     "(props.asBlob)"
+    ],
+    "call": "doc.output",
+    "args": "'blob'",
+    "src": "e5784968",
+    "mbody": "eedb9b65",
+    "id": "utilities/Utils#effect-576bec88-3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:124",
+     "lib/core/services/plan_export_service.dart:59"
+    ],
+    "n": "A4-PDF als Bytes für Telegram.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart",
+    "lib/core/services/plan_export_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 1963,
+    "method": "Utils.generateVorkursCertificates",
+    "cond": [],
+    "call": "doc.output",
+    "args": "'blob'",
+    "src": "e5784968",
+    "mbody": "a466d143",
+    "id": "utilities/Utils#effect-b60269d9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/certificate_service.dart:28"
+    ],
+    "n": "Eine A4-Seite je Person, Times fett-kursiv, gleicher Text; Name schrumpft per FittedBox (ohne 28-pt-Untergrenze).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/certificate_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 1799,
+    "method": "Utils.openFileNative",
+    "cond": [
+     "!(Utils.isStandaloneWebApp())",
+     "(!Capacitor.isNativePlatform())"
+    ],
+    "call": "Utils.openInNewTab",
+    "args": "url",
+    "src": "e3badbf2",
+    "mbody": "5af52658",
+    "id": "utilities/Utils#effect-cf6a6016"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/song_file_opener.dart:56",
+     "lib/core/services/native/native_file_service.dart:142",
+     "lib/core/services/web_window_web.dart:36"
+    ],
+    "n": "Web (nicht installiert): Datei-URL in neuem Tab (window.open, sonst Link-Klick) wie Ionic, für alle Dateien, die Flutter extern öffnet (openSongFileExternally → NativeFileService.openUrl). Dass Flutter PDFs/Bilder im In-App-Viewer zeigt, ist an den Aufrufstellen (song.page, songs.page) als diff bewertet.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/services/web_window_web.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 1030,
+    "method": "Utils.createPlanExport",
+    "cond": [
+     "(props.asImage)",
+     "(props.asBlob)"
+    ],
+    "call": "doc.output",
+    "args": "'datauristring'",
+    "src": "88da6560",
+    "mbody": "eedb9b65",
+    "id": "utilities/Utils#effect-d0866846-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:123",
+     "lib/core/services/plan_export_service.dart:119"
+    ],
+    "n": "A4-Plan als PNG (Printing.raster 150 dpi statt jsPDF scale 6) für Telegram.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart",
+    "lib/core/services/plan_export_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/Utils",
+   "ionic": {
+    "ts": "utilities/Utils.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "utilities/Utils.ts",
+    "line": 1641,
+    "method": "Utils.openNavigation",
+    "cond": [
+     "!(Capacitor.isNativePlatform())"
+    ],
+    "call": "Utils.openInNewTab",
+    "args": "url",
+    "src": "e3badbf2",
+    "mbody": "5eb1c933",
+    "id": "utilities/Utils#effect-e71503f7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/event_list_widgets.dart:1113",
+     "lib/core/services/native/native_file_service.dart:103",
+     "lib/core/services/web_window_web.dart:36"
+    ],
+    "n": "Web: Google-Maps-Link über openInNewTab (window.open, in installierter Web-App Link-Klick) wie Ionic. Nuance: „Apple Karten“ (maps://) im iOS-Browser öffnet Flutter über url_launcher_web window.open statt Link-Klick – nur in installierter iOS-Web-App denkbar relevant.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/services/web_window_web.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/attendance-date-dialog",
+   "ionic": {
+    "ts": "utilities/attendance-date-dialog.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "utilities/attendance-date-dialog.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function promptAttendanceDateChange:15-80",
+     "function protocolAttendanceTypes:83-87",
+     "function promptCreateProtocolAttendance:94-159"
+    ],
+    "bodies": {
+     "function promptAttendanceDateChange": "cced74ba",
+     "function protocolAttendanceTypes": "fc386eb8",
+     "function promptCreateProtocolAttendance": "68f539aa"
+    },
+    "id": "utilities/attendance-date-dialog#logic-8dd6e8f4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_date_change.dart:63",
+     "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:32",
+     "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:170"
+    ],
+    "n": "Methoden portiert (Datum ändern, Anwesenheiten zurücksetzen/behalten, Protokoll-Termin anlegen); Dialog-Unterschiede bei den Einzel-Items.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart",
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/attendance-date-dialog",
+   "ionic": {
+    "ts": "utilities/attendance-date-dialog.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "utilities/attendance-date-dialog.ts",
+    "line": 43,
+    "method": "promptAttendanceDateChange",
+    "cond": [],
+    "message": {
+     "keys": [
+      "dateDialog.loadFailed"
+     ],
+     "de": [
+      "Termin konnte nicht geladen werden"
+     ],
+     "literals": [],
+     "expr": "translate('dateDialog.loadFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "c9f4da21",
+    "mbody": "cced74ba",
+    "roleGuarded": true,
+    "id": "utilities/attendance-date-dialog#toast-37694bad"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_date_change.dart:88",
+     "lib/features/attendance/presentation/widgets/attendance_date_change.dart:110"
+    ],
+    "n": "Roter Toast „Termin konnte nicht geladen werden“ wie Ionic. Keine Rollenprüfung in der Funktion; Aufrufer gleich beschränkt: Termin-Detail (Admin/Verantwortlich/Helfer/Stimmführer-Helfer; Ionic att-list openAttendance + Dashboard canOpenAttendance, Flutter attendanceDetailRedirect canAddAttendance; Beobachter/Spieler/Eltern/Bewerber nicht) und Themen-Tab „Ändern“ → „Datum ändern“ nur Leitung (isTeamLeader = Admin/Verantwortlich, beide Apps). Flutter lädt den Termin vor dem Datumsdialog (Ionic danach) – gleicher Fehlerfall; Abwesenheiten-Ladefehler ist als b20-Extra erfasst.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/attendance-date-dialog",
+   "ionic": {
+    "ts": "utilities/attendance-date-dialog.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "utilities/attendance-date-dialog.ts",
+    "line": 135,
+    "method": "promptCreateProtocolAttendance",
+    "cond": [
+     "(dayjs(value).isBefore(dayjs(), 'day'))"
+    ],
+    "message": {
+     "keys": [
+      "dateDialog.fromToday"
+     ],
+     "de": [
+      "Bitte ein Datum ab heute wählen"
+     ],
+     "literals": [],
+     "expr": "translate('dateDialog.fromToday')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "2fc58b22",
+    "mbody": "68f539aa",
+    "roleGuarded": true,
+    "id": "utilities/attendance-date-dialog#toast-8fed68b4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:234"
+    ],
+    "n": "Gleicher Text „Bitte ein Datum ab heute wählen“, Warnfarbe; in Flutter praktisch unerreichbar, weil der Picker Tage vor heute sperrt (firstDate heute) – Ergebnis gleich (kein Termin in der Vergangenheit).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/db-helpers",
+   "ionic": {
+    "ts": "utilities/db-helpers.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "utilities/db-helpers.ts",
+    "line": 346,
+    "method": "syncDutyWithStatus",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, duty_state, duty_assigned_at, attendance:attendance_id(type_id)'",
+    "filters": [
+     "eq('id', id)",
+     "maybeSingle()"
+    ],
+    "tenantFilter": false,
+    "src": "0cbb4f87",
+    "mbody": "f3f2d8bf",
+    "id": "utilities/db-helpers#db-2d9892ee"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:652"
+    ],
+    "n": "Liest id, duty_state und attendance(tenantId,type_id,duty_mode) per id, mit Tenant-Prüfung.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/db-helpers",
+   "ionic": {
+    "ts": "utilities/db-helpers.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "utilities/db-helpers.ts",
+    "line": 363,
+    "method": "syncDutyWithStatus",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "update",
+    "payload": "update",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', id)"
+    ],
+    "tenantFilter": false,
+    "src": "f54b4e82",
+    "mbody": "f3f2d8bf",
+    "id": "utilities/db-helpers#db-f424eb31"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:681",
+     "lib/data/repositories/attendance_repository.dart:713",
+     "lib/core/utils/duty_utils.dart:51"
+    ],
+    "n": "Gleiche Spalten/Werte: duty_state nach dutyStateAfterStatus, bei „confirmed“ duty_reminder_sent=true, bei vorher leerem Dienst duty_assigned_by/at; nur für Dienst-Typen und ohne explizites duty_state. Flutter schreibt sie im selben person_attendances-Update wie den Status (.eq('id') nach Tenant-Prüfung der Zeile), Ionic als zweites Update; Abmelde-Pfad ebenso (sign_in_out_repository.dart:141).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/db-helpers",
+   "ionic": {
+    "ts": "utilities/db-helpers.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "utilities/db-helpers.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function sanitizeImg:19-24",
+     "function pickInsertFields:29-36",
+     "function pickUpdateFields:41-46",
+     "function stripComputedFields:52-63",
+     "function pickPersonAttendanceFields:68-77",
+     "function pickPersonFields:92-210",
+     "function pickGroupFields:215-246",
+     "function pickTeacherFields:251-274",
+     "function pickHistoryFields:285-304",
+     "function pickTenantUserFields:309-330",
+     "function syncDutyWithStatus:341-365"
+    ],
+    "bodies": {
+     "function sanitizeImg": "cf777627",
+     "function pickInsertFields": "96061f74",
+     "function pickUpdateFields": "3117c2ef",
+     "function stripComputedFields": "cea0cb6a",
+     "function pickPersonAttendanceFields": "8db00579",
+     "function pickPersonFields": "dfaf7658",
+     "function pickGroupFields": "084dd431",
+     "function pickTeacherFields": "ca1235b7",
+     "function pickHistoryFields": "a8aa2e7e",
+     "function pickTenantUserFields": "036b61cf",
+     "function syncDutyWithStatus": "f3f2d8bf"
+    },
+    "id": "utilities/db-helpers#logic-19bf1565"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/utils/db_helpers.dart:1",
+     "lib/core/utils/duty_utils.dart:51",
+     "lib/data/repositories/attendance_repository.dart:650",
+     "lib/data/repositories/sign_in_out_repository.dart:142"
+    ],
+    "n": "pick*-Helfer durch explizite Repository-Payloads ersetzt (mobile/street etc. sind keine player-Spalten); syncDutyWithStatus = dutySyncFieldsForStatus; sanitizeImg über data:-Prüfung in player_repository.dart:459/511; generateIonicId db_helpers.dart:121.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart",
+    "lib/data/repositories/sign_in_out_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/organisation-person-key",
+   "ionic": {
+    "ts": "utilities/organisation-person-key.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "utilities/organisation-person-key.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function getOrganisationPersonKey:3-13"
+    ],
+    "bodies": {
+     "function getOrganisationPersonKey": "67804929"
+    },
+    "id": "utilities/organisation-person-key#logic-285eabcd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/shared_person_fields.dart:18",
+     "lib/data/repositories/org_plan_repository.dart:319"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/shared_person_fields.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/plan-groups",
+   "ionic": {
+    "ts": "utilities/plan-groups.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "utilities/plan-groups.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function isGroupHead:15-17",
+     "function newGroupHead:19-28",
+     "function childrenOf:31-33",
+     "function groupDuration:36-38",
+     "function fieldMinutes:41-43",
+     "function lastIndexOfGroup:46-53",
+     "function normalizeGroups:60-77",
+     "function fieldNumbers:80-89",
+     "function moveRow:103-153",
+     "function cloneBlock:156-174",
+     "function blockTemplateFrom:176-184"
+    ],
+    "bodies": {
+     "function isGroupHead": "c4d161e4",
+     "function newGroupHead": "93b13cae",
+     "function childrenOf": "6a144795",
+     "function groupDuration": "7a6ad699",
+     "function fieldMinutes": "39d7850e",
+     "function lastIndexOfGroup": "a17a6d95",
+     "function normalizeGroups": "43cfb52b",
+     "function fieldNumbers": "c31a8ce8",
+     "function moveRow": "c1e7213b",
+     "function cloneBlock": "b990161c",
+     "function blockTemplateFrom": "1e849776"
+    },
+    "id": "utilities/plan-groups#logic-7f5e06ab"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/utils/plan_utils.dart:90",
+     "lib/core/utils/plan_utils.dart:162",
+     "lib/core/utils/plan_utils.dart:207",
+     "lib/core/utils/dashboard_utils.dart:347"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/utils/plan_utils.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "utilities/unique-dates",
+   "ionic": {
+    "ts": "utilities/unique-dates.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "utilities/unique-dates.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function uniqueDates:9-21"
+    ],
+    "bodies": {
+     "function uniqueDates": "7fb3f324"
+    },
+    "id": "utilities/unique-dates#logic-49754779"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/attendance_create_writes.dart:31"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/attendance_create_writes.dart"
+   ]
+  }
+ ]
+}

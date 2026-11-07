@@ -1,0 +1,18 @@
+{
+ "batch": "zz-verify2-b10-planning-org",
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
+ "items": {
+  "org-plan-public/org-plan-public.page#db-f11d79f7": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/data/repositories/public_plan_repository.dart:256",
+    "lib/data/repositories/public_plan_repository.dart:259",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:104"
+   ],
+   "n": "Gleiche Abfrage auf attendance (id, date, plan, typeInfo, tenantId; tenantId in den Instanzen der Organisation aus tenant_group_tenants, is_org_plan, archived=false, plan not null, order date) und nur wenn Instanzen vorhanden (names.isNotEmpty ↔ tenantIds.length). Öffentliche Seite per Schlüssel ohne Rollenbezug; der tenantId-Filter ist wie in Ionic die Instanzliste der Organisation."
+  }
+ },
+ "extra": []
+}

@@ -1,0 +1,2229 @@
+{
+ "batch": "zz-verify5c-sonnet-07",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 110,
+    "cond": [
+     "@else (not loading)",
+     "@if (lastEvent)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "homeDashboard.lastEvent"
+    ],
+    "de": [
+     "Letzter Termin"
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.lastEvent' | transloco }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-077f6830"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:100"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 89,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)",
+     "@if (nextExcused > 0)",
+     "in <ion-modal trigger=open-excused-modal>",
+     "@for (p of nextExcusedPersons; track p.person_id)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ p.firstName }} {{ p.lastName }}"
+    ],
+    "text": "{{ p.firstName }} {{ p.lastName }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-120492fb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:251"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 71,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)"
+    ],
+    "tag": "strong",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ nextPerc }}%"
+    ],
+    "text": "{{ nextPerc }}%",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-224308fd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:204"
+    ],
+    "n": "Inkl. Fortschrittsbalken darunter.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 90,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)",
+     "@if (nextExcused > 0)",
+     "in <ion-modal trigger=open-excused-modal>",
+     "@for (p of nextExcusedPersons; track p.person_id)",
+     "@if (p.groupName)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ p.groupName }}"
+    ],
+    "text": "{{ p.groupName }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-260e2887"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:255"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 57,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "stat-label"
+    },
+    "keys": [
+     "homeDashboard.signedOut"
+    ],
+    "de": [
+     "Abgemeldet"
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.signedOut' | transloco }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-273be980"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:169"
+    ],
+    "n": "Inkl. Zusatzzeile '{n} Schicht' bei Schichtarbeitern.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 59,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)",
+     "@if (nextShiftWorkers > 0)"
+    ],
+    "tag": "#text",
+    "keys": [
+     "homeDashboard.shiftCount"
+    ],
+    "de": [
+     "{count} Schicht"
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.shiftCount' | transloco: { count: nextShiftWorkers } }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-4bf876ff"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:169",
+     "lib/core/utils/dashboard_logic.dart:149"
+    ],
+    "n": "Kachel 'Abgemeldet' + Zeilenumbruch '{n} Schicht', wenn entschuldigt/verspätet entschuldigt mit Notiz 'Schichtbedingt'/'Arbeitsbedingt' > 0 – gleich.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 63,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "stat-value"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ nextNeutral }}"
+    ],
+    "text": "{{ nextNeutral }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-50f2f871"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:186"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 70,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [
+     "homeDashboard.average"
+    ],
+    "de": [
+     "Durchschnitt"
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.average' | transloco }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-559e61e5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:200"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 93,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)",
+     "@if (nextExcused > 0)",
+     "in <ion-modal trigger=open-excused-modal>",
+     "@for (p of nextExcusedPersons; track p.person_id)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end",
+     "[color]": "\"p.status === AttendanceStatus.LateExcused ? 'warning' : 'primary'\""
+    },
+    "bindings": [
+     "[color]=\"p.status === AttendanceStatus.LateExcused ? 'warning' : 'primary'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ statusLabel(p.status) }}"
+    ],
+    "text": "{{ statusLabel(p.status) }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-609ece15"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:259"
+    ],
+    "n": "Chip warning bei 'verspätet entschuldigt', sonst primary; Text Status + ' · Schicht' bei Schichtnotiz.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 44,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextEvent.notes)"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ nextEvent.notes }}"
+    ],
+    "text": "{{ nextEvent.notes }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-8ba43bc8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:87"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 56,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "stat-value"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ nextExcused }}"
+    ],
+    "text": "{{ nextExcused }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-8cbc8076"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:180"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 81,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)",
+     "@if (nextExcused > 0)",
+     "in <ion-modal trigger=open-excused-modal>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "homeDashboard.signOuts"
+    ],
+    "de": [
+     "Abmeldungen"
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.signOuts' | transloco }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-932c96fc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:243"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 52,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "stat-value"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ nextPresent }}"
+    ],
+    "text": "{{ nextPresent }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-9ddee8d1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:177"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 95,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)",
+     "@if (nextExcused > 0)",
+     "in <ion-modal trigger=open-excused-modal>",
+     "@for (p of nextExcusedPersons; track p.person_id)",
+     "@if (isShift(p.notes))"
+    ],
+    "tag": "#text",
+    "keys": [
+     "homeDashboard.shift"
+    ],
+    "de": [
+     "Schicht"
+    ],
+    "literals": [],
+    "text": "· {{ 'homeDashboard.shift' | transloco }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-a4c222ad"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:267"
+    ],
+    "n": "Badge im Abmeldungen-Sheet 'Entschuldigt · Schicht' bzw. '<verspätet entsch.> · Schicht' bei Schicht-Notiz – gleich.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 91,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)",
+     "@if (nextExcused > 0)",
+     "in <ion-modal trigger=open-excused-modal>",
+     "@for (p of nextExcusedPersons; track p.person_id)",
+     "@if (p.notes)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ p.notes }}"
+    ],
+    "text": "{{ p.notes }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-a6df82bc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:256"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 53,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "stat-label"
+    },
+    "keys": [
+     "common.status.present"
+    ],
+    "de": [
+     "Anwesend"
+    ],
+    "literals": [],
+    "text": "{{ 'common.status.present' | transloco }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-a7ec96b8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:177"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 64,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "stat-label"
+    },
+    "keys": [
+     "tasks.status.open"
+    ],
+    "de": [
+     "Offen"
+    ],
+    "literals": [],
+    "text": "{{ 'tasks.status.open' | transloco }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-af42f222"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:186"
+    ],
+    "n": "'Offen' über protocolOpen (gleicher Text).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 129,
+    "cond": [
+     "@else (not loading)",
+     "@if (!lastEvent && !nextEvent)"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [
+     "homeDashboard.noEvents"
+    ],
+    "de": [
+     "Keine Termine gefunden."
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.noEvents' | transloco }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-bd37369c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:68"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 71,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [
+     "homeDashboard.totalCount"
+    ],
+    "de": [
+     "{count} gesamt"
+    ],
+    "literals": [],
+    "text": "· {{ 'homeDashboard.totalCount' | transloco: { count: nextTotal } }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-c6804cc8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:207"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 20,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "teamOrg.nextEvent"
+    ],
+    "de": [
+     "Nächster Termin"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.nextEvent' | transloco }}",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#text-f908c92b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:75"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 95,
+    "cond": [
+     "@if (isIos)"
+    ],
+    "tag": "ion-fab-button",
+    "attrs": {
+     "routerLink": "/tabs/settings/dashboard"
+    },
+    "events": [],
+    "link": "/tabs/settings/dashboard",
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "settings-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "home-dashboard/home-dashboard.page#action-1e2f7a30"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:95"
+    ],
+    "n": "Nur iOS, FAB unten rechts mit Zahnrad → '/settings/dashboard'.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 89,
+    "cond": [
+     "@if (visibleCards.length === 0)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "outline",
+     "routerLink": "/tabs/settings/dashboard"
+    },
+    "events": [],
+    "link": "/tabs/settings/dashboard",
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "homeDashboard.configure"
+    ],
+    "de": [
+     "Dashboard konfigurieren"
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.configure' | transloco }}",
+    "id": "home-dashboard/home-dashboard.page#action-246718b2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:124"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-menu-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "home-dashboard/home-dashboard.page#action-3ea00e0d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:68"
+    ],
+    "n": "SideNavMenuButton.maybe nur bei Tablet-Overlay-Sidepanel (Ionic autoHide).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 31,
+    "cond": [
+     "@if (!isIos)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "routerLink": "/tabs/settings/dashboard"
+    },
+    "events": [],
+    "link": "/tabs/settings/dashboard",
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "settings-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "home-dashboard/home-dashboard.page#action-85616b63"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:83"
+    ],
+    "n": "Nur nicht-iOS, Zahnrad → '/settings/dashboard'.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 45,
+    "cond": [],
+    "tag": "ion-refresher",
+    "attrs": {
+     "slot": "fixed"
+    },
+    "events": [
+     "(ionRefresh)=refreshAllCards(); $event.target.complete()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "home-dashboard/home-dashboard.page#action-89d4cfdd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:105",
+     "lib/core/providers/dashboard_providers.dart:298"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 77,
+    "cond": [
+     "@for (card of visibleCards; track card.id)",
+     "@if (card.id === 'current-plan')"
+    ],
+    "tag": "app-current-plan-card",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "home-dashboard/home-dashboard.page#embed-07ebeab6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:36"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 62,
+    "cond": [
+     "@for (card of visibleCards; track card.id)",
+     "@if (card.id === 'next-event')"
+    ],
+    "tag": "app-next-event-card",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "home-dashboard/home-dashboard.page#embed-0a79b8bc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:31"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 34,
+    "cond": [
+     "@if (!isIos)"
+    ],
+    "tag": "app-notification-bell",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "home-dashboard/home-dashboard.page#embed-0bb4d324"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:89"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 38,
+    "cond": [
+     "@else (not !isIos)"
+    ],
+    "tag": "app-notification-bell",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "home-dashboard/home-dashboard.page#embed-0bb4d324-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:89"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 65,
+    "cond": [
+     "@for (card of visibleCards; track card.id)",
+     "@if (card.id === 'member-changes')"
+    ],
+    "tag": "app-member-changes-card",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "home-dashboard/home-dashboard.page#embed-4c48c398"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:32"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 80,
+    "cond": [
+     "@for (card of visibleCards; track card.id)",
+     "@if (card.id === 'my-tasks')"
+    ],
+    "tag": "app-my-tasks",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "home-dashboard/home-dashboard.page#embed-7bf0df2f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:37",
+     "lib/core/providers/dashboard_providers.dart:218"
+    ],
+    "n": "Nur mit Teamorganisation (configurableDashboardCards).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 74,
+    "cond": [
+     "@for (card of visibleCards; track card.id)",
+     "@if (card.id === 'current-songs')"
+    ],
+    "tag": "app-current-songs-card",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "home-dashboard/home-dashboard.page#embed-95fa8dc1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:35"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 59,
+    "cond": [
+     "@for (card of visibleCards; track card.id)",
+     "@if (card.id === 'birthdays')"
+    ],
+    "tag": "app-birthdays-card",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "home-dashboard/home-dashboard.page#embed-a500e2c5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:30"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 71,
+    "cond": [
+     "@for (card of visibleCards; track card.id)",
+     "@if (card.id === 'critical-persons')"
+    ],
+    "tag": "app-critical-persons-card",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "home-dashboard/home-dashboard.page#embed-ba02fb2d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:34"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 68,
+    "cond": [
+     "@for (card of visibleCards; track card.id)",
+     "@if (card.id === 'absences')"
+    ],
+    "tag": "app-absences-card",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "home-dashboard/home-dashboard.page#embed-dae20206"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:33"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 88,
+    "cond": [
+     "@if (visibleCards.length === 0)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "homeDashboard.allHidden"
+    ],
+    "de": [
+     "Alle Karten sind ausgeblendet. Konfiguriere das Dashboard unter Einstellungen."
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.allHidden' | transloco }}",
+    "id": "home-dashboard/home-dashboard.page#text-fad17522"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:119"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-back-button",
+    "attrs": {
+     "defaultHref": "tabs/settings"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "\"\"",
+    "id": "instruments/instrument-list/instrument-list.page#action-4c33cd05"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:93"
+    ],
+    "n": "Zurück ohne Text, context.go('/settings') = Ionic defaultHref tabs/settings.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 92,
+    "cond": [
+     "@for (category of groupedInstruments; track category.id)"
+    ],
+    "tag": "ion-reorder-group",
+    "attrs": {
+     "[disabled]": "\"!isReordering\""
+    },
+    "events": [
+     "(ionItemReorder)=handleReorder($event, category.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "reorder-two"
+    ],
+    "keys": [
+     "instruments.mainGroup",
+     "common.persons"
+    ],
+    "de": [
+     "{name} (Hauptgruppe)",
+     "{count, plural, one {# Person} other {# Personen}}"
+    ],
+    "literals": [],
+    "text": "{{ instrument.sort_order }} {{ 'instruments.mainGroup' | transloco: { name: instrument.name } }} {{ instrument.name }} ({{ instrument.tuning }}) {{ instrument.name }} {{ instrument.clefText }} {{ 'co…",
+    "id": "instruments/instrument-list/instrument-list.page#action-7fdb0a4f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:209"
+    ],
+    "n": "ReorderableListView je Kategorie mit Griff, nur innerhalb der Kategorie.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 94,
+    "cond": [
+     "@for (category of groupedInstruments; track category.id)",
+     "in <ion-reorder-group>"
+    ],
+    "tag": "ion-item",
+    "attrs": {},
+    "events": [
+     "(click)=isReordering ? null : openModal(instrument)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "reorder-two"
+    ],
+    "keys": [
+     "instruments.mainGroup",
+     "common.persons"
+    ],
+    "de": [
+     "{name} (Hauptgruppe)",
+     "{count, plural, one {# Person} other {# Personen}}"
+    ],
+    "literals": [],
+    "text": "{{ instrument.sort_order }} {{ 'instruments.mainGroup' | transloco: { name: instrument.name } }} {{ instrument.name }} ({{ instrument.tuning }}) {{ instrument.name }} {{ instrument.clefText }} {{ 'co…",
+    "id": "instruments/instrument-list/instrument-list.page#action-d2efa7e3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:286",
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:155",
+     "lib/data/repositories/group_repository.dart:218"
+    ],
+    "n": "Behebung bestätigt: Personenzahl zählt nur left = null und pending = false (wie db.getPlayers), Badge rot bei 0; leere Stimmung jetzt „()“ wie Ionic. Titel/Hauptgruppe/Schlüssel/sort_order-Badge gleich; Tipp öffnet Bearbeiten nur für Admin/Verantwortlich und nicht im Sortiermodus.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/group_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "instruments/instrument-list/instrument-list.page.ts",
+    "line": 223,
+    "method": "InstrumentListPage.deleteCategory",
+    "cond": [],
+    "header": {
+     "keys": [
+      "common.confirm"
+     ],
+     "de": [
+      "Bestätigen"
+     ],
+     "literals": [],
+     "expr": "translate('common.confirm')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "instruments.deleteCategory"
+     ],
+     "de": [
+      "Kategorie wirklich löschen? Alle Gruppen in dieser Kategorie verlieren die Kategorisierung."
+     ],
+     "literals": [],
+     "expr": "translate('instruments.deleteCategory')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.yes"
+       ],
+       "de": [
+        "Ja"
+       ],
+       "literals": [],
+       "expr": "translate('common.yes')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { await this.db.deleteGroupCategory(id); this.categories = await this.db.getGroupCategories(); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "7060fd28",
+    "mbody": "b04071c5",
+    "id": "instruments/instrument-list/instrument-list.page#alert-415386f9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:339"
+    ],
+    "n": "Titel „Bestätigen“, Text „Kategorie wirklich löschen? …“, Buttons „Abbrechen“/„Ja“, löscht. Ionic: „Abbrechen“ mit role destructive (iOS rot), „Ja“ normal / Flutter: „Abbrechen“ neutral, „Ja“ rot gefüllt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "instruments/instrument-list/instrument-list.page.ts",
+    "line": 249,
+    "method": "InstrumentListPage.editCategory",
+    "cond": [],
+    "header": {
+     "keys": [
+      "instruments.editCategory"
+     ],
+     "de": [
+      "Kategorie bearbeiten"
+     ],
+     "literals": [],
+     "expr": "translate('instruments.editCategory')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (data) => { if (data.name) { await this.db.updateGroupCategory(id, data.name); this.categories = await this.db.getGroupCategories(); } else { Utils.showToast(translate('instruments.enterName'), 'danger'); return false; } }"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "text",
+      "label": null,
+      "name": "'name'",
+      "placeholder": {
+       "keys": [
+        "instruments.categoryName"
+       ],
+       "de": [
+        "Name der Kategorie"
+       ],
+       "literals": [],
+       "expr": "translate('instruments.categoryName')"
+      },
+      "value": "category.name",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "1366a17b",
+    "mbody": "05145c9b",
+    "id": "instruments/instrument-list/instrument-list.page#alert-bd4338b7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:298"
+    ],
+    "n": "Titel „Kategorie bearbeiten“, vorbelegter Name, Buttons „Abbrechen“/„Speichern“, speichert Namen. Ionic: Platzhalter „Name der Kategorie“, „Abbrechen“ role destructive (iOS rot) / Flutter: schwebendes Label, „Abbrechen“ neutral; Name getrimmt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "instruments/instrument-list/instrument-list.page.ts",
+    "line": 191,
+    "method": "InstrumentListPage.addCategory",
+    "cond": [],
+    "header": {
+     "keys": [
+      "instruments.newCategory"
+     ],
+     "de": [
+      "Neue Kategorie"
+     ],
+     "literals": [],
+     "expr": "translate('instruments.newCategory')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.add"
+       ],
+       "de": [
+        "Hinzufügen"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.add')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (data) => { if (data.name) { await this.db.addGroupCategory(data.name); this.categories = await this.db.getGroupCategories(); } else { Utils.showToast(translate('instruments.enterName'), 'danger'); return false; } }"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "text",
+      "label": null,
+      "name": "'name'",
+      "placeholder": {
+       "keys": [
+        "instruments.categoryName"
+       ],
+       "de": [
+        "Name der Kategorie"
+       ],
+       "literals": [],
+       "expr": "translate('instruments.categoryName')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "166ce413",
+    "mbody": "94ae5076",
+    "id": "instruments/instrument-list/instrument-list.page#alert-eeb83d29"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:260"
+    ],
+    "n": "Titel „Neue Kategorie“, Buttons „Abbrechen“/„Hinzufügen“, legt Kategorie an. Ionic: Platzhalter „Name der Kategorie“, „Abbrechen“ mit role destructive (iOS rot) / Flutter: schwebendes Label „Name der Kategorie“, „Abbrechen“ neutral; Name wird getrimmt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "instruments/instrument-list/instrument-list.page.ts",
+    "line": 396,
+    "method": "InstrumentListPage.saveOrder",
+    "cond": [],
+    "message": {
+     "keys": [
+      "instruments.savingOrder"
+     ],
+     "de": [
+      "Reihenfolge wird gespeichert..."
+     ],
+     "literals": [],
+     "expr": "translate('instruments.savingOrder')"
+    },
+    "duration": "5000",
+    "src": "b833c1bc",
+    "mbody": "bdada5a3",
+    "id": "instruments/instrument-list/instrument-list.page#loading-7d7ff756"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:54"
+    ],
+    "n": "Ionic: blockierendes Overlay „Reihenfolge wird gespeichert...“ (max. 5 s) / Flutter: kein Ladehinweis, Liste bleibt bedienbar; zudem springt die Liste nach dem Häkchen bis zum Ende von Speichern + Neuladen auf die alte Reihenfolge zurück (_reorderSections = null vor dem await).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "instruments/instrument-list/instrument-list.page.ts",
+    "line": 314,
+    "method": "InstrumentListPage.saveCategoryOrder",
+    "cond": [],
+    "message": {
+     "keys": [
+      "instruments.savingOrder"
+     ],
+     "de": [
+      "Reihenfolge wird gespeichert..."
+     ],
+     "literals": [],
+     "expr": "translate('instruments.savingOrder')"
+    },
+    "duration": "5000",
+    "src": "b833c1bc",
+    "mbody": "a77d427e",
+    "id": "instruments/instrument-list/instrument-list.page#loading-c2ec3077"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:135"
+    ],
+    "n": "Ionic: blockierendes Overlay „Reihenfolge wird gespeichert...“ / Flutter: nur LinearProgressIndicator im Sheet-Kopf, ohne Text, nicht blockierend.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 89,
+    "cond": [
+     "@for (category of groupedInstruments; track category.id)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ category.name }} ({{ category.instruments.length }})"
+    ],
+    "text": "{{ category.name }} ({{ category.instruments.length }})",
+    "id": "instruments/instrument-list/instrument-list.page#text-1d015e65"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:243"
+    ],
+    "n": "Text „Kategorie (n)“ in primary gleich. Ionic: ion-item-divider sticky (bleibt beim Scrollen oben stehen) / Flutter: IonItemDivider in einer Column, scrollt mit.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 81,
+    "cond": [
+     "@if (isReordering)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "instruments.dragGroups"
+    ],
+    "de": [
+     "Ziehe die Gruppen, um die Reihenfolge anzupassen. Klicke auf das Häkchen, um zu speichern."
+    ],
+    "literals": [],
+    "text": "{{ 'instruments.dragGroups' | transloco }}",
+    "id": "instruments/instrument-list/instrument-list.page#text-5f0475fb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:197"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "instruments/instrument-list/instrument-list.page.ts",
+    "line": 344,
+    "method": "InstrumentListPage.saveCategoryOrder",
+    "cond": [],
+    "message": {
+     "keys": [
+      "instruments.orderFailed"
+     ],
+     "de": [
+      "Fehler beim Speichern der Reihenfolge"
+     ],
+     "literals": [],
+     "expr": "translate('instruments.orderFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "4f347adb",
+    "mbody": "a77d427e",
+    "id": "instruments/instrument-list/instrument-list.page#toast-0702bdec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:62"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "instruments/instrument-list/instrument-list.page.ts",
+    "line": 270,
+    "method": "InstrumentListPage.editCategory",
+    "cond": [
+     "!(data.name)"
+    ],
+    "message": {
+     "keys": [
+      "instruments.enterName"
+     ],
+     "de": [
+      "Bitte gib einem Namen an"
+     ],
+     "literals": [],
+     "expr": "translate('instruments.enterName')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "89780d2a",
+    "mbody": "05145c9b",
+    "id": "instruments/instrument-list/instrument-list.page#toast-30c6ec59"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:324",
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:327"
+    ],
+    "n": "Behebung bestätigt: „Speichern“ mit leerem Namen zeigt roten Toast „Bitte gib einem Namen an“, Dialog bleibt offen.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "instruments/instrument-list/instrument-list.page.ts",
+    "line": 211,
+    "method": "InstrumentListPage.addCategory",
+    "cond": [
+     "!(data.name)"
+    ],
+    "message": {
+     "keys": [
+      "instruments.enterName"
+     ],
+     "de": [
+      "Bitte gib einem Namen an"
+     ],
+     "literals": [],
+     "expr": "translate('instruments.enterName')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "89780d2a",
+    "mbody": "94ae5076",
+    "id": "instruments/instrument-list/instrument-list.page#toast-4c623e8a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:282",
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:285"
+    ],
+    "n": "Behebung bestätigt: „Hinzufügen“ mit leerem Namen zeigt roten Toast „Bitte gib einem Namen an“, Dialog bleibt offen (wie return false). Flutter trimmt (nur Leerzeichen → Toast, Ionic würde „ “ speichern) – unerheblich.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "instruments/instrument-list/instrument-list.page.ts",
+    "line": 341,
+    "method": "InstrumentListPage.saveCategoryOrder",
+    "cond": [],
+    "message": {
+     "keys": [
+      "typeSettings.orderSaved"
+     ],
+     "de": [
+      "Reihenfolge gespeichert"
+     ],
+     "literals": [],
+     "expr": "translate('typeSettings.orderSaved')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "db00cc12",
+    "mbody": "a77d427e",
+    "id": "instruments/instrument-list/instrument-list.page#toast-c1848ce1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:60"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  }
+ ]
+}

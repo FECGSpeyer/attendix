@@ -1,0 +1,211 @@
+{
+  "batch": "zz-verify2-b04-attendance",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "attendance/attendance/attendance.page#action-3e99df7b": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/pages/attendance_detail_page.dart:1125", "lib/features/attendance/presentation/pages/attendance_detail_page.dart:972", "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:75"],
+      "n": "Nur Admin/Verantwortliche (Ionic autoPanel.isManager), erst ab Terminbeginn und bei ≥ 1 abwesenden, nicht ausgetretenen Person; Helfer/Stimmführer-Helfer sehen den Eintrag in beiden nicht. „Unentschuldigte anschreiben (n)“ nach Legende/Erinnerung, öffnet Compose mit festen Empfängern, Titel/Text vorbelegt, Antworten erlaubt.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-4e772282": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:53", "lib/features/attendance/presentation/pages/attendance_detail_page.dart:691", "lib/core/providers/role_permission_providers.dart:105"],
+      "n": "„erledigt/gesamt“, grün wenn alles erledigt, sonst primary. Sichtbarkeit gleich: Admin/Verantwortliche/Stimmführer-Helfer immer, Helfer nur mit checklist_view (Ionic isHelper = nur HELPER), nur mit Einträgen.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#field-ea675320": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:105", "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1496", "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1672"],
+      "n": "Abhaken für jede Rolle, die die Checkliste sieht (auch Helfer mit checklist_view), ohne weitere Rollenprüfung wie Ionic; schreibt attendance.checklist (Flutter mit id + tenantId). Beobachter: Ionic nur per Direkt-URL erreichbar, Flutter sperrt /attendance/:id (Routing-Batch).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-ed6ba539": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:108"],
+      "n": "Text, bei erledigt durchgestrichen; gleiche Rollenbedingung wie die Checkliste.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-0a51d6bd": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:95", "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1604"],
+      "n": "Wischen → roter Papierkorb für alle, die die Checkliste sehen; Dialog/zusätzlicher Toast siehe alert-87434869.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#media-5cb3848f": {
+      "s": "missing",
+      "sev": "niedrig",
+      "f": ["lib/features/duty/presentation/widgets/duty_staffing_section.dart:127"],
+      "n": "Ionic: Besetzungsblock (Dienst-Typ) zeigt vor jeder eingeteilten Person ein ion-avatar mit pa.img / Flutter: ListTile ohne leading, kein Bild. Gleiche Lücke wie text-da1403f3."
+    },
+    "attendance/attendance/attendance.page#text-1956196d": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:216", "lib/features/attendance/presentation/pages/attendance_detail_page.dart:715"],
+      "n": "„Ablaufplan & Tagesordnung“ bei enable_protocol des Typs, sonst „Ablaufplan“. Admin/Verantwortliche/Helfer/Stimmführer-Helfer sehen es in beiden; Beobachter nicht (Flutter zusätzlich Seite gesperrt).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-33a93547": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:227"],
+      "n": "Chips nur bei > 1 Plan, Vorauswahl heutiger Plan, „Heute“-Markierung; für alle Nicht-Beobachter.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-39e7db32": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/planning/presentation/widgets/plan_view_list.dart:88", "lib/features/planning/presentation/widgets/plan_view_list.dart:99", "lib/core/utils/plan_utils.dart:459"],
+      "n": "Label „Start“ und Rollen gleich. Aber Live-Modus in den 5 Min vor Beginn: Ionic markiert schon das erste Feld als aktiv (Countdown-Badge bis Feldende), unter „Start“ nichts / Flutter: kein aktives Feld vor Beginn, dafür Flutter-eigene Zeile „beginnt in X Min.“ unter „Start“. Erstprüfung hat den Live-Modus übersehen.",
+      "v": "korrigiert"
+    },
+    "attendance/attendance/attendance.page#text-e7f02a78-2": {
+      "s": "ok",
+      "f": ["lib/features/planning/presentation/widgets/plan_view_list.dart:213"],
+      "n": "„Ende“ mit Uhrzeit; Uhrzeit-Badge vs. Notiz siehe text-1ffb6841-2.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-292b5b5a": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:198", "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:243"],
+      "n": "Nur enable_protocol + Admin/Verantwortliche (isTeamLeader, ohne Teamorg-Schalter wie Ionic) + erster Plan; Helfer/Stimmführer-Helfer nicht.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-525fcc66": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:246", "lib/features/attendance/presentation/pages/attendance_detail_page.dart:725", "lib/core/router/route_access.dart:110"],
+      "n": "Für alle Nicht-Beobachter (auch Helfer/Stimmführer-Helfer): Route /planning?attendanceId=… ist für canAddAttendance freigegeben; Planindex wird übergeben. Seite statt Modal.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-f16184a4": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:252"],
+      "n": "„Teilen“ mit Teilen-Icon für alle Nicht-Beobachter; Sheet-Inhalt siehe actionsheet-19467990.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-292b5b5a-2": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:219"],
+      "n": "Ohne Plan: gleiche Bedingung enable_protocol + Admin/Verantwortliche, vor „Ablaufplan erstellen“.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-2ffbbc70": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:222", "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:183"],
+      "n": "Für alle Nicht-Beobachter. Flutter wertet einen Plan ohne Felder auch als „kein Plan“; Ionic speichert keinen leeren Plan (validate verlangt ≥ 1 Feld), daher praktisch gleich.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-c40504a2": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/pages/attendance_detail_page.dart:598", "lib/core/providers/role_permission_providers.dart:97"],
+      "n": "Nur Rolle HELPER ohne player_notes_view sieht „Notiz hinzugefügt“ statt der Notiz (beide Ansichtsmodi); Stimmführer-Helfer und Leitung sehen die Notiz wie Ionic.",
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#text-f9dc6cea": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:291", "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:249"],
+      "n": "Panel nur Admin/Verantwortliche und ab Terminbeginn (isManager && started); Uhrzeit HH:mm = Terminende + Verzögerung.",
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#text-40b5ed17": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:302"],
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#text-cbe9ec72": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:295"],
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#text-552f8f68": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:303"],
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#text-5b92afdf": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:296"],
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#text-38f24a5a": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:282", "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:305"],
+      "n": "„dd.MM.yyyy, HH:mm“ lokal.",
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#text-bdda8e46": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:297"],
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#text-9a24a550": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:306"],
+      "n": "Randfall: leerer created_by_name zeigt in Ionic „Unbekannt“, in Flutter (nur bei null) „Ausgesetzt von “ – praktisch nie.",
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#text-604d5e9c": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:299"],
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#text-4bfd5861": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:298"],
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#action-32eb1cf7": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:165", "lib/data/repositories/auto_message_repository.dart:206"],
+      "n": "Button, Bedingung (Admin/Verantwortliche, Regel noch nicht gelaufen, Sendezeit in der Zukunft) und Insert in auto_message_runs (status suspended, created_by) gleich. Aber created_by_name: Ionic nimmt db.teamPerson() – nur geladen mit Teamorganisation (Einstellungen/Teamorg/Meine Aufgaben), sonst E-Mail / Flutter nimmt ownProfileProvider – nur geladen nach Besuch der Einstellungen oder mit Seitenleiste (Tablet), sonst E-Mail. „Ausgesetzt von …“ zeigt daher je nach Situation Name statt E-Mail oder umgekehrt.",
+      "v": "korrigiert"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#action-4fdc1969": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:315", "lib/data/repositories/auto_message_repository.dart:223"],
+      "n": "Löscht den suspended-Run (id + status, Flutter zusätzlich tenantId); nur Admin/Verantwortliche.",
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#action-beffd5ad": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:317", "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:188"],
+      "n": "Mit message_id → /messages/:id, sonst Regel-Verlauf /settings/auto-messages/:id?tab=history (Admin/Verantwortliche).",
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#text-bb9383cc": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:322"],
+      "n": "Zählt offene Rückmeldungen inkl. lokal entschiedener wie Ionic.",
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#text-5dd3621d": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:442", "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:161"],
+      "n": "Name über person_attendance_id aus den Personen des Termins, sonst „Unbekannt“.",
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#text-71044245": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:424"],
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#text-241dd21d": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:425", "lib/features/messages/presentation/auto_message_texts.dart:68"],
+      "n": "Grund (fehlend/unbekannt → „Sonstiges“) + „: Text“.",
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#action-4325a30d": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:455", "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:196", "lib/data/repositories/auto_message_repository.dart:434"],
+      "n": "„Auf anwesend“/„Entschuldigen“ je nach Art, gesperrt während busy; Bestätigungsdialog (Name, Text, Abbrechen/Aktion), Edge Function attendance-response decide, Toast „Übernommen“. Nur Admin/Verantwortliche.",
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#text-7f432be1": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:476", "lib/features/messages/presentation/auto_message_texts.dart:76"],
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

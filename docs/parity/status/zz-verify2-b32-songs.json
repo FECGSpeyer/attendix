@@ -1,0 +1,170 @@
+{
+ "batch": "zz-verify2-b32-songs",
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
+ "items": {
+  "songs/songs.page#text-5ecb67ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:245",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:257"
+   ],
+   "n": "Öffentlicher Freigabe-Link (ohne Login): Titel = longName der freigegebenen Instanz (Flutter title bei data.isPublic). Keine Rollenbedingung.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-ed429618": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:310",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:123",
+    "lib/core/providers/optional_tabs_providers.dart:87",
+    "lib/core/router/route_access.dart:46"
+   ],
+   "n": "Flutter besser: Text „Tab ausblenden“/„Als Tab anzeigen“, Bookmark-Icon, Speichern in user_metadata showSongsTab_<tenantId> gleich, nicht auf der öffentlichen Seite. Erstprüfer irrte bei Eltern: settings.page.html:522 schließt Eltern nicht aus. Ionic: Eltern (Handy) erreichen Werke über Einstellungen und sehen den Eintrag; danach erscheint der Werke-Tab (tabs.page.ts:49 ohne Eltern-Ausschluss), obwohl isUrlAccessAllowed /tabs/songs-tab für Eltern sperrt (Utils.ts:1305) und das Sidepanel ihn ausblendet (nav-items.ts:82) / Flutter: für Eltern weder Eintrag noch Tab (canOpenSongsTab). Übrige Rollen gleich (Bewerber und Allgemein-Instanzen erreichen die Seite in beiden nicht).",
+   "v": "korrigiert"
+  },
+  "songs/songs.page#action-684cb018": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:326",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:160",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:98"
+   ],
+   "n": "Nur Admin/Verantwortlicher (Ionic isAdmin = Rolle 1/5), nicht auf der öffentlichen Seite (Flutter isAdmin enthält !_isPublic); Helfer, Stimmführer, Spieler, Eltern, Beobachter ohne Eintrag wie Ionic. Öffnet den Import, danach Neuladen.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-380a0b3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:338",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:282"
+   ],
+   "n": "Nur Admin/Verantwortlicher, nicht öffentlich, nur mit Organisation (currentOrganisationProvider = Ionic db.organisation()); Ziel /settings/org-settings/songs mit q = Suchbegriff wie Ionic.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#text-5ecb67ec-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:376",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:245"
+   ],
+   "n": "Großer Titel (nur iOS, IonLargeTitle) = longName beim öffentlichen Link, wie Ionic collapse=condense.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#text-b8539fda-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:376",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:245"
+   ],
+   "n": "„Werke ({count})“ mit Anzahl aller Werke; großer Titel nur iOS.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#text-c364c614": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:156",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:360"
+   ],
+   "n": "„Werk hinzufügen“. FAB/Sheet nur Admin/Verantwortlicher und nicht auf der öffentlichen Seite (Ionic dort ohne Login kein tenantUser → isAdmin false).",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#text-969bc289": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:169"
+   ],
+   "n": "„Präfix (optional)“ mit Hilfetext wie Ionic; Rollen wie text-c364c614.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#text-3400020d": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:177"
+   ],
+   "v": "bestätigt"
+  },
+  "songs/songs.page#field-e45acad0": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:174",
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:58"
+   ],
+   "n": "Zahlentastatur; „Hinzufügen“ erst mit Nummer und Name aktiv wie Ionic.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#text-ff22518d": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:183"
+   ],
+   "v": "bestätigt"
+  },
+  "songs/songs.page#field-e45acad0-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:180"
+   ],
+   "n": "Flutter trimmt den Namen (nur Leerzeichen gilt als leer) – ohne praktische Wirkung.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#text-0a936b9f": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:191"
+   ],
+   "v": "bestätigt"
+  },
+  "songs/songs.page#field-1ade78f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:193",
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:82"
+   ],
+   "n": "„Chor & Orchester“, Standard aus, schreibt withChoir.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#field-c79cb682": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:199",
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:83"
+   ],
+   "n": "„Mit Solo-Gesang“, Standard aus, schreibt withSolo.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#field-91386d59": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:205",
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:100",
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:40"
+   ],
+   "n": "Rolle/Tenant gleich (Admin/Verantwortlicher, nur Orchester), Label „Besetzung“, Optionen ohne Hauptgruppe, Vorauswahl alle Gruppen inkl. Hauptgruppe → instrument_ids wie Ionic. Erstprüfer wertete die Auswahlform als ok, gleiche Abweichung ist sonst diff (teachers field-cfeef758, stats field-2d5da58e): Ionic ion-select interface=modal (Auswahlliste als Modal) / Flutter AlertDialog mit Checkboxen und „Abbrechen“/„OK“.",
+   "v": "korrigiert"
+  },
+  "x-e99fb6352e": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:219",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:238",
+    "lib/core/providers/song_filter_providers.dart:92"
+   ],
+   "n": "Bestätigt. Ionic: getSongs (auch nach deleteCategory) setzt eine nicht mehr existierende selectedCategory auf '' und bereinigt selectedCategories (songs.page.ts:190) / Flutter: pruneCategories nur einmal pro Seitenzustand (_pruned). Nach Löschen im Kategorien-Sheet bleibt filter.category auf der gelöschten ID: Liste zeigt nur Werke, die die ID noch in category_ids tragen (beide Apps bereinigen die Werke nicht), kein Segment markiert, „Aktuelle Werke anzeigen“ weg, „Filter zurücksetzen“ behält category; war es die letzte Kategorie, fehlt das Segment → erst nach Verlassen der Seite (ShellRoute ohne Zustand) wieder alle Werke.",
+   "v": "bestätigt"
+  },
+  "x-0eafffa668": {
+   "s": "na",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:219",
+    "lib/core/providers/song_filter_providers.dart:92"
+   ],
+   "n": "Zurückgenommen als Duplikat von x-e99fb6352e (gleiche Ursache _pruned, gleiche Wirkung); die Lücke bleibt dort mit mittel erfasst. Zudem ungenau: die Liste wird nicht leer, sondern zeigt weiter die Werke mit der gelöschten Kategorie-ID.",
+   "v": "korrigiert"
+  }
+ },
+ "extra": []
+}

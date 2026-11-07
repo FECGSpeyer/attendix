@@ -1,0 +1,1156 @@
+{
+ "batch": "b35-team",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "tasks/task-detail/task-detail.page#logic-945723cf": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:28",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:141",
+    "lib/features/team_organization/team_org_utils.dart:341"
+   ],
+   "n": "isLeader/isMine/isOverdue/assigneeText/attendanceLabel/hasSource, Laden, Status, Bearbeiten, Löschen gleich; sichtbare Abweichungen nur in den Items (Segment nicht optimistisch, Zurück/Refresh)."
+  },
+  "tasks/task-detail/task-detail.page#toast-c72a240e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:36"
+   ],
+   "n": "Grüner Erfolgs-Toast „Erledigt – danke!“ nur bei status=completed (Ionic-Default success)."
+  },
+  "tasks/task-detail/task-detail.page#toast-7ac8159c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:38"
+   ]
+  },
+  "tasks/task-detail/task-detail.page#alert-3b0ee21a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:45",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:53"
+   ],
+   "n": "Dialog „Aufgabe löschen?“ / „Die Aufgabe wird endgültig entfernt.“, Abbrechen + Löschen (destruktiv); Löschen → deleteTask, Toast, Navigation."
+  },
+  "tasks/task-detail/task-detail.page#toast-530c6140": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:56"
+   ]
+  },
+  "tasks/task-detail/task-detail.page#nav-6c8e01ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:57"
+   ],
+   "n": "context.go('/settings/team-organization') = Ionic navigateBack('/tabs/settings/team-organization')."
+  },
+  "tasks/task-detail/task-detail.page#toast-6ad4cd08": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:59",
+    "lib/data/repositories/task_repository.dart:175"
+   ]
+  },
+  "tasks/task-detail/task-detail.page#action-367e5078": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:74",
+    "lib/core/providers/push_providers.dart:313"
+   ],
+   "n": "In-App identisch (pop). Push/Deep-Link: Ionic: ion-back-button defaultHref=backHref (Leitung → Teamorganisation, Mitglieder → /tabs/signout, wenn im Einstellungen-Tab kein Verlauf) / Flutter: Push öffnet per go('/settings/tasks/:id'), Zurück führt immer auf die Einstellungen-Seite.",
+   "sev": "niedrig"
+  },
+  "tasks/task-detail/task-detail.page#text-8396c3eb": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:75"
+   ]
+  },
+  "tasks/task-detail/task-detail.page#action-5099bb1b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:77",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:78"
+   ],
+   "n": "Nur Leitung + Aufgabe geladen; öffnet Aufgabenformular, danach Neuladen per Invalidierung."
+  },
+  "tasks/task-detail/task-detail.page#action-b4ae1052": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:83"
+   ],
+   "n": "Rotes Papierkorb-Icon, nur Leitung."
+  },
+  "tasks/task-detail/task-detail.page#action-df7b76e8": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:116",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:134",
+    "lib/core/providers/team_org_providers.dart:173"
+   ],
+   "n": "Ionic: Refresher in jedem Zustand, auch bei „Diese Aufgabe gibt es nicht mehr…“ (z. B. nach Ladefehler) / Flutter: RefreshIndicator nur bei geladener Aufgabe; nach einem Ladefehler bleibt taskByIdProvider (family ohne autoDispose) im Fehler → auch beim erneuten Öffnen dauerhaft „nicht verfügbar“, kein Neuladen möglich.",
+   "sev": "mittel"
+  },
+  "tasks/task-detail/task-detail.page#text-2ff03e0b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:119"
+   ]
+  },
+  "tasks/task-detail/task-detail.page#action-96d71bae": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:127"
+   ],
+   "n": "Ionic: routerLink navigiert immer zu backHref (Leitung: Teamorganisation, sonst /tabs/signout) / Flutter: pop() zur vorherigen Seite (z. B. Protokoll oder Thema), nur ohne Verlauf go(backHref).",
+   "sev": "niedrig"
+  },
+  "tasks/task-detail/task-detail.page#text-bee01c7b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:176"
+   ],
+   "n": "Erledigt: durchgestrichen + grau wie Ionic .is-done."
+  },
+  "tasks/task-detail/task-detail.page#text-c11b97ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:148",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:187"
+   ],
+   "n": "„Dir zugewiesen“ / „Zugewiesen an {name}“ / „Noch niemandem zugewiesen“."
+  },
+  "tasks/task-detail/task-detail.page#field-98dcebe4": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:194",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:31"
+   ],
+   "n": "Optionen Offen/In Arbeit/Erledigt gleich. Ionic: Status wird optimistisch gesetzt, Segment springt sofort um (bei Fehler zurück) / Flutter: kein optimistischer Wechsel, Segment bleibt deaktiviert auf dem alten Wert bis die Aufgabe nach dem Speichern neu geladen ist.",
+   "sev": "niedrig"
+  },
+  "tasks/task-detail/task-detail.page#text-8b7082f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:204"
+   ]
+  },
+  "tasks/task-detail/task-detail.page#text-1426d778": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:206"
+   ]
+  },
+  "tasks/task-detail/task-detail.page#text-4f08b74c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:209"
+   ],
+   "n": "Name oder „Niemand“ (tasksNobody)."
+  },
+  "tasks/task-detail/task-detail.page#text-42f959f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:212"
+   ]
+  },
+  "tasks/task-detail/task-detail.page#text-0a1f7670": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:213"
+   ],
+   "n": "Langes Datum + „· überfällig“ rot bzw. „Ohne Fälligkeit“ (tasksNoDue)."
+  },
+  "tasks/task-detail/task-detail.page#text-ca279706": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:221"
+   ]
+  },
+  "tasks/task-detail/task-detail.page#text-0b47706e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:222",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:277"
+   ],
+   "n": "Farben low=medium, medium=warning, high=danger wie Ionic."
+  },
+  "tasks/task-detail/task-detail.page#text-f23a3681": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:229"
+   ]
+  },
+  "tasks/task-detail/task-detail.page#text-2a6306ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:232"
+   ]
+  },
+  "tasks/task-detail/task-detail.page#text-0f3ee4e8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:240"
+   ]
+  },
+  "tasks/task-detail/task-detail.page#action-b9c30d9d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:243",
+    "lib/core/router/legacy_routes.dart:54"
+   ],
+   "n": "Ziel /settings/protocol/:id = Ionic /tabs/attendance/:id/protocol (Legacy-Mapping); Untertitel „{Typ} vom {Datum}“."
+  },
+  "tasks/task-detail/task-detail.page#action-c566ab32": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:254"
+   ],
+   "n": "Nur Leitung; Untertitel Thementitel oder „Thema öffnen“; öffnet /settings/agenda-items/:id."
+  },
+  "tasks/task-detail/task-detail.page#text-7cddd11e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:263"
+   ]
+  },
+  "tasks/task-detail/task-detail.page#text-52aa1928": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:267"
+   ]
+  },
+  "tasks/task-detail/task-detail.page#text-c959bd9a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:271"
+   ]
+  },
+  "tasks/task-detail/task-detail.page#action-222258cc": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:91",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:107"
+   ],
+   "n": "Grüner runder Button mit Häkchen, nur bei nicht erledigter Aufgabe, während Speichern deaktiviert."
+  },
+  "tasks/task-form/task-form.component#logic-3022c985": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:82",
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:102",
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:140"
+   ],
+   "n": "Vorbelegung, Personenfilter, Benachrichtigungslogik (needsAssignmentNotice), Speichern (gleiche Spalten, tenant_id, status open, Bezüge; Edit: description null) und Benachrichtigung task_assigned gleich. Abweichung: Sortierung der Personenliste (siehe extra).",
+   "sev": "niedrig"
+  },
+  "tasks/task-form/task-form.component#modal-fbcd872a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:17"
+   ],
+   "n": "Bottom-Sheet in voller Höhe (Ionic breakpoints [0,1], initial 1); liefert gespeicherte Aufgabe oder null."
+  },
+  "tasks/task-form/task-form.component#toast-505df5d1": {
+   "s": "na",
+   "n": "toter Code: save() wird nur vom Footer-Button aufgerufen, der bei leerem Titel deaktiviert ist (task-form.component.html:326); Flutter identisch (task_form_sheet.dart:143/346)."
+  },
+  "tasks/task-form/task-form.component#toast-e5e62536": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:178"
+   ],
+   "n": "„Gespeichert“ / „Aufgabe angelegt“ grün."
+  },
+  "tasks/task-form/task-form.component#toast-94a27b91": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:181"
+   ]
+  },
+  "tasks/task-form/task-form.component#action-4173da23": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:205"
+   ]
+  },
+  "tasks/task-form/task-form.component#text-1d087fb8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:210"
+   ],
+   "n": "tasksFlutterEditTask/NewTask = „Aufgabe bearbeiten“ / „Neue Aufgabe“."
+  },
+  "tasks/task-form/task-form.component#text-cff47599": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:217"
+   ]
+  },
+  "tasks/task-form/task-form.component#field-b7f236f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:237"
+   ],
+   "n": "Platzhalter „Was ist zu tun?“, Löschen-Icon (clearInput), Satzanfang groß."
+  },
+  "tasks/task-form/task-form.component#field-5504eef7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:255"
+   ]
+  },
+  "tasks/task-form/task-form.component#text-ed9f0e50": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:267"
+   ]
+  },
+  "tasks/task-form/task-form.component#action-188401b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:269"
+   ],
+   "n": "Initialen + Name bzw. „Niemand“, öffnet Personenauswahl."
+  },
+  "tasks/task-form/task-form.component#text-da739eab": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:289"
+   ]
+  },
+  "tasks/task-form/task-form.component#action-0925aed4": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:294"
+   ],
+   "n": "Kleiner Outline-Button mit langem Datum bzw. „Kein Datum“ (tasksFlutterNoDate)."
+  },
+  "tasks/task-form/task-form.component#modal-92635511": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:127"
+   ],
+   "n": "Datums-Overlay → Flutter-Datumsdialog (showAppDatePicker); Inhalt siehe field-68caad4a."
+  },
+  "tasks/task-form/task-form.component#field-68caad4a": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:127",
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:303",
+    "lib/shared/widgets/adaptive/app_pickers.dart:47"
+   ],
+   "n": "Ionic: ion-datetime mit Buttons OK / Abbrechen / Löschen (Löschen entfernt die Fälligkeit), Woche ab Montag / Flutter: Datumsdialog ohne Löschen-Button (iOS-Look: Tippen auf Tag übernimmt sofort, kein OK/Abbrechen), Entfernen über separates X-Icon neben dem Datum; Auswahl auf 1.1.(Jahr−2) bis 1.1.(Jahr+5) begrenzt.",
+   "sev": "niedrig"
+  },
+  "tasks/task-form/task-form.component#field-df1cca73": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:312"
+   ],
+   "n": "Niedrig/Mittel/Hoch in gleicher Reihenfolge, Default Mittel."
+  },
+  "tasks/task-form/task-form.component#field-08c6fe2b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:320"
+   ],
+   "n": "„{Vorname} benachrichtigen“ bzw. „Person benachrichtigen“, Hinweis „Sofort per Push oder Telegram“, Default an."
+  },
+  "tasks/task-form/task-form.component#modal-caf75467": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:117",
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:393"
+   ],
+   "n": "Ionic: Sheet initial 75 %, auf volle Höhe ziehbar (breakpoints [0, 0.75, 1]) / Flutter: Bottom-Sheet mit fester 75 %-Höhe, nicht erweiterbar.",
+   "sev": "niedrig"
+  },
+  "tasks/task-form/task-form.component#text-07e6a74f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:400"
+   ]
+  },
+  "tasks/task-form/task-form.component#action-8db5065d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:402"
+   ],
+   "n": "Schließt ohne Änderung."
+  },
+  "tasks/task-form/task-form.component#field-ae0314ff": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:405"
+   ]
+  },
+  "tasks/task-form/task-form.component#action-18c18445": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:414"
+   ],
+   "n": "Nur ohne Suchtext; Häkchen wenn niemand gewählt; wählt niemand und schließt."
+  },
+  "tasks/task-form/task-form.component#action-acf5a339": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:427"
+   ]
+  },
+  "tasks/task-form/task-form.component#text-581bae9e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:424"
+   ]
+  },
+  "tasks/task-form/task-form.component#action-4a9b174b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:340"
+   ],
+   "n": "„Speichern“ (commonSave) / „Aufgabe anlegen“; deaktiviert bei leerem Titel oder Speichern."
+  },
+  "team-organization/protocols-tab/protocols-tab.component#logic-58a7de00": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:49",
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:73",
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:94"
+   ],
+   "n": "Zeilenaufbau (Titel/Untertitel/Datum/Entwurf/geändert), Suche, Monatsgruppen und Freigabetext gleich. Abweichung im Ladefehler (siehe extra).",
+   "sev": "mittel"
+  },
+  "team-organization/protocols-tab/protocols-tab.component#field-7b62387b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:117"
+   ],
+   "n": "Nur bei Zeilen oder Suchtext; durchsucht Titel, Typ, Datum, Entwurf/Freigegeben."
+  },
+  "team-organization/protocols-tab/protocols-tab.component#text-53f38ed5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:124"
+   ]
+  },
+  "team-organization/protocols-tab/protocols-tab.component#text-405cf743": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:124"
+   ]
+  },
+  "team-organization/protocols-tab/protocols-tab.component#text-2dca94d6": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:125"
+   ]
+  },
+  "team-organization/protocols-tab/protocols-tab.component#text-05380ad1": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:125"
+   ]
+  },
+  "team-organization/protocols-tab/protocols-tab.component#text-bdca479c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:127"
+   ]
+  },
+  "team-organization/protocols-tab/protocols-tab.component#text-c43452f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:127"
+   ]
+  },
+  "team-organization/protocols-tab/protocols-tab.component#text-8203da2e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:132",
+    "lib/features/team_organization/team_org_utils.dart:593"
+   ],
+   "n": "Monatsname + Jahr bzw. „Ohne Datum“."
+  },
+  "team-organization/protocols-tab/protocols-tab.component#action-d09ac42f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:136",
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:163"
+   ],
+   "n": "Datumskachel (Tag/Wochentag), Titel, „Datum · Typ“, Freigabetext, Badge Entwurf (warning) bzw. Freigegeben (success, nur Leitung); öffnet /settings/protocol/:id."
+  },
+  "team-organization/tasks-tab/tasks-tab.component#logic-a2306e01": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:28",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:89"
+   ],
+   "n": "Laden (Leitung alle, Mitglieder eigene), Chips/Filter, Archiv-Zählung, Gruppen, Leertexte, Untertitel, optimistisches Abhaken und Anlegen gleich; Refresh/Fehler siehe action-411a87d7 und toast-1b91ff64."
+  },
+  "team-organization/tasks-tab/tasks-tab.component#toast-1b91ff64": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:79",
+    "lib/core/providers/team_org_providers.dart:163"
+   ],
+   "n": "Ionic: roter Toast „Aufgaben konnten nicht geladen werden“, Liste bleibt stehen (getTasks/getMyTasks schlucken DB-Fehler meist → leere Liste) / Flutter: kein Toast; zentrierter Fehlertext ersetzt den ganzen Tab (auch nach fehlgeschlagenem Refresh), nicht scrollbar → kein Pull-to-Refresh, teamTasksProvider bleibt bis zur nächsten Invalidierung im Fehler.",
+   "sev": "mittel"
+  },
+  "team-organization/tasks-tab/tasks-tab.component#toast-b2f47c86": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:48"
+   ]
+  },
+  "team-organization/tasks-tab/tasks-tab.component#action-77c35df5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:121"
+   ]
+  },
+  "team-organization/tasks-tab/tasks-tab.component#action-da4e5bf3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:122"
+   ]
+  },
+  "team-organization/tasks-tab/tasks-tab.component#action-ad45d8d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:124"
+   ],
+   "n": "Label „{Kurzname} · {Anzahl}“; Tooltip mit vollem Namen fehlt (nur Web-Hover). Sortierung siehe extra tasks-tab.utils."
+  },
+  "team-organization/tasks-tab/tasks-tab.component#text-f8c29ade": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:148"
+   ],
+   "n": "Überfällig rot."
+  },
+  "team-organization/tasks-tab/tasks-tab.component#text-f28d8b0a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:150"
+   ]
+  },
+  "team-organization/tasks-tab/tasks-tab.component#action-82b056e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:191",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:223"
+   ],
+   "n": "Titel, Untertitel (Person · Fälligkeit), Badges „In Arbeit“/„Hoch“; öffnet /settings/tasks/:id."
+  },
+  "team-organization/tasks-tab/tasks-tab.component#action-95de4093": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:225"
+   ],
+   "n": "Kreis/Häkchen-Icon (grün), schaltet erledigt/offen optimistisch."
+  },
+  "team-organization/tasks-tab/tasks-tab.component#text-444e918f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:100",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:132"
+   ]
+  },
+  "team-organization/tasks-tab/tasks-tab.component#action-82982f92": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:137"
+   ]
+  },
+  "team-organization/tasks-tab/tasks-tab.component#field-cf2e1135": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:165"
+   ]
+  },
+  "team-organization/tasks-tab/tasks-tab.component#action-b57d4ec0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:69"
+   ]
+  },
+  "team-organization/tasks-tab/tasks-tab.utils#logic-1480eaf8": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/team_org_utils.dart:414",
+    "lib/features/team_organization/team_org_utils.dart:443",
+    "lib/features/team_organization/team_org_utils.dart:461",
+    "lib/features/team_organization/team_org_utils.dart:478"
+   ],
+   "n": "filterTasks, formatTaskDue, formatLongDate, localToday, toggledStatus, needsAssignmentNotice sowie Status-/Prioritäts-Labels und -Farben gleich. Abweichung: Sortierung der Personen-Chips (siehe extra).",
+   "sev": "niedrig"
+  },
+  "team-organization/team-org.utils#logic-28a985ee": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/team_org_utils.dart:54",
+    "lib/features/team_organization/team_org_utils.dart:274",
+    "lib/features/team_organization/team_org_utils.dart:367"
+   ],
+   "n": "Rollen-/Kreisprüfung, Agenda-Felder, TOP-Nummern, Startzeiten, vertagte Themen, Überfällig/Archiv, Gruppierung, isEditedAfterPublish gleich. Abweichung: Titelsortierung (siehe extra).",
+   "sev": "niedrig"
+  },
+  "team-organization/team-organization.page#logic-cb8d3ed3": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:30",
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:64"
+   ],
+   "n": "Start-Tab aus ?tab= und Laden der Person gleich. Abweichung: kein Neuladen beim Zurückkehren und beim Tabwechsel (siehe extra).",
+   "sev": "mittel"
+  },
+  "team-organization/team-organization.page#action-a5d08482": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:52"
+   ]
+  },
+  "team-organization/team-organization.page#text-e4d0791c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:53"
+   ]
+  },
+  "team-organization/team-organization.page#field-33021d7d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:55"
+   ],
+   "n": "Segment Aufgaben/Themen/Protokolle in zweiter Leiste; Flutter zusätzlich wischbar."
+  },
+  "team-organization/team-organization.page#action-411a87d7": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:108",
+    "lib/core/providers/team_org_providers.dart:170",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:385",
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:112"
+   ],
+   "n": "Ionic: Refresher lädt den aktiven Tab neu, Mitglieder-Aufgaben frisch per getMyTasks / Flutter: RefreshIndicator je Tab; im Aufgaben-Tab für Mitglieder wirkungslos – invalidate(teamTasksProvider) liefert das gecachte myTasksProvider.future (nicht invalidiert), neu zugewiesene Aufgaben erscheinen nicht. Fehlerzustände ohne Refresh siehe Toast-Items.",
+   "sev": "mittel"
+  },
+  "team-organization/team-organization.page#embed-05e88de7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:67"
+   ]
+  },
+  "team-organization/team-organization.page#embed-334beee4": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:68"
+   ]
+  },
+  "team-organization/team-organization.page#embed-159b52d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:69"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#logic-5ba0ad22": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:351",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:69",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:128",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:226"
+   ],
+   "n": "Rollen-/Kreis-Weiche, Terminwahl, Datum ändern, Termin anlegen, TOP entfernen, Annehmen/Ablehnen, Vorschlagen gleich. Abweichung: Anzeige vor vollständigem Laden (siehe extra).",
+   "sev": "niedrig"
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-f0d73e65": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:370",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:600"
+   ],
+   "n": "Ionic: roter Toast „Themen konnten nicht geladen werden“, Inhalt bleibt (getAgendaItems schluckt DB-Fehler meist) / Flutter: kein Toast; Leitung: zentrierter Fehlertext ersetzt den ganzen Tab, ohne Pull-to-Refresh, agendaItemsProvider bleibt im Fehler; Mitglieder: Fehlertext in der Liste (Refresh möglich).",
+   "sev": "mittel"
+  },
+  "team-organization/topics-tab/topics-tab.component#actionsheet-8e3d3c47": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:69"
+   ],
+   "n": "Kopf „Für welchen Termin planen?“, bis 8 Termine, „Datum dieses Termins ändern“, „Neuen Termin anlegen“, Abbrechen; aktueller Termin per Häkchen-Icon statt „ ✓“-Suffix."
+  },
+  "team-organization/topics-tab/topics-tab.component#actionsheet-f0556e68": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:128"
+   ],
+   "n": "Kopf TOP-Name, „Thema öffnen“, „Aus diesem Termin entfernen“ (destruktiv), Abbrechen (automatisch)."
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-11df5505": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:153"
+   ],
+   "n": "Text gleich. Ionic: grüner Erfolgs-Toast (Default success) / Flutter: neutraler Info-Toast (showInfo).",
+   "sev": "niedrig"
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-7dbb4368": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:155"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#nav-190be6fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:141",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:508",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:537"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#nav-78aeaedf": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:431"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#nav-f98c876b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:365"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#modal-54dabea2": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:451",
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:24"
+   ],
+   "n": "Übergabe Termin + Typ gleich, Plan danach aktualisiert. Ionic: Vollbild-Modal (ohne Breakpoints) / Flutter: Bottom-Sheet mit 90 % Höhe.",
+   "sev": "niedrig"
+  },
+  "team-organization/topics-tab/topics-tab.component#alert-07626e40": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:160"
+   ],
+   "n": "Radios Hoch/Mittel/Niedrig, vorbelegt mit Priorität; Abbrechen / Übernehmen; schreibt accepted, priority, decision_note null."
+  },
+  "team-organization/topics-tab/topics-tab.component#alert-f13f91ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:194"
+   ],
+   "n": "„{Name} wird informiert…“ bzw. „Die Person“, Textfeld „Begründung (optional)“; Abbrechen / Ablehnen."
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-6b9b25ac": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:232"
+   ],
+   "n": "„Übernommen“ / „Abgelehnt“ grün; team-notify proposal_decided wie Ionic."
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-40fc1c31": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:234"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-773e9b79": {
+   "s": "na",
+   "n": "toter Code: sendSuggestion() nur über Button, der bei leerem Titel deaktiviert ist (topics-tab.component.html:244); Flutter identisch (topics_tab.dart:679/738)."
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-3235ad83": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:564"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-b78247a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:689"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#action-d04855de": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:396"
+   ],
+   "n": "„1 neuer Vorschlag“ / „n neue Vorschläge“ (ICU-Plural), „Von Mitgliedern eingereicht“, Glühbirne."
+  },
+  "team-organization/topics-tab/topics-tab.component#action-a3959875": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:402"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-35aed666": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:417"
+   ],
+   "n": "„Nächster Termin“ bzw. „Gewählter Termin“."
+  },
+  "team-organization/topics-tab/topics-tab.component#action-3157cfe0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:418"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#action-a454cdde": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:423"
+   ],
+   "n": "Titel „{Typ} · {Wochentag}, {TT.MM.}“, Minuten-Notiz nur wenn > 0."
+  },
+  "team-organization/topics-tab/topics-tab.component#action-a9fd8aa7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:433"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-3367c740": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:443"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#action-5a533757": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:447"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-5af62190": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:458"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-8ee75432": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:461"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#action-a6616d6f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:463"
+   ],
+   "n": "Während Anlegen deaktiviert; gewählter neuer Termin wird ausgewählt."
+  },
+  "team-organization/topics-tab/topics-tab.component#text-a13b4369": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:473"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-0a7991a6": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:476"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#action-db6a6c6f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:479"
+   ],
+   "n": "Badges „vertagt“/„eingeplant“, Untertitel Verantwortlich · Vorschlag von, Prioritäts-Badge; Sortierung siehe extra team-org.utils."
+  },
+  "team-organization/topics-tab/topics-tab.component#text-d8a32d79": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:510"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#field-ab65ddc9": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:519"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#action-7f827458": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:524"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#action-699aa11a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:362"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#modal-f91a5777": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:240",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:251"
+   ],
+   "n": "Ionic: Sheet in voller Höhe (Breakpoint 1); schließt automatisch, sobald nach einer Entscheidung keine Vorschläge mehr offen sind (loadLeader: isReviewOpen=false) / Flutter: Bottom-Sheet 85 % Höhe, bleibt nach der letzten Entscheidung offen.",
+   "sev": "niedrig"
+  },
+  "team-organization/topics-tab/topics-tab.component#action-051b8f7f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:257"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-d2385962": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:262"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-c03f0b71": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:273"
+   ],
+   "n": "Hinweis bei offenen Vorschlägen (Ionic-Sheet ist nur dann offen)."
+  },
+  "team-organization/topics-tab/topics-tab.component#text-1e54bcf8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:281"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-921d34f9": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:289"
+   ],
+   "n": "Name bzw. „Mitglied“ (teamOrgFlutterMember)."
+  },
+  "team-organization/topics-tab/topics-tab.component#text-1e977710": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:293"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-5ea5f4d9": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:296"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-1373b371": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:297"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#action-8d43340c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:306"
+   ],
+   "n": "Grauer Outline-Button, während Entscheidung gesperrt."
+  },
+  "team-organization/topics-tab/topics-tab.component#action-82525c3b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:317"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-62bc2cc3": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:273"
+   ],
+   "n": "Ionic: praktisch nur kurz beim automatischen Schließen sichtbar, Hinweis bleibt darüber / Flutter: Sheet bleibt offen (siehe modal-f91a5777) und zeigt „Alle Vorschläge sind entschieden.“ dauerhaft anstelle des Hinweises.",
+   "sev": "niedrig"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-729adf66": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:582"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-59b7f7b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:583"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#action-1d76455a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:587"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-67aab65d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:604"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-5ea5f4d9-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:612"
+   ],
+   "n": "Darunter „Von der Leitung übernommen“ bzw. „Eingereicht am {Datum}“."
+  },
+  "team-organization/topics-tab/topics-tab.component#text-fd9c6263": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:622"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-569e6f57": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:627"
+   ],
+   "n": "Übernommen grün / Abgelehnt rot / Wartet grau."
+  },
+  "team-organization/topics-tab/topics-tab.component#text-2b2a9314": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:606"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#modal-0f4cf4d0": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:555",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:700"
+   ],
+   "n": "Ionic: Sheet in voller Höhe (breakpoints [0,1], initial 1) / Flutter: Bottom-Sheet nur so hoch wie der Inhalt (mainAxisSize.min).",
+   "sev": "niedrig"
+  },
+  "team-organization/topics-tab/topics-tab.component#action-3118994b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:706"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-ea18beab": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:708"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#text-59b7f7b0-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:713"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#field-a7c2d1da": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:717"
+   ],
+   "n": "Gestapeltes Label „Titel“, Platzhalter „z. B. Neue Notenpulte“."
+  },
+  "team-organization/topics-tab/topics-tab.component#field-12915c8b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:722"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.component#action-3d3811bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:737"
+   ],
+   "n": "Deaktiviert bei leerem Titel/Senden; Insert proposal_status pending, status open, priority medium, proposed_by."
+  },
+  "team-organization/topics-tab/topics-tab.component#text-6db4964a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:33"
+   ]
+  },
+  "team-organization/topics-tab/topics-tab.utils#logic-cd8b7c00": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/team_org_utils.dart:290",
+    "lib/features/team_organization/team_org_utils.dart:312",
+    "lib/features/team_organization/team_org_utils.dart:324",
+    "lib/features/team_organization/team_org_utils.dart:250",
+    "lib/data/models/team_org/team_org.dart:46"
+   ],
+   "n": "splitTopics, suggestionStatus (Label/Farbe), relativeDay, planTops, initials gleich."
+  }
+ },
+ "extra": [
+  {
+   "unit": "team-organization/team-organization.page",
+   "title": "Kein Neuladen beim Zurückkehren/Tabwechsel",
+   "n": "Ionic: ionViewWillEnter lädt den aktiven Tab bei jeder Rückkehr neu, jeder Segmentwechsel erzeugt den Tab neu (ngOnInit → reload) / Flutter: Tabs lesen app-weit gecachte Provider (kein autoDispose), neu geladen nur nach eigenen Mutationen oder Pull-to-Refresh. Dadurch veraltet z. B.: neue Protokoll-Entwürfe und Ergebnisse („vertagt“) – protocolsProvider wird nur bei Freigabe invalidiert –, außerhalb der Teamorganisation angelegte/gelöschte Termine (Nächster Termin) und Änderungen anderer Personen.",
+   "sev": "mittel",
+   "ionic": "src/app/team-organization/team-organization.page.ts:40",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:64",
+    "lib/core/providers/team_org_providers.dart:245",
+    "lib/core/providers/team_org_providers.dart:255",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1024"
+   ]
+  },
+  {
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "title": "Anzeige vor vollständigem Laden",
+   "n": "Ionic: loadLeader wartet per Promise.all auf Themen, Protokolle und kommende Termine, bis dahin Skeleton / Flutter: Tab erscheint, sobald die Themen geladen sind; solange Termine/Protokolle noch laden, steht kurz „Kein Termin mit Protokoll & Tagesordnung geplant.“ mit „Termin anlegen“ da und „vertagt“-Badges fehlen. Mitglieder: Vorschlagskarte sofort, Liste mit Spinner statt Skeleton.",
+   "sev": "niedrig",
+   "ionic": "src/app/team-organization/topics-tab/topics-tab.component.ts:113",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:353",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:456",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:596"
+   ]
+  },
+  {
+   "unit": "team-organization/protocols-tab/protocols-tab.component",
+   "title": "Ladefehler der Protokollliste",
+   "n": "Ionic: Fehler → rows=[] → Leerzustand („Noch keine Protokolle…“), Refresher bleibt nutzbar (getProtocols schluckt DB-Fehler ohnehin) / Flutter: zentrierter Text „Protokoll konnte nicht geladen werden.“ (Singular) ohne Pull-to-Refresh; protocolsProvider bleibt bis zur nächsten Invalidierung im Fehler.",
+   "sev": "mittel",
+   "ionic": "src/app/team-organization/protocols-tab/protocols-tab.component.ts:76",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:94",
+    "lib/core/providers/team_org_providers.dart:245"
+   ]
+  },
+  {
+   "unit": "tasks/task-form/task-form.component",
+   "title": "Sortierung der Personenauswahl",
+   "n": "Ionic: personName.localeCompare(…, 'de') / Flutter: fullName.toLowerCase().compareTo → Namen mit Umlaut/Akzent am Anfang (Ä, Ö, Ü, É …) stehen am Ende statt alphabetisch eingeordnet.",
+   "sev": "niedrig",
+   "ionic": "src/app/tasks/task-form/task-form.component.ts:121",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:105"
+   ]
+  },
+  {
+   "unit": "team-organization/tasks-tab/tasks-tab.utils",
+   "title": "Sortierung der Personen-Chips",
+   "n": "Ionic: name.localeCompare(…, currentLanguage()) / Flutter: toLowerCase().compareTo (Codepunkte) → Chips von Personen mit Umlaut-/Akzent-Anfang stehen am Ende.",
+   "sev": "niedrig",
+   "ionic": "src/app/team-organization/tasks-tab/tasks-tab.utils.ts:67",
+   "f": [
+    "lib/features/team_organization/team_org_utils.dart:438"
+   ]
+  },
+  {
+   "unit": "team-organization/team-org.utils",
+   "title": "Titelsortierung Themen/Aufgaben",
+   "n": "Ionic: title.localeCompare (sortTopicsForPlanning, groupTasksByDue: Gleichstand und Gruppe „Ohne Datum“) / Flutter: String.compareTo – Großbuchstaben vor Kleinbuchstaben, Umlaute ans Ende (z. B. „Zeitplan“ vor „abstimmen“, „Ölwechsel“ hinter „Zoom“).",
+   "sev": "niedrig",
+   "ionic": "src/app/team-organization/team-org.utils.ts:167",
+   "f": [
+    "lib/features/team_organization/team_org_utils.dart:284",
+    "lib/features/team_organization/team_org_utils.dart:389",
+    "lib/features/team_organization/team_org_utils.dart:395"
+   ]
+  }
+ ]
+}

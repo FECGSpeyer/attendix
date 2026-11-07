@@ -1,0 +1,1540 @@
+{
+ "batch": "zz-verify5-b-opus-09",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 42,
+    "method": "ImageService.updateImage",
+    "cond": [],
+    "table": "storage:profiles",
+    "op": "getPublicUrl",
+    "payload": "fileName",
+    "filters": [],
+    "src": "61bc668a",
+    "mbody": "36ea5476",
+    "id": "services/image/image.service#db-12611d90"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:424",
+     "lib/data/repositories/profile_repository.dart:424"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart",
+    "lib/data/repositories/profile_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 85,
+    "method": "ImageService.copyProfileImage",
+    "cond": [
+     "(!error)",
+     "(sourcePath && sourcePath !== targetPath)",
+     "(markerIndex !== -1)"
+    ],
+    "table": "storage:profiles",
+    "op": "getPublicUrl",
+    "payload": "targetPath",
+    "filters": [],
+    "src": "201dad3a",
+    "mbody": "b2f44db8",
+    "id": "services/image/image.service#db-4cfbc031"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:452",
+     "lib/data/repositories/player_repository.dart:1754"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 53,
+    "method": "ImageService.updateImage",
+    "cond": [
+     "!(appId && currentUserId === appId)"
+    ],
+    "table": "player",
+    "op": "update",
+    "payload": "{ img: data.publicUrl }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "fc7d0600",
+    "mbody": "36ea5476",
+    "id": "services/image/image.service#db-58f14585-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:436"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 172,
+    "method": "ImageService.updateAttendanceImage",
+    "cond": [],
+    "table": "attendance",
+    "op": "update",
+    "payload": "{ img: data.publicUrl }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "4f4e5b06",
+    "mbody": "e2e49a01",
+    "id": "services/image/image.service#db-7913e521"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:1101"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 26,
+    "method": "ImageService.removeImage",
+    "cond": [],
+    "table": "storage:profiles",
+    "op": "remove",
+    "payload": "[imgPath]",
+    "filters": [],
+    "src": "7878efa6",
+    "mbody": "6da28d13",
+    "id": "services/image/image.service#db-7a9f2e5f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/person_header.dart:320",
+     "lib/data/repositories/profile_repository.dart:469"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart",
+    "lib/data/repositories/profile_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 92,
+    "method": "ImageService.copyProfileImage",
+    "cond": [],
+    "table": "player",
+    "op": "update",
+    "payload": "{ img: url }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: targetId })"
+    ],
+    "tenantFilter": false,
+    "src": "6eccc9c8",
+    "mbody": "b2f44db8",
+    "id": "services/image/image.service#db-99d7e9b8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:452",
+     "lib/data/repositories/player_repository.dart:1754"
+    ],
+    "n": "update {img: url} auf die Zielzeile (zusätzlich tenantId des Ziel-Tenants); Kopierfehler behält die Quell-URL wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 34,
+    "method": "ImageService.updateImage",
+    "cond": [],
+    "table": "storage:profiles",
+    "op": "upload",
+    "payload": "fileName, image, { upsert: true }",
+    "filters": [],
+    "src": "7c5b8b25",
+    "mbody": "36ea5476",
+    "id": "services/image/image.service#db-a5100067"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:424",
+     "lib/data/repositories/profile_repository.dart:424"
+    ],
+    "n": "Gleicher Bucket, Key <id>, upsert.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart",
+    "lib/data/repositories/profile_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 82,
+    "method": "ImageService.copyProfileImage",
+    "cond": [
+     "(sourcePath && sourcePath !== targetPath)",
+     "(markerIndex !== -1)"
+    ],
+    "table": "storage:profiles",
+    "op": "remove",
+    "payload": "[targetPath]",
+    "filters": [],
+    "src": "a7475ccf",
+    "mbody": "b2f44db8",
+    "id": "services/image/image.service#db-a7577189"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:452",
+     "lib/data/repositories/player_repository.dart:1754"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 19,
+    "method": "ImageService.removeImage",
+    "cond": [
+     "!(appId && currentUserId === appId)",
+     "(!newUser)"
+    ],
+    "table": "player",
+    "op": "update",
+    "payload": "{ img: '' }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "47a357fe",
+    "mbody": "6da28d13",
+    "id": "services/image/image.service#db-a8a5f597-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/person_header.dart:314"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 167,
+    "method": "ImageService.updateAttendanceImage",
+    "cond": [],
+    "table": "storage:attendances",
+    "op": "getPublicUrl",
+    "payload": "id.toString()",
+    "filters": [],
+    "src": "69ec163c",
+    "mbody": "e2e49a01",
+    "id": "services/image/image.service#db-dd0a299b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:1099"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/image/image.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "removeImage:11-29",
+     "updateImage:31-60",
+     "copyProfileImage:70-102",
+     "updateTenantLogo:110-128",
+     "removeTenantLogo:130-134",
+     "updateOrgLogo:136-151",
+     "removeOrgLogo:153-157",
+     "updateAttendanceImage:159-178"
+    ],
+    "bodies": {
+     "removeImage": "6da28d13",
+     "updateImage": "36ea5476",
+     "copyProfileImage": "b2f44db8",
+     "updateTenantLogo": "fd039478",
+     "removeTenantLogo": "53c3afaf",
+     "updateOrgLogo": "0b3fb2d0",
+     "removeOrgLogo": "28e94321",
+     "updateAttendanceImage": "e2e49a01"
+    },
+    "id": "services/image/image.service#logic-48858de3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:420",
+     "lib/data/repositories/player_repository.dart:452",
+     "lib/data/repositories/profile_repository.dart:413",
+     "lib/data/repositories/profile_repository.dart:451",
+     "lib/data/repositories/organisation_settings_repository.dart:98",
+     "lib/data/repositories/attendance_repository.dart:1094"
+    ],
+    "n": "Upload/Entfernen/Kopieren von Profilbild, Org-Logo und Termin-Bild entsprechen den Repositories; der appId-Zweig (alle Tenants) weicht ab, siehe db-a8a5f597 und db-58f14585. Tenant-Logo-Methoden sind toter Code.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart",
+    "lib/data/repositories/profile_repository.dart",
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/layout/layout.service",
+   "ionic": {
+    "ts": "services/layout/layout.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/layout/layout.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "width:21-21",
+     "sidePanel:24-24",
+     "sidePanelFixed:26-26",
+     "collapsed:30-34",
+     "constructor:36-44",
+     "toggleCollapsed:46-48",
+     "setCollapsed:50-57",
+     "readCollapsedChoice:59-66"
+    ],
+    "bodies": {
+     "width": "b0e76aa0",
+     "sidePanel": "cba22e0c",
+     "sidePanelFixed": "dc20e05a",
+     "collapsed": "624bb1f8",
+     "constructor": "b31770f1",
+     "toggleCollapsed": "ec78ba62",
+     "setCollapsed": "053fa3ab",
+     "readCollapsedChoice": "f8798d8d"
+    },
+    "id": "services/layout/layout.service#logic-e1e06d78"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav_layout.dart:14",
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:88",
+     "lib/shared/widgets/layout/main_shell.dart:338"
+    ],
+    "n": "Gleiche Breakpoints (768/992/1200), Einklapp-Zustand unter 'sidePanelCollapsed' (SharedPreferences statt localStorage) und Umschalter.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 157,
+    "method": "LiveActivityService.runningPlans",
+    "cond": [],
+    "table": "attendance",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, date, plan, extra_plans, duration_days, share_plan, type_id, typeInfo'",
+    "filters": [
+     "eq('tenantId', tenant.id)",
+     "gte('date', dayjs().subtract(LOOKBACK_DAYS, 'day').startOf('day').toISOString())",
+     "lte('date', dayjs().add(1, 'day').endOf('day').toISOString())",
+     "not('plan', 'is', null)"
+    ],
+    "tenantFilter": true,
+    "src": "be00502e",
+    "mbody": "05036cce",
+    "roleGuarded": true,
+    "id": "services/live-activity/live-activity.service#db-142faef7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/live_activity_repository.dart:30",
+     "lib/core/services/live_activity_service.dart:578"
+    ],
+    "n": "Gleiche Spalten/Filter (tenantId, 14 Tage zurück bis morgen 23:59 lokal, plan nicht null). Rollen gleich: Beobachter nie, Admin/Verantwortlich alle Pläne, alle anderen (Helfer, Stimmführer, Spieler, Eltern, Bewerber) nur mit share_plan. Nur native App mit Plugin.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 211,
+    "method": "LiveActivityService.addOrgPlans",
+    "cond": [],
+    "table": "shared_plans",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, plan_title, date, time, fields'",
+    "filters": [
+     "eq('org_id', org.id)",
+     "gte('date', dayjs().subtract(1, 'day').format('YYYY-MM-DD'))",
+     "lte('date', dayjs().add(1, 'day').format('YYYY-MM-DD'))"
+    ],
+    "tenantFilter": false,
+    "src": "05a2102c",
+    "mbody": "662d2886",
+    "roleGuarded": true,
+    "id": "services/live-activity/live-activity.service#db-2675f6b3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_plan_repository.dart:128",
+     "lib/core/services/live_activity_service.dart:648"
+    ],
+    "n": "Nur Admin/Verantwortlich mit Organisation; shared_plans nach org_id, date gestern bis morgen (YYYY-MM-DD); Flutter liest '*' statt fünf Spalten. Ohne date/time/fields übersprungen, Titel-Fallback „ORG-Plan“ – wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 199,
+    "method": "LiveActivityService.addOrgPlans",
+    "cond": [],
+    "table": "tenant_group_tenants",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'tenant_id'",
+    "filters": [
+     "eq('tenant_group', org.id)"
+    ],
+    "tenantFilter": false,
+    "src": "65349feb",
+    "mbody": "662d2886",
+    "roleGuarded": true,
+    "id": "services/live-activity/live-activity.service#db-58d62735"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_plan_repository.dart:92",
+     "lib/core/services/live_activity_service.dart:598"
+    ],
+    "n": "Nur Admin/Verantwortlich (isLeader) und nur mit Organisation: tenant_group_tenants.tenant_id nach tenant_group = Org-ID – wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 254,
+    "method": "LiveActivityService.saveToken",
+    "cond": [],
+    "table": "auth",
+    "op": "getUser",
+    "payload": null,
+    "filters": [],
+    "src": "eb766541",
+    "mbody": "8b2c467d",
+    "id": "services/live-activity/live-activity.service#db-818eac03"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/live_activity_service.dart:834"
+    ],
+    "n": "Nutzer-ID aus currentUser statt auth.getUser().",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 203,
+    "method": "LiveActivityService.addOrgPlans",
+    "cond": [
+     "?(tenantIds.length)"
+    ],
+    "table": "attendance",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, date, plan, typeInfo, attType:type_id(name, color)'",
+    "filters": [
+     "in('tenantId', tenantIds)",
+     "eq('is_org_plan', true)",
+     "gte('date', dayjs().subtract(1, 'day').startOf('day').toISOString())",
+     "lte('date', dayjs().add(1, 'day').endOf('day').toISOString())",
+     "not('plan', 'is', null)"
+    ],
+    "tenantFilter": false,
+    "src": "acb9d10e",
+    "mbody": "662d2886",
+    "roleGuarded": true,
+    "id": "services/live-activity/live-activity.service#db-f29b62df"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_plan_repository.dart:102",
+     "lib/core/services/live_activity_service.dart:598"
+    ],
+    "n": "Nur Admin/Verantwortlich mit Organisation; attendance 'id, date, plan, typeInfo, attType:type_id(name, color)', tenantId in Org-Instanzen, is_org_plan, gestern 0:00 bis morgen 23:59, plan nicht null; ohne verbundene Instanzen leer – wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 132,
+    "method": "LiveActivityService.sync",
+    "cond": [
+     "(running)",
+     "!(c.state.phase === 'ended')"
+    ],
+    "plugin": "LiveActivity",
+    "call": "update",
+    "args": "{ attendanceId: c.attendanceId, planKey: c.planKey, state: shown(c.state) }",
+    "src": "4d1f99f5",
+    "mbody": "2b34d7e4",
+    "id": "services/live-activity/live-activity.service#native-0534809b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/live_activity_service.dart:522"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 130,
+    "method": "LiveActivityService.sync",
+    "cond": [
+     "(running)",
+     "(c.state.phase === 'ended')"
+    ],
+    "plugin": "LiveActivity",
+    "call": "end",
+    "args": "{ attendanceId: c.attendanceId, planKey: c.planKey, state: shown(c.state) }",
+    "src": "130ddcf4",
+    "mbody": "2b34d7e4",
+    "id": "services/live-activity/live-activity.service#native-09b70352"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/live_activity_service.dart:515"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 142,
+    "method": "LiveActivityService.sync",
+    "cond": [
+     "(!wanted.has(key(a)) && (!attendanceIds || attendanceIds.has(a.attendanceId)))"
+    ],
+    "plugin": "LiveActivity",
+    "call": "end",
+    "args": "{ attendanceId: a.attendanceId, planKey: a.planKey, immediate: true }",
+    "src": "0184bc1f",
+    "mbody": "2b34d7e4",
+    "id": "services/live-activity/live-activity.service#native-09b70352-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/live_activity_service.dart:545"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 244,
+    "method": "LiveActivityService.registerTokenListeners",
+    "cond": [
+     "(Capacitor.getPlatform() === 'ios')"
+    ],
+    "plugin": "LiveActivity",
+    "call": "configure",
+    "args": "{ url: environment.apiUrl, key: environment.apiKey }",
+    "src": "163507cf",
+    "mbody": "4470ec4e",
+    "id": "services/live-activity/live-activity.service#native-134664fe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/live_activity_service.dart:679"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 247,
+    "method": "LiveActivityService.registerTokenListeners",
+    "cond": [],
+    "plugin": "LiveActivity",
+    "call": "getTokens",
+    "args": "",
+    "src": "55402fbc",
+    "mbody": "4470ec4e",
+    "id": "services/live-activity/live-activity.service#native-13900c1d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/live_activity_service.dart:686"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 78,
+    "method": "LiveActivityService.init",
+    "cond": [
+     "(!this.started)"
+    ],
+    "plugin": "App",
+    "call": "addListener",
+    "args": "'appStateChange', ({ isActive }) => { if (isActive) { this.startLoop(); } else { this.stopLoop(); } }",
+    "src": "165072ac",
+    "mbody": "7bee0196",
+    "id": "services/live-activity/live-activity.service#native-3a9fbadc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/live_activity_service.dart:416"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 119,
+    "method": "LiveActivityService.sync",
+    "cond": [],
+    "plugin": "LiveActivity",
+    "call": "list",
+    "args": "",
+    "src": "8a375e87",
+    "mbody": "2b34d7e4",
+    "id": "services/live-activity/live-activity.service#native-72f0d353"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/live_activity_service.dart:496"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 134,
+    "method": "LiveActivityService.sync",
+    "cond": [
+     "!(running)",
+     "!(c.state.phase === 'ended')"
+    ],
+    "plugin": "LiveActivity",
+    "call": "start",
+    "args": "{ ...c, state: shown(c.state) }",
+    "src": "e557c9be",
+    "mbody": "2b34d7e4",
+    "id": "services/live-activity/live-activity.service#native-aeb702b8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/live_activity_service.dart:530"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 98,
+    "method": "LiveActivityService.setEnabled",
+    "cond": [
+     "(!enabled)"
+    ],
+    "plugin": "LiveActivity",
+    "call": "endAll",
+    "args": "",
+    "src": "59f25d5b",
+    "mbody": "a2d3cf52",
+    "id": "services/live-activity/live-activity.service#native-c934f51c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/live_activity_service.dart:449"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 67,
+    "method": "LiveActivityService.init",
+    "cond": [],
+    "plugin": "LiveActivity",
+    "call": "isAvailable",
+    "args": "",
+    "src": "b81cf060",
+    "mbody": "7bee0196",
+    "id": "services/live-activity/live-activity.service#native-d5cbbf48"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/live_activity_service.dart:392"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 236,
+    "method": "LiveActivityService.registerTokenListeners",
+    "cond": [],
+    "plugin": "LiveActivity",
+    "call": "addListener",
+    "args": "'pushToStartToken', e => this.saveToken('start', e.token)",
+    "src": "ab3ac264",
+    "mbody": "4470ec4e",
+    "id": "services/live-activity/live-activity.service#native-f31c300f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/live_activity_service.dart:751"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 237,
+    "method": "LiveActivityService.registerTokenListeners",
+    "cond": [],
+    "plugin": "LiveActivity",
+    "call": "addListener",
+    "args": "'activityToken', e => this.saveToken('update', e.token, e)",
+    "src": "7a8927f1",
+    "mbody": "4470ec4e",
+    "id": "services/live-activity/live-activity.service#native-f31c300f-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/live_activity_service.dart:755"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/login.guard",
+   "ionic": {
+    "ts": "services/login.guard.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/login.guard.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:11-11",
+     "canActivate:13-27"
+    ],
+    "bodies": {
+     "constructor": "89059650",
+     "canActivate": "30fcfc6e"
+    },
+    "id": "services/login.guard#logic-7db01f48"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:342",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:92",
+     "lib/core/utils/dashboard_logic.dart:56"
+    ],
+    "n": "Eingeloggt auf /login → Startseite der Rolle bzw. /tenants (Tenant-Auswahl leitet automatisch weiter).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/notification/notification.service",
+   "ionic": {
+    "ts": "services/notification/notification.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/notification/notification.service.ts",
+    "line": 56,
+    "method": "NotificationService.updateNotificationConfig",
+    "cond": [],
+    "table": "notifications",
+    "op": "update",
+    "payload": "config as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', config.id)"
+    ],
+    "tenantFilter": false,
+    "src": "5cd990fb",
+    "mbody": "ff956911",
+    "id": "services/notification/notification.service#db-9e3d4549"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/telegram_service.dart:207",
+     "lib/features/notifications/presentation/pages/notifications_page.dart:107"
+    ],
+    "n": "Update per id mit allen Flags (ohne created_at); Tracking NotificationSettingsChanged gleich.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/telegram_service.dart",
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/notification/notification.service",
+   "ionic": {
+    "ts": "services/notification/notification.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/notification/notification.service.ts",
+    "line": 16,
+    "method": "NotificationService.getNotificationConfig",
+    "cond": [],
+    "table": "notifications",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('id', userId)",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "75148725",
+    "mbody": "461ac0e3",
+    "id": "services/notification/notification.service#db-a9921eda"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/telegram_service.dart:183"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/telegram_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/notification/notification.service",
+   "ionic": {
+    "ts": "services/notification/notification.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/notification/notification.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "getNotificationConfig:15-53",
+     "updateNotificationConfig:55-71",
+     "notifyPerTelegram:73-90",
+     "sendPlanPerTelegram:92-144",
+     "sendSongPerTelegram:146-161"
+    ],
+    "bodies": {
+     "getNotificationConfig": "461ac0e3",
+     "updateNotificationConfig": "ff956911",
+     "notifyPerTelegram": "480e4fe0",
+     "sendPlanPerTelegram": "90db8b56",
+     "sendSongPerTelegram": "a4a3cd8a"
+    },
+    "id": "services/notification/notification.service#logic-fbcbe895"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/telegram_service.dart:183",
+     "lib/core/services/telegram_service.dart:196",
+     "lib/core/services/telegram_service.dart:209"
+    ],
+    "n": "Laden/Anlegen/Ändern der Benachrichtigungs-Konfiguration entspricht TelegramService; notifyPerTelegram/sendPlanPerTelegram/sendSongPerTelegram sind toter Code (db.service.ts:3082-3091 nutzt telegramSvc).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/telegram_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 13,
+    "method": "OrganisationService.updateOrgExtraFields",
+    "cond": [],
+    "table": "tenant_groups",
+    "op": "update",
+    "payload": "{ additional_fields: fields as any }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', orgId)",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "f819c43d",
+    "mbody": "291e96da",
+    "id": "services/organisation/organisation.service#db-2b71bceb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_plan_repository.dart:260",
+     "lib/data/repositories/org_plan_repository.dart:227",
+     "lib/core/providers/plan_providers.dart:252"
+    ],
+    "n": "update tenant_groups {additional_fields} .eq('id', orgId) wie Ionic (Org über aktuelle Instanz); Feld-JSON gleiche Keys (id, name, type, defaultValue, options, visibleToPlayers, editableByPlayers, displayMode).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/plan_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 413,
+    "method": "OrganisationService.updateOrgGemeindeApp",
+    "cond": [],
+    "table": "tenant_groups",
+    "op": "update",
+    "payload": "updates as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', orgId)",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "4af75d5d",
+    "mbody": "9f4114a3",
+    "id": "services/organisation/organisation.service#db-32f64acc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_plan_repository.dart:252",
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:85"
+    ],
+    "n": "Gleiche Spalten (beamer_files_enabled bzw. gemeinde_app_key_hash + _hint, Schlüssel atx_+48 Hex, SHA-256).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 50,
+    "method": "OrganisationService.getPersonFieldValuesForPeople",
+    "cond": [],
+    "table": "tenant_group_person_fields",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'person_key, field_id, value'",
+    "filters": [
+     "eq('tenant_group', orgId)",
+     "in('person_key', personKeys)"
+    ],
+    "tenantFilter": false,
+    "src": "0218faf5",
+    "mbody": "0153add0",
+    "id": "services/organisation/organisation.service#db-3ed669cb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/shared_person_fields.dart:73"
+    ],
+    "n": "Flutter lädt seitenweise (siehe Extra).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/shared_person_fields.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 348,
+    "method": "OrganisationService.updateOrgPlanningTemplates",
+    "cond": [],
+    "table": "tenant_groups",
+    "op": "update",
+    "payload": "{ planning_templates: templates } as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', orgId)",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "376433a4",
+    "mbody": "b5c39cd2",
+    "id": "services/organisation/organisation.service#db-67309274"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_plan_repository.dart:240",
+     "lib/core/providers/plan_providers.dart:239"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/plan_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 322,
+    "method": "OrganisationService.generatePublicPlanKey",
+    "cond": [],
+    "table": "tenant_groups",
+    "op": "update",
+    "payload": "{ public_plan_key: key } as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', orgId)"
+    ],
+    "tenantFilter": false,
+    "src": "bf7221b9",
+    "mbody": "dd3e893a",
+    "id": "services/organisation/organisation.service#db-7215e087"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_plan_repository.dart:201",
+     "lib/core/providers/plan_providers.dart:259"
+    ],
+    "n": "update tenant_groups {public_plan_key} .eq('id'); 16 Hex-Zeichen aus Random.secure (Ionic randomUUID-Hex).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/plan_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 380,
+    "method": "OrganisationService.updateOrgName",
+    "cond": [],
+    "table": "tenant_groups",
+    "op": "update",
+    "payload": "{ name }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', orgId)",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "f1823bc7",
+    "mbody": "80bdc228",
+    "id": "services/organisation/organisation.service#db-a803b727"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_plan_repository.dart:246",
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:42"
+    ],
+    "n": "Getrimmter Name wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 96,
+    "method": "OrganisationService.deletePersonFieldValues",
+    "cond": [],
+    "table": "tenant_group_person_fields",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('tenant_group', orgId)",
+     "in('field_id', fieldIds)"
+    ],
+    "tenantFilter": false,
+    "src": "e6dae50d",
+    "mbody": "e778f8dc",
+    "id": "services/organisation/organisation.service#db-ac6b27bd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_plan_repository.dart:307",
+     "lib/core/providers/plan_providers.dart:255",
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:107"
+    ],
+    "n": "delete tenant_group_person_fields .eq('tenant_group').in('field_id') nach dem Speichern der Felder, gelöschte IDs = original minus aktuell, wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/plan_providers.dart",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  }
+ ]
+}

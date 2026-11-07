@@ -1,0 +1,437 @@
+{
+ "batch": "zz-verify6-sonnet-12",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "org-settings/org-person-fields/org-person-fields.page#field-e81d372e": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:440"
+   ],
+   "n": "Schalter „Für Mitglieder sichtbar“ + Hilfetext, Standard aus; Admin-only wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#modal-1fbef7b1": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:70",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:395"
+   ],
+   "n": "Edit-Sheet mit Kopie, Typ nicht änderbar, Wegwischen verwirft, „Übernehmen“ prüft Optionen.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#modal-b6eb6b51": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:53",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:281"
+   ],
+   "n": "Auslöser/Rolle gleich (nur Admin). Ionic: newField bleibt nach Wegwischen erhalten / Flutter: Sheet startet leer. Nur Komfort, Funktion gleich.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-079ad93e": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:463"
+   ],
+   "n": "Ionic Edit: „Keine Optionen“ / Flutter: „Keine Optionen ausgewählt“; gleiche Bedeutung.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-2cad8859": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:405"
+   ],
+   "n": "„Neues Feld hinzufügen“.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-8be14847": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:411"
+   ],
+   "n": "Typname rechts im Edit-Sheet.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-8e53f70a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:486"
+   ],
+   "n": "„Standardwert“-Schalter bei Ja/Nein (Add: Flutter-Label gleich).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-8e53f70a-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:486"
+   ],
+   "n": "„Standardwert“-Schalter bei Ja/Nein (Edit).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-a8a25bcf": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:405"
+   ],
+   "n": "„Feld bearbeiten“.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-c96d82b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:456"
+   ],
+   "n": "„Optionen“ nur bei Typ Auswahl.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-c96d82b0-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:456"
+   ],
+   "n": "„Optionen“ nur bei Typ Auswahl (Edit).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-e85d8c9c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:463"
+   ],
+   "n": "„Keine Optionen ausgewählt“ bei leerer Liste (Add).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-f87b8a1c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:135"
+   ],
+   "n": "Leertext bei leerer Liste; Seite per Router-Guard Admin/Verantwortlich, Bearbeiten nur Admin wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-ff653f98": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:410"
+   ],
+   "n": "„Typ“ im Edit-Sheet.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-c77d8a1e": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:367"
+   ],
+   "n": "Toast „Bitte füge mindestens eine Auswahloption hinzu.“ (rot), Sheet bleibt offen.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-01d7d5ac": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:619",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:545"
+   ],
+   "n": "Tippen öffnet „Feld bearbeiten“, Zeile „HH:mm | Ausführender“. Ionic: Werk-Platzhalter kursiv ohne Zeit / Flutter: normal mit Zeit, zusätzlich kursive Info-Zeile. Nur Darstellung.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-2df56b6c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:661",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:281"
+   ],
+   "n": "Löschen-Option ohne Rückfrage wie Ionic (Blöcke fragen nach, Flutter-Zusatz).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-2f0f2a33": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:481",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:204"
+   ],
+   "n": "Template löschen ohne Rückfrage, speichert wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-51e20dd1": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:405",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:146"
+   ],
+   "n": "Voll-Wischen löscht Standardfeld (DismissiblePane), speichert.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-687aeae0": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:441",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:155"
+   ],
+   "n": "„+“ im Header Vorlagen, fragt Namen, speichert, klappt neue Vorlage auf.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-79db6f21": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:379",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:420",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:425"
+   ],
+   "n": "Leertext, Name+Ausführender, Antippen bearbeitet, Minuten-Feld, Sortieren speichert.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-95567a5a": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:444",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:502"
+   ],
+   "n": "Sortieren per Ziehgriff mit Neuberechnung/Speichern gleich. Ionic: leere Vorlage zeigt keine Zeile / Flutter: „Keine Felder“.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-b326a42a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:378",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:89"
+   ],
+   "n": "„+“ Standardfeld-Dialog, speichert.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-babb6f3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:488"
+   ],
+   "n": "Titel, „n Feld/Felder · Dauer“, Auf-/Zuklappen.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-bd8f72cc": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:407",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:146"
+   ],
+   "n": "Löschen-Option Standardfeld, speichert.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-d1249587": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:647"
+   ],
+   "n": "Ionic: Voll-Wischen löscht / Flutter: nur Tipp auf Löschen-Option (kein DismissiblePane), zusätzlich Option „Einrücken“. Gleiches Ergebnis.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-ed8e3687": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:475",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:189"
+   ],
+   "n": "Umbenennen per Wisch-Option, speichert.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-1b2d213f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:107"
+   ],
+   "n": "Feldname/Ausführender/Minuten ohne Info, „Speichern“, Pflichtmeldung.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-255be77f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:89",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:40"
+   ],
+   "n": "„Feld hinzufügen“, Name/Ausführender/Info/Minuten (20), Abbrechen/Hinzufügen, Pflichtmeldung.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-d30419c5": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:265"
+   ],
+   "n": "„Notizfeld hinzufügen“, id „noteFld <Text>“, time 0, Name nicht Pflicht wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-ff2bca9c": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:220"
+   ],
+   "n": "Titel, Felder, Pflichtmeldung gleich. Ionic: Button „Speichern“ / Flutter: „Updaten“ (gemeinsamer Editor-Dialog).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#field-0fbdb2fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:287",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:500"
+   ],
+   "n": "Startzeit wählen, speichert. Gespeichertes Format „HH:mm“ statt ISO (Flutter und Ionic lesen beide Formen); siehe Extra „Startzeit-Format“.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#field-a0f363a7": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:573",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:290"
+   ],
+   "n": "Minuten-Zahlenfeld je Feld (nicht bei Notizen), Ende neu berechnet, speichert; Flutter speichert bei jeder Eingabe statt beim Verlassen.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#field-d048865c": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:500",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:287"
+   ],
+   "n": "Ionic: ion-datetime-button, speichert bei Rad-Änderung / Flutter: Button „--:--“ ohne Wert, Picker startet 10:00, speichert bei Bestätigen. Gleiche Funktion.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#modal-3febb718": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:290"
+   ],
+   "n": "Zeit-Picker statt Inline-Modal, 24 h.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-58b1f3a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:446"
+   ],
+   "n": "„Noch keine Vorlagen definiert“.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-f189620f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:499"
+   ],
+   "n": "„Startzeit“.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-034c64fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:181",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:44"
+   ],
+   "n": "Nur Admin; destruktive Bestätigung, löscht tenant_group_tenants-Link (+ leere Org), Toast; Flutter zusätzlich Fehlertoast.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-0f593c87": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:195"
+   ],
+   "n": "→ /settings/org-settings/planning-templates; Admin + Verantwortlich (Guard).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-14c8d226": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:189",
+    "lib/core/router/app_router.dart:1258"
+   ],
+   "n": "Branding → gleiche BrandingPage; /settings/general geschützt Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-16566c33": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:219",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:69"
+   ],
+   "n": "Nur Admin + fecg_link_enabled; Texte, Erneuern-Bestätigung, Hash/Hint-Speicherung, Schlüssel-Dialog mit Kopieren/Schließen wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-1e69166b": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:137"
+   ],
+   "n": "Zurück-Pfeil automatisch über AppBar.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-77cfad47": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:155",
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:15"
+   ],
+   "n": "Nur Admin, ohne Org; Org-Auswahl bzw. direkt Erstellen wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-79ded874": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:240"
+   ],
+   "n": "Nur Admin; Personen verknüpfen (Seite statt Modal, Darstellung).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-8ea841f2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:247"
+   ],
+   "n": "Nur Admin → /settings/org-settings/person-fields.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-95a1e432": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:173"
+   ],
+   "n": "Org-Name; „Tippen zum Umbenennen“, Chevron, Umbenennen nur Admin.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-9d64834f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:201"
+   ],
+   "n": "„Org-Pläne“ → /settings/org-plans.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#alert-f8951c24": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:71"
+   ],
+   "n": "Erneuern-Bestätigung nur bei vorhandenem Hash, Abbrechen/Erneuern (destruktiv).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#field-16ab0b34": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:211"
+   ],
+   "n": "Schalter schreibt tenant_groups.beamer_files_enabled; nur Admin + fecg_link_enabled; Flutter zusätzlich Fehlertoast.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#loading-9aa86873": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:124",
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:137"
+   ],
+   "n": "Erstprüfer „kein Overlay“ überholt: Flutter zeigt jetzt blockierenden Spinner (barrierDismissible false, PopScope) während Erstellen+Verknüpfen.",
+   "v": "korrigiert"
+  }
+ },
+ "extra": []
+}

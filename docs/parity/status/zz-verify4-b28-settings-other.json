@@ -1,0 +1,19 @@
+{
+  "batch": "zz-verify4-b28-settings-other",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "settings/role-permissions/role-permissions.page#field-960c2d92": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/role_permissions_page.dart:189",
+        "lib/features/settings/presentation/pages/role_permissions_page.dart:193",
+        "lib/features/settings/presentation/pages/role_permissions_page.dart:204",
+        "lib/features/settings/presentation/pages/role_permissions_page.dart:81"
+      ],
+      "n": "Schalter „Dateiablage für alle Mitglieder“ mit Hilfetext. Seite für Admin/Verantwortlich (Guard app_router.dart:176 = Ionic isAdmin-Einstieg); bedienbar nur für Admin (Ionic canEditFilesShared = ADMIN, Flutter role.isAdmin = nur admin), Verantwortliche sehen ihn deaktiviert; files_shared wird nur von Admins und nur bei Änderung geschrieben – wie Ionic.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

@@ -1,0 +1,429 @@
+{
+ "batch": "zz-verify6-sonnet-20",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "protocols/protocol/protocol.page#action-7b79c06e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1809"
+   ],
+   "v": "bestätigt",
+   "n": "Breites Layout: Zeile „Punkt“ mit Plus am Ende der Liste, öffnet Dialog „Spontaner Punkt“."
+  },
+  "protocols/protocol/protocol.page#action-85b310a5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:992"
+   ],
+   "v": "bestätigt",
+   "n": "„Abbrechen“ bei bereits freigegebenem Protokoll, sonst „Als Entwurf lassen“; schließt Sheet ohne Freigabe."
+  },
+  "protocols/protocol/protocol.page#action-a536206e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1765",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1792"
+   ],
+   "v": "bestätigt",
+   "n": "Zeit, Titel, Leitung · min, Auswahl- und Live-Markierung, Tippen aktiviert und fokussiert den Editor."
+  },
+  "protocols/protocol/protocol.page#action-b5f2fcb0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:902"
+   ],
+   "v": "bestätigt",
+   "n": "„Abbrechen“ links im Freigabe-Sheet."
+  },
+  "protocols/protocol/protocol.page#action-c6f17db5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1949"
+   ],
+   "v": "bestätigt",
+   "n": "Allgemeine Notizen rechts im breiten Layout, editierbar, Änderungen werden gespeichert."
+  },
+  "protocols/protocol/protocol.page#action-c84d1157": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1642",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2012"
+   ],
+   "v": "bestätigt",
+   "n": "Trenner rechts: Ziehen, Pfeiltasten (Shift 48, sonst 16), Home/Doppelklick setzt zurück, Breite wird gespeichert; Tooltip „Ziehen, um die Breite anzupassen …“."
+  },
+  "protocols/protocol/protocol.page#action-e9b880bb": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1446",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1613",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1733"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Breites Layout gleich (nextSectionId + Fokus). Ionic Handy: „Nächster Punkt“ auch sichtbar, wenn kein Abschnitt offen ist (springt zum ersten), öffnet, fokussiert und scrollt zum Abschnitt / Flutter Handy (eigene Live-Leiste): Button nur bei offenem Abschnitt mit Nachfolger, setzt nur die Auswahl ohne Scroll/Fokus. Nutzer kann weiter denselben Punkt wählen, daher niedrig."
+  },
+  "protocols/protocol/protocol.page#action-eb5b2d02": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1540"
+   ],
+   "v": "bestätigt",
+   "n": "Handy: Editor nur im aufgeklappten Abschnitt, editierbar, Task-Chips mit Status."
+  },
+  "protocols/protocol/protocol.page#action-eb5b2d02-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1853"
+   ],
+   "v": "bestätigt",
+   "n": "Breit: Editor des aktiven Abschnitts, editierbar."
+  },
+  "protocols/protocol/protocol.page#alert-0750ecfb": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:584",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:606",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:619"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Titel „Spontaner Punkt“, Hinweis, Felder Titel/Dauer (vorbelegt), Abbrechen/Hinzufügen gleich; Dauer min. 1. Ionic: leerer Titel → Warn-Toast „Bitte einen Titel eingeben“, Alert bleibt offen / Flutter: Dialog schließt, dann derselbe Warn-Toast, Eingaben gehen verloren. Randfall „12.5“: Ionic 12, Flutter Standarddauer. Nutzer erfährt dasselbe und kann neu öffnen."
+  },
+  "protocols/protocol/protocol.page#embed-5484c3d8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1573",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1591"
+   ],
+   "v": "bestätigt",
+   "n": "Weitere Notizen: schreibgeschützter Editor in Handy- und Leseansicht (gleiche Funktion _leftoverWidgets)."
+  },
+  "protocols/protocol/protocol.page#embed-5484c3d8-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1914",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1915"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Schreibgeschützte Notizen gleich. Flutter listet darunter zusätzlich die in diesen Notizen referenzierten Aufgaben; Ionic zeigt dort keine Aufgabenliste (die Aufgaben stehen rechts in der Sitzungsliste)."
+  },
+  "protocols/protocol/protocol.page#embed-5484c3d8-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2090"
+   ],
+   "v": "bestätigt",
+   "n": "Leseansicht: schreibgeschützte Notizen je Abschnitt mit Notizen."
+  },
+  "protocols/protocol/protocol.page#embed-5484c3d8-4": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2108"
+   ],
+   "v": "bestätigt",
+   "n": "Leseansicht: schreibgeschützte allgemeine Notizen."
+  },
+  "protocols/protocol/protocol.page#field-a14b79a7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:945",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:946"
+   ],
+   "v": "bestätigt",
+   "n": "Checkbox je Thema, Untertitel Ergebnis-Label; „Beschlossen“ vorausgewählt (close = decided, wie Ionic topicClosureCandidates); beim Freigeben Status „completed“, Fehler → Warn-Toast."
+  },
+  "protocols/protocol/protocol.page#field-c72137bf": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:888",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:973"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Schalter „Protokoll als PDF mitschicken“ / „Per Telegram als Dokument“, Standard an. Ionic: sendPdf ist Seitenzustand, ausgeschaltet bleibt es beim erneuten Öffnen aus / Flutter: bei jedem Öffnen wieder an."
+  },
+  "protocols/protocol/protocol.page#loading-20731d79": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:795"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Ionic: blockierendes Lade-Overlay beim Erstellen des PDFs / Flutter: kein Overlay bis zum Speichern/Teilen; Fehler-Toast „PDF konnte nicht erstellt werden“ bleibt."
+  },
+  "protocols/protocol/protocol.page#loading-4ee35e81": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1012"
+   ],
+   "v": "bestätigt",
+   "n": "Blockierender Spinner-Dialog (nicht schließbar) während der Freigabe; wird im finally geschlossen."
+  },
+  "protocols/protocol/protocol.page#modal-310a0a39": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1299",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1352"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Auslöser (Footer „Notizen“, nur Handy), Inhalt (Hinweis, Editor, Aufgaben, „Aufgabe“) und Speichern beim Schließen gleich. Ionic: Sheet mit Breakpoints [0, 0.75, 1] / Flutter: feste Höhe 80 %, nicht auf Vollbild ziehbar."
+  },
+  "protocols/protocol/protocol.page#modal-a445544e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:889"
+   ],
+   "v": "bestätigt",
+   "n": "Bottom-Sheet 90 % Höhe mit Abbrechen links und Titel „Freigeben“; Ionic Sheet Breakpoint 1. Zusatz: bei Fehler ist das Sheet in Flutter schon zu (Ionic bleibt offen), Toast „Freigabe fehlgeschlagen“ erscheint aber."
+  },
+  "protocols/protocol/protocol.page#modal-ee22855e": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1237"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Auslöser (Teilnehmer-Zeile) und Daten (Anwesend/Entschuldigt/Sonstige, Notizen bei Entschuldigten, Hinweis) gleich. Ionic: Sheet mit Breakpoints [0, 0.6, 1] / Flutter: feste Höhe 70 %."
+  },
+  "protocols/protocol/protocol.page#text-02d5034d": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1586",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1588"
+   ],
+   "v": "bestätigt",
+   "sev": "niedrig",
+   "n": "Titel gleich. Flutter zeigt (Handy- und Leseansicht) unter jedem Titel zusätzlich „Dieser Punkt steht nicht mehr im Ablaufplan. Die Notizen bleiben erhalten.“ – Ionic dort nur Titel + Notizen."
+  },
+  "protocols/protocol/protocol.page#text-036b6b54": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:932"
+   ],
+   "v": "bestätigt",
+   "n": "„Ohne Ergebnis: n“ nur für TOPs ohne Ergebnis, wie publishSummary."
+  },
+  "protocols/protocol/protocol.page#text-066d150f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1753"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-06b9b81b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1830"
+   ],
+   "v": "bestätigt",
+   "n": "„· n min“ im Kicker nur bei Dauer > 0."
+  },
+  "protocols/protocol/protocol.page#text-096e9cd3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:967"
+   ],
+   "v": "bestätigt",
+   "n": "„n Anwesende“ + „ · n Personen mit Aufgaben“ bei Aufgabenverantwortlichen."
+  },
+  "protocols/protocol/protocol.page#text-0a05ce42": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:921"
+   ],
+   "v": "bestätigt",
+   "n": "Zusatz „ · wird beim nächsten Termin vorgeschlagen“ nur bei suggest_postponed."
+  },
+  "protocols/protocol/protocol.page#text-0cd727f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1897"
+   ],
+   "v": "bestätigt",
+   "n": "Speicherstatus (Speichert…/Automatisch gespeichert um …)."
+  },
+  "protocols/protocol/protocol.page#text-11d66fff": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2060"
+   ],
+   "v": "bestätigt",
+   "n": "Chips der Anwesenden; Reihenfolge siehe Extra (Sortierung)."
+  },
+  "protocols/protocol/protocol.page#text-11d66fff-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2067"
+   ],
+   "v": "bestätigt",
+   "n": "Chips der Entschuldigten, grau."
+  },
+  "protocols/protocol/protocol.page#text-158e2b35": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2092"
+   ],
+   "v": "bestätigt",
+   "n": "„Keine Notizen“ (grau) bei Abschnitt ohne Notizen und ohne Aufgaben."
+  },
+  "protocols/protocol/protocol.page#text-15ef5196": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1814"
+   ],
+   "v": "bestätigt",
+   "n": "Label „Anwesend“ (Großbuchstaben) über der Teilnehmerzeile."
+  },
+  "protocols/protocol/protocol.page#text-160968fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:959"
+   ],
+   "v": "bestätigt",
+   "n": "„Lesen dürfen“ mit Gruppen- bzw. „alle Mitglieder“-Zeile."
+  },
+  "protocols/protocol/protocol.page#text-171a2841": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:963"
+   ],
+   "v": "bestätigt",
+   "n": "„alle Mitglieder (Termintyp „{Typ}“ hat keine Gruppen)“, sonst „die Gruppen aus dem Termintyp …“; Sheet nur für Leitung (isTeamLeader = Admin/Verantwortlicher, wie Ionic)."
+  },
+  "protocols/protocol/protocol.page#text-18dbad86": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1754"
+   ],
+   "v": "bestätigt",
+   "n": "Breit (nur Leitung): „Di, 21.10.2026 · 19:00–20:30“, Zeitspanne nur bei Planstart, Ende = Start + Summe der Dauern."
+  },
+  "protocols/protocol/protocol.page#text-19804570": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1264"
+   ],
+   "v": "bestätigt",
+   "n": "Name „Vorname Nachname“ je anwesender Person. Randfall leerer Name (Ionic „Unbekannt“, Flutter leer) und Sortierung siehe Extra."
+  },
+  "protocols/protocol/protocol.page#text-19804570-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1274"
+   ],
+   "v": "bestätigt",
+   "n": "Entschuldigte im Teilnehmer-Sheet mit Notiz als Untertitel."
+  },
+  "protocols/protocol/protocol.page#text-19804570-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1284"
+   ],
+   "v": "bestätigt",
+   "n": "Sonstige im Teilnehmer-Sheet, grau."
+  },
+  "protocols/protocol/protocol.page#text-1aaa95b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1925"
+   ],
+   "v": "bestätigt",
+   "n": "„Wähle links einen Punkt aus.“ / „Der Ablaufplan ist noch leer.“ wie Ionic."
+  },
+  "protocols/protocol/protocol.page#text-24981059": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1271"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-24bf7368": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2064"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-27c5b66c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1910"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-28a78447": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1827"
+   ],
+   "v": "bestätigt",
+   "n": "Startzeit im Kicker des breiten Hauptbereichs (nach „TOP n ·“)."
+  },
+  "protocols/protocol/protocol.page#text-2bcbb774": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2041"
+   ],
+   "v": "bestätigt",
+   "n": "Lese-Layout: „… · 19:00–20:30 Uhr“, nur bei Planstart."
+  },
+  "protocols/protocol/protocol.page#text-2bf7f00d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:913"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-2c1a73a9": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2040"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-2d97aa39": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1266"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-32276dc5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1257"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-360916dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2082"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-400180d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1754"
+   ],
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "protocols/protocol/protocol.page",
+   "title": "Teilnehmende: Sortierung und leerer Name",
+   "n": "Ionic: sort mit localeCompare (Umlaute/Groß-Klein nach Locale), leerer Name → „Unbekannt“ / Flutter: Dart compareTo (Codeeinheiten: Umlaut-Namen und Kleinbuchstaben ans Ende), leerer Name bleibt leer. Betrifft Teilnehmer-Sheet und Chips der Leseansicht, nicht den Inhalt.",
+   "sev": "niedrig",
+   "ionic": "src/app/protocols/protocol/protocol.page.ts:295",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:741"
+   ]
+  }
+ ]
+}

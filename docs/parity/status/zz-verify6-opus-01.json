@@ -1,0 +1,405 @@
+{
+ "batch": "zz-verify6-opus-01",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#loading-ff407ba2": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:146-188",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:309-315"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay (Utils.getLoadingElement, max. 3 s) beim Speichern / Flutter: kein Overlay, nur der Speichern-FAB ist während _saving deaktiviert, Formular bleibt bedienbar. Rolle gleich (nur Leitung = ADMIN/RESPONSIBLE). Zeilenverweise aktualisiert (78/233 zeigten nach Dateiänderung auf Laden/Plan).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#nav-9a96f482": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:510",
+    "lib/core/router/legacy_routes.dart:54-56",
+    "lib/core/router/app_router.dart:1080-1090"
+   ],
+   "n": "Verlaufseintrag → context.push('/settings/protocol/<attendanceId>') = Ionic /tabs/attendance/:id/protocol (Legacy-Abbildung legacy_routes.dart:54-56). Verlauf für alle Leser des Themas, Route ohne Rollensperre wie Ionic In-App. Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#nav-f7bc89a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:566",
+    "lib/core/router/app_router.dart:1070-1074"
+   ],
+   "n": "Aufgabe → context.push('/settings/tasks/<id>') wie Ionic /tabs/settings/tasks/:id. Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-69e94eec": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:183-185"
+   ],
+   "n": "Roter Toast „Thema konnte nicht gespeichert werden“ (agendaSaveFailed) bei Fehler in Anlegen und Ändern; nur Leitung (FAB nur isTeamLeader). Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-de8c40b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:182"
+   ],
+   "n": "Grüner Toast „Gespeichert“ (dutySaved, showSuccess) nach Anlegen und Ändern; nur Leitung. Zeile aktualisiert.",
+   "v": "bestätigt"
+  },
+  "x-05b82aec95": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:352-360",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:264-268",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:291-294"
+   ],
+   "n": "Korrektur niedrig→mittel (anderer DB-Wert). Ionic: item ist per ngModel ans Formular gebunden – beim Einplanen schreibt buildAgendaField den ungespeicherten Titel und die ungespeicherte Dauer als TOP-Name/-Dauer in attendance.plan; Status ≠ „Offen“ blendet „Einplanen“ sofort aus / Flutter: Button-Bedingung und _planInto(item) nutzen das gespeicherte Thema (agendaItemByIdProvider) → Plan bekommt alten Titel/alte Dauer, Button verschwindet erst nach Speichern. Ablauf Titel ändern → Einplanen → Speichern: in Flutter steht im Ablaufplan/Protokoll der alte Titel.",
+   "sev": "mittel",
+   "v": "korrigiert"
+  },
+  "x-5b249b81bc": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:317-333"
+   ],
+   "n": "Flutter besser: Ionic zeigt bei nicht ladbarem/nicht sichtbarem Thema eine leere Seite ohne Hinweis (item undefined, kein FAB) / Flutter zeigt „Thema nicht gefunden“ mit Pull-to-Refresh (_retryLoad). Zeilen aktualisiert.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-plan.helpers#logic-71d6aee7": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/team_org_utils.dart:169",
+    "lib/features/team_organization/team_org_utils.dart:178",
+    "lib/features/team_organization/team_org_utils.dart:195",
+    "lib/features/team_organization/team_org_utils.dart:219",
+    "lib/features/team_organization/team_org_utils.dart:230",
+    "lib/core/providers/team_org_providers.dart:413-437"
+   ],
+   "n": "defaultTopicDuration (Thema → Typ → 10), computePlanEnd (Marker zählt 0), initialPlan (ohne Song-Platzhalter, Zeit Typ-Plan → Typ-Start → Termin → 19:00), planWithTopics, insertAfterName, upcomingProtocolAttendances (ab heute, aufsteigend) und addTopicsToAttendance (Plan neu lesen, Schreiben mit id + tenantId) gleich. Einzige Abweichung: inzwischen gelöschter Plan (x-17fbb26884).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-17fbb26884": {
+   "s": "diff",
+   "f": [
+    "lib/core/providers/team_org_providers.dart:427-434"
+   ],
+   "n": "Flutter besser: Ionic addTopicsToAttendance übernimmt einen inzwischen gelöschten Plan als null und schreibt einen neuen Standardplan (initialPlan) mit dem Thema / Flutter (SOL_FIX32) wirft StateError → Toast „Thema konnte nicht eingeplant werden“ bzw. „Ablaufplan konnte nicht gespeichert werden“, nichts wird geschrieben. Ein erneutes Einplanen lädt die Termine neu und legt dann wie Ionic den Standardplan an. Nur bei gleichzeitigem Löschen.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-0351b31a": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1091-1095",
+    "lib/core/router/legacy_routes.dart:107-113"
+   ],
+   "n": "Flutter besser: Ionic In-App für alle Rollen (Einstellungseintrag ohne Bedingung); Reload/Deep-Link: AuthGuard-Standardzweig lässt nur ADMIN/RESPONSIBLE/VIEWER durch, VIEWER fehlt in isUrlAccessAllowed → getUrl(role). Flutter: Legacy-URL → /settings/notifications, Route ohne Rollensperre (wie Ionic In-App), Reload öffnet für alle. Zeilen aktualisiert (1056-1060 zeigt jetzt auf Auto-Mitteilungen).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-05ed08a7": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/route_access.dart:89-93",
+    "lib/core/router/app_router.dart:1318-1336"
+   ],
+   "n": "Flutter besser: Ionic Reload/Deep-Link von /tabs/songs-tab nur für ADMIN/RESPONSIBLE/VIEWER (AuthGuard-Standardzweig), sonst abgebrochen / Flutter: /songs-tab für alle außer Bewerber/Eltern (canOpenSongsTab = isUrlAccessAllowed), andere → role.defaultRoute. Eltern: Ionic zeigt den Werke-Tab nach „Als Tab anzeigen“ in-app, Flutter nicht – im Werke-Seiten-Batch als niedrig erfasst (songs.page#action-ed429618), Werke bleiben über Einstellungen erreichbar.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-0a62fac7": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:179",
+    "lib/core/router/app_router.dart:1046-1062"
+   ],
+   "n": "Flutter besser: Ionic In-App nur ADMIN/RESPONSIBLE (Liste aus Mitteilungen, Termin-Panel isManager); URL fehlt in isUrlAccessAllowed → Reload leitet auch Admins auf getUrl(role), Nicht-Dirigenten bricht schon der AuthGuard ab / Flutter: Route für admin/responsible, auch nach Reload; andere → role.defaultRoute.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-117fac13": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:195",
+    "lib/core/router/app_router.dart:855-882"
+   ],
+   "n": "Flutter besser: Ionic: AuthGuard lässt Helfer durch, isUrlAccessAllowed('/tabs/attendance') nur ADMIN/RESPONSIBLE/VIEWER → Reload der nackten URL schickt Helfer/VL-Helfer auf /tabs/signout / Flutter: /attendance für Dirigenten und Helfer (canSeeAttendanceTab = Tab-Rollen), andere → defaultRoute.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-174d1db9": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/legacy_routes.dart:98-101",
+    "lib/core/router/app_router.dart:171",
+    "lib/core/router/app_router.dart:1144-1159"
+   ],
+   "n": "Notiz veraltet: die Legacy-URL /tabs/settings/general/shifts/:id wird jetzt auf /settings/shifts/:id abgebildet, keine Fehlerseite mehr. Flutter besser: Ionic Reload → AuthGuard (nur Dirigenten) bzw. URL fehlt in isUrlAccessAllowed → getUrl(role), die Schicht öffnet nie / Flutter öffnet die Schicht für admin/responsible (wie Ionic In-App aus Allgemein), andere → defaultRoute.",
+   "sev": "niedrig",
+   "v": "korrigiert"
+  },
+  "app-routing.module#route-1a651acd": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1215-1233"
+   ],
+   "n": "Flutter besser: Ionic In-App für alle (Hilfe ohne Rollenbedingung), isUrlAccessAllowed erlaubt /tabs/settings/help/article/* allen, aber der AuthGuard-Standardzweig bricht Reload für Nicht-Dirigenten ab / Flutter: Artikel per Route und Reload für alle Rollen.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-1f551f78": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1310-1317"
+   ],
+   "n": "Ionic: SuperDeveloperGuard (Super-Developer-E-Mail) leitet andere auf /tabs/player / Flutter: Routen-Redirect isSuperDeveloperProvider (gleiche E-Mail-Prüfung), andere → /settings. Nur andere Landeseite für Nicht-Superdevs, die keinen UI-Weg dorthin haben.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-3e6c6d33": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1063-1069"
+   ],
+   "n": "Flutter besser: Ionic: URL fehlt in isUrlAccessAllowed → Reload/Deep-Link leitet jede Rolle auf getUrl(role) (Nicht-Dirigenten bricht schon der AuthGuard ab) / Flutter: Route ohne Rollensperre wie Ionic In-App (Eintrag nur bei showTeam, Inhalt per RLS), öffnet auch nach Reload. Notiz präzisiert: Flutter prüft hier keine Rolle.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-409dca75": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/legacy_routes.dart:98-101",
+    "lib/core/router/app_router.dart:171",
+    "lib/core/router/app_router.dart:1144-1147"
+   ],
+   "n": "Notiz veraltet: die Legacy-URL /tabs/settings/general/shifts wird jetzt auf /settings/shifts abgebildet, keine Fehlerseite „Seite nicht gefunden“ mehr. Flutter besser: Ionic Reload/Lesezeichen öffnet die Seite nie (AuthGuard-Standardzweig bzw. URL fehlt in isUrlAccessAllowed → getUrl(role)) / Flutter öffnet die Schichten für admin/responsible (wie Ionic In-App aus Allgemein), andere → defaultRoute.",
+   "sev": "niedrig",
+   "v": "korrigiert"
+  },
+  "app-routing.module#route-4f64d874": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:358-383",
+    "lib/core/router/app_router.dart:507-511",
+    "lib/features/legal/presentation/pages/terms_page.dart:62-77",
+    "lib/features/legal/presentation/pages/terms_page.dart:79-104"
+   ],
+   "n": "Ionic: nach Akzeptieren Utils.getUrl(role) (Dirigenten Personen, Eltern /tabs/parents, sonst /tabs/signout; ohne Instanz /register), ein vorher geöffneter Link geht verloren / Flutter: gemerkter Link (PendingFileLink) oder homeRouteFor – Admin/Verantwortl. mit Dashboard-Tab landen auf /home-dashboard statt Personen; ohne Instanz /register → Instanzauswahl. TermsGuard-Äquivalent im Redirect, nicht angemeldet → /login wie Ionic ngOnInit. Notiz aktualisiert: kein Umweg über /tenants mehr.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-58f7f3b8": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:166",
+    "lib/core/router/app_router.dart:1252-1256"
+   ],
+   "n": "Flutter besser: Ionic In-App nur aus Allgemein (ADMIN/RESPONSIBLE); URL fehlt in isUrlAccessAllowed → Reload leitet auch Admins auf getUrl(role) / Flutter: Route unter dem /settings/general-Schutz (admin/responsible), öffnet auch nach Reload; andere → defaultRoute.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-692f435d": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:995-1014",
+    "lib/core/router/route_access.dart:116-122"
+   ],
+   "n": "Flutter besser: Ionic isUrlAccessAllowed erlaubt /tabs/settings/songs/* allen, aber der AuthGuard-Standardzweig bricht Reload für Nicht-Dirigenten ab / Flutter: Werkseite für alle Rollen, Bearbeiten (/edit) nur admin/responsible. Bewerber kämen nur per getippter URL hin (kein UI-Weg in beiden Apps). Notiz präzisiert: die URL fehlt nicht in isUrlAccessAllowed.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-6b4589f8": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/legacy_routes.dart:91-92",
+    "lib/core/router/app_router.dart:562-566"
+   ],
+   "n": "Flutter besser: Ionic /tabs/settings/register (RegisterPage, isUrlAccessAllowed für alle) – Reload bricht für Nicht-Dirigenten ab (AuthGuard) / Flutter: Legacy-URL → /tenants/new (Instanz anlegen) für alle angemeldeten Rollen.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-70e49d30": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/attendance_detail_guard.dart:23-28",
+    "lib/core/router/app_router.dart:222-230",
+    "lib/core/router/app_router.dart:868-880"
+   ],
+   "n": "Unverändert: Ionic öffnet /tabs/attendance/:id per getippter URL auch für VIEWER (AuthGuard und isUrlAccessAllowed erlauben VIEWER), es gibt aber keinen UI-Weg (att-list openAttendance nur ADMIN/RESPONSIBLE/Helfer, Push navigateToAttendance VIEWER → signout, Protokoll-/Nachrichten-Links nur Leitung) / Flutter: attendanceDetailRedirect (canAddAttendance) leitet VIEWER auf /people. Helfer: Reload in beiden offen.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-81a96071": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1234-1238"
+   ],
+   "n": "Flutter besser: Ionic In-App für alle (Einstellungseintrag ohne Bedingung); URL fehlt in isUrlAccessAllowed → Reload leitet jede Rolle auf getUrl(role) (Nicht-Dirigenten bricht schon der AuthGuard ab) / Flutter: /settings/delete-account für alle angemeldeten Rollen, auch nach Reload.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-82191e46": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1329-1334",
+    "lib/core/router/route_access.dart:89-93"
+   ],
+   "n": "Flutter besser: Ionic isUrlAccessAllowed erlaubt /tabs/songs-tab/* allen außer Bewerber/Eltern, der AuthGuard-Standardzweig bricht Reload für Nicht-Dirigenten ab / Flutter: /songs-tab/:id mit derselben Regel (canOpenSongsTab), Werke-Tab bleibt gewählt; andere → defaultRoute. Notiz präzisiert: die URL fehlt nicht in isUrlAccessAllowed.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-902a5855": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/legacy_routes.dart:54-56",
+    "lib/core/router/app_router.dart:1080-1090"
+   ],
+   "n": "Flutter besser: Ionic: AuthGuard/isUrlAccessAllowed lassen /tabs/attendance/* beim Kaltstart nur ADMIN/HELPER/VLH/VIEWER/RESPONSIBLE zu – Spieler/Stimmführer/NONE mit Team-Benachrichtigungslink /tabs/attendance/:id/protocol kommen nicht aufs Protokoll (In-App per Push schon) / Flutter: Legacy-URL → /settings/protocol/:id ohne Rollensperre (Inhalt per RLS).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-903b9699": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1070-1074"
+   ],
+   "n": "Flutter besser: Ionic: URL fehlt in isUrlAccessAllowed → Reload/Team-Benachrichtigungslink /tabs/settings/tasks/:id leitet jede Rolle auf getUrl(role) (Nicht-Dirigenten: AuthGuard bricht ab) / Flutter: Route ohne Rollensperre wie Ionic In-App, öffnet auch nach Reload (Inhalt per RLS). Notiz präzisiert: Flutter prüft hier keine Rolle.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-a1ee1df3": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:177",
+    "lib/core/router/app_router.dart:1040-1045"
+   ],
+   "n": "Flutter besser: Ionic In-App nur ADMIN/RESPONSIBLE (Einstellungen/Sidepanel isAdmin); /tabs/settings/messages fehlt in isUrlAccessAllowed → Reload wirft auch Admins auf die Startseite / Flutter: Route für admin/responsible, andere → defaultRoute.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-b64546c1": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:318-342",
+    "lib/core/router/app_router.dart:358-364",
+    "lib/core/router/legacy_routes.dart:44-45"
+   ],
+   "n": "Flutter besser: /tabs ohne Anmeldung → Ionic AuthGuard → /login, der Link geht verloren / Flutter: /tabs → /open-link, Link gemerkt (PendingFileLink) und nach Login fortgesetzt → Rollen-Startseite; TermsGuard-Äquivalent im Redirect. Angemeldete Nicht-Dirigenten: Ionic Kaltstart /tabs → /tabs/player → AuthGuard bricht ab, Flutter → Rollen-Startseite.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-b64546c1-2": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/legacy_routes.dart:45",
+    "lib/features/deep_links/presentation/pages/open_link_page.dart:81-89"
+   ],
+   "n": "Ionic: Kindroute '' → /tabs/player (Kaltstart nur Dirigenten via AuthGuard; Admins mit Dashboard-Tab landen trotzdem auf Personen) / Flutter: /tabs → /open-link → homeRouteFor (Rollen-Startseite, Admin/Verantwortl. mit Dashboard-Tab → /home-dashboard). Kein In-App-Aufruf von /tabs in Ionic.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-b64546c1-3": {
+   "s": "na",
+   "f": [
+    "lib/core/router/legacy_routes.dart:74-75"
+   ],
+   "n": "Korrektur diff→na: toter Code. Die äußere ''-Route (pathMatch full, tabs-routing.module.ts:235) steht hinter der ''-Route mit TabsPage (:9), die '/tabs' schon über ihre Kindroute '' → /tabs/player auflöst; für '/tabs/xyz' passt pathMatch full nicht. Sie ist keine Wildcard (unbekannte /tabs/xyz fallen in Ionic auf :songSharingId/:songId). Flutters Abbildung unbekannter /tabs/...-Pfade auf /open-link ist kein Gegenstück dieser Route.",
+   "v": "korrigiert"
+  },
+  "app-routing.module#route-b987dd8e": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:964-970",
+    "lib/core/router/legacy_routes.dart:61-62"
+   ],
+   "n": "Flutter besser: Ionic: /tabs/messages/:id fehlt in isUrlAccessAllowed → Mail-Link/Reload landet für jede Rolle auf getUrl(role) (Nicht-Dirigenten: AuthGuard bricht ab), In-App (Push, Liste) öffnet die Seite / Flutter: Legacy-URL → /messages/:id, öffnet ohne Rollensperre (Inhalt per RLS). Notiz präzisiert: nicht nur Spieler betroffen.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-b9a9398e": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/legacy_routes.dart:63-64",
+    "lib/core/router/app_router.dart:1176-1187",
+    "lib/core/router/app_router.dart:1337-1353",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:324-325"
+   ],
+   "n": "Ionic: Reload /tabs/org-plans/planung bleibt im Org-Tab (ADMIN/RESPONSIBLE) / Flutter: Legacy-URL → /settings/org-plans/planung (gleiche Seite, gleiche Rollen) unter „Mehr“ statt im Org-Tab; In-App nutzt Flutter wie Ionic /org-plans-tab/planung.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-bac0fe82": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1215-1219"
+   ],
+   "n": "Flutter besser: Ionic In-App für alle, isUrlAccessAllowed erlaubt /tabs/settings/help allen, aber der AuthGuard bricht Reload für Nicht-Dirigenten ab / Flutter: Hilfe für alle Rollen, auch nach Reload.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-d6960ea2": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1227-1231"
+   ],
+   "n": "Flutter besser: wie /tabs/settings/help – Ionic Reload für Nicht-Dirigenten abgebrochen (AuthGuard) / Flutter: Glossar für alle Rollen.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-dd04c3d0": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/legacy_routes.dart:103-106",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:188-194",
+    "lib/core/router/app_router.dart:1257-1261"
+   ],
+   "n": "Ionic: Reload /tabs/settings/org-settings/branding öffnet die Branding-Seite (ADMIN/RESPONSIBLE) / Flutter: Legacy-URL → /settings/org-settings, Branding erst per Tipp (/settings/general/branding). Notiz präzisiert: Flutter hat eine eigene Branding-Seite, die Legacy-Abbildung zielt nur nicht darauf.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-ddf8f625": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1273-1280"
+   ],
+   "n": "Ionic: SuperDeveloperGuard leitet Nicht-Superdevs auf /tabs/player / Flutter: Routen-Redirect isSuperDeveloperProvider, sonst /settings. Eintrag in beiden nur für den Superdev sichtbar.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-e032468e": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:985-1016",
+    "lib/core/router/route_access.dart:116-122"
+   ],
+   "n": "Flutter besser: Ionic In-App für alle außer Bewerber/Allgemein-Instanzen (Einstellungen), isUrlAccessAllowed erlaubt allen, aber der AuthGuard bricht Reload für Nicht-Dirigenten ab / Flutter: /settings/songs ohne Rollensperre, Anlegen/Bearbeiten nur admin/responsible (route_access). Bewerber nur per getippter URL (kein UI-Weg in beiden Apps, Ionic-Whitelist erlaubt die URL), daher kein echter Rollenunterschied.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-e4f28d41": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:179",
+    "lib/core/router/app_router.dart:1052-1060"
+   ],
+   "n": "Flutter besser: Ionic In-App nur ADMIN/RESPONSIBLE (Regelliste, Termin-Panel isManager); URL fehlt in isUrlAccessAllowed → Reload leitet auch Admins auf getUrl(role) / Flutter: Route für admin/responsible, auch nach Reload; andere → defaultRoute.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-f024e0aa": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1075-1079",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:340"
+   ],
+   "n": "Flutter besser: Ionic: URL fehlt in isUrlAccessAllowed → Reload/Deep-Link landet für jede Rolle auf getUrl(role) (Nicht-Dirigenten: AuthGuard bricht ab) / Flutter: Route ohne Rollensperre wie Ionic In-App (Leitung Formular, sonst Leseansicht, Inhalt per RLS), öffnet auch nach Reload. Randfall: Nicht-Leitung mit getippter /settings/agenda-items/new → Flutter Fehler-Widget (item! ist null in _readOnly), Ionic leere Leseansicht.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

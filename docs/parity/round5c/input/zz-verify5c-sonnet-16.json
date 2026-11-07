@@ -1,0 +1,2090 @@
+{
+ "batch": "zz-verify5c-sonnet-16",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 83,
+    "cond": [
+     "@if (player)",
+     "@if (!existingPlayer || editingName)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "[disabled]": "\"readOnly\""
+    },
+    "events": [
+     "(ionInput)=onNameInput()",
+     "(ionChange)=onChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"player.lastName\"",
+    "bindings": [
+     "[debounce]=\"250\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#field-6e1a9b00"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:249",
+     "lib/features/people/presentation/pages/person_create_page.dart:381"
+    ],
+    "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe (Detail, mit Pflicht-Validierung); Neu-Seite: TextFormField mit Pflicht-Validierung",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart",
+    "lib/features/people/presentation/pages/person_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 435,
+    "cond": [
+     "@if (player)",
+     "@if (isVoS && !isMainGroup)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "[disabled]": "\"readOnly\""
+    },
+    "events": [
+     "(ionChange)=onChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"player.testResult\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#field-7662f2a7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:877"
+    ],
+    "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; leer + nicht bearbeitbar ausgeblendet (Ionic: immer sichtbar)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 246,
+    "cond": [
+     "@if (player)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "[disabled]": "\"readOnly\""
+    },
+    "events": [
+     "(ionChange)=onChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"player.phone\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#field-84804c14"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:330"
+    ],
+    "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; zusätzlich Anruf-Button; leer + nicht bearbeitbar ausgeblendet (Ionic: leeres deaktiviertes Feld).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 332,
+    "cond": [
+     "@if (player)",
+     "in <ion-modal trigger=joined-trigger #joinedModal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "date",
+     "[value]": "\"player.joined\"",
+     "[max]": "\"max\""
+    },
+    "events": [
+     "(ionChange)=onJoinedChange($event.detail.value, joinedModal)"
+    ],
+    "link": null,
+    "model": "[value]=\"player.joined\"",
+    "bindings": [
+     "[preferWheel]=\"true\"",
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#field-8c59f281"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371"
+    ],
+    "n": "Ionic: ion-datetime Rad, max = heute / Flutter: Kalender, lastDate = heute; Speichern als Datum wie Ionic",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 976,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "date",
+     "size": "cover",
+     "[min]": "\"minPauseDate\""
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"pauseUntil\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#field-932fcf9d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:145"
+    ],
+    "n": "Ionic: Inline-Kalender im aufklappbaren Bereich, min = heute / Flutter: Datumsdialog, firstDate heute, bis +3 Jahre, Start +30 Tage",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 268,
+    "cond": [
+     "@if (player)",
+     "in <ion-modal trigger=birthday-trigger #birthdayModal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "date",
+     "[value]": "\"player.birthday\"",
+     "[max]": "\"max\""
+    },
+    "events": [
+     "(ionChange)=onBirthdayChange($event.detail.value, birthdayModal)"
+    ],
+    "link": null,
+    "model": "[value]=\"player.birthday\"",
+    "bindings": [
+     "[preferWheel]=\"true\"",
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#field-946f7994"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371",
+     "lib/features/people/presentation/pages/person_detail_page.dart:643"
+    ],
+    "n": "Ionic: ion-datetime Rad, max = heute / Flutter: Kalender, lastDate = heute; Speichern als Datum wie Ionic; setzt correctBirthday beim Speichern",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 237,
+    "cond": [
+     "@if (player)",
+     "@if (isChoir)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "[disabled]": "\"readOnly || !isAdmin\""
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"player.range\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#field-9f6c9acb"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:829"
+    ],
+    "n": "Flutter besser: Ionic-Input ohne ionChange (Änderung allein aktiviert Speichern nicht) / Flutter markiert Änderung. Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; leer + nicht bearbeitbar ausgeblendet",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 1057,
+    "cond": [
+     "in <ion-modal isOpen=\"isAbsenceModalOpen\">"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "date",
+     "size": "cover",
+     "[min]": "\"absenceFrom || undefined\""
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"absenceUntil\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#field-e2731760"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:96"
+    ],
+    "n": "Ionic: Inline-Kalender, min = Von / Flutter: gemeinsamer Zeitraum-Dialog",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 610,
+    "cond": [
+     "@if (player)",
+     "@if (db.getPersonExtraFields().length)",
+     "@for (field of db.getPersonExtraFields(); track field.id)",
+     "@else if (field.type === fieldTypes.DATE)",
+     "in <ion-modal #extraDateModal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "date",
+     "[value]": "\"player.additional_fields[field.id]\"",
+     "[max]": "\"max\""
+    },
+    "events": [
+     "(ionChange)=onExtraFieldDateChange(field.id, $event.detail.value, extraDateModal)"
+    ],
+    "link": null,
+    "model": "[value]=\"player.additional_fields[field.id]\"",
+    "bindings": [
+     "[preferWheel]=\"true\"",
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#field-e423e2ec"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:795",
+     "lib/shared/widgets/sheets/field_editor_sheet.dart:213"
+    ],
+    "n": "Ionic: max = heute / Flutter: Kalender 1900–2100 (kein Maximum heute)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/person/person.page.html",
+    "line": 474,
+    "cond": [
+     "@if (player)",
+     "@if (player.shift_id)",
+     "@else (not shift && shift.shifts.length > 0)"
+    ],
+    "tag": "ion-datetime-button",
+    "attrs": {
+     "[disabled]": "\"readOnly\""
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/person/person.page#field-ea337733"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:568"
+    ],
+    "n": "Ionic: ion-datetime-button / Flutter: Zeile mit Datum, leer „Nicht angegeben“, Tipp öffnet Datumsauswahl",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/person/person.page.ts",
+    "line": 1680,
+    "method": "PersonPage.declinePlayer",
+    "cond": [],
+    "message": {
+     "keys": [
+      "person.declining"
+     ],
+     "de": [
+      "Die Person wird abgelehnt..."
+     ],
+     "literals": [],
+     "expr": "translate('person.declining')"
+    },
+    "duration": "10000",
+    "src": "1c5a1b08",
+    "mbody": "e71a6516",
+    "id": "people/person/person.page#loading-58ec291d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1300"
+    ],
+    "n": "Ionic: blockierendes Loading „Die Person wird abgelehnt...“ / Flutter: kein Ladeindikator",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/person/person.page.ts",
+    "line": 1546,
+    "method": "PersonPage.deleteAbsence",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "b78d7bc8",
+    "id": "people/person/person.page#loading-6f0c380f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:248"
+    ],
+    "n": "Ionic: blockierendes Loading beim Löschen der Abwesenheit / Flutter: kein Ladeindikator",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/person/person.page.ts",
+    "line": 1013,
+    "method": "PersonPage.register",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ff7fc50a",
+    "mbody": "a766b36b",
+    "id": "people/person/person.page#loading-9ba0a7e4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1596"
+    ],
+    "n": "Ionic: blockierendes Loading beim Account anlegen / Flutter: kein Ladeindikator",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/person/person.page.ts",
+    "line": 1090,
+    "method": "PersonPage.onImageSelect",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "41c8a13a",
+    "id": "people/person/person.page#loading-b96f785a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/person_header.dart:225"
+    ],
+    "n": "Ionic: blockierendes Loading beim Bildupload / Flutter: nur Info-Toast „Lade Passbild hoch...“, nicht blockierend",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/person/person.page.ts",
+    "line": 389,
+    "method": "PersonPage.resetLateCount",
+    "cond": [],
+    "message": {
+     "keys": [
+      "person.resetting"
+     ],
+     "de": [
+      "Wird zurückgesetzt..."
+     ],
+     "literals": [],
+     "expr": "translate('person.resetting')"
+    },
+    "duration": "{ message: translate('person.resetting') }",
+    "src": "3f49d65f",
+    "mbody": "6e8fb0f2",
+    "id": "people/person/person.page#loading-be5cc2f1"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1151",
+     "lib/features/people/presentation/widgets/person_detail/late_warning_card.dart"
+    ],
+    "n": "Ionic: blockierendes Loading „Wird zurückgesetzt...“ / Flutter: kein Ladeindikator beim Zurücksetzen",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "people/person/person.page.ts",
+    "line": 1755,
+    "method": "PersonPage.openUnavailability",
+    "cond": [],
+    "component": "UnavailabilityModalComponent",
+    "props": [
+     "personId",
+     "personName",
+     "forOther"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "de5ce7d1",
+    "mbody": "764a769b",
+    "id": "people/person/person.page#modal-38ca9858"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_detail_page.dart:1923"
+    ],
+    "n": "Flutter: openUnavailabilityPage (Vollbild-Seite) mit personId, personName, forOther=true; Ionic Vollbild-Modal",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "people/person/person.page.html",
+    "line": 330,
+    "cond": [
+     "@if (player)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "joined-trigger",
+     "class": "dateModal",
+     "#": "joinedModal"
+    },
+    "events": [],
+    "bindings": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "people/person/person.page#modal-5e3cc20f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371"
+    ],
+    "n": "Ionic: Modal mit Rad-Datumsauswahl (preferWheel) / Flutter: Material-DatePicker-Dialog bzw. Kalender-Karte (iOS-Look)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "people/person/person.page.html",
+    "line": 298,
+    "cond": [
+     "@if (player)",
+     "@if (!isGeneral && !isChoir && !isMainGroup)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "playsSince-trigger",
+     "class": "dateModal",
+     "#": "playsSinceModal"
+    },
+    "events": [],
+    "bindings": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "people/person/person.page#modal-637d2f88"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371"
+    ],
+    "n": "Ionic: Modal mit Rad-Datumsauswahl (preferWheel) / Flutter: Material-DatePicker-Dialog bzw. Kalender-Karte (iOS-Look)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "people/person/person.page.html",
+    "line": 266,
+    "cond": [
+     "@if (player)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "birthday-trigger",
+     "class": "dateModal",
+     "#": "birthdayModal"
+    },
+    "events": [],
+    "bindings": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "people/person/person.page#modal-9c171caa"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371",
+     "lib/shared/widgets/adaptive/app_pickers.dart:12"
+    ],
+    "n": "Ionic: Modal mit Rad-Datumsauswahl (preferWheel) / Flutter: Material-DatePicker-Dialog bzw. Kalender-Karte (iOS-Look)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart",
+    "lib/shared/widgets/adaptive/app_pickers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "people/person/person.page.html",
+    "line": 608,
+    "cond": [
+     "@if (player)",
+     "@if (db.getPersonExtraFields().length)",
+     "@for (field of db.getPersonExtraFields(); track field.id)",
+     "@else if (field.type === fieldTypes.DATE)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "class": "dateModal",
+     "[trigger]": "\"'extraDate-trigger-' + field.id\"",
+     "#": "extraDateModal"
+    },
+    "events": [],
+    "bindings": [
+     "[trigger]=\"'extraDate-trigger-' + field.id\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "people/person/person.page#modal-9dba127a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:795"
+    ],
+    "n": "Ionic: Modal mit Rad-Datumsauswahl / Flutter: DatePicker-Dialog bzw. Kalender-Karte",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "people/person/person.page.html",
+    "line": 475,
+    "cond": [
+     "@if (player)",
+     "@if (player.shift_id)",
+     "@else (not shift && shift.shifts.length > 0)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "people/person/person.page#modal-ac91c261"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:583"
+    ],
+    "n": "Ionic: Modal mit ion-datetime / Flutter: DatePicker-Dialog bzw. Kalender-Karte",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "people/person/person.page.html",
+    "line": 995,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"isAbsenceModalOpen\""
+    },
+    "events": [
+     "(ionModalDidDismiss)=dismissAbsenceModal()"
+    ],
+    "bindings": [
+     "[breakpoints]=\"[0, 0.85, 1]\"",
+     "[initialBreakpoint]=\"0.85\"",
+     "[isOpen]=\"isAbsenceModalOpen\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "people/person/person.page#modal-b29d5620"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:48",
+     "lib/features/people/presentation/widgets/planned_absences.dart:362"
+    ],
+    "n": "Flutter: Bottom-Sheet in Inhaltshöhe (Ionic Sheet-Modal 0.85), Titel „Abwesenheit eintragen“ mit X.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "people/person/person.page.html",
+    "line": 914,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"isPauseModalOpen\""
+    },
+    "events": [
+     "(ionModalDidDismiss)=dismissPauseModal()"
+    ],
+    "bindings": [
+     "[breakpoints]=\"[0, 0.75, 1]\"",
+     "[initialBreakpoint]=\"0.75\"",
+     "[isOpen]=\"isPauseModalOpen\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "people/person/person.page#modal-cc46e7c5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:43"
+    ],
+    "n": "Flutter: Bottom-Sheet (Ionic Sheet-Modal 0.75)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 214,
+    "cond": [
+     "@if (player)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "attendance.general"
+    ],
+    "de": [
+     "Allgemein"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.general' | transloco }}",
+    "id": "people/person/person.page#text-13da27cf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:139"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 236,
+    "cond": [
+     "@if (player)",
+     "@if (isChoir)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "person.vocalRange"
+    ],
+    "de": [
+     "Stimmumfang"
+    ],
+    "literals": [],
+    "text": "{{ 'person.vocalRange' | transloco }}",
+    "id": "people/person/person.page#text-1819de6e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:152",
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:835"
+    ],
+    "n": "'Stimmumfang' bei Chor, alle Rollen; leer + nicht bearbeitbar ausgeblendet (beim Feld-Item erfasst).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 253,
+    "cond": [
+     "@if (player)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.birthday"
+    ],
+    "de": [
+     "Geburtsdatum"
+    ],
+    "literals": [],
+    "text": "{{ 'people.birthday' | transloco }}",
+    "id": "people/person/person.page#text-22fb03ba"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:162"
+    ],
+    "n": "Flutter: Feld ausgeblendet, wenn leer und nicht bearbeitbar.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 595,
+    "cond": [
+     "@if (player)",
+     "@if (db.getPersonExtraFields().length)",
+     "@for (field of db.getPersonExtraFields(); track field.id)",
+     "@else if (field.type === fieldTypes.DATE)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.name }}"
+    ],
+    "text": "{{ field.name }}",
+    "id": "people/person/person.page#text-2ef5c47d-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:757"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 631,
+    "cond": [
+     "@if (player)",
+     "@if (db.getPersonExtraFields().length)",
+     "@for (field of db.getPersonExtraFields(); track field.id)",
+     "@else if (field.type === fieldTypes.BFECG_CHURCH)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.name }}"
+    ],
+    "text": "{{ field.name }}",
+    "id": "people/person/person.page#text-2ef5c47d-3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:726"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 713,
+    "cond": [
+     "@if (personAttendance.length || history.length)",
+     "@if (lateCount === 0)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "person.average"
+    ],
+    "de": [
+     "Durchschnitt"
+    ],
+    "literals": [],
+    "text": "{{ 'person.average' | transloco }}",
+    "id": "people/person/person.page#text-46e0984b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:168"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 707,
+    "cond": [
+     "@if (personAttendance.length || history.length)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "person.history"
+    ],
+    "de": [
+     "Historie"
+    ],
+    "literals": [],
+    "text": "{{ 'person.history' | transloco }}",
+    "id": "people/person/person.page#text-4ba50278"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:49",
+     "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:76",
+     "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:102"
+    ],
+    "n": "Ionic: Bereich „Historie“ nur sichtbar, wenn Einträge vorhanden (personAttendance wird nie befüllt, also history.length) / Flutter: immer sichtbar, leer mit „Keine Historie vorhanden“ (Durchschnitt 0 %), zusätzlicher Umschalter „Alle anzeigen“ (alle Saisons).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 718,
+    "cond": [
+     "@if (personAttendance.length || history.length)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end",
+     "[color]": "\"perc >= 75 ? 'success' : perc >= 50 ? 'warning' : 'danger'\""
+    },
+    "bindings": [
+     "[color]=\"perc >= 75 ? 'success' : perc >= 50 ? 'warning' : 'danger'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ perc }}%"
+    ],
+    "text": "{{ perc }}%",
+    "id": "people/person/person.page#text-524d02fd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:164"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 940,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "people.pausedFrom"
+    ],
+    "de": [
+     "Pausiert ab (optional)"
+    ],
+    "literals": [],
+    "text": "{{ 'people.pausedFrom' | transloco }}",
+    "id": "people/person/person.page#text-56eeae57"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:128"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 966,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">",
+     "@else (not pauseUntil)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "people.noEndDate"
+    ],
+    "de": [
+     "Kein Enddatum gewählt"
+    ],
+    "literals": [],
+    "text": "{{ 'people.noEndDate' | transloco }}",
+    "id": "people/person/person.page#text-57a6ff94"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:143"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 983,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "class": "ion-padding",
+     "color": "medium"
+    },
+    "keys": [
+     "person.pauseHintAuto"
+    ],
+    "de": [
+     "Mit einem Startdatum in der Vergangenheit wird die Person auch aus zurückliegenden Anwesenheiten ab diesem Datum entfernt. Wenn ein Enddatum angegeben ist, wird die Person danach automatisch wieder aktiviert."
+    ],
+    "literals": [],
+    "text": "{{ 'person.pauseHintAuto' | transloco }}",
+    "id": "people/person/person.page#text-6e3272f5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:158"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 942,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">",
+     "@if (pauseFrom)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ pauseFrom | date: ('common.ngDate' | transloco) }}",
+    "id": "people/person/person.page#text-71d08f8a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:129"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 964,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">",
+     "@if (pauseUntil)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ pauseUntil | date: ('common.ngDate' | transloco) }}",
+    "id": "people/person/person.page#text-71d08f8a-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:143"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 1023,
+    "cond": [
+     "in <ion-modal isOpen=\"isAbsenceModalOpen\">",
+     "@if (absenceFrom)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ absenceFrom | date: ('common.ngDate' | transloco) }}",
+    "id": "people/person/person.page#text-71d08f8a-3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:167"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 1045,
+    "cond": [
+     "in <ion-modal isOpen=\"isAbsenceModalOpen\">",
+     "@if (absenceUntil)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ absenceUntil | date: ('common.ngDate' | transloco) }}",
+    "id": "people/person/person.page#text-71d08f8a-4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:176"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 919,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "person.pauseTitle"
+    ],
+    "de": [
+     "{name} pausieren"
+    ],
+    "literals": [],
+    "text": "{{ 'person.pauseTitle' | transloco: { name: (player?.firstName ?? '') + ' ' + (player?.lastName ?? '') } }}",
+    "id": "people/person/person.page#text-74cc549e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:98"
+    ],
+    "n": "„{name} Pausieren“ (Großschreibung)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 578,
+    "cond": [
+     "@if (player)",
+     "@if (db.getPersonExtraFields().length)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.extraFields"
+    ],
+    "de": [
+     "Zusatzfelder"
+    ],
+    "literals": [],
+    "text": "{{ 'people.extraFields' | transloco }}",
+    "id": "people/person/person.page#text-75ad9b8b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:124"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 716,
+    "cond": [
+     "@if (personAttendance.length || history.length)",
+     "@if (lateCount !== 0)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "person.averageLate"
+    ],
+    "de": [
+     "Durchschnitt ({count}x zu spät)"
+    ],
+    "literals": [],
+    "text": "{{ 'person.averageLate' | transloco: { count: lateCount } }}",
+    "id": "people/person/person.page#text-79695a55"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:167"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 473,
+    "cond": [
+     "@if (player)",
+     "@if (player.shift_id)",
+     "@else (not shift && shift.shifts.length > 0)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "person.startDate"
+    ],
+    "de": [
+     "Anfangsdatum"
+    ],
+    "literals": [],
+    "text": "{{ 'person.startDate' | transloco }}",
+    "id": "people/person/person.page#text-79d17c2c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:580"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 317,
+    "cond": [
+     "@if (player)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "person.joinedOn"
+    ],
+    "de": [
+     "Beigetreten am"
+    ],
+    "literals": [],
+    "text": "{{ 'person.joinedOn' | transloco }}",
+    "id": "people/person/person.page#text-828f38de"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:184"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 1025,
+    "cond": [
+     "in <ion-modal isOpen=\"isAbsenceModalOpen\">",
+     "@else (not absenceFrom)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "person.noDateChosen"
+    ],
+    "de": [
+     "Kein Datum gewählt"
+    ],
+    "literals": [],
+    "text": "{{ 'person.noDateChosen' | transloco }}",
+    "id": "people/person/person.page#text-887c6524"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:169"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 1047,
+    "cond": [
+     "in <ion-modal isOpen=\"isAbsenceModalOpen\">",
+     "@else (not absenceUntil)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "person.noDateChosen"
+    ],
+    "de": [
+     "Kein Datum gewählt"
+    ],
+    "literals": [],
+    "text": "{{ 'person.noDateChosen' | transloco }}",
+    "id": "people/person/person.page#text-887c6524-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:177"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 1021,
+    "cond": [
+     "in <ion-modal isOpen=\"isAbsenceModalOpen\">"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "person.fromRequired"
+    ],
+    "de": [
+     "Von *"
+    ],
+    "literals": [],
+    "text": "{{ 'person.fromRequired' | transloco }}",
+    "id": "people/person/person.page#text-8b8fdf3d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:166"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 962,
+    "cond": [
+     "in <ion-modal isOpen=\"isPauseModalOpen\">"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "signout.pausedUntil"
+    ],
+    "de": [
+     "Pausiert bis (optional)"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.pausedUntil' | transloco }}",
+    "id": "people/person/person.page#text-98061078"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/pause_person_sheet.dart:142"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 401,
+    "cond": [
+     "@if (player)",
+     "@if (!isMainGroup && isChoir)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.instruments"
+    ],
+    "de": [
+     "Instrumente"
+    ],
+    "literals": [],
+    "text": "{{ 'people.instruments' | transloco }}",
+    "id": "people/person/person.page#text-a507dbf9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:204",
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:854"
+    ],
+    "n": "'Instrumente' bei Chor && !Hauptgruppe; leer + nicht bearbeitbar ausgeblendet (Feld-Item).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 285,
+    "cond": [
+     "@if (player)",
+     "@if (!isGeneral && !isChoir && !isMainGroup)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "person.playsSince"
+    ],
+    "de": [
+     "Spielt auf dem Instrument seit"
+    ],
+    "literals": [],
+    "text": "{{ 'person.playsSince' | transloco }}",
+    "id": "people/person/person.page#text-a939a284"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:170",
+     "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:177"
+    ],
+    "n": "Flutter: Feld zusätzlich ausgeblendet, wenn leer und nicht bearbeitbar.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/person/person.page",
+   "ionic": {
+    "ts": "people/person/person.page.ts",
+    "html": "people/person/person.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/person/person.page.html",
+    "line": 1043,
+    "cond": [
+     "in <ion-modal isOpen=\"isAbsenceModalOpen\">"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "person.untilRequired"
+    ],
+    "de": [
+     "Bis *"
+    ],
+    "literals": [],
+    "text": "{{ 'person.untilRequired' | transloco }}",
+    "id": "people/person/person.page#text-ac9e7aae"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:174"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  }
+ ]
+}

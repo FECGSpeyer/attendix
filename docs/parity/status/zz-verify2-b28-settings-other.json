@@ -1,0 +1,90 @@
+{
+  "batch": "zz-verify2-b28-settings-other",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "settings/handover/handover.page#toast-3db15108": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/handover_page.dart:100", "lib/features/settings/presentation/pages/handover_page.dart:113", "lib/data/repositories/organisation_repository.dart:312"],
+      "n": "Gleiche Datenquelle (tenant_group_tenants der Organisation ohne aktuelle Instanz; ohne Organisation leer) → roter Toast; bei Ladefehler in beiden kein Toast. Seite in beiden nur Admin/Verantw.",
+      "v": "bestätigt"
+    },
+    "settings/role-permissions/role-permissions.page#text-d1804890": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/role_permissions_page.dart:22", "lib/features/settings/presentation/pages/role_permissions_page.dart:210", "lib/features/settings/presentation/pages/role_permissions_page.dart:283", "lib/features/settings/presentation/pages/role_permissions_page.dart:290"],
+      "n": "Gleiche Rollenreihenfolge und Labels (Helfer, Stimmführer-Helfer, Mitglied); Abschnitt nur bei vorhandener Berechtigungszeile und mind. einem Schalter (Stimmführer/Beobachter/Eltern nie); mehrere gleichzeitig aufklappbar. Seite nur Admin/Verantw. in beiden.",
+      "v": "bestätigt"
+    },
+    "settings/role-permissions/role-permissions.page#field-8c1e1d62": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/role_permissions_page.dart:233", "lib/features/settings/presentation/pages/role_permissions_page.dart:235"],
+      "n": "Nur bei Helfer und Stimmführer-Helfer; schreibt attendance_all_groups; Admin und Verantw. dürfen in beiden ändern.",
+      "v": "bestätigt"
+    },
+    "settings/role-permissions/role-permissions.page#field-d7afd422": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/role_permissions_page.dart:233", "lib/features/settings/presentation/pages/role_permissions_page.dart:241"],
+      "n": "Nur bei Helfer und Stimmführer-Helfer; schreibt attendance_create.",
+      "v": "bestätigt"
+    },
+    "settings/role-permissions/role-permissions.page#field-eb839598": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/role_permissions_page.dart:233", "lib/features/settings/presentation/pages/role_permissions_page.dart:247"],
+      "n": "Nur bei Helfer und Stimmführer-Helfer; schreibt player_notes_view.",
+      "v": "bestätigt"
+    },
+    "settings/role-permissions/role-permissions.page#field-1bfec850": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/role_permissions_page.dart:233", "lib/features/settings/presentation/pages/role_permissions_page.dart:253"],
+      "n": "Nur bei Helfer und Stimmführer-Helfer; schreibt checklist_view.",
+      "v": "bestätigt"
+    },
+    "settings/role-permissions/role-permissions.page#field-5585f9ff": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/role_permissions_page.dart:32", "lib/features/settings/presentation/pages/role_permissions_page.dart:261"],
+      "n": "Nur im Abschnitt Mitglied (PLAYER); schreibt player_self_pause. Auswertung in beiden über die PLAYER-Berechtigung (canSelfPauseProvider).",
+      "v": "bestätigt"
+    },
+    "settings/role-permissions/role-permissions.page#field-c1ffb95b": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/role_permissions_page.dart:33", "lib/features/settings/presentation/pages/role_permissions_page.dart:268"],
+      "n": "Bei Mitglied, Helfer und Stimmführer-Helfer; schreibt player_planned_absence.",
+      "v": "bestätigt"
+    },
+    "settings/voice-leader/voice-leader.page#text-b3aad9b6": {
+      "s": "ok",
+      "f": ["lib/features/voice_leader/presentation/pages/voice_leader_page.dart:255", "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:257"],
+      "n": "Badge „Sf“ (primary) bei isLeader; Seite in beiden nur Stimmführer/Stf.-Helfer (route_access.dart).",
+      "v": "bestätigt"
+    },
+    "x-bb2ef2fc5d": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/settings/presentation/pages/handover_page.dart:296", "lib/data/repositories/player_repository.dart:77"],
+      "n": "Echt: Ionic sortiert über getModifiedPlayersForList (Hauptgruppe zuerst, Gruppen-sort_order, Gruppenname, Personen-sort_order, Nachname, isLeader egal) / Flutter zeigt playersProvider unverändert (instrument-ID, isLeader absteigend, Nachname). Sichtbar andere Reihenfolge der Auswahlliste.",
+      "v": "bestätigt"
+    },
+    "x-8d00ffba99": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/help/data/help_content.dart:244", "lib/features/help/data/help_content_en.dart:142"],
+      "n": "Echt: Ionic planning.articles.ts:79 (und en/planning.en.ts:70) enthält „Dort siehst du die ORG-Pläne der nächsten 8 Wochen und zusätzlich die letzten 20 vergangenen.“ / Flutter-Artikel endet nach „… in der Gemeinde App erscheinen.“ (de und en). Fehlender Hinweis.",
+      "v": "bestätigt"
+    },
+    "x-6eff6305bb": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/voice_leader/data/providers/voice_leader_providers.dart:138", "lib/features/voice_leader/data/providers/voice_leader_providers.dart:141"],
+      "n": "Echt: Ionic localeCompare (ICU, Umlaute wie Grundbuchstabe) / Flutter toLowerCase().compareTo (Code-Einheiten): „Müller“ steht nach „Mustermann“, „Özdemir“ nach „Zimmer“. Andere Reihenfolge bei Namen mit Umlauten.",
+      "v": "bestätigt"
+    },
+    "x-7da9b986f8": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/data/repositories/attendance_repository.dart:348", "lib/data/repositories/attendance_repository.dart:357", "lib/features/voice_leader/data/providers/voice_leader_providers.dart:80"],
+      "n": "Echt, Grenzfall: Ionic lädt je Mitglied alle person_attendances (der .gt auf attendance.date ohne !inner leert nur das Embed, Filter dann in JS) – Limit 1000 gilt pro Person / Flutter: eine Abfrage für ALLE Mitglieder, nur Status 2/4/5, ohne Datumsfilter, ohne order, ohne fetchAllPages; ab > 1000 Abwesenheitszeilen der ganzen Stimme kappt PostgREST willkürlich, kommende Abwesenheiten können fehlen. Nebenbei: Ionic blendet für Stimmführer archivierte Termine aus, Flutter nicht.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

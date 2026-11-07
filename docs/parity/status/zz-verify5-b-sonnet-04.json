@@ -1,0 +1,343 @@
+{
+ "batch": "zz-verify5-b-sonnet-04",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "people/list/list.page#field-a2446bcd": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:839",
+    "lib/features/people/presentation/pages/people_list_page.dart:355"
+   ],
+   "n": "Sortier-Auswahl: gleiche 11 Optionen/Reihenfolge, Testergebnis nur VoS, Sortierlogik (Vor-/Nachname, Geburtstag, Beitritt, Anwesenheit, nächster Geburtstag, Test) passt, Speicherung je Instanz.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#field-ab968b75": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/archive_person_modal.dart:98"
+   ],
+   "n": "Archiv-Notiz jetzt in archive_person_modal.dart (Textfeld \"Notiz\", Satzanfang groß); Ionic-Archivdialog wie dort.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#text-1edff7fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/archive_person_modal.dart:88"
+   ],
+   "n": "\"Austrittsdatum\" im Archiv-Modal, Datumswahl.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#text-2e536d7b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/archive_person_modal.dart:69",
+    "lib/features/people/presentation/pages/people_list_page.dart:1449"
+   ],
+   "n": "Titel \"{Name} Archivieren\" mit Vor- und Nachname.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#text-3c936418": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/archive_person_modal.dart:98"
+   ],
+   "n": "Label \"Notiz\" vorhanden.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#text-6f2a6577": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:559"
+   ],
+   "n": "Leerzustand \"Bisher wurden noch keine Personen angelegt\" mit Buttons Person hinzufügen/Import (Admin), wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#text-75888fce": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:675"
+   ],
+   "n": "\"Personen (n)\" mit Anzahl der gefilterten Personen.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#toast-4abeba9d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:213"
+   ],
+   "n": "Roter Fehlerhinweis bei Pausieren-Fehler; Flutter mit Präfix \"Fehler: ...\", Ionic zeigt den Fehlertext.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#toast-c81105f4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1239"
+   ],
+   "n": "Fehler beim Speichern der Reihenfolge: roter Toast \"Fehler beim Speichern der Reihenfolge\".",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-213509df": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1969",
+    "lib/features/people/presentation/pages/person_create_page.dart:324"
+   ],
+   "n": "Schließen-X; Rückfrage \"Änderungen verwerfen?\" (Abbrechen/Ja) bei Änderungen in Detail- und Anlegen-Seite.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-3a69a489": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1909",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1566"
+   ],
+   "n": "Reaktivieren-FAB bei archivierter Person, Bestätigung Abbrechen/Ja; nur Admin/Verantwortliche, Ionic öffnet diese Ansicht nur aus Admin-Einstellungen (Archiv).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-8b894b78": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:330"
+   ],
+   "n": "Speichern-FAB der Anlegen-Seite (Person hinzufügen).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#alert-5ffb2485": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1566",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1909"
+   ],
+   "n": "Alert \"Person reaktivieren\" + Text, Abbrechen/Ja, ruft reactivatePlayer, Toast, Seite schließt.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#alert-c5cb3708": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:63",
+    "lib/features/people/presentation/pages/person_detail_page.dart:2009"
+   ],
+   "n": "Alert \"Personen zusammenführen\" mit beiden Namen, Abbrechen/Zusammenführen; nur ausstehende Person + canEdit; Erfolg-/Fehler-Toast.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#alert-d5cca7fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:261"
+   ],
+   "n": "Alert \"Abwesenheit löschen\" + Text, Abbrechen/Löschen (destruktiv), setzt entschuldigte Termine zurück.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-3de9eda0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/archive_person_modal.dart:98"
+   ],
+   "n": "Archiv-Notiz im gemeinsamen Archiv-Modal (2 Zeilen, wachsend).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-012b5231": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:313"
+   ],
+   "n": "Titel \"Person hinzufügen\".",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-15cc2dfb": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/archive_person_modal.dart:88"
+   ],
+   "n": "\"Austrittsdatum\" im Archiv-Modal.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-2ef5c47d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:748"
+   ],
+   "n": "Boolesches Zusatzfeld: Label field.name mit Schalter.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-45b14cdb": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/archive_person_modal.dart:69",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1299"
+   ],
+   "n": "Titel \"{Name} Archivieren\" mit vollem Namen.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-a7ca92e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1952"
+   ],
+   "n": "Titel \"Person genehmigen\" bei ausstehender Person (canEdit).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-049f4205": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1154"
+   ],
+   "n": "Roter Toast personNoMatchOther bei keinem Treffer.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-10d4fb42": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1364"
+   ],
+   "n": "Roter Toast personResetFailed beim Zurücksetzen des Verspätungszählers.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-3e3e43d5": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1122",
+    "lib/features/people/presentation/pages/person_create_page.dart:252"
+   ],
+   "n": "Toast personDataTaken (grün) nach Übernahme.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-58f0abe0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1595"
+   ],
+   "n": "Grüner Toast personReactivated nach Reaktivierung.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-78153810": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1330"
+   ],
+   "n": "Grüner Toast personArchived, Seite schließt.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-8a955d94": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:309",
+    "lib/features/people/presentation/pages/person_create_page.dart:941"
+   ],
+   "n": "Grüner Toast personPhotoRemoved (Bild bestehend + neue Person).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-9d699ae0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:207",
+    "lib/features/people/presentation/pages/person_create_page.dart:912"
+   ],
+   "n": "Roter Toast personPhotoTooLarge bei > 2 MB (kPersonImageMaxBytes).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-b0dccec9": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:291"
+   ],
+   "n": "Grüner Toast signoutAbsenceDeleted; zusätzlich Fehler-Toast.",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#field-159a7ede": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:286",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:225"
+   ],
+   "n": "Info-Feld mit Label \"Info\" und Platzhalter \"Info-Text (optional)...\" (planningInfoOptionalEllipsis im Bearbeiten-Dialog).",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#field-86c9cb80": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:200",
+    "lib/features/planning/presentation/pages/planning_page.dart:2090"
+   ],
+   "n": "Beamer-Schalter, Auto-Grund nur ohne Handwert, Werk/Lied/Gedicht wie Ionic; showBeamer = fecg_link && beamer_files && Org-Plan; Speicherung needsBeamer.",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-0fbfb680": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:187",
+    "lib/features/planning/presentation/pages/planning_page.dart:2090"
+   ],
+   "n": "Überschrift \"Beamer\" (Großbuchstaben) nur bei showBeamer.",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-572a71cd": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:223"
+   ],
+   "n": "Titel \"Feld bearbeiten\".",
+   "v": "bestätigt"
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#action-7476193c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:316"
+   ],
+   "n": "\"Per Telegram senden (Bild)\" nur bei Chat-ID und Umfang \"Nur ...\".",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-1ca27ce8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:150"
+   ],
+   "n": "Info-Zeile unter Blockkopf wird angezeigt (kursiv, grau).",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-f89a1a83": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:140"
+   ],
+   "n": "Zeitspanne des Blocks + \" | Ausführender\" wie Ionic.",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#toast-b048fc61": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:100"
+   ],
+   "n": "Warn-Toast \"Kein Plan verfügbar\" bei leerem Plan (PDF).",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#toast-f47f3c2c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:100"
+   ],
+   "n": "Warn-Toast \"Kein Plan verfügbar\" bei leerem Plan (Telegram).",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#action-6c9b4483": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:661",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:281"
+   ],
+   "n": "Wisch-Löschen (rot): Block mit Rückfrage, sonst direkt entfernen, wie Ionic removeField.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#action-6f76d26d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1291",
+    "lib/features/planning/presentation/pages/planning_page.dart:1805"
+   ],
+   "n": "\"Weiteren Ablaufplan anlegen\" im +-Menü bei vorhandenem Termin; Dialog Leer/Kopieren/Abbrechen, Warn-Toasts wie Ionic.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

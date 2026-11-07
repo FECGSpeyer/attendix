@@ -1,0 +1,97 @@
+{
+ "batch": "zz-verify2-b14-selfService",
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
+ "items": {
+  "selfService/overview/overview.page#text-f5f8878b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:354",
+    "lib/core/providers/self_service_providers.dart:106",
+    "lib/data/repositories/sign_in_out_repository.dart:640"
+   ],
+   "n": "Rollen geprüft: Übersicht nur PLAYER/NONE/HELPER/VL-HELPER mit mehreren Instanzen (Stimmführer nicht) in beiden (main_shell + route_access). Gruppenname = longName || shortName || „Unbekannt“, archivierte Termine je Mitgliedschaftsrolle gefiltert – gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#text-15f2df15": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:355"
+   ],
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#text-bd3022fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:347"
+   ],
+   "n": "Nur im Modus „Nach Instanz“ nach dem Laden ohne Gruppen – gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#action-4d01e523": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:34",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:150"
+   ],
+   "n": "Nur Eltern-Rolle (Route /parents) und mehr als eine Instanz des Nutzers (tenantUsers, alle Rollen) in beiden; Langname + Pfeil nach unten; Wechsel setzt Instanz und öffnet Startseite der neuen Rolle.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#popover-40152ee7": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:34",
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:54"
+   ],
+   "n": "PopupMenu statt ion-popover, gleiche Liste (Langnamen) mit Badge „Aktuell“.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-ae69766a": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:32",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:164"
+   ],
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-ae69766a-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:249"
+   ],
+   "v": "bestätigt"
+  },
+  "x-9e43a66882": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:377",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:391",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:394"
+   ],
+   "n": "Befund echt. Ionic Übersicht: Entschuldigt (E) → „Anmelden“ + „Anmelden mit Notiz“; Verspätung gemeldet (text 'L') → zusätzlich „Abmelden“ + „Verspätung eintragen“, nach Fristende bleiben diese beiden. / Flutter overviewMode: isExcusedStatus blendet „Anmelden mit Notiz“ aus und sperrt „Abmelden“/„Verspätung eintragen“ → kein direkter Wechsel von „Verspätung gemeldet“ zu Abmelden, nach Frist nur Toast „keine Aktionen“.",
+   "v": "bestätigt"
+  },
+  "x-3b9835638f": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:468",
+    "lib/data/repositories/sign_in_out_repository.dart:670"
+   ],
+   "n": "Befund echt. Ionic parents.signin: attendance ist das zusammengebaute Termin-Objekt ohne status → Typ immer 'signin' → quick-processor benachrichtigt. / Flutter: Typ je Kindstatus, bei „Verspätung gemeldet“ 'lateSignIn'; quick-processor kennt nur 'lateSignin' → keine Push-/Telegram-Benachrichtigung. DB-Schreibung gleich.",
+   "v": "bestätigt"
+  },
+  "x-afb9c7a207": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/data/repositories/player_repository.dart:222",
+    "lib/features/parents/data/providers/parents_providers.dart:254"
+   ],
+   "n": "Befund echt. Ionic getPlayers (PARENT): order instrument, isLeader desc, lastName; Kinder je Termin in dieser Reihenfolge (stabile Sortierung). / Flutter getChildrenForParent nur order lastName; Kinder je Termin in DB-Reihenfolge von getPersonAttendancesForPersons (nur nach Termin-Datum sortiert).",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

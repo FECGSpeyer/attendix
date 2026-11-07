@@ -1,0 +1,418 @@
+<title>Attendix Paritätsnachweis</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: summary band, sticky filter bar, then area rail + findings list (stacks on phones). */
+:root {
+  --bg: #f3f6f5;
+  --surface: #ffffff;
+  --sunken: #e9efed;
+  --fg: #16201d;
+  --muted: #5a6964;
+  --line: #d7e0dc;
+  --accent: #0d6e66;
+  --accent-soft: #d6ecea;
+  --ok: #1f7a44;
+  --ok-soft: #dcefe3;
+  --hoch: #b4281d;
+  --hoch-soft: #f8e0dd;
+  --mittel: #a65a05;
+  --mittel-soft: #f7e8d3;
+  --niedrig: #56636f;
+  --niedrig-soft: #e5e9ed;
+  --na: #8a8f96;
+  --open: #b9c4c0;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1514; --surface: #161e1c; --sunken: #1d2725; --fg: #e3ebe8; --muted: #9aaaa5; --line: #2a3633;
+    --accent: #5cc4b9; --accent-soft: #173a36; --ok: #6fcf97; --ok-soft: #173325; --hoch: #ff8a7a; --hoch-soft: #3d1c18;
+    --mittel: #f0b05a; --mittel-soft: #3a2a13; --niedrig: #aab6c1; --niedrig-soft: #252d33; --na: #7d858c; --open: #3c4a46;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1514; --surface: #161e1c; --sunken: #1d2725; --fg: #e3ebe8; --muted: #9aaaa5; --line: #2a3633;
+  --accent: #5cc4b9; --accent-soft: #173a36; --ok: #6fcf97; --ok-soft: #173325; --hoch: #ff8a7a; --hoch-soft: #3d1c18;
+  --mittel: #f0b05a; --mittel-soft: #3a2a13; --niedrig: #aab6c1; --niedrig-soft: #252d33; --na: #7d858c; --open: #3c4a46;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font: 15px/1.5 var(--font-body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); max-width: 1320px; margin: 0 auto; }
+a { color: var(--accent); }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+header.top { background: var(--surface); border-bottom: 1px solid var(--line); }
+header.top .wrap { padding-block: 20px 18px; display: grid; gap: 14px; }
+h1 { font-size: 1.55rem; line-height: 1.2; margin: 0; font-weight: 700; text-wrap: balance; letter-spacing: -0.01em; }
+.sub { color: var(--muted); margin: 2px 0 0; font-size: 0.9rem; }
+.sub code { font-family: var(--font-mono); font-size: 0.85em; }
+.kpis { display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: baseline; }
+.kpi { display: grid; gap: 0; min-width: 0; }
+.kpi b { font-size: 1.5rem; font-variant-numeric: tabular-nums; font-weight: 600; line-height: 1.1; }
+.kpi span { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.kpi.hoch b { color: var(--hoch); } .kpi.mittel b { color: var(--mittel); } .kpi.ok b { color: var(--ok); }
+.bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--open); }
+.bar i { display: block; height: 100%; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.8rem; color: var(--muted); }
+.device { border: 1px solid var(--line); border-radius: 10px; background: var(--bg); min-width: 0; max-width: 100%; }
+.device > summary { cursor: pointer; padding: 8px 12px; font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; }
+.device > summary b { font-weight: 600; }
+.device .dk { font-variant-numeric: tabular-nums; color: var(--muted); }
+.device .dk.ok { color: var(--ok); } .device .dk.bad { color: var(--hoch); } .device .dk.me { color: var(--mittel); }
+.device .tbl { overflow-x: auto; border-top: 1px solid var(--line); }
+.device table { border-collapse: collapse; width: 100%; font-size: 0.82rem; }
+.device th, .device td { padding: 4px 8px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.device th { color: var(--muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.device td.c { text-align: center; white-space: nowrap; width: 4.5em; }
+.device td.c.ok { color: var(--ok); } .device td.c.bad { color: var(--hoch); background: var(--hoch-soft); } .device td.c.me { color: var(--mittel); } .device td.c.na { color: var(--na); }
+.device td.t { min-width: 16em; }
+.device .dfilter { display: flex; gap: 6px; padding: 8px 12px; flex-wrap: wrap; }
+.legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; background: var(--c); vertical-align: -1px; }
+
+.filters { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+.filters .wrap { padding-block: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.filters input[type=search] { flex: 1 1 220px; min-width: 0; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.chipset { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 10px; font-size: 0.82rem; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--fg); font-weight: 500; }
+.filters select { padding: 6px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); max-width: 100%; }
+
+main .wrap { padding-block: 18px 40px; display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 860px) { main .wrap { grid-template-columns: minmax(0, 1fr); } .rail { order: 2; } }
+.rail { display: grid; gap: 2px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 64px); max-height: calc(100vh - 90px); overflow: auto; }
+@media (max-width: 860px) { .rail { position: static; max-height: none; } }
+.rail h2, .list h2 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 0 6px; font-weight: 600; }
+.area { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 8px; padding: 7px 9px; border-radius: 8px; cursor: pointer; border: 1px solid transparent; background: none; text-align: left; width: 100%; }
+.area:hover { background: var(--sunken); }
+.area[aria-pressed="true"] { background: var(--surface); border-color: var(--line); }
+.area .n { font-variant-numeric: tabular-nums; font-size: 0.8rem; color: var(--muted); }
+.area .gaps { font-variant-numeric: tabular-nums; font-size: 0.8rem; color: var(--hoch); font-weight: 600; }
+.area .bar { grid-column: 1 / -1; height: 4px; }
+
+.list { display: grid; gap: 10px; min-width: 0; }
+.count { color: var(--muted); font-size: 0.85rem; }
+.row { display: grid; grid-template-columns: 4px minmax(0, 1fr); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.row .stripe { background: var(--sev, var(--open)); }
+.row .body { padding: 10px 14px 12px; display: grid; gap: 6px; min-width: 0; }
+.row .head { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.tag { font-size: 0.72rem; padding: 1px 7px; border-radius: 4px; background: var(--sunken); color: var(--muted); font-weight: 500; letter-spacing: 0.02em; }
+.tag.s-diff, .tag.s-missing { background: var(--sevsoft); color: var(--sev); }
+.tag.s-ok { background: var(--ok-soft); color: var(--ok); }
+.tag.s-unclear { background: var(--mittel-soft); color: var(--mittel); }
+.row .label { font-weight: 600; overflow-wrap: anywhere; }
+.row .unit { font-size: 0.8rem; color: var(--muted); overflow-wrap: anywhere; }
+.row .note { margin: 0; overflow-wrap: anywhere; white-space: pre-wrap; }
+.refs { display: flex; flex-wrap: wrap; gap: 4px 14px; font-family: var(--font-mono); font-size: 0.78rem; min-width: 0; }
+.refs a { overflow-wrap: anywhere; text-decoration: none; }
+.refs a:hover { text-decoration: underline; }
+.refs .k { color: var(--muted); font-family: var(--font-body); }
+.cond { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); overflow-wrap: anywhere; }
+.decide { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding-top: 4px; }
+.decide button { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 4px 10px; font-size: 0.82rem; cursor: pointer; }
+.decide button[aria-pressed="true"][data-d="angleichen"] { background: var(--hoch-soft); border-color: var(--hoch); color: var(--hoch); }
+.decide button[aria-pressed="true"][data-d="lassen"] { background: var(--ok-soft); border-color: var(--ok); color: var(--ok); }
+.decide button[aria-pressed="true"][data-d="spaeter"] { background: var(--niedrig-soft); border-color: var(--niedrig); }
+.decide input { flex: 1 1 200px; min-width: 0; border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; background: var(--bg); font-size: 0.85rem; }
+.decide .saved { font-size: 0.75rem; color: var(--muted); }
+.more { justify-self: start; border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 8px 14px; cursor: pointer; }
+.empty { padding: 28px; text-align: center; color: var(--muted); background: var(--surface); border: 1px dashed var(--line); border-radius: 10px; }
+.note-banner { font-size: 0.85rem; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) { .row { transition: border-color .15s; } .row:hover { border-color: var(--accent); } }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div>
+      <h1>Attendix Paritätsnachweis</h1>
+      <p class="sub" id="sub">Ionic-App gegen Flutter-App, normales Design. Daten werden geladen…</p>
+    </div>
+    <div class="kpis" id="kpis"></div>
+    <div class="bar" id="bar" aria-hidden="true"></div>
+    <div class="legend">
+      <span style="--c: var(--ok)">gleich</span>
+      <span style="--c: var(--hoch)">fehlt / weicht ab (hoch)</span>
+      <span style="--c: var(--mittel)">mittel</span>
+      <span style="--c: var(--niedrig)">niedrig</span>
+      <span style="--c: var(--na)">entfällt</span>
+      <span style="--c: var(--open)">noch nicht geprüft</span>
+    </div>
+    <details class="device" id="device" hidden></details>
+  </div>
+</header>
+
+<div class="filters">
+  <div class="wrap">
+    <input type="search" id="q" placeholder="Suchen: Text, Notiz, Datei" aria-label="Suchen">
+    <div class="chipset" id="statusChips" role="group" aria-label="Status"></div>
+    <div class="chipset" id="sevChips" role="group" aria-label="Schwere"></div>
+    <select id="kind" aria-label="Art"><option value="">Alle Arten</option></select>
+    <select id="better" aria-label="Typ">
+      <option value="">Alle Abweichungen</option>
+      <option value="no">Lücken (ohne „Flutter besser“)</option>
+      <option value="yes">Nur „Flutter besser“</option>
+    </select>
+    <select id="decision" aria-label="Entscheidung">
+      <option value="">Alle Entscheidungen</option>
+      <option value="none">Noch nicht entschieden</option>
+      <option value="angleichen">Angleichen</option>
+      <option value="lassen">So lassen</option>
+      <option value="spaeter">Später klären</option>
+    </select>
+  </div>
+</div>
+
+<main>
+  <div class="wrap">
+    <nav class="rail" id="rail" aria-label="Bereiche"><h2>Bereiche</h2></nav>
+    <section class="list" id="list" aria-live="polite">
+      <div class="empty">Daten werden geladen…</div>
+    </section>
+  </div>
+</main>
+
+<script>
+const IONIC_REPO = 'https://github.com/FECGSpeyer/attendance/blob/';
+const FLUTTER_REPO = 'https://github.com/FECGSpeyer/attendix/blob/';
+const KIND = { action: 'Aktion', field: 'Feld', text: 'Text', embed: 'Baustein', media: 'Bild', alert: 'Dialog', actionsheet: 'Aktionsblatt', modal: 'Modal', popover: 'Popover', toast: 'Hinweis', loading: 'Ladeanzeige', nav: 'Navigation', db: 'Datenbank', native: 'Nativ', effect: 'Datei/Teilen', route: 'Route', logic: 'Logik', extra: 'Zusatzbefund' };
+const STATUS = { missing: 'fehlt', diff: 'weicht ab', unclear: 'unklar', ok: 'gleich', na: 'entfällt', offen: 'offen' };
+const AREA = { app: 'App, Anmeldung, Navigation', attendance: 'Termine', overview: 'Übersicht, Statistik, Nachrichten', people: 'Personen', 'planning-org': 'Ablaufpläne, Organisation', selfService: 'Meine Termine, Eltern', services: 'Datenebene', 'settings-general': 'Einstellungen: Allgemein', 'settings-main': 'Einstellungen', 'settings-other': 'Einstellungen: weitere', shared: 'Gemeinsame Bausteine', songs: 'Werke', 'teachers-instruments-duty': 'Lehrer, Instrumente, Dienste', team: 'Team-Organisation', native: 'Native Konfiguration' };
+const SEVRANK = { hoch: 0, mittel: 1, niedrig: 2 };
+const state = { q: '', status: new Set(['missing', 'diff', 'unclear']), sev: new Set(), kind: '', area: '', decision: '', better: '', limit: 200 };
+let data = null, rows = [], decisions = {}, db = null;
+
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const docId = (id) => id.replace(/[^A-Za-z0-9_.~:@+-]/g, (c) => (c === '/' ? '~' : c === '#' ? '@' : '+'));
+const ionicLink = (ref) => {
+  if (!ref) return '';
+  const m = String(ref).replace(/^src\/app\//, '').match(/^(.*?)(?::(\d+)(?:-(\d+))?)?$/);
+  // files of the app itself are listed relative to src/app; android/, ios/, supabase/ … are not
+  const path = (data.meta.appTop || []).includes(m[1].split('/')[0]) ? `src/app/${m[1]}` : m[1];
+  return `<a href="${IONIC_REPO}${esc(data.meta.ionicCommit)}/${esc(path)}${m[2] ? `#L${m[2]}${m[3] ? `-L${m[3]}` : ''}` : ''}" target="_blank" rel="noopener">${esc(m[1])}${m[2] ? `:${m[2]}` : ''}</a>`;
+};
+// each verdict links to the Flutter commit it was made against
+const flutterLink = (ref, fc) => {
+  const m = String(ref).match(/^(.*?)(?::(\d+)(?:-\d+)?)?$/);
+  const sha = esc((data.meta.flutterCommits || [])[fc ?? 0] || 'master');
+  return `<a href="${FLUTTER_REPO}${sha}/${esc(m[1])}${m[2] ? `#L${m[2]}` : ''}" target="_blank" rel="noopener">${esc(m[1].replace(/^lib\//, ''))}${m[2] ? `:${m[2]}` : ''}</a>`;
+};
+
+function build() {
+  const units = data.units;
+  rows = data.rows.map((r) => ({ id: r[0], unit: units[r[1]][0], area: units[r[1]][3], kind: r[2], file: r[3], line: r[4], label: r[5], status: r[6], sev: r[7], f: r[8] || [], note: r[9], cond: r[10], v: r[11] || null, fc: r[12], fchanged: !!r[13] }));
+  data.extra.forEach((e) => {
+    const area = e[1].startsWith('native') ? 'native' : (units.find((u) => u[0] === e[1]) || [, , , 'app'])[3];
+    rows.push({ id: e[0], unit: e[1], area, kind: 'extra', file: e[5], line: null, label: e[2], status: e[4] ? 'diff' : 'ok', sev: e[4], f: e[6] || [], note: e[3], cond: '', v: e[7] || null, fc: e[8], stale: !!e[9], fchanged: !!e[10], extra: true });
+  });
+  // a page's logic entry only summarises when its findings are listed one by one (also withdrawn ones)
+  const summaryUnits = new Set(data.summaryUnits || []);
+  rows.forEach((r) => { if (r.kind === 'logic' && summaryUnits.has(r.unit)) r.summary = true; });
+  rows.forEach((r) => { r.better = /^Flutter besser/i.test(r.note || '') || /^Flutter besser/i.test(r.label || ''); });
+  // a summary entry "Geprüft ohne Abweichung" from the native check is information, not a gap
+  rows.forEach((r) => { if (r.extra && /^Geprüft ohne Abweichung/.test(r.label)) { r.status = 'ok'; r.sev = null; } });
+}
+
+function counts(list) {
+  const c = { ok: 0, diff: 0, missing: 0, na: 0, unclear: 0, offen: 0, hoch: 0, mittel: 0, niedrig: 0 };
+  for (const r of list) { c[r.status] = (c[r.status] || 0) + 1; if ((r.status === 'diff' || r.status === 'missing') && r.sev && !r.summary) c[r.sev]++; }
+  return c;
+}
+
+function renderSummary() {
+  const items = rows.filter((r) => !r.extra);
+  const c = counts(rows);
+  const ci = counts(items);
+  const checked = items.length - ci.offen;
+  const decided = Object.values(decisions).filter((x) => x.d).length;
+  const sub = document.getElementById('sub');
+  sub.innerHTML = `Ionic ${esc(data.meta.ionicVersion)} (<code>${esc(data.meta.ionicCommit)}</code>) gegen Flutter (<code>${esc((data.meta.flutterCommits || []).join(', ') || '–')}</code>), normales Design. Stand ${new Date(data.meta.generatedAt).toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' })}.`;
+  document.getElementById('kpis').innerHTML = [
+    ['', `${checked.toLocaleString('de-DE')} / ${items.length.toLocaleString('de-DE')}`, 'Punkte geprüft'],
+    ['ok', ci.ok.toLocaleString('de-DE'), 'gleich'],
+    ['hoch', c.hoch, 'Lücken hoch'],
+    ['mittel', c.mittel, 'mittel'],
+    ['', c.niedrig, 'niedrig'],
+    ['', c.unclear, 'unklar'],
+    ['', decided, 'von dir entschieden'],
+  ].map(([k, v, l]) => `<div class="kpi ${k}"><b>${v}</b><span>${l}</span></div>`).join('');
+  const total = items.length || 1;
+  const seg = (n, col) => (n ? `<i style="width:${(100 * n) / total}%;background:var(${col})"></i>` : '');
+  const sevOf = (s) => items.filter((r) => (r.status === 'diff' || r.status === 'missing') && r.sev === s && !r.summary).length;
+  document.getElementById('bar').innerHTML = seg(ci.ok, '--ok') + seg(sevOf('hoch'), '--hoch') + seg(sevOf('mittel'), '--mittel') + seg(sevOf('niedrig') + ci.unclear, '--niedrig') + seg(ci.na, '--na');
+}
+
+function renderRail() {
+  const rail = document.getElementById('rail');
+  const byArea = {};
+  for (const r of rows) (byArea[r.area] ||= []).push(r);
+  const areas = Object.keys(byArea).sort((a, b) => (AREA[a] || a).localeCompare(AREA[b] || b, 'de'));
+  const btn = (key, name, list) => {
+    const items = list.filter((r) => !r.extra);
+    const c = counts(list);
+    const done = items.length ? (items.length - (counts(items).offen || 0)) / items.length : 1;
+    const gaps = c.hoch + c.mittel;
+    return `<button class="area" data-area="${esc(key)}" aria-pressed="${state.area === key}"><span>${esc(name)}</span><span class="${gaps ? 'gaps' : 'n'}">${gaps ? `${gaps} offen` : `${Math.round(done * 100)} %`}</span><span class="bar"><i style="width:${done * 100}%;background:var(--accent)"></i></span></button>`;
+  };
+  rail.innerHTML = '<h2>Bereiche</h2>' + btn('', 'Alle Bereiche', rows) + areas.map((a) => btn(a, AREA[a] || a, byArea[a])).join('');
+  rail.querySelectorAll('.area').forEach((b) => b.addEventListener('click', () => { state.area = b.dataset.area; state.limit = 200; renderRail(); renderList(); }));
+}
+
+function filtered() {
+  const q = state.q.trim().toLowerCase();
+  return rows.filter((r) => {
+    if (state.area && r.area !== state.area) return false;
+    if (state.status.size && !state.status.has(r.status)) return false;
+    if (state.sev.size && !state.sev.has(r.sev)) return false;
+    if (state.kind && r.kind !== state.kind) return false;
+    if (state.better && (state.better === 'yes') !== r.better) return false;
+    if (state.decision) {
+      const d = decisions[docId(r.id)]?.d;
+      if (state.decision === 'none' ? d : d !== state.decision) return false;
+    }
+    if (q && !`${r.label} ${r.note} ${r.file} ${r.unit} ${(r.f || []).join(' ')}`.toLowerCase().includes(q)) return false;
+    return true;
+  }).sort((a, b) => (SEVRANK[a.sev] ?? 3) - (SEVRANK[b.sev] ?? 3) || a.area.localeCompare(b.area) || a.unit.localeCompare(b.unit) || (a.line || 0) - (b.line || 0));
+}
+
+function rowHtml(r) {
+  const sev = SEVRANK[r.sev] !== undefined ? r.sev : null;
+  const sevVar = r.status === 'ok' ? '--ok' : r.status === 'na' ? '--na' : r.status === 'offen' ? '--open' : sev ? `--${sev}` : '--mittel';
+  const dec = decisions[docId(r.id)];
+  const decidable = r.status === 'diff' || r.status === 'missing' || r.status === 'unclear';
+  const refs = [];
+  if (r.file) refs.push(`<span class="k">Ionic</span> ${ionicLink(r.line ? `${r.file}:${r.line}` : r.file)}`);
+  if (r.f && r.f.length) refs.push(`<span class="k">Flutter</span> ${r.f.slice(0, 4).map((x) => flutterLink(x, r.fc)).join(' ')}`);
+  return `<article class="row" style="--sev: var(${sevVar}); --sevsoft: var(${sevVar}-soft, var(--sunken))" data-id="${esc(r.id)}">
+    <div class="stripe"></div>
+    <div class="body">
+      <div class="head"><span class="tag s-${esc(r.status)}">${esc(STATUS[r.status] || r.status)}${r.sev && r.status !== 'ok' ? ` · ${esc(r.sev)}` : ''}</span><span class="tag">${esc(KIND[r.kind] || r.kind)}</span>${r.better ? '<span class="tag">Flutter besser</span>' : ''}${r.summary ? '<span class="tag" title="Die Befunde dieser Seite stehen einzeln als Zusatzbefunde">Zusammenfassung</span>' : ''}${r.stale ? '<span class="tag" title="Die Ionic-Seite hat sich nach diesem Befund geändert">Ionic geändert</span>' : ''}${r.fchanged ? '<span class="tag" title="Eine referenzierte Flutter-Datei wurde nach diesem Urteil geändert">Flutter geändert</span>' : ''}${r.v ? `<span class="tag" title="Zweite, unabhängige Prüfung">${r.v === 'korrigiert' ? '2. Prüfung: korrigiert' : '2× geprüft'}</span>` : ''}<span class="label">${esc(r.label)}</span></div>
+      <div class="unit">${esc(r.unit)}</div>
+      ${r.note ? `<p class="note">${esc(r.note)}</p>` : ''}
+      ${r.cond ? `<div class="cond">${esc(r.cond)}</div>` : ''}
+      ${refs.length ? `<div class="refs">${refs.join('')}</div>` : ''}
+      ${decidable ? `<div class="decide" role="group" aria-label="Entscheidung">
+        ${['angleichen', 'lassen', 'spaeter'].map((d) => `<button type="button" data-d="${d}" aria-pressed="${dec?.d === d}" ${db ? '' : 'disabled'}>${{ angleichen: 'Angleichen', lassen: 'So lassen', spaeter: 'Später klären' }[d]}</button>`).join('')}
+        <input type="text" id="c-${esc(docId(r.id))}" placeholder="Anmerkung (optional)" value="${esc(dec?.c || '')}" ${db ? '' : 'disabled'} aria-label="Anmerkung">
+        ${dec?.at ? `<span class="saved">gespeichert ${new Date(dec.at).toLocaleDateString('de-DE')}</span>` : ''}
+      </div>` : ''}
+    </div>
+  </article>`;
+}
+
+function renderList() {
+  const list = document.getElementById('list');
+  const all = filtered();
+  const shown = all.slice(0, state.limit);
+  const title = state.area ? (AREA[state.area] || state.area) : 'Alle Bereiche';
+  list.innerHTML = `<h2>${esc(title)}</h2><div class="count">${all.length.toLocaleString('de-DE')} Einträge${all.length > shown.length ? `, ${shown.length} angezeigt` : ''}${db ? '' : ' · Entscheidungen sind in dieser Ansicht nur lesbar'}</div>` +
+    (shown.length ? shown.map(rowHtml).join('') : '<div class="empty">Keine Einträge für diese Auswahl.</div>') +
+    (all.length > shown.length ? '<button class="more" id="more" type="button">Weitere 200 anzeigen</button>' : '');
+  document.getElementById('more')?.addEventListener('click', () => { state.limit += 200; renderList(); });
+}
+
+document.getElementById('list').addEventListener('click', async (ev) => {
+  const b = ev.target.closest('.decide button');
+  if (!b || !db) return;
+  const id = b.closest('.row').dataset.id;
+  const key = docId(id);
+  const input = document.getElementById(`c-${key}`);
+  const current = decisions[key]?.d;
+  const d = current === b.dataset.d ? null : b.dataset.d;
+  try {
+    if (d || input?.value.trim()) await db.collection('decisions').doc(key).set({ d, c: input?.value || '', item: id, at: new Date().toISOString() });
+    else await db.collection('decisions').doc(key).delete();
+  } catch (e) { b.textContent = 'Nicht gespeichert'; }
+});
+document.getElementById('list').addEventListener('change', async (ev) => {
+  const input = ev.target.closest('.decide input');
+  if (!input || !db) return;
+  const id = input.closest('.row').dataset.id;
+  const key = docId(id);
+  const cur = decisions[key];
+  // a note alone is no decision: it is kept without one (d: null)
+  try {
+    if (!cur?.d && !input.value.trim()) await db.collection('decisions').doc(key).delete();
+    else await db.collection('decisions').doc(key).set({ d: cur?.d || null, c: input.value, item: id, at: new Date().toISOString() });
+  } catch { /* shown by snapshot */ }
+});
+
+function setupFilters() {
+  const sc = document.getElementById('statusChips');
+  sc.innerHTML = ['missing', 'diff', 'unclear', 'ok', 'na', 'offen'].map((s) => `<button class="chip" type="button" data-s="${s}" aria-pressed="${state.status.has(s)}">${STATUS[s]}</button>`).join('');
+  sc.addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (!b) return; const s = b.dataset.s; state.status.has(s) ? state.status.delete(s) : state.status.add(s); b.setAttribute('aria-pressed', state.status.has(s)); state.limit = 200; renderList(); });
+  const sv = document.getElementById('sevChips');
+  sv.innerHTML = ['hoch', 'mittel', 'niedrig'].map((s) => `<button class="chip" type="button" data-s="${s}" aria-pressed="false">${s}</button>`).join('');
+  sv.addEventListener('click', (e) => { const b = e.target.closest('.chip'); if (!b) return; const s = b.dataset.s; state.sev.has(s) ? state.sev.delete(s) : state.sev.add(s); b.setAttribute('aria-pressed', state.sev.has(s)); state.limit = 200; renderList(); });
+  const kind = document.getElementById('kind');
+  kind.innerHTML += Object.entries(KIND).map(([k, v]) => `<option value="${k}">${v}</option>`).join('');
+  kind.addEventListener('change', () => { state.kind = kind.value; state.limit = 200; renderList(); });
+  const better = document.getElementById('better');
+  better.addEventListener('change', () => { state.better = better.value; state.limit = 200; renderList(); });
+  const dec = document.getElementById('decision');
+  dec.addEventListener('change', () => { state.decision = dec.value; state.limit = 200; renderList(); });
+  let t;
+  document.getElementById('q').addEventListener('input', (e) => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value; state.limit = 200; renderList(); }, 150); });
+}
+
+async function connectDb() {
+  try {
+    db = await (window.claude?.use ? window.claude.use('db') : null);
+  } catch { db = null; }
+  if (!db) { renderList(); return; }
+  renderList();
+  db.collection('decisions').onSnapshot((snap) => {
+    const next = {};
+    snap.docs.forEach((d) => { next[d.id] = d.data(); });
+    decisions = next;
+    renderSummary();
+    renderList();
+  }, () => { /* read-only view */ });
+}
+
+let deviceFilter = 'open';
+function renderDevice() {
+  const el = document.getElementById('device');
+  const dv = data.device;
+  if (!dv || !dv.rows?.length) { el.hidden = true; return; }
+  el.hidden = false;
+  const cls = (v) => (v === '✓' ? 'ok' : v === '✗' ? 'bad' : v === 'Leon' ? 'me' : v === '–' ? 'na' : '');
+  const n = { ok: 0, bad: 0, me: 0, open: 0 };
+  dv.rows.forEach(([, , cells]) => cells.forEach((v) => { const c = cls(v); if (c === 'ok' || c === 'bad' || c === 'me') n[c]++; else if (c === '') n.open++; }));
+  const pick = {
+    open: (cells) => cells.some((v) => cls(v) !== 'ok' && cls(v) !== 'na'),
+    bad: (cells) => cells.includes('✗'),
+    me: (cells) => cells.includes('Leon'),
+    all: () => true,
+  };
+  const shown = dv.rows.filter(([, , cells]) => pick[deviceFilter](cells));
+  const chip = (k, label) => `<button type="button" class="chip" data-dev="${k}" aria-pressed="${deviceFilter === k}">${label}</button>`;
+  const open = el.open;
+  el.innerHTML = `<summary><b>Gerätetest</b><span class="dk ok">${n.ok} ✓</span><span class="dk bad">${n.bad} ✗</span><span class="dk me">${n.me} bei Leon</span><span class="dk">${n.open} offen</span><span class="dk">${dv.rows.length} Zeilen × iPhone, iPad, Android, Web${dv.asOf ? ` · Stand ${esc(dv.asOf)}` : ''}</span></summary>` +
+    `<div class="dfilter">${chip('open', 'Nicht alles ✓')}${chip('bad', 'Nur ✗')}${chip('me', 'Bei Leon')}${chip('all', 'Alle')}</div>` +
+    `<div class="tbl"><table><thead><tr><th>#</th><th>Prüfung</th>${dv.cols.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>` +
+    shown.map(([num, text, cells]) => `<tr><td>${num}</td><td class="t">${esc(text)}</td>${cells.map((v) => `<td class="c ${cls(v)}">${esc(v)}</td>`).join('')}</tr>`).join('') +
+    '</tbody></table></div>';
+  el.open = open;
+  el.querySelectorAll('[data-dev]').forEach((b) => b.addEventListener('click', () => { deviceFilter = b.dataset.dev; renderDevice(); }));
+}
+
+fetch('tracker-data.json').then((r) => r.json()).then((d) => {
+  data = d;
+  build();
+  setupFilters();
+  renderSummary();
+  renderDevice();
+  renderRail();
+  renderList();
+  connectDb();
+}).catch(() => {
+  document.getElementById('list').innerHTML = '<div class="empty">Die Daten (tracker-data.json) konnten nicht geladen werden.</div>';
+});
+</script>

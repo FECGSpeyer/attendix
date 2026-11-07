@@ -1,0 +1,2034 @@
+{
+ "batch": "b25-settings-main",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "settings/settings/settings.page#logic-377d0a85": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:72",
+    "lib/features/settings/presentation/pages/settings_page.dart:85",
+    "lib/features/settings/presentation/pages/settings_page.dart:90",
+    "lib/features/settings/presentation/pages/settings_page.dart:102",
+    "lib/features/settings/presentation/pages/settings_page.dart:162",
+    "lib/features/profile/presentation/widgets/profile_hero_card.dart:29",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:74",
+    "lib/core/providers/profile_providers.dart:142"
+   ],
+   "sev": "niedrig",
+   "n": "Rollenflags (isAdmin=Admin|Verantwortlicher, isSuperAdmin, isHelper=Helfer|Stimmführer-Helfer, isApplicant, isVoiceLeader, isGeneral, parentsEnabled, maintainTeachers, showPlanning/showTeam inkl. hasOwnTasks), Datenquellen (Pending live, Spieler ohne Account, Archiv, Beobachter, Eltern, Admins, Profil inkl. Org-Feldwerte, Default-Vorbelegung editierbarer Zusatzfelder), getRoleName, getChurchLabel, filteredChurches, isVorkursTenant, canDeleteTenant und updateUserData (Org-Felder → shared values, correctBirthday nur bei Änderung, Gemeinde-Sync) wie Ionic. Abweichungen siehe extra (Pull-to-Refresh, Flutter-only Beta-Zeile) und die einzelnen Items."
+  },
+  "settings/settings/settings.page#db-754f75cc": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/realtime_providers.dart:326",
+    "lib/core/providers/realtime_providers.dart:358",
+    "lib/features/settings/presentation/pages/settings_page.dart:86"
+   ],
+   "n": "Live-Aktualisierung der ausstehenden Registrierungen per postgres_changes auf player (Flutter zusätzlich tenantId-Filter + DELETE-Listener)."
+  },
+  "settings/settings/settings.page#db-6d9b276f": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/realtime_providers.dart:358",
+    "lib/core/providers/realtime_providers.dart:370"
+   ],
+   "n": "Ionic Kanal 'pending-player-changes' ohne Filter, Callback prüft tenantId+pending oder old.id / Flutter Kanal 'pending_player_changes_<tenantId>' mit tenantId-Filter, gleiche Bedingung (pending-Insert oder old.id) → gleiche Wirkung."
+  },
+  "settings/settings/settings.page#effect-eea7b9c6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:57",
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:59"
+   ],
+   "n": "window.open(url, _blank) ↔ launchUrl(externalApplication) mit denselben Store-URLs."
+  },
+  "settings/settings/settings.page#modal-8e265ba0": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:323",
+    "lib/features/history/presentation/pages/history_page.dart:32"
+   ],
+   "sev": "niedrig",
+   "n": "iOS: Karten-Modal wie Ionic (presentingElement). md/Android/Desktop: Ionic Vollbild- bzw. zentriertes Desktop-Modal / Flutter context.push('/history') als normale Seite im Shell."
+  },
+  "settings/settings/settings.page#modal-6205e9c6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:443",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:44"
+   ],
+   "n": "iOS Karten-Modal, md showIonModal (Vollbild bzw. Desktop-Karte)."
+  },
+  "settings/settings/settings.page#modal-192327a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:449",
+    "lib/features/export/presentation/pages/export_page.dart:47"
+   ],
+   "n": "iOS Karten-Modal, md showIonModal."
+  },
+  "settings/settings/settings.page#modal-574f5f7c": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:360"
+   ],
+   "sev": "mittel",
+   "n": "Ionic: 'Ablaufpläne' öffnet PlanningPage als Karten-Modal (cssClass planningModal) / Flutter: context.push('/planning') – normale Seite im Shell."
+  },
+  "settings/settings/settings.page#modal-35a628ef": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/left_players_page.dart:125",
+    "lib/features/settings/presentation/pages/left_players_page.dart:129",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1701"
+   ],
+   "sev": "mittel",
+   "n": "Ionic: Tippen auf archivierte Person öffnet PersonPage als Karten-Modal (readOnly, hasLeft), Liste wird nach 'activated' neu geladen / Flutter: context.push('/people/<id>') als Seite; Seite ist für ausgetretene Personen schreibgeschützt mit 'Person reaktivieren', Liste wird danach invalidiert."
+  },
+  "settings/settings/settings.page#alert-fa4a21f7": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:673",
+    "lib/features/settings/presentation/pages/settings_page.dart:676",
+    "lib/features/settings/presentation/pages/settings_page.dart:678"
+   ],
+   "n": "Titel 'Accounts anlegen', Nachricht mit allen Namen, Buttons Abbrechen / Fortfahren."
+  },
+  "settings/settings/settings.page#loading-c8362f38": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:685"
+   ],
+   "n": "Blockierender Spinner-Dialog bis alle Accounts angelegt sind."
+  },
+  "settings/settings/settings.page#toast-31b630b5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:703"
+   ],
+   "n": "Gleicher Text 'Fehler beim Erstellen der Accounts: {error}', rot; Erstellung stoppt beim ersten Fehler wie Ionic."
+  },
+  "settings/settings/settings.page#toast-ea2b57b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:706"
+   ]
+  },
+  "settings/settings/settings.page#alert-7b4ee94f": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/viewers_page.dart:204",
+    "lib/features/settings/presentation/pages/viewers_page.dart:208",
+    "lib/features/settings/presentation/pages/viewers_page.dart:209",
+    "lib/features/settings/presentation/pages/viewers_page.dart:227",
+    "lib/features/settings/presentation/pages/viewers_page.dart:230"
+   ],
+   "sev": "niedrig",
+   "n": "Titel 'Beobachter entfernen?', Nachricht und Buttons Abbrechen/Ja gleich. Flutter zusätzlich: Erfolgs-Toast 'Beobachter entfernt' (Flutter-only-Text) und Fehler-Toast; Ionic zeigt nach dem Entfernen keinen Toast."
+  },
+  "settings/settings/settings.page#alert-1497e709": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/parents_page.dart:204",
+    "lib/features/settings/presentation/pages/parents_page.dart:208",
+    "lib/features/settings/presentation/pages/parents_page.dart:209",
+    "lib/features/settings/presentation/pages/parents_page.dart:230"
+   ],
+   "sev": "niedrig",
+   "n": "Titel 'Elternteil entfernen?', Nachricht und Buttons gleich. Flutter zusätzlich: Erfolgs-Toast 'Elternteil entfernt' (Flutter-only) und Fehler-Toast; Ionic ohne Toast."
+  },
+  "settings/settings/settings.page#loading-050c9fa4": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:389",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:161"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: blockierendes Loading (3 s) beim Instanzwechsel / Flutter: kein Ladeoverlay, Wechsel läuft im Hintergrund (Sheet wird sofort geschlossen)."
+  },
+  "settings/settings/settings.page#nav-78b78dd3": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:405",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:191",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:202",
+    "lib/core/constants/enums.dart:137"
+   ],
+   "n": "Utils.getUrl(role) ↔ role.defaultRoute: Admin/Verantw./Beobachter → /people (=/tabs/player), Eltern → /parents, sonst → /signout; Verlauf wird ersetzt."
+  },
+  "settings/settings/settings.page#effect-4e3df8e4": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:405",
+    "lib/core/constants/enums.dart:137"
+   ],
+   "n": "Gleiches Ziel wie nav-78b78dd3."
+  },
+  "settings/settings/settings.page#modal-2d9ef553": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:376",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:380"
+   ],
+   "sev": "mittel",
+   "n": "Ionic: '+' schließt das Instanzen-Sheet und öffnet RegisterPage als Karten-Modal / Flutter: Sheet zu, router.push('/tenants/new') als normale Seite."
+  },
+  "settings/settings/settings.page#alert-39899a98": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/viewers_page.dart:103",
+    "lib/features/settings/presentation/pages/viewers_page.dart:112",
+    "lib/features/settings/presentation/pages/viewers_page.dart:118",
+    "lib/features/settings/presentation/pages/viewers_page.dart:129",
+    "lib/features/settings/presentation/pages/viewers_page.dart:169",
+    "lib/features/settings/presentation/pages/viewers_page.dart:177"
+   ],
+   "sev": "niedrig",
+   "n": "Titel 'Beobachter hinzufügen', Felder E-Mail-Adresse/Vorname/Nachname, Buttons Abbrechen/Einladen gleich. Ionic: Platzhalter, Prüfung per E-Mail-Regex + Pflichtfelder, bei Fehler Alert-Nachricht 'Bitte gib gültige Werte ein.' / Flutter: Labels mit Icons, Prüfung nur auf '@', feldweise Fehlertexte ('E-Mail ist erforderlich', 'Ungültige E-Mail-Adresse', 'Vorname ist erforderlich' …)."
+  },
+  "settings/settings/settings.page#loading-7a0b5d62": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/viewers_page.dart:186"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: blockierendes Loading während createViewer / Flutter: kein Ladeindikator."
+  },
+  "settings/settings/settings.page#toast-c8d5ae80": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/viewers_page.dart:192"
+   ]
+  },
+  "settings/settings/settings.page#toast-b5ce2d5c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/viewers_page.dart:195",
+    "lib/features/settings/presentation/pages/viewers_page.dart:198"
+   ],
+   "n": "Fehlermeldung rot; Flutter bei Nicht-AccountFlow-Fehlern mit Präfix 'Fehler: …'."
+  },
+  "settings/settings/settings.page#alert-7ca4ade1": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/parents_page.dart:103",
+    "lib/features/settings/presentation/pages/parents_page.dart:112",
+    "lib/features/settings/presentation/pages/parents_page.dart:125",
+    "lib/features/settings/presentation/pages/parents_page.dart:129",
+    "lib/features/settings/presentation/pages/parents_page.dart:177"
+   ],
+   "sev": "niedrig",
+   "n": "Titel 'Elternteil hinzufügen', Felder und Buttons gleich. Ionic: E-Mail-Regex + Pflichtfelder, Fehler als Alert-Nachricht 'Bitte gib gültige Werte ein.' / Flutter: Prüfung nur auf '@', feldweise Flutter-only-Fehlertexte."
+  },
+  "settings/settings/settings.page#loading-58a1f0f9": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/parents_page.dart:186"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: blockierendes Loading während createParent / Flutter: kein Ladeindikator."
+  },
+  "settings/settings/settings.page#toast-21f67f36": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/parents_page.dart:192"
+   ]
+  },
+  "settings/settings/settings.page#toast-ed90dc90": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/parents_page.dart:195",
+    "lib/features/settings/presentation/pages/parents_page.dart:198"
+   ],
+   "n": "Fehlermeldung rot; Flutter ggf. mit Präfix 'Fehler: …'."
+  },
+  "settings/settings/settings.page#toast-83e46be4": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:262",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:263"
+   ],
+   "n": "Gleiche Bedingung (Rolle Admin in dieser Instanz und keine Demo)."
+  },
+  "settings/settings/settings.page#alert-7157049d": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:269",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:275",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:283",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:290",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:305",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:311",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:329",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:335"
+   ],
+   "sev": "niedrig",
+   "n": "Titel, Nachricht, Platzhalter, Abbrechen/Löschen, falscher Name → 'Der eingegebene Name ist nicht korrekt.' (Dialog bleibt offen) gleich. Ionic nach Löschen: setTenant() + Navigation zur Startseite der Rolle auch wenn eine andere als die aktuelle Instanz gelöscht wurde / Flutter: Sheet zu, Toast, nur bei der aktuellen Instanz go('/tenants') (Auto-Auswahl), sonst bleibt die Mehr-Seite offen."
+  },
+  "settings/settings/settings.page#loading-48280d26": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:329"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: blockierendes Loading 'Instanz wird entfernt...' / Flutter: kein Ladeoverlay während des Löschens."
+  },
+  "settings/settings/settings.page#loading-bfd0a3e6": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:241"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: blockierendes Loading beim Favorit setzen / Flutter: kein Ladeoverlay."
+  },
+  "settings/settings/settings.page#toast-05890c58": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:247",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:250",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:251"
+   ],
+   "n": "Gleicher Text 'Favorit gesetzt/entfernt' je nach Richtung; Flutter besser: bei Fehler zusätzlich 'Fehler beim Speichern' (Ionic still)."
+  },
+  "settings/settings/settings.page#alert-7be72d9c": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:33",
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:38",
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:78",
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:85",
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:93",
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:119"
+   ],
+   "sev": "niedrig",
+   "n": "Titel 'Gruppen auswählen', Nachricht, alle Gruppen vorausgewählt, Abbrechen/Generieren gleich. Ionic: ohne Auswahl bleibt der Alert offen (Toast) / Flutter: Dialog schließt, dann Warn-Toast."
+  },
+  "settings/settings/settings.page#toast-d085d424": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:39"
+   ]
+  },
+  "settings/settings/settings.page#loading-5eec4aaf": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:43"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: blockierendes Loading 'Urkunden werden erstellt...' / Flutter: nur Info-Toast mit demselben Text, nicht blockierend."
+  },
+  "settings/settings/settings.page#toast-f95d3c4b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:49"
+   ]
+  },
+  "settings/settings/settings.page#toast-6c20ad47": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:59"
+   ]
+  },
+  "settings/settings/settings.page#alert-271738b9": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:36",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:39",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:40",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:41",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:45",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:46"
+   ],
+   "sev": "niedrig",
+   "n": "Titel 'Admin hinzufügen', Platzhalter 'E-Mail-Adresse', Abbrechen/Hinzufügen gleich. Ionic: ungültige/leere E-Mail → Alert bleibt offen mit 'Bitte gib gültige Werte ein.' / Flutter: leer → Dialog schließt still, ungültig → Dialog zu + Toast 'Bitte gib eine gültige E-Mail-Adresse ein.' (Flutter-only)."
+  },
+  "settings/settings/settings.page#loading-8befac68": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:100",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:106"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: blockierendes Loading / Flutter: nur Spinner im FAB, nicht blockierend."
+  },
+  "settings/settings/settings.page#toast-c5285b23": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:55"
+   ],
+   "n": "Flutter zusätzlich Warn-Toast 'Der Admin wurde hinzugefügt, konnte aber nicht benachrichtigt werden.', wenn die Mail scheitert."
+  },
+  "settings/settings/settings.page#toast-a2cd4021": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:61"
+   ]
+  },
+  "settings/settings/settings.page#alert-b76739e0": {
+   "s": "na",
+   "n": "toter Code: openChurchInput() wird von keinem Template/Aufruf genutzt (grep in settings/settings: nur Definition settings.page.ts:649); Gemeinde anlegen gibt es in der Administration."
+  },
+  "settings/settings/settings.page#loading-f92eb956": {
+   "s": "na",
+   "n": "toter Code: openChurchInput() wird von keinem Template/Aufruf genutzt (grep in settings/settings: nur Definition settings.page.ts:649); Gemeinde anlegen gibt es in der Administration."
+  },
+  "settings/settings/settings.page#toast-fd82a88f": {
+   "s": "na",
+   "n": "toter Code: openChurchInput() wird von keinem Template/Aufruf genutzt (grep in settings/settings: nur Definition settings.page.ts:649); Gemeinde anlegen gibt es in der Administration."
+  },
+  "settings/settings/settings.page#toast-51f8662b": {
+   "s": "na",
+   "n": "toter Code: openChurchInput() wird von keinem Template/Aufruf genutzt (grep in settings/settings: nur Definition settings.page.ts:649); Gemeinde anlegen gibt es in der Administration."
+  },
+  "settings/settings/settings.page#toast-179e26cf": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:67",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:68"
+   ]
+  },
+  "settings/settings/settings.page#alert-e12b9db8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:71",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:74",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:75",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:77",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:81",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:88"
+   ],
+   "n": "Titel 'Admin entfernen?', 'Möchtest du {E-Mail} wirklich entfernen?', Abbrechen/Ja (Ja rot); Flutter zeigt zusätzlich Fehler-Toast."
+  },
+  "settings/settings/settings.page#toast-bfb6e0b5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:90"
+   ]
+  },
+  "settings/settings/settings.page#alert-4edfb328": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:43",
+    "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:48",
+    "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:69",
+    "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:85",
+    "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:88",
+    "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:129",
+    "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:146",
+    "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:160"
+   ],
+   "n": "Link mit tenantId, personId nur für Nicht-Admin/Verantwortliche mit Personeneintrag, &lang bei ≠de; Checkbox 'Abgesagte Termine ausblenden' nur beim persönlichen Feed (&hideExcused=1); 'Link kopieren' lässt den Dialog offen, 'Anleitung öffnen' schließt und öffnet die Plattform-Anleitung, 'Schließen'."
+  },
+  "settings/settings/settings.page#toast-ab89dfb2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:141"
+   ]
+  },
+  "settings/settings/settings.page#native-d27820c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:151"
+   ],
+   "n": "In-App-Browser mit Apple- bzw. Google-Anleitung je nach Plattform."
+  },
+  "settings/settings/settings.page#modal-fb3873fe": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/pending_players_page.dart:125",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1736"
+   ],
+   "sev": "mittel",
+   "n": "Ionic: Tippen auf ausstehende Person öffnet PersonPage als Karten-Modal (approveMode) / Flutter: context.push('/people/<id>') als normale Seite (Freigabe-Aktionen dort für pending)."
+  },
+  "settings/settings/settings.page#actionsheet-0d48212e": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:118",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:121",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:126",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:132",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:137"
+   ],
+   "sev": "niedrig",
+   "n": "Buttons 'Passbild ersetzen', bei echtem Bild 'Passbild ansehen' + 'Passbild entfernen' (destruktiv), 'Abbrechen' in gleicher Reihenfolge. Flutter zeigt zusätzlich Icons vor den Einträgen."
+  },
+  "settings/settings/settings.page#alert-311384de": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:206",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:208",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:209",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:210",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:211",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:214"
+   ],
+   "n": "Titel 'Passbild entfernen', Nachricht, Abbrechen / Entfernen (destruktiv)."
+  },
+  "settings/settings/settings.page#toast-629827a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:218"
+   ]
+  },
+  "settings/settings/settings.page#toast-c11515af": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:222"
+   ]
+  },
+  "settings/settings/settings.page#toast-68b1e36d": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:255"
+   ]
+  },
+  "settings/settings/settings.page#loading-f3f08e9f": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:160",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:178"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: blockierendes Loading während des Passbild-Uploads / Flutter: kein Ladeindikator beim Upload."
+  },
+  "settings/settings/settings.page#toast-453ee9ac": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:165",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:174"
+   ],
+   "sev": "niedrig",
+   "n": "Gleicher Text 'Das Bild darf maximal 2MB groß sein.'. Ionic prüft die Originaldatei / Flutter verkleinert vorher auf max. 1200 px, Qualität 85 – die Meldung erscheint daher praktisch nie, große Fotos werden verkleinert hochgeladen."
+  },
+  "settings/settings/settings.page#toast-b5f2fce2": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:186"
+   ]
+  },
+  "settings/settings/settings.page#toast-a9658903": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:188",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:193"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: Upload-Fehler zeigt die rohe Fehlermeldung / Flutter: festen Text 'Fehler beim ändern des Passbildes, versuche es später erneut'."
+  },
+  "settings/settings/settings.page#toast-3f7aaa6b": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:190",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:196"
+   ],
+   "n": "Flutter-Picker erlaubt nur Bilder; derselbe Text erscheint bei fehlgeschlagenem Upload."
+  },
+  "settings/settings/settings.page#native-ba3cad21": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:180",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:275"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: Browser.open (In-App-Browser) für https://t.me/Eckstaedt / Flutter: launchUrl externalApplication (externe App/Browser)."
+  },
+  "settings/settings/settings.page#loading-2f222624": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:86",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:390"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: blockierendes Loading / Flutter: Spinner im Absenden-Button, nicht blockierend."
+  },
+  "settings/settings/settings.page#toast-15895374": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:100"
+   ]
+  },
+  "settings/settings/settings.page#toast-f39cf2c9": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:103"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: 'Fehler beim Senden der Anfrage: {error}' / Flutter: 'Fehler beim Senden der Frage' ohne Fehlerdetail."
+  },
+  "settings/settings/settings.page#loading-35a4db51": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:113",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:390"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: blockierendes Loading / Flutter: Spinner im Absenden-Button, nicht blockierend."
+  },
+  "settings/settings/settings.page#toast-8545be66": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:108",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:109"
+   ],
+   "sev": "niedrig",
+   "n": "Gleicher Text 'Bitte gib eine Bewertung ab.'; Ionic rot (danger) / Flutter Warnfarbe."
+  },
+  "settings/settings/settings.page#toast-3bab5672": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:132"
+   ]
+  },
+  "settings/settings/settings.page#toast-70d8cc00": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:135"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: 'Fehler beim Senden des Feedbacks: {error}' / Flutter: 'Fehler beim Senden des Feedbacks' ohne Fehlerdetail."
+  },
+  "settings/settings/settings.page#db-d18f91fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:228",
+    "lib/core/providers/user_preferences_provider.dart:75",
+    "lib/core/providers/user_preferences_provider.dart:93"
+   ],
+   "n": "auth.updateUser data.wantInstanceSelection (Flutter übernimmt die übrigen Metadaten inkl. currentTenantId)."
+  },
+  "settings/settings/settings.page#alert-ea6ef480": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/account_dialogs.dart:13",
+    "lib/features/profile/presentation/widgets/account_dialogs.dart:58",
+    "lib/features/profile/presentation/widgets/account_dialogs.dart:112",
+    "lib/features/profile/presentation/widgets/account_dialogs.dart:121",
+    "lib/features/profile/presentation/widgets/account_dialogs.dart:134",
+    "lib/features/profile/presentation/widgets/account_dialogs.dart:138"
+   ],
+   "sev": "niedrig",
+   "n": "Titel 'Passwort ändern', Platzhalter, Abbrechen/Ändern, Prüfungen (gleich, ≥6) gleich. Ionic: bei Server-Fehler schließt der Alert / Flutter: Dialog bleibt offen."
+  },
+  "settings/settings/settings.page#toast-6b55f1fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/account_dialogs.dart:61"
+   ]
+  },
+  "settings/settings/settings.page#toast-2c78d222": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/account_dialogs.dart:65"
+   ]
+  },
+  "settings/settings/settings.page#toast-2d6698bd": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/account_dialogs.dart:19"
+   ],
+   "n": "Ionic Default-Farbe success ↔ showSuccess."
+  },
+  "settings/settings/settings.page#toast-8151dcc2": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/account_dialogs.dart:79"
+   ]
+  },
+  "settings/settings/settings.page#action-4a7b692d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:138"
+   ],
+   "n": "Menü-Button für das Overlay-Sidepanel (Tablet hochkant)."
+  },
+  "settings/settings/settings.page#text-32c6837e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:142",
+    "lib/features/settings/presentation/pages/settings_page.dart:143"
+   ]
+  },
+  "settings/settings/settings.page#action-f029eaa1": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:144",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:51",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:52",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:61"
+   ],
+   "sev": "niedrig",
+   "n": "Ohne Sidepanel Instanz-Langname mit Chevron. Ionic zeigt den Button immer (auch bei nur einer Instanz, Popover mit einem Eintrag) / Flutter zeigt bei ≤1 Instanz nur den Namen als Text ohne Chevron und ohne Popover."
+  },
+  "settings/settings/settings.page#popover-0d21b454": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:99",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:118",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:122"
+   ],
+   "n": "Popover 220 breit mit allen Instanzen (Langname), schließt bei Auswahl (bei >1 Instanz, vgl. action-f029eaa1)."
+  },
+  "settings/settings/settings.page#action-1dcadcaa": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:124",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:135",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:389"
+   ],
+   "n": "Langname + Badge 'Aktuell' bei aktueller Instanz; Tippen wechselt die Instanz (aktuelle: nichts) und navigiert zur Rollen-Startseite."
+  },
+  "settings/settings/settings.page#embed-ea4c4538": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:148",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:26"
+   ],
+   "n": "Glocke rechts; mit Sidepanel ausgeblendet wie Ionic global.scss."
+  },
+  "settings/settings/settings.page#action-376a8e41": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:162",
+    "lib/features/settings/presentation/pages/settings_page.dart:163"
+   ],
+   "sev": "niedrig",
+   "n": "Pull-to-Refresh vorhanden; lädt aber Profil/Hero-Karte, Zusatzfelder, Gemeinden und Teamorganisation nicht neu (Ionic initialize() lädt alles), siehe extra."
+  },
+  "settings/settings/settings.page#text-1669c0e7": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:94"
+   ],
+   "n": "Nur Web, nur Super-Developer, nicht in Teams, nicht weggeklickt – wie checkAppPromo."
+  },
+  "settings/settings/settings.page#action-43588303": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:104",
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:49"
+   ],
+   "n": "Schließen-X merkt 'appPromoDismissed' lokal."
+  },
+  "settings/settings/settings.page#text-3b369ec9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:109"
+   ]
+  },
+  "settings/settings/settings.page#action-e089eec6": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:113",
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:116",
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:117"
+   ],
+   "sev": "niedrig",
+   "n": "Text und Ziel gleich (iOS App Store / Google Play). Icon Android: Ionic logo-google-playstore / Flutter Icons.shop (Einkaufstasche); Button weiß mit tertiary-Text statt Ionic color='light'."
+  },
+  "settings/settings/settings.page#action-eccc9057": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:122",
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:124",
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:125",
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:126"
+   ]
+  },
+  "settings/settings/settings.page#action-87682d7a": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:129",
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:131",
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:132",
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:133"
+   ],
+   "sev": "niedrig",
+   "n": "Text und Ziel gleich; Icon Ionic logo-google-playstore / Flutter Icons.shop."
+  },
+  "settings/settings/settings.page#text-6ee51338": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:192",
+    "lib/features/settings/presentation/pages/settings_page.dart:622"
+   ],
+   "n": "Gelbe Karte nur für Admin/Verantwortliche bei ≥1 ausstehender Person, Live-Zähler."
+  },
+  "settings/settings/settings.page#text-89935282": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:627"
+   ]
+  },
+  "settings/settings/settings.page#modal-3a4ca14e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:610",
+    "lib/features/settings/presentation/pages/pending_players_page.dart:17"
+   ],
+   "n": "Sheet in voller Höhe ([0,1]) beim Tippen auf die Karte."
+  },
+  "settings/settings/settings.page#text-142fcb20": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/pending_players_page.dart:39",
+    "lib/features/settings/presentation/pages/pending_players_page.dart:43"
+   ]
+  },
+  "settings/settings/settings.page#action-a2970ae5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/pending_players_page.dart:93",
+    "lib/features/settings/presentation/pages/pending_players_page.dart:117",
+    "lib/features/settings/presentation/pages/pending_players_page.dart:125"
+   ],
+   "n": "Name + E-Mail; Tippen öffnet die Person zur Freigabe (Darstellung siehe modal-fb3873fe)."
+  },
+  "settings/settings/settings.page#action-de860e09": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/profile_hero_card.dart:84",
+    "lib/shared/widgets/display/avatar.dart:37",
+    "lib/shared/widgets/display/avatar.dart:44"
+   ],
+   "n": "Ohne/defektes Bild Avatar-Platzhalter (graue Silhouette) wie avatar-placeholder.svg."
+  },
+  "settings/settings/settings.page#text-7e9a0311": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/profile_hero_card.dart:96",
+    "lib/features/profile/presentation/widgets/profile_hero_card.dart:97"
+   ]
+  },
+  "settings/settings/settings.page#text-a5a58719": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/profile_hero_card.dart:107",
+    "lib/features/profile/presentation/widgets/profile_helpers.dart:9"
+   ],
+   "n": "Gleiche Rollennamen (Administrator, Verantwortlicher, Helfer, Stimmführer, Stimmführer-Helfer, Mitglied, Beobachter, Elternteil, Bewerber; sonst leer)."
+  },
+  "settings/settings/settings.page#text-64fcd64b": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/profile_hero_card.dart:42",
+    "lib/features/profile/presentation/widgets/profile_helpers.dart:30"
+   ],
+   "n": "dd.MM.yyyy."
+  },
+  "settings/settings/settings.page#text-971ec78d": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/profile_hero_card.dart:47",
+    "lib/features/profile/presentation/widgets/profile_hero_card.dart:48"
+   ]
+  },
+  "settings/settings/settings.page#text-a4f92d9f": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/profile_hero_card.dart:49",
+    "lib/features/profile/presentation/widgets/profile_hero_card.dart:53",
+    "lib/features/profile/presentation/widgets/profile_helpers.dart:49",
+    "lib/features/profile/presentation/widgets/profile_helpers.dart:57",
+    "lib/features/profile/presentation/widgets/profile_helpers.dart:67"
+   ],
+   "sev": "niedrig",
+   "n": "'Name: Wert' für alle für Spieler sichtbaren Zusatzfelder, '—' bei leer, Gemeindename. Abweichend: Feldtyp Datum – Ionic Rohwert (z. B. 2024-05-01) / Flutter dd.MM.yyyy; Ja/Nein-Feld ohne Wert (nicht editierbar) – Ionic 'Nein' / Flutter Default-Wert."
+  },
+  "settings/settings/settings.page#modal-d69db991": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/profile_hero_card.dart:76",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:25",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:35"
+   ],
+   "n": "Sheet mit 90 % Höhe ([0, .9]), Titel 'Meine Stammdaten'."
+  },
+  "settings/settings/settings.page#text-2182762d": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:281"
+   ]
+  },
+  "settings/settings/settings.page#action-faf7c001": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:295",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:296",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:297"
+   ],
+   "n": "Zeile 'Passbild' mit Avatar rechts öffnet das Aktionsblatt."
+  },
+  "settings/settings/settings.page#field-f65b81d3": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:164",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:165",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:167"
+   ],
+   "sev": "mittel",
+   "n": "Ionic: <input type=file accept=image/*> – auf Mobilgeräten Auswahl Kamera/Mediathek/Dateien, Originaldatei wird hochgeladen / Flutter: ImagePicker nur Galerie (keine Kamera-Option), Bild wird auf 1200 px / Qualität 85 verkleinert."
+  },
+  "settings/settings/settings.page#action-de860e09-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:299",
+    "lib/shared/widgets/display/avatar.dart:44"
+   ]
+  },
+  "settings/settings/settings.page#text-cded50f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:307"
+   ]
+  },
+  "settings/settings/settings.page#field-3e74ed2d": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:306",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:310"
+   ],
+   "n": "Text, Großschreibung Wörter; Flutter trimmt beim Speichern."
+  },
+  "settings/settings/settings.page#text-3f284c53": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:313"
+   ]
+  },
+  "settings/settings/settings.page#field-62eaf0c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:312",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:316"
+   ]
+  },
+  "settings/settings/settings.page#text-d57cbb48": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:319"
+   ]
+  },
+  "settings/settings/settings.page#field-2ea6e874": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:318",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:322"
+   ],
+   "n": "Tastatur Telefon."
+  },
+  "settings/settings/settings.page#text-cc31d22d": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:325"
+   ]
+  },
+  "settings/settings/settings.page#field-3a03c0eb": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:326",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:329",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:331",
+    "lib/features/profile/presentation/widgets/profile_helpers.dart:41"
+   ],
+   "sev": "niedrig",
+   "n": "Datums-Button im Format '16. Feb. 2002'. Ohne Geburtsdatum: Ionic ion-datetime-button zeigt das heutige Datum / Flutter 'Auswählen'."
+  },
+  "settings/settings/settings.page#modal-889ed29c": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:101",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:103"
+   ],
+   "n": "Plattform-Datumsdialog statt ion-modal mit ion-datetime."
+  },
+  "settings/settings/settings.page#field-3b74f121": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:103",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:107",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:108",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:113"
+   ],
+   "n": "Nur Datum, max. heute, App-Sprache; gespeichert als yyyy-MM-dd."
+  },
+  "settings/settings/settings.page#text-ae364b7b": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:336",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:337"
+   ]
+  },
+  "settings/settings/settings.page#text-f17f7f72": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:369",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:371"
+   ]
+  },
+  "settings/settings/settings.page#field-09a32184": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:372",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:374"
+   ]
+  },
+  "settings/settings/settings.page#field-b5ead18a": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:377",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:383",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:394"
+   ],
+   "sev": "niedrig",
+   "n": "Auswahl mit Feldname und allen Optionen in Reihenfolge. Ohne Wert: Ionic leer / Flutter Platzhalter 'Bitte auswählen'."
+  },
+  "settings/settings/settings.page#text-f17f7f72-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:398",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:400"
+   ]
+  },
+  "settings/settings/settings.page#action-2226c143": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:401",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:403",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:493"
+   ],
+   "n": "Label 'Bitte auswählen' / 'Nicht gelistet' / Gemeindename wie getChurchLabel."
+  },
+  "settings/settings/settings.page#modal-b0fe3226": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:505",
+    "lib/features/profile/presentation/widgets/church_picker.dart:16",
+    "lib/features/profile/presentation/widgets/church_picker.dart:31"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic: Vollbild-ion-modal / Flutter: Bottom-Sheet mit 95 % Höhe (Inhalt gleich)."
+  },
+  "settings/settings/settings.page#text-2eb08111": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/church_picker.dart:83"
+   ]
+  },
+  "settings/settings/settings.page#action-d57207ac": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/church_picker.dart:86",
+    "lib/features/profile/presentation/widgets/church_picker.dart:88"
+   ]
+  },
+  "settings/settings/settings.page#field-b4eb2bfd": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/church_picker.dart:98",
+    "lib/features/profile/presentation/widgets/church_picker.dart:102",
+    "lib/features/profile/presentation/widgets/church_picker.dart:121"
+   ],
+   "n": "Suchfeld 'Gemeinde suchen', filtert sofort nach Namensteil (ohne Groß/Klein)."
+  },
+  "settings/settings/settings.page#action-ed6b5ba6": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/church_picker.dart:132",
+    "lib/features/profile/presentation/widgets/church_picker.dart:134",
+    "lib/features/profile/presentation/widgets/church_picker.dart:135"
+   ],
+   "n": "'Nicht gelistet' zuerst, Haken bei Auswahl '' , setzt '' und schließt."
+  },
+  "settings/settings/settings.page#action-c49c7c68": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/church_picker.dart:137",
+    "lib/features/profile/presentation/widgets/church_picker.dart:140",
+    "lib/features/profile/presentation/widgets/church_picker.dart:141"
+   ]
+  },
+  "settings/settings/settings.page#text-65e400f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/church_picker.dart:143",
+    "lib/features/profile/presentation/widgets/church_picker.dart:145",
+    "lib/features/profile/presentation/widgets/church_picker.dart:146"
+   ]
+  },
+  "settings/settings/settings.page#field-509e17fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:409",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:413",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:235"
+   ],
+   "n": "Zahl-Tastatur, gespeichert als Zahl (leer → null)."
+  },
+  "settings/settings/settings.page#field-509e17fd-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:406",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:409"
+   ],
+   "n": "Textfeld mit Label oben für übrige Typen (Text, Textarea, Datum)."
+  },
+  "settings/settings/settings.page#text-7b00fe14": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:360",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:363"
+   ]
+  },
+  "settings/settings/settings.page#text-88aeecc7": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:364",
+    "lib/features/profile/presentation/widgets/profile_helpers.dart:49",
+    "lib/features/profile/presentation/widgets/profile_helpers.dart:67"
+   ],
+   "sev": "niedrig",
+   "n": "Anzeige nicht editierbarer Felder wie getExtraFieldDisplayValue, außer: Datum – Ionic Rohwert / Flutter dd.MM.yyyy; Ja/Nein ohne Wert – Ionic 'Nein' / Flutter Default-Wert."
+  },
+  "settings/settings/settings.page#action-100a2fb9": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:346",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:348",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:227",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:256",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:258"
+   ],
+   "sev": "mittel",
+   "n": "Speichern schreibt dieselben Felder. Ionic: Sheet bleibt nach dem Speichern offen, Fehler werden nicht gemeldet, Eingaben wirken sofort live auf die Hero-Karte (auch ungespeichert) / Flutter: Sheet schließt nach Erfolg, bei Fehler Toast 'Fehler beim Aktualisieren des Profils', ungespeicherte Eingaben verfallen beim Schließen."
+  },
+  "settings/settings/settings.page#modal-2a88fd25": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:149",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:150",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:382"
+   ],
+   "n": "Vollbild-Bildbetrachter über 'Passbild ansehen', ohne ?quality=20."
+  },
+  "settings/settings/settings.page#action-46a45423": {
+   "s": "diff",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:153",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:276"
+   ],
+   "sev": "niedrig",
+   "n": "Ionic setzt nur das HTML-Attribut title='Passbild' (Kopfzeile des Viewers bleibt leer, Tooltip im Web) / Flutter zeigt 'Passbild.jpg' als Titel in der Kopfzeile."
+  },
+  "settings/settings/settings.page#text-da7247a3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:198",
+    "lib/features/settings/presentation/pages/settings_page.dart:201"
+   ],
+   "n": "Nur Stimmführer/Stimmführer-Helfer, nicht in allgemeinen Instanzen, ohne Sidepanel."
+  },
+  "settings/settings/settings.page#action-e74471ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:203",
+    "lib/features/settings/presentation/pages/settings_page.dart:205",
+    "lib/features/settings/presentation/pages/settings_page.dart:206"
+   ]
+  },
+  "settings/settings/settings.page#text-b00463f6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:212",
+    "lib/features/settings/presentation/pages/settings_page.dart:215"
+   ],
+   "n": "Nur Admin/Verantwortliche."
+  },
+  "settings/settings/settings.page#action-853e8c3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:217",
+    "lib/features/settings/presentation/pages/settings_page.dart:220"
+   ]
+  },
+  "settings/settings/settings.page#action-bfcc1d8c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:222",
+    "lib/features/settings/presentation/pages/settings_page.dart:225"
+   ]
+  },
+  "settings/settings/settings.page#action-aa4cba95": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:227",
+    "lib/features/settings/presentation/pages/settings_page.dart:231"
+   ],
+   "n": "Nur wenn tenant.maintainTeachers."
+  },
+  "settings/settings/settings.page#action-4e6845f9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:233",
+    "lib/features/settings/presentation/pages/settings_page.dart:236"
+   ]
+  },
+  "settings/settings/settings.page#action-a5717533": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:238",
+    "lib/features/settings/presentation/pages/settings_page.dart:241"
+   ]
+  },
+  "settings/settings/settings.page#text-6820099c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:247",
+    "lib/features/settings/presentation/pages/settings_page.dart:250"
+   ],
+   "n": "Admin/Verantwortliche, ohne Sidepanel."
+  },
+  "settings/settings/settings.page#action-23b43f46": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:252",
+    "lib/features/settings/presentation/pages/settings_page.dart:254",
+    "lib/features/settings/presentation/pages/settings_page.dart:255",
+    "lib/features/settings/presentation/pages/settings_page.dart:256"
+   ]
+  },
+  "settings/settings/settings.page#text-1db2be73": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:262",
+    "lib/features/settings/presentation/pages/settings_page.dart:265"
+   ]
+  },
+  "settings/settings/settings.page#text-7e9eef73": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:267",
+    "lib/features/settings/presentation/pages/settings_page.dart:270"
+   ],
+   "n": "Nur Admin (nicht Verantwortlicher) und keine Demo."
+  },
+  "settings/settings/settings.page#text-ffbd2021": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:272"
+   ]
+  },
+  "settings/settings/settings.page#text-68eeff8f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:275",
+    "lib/features/settings/presentation/pages/settings_page.dart:278"
+   ],
+   "n": "Nur wenn Eltern in der Instanz aktiviert."
+  },
+  "settings/settings/settings.page#text-d9253696": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:280"
+   ]
+  },
+  "settings/settings/settings.page#text-262cddb6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:283",
+    "lib/features/settings/presentation/pages/settings_page.dart:285"
+   ]
+  },
+  "settings/settings/settings.page#text-5bc1738e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:287"
+   ]
+  },
+  "settings/settings/settings.page#action-cda2bc0f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:90",
+    "lib/features/settings/presentation/pages/settings_page.dart:292",
+    "lib/features/settings/presentation/pages/settings_page.dart:296",
+    "lib/features/settings/presentation/pages/settings_page.dart:298",
+    "lib/features/settings/presentation/pages/settings_page.dart:299"
+   ],
+   "n": "Gleiche Auswahl (nicht pending, nicht ausgetreten, E-Mail, ohne appId), Warnfarbe-Icon + Badge."
+  },
+  "settings/settings/settings.page#modal-ae5fb341": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:273",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:23"
+   ],
+   "n": "Sheet in voller Höhe."
+  },
+  "settings/settings/settings.page#text-691320ef": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:103"
+   ]
+  },
+  "settings/settings/settings.page#text-d8036cc4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:116",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:118"
+   ]
+  },
+  "settings/settings/settings.page#action-0f769ee3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:132",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:134",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:136",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:138"
+   ],
+   "n": "E-Mail + 'Erstellt am: dd.MM.yyyy'; Tippen → entfernen."
+  },
+  "settings/settings/settings.page#action-23cfeaeb": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:104",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:105"
+   ]
+  },
+  "settings/settings/settings.page#modal-da6c9bf0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:281",
+    "lib/features/settings/presentation/pages/parents_page.dart:21"
+   ],
+   "n": "Sheet in voller Höhe."
+  },
+  "settings/settings/settings.page#text-5852c1f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/parents_page.dart:38"
+   ]
+  },
+  "settings/settings/settings.page#text-f9602276": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/parents_page.dart:81",
+    "lib/features/settings/presentation/pages/parents_page.dart:83"
+   ]
+  },
+  "settings/settings/settings.page#action-5bb3e6ac": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/parents_page.dart:89",
+    "lib/features/settings/presentation/pages/parents_page.dart:259"
+   ],
+   "n": "Name + E-Mail; Tippen → entfernen."
+  },
+  "settings/settings/settings.page#action-ebc157f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/parents_page.dart:46",
+    "lib/features/settings/presentation/pages/parents_page.dart:47"
+   ]
+  },
+  "settings/settings/settings.page#modal-d14aa098": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:288",
+    "lib/features/settings/presentation/pages/viewers_page.dart:21"
+   ],
+   "n": "Sheet in voller Höhe."
+  },
+  "settings/settings/settings.page#text-e103b45d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/viewers_page.dart:38"
+   ]
+  },
+  "settings/settings/settings.page#text-6a9d1dab": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/viewers_page.dart:81",
+    "lib/features/settings/presentation/pages/viewers_page.dart:83"
+   ]
+  },
+  "settings/settings/settings.page#action-03eef951": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/viewers_page.dart:89",
+    "lib/features/settings/presentation/pages/viewers_page.dart:254",
+    "lib/features/settings/presentation/pages/viewers_page.dart:259"
+   ]
+  },
+  "settings/settings/settings.page#action-7e3c5efc": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/viewers_page.dart:46",
+    "lib/features/settings/presentation/pages/viewers_page.dart:47"
+   ]
+  },
+  "settings/settings/settings.page#text-7683867c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:305",
+    "lib/features/settings/presentation/pages/settings_page.dart:308"
+   ],
+   "n": "!allgemein && !Bewerber && (!Sidepanel || Admin/Verantw. || Helfer)."
+  },
+  "settings/settings/settings.page#action-2ec504ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:310",
+    "lib/features/settings/presentation/pages/settings_page.dart:314",
+    "lib/features/settings/presentation/pages/settings_page.dart:315"
+   ]
+  },
+  "settings/settings/settings.page#action-7c8d3cef": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:317",
+    "lib/features/settings/presentation/pages/settings_page.dart:320",
+    "lib/features/settings/presentation/pages/settings_page.dart:323"
+   ],
+   "n": "Nur Admin/Verantwortliche/Helfer; Darstellung siehe modal-8e265ba0."
+  },
+  "settings/settings/settings.page#action-01c7c3ee": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:325",
+    "lib/features/settings/presentation/pages/settings_page.dart:328",
+    "lib/features/settings/presentation/pages/settings_page.dart:329",
+    "lib/core/providers/role_permission_providers.dart:262"
+   ],
+   "n": "Gleiche canAccessFiles-Regel, ohne Sidepanel."
+  },
+  "settings/settings/settings.page#text-bfb46f54": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:335",
+    "lib/features/settings/presentation/pages/settings_page.dart:338"
+   ]
+  },
+  "settings/settings/settings.page#action-01c7c3ee-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:340",
+    "lib/features/settings/presentation/pages/settings_page.dart:342",
+    "lib/features/settings/presentation/pages/settings_page.dart:343"
+   ]
+  },
+  "settings/settings/settings.page#text-cb4c66f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:102",
+    "lib/features/settings/presentation/pages/settings_page.dart:109",
+    "lib/features/settings/presentation/pages/settings_page.dart:349",
+    "lib/features/settings/presentation/pages/settings_page.dart:352"
+   ],
+   "n": "showPlanning = Admin/Verantw.; showTeam = Teamorg aktiv && (Leitung || im Kreis || eigene Aufgaben)."
+  },
+  "settings/settings/settings.page#action-1309c10c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:355",
+    "lib/features/settings/presentation/pages/settings_page.dart:358",
+    "lib/features/settings/presentation/pages/settings_page.dart:360"
+   ],
+   "n": "Ohne Sidepanel; Darstellung siehe modal-574f5f7c."
+  },
+  "settings/settings/settings.page#action-95044898": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:362",
+    "lib/features/settings/presentation/pages/settings_page.dart:364",
+    "lib/features/settings/presentation/pages/settings_page.dart:366"
+   ]
+  },
+  "settings/settings/settings.page#action-6fae9650": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:368",
+    "lib/features/settings/presentation/pages/settings_page.dart:371",
+    "lib/features/settings/presentation/pages/settings_page.dart:373"
+   ],
+   "n": "Nur mit verknüpfter Organisation."
+  },
+  "settings/settings/settings.page#action-0490526c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:377",
+    "lib/features/settings/presentation/pages/settings_page.dart:380",
+    "lib/features/settings/presentation/pages/settings_page.dart:382"
+   ],
+   "n": "Ionic ohne queryParam → Standard-Tab tasks; Flutter ?tab=tasks – gleiches Ergebnis."
+  },
+  "settings/settings/settings.page#action-dd62459d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:385",
+    "lib/features/settings/presentation/pages/settings_page.dart:387",
+    "lib/features/settings/presentation/pages/settings_page.dart:389"
+   ]
+  },
+  "settings/settings/settings.page#action-ad2d5b3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:391",
+    "lib/features/settings/presentation/pages/settings_page.dart:394",
+    "lib/features/settings/presentation/pages/settings_page.dart:396"
+   ]
+  },
+  "settings/settings/settings.page#action-ba3051a1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:398",
+    "lib/features/settings/presentation/pages/settings_page.dart:400",
+    "lib/features/settings/presentation/pages/settings_page.dart:402"
+   ]
+  },
+  "settings/settings/settings.page#text-7ccbeb61": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:411",
+    "lib/features/settings/presentation/pages/settings_page.dart:414"
+   ]
+  },
+  "settings/settings/settings.page#action-6d5f3647": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:416",
+    "lib/features/settings/presentation/pages/settings_page.dart:418",
+    "lib/features/settings/presentation/pages/settings_page.dart:419",
+    "lib/features/settings/presentation/pages/settings_page.dart:420"
+   ],
+   "n": "Organisationsname bzw. 'Organisation' + Notiz 'Nicht verknüpft'."
+  },
+  "settings/settings/settings.page#text-b30c4fab": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:426",
+    "lib/features/settings/presentation/pages/settings_page.dart:429"
+   ],
+   "n": "Alle außer Bewerber."
+  },
+  "settings/settings/settings.page#action-7740317e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:431",
+    "lib/features/settings/presentation/pages/settings_page.dart:433",
+    "lib/features/settings/presentation/pages/settings_page.dart:435"
+   ]
+  },
+  "settings/settings/settings.page#action-223af3ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:438",
+    "lib/features/settings/presentation/pages/settings_page.dart:441",
+    "lib/features/settings/presentation/pages/settings_page.dart:443"
+   ]
+  },
+  "settings/settings/settings.page#action-094f3e92": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:445",
+    "lib/features/settings/presentation/pages/settings_page.dart:447",
+    "lib/features/settings/presentation/pages/settings_page.dart:449"
+   ]
+  },
+  "settings/settings/settings.page#action-96f2fe49": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:452",
+    "lib/features/settings/presentation/pages/settings_page.dart:455",
+    "lib/features/settings/presentation/pages/settings_page.dart:457",
+    "lib/core/services/certificate_service.dart:14"
+   ],
+   "n": "Nur Admin/Verantw. in Instanzen mit 'vorkurs' im Kurz- oder Langnamen."
+  },
+  "settings/settings/settings.page#text-65c38342": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:463"
+   ]
+  },
+  "settings/settings/settings.page#text-e8ef8ce5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:460",
+    "lib/features/settings/presentation/pages/settings_page.dart:465"
+   ]
+  },
+  "settings/settings/settings.page#modal-bdb71a9d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:466",
+    "lib/features/settings/presentation/pages/left_players_page.dart:37",
+    "lib/features/settings/presentation/pages/left_players_page.dart:39"
+   ],
+   "n": "Sheet initial halbe Höhe, auf volle Höhe ziehbar."
+  },
+  "settings/settings/settings.page#text-14ba6220": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/left_players_page.dart:58"
+   ]
+  },
+  "settings/settings/settings.page#action-c5e57298": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/left_players_page.dart:198",
+    "lib/features/settings/presentation/pages/left_players_page.dart:200",
+    "lib/features/settings/presentation/pages/left_players_page.dart:203",
+    "lib/features/settings/presentation/pages/left_players_page.dart:204",
+    "lib/features/settings/presentation/pages/left_players_page.dart:141"
+   ],
+   "sev": "niedrig",
+   "n": "Zeile 'Vorname Nachname (Gruppe)' + 'Ausgetreten: dd.MM.yyyy', Tippen öffnet die Person. Flutter zusätzlich: grüner Reaktivieren-Button je Zeile mit eigenem Dialog 'Person wieder aktivieren?' und Toast '{name} wurde reaktiviert' (Flutter-only); in Ionic nur über die Person."
+  },
+  "settings/settings/settings.page#text-e74671e3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/left_players_page.dart:87",
+    "lib/features/settings/presentation/pages/left_players_page.dart:93"
+   ]
+  },
+  "settings/settings/settings.page#text-df3e0c42": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:477",
+    "lib/features/settings/presentation/pages/settings_page.dart:479"
+   ]
+  },
+  "settings/settings/settings.page#action-e4bcb515": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:508",
+    "lib/features/settings/presentation/pages/settings_page.dart:511",
+    "lib/features/settings/presentation/pages/settings_page.dart:512",
+    "lib/features/settings/presentation/pages/settings_page.dart:514"
+   ],
+   "n": "'Instanz wechseln' + Langname, öffnet das Instanzen-Sheet."
+  },
+  "settings/settings/settings.page#field-f99a2fe1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:516",
+    "lib/features/settings/presentation/widgets/language_picker_tile.dart:19",
+    "lib/features/settings/presentation/widgets/language_picker_tile.dart:32",
+    "lib/features/settings/presentation/widgets/language_picker_tile.dart:39",
+    "lib/features/settings/presentation/widgets/language_picker_tile.dart:96",
+    "lib/core/providers/locale_provider.dart:80"
+   ],
+   "n": "Nur bei >1 Sprache; 'Sprache' + Badge 'NEU', Auswahl Deutsch/English, speichert lokal und im Konto; Flutter lädt ohne Seiten-Reload neu."
+  },
+  "settings/settings/settings.page#action-b51b7100": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:518",
+    "lib/features/settings/presentation/pages/settings_page.dart:520",
+    "lib/features/settings/presentation/pages/settings_page.dart:521"
+   ]
+  },
+  "settings/settings/settings.page#action-31a73187": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:523",
+    "lib/features/settings/presentation/pages/settings_page.dart:525",
+    "lib/features/settings/presentation/pages/settings_page.dart:527"
+   ]
+  },
+  "settings/settings/settings.page#action-6bde5da6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:532",
+    "lib/features/settings/presentation/pages/settings_page.dart:535",
+    "lib/features/settings/presentation/pages/settings_page.dart:536"
+   ]
+  },
+  "settings/settings/settings.page#text-44a92a2a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:538",
+    "lib/features/settings/presentation/pages/settings_page.dart:541",
+    "lib/features/settings/presentation/pages/settings_page.dart:543"
+   ]
+  },
+  "settings/settings/settings.page#text-c57743c9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:545",
+    "lib/features/settings/presentation/pages/settings_page.dart:547",
+    "lib/features/settings/presentation/pages/settings_page.dart:550"
+   ]
+  },
+  "settings/settings/settings.page#text-87e51c97": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:549",
+    "lib/core/constants/app_constants.dart:10"
+   ],
+   "sev": "mittel",
+   "n": "Ionic: Badge mit package.json-Version (4.19.7) / Flutter: AppConstants.appVersion (0.38.1) – Nutzer sehen eine niedrigere, andere Versionsnummer."
+  },
+  "settings/settings/settings.page#action-0fb1fcee": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:553",
+    "lib/features/settings/presentation/pages/settings_page.dart:556",
+    "lib/features/settings/presentation/pages/settings_page.dart:560",
+    "lib/core/services/app_update_service_stub.dart:17"
+   ],
+   "n": "Nur wenn Update bereit; Web: neuer Service Worker, nativ: Store-Update statt Ionic-Live-Update-Bundle."
+  },
+  "settings/settings/settings.page#action-6e82f27d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:562",
+    "lib/features/settings/presentation/pages/settings_page.dart:565",
+    "lib/features/settings/presentation/pages/settings_page.dart:566"
+   ],
+   "n": "Nur Super-Developer."
+  },
+  "settings/settings/settings.page#action-fcbb0db2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:572",
+    "lib/features/settings/presentation/pages/settings_page.dart:576",
+    "lib/features/settings/presentation/pages/settings_page.dart:577",
+    "lib/features/settings/presentation/pages/settings_page.dart:583",
+    "lib/features/settings/presentation/pages/settings_page.dart:585"
+   ],
+   "n": "Rote Zeile, ohne Sidepanel, direkter Logout ohne Rückfrage, → /login."
+  },
+  "settings/settings/settings.page#action-01e9297c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:484",
+    "lib/features/settings/presentation/pages/settings_page.dart:488",
+    "lib/features/settings/presentation/pages/settings_page.dart:494"
+   ],
+   "n": "Dezenter, unterstrichener Link 'Konto löschen' unter der Gruppe."
+  },
+  "settings/settings/settings.page#modal-4c83c19f": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:543",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:19",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:20",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:38",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:236"
+   ],
+   "sev": "niedrig",
+   "n": "iOS: Sheet in voller Höhe wie Ionic [0,1]. md: Ionic volle Höhe / Flutter ziehbares Sheet initial 70 %, max. 90 %."
+  },
+  "settings/settings/settings.page#text-d60bc83a": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:158",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:257"
+   ]
+  },
+  "settings/settings/settings.page#action-f0fb0558": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:172",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:176",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:269",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:271"
+   ]
+  },
+  "settings/settings/settings.page#text-aeb638b3": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:190",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:284"
+   ]
+  },
+  "settings/settings/settings.page#field-a041b4f2": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:198",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:210",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:288",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:290"
+   ],
+   "sev": "niedrig",
+   "n": "Segmente 'Hilfe/Frage' / 'Feedback' gleich. Flutter leert beim Wechsel alle Eingaben (Frage, Feedback, Telefon, Bewertung, Anonym) / Ionic behält sie."
+  },
+  "settings/settings/settings.page#text-50405073": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:400",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:487"
+   ]
+  },
+  "settings/settings/settings.page#field-404f4b1d": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:399",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:402",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:403",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:488"
+   ]
+  },
+  "settings/settings/settings.page#text-ab6878ab": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:406",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:498"
+   ]
+  },
+  "settings/settings/settings.page#field-c47e2c8a": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:405",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:408",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:409",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:410",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:499",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:500"
+   ]
+  },
+  "settings/settings/settings.page#action-ca440363": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:80",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:81",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:82",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:89",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:90"
+   ],
+   "sev": "niedrig",
+   "n": "Flutter besser: leere Frage wird mit Warnung 'Bitte gib eine Frage ein' (Flutter-only) blockiert, Ionic sendet auch leer. Flutter trimmt Text/Telefon und schreibt leeres Telefon als null statt ''. md: Flutter-only Einleitung 'Hast du eine Frage oder brauchst Hilfe?'."
+  },
+  "settings/settings/settings.page#text-294adf9f": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:421"
+   ]
+  },
+  "settings/settings/settings.page#action-c7c0892e": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:425",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:433",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:439",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:546",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:550"
+   ],
+   "sev": "niedrig",
+   "n": "iOS gleich (5 gefüllte Sterne, warning/medium). md: Flutter große Sterne als Outline (star_border) statt grau gefüllt, zentriert unter Flutter-only-Text „Wie gefällt dir die App?“."
+  },
+  "settings/settings/settings.page#text-552071d3": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:448",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:563"
+   ]
+  },
+  "settings/settings/settings.page#field-293446a9": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:447",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:450",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:564"
+   ]
+  },
+  "settings/settings/settings.page#field-ace4bcc6": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:453",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:454",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:571",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:574"
+   ],
+   "sev": "niedrig",
+   "n": "Schalter 'Anonym' gleich; md zusätzlich Flutter-only-Untertitel 'Deine Daten werden nicht mitgesendet'."
+  },
+  "settings/settings/settings.page#text-ab6878ab-2": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:458",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:460",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:581",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:587"
+   ],
+   "n": "Nur wenn nicht anonym."
+  },
+  "settings/settings/settings.page#field-c47e2c8a-2": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:459",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:462",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:463",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:583"
+   ]
+  },
+  "settings/settings/settings.page#action-0c7adf31": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:107",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:115",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:467",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:598"
+   ],
+   "n": "Bewertung erforderlich, sendet Text/Bewertung/anonym/Telefon (anonym ohne Instanz/Nutzer); Flutter trimmt und schreibt leeres Telefon als null."
+  },
+  "settings/settings/settings.page#modal-48701210": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:550",
+    "lib/shared/widgets/sheets/version_history_sheet.dart:63",
+    "lib/shared/widgets/sheets/version_history_sheet.dart:188"
+   ],
+   "n": "Sheet initial halbe Höhe, auf volle Höhe ziehbar."
+  },
+  "settings/settings/settings.page#text-88ee9ddc": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/version_history_sheet.dart:84",
+    "lib/shared/widgets/sheets/version_history_sheet.dart:92"
+   ]
+  },
+  "settings/settings/settings.page#text-8938a6a0": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/version_history_sheet.dart:37",
+    "lib/shared/widgets/sheets/version_history_sheet.dart:176",
+    "lib/shared/widgets/sheets/version_history_sheet.dart:178",
+    "assets/version_history.json:1"
+   ],
+   "sev": "mittel",
+   "n": "Gleiche Darstellung ('Version x (Datum)' + je Änderung eine Zeile). Inhalt: Ionic version-history.json (4.19.x-Einträge) / Flutter assets/version_history.json mit eigener Flutter-Historie (0.38.x, andere Einträge)."
+  },
+  "settings/settings/settings.page#modal-712205ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:119",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:33",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:35"
+   ],
+   "n": "Sheet initial halbe Höhe, auf volle Höhe ziehbar."
+  },
+  "settings/settings/settings.page#action-da0472bf": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:389",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:392",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:405"
+   ],
+   "n": "'+' links; Ziel/Darstellung siehe modal-2d9ef553."
+  },
+  "settings/settings/settings.page#text-d6dc4517": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:386",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:388"
+   ]
+  },
+  "settings/settings/settings.page#action-f029eaa1-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:394",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:397",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:406"
+   ]
+  },
+  "settings/settings/settings.page#modal-1225d656": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:210",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:211"
+   ],
+   "n": "Kleines Bottom-Sheet mit dem Schalter."
+  },
+  "settings/settings/settings.page#field-fdb790d6": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:218",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:224",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:227",
+    "lib/core/providers/user_preferences_provider.dart:61",
+    "lib/core/config/supabase_config.dart:60"
+   ],
+   "sev": "mittel",
+   "n": "Label 'Instanzauswahl aktivieren' + Hilfetext gleich, Schreiben in auth-Metadaten gleich. Aber (statisch abgeleitet, nicht ausgeführt): der Schalter liest userPreferencesProvider, der nur bei Kontowechsel neu berechnet wird (currentAuthUserIdProvider liefert dieselbe ID) → nach dem Umschalten bleibt der Schalter optisch auf dem alten Wert; erneutes Tippen schreibt denselben Wert erneut, Zurückschalten in derselben Sitzung nicht möglich. Ionic: ngModel schaltet sofort um."
+  },
+  "settings/settings/settings.page#action-25aed01a": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:537",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:539",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:541",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:549",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:566",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:569",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:168"
+   ],
+   "sev": "niedrig",
+   "n": "Kurzname, Langname, Badge 'Aktuell', Favoriten-Stern, Tippen wechselt (aktuelle: nichts) wie Ionic. Flutter zusätzlich: Info-Button je Instanz → Flutter-only Detailseite der Instanz."
+  },
+  "settings/settings/settings.page#action-0b6bb97b": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:509",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:513",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:515"
+   ],
+   "n": "Wischen nach links; voller Wisch setzt/entfernt Favorit."
+  },
+  "settings/settings/settings.page#action-d97dcdca": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:521",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:522",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:523"
+   ],
+   "n": "Rote Aktion mit Papierkorb → Instanz löschen."
+  },
+  "settings/settings/settings.page#action-a468909d": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:527",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:528",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:531"
+   ],
+   "n": "Gelbe Aktion, Stern / Stern-Umriss je nach Favorit."
+  },
+  "settings/settings/settings.page#action-b93bec25": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:152",
+    "lib/features/settings/presentation/pages/settings_page.dart:153",
+    "lib/features/settings/presentation/pages/settings_page.dart:156",
+    "lib/features/settings/presentation/pages/settings_page.dart:158"
+   ],
+   "n": "Nur iOS: FAB mit apps-Icon öffnet das Instanzen-Sheet (in der Tab-Bar-Zeile)."
+  }
+ },
+ "extra": [
+  {
+   "unit": "settings/settings/settings.page",
+   "title": "Pull-to-Refresh lädt Profil/Team nicht neu",
+   "n": "Ionic: handleRefresh() → initialize() lädt Profil (Hero-Karte/Stammdaten inkl. Org-Feldwerte), Zusatzfelder, Gemeinden, Team-Zugang, Admins, Viewer, Eltern, Archiv, Pending neu / Flutter: invalidiert nur Tenant, Instanzen, Pending, Spieler, Beobachter, Eltern, Admins, Archiv – ownProfileProvider, personExtraFieldsProvider, churchesProvider und Team-Provider bleiben im Cache.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/settings/settings.page.ts:195",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:162",
+    "lib/features/settings/presentation/pages/settings_page.dart:163",
+    "lib/core/providers/profile_providers.dart:47"
+   ]
+  },
+  {
+   "unit": "settings/settings/settings.page",
+   "title": "Flutter-only Zeile 'Neues Design (Beta)'",
+   "n": "Ionic: System-Block ohne diese Zeile / Flutter: im normalen Design zwischen Sprache und Benachrichtigungen die Zeile 'Neues Design (Beta)' mit Badge 'NEU', Hinweis 'Nur auf diesem Gerät. Jederzeit wieder ausschaltbar.' und Schalter (für alle Rollen).",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/settings/settings.page.html:741",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:517",
+    "lib/features/settings/presentation/widgets/redesign_beta_tile.dart:12"
+   ]
+  }
+ ]
+}

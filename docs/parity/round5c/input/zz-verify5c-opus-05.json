@@ -1,0 +1,1577 @@
+{
+ "batch": "zz-verify5c-opus-05",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 27,
+    "cond": [
+     "@else (not (db.tenants()?.length ?? 0) > 1)"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "tabs.dashboard"
+    ],
+    "de": [
+     "Dashboard"
+    ],
+    "literals": [],
+    "text": "{{ 'tabs.dashboard' | transloco }}",
+    "id": "home-dashboard/home-dashboard.page#text-4fcb2ddf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:75"
+    ],
+    "n": "Titel „Dashboard“ bei ≤ 1 Instanz (bis userTenantsProvider geladen ist ebenfalls, nur kurz).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/home-dashboard.page.html",
+    "line": 51,
+    "cond": [
+     "@if ((db.tenants()?.length ?? 0) <= 1)"
+    ],
+    "tag": "ion-title",
+    "attrs": {
+     "size": "large"
+    },
+    "keys": [
+     "tabs.dashboard"
+    ],
+    "de": [
+     "Dashboard"
+    ],
+    "literals": [],
+    "text": "{{ 'tabs.dashboard' | transloco }}",
+    "id": "home-dashboard/home-dashboard.page#text-4fcb2ddf-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:49",
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:52"
+    ],
+    "n": "Großer Titel nur bei ≤ 1 Instanz und nur im iOS-Look (Ionic collapse=\"condense\" ist iOS-only).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "extra": {
+    "id": "x-c6f9466555",
+    "title": "Meine Aufgaben beim Zurückkehren",
+    "n": "Ionic: ionViewWillEnter lädt die Karte 'Meine Aufgaben' bei jedem erneuten Betreten des Dashboards neu / Flutter: myTasksProvider wird nur nach eigenen Aufgaben-Änderungen (TeamTaskNotifier, Abmeldung) oder Pull-to-Refresh invalidiert; fremde Änderungen erscheinen erst nach Refresh.",
+    "sev": "niedrig",
+    "ionic": "src/app/home-dashboard/home-dashboard.page.ts:47",
+    "f": [
+     "lib/core/providers/team_org_providers.dart:277",
+     "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:53"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/providers/team_org_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 152,
+    "cond": [
+     "@if (isAdmin)",
+     "in <ion-modal trigger=add-instrument-button #modal>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "full"
+    },
+    "events": [
+     "(click)=addInstrument(input.value, modal)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "attendance.add"
+    ],
+    "de": [
+     "Hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.add' | transloco }}",
+    "id": "instruments/instrument-list/instrument-list.page#action-09922adb"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:427",
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:371",
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:347",
+     "lib/data/repositories/group_repository.dart:94"
+    ],
+    "n": "Flutter besser: Rolle gleich (nur Admin/Verantwortlicher); Insert name, maingroup false, tuning C, clefs [g], tenantId, category (nur wenn gesetzt) gleich; leerer Name → „Bitte gib einem Namen an“. Erstprüfer übersah: Ionic speichert den Namen ungetrimmt (nur Leerzeichen wird angelegt) und prüft den Insert-Fehler nicht (group.service.ts:34, Modal schließt still) / Flutter trimmt und zeigt bei Fehler „Fehler beim Hinzufügen“.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart",
+    "lib/data/repositories/group_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 9,
+    "cond": [
+     "@if (isAdmin)"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=toggleReorderMode()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"isReordering ? 'checkmark' : 'swap-vertical'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "instruments/instrument-list/instrument-list.page#action-13fe6ace"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:101",
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:78",
+     "lib/core/router/app_router.dart:165"
+    ],
+    "n": "Nur Admin/Verantwortlicher; die Seite ist in beiden nur für diese Rollen erreichbar (Einstellungen-Abschnitt isAdmin, Ionic isUrlAccessAllowed / Flutter Route-Guard). swap-vertical ↔ Häkchen, Beenden speichert sort_order. Overlay/Erfolgs-Toast siehe loading-7d7ff756 / toast-e4f5c17f.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 23,
+    "cond": [
+     "@if (isAdmin)",
+     "in <ion-modal trigger=cat-button>"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=addCategory()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "instruments/instrument-list/instrument-list.page#action-3f2a74e6"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:122"
+    ],
+    "n": "Ionic: Plus-Button immer sichtbar, auch im Sortiermodus / Flutter: im Sortiermodus ausgeblendet.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 51,
+    "cond": [
+     "@if (isAdmin)",
+     "in <ion-modal trigger=cat-button>",
+     "in <ion-reorder-group>",
+     "@if (!isCategoryReordering)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "color": "warning"
+    },
+    "events": [
+     "(click)=editCategory(cat.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "pencil"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "instruments/instrument-list/instrument-list.page#action-623e8e94"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:392"
+    ],
+    "n": "Nur Admin/Verantwortliche (Sheet-Button), nur außerhalb des Sortiermodus, öffnet „Kategorie bearbeiten“ wie Ionic. Ionic: Stift-Icon in warning-Farbe (orange) / Flutter: Icons.edit in Standardfarbe.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 38,
+    "cond": [
+     "@if (isAdmin)",
+     "in <ion-modal trigger=cat-button>"
+    ],
+    "tag": "ion-reorder-group",
+    "attrs": {
+     "[disabled]": "\"!isCategoryReordering\""
+    },
+    "events": [
+     "(ionItemReorder)=handleCategoryReorder($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "reorder-two",
+     "pencil",
+     "trash"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ cat.sort_order }} {{ cat.name }}",
+    "id": "instruments/instrument-list/instrument-list.page#action-a01ef8cf"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:197",
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:384"
+    ],
+    "n": "Sortieren per Ziehen und Speichern wie Ionic. Ionic: Zeile mit Griff-Icon (im Sortiermodus) und Badge der gespeicherten sort_order (immer, auch außerhalb des Sortiermodus) / Flutter: Karten; außerhalb des Sortiermodus Kategorie-Icon statt sort_order-Badge, im Sortiermodus Positionsnummer im Kreis, Ziehen per Long-Press (Standard-Griff).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 20,
+    "cond": [
+     "@if (isAdmin)",
+     "in <ion-modal trigger=cat-button>"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=toggleCategoryReorderMode()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"isCategoryReordering ? 'checkmark' : 'swap-vertical'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "instruments/instrument-list/instrument-list.page#action-b5b9e69f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:114",
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:28"
+    ],
+    "n": "swap-vertical ↔ Häkchen; Beenden speichert Kategorie-sort_order und daraus die Gruppen-sort_order, Erfolgs-/Fehler-Toast.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 12,
+    "cond": [
+     "@if (isAdmin)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "id": "cat-button"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "pricetags-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "instruments/instrument-list/instrument-list.page#action-e7701887"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:111"
+    ],
+    "n": "Icons.sell_outlined statt pricetags-outline, nur Admin/Verantwortlicher, öffnet das Kategorien-Sheet.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 140,
+    "cond": [
+     "@if (isAdmin)",
+     "in <ion-modal trigger=add-instrument-button #modal>"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "#": "input"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[placeholder]=\"'instruments.groupPh' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "instruments.groupPh"
+    ],
+    "de": [
+     "z.B. Mädchen, Posaune, Alt 1, etc."
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'instruments.groupPh' | transloco\"",
+    "id": "instruments/instrument-list/instrument-list.page#field-a89a567a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:408"
+    ],
+    "n": "Platzhalter „z.B. Mädchen, Posaune, Alt 1, etc.“ unter dem Label „Gruppe“.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 144,
+    "cond": [
+     "@if (isAdmin)",
+     "in <ion-modal trigger=add-instrument-button #modal>",
+     "@if (categories?.length > 0)"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newGroupCategory\"",
+    "bindings": [
+     "[label]=\"'instruments.category' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"null\"",
+      "keys": [
+       "generalSettings.none"
+      ],
+      "de": [
+       "Keine"
+      ],
+      "literals": [],
+      "text": "{{ 'generalSettings.none' | transloco }}"
+     },
+     {
+      "value": "\"cat.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ cat.name }}"
+     }
+    ],
+    "keys": [
+     "instruments.category",
+     "generalSettings.none"
+    ],
+    "de": [
+     "Kategorie",
+     "Keine"
+    ],
+    "literals": [],
+    "text": "[label]=\"'instruments.category' | transloco\" {{ 'generalSettings.none' | transloco }} {{ cat.name }}",
+    "id": "instruments/instrument-list/instrument-list.page#field-c9279f21"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:413"
+    ],
+    "n": "Nur wenn Kategorien existieren; Label „Kategorie“, Optionen „Keine“ + Kategorien, Standard „Keine“.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "instruments/instrument-list/instrument-list.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:27-32",
+     "trackByCategoryId:34-34",
+     "ngOnInit:36-41",
+     "getGroups:43-105",
+     "groupInstrumentsByCategory:107-152",
+     "openModal:154-174",
+     "addInstrument:176-188",
+     "addCategory:190-220",
+     "deleteCategory:222-241",
+     "editCategory:243-279",
+     "toggleCategoryReorderMode:281-287",
+     "handleCategoryReorder:289-311",
+     "saveCategoryOrder:313-346",
+     "toggleReorderMode:348-354",
+     "handleReorder:356-379",
+     "updateGlobalSortOrder:381-393",
+     "saveOrder:395-415"
+    ],
+    "bodies": {
+     "constructor": "09b6657c",
+     "trackByCategoryId": "8833ce84",
+     "ngOnInit": "8209b62a",
+     "getGroups": "16a64bc7",
+     "groupInstrumentsByCategory": "7b834e3d",
+     "openModal": "a3b572e7",
+     "addInstrument": "f6ec1fc1",
+     "addCategory": "94ae5076",
+     "deleteCategory": "b04071c5",
+     "editCategory": "05145c9b",
+     "toggleCategoryReorderMode": "a28cc9a8",
+     "handleCategoryReorder": "33a3a3d3",
+     "saveCategoryOrder": "a77d427e",
+     "toggleReorderMode": "2c6f43de",
+     "handleReorder": "eab49de0",
+     "updateGlobalSortOrder": "883a02c2",
+     "saveOrder": "bdada5a3"
+    },
+    "id": "instruments/instrument-list/instrument-list.page#logic-8072fecc"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:71",
+     "lib/core/utils/instrument_sort.dart:54",
+     "lib/core/utils/instrument_sort.dart:86",
+     "lib/core/providers/group_providers.dart:107",
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:28"
+    ],
+    "n": "Admin = Admin/Verantwortlicher, Gruppierung nach Kategorie (Sektionen nach sort_order, dann Name; Gruppen nach sort_order, dann Name), globale Neu-Nummerierung beim Sortieren, Kategorien-CRUD, Gruppe hinzufügen (tuning C, clefs g) wie Ionic. Personenanzahl siehe action-d2efa7e3; weitere Abweichungen siehe extra.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart",
+    "lib/core/providers/group_providers.dart",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "instruments/instrument-list/instrument-list.page.ts",
+    "line": 159,
+    "method": "InstrumentListPage.openModal",
+    "cond": [],
+    "component": "InstrumentPage",
+    "props": [
+     "existingInstrument"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "aab3bee1",
+    "mbody": "a3b572e7",
+    "roleGuarded": true,
+    "id": "instruments/instrument-list/instrument-list.page#modal-1bead9c9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:437"
+    ],
+    "n": "Nur für Admin/Verantwortliche, übergibt die Gruppe (plus Kategorien). Ionic: iOS Karten-Modal (presentingElement), md Vollbild / Flutter: Vollbild-Dialog (fullscreenDialog) auf allen Plattformen. Neuladen nach Änderung in beiden.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 130,
+    "cond": [
+     "@if (isAdmin)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "add-instrument-button",
+     "#": "modal"
+    },
+    "events": [
+     "(willPresent)=newGroupCategory = null"
+    ],
+    "bindings": [
+     "[breakpoints]=\"[0, 0.8]\"",
+     "[initialBreakpoint]=\"0.8\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "instruments/instrument-list/instrument-list.page#modal-c7ef6c60"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:162",
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:333"
+    ],
+    "n": "FAB nur Admin/Verantwortlicher; Bottom-Sheet in Inhaltshöhe statt 80 %, Kategorie bei jedem Öffnen „Keine“ (Ionic willPresent).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 13,
+    "cond": [
+     "@if (isAdmin)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "cat-button"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, 0.6, 1]\"",
+     "[initialBreakpoint]=\"0.6\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "instruments/instrument-list/instrument-list.page#modal-e8e040b7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:411",
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:72"
+    ],
+    "n": "Nur Admin/Verantwortlicher. Sheet startet bei 60 % (Ionic Stufen 0/0,6/1, Flutter bis 90 %); Flutter zusätzlich X-Button und Leer-Hinweis „Keine Kategorien“.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 139,
+    "cond": [
+     "@if (isAdmin)",
+     "in <ion-modal trigger=add-instrument-button #modal>"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.group"
+    ],
+    "de": [
+     "Gruppe"
+    ],
+    "literals": [],
+    "text": "{{ 'people.group' | transloco }}",
+    "id": "instruments/instrument-list/instrument-list.page#text-1de3fac0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:407"
+    ],
+    "n": "Feldlabel „Gruppe“ im Sheet „Gruppe hinzufügen“ (nur Admin/Verantwortliche).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 33,
+    "cond": [
+     "@if (isAdmin)",
+     "in <ion-modal trigger=cat-button>",
+     "@if (isCategoryReordering)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "instruments.dragCategories"
+    ],
+    "de": [
+     "Ziehe die Kategorien, um die Reihenfolge anzupassen. Klicke auf das Häkchen, um zu speichern."
+    ],
+    "literals": [],
+    "text": "{{ 'instruments.dragCategories' | transloco }}",
+    "id": "instruments/instrument-list/instrument-list.page#text-49ad7035"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:191"
+    ],
+    "n": "Gleicher Text „Ziehe die Kategorien …“. Ionic: ion-item mit primary-Hintergrund und weißem Info-Icon / Flutter: normale ListTile mit blauem Info-Icon.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 135,
+    "cond": [
+     "@if (isAdmin)",
+     "in <ion-modal trigger=add-instrument-button #modal>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "instruments.addGroup"
+    ],
+    "de": [
+     "Gruppe hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'instruments.addGroup' | transloco }}",
+    "id": "instruments/instrument-list/instrument-list.page#text-971d4e5a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:399"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "instruments/instrument-list/instrument-list.page.html",
+    "line": 18,
+    "cond": [
+     "@if (isAdmin)",
+     "in <ion-modal trigger=cat-button>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "instruments.categories"
+    ],
+    "de": [
+     "Kategorien"
+    ],
+    "literals": [],
+    "text": "{{ 'instruments.categories' | transloco }}",
+    "id": "instruments/instrument-list/instrument-list.page#text-9789226a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:105"
+    ],
+    "n": "„Kategorien“ (Flutter mit Kategorie-Icon davor).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "extra": {
+    "id": "x-5824d283fc",
+    "title": "Fehler beim Hinzufügen einer Gruppe",
+    "n": "Flutter besser: Ionic: groupSvc.addGroup prüft den Fehler nicht, Sheet schließt ohne Meldung / Flutter: Sheet schließt, roter Toast „Fehler beim Hinzufügen“.",
+    "sev": "niedrig",
+    "ionic": "src/app/instruments/instrument-list/instrument-list.page.ts:178",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:346"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "extra": {
+    "id": "x-a43d5a3f61",
+    "title": "Pull-to-Refresh nur in Flutter",
+    "n": "Flutter besser: Ionic: kein ion-refresher auf der Gruppenliste / Flutter: Herunterziehen lädt Gruppen, Kategorien und Personenanzahlen neu.",
+    "sev": "niedrig",
+    "ionic": "src/app/instruments/instrument-list/instrument-list.page.html:70",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:82"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument-list/instrument-list.page",
+   "ionic": {
+    "ts": "instruments/instrument-list/instrument-list.page.ts",
+    "html": "instruments/instrument-list/instrument-list.page.html"
+   },
+   "extra": {
+    "id": "x-d0c116c654",
+    "title": "Sortiermodus ohne Verschieben nummeriert neu",
+    "n": "Ionic: Häkchen ohne Verschieben speichert nur vorhandene sort_order-Werte unverändert (null bleibt null) / Flutter: computeGlobalSortOrder vergibt beim Verlassen immer 1..n an alle Gruppen und schreibt sie (Badges ändern sich, Gruppen ohne sort_order bekommen eine).",
+    "sev": "niedrig",
+    "ionic": "src/app/instruments/instrument-list/instrument-list.page.ts:401",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:49"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "instruments/instrument/instrument.page",
+   "ionic": {
+    "ts": "instruments/instrument/instrument.page.ts",
+    "html": "instruments/instrument/instrument.page.html"
+   },
+   "extra": {
+    "id": "x-718f3b20d0",
+    "title": "Geschriebene Werte beim Aktualisieren",
+    "n": "Ionic: schreibt notes, range, tuning, clefs, name, maingroup, category, synonyms so wie sie sind ('' bleibt '', versteckte Felder unverändert) / Flutter: trimmt, schreibt leere range/synonyms/notes als null, maingroup nicht, und schreibt tuning/clefs immer – bei Chor/Allgemein/Hauptgruppe (Felder versteckt) wird ein leerer Wert zu „C“ bzw. [g].",
+    "sev": "niedrig",
+    "ionic": "src/app/instruments/instrument/instrument.page.ts:64",
+    "f": [
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:730"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/legal-modal/legal-modal.component",
+   "ionic": {
+    "ts": "login/legal-modal/legal-modal.component.ts",
+    "html": "login/legal-modal/legal-modal.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "login/legal-modal/legal-modal.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:14-14",
+     "dismiss:16-18"
+    ],
+    "bodies": {
+     "constructor": "3f1f042a",
+     "dismiss": "69a7489b"
+    },
+    "id": "login/legal-modal/legal-modal.component#logic-3f4d04f2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/legal/presentation/widgets/legal_content_view.dart:171-193"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/legal/presentation/widgets/legal_content_view.dart (Referenz ungültig)"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "login/login.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:36-43",
+     "ngOnInit:45-84",
+     "login:86-122",
+     "ngOnDestroy:124-126",
+     "onEnter:129-139",
+     "enterOtpMode:141-145",
+     "onModeChange:148-154",
+     "exitOtpMode:156-161",
+     "requestCode:163-183",
+     "resendCode:185-190",
+     "verifyCode:192-202",
+     "startResendCooldown:204-213",
+     "clearCooldown:215-221",
+     "promptResendConfirmation:223-257",
+     "promptRegister:259-277",
+     "promptSwitchToOtp:279-297",
+     "startDemo:299-309",
+     "openLegal:311-314",
+     "forgotPassword:316-341",
+     "register:343-359"
+    ],
+    "bodies": {
+     "constructor": "3306670c",
+     "ngOnInit": "430a4f87",
+     "login": "7c1f97ed",
+     "ngOnDestroy": "45eaeae0",
+     "onEnter": "91590192",
+     "enterOtpMode": "cc47c442",
+     "onModeChange": "54cc97a3",
+     "exitOtpMode": "dbdf4f47",
+     "requestCode": "2f646fc6",
+     "resendCode": "64cd82e6",
+     "verifyCode": "adfd5f40",
+     "startResendCooldown": "ac783939",
+     "clearCooldown": "36f956cd",
+     "promptResendConfirmation": "01bbbef3",
+     "promptRegister": "ded5a609",
+     "promptSwitchToOtp": "7100e7e8",
+     "startDemo": "c21185e3",
+     "openLegal": "a363d927",
+     "forgotPassword": "1ebd9485",
+     "register": "0005dfe6"
+    },
+    "id": "login/login.page#logic-b2bfd6ff"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:113-417"
+    ],
+    "n": "Login (Passwort/Code), Reset, Registrieren, Bestätigungsmail gleich; Unterschiede siehe extras.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "extra": {
+    "id": "x-e022710cfa",
+    "title": "Registrieren mit E-Mail vorbefüllt",
+    "n": "Ionic: Registrieren-Modal startet leer / Flutter: übernimmt die eingegebene E-Mail.",
+    "sev": "niedrig",
+    "ionic": "src/app/login/login.page.ts",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:333-347"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "extra": {
+    "id": "x-ffab6fe794",
+    "title": "E-Mail-Validierung inline",
+    "n": "Ionic: ungültige E-Mail → Toast / Flutter: Fehlertext direkt am Feld.",
+    "sev": "niedrig",
+    "ionic": "src/app/login/login.page.ts:164-166",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:151-168"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-compose/message-compose.component",
+   "ionic": {
+    "ts": "messages/message-compose/message-compose.component.ts",
+    "html": "messages/message-compose/message-compose.component.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "messages/message-compose/message-compose.component.ts",
+    "line": 189,
+    "method": "MessageComposeComponent.send",
+    "cond": [],
+    "message": {
+     "keys": [
+      "messages.sendingNow"
+     ],
+     "de": [
+      "Wird versendet …"
+     ],
+     "literals": [],
+     "expr": "translate('messages.sendingNow')"
+    },
+    "duration": "{ message: translate('messages.sendingNow') }",
+    "src": "800db6b6",
+    "mbody": "506b15a3",
+    "roleGuarded": true,
+    "id": "messages/message-compose/message-compose.component#loading-a5f8925e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_compose_page.dart:518",
+     "lib/features/messages/presentation/pages/message_compose_page.dart:306"
+    ],
+    "n": "Overlay mit Spinner 'Wird versendet …' über dem Inhalt, 'Abbrechen' währenddessen deaktiviert. Erreichbarkeit nur Admin/Verantwortlich wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-compose/message-compose.component",
+   "ionic": {
+    "ts": "messages/message-compose/message-compose.component.ts",
+    "html": "messages/message-compose/message-compose.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "messages/message-compose/message-compose.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "get draftKey:61-63",
+     "ngOnInit:65-86",
+     "get isPreset:88-90",
+     "get groupIds:92-94",
+     "get hasText:96-98",
+     "get canSend:100-107",
+     "onContentChange:109-112",
+     "onTitleChange:114-116",
+     "setAudience:118-121",
+     "toggleGroup:123-130",
+     "onChannelChange:132-134",
+     "loadCounts:136-159",
+     "cancel:161-163",
+     "confirmSend:165-182",
+     "send:184-216",
+     "saveDraft:218-225"
+    ],
+    "bodies": {
+     "get draftKey": "3d5c2752",
+     "ngOnInit": "134777dd",
+     "get isPreset": "72b377b3",
+     "get groupIds": "b15f8da4",
+     "get hasText": "38b393ea",
+     "get canSend": "b03e9fbf",
+     "onContentChange": "b62ed1a1",
+     "onTitleChange": "1f75ef75",
+     "setAudience": "b58abd49",
+     "toggleGroup": "c320dafb",
+     "onChannelChange": "b74e98ea",
+     "loadCounts": "30a3acf4",
+     "cancel": "330d06ee",
+     "confirmSend": "b39d636d",
+     "send": "506b15a3",
+     "saveDraft": "f174c40b"
+    },
+    "id": "messages/message-compose/message-compose.component#logic-2f8f942d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/messages/presentation/pages/message_compose_page.dart:88",
+     "lib/features/messages/presentation/pages/message_compose_page.dart:114",
+     "lib/features/messages/presentation/pages/message_compose_page.dart:179",
+     "lib/features/messages/presentation/pages/message_compose_page.dart:187",
+     "lib/core/providers/message_providers.dart:97"
+    ],
+    "n": "Gleich: Entwurf je Tenant ('message-draft-<tenantId>', Titel+Inhalt bei jeder Änderung, nicht im Preset-Modus), Preset mit festen Empfängern/Titel/Inhalt, Senden nur mit Titel, Text, ≥1 Kanal, Gruppenauswahl bzw. 'alle' und >0 Empfängern, Zähler mit Request-Schutz (leere Gruppenauswahl → 0 ohne Abfrage), Gruppen in gleicher Sortierung, Rückgabe der Nachrichten-ID. Entwurf jetzt als Quill-Delta statt Tiptap-JSON gespeichert (alter Ionic-Entwurf wird nicht übernommen). Unterschiede siehe extra.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-compose/message-compose.component",
+   "ionic": {
+    "ts": "messages/message-compose/message-compose.component.ts",
+    "html": "messages/message-compose/message-compose.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "messages/message-compose/message-compose.component.ts",
+    "line": 207,
+    "method": "MessageComposeComponent.send",
+    "cond": [],
+    "message": {
+     "keys": [
+      "messages.isSending"
+     ],
+     "de": [
+      "Mitteilung wird versendet"
+     ],
+     "literals": [],
+     "expr": "translate('messages.isSending')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "31d49b08",
+    "mbody": "506b15a3",
+    "roleGuarded": true,
+    "id": "messages/message-compose/message-compose.component#toast-56426039"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_compose_page.dart:269"
+    ],
+    "n": "Erfolg-Toast 'Mitteilung wird versendet', danach Dialog schließt mit Id. Nur Admin/Verantwortlich wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-compose/message-compose.component",
+   "ionic": {
+    "ts": "messages/message-compose/message-compose.component.ts",
+    "html": "messages/message-compose/message-compose.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "messages/message-compose/message-compose.component.ts",
+    "line": 211,
+    "method": "MessageComposeComponent.send",
+    "cond": [],
+    "message": {
+     "keys": [
+      "messages.sendFailed"
+     ],
+     "de": [
+      "Fehler beim Versenden, bitte versuche es erneut."
+     ],
+     "literals": [],
+     "expr": "translate('messages.sendFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "fe834124",
+    "mbody": "506b15a3",
+    "roleGuarded": true,
+    "id": "messages/message-compose/message-compose.component#toast-9c6ed681"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_compose_page.dart:264"
+    ],
+    "n": "Fehler-Toast 'Fehler beim Versenden, bitte versuche es erneut.', Dialog bleibt offen. Nur Admin/Verantwortlich wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-compose/message-compose.component",
+   "ionic": {
+    "ts": "messages/message-compose/message-compose.component.ts",
+    "html": "messages/message-compose/message-compose.component.html"
+   },
+   "extra": {
+    "id": "x-b299242fe2",
+    "title": "Preset-Versand löscht normalen Entwurf",
+    "n": "Flutter besser: Ionic: nach Versand im Preset-Modus ('Unentschuldigte anschreiben') wird trotzdem der normale Entwurf 'message-draft-<tenantId>' gelöscht / Flutter: _clearDraft überspringt Preset, normaler Entwurf bleibt erhalten.",
+    "sev": "niedrig",
+    "ionic": "src/app/messages/message-compose/message-compose.component.ts:203",
+    "f": [
+     "lib/features/messages/presentation/pages/message_compose_page.dart:156"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "messages/message-detail/message-detail.page.ts",
+    "line": 156,
+    "method": "MessageDetailPage.respond",
+    "cond": [],
+    "component": "AttendanceResponseModalComponent",
+    "props": [
+     "messageId",
+     "termin",
+     "kind"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "a6638a01",
+    "mbody": "38b8f528",
+    "roleGuarded": true,
+    "id": "messages/message-detail/message-detail.page#modal-187e9b6a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/attendance_response_page.dart:17",
+     "lib/features/messages/presentation/widgets/message_termin_section.dart:95",
+     "lib/features/messages/presentation/widgets/message_termin_section.dart:183",
+     "lib/features/messages/presentation/pages/message_detail_page.dart:184"
+    ],
+    "n": "Vollbild-Dialog (fullscreenDialog) wie Ionic-Modal ohne Sheet; übergibt messageId, Termin-Label und kind; danach Toast 'respDone'/'respDoneInstant' und Neuladen. Rollen: isManager = Admin/Verantwortlich UND Mitteilung gehört zur aktuellen Instanz (Ionic message-detail.page.ts:95, Flutter _isManager + tenantId-Vergleich). Nur Nicht-Manager (Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber) mit eigener Empfängerzeile (person_attendance_id), allow_responses, ≤ RESPONSE_DAYS+1 Tage nach Termin und ohne bzw. mit offener Antwort – Flutter MessageTerminSection nur bei !isManager, _canRespond gleich.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "messages/message-detail/message-detail.page.ts",
+    "line": 174,
+    "method": "MessageDetailPage.openTermin",
+    "cond": [
+     "(this.message?.attendance_id)"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "`/tabs/attendance/${this.message.attendance_id}`",
+    "src": "0fb42462",
+    "mbody": "0a11720f",
+    "id": "messages/message-detail/message-detail.page#nav-35f52631"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_detail_page.dart:191"
+    ],
+    "n": "context.push('/attendance/<id>') wie navigateByUrl('/tabs/attendance/<id>').",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "messages/message-detail/message-detail.page.ts",
+    "line": 231,
+    "method": "MessageDetailPage.openMessage",
+    "cond": [],
+    "via": "router.navigateByUrl",
+    "to": "`/tabs/messages/${m.id}`",
+    "src": "b3739f29",
+    "mbody": "5f667422",
+    "id": "messages/message-detail/message-detail.page#nav-c6479685"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_detail_page.dart:614"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/android",
+   "ionic": {},
+   "extra": {
+    "id": "x-17b8eb5c2b",
+    "title": "Template-Attribute der Activity",
+    "n": "Ionic: configChanges ohne fontScale/density/layoutDirection, supportsRtl=true, windowSoftInputMode nicht gesetzt, kein <queries>, Namespace io.stephanus.attendix, Java 21 / Flutter: configChanges inkl. fontScale/density/layoutDirection (kein Activity-Neustart bei Schriftgröße), kein supportsRtl, windowSoftInputMode=adjustResize, hardwareAccelerated, <queries> PROCESS_TEXT, Kotlin-Namespace de.attendix.attendix, Java 11. Ohne sichtbare Wirkung.",
+    "sev": "niedrig",
+    "ionic": "android/app/src/main/AndroidManifest.xml:13",
+    "f": [
+     "android/app/src/main/AndroidManifest.xml:17",
+     "android/app/src/main/AndroidManifest.xml:19",
+     "android/app/src/main/AndroidManifest.xml:103"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "android/app/src/main/AndroidManifest.xml"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/android",
+   "ionic": {},
+   "extra": {
+    "id": "x-184c4525e6",
+    "title": "VIBRATE-Berechtigung entfällt",
+    "n": "Ionic: @capacitor/haptics bringt android.permission.VIBRATE per Plugin-Manifest mit / Flutter: HapticFeedback braucht keine Berechtigung, VIBRATE fehlt im Store-Eintrag (Wegfall einer normalen Berechtigung, unkritisch).",
+    "sev": "niedrig",
+    "ionic": "package.json:47",
+    "f": [
+     "android/app/src/main/AndroidManifest.xml:4"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "android/app/src/main/AndroidManifest.xml"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/android",
+   "ionic": {},
+   "extra": {
+    "id": "x-2f444d5285",
+    "title": "Legacy-Icon (Android 7) anders",
+    "n": "Ionic: mipmap ic_launcher.png = türkises Quadrat mit weißem Rand und transparenten Ecken / Flutter: randloses türkises Quadrat (flutter_launcher_icons); betrifft nur API 24/25 ohne adaptive Icons.",
+    "sev": "niedrig",
+    "ionic": "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png:1",
+    "f": [
+     "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png:1",
+     "pubspec.yaml:175"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "pubspec.yaml"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/android",
+   "ionic": {},
+   "extra": {
+    "id": "x-409941f468",
+    "title": "Alte Ionic-Benachrichtigungskanäle bleiben verwaist",
+    "n": "Ionic: @capacitor/push-notifications legt wegen presentationOptions 'PushDefaultForegroundChannel' (\"Push Notifications Foreground\") an, dazu der FCM-Fallback-Kanal / Flutter: löscht sie nicht → nach dem Update stehen die alten (englischen) Kanäle neben 'Benachrichtigungen' in den App-Einstellungen.",
+    "sev": "niedrig",
+    "ionic": "capacitor.config.json:6",
+    "f": [
+     "android/app/src/main/kotlin/io/stephanus/attendix/MainActivity.kt:50"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "android/app/src/main/kotlin/io/stephanus/attendix/MainActivity.kt"
+   ]
+  }
+ ]
+}

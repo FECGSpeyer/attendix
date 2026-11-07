@@ -1,0 +1,386 @@
+{
+ "batch": "zz-verify6-opus-20",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "services/db.service#toast-f23fb4a8": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/dashboard_repository.dart:36",
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:39",
+    "lib/features/songs/presentation/widgets/group_pdf_print.dart:36",
+    "lib/core/providers/statistics_providers.dart:170"
+   ],
+   "n": "getPlayers(true), alle Rollen (Statistik, Termin „Person hinzufügen“, Werk-Druck, Dashboard-Karten, Aufgaben …). Ionic: roter Toast „Fehler beim Laden der Personen“ bei jedem Ladefehler / Flutter: Text nur beim Werk-PDF-Druck (group_pdf_print:36), Dashboard-Karten zeigen Inline „Fehler beim Laden: …“, die Statistik lädt Personen aber still (activePlayersForStatsProvider/playersProvider nur valueOrNull → leere Diagramme ohne Hinweis). Fehlende Fehlermeldung ist nie niedrig → mittel (Erstprüfung niedrig).",
+   "sev": "mittel",
+   "v": "korrigiert"
+  },
+  "services/db.service#toast-f23fb4a8-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:586",
+    "lib/features/settings/presentation/pages/handover_page.dart:98"
+   ],
+   "n": "getPlayers() Standardzweig (alle Rollen außer Eltern; Personenliste, Übergabe, Export, Zusatzfelder, Gruppen, Lehrer, Mitglieder, Termin-Erstellung). Ionic: Toast „Fehler beim Laden der Personen“ / Flutter: Personenliste zeigt Fehlerzustand „Fehler beim Laden – Die Personenliste konnte nicht geladen werden.“ + Erneut (gleichwertig), Übergabe-Seite liest playersProvider nur per valueOrNull → bei Ladefehler leere Liste ohne Hinweis. Fehlende Fehlermeldung → mittel (Erstprüfung niedrig). Referenz :534 veraltet → :586.",
+   "sev": "mittel",
+   "v": "korrigiert"
+  },
+  "x-95b3cf867d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:280",
+    "lib/data/repositories/player_repository.dart:266",
+    "lib/data/repositories/duty_repository.dart:350",
+    "lib/data/repositories/attendance_repository.dart:135"
+   ],
+   "n": "Fix greift: im normalen Code kein .order() ohne ascending mehr (nur Kommentare tenant_providers:339, paged_query:10); alle 49 genannten Stellen tragen jetzt ascending: true, Stichproben gegen Ionic (getPendingPlayers created_at asc, Abwesenheiten from_date, attendance_types index, Gruppen/Kategorien, Kinder der Eltern instrument/isLeader desc/lastName) stimmen. Hinweis: explizite ascending:false-Aufrufe sind in postgrest-dart nullslast statt PG-Default nullsfirst; betrifft nur nullable isLeader, das Ionic überall als false anlegt → ohne Wirkung.",
+   "v": "bestätigt"
+  },
+  "x-a90a7e3384": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/player_repository.dart:624",
+    "lib/data/repositories/player_repository.dart:827"
+   ],
+   "n": "Weiter real. Flutter besser: Ionic removeEmailFromAuth ruft nach removeUserFromTenant getAppIdByEmail; bleibt der tenantUsers-Eintrag wegen einer zweiten aktiven Person mit gleicher appId bestehen, wirft es „… bereits in der Instanz als …“ → Archivieren bricht ab (Löschen meldet Fehler nach dem Löschen) / Flutter archivePlayer/deletePlayer rufen nur removeUserFromTenant (gleiche Admin-/Andere-Person-Wächter), kein Nachlauf. Referenz :584 veraltet → :624/:827.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-e667bd214f": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:375",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:518",
+    "lib/core/providers/tenant_providers.dart:278"
+   ],
+   "n": "Weiter real: Ionic db.logout() nur signOut, user_metadata.currentTenantId bleibt / Flutter Abmelden auf Instanzauswahl und Instanz-Erstellen ruft clearTenant() VOR signOut → Prefs + user_metadata.currentTenantId gelöscht, nächster Login landet auf der Instanzauswahl statt der letzten Instanz (Einstellungen/Seitenleiste rufen clearTenant erst nach signOut, Metadaten bleiben dort). Nur ein Tipp mehr → niedrig. Referenzen auf aktuelle Zeilen gesetzt.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-02bd826b": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:399",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:111"
+   ],
+   "n": "Insert person_unavailability mit gleichem Payload: tenant_id aktuelle Instanz, person_id, weekdays, type_ids (Modell-Default []), reason (Default ''), valid_until leer → null, created_by aktueller Nutzer (Ionic-Modal übergibt db.user.id); .select().single(). Einziger Unterschied: Flutter speichert den Grund getrimmt (wirkt nirgends, unavailabilityNote trimmt in beiden).",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-08f908d3": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:136"
+   ],
+   "n": "duty_state/duty_assigned_by/at null, bei !keepStatus status Neutral (0) + notes '', changed_by/at; ID vorab über attendance.tenantId geprüft. Keine Demo-Sperre in beiden.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-0f54bc54": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:391"
+   ],
+   "n": "Update mit gleichem Payload inkl. created_by = aktueller Nutzer (wie Ionic-Modal save()), .select().single(); zusätzlich Filter tenant_id.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-37def78d": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:313"
+   ],
+   "n": "Flutter besser: Ionic lädt die Dienst-Zählung mit .range(0,9999), PostgREST kappt bei max-rows (1000) → bei vielen Einteilungen zu niedrige Zähler / Flutter blättert per fetchAllPages (order id) und filtert zusätzlich attendance.tenantId. Spalten, Filter (person_id, duty_state not null, Datum, optional type_id), Zählregel occupiesDuty und Fehler → leere Map gleich.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-55cf5d45": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:186"
+   ],
+   "n": "RPC duty_take mit p_attendance_id; Termin vorab gegen Tenant geprüft (sonst not_member); bei 'ok' duty-notify 'filled' (Flutter wartet, notify wirft nie).",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-67423715": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:265"
+   ],
+   "n": "Gleiche Spalten/Filter (tenantId, type_id in Dienst-Typen, date ≥ heute 0 Uhr bzw. from, optional ≤ until), order date ascending: true; Fehlerverhalten (Flutter wirft statt []) siehe x-430cdb3d1a.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-7067bf2c": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:161"
+   ],
+   "n": "duty_state 'confirmed', status Anwesend (1), notes '', changed_by/at; ID vorab gegen Tenant geprüft.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-7d46abd1": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:363"
+   ],
+   "n": "select * mit tenant_id; Fehler → leere Liste wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-7ef6118a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:350"
+   ],
+   "n": "Fix greift: person_id + tenant_id, .order('created_at', ascending: true) → älteste Regel zuerst wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-807d7b5e": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:86",
+    "lib/data/repositories/duty_repository.dart:97"
+   ],
+   "n": "Spalten wie Ionic (duty_state 'confirmed', duty_assigned_by/at, duty_reminder_sent true, changed_by/at, Status bleibt; IDs über attendance.tenantId geprüft). Aber: Flutter assign() beginnt mit ensureNotDemo('assignDuty') → im Demo-Konto Toast „Diese Funktion ist im Demo-Modus nicht verfügbar.“ und kein Einteilen; Ionic DutyService.assign und die Aufrufer (attendance.page assignDuty, duty-distribute-modal) haben keine checkDemoRestriction → Demo-Nutzer kann in Ionic einteilen. Echte Konten unberührt → mittel (Erstprüfung ok).",
+   "sev": "mittel",
+   "v": "korrigiert"
+  },
+  "services/duty/duty.service#db-807d7b5e-2": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:86",
+    "lib/data/repositories/duty_repository.dart:109"
+   ],
+   "n": "'requested', Status Neutral, notes '', reminder_sent false, assigned_by/at, changed_by/at, danach duty-notify 'assigned' mit den angefragten IDs – gleich. Aber Demo-Sperre ensureNotDemo('assignDuty') vor dem Update, die Ionic nicht hat (Demo-Konto kann in Ionic Dienste anfragen/verteilen, in Flutter nur Hinweis-Toast). Echte Konten unberührt → mittel (Erstprüfung ok).",
+   "sev": "mittel",
+   "v": "korrigiert"
+  },
+  "services/duty/duty.service#db-851bf368": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:428",
+    "lib/data/repositories/duty_repository.dart:449"
+   ],
+   "n": "Gleiche Abfrage (person_id, attendance.tenantId, date ≥ heute 0 Uhr) und Filterlogik (Typ bekannt, kein duty_state, Status = Standardstatus, Entschuldigt erlaubt, Regel passt); Daten sortiert; Fehler → {0, []} wie Ionic; sichtbare Typen wie Ionic-Modal.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-8727fa30": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:477"
+   ],
+   "n": "Status Entschuldigt (2), notes unavailabilityNote (identisch, duty_utils.dart:218), changed_by/at für dieselbe ID-Auswahl; Fehler → Toast „Fehler beim Übernehmen in geplante Termine“ über unavailability_page.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-8bd7fb45": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:410"
+   ],
+   "n": "Delete per id, zusätzlich Filter tenant_id.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-976ff62c": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:428",
+    "lib/data/repositories/duty_repository.dart:467"
+   ],
+   "n": "Gleiche Abfrage wie Ionic; Lookup-Fehler → 0 ohne Änderung (nur gemeldet) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-9a8744f6": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:214"
+   ],
+   "n": "duty-notify mit gleichem Body (type, tenantId, attendanceId, personAttendanceIds); Fehler nur geloggt; im Demo-Konto unterdrückt (für den Nutzer unsichtbar).",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#logic-75953b4f": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:80",
+    "lib/data/repositories/duty_repository.dart:255",
+    "lib/data/repositories/duty_repository.dart:301",
+    "lib/data/repositories/duty_repository.dart:423",
+    "lib/core/providers/duty_providers.dart:176",
+    "lib/core/providers/duty_providers.dart:308"
+   ],
+   "n": "Methoden entsprechen DutyRepository/DutyNotifier (assign/unassign/confirm/take/notify, Verfügbarkeiten, Übernehmen in künftige Termine, gleiche Status-/duty_state-Werte). Abweichungen bei den Items (Paging getDutyCounts Flutter besser, Demo-Sperre beim Einteilen db-807d7b5e/-2) und Extra x-430cdb3d1a (Ladefehler Dienst-Termine gemeldet). getOpenDutiesForPerson in Ionic ungenutzt; Flutter hat Gleichwertiges in myDutyOverviewProvider:176.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-430cdb3d1a": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:294",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:146",
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:345"
+   ],
+   "n": "Weiter real. Flutter besser: Ionic getUpcomingDutyTermine fängt DB-Fehler ab und liefert still [] (Verteilung wirkt leer, „Person einteilen“ ohne Gleicher-Tag-Info) / Flutter wirft weiter: Dienstverteilung und „Person einteilen“ zeigen Toast „Fehler: …“ (Sheet öffnet dann nicht); Provider-Nutzer (Meine Dienste, Badges) lesen valueOrNull wie Ionic leer.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "services/feedback/feedback.service#db-d7adec93": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/feedback_repository.dart:30",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:88",
+    "lib/features/settings/presentation/pages/files_page.dart:724"
+   ],
+   "n": "Flutter besser: Tabelle questions, gleiche Spalten (message, phone, tenant_id aktuelle Instanz, user_id) / Ionic schreibt leere Telefonnummer als '' (Einstellungen ohne Nummer, Speicher-Anfrage der Dateiablage sendQuestion(message, '')), Flutter als null; einziger Leser ist send-telegram-on-question, das dann „(keine Nummer)“ statt leer zeigt. Referenz files_page :708 veraltet → :724.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "services/files/files.service#db-95cedfe5": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/files_repository.dart:182",
+    "lib/data/repositories/files_repository.dart:207"
+   ],
+   "n": "Flutter besser: Ionic listet mit limit 1000, sortBy name asc und hört dort auf (Löschen/Verschieben großer Ordner unvollständig, Liste max. 1000) / Flutter listAllPages blättert mit gleicher Sortierung alle Einträge durch (Abbruch bei ignoriertem Offset); Bucket und Präfix gleich, zusätzlich Prüfung auf eigenen Tenant-Präfix.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-6b399b9e28": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/files_repository.dart:182",
+    "lib/data/repositories/files_repository.dart:207"
+   ],
+   "n": "Weiter real. Flutter besser: Ionic listRaw lädt je Ordnerebene nur die ersten 1000 Einträge – Löschen/Verschieben/Umbenennen großer Ordner erfasst nur einen Teil und meldet trotzdem Erfolg, Liste zeigt max. 1000 / Flutter listAllPages lädt seitenweise alle Einträge.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "x-920cf157c8": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:148",
+    "lib/data/repositories/files_repository.dart:291"
+   ],
+   "n": "Weiter real: Ionic sortiert Namen mit localeCompare(currentLanguage, sensitivity base) / Flutter toLowerCase().compareTo (Codepoint). Neue Namen sind auf [a-zA-Z0-9 ._'()-] bereinigt; Unterschied nur bei Satzzeichen an gleicher Stelle (z. B. „(“/„'“ vor „-“) oder Alt-Namen mit Umlauten (Flutter hinter z). Gleiche Einträge, nur Reihenfolge im Randfall → niedrig.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "services/group-category/group-category.service#db-0dccc13f": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:298",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:297"
+   ],
+   "n": "Insert {name, tenant_id} + select einzeln; Demo-Sperre in beiden. Flutter trimmt den Namen und lehnt Nur-Leerzeichen ab (Ionic speichert ungetrimmt) – Randfall.",
+   "v": "bestätigt"
+  },
+  "services/group-category/group-category.service#db-4913a14b": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:390",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:378"
+   ],
+   "n": "Delete per id, zusätzlich tenant_id; Bestätigung „Bestätigen“/instruments.deleteCategory mit Ja/Abbrechen davor wie Ionic; Demo-Sperre in beiden.",
+   "v": "bestätigt"
+  },
+  "services/group-category/group-category.service#db-bab11025": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:279",
+    "lib/data/repositories/group_repository.dart:280"
+   ],
+   "n": "Fix greift: tenant_id-Filter, order sort_order ascending nullslast, dann name ascending (postgrest-dart: sort_order.asc.nullslast,name.asc.nullslast) = Ionic; Offline-Cache über OfflineListCache.",
+   "v": "bestätigt"
+  },
+  "services/group-category/group-category.service#db-bbeac978": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:374",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:43"
+   ],
+   "n": "sort_order 1..n in Anzeigereihenfolge wie Ionic handleCategoryReorder, dazu globale Instrument-Reihenfolge (updateGlobalSortOrder); zusätzlich Filter tenant_id. Randfall: Umsortieren an/aus ohne Ziehen nummeriert in Flutter trotzdem 1..n (Ionic speichert nur gesetzte sort_order) – sichtbare Reihenfolge bleibt gleich.",
+   "v": "bestätigt"
+  },
+  "services/group-category/group-category.service#db-e5a432a0": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:329",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:345"
+   ],
+   "n": "Update {name} per id + tenant_id, select einzeln; leerer Name → Toast „instruments.enterName“, Dialog bleibt offen wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/group-category/group-category.service#logic-519c274b": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:273",
+    "lib/data/repositories/group_repository.dart:292",
+    "lib/data/repositories/group_repository.dart:321",
+    "lib/data/repositories/group_repository.dart:370",
+    "lib/data/repositories/group_repository.dart:387",
+    "lib/core/providers/group_providers.dart:98"
+   ],
+   "n": "CRUD, Sortier-Updates, Demo-Sperren und Offline-Cache (OfflineListCache statt Ionic Storage) entsprechen; die frühere Sortierabweichung beim Laden ist behoben (db-bab11025). Toast-Abweichungen bei den Toast-Items.",
+   "v": "bestätigt"
+  },
+  "x-9da1d11c08": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:280",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:68"
+   ],
+   "n": "Fix greift: .order('sort_order', ascending: true, nullsFirst: false).order('name', ascending: true) → Kategorien ohne/mit gleichem sort_order wieder A→Z wie Ionic; Kategorien-Sheet und Provider-Nutzer übernehmen die DB-Reihenfolge.",
+   "v": "bestätigt"
+  },
+  "services/group/group.service#db-1b7059eb": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:143"
+   ],
+   "n": "update(pickGroupFields) mit gleicher Spaltenliste, per id + zusätzlich tenantId; 23505 → Meldung svc.onlyOneMainGroup; Demo-Sperre in beiden.",
+   "v": "bestätigt"
+  },
+  "services/group/group.service#db-5235a536": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:109",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:381",
+    "lib/data/repositories/tenant_create_repository.dart:59",
+    "lib/features/tenant_selection/tenant_defaults.dart:65"
+   ],
+   "n": "Instrument {name, maingroup false, category?} plus tenantId und Defaults tuning 'C'/clefs ['g']; Hauptgruppe bei Tenant-Erstellung über buildMainGroupPayload (maingroup true). Flutter trimmt den Namen.",
+   "v": "bestätigt"
+  },
+  "services/group/group.service#db-799fb770": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:24",
+    "lib/data/repositories/group_repository.dart:26"
+   ],
+   "n": "Fix greift: tenantId, order category asc, sort_order asc nullslast, name asc = Ionic (category ohne nullsFirst ist auch dort nulls last); groupsProvider sortiert nicht um → Standardgruppe (groups()[0]) wieder dieselbe.",
+   "v": "bestätigt"
+  },
+  "services/group/group.service#db-9bbeb42c": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:259"
+   ],
+   "n": "Delete per id + zusätzlich tenantId; Vorab-Prüfung auf zugeordnete (auch archivierte, nicht pending) Personen wie Ionic instrument.page (getPlayers(true)); Demo-Sperre in beiden.",
+   "v": "bestätigt"
+  },
+  "services/group/group.service#logic-66f1135a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:18",
+    "lib/data/repositories/group_repository.dart:94",
+    "lib/data/repositories/group_repository.dart:129",
+    "lib/data/repositories/group_repository.dart:244"
+   ],
+   "n": "getGroups/addGroup/updateGroup/removeGroup entsprechen GroupRepository (pickGroupFields gleich, Sortierung jetzt wie Ionic). Kategorie-/Lehrer-Methoden und getMainGroup dieser Klasse sind toter Code (Aufrufe laufen über GroupCategoryService/TeacherService).",
+   "v": "bestätigt"
+  },
+  "services/history/history.service#db-1c319cab": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:889"
+   ],
+   "n": "history nach attendance_id + tenantId, .order('songId', ascending: true) wie Ionic; Flutter liest nur id, songId, person_id, otherConductor, date (alles, was die Werke-Liste braucht). Der fehlende visible/save_in_history-Abgleich der Termin-Seite ist dort separat erfasst.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

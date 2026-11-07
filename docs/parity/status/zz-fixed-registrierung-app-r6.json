@@ -1,0 +1,58 @@
+{
+ "batch": "zz-fixed-registrierung-app-r6",
+ "ionic": "1923d203",
+ "afterRound": 6,
+ "flutter": "359f15d",
+ "items": {
+  "register/tenant-register/tenant-register.page#toast-bd259c1e": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ],
+   "n": "Textfeld mit altem Standardwert false startet leer; Pflichtprüfung zeigt den Toast, „false“ wird nie gespeichert. PR #346."
+  },
+  "register/tenant-register/tenant-register.page#field-3d36f520-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart",
+    "lib/features/registration/data/providers/registration_providers.dart"
+   ],
+   "n": "Zahlfeld mit Dezimaltastatur; gespeichert als Zahl wie parseFloat (int oder double, Komma erlaubt). PR #346."
+  },
+  "x-eed3ad9724": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/data/providers/registration_providers.dart"
+   ],
+   "n": "Ohne Passbild wird das Standardbild als img geschrieben wie Ionic. PR #346."
+  },
+  "services/db.service#db-c465c027": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/user_preferences_provider.dart"
+   ],
+   "n": "Instanzwechsel schreibt nur currentTenantId in user_metadata und liest die Einstellungen danach neu; updatePreferences/clearCurrentTenantId senden ebenfalls nur geänderte Schlüssel. PR #346."
+  },
+  "x-a4cf6b376c": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/audio_player/audio_player_service.dart"
+   ],
+   "n": "Nach Titelende pausieren und auf 0 spulen, Play startet von vorn; Sperrbildschirm zeigt 0:00. PR #346."
+  },
+  "x-8e475b1344": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/firebase_push_messaging_client.dart"
+   ],
+   "n": "iOS-Push bei offener App mit Banner, Ton und Badge wie Ionic (Leons Entscheidung 05.11.). PR #346."
+  },
+  "services/db.service#toast-f23fb4a8-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart"
+   ],
+   "n": "Übergabe: Ladefehler der Personen zeigt einmal „Fehler beim Laden der Personen“. PR #346."
+  }
+ }
+}

@@ -1,0 +1,400 @@
+{
+ "batch": "zz-verify6-opus-07",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "x-69dc9e912d": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:91"
+   ],
+   "n": "Weiterhin kein Auto-Scroll: PlanViewList berechnet nur den aktiven Index (Hervorhebung, Countdown, Opacity), scrollt aber nie. Ionic scrollToActive scrollt im Live-Modus einmal je Plan das aktive Feld in die Mitte. Referenz 86 → 91.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-95e1a74a13": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:311"
+   ],
+   "n": "Ionic: 3 Skeleton-Zeilen in Inset-Liste / Flutter: AppSpinner (iOS unter dem Large Title). Unverändert; Referenz 297 → 311.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-9860b49fd3": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:92",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:104",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:334"
+   ],
+   "n": "Unverändert: Fehler beim ersten Laden (getPublicOrgPlans wirft) → catch in _init → „Link ungültig oder abgelaufen.“ (Ionic: Pläne-Fehler → leere Liste „Keine bevorstehenden Org-Pläne vorhanden.“). Pull-to-Refresh-Fehler: _loadPlans setzt _loading=true und wirft, Spinner ohne Refresher bleibt, Polling-Timer gestoppt; Ionic bleibt in leerer Liste mit Refresher. Keine App meldet den Fehler – Randfall, niedrig bleibt.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-ebdd8364a6": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/plan_utils.dart:486",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:93"
+   ],
+   "n": "PlanUtils.activeIndex gibt vor Start −1 zurück (kein Feld hervorgehoben), stattdessen zeigt die Start-Zeile „beginnt in X Min.“ (startCountdown). Ionic: in den 5 Min. vor Start ist Feld 1 aktiv mit Countdown bis Ende Feld 1. Live-Fenster (5 Min. vor bis 15 Min. nach Ende) gleich. Referenzen korrigiert (plan_utils 455 → 486, plan_view_list 88 → 93).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#actionsheet-76cc5ad8": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:121"
+   ],
+   "n": "Header „Öffentlicher Link“, „Link kopieren“, „Link widerrufen“ (destruktiv, ohne Rückfrage wie Ionic), „Abbrechen“ (showAppActionSheet) gleich; Widerrufen schreibt tenant_groups.public_plan_key = null (eq id). Rollen gleich: Seite nur Admin/Verantwortlich (Route-Guard; Ionic nur über Org-Einstellungen/Org-Tab erreichbar), Button nur mit Organisation (Ionic: return ohne org). Ionic ohne Icons / Flutter Icons copy, link_off.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#effect-bb4d0f68": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:120",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:217"
+   ],
+   "n": "Ionic: kopiert immer https://attendix.de/org-plan?key=… / Flutter planPublicUrl: nativ gleich, im Web <origin><path>#/org-plan?key=… (Hash-URL der aktuellen Domain). Link funktioniert in beiden. Referenz plan_export_actions 166 → 217.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#effect-bb4d0f68-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:138",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:144",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:217"
+   ],
+   "n": "Neuer Schlüssel (16 Hex-Zeichen, Random.secure) → update tenant_groups.public_plan_key (eq id), Link kopiert, Toast „Link erstellt und kopiert“ wie Ionic. Ionic: kopiert immer https://attendix.de/org-plan?key=… / Flutter: nativ gleich, im Web <origin><path>#/org-plan?key=…. Referenz 166 → 217.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#logic-26fb5248": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:186",
+    "lib/core/providers/plan_providers.dart:135",
+    "lib/core/providers/plan_providers.dart:156",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:41"
+   ],
+   "n": "Gleich: Laden (attendance is_org_plan, archived=false, plan not null, order date ascending der Org-Instanzen + shared_plans org_id, Ad-hoc-Fehler → leer), Sortierung/Aufteilung kommend (heute+) / vergangen (absteigend), Titel/Datum „dd, TT.MM.JJJJ“/Punkte/Instanz-Label, Öffnen im Plan-Viewer (live am Plantag), Tab-Schalter (user_metadata showOrgPlansTab_<tenantId>), Ad-hoc-Löschen (eq id + org_id), Kalender, öffentlicher Link. Korrektur sev niedrig → mittel: das Extra x-0828227b29 (keine Fehlermeldung beim fehlgeschlagenen Widerrufen) ist mittel; übrige Extras (Lade-/Fehlerzustand) niedrig.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "org-plans/org-plans.page#native-1a59de28": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:102",
+    "lib/core/services/native/native_file_service.dart:123"
+   ],
+   "n": "In-App-Browser (nativ) bzw. extern (Web) mit Apple-/Google-Hilfe-URL. Ionic: isPlatform('ios') ist auch im iPhone-Browser/PWA wahr → Apple-Anleitung / Flutter: `!kIsWeb && iOS` → PWA auf dem iPhone öffnet die Google-Anleitung (org_plan_public_page nutzt dagegen defaultTargetPlatform ohne kIsWeb). Zusätzlich: Flutter lässt den Kalender-Dialog nach „Anleitung öffnen“ offen, Ionic schließt den Alert.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#toast-7283895c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:134"
+   ],
+   "n": "„Link widerrufen“ (success) nur nach erfolgreichem Update public_plan_key = null (tenant_groups, eq id); Rollen gleich. Fehlende Fehlermeldung bei Misserfolg: Extra x-0828227b29.",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#toast-c19318c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:131",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:210"
+   ],
+   "n": "Nur mit Organisation und vorhandenem Key: Sheet „Öffentlicher Link“ → „Link kopieren“ → Clipboard + „Link kopiert“ (success). Referenz plan_export_actions 159 → 210.",
+   "v": "bestätigt"
+  },
+  "x-0828227b29": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:133",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:141"
+   ],
+   "n": "Ionic: Widerrufen fehlgeschlagen → Toast „Fehler beim Widerrufen des öffentlichen Links“ (danger, Service); Erstellen fehlgeschlagen → „Fehler beim Erstellen des öffentlichen Links“ / Flutter: Widerrufen fehlgeschlagen → gar keine Meldung (nur der Erfolgs-Toast entfällt; handleError zeigt nichts an), der Nutzer erfährt nicht, dass der Link weiter aktiv ist; Erstellen → „Fehler beim Erstellen des Links“ (gleiche Bedeutung). Korrektur niedrig → mittel: fehlende Fehlermeldung ist nie nur Optik.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "x-50bd7526a2": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:268",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:284"
+   ],
+   "n": "Ionic: 3 Skeleton-Zeilen, darunter bereits „Ablaufplanung öffnen“ / Flutter: Spinner, Aktionskasten erst nach dem Laden. Unverändert; Referenzen 250/261 → 268/284.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-b106a68ca5": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:270"
+   ],
+   "n": "Ionic: Toast „Fehler beim Laden der Organisationspläne“ (danger), Seite zeigt Leerzustand „Keine bevorstehenden Org-Pläne …“ plus „Ablaufplanung öffnen“ und ggf. Öffentlicher-Link-Kasten / Flutter: kein Toast, aber Inline-Text „Fehler: <Meldung>“ statt der Liste; „Ablaufplanung öffnen“, „Vergangene Pläne“ und Link-Kasten fehlen im Fehlerzustand (AppBar-Link-Button bleibt). Fehler wird gemeldet → niedrig bleibt. Referenz 264 → 270.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-3207b9c2": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:376",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:511"
+   ],
+   "n": "Fix schließt keine Lücke, sondern erzeugt eine: Ionic bindet den Typ dynamisch ([type]=\"… ? 'number' : …\"). Angular wählt den Value-Accessor beim Kompilieren über den Selektor; NumericValueAccessor (ion-input[type=number]) passt nur auf ein statisches type-Attribut, bei Property-Binding greift TextValueAccessor → Ionic speichert den geänderten Zahl-Standardwert als String („5“), geleert als „“. Flutter (seit Fix) speichert num 5 bzw. null (wegen includeIfNull:false fehlt defaultValue dann ganz). Folge: geleerter Standardwert → Personen ohne Wert zeigen in Flutter (und Ionic-Lesern) 0 (getFieldTypeDefaultValue), in Ionic leer; zudem anderer JSON-Typ in additional_fields/tenant_group_person_fields. Gleiches gilt für das Hinzufügen-Sheet. Bitte im Ionic-Build gegenprüfen (Zahl ändern → additional_fields).",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#logic-b640ed70": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:46",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:96",
+    "lib/core/providers/plan_providers.dart:288",
+    "lib/data/repositories/org_plan_repository.dart:260",
+    "lib/data/repositories/org_plan_repository.dart:304"
+   ],
+   "n": "Laden aus organisation.additional_fields, Admin-Recht (Rolle ADMIN, sonst Plus/Bearbeiten/Löschen/Haken deaktiviert), ID org_<orgId>_<name>, Löschen mit Rückfrage, Umsortieren, Speichern (Validierung, update tenant_groups.additional_fields eq id, delete tenant_group_person_fields tenant_group + field_id in gelöschte) gleich; updateOptions in Ionic toter Code. Abweichungen: Zahl-Standardwert (Item field-3207b9c2), Fehlermeldung beim Speichern (Extra, niedrig). Nebenbei: Flutter trimmt Auswahloptionen und verlangt beim Bearbeiten einen Namen (Ionic erst beim Speichern „Ungültige Organisations-Zusatzfelder.“). Referenzen aktualisiert.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#nav-e3374715": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:168"
+   ],
+   "n": "Pfeil zurück → Navigator.maybePop (zurück zu den Organisationseinstellungen) wie navController.back.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-04d937da": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:366",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:156"
+   ],
+   "n": "Nur Admin (Plus sonst deaktiviert wie Ionic [disabled]=!isSuperAdmin); Auswahlfeld ohne nicht-leere Option → „Bitte füge mindestens eine Auswahloption hinzu.“ (danger), Sheet bleibt offen.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-4bf625f4": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:103"
+   ],
+   "n": "save nur Admin (Guard + Haken deaktiviert); „Das Auswahlfeld „{name}“ benötigt Optionen.“ (danger).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-77469d60": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:357",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:156"
+   ],
+   "n": "Nur Admin. Leerer (getrimmter) Name → „Bitte gib einen gültigen Namen für das Zusatzfeld ein.“ (danger), Sheet bleibt offen. Fall „ohne Organisation“ unerreichbar (Plus nur mit org.id).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-89565647": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:99"
+   ],
+   "n": "Leerer Name oder ID ohne Präfix org_<orgId>_ → „Ungültige Organisations-Zusatzfelder.“ (danger), Speichern bricht ab.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-a15cd8e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:61",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:361"
+   ],
+   "n": "Namensprüfung (orgFieldId org_<orgId>_<name>) im Sheet vor dem Schließen; „Ein Zusatzfeld mit diesem Namen existiert bereits.“ (danger), Sheet bleibt mit allen Eingaben offen.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-ffb36bd8": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:116",
+    "lib/core/providers/plan_providers.dart:288",
+    "lib/data/repositories/org_plan_repository.dart:304"
+   ],
+   "n": "Nur Admin; Prüfungen wie Ionic, dann update tenant_groups.additional_fields (eq id) + delete tenant_group_person_fields (tenant_group, field_id in entfernte), danach „Organisations-Zusatzfelder gespeichert.“ (success).",
+   "v": "bestätigt"
+  },
+  "x-9eb577887f": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:118"
+   ],
+   "n": "Ionic: „Fehler beim Speichern der Organisations-Zusatzfelder“ bzw. „Fehler beim Löschen der gemeinsamen Zusatzfeldwerte“ (danger) / Flutter: einheitlich „Fehler beim Speichern“. Fehler wird gemeldet, nur weniger genau → niedrig. Referenz 116 → 118.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#logic-833a03a8": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:34",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:62",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:226",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:555"
+   ],
+   "n": "Gleich: Laden default_fields/planning_templates, Standardfelder anlegen (Name Pflicht, „Bitte einen Feldnamen eingeben.“)/bearbeiten/löschen (Wischen)/sortieren/Minuten inline, Vorlagen anlegen (danach aufgeklappt)/umbenennen/löschen (Auswahl-Index nachgezogen), Feld/Notiz/Werk-Platzhalter (nicht bei Typ general)/Standardfelder einfügen, Uhrzeiten nur mit Startzeit, „Ende ca.“, Dauer, Speichern nach jeder Änderung in tenant_groups. Korrektur sev niedrig → mittel wegen Extra x-5dfb4436f3 (anderer DB-Wert time/end); übrige Extras niedrig (Programmblöcke, Fehlertext, Langdruck, „Updaten“).",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "x-1faf0b8269": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:555",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:655"
+   ],
+   "n": "Unverändert: Vorlagen nutzen PlanFieldsEditor ohne templateMode → Wisch-Option „Einrücken/Ausrücken“ (groupId), Block-Köpfe mit Block-Optionen/„Unterpunkt hinzufügen“; Ionic: flache Liste, Wischen nur Löschen. Zusatzfunktion, Ionic-Planung kann Blöcke darstellen → niedrig. Referenzen 549/246 → 555/655.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-27217fab1f": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:493",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:171"
+   ],
+   "n": "Flutter besser: zusätzlich Langdruck auf die Vorlage → Action-Sheet „Vorlage umbenennen“/„Löschen“; Wisch-Optionen wie Ionic vorhanden. Referenz 447 → 493.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-5dfb4436f3": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:64",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:300"
+   ],
+   "n": "Ionic: ion-datetime schreibt tpl.time als ISO-Datum-Zeit, end bleibt '' / Flutter: schreibt time als „HH:mm“ und bei jedem Speichern end = berechnetes „HH:mm“ in jede Vorlage. Korrektur niedrig → mittel: anderer DB-Wert, und die Annahme „Leser beider Apps akzeptieren beide Formate“ stimmt nicht ganz – Ionic public-planning onTemplateChange übernimmt die Startzeit nur bei dayjs(tpl.time).isValid(); „10:00“ ist für dayjs ungültig, die Startzeit einer in Flutter bearbeiteten Vorlage fällt dort weg (betrifft Ionic-Clients im Parallelbetrieb). Flutter-Leser (parseTimeToMinutes) akzeptieren beides. Referenzen 43/261 → 64/300.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "x-7ea8e45361": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:226"
+   ],
+   "n": "Ionic changeField (Vorlagenfeld): Bestätigen „Speichern“ / Flutter PlanFieldsEditor._editField: „Updaten“ (planningUpdate); Titel „Feld bearbeiten“, Programmpunkt/Ausführender/Info/Minuten und Leer-Prüfung „Bitte einen Programmpunkt eingeben.“ gleich. Referenz 171 → 226.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-e08795a22d": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:58",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:66"
+   ],
+   "n": "Ionic: „Fehler beim Speichern der Planvorlagen“ bzw. „Fehler beim Speichern der Standardfelder“ (Service) / Flutter: „Fehler beim Speichern“. Fehler wird gemeldet → niedrig. Referenzen 40/47 → 58/66.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-settings/org-settings.page#action-973a2bad": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:256",
+    "lib/core/router/app_router.dart:180"
+   ],
+   "n": "Nur mit Organisation, Admin + Verantwortlich (Ionic isAdmin) → „Personenübergabe“ → /settings/handover, Route ebenfalls admin/verantwortlich-geschützt. Referenzen 261/177 → 256/180.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#action-fd83ac3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:266"
+   ],
+   "n": "Admin + Verantwortlich mit verknüpften Instanzen (ohne eigene); „Werke in der Organisation suchen“ / „Werke anderer Instanzen finden und übernehmen“ → /settings/org-settings/songs (Guard admin/verantwortlich).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#alert-49a6136a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:44",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:180",
+    "lib/data/repositories/organisation_repository.dart:91"
+   ],
+   "n": "Eintrag nur Admin. „Organisation von Instanz trennen?“, „Möchtest du die Organisation „{name}“ wirklich…“, Abbrechen/„Trennen“ (destruktiv); delete tenant_group_tenants (tenant_id + tenant_group), danach Org löschen wenn keine Instanz mehr verknüpft (wie Ionic), Toast „Die Organisation wurde erfolgreich von der Instanz getrennt.“. Fehlertext abweichend (bestehendes Extra).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#alert-d66bdd77": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:30",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:160"
+   ],
+   "n": "Nur Admin ohne Organisation. „Organisation auswählen“, Radioliste der Orgs aus Instanzen mit Rolle 1/5 (erste vorausgewählt), „Abbrechen“/„Auswählen“/„Neue Organisation erstellen“; ohne Orgs direkt „Organisation erstellen“. Der Ladefehler-Pfad (Flutter ohne Fehlermeldung → Erstellen-Dialog) ist als neues Extra beim Logik-Item erfasst.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#alert-eca98d48": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:91"
+   ],
+   "n": "Nur Admin + fecg_link_enabled. Nach Speichern von Hash/Hint (Fehler → „Fehler beim Speichern der Gemeinde-App-Einstellungen“, kein Dialog): „Verbindungsschlüssel“, Schlüssel atx_+48 hex (Flutter monospace im Inhalt statt subHeader), „Nur jetzt sichtbar…“, „Kopieren“ (bleibt offen, „Schlüssel kopiert“) / „Schließen“.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#field-cfa42488": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:94",
+    "lib/data/repositories/song_repository.dart:402"
+   ],
+   "n": "Nur Admin + verknüpfte Instanzen. Optionen „Keine (eigene Werke)“ + Kurznamen, Action-Sheet (iOS), Rückfrage beim Deaktivieren, update tenants.song_source_tenant_id (eq id = eigene Instanz), Toast „Werk-Synchronisierung gespeichert.“. Inline-Spinner statt Overlay (eigenes loading-Item).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#loading-fa858e41": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:70"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay während des Verknüpfens / Flutter: linkCurrentTenant ohne Overlay, wartet ohne Anzeige (Erstellen hat dagegen einen blockierenden Spinner).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "org-settings/org-settings.page#logic-6f27dc28": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:124",
+    "lib/core/providers/organisation_providers.dart:39",
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:17"
+   ],
+   "n": "Gleich: isSuperAdmin = Admin, isAdmin = Admin/Verantwortlich, verknüpfte Instanzen ohne eigene, Abschnitts-Sichtbarkeit, Org-Auswahl/-Erstellung, Umbenennen, Trennen (löscht leere Org), Gemeinde-App-Schalter und Schlüssel (atx_ + 24 Bytes hex, SHA-256, letzte 4), Werk-Sync mit Rückfrage. Korrektur sev niedrig → mittel wegen neuem Extra: Ladefehler der Organisationsliste wird in Flutter verschluckt (siehe extra). Übrige Extras (Fehlertexte, Instanzliste nach Verknüpfen) niedrig.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "org-settings/org-settings.page#text-03183d75": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:284"
+   ],
+   "n": "„Diese Instanz“ unter dem Kurznamen der eigenen Instanz, nur mit Organisation und verknüpften Instanzen – gleich.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#text-372954be": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:277",
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:117"
+   ],
+   "n": "„Werk-Synchronisierung“ nur Admin + verknüpfte Instanzen (OrgSongSyncSection) – gleich.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "org-settings/org-settings.page",
+   "title": "Ladefehler der Organisationsliste",
+   "n": "Ionic openOrganisationAlert: getOrganisationsFromUser schlägt fehl → Toast „Fehler beim Laden der Mandanten“ bzw. „Fehler beim Laden der Organisationen“ (danger), kein Dialog / Flutter showOrganisationLinkDialog: Fehler wird abgefangen und als leere Liste behandelt → ohne Meldung öffnet direkt „Organisation erstellen“; der Admin erfährt nicht, dass vorhandene Organisationen nicht geladen werden konnten, und wird zum Anlegen einer neuen (ggf. doppelten) Organisation geführt.",
+   "sev": "mittel",
+   "ionic": "src/app/org-settings/org-settings.page.ts:42",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:19"
+   ]
+  }
+ ]
+}

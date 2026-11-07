@@ -1,0 +1,424 @@
+{
+ "batch": "zz-verify6-sonnet-05",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-39f7c63f": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:310"
+   ],
+   "v": "bestätigt"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-41a83796": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:490"
+   ],
+   "v": "korrigiert",
+   "n": "Erste Referenz (Zeile 497) war der „offen“-Chip; Ionic-Zeile 103 ist der gewählte Namens-Chip: Flutter IonChip primary mit onTap _change(row, pa) (Z. 490-491). Tausch-Dialog mit „Niemand“, Sortierung nach Anzahl, „Übernehmen“ wie Ionic. Status unverändert ok."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-48d2440d": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:333",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:339"
+   ],
+   "v": "bestätigt",
+   "n": "„{n} Einteilungen speichern“ / „Nichts zu verteilen“, deaktiviert bei saving/0. Speichern: duty_repository.assign (duty_state requested, tenant-validiert) wie Ionic dutySvc.assign."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-7bb1a2ef": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:413"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser: Ionic Plus bei 10 aktiv aber wirkungslos (Math.min 10) / Flutter Button bei 10 deaktiviert; Maximum 10 gleich. Gleicher Wert, rein optisch.",
+   "sev": "niedrig"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-92abd7bd": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:302"
+   ],
+   "v": "bestätigt",
+   "n": "Close-Icon (Tooltip „Abbrechen“) im Rules-Schritt, pop(false)."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-c226c1cd": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:401"
+   ],
+   "v": "bestätigt",
+   "n": "Minus-Button, bei <=1 deaktiviert wie Ionic."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#action-ef738241": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:297"
+   ],
+   "v": "bestätigt",
+   "n": "Text „Zurück“ im Vorschau-Schritt, zurück zu den Regeln."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#field-71fefb63": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:96"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: Kalender mit „Fertig“/„Abbrechen“, Wert erst nach „Fertig“ / Flutter: Plattform-Datumsdialog (OK/Abbrechen bzw. iOS-Look), Bereich 2020–2100. Gleiche Funktion, nur Optik.",
+   "sev": "niedrig"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#field-8f524790": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:423"
+   ],
+   "v": "bestätigt",
+   "n": "Schalter „Nicht zweimal am selben Tag“, Default an."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#field-b28d8f3e": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:366",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:86"
+   ],
+   "v": "bestätigt",
+   "n": "Anzeigeformat des Von-Datums (Ionic Intl-Kurzformat / Flutter dateFmt()); Startwert Monatsanfang Folgemonat gleich. Nur Optik.",
+   "sev": "niedrig"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#field-b28d8f3e-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:370",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:86"
+   ],
+   "v": "bestätigt",
+   "n": "Anzeigeformat des Bis-Datums (Ionic Intl-Kurzformat / Flutter dateFmt()); Startwert Monatsende Folgemonat gleich. Nur Optik.",
+   "sev": "niedrig"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#field-bca25190": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:96"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: Kalender mit „Fertig“/„Abbrechen“ / Flutter: Plattform-Datumsdialog, Bereich 2020–2100. Gleiche Funktion, nur Optik.",
+   "sev": "niedrig"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#field-dcffc1a2": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:376",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:382"
+   ],
+   "v": "bestätigt",
+   "n": "Typen-Checkboxen links nur bei >1 Dienst-Typ (dutyTypesProvider = dutyMode), alle vorgewählt, Umschalten wie Ionic."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#modal-8334d587": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:96",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:368"
+   ],
+   "v": "bestätigt",
+   "n": "Plattform-Datumsdialog statt Inline-ion-modal; gleiche Wirkung."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#modal-8334d587-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:96",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:372"
+   ],
+   "v": "bestätigt",
+   "n": "„Bis“-Chip öffnet Plattform-Datumsdialog statt Inline-ion-modal; gleiche Wirkung."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-0c03b658": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:440"
+   ],
+   "v": "bestätigt",
+   "n": "„Im Zeitraum gibt es keine Termine mit Dienst-Modus.“ bei leeren Zeilen."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-1882858c": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:488"
+   ],
+   "v": "bestätigt",
+   "n": "Bestehende Einteilungen als graue Outline-Chips (deaktiviert)."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-2ae55158": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:512"
+   ],
+   "v": "bestätigt",
+   "n": "„{n}“ + „ (+{m} neu)“ wie Ionic."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-3a79670e": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:511"
+   ],
+   "v": "bestätigt",
+   "n": "Name = Vorname Nachname getrimmt wie Ionic."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-3e33eb39": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:517"
+   ],
+   "v": "bestätigt"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-409d35e4": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:393"
+   ],
+   "v": "bestätigt"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-44d703fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:410"
+   ],
+   "v": "bestätigt"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-4f73a196": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:479",
+    "lib/data/repositories/duty_repository.dart:42"
+   ],
+   "v": "bestätigt",
+   "n": "Titel typeInfo > Typname > „Dienst“, „n/required“ wie Ionic."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-5a20f49b": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:430"
+   ],
+   "v": "bestätigt"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-5bf9a0b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:378"
+   ],
+   "v": "bestätigt"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-67345289": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:364"
+   ],
+   "v": "bestätigt"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-85e38131": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:367"
+   ],
+   "v": "bestätigt"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-c98e746d": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:371"
+   ],
+   "v": "bestätigt"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-d1ef8852": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:307"
+   ],
+   "v": "bestätigt",
+   "n": "„Dienste verteilen“ / „Vorschlag“."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-d6fa8825": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:396"
+   ],
+   "v": "bestätigt"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-dd1d8c79": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:450",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:468"
+   ],
+   "v": "bestätigt",
+   "n": "Plural-Zusammenfassung mit/ohne „Plätze bleiben offen“ plus „Tippe auf einen Namen zum Tauschen.“ gleich."
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-e73248fa": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:88"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: dayjs „dd, DD.MM. · HH:mm“ (mit führender Null, sprachabhängiges dayMonth-Format) / Flutter: „Mo, 3.2. · 19:00“ ohne führende Null. Gleiche Information, nur Format.",
+   "sev": "niedrig"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#text-f1aefe19": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:507"
+   ],
+   "v": "bestätigt"
+  },
+  "duty/unavailability-modal/unavailability-modal.component#action-0e2193da": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:277"
+   ],
+   "v": "bestätigt",
+   "n": "Volle Breite „Regel hinzufügen“ mit Plus, neue Regel mit Dienst-Typen vorgewählt (wie Ionic add())."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#action-0f45da39": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:207"
+   ],
+   "v": "bestätigt",
+   "n": "Text „Zurück“ nur beim Bearbeiten, verwirft Bearbeitung (auch per Zurück-Geste)."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#action-9aa27fbe": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:257"
+   ],
+   "v": "bestätigt",
+   "n": "Titel „Wochentage · Grund“, Untertitel „Typen · bis … / unbefristet“, Tipp öffnet Bearbeitung."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#action-ab8ecfb1": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:221",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:101",
+    "lib/data/repositories/duty_repository.dart:376"
+   ],
+   "v": "bestätigt",
+   "n": "„Speichern“ fett, bei Speichern deaktiviert; Warnung „Wochentag wählen“ wie Ionic; schreibt person_unavailability (tenant_id, person_id, weekdays, type_ids, reason, valid_until, created_by), Update zusätzlich mit tenantId-Filter; danach Anwenden-auf-geplante-Termine-Dialog. Flutter besser: Fehlertoast beim Speichern."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#action-c445913a": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:266"
+   ],
+   "v": "bestätigt",
+   "n": "Roter Mülleimer, öffnet nur die Löschbestätigung (eigener Button, kein Durchreichen an Zeilen-Tap)."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#action-ee9ebd0b": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:305"
+   ],
+   "v": "bestätigt",
+   "n": "Mo–So Chips (ISO 1–7), sortiert, Langname als Tooltip."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#action-fa621d1e": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:213"
+   ],
+   "v": "bestätigt",
+   "n": "Schließen-X (Tooltip „Schließen“) außerhalb der Bearbeitung."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#alert-7cb35beb": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:157",
+    "lib/data/repositories/duty_repository.dart:408"
+   ],
+   "v": "bestätigt",
+   "n": "„Regel löschen?“ / „Bereits eingetragene Abmeldungen bleiben bestehen.“, Abbrechen / Löschen (rot); delete mit id + tenant_id, Liste wird neu geladen. Flutter besser: Fehlertoast bei Fehlschlag."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#field-845c170b": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:329"
+   ],
+   "v": "bestätigt",
+   "n": "Checkbox je sichtbarem Typ, Neu mit Dienst-Typen vorgewählt, Umschalten wie Ionic."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#field-b539df20": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:349",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:111"
+   ],
+   "v": "bestätigt",
+   "n": "„Grund (optional)“, Platzhalter „z. B. Kinderstunde“; Flutter speichert getrimmt (Ionic ungetrimmt), praktisch unsichtbar."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#field-bb90d03c": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:354",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:170"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: natives Datumsfeld, leer = unbefristet / Flutter: Zeile „Gültig bis (optional)“ mit Plattform-Datumsdialog und Löschen-X, zeigt „unbefristet“; gleicher gespeicherter Wert (YYYY-MM-DD bzw. null). Nur Optik.",
+   "sev": "niedrig"
+  },
+  "duty/unavailability-modal/unavailability-modal.component#text-190b3c0b": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:340"
+   ],
+   "v": "bestätigt"
+  },
+  "duty/unavailability-modal/unavailability-modal.component#text-61239cdf": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:296"
+   ],
+   "v": "bestätigt"
+  },
+  "duty/unavailability-modal/unavailability-modal.component#text-7f458e30": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:245"
+   ],
+   "v": "bestätigt",
+   "n": "Leertext je nach forOther. Ladefehler: Flutter zeigt Fehlertext statt leerer Liste (Ionic: Toast+leer), ohne Funktionsverlust."
+  },
+  "duty/unavailability-modal/unavailability-modal.component#text-96d283d0": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:193"
+   ],
+   "v": "bestätigt"
+  },
+  "duty/unavailability-modal/unavailability-modal.component#text-c25a5821": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:326"
+   ],
+   "v": "bestätigt"
+  },
+  "duty/unavailability-modal/unavailability-modal.component#text-c5d27b76": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:368"
+   ],
+   "v": "bestätigt",
+   "n": "Hinweis gleich, 13px grau."
+  }
+ },
+ "extra": [
+  {
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "title": "Verteilung zählt voll besetzte Termine und andere Dienst-Typen für „Nicht zweimal am selben Tag“",
+   "n": "Ionic: run() filtert Termine mit occupied>=required vor distributeDuties heraus und lädt nur gewählte Typen / Flutter (SOL_FIX2): voll besetzte und nicht gewählte Dienst-Typen gehen als Slots mit open 0 ein, damit deren Personen am selben Tag nicht nochmal eingeteilt werden. Flutter besser, Vorschlag kann daher von Ionic abweichen; Leon entscheidet.",
+   "sev": "niedrig",
+   "ionic": "src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:run",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart:161"
+   ]
+  }
+ ]
+}

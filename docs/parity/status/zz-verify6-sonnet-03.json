@@ -1,0 +1,453 @@
+{
+ "batch": "zz-verify6-sonnet-03",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "attendance/attendance/attendance.page#action-d7e1cae2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1264"
+   ],
+   "v": "bestätigt",
+   "n": "Aktuell geprüft: „Verspätet entschuldigt“ (Filter Status 5) erscheint wie Ionic nur wenn Typ Verspätet erlaubt (Menü Status-Filter, Zeile 1264)."
+  },
+  "attendance/attendance/attendance.page#action-da48cc91": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1173",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:967"
+   ],
+   "v": "bestätigt",
+   "n": "Legende-Eintrag immer sichtbar, öffnet Sheet mit allen 6 Status (N/✓/E/A/L/LE) wie Ionic-Modal."
+  },
+  "attendance/attendance/attendance.page#action-da89e903": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:395",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:725",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2718"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser: Ionic zeigt den Eintrag ohne Rollenbedingung (auch Beobachter); Flutter nur canEdit (Admin, Verantwortliche, Helfer, StF-Helfer). Beobachter erreichen die Ionic-Terminseite laut summary.md nur per getippter URL (kein UI-Weg), Flutter leitet sie um – daher niedrig. Alle Rollen mit UI-Zugang sehen den Eintrag wie in Ionic.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-dd4e8bf5": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1262"
+   ],
+   "v": "bestätigt",
+   "n": "„Entschuldigt“ im Status-Filter nur wenn Typ Status 2 erlaubt, schaltet Filter um."
+  },
+  "attendance/attendance/attendance.page#action-de07ad3e": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1284"
+   ],
+   "v": "bestätigt",
+   "n": "„Filter löschen“ (rot, Icon) nur bei aktivem Filter, leert Filter."
+  },
+  "attendance/attendance/attendance.page#action-e24264a7": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:203",
+    "lib/features/attendance/presentation/attendance_add_persons.dart:63"
+   ],
+   "v": "bestätigt",
+   "n": "Button „Personen auswählen“ (deaktiviert) bzw. „n Person(en) hinzufügen“; schreibt person_attendances mit Typ-Default bzw. Schichtstatus + Notiz wie Ionic (tenant-Repo). Kleinigkeiten (niedrig): kein blockierendes „Personen werden hinzugefügt“-Overlay, kein Schließen-X im Sheet."
+  },
+  "attendance/attendance/attendance.page#action-facf83f1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1172",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:988"
+   ],
+   "v": "bestätigt",
+   "n": "„Gemeinde-Übersicht“ nur wenn Personenfeld bfecg_church existiert, wie Ionic churchField."
+  },
+  "attendance/attendance/attendance.page#action-fc458692": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1160",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1295"
+   ],
+   "v": "bestätigt",
+   "n": "Nur wenn sortierbare Felder (Personenfelder ohne textarea + Anmeldefelder) existieren; Untertitel „Feld ↑/↓“; Radio-Dialog Standard (Gruppe)/Feld ↑↓, gleiche Speicher-Keys."
+  },
+  "attendance/attendance/attendance.page#action-fd60899f": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:563"
+   ],
+   "v": "bestätigt",
+   "n": "3-Punkte-Menü mit Badge (Anzahl) und primärer Icon-Farbe bei aktivem Filter."
+  },
+  "attendance/attendance/attendance.page#actionsheet-0085a6c3": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2213",
+    "lib/features/attendance/presentation/widgets/attendance_detail/songs_history_accordion.dart:33"
+   ],
+   "v": "bestätigt",
+   "n": "Optionen gleich („Dirigent ändern“, „Zum Werk“, Abbrechen; Zum Werk → /settings/songs/:id). Header Ionic „12 Name“ / Flutter Song.displayName „Präfix12 - Name“; unbekannt: „Unbekanntes Lied“/„Unbekannter Dirigent“ vs „Unbekanntes Werk“/„Unbekannt“ – gleiche Bedeutung.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#actionsheet-5fe69f80": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:17",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:874"
+   ],
+   "v": "bestätigt",
+   "n": "Sheet gleich (Header „Notiz hinzufügen“, „Aktuell: …“, Gründe aus Mandant/Default, „Eigene Notiz...“, „Notiz löschen“ destruktiv nur bei vorhandener Notiz, Abbrechen); geschrieben wird notes (leer = '') wie Ionic. Flutter zeigt zusätzlich Erfolgs-Toast (Ionic keiner).",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#alert-1119c6cc": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:148"
+   ],
+   "v": "bestätigt",
+   "n": "„Dirigent eingeben“, Platzhalter „Dirigent“, Abbrechen/Speichern, vorbelegt mit otherConductor; leerer Name speichert nichts; speichert person_id=null + otherConductor wie Ionic."
+  },
+  "attendance/attendance/attendance.page#alert-1a679783": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:55",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:600",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:825"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser: Helfer ohne player_notes_view bekommt in Ionic im Dialog die echte Notiz vorbelegt (Liste maskiert sie aber als „Notiz hinzugefügt“, also Ionic-Leck); Flutter belegt die maskierte Notiz vor und speichert sie unverändert nicht zurück (Zeile ~870 onNoteChanged). Sonst gleich: Titel „Eigene Notiz“, Platzhalter, Preset-Logik, Speichern auch leer.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#alert-3e7845a6": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1591",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1626"
+   ],
+   "v": "bestätigt",
+   "n": "Dialog gleich („To-Do hinzufügen“, Text, Frist in Stunden, Abbrechen/Hinzufügen; leerer Text → Warn-Toast, Dialog bleibt offen; Id, dueDate = Start(oder 19:00) − Stunden, UTC, completed false). Flutter zeigt zusätzlich Toast „To-Do hinzugefügt“. Rand: Dezimalwert „1.5“ → Ionic parseInt 1, Flutter int.tryParse null (keine Frist).",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#alert-5a49adc7": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:89",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2242",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2200",
+    "lib/features/attendance/presentation/attendance_song_history.dart:70"
+   ],
+   "v": "bestätigt",
+   "n": "Dirigent ändern: Radios aktive Dirigenten + „Anderer Dirigent“, Abbrechen/Speichern; Update history person_id/otherConductor der Zeile (syncAttendanceSongHistory, Tenant-Repo). Werke-Abschnitt nur bei manage_songs und Mandant ≠ general, keine Rollenbedingung – gleich."
+  },
+  "attendance/attendance/attendance.page#alert-69df322a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1295",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1160"
+   ],
+   "v": "bestätigt",
+   "n": "Nur wenn sortierbare Felder existieren; Radios „Standard (Gruppe)“ und je Feld ↑/↓, Abbrechen/OK, gleiche Speicher-Keys (attSortField/Level/Dir + Id)."
+  },
+  "attendance/attendance/attendance.page#alert-87434869": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1666"
+   ],
+   "v": "bestätigt",
+   "n": "Titel „To-Do löschen?“ (Flutter-Key) statt „To-Do löschen“, Text und Buttons gleich, Löschen per Id; Flutter zeigt zusätzlich Toast „To-Do gelöscht“.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#alert-a4a881ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2579",
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:240",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:825"
+   ],
+   "v": "bestätigt",
+   "n": "„Person entfernen“ (Bestätigung mit Name, Abbrechen/Entfernen destruktiv, Toast Erfolg/Fehler) nur ohne isHelper (role == HELPER) – StF-Helfer darf, Flutter showModifierInfo: !isHelper identisch; löscht person_attendances-Zeile (Tenant-Validierung)."
+  },
+  "attendance/attendance/attendance.page#alert-ad3c579a": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:921"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser: sucht den Ändernden unter allen Personen des Mandanten (Ionic nur unter Personen des Termins → sonst „'Unbekannt'“). Ionic-Sonderfall UUID 665fe2b4-… → „Matthias Eckstädt“ fehlt (mandantenspezifischer Hack). Toast „Status wurde nicht geändert“ und Text mit Datum/Uhrzeit gleich.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#embed-76bd1527": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:679"
+   ],
+   "v": "bestätigt",
+   "n": "Auto-Nachrichten-Panel nach Archiv-Banner vor „Allgemein“, nur Admin/Verantwortliche (isManager) wie Ionic."
+  },
+  "attendance/attendance/attendance.page#field-093444e8": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1370"
+   ],
+   "v": "bestätigt",
+   "n": "„Bilder anzeigen“ im Untermenü „Ansicht“, Standard aus, lokal gespeichert."
+  },
+  "attendance/attendance/attendance.page#field-291ed873": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:99",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:691"
+   ],
+   "v": "bestätigt",
+   "n": "Speichern beim Verlassen des Feldes wie Ionic (nur bei Änderung); leeres Feld: Ionic schreibt '' / Flutter null (beide leer, Anzeige gleich).",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#field-2a3cbef9": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:142",
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:210"
+   ],
+   "v": "bestätigt",
+   "n": "Optionen (aktive Dirigenten + „Anderer Dirigent“), Label „Dirigent“, Alert „Dirigent eingeben“ gleich. Vorauswahl: Ionic immer erster aktiver Dirigent; Flutter liest im postFrameCallback ref.read(activeConductorsProvider).valueOrNull, der Provider wird erst im ersten build erzeugt und ist dann noch AsyncLoading → beim ersten Öffnen pro Sitzung evtl. keine Vorauswahl („Wählen“, „Werk(e) hinzufügen“ deaktiviert bis Auswahl). Nutzer kann alles weiterhin tun, keine falschen Daten → niedrig.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#field-2c20cb73": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:375",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2292"
+   ],
+   "v": "bestätigt",
+   "n": "Platzhalter „Adresse oder Ortsname“, nur bei Typ place_enabled, Speichern beim Verlassen, leer → null (place) wie Ionic."
+  },
+  "attendance/attendance/attendance.page#field-2eb6811a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:422"
+   ],
+   "v": "bestätigt",
+   "n": "Checkbox-Auswahl im „Werke auswählen“-Picker. Werke-Bereich für alle Rollen mit Terminzugriff, nur bei manage_songs und Mandant ≠ general."
+  },
+  "attendance/attendance/attendance.page#field-36f00c0f": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1380"
+   ],
+   "v": "bestätigt",
+   "n": "„Anmeldefelder anzeigen“ nur wenn Typ Anmeldefelder hat, Standard an."
+  },
+  "attendance/attendance/attendance.page#field-3d7244ba": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:93",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2390"
+   ],
+   "v": "bestätigt",
+   "n": "Speichern beim Verlassen wie Ionic; leeres Feld: Ionic schreibt '' / Flutter null (gleiche Anzeige).",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#field-3ee5c084": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:392"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: ion-searchbar mit Lösch-X (ionClear → resetSongSearch) / Flutter: SearchBar ohne Lösch-Button (Text manuell löschbar). Platzhalter „Werk suchen...“ und Suche über „Präfix+Nummer Name“ gleich; Rollen/Mandant wie bei den anderen Werke-Items.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#field-417d9077": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1389"
+   ],
+   "v": "bestätigt",
+   "n": "„Explizite Statusauswahl“ mit Hinweistext, angehakt = Auswahlmodus (select), sonst Klick-Modus; lokal gespeichert."
+  },
+  "attendance/attendance/attendance.page#field-54fc17c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1266"
+   ],
+   "v": "bestätigt",
+   "n": "„Abwesend“ im Status-Filter nur wenn Typ Status 4 erlaubt."
+  },
+  "attendance/attendance/attendance.page#field-55765067": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:220",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1803"
+   ],
+   "v": "bestätigt",
+   "n": "Schalter „Anmeldefrist setzen“ nur wenn nicht isDeadlineReadonly; Standardfrist (Vortag, Typ-Start+2 h, sonst Termintag) wie Ionic, schreibt deadline (null beim Ausschalten). Flutter zeigt zusätzlich Toast; auf iOS ohne Hilfetext.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#field-635df2fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1262"
+   ],
+   "v": "bestätigt",
+   "n": "Checkbox „Entschuldigt“ im Status-Filter."
+  },
+  "attendance/attendance/attendance.page#field-735def41": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1260"
+   ],
+   "v": "bestätigt",
+   "n": "Checkbox „Neutral“ im Status-Filter nur wenn Typ Status 0 erlaubt."
+  },
+  "attendance/attendance/attendance.page#field-95734d84": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:275",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2462"
+   ],
+   "v": "bestätigt",
+   "n": "Ende: schreibt end_time + Schichtneuberechnung wie Ionic. Ionic: Minuten nur in 5er-Schritten / Flutter: freie Minutenwahl; zusätzlich Erfolgs-Toast.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#field-a9cd06ca": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:363"
+   ],
+   "v": "bestätigt",
+   "n": "Textfeld mit Label, Platzhalter „...“; Bearbeiten-Sheet ohne Pflichtprüfung (requireText false) wie Ionic."
+  },
+  "attendance/attendance/attendance.page#field-b12f8242": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:338"
+   ],
+   "v": "bestätigt",
+   "n": "Mehrfachauswahl mit Checkboxen je Option, Ergebnis wird mit bestehenden Antworten gemerged."
+  },
+  "attendance/attendance/attendance.page#field-b46ff290": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1263"
+   ],
+   "v": "bestätigt",
+   "n": "Checkbox „Verspätet“ im Status-Filter nur wenn Typ Status 3 erlaubt."
+  },
+  "attendance/attendance/attendance.page#field-b5b11f80": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:117"
+   ],
+   "v": "bestätigt",
+   "n": "Person im Block „Passende Personen“ (relevante Gruppen + Zusatzfeldfilter), Name + Gruppe, Checkbox."
+  },
+  "attendance/attendance/attendance.page#field-b5b11f80-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:190"
+   ],
+   "v": "bestätigt",
+   "n": "Person im Block „Andere Personen“ (eingeklappt, wie Ionic), Name + Gruppe, Checkbox."
+  },
+  "attendance/attendance/attendance.page#field-b975e0f1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1261"
+   ],
+   "v": "bestätigt",
+   "n": "Checkbox „Anwesend“ im Status-Filter nur wenn Typ Status 1 erlaubt."
+  },
+  "attendance/attendance/attendance.page#field-bbe33afa": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:324"
+   ],
+   "v": "bestätigt",
+   "n": "Auswahlfeld mit Label und Optionen."
+  },
+  "attendance/attendance/attendance.page#field-cd0f2af8": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1264"
+   ],
+   "v": "bestätigt",
+   "n": "Checkbox „Verspätet entschuldigt“ (Status 5) im Status-Filter nur wenn Typ Status 3 erlaubt."
+  },
+  "attendance/attendance/attendance.page#field-e98b30bf": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:318"
+   ],
+   "v": "bestätigt",
+   "n": "Schalter Ja/Nein, Standard false."
+  },
+  "attendance/attendance/attendance.page#field-f27959a3": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:265",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2407"
+   ],
+   "v": "bestätigt",
+   "n": "Beginn: schreibt start_time + Schichtneuberechnung wie Ionic. Ionic: Minuten nur in 5er-Schritten / Flutter: freie Minutenwahl; zusätzlich Erfolgs-Toast.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#modal-1e1a6630": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2635",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:965"
+   ],
+   "v": "bestätigt",
+   "n": "Statusübersicht-Sheet aus dem Menü mit den Personen des Termins (bei Helfern nur eigene Gruppe, nicht Suche/Filter) wie Ionic StatusInfoComponent."
+  },
+  "attendance/attendance/attendance.page#modal-2816ad2c": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:240",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2329"
+   ],
+   "v": "bestätigt",
+   "n": "Bottom-Sheet „Anmeldefelder“ (ab 2 Feldern; bei einem Feld Einzel-Alert), Speichern merged registration_answers, kein Toast wie Ionic."
+  },
+  "attendance/attendance/attendance.page#modal-761bba53": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1842",
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:247"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: ein Modal mit Datum+Uhrzeit (date-time, 5-Min-Raster, min jetzt, max Terminbeginn) / Flutter: erst Datums-, dann Uhrzeit-Dialog (5-Min-Raster), gleiche Grenzen; Button bei isDeadlineReadonly deaktiviert; gleicher gespeicherter Wert (Wandzeit).",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#modal-761bba53-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2407",
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:265"
+   ],
+   "v": "bestätigt",
+   "n": "Uhrzeit-Auswahl für Beginn (nur bei nicht ganztägigem Typ) statt ion-datetime-Modal."
+  },
+  "attendance/attendance/attendance.page#modal-761bba53-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2462",
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:275"
+   ],
+   "v": "bestätigt",
+   "n": "Uhrzeit-Auswahl für Ende (nur bei nicht ganztägigem Typ) statt ion-datetime-Modal."
+  },
+  "attendance/attendance/attendance.page#modal-80b3cbae": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:244",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:777"
+   ],
+   "v": "bestätigt",
+   "n": "Ablaufplan-Editor als Seite (/planning?attendanceId=…&plan=i) statt Vollbild-Modal; Planindex wird aus dem Akkordeon übergeben (nur iOS-FAB öffnet ohne Planindex, geringfügig)."
+  }
+ },
+ "extra": []
+}

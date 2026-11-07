@@ -1,0 +1,346 @@
+{
+ "batch": "zz-verify5-b-sonnet-01",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-03443e7a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:301",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:190"
+   ],
+   "n": "Weiterhin nur !isNew && item != null && isTeamLeader (Admin/Verantwortlich); Löschen-Icon rot mit Tooltip, ruft _delete.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-e0111868": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:296"
+   ],
+   "n": "AppBar-Zurück per Navigator; Ionic defaultHref nur bei Direktaufruf (md ohne Pop-Stack hier kein Zurück-Pfeil, niedrig).",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#alert-592677a1": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:190"
+   ],
+   "n": "Dialog „Thema wirklich löschen?“ + agendaDeleteMessage, Abbrechen/Löschen (destruktiv); deleteAgendaItem mit id + tenant_id, Fehler bei 0 Zeilen.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#nav-f25bbc6a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:203"
+   ],
+   "n": "context.go(/settings/team-organization?tab=topics) nach Löschen, gleiche Zielseite wie navigateBack.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-7e0c435f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:439",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:340"
+   ],
+   "n": "Nur-Lese-Ansicht (_readOnly) für alle Nicht-Leitungsrollen; Titel 20px/600.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-8561bc58": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:296"
+   ],
+   "n": "Titel „Neues Thema“/„Thema“ wie Ionic.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-9a3941ff": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:347"
+   ],
+   "n": "„Vorschlag von {name}“ + decisionNote als Untertitel, nur bei Vorschlagenden.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-aa35d39a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:283"
+   ],
+   "n": "Danger-Toast agendaPlanFailed im catch von „Einplanen“ (Ionic planFailed).",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-b69cc6ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:205"
+   ],
+   "n": "Danger-Toast „Löschen fehlgeschlagen“ im catch beim Löschen.",
+   "v": "bestätigt"
+  },
+  "app.component#nav-3a7bceb6": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:119-133"
+   ],
+   "n": "Link mit error_description → Toast + /login (Flutter German-Mapping statt Roh-Text, gleiche Bedeutung).",
+   "v": "bestätigt"
+  },
+  "app.component#nav-3a7bceb6-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:119-133"
+   ],
+   "n": "Fehler bei verifyOtp/setSession/exchange → Toast + /login wie Ionic catch.",
+   "v": "bestätigt"
+  },
+  "app.component#nav-da17d860": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:85-110"
+   ],
+   "n": "Nicht-Auth-Link: go(pfad+query) wie navigateByUrl(fullPath).",
+   "v": "bestätigt"
+  },
+  "app.component#toast-0dcf4ddc": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/widgets/password_recovery_alert.dart:159",
+    "lib/features/auth/data/auth_flow_service.dart:194-215"
+   ],
+   "n": "Alert „Neues Passwort“ ist jetzt password_recovery_alert.dart (new_password_page.dart gelöscht): Fehlertoast (danger) mit gleicher Code-Zuordnung (same_password, weak, Rate-Limit, Session abgelaufen); Alert bleibt offen.",
+   "v": "bestätigt"
+  },
+  "app.component#toast-872f0a00": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:119-133"
+   ],
+   "n": "Fehlertoast resetLinkInvalid/confirmLinkInvalid (danger) + /login.",
+   "v": "bestätigt"
+  },
+  "app.component#toast-9a9fbfa0": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/widgets/password_recovery_alert.dart:55",
+    "lib/features/auth/presentation/widgets/password_recovery_alert.dart:157"
+   ],
+   "n": "Erfolgstoast (db.passwordUpdated) und Alert schließt; Flutter öffnet /login-Flow danach (wie Ionic Host-Seite /login).",
+   "v": "bestätigt"
+  },
+  "app.component#toast-e7dc24bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:119-133"
+   ],
+   "n": "Registrierungs-Bestätigung: Toast „E-Mail bestätigt“ (success, 4s), danach /tenants (Ionic routeAfterAuth, Router-Landing).",
+   "v": "bestätigt"
+  },
+  "app.component#toast-ed78b5e8": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/widgets/password_recovery_alert.dart:146"
+   ],
+   "n": "„min. 6 Zeichen“-Danger-Toast bei <6 Zeichen, Alert bleibt offen (nur Dialog statt Seite, gleiche Funktion).",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-558f18b9-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:113"
+   ],
+   "n": "Filter-Popover „Alle anzeigen“, Typen mit Farbpunkt, „Archivierte anzeigen“ nur Admin/Verantwortliche. Icon tune statt „options“, primär bei aktivem Filter/Archiv.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-cac10456": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:262",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:650"
+   ],
+   "n": "Nur bei Anlegerecht (Admin/Verantw., Helfer mit attendance_create) wie Ionic canCreate.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#field-2fb88a59": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:190-204"
+   ],
+   "n": "Eingabefeld für den anderen Dirigenten; erscheint sofort bei „Anderer Dirigent“ (Ionic erst nach dem Alert), siehe alert-c973a254.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#field-57f0740a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:160-189",
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:93-101",
+    "lib/core/providers/conductor_providers.dart:34-37"
+   ],
+   "n": "Label „Dirigent“, aktive Dirigenten (Hauptgruppe, nicht ausgetreten) mit Vor- + Nachname + „Anderer Dirigent“, Vorauswahl erster Dirigent.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#popover-93db939c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:113"
+   ],
+   "n": "Stelle unverändert vorhanden und wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#text-11163db2": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:29"
+   ],
+   "n": "Stelle unverändert vorhanden und wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#text-1d217a94": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:789"
+   ],
+   "n": "Stelle unverändert vorhanden und wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#text-510775a7": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:763"
+   ],
+   "n": "Stelle unverändert vorhanden und wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#text-64289559": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:778",
+    "lib/core/providers/holiday_providers.dart:13-23"
+   ],
+   "n": "„Ferien des ausgewählten Bundeslandes“ nur wenn Ferien/Feiertage geladen (Instanz showHolidays && region). Rollen: Anlege-Sheet in Flutter nur mit Anlegerecht (Admin/Verantw., Helfer mit attendance_create) wie Ionic-FAB; Ionic-Leerzustand öffnet es für alle (bereits action-4fff8ad6).",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#text-984b2adc": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:783"
+   ],
+   "n": "Stelle unverändert vorhanden und wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#text-e2495367": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:759"
+   ],
+   "n": "Stelle unverändert vorhanden und wie Ionic.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-3e99df7b": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1177",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1024-1028",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:73-110"
+   ],
+   "n": "Nur Admin/Verantwortlich, Terminbeginn erreicht, >=1 Abwesende nicht ausgetreten; Compose mit festen Empfängern, Titel/Text identisch (Ionic-Variablen termin/datum/instanz).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-cf6368ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:496-535"
+   ],
+   "n": "Zurück über AppBar-Pop; Ionic defaultHref nur bei Direktaufruf, in Flutter dann ohne Pfeil (niedrig).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#field-4babf8fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:194"
+   ],
+   "n": "Name des anderen Dirigenten; Flutter zeigt das Feld direkt bei „Anderer Dirigent“ statt nach dem Alert (Ablauf siehe alert-aadedcba). Rollen/Mandant gleich: Werke-Bereich für alle Rollen mit Terminzugriff (Admin, Verantwortlich, Helfer, StF-Helfer), nur bei Typ manage_songs und Mandant ≠ general (sh",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#modal-94dca9ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1422",
+    "lib/features/attendance/presentation/attendance_extra_actions.dart:102-127"
+   ],
+   "n": "Gemeinde-Übersicht der Anwesenden (Anwesend/Verspätet/Verspätet entsch.), Untertitel „Anwesende Personen“.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#nav-bb97d1da": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:396-399",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1498",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1514"
+   ],
+   "n": "Zurück per pop, ohne Verlauf go(/attendance) (Ionic navigateByUrl(/tabs/attendance)); auch bei deletedByOther.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#text-b4223e43": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:482",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1100"
+   ],
+   "n": "Titel „dd.MM.yyyy | anwesend/gesamt“ (Anwesend+Verspätet) über gefilterte Liste wie filteredPlayers.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#toast-6eb688fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1735"
+   ],
+   "n": "Success-Toast attendanceChecklistRestored nach Checkliste zurücksetzen (alte Ref 1669 war veraltet, Foto-Toast).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#toast-f46a2cc7": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:404-415"
+   ],
+   "n": "Toast Verbindung wiederhergestellt/keine Verbindung nur bei echtem Wechsel.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#action-4325a30d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:455",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:196",
+    "lib/data/repositories/auto_message_repository.dart:434"
+   ],
+   "n": "„Auf anwesend“/„Entschuldigen“ je nach Art, gesperrt während busy; Bestätigungsdialog (Name, Text, Abbrechen/Aktion), Edge Function attendance-response decide, Toast „Übernommen“. Nur Admin/Verantwortliche.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#action-4fdc1969": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:315",
+    "lib/data/repositories/auto_message_repository.dart:223"
+   ],
+   "n": "Löscht den suspended-Run (id + status, Flutter zusätzlich tenantId); nur Admin/Verantwortliche.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#action-beffd5ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:317",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:188"
+   ],
+   "n": "Mit message_id → /messages/:id, sonst Regel-Verlauf /settings/auto-messages/:id?tab=history (Admin/Verantwortliche).",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#action-ee066e4b": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:461"
+   ],
+   "n": "„Ablehnen“ (outline, grau) nur Admin/Verantwortliche nach Terminbeginn bei offenen Antworten; Rückfrage mit Name, Text und destruktivem „Ablehnen“, Toast wie Ionic.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

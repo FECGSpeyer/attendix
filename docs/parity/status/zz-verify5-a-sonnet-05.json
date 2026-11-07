@@ -1,0 +1,81 @@
+{
+ "batch": "zz-verify5-a-sonnet-05",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "stats/stats.page#media-315d630a": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:758",
+    "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart"
+   ],
+   "n": "Waagrechte Balken, Titel statsInstrumentChart, x 0-100 mit Achsentitel %, Höhe max(300,n*30), Farbe #3880ff; Daten nach Gruppe sortiert wie Ionic.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#media-42266499": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:945",
+    "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart"
+   ],
+   "n": "Waagrechte Balken, Titel statsUnexcusedAbsences, Top 15, Höhe min 250, rot, ohne feste Achse wie Ionic.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#media-57ebfc11": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:789",
+    "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart"
+   ],
+   "n": "Waagrechte Balken Top 20, x 0-100 mit %, min 300, 28px/Eintrag, grün; Name 'Vorname N.'. Prozent in Flutter ungerundet (nur Tooltip gerundet), unerheblich.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#media-9766bdb9": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:916",
+    "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart"
+   ],
+   "n": "Waagrechte Balken, Achsentitel 'Jahre', Label 'Name (n)', orange, min 300, 28px/Eintrag.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#media-ac43f03a": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:535"
+   ],
+   "n": "Titel 'Anwesenheitsverlauf (letzte 20 Termine)', y 0-100 mit Achsentitel %, letzte 20 nach Datum, Füllung, kein Legend; Label dayMonth.",
+   "v": "bestätigt"
+  },
+  "tabs/side-nav/side-nav.component#modal-186fad14": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:111",
+    "lib/features/planning/presentation/pages/planning_page.dart:81"
+   ],
+   "n": "Aktion planning öffnet PlanningPage als Modal ohne Props (attendanceId null -> nächster kommender Termin, sonst keiner, wie Ionic); Overlay schließt vorher. Planning-Datei seit Verdikt geändert, Einstieg unverändert.",
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#action-df7b76e8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:139",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:162"
+   ],
+   "n": "RefreshIndicator in beiden Zuständen (Aufgabe da / nicht da), lädt taskById neu wie load().",
+   "v": "bestätigt"
+  },
+  "team-organization/team-organization.page#action-411a87d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:98",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:376",
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:108",
+    "lib/core/providers/team_org_providers.dart:463"
+   ],
+   "n": "Pull-to-refresh je aktivem Tab (Aufgaben/Themen/Protokolle) via reloadTeamOrgTab = reloadActive(). Auch im Fehlerzustand (content(const [])). Nur im Ladezustand ohne Refresher, unerheblich.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

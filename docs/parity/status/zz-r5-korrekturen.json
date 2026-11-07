@@ -1,0 +1,84 @@
+{
+ "batch": "zz-r5-korrekturen",
+ "afterRound": 5,
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "note": "Nachprüfung des Paritäts-Threads zu Runde 5 Teil A.",
+ "items": {
+  "people/person/person.page#alert-97cf5262": {
+   "sev": "mittel",
+   "n": "Dialog „Person kopieren/übertragen“ mit Ionic-Texten und Abbrechen/Ja gleich. Rollen-Abweichung: Flutter handoverPlayer vergibt RESPONSIBLE, wenn die Zielgruppe die Hauptgruppe der Zielinstanz ist (player_repository.dart:1716-1718). Ionic person.page.ts:1365 übergibt als mainGroup die Gruppe der QUELLE (isMainGroup ? player.instrument : null), db.service.ts:3824 vergleicht die Zielgruppe damit → praktisch immer PLAYER. Nur die Übergabe-Seite (handover-detail) vergibt in Ionic RESPONSIBLE für die Hauptgruppe. Die übertragene Person bekommt in Flutter also mehr Rechte als in Ionic (mittel statt niedrig wegen Rollenrechten; Leon entscheidet, ob wie Ionic PLAYER oder wie die Übergabe-Seite)."
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-3207b9c2": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:361-367"
+   ],
+   "n": "Edit-Sheet „Standardwert“ je Typ gleich. Abweichender DB-Wert: Ein geänderter Zahl-Standardwert wird als Text gespeichert („5“), Ionic speichert die Zahl (ion-input type=number). Personen erhalten den Standard dann als Text; in der Anzeige gleich, aber anderer Wert in extraFields (Sortieren/Vergleichen). Fix: bei Typ number num.tryParse.",
+   "v": "korrigiert"
+  }
+ },
+ "extra": [
+  {
+   "unit": "services/db.service",
+   "title": "Sortierung ohne ascending absteigend (postgrest-dart)",
+   "sev": "mittel",
+   "ionic": "src/app/services/db.service.ts:1",
+   "f": [
+    "lib/data/repositories/dashboard_repository.dart:83",
+    "lib/data/repositories/dashboard_repository.dart:110",
+    "lib/data/repositories/dashboard_repository.dart:132",
+    "lib/data/repositories/plan_repository.dart:181",
+    "lib/data/repositories/group_repository.dart:24",
+    "lib/data/repositories/group_repository.dart:26",
+    "lib/data/repositories/group_repository.dart:280",
+    "lib/data/repositories/attendance_repository.dart:135",
+    "lib/data/repositories/attendance_repository.dart:368",
+    "lib/data/repositories/attendance_repository.dart:821",
+    "lib/data/repositories/attendance_repository.dart:852",
+    "lib/data/repositories/org_song_repository.dart:100",
+    "lib/data/repositories/org_song_repository.dart:101",
+    "lib/data/repositories/org_song_repository.dart:117",
+    "lib/data/repositories/org_song_repository.dart:131",
+    "lib/data/repositories/parent_repository.dart:25",
+    "lib/data/repositories/parent_repository.dart:26",
+    "lib/data/repositories/player_repository.dart:79",
+    "lib/data/repositories/player_repository.dart:81",
+    "lib/data/repositories/player_repository.dart:166",
+    "lib/data/repositories/player_repository.dart:211",
+    "lib/data/repositories/player_repository.dart:236",
+    "lib/data/repositories/player_repository.dart:266",
+    "lib/data/repositories/player_repository.dart:268",
+    "lib/data/repositories/player_repository.dart:288",
+    "lib/data/repositories/player_repository.dart:290",
+    "lib/data/repositories/player_repository.dart:1352",
+    "lib/data/repositories/player_repository.dart:1400",
+    "lib/data/repositories/player_repository.dart:1641",
+    "lib/data/repositories/player_repository.dart:1643",
+    "lib/data/repositories/shift_repository.dart:23",
+    "lib/data/repositories/viewer_repository.dart:25",
+    "lib/data/repositories/viewer_repository.dart:26",
+    "lib/data/repositories/organisation_repository.dart:258",
+    "lib/data/repositories/organisation_repository.dart:259",
+    "lib/data/repositories/player_absence_repository.dart:35",
+    "lib/data/repositories/player_absence_repository.dart:57",
+    "lib/data/repositories/public_song_repository.dart:110",
+    "lib/data/repositories/public_song_repository.dart:127",
+    "lib/data/repositories/public_song_repository.dart:128",
+    "lib/data/repositories/public_song_repository.dart:145",
+    "lib/data/repositories/song_repository.dart:358",
+    "lib/data/repositories/song_repository.dart:448",
+    "lib/data/repositories/shared_person_fields.dart:105",
+    "lib/data/repositories/import_repository.dart:37",
+    "lib/data/repositories/import_repository.dart:90",
+    "lib/data/repositories/duty_repository.dart:350",
+    "lib/data/repositories/church_repository.dart:23",
+    "lib/data/repositories/church_repository.dart:155",
+    "lib/core/providers/tenant_providers.dart:339",
+    "lib/core/utils/paged_query.dart:10"
+   ],
+   "n": "Ionic (postgrest-js): .order('spalte') sortiert aufsteigend. Flutter (postgrest-dart 2.6.0, postgrest_transform_builder.dart:72-81): order() hat ascending = false als Standard → jede .order('spalte') ohne ascending sortiert ABSTEIGEND. 51 Stellen im normalen Code (Liste in f). Bestätigt sichtbar: Kinder der Eltern in umgekehrter Reihenfolge (x-afb9c7a207, player_repository.dart:266/268), Gruppenkategorien ohne sort_order Z→A (group_repository.dart:280). Bei den übrigen Stellen ist offen, ob der Client danach selbst sortiert und ob Ionic dort ascending:false nutzt. Fix: jede Stelle mit dem Ionic-Aufruf vergleichen und ascending explizit setzen."
+  }
+ ]
+}

@@ -1,0 +1,1987 @@
+{
+ "batch": "zz-verify5-b-sonnet-09",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/general.page.html",
+    "line": 347,
+    "cond": [
+     "@for (rule of criticalRules; track rule.id; let i = $index)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "[color]": "\"rule.operator === CriticalRuleOperator.AND ? 'primary' : 'secondary'\""
+    },
+    "bindings": [
+     "[color]=\"rule.operator === CriticalRuleOperator.AND ? 'primary' : 'secondary'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ rule.operator }}"
+    ],
+    "text": "{{ rule.operator }}",
+    "id": "settings/general/general.page#text-3cadc6db"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/critical_rule_card.dart:37"
+    ],
+    "n": "Badge „AND“ primary / „OR“ secondary unter der Regelbeschreibung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/critical_rule_card.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/general.page.html",
+    "line": 94,
+    "cond": [],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "generalSettings.reasonsCount"
+    ],
+    "de": [
+     "{count, plural, one {# Grund} other {# Gründe}} konfiguriert"
+    ],
+    "literals": [],
+    "text": "{{ 'generalSettings.reasonsCount' | transloco: { count: absenceReasons.length } }}",
+    "id": "settings/general/general.page#text-6bf3b772"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/reasons_list_editor.dart:118"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/general.page.html",
+    "line": 124,
+    "cond": [],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "generalSettings.reasonsCount"
+    ],
+    "de": [
+     "{count, plural, one {# Grund} other {# Gründe}} konfiguriert"
+    ],
+    "literals": [],
+    "text": "{{ 'generalSettings.reasonsCount' | transloco: { count: lateReasons.length } }}",
+    "id": "settings/general/general.page#text-6bf3b772-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/reasons_list_editor.dart:118"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/general.page.html",
+    "line": 93,
+    "cond": [],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "generalSettings.absenceReasons"
+    ],
+    "de": [
+     "Abwesenheitsgründe"
+    ],
+    "literals": [],
+    "text": "{{ 'generalSettings.absenceReasons' | transloco }}",
+    "id": "settings/general/general.page#text-ac492500"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:581",
+     "lib/features/settings/presentation/widgets/reasons_list_editor.dart:116"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/general.page.html",
+    "line": 35,
+    "cond": [],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "generalSettings.seasonStart"
+    ],
+    "de": [
+     "Saisonbeginn"
+    ],
+    "literals": [],
+    "text": "{{ 'generalSettings.seasonStart' | transloco }}",
+    "id": "settings/general/general.page#text-df744576"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:501"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 15,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=delete()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/shifts/shift/shift.page#action-3db27495"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:124"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=goBack()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "arrow-back"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/shifts/shift/shift.page#action-fc68a5f1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:103"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 8,
+    "cond": [],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "shifts.edit"
+    ],
+    "de": [
+     "Schichtplan anpassen"
+    ],
+    "literals": [],
+    "text": "{{ 'shifts.edit' | transloco }}",
+    "id": "settings/general/shifts/shift/shift.page#text-7ef3058c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:102"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 25,
+    "cond": [],
+    "tag": "ion-title",
+    "attrs": {
+     "size": "large"
+    },
+    "keys": [
+     "shifts.edit"
+    ],
+    "de": [
+     "Schichtplan anpassen"
+    ],
+    "literals": [],
+    "text": "{{ 'shifts.edit' | transloco }}",
+    "id": "settings/general/shifts/shift/shift.page#text-7ef3058c-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:101"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/shifts/shift/shift.page.ts",
+    "line": 48,
+    "method": "ShiftPage.save",
+    "cond": [],
+    "message": {
+     "keys": [
+      "shifts.saved"
+     ],
+     "de": [
+      "Schichtplan gespeichert"
+     ],
+     "literals": [],
+     "expr": "translate('shifts.saved')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "f4bc5c83",
+    "mbody": "ee4cb567",
+    "id": "settings/general/shifts/shift/shift.page#toast-11bf6169"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:458"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/shifts/shift/shift.page.ts",
+    "line": 251,
+    "method": "ShiftPage.executeCopy",
+    "cond": [
+     "(copyAssignments && assignedCount > 0)"
+    ],
+    "message": {
+     "keys": [
+      "shifts.copiedAssigned"
+     ],
+     "de": [
+      "Schichtplan nach „{tenant}“ kopiert und {count, plural, one {# Person} other {# Personen}} zugewiesen."
+     ],
+     "literals": [],
+     "expr": "translate('shifts.copiedAssigned', { tenant: targetTenant?.longName, count: assignedCount })"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "2c15de05",
+    "mbody": "18f787df",
+    "id": "settings/general/shifts/shift/shift.page#toast-38146a50"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:418"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/shifts/shift/shift.page.ts",
+    "line": 261,
+    "method": "ShiftPage.executeCopy",
+    "cond": [
+     "!(copyAssignments && assignedCount === 0 && playersWithShift.length > 0)",
+     "!(copyAssignments && assignedCount > 0)"
+    ],
+    "message": {
+     "keys": [
+      "shifts.copied"
+     ],
+     "de": [
+      "Schichtplan nach „{tenant}“ kopiert."
+     ],
+     "literals": [],
+     "expr": "translate('shifts.copied', { tenant: targetTenant?.longName })"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "d57cbc91",
+    "mbody": "18f787df",
+    "id": "settings/general/shifts/shift/shift.page#toast-e8d0589a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:423"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shifts.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shifts.page.ts",
+    "html": "settings/general/shifts/shifts.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/general/shifts/shifts.page.ts",
+    "line": 29,
+    "method": "ShiftsPage.goBack",
+    "cond": [],
+    "via": "navController.navigateBack",
+    "to": "'/tabs/settings/general'",
+    "src": "9da983a4",
+    "mbody": "b4169157",
+    "id": "settings/general/shifts/shifts.page#nav-8e9080ea"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/pages/shifts_list_page.dart:34-38",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:536"
+    ],
+    "n": "Flutter context.pop() zurück zu „Allgemein“ (Seite wird von dort gepusht).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/type/type.page.html",
+    "line": 5,
+    "cond": [
+     "@if (!isNew)"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=navigateBack()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "arrow-back"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/type/type.page#action-06fe01ff"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:225-229"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/type/type.page.html",
+    "line": 729,
+    "cond": [
+     "@if (type)",
+     "@for (field of type.registration_fields; track field.id; let i = $index)"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=removeRegistrationField(i, regSlider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/type/type.page#action-174badcb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/registration_fields_editor.dart:91-93",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1503",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "Wisch-Option Papierkorb entfernt das Feld per Index, gespeichert mit Speichern. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/type/type.page.html",
+    "line": 422,
+    "cond": [
+     "@if (type)",
+     "in <ion-popover trigger=color-btn #colorPopover>",
+     "@for (color of colors; track color)"
+    ],
+    "tag": "ion-col",
+    "attrs": {
+     "size": "4"
+    },
+    "events": [
+     "(click)=type.color = color; colorPopover.dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[style.paddingTop]=\"'.5rem'\"",
+     "[style.borderRadius]=\"'1rem'\"",
+     "[style.backgroundColor]=\"type.color === color ? 'var(--ion-color-medium)' : ''\"",
+     "[style.textAlign]=\"'center'\""
+    ],
+    "icons": [
+     "ellipse"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/type/type.page#action-2608135b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:744-781",
+     "lib/core/utils/color_utils.dart:81-91",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1482",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "Gleiche 9 Farben in gleicher Reihenfolge, Auswahl grau hinterlegt, Tippen setzt color und schließt; Popover→Dialog bei popover-31d23755 erfasst. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/type/type.page.html",
+    "line": 175,
+    "cond": [
+     "@if (type)",
+     "@if (type.enable_protocol)",
+     "@if (!hasAgendaMarker)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [
+     "(click)=addAgendaItemsPlaceholder()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "typeSettings.insertPlaceholder"
+    ],
+    "de": [
+     "Platzhalter einfügen"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.insertPlaceholder' | transloco }}",
+    "id": "settings/general/type/type.page#action-7ac15547"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/type_protocol_settings.dart:159-164",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:449-452"
+    ],
+    "n": "Nur ohne Marker sichtbar, fügt Feld „Tagesordnung“ (time 0) ans Ende des Standard-Ablaufplans. Hinweis: der Ablaufplan selbst ist in Flutter nur bei „Werke verwalten“ sichtbar (text-6289c3a9, hoch). Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/type/type.page.html",
+    "line": 12,
+    "cond": [
+     "@if (!isNew)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=deleteType()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/type/type.page#action-9220acaf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:230-236"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/type/type.page.html",
+    "line": 642,
+    "cond": [
+     "@if (type)",
+     "@if (type.checklist)",
+     "@if (type.checklist && type.checklist.length > 0)",
+     "in <ion-reorder-group>"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=removeChecklistItem(i, checklistSlider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/type/type.page#action-9242896d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:686-691",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "Wisch-Option Papierkorb entfernt den Eintrag lokal. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/type/type.page.html",
+    "line": 631,
+    "cond": [
+     "@if (type)",
+     "@if (type.checklist)",
+     "@if (type.checklist && type.checklist.length > 0)"
+    ],
+    "tag": "ion-reorder-group",
+    "attrs": {
+     "disabled": "false"
+    },
+    "events": [
+     "(ionItemReorder)=handleChecklistReorder($any($event))"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ item.text }} {{ getChecklistDeadlineText(item.deadlineHours) }}",
+    "id": "settings/general/type/type.page#action-fb3aac9e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:669-703",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "Sortierbare Checkliste mit Text, Deadline-Text und Griff am Ende; dass Flutter sie auch ohne aktivierte Checkliste zeigt, ist bei field-d34df4b8 erfasst. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/general/type/type.page.ts",
+    "line": 162,
+    "method": "TypePage.confirmUnsavedChanges",
+    "cond": [],
+    "header": {
+     "keys": [
+      "rolePerm.unsaved"
+     ],
+     "de": [
+      "Ungespeicherte Änderungen"
+     ],
+     "literals": [],
+     "expr": "translate('rolePerm.unsaved')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "rolePerm.unsavedMessage"
+     ],
+     "de": [
+      "Du hast ungespeicherte Änderungen. Möchtest du sie speichern bevor du die Seite verlässt?"
+     ],
+     "literals": [],
+     "expr": "translate('rolePerm.unsavedMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => resolve(false)"
+     },
+     {
+      "text": {
+       "keys": [
+        "rolePerm.discard"
+       ],
+       "de": [
+        "Verwerfen"
+       ],
+       "literals": [],
+       "expr": "translate('rolePerm.discard')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => resolve(true)"
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { await this.save(); resolve(true); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "4e2bf52a",
+    "mbody": "1bc51c13",
+    "id": "settings/general/type/type.page#alert-67f98937"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1422-1455",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "Gleicher Auslöser (Zurück-Pfeil bei Änderungen), Titel/Text gleich, Abbrechen / Verwerfen (rot) / Speichern; Speichern speichert (inkl. Dienstplan-Angebot) und verlässt die Seite auch bei Validierungsfehler – wie Ionic. roleGuarded kommt nur vom Alert-Button-Schlüssel „role:“, keine Rollenprüfung in der Methode. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 224,
+    "cond": [
+     "@if (type)",
+     "@if (type.duty_mode)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[ngModel]=\"type.duty_notify_understaffed !== false\"",
+    "bindings": [
+     "[helperText]=\"'typeSettings.notifyGroupHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.notifyGroupHelper",
+     "typeSettings.notifyGroup"
+    ],
+    "de": [
+     "Sagt eine eingeteilte Person ab und der Dienst ist unterbesetzt, bekommen alle aus dem Personenkreis eine Nachricht.",
+     "Gruppe bei Ausfall benachrichtigen"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'typeSettings.notifyGroupHelper' | transloco\" {{ 'typeSettings.notifyGroup' | transloco }}",
+    "id": "settings/general/type/type.page#field-30cdf8c8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:987-995",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1508",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "„Gruppe bei Ausfall benachrichtigen“ + Hilfetext, Default true, schreibt duty_notify_understaffed. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 40,
+    "cond": [
+     "@if (type)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"type.visible\"",
+    "bindings": [
+     "[helperText]=\"'typeSettings.activeHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.activeHelper",
+     "typeSettings.active"
+    ],
+    "de": [
+     "Wenn du diese Option deaktivierst, wird der Anwesenheitstyp beim Anlegen einer Anwesenheit nicht mehr als Option angezeigt.",
+     "Aktiv"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'typeSettings.activeHelper' | transloco\" {{ 'typeSettings.active' | transloco }}",
+    "id": "settings/general/type/type.page#field-4bd5f276"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:284-295"
+    ],
+    "n": "Schalter „Aktiv“ mit Hilfetext, schreibt visible. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 214,
+    "cond": [
+     "@if (type)",
+     "@if (type.duty_mode)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"type.duty_confirm_reminder_days\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"null\"",
+      "keys": [
+       "typeSettings.off"
+      ],
+      "de": [
+       "Aus"
+      ],
+      "literals": [],
+      "text": "{{ 'typeSettings.off' | transloco }}"
+     },
+     {
+      "value": "\"1\"",
+      "keys": [
+       "typeSettings.after1Day"
+      ],
+      "de": [
+       "nach 1 Tag"
+      ],
+      "literals": [],
+      "text": "{{ 'typeSettings.after1Day' | transloco }}"
+     },
+     {
+      "value": "\"2\"",
+      "keys": [
+       "typeSettings.after2Days"
+      ],
+      "de": [
+       "nach 2 Tagen"
+      ],
+      "literals": [],
+      "text": "{{ 'typeSettings.after2Days' | transloco }}"
+     },
+     {
+      "value": "\"3\"",
+      "keys": [
+       "typeSettings.after3Days"
+      ],
+      "de": [
+       "nach 3 Tagen"
+      ],
+      "literals": [],
+      "text": "{{ 'typeSettings.after3Days' | transloco }}"
+     },
+     {
+      "value": "\"7\"",
+      "keys": [
+       "typeSettings.after7Days"
+      ],
+      "de": [
+       "nach 7 Tagen"
+      ],
+      "literals": [],
+      "text": "{{ 'typeSettings.after7Days' | transloco }}"
+     }
+    ],
+    "keys": [
+     "typeSettings.remindUnconfirmed",
+     "typeSettings.off",
+     "typeSettings.after1Day",
+     "typeSettings.after2Days",
+     "typeSettings.after3Days",
+     "typeSettings.after7Days"
+    ],
+    "de": [
+     "Erinnern, wenn unbestätigt",
+     "Aus",
+     "nach 1 Tag",
+     "nach 2 Tagen",
+     "nach 3 Tagen",
+     "nach 7 Tagen"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.remindUnconfirmed' | transloco }} {{ 'typeSettings.off' | transloco }} {{ 'typeSettings.after1Day' | transloco }} {{ 'typeSettings.after2Days' | transloco }} {{ 'typeSettings.after3D…",
+    "id": "settings/general/type/type.page#field-5409bc4e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:971-986",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1507",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "„Erinnern, wenn unbestätigt“ mit Aus/nach 1 Tag/2/3/7 Tagen in gleicher Reihenfolge, null=Aus, schreibt duty_confirm_reminder_days. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 191,
+    "cond": [
+     "@if (type)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=onDutyToggle()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"type.duty_mode\"",
+    "bindings": [
+     "[helperText]=\"'typeSettings.dutyHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.dutyHelper",
+     "typeSettings.dutyMode"
+    ],
+    "de": [
+     "Für Dienste wie Tontechnik: Pro Termin wird eine feste Zahl Personen eingeteilt. Nur Eingeteilte sind erwartet, alle anderen aus dem Personenkreis sind Springer.",
+     "Dienst-Modus"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'typeSettings.dutyHelper' | transloco\" {{ 'typeSettings.dutyMode' | transloco }}",
+    "id": "settings/general/type/type.page#field-8aa4fd37"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:921-942"
+    ],
+    "n": "Schalter mit Hilfetext; Einschalten: Personen ≥ 1, Neutral/Anwesend/Entschuldigt ergänzt, Standardstatus Neutral (Selbst-Eintragen/Benachrichtigen/Erinnerung kommen aus den DB-Defaults wie in Ionic). Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 254,
+    "cond": [
+     "@if (type)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"type.notification\"",
+    "bindings": [
+     "[attr.label]=\"'typeSettings.eventReminder' | transloco\"",
+     "[helperText]=\"'typeSettings.eventReminderHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.eventReminder",
+     "typeSettings.eventReminderHelper"
+    ],
+    "de": [
+     "Terminerinnerung",
+     "Wenn diese Option aktiviert ist, Erinnerungen angelegt wurden und die Benachrichtigungen aktiviert sind, erhalten Personen eine Terminerinnerung."
+    ],
+    "literals": [],
+    "text": "[attr.label]=\"'typeSettings.eventReminder' | transloco\" [helperText]=\"'typeSettings.eventReminderHelper' | transloco\" {{ 'typeSettings.eventReminder' | transloco }}",
+    "id": "settings/general/type/type.page#field-8fba8ce6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:481-492",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1485",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "Schalter „Terminerinnerung“ + Hilfetext, schreibt notification. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 162,
+    "cond": [
+     "@if (type)",
+     "@if (type.enable_protocol)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "number",
+     "class": "ion-text-end"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"type.agenda_default_duration\"",
+    "bindings": [
+     "[label]=\"'typeSettings.topicMinutes' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.topicMinutes"
+    ],
+    "de": [
+     "Standarddauer pro Thema (Min.)"
+    ],
+    "literals": [],
+    "text": "\"10\" [label]=\"'typeSettings.topicMinutes' | transloco\"",
+    "id": "settings/general/type/type.page#field-91bd7675"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/type_protocol_settings.dart:128-148"
+    ],
+    "n": "Label links, Wert rechtsbündig, Platzhalter „10“; ungültig/≤ 0 wird nicht geschrieben (Ionic validate löscht den Schlüssel). Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 180,
+    "cond": [
+     "@if (type)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"type.place_enabled\"",
+    "bindings": [
+     "[helperText]=\"'typeSettings.locationHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.locationHelper",
+     "typeSettings.enableLocation"
+    ],
+    "de": [
+     "Wenn aktiviert, kann bei Terminen dieses Typs ein Ort hinterlegt werden. Dieser wird dann als Navigationslink in Google Maps oder Apple Karten angezeigt.",
+     "Ort / Navigation aktivieren"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'typeSettings.locationHelper' | transloco\" {{ 'typeSettings.enableLocation' | transloco }}",
+    "id": "settings/general/type/type.page#field-98265cec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:455-466"
+    ],
+    "n": "Schalter mit Hilfetext, schreibt place_enabled. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 209,
+    "cond": [
+     "@if (type)",
+     "@if (type.duty_mode)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[ngModel]=\"type.duty_self_signup !== false\"",
+    "bindings": [
+     "[helperText]=\"'typeSettings.selfAssignHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.selfAssignHelper",
+     "typeSettings.selfAssign"
+    ],
+    "de": [
+     "Personen aus dem Personenkreis können offene Dienste selbst übernehmen.",
+     "Selbst eintragen erlaubt"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'typeSettings.selfAssignHelper' | transloco\" {{ 'typeSettings.selfAssign' | transloco }}",
+    "id": "settings/general/type/type.page#field-b74def74"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:943",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:964-970",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1506",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "Schalter „Selbst eintragen erlaubt“ + Hilfetext nur bei Dienst-Modus, Default true (Modell @Default(true) = Ionic !== false), schreibt duty_self_signup. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 166,
+    "cond": [
+     "@if (type)",
+     "@if (type.enable_protocol)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[ngModel]=\"type.suggest_postponed !== false\"",
+    "bindings": [
+     "[helperText]=\"'typeSettings.postponedHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.postponedHelper",
+     "typeSettings.suggestPostponed"
+    ],
+    "de": [
+     "Beim nächsten Termin dieses Typs stehen vertagte Themen beim Aufnehmen ganz oben.",
+     "Vertagte Themen vorschlagen"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'typeSettings.postponedHelper' | transloco\" {{ 'typeSettings.suggestPostponed' | transloco }}",
+    "id": "settings/general/type/type.page#field-ccf8bbf1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/type_protocol_settings.dart:149-155"
+    ],
+    "n": "null zählt als an (wie !== false), schreibt suggest_postponed. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 229,
+    "cond": [
+     "@if (type)",
+     "@if (type.duty_mode)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"type.duty_urgent_hours\"",
+    "bindings": [
+     "[helperText]=\"'typeSettings.urgentHelper' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"null\"",
+      "keys": [
+       "typeSettings.off"
+      ],
+      "de": [
+       "Aus"
+      ],
+      "literals": [],
+      "text": "{{ 'typeSettings.off' | transloco }}"
+     },
+     {
+      "value": "\"6\"",
+      "keys": [
+       "typeSettings.h6"
+      ],
+      "de": [
+       "6 h vorher"
+      ],
+      "literals": [],
+      "text": "{{ 'typeSettings.h6' | transloco }}"
+     },
+     {
+      "value": "\"12\"",
+      "keys": [
+       "typeSettings.h12"
+      ],
+      "de": [
+       "12 h vorher"
+      ],
+      "literals": [],
+      "text": "{{ 'typeSettings.h12' | transloco }}"
+     },
+     {
+      "value": "\"24\"",
+      "keys": [
+       "typeSettings.h24"
+      ],
+      "de": [
+       "24 h vorher"
+      ],
+      "literals": [],
+      "text": "{{ 'typeSettings.h24' | transloco }}"
+     },
+     {
+      "value": "\"48\"",
+      "keys": [
+       "typeSettings.h48"
+      ],
+      "de": [
+       "48 h vorher"
+      ],
+      "literals": [],
+      "text": "{{ 'typeSettings.h48' | transloco }}"
+     },
+     {
+      "value": "\"72\"",
+      "keys": [
+       "typeSettings.h72"
+      ],
+      "de": [
+       "72 h vorher"
+      ],
+      "literals": [],
+      "text": "{{ 'typeSettings.h72' | transloco }}"
+     }
+    ],
+    "keys": [
+     "typeSettings.urgentHelper",
+     "typeSettings.urgentIfOpen",
+     "typeSettings.off",
+     "typeSettings.h6",
+     "typeSettings.h12",
+     "typeSettings.h24",
+     "typeSettings.h48",
+     "typeSettings.h72"
+    ],
+    "de": [
+     "Einmaliger dringender Push an alle aus dem Personenkreis und die Leitung.",
+     "Dringend, wenn noch offen",
+     "Aus",
+     "6 h vorher",
+     "12 h vorher",
+     "24 h vorher",
+     "48 h vorher",
+     "72 h vorher"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'typeSettings.urgentHelper' | transloco\" {{ 'typeSettings.urgentIfOpen' | transloco }} {{ 'typeSettings.off' | transloco }} {{ 'typeSettings.h6' | transloco }} {{ 'typeSettings.h12' | t…",
+    "id": "settings/general/type/type.page#field-e4e83761"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:996-1013",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1509",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "„Dringend, wenn noch offen“ + Hilfetext, Aus/6/12/24/48/72 h vorher, schreibt duty_urgent_hours. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 144,
+    "cond": [
+     "@if (type)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"type.include_in_average\"",
+    "bindings": [
+     "[attr.label]=\"'typeSettings.countForAvg' | transloco\"",
+     "[helperText]=\"'typeSettings.countForAvgHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.countForAvg",
+     "typeSettings.countForAvgHelper"
+    ],
+    "de": [
+     "Für Ø berücksichtigen",
+     "Wenn diese Option aktiviert ist, wird dieser Typ beim Anwesenheitsdurchschnitt berücksichtigt."
+    ],
+    "literals": [],
+    "text": "[attr.label]=\"'typeSettings.countForAvg' | transloco\" [helperText]=\"'typeSettings.countForAvgHelper' | transloco\" {{ 'typeSettings.countForAvg' | transloco }}",
+    "id": "settings/general/type/type.page#field-fdd20919"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:429-440"
+    ],
+    "n": "Schalter mit Hilfetext, schreibt include_in_average. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/general/type/type.page.html",
+    "line": 97,
+    "cond": [
+     "@if (type)",
+     "@if (!type.all_day)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/general/type/type.page#modal-8afdfb0b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1196-1213",
+     "lib/shared/widgets/adaptive/app_pickers.dart:79-157"
+    ],
+    "n": "Zeitwahl-Dialog (iOS: Karte mit 24-h-Rad, Android: Material-Zeitwahl) statt ion-modal mit ion-datetime (Plattform-Look); fehlendes 5-Minuten-Raster ist in field-ea19d7e9 erfasst. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+    "lib/shared/widgets/adaptive/app_pickers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/general/type/type.page.html",
+    "line": 115,
+    "cond": [
+     "@if (type)",
+     "@if (!type.all_day)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/general/type/type.page#modal-8afdfb0b-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1196-1213",
+     "lib/shared/widgets/adaptive/app_pickers.dart:79-157"
+    ],
+    "n": "Zeitwahl-Dialog statt ion-modal (Plattform-Look); 5-Minuten-Raster in field-32a15191 erfasst. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+    "lib/shared/widgets/adaptive/app_pickers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/general/type/type.page.ts",
+    "line": 153,
+    "method": "TypePage.navigateBack",
+    "cond": [],
+    "via": "navController.back",
+    "to": "",
+    "src": "1c595136",
+    "mbody": "beec6ec6",
+    "id": "settings/general/type/type.page#nav-3a5f04bf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1453-1455"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/general/type/type.page.ts",
+    "line": 252,
+    "method": "TypePage.deleteType",
+    "cond": [],
+    "via": "router.navigate",
+    "to": "['/tabs/settings/general/types']",
+    "src": "3afb2ca4",
+    "mbody": "05167abe",
+    "id": "settings/general/type/type.page#nav-41b5d1ca"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1556"
+    ],
+    "n": "Ionic router.navigate zur Typenliste / Flutter context.pop() → darunterliegende Typenliste (/settings/types ist Eltern-Route, auch bei Direktlink). roleGuarded kommt nur vom Alert-Button-Schlüssel „role:“, keine Rollenprüfung in der Methode. Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 713,
+    "cond": [
+     "@if (type)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "typeSettings.signupFields"
+    ],
+    "de": [
+     "Anmeldefelder"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.signupFields' | transloco }}",
+    "id": "settings/general/type/type.page#text-058a3ea5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:723-724",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "Abschnitt „Anmeldefelder“ (fehlender Zähler-Badge bei text-fdfcef92). Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 413,
+    "cond": [
+     "@if (type)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "typeSettings.colorHint"
+    ],
+    "de": [
+     "Die Farbe ist nur für den Kalender relevant (beim Anlegen einer Anwesenheit)."
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.colorHint' | transloco }}",
+    "id": "settings/general/type/type.page#text-08ed915a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:514",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "„Die Farbe ist nur für den Kalender relevant …“. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 57,
+    "cond": [
+     "@if (type)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "typeSettings.defaultStatus"
+    ],
+    "de": [
+     "Standard Anwesenheitsstatus"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.defaultStatus' | transloco }}",
+    "id": "settings/general/type/type.page#text-0b9f9349"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:308-310"
+    ],
+    "n": "Rollen: Seite nur Admin/Verantwortlich – Ionic: Link nur im isAdmin-Block (ADMIN||RESPONSIBLE), isUrlAccessAllowed …/general/types/ → ADMIN/RESPONSIBLE; Flutter: settings_page isAdmin + Route-Guard /settings/types/* _isAdminOrResponsible; Helfer/Stimmführer/Spieler/Eltern/Beobachter/Bewerber in beiden ohne Zugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 293,
+    "cond": [
+     "@if (type)",
+     "@if (type.notification)",
+     "in <ion-modal trigger=reminders-modal-trigger>"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "typeSettings.howReminders"
+    ],
+    "de": [
+     "So funktionieren Erinnerungen"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.howReminders' | transloco }}",
+    "id": "settings/general/type/type.page#text-5f58aecb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/type_reminders_editor.dart:81-90",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:493-500",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "„So funktionieren Erinnerungen“ als Info-Karte, nur bei notification. Sheet→inline ist bei modal-0895b1d0 erfasst. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  }
+ ]
+}

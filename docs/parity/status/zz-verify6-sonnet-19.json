@@ -1,0 +1,418 @@
+{
+ "batch": "zz-verify6-sonnet-19",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "planning/planning.page#field-219cb90c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2273"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/planning.page#field-6e765eaa": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2205",
+    "lib/features/planning/presentation/pages/planning_page.dart:2056"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/planning.page#field-6e765eaa-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2221"
+   ],
+   "n": "Ionic: Ende-Zeile sobald end gesetzt (nach Laden/calculateEnd immer, auch ohne Felder = Startzeit) / Flutter: nur wenn Felder vorhanden. Nur Anzeige.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#field-74e4ebf9": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:192"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/planning.page#field-908d6fcd": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:561",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:714"
+   ],
+   "n": "Minuten-Feld nur für Nicht-Notiz/Nicht-Block-Zeilen, Platzhalter \"min\", nur Ziffern.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#field-9f5fc570": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:205"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/planning.page#field-db353430": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2313",
+    "lib/core/providers/branding_providers.dart:21"
+   ],
+   "n": "Ionic: Schalter nur wenn Tenant logo_url/branding_text gesetzt, Wert nur für diese Seite / Flutter: Quelle Org-Branding zuerst, dann Tenant; Schalterzustand sitzungsweit (Provider). Export-Wirkung gleich; Randfall Org-Branding ohne Tenant-Branding zeigt Schalter zusätzlich.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#field-e6429340": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2281"
+   ],
+   "n": "Schreibt attendance.share_plan, bei Fehler Rücksetzen.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#field-f33048e7": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2205",
+    "lib/features/planning/presentation/pages/planning_page.dart:2056",
+    "lib/features/planning/presentation/pages/planning_page.dart:2067"
+   ],
+   "n": "Startzeit-Auswahl 24h, Änderung -> Ende neu und Speichern (Autosave _changed).",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#field-fe37eb3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2294",
+    "lib/core/providers/organisation_providers.dart:11"
+   ],
+   "n": "Organisationsplan-Schalter nur mit Termin und Org-Zugehörigkeit, schreibt is_org_plan (_updateFlags); keine weitere Rollenbedingung.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#modal-42d9d843": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2056"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/planning.page#modal-42d9d843-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2221"
+   ],
+   "n": "Ionic: Ende-Chip öffnet deaktivierten Zeit-Picker (keine Eingabe möglich) / Flutter: Chip ohne Aktion. Gleiche Funktion.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#modal-ffaa7230": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1588",
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:111"
+   ],
+   "n": "Werkauswahl-Seite \"Werk auswählen\" mit Suche, Tippen fügt Werk an. Flutter sucht zusätzlich im Komponisten (Flutter besser, harmlos).",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#popover-e86b26e7": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1703"
+   ],
+   "n": "Popover als showMenu: gleiche Einträge/Bedingungen (!isGeneral, Songs, Themen, Agenda-Platzhalter, Blöcke, Vorlagen, Felder, weiterer Plan); Löschen von Blockvorlagen nur Admin.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#text-18279507": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:172"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/planning.page#text-69ed5195": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:198"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/planning.page#text-6c5f535b": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:185"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/planning.page#text-7cfe3610": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2275"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/planning.page#text-92612b82": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1741"
+   ],
+   "n": "\"Vorlagen\" nur mit Org-Vorlagen, keine Rollenbedingung.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#text-c14e181a": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1720"
+   ],
+   "n": "\"Programmblöcke\" nur mit Blockvorlagen des Tenants.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#text-ea874fbd": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2223"
+   ],
+   "n": "Ionic: Ende-Zeile sobald end gesetzt / Flutter: nur wenn Felder vorhanden.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#text-feff39c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1745"
+   ],
+   "n": "\"Felder\" nur mit Org-Standardfeldern.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#toast-096e3af1": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1239"
+   ],
+   "n": "Referenz korrigiert (war _markWritten). \"Das ist bereits der erste Termin\" (warning), Richtung gleich.",
+   "v": "korrigiert"
+  },
+  "planning/planning.page#toast-0eda0832": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:955",
+    "lib/features/planning/presentation/pages/planning_page.dart:2001"
+   ],
+   "n": "Keine Rollenbedingung; Warning bei fehlenden Feldern beim Export.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#toast-141f0770": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1619"
+   ],
+   "n": "Referenz korrigiert (war noCurrentSongs). Erfolgs-Toast Vorlage gespeichert.",
+   "v": "korrigiert"
+  },
+  "planning/planning.page#toast-435087dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1809"
+   ],
+   "n": "Referenz korrigiert. \"Tagesordnung bereits vorhanden\" (warning).",
+   "v": "korrigiert"
+  },
+  "planning/planning.page#toast-49787446": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:958",
+    "lib/features/planning/presentation/pages/planning_page.dart:2001"
+   ],
+   "n": "Keine Rollenbedingung; Warning bei Feld ohne Dauer.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#toast-68f53270": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1564",
+    "lib/features/planning/presentation/pages/planning_page.dart:1666"
+   ],
+   "n": "Referenz korrigiert. Nur wenn Typ != general; Warning wenn keine aktuellen Werke.",
+   "v": "korrigiert"
+  },
+  "planning/planning.page#toast-a4629d9d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1621"
+   ],
+   "n": "Referenz korrigiert. Fehler-Toast Vorlage speichern fehlgeschlagen (danger).",
+   "v": "korrigiert"
+  },
+  "planning/planning.page#toast-b7e0e2e8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1243"
+   ],
+   "n": "Referenz korrigiert. letzter Termin (warning).",
+   "v": "korrigiert"
+  },
+  "protocols/protocol/protocol.page#action-099ebe1a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1795"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-0bec9107": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1938",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:546"
+   ],
+   "n": "Plus-Button im Kopf \"Allgemeine Notizen\" (nur Leitung, breit), legt Protokoll an, öffnet Aufgabenformular, fügt Referenz ein.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-15655d8b": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1485"
+   ],
+   "n": "Kopf mit TOP/Startzeit, Name, Haken, Ergebnis-Badge, Minuten, Pfeil gleich. Ionic: Verantwortliche/r bleibt bei eingeklappter Karte neben Vorschau / Flutter: Vorschau ersetzt die Verantwortlichen-Zeile. Nur Anzeige.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-198ecb5e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1646",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1674",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1658"
+   ],
+   "n": "Ziehen, Doppelklick/Pos1 Reset, Pfeiltasten (Shift 48), Breite gespeichert.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-237eefeb": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1141",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1299"
+   ],
+   "n": "Nur Leitung im Handy-Layout; öffnet Allgemeine Notizen, Punkt bei vorhandenen Notizen.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-238ec080": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1545",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:546"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-238ec080-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1876"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-320caa0f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1386",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1401"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-320caa0f-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1976",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1984",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2022"
+   ],
+   "n": "Untertitel \"TOP n/Punkt/Allgemein · Vorname\" gleich, Ziel /settings/tasks/:id.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-346ac4ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1470"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-433417f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1408"
+   ],
+   "n": "Besprochen/Beschlossen/Vertagt als ChoiceChips, erneutes Tippen hebt auf.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-48d91b74": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1089",
+    "lib/core/router/app_router.dart:1081",
+    "lib/core/services/push/push_navigation.dart:117"
+   ],
+   "n": "Pop/Zurück und Speichern beim Verlassen gleich. Ionic defaultHref rollenabhängig (Leitung -> /tabs/attendance/:id, Mitglieder -> Teamorganisation > Protokolle) bei leerem Stack (Push, Direktlink) / Flutter: Route /settings/protocol/:id, kein rollenabhängiger Fallback, Zurück führt zu Einstellungen. Nur Navigationsweg, Funktion bleibt erreichbar.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-5ae5d0d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1818"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-69bd2a16": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1111"
+   ],
+   "n": "Teilen-Button für alle Rollen, wenn Termin geladen/verfügbar.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-69bd2a16-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2115"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-6ddd6834": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1177"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-747eafd6": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1928"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-75501172": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:814",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:959",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1066"
+   ],
+   "n": "Text und Ablauf gleich (Flush, publish, Themen schließen, PDF, notifyTeam, Toasts). Ionic: Sheet bleibt bis Ende offen, bei Fehler offen / Flutter: Sheet schließt sofort, Ladeoverlay, bei Fehler Fehler-Toast und neu öffnen. Ionic zeigt ebenfalls Lade-Overlay.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-75d6acff": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1252"
+   ],
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-7a8159ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1194"
+   ],
+   "n": "Avatare (max 4 + \"+n\"), \"{n} anwesend\", \"{n} entschuldigt · aus der Anwesenheit\"; öffnet Teilnehmerliste.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

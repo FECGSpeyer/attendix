@@ -1,0 +1,1660 @@
+{
+ "batch": "zz-verify5-b-opus-07",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/cross-tenant/cross-tenant.service",
+   "ionic": {
+    "ts": "services/cross-tenant/cross-tenant.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/cross-tenant/cross-tenant.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "crossTenantAttendances:21-21",
+     "crossTenantAttendancesLoading:22-22",
+     "getTenantColor:32-42",
+     "getPersonIdForTenant:44-56",
+     "getPersonAttendancesForTenant:58-102",
+     "getAttendanceTypesForTenants:104-133",
+     "loadAllPersonAttendancesAcrossTenants:135-188",
+     "getCrossTenantAttendanceType:190-192",
+     "getUserRolesForTenants:195-207",
+     "getTenantsFromUser:209-226",
+     "getUsersFromTenant:228-241",
+     "getPersonIdFromTenant:243-258",
+     "getPossiblePersonsByName:260-321",
+     "getPossiblePersonsByEmail:323-345",
+     "sanitizeOrToken:351-356"
+    ],
+    "bodies": {
+     "crossTenantAttendances": "5a909ea3",
+     "crossTenantAttendancesLoading": "7c1c5671",
+     "getTenantColor": "d8c9bef9",
+     "getPersonIdForTenant": "da244de6",
+     "getPersonAttendancesForTenant": "92d57679",
+     "getAttendanceTypesForTenants": "a0569344",
+     "loadAllPersonAttendancesAcrossTenants": "dd9b6f18",
+     "getCrossTenantAttendanceType": "ff652114",
+     "getUserRolesForTenants": "49b0745c",
+     "getTenantsFromUser": "060dae9f",
+     "getUsersFromTenant": "ca932b7e",
+     "getPersonIdFromTenant": "85607eac",
+     "getPossiblePersonsByName": "e58b326f",
+     "getPossiblePersonsByEmail": "eab373ed",
+     "sanitizeOrToken": "4ecee5eb"
+    },
+    "id": "services/cross-tenant/cross-tenant.service#logic-cf175343"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/cross_tenant_person_repository.dart:84",
+     "lib/data/repositories/cross_tenant_person_repository.dart:91",
+     "lib/data/repositories/cross_tenant_person_repository.dart:141",
+     "lib/data/repositories/cross_tenant_person_repository.dart:240",
+     "lib/data/repositories/cross_tenant_person_repository.dart:262",
+     "lib/core/providers/tenant_providers.dart:176"
+    ],
+    "n": "Lebendige Methoden gleich (Präfix-OR-Suche mit Bereinigung, Ranking, Limit 500, inkl. Ausgetretener; E-Mail-Suche case-insensitiv nur aktive; Nutzer-Ids einer verknüpften Instanz ohne Beobachter; Personen-Id bevorzugt aktiv). Flutter maskiert bei der E-Mail-Suche zusätzlich LIKE-Platzhalter. Farb-/Cross-Tenant-Anwesenheits-Methoden und getTenantsFromUser sind hier toter Code (DbService-Implementierung).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/tenant_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/data.service",
+   "ionic": {
+    "ts": "services/data.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/data.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:10-10",
+     "setHandoverData:12-14",
+     "getHandoverData:16-18"
+    ],
+    "bodies": {
+     "constructor": "84911fb6",
+     "setHandoverData": "40d0f9c7",
+     "getHandoverData": "c396a00d"
+    },
+    "id": "services/data.service#logic-38cae9e9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/handover_page.dart:24",
+     "lib/features/settings/presentation/pages/handover_page.dart:138",
+     "lib/core/router/app_router.dart:1255"
+    ],
+    "n": "Übergabedaten (Personen, in Instanz bleiben, Ziel-Instanz) werden als GoRouter-extra (HandoverData) an die Detailseite gegeben statt über einen Singleton-Service.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/handover_page.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 3026,
+    "method": "DbService.notifyTeam",
+    "cond": [],
+    "table": "edge:team-notify",
+    "op": "invoke",
+    "payload": "{ body: { ...body, tenantId: this.tenant().id } }",
+    "filters": [],
+    "src": "a14815b8",
+    "mbody": "02b0158b",
+    "roleGuarded": true,
+    "id": "services/db.service#db-01d8f953"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/protocol_repository.dart:294"
+    ],
+    "n": "Body + tenantId, Fehler verschluckt wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/protocol_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 3755,
+    "method": "DbService.personExistsInTenant",
+    "cond": [
+     "(email)"
+    ],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id'",
+    "filters": [
+     "eq('tenantId', targetTenantId)",
+     "ilike('email', email)",
+     "limit(1)"
+    ],
+    "tenantFilter": true,
+    "src": "9d19e100",
+    "mbody": "78495022",
+    "id": "services/db.service#db-09697835"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:1564"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 2763,
+    "method": "DbService.getAllUpcomingAttendancesForSignout",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, attendance_id, status, notes, registration_answers, duty_state'",
+    "filters": [
+     "eq('person_id', playerId)",
+     "in('attendance_id', runningAtts.map((a: any) => a.id))"
+    ],
+    "tenantFilter": false,
+    "src": "5eca03b7",
+    "mbody": "6b5b21c0",
+    "roleGuarded": true,
+    "id": "services/db.service#db-133f3370"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/sign_in_out_repository.dart:442",
+     "lib/core/providers/signout_providers.dart:209"
+    ],
+    "n": "Nur mit Instanz-Einstellung show_all_attendances („Meine Termine“, nicht Bewerber); laufende/kommende Termine (31 Tage Rückblick) + eigene person_attendances (person_id, attendance_id in …) – gleich. Kein Archiv-Filter in beiden (nur beendete Termine archivierbar).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/sign_in_out_repository.dart",
+    "lib/core/providers/signout_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 1541,
+    "method": "DbService.getRoleFromTenantUser",
+    "cond": [],
+    "table": "tenantUsers",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'role'",
+    "filters": [
+     "eq('tenantId', this.tenant().id)",
+     "eq('userId', appId)",
+     "maybeSingle()"
+    ],
+    "tenantFilter": true,
+    "src": "39d24c0d",
+    "mbody": "c301a4e7",
+    "roleGuarded": true,
+    "id": "services/db.service#db-17024199"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/user_registration_repository.dart:256",
+     "lib/features/people/presentation/pages/person_detail_page.dart:413"
+    ],
+    "n": "tenantUsers.role nach tenantId + userId, maybeSingle; keine Zeile → Spieler (Ionic NONE → PLAYER), Bewerber-Reparatur (pending=false) gleich. Keine Rollenbedingung in der Methode.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 1561,
+    "method": "DbService.getPlayers",
+    "cond": [
+     "(all)"
+    ],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "is('pending', false)",
+     "eq('tenantId', this.tenant().id)"
+    ],
+    "tenantFilter": true,
+    "src": "671706b9",
+    "mbody": "435d8d9d",
+    "roleGuarded": true,
+    "id": "services/db.service#db-1c4d7b0d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:62",
+     "lib/data/repositories/player_repository.dart:94"
+    ],
+    "n": "all-Zweig liegt vor der Eltern-Prüfung, also für alle Rollen gleich (pending=false, tenantId, inkl. archivierter). Flutter: getPlayers(all) vorhanden, die Aufrufer laden mit eigenen tenantId-Abfragen (z. B. getPlayersByShift); deren Logik in den Seiten-Batches.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 2680,
+    "method": "DbService.getAttendancesByDate",
+    "cond": [],
+    "table": "attendance",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenantId', tenantId || this.tenant().id)",
+     "gt('date', dayjs(date).startOf('day').toISOString())",
+     "order('date', { ascending: false, })"
+    ],
+    "tenantFilter": true,
+    "src": "db85eeac",
+    "mbody": "8c915c56",
+    "roleGuarded": true,
+    "id": "services/db.service#db-1e5584c0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:2116",
+     "lib/data/repositories/player_repository.dart:637"
+    ],
+    "n": "Ionic: alle Termine ab Tagesbeginn des Datums (nicht nur des Tages) für Eintritt (addPlayerToAttendancesByDate) und Austritt (left). Flutter inline: date > Eintrittstag bzw. removeFromUpcomingAttendances(from: left), tenantId – gleich. Referenz der Erstprüfung (attendance_repository.dart:801) ist eine ungenutzte Tagesabfrage mit anderer Bedeutung. Keine Rollenbedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 2485,
+    "method": "DbService.removeUserFromTenant",
+    "cond": [
+     "(deleteAdmin)"
+    ],
+    "table": "tenantUsers",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('tenantId', this.tenant().id)",
+     "eq('role', Role.ADMIN)",
+     "match({ userId: appId })"
+    ],
+    "tenantFilter": true,
+    "src": "2941e276",
+    "mbody": "2cf39eae",
+    "roleGuarded": true,
+    "id": "services/db.service#db-241c9ebf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:654"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 3277,
+    "method": "DbService.deleteInstance",
+    "cond": [],
+    "table": "tenants",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: tenantId })"
+    ],
+    "tenantFilter": false,
+    "src": "a3d3600e",
+    "mbody": "5b81a8b5",
+    "roleGuarded": true,
+    "id": "services/db.service#db-2c362d4d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/providers/tenant_providers.dart:301"
+    ],
+    "n": "Flutter prüft vorher zusätzlich Admin-Rolle.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/tenant_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 2820,
+    "method": "DbService.updateHistoryDatesForAttendance",
+    "cond": [],
+    "table": "history",
+    "op": "update",
+    "payload": "{ date }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('tenantId', this.tenant().id)",
+     "eq('attendance_id', attendance_id)"
+    ],
+    "tenantFilter": true,
+    "src": "6e6bcded",
+    "mbody": "65843c69",
+    "roleGuarded": true,
+    "id": "services/db.service#db-2d9e88d3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:940"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 3299,
+    "method": "DbService.setFavoriteTenant",
+    "cond": [],
+    "table": "tenantUsers",
+    "op": "update",
+    "payload": "{ favorite }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('userId', this.user.id)",
+     "eq('tenantId', tenantId)"
+    ],
+    "tenantFilter": true,
+    "src": "721a4d13",
+    "mbody": "93b38d53",
+    "id": "services/db.service#db-33aeae23"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/providers/tenant_providers.dart:281"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/tenant_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 758,
+    "method": "DbService.logout",
+    "cond": [],
+    "table": "auth",
+    "op": "signOut",
+    "payload": null,
+    "filters": [],
+    "src": "7b49e830",
+    "mbody": "8c19b1a4",
+    "id": "services/db.service#db-3570c95a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/settings_page.dart:583",
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:139",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:347"
+    ],
+    "n": "signOut + Navigation /login; Löschen von currentTenantId auf Instanzauswahl siehe Extra des Erstreviews.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 1987,
+    "method": "DbService.removePlayerFromUpcomingAttendances",
+    "cond": [
+     "(from)",
+     "!(left)"
+    ],
+    "table": "attendance",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenantId', tenantId ?? this.tenant().id)",
+     "gte('date', fromIso)",
+     "order('date', { ascending: false })"
+    ],
+    "tenantFilter": true,
+    "src": "cefefc5b",
+    "mbody": "f2c1785e",
+    "roleGuarded": true,
+    "id": "services/db.service#db-35a09ab7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:910",
+     "lib/data/repositories/cross_tenant_person_repository.dart:337"
+    ],
+    "n": "Pause mit Startdatum: Termine der Instanz ab Datum (tenantId) → person_attendances der Person löschen; Flutter vergleicht mit „YYYY-MM-DD“ statt lokaler Mitternacht – bei auf 12 Uhr normierten Terminen gleich. Andere Instanz: eigene tenantId wie Ionic. Dass Flutter dort nur Instanzen anbietet, in denen der Nutzer Admin/Verantwortlich ist, ist am Pause-Dialog erfasst (b08/b09, Flutter besser).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 302,
+    "method": "DbService.copySongToTenant",
+    "cond": [],
+    "table": "songs",
+    "op": "insert",
+    "payload": "{ ...newSong, tenantId: targetTenantId } as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "ed0d631d",
+    "mbody": "2e43bb02",
+    "id": "services/db.service#db-4c1eb778"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:305"
+    ],
+    "n": "Gleiche Spalten (name, number, prefix, withChoir, withSolo, link, difficulty, instrument_ids [], category null) + tenantId Ziel.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 240,
+    "method": "DbService.downloadSongFileFromTenant",
+    "cond": [],
+    "table": "storage:songs",
+    "op": "download",
+    "payload": "filePath",
+    "filters": [],
+    "src": "329e9e3f",
+    "mbody": "57ca285e",
+    "id": "services/db.service#db-60a1d5d1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:327",
+     "lib/core/services/song_file_service.dart:547"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 2511,
+    "method": "DbService.removeUserFromTenant",
+    "cond": [
+     "(personId !== undefined)"
+    ],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id'",
+    "filters": [
+     "eq('tenantId', this.tenant().id)",
+     "eq('appId', appId)",
+     "is('left', null)",
+     "neq('id', personId)",
+     "limit(1)"
+    ],
+    "tenantFilter": true,
+    "src": "53ef019d",
+    "mbody": "2cf39eae",
+    "roleGuarded": true,
+    "id": "services/db.service#db-6f7cc08a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:677"
+    ],
+    "n": "Mit personId: weitere aktive Person desselben Kontos (tenantId, appId, left null, id ≠ personId, limit 1) → Zugang bleibt; für alle Rollen gleich (Demo-Unterschied der Methode bei db-d2175ed2).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 2249,
+    "method": "DbService.updatePlayer",
+    "cond": [],
+    "table": "player",
+    "op": "update",
+    "payload": "pickPersonFields({ ...dataToUpdate, history: dataToUpdate.history as any, }) as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: player.id })"
+    ],
+    "tenantFilter": false,
+    "src": "1275c241",
+    "mbody": "ff42fbd7",
+    "roleGuarded": true,
+    "id": "services/db.service#db-73e39b3e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:538"
+    ],
+    "n": "pickPersonFields ohne id/created_at/img, Filter id + tenantId.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 1757,
+    "method": "DbService.addPlayer",
+    "cond": [
+     "(player.appId)"
+    ],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id'",
+    "filters": [
+     "eq('appId', player.appId)",
+     "eq('tenantId', effectiveTenantId)",
+     "limit(1)",
+     "maybeSingle()"
+    ],
+    "tenantFilter": true,
+    "src": "df7f1d2b",
+    "mbody": "5c6579b3",
+    "roleGuarded": true,
+    "id": "services/db.service#db-7932c0e0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:369",
+     "lib/features/people/presentation/pages/person_create_page.dart:1052",
+     "lib/features/registration/data/providers/registration_providers.dart:197"
+    ],
+    "n": "player.id nach appId + tenantId, limit 1, maybeSingle → vorhandene Zeile wird reaktiviert statt eingefügt. Rolle des neuen Kontos gleich (Hauptgruppe → Verantwortlich, sonst Spieler; Import ebenso), Demo gesperrt; Selbstregistrierung reaktiviert ebenfalls.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart",
+    "lib/features/people/presentation/pages/person_create_page.dart",
+    "lib/features/registration/data/providers/registration_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 2714,
+    "method": "DbService.getPersonAttendances",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*, attendance:attendance_id(id, date, type, typeInfo, songs, type_id, start_time, end_time, deadline, duration_days, plan, extra_plans, share_plan, descriptio…",
+    "filters": [
+     "eq('person_id', id)",
+     "gt('attendance.date', all ? dayjs('2020-01-01').toISOString() : this.getCurrentAttDate())"
+    ],
+    "tenantFilter": false,
+    "src": "d8927380",
+    "mbody": "7d2b572c",
+    "roleGuarded": true,
+    "id": "services/db.service#db-7ea61b92"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/sign_in_out_repository.dart:362",
+     "lib/data/repositories/player_repository.dart:1521",
+     "lib/data/repositories/attendance_repository.dart:383"
+    ],
+    "n": "Rollenfilter gleich: archivierte Termine nur für Admin/Verantwortlich (canSeeArchivedAttendances) in „Meine Termine“, Personenseite (Statistik/Historie) und Elternportal; Join auf attendance mit tenantId. Referenz der Erstprüfung (attendance_repository.dart:311) wird von keiner Seite genutzt.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/sign_in_out_repository.dart",
+    "lib/data/repositories/player_repository.dart",
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 1603,
+    "method": "DbService.getPlayers",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*, person_attendances(*)'",
+    "filters": [
+     "eq('tenantId', this.tenant().id)",
+     "is('left', null)",
+     "is('pending', false)",
+     "order('instrument')",
+     "order('isLeader', { ascending: false })",
+     "order('lastName')"
+    ],
+    "tenantFilter": true,
+    "src": "a39c9ef4",
+    "mbody": "435d8d9d",
+    "roleGuarded": true,
+    "id": "services/db.service#db-8d10beae"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:62",
+     "lib/core/providers/realtime_providers.dart:56",
+     "lib/features/members/data/providers/members_providers.dart:63",
+     "lib/data/repositories/player_repository.dart:252"
+    ],
+    "n": "Standardzweig für alle Rollen außer Eltern: tenantId, left null, pending=false, Sortierung Gruppe/Stimmführer/Nachname gleich; person_attendances lädt Flutter nicht mit (Prozente über eigenen Provider). Eltern bekommen in beiden Apps nur ihre Kinder (Flutter getChildrenForParent, eigenes Item db-d20467f8); keine Flutter-Seite mit getPlayers() ist für Eltern erreichbar (Mitglieder nur Helfer/Spieler/Stimmführer, Personen nur Dirigent/Beobachter).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart",
+    "lib/features/members/data/providers/members_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 4110,
+    "method": "DbService.getAttendanceTypesForTenants",
+    "cond": [],
+    "table": "attendance_types",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenant_id', tenantId)",
+     "order('index', { ascending: true })"
+    ],
+    "tenantFilter": true,
+    "src": "029d6fde",
+    "mbody": "a0569344",
+    "id": "services/db.service#db-931b014c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/sign_in_out_repository.dart:612"
+    ],
+    "n": "Typen per Join attType:type_id statt eigener Abfrage je Instanz; gleiche Daten",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/sign_in_out_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 3190,
+    "method": "DbService.getUpcomingHistory",
+    "cond": [],
+    "table": "history",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "` id, person_id ( firstName, lastName ), date, otherConductor, songId, attendance_id ( date ) `",
+    "filters": [
+     "eq('tenantId', this.tenant().id)"
+    ],
+    "tenantFilter": true,
+    "src": "595dfc98",
+    "mbody": "a3c8b38d",
+    "roleGuarded": true,
+    "id": "services/db.service#db-973409b9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/song_repository.dart:738",
+     "lib/features/planning/presentation/pages/planning_page.dart:859"
+    ],
+    "n": "Planung: Dirigentenname je Werk aus künftiger history (tenantId). Ionic filtert clientseitig nach Termin- bzw. Eintragsdatum ab heute, Flutter serverseitig nach history.date – praktisch gleich. Keine Rollenbedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 610,
+    "method": "DbService.getTenants",
+    "cond": [],
+    "table": "tenants",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "in('id', this.tenantUsers().map(tu => tu.tenantId))",
+     "order('longName', { ascending: true })"
+    ],
+    "tenantFilter": false,
+    "src": "00abc22b",
+    "mbody": "3e802437",
+    "id": "services/db.service#db-9c005a78"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/providers/tenant_providers.dart:176"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/tenant_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 3545,
+    "method": "DbService.activatePlayer",
+    "cond": [],
+    "table": "player",
+    "op": "update",
+    "payload": "{ left: null, history: player.history as any }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: player.id })"
+    ],
+    "tenantFilter": false,
+    "src": "c7c62915",
+    "mbody": "4d6b4280",
+    "id": "services/db.service#db-9e81b5f6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:737"
+    ],
+    "n": "left = null + History \"Person wieder aktiviert\", Filter id + tenantId.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 3770,
+    "method": "DbService.personExistsInTenant",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id'",
+    "filters": [
+     "eq('tenantId', targetTenantId)",
+     "ilike('firstName', firstName)",
+     "ilike('lastName', lastName)",
+     "limit(1)"
+    ],
+    "tenantFilter": true,
+    "src": "4fe3c25b",
+    "mbody": "78495022",
+    "id": "services/db.service#db-9f804cab"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:1564"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 355,
+    "method": "DbService.copySongToTenant",
+    "cond": [
+     "(song.files?.length)"
+    ],
+    "table": "songs",
+    "op": "update",
+    "payload": "{ files: filesJson, instrument_ids: Array.from(new Set( filesJson .map(f => f.instrumentId) .filter(id => id !== null && id !== 1 && id !== 2) )) }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: createdSong.id })"
+    ],
+    "tenantFilter": false,
+    "src": "2a347d22",
+    "mbody": "2e43bb02",
+    "id": "services/db.service#db-abc49039"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/song_file_service.dart:618",
+     "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:354"
+    ],
+    "n": "Flutter schreibt files je Upload (uploadFileBytes) und am Ende instrument_ids der gemappten Ids ohne null/1/2, Filter id + tenantId Ziel; Endzustand gleich.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 2614,
+    "method": "DbService.getAttendance",
+    "cond": [
+     "(withPersonAttendance)"
+    ],
+    "table": "attendance",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "`*, persons:person_attendances( *, person:person_id( firstName, lastName, img, instrument(id, name), joined, sort_order ) )`",
+    "filters": [
+     "eq('tenantId', this.tenant().id)",
+     "gt('date', all ? dayjs('2020-01-01').toISOString() : this.getCurrentAttDate())",
+     "order('date', { ascending: false, })"
+    ],
+    "tenantFilter": true,
+    "src": "d7a3aece",
+    "mbody": "f921516c",
+    "roleGuarded": true,
+    "id": "services/db.service#db-cc6767aa"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:69",
+     "lib/core/providers/realtime_providers.dart:251",
+     "lib/core/providers/statistics_providers.dart:80"
+    ],
+    "n": "Mit Personen: Termine nach tenantId, date > Saisonstart bzw. 2020, neueste zuerst; archivierte nur für Admin/Verantwortlich (filterArchivedForRole in Repository und Terminliste). Aufrufer (Terminliste, Export, Statistik) nutzen den gefilterten Weg.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 1515,
+    "method": "DbService.updateProfile",
+    "cond": [
+     "(additional_fields?.bfecg_church && additional_fields.bfecg_church !== churchId)",
+     "(players && players.length > 0)",
+     "(churchId)"
+    ],
+    "table": "player",
+    "op": "update",
+    "payload": "{ additional_fields }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: player.id })"
+    ],
+    "tenantFilter": false,
+    "src": "708d5fd1",
+    "mbody": "2ec600ef",
+    "id": "services/db.service#db-d030c88f-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/profile_repository.dart:403"
+    ],
+    "n": "additional_fields.bfecg_church in eigenen Zeilen mit gesetzter, abweichender Kirche; Filter id + tenantId + appId.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/profile_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 261,
+    "method": "DbService.uploadSongFileToTenant",
+    "cond": [],
+    "table": "storage:songs",
+    "op": "upload",
+    "payload": "filePath, blob, { upsert: true }",
+    "filters": [],
+    "src": "449a94fd",
+    "mbody": "1ea40ebe",
+    "id": "services/db.service#db-e29da71b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/song_file_service.dart:572",
+     "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:339"
+    ],
+    "n": "songs/<Zielinstanz>/<neue songId>/<storageName>, upsert, Dateityp der Quelle.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 3659,
+    "method": "DbService.getExistingEmails",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'email'",
+    "filters": [
+     "eq('tenantId', id)",
+     "range(from, from + pageSize - 1)"
+    ],
+    "tenantFilter": true,
+    "src": "d2b86eee",
+    "mbody": "eb35fd86",
+    "roleGuarded": true,
+    "id": "services/db.service#db-e6a0665f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/import_repository.dart:27",
+     "lib/features/people/presentation/pages/person_import_page.dart:152"
+    ],
+    "n": "E-Mails der Instanz (tenantId, seitenweise 1000, getrimmt/klein) für Duplikate beim Import; Import nur für Admin/Verantwortlich in beiden Apps.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 2664,
+    "method": "DbService.getUpcomingAttendances",
+    "cond": [],
+    "table": "attendance",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenantId', tenantId ?? this.tenant().id)",
+     "gt('date', from.toISOString())",
+     "order('date', { ascending: true, })"
+    ],
+    "tenantFilter": true,
+    "src": "29eea015",
+    "mbody": "1effaea8",
+    "roleGuarded": true,
+    "id": "services/db.service#db-e7a94696"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:125",
+     "lib/data/repositories/player_repository.dart:910"
+    ],
+    "n": "Keine Rollenbedingung in der Methode; Termine der Instanz ab heute (tenantId), aufsteigend. Flutter gte lokaler Tagesbeginn statt gt – bei auf 12 Uhr normierten Terminen gleich.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart",
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 2525,
+    "method": "DbService.removeUserFromTenant",
+    "cond": [],
+    "table": "tenantUsers",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('tenantId', this.tenant().id)",
+     "match({ userId: appId })"
+    ],
+    "tenantFilter": true,
+    "src": "273f9dd9",
+    "mbody": "2cf39eae",
+    "roleGuarded": true,
+    "id": "services/db.service#db-f46be416"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:683"
+    ],
+    "n": "Admin bleibt, weitere aktive Person mit gleicher appId hält den Zugang.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 1505,
+    "method": "DbService.updateProfile",
+    "cond": [
+     "(churchId)"
+    ],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('appId', this.user.id)"
+    ],
+    "tenantFilter": false,
+    "src": "6b791e48",
+    "mbody": "2ec600ef",
+    "id": "services/db.service#db-f5ce2029"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/profile_repository.dart:385"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/profile_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "services/db.service.ts",
+    "line": 3359,
+    "method": "DbService.createInstance",
+    "cond": [],
+    "call": "Utils.getUrl",
+    "args": "Role.ADMIN",
+    "src": "fee7e775",
+    "mbody": "d825507b",
+    "roleGuarded": true,
+    "id": "services/db.service#effect-1473b6bd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:594"
+    ],
+    "n": "Utils.getUrl(ADMIN) = Personen; Flutter /people – wie nav-c490be92.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "services/db.service.ts",
+    "line": 1410,
+    "method": "DbService.routeAfterAuth",
+    "cond": [
+     "?(useDashboard)",
+     "(this.tenantUser())"
+    ],
+    "call": "Utils.getUrl",
+    "args": "role",
+    "src": "d707b28e",
+    "mbody": "67854b2a",
+    "roleGuarded": true,
+    "id": "services/db.service#effect-75028b3e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/utils/dashboard_logic.dart:56",
+     "lib/features/auth/presentation/pages/login_page.dart:461"
+    ],
+    "n": "homeRouteFor: Dashboard für Admin/Verantwortliche mit showDashboardTab, sonst role.defaultRoute (= Utils.getUrl).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "nav",
+    "file": "services/db.service.ts",
+    "line": 1410,
+    "method": "DbService.routeAfterAuth",
+    "cond": [
+     "(this.tenantUser())"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "useDashboard ? '/tabs/home-dashboard' : Utils.getUrl(role)",
+    "src": "58adcfe9",
+    "mbody": "67854b2a",
+    "roleGuarded": true,
+    "id": "services/db.service#nav-138a96fb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:312",
+     "lib/features/auth/presentation/pages/login_page.dart:458",
+     "lib/core/utils/dashboard_logic.dart:46",
+     "lib/core/constants/enums.dart:137"
+    ],
+    "n": "Ziel je Rolle gleich: Admin/Verantwortlich mit showDashboardTab_<Instanz> → Dashboard; Admin/Verantwortlich/Beobachter → Personen; Eltern → Elternportal; Helfer, Stimmführer(-Helfer), Spieler, Bewerber, NONE → Meine Termine. Instanzauswahl nach Login (Ionic Alert, Flutter Seite /tenants) ist unter alert-f27cc642 erfasst.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "nav",
+    "file": "services/db.service.ts",
+    "line": 1403,
+    "method": "DbService.routeAfterAuth",
+    "cond": [
+     "(pendingFileLink)",
+     "(this.tenantUser())"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "pendingFileLink",
+    "src": "3691d38b",
+    "mbody": "67854b2a",
+    "roleGuarded": true,
+    "id": "services/db.service#nav-7f5eeeac"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:344",
+     "lib/core/router/app_router.dart:369",
+     "lib/features/public_links/presentation/pages/open_file_page.dart:82",
+     "lib/features/public_links/presentation/pages/open_file_page.dart:96"
+    ],
+    "n": "Gemerkter Datei-Link wird nach Login (auch nach /terms) eingelöst; /open-file wechselt die Instanz und prüft Dateizugriff (Toast 'files.noAccess' → Startseite) wie Ionic. Randfall ohne jede Instanz: Ionic → /register, Link bleibt gespeichert; Flutter löst ihn sofort ein → Toast 'Du hast keinen Zugriff auf diese Instanz.' → Instanz anlegen (Zugriff in beiden Fällen nicht möglich). Persistenz über Reload: x-8fea36599e.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "nav",
+    "file": "services/db.service.ts",
+    "line": 3292,
+    "method": "DbService.deleteInstance",
+    "cond": [
+     "!(this.tenantUser())"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "'/register'",
+    "src": "22eb71b5",
+    "mbody": "5b81a8b5",
+    "roleGuarded": true,
+    "id": "services/db.service#nav-8f636066"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:328",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:361",
+     "lib/core/providers/tenant_providers.dart:315"
+    ],
+    "n": "Letzte Instanz gelöscht → /tenants zeigt ohne Instanzen die nicht schließbare Seite 'Neue Instanz anlegen' (= Ionic /register mit Konto-Menü). Löschen nur Admin und nicht Demo, wie Ionic canDeleteTenant.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "nav",
+    "file": "services/db.service.ts",
+    "line": 3359,
+    "method": "DbService.createInstance",
+    "cond": [],
+    "via": "router.navigateByUrl",
+    "to": "Utils.getUrl(Role.ADMIN)",
+    "src": "44440bf8",
+    "mbody": "d825507b",
+    "roleGuarded": true,
+    "id": "services/db.service#nav-c490be92"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:594",
+     "lib/features/tenant_selection/tenant_defaults.dart:22"
+    ],
+    "n": "Ersteller ist immer Admin der neuen Instanz (Superentwickler-Konto immer, eigenes Konto außer beim Superentwickler) → Ionic /tabs/player, Flutter Role.admin.defaultRoute „/people“. Demo gesperrt.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ]
+  }
+ ]
+}

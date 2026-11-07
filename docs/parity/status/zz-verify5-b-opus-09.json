@@ -1,0 +1,248 @@
+{
+  "batch": "zz-verify5-b-opus-09",
+  "ionic": "1923d203",
+  "flutter": "57bb011",
+  "items": {
+    "services/image/image.service#db-12611d90": {
+      "s": "ok",
+      "f": ["lib/data/repositories/player_repository.dart:443", "lib/data/repositories/profile_repository.dart:462"],
+      "n": "getPublicUrl(<playerId>) im Bucket profiles nach dem Upload; gespeichert wird die nackte URL wie Ionic (Person: PlayerRepository.updateImage, eigenes Profil: uploadOwnImage).",
+      "v": "bestätigt"
+    },
+    "services/image/image.service#db-4cfbc031": {
+      "s": "ok",
+      "f": ["lib/data/repositories/player_repository.dart:501", "lib/data/repositories/player_repository.dart:1793"],
+      "n": "Nach erfolgreichem copy: getPublicUrl(<targetId>) + '?v=<ms>' wie Ionic; Kopierfehler behält die Quell-URL (Ionic: if (!error)).",
+      "v": "bestätigt"
+    },
+    "services/image/image.service#db-58f14585-2": {
+      "s": "ok",
+      "f": ["lib/data/repositories/player_repository.dart:448", "lib/features/people/presentation/widgets/person_detail/person_header.dart:224"],
+      "n": "update player {img: publicUrl} .eq('id').eq('tenantId') nach Upload; fremde Person wie Ionic match({id}). Eigenes Konto zusätzlich syncOwnImage (alle Zeilen des appId) = Ionic-appId-Zweig.",
+      "v": "bestätigt"
+    },
+    "services/image/image.service#db-7913e521": {
+      "s": "ok",
+      "f": ["lib/data/repositories/attendance_repository.dart:1110", "lib/features/attendance/presentation/attendance_extra_actions.dart:80"],
+      "n": "update attendance {img: url} .eq('id').eq('tenantId') nach Upload in Bucket attendances, Key <id>, upsert – wie Ionic (zusätzlich Tenant-Prüfung).",
+      "v": "bestätigt"
+    },
+    "services/image/image.service#db-7a9f2e5f": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/person_header.dart:299", "lib/data/repositories/profile_repository.dart:498"],
+      "n": "storage profiles.remove([Key aus der gespeicherten URL]) nach dem Leeren von img, Fehler werden geschluckt wie Ionic (Person: profileImagePathFromUrl, eigenes Profil: letztes URL-Segment).",
+      "v": "bestätigt"
+    },
+    "services/image/image.service#db-99d7e9b8": {
+      "s": "ok",
+      "f": ["lib/data/repositories/player_repository.dart:509", "lib/data/repositories/player_repository.dart:1793"],
+      "n": "update player {img: url} auf die Zielzeile .eq('id', targetId).eq('tenantId', targetTenantId); Fehler wird geworfen und im Handover nur geloggt wie Ionic (console.error).",
+      "v": "bestätigt"
+    },
+    "services/image/image.service#db-a5100067": {
+      "s": "ok",
+      "f": ["lib/data/repositories/player_repository.dart:435", "lib/data/repositories/profile_repository.dart:453"],
+      "n": "Gleicher Bucket profiles, Key <playerId>, upsert: true; Upload-Fehler wird geworfen und als Fehler-Toast gezeigt wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/image/image.service#db-a7577189": {
+      "s": "ok",
+      "f": ["lib/data/repositories/player_repository.dart:494"],
+      "n": "remove([targetPath]) nur bei profiles-URL und sourcePath != targetPath, vor dem copy – wie Ionic; Fehler ignoriert.",
+      "v": "bestätigt"
+    },
+    "services/image/image.service#db-a8a5f597-2": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/person_header.dart:290", "lib/data/repositories/player_repository.dart:586"],
+      "n": "Nach Bestätigungsdialog update player {img: ''} .eq('id').eq('tenantId') (updatePlayerFields), danach Storage-Remove; nur für bestehende Person wie Ionic (existingPlayer, newUser=false).",
+      "v": "bestätigt"
+    },
+    "services/image/image.service#db-dd0a299b": {
+      "s": "ok",
+      "f": ["lib/data/repositories/attendance_repository.dart:1109"],
+      "n": "getPublicUrl('<attendanceId>') im Bucket attendances wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/image/image.service#logic-48858de3": {
+      "s": "ok",
+      "f": ["lib/data/repositories/player_repository.dart:431", "lib/data/repositories/player_repository.dart:473", "lib/data/repositories/profile_repository.dart:26", "lib/data/repositories/profile_repository.dart:442", "lib/data/repositories/profile_repository.dart:480", "lib/data/repositories/organisation_settings_repository.dart:93", "lib/data/repositories/organisation_settings_repository.dart:112", "lib/data/repositories/attendance_repository.dart:1099"],
+      "n": "Upload/Entfernen/Kopieren von Profilbild, Org-Logo (branding, org-<id>, ?v=) und Termin-Bild entsprechen den Repositories. Der appId-Zweig (eigenes Konto, alle Instanzen) ist inzwischen über syncOwnImage/syncOwnPlayerImage bzw. _syncOwnPersonalData umgesetzt (je Zeile id+tenantId+appId); die alte Notiz zur Abweichung ist überholt. updateTenantLogo/removeTenantLogo sind toter Code (keine Aufrufer).",
+      "v": "bestätigt"
+    },
+    "services/layout/layout.service#logic-e1e06d78": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/layout/side_nav/side_nav_layout.dart:31", "lib/shared/widgets/layout/side_nav/side_nav_layout.dart:40", "lib/shared/widgets/layout/side_nav/side_nav_layout.dart:64", "lib/shared/widgets/layout/side_nav/side_nav.dart:89", "lib/shared/widgets/layout/main_shell.dart:339"],
+      "n": "Gleiche Breakpoints (768 Overlay / 992 fest / 1200 Standard ausgeklappt), collapsed nur im festen Modus, Wahl unter 'sidePanelCollapsed' ('1'/'0', SharedPreferences statt localStorage, Fehler geschluckt), Umschalter setzt !collapsed; Breite reagiert über MediaQuery statt resize-Listener.",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#db-142faef7": {
+      "s": "ok",
+      "f": ["lib/data/repositories/live_activity_repository.dart:30", "lib/core/services/live_activity_service.dart:562", "lib/core/services/live_activity_service.dart:578"],
+      "n": "Gleiche Spalten/Filter (tenantId, 14 Tage zurück 0:00 bis morgen 23:59:59.999 lokal als UTC-ISO, plan nicht null). Rollen gleich: Beobachter nie, Admin/Verantwortlich alle Pläne, alle anderen nur mit share_plan. Nur native App.",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#db-2675f6b3": {
+      "s": "ok",
+      "f": ["lib/data/repositories/org_plan_repository.dart:128", "lib/core/services/live_activity_service.dart:871"],
+      "n": "Nur Admin/Verantwortlich mit Organisation; shared_plans .eq('org_id').gte/lte date gestern bis morgen (YYYY-MM-DD); Flutter liest '*' statt fünf Spalten. Ohne date/time/fields übersprungen, Titel-Fallback „ORG-Plan“ – wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#db-58d62735": {
+      "s": "ok",
+      "f": ["lib/data/repositories/org_plan_repository.dart:92", "lib/core/services/live_activity_service.dart:607"],
+      "n": "Nur Admin/Verantwortlich (isLeader) und nur mit Organisation: tenant_group_tenants.tenant_id nach tenant_group = Org-ID – wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#db-818eac03": {
+      "s": "ok",
+      "f": ["lib/core/services/live_activity_service.dart:715", "lib/core/services/live_activity_service.dart:834"],
+      "n": "Nutzer-ID aus auth.currentUser statt auth.getUser(); ohne Nutzer oder Token kein Speichern wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#db-f29b62df": {
+      "s": "ok",
+      "f": ["lib/data/repositories/org_plan_repository.dart:102", "lib/core/services/live_activity_service.dart:879"],
+      "n": "Nur Admin/Verantwortlich mit Organisation; attendance 'id, date, plan, typeInfo, attType:type_id(name, color)', tenantId in Org-Instanzen, is_org_plan, gestern 0:00 bis morgen 23:59, plan nicht null; ohne verbundene Instanzen leer – wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#native-0534809b": {
+      "s": "ok",
+      "f": ["lib/core/services/live_activity_service.dart:522"],
+      "n": "update {attendanceId, planKey, state} bei laufender Aktivität und geändertem stateKey; iOS iosLiveState, Android Rohzustand wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#native-09b70352": {
+      "s": "ok",
+      "f": ["lib/core/services/live_activity_service.dart:515"],
+      "n": "end {attendanceId, planKey, state} bei phase 'ended' nur wenn laufend – wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#native-09b70352-2": {
+      "s": "ok",
+      "f": ["lib/core/services/live_activity_service.dart:545"],
+      "n": "end {..., immediate: true} für nicht mehr gewollte Aktivitäten dieser Instanz (attendanceIds null oder enthalten) – wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#native-134664fe": {
+      "s": "ok",
+      "f": ["lib/core/services/live_activity_service.dart:679"],
+      "n": "configure {url, key} nur auf iOS (Supabase-URL/Anon-Key), Fehler abgefangen wie Ionic .catch.",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#native-13900c1d": {
+      "s": "ok",
+      "f": ["lib/core/services/live_activity_service.dart:686"],
+      "n": "getTokens: pushToStartToken → saveToken('start'), activityTokens → saveToken('update', target); Fehler abgefangen wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#native-3a9fbadc": {
+      "s": "ok",
+      "f": ["lib/core/services/live_activity_service.dart:416"],
+      "n": "AppLifecycleListener onResume → startLoop, onInactive → stopLoop; einmal pro Sitzung beim ersten init wie Ionic App.addListener('appStateChange').",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#native-72f0d353": {
+      "s": "ok",
+      "f": ["lib/core/services/live_activity_service.dart:496"],
+      "n": "list() liefert die laufenden Aktivitäten für den Abgleich wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#native-aeb702b8": {
+      "s": "ok",
+      "f": ["lib/core/services/live_activity_service.dart:530"],
+      "n": "start {attendanceId, planKey, title, state} wenn nicht laufend und nicht beendet – wie Ionic {...c, state}; zusätzlich nie bei abgeschaltetem Schalter (Ionic hat dann ohnehin keine Kandidaten).",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#native-c934f51c": {
+      "s": "ok",
+      "f": ["lib/core/services/live_activity_service.dart:449", "lib/features/notifications/presentation/pages/notifications_page.dart:122"],
+      "n": "setEnabled(false): lastKeys leeren, endAll (Fehler geschluckt); true → sync – vom Schalter in den Benachrichtigungen wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#native-d5cbbf48": {
+      "s": "ok",
+      "f": ["lib/core/services/live_activity_service.dart:392"],
+      "n": "isAvailable → supported; Fehler = nicht unterstützt, dann kein Start – wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#native-f31c300f": {
+      "s": "ok",
+      "f": ["lib/core/services/live_activity_service.dart:751"],
+      "n": "Native Event pushToStartToken → saveToken('start', token) über den MethodChannel (attach), wie Ionic-Listener.",
+      "v": "bestätigt"
+    },
+    "services/live-activity/live-activity.service#native-f31c300f-2": {
+      "s": "ok",
+      "f": ["lib/core/services/live_activity_service.dart:755"],
+      "n": "Native Event activityToken → saveToken('update', token, target) wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/login.guard#logic-7db01f48": {
+      "s": "ok",
+      "f": ["lib/core/router/app_router.dart:334", "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:69", "lib/core/utils/dashboard_logic.dart:56"],
+      "n": "Eingeloggt auf /login → Startseite der Rolle (Admin/Verantwortlich mit showDashboardTab_<tenant> → /home-dashboard, sonst defaultRoute = Utils.getUrl) bzw. /tenants, dessen Auto-Navigation die gespeicherte Instanz öffnet. Randfall ohne Instanz: Flutter zeigt direkt „Neue Instanz anlegen“, Ionic das Login-Formular (nach erneutem Login ebenfalls /register).",
+      "v": "bestätigt"
+    },
+    "services/notification/notification.service#db-9e3d4549": {
+      "s": "ok",
+      "f": ["lib/core/services/telegram_service.dart:207", "lib/features/notifications/presentation/pages/notifications_page.dart:108"],
+      "n": "update notifications per id mit allen Flags (ohne created_at); Tracking NotificationSettingsChanged {enabled, pushEnabled} nur bei Erfolg, Fehler-Toast vorhanden (anderer Wortlaut).",
+      "v": "bestätigt"
+    },
+    "services/notification/notification.service#db-a9921eda": {
+      "s": "ok",
+      "f": ["lib/core/services/telegram_service.dart:181"],
+      "n": "select '*' .eq('id', userId); ohne Zeile Insert mit gleichen Defaults (enabled false, Kategorien true, push false) wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/notification/notification.service#logic-fbcbe895": {
+      "s": "ok",
+      "f": ["lib/core/services/telegram_service.dart:181", "lib/core/services/telegram_service.dart:196", "lib/core/services/telegram_service.dart:207"],
+      "n": "Laden/Anlegen/Ändern der Benachrichtigungs-Konfiguration entspricht TelegramService (enabled_tenants als Zahlen); notifyPerTelegram/sendPlanPerTelegram/sendSongPerTelegram dieses Service sind toter Code (db.service nutzt nur get/updateNotificationConfig).",
+      "v": "bestätigt"
+    },
+    "services/organisation/organisation.service#db-2b71bceb": {
+      "s": "ok",
+      "f": ["lib/data/repositories/org_plan_repository.dart:260", "lib/core/providers/plan_providers.dart:288", "lib/features/organisation/presentation/pages/org_person_fields_page.dart:111"],
+      "n": "update tenant_groups {additional_fields} .eq('id', orgId).select().single() wie Ionic (Org der aktuellen Instanz, nur Admin); Feld-JSON gleiche Keys (id, name, type, defaultValue, options, visibleToPlayers, editableByPlayers, displayMode).",
+      "v": "bestätigt"
+    },
+    "services/organisation/organisation.service#db-32f64acc": {
+      "s": "ok",
+      "f": ["lib/data/repositories/org_plan_repository.dart:252", "lib/features/organisation/presentation/pages/org_settings_page.dart:63", "lib/features/organisation/presentation/pages/org_settings_page.dart:82"],
+      "n": "Gleiche Spalten (beamer_files_enabled bzw. gemeinde_app_key_hash + _hint, Schlüssel atx_+48 Hex, SHA-256, Hint letzte 4), nur Admin mit Gemeinde-App-Org; Fehler-Toast svcSaveGemeindeAppFailed.",
+      "v": "bestätigt"
+    },
+    "services/organisation/organisation.service#db-3ed669cb": {
+      "s": "ok",
+      "f": ["lib/data/repositories/shared_person_fields.dart:86"],
+      "n": "Gleiche Spalten/Filter (tenant_group, in person_key); Flutter lädt in 100er-Blöcken seitenweise mit .order('id') (Reihenfolge für das Ergebnis-Map ohne Bedeutung).",
+      "v": "bestätigt"
+    },
+    "services/organisation/organisation.service#db-67309274": {
+      "s": "ok",
+      "f": ["lib/data/repositories/org_plan_repository.dart:240", "lib/core/providers/plan_providers.dart:245"],
+      "n": "update tenant_groups {planning_templates} .eq('id').select().single(); Flutter schreibt zusätzlich das berechnete end je Vorlage (Ionic ignoriert end beim Anwenden, ohne Wirkung).",
+      "v": "bestätigt"
+    },
+    "services/organisation/organisation.service#db-7215e087": {
+      "s": "ok",
+      "f": ["lib/data/repositories/org_plan_repository.dart:199", "lib/core/providers/plan_providers.dart:295"],
+      "n": "update tenant_groups {public_plan_key} .eq('id'); 16 Hex-Zeichen aus Random.secure (Ionic randomUUID-Hex).",
+      "v": "bestätigt"
+    },
+    "services/organisation/organisation.service#db-a803b727": {
+      "s": "ok",
+      "f": ["lib/data/repositories/org_plan_repository.dart:246", "lib/features/organisation/presentation/pages/org_settings_page.dart:39"],
+      "n": "Getrimmter Name, leer → Hinweis; update tenant_groups {name} .eq('id').select().single() wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/organisation/organisation.service#db-ac6b27bd": {
+      "s": "ok",
+      "f": ["lib/data/repositories/org_plan_repository.dart:304", "lib/core/providers/plan_providers.dart:288", "lib/features/organisation/presentation/pages/org_person_fields_page.dart:111"],
+      "n": "delete tenant_group_person_fields .eq('tenant_group').in('field_id') nach dem Speichern der Felder, gelöschte IDs = original minus aktuell, leere Liste → nichts, wie Ionic.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

@@ -1,0 +1,131 @@
+{
+ "batch": "zz-verify5-b-sonnet-12",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "team-organization/tasks-tab/tasks-tab.component#text-444e918f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:92",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:132"
+   ],
+   "n": "emptyText-Logik identisch (Nicht-Leitung/mine/leer/Person), vier Texte.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#action-1d76455a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:587"
+   ],
+   "n": "Bestätigt gegen aktuellen Code, unverändert gleich.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#action-699aa11a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:362"
+   ],
+   "n": "Bestätigt gegen aktuellen Code, unverändert gleich.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#action-7f827458": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:524"
+   ],
+   "n": "Bestätigt gegen aktuellen Code, unverändert gleich.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#action-d04855de": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:396"
+   ],
+   "n": "Bestätigt gegen aktuellen Code, unverändert gleich.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#nav-190be6fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:508",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:537"
+   ],
+   "n": "Bestätigt gegen aktuellen Code, unverändert gleich.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#nav-f98c876b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:365"
+   ],
+   "n": "Bestätigt gegen aktuellen Code, unverändert gleich.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-040514d0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:619"
+   ],
+   "n": "Bestätigt gegen aktuellen Code, unverändert gleich.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-2b2a9314": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:606"
+   ],
+   "n": "Bestätigt gegen aktuellen Code, unverändert gleich.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-59b7f7b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:583"
+   ],
+   "n": "Bestätigt gegen aktuellen Code, unverändert gleich.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-67aab65d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:604"
+   ],
+   "n": "Bestätigt gegen aktuellen Code, unverändert gleich.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-729adf66": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:582"
+   ],
+   "n": "Bestätigt gegen aktuellen Code, unverändert gleich.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-3235ad83": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:564"
+   ],
+   "n": "Bestätigt gegen aktuellen Code, unverändert gleich.",
+   "v": "bestätigt"
+  },
+  "terms/terms.page#modal-0b75e632": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:42",
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:139"
+   ],
+   "n": "Datenschutz-Link öffnet Legal-Modal (showLegalModal) weiterhin.",
+   "v": "bestätigt"
+  },
+  "utilities/Utils#toast-29969d9e": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:127"
+   ],
+   "n": "Warnung \"Kein Plan verfügbar\" (planningNoPlan, gleicher Text) bei leerem Plan.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

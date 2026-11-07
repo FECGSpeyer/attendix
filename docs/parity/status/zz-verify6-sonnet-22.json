@@ -1,0 +1,432 @@
+{
+ "batch": "zz-verify6-sonnet-22",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "protocols/protocol/protocol.page#text-fb9b7b24": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1279-1284"
+   ],
+   "n": "",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-fbfcf4a9": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:961-966"
+   ],
+   "n": "Gruppen-Text nur wenn Typ relevantGroups hat, sonst readAll; Sheet nur über _openPublish (Leitung).",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-fd297bc2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1718-1735",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1443-1446"
+   ],
+   "n": "„Läuft: {name} · noch {min} min“, Name = „TOP n“ oder Punktname, wie liveLabel.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-fd7a6a5e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:917-920"
+   ],
+   "n": "Plural-ARB gleich, nur bei besprochenen TOPs.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-ff71af8d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1838"
+   ],
+   "n": "Titel des aktiven Punkts im breiten Layout.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#toast-09822721": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1067-1069"
+   ],
+   "n": "protocolPublishFailed als Fehler-Toast, gleicher catch um den Publish.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#toast-31c22572": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:555"
+   ],
+   "n": "protocolCreateFailed Fehler-Toast bei fehlgeschlagenem ensureProtocol.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#toast-45539e3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:619-621"
+   ],
+   "n": "agendaEnterTitle als Warnung bei leerem Titel; Dialog ist in Flutter schon zu (siehe alert-0750ecfb).",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#toast-a4e6101a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1028-1038"
+   ],
+   "n": "protocolCloseFailed als Warnung, Publish läuft weiter.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#toast-ad978678": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:501"
+   ],
+   "n": "protocolOutcomeSaveFailed Fehler-Toast.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#toast-b135441f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:438-443"
+   ],
+   "n": "protocolNotesSaveFailed, höchstens alle 10 s wie Ionic.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#toast-cbe0d029": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1042-1053"
+   ],
+   "n": "protocolPdfFailedNotify als Warnung nur bei sendPdf, Veröffentlichung läuft weiter.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#toast-fe3d7c68": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1066"
+   ],
+   "n": "protocolPublished Erfolgs-Toast nach Publish.",
+   "v": "bestätigt"
+  },
+  "public-planning/my-plans/my-plans.component#action-0e9f07d8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1093-1105"
+   ],
+   "n": "Wisch-Aktion löschen (danger, Papierkorb-Icon) je Plan.",
+   "v": "bestätigt"
+  },
+  "public-planning/my-plans/my-plans.component#action-471438e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1029-1031"
+   ],
+   "n": "„Schließen“ in der Kopfzeile schließt ohne Auswahl.",
+   "v": "bestätigt"
+  },
+  "public-planning/my-plans/my-plans.component#action-580d78c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1106-1112"
+   ],
+   "n": "Zeile Titel (Fallback „Ablaufplan“) + Datum · n Felder, Tippen lädt den Plan.",
+   "v": "bestätigt"
+  },
+  "public-planning/my-plans/my-plans.component#alert-c33e32bf": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1067-1083",
+    "lib/data/repositories/plan_repository.dart:296-312"
+   ],
+   "n": "Rückfrage „Plan löschen“/Text mit Titel, Löschen auf shared_plans per id, zusätzlich creator_user_id (nur eigene Pläne, unkritisch); Fehler-Toast vorhanden.",
+   "v": "bestätigt"
+  },
+  "public-planning/my-plans/my-plans.component#text-8b159228": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1042-1050"
+   ],
+   "n": "„Keine Pläne vorhanden.“ zentriert grau.",
+   "v": "bestätigt"
+  },
+  "public-planning/my-plans/my-plans.component#toast-16f262e1": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1080-1082"
+   ],
+   "n": "plansDeleteFailed als Fehler-Toast.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-1352b63f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:595-604"
+   ],
+   "n": "Chevron rechts/runter, Tooltip „Block aufklappen“/„einklappen“.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-26dcf833": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:506-513"
+   ],
+   "n": "Orga-Feld-Einträge im „+“-Menü nur eingeloggt (org nur bei Login).",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-29abb447": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:858"
+   ],
+   "n": "Teilen-Icon, Tooltip „Teilen & Exportieren“, immer sichtbar; zeigt Sheet nach Validierung.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-5364830f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:935-939"
+   ],
+   "n": "„Vorlage wiederherstellen“, Icon refresh, primär; ohne Vorlage Warnung wie Ionic.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-561534c8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:505-513"
+   ],
+   "n": "„Notizfeld hinzufügen“ im Menü.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-58426c72": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:950-955"
+   ],
+   "n": "„Neuer Plan“ grau, nur eingeloggt (Route nur Admin/Verantwortlich).",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-5d3b0d53": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:505-513"
+   ],
+   "n": "„Programmblock hinzufügen“ im Menü.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-5dd20907": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:511-513",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:563-570"
+   ],
+   "n": "Nur eingeloggt, Instanztyp ≠ general und mit Werken; Werk-Auswahl, Feld „Nr. Name“ mit 20 min.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-5eb77eb9": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:960-972"
+   ],
+   "n": "„+“ am Ablaufplan-Kopf öffnet das Menü.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-6c83022b": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:448-451",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:748-766"
+   ],
+   "n": "„Unterpunkt hinzufügen“ (Icon add, primär) am Ende jedes aufgeklappten Blocks.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-7c6a22b8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:940-949",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:668-700"
+   ],
+   "n": "hasOrg = eingeloggt + Organisation; „In Organisation \"{org}\"“ entfernt, sonst validiert, speichert, setzt shared_plans.org_id; Toasts gleich (Flutter filtert zusätzlich creator_user_id).",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-b290a33e": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:509-513",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:559-562"
+   ],
+   "n": "Nur eingeloggt und ≠ general; fügt fehlende Werke der Historie an (20 min, „Nr. “ Präfix), ohne Toast bei leerer Historie.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-bc995e2f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:851",
+    "lib/core/router/app_router.dart:1170-1186"
+   ],
+   "n": "Zurück-Pfeil nur in der App (eingeloggt = inApp); Ziel über Routen-Hierarchie wie defaultHref.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-ded29dbe": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1004-1010",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:743-751"
+   ],
+   "n": "„Exportieren“ mit Teilen-Icon, volle Breite, Validierung, dann Export-Sheet.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#action-e29a181c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:857",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:659-666"
+   ],
+   "n": "„Meine Pläne“ nur eingeloggt; /settings/planung nur Admin/Verantwortlich (app_router.dart:182), wie Ionic isUrlAccessAllowed.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#actionsheet-722869aa": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:753-770",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:76-102"
+   ],
+   "n": "Header „Teilen & Exportieren“, Nur-Lesen-/Bearbeitungs-Link, PDF (A4), PDF (2x A5), Bild (A4), Telegram nur mit Chat-ID, Abbrechen – Reihenfolge und Wirkung gleich. Ionic: ohne Icons / Flutter: Icons.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#actionsheet-8b22c81c": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:330-362"
+   ],
+   "n": "Header Blockname, Untertitel „n Unterpunkte · x min“, Block bearbeiten/Unterpunkt hinzufügen/Block auflösen/Block mit Unterpunkten löschen (destruktiv), Abbrechen gleich. „Als Vorlage speichern“ nur wenn onSaveBlockTemplate gesetzt (nicht auf der öffentlichen Seite). Ionic: ohne Icons / Flutter: Icons.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#actionsheet-bfb3e0da": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:743-751",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:76-102"
+   ],
+   "n": "Validierung vorher, Header „Exportieren“, PDF (A4), PDF (2x A5), Bild (A4), Telegram-Einträge nur mit Chat-ID, Abbrechen – gleich. Ionic: ohne Icons / Flutter: Icons.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#alert-04303c43": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:365-385"
+   ],
+   "n": "„Block bearbeiten“ mit Name/Ausführung/Info, Abbrechen/Speichern, „Bitte einen Namen eingeben.“ (Dialog bleibt offen).",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#alert-252d541a": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:306-328",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:574-616"
+   ],
+   "n": "„Unterpunkt hinzufügen“ mit Blockname als Untertitel, Platzhalter wie Ionic, Minuten Vorgabe 5; Einfügen am Blockende, Block wird aufgeklappt.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#alert-25e72979": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:544-556",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:236-345"
+   ],
+   "n": "„Notizfeld hinzufügen“, Platzhalter „Notiz eingeben...“, Meldung „Bitte eine Notiz eingeben.“, id „noteFld …“, Dauer 0 – gleich. Ionic: nur Platzhalter, ungetrimmt / Flutter: zusätzlich Feldbeschriftung „Notiz“, Text getrimmt (kosmetisch).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#alert-32122b22": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:534-543",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:236-345"
+   ],
+   "n": "Titel, Platzhalter, Meldung „Bitte einen Programmpunkt eingeben.“, Dauer 20, für alle gleich. Ionic: nur Platzhalter, ungetrimmt / Flutter: zusätzlich Feldbeschriftungen, Werte getrimmt (kosmetisch).",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#alert-815ae115": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:618-640",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:950-955"
+   ],
+   "n": "„Neuer Plan“ nur eingeloggt; mit Feldern Rückfrage mit gleichem Text, setzt Titel, Datum, 10:00, Felder, Vorlage, Branding, Org-Zuordnung zurück (nur lokal).",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#alert-f4ddbc0f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:574-598"
+   ],
+   "n": "„Programmblock hinzufügen“, Hinweis „Die Dauer ergibt sich aus den Unterpunkten.“, Name/Ausführung/Info, Abbrechen/Anlegen, Meldung „Bitte einen Namen eingeben.“, danach Unterpunkt-Dialog.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#field-2749d7be": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:816-829"
+   ],
+   "n": "Startzeit wählen (24 h) → Zeiten/Ende neu, Speichern.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#field-51c31589": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:927-934"
+   ],
+   "n": "Ionic: ion-datetime-button im Intl-Kurzformat / Flutter: Datum im dateFmt-Format. Nur Darstellung.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#field-7949de05": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:573-577",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:674-720"
+   ],
+   "n": "Zahlenfeld mit Platzhalter „min“, nicht bei Notizen (bei Blöcken Badge); Änderung → Zeiten/Ende neu + Speichern.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#field-9dc37d80": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:898-913",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:414-440"
+   ],
+   "n": "Flutter besser: Optionen (Vorlagen, deaktiviert „── Org-Vorlagen ──“, „{title} (Org)“ nur eingeloggt) und Rückfrage gleich. Ionic: bei „Abbrechen“ bleibt die neue Vorlage ausgewählt / Flutter: Abbrechen setzt Auswahl zurück.",
+   "sev": "niedrig",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#field-bfd56fd5": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:803-814"
+   ],
+   "n": "Datum wählen → Startzeit/Ende gelten für das neue Datum, Speichern.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#field-cc22e81f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:877-895"
+   ],
+   "n": "Label „Titel“, Platzhalter „Ablaufplan“, Großschreibung Satzanfang, Speichern beim Verlassen.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#modal-419a4f08": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:803-814"
+   ],
+   "n": "Plattform-Datumsdialog statt ion-modal mit ion-datetime.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

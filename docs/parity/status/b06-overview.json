@@ -1,0 +1,1246 @@
+{
+ "batch": "b06-overview",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "messages/message-detail/message-detail.page#logic-9a7e9461": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:56",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:78",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:116",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:247",
+    "lib/features/messages/presentation/message_format.dart:54",
+    "lib/features/messages/presentation/message_format.dart:112",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:62",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:84",
+    "lib/core/providers/message_providers.dart:58",
+    "lib/data/models/auto_message/auto_message.dart:478"
+   ],
+   "n": "Kernlogik gleich: Wechsel in die Instanz der Mitteilung (falls Mitglied), Manager = Admin/Verantwortlicher der aktuellen Instanz, Inhalt für Mitglieder offen / für Manager eingeklappt, markRead mit ignorierten Fehlern, personalisierter Titel/Text (Sprache, Platzhalter, {datum}), Empfängerliste nach Name, Zähler read/push/email/opened/readAny/open/problems, Chips (chipsFor) identisch, Filter Alle/Gelesen/Offen/Probleme, Termin-Karte mit Status, eigene Rückmeldung, canRespond (allow_responses, eigene Zeile, 7+1 Tage, keine oder offene Rückmeldung), frühere Mitteilungen (6 laden, aktuelle raus, max. 5), Löschen. Abweichungen: Mitteilungen aus verlassenen Instanzen und archivierte Termine – siehe extra.",
+   "sev": "mittel"
+  },
+  "messages/message-detail/message-detail.page#toast-264998c7": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:143",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:252",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:316",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:600"
+   ],
+   "n": "Ionic: Toast 'Mitteilung konnte nicht geladen werden' (danger) bei jedem Ladefehler (Mitteilung, Empfängerliste, frühere Mitteilungen); bei Fehler der Mitteilung zusätzlich Ansicht 'Diese Mitteilung gibt es nicht mehr…'. / Flutter: nie ein Toast; Fehler der Mitteilung -> zentrierter Text 'Mitteilung konnte nicht geladen werden'; Fehler der Empfängerliste -> stumm, Kacheln 0 / 0 und 'Keine Personen in dieser Ansicht.' (Manager sieht falsche Zahlen ohne Fehlerhinweis); Fehler der früheren Mitteilungen -> Liste fehlt stumm.",
+   "sev": "mittel"
+  },
+  "messages/message-detail/message-detail.page#modal-187e9b6a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:17",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:95"
+   ],
+   "n": "Vollbild-Dialog (fullscreenDialog) wie Ionic-Modal ohne Sheet; übergibt messageId, Termin-Label und kind."
+  },
+  "messages/message-detail/message-detail.page#toast-12c5a899": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:102"
+   ]
+  },
+  "messages/message-detail/message-detail.page#nav-35f52631": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:191"
+   ],
+   "n": "context.push('/attendance/<id>') wie navigateByUrl('/tabs/attendance/<id>')."
+  },
+  "messages/message-detail/message-detail.page#effect-6fdffe28": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:84",
+    "lib/core/constants/enums.dart:137"
+   ],
+   "n": "Zurück: pop, sonst Manager -> /settings/messages, sonst role.defaultRoute (= Utils.getUrl)."
+  },
+  "messages/message-detail/message-detail.page#native-886951c6": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:527",
+    "lib/core/services/native/native_file_service.dart:123"
+   ],
+   "n": "Links im Text: In-App-Browser in der App, extern im Web – wie Browser.open."
+  },
+  "messages/message-detail/message-detail.page#alert-183a4e8d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:92",
+    "lib/core/utils/dialog_helper.dart:12"
+   ],
+   "n": "Titel 'Mitteilung löschen?', Hinweistext, 'Abbrechen' / 'Löschen' (rot); danach Löschen + Navigation."
+  },
+  "messages/message-detail/message-detail.page#nav-9c26e0e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:104"
+   ],
+   "n": "context.go('/settings/messages') statt navigateByUrl; gleiches Ziel."
+  },
+  "messages/message-detail/message-detail.page#toast-fac5b4e7": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:106"
+   ]
+  },
+  "messages/message-detail/message-detail.page#nav-c6479685": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:614"
+   ]
+  },
+  "messages/message-detail/message-detail.page#action-df113b87": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:127"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-330ba71f": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:128"
+   ]
+  },
+  "messages/message-detail/message-detail.page#action-27ae197e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:131"
+   ]
+  },
+  "messages/message-detail/message-detail.page#action-91d55a5f": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:110",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:206"
+   ],
+   "n": "Pull-to-refresh nur für Manager; lädt Mitteilung und Empfänger neu."
+  },
+  "messages/message-detail/message-detail.page#text-dbb40a45": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:145"
+   ]
+  },
+  "messages/message-detail/message-detail.page#action-f228d859": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:212"
+   ],
+   "n": "Datum 'dd.MM.yyyy, HH:mm' · Absender · 'Nachricht anzeigen/ausblenden', Chevron auf/ab."
+  },
+  "messages/message-detail/message-detail.page#text-979626ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:547"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-8cb3a397": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:555"
+   ]
+  },
+  "messages/message-detail/message-detail.page#action-312b066f": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:513",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:563"
+   ],
+   "n": "HTML-Text wird als Quill-Dokument (HtmlToDelta) statt innerHTML gezeigt; Link-Tap über onLaunchUrl."
+  },
+  "messages/message-detail/message-detail.page#text-4920b42c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:118",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:138"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-09b02ea9": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:139",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:206"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-3a2e95de": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:144",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:163"
+   ]
+  },
+  "messages/message-detail/message-detail.page#action-0dd41e66": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:176",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:182"
+   ]
+  },
+  "messages/message-detail/message-detail.page#action-5e32ddc8": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:189"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-c1ec1779": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:196"
+   ]
+  },
+  "messages/message-detail/message-detail.page#action-6e9d8cde": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:185"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-dc8412d2": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:272"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-0831ef43": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:273"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-8939c3f4": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:290",
+    "lib/features/messages/presentation/message_format.dart:112"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-fffffa33": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:290"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-76fc0593": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:291",
+    "lib/features/messages/presentation/message_format.dart:112"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-1c7f5885": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:293"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-98080bcc": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:298"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-17551393": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:298"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-b9117b34": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:299"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-38a4bb6c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:299"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-7e52a06c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:301"
+   ]
+  },
+  "messages/message-detail/message-detail.page#field-daef3c09": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:305",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:255"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-742d6e9a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:318"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-d6a206b1": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:438"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-301d7e0b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:441"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-be3895d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:450",
+    "lib/features/messages/presentation/message_format.dart:54"
+   ]
+  },
+  "messages/message-detail/message-detail.page#text-564442b5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:607"
+   ]
+  },
+  "messages/message-detail/message-detail.page#action-3e529376": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:610"
+   ]
+  },
+  "messages/message-list/message-list.page#logic-90f4604f": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:34",
+    "lib/core/providers/message_providers.dart:44",
+    "lib/data/repositories/message_repository.dart:31",
+    "lib/data/repositories/message_repository.dart:97",
+    "lib/core/providers/auto_message_providers.dart:44",
+    "lib/features/messages/presentation/pages/message_list_page.dart:39"
+   ],
+   "n": "Laden (max. 100, neueste zuerst), Gelesen/Probleme je Mitteilung, Balken readPercent, Zähler aktiver Regeln, Neu-Laden nach Rückkehr vom Detail (ionViewWillEnter), Löschen mit Neuladen – gleich."
+  },
+  "messages/message-list/message-list.page#toast-d930edbc": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:73"
+   ],
+   "n": "Ionic: Toast 'Mitteilungen konnten nicht geladen werden' (danger), darunter Leerzustand 'Noch keine Mitteilungen' mit Button und Eintrag 'Automatische Nachrichten'. / Flutter: kein Toast, nur zentrierter Text 'Mitteilungen konnten nicht geladen werden' ohne Auto-Eintrag und Leerzustand.",
+   "sev": "niedrig"
+  },
+  "messages/message-list/message-list.page#nav-643a9071": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:107",
+    "lib/features/messages/presentation/pages/message_list_page.dart:34"
+   ]
+  },
+  "messages/message-list/message-list.page#modal-bb949983": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:23"
+   ],
+   "n": "Vollbild-Dialog (fullscreenDialog) wie Ionic-Modal ohne Sheet."
+  },
+  "messages/message-list/message-list.page#nav-e075183e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:25"
+   ]
+  },
+  "messages/message-list/message-list.page#alert-04a6d14c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:39",
+    "lib/core/utils/dialog_helper.dart:12"
+   ]
+  },
+  "messages/message-list/message-list.page#toast-b632ba90": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:49"
+   ]
+  },
+  "messages/message-list/message-list.page#action-6e2f9e03": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:60"
+   ],
+   "n": "Automatischer Zurück-Pfeil (Route unter /settings)."
+  },
+  "messages/message-list/message-list.page#text-64742366": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:60"
+   ]
+  },
+  "messages/message-list/message-list.page#action-62bff874": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:66"
+   ],
+   "n": "Lädt Mitteilungen und Regelzähler neu."
+  },
+  "messages/message-list/message-list.page#action-f29f89c5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:123"
+   ],
+   "n": "timer-Icon in Primärfarbe, 'Automatische Nachrichten', Zählertext erst nach Laden, Ziel /settings/auto-messages."
+  },
+  "messages/message-list/message-list.page#text-00ca2eba": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:295"
+   ]
+  },
+  "messages/message-list/message-list.page#text-d04e60e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:303"
+   ]
+  },
+  "messages/message-list/message-list.page#action-4c1cdd16": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:310"
+   ],
+   "n": "Icon: Ionic create-outline (Stift) / Flutter Icons.edit_note (Stift mit Linien). Text 'Erste Mitteilung schreiben', runde Form und Aktion (Verfassen) gleich.",
+   "sev": "niedrig"
+  },
+  "messages/message-list/message-list.page#text-11e3ea69": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:100"
+   ]
+  },
+  "messages/message-list/message-list.page#action-af8aa53c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:143",
+    "lib/features/messages/presentation/pages/message_list_page.dart:155",
+    "lib/features/messages/presentation/pages/message_list_page.dart:238",
+    "lib/features/messages/presentation/pages/message_list_page.dart:248"
+   ],
+   "n": "Titel, 'dd.MM.yyyy · Absender · an N Personen', Lesebalken, 'Versand läuft …' bzw. 'X von Y gelesen', gelbes Badge 'N Problem(e)'."
+  },
+  "messages/message-list/message-list.page#action-3792f6a2": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:161"
+   ]
+  },
+  "messages/message-list/message-list.page#action-f3bf71f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:61"
+   ]
+  },
+  "notifications/notifications.page#logic-4cbdd102": {
+   "s": "diff",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:60",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:103",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:119",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:125",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:141",
+    "lib/core/services/telegram_service.dart:181",
+    "lib/core/services/telegram_service.dart:207",
+    "lib/core/services/telegram_service.dart:150"
+   ],
+   "n": "Gleich: Konfiguration per Benutzer-Id laden (fehlende Zeile wird mit denselben Defaults angelegt), Realtime-Abo, jede Änderung schreibt die ganze Zeile, Telegram trennen setzt telegram_chat_id '', Instanz-Toggles über enabled_tenants (Zahlen), Live Activity speichert und ruft setEnabled, Push-Schalter über pushService.togglePush, Dienste-Schalter nur bei duty_mode-Typen. Abweichungen nur bei Fehlern/Laden – siehe extra.",
+   "sev": "niedrig"
+  },
+  "notifications/notifications.page#db-f59556e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:79"
+   ],
+   "n": "Realtime auf 'notifications', gefiltert id = userId, übernimmt die neue Zeile."
+  },
+  "notifications/notifications.page#db-dd73b098": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:81"
+   ],
+   "n": "Kanalname 'noti-changes-<userId>' statt 'noti-changes'; ohne Nutzerwirkung."
+  },
+  "notifications/notifications.page#native-1f2aa2b5": {
+   "s": "diff",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:130",
+    "lib/core/services/telegram_service.dart:176"
+   ],
+   "n": "Gleicher Link https://t.me/attendix_bot?start=<userId>. Ionic: Capacitor Browser.open (In-App-Browser in der App, neuer Tab im Web) / Flutter: launchUrl externalApplication (öffnet direkt Telegram bzw. externen Browser), bei Fehler Toast 'Konnte Telegram nicht öffnen'.",
+   "sev": "niedrig"
+  },
+  "notifications/notifications.page#alert-301e4134": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:141",
+    "lib/core/utils/dialog_helper.dart:12"
+   ],
+   "n": "Titel 'Möchtest du die Verbindung wirklich trennen?', Text 'Die Verbindung kann jederzeit wiederhergestellt werden', 'Abbrechen' / 'Ja'."
+  },
+  "notifications/notifications.page#action-859c154e": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:189"
+   ]
+  },
+  "notifications/notifications.page#text-5c26f0ed": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:189"
+   ]
+  },
+  "notifications/notifications.page#text-5c26f0ed-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:198"
+   ]
+  },
+  "notifications/notifications.page#text-709edc1e": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:204"
+   ]
+  },
+  "notifications/notifications.page#field-23dab456": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:203"
+   ]
+  },
+  "notifications/notifications.page#text-c3c6e93d": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:430",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:439"
+   ]
+  },
+  "notifications/notifications.page#field-cb78f4aa": {
+   "s": "diff",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:208",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:410",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:446"
+   ],
+   "n": "Flutter besser: Material-Darstellung mit zusätzlichem Kopieren-Button (Toast 'Benutzer-Id kopiert') und Monospace-Wert; iOS wie Ionic (Label + markierbarer Wert). Sichtbar nur ohne Telegram-Verknüpfung wie Ionic.",
+   "sev": "niedrig"
+  },
+  "notifications/notifications.page#text-bd81b782": {
+   "s": "diff",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:485",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:531"
+   ],
+   "n": "Text 'Telegramverknüpfung' gleich. Material: zusätzliches Telegram-Icon vor dem Titel (grün wenn verknüpft); Ionic ohne Icon. iOS wie Ionic.",
+   "sev": "niedrig"
+  },
+  "notifications/notifications.page#text-9e4486a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:490"
+   ]
+  },
+  "notifications/notifications.page#action-d9956aed": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:516",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:539"
+   ]
+  },
+  "notifications/notifications.page#action-3757cd90": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:516",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:539"
+   ]
+  },
+  "notifications/notifications.page#field-0dddd55e": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:215",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:125",
+    "lib/core/providers/push_providers.dart:34"
+   ],
+   "n": "Nur native App (iOS/Android) wie Capacitor.isNativePlatform."
+  },
+  "notifications/notifications.page#field-05b9f833": {
+   "s": "diff",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:222",
+    "lib/core/services/live_activity_service.dart:149"
+   ],
+   "n": "Sichtbarkeit (App mit Live-Activity-Plugin, iOS und Android) und Wirkung gleich. Helfertext: Ionic iOS -> '…auf dem Sperrbildschirm und in der Dynamic Island.', Android -> 'Zeigt den aktuellen Punkt eines laufenden Ablaufplans auf dem Sperrbildschirm.' / Flutter: Bedingung isSupportedPlatform ist auf iOS UND Android true, Android zeigt daher den iOS-Text mit Dynamic Island.",
+   "sev": "mittel"
+  },
+  "notifications/notifications.page#field-12e883c7": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:232"
+   ]
+  },
+  "notifications/notifications.page#text-b0255cc9": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:240"
+   ]
+  },
+  "notifications/notifications.page#text-72de2ce1": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:251"
+   ]
+  },
+  "notifications/notifications.page#field-55a1dea9": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:255"
+   ]
+  },
+  "notifications/notifications.page#field-7eec9958": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:261"
+   ]
+  },
+  "notifications/notifications.page#field-832701e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:267"
+   ]
+  },
+  "notifications/notifications.page#field-00fac5bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:273"
+   ]
+  },
+  "notifications/notifications.page#field-1c9e3397": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:279",
+    "lib/core/providers/notification_settings_providers.dart:38"
+   ],
+   "n": "Nur wenn ein Termintyp duty_mode hat; null zählt als an."
+  },
+  "notifications/notifications.page#field-fc9454f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:286"
+   ]
+  },
+  "notifications/notifications.page#field-094611bf": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:292"
+   ]
+  },
+  "notifications/notifications.page#field-71fbcd82": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:298"
+   ]
+  },
+  "notifications/notifications.page#field-92991b01": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:304"
+   ]
+  },
+  "notifications/notifications.page#field-d5e44720": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:310"
+   ],
+   "n": "Ionic [attr.label]='Abmeldungen' ist nur ein wirkungsloses HTML-Attribut; sichtbarer Text 'Neue Problemfälle' + Helfertext gleich."
+  },
+  "notifications/notifications.page#field-1278e9dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:316"
+   ],
+   "n": "Ionic [attr.label]='Abmeldungen' wirkungslos; sichtbarer Text 'Neu-Registrierungen' + Helfertext gleich."
+  },
+  "notifications/notifications.page#text-68264c2e": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:324"
+   ]
+  },
+  "notifications/notifications.page#text-809405e4": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:332"
+   ],
+   "n": "Flutter fällt bei leerem longName auf shortName zurück."
+  },
+  "notifications/notifications.page#field-fbc6770a": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:335",
+    "lib/core/services/telegram_service.dart:150",
+    "lib/core/services/telegram_service.dart:154"
+   ]
+  },
+  "stats/stats.page#logic-49d4b21b": {
+   "s": "diff",
+   "f": [
+    "lib/core/providers/statistics_providers.dart:54",
+    "lib/core/providers/statistics_providers.dart:69",
+    "lib/core/providers/statistics_providers.dart:200",
+    "lib/core/providers/statistics_providers.dart:252",
+    "lib/core/providers/statistics_providers.dart:323",
+    "lib/core/providers/statistics_providers.dart:391",
+    "lib/core/providers/statistics_providers.dart:443",
+    "lib/core/providers/statistics_providers.dart:500",
+    "lib/core/utils/statistics_utils.dart:33",
+    "lib/core/utils/statistics_utils.dart:66",
+    "lib/core/utils/statistics_utils.dart:116",
+    "lib/core/utils/field_stats.dart:1"
+   ],
+   "n": "Datenbasis und Berechnungen gleich: Zeitraum-Default Saisonstart bzw. 2023-01-01 bis heute, nur Termine bis heute, Prozent je Termin neu berechnet (averagePersons, shift_excused_as_present), Ø nur über include_in_average-Typen, beste/schlechteste, Termine je Typ, Status-, Gruppen-, Top-20-, Alters- (3-Jahres-Gruppen), Ø-Alter- und Fehlzeiten-Aggregation nur über aktive Personen, Mitgliederzahlen, Zusatzfeld-Statistik, Organisation (Deduplizierung global_person_id/appId/Name+Geburtstag, Sortierung nach Instanzzahl). Abweichungen in der Diagrammdarstellung – siehe extra.",
+   "sev": "hoch"
+  },
+  "stats/stats.page#alert-7c50ef8f": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1354",
+    "lib/core/utils/dialog_helper.dart:51"
+   ],
+   "n": "Titel 'Instanzen der Organisation', Langnamen kommagetrennt, Button 'OK'."
+  },
+  "stats/stats.page#text-12ff1709": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:145"
+   ]
+  },
+  "stats/stats.page#action-063ee465": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:149"
+   ]
+  },
+  "stats/stats.page#text-c6a37fd4": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:190"
+   ]
+  },
+  "stats/stats.page#text-682a469d": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:358"
+   ]
+  },
+  "stats/stats.page#field-d9134dd8": {
+   "s": "diff",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:347",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:392"
+   ],
+   "n": "Anzeigeformat: Ionic ion-datetime-button zeigt das Intl-Kurzformat (z. B. '1. Sept. 2025'; so dokumentiert in lib/features/profile/presentation/widgets/profile_helpers.dart:37, Ionic-Paket nicht im Container) / Flutter '01.09.2025' (DateHelper.getShortDate).",
+   "sev": "niedrig"
+  },
+  "stats/stats.page#modal-7a053185": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:325"
+   ],
+   "n": "Datumsauswahl als Plattform-Datepicker statt Inline-ion-modal mit ion-datetime."
+  },
+  "stats/stats.page#field-0fc2d09f": {
+   "s": "diff",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:325",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:341",
+    "lib/core/providers/statistics_providers.dart:43"
+   ],
+   "n": "Flutter besser: \"Von\" ist auf <= \"Bis\" begrenzt (Ionic: jedes Datum, ggf. leerer Zeitraum). Übernahme bei Auswahl und Neuberechnung wie onDateFilterChange.",
+   "sev": "niedrig"
+  },
+  "stats/stats.page#text-f8e23853": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:360"
+   ]
+  },
+  "stats/stats.page#field-d9134dd8-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:347",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:392"
+   ],
+   "n": "Anzeigeformat wie field-d9134dd8: Ionic Intl-Kurzformat ('1. Sept. 2025') / Flutter '01.09.2025'.",
+   "sev": "niedrig"
+  },
+  "stats/stats.page#modal-7a053185-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:325"
+   ],
+   "n": "Datumsauswahl als Plattform-Datepicker statt Inline-ion-modal."
+  },
+  "stats/stats.page#field-e8b28445": {
+   "s": "diff",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:325",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:341",
+    "lib/core/providers/statistics_providers.dart:43"
+   ],
+   "n": "Flutter besser: \"Bis\" ist auf >= \"Von\" begrenzt (obere Grenze heute+2 Jahre); Ionic ohne Grenzen. Neuberechnung bei Auswahl gleich.",
+   "sev": "niedrig"
+  },
+  "stats/stats.page#text-be4f1cf5": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:234"
+   ]
+  },
+  "stats/stats.page#text-f216d652": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:437"
+   ]
+  },
+  "stats/stats.page#text-11de0c3e": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:438",
+    "lib/core/providers/statistics_providers.dart:69"
+   ]
+  },
+  "stats/stats.page#text-98ec1180": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:440"
+   ]
+  },
+  "stats/stats.page#text-89697536": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:444"
+   ]
+  },
+  "stats/stats.page#text-9d4c6d89": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:447"
+   ]
+  },
+  "stats/stats.page#text-35abd623": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:428",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:448",
+    "lib/core/utils/statistics_utils.dart:9"
+   ]
+  },
+  "stats/stats.page#text-dd5dc127": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:452"
+   ]
+  },
+  "stats/stats.page#text-f8479cf2": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:454",
+    "lib/data/models/attendance/attendance.dart:332"
+   ]
+  },
+  "stats/stats.page#text-55a6afe8": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:456",
+    "lib/core/providers/statistics_providers.dart:252"
+   ]
+  },
+  "stats/stats.page#text-237885aa": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:461"
+   ]
+  },
+  "stats/stats.page#text-f8479cf2-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:463",
+    "lib/data/models/attendance/attendance.dart:332"
+   ]
+  },
+  "stats/stats.page#text-6cd906f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:465"
+   ]
+  },
+  "stats/stats.page#text-729fe4d0": {
+   "s": "diff",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:87",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:236",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:245"
+   ],
+   "n": "Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.",
+   "sev": "niedrig"
+  },
+  "stats/stats.page#text-a54abdb5": {
+   "s": "diff",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:87",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:238",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:245"
+   ],
+   "n": "Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.",
+   "sev": "niedrig"
+  },
+  "stats/stats.page#text-f6dad6f9": {
+   "s": "diff",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:87",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:240",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:245"
+   ],
+   "n": "Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.",
+   "sev": "niedrig"
+  },
+  "stats/stats.page#text-0a14e583": {
+   "s": "diff",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:87",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:242",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:245"
+   ],
+   "n": "Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.",
+   "sev": "niedrig"
+  },
+  "stats/stats.page#text-5acf85be": {
+   "s": "diff",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:87",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:244",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:245"
+   ],
+   "n": "Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.",
+   "sev": "niedrig"
+  },
+  "stats/stats.page#text-20604815": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:268"
+   ]
+  },
+  "stats/stats.page#text-de24f1ff": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:506"
+   ]
+  },
+  "stats/stats.page#text-9d79b85d": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:494",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:506"
+   ]
+  },
+  "stats/stats.page#text-978a1453": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:507"
+   ]
+  },
+  "stats/stats.page#text-0a6c856c": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:495",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:507"
+   ]
+  },
+  "stats/stats.page#text-12928d49": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:508"
+   ]
+  },
+  "stats/stats.page#text-40bebb12": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:493",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:508"
+   ]
+  },
+  "stats/stats.page#text-7163ab68": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:509"
+   ]
+  },
+  "stats/stats.page#text-9f46e7f6": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:509"
+   ],
+   "n": "Aktuelle (nicht ausgetretene) + ausgetretene Personen, ohne pending – wie getPlayers(true)."
+  },
+  "stats/stats.page#text-0d669f08": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:270"
+   ]
+  },
+  "stats/stats.page#text-c9d5517b": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:272"
+   ]
+  },
+  "stats/stats.page#text-5740d423": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:274",
+    "lib/features/statistics/presentation/widgets/field_stats_section.dart:44"
+   ]
+  },
+  "stats/stats.page#field-3c8350e8": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/widgets/field_stats_section.dart:80"
+   ],
+   "n": "Auswahl der Zusatzfelder (Auswahl, Ja/Nein, Gemeinde), erstes Feld vorausgewählt."
+  },
+  "stats/stats.page#field-f5617f3e": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/widgets/field_stats_section.dart:89",
+    "lib/core/utils/field_stats.dart:1"
+   ],
+   "n": "'Alle Gruppen' + nur Gruppen mit gezählten Personen; ungültige Gruppe fällt auf 'Alle' zurück."
+  },
+  "stats/stats.page#field-2c72210e": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/widgets/field_stats_section.dart:99"
+   ]
+  },
+  "stats/stats.page#text-985a36d9": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/widgets/field_stats_section.dart:221"
+   ]
+  },
+  "stats/stats.page#text-0c85a36d": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/widgets/field_stats_section.dart:239"
+   ]
+  },
+  "stats/stats.page#text-2041032e": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/widgets/field_stats_section.dart:244"
+   ]
+  },
+  "stats/stats.page#text-7163ab68-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/widgets/field_stats_section.dart:112"
+   ]
+  },
+  "stats/stats.page#text-eba60d6c": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/widgets/field_stats_section.dart:117"
+   ]
+  },
+  "stats/stats.page#text-6c343224": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/widgets/field_stats_section.dart:121"
+   ]
+  },
+  "stats/stats.page#text-80978ea5": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1321"
+   ]
+  },
+  "stats/stats.page#field-2d5da58e": {
+   "s": "diff",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1253",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1327",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1307"
+   ],
+   "n": "Ionic: ion-select multiple mit interface='modal' (Vollbild-Auswahlliste, Übernahme beim Schließen) / Flutter: AlertDialog mit Checkboxen und 'Abbrechen'/'OK'. Anzeige der gewählten Namen und Filterwirkung (Personen und deren Instanzen nur aus der Auswahl) gleich.",
+   "sev": "mittel"
+  },
+  "stats/stats.page#action-1729e009": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1349"
+   ],
+   "n": "Badge 'Alle (N)' bzw. Anzahl gewählter Instanzen; Tap zeigt Alert."
+  },
+  "stats/stats.page#text-666d20ee": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1361"
+   ]
+  },
+  "stats/stats.page#text-8ee10fbd": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1362",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1378"
+   ]
+  },
+  "stats/stats.page#modal-54866a37": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1365",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1418"
+   ],
+   "n": "Bottom-Sheet in voller Höhe wie Sheet mit Breakpoint 1."
+  },
+  "stats/stats.page#text-4d5d9eb5": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1428"
+   ]
+  },
+  "stats/stats.page#text-8808d9e3": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1449"
+   ]
+  },
+  "stats/stats.page#text-445b00dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1450"
+   ]
+  },
+  "stats/stats.page#text-70364d9b": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1451"
+   ]
+  }
+ },
+ "extra": [
+  {
+   "unit": "messages/message-detail/message-detail.page",
+   "title": "Mitteilung aus verlassener Instanz nicht mehr abrufbar",
+   "n": "Ionic: getMessage ohne Instanzfilter (RLS \"recipient can read messages\"), die eigene Kopie bleibt auch nach Austritt lesbar (z. B. aus dem Benachrichtigungs-Feed 'alle Instanzen' oder einem Push-/E-Mail-Link) / Flutter: getMessageById filtert auf aktuelle + aktuelle Instanzen des Nutzers, sonst Ansicht 'Diese Mitteilung gibt es nicht mehr oder du hast keinen Zugriff darauf.'",
+   "sev": "mittel",
+   "ionic": "src/app/services/message/message.service.ts:46",
+   "f": [
+    "lib/data/repositories/message_repository.dart:48",
+    "lib/core/providers/message_providers.dart:58"
+   ]
+  },
+  {
+   "unit": "messages/message-detail/message-detail.page",
+   "title": "Archivierter Termin: keine Termin-Karte/Antwort für Mitglieder",
+   "n": "Ionic: loadOwnCopy lädt den Termin ohne Archiv-Filter, Mitglieder sehen Termin-Karte, Status und 'Grund nachtragen'/'Ich war doch da' auch bei archivierten Terminen / Flutter: getAttendanceInfo verwirft archivierte Termine für alle außer Admin/Verantwortliche, die Termin-Karte und die Antwort-Buttons fehlen dann (evtl. bewusst wie filterArchivedForRole).",
+   "sev": "mittel",
+   "ionic": "src/app/services/auto-message/auto-message.service.ts:181",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:249",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:69",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:116"
+   ]
+  },
+  {
+   "unit": "notifications/notifications.page",
+   "title": "Fehler beim Speichern der Einstellungen",
+   "n": "Ionic: Toast 'Fehler beim Updaten der Konfiguration, bitte versuche es später erneut.', der Schalter bleibt im neuen (nicht gespeicherten) Zustand / Flutter: Toast 'Fehler beim Aktualisieren der Konfiguration', der Schalter springt zurück.",
+   "sev": "niedrig",
+   "ionic": "src/app/services/notification/notification.service.ts:55",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:103"
+   ]
+  },
+  {
+   "unit": "notifications/notifications.page",
+   "title": "Laden der Einstellungen",
+   "n": "Flutter besser: Ionic zeigt beim Laden und bei Ladefehler eine leere Seite (nur Titel) / Flutter zeigt Spinner, bei Fehler Toast 'Fehler beim Laden: …' und Text 'Konfiguration nicht gefunden'.",
+   "sev": "niedrig",
+   "ionic": "src/app/notifications/notifications.page.ts:43",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:60",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:158"
+   ]
+  },
+  {
+   "unit": "stats/stats.page",
+   "title": "Balkendiagramme ohne zuordenbare Namen",
+   "n": "Ionic: Top 20, Anwesenheit pro Instrument, Unentschuldigte Abwesenheiten und Ø-Alter pro Instrument als horizontale Balken (indexAxis y) mit Personen-/Gruppennamen an jedem Balken / Flutter: fl_chart 0.69 BarChart ohne Drehung -> senkrechte Balken, untere Achse unbeschriftet; die Namen werden als leftTitles an den Y-Wert-Teilstrichen (data[Wert]) gezeichnet und stehen damit neben falschen Werten/Balken. Zuordnung nur per Tooltip beim Antippen.",
+   "sev": "hoch",
+   "ionic": "src/app/stats/stats.page.ts:306",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:752",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:787",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:842",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:877",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1025",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1060",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1117",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1153"
+   ]
+  },
+  {
+   "unit": "stats/stats.page",
+   "title": "Diagrammtitel und Achsentitel fehlen",
+   "n": "Ionic: Titel in den Diagrammen 'Anwesenheitsverlauf (letzte 20 Termine)', 'Statusverteilung (in %)', 'Top 20 - Anwesenheits-Elite 🏆', 'Anwesenheitsquote nach Instrument', 'Unentschuldigte Abwesenheiten', 'Altersverteilung 🎂', 'Durchschnittsalter pro Instrument', Achsentitel '%' bzw. 'Jahre' / Flutter: nur die Abschnittsüberschriften, u. a. fehlt der Hinweis, dass der Verlauf nur die letzten 20 Termine zeigt.",
+   "sev": "mittel",
+   "ionic": "src/app/stats/stats.page.ts:207",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:516",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:603",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:921"
+   ]
+  },
+  {
+   "unit": "stats/stats.page",
+   "title": "Statusverteilung: Legende ohne Prozent",
+   "n": "Ionic: Legende 'Anwesend (x%)', 'Entschuldigt (x%)', 'Verspätet (x%)', 'Abwesend (x%)' über dem Kreisdiagramm / Flutter: Prozent auf den Segmenten, Legende rechts nur mit Statusnamen, Ring statt voller Kreis.",
+   "sev": "niedrig",
+   "ionic": "src/app/stats/stats.page.ts:240",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:603",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:692"
+   ]
+  },
+  {
+   "unit": "stats/stats.page",
+   "title": "Leere Einzeldiagramme mit Platzhaltertext",
+   "n": "Ionic: leeres Diagramm (mit Titel), wenn keine Daten / Flutter: Platzhalter 'Keine Daten verfügbar', 'Keine Geburtsdaten vorhanden' bzw. 'Keine unentschuldigten Abwesenheiten'.",
+   "sev": "niedrig",
+   "ionic": "src/app/stats/stats.page.ts:380",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1197",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:929",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1112"
+   ]
+  },
+  {
+   "unit": "stats/stats.page",
+   "title": "Pull-to-refresh nur in Flutter",
+   "n": "Flutter besser: Herunterziehen lädt Termine und Personen neu / Ionic: kein Refresher, nur erneutes Öffnen.",
+   "sev": "niedrig",
+   "ionic": "src/app/stats/stats.page.html:12",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:163"
+   ]
+  }
+ ]
+}

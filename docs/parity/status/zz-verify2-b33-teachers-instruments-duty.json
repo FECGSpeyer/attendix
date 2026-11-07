@@ -1,0 +1,138 @@
+{
+ "batch": "zz-verify2-b33-teachers-instruments-duty",
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
+ "items": {
+  "instruments/instrument-list/instrument-list.page#action-13fe6ace": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:101",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:78",
+    "lib/core/router/app_router.dart:165"
+   ],
+   "n": "Nur Admin/Verantwortlicher; die Seite ist in beiden nur für diese Rollen erreichbar (Einstellungen-Abschnitt isAdmin, Ionic isUrlAccessAllowed / Flutter Route-Guard). swap-vertical ↔ Häkchen, Beenden speichert sort_order. Overlay/Erfolgs-Toast siehe loading-7d7ff756 / toast-e4f5c17f.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#action-e7701887": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:111"
+   ],
+   "n": "Icons.sell_outlined statt pricetags-outline, nur Admin/Verantwortlicher, öffnet das Kategorien-Sheet.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#modal-e8e040b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:411",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:72"
+   ],
+   "n": "Nur Admin/Verantwortlicher. Sheet startet bei 60 % (Ionic Stufen 0/0,6/1, Flutter bis 90 %); Flutter zusätzlich X-Button und Leer-Hinweis „Keine Kategorien“.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#text-9789226a": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:105"
+   ],
+   "n": "„Kategorien“ (Flutter mit Kategorie-Icon davor).",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#action-b5b9e69f": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:114",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:28"
+   ],
+   "n": "swap-vertical ↔ Häkchen; Beenden speichert Kategorie-sort_order und daraus die Gruppen-sort_order, Erfolgs-/Fehler-Toast.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#action-e212c1b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:399",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:246",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:339"
+   ],
+   "n": "Roter Mülleimer, nur außerhalb des Sortiermodus, öffnet die Bestätigung (alert-415386f9). Fehlender Fehler-Toast beim Löschen steht bei services/group-category toast-0eec9127.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#modal-c7ef6c60": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:162",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:333"
+   ],
+   "n": "FAB nur Admin/Verantwortlicher; Bottom-Sheet in Inhaltshöhe statt 80 %, Kategorie bei jedem Öffnen „Keine“ (Ionic willPresent).",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#text-971d4e5a": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:399"
+   ],
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#field-a89a567a": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:408"
+   ],
+   "n": "Platzhalter „z.B. Mädchen, Posaune, Alt 1, etc.“ unter dem Label „Gruppe“.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#field-c9279f21": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:413"
+   ],
+   "n": "Nur wenn Kategorien existieren; Label „Kategorie“, Optionen „Keine“ + Kategorien, Standard „Keine“.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument-list/instrument-list.page#action-09922adb": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:427",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:371",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:347",
+    "lib/data/repositories/group_repository.dart:94"
+   ],
+   "n": "Flutter besser: Rolle gleich (nur Admin/Verantwortlicher); Insert name, maingroup false, tuning C, clefs [g], tenantId, category (nur wenn gesetzt) gleich; leerer Name → „Bitte gib einem Namen an“. Erstprüfer übersah: Ionic speichert den Namen ungetrimmt (nur Leerzeichen wird angelegt) und prüft den Insert-Fehler nicht (group.service.ts:34, Modal schließt still) / Flutter trimmt und zeigt bei Fehler „Fehler beim Hinzufügen“.",
+   "v": "korrigiert"
+  },
+  "x-56b4cdc47b": {
+   "s": "na",
+   "f": [
+    "lib/core/providers/duty_providers.dart:306",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:150"
+   ],
+   "n": "Inhaltlich zutreffend (Ionic: roter Toast „Fehler beim Übernehmen in geplante Termine“, kein Erfolgs-Toast / Flutter: Notifier fängt ab → grüner Toast „0 Termine angepasst“), aber Duplikat: bereits als services/duty/duty.service#toast-b8016997 (diff/mittel, in zz-verify-b18 bestätigt) erfasst. Zurückgenommen gegen Doppelzählung.",
+   "v": "korrigiert"
+  },
+  "x-70eb019a5f": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:730",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:750",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:471",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:477"
+   ],
+   "n": "Bestätigt. Ionic update() (instrument.page.ts:58) speichert zuerst; bei Fehler Service-Toast „Fehler beim updaten des Instruments“ bzw. „Es kann nur eine Hauptgruppe existieren“, Modal bleibt mit den Eingaben offen / Flutter: _save schließt sofort, gespeichert wird danach in der Liste; bei Fehler „Fehler beim Speichern“, Eingaben verloren.",
+   "v": "bestätigt"
+  },
+  "x-f65abbf51d": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:113",
+    "lib/core/providers/group_providers.dart:42",
+    "lib/features/people/presentation/pages/people_list_page.dart:396"
+   ],
+   "n": "Bestätigt, Begründung präzisiert: _showAddSheet liest groupsProvider nur per ref.read als feste Liste; ist er noch nicht geladen, ist die Auswahl „Instrumente“ leer und „Hinzufügen“ endet mit „Bitte fülle alle Felder aus...“, erst beim nächsten Öffnen gefüllt. Anders als notiert lädt die Personenliste groupsProvider, wenn nach Gruppe sortiert (Standard). Die Lücke tritt also auf, wenn die Lehrerseite ohne vorheriges Laden erreicht wird (z. B. Neuladen/Direktlink /settings/teachers, Personenliste anders sortiert). Ionic: db.groups() immer geladen. Bearbeiten-Fall: teacher/teacher.page#field-fc1d0925.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

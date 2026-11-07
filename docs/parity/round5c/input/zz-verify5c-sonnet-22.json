@@ -1,0 +1,3297 @@
+{
+ "batch": "zz-verify5c-sonnet-22",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 495,
+    "cond": [
+     "in <ion-modal isOpen=\"attendeesOpen\">",
+     "@if (others.length)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "protocol.othersList"
+    ],
+    "de": [
+     "Nicht da / offen ({count})"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.othersList' | transloco: { count: others.length } }}",
+    "id": "protocols/protocol/protocol.page#text-fb9b7b24"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1240"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 623,
+    "cond": [
+     "in <ion-modal isOpen=\"publishOpen\">",
+     "@if (summary; as sum)",
+     "@if (type?.relevant_groups?.length)"
+    ],
+    "tag": "#text",
+    "keys": [
+     "protocol.readGroups"
+    ],
+    "de": [
+     "die Gruppen aus dem Termintyp „{type}“"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.readGroups' | transloco: { type: type?.name } }}",
+    "id": "protocols/protocol/protocol.page#text-fbfcf4a9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:923"
+    ],
+    "n": "Freigabe-Sheet „Wer darf es lesen“: „die Gruppen aus dem Termintyp „{Typ}““ wenn der Typ Gruppen hat; nur Leitung.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 95,
+    "cond": [
+     "<ng-template #liveBar>",
+     "@if (live)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "grow"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ liveLabel }}"
+    ],
+    "text": "{{ liveLabel }}",
+    "id": "protocols/protocol/protocol.page#text-fd297bc2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1394",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1683"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 559,
+    "cond": [
+     "in <ion-modal isOpen=\"publishOpen\">",
+     "@if (summary; as sum)",
+     "@if (sum.discussed.length)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "protocol.discussedCount"
+    ],
+    "de": [
+     "{count, plural, one {# Thema} other {# Themen}} besprochen"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.discussedCount' | transloco: { count: sum.discussed.length } }}",
+    "id": "protocols/protocol/protocol.page#text-fd7a6a5e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:878"
+    ],
+    "n": "„{n} Thema/Themen besprochen“ (Plural gleich) mit Namensliste, nur wenn besprochene TOPs vorhanden; Zählung wie publishSummary.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 292,
+    "cond": [
+     "<ng-template #wideLayout>",
+     "@for (s of (activeSection ? [activeSection] : []); track s.id)"
+    ],
+    "tag": "h1",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ s.name }}"
+    ],
+    "text": "{{ s.name }}",
+    "id": "protocols/protocol/protocol.page#text-ff71af8d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1789"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "protocols/protocol/protocol.page.ts",
+    "line": 947,
+    "method": "ProtocolPage.publish",
+    "cond": [],
+    "message": {
+     "keys": [
+      "protocol.publishFailed"
+     ],
+     "de": [
+      "Protokoll konnte nicht freigegeben werden"
+     ],
+     "literals": [],
+     "expr": "translate('protocol.publishFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "58c735bf",
+    "mbody": "b39b3660",
+    "id": "protocols/protocol/protocol.page#toast-09822721"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1027"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "protocols/protocol/protocol.page.ts",
+    "line": 763,
+    "method": "ProtocolPage.createTask",
+    "cond": [],
+    "message": {
+     "keys": [
+      "protocol.createFailed"
+     ],
+     "de": [
+      "Protokoll konnte nicht angelegt werden"
+     ],
+     "literals": [],
+     "expr": "translate('protocol.createFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "c331867a",
+    "mbody": "5c61f68f",
+    "id": "protocols/protocol/protocol.page#toast-31c22572"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:528"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "protocols/protocol/protocol.page.ts",
+    "line": 810,
+    "method": "ProtocolPage.addSpontaneousTopic",
+    "cond": [
+     "(!title)"
+    ],
+    "message": {
+     "keys": [
+      "agenda.enterTitle"
+     ],
+     "de": [
+      "Bitte einen Titel eingeben"
+     ],
+     "literals": [],
+     "expr": "translate('agenda.enterTitle')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "3557d336",
+    "mbody": "e752cb2b",
+    "id": "protocols/protocol/protocol.page#toast-45539e3a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:593"
+    ],
+    "n": "„Punkt“ nur in den Leitungs-Layouts (Handy/breit) beider Apps. Toast gleich; der Dialog ist in Flutter dabei schon geschlossen (siehe alert-0750ecfb).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "protocols/protocol/protocol.page.ts",
+    "line": 962,
+    "method": "ProtocolPage.closeTopics",
+    "cond": [
+     "(results.some(r => r.status === 'rejected'))"
+    ],
+    "message": {
+     "keys": [
+      "protocol.closeFailed"
+     ],
+     "de": [
+      "Nicht alle Themen konnten als erledigt markiert werden"
+     ],
+     "literals": [],
+     "expr": "translate('protocol.closeFailed')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "ef1d057a",
+    "mbody": "822cf5c3",
+    "id": "protocols/protocol/protocol.page#toast-a4e6101a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:996"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "protocols/protocol/protocol.page.ts",
+    "line": 736,
+    "method": "ProtocolPage.setOutcome",
+    "cond": [],
+    "message": {
+     "keys": [
+      "protocol.outcomeSaveFailed"
+     ],
+     "de": [
+      "Ergebnis konnte nicht gespeichert werden"
+     ],
+     "literals": [],
+     "expr": "translate('protocol.outcomeSaveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "04ecdab3",
+    "mbody": "4212f120",
+    "id": "protocols/protocol/protocol.page#toast-ad978678"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:474"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "protocols/protocol/protocol.page.ts",
+    "line": 650,
+    "method": "ProtocolPage.showSaveError",
+    "cond": [],
+    "message": {
+     "keys": [
+      "protocol.notesSaveFailed"
+     ],
+     "de": [
+      "Notizen konnten nicht gespeichert werden. Prüfe deine Verbindung."
+     ],
+     "literals": [],
+     "expr": "translate('protocol.notesSaveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "dd62bc36",
+    "mbody": "83c63047",
+    "id": "protocols/protocol/protocol.page#toast-b135441f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:413"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "protocols/protocol/protocol.page.ts",
+    "line": 933,
+    "method": "ProtocolPage.publish",
+    "cond": [
+     "(this.sendPdf)"
+    ],
+    "message": {
+     "keys": [
+      "protocol.pdfFailedNotify"
+     ],
+     "de": [
+      "PDF konnte nicht erstellt werden, die Benachrichtigung geht ohne PDF raus"
+     ],
+     "literals": [],
+     "expr": "translate('protocol.pdfFailedNotify')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "ab8b2f9e",
+    "mbody": "b39b3660",
+    "id": "protocols/protocol/protocol.page#toast-cbe0d029"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1010"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "protocols/protocol/protocol.page.ts",
+    "line": 944,
+    "method": "ProtocolPage.publish",
+    "cond": [],
+    "message": {
+     "keys": [
+      "protocol.published"
+     ],
+     "de": [
+      "Protokoll freigegeben"
+     ],
+     "literals": [],
+     "expr": "translate('protocol.published')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "c0a89ee5",
+    "mbody": "b39b3660",
+    "id": "protocols/protocol/protocol.page#toast-fe3d7c68"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1025"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/my-plans/my-plans.component",
+   "ionic": {
+    "ts": "public-planning/my-plans/my-plans.component.ts",
+    "html": "public-planning/my-plans/my-plans.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/my-plans/my-plans.component.html",
+    "line": 29,
+    "cond": [
+     "@if (!loading)",
+     "@for (plan of plans; track plan.id)"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=deletePlan(plan)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "public-planning/my-plans/my-plans.component#action-0e9f07d8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:1087"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/my-plans/my-plans.component",
+   "ionic": {
+    "ts": "public-planning/my-plans/my-plans.component.ts",
+    "html": "public-planning/my-plans/my-plans.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/my-plans/my-plans.component.html",
+    "line": 5,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.close"
+    ],
+    "de": [
+     "Schließen"
+    ],
+    "literals": [],
+    "text": "{{ 'common.close' | transloco }}",
+    "id": "public-planning/my-plans/my-plans.component#action-471438e0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:1017"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/my-plans/my-plans.component",
+   "ionic": {
+    "ts": "public-planning/my-plans/my-plans.component.ts",
+    "html": "public-planning/my-plans/my-plans.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/my-plans/my-plans.component.html",
+    "line": 21,
+    "cond": [
+     "@if (!loading)",
+     "@for (plan of plans; track plan.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=loadPlan(plan)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "chevron-forward-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Ablaufplan",
+     " Felder"
+    ],
+    "text": "{{ plan.plan_title || 'Ablaufplan' }} {{ formatDate(plan) }}{{ fieldCount(plan) ? ' · ' + fieldCount(plan) + ' Felder' : '' }}",
+    "id": "public-planning/my-plans/my-plans.component#action-580d78c4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:1098"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/my-plans/my-plans.component",
+   "ionic": {
+    "ts": "public-planning/my-plans/my-plans.component.ts",
+    "html": "public-planning/my-plans/my-plans.component.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "public-planning/my-plans/my-plans.component.ts",
+    "line": 54,
+    "method": "MyPlansComponent.deletePlan",
+    "cond": [],
+    "header": {
+     "keys": [
+      "planning.deletePlan"
+     ],
+     "de": [
+      "Plan löschen"
+     ],
+     "literals": [],
+     "expr": "translate('planning.deletePlan')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "plans.deletePlanForever",
+      "plans.runSheet"
+     ],
+     "de": [
+      "\"{title}\" endgültig löschen?",
+      "Ablaufplan"
+     ],
+     "literals": [],
+     "expr": "translate('plans.deletePlanForever', { title: plan.plan_title || translate('plans.runSheet') })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.delete"
+       ],
+       "de": [
+        "Löschen"
+       ],
+       "literals": [],
+       "expr": "translate('common.delete')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { const { error } = await getSupabase() .from('shared_plans') .delete() .eq('id', plan.id); if (error) { Utils.showToast(translate('plans.deleteFailed'), 'danger'); } else { this.plans = this.plans.filter(p => p.id !== plan.id)…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "44f02ad6",
+    "mbody": "4dae35f8",
+    "id": "public-planning/my-plans/my-plans.component#alert-c33e32bf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:1054",
+     "lib/data/repositories/plan_repository.dart:298"
+    ],
+    "n": "Dialog gleich; Löschen auf shared_plans per id, zusätzlich creator_user_id (nur eigene Pläne, unkritisch); Fehler-Toast „plans.deleteFailed“ vorhanden.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/plan_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/my-plans/my-plans.component",
+   "ionic": {
+    "ts": "public-planning/my-plans/my-plans.component.ts",
+    "html": "public-planning/my-plans/my-plans.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "public-planning/my-plans/my-plans.component.html",
+    "line": 37,
+    "cond": [
+     "@if (!loading)",
+     "@if (!plans.length)"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "color": "medium",
+     "class": "ion-text-center ion-padding"
+    },
+    "keys": [
+     "plans.noPlans"
+    ],
+    "de": [
+     "Keine Pläne vorhanden."
+    ],
+    "literals": [],
+    "text": "{{ 'plans.noPlans' | transloco }}",
+    "id": "public-planning/my-plans/my-plans.component#text-8b159228"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:1034"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/my-plans/my-plans.component",
+   "ionic": {
+    "ts": "public-planning/my-plans/my-plans.component.ts",
+    "html": "public-planning/my-plans/my-plans.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "public-planning/my-plans/my-plans.component.ts",
+    "line": 68,
+    "method": "MyPlansComponent.deletePlan",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "plans.deleteFailed"
+     ],
+     "de": [
+      "Fehler beim Löschen"
+     ],
+     "literals": [],
+     "expr": "translate('plans.deleteFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "1446f988",
+    "mbody": "4dae35f8",
+    "id": "public-planning/my-plans/my-plans.component#toast-16f262e1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:1068"
+    ],
+    "n": "Löschfehler → „Fehler beim Löschen“ (danger); gleiche Rollen wie alert-c33e32bf.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/public-planning.page.html",
+    "line": 207,
+    "cond": [
+     "in <ion-reorder-group>",
+     "@else",
+     "@if (field.isGroup)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "start",
+     "fill": "clear",
+     "size": "small",
+     "class": "group-toggle"
+    },
+    "events": [
+     "(click)=toggleGroup(field)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"(isCollapsed(field) ? 'planning.expandBlock' : 'planning.collapseBlock') | transloco\""
+    ],
+    "icons": [
+     "[name]=\"isCollapsed(field) ? 'chevron-forward' : 'chevron-down'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "public-planning/public-planning.page#action-1352b63f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:492-500"
+    ],
+    "n": "chevron_right/expand_more, Tooltip „Block aufklappen“/„Block einklappen“",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/public-planning.page.html",
+    "line": 93,
+    "cond": [
+     "in <ion-popover trigger=add-trigger #addPopover>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=addField(addPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "planning.addField"
+    ],
+    "de": [
+     "Feld hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.addField' | transloco }}",
+    "id": "public-planning/public-planning.page#action-26dcf833"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:506"
+    ],
+    "n": "„Feld hinzufügen“",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/public-planning.page.html",
+    "line": 15,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=shareCurrentPlan(false)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.title]=\"'plans.shareExport' | transloco\""
+    ],
+    "icons": [
+     "share-outline"
+    ],
+    "keys": [
+     "plans.shareExport"
+    ],
+    "de": [
+     "Teilen & Exportieren"
+    ],
+    "literals": [],
+    "text": "[attr.title]=\"'plans.shareExport' | transloco\"",
+    "id": "public-planning/public-planning.page#action-29abb447"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:846"
+    ],
+    "n": "Teilen-Icon (ios_share), Tooltip „Teilen & Exportieren“, immer sichtbar",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/public-planning.page.html",
+    "line": 64,
+    "cond": [],
+    "tag": "ion-item",
+    "attrs": {
+     "detail": "false",
+     "button": "",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=resetToTemplate()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "refresh"
+    ],
+    "keys": [
+     "plans.restoreTemplate"
+    ],
+    "de": [
+     "Vorlage wiederherstellen"
+    ],
+    "literals": [],
+    "text": "{{ 'plans.restoreTemplate' | transloco }}",
+    "id": "public-planning/public-planning.page#action-5364830f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:923-927"
+    ],
+    "n": "„Vorlage wiederherstellen“, Icon refresh, primär",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/public-planning.page.html",
+    "line": 99,
+    "cond": [
+     "in <ion-popover trigger=add-trigger #addPopover>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=addNoteField(addPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "planning.addNoteField"
+    ],
+    "de": [
+     "Notizfeld hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.addNoteField' | transloco }}",
+    "id": "public-planning/public-planning.page#action-561534c8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:508"
+    ],
+    "n": "„Notizfeld hinzufügen“",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/public-planning.page.html",
+    "line": 78,
+    "cond": [
+     "@if (isLoggedIn)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "detail": "false",
+     "button": "",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=newPlan()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-circle-outline"
+    ],
+    "keys": [
+     "plans.newPlan"
+    ],
+    "de": [
+     "Neuer Plan"
+    ],
+    "literals": [],
+    "text": "{{ 'plans.newPlan' | transloco }}",
+    "id": "public-planning/public-planning.page#action-58426c72"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:938"
+    ],
+    "n": "„Neuer Plan“ grau mit add_circle_outline, nur eingeloggt (Admin/Verantwortlich).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/public-planning.page.html",
+    "line": 96,
+    "cond": [
+     "in <ion-popover trigger=add-trigger #addPopover>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=addGroup(addPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "planning.addBlock"
+    ],
+    "de": [
+     "Programmblock hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.addBlock' | transloco }}",
+    "id": "public-planning/public-planning.page#action-5d3b0d53"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:507"
+    ],
+    "n": "„Programmblock hinzufügen“",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/public-planning.page.html",
+    "line": 107,
+    "cond": [
+     "in <ion-popover trigger=add-trigger #addPopover>",
+     "@if (isLoggedIn && !isGeneral)",
+     "@if (songs.length)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=openSongSelector(addPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "planning.addSong"
+    ],
+    "de": [
+     "Werk hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.addSong' | transloco }}",
+    "id": "public-planning/public-planning.page#action-5dd20907"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:511"
+    ],
+    "n": "Nur eingeloggt, Instanztyp ≠ general und mit Werken (beide); öffnet „Werk auswählen“, fügt „Nr. Name“ mit 20 min an.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/public-planning.page.html",
+    "line": 88,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "id": "add-trigger",
+     "fill": "clear"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "public-planning/public-planning.page#action-5eb77eb9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:951-958"
+    ],
+    "n": "„+“ öffnet das Menü",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/public-planning.page.html",
+    "line": 197,
+    "cond": [
+     "in <ion-reorder-group>",
+     "@if (row.addFor)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "class": "group-child group-add",
+     "lines": "full",
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=addSubItem(row.addFor)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add"
+    ],
+    "keys": [
+     "planning.addSubItem"
+    ],
+    "de": [
+     "Unterpunkt hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.addSubItem' | transloco }}",
+    "id": "public-planning/public-planning.page#action-6c83022b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:362-367",
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:644-668"
+    ],
+    "n": "„Unterpunkt hinzufügen“ (Icon add, primär) am Ende jedes aufgeklappten Blocks",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/public-planning.page.html",
+    "line": 69,
+    "cond": [
+     "@if (hasOrg)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "detail": "false",
+     "button": "",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=isOrgPlan ? removeFromOrg() : addToOrg()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"isOrgPlan ? 'checkmark-circle' : 'business-outline'\""
+    ],
+    "keys": [
+     "plans.inOrg",
+     "plans.addToOrg"
+    ],
+    "de": [
+     "In Organisation \"{org}\"",
+     "Zur Organisation hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ isOrgPlan ? ('plans.inOrg' | transloco: { org: db.organisation().name }) : ('plans.addToOrg' | transloco) }}",
+    "id": "public-planning/public-planning.page#action-7c6a22b8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:928",
+     "lib/features/planning/presentation/pages/public_planning_page.dart:676"
+    ],
+    "n": "hasOrg = eingeloggt && Organisation in beiden; „In Organisation \"{org}\"“ (grün, check_circle) entfernt bzw. „Zur Organisation hinzufügen“ (primär, business) validiert, speichert und setzt shared_plans.org_id; Toasts gleich (Flutter filtert zusätzlich creator_user_id, siehe db-252fc2e5/db-99a947c6).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/public-planning.page.html",
+    "line": 103,
+    "cond": [
+     "in <ion-popover trigger=add-trigger #addPopover>",
+     "@if (isLoggedIn && !isGeneral)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=addCurrentSongs(addPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "planning.addCurrentSongs"
+    ],
+    "de": [
+     "Aktuelle Werke hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.addCurrentSongs' | transloco }}",
+    "id": "public-planning/public-planning.page#action-b290a33e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:509"
+    ],
+    "n": "Nur eingeloggt und Instanztyp ≠ general (beide); fügt fehlende Werke der Historie an (20 min, Dirigent, Präfix „Nr. “), ohne Toast bei leerer Historie wie Ionic. Quelle/Reihenfolge: bekannter Befund „Quelle und Reihenfolge der aktuellen Werke“.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/public-planning.page.html",
+    "line": 5,
+    "cond": [
+     "@if (isLoggedIn)"
+    ],
+    "tag": "ion-back-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[defaultHref]=\"fromOrgPlans ? orgPlansBackHref : '/tabs/settings'\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "\"\"",
+    "id": "public-planning/public-planning.page#action-bc995e2f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:839",
+     "lib/core/router/app_router.dart:1153",
+     "lib/core/router/app_router.dart:1163",
+     "lib/core/router/app_router.dart:1328"
+    ],
+    "n": "Zurück-Pfeil nur in der App (eingeloggt = inApp, anonymes /planung ohne); Ziel Einstellungen bzw. Org-Pläne (Tab oder Einstellungen) über die Routen-Hierarchie wie defaultHref.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/public-planning.page.html",
+    "line": 274,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block"
+    },
+    "events": [
+     "(click)=showExportOptions()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "share-outline"
+    ],
+    "keys": [
+     "planning.export"
+    ],
+    "de": [
+     "Exportieren"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.export' | transloco }}",
+    "id": "public-planning/public-planning.page#action-ded29dbe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:991-998"
+    ],
+    "n": "„Exportieren“ mit Teilen-Icon, volle Breite → Export-Sheet",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "public-planning/public-planning.page.html",
+    "line": 11,
+    "cond": [
+     "@if (isLoggedIn)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=openMyPlans()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.title]=\"'plans.myPlans' | transloco\""
+    ],
+    "icons": [
+     "list-outline"
+    ],
+    "keys": [
+     "plans.myPlans"
+    ],
+    "de": [
+     "Meine Pläne"
+    ],
+    "literals": [],
+    "text": "[attr.title]=\"'plans.myPlans' | transloco\"",
+    "id": "public-planning/public-planning.page#action-e29a181c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:844",
+     "lib/features/planning/presentation/pages/public_planning_page.dart:669"
+    ],
+    "n": "„Meine Pläne“ (Listen-Icon) nur eingeloggt; Eingeloggt nur Admin/Verantwortlich erreichbar (Ionic: /planung → /tabs/settings/planung, isUrlAccessAllowed ADMIN/RESPONSIBLE; Flutter app_router.dart:309 + :182), anonym nur /planung. Darstellung des Dialogs: modal-c85eff60.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 802,
+    "method": "PublicPlanningPage.shareCurrentPlan",
+    "cond": [],
+    "header": {
+     "keys": [
+      "plans.shareExport"
+     ],
+     "de": [
+      "Teilen & Exportieren"
+     ],
+     "literals": [],
+     "expr": "translate('plans.shareExport')"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "planning.readOnlyLink"
+       ],
+       "de": [
+        "Nur-Lesen-Link"
+       ],
+       "literals": [],
+       "expr": "translate('planning.readOnlyLink')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => this.doShare(false)"
+     },
+     {
+      "text": {
+       "keys": [
+        "planning.editLink"
+       ],
+       "de": [
+        "Bearbeitungs-Link"
+       ],
+       "literals": [],
+       "expr": "translate('planning.editLink')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => this.doShare(true)"
+     },
+     {
+      "text": {
+       "keys": [],
+       "de": [],
+       "literals": [
+        "PDF (A4)"
+       ],
+       "expr": "'PDF (A4)'"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => this.export(false)"
+     },
+     {
+      "text": {
+       "keys": [],
+       "de": [],
+       "literals": [
+        "PDF (2x A5)"
+       ],
+       "expr": "'PDF (2x A5)'"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => this.export(true)"
+     },
+     {
+      "text": {
+       "keys": [
+        "plans.imageA4"
+       ],
+       "de": [
+        "Bild (A4)"
+       ],
+       "literals": [],
+       "expr": "translate('plans.imageA4')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => this.exportImage(false)"
+     },
+     {
+      "expr": "...this.telegramButtons()",
+      "keys": [],
+      "de": [],
+      "literals": []
+     },
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "src": "0154bc8e",
+    "mbody": "3c6f4434",
+    "id": "public-planning/public-planning.page#actionsheet-722869aa"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:744-758",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:59-82"
+    ],
+    "n": "Header „Teilen & Exportieren“, „Nur-Lesen-Link“, „Bearbeitungs-Link“, „PDF (A4)“, „PDF (2x A5)“, „Bild (A4)“, Telegram, „Abbrechen“ – Reihenfolge und Wirkung gleich. Ionic: ohne Icons / Flutter: Icons (link, edit_note, picture_as_pdf …)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 610,
+    "method": "PublicPlanningPage.showGroupOptions",
+    "cond": [],
+    "header": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "head.name"
+    },
+    "subHeader": {
+     "keys": [
+      "planning.blockSubHeader"
+     ],
+     "de": [
+      "{count, plural, one {# Unterpunkt} other {# Unterpunkte}} · {min} min"
+     ],
+     "literals": [],
+     "expr": "translate('planning.blockSubHeader', { count: childrenOf(this.selectedFields, head.id).length, min: this.groupMinutes(head) })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "planning.editBlock"
+       ],
+       "de": [
+        "Block bearbeiten"
+       ],
+       "literals": [],
+       "expr": "translate('planning.editBlock')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { void this.editGroup(head); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "planning.addSubItem"
+       ],
+       "de": [
+        "Unterpunkt hinzufügen"
+       ],
+       "literals": [],
+       "expr": "translate('planning.addSubItem')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { void this.addSubItem(head); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "planning.dissolveBlock"
+       ],
+       "de": [
+        "Block auflösen"
+       ],
+       "literals": [],
+       "expr": "translate('planning.dissolveBlock')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { this.dissolveGroup(head); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "planning.deleteBlockWithItems"
+       ],
+       "de": [
+        "Block mit Unterpunkten löschen"
+       ],
+       "literals": [],
+       "expr": "translate('planning.deleteBlockWithItems')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { void this.confirmDeleteGroup(head); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "src": "2302a8f3",
+    "mbody": "a6812999",
+    "id": "public-planning/public-planning.page#actionsheet-8b22c81c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:246-279"
+    ],
+    "n": "Header Blockname, Untertitel „n Unterpunkte · x min“, „Block bearbeiten“, „Unterpunkt hinzufügen“, „Block auflösen“, „Block mit Unterpunkten löschen“ (destruktiv), „Abbrechen“ gleich. Ionic: ohne Icons / Flutter: Icons (edit, add, call_split, delete)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 793,
+    "method": "PublicPlanningPage.showExportOptions",
+    "cond": [],
+    "header": {
+     "keys": [
+      "planning.export"
+     ],
+     "de": [
+      "Exportieren"
+     ],
+     "literals": [],
+     "expr": "translate('planning.export')"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "expr": "buttons",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "src": "561105c1",
+    "mbody": "1764fce1",
+    "id": "public-planning/public-planning.page#actionsheet-bfb3e0da"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:739-742",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:57-77"
+    ],
+    "n": "Validierung vorher, Header „Exportieren“, „PDF (A4)“, „PDF (2x A5)“, „Bild (A4)“, Telegram-Einträge „Per Telegram senden (PDF)“/„(PDF 2x A5)“/„(Bild)“ nur mit Chat-ID, „Abbrechen“ – gleich. Ionic: ohne Icons / Flutter: Icons",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 625,
+    "method": "PublicPlanningPage.editGroup",
+    "cond": [],
+    "header": {
+     "keys": [
+      "planning.editBlock"
+     ],
+     "de": [
+      "Block bearbeiten"
+     ],
+     "literals": [],
+     "expr": "translate('planning.editBlock')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(evt: any) => { if (!evt.field?.trim()) { alert.message = translate('planning.enterNamePlease'); return false; } head.name = evt.field.trim(); head.conductor = evt.conductor ?? ''; head.info = evt.info?.trim() || undefined; this.calculateE…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": {
+       "keys": [
+        "planning.name"
+       ],
+       "de": [
+        "Name"
+       ],
+       "literals": [],
+       "expr": "translate('planning.name')"
+      },
+      "name": "'field'",
+      "placeholder": {
+       "keys": [
+        "planning.name"
+       ],
+       "de": [
+        "Name"
+       ],
+       "literals": [],
+       "expr": "translate('planning.name')"
+      },
+      "value": "head.name",
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": {
+       "keys": [
+        "planning.performance"
+       ],
+       "de": [
+        "Ausführung"
+       ],
+       "literals": [],
+       "expr": "translate('planning.performance')"
+      },
+      "name": "'conductor'",
+      "placeholder": {
+       "keys": [
+        "planning.performanceOptional"
+       ],
+       "de": [
+        "Ausführung (optional)"
+       ],
+       "literals": [],
+       "expr": "translate('planning.performanceOptional')"
+      },
+      "value": "head.conductor",
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": {
+       "keys": [
+        "planning.info"
+       ],
+       "de": [
+        "Info"
+       ],
+       "literals": [],
+       "expr": "translate('planning.info')"
+      },
+      "name": "'info'",
+      "placeholder": {
+       "keys": [
+        "planning.infoOptional"
+       ],
+       "de": [
+        "Info-Text (optional)"
+       ],
+       "literals": [],
+       "expr": "translate('planning.infoOptional')"
+      },
+      "value": "head.info",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "a22f0546",
+    "mbody": "a9313ce8",
+    "id": "public-planning/public-planning.page#alert-04303c43"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:281-301"
+    ],
+    "n": "„Block bearbeiten“, Name/Ausführung/Info mit Bezeichnungen, „Abbrechen“/„Speichern“, Meldung „Bitte einen Namen eingeben.“",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 572,
+    "method": "PublicPlanningPage.addSubItem",
+    "cond": [],
+    "header": {
+     "keys": [
+      "planning.addSubItem"
+     ],
+     "de": [
+      "Unterpunkt hinzufügen"
+     ],
+     "literals": [],
+     "expr": "translate('planning.addSubItem')"
+    },
+    "subHeader": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "head.name"
+    },
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.add"
+       ],
+       "de": [
+        "Hinzufügen"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.add')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(evt: any) => { if (!evt.field?.trim()) { alert.message = translate('planning.enterItemPlease'); return false; } const at = lastIndexOfGroup(this.selectedFields, head.id) + 1; this.selectedFields.splice(at, 0, { id: `fld-${crypto.randomUUI…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'field'",
+      "placeholder": {
+       "keys": [
+        "planning.subItemPlaceholder"
+       ],
+       "de": [
+        "Programmpunkt, z. B. Gruppenlied"
+       ],
+       "literals": [],
+       "expr": "translate('planning.subItemPlaceholder')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'conductor'",
+      "placeholder": {
+       "keys": [
+        "planning.enterPerformer"
+       ],
+       "de": [
+        "Ausführenden eingeben..."
+       ],
+       "literals": [],
+       "expr": "translate('planning.enterPerformer')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'info'",
+      "placeholder": {
+       "keys": [
+        "planning.subItemInfoPlaceholder"
+       ],
+       "de": [
+        "Info-Text (optional), z. B. Liedtitel"
+       ],
+       "literals": [],
+       "expr": "translate('planning.subItemInfoPlaceholder')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "number",
+      "label": {
+       "keys": [
+        "planning.minutes"
+       ],
+       "de": [
+        "Minuten"
+       ],
+       "literals": [],
+       "expr": "translate('planning.minutes')"
+      },
+      "name": "'time'",
+      "placeholder": {
+       "keys": [
+        "planning.minutes"
+       ],
+       "de": [
+        "Minuten"
+       ],
+       "literals": [],
+       "expr": "translate('planning.minutes')"
+      },
+      "value": "5",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "b872e9ad",
+    "mbody": "86f025f1",
+    "id": "public-planning/public-planning.page#alert-252d541a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:599-619",
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:222-244"
+    ],
+    "n": "„Unterpunkt hinzufügen“ mit Blockname als Untertitel, Platzhalter „Programmpunkt, z. B. Gruppenlied“/„Ausführenden eingeben...“/„Info-Text (optional), z. B. Liedtitel“, „Minuten“ Vorgabe 5, „Abbrechen“/„Hinzufügen“; Einfügen am Blockende, Block wird aufgeklappt",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 383,
+    "method": "PublicPlanningPage.addNoteField",
+    "cond": [],
+    "header": {
+     "keys": [
+      "planning.addNoteField"
+     ],
+     "de": [
+      "Notizfeld hinzufügen"
+     ],
+     "literals": [],
+     "expr": "translate('planning.addNoteField')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.add"
+       ],
+       "de": [
+        "Hinzufügen"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.add')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(evt: any) => { if (!evt.field) { alert.message = translate('plans.enterNotePlease'); return false; } this.selectedFields.push({ id: `noteFld ${evt.field}-${Date.now()}`, name: evt.field, conductor: '', time: '0', }); this.calculateEnd(); }"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'field'",
+      "placeholder": {
+       "keys": [
+        "planning.enterNote"
+       ],
+       "de": [
+        "Notiz eingeben..."
+       ],
+       "literals": [],
+       "expr": "translate('planning.enterNote')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "eb568331",
+    "mbody": "9e525fc6",
+    "id": "public-planning/public-planning.page#alert-25e72979"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:552",
+     "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:237"
+    ],
+    "n": "„Notizfeld hinzufügen“, Platzhalter „Notiz eingeben...“, „Abbrechen“/„Hinzufügen“, Meldung „Bitte eine Notiz eingeben.“, id „noteFld …-Zeit“, Dauer 0 – gleich. Ionic: nur Platzhalter, Text ungetrimmt / Flutter: zusätzlich Feldbeschriftung „Notiz“, Text getrimmt (kosmetisch, wie planning alert-70a7354c).",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 350,
+    "method": "PublicPlanningPage.addField",
+    "cond": [],
+    "header": {
+     "keys": [
+      "planning.addField"
+     ],
+     "de": [
+      "Feld hinzufügen"
+     ],
+     "literals": [],
+     "expr": "translate('planning.addField')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.add"
+       ],
+       "de": [
+        "Hinzufügen"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.add')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(evt: any) => { if (!evt.field) { alert.message = translate('planning.enterItemPlease'); return false; } this.selectedFields.push({ id: `${evt.field}-${Date.now()}`, name: evt.field, conductor: evt.conductor ?? '', info: evt.info?.trim() |…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'field'",
+      "placeholder": {
+       "keys": [
+        "planning.enterItem"
+       ],
+       "de": [
+        "Programmpunkt eingeben..."
+       ],
+       "literals": [],
+       "expr": "translate('planning.enterItem')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'conductor'",
+      "placeholder": {
+       "keys": [
+        "plans.performerOptional"
+       ],
+       "de": [
+        "Ausführender (optional)"
+       ],
+       "literals": [],
+       "expr": "translate('plans.performerOptional')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'info'",
+      "placeholder": {
+       "keys": [
+        "planning.infoOptional"
+       ],
+       "de": [
+        "Info-Text (optional)"
+       ],
+       "literals": [],
+       "expr": "translate('planning.infoOptional')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "74eff18b",
+    "mbody": "7119ed50",
+    "id": "public-planning/public-planning.page#alert-32122b22"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:542",
+     "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:237"
+    ],
+    "n": "Titel, Platzhalter „Programmpunkt eingeben...“/„Ausführender (optional)“/„Info-Text (optional)“, „Abbrechen“/„Hinzufügen“, Meldung „Bitte einen Programmpunkt eingeben.“, Dauer 20, für alle (auch anonym) – gleich. Ionic: Eingaben nur mit Platzhaltern, Name/Ausführender ungetrimmt (nur Leerzeichen wird angenommen) / Flutter: zusätzlich Feldbeschriftungen „Programmpunkt“/„Ausführender“/„Info“, Werte getrimmt. Erstprüfer nannte das selbst, wertete aber ok; wie planning alert-70a7354c ist das diff niedrig.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 896,
+    "method": "PublicPlanningPage.newPlan",
+    "cond": [
+     "(this.selectedFields.length)"
+    ],
+    "header": {
+     "keys": [
+      "plans.newPlan"
+     ],
+     "de": [
+      "Neuer Plan"
+     ],
+     "literals": [],
+     "expr": "translate('plans.newPlan')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "plans.discardNew"
+     ],
+     "de": [
+      "Aktuellen Plan verwerfen und einen neuen erstellen?"
+     ],
+     "literals": [],
+     "expr": "translate('plans.discardNew')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "plans.newPlan"
+       ],
+       "de": [
+        "Neuer Plan"
+       ],
+       "literals": [],
+       "expr": "translate('plans.newPlan')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => this.resetToNew()"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "6711f7df",
+    "mbody": "3eea8a73",
+    "id": "public-planning/public-planning.page#alert-815ae115"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:626",
+     "lib/features/planning/presentation/pages/public_planning_page.dart:938"
+    ],
+    "n": "„Neuer Plan“ nur eingeloggt (Admin/Verantwortlich); mit Feldern Rückfrage „Neuer Plan“/„Aktuellen Plan verwerfen und einen neuen erstellen?“, „Abbrechen“/„Neuer Plan“; setzt Titel, Datum, 10:00, Felder, Vorlage, Branding, Org-Zuordnung zurück (nur lokal).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "public-planning/public-planning.page.ts",
+    "line": 542,
+    "method": "PublicPlanningPage.addGroup",
+    "cond": [],
+    "header": {
+     "keys": [
+      "planning.addBlock"
+     ],
+     "de": [
+      "Programmblock hinzufügen"
+     ],
+     "literals": [],
+     "expr": "translate('planning.addBlock')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "planning.blockDurationHint"
+     ],
+     "de": [
+      "Die Dauer ergibt sich aus den Unterpunkten."
+     ],
+     "literals": [],
+     "expr": "translate('planning.blockDurationHint')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.create"
+       ],
+       "de": [
+        "Anlegen"
+       ],
+       "literals": [],
+       "expr": "translate('common.create')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(evt: any) => { if (!evt.field?.trim()) { alert.message = translate('planning.enterNamePlease'); return false; } const head = newGroupHead(evt.field.trim(), evt.conductor?.trim(), evt.info?.trim()); this.selectedFields.push(head); this.cal…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'field'",
+      "placeholder": {
+       "keys": [
+        "planning.blockNamePlaceholder"
+       ],
+       "de": [
+        "Name, z. B. Programm Jugendchor"
+       ],
+       "literals": [],
+       "expr": "translate('planning.blockNamePlaceholder')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'conductor'",
+      "placeholder": {
+       "keys": [
+        "planning.performanceOptional"
+       ],
+       "de": [
+        "Ausführung (optional)"
+       ],
+       "literals": [],
+       "expr": "translate('planning.performanceOptional')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'info'",
+      "placeholder": {
+       "keys": [
+        "planning.infoOptional"
+       ],
+       "de": [
+        "Info-Text (optional)"
+       ],
+       "literals": [],
+       "expr": "translate('planning.infoOptional')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "ddf2d317",
+    "mbody": "3b7cab36",
+    "id": "public-planning/public-planning.page#alert-f4ddbc0f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:582-598"
+    ],
+    "n": "„Programmblock hinzufügen“, Hinweis „Die Dauer ergibt sich aus den Unterpunkten.“, Name/Ausführung (optional)/Info, „Abbrechen“/„Anlegen“, Meldung „Bitte einen Namen eingeben.“, danach Unterpunkt-Dialog",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "public-planning/public-planning.page.html",
+    "line": 185,
+    "cond": [
+     "in <ion-modal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "id": "startTime",
+     "presentation": "time"
+    },
+    "events": [
+     "(ionChange)=calculateEnd()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"time\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[formatOptions]=\"{ time: { hour: '2-digit', minute: '2-digit', hour12: false } }\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "public-planning/public-planning.page#field-2749d7be"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:804-817"
+    ],
+    "n": "Startzeit wählen → Zeiten/Ende neu, Speichern (Flutter beim Bestätigen, Ionic bei jeder Rad-Änderung)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "public-planning/public-planning.page.html",
+    "line": 56,
+    "cond": [],
+    "tag": "ion-datetime-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "public-planning/public-planning.page#field-51c31589"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:918-921"
+    ],
+    "n": "Ionic: ion-datetime-button im Intl-Kurzformat (z. B. „4. Nov. 2026“; Ionic-Paket nicht im Container) / Flutter: „04.11.2026“ (dateFmt)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "public-planning/public-planning.page.html",
+    "line": 235,
+    "cond": [
+     "in <ion-reorder-group>",
+     "@else",
+     "@else",
+     "@if (!field.id.includes('noteFld'))"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "required": "true",
+     "type": "number",
+     "slot": "end"
+    },
+    "events": [
+     "(ionBlur)=calculateEnd()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"field.time\"",
+    "bindings": [
+     "[placeholder]=\"'planning.minPlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "planning.minPlaceholder"
+    ],
+    "de": [
+     "min"
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'planning.minPlaceholder' | transloco\"",
+    "id": "public-planning/public-planning.page#field-7949de05"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:469-473",
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:570-619"
+    ],
+    "n": "Zahl, Platzhalter „min“, nicht bei Notizen; Änderung → Zeiten/Ende neu + Speichern (Flutter je Eingabe, Ionic beim Verlassen)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "public-planning/public-planning.page.html",
+    "line": 35,
+    "cond": [],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [
+     "(ionChange)=onTemplateChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"selectedTemplateId\"",
+    "bindings": [
+     "[label]=\"'plans.template' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"tpl.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ tpl.name }}"
+     },
+     {
+      "value": "",
+      "keys": [
+       "plans.orgTemplates"
+      ],
+      "de": [
+       "── Org-Vorlagen ──"
+      ],
+      "literals": [],
+      "text": "{{ 'plans.orgTemplates' | transloco }}\"\""
+     },
+     {
+      "value": "\"'org:' + i\"",
+      "keys": [
+       "plans.orgSuffix"
+      ],
+      "de": [
+       "{title} (Org)"
+      ],
+      "literals": [],
+      "text": "{{ 'plans.orgSuffix' | transloco: { title: tpl.title } }}"
+     }
+    ],
+    "keys": [
+     "plans.template",
+     "plans.orgTemplates",
+     "plans.orgSuffix"
+    ],
+    "de": [
+     "Vorlage",
+     "── Org-Vorlagen ──",
+     "{title} (Org)"
+    ],
+    "literals": [],
+    "text": "[label]=\"'plans.template' | transloco\" {{ tpl.name }} \"\" {{ 'plans.orgTemplates' | transloco }} {{ 'plans.orgSuffix' | transloco: { title: tpl.title } }}",
+    "id": "public-planning/public-planning.page#field-9dc37d80"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:886-901",
+     "lib/features/planning/presentation/pages/public_planning_page.dart:425-451"
+    ],
+    "n": "Flutter besser: Optionen (5 Vorlagen, deaktiviert „── Org-Vorlagen ──“, „{title} (Org)“ nur eingeloggt) und Rückfrage gleich. Ionic: bei „Abbrechen“ bleibt die neue Vorlage ausgewählt, obwohl nichts ersetzt wurde; Startzeit einer Org-Vorlage nur übernommen, wenn sie ISO-Datum-Zeit ist / Flutter: Abbrechen setzt die Auswahl zurück; Startzeit auch im Format „HH:mm“ übernommen",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "public-planning/public-planning.page.html",
+    "line": 59,
+    "cond": [
+     "in <ion-modal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "id": "dateOnly",
+     "presentation": "date"
+    },
+    "events": [
+     "(ionChange)=onDateChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"date\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "public-planning/public-planning.page#field-bfd56fd5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:791-802"
+    ],
+    "n": "Datum wählen → Startzeit/Ende gelten für das neue Datum, Speichern",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "public-planning/public-planning.page.html",
+    "line": 31,
+    "cond": [],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [
+     "(ionBlur)=calculateEnd()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"planTitle\"",
+    "bindings": [
+     "[label]=\"'plans.title' | transloco\"",
+     "[placeholder]=\"'plans.runSheet' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "plans.title",
+     "plans.runSheet"
+    ],
+    "de": [
+     "Titel",
+     "Ablaufplan"
+    ],
+    "literals": [],
+    "text": "[label]=\"'plans.title' | transloco\" [placeholder]=\"'plans.runSheet' | transloco\"",
+    "id": "public-planning/public-planning.page#field-cc22e81f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:862-884"
+    ],
+    "n": "Label „Titel“, Platzhalter „Ablaufplan“, Großschreibung Satzanfang, Speichern beim Verlassen",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "public-planning/public-planning.page",
+   "ionic": {
+    "ts": "public-planning/public-planning.page.ts",
+    "html": "public-planning/public-planning.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "public-planning/public-planning.page.html",
+    "line": 57,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "public-planning/public-planning.page#modal-419a4f08"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/public_planning_page.dart:791-802"
+    ],
+    "n": "Plattform-Datumsdialog statt ion-modal mit ion-datetime",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart"
+   ]
+  }
+ ]
+}

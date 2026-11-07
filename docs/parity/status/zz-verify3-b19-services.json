@@ -1,0 +1,257 @@
+{
+  "batch": "zz-verify3-b19-services",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "services/organisation/organisation.service#db-be14ed40": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/organisation_repository.dart:271",
+        "lib/core/providers/organisation_providers.dart:21",
+        "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:18"
+      ],
+      "n": "tenantUsers mit userId und or(role.eq.1,role.eq.5) wie Ionic (Flutter liest nur die Spalte tenantId, gleiche Daten). Rolle: Aufrufer \"Organisation erstellen oder verknüpfen\" nur für Admin (Ionic isSuperAdmin, Flutter isSuperAdmin = Role.admin) und nur ohne Organisation (org_settings_page.dart:158).",
+      "v": "bestätigt"
+    },
+    "services/organisation/organisation.service#db-6030916f": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/organisation_repository.dart:287"
+      ],
+      "n": "tenant_group_tenants in(tenant_id, Admin/Verantwortlich-Instanzen), Dubletten entfernt wie Ionic; leere Liste → [] (Ionic: in() mit leerer Liste → leer). Gleiche Rollenbeschränkung über die erste Abfrage.",
+      "v": "bestätigt"
+    },
+    "services/player/player.service#db-ce9568b4": {
+      "s": "na",
+      "n": "toter Code: PlayerService.getPlayers wird nirgends aufgerufen (playerSvc wird nur für getPlayerByAppId/getPlayersByGroup/updateExtraField…/updatePlayer… genutzt); DbService.getPlayers (db.service.ts:1559) hat eine eigene Implementierung.",
+      "v": "bestätigt"
+    },
+    "services/player/player.service#toast-051f6ab0": {
+      "s": "na",
+      "n": "toter Code: PlayerService.getPlayers wird nirgends aufgerufen; DbService.getPlayers (db.service.ts:1559) hat eigenen Toast.",
+      "v": "bestätigt"
+    },
+    "services/player/player.service#db-4bba08c7": {
+      "s": "na",
+      "n": "toter Code: PlayerService.getPlayers wird nirgends aufgerufen; die Eltern-/Standard-Abfrage läuft über DbService.getPlayers (db.service.ts:1559).",
+      "v": "bestätigt"
+    },
+    "services/player/player.service#toast-051f6ab0-2": {
+      "s": "na",
+      "n": "toter Code: PlayerService.getPlayers wird nirgends aufgerufen; DbService.getPlayers hat eigenen Toast.",
+      "v": "bestätigt"
+    },
+    "services/player/player.service#db-e018cb94": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:200",
+        "lib/features/voice_leader/data/providers/voice_leader_providers.dart:72",
+        "lib/core/router/route_access.dart:96",
+        "lib/features/settings/presentation/pages/settings_page.dart:198"
+      ],
+      "n": "player: tenantId, instrument, left null, pending false, Sortierung isLeader desc/lastName wie Ionic. Rolle: Ionic settings/voice-leader nur über Einstiege für VOICE_LEADER/VOICE_LEADER_HELPER (settings.page isVoiceLeader && !isGeneral && !sp, side-nav, isUrlAccessAllowed); Flutter gleiche Einstiege (canSeeVoiceLeaderSettings) plus Routen-Gate für dieselben Rollen.",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#native-7521b3d9": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/core/services/push/push_service.dart:266",
+        "lib/core/services/push/push_service.dart:273",
+        "lib/core/services/push/firebase_push_messaging_client.dart:58",
+        "lib/core/services/push/firebase_push_messaging_client.dart:71"
+      ],
+      "n": "Android 13+: firebase_messaging getNotificationSettings liefert ohne erteilte POST_NOTIFICATIONS-Berechtigung 0 = AuthorizationStatus.denied (nie notDetermined, Pub-Cache firebase_messaging-15.2.10 FlutterFirebaseMessagingPlugin.java:395-409); Flutter mappt das auf PushPermission.denied. Ionic (Capacitor PushNotifications.checkPermissions) liefert bei noch nicht gefragter Berechtigung 'prompt'. Folge in promptAndEnable: Flutter setzt push_prompt_shown und kehrt zurück – weder Dialog \"Push-Benachrichtigungen\" noch Systemabfrage; Neuinstallationen auf Android 13+ (und Ionic-Nutzer ohne erteilte Berechtigung) bekommen nie ein Token in device_tokens. Ionic: Dialog → Aktivieren → requestPermissions → Token. iOS gleich. Erstprüfung hat die Android-Abbildung übersehen.",
+      "v": "korrigiert"
+    },
+    "services/push/push.service#alert-a499f987": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/core/providers/push_providers.dart:195",
+        "lib/core/services/push/push_service.dart:278"
+      ],
+      "n": "Text/Buttons/Effekt gleich (Später → Flag; Aktivieren → Flag, initPush, notifications.push_enabled=true), alle Rollen nach Anmeldung, nur nativ. Aber: auf Android 13+ erscheint der Dialog in Flutter nie (gleiche Ursache wie native-7521b3d9: denied statt prompt). Zusätzlich: Tippen außerhalb/Zurück ruft in Ionic den cancel-Handler \"Später\" (Flag gesetzt, keine erneute Frage); Flutter (barrierDismissible) setzt das Flag nicht und fragt beim nächsten Start erneut.",
+      "v": "korrigiert"
+    },
+    "services/push/push.service#native-9bb3502f": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/core/services/push/push_service.dart:301",
+        "lib/core/services/push/push_service.dart:306",
+        "lib/core/services/push/firebase_push_messaging_client.dart:71"
+      ],
+      "n": "Android 13+: firebase_messaging getNotificationSettings liefert ohne erteilte POST_NOTIFICATIONS-Berechtigung 0 = AuthorizationStatus.denied (nie notDetermined, Pub-Cache firebase_messaging-15.2.10 FlutterFirebaseMessagingPlugin.java:395-409); Flutter mappt das auf PushPermission.denied. Ionic (Capacitor PushNotifications.checkPermissions) liefert bei noch nicht gefragter Berechtigung 'prompt'. initPush (auch über Benachrichtigungen → Push einschalten = togglePush) bricht in Flutter auf Android 13+ ohne Berechtigung ab, statt die Systemabfrage zu zeigen; kein Token. iOS gleich.",
+      "v": "korrigiert"
+    },
+    "services/push/push.service#native-c30ca494": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/core/services/push/push_service.dart:303",
+        "lib/core/services/push/firebase_push_messaging_client.dart:83"
+      ],
+      "n": "iOS: requestPermission bei notDetermined wie Ionic. Android 13+: wird in Flutter nie erreicht, weil checkPermission ohne Berechtigung denied statt prompt liefert (siehe native-9bb3502f) – die POST_NOTIFICATIONS-Systemabfrage erscheint nie; Ionic fragt.",
+      "v": "korrigiert"
+    },
+    "services/push/push.service#native-ce80f086": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/push_service.dart:312",
+        "lib/core/services/push/firebase_push_messaging_client.dart:139"
+      ],
+      "n": "Token-Erneuerung → saveToken (onTokenRefresh, in Flutter auch auf Android). Keine Rollenbeschränkung in beiden.",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#native-fdd6118b": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/firebase_push_messaging_client.dart:83",
+        "lib/core/services/push/push_service.dart:303"
+      ],
+      "n": "iOS: FirebaseMessaging.requestPermission (alert/badge/sound) im prompt-Fall; nach erteilter Berechtigung ist der Ionic-Aufruf ein No-op.",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#native-95ceae7e": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/firebase_push_messaging_client.dart:99",
+        "lib/core/services/push/push_service.dart:318"
+      ],
+      "n": "firebase_messaging registriert APNs selbst; getToken wartet bis zu 10 s auf das APNs-Token (Ionic: registration-Listener mit 10-s-Timeout).",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#native-17b43e12": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/firebase_push_messaging_client.dart:99",
+        "lib/core/services/push/push_service.dart:318"
+      ],
+      "n": "iOS-APNs-Registrierung übernimmt firebase_messaging; Token danach wie Ionic gespeichert.",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#native-920b8a86": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/firebase_push_messaging_client.dart:115",
+        "lib/core/services/push/push_service.dart:318"
+      ],
+      "n": "FCM-Token → device_tokens; ohne Token nur Log wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#native-17b43e12-2": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/firebase_push_messaging_client.dart:99",
+        "lib/core/services/push/push_service.dart:318"
+      ],
+      "n": "Android: FCM getToken statt register()+registration – gleiches Ergebnis, sobald die Berechtigung erteilt ist (Android-13+-Lücke siehe native-9bb3502f).",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#native-95ceae7e-3": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/push_service.dart:318",
+        "lib/core/services/push/push_service.dart:322"
+      ],
+      "n": "Android: Token speichern (saveToken: fremde Zeilen löschen, upsert) entspricht dem registration-Listener.",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#native-95ceae7e-4": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/firebase_push_messaging_client.dart:116",
+        "lib/core/services/push/push_service.dart:324"
+      ],
+      "n": "Registrierungsfehler nur geloggt wie Ionic (console.error), keine Nutzeranzeige.",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#alert-a69276d0": {
+      "s": "ok",
+      "f": [
+        "lib/core/providers/push_providers.dart:224",
+        "lib/core/services/push/push_service.dart:194"
+      ],
+      "n": "Titel oder \"Benachrichtigung\", Text, \"OK\"/\"Anzeigen\" → navigateFromData; live_plan still; Tracking PushReceived. Alle Rollen. Ob Ionic auf iOS zusätzlich den Systembanner im Vordergrund zeigt (Plugin-Default presentationOptions), ist ohne Plugin-Quellen nicht prüfbar; Flutter zeigt bewusst nur den Dialog.",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#nav-1a9e006e": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/push_navigation.dart:94",
+        "lib/core/providers/push_providers.dart:306"
+      ],
+      "n": "/tabs/messages/:id → /messages/:id (push), kein Markieren als gelesen (Seite macht das), Route ohne Rollen-Gate wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#nav-6fe135b6": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/push_navigation.dart:108",
+        "lib/core/router/legacy_routes.dart:22"
+      ],
+      "n": "data.route (team-notify: /tabs/settings/tasks/:id, /tabs/attendance/:id/protocol, team-organization?tab=topics) über legacyRouteRedirect; Zielrouten ohne Rollen-Gate wie Ionic (Seiten prüfen selbst).",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#nav-06da0462": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/push_navigation.dart:112"
+      ],
+      "n": "task: /settings/tasks/:id bzw. team-organization?tab=tasks (initialTab ausgewertet).",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#nav-20f8d0b6": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/push_navigation.dart:117",
+        "lib/core/router/legacy_routes.dart:54"
+      ],
+      "n": "protocol: /tabs/attendance/:id/protocol → /settings/protocol/:id (nicht unter dem /attendance-Rollen-Gate, also für alle Empfänger erreichbar wie Ionic); sonst team-organization?tab=protocols.",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#nav-a5ba65e3": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/push_navigation.dart:122"
+      ],
+      "n": "proposal: team-organization?tab=topics.",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#nav-f5555b08": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/push_navigation.dart:140"
+      ],
+      "n": "Termin-Push ohne attendanceId → /attendance. Flutter-Route hat Rollen-Gate (Dirigent/Helfer), Ionic navigiert ungeprüft; alle Edge Functions senden jedoch attendanceId mit, der Zweig ist praktisch unerreichbar.",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#nav-3df4da0a-2": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/push_navigation.dart:130"
+      ],
+      "n": "criticals → /tabs/player (/people). Ionic ohne Rollenprüfung, Flutter-Route nur für Dirigenten; Empfänger sind laut evaluate-critical-rules nur Admin/Verantwortlich, daher kein Unterschied.",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#nav-3df4da0a-3": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/push_navigation.dart:143"
+      ],
+      "n": "Default → /tabs/player (/people). Typen hier: registration, pause – Empfänger nur Admin/Verantwortlich (new-registration-notifier, quick-processor), daher trotz Flutter-Routen-Gate kein Unterschied.",
+      "v": "bestätigt"
+    },
+    "services/role-permission/role-permission.service#db-0adce399": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/role_permission_repository.dart:22",
+        "lib/core/providers/role_permission_providers.dart:44"
+      ],
+      "n": "tenant_role_permissions eq(tenant_id) für alle Rollen geladen wie Ionic (setTenant). Flutter lädt per Provider; solange nicht bestätigt geladen, werden Helfer-Rechte verweigert (SOL_FIX2) – kein Unterschied nach dem Laden.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

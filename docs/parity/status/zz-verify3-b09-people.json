@@ -1,0 +1,184 @@
+{
+  "batch": "zz-verify3-b09-people",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "people/person/person.page#alert-40883a4d": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/people/presentation/pages/person_detail_page.dart:1742", "lib/features/people/presentation/pages/person_create_page.dart:123"],
+      "n": "Flutter besser: Detailseite gleich ('Änderungen verwerfen?' / Text, 'Abbrechen' / 'Ja'; Änderungen nur für Admin/Verantwortliche möglich wie Ionic !readOnly). Erstprüfer übersah: Ionic onChange setzt hasChanges nur bei existingPlayer, das Neu-Modal schließt daher immer ohne Rückfrage / Flutter fragt auf der Neu-Seite bei jeder Eingabe (Name, E-Mail, Bild …) ebenfalls nach.",
+      "v": "korrigiert"
+    },
+    "people/person/person.page#toast-e88a740d": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/person_create_page.dart:1066"],
+      "n": "'Die Person wurde erfolgreich hinzugefügt' grün, danach Seite zu. Admin/Verantwortliche gleich. Beobachter erreicht die Neu-Seite in Flutter ohne Rollenprüfung (Ionic: Felder gesperrt, kein Anlegen) – bereits bei list.page#action-4792cae3 erfasst.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#toast-46aad51d": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/person_create_page.dart:1072"],
+      "n": "'Fehler beim hinzufügen der Person: {error}' rot; Flutter mit lesbarer Fehlermeldung.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#toast-2b97990f": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/person_detail_page.dart:533", "lib/features/people/presentation/pages/person_detail_page.dart:538"],
+      "n": "Bedingung gleich (E-Mail gesetzt, geändert, ungültig), Text gleich; nur im Account-Bereich für Admin/Verantwortliche. Regex leicht anders als Utils.validateEmail (Sonderzeichen im lokalen Teil), Randfall.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#toast-8064d400": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/person_detail_page.dart:725"],
+      "n": "'Die Spielerdaten wurden erfolgreich aktualisiert.' grün; nur Admin/Verantwortliche speichern. Dass die Seite offen bleibt, gehört zum Speichern-FAB.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#toast-a9ba8d62": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/person_detail_page.dart:734"],
+      "n": "'Fehler beim aktualisieren des Spielers: {error}' rot.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#toast-0c4f57a4": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/person_detail_page.dart:1518", "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:266"],
+      "n": "Rollenauswahl nur im Account-Bereich (canEdit = Admin/Verantwortliche, nicht pending/archiviert), gesperrt bei Hauptgruppe; Optionen Mitglied/Verantwortlich/Helfer (+ Stimmführer-Rollen bei isLeader) wie Ionic; schreibt tenantUsers.role, Toast gleich.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#alert-c5cb3708": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/duplicate_candidates_card.dart:63", "lib/features/people/presentation/pages/person_detail_page.dart:1828"],
+      "n": "Nur bei ausstehender Person und canEdit (Ionic approveMode, nur aus Einstellungen für Admin/Verantwortliche). 'Personen zusammenführen', Text mit beiden Namen, 'Abbrechen' / 'Zusammenführen'.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#toast-6cd00c06": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/duplicate_candidates_card.dart:91"],
+      "n": "'Die Personen wurden erfolgreich zusammengeführt' grün, Seite schließt.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#alert-a6876225": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:287", "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:226"],
+      "n": "Wischen-Löschen nur canEdit (Admin/Verantwortliche, nicht archiviert) und kein Termin-Eintrag wie Ionic (!readOnly, type≠4). 'Eintrag unwiderruflich entfernen?' 'Abbrechen' / 'Ja'; entfernt per Datum+Typ+Text statt nur Datum.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#toast-29a8b883": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:334"],
+      "v": "bestätigt"
+    },
+    "people/person/person.page#toast-326d88e1": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:338"],
+      "v": "bestätigt"
+    },
+    "people/person/person.page#alert-18f6a225": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/person_header.dart:285"],
+      "n": "'Passbild entfernen' / 'Möchtest du das Passbild wirklich entfernen?', 'Abbrechen' / 'Entfernen' (rot). Nur canEdit wie Ionic !readOnly; Beobachter/Archiv nur Ansicht. Erreichbar über das Avatar-Aktionsblatt statt Bildbetrachter – bei action-0a1221be erfasst.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#toast-8a955d94": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/person_header.dart:331", "lib/features/people/presentation/pages/person_create_page.dart:970"],
+      "v": "bestätigt"
+    },
+    "people/person/person.page#toast-9e8a666e": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/people/presentation/pages/person_detail_page.dart:962", "lib/features/people/presentation/pages/person_detail_page.dart:1384"],
+      "n": "Menüpunkt gleich (kein appId, Admin/Verantwortlicher). Erstprüfer übersah die Rollenlogik in db.createAccount → registerUser/getAppIdByEmail: Ionic Admin → nur player.appId gesetzt (E-Mail nur lokal angezeigt), Toast. Ionic Verantwortlicher → ist sein Account schon mit einer Person der Instanz verknüpft: Fehler 'Der Benutzer ist bereits in diesem Mandanten: …', keine Zuweisung; sonst wird sein tenantUsers-Eintrag gelöscht und mit Rolle Spieler (Hauptgruppe: Verantwortlich) neu angelegt + Info-Mail / Flutter: schreibt für beide Rollen direkt appId + E-Mail, immer Erfolgs-Toast, Rolle unverändert. Verantwortliche können so ihren Account an eine zweite Person hängen, was Ionic verweigert (die Ionic-Selbstherabstufung entfällt).",
+      "v": "korrigiert"
+    },
+    "people/person/person.page#alert-01934766": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/people/presentation/widgets/handover_sheet.dart:723", "lib/features/people/presentation/widgets/handover_sheet.dart:763"],
+      "n": "Flutter besser: Titel 'Kopieren/Übertragen nicht möglich', Text mit Instanz und E-Mail bzw. Name, 'OK' gleich. Ionic prüft keine Rechte in der Zielinstanz und zeigt den Hinweis für jede eigene Ziel-Rolle / Flutter prüft vorher canEdit in der Zielinstanz und zeigt sonst den roten Toast 'Keine Berechtigung in der Ziel-Instanz' statt des Hinweises (Ionic-Übertragung scheitert dann später). Andere Ziel-Instanzliste: field-0a2daf88.",
+      "v": "korrigiert"
+    },
+    "people/person/person.page#toast-b7159a13": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/pause_person_sheet.dart:271", "lib/features/people/presentation/pages/person_detail_page.dart:1006"],
+      "n": "'Fehler bei {Kurzname}: {Fehler}' rot; Pausieren nur Admin/Verantwortliche (canEdit) wie Ionic.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#toast-52d1c58c": {
+      "s": "na",
+      "n": "toter Code bestätigt: Button 'Abwesenheit eintragen' ist ohne Grund/Von/Bis deaktiviert (person.page.html:1068-1069), confirmAbsence wird nur dort aufgerufen. Flutter ebenso deaktiviert (planned_absences.dart:203).",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#toast-aee32adb": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/planned_absences.dart:243", "lib/features/people/presentation/pages/person_detail_page.dart:1914"],
+      "n": "Mit/ohne Anzahl entschuldigter Termine wie Ionic; Bereich nur canEdit + canManagePlannedAbsences (effektiv Admin/Verantwortliche wie Ionic !readOnly && canManagePlannedAbsences).",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#alert-d5cca7fc": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/planned_absences.dart:256", "lib/features/people/presentation/widgets/planned_absences.dart:259"],
+      "n": "'Abwesenheit löschen', Personen-Text, 'Abbrechen' / 'Löschen' (destruktiv); setzt entschuldigte Termine zurück. Gleiche Rollen wie toast-aee32adb.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#toast-b0dccec9": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/planned_absences.dart:270"],
+      "v": "bestätigt"
+    },
+    "people/person/person.page#alert-5ffb2485": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/person_detail_page.dart:1427", "lib/features/people/presentation/pages/person_detail_page.dart:1731"],
+      "n": "Nur bei archivierter Person; Flutter zusätzlich nur Admin/Verantwortliche (Ionic nur aus deren Archiv-Liste erreichbar). 'Person reaktivieren' / Text, 'Abbrechen' / 'Ja'.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#actionsheet-eadcf3f0": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/people/presentation/pages/person_detail_page.dart:1330"],
+      "n": "Bedingung gleich (ausstehende Person, Admin/Verantwortliche), Texte, Reihenfolge und Wirkung gleich. Ionic: keine Icons, 'Abbrechen' mit role destructive (rot, in der Button-Gruppe) / Flutter: grünes Haken-Icon und grüne Schrift bei 'Person genehmigen', Icon bei 'Person ablehnen', 'Abbrechen' als normaler separater Abbrechen-Button (cancelDestructive fehlt, anders als im '…'-Menü).",
+      "v": "korrigiert"
+    },
+    "people/person/person.page#text-b7dada5f": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/late_warning_card.dart:56", "lib/features/people/presentation/pages/person_detail_page.dart:1856"],
+      "n": "'Diese Person ist <b>{n}x</b> unentschuldigt zu spät gekommen.' mit fettem Zähler; nur canEdit (Admin/Verantwortliche, nicht archiviert) und lateCount ≥ Schwelle wie Ionic !readOnly && isAdmin."
+    },
+    "people/person/person.page#text-1819de6e": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:152", "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:835"],
+      "n": "'Stimmumfang' bei Chor, alle Rollen; leer + nicht bearbeitbar ausgeblendet (beim Feld-Item erfasst).",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#field-020d2981": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:201", "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:392"],
+      "n": "Schalter 'Stimmführer' bei !general && !Hauptgruppe für alle Rollen sichtbar, nur canEdit änderbar (Ionic disabled=readOnly), markiert Änderung; Gruppenwechsel setzt ihn zurück wie Ionic.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#text-a507dbf9": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:204", "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:854"],
+      "n": "'Instrumente' bei Chor && !Hauptgruppe; leer + nicht bearbeitbar ausgeblendet (Feld-Item).",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#text-f9ca222a": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:217", "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:883"],
+      "n": "'Testergebnis' bei VoS && !Hauptgruppe; leer + nicht bearbeitbar ausgeblendet (Feld-Item).",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#text-ac60eb1f": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:174", "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:42"],
+      "n": "'Andere Instanzen' nur bei nicht leerer Liste, für alle Rollen. Liste jetzt wie Ionic getTenantsFromUser: nur über die Organisation verknüpfte Instanzen, ohne aktuelle, ohne Rolle Beobachter.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#text-20f64a9c": {
+      "s": "na",
+      "n": "Kein beabsichtigter Text: Tippfehler '>>' im Ionic-Template ([isOpen]=\"isArchiveModalOpen\">>, person.page.html:1077); der Textknoten '>' liegt im ion-modal neben der absolut positionierten Modal-Seite und ist nicht sichtbar. Flutter-Archivdialog ohne solchen Text."
+    }
+  },
+  "extra": []
+}

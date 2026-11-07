@@ -1,0 +1,442 @@
+{
+ "batch": "zz-verify6-sonnet-02",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "attendance/att-list/att-list.page#field-b83547ff": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:158-160",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:258-287",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:683-687"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser: beim automatisch gewählten ersten Typ ist die Dauer mit duration_days vorbelegt und wird so gespeichert / Ionic zeigt dort 1 (onTypeChange läuft nur bei Nutzerauswahl) und speichert 1 (Anzeige und Wert stimmen in beiden überein). Zahlenfeld nur bei all_day; Werte < 1 werden in Flutter ignoriert (Ionic min=1). Leon entscheidet.",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#field-ca655798": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:349-364"
+   ],
+   "v": "bestätigt",
+   "n": "Ort-Textarea nur bei place_enabled, Platzhalter gleich, 2 Zeilen, Wert getrimmt/null wie Ionic."
+  },
+  "attendance/att-list/att-list.page#modal-3dd9b5f6": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:30-64"
+   ],
+   "v": "bestätigt",
+   "n": "Sheet initial 0.8, max 1, Griff; Sheet je Öffnen neu. Anlegen nur mit Anlegerecht (wie Ionic-FAB; Ionic-Leerzustand-Button öffnet es dort für alle, siehe Leerzustand-Item)."
+  },
+  "attendance/att-list/att-list.page#modal-aff28de3": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:296-310",
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:361-443"
+   ],
+   "v": "bestätigt",
+   "n": "Vollbildseite „Werke auswählen“ mit Suche wie Ionic, aber Auswahl wird nur mit ✓ übernommen; X/Zurück verwirft sie (Ionic: Auswahl wirkt sofort, jedes Schließen behält sie). Suchbegriff wird bei jedem Öffnen zurückgesetzt. Gleiche Funktion über ✓ erreichbar.",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#modal-b795ad26": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:63-76",
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:161-166"
+   ],
+   "v": "bestätigt",
+   "n": "Bottom-Sheet bis 70 % Höhe mit Titel; zusätzlich X-Knopf."
+  },
+  "attendance/att-list/att-list.page#modal-c5f95b6f": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:702-706",
+    "lib/features/attendance/presentation/widgets/multi_date_calendar.dart:347"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: kleines Karten-Modal nur mit Kalender, Auswahl wirkt sofort / Flutter: Dialog mit Titel, X, Legende und „Abbrechen“/„Übernehmen“; Schließen ohne „Übernehmen“ verwirft die Auswahl. Gleiche Mehrfachauswahl.",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#text-03f304ab": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:369-387",
+    "lib/core/utils/attendance_logic_utils.dart:116-117"
+   ],
+   "v": "bestätigt",
+   "n": "„Werke“ nur bei Typ manage_songs und Mandant ≠ general. Anlege-Sheet nur mit Anlegerecht (Admin/Verantw., Helfer mit attendance_create) wie Ionic-FAB."
+  },
+  "attendance/att-list/att-list.page#text-16ffe6c1": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:771-775"
+   ],
+   "v": "bestätigt",
+   "n": "Text „Feiertage des ausgewählten Bundeslandes“ gleich, gleiche Bedingung; Punktfarbe AppColors.danger statt Ionic „holiday“ (#9f6073, als AppColors.holiday vorhanden). Nur Farbe.",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#text-2eda2c9b": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:258-287"
+   ],
+   "v": "bestätigt",
+   "n": "„Dauer (in Tagen)“ nur bei all_day."
+  },
+  "attendance/att-list/att-list.page#text-37cb62f9": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:340-364"
+   ],
+   "v": "bestätigt",
+   "n": "„Ort (für Navigation)“ nur bei place_enabled."
+  },
+  "attendance/att-list/att-list.page#text-3c05a1f7": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:380"
+   ],
+   "v": "bestätigt",
+   "n": "„Werke auswählen“."
+  },
+  "attendance/att-list/att-list.page#text-55882df1": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:412-416"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: „Keine Werke gefunden“ nur bei leerem Ergebnis UND Suchbegriff / Flutter: auch ohne Suchbegriff, wenn die Instanz gar keine Werke hat (Ionic zeigt dann leere Liste). Referenz korrigiert (alte Zeile 350 ungültig).",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#text-61e1c75b": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:312-316"
+   ],
+   "v": "bestätigt",
+   "n": "„Benötigte Personen · {Wochentag}“ je Wochentag der gewählten Termine, nur im Dienst-Modus."
+  },
+  "attendance/att-list/att-list.page#text-7b86b1bd": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:293"
+   ],
+   "v": "bestätigt",
+   "n": "„Bisher wurden noch keine Termine angelegt“ im Leerzustand. Referenz korrigiert (alt 238). Button darunter nur mit Anlegerecht (Ionic: für alle sichtbar, eigenes Item)."
+  },
+  "attendance/att-list/att-list.page#text-85c4ff72": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:178-180",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:531"
+   ],
+   "v": "bestätigt",
+   "n": "„Datum (Mehrfachauswahl möglich)“ Android und iOS-Variante."
+  },
+  "attendance/att-list/att-list.page#text-8babe4ac": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:475",
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:346",
+    "lib/data/models/song/song.dart:150"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: „{number} {name}“ (ohne Präfix) bzw. „Unbekanntes Lied“ / Flutter: „{prefix}{number} - {name}“ bzw. „Unbekannt“. Nur Darstellung.",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#text-ae092621": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:317"
+   ],
+   "v": "bestätigt",
+   "n": "„n Termin/Termine“ per Plural."
+  },
+  "attendance/att-list/att-list.page#text-c6ee8b66": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:329"
+   ],
+   "v": "bestätigt",
+   "n": "Zahl der benötigten Personen mit −/+ (min 1)."
+  },
+  "attendance/att-list/att-list.page#text-d26956cf": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:175"
+   ],
+   "v": "bestätigt",
+   "n": "„Werk(e) hinzufügen“."
+  },
+  "attendance/att-list/att-list.page#text-d3bdc91d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:35-42",
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:476"
+   ],
+   "v": "bestätigt",
+   "n": "Anderer Dirigent bzw. Name des Dirigenten (Fallback „Unbekannt“ statt „Unbekannter Dirigent“, praktisch unerreichbar)."
+  },
+  "attendance/att-list/att-list.page#text-eba80bc1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:289-311"
+   ],
+   "v": "bestätigt",
+   "n": "„Info-Text (optional)“ mit Hilfetext."
+  },
+  "attendance/att-list/att-list.page#text-eda8e24c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:796-800",
+    "lib/core/services/holiday_service.dart:184-188"
+   ],
+   "v": "korrigiert",
+   "n": "Jetzt wie Ionic: isHolidayGone = Startdatum < heute, laufende Ferien werden ausgeblendet; Format „dd.MM.yyyy - dd.MM.yyyy: Name“ gleich. Frühere Abweichung behoben."
+  },
+  "attendance/att-list/att-list.page#text-eda8e24c-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:802-805",
+    "lib/core/services/holiday_service.dart:122",
+    "lib/core/services/holiday_service.dart:184-188"
+   ],
+   "v": "korrigiert",
+   "n": "Jetzt wie Ionic: Feiertag am Tag selbst noch sichtbar (gone = Start < heute). Frühere Abweichung behoben."
+  },
+  "attendance/att-list/att-list.page#text-f384ea6e": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:498"
+   ],
+   "v": "bestätigt",
+   "n": "Titel „Termin hinzufügen“."
+  },
+  "attendance/att-list/att-list.page#text-f66256e1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:460-467"
+   ],
+   "v": "bestätigt",
+   "n": "„Keine Werke ausgewählt“ bei leerer Liste. Referenz korrigiert."
+  },
+  "attendance/att-list/att-list.page#toast-b8563c8d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:665-673"
+   ],
+   "v": "bestätigt",
+   "n": "Nur heute gewählt → Auswahl leeren, „Das aktuelle Datum wurde deselektiert“, danach Kalender. Neutraler Standard-Toast statt Ionic-Farbe „light“."
+  },
+  "attendance/att-list/att-list.page#toast-e7112c48": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:840-843"
+   ],
+   "v": "bestätigt",
+   "n": "Warn-Toast „Bitte wähle mindestens ein Datum aus“; in beiden praktisch unerreichbar, da Absenden ohne Datum deaktiviert."
+  },
+  "attendance/attendance/attendance.page#action-0ce1a7c0": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1388-1396"
+   ],
+   "v": "bestätigt",
+   "n": "Explizite Statusauswahl mit Hinweis im Untermenü „Ansicht“, schaltet Klick/Auswahl-Modus, wird gespeichert, Default Klick wie Ionic."
+  },
+  "attendance/attendance/attendance.page#action-241fea16": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1261"
+   ],
+   "v": "bestätigt",
+   "n": "Filter „Anwesend“ nur wenn im Typ verfügbar."
+  },
+  "attendance/attendance/attendance.page#action-33556934": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:391-401"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: X-Icon zum Schließen / Flutter: Textbutton „Abbrechen“. Beides verwirft.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-54b40856": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1369-1376"
+   ],
+   "v": "bestätigt",
+   "n": "„Bilder anzeigen“, gespeichert, Default aus."
+  },
+  "attendance/attendance/attendance.page#action-5ca67a7d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1541-1548",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:788"
+   ],
+   "v": "bestätigt",
+   "n": "„Neu laden“-Button im Banner bei fehlender Personenliste (Flutter lädt Provider neu). Ionic zeigt zusätzlich Fehler-Toast „reloadFailed“; in Flutter erscheint bei Fehler stattdessen die Fehlerseite mit „Neu laden“, daher kein Informationsverlust."
+  },
+  "attendance/attendance/attendance.page#action-5dad23bc": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1263"
+   ],
+   "v": "bestätigt",
+   "n": "Filter „Verspätet“ nur wenn Status 3 verfügbar."
+  },
+  "attendance/attendance/attendance.page#action-5fb9b753": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:408-418",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2328-2380"
+   ],
+   "v": "korrigiert",
+   "n": "Speichern merged in registration_answers (inkl. Standardwerten, offline-fähig) wie Ionic; der frühere Zusatz-Toast „Anmeldefelder gespeichert“ ist entfernt („Ionic saveRegFieldAnswers: no toast“). Jetzt gleich."
+  },
+  "attendance/attendance/attendance.page#action-693335dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1378-1387"
+   ],
+   "v": "bestätigt",
+   "n": "„Anmeldefelder anzeigen“ nur bei Anmeldefeldern, Default an."
+  },
+  "attendance/attendance/attendance.page#action-695a85d1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1155-1158"
+   ],
+   "v": "bestätigt",
+   "n": "„Status-Filter“ mit „{count} aktiv“ und Untermenü."
+  },
+  "attendance/attendance/attendance.page#action-6b1dd3ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1260"
+   ],
+   "v": "bestätigt",
+   "n": "Filter „Neutral“."
+  },
+  "attendance/attendance/attendance.page#action-6c23e1d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:193-198",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2271-2279"
+   ],
+   "v": "bestätigt",
+   "n": "„Datum“ unbedingt antippbar (onDateSelect immer gesetzt) wie Ionic, ruft promptAttendanceDateChange (eigener Batch)."
+  },
+  "attendance/attendance/attendance.page#action-6d68e9c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1162-1163"
+   ],
+   "v": "bestätigt",
+   "n": "„Ansicht“ mit Untermenü."
+  },
+  "attendance/attendance/attendance.page#action-7ee9567b": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:154-162"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: X-Button zum Schließen / Flutter: kein Schließen-Button (Wischen, Tippen daneben, Zurück). Gleiche Funktion.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-84a45123": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:488",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:850-857"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser: iOS-FAB (Ablaufplan bearbeiten) fehlt für Beobachter / Ionic zeigt ihn allen Rollen, obwohl Beobachter den Ablaufplan-Bereich nicht sehen. Flutter öffnet den Plan-Editor ohne initialen Plan-Index (Ionic: planIndex), nur relevant bei mehreren Plänen.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-8700fc49": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:346-361"
+   ],
+   "v": "bestätigt",
+   "n": "Multi-Select-Option schaltet Häkchen im Anmeldefelder-Sheet."
+  },
+  "attendance/attendance/attendance.page#action-8beaeeab": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:277-283",
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:312-318"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: „Hinzufügen“, immer tippbar / Flutter: „Werk(e) hinzufügen“, deaktiviert bis Werk und Dirigent gewählt. Gleiches Ergebnis (Ionic tut ohne Auswahl nichts).",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-9a1384d5": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/songs_history_accordion.dart:36-43",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2162-2173",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2202"
+   ],
+   "v": "bestätigt",
+   "n": "Entfernen ohne Rückfrage wie Ionic (Flutter gleicht history-Zeilen ab, tenant-gefiltert, statt Löschen per id); Flutter zeigt zusätzlich Toast „Werk entfernt“.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-9cc1dea3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1266"
+   ],
+   "v": "bestätigt",
+   "n": "Filter „Abwesend“."
+  },
+  "attendance/attendance/attendance.page#action-a166edd0": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:400-407",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2517-2560"
+   ],
+   "v": "bestätigt",
+   "n": "Export wie Ionic (gleiche Personen, Gruppen-Sortierung); Flutter zeigt vorher zusätzlich Info-Toast „Excel wird erstellt…“.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-ae2384c0": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:382-386"
+   ],
+   "v": "bestätigt",
+   "n": "Häkchen schließt „Werke auswählen“ und übernimmt die Auswahl. Werke-Bereich nur bei manage_songs und Mandant ≠ general (showSongsForType), keine Rollenprüfung wie Ionic."
+  },
+  "attendance/attendance/attendance.page#action-bb56681b": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:198-204"
+   ],
+   "v": "bestätigt",
+   "n": "Zeile „Werk(e)“ mit „{n} Werk(e) ausgewählt“ / „Keine Werke ausgewählt“ öffnet Auswahl."
+  },
+  "attendance/attendance/attendance.page#action-c44054d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:417-437"
+   ],
+   "v": "bestätigt",
+   "n": "Tap schaltet Auswahl um (CheckboxListTile); „Präfix+Nummer Name“, Komponist als Unterzeile."
+  },
+  "attendance/attendance/attendance.page#action-d0752375": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1171",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:964-966"
+   ],
+   "v": "bestätigt",
+   "n": "„Status-Übersicht“ öffnet Übersicht (Dialog statt Sheet)."
+  }
+ },
+ "extra": []
+}

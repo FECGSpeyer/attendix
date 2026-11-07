@@ -1,0 +1,429 @@
+{
+ "batch": "zz-verify6-sonnet-17",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "people/person/person.page#text-b8f39c05": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/archive_person_modal.dart:101"
+   ],
+   "n": "Archiv-Modal: Label „Notiz“ (peopleNote) wie Ionic; erste Referenz (person_detail_page:1084) war ungültig, korrigiert.",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#text-bb66373a": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:338"
+   ],
+   "n": "Ionic: „Telefon-/Handynummer“ (immer sichtbar, bei readOnly deaktiviert) / Flutter: „Telefon“, ohne Nummer und ohne Bearbeitungsrecht ausgeblendet. Gleiche Funktion.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-be0758fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:129"
+   ],
+   "n": "„Ab heute“ bei leerem Von-Datum wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-c4ad9070": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:252",
+    "lib/features/people/presentation/pages/person_create_page.dart:404"
+   ],
+   "n": "Detail: „Nachname“ gleich; Neu-Seite: „Nachname *“. Reine Darstellung.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-cd380b15": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:115"
+   ],
+   "n": "Label „Grund *“ wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-cd380b15-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:159"
+   ],
+   "n": "Label „Grund *“ (signoutReasonRequired) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-d974b12d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:196"
+   ],
+   "n": "Hinweis in Warnfarbe im Abwesenheits-Modal; Person-Detail übergibt showLongAbsenceHint: true (planned_absences.dart:387), Ionic zeigt ihn immer.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-e915fb37": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:236",
+    "lib/features/people/presentation/pages/person_create_page.dart:385"
+   ],
+   "n": "Detail: „Vorname“ gleich; Neu-Seite: „Vorname *“. Reine Darstellung.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-ef92326c": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:142"
+   ],
+   "n": "Titel „Abwesenheit eintragen“ wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-f9ca222a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:217",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:916"
+   ],
+   "n": "„Testergebnis“ nur bei VoS && !Hauptgruppe (isVoS aus shortName==VoS, Zeile 115); leer und ohne Bearbeitungsrecht ausgeblendet.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-26c7e22c": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1478"
+   ],
+   "n": "Ablehnen-Fehler: „Fehler beim aktualisieren des Spielers“ (personUpdateFailed), danger, wie Ionic. Erstprüfer-Diff (Fehler: {error}) ist überholt.",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#toast-29a8b883": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:335"
+   ],
+   "n": "Erfolgs-Toast personEntryRemoved wie Ionic. Hinweis: Flutter entfernt nach Datum+Typ+Text, Ionic nur nach Datum (unkritisch).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-326d88e1": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:339"
+   ],
+   "n": "Fehler-Toast personEntryRemoveFailed, danger.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-420483c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1356"
+   ],
+   "n": "Toast „Verspätungszähler zurückgesetzt“ (success) nach resetLateCount; Referenz war ungültig, korrigiert.",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#toast-55836540": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1474"
+   ],
+   "n": "Nach Ablehnen: Toast „Die Spielerdaten wurden erfolgreich aktualisiert.“ (personUpdated) wie Ionic; Ablehnen schreibt player pending=false, left, history (tenantId-gefiltert) und sendet Ablehnungs-Mail. Erstprüfer-Diff überholt.",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#toast-602fdd96": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1194"
+   ],
+   "n": "Toast „E-Mail Adresse wurde erfolgreich aktualisiert“ (success) nach E-Mail/global_person_id-Update.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-7e0a2ff5": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:250"
+   ],
+   "n": "Ionic: Roh-Fehler beim Bild-Upload / Flutter: „Fehler beim Hochladen: {error}“ (danger). Gleiche Information.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-8807fdd9": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1807"
+   ],
+   "n": "Schlüssel-FAB (Account anlegen ohne Rückfrage): Seite schließt, Toast „Account wurde erfolgreich angelegt“ (personAccountCreated) wie Ionic register(). Erstprüfer-Diff überholt.",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#toast-9e522fb8": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:921"
+   ],
+   "n": "Neue Person: Foto-Ladefehler „Fehler beim Laden des Passbildes“ (danger), Foto bleibt lokal bis Speichern.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-cee56561": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1726"
+   ],
+   "n": "Nach Account-Entfernung Seite schließen + Toast „Der Benutzer wurde erfolgreich entfernt“ (success); email/appId werden geleert. Erstprüfer-Diff überholt.",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#toast-f4e0ab31": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:216"
+   ],
+   "n": "Ionic: Roh-Fehler (danger) / Flutter: „Fehler: {error}“ (danger). Gleiche Information.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-f55609ac": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1730"
+   ],
+   "n": "Fehler-Toast „Fehler beim Entfernen des Benutzers“ (danger) wie Ionic. Erstprüfer-Diff überholt.",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#toast-fc0e45e2": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1825"
+   ],
+   "n": "Ionic: Roh-Fehlermeldung error.message / Flutter: „{Name} - Fehler beim Erstellen des Accounts: {error}“ (danger). Gleiche Information.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "planning/plan-chips/plan-chips.component#action-82aaa332": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:266"
+   ],
+   "n": "Chip je Plan, gewählter primary, übrige outline/medium, „· heute“ am heutigen Plan, Tap auf anderen Chip wechselt, Zusatz-Widget (trailing).",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#action-36535d24": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:317"
+   ],
+   "n": "Abbrechen schließt ohne Änderung. Ionic: Vollbild-Modal, Button oben links / Flutter: Dialog, Button unten.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#action-97956a62": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:319",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:226"
+   ],
+   "n": "Text „Updaten“, Speichern wie Ionic (Name/Ausführender/Info/Minuten/Beamer in Feld). Ionic: Button oben rechts / Flutter: unten im Dialog.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#field-1c5a6d48": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:264"
+   ],
+   "n": "Label „Programmpunkt“, Platzhalter „Programmpunkt eingeben...“, Satzanfang groß, mehrzeilig.",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#field-6a664673": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:294",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:246"
+   ],
+   "n": "Label „Minuten“, Zahlentastatur, Vorbelegung gleich; Flutter ohne Platzhalter, Suffix „min“. Randfall: Ionic 0/leer Minuten behält alte Dauer, Flutter 0 → „0“, leer → alte Dauer; Ionic Vorbelegung bei Dauer 0 = 20, Flutter 0.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#field-931b8beb": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:274"
+   ],
+   "n": "Label „Ausführender“, Platzhalter „Ausführenden eingeben...“.",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-0bda59a8": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:300",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:180"
+   ],
+   "n": "Text „Bitte einen Programmpunkt eingeben.“ gleich, Dialog bleibt offen, nichts gespeichert. Ionic: direkt unter dem Feld, verschwindet beim Tippen / Flutter: unter allen Feldern, bleibt bis nächster Versuch.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-0d1ecdbc": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:226"
+   ],
+   "n": "Dateiname bei Beamer an und Datei vorhanden; showBeamer = verknüpfte Gemeinde-App + beamer_files_enabled + Org-Plan (PlanBeamer.active, planning_page.dart:2090; Notizen ohne Beamer wie Ionic changeNoteField).",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-552fe355": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:231"
+   ],
+   "n": "Hinweis „Automatisch an bei Werken…“ unter dem Beamer-Bereich, nur wenn showBeamer.",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-6aad1281": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:227"
+   ],
+   "n": "„Verknüpfen kannst du die Datei in der Gemeinde App.“ bei Beamer an ohne Datei.",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-a42fe7b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:227"
+   ],
+   "n": "„Ändern kannst du die Datei in der Gemeinde App.“ bei Beamer an mit Datei.",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-d5e8230e": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:226"
+   ],
+   "n": "„Noch keine Datei verknüpft“ bei Beamer an ohne Datei.",
+   "v": "bestätigt"
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#action-020798d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:287"
+   ],
+   "n": "Schließen-Button (X) oben rechts schließt Sheet ohne Auswahl.",
+   "v": "bestätigt"
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#action-02b802e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:312"
+   ],
+   "n": "„Exportieren (PDF 2x A5)“, liefert pdf2x mit Scope.",
+   "v": "bestätigt"
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#action-3f20e5d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:315"
+   ],
+   "n": "„Per Telegram senden (PDF 2x A5)“ nur bei Telegram-Chat-ID (hasChatId).",
+   "v": "bestätigt"
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#action-b401edaf": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:311"
+   ],
+   "n": "„Exportieren (PDF)“.",
+   "v": "bestätigt"
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#action-bb65cd73": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:314"
+   ],
+   "n": "„Per Telegram senden (PDF)“ nur bei Telegram-Chat-ID.",
+   "v": "bestätigt"
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#field-6b6f854b": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:270",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:299"
+   ],
+   "n": "Segment „Nur {label}“ / „Alle {count} Pläne“, Start „Nur …“; Auswahl bestimmt Seiten (plan_viewer_page.dart:132).",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#action-38e50abc": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:165"
+   ],
+   "n": "Schließen-Button links in der Toolbar.",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#action-7acce3ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:172"
+   ],
+   "n": "Live-Button nur wenn isLiveNow, primary/danger, schaltet Live-Modus; Berechnung wie Ionic (Termin heute, Start-5 Min bis Ende+15 Min).",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#action-adebf7d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:200",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:237"
+   ],
+   "n": "Chips nur bei mehreren Plänen (_labels), Wechsel setzt Plan und Live-Zustand.",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#action-f23d47df": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:180"
+   ],
+   "n": "Stift nur wenn onEdit gesetzt: Terminliste setzt es für canAddAttendance (Admin, Verantwortlich, Helfer, Stimmführer-Helfer) wie Ionic isConductor||isHelper; Org-Pläne/Dashboard/Self-Service ohne, wie Ionic. Schließt Viewer und öffnet Editor mit Planindex.",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#actionsheet-3a04c7a8": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:143",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:80"
+   ],
+   "n": "Ionic: Export-Sheet ohne Icons, Abbrechen role destructive / Flutter: gleiche Einträge und Reihenfolge, mit Icons, Abbrechen nicht rot.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-2b1d776d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:104"
+   ],
+   "n": "Start-Countdown („beginnt gleich“ / „beginnt in …“) unter „Start“ nur im Live-Modus, gleiche Texte.",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-5103dc28": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:107"
+   ],
+   "n": "„{time} Uhr“ am Ende der Start-Zeile.",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-5103dc28-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:212"
+   ],
+   "n": "Ende-Zeile „{time} Uhr“ wie Ionic bei gesetztem plan.end. Flutter besser: ohne plan.end berechnet Flutter Start+Dauer und zeigt die Zeile trotzdem, Ionic blendet sie dann aus.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-5d50b365": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:103"
+   ],
+   "n": "„Start“ als Titel der ersten Zeile.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

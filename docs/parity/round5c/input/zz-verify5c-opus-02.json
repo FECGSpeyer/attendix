@@ -1,0 +1,1624 @@
+{
+ "batch": "zz-verify5c-opus-02",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "org-settings/org-person-fields/org-person-fields-routing.module.ts",
+    "line": 5,
+    "cond": [],
+    "path": "/tabs/settings/org-settings/person-fields",
+    "component": "OrgPersonFieldsPage",
+    "unit": "org-settings/org-person-fields/org-person-fields.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-f4856f09"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1153-1177"
+    ],
+    "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "org-settings/org-songs/org-songs-routing.module.ts",
+    "line": 5,
+    "cond": [],
+    "path": "/tabs/settings/org-settings/songs",
+    "component": "OrgSongsPage",
+    "unit": "org-settings/org-songs/org-songs.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-f65b270a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1153-1177"
+    ],
+    "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-e01a452bb2",
+    "title": "Reload/Deep-Link-Rollenprüfung",
+    "n": "Flutter besser: Ionic: AuthGuard läuft nur beim Betreten von /tabs; für viele Unterseiten (messages, team-organization, tasks/:id, agenda-items/:id, messages/:id, auto-messages, overview, delete-account, general/extra-fields, general/shifts, org-settings/person-fields, org-settings/songs) bricht ein Reload die Navigation ab (leere Seite) oder TabsPage-effect leitet auf getUrl(role) um, obwohl die UI der Rolle den Zugang erlaubt / Flutter: Redirect prüft die Rolle bei jeder Navigation und schickt abgelehnte Rollen auf role.defaultRoute.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/auth.guard.ts:16-45",
+    "f": [
+     "lib/core/router/app_router.dart:214-246",
+     "lib/core/router/route_access.dart:127-139"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app.component",
+   "ionic": {
+    "ts": "app.component.ts",
+    "html": "app.component.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "app.component.ts",
+    "line": 227,
+    "method": "AppComponent.showNativeAppAd",
+    "cond": [],
+    "call": "window.open",
+    "args": "storeUrl, '_blank'",
+    "src": "1f94f89c",
+    "mbody": "81991eed",
+    "id": "app.component#effect-330e1045"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/dialogs/native_app_ad.dart:77-87",
+     "lib/shared/widgets/dialogs/native_app_ad.dart:44-50",
+     "lib/core/router/app_router.dart:145"
+    ],
+    "n": "Ionic showNativeAppAd: nur Web, nicht in Teams (teams.isInTeams() → return), einmalig (localStorage) → window.open(Store-URL, '_blank') / Flutter NativeAppAdGate: Web + einmalig, aber ohne Teams-Prüfung → Hinweis und Store-Öffnen auch im Teams-Tab. Gleiche Lücke wie Extra \"Native-App-Hinweis in Teams\" (b01-app). Erstprüfung hat die Teams-Bedingung nicht berücksichtigt.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app.component",
+   "ionic": {
+    "ts": "app.component.ts",
+    "html": "app.component.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "app.component.ts",
+    "line": 170,
+    "method": "AppComponent.listenToAuthChanges",
+    "cond": [
+     "(url.startsWith('/tabs'))",
+     "(event === 'SIGNED_OUT')"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "'/login'",
+    "src": "bd94d0e7",
+    "mbody": "50cfbfa4",
+    "id": "app.component#nav-0040c935"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:333-336"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app.component",
+   "ionic": {
+    "ts": "app.component.ts",
+    "html": "app.component.html"
+   },
+   "extra": {
+    "id": "x-0cf36be089",
+    "title": "Auth-Link-Fehlertexte",
+    "n": "Flutter besser: Ionic zeigt error_description (englisch) direkt / Flutter übersetzt bekannte Fehler ins Deutsche.",
+    "sev": "niedrig",
+    "ionic": "src/app/app.component.ts:297",
+    "f": [
+     "lib/features/auth/data/auth_link_listener.dart:152-165"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/auth/data/auth_link_listener.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app.module",
+   "ionic": {
+    "ts": "app.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "app.module.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function initAuth:18-20",
+     "function initLocale:22-24",
+     "function initTeams:26-28"
+    ],
+    "bodies": {
+     "function initAuth": "c2c69df1",
+     "function initLocale": "9f2e0519",
+     "function initTeams": "b1b26366"
+    },
+    "id": "app.module#logic-0c401cb7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/main.dart:102-105",
+     "lib/main.dart:155"
+    ],
+    "n": "Ionic: TeamsService.init als APP_INITIALIZER (App startet erst nach Teams-Erkennung); SW im iframe deaktiviert / Flutter: TeamsService.init() wird nicht abgewartet (unawaited), SSO startet nach Erkennung. Sichtbar höchstens als kurzer Zwischenstand im Teams-Tab.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/main.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 192,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (attendances.length && (isConductor || isHelper))",
+     "@for (group of upcomingGroups; track group.key)",
+     "@for (att of group.items; track att.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=openAttendance(att)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "headset-outline",
+     "document-text-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ weekday(att.date) }} {{ day(att.date) }} {{ getEventTitle(att) }} {{ meta }} {{ dutyNames(att) }} {{ dutyBadge(att).text }} {{ att.percentage || 0 }}%",
+    "id": "attendance/att-list/att-list.page#action-15811e3a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:531",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:405"
+    ],
+    "n": "Zeile wie Ionic (Kachel mit Hervorhebung, Headset-Icon, Titel, Meta, Dienst-Namen, Ablaufplan-Button, Besetzung bzw. %-Pill, Tap). Abweichung: bei ganztägigen Typen fehlt in Flutter die Uhrzeit in der Meta-Zeile (Ionic zeigt start_time, falls gesetzt).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 249,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (isConductor || isHelper ? oldAttendances.length : viewerAttendances.length)",
+     "@for (att of pastPreview; track att.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "detail": "false",
+     "[button]": "\"isConductor || isHelper\""
+    },
+    "events": [
+     "(click)=openAttendance(att)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[class.ev-archived]=\"att.archived\""
+    ],
+    "icons": [
+     "archive-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ weekday(att.date) }} {{ day(att.date) }} {{ getEventTitle(att) }} {{ getReadableDate(att.date, att.type_id) }} · {{ getCountText(att) }} {{ att.percentage || 0 }}%",
+    "id": "attendance/att-list/att-list.page#action-15811e3a-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:585",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:433"
+    ],
+    "n": "Ionic: vergangene Zeilen zeigen immer \"{percentage}%\" / Flutter: percentPill zeigt bei Dienst-Terminen (letzte 180 Tage) die Besetzung \"1/2\" statt Prozent. Rest (Archiv-Icon, \"Datum · x von y anwesend\", Tap nur Dirigent/Helfer) gleich.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 69,
+    "cond": [
+     "@if (isConductor && hasDutyTypes)"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=openDutyDistribution()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'attList.distributeDuties' | transloco\""
+    ],
+    "icons": [
+     "shuffle-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#action-437c32e5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:314",
+     "lib/core/providers/duty_providers.dart:56"
+    ],
+    "n": "Nur Admin/Verantwortlich und nur wenn die Instanz einen Termintyp mit duty_mode hat (alle Typen, auch unsichtbare) – wie Ionic isConductor && hasDutyTypes; Beobachter/Helfer sehen ihn in beiden Apps nicht. Icon shuffle, Tooltip „Dienste verteilen“.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+    "lib/core/providers/duty_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 7,
+    "cond": [
+     "@if ((db.tenants()?.length ?? 0) > 1)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "id": "tenant-switcher-att-list"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "chevron-down-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ db.tenant()?.longName }}",
+    "id": "attendance/att-list/att-list.page#action-558f18b9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:301",
+     "lib/shared/widgets/tenant/tenant_switcher_title.dart:51",
+     "lib/shared/widgets/tenant/tenant_switcher_title.dart:61"
+    ],
+    "n": "Nur bei >1 Instanz, für alle Rollen der Seite gleich (keine Rollenprüfung in beiden Apps): Langname + Chevron links (centerTitle false). Material in Großbuchstaben (Plattform-Optik). Seite in beiden Apps nur für Admin, Verantwortlich, Beobachter, Helfer, Stimmführer-Helfer (Ionic Tab isHelper||isConductor / Flutter canSeeAttendanceTab); Stimmführer, Spieler, Eltern, Bewerber erreichen sie nicht.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 224,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (attendances.length && (isConductor || isHelper))",
+     "@for (group of upcomingGroups; track group.key)",
+     "@for (att of group.items; track att.id)",
+     "@if (isConductor)",
+     "in <ion-item-options>"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=remove(att.id, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#action-609bdff2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:466"
+    ],
+    "n": "Mülleimer-Option nur Admin/Verantwortlich, wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 266,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (isConductor || isHelper ? oldAttendances.length : viewerAttendances.length)",
+     "@for (att of pastPreview; track att.id)",
+     "in <ion-item-options>"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=remove(att.id, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#action-609bdff2-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:466"
+    ],
+    "n": "Mülleimer-Option nur Admin/Verantwortlich, wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 52,
+    "cond": [
+     "in <ion-popover trigger=att-filter-trigger>",
+     "@if (isConductor)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=toggleShowArchived()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "archive-outline",
+     "checkmark"
+    ],
+    "keys": [
+     "attList.showArchived",
+     "attList.archivedCount"
+    ],
+    "de": [
+     "Archivierte anzeigen",
+     "{count, plural, one {# archivierter Termin} other {# archivierte Termine}}"
+    ],
+    "literals": [],
+    "text": "{{ 'attList.showArchived' | transloco }} {{ 'attList.archivedCount' | transloco: { count: archivedCount } }}",
+    "id": "attendance/att-list/att-list.page#action-8b549b85"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:160",
+     "lib/core/utils/archived_attendance.dart:6",
+     "lib/core/providers/attendance_providers.dart:201"
+    ],
+    "n": "Rollen geprüft: nur Admin/Verantwortlich (Ionic isConductor = ADMIN||RESPONSIBLE; Flutter canSeeArchivedAttendances). Helfer, Stimmführer-Helfer, Beobachter sehen den Eintrag in beiden Apps nicht und bekommen archivierte Termine gar nicht geladen. Zähler „{n} archivierte(r) Termin(e)“ nur bei >0.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+    "lib/core/providers/attendance_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 174,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (currentAttendance && (isConductor || isHelper))"
+    ],
+    "tag": "ion-item-options",
+    "attrs": {
+     "side": "end"
+    },
+    "events": [
+     "(ionSwipe)=remove(currentAttendance.id, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#action-a3616f18"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:495",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:450",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:457"
+    ],
+    "n": "Auf der Karte „Heute/Nächster Termin“ können Admin, Verantwortlich, Helfer und Stimmführer-Helfer per (Voll-)Wischen löschen – in Ionic ebenso (kein [disabled] auf diesem Slider). Bestätigung „Termin wirklich entfernen?“ mit Abbrechen/Fortfahren, dann DELETE attendance (id + tenantId).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 175,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (currentAttendance && (isConductor || isHelper))",
+     "in <ion-item-options>"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=remove(currentAttendance.id, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#action-bf238f2d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:466",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:71"
+    ],
+    "n": "Mülleimer-Option auf der Karte, gleiche Rollen wie das Wischen (Dirigent + Helfer).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 129,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (currentAttendance && (isConductor || isHelper))"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "ev-today ev-today--filled"
+    },
+    "events": [
+     "(click)=openAttendance(currentAttendance)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "location-outline",
+     "checkbox-outline",
+     "document-text-outline"
+    ],
+    "keys": [
+     "attList.dutyFilled",
+     "attList.countPresent",
+     "attList.countExcused",
+     "attList.countAbsent",
+     "signout.runSheet"
+    ],
+    "de": [
+     "{text} besetzt",
+     "{count} anwesend",
+     "{count} entschuldigt",
+     "{count} abwesend",
+     "Ablaufplan"
+    ],
+    "literals": [
+     "Anwesenheit",
+     "Anwesenheit erfassen"
+    ],
+    "text": "{{ weekday(currentAttendance.date) }} {{ day(currentAttendance.date) }} {{ getEventTitle(currentAttendance) }} {{ getEventMeta(currentAttendance, true, false) }} {{ currentAttendance.place }} {{ 'att…",
+    "id": "attendance/att-list/att-list.page#action-c806441b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:493",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:195",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:405"
+    ],
+    "n": "Gefüllte Karte mit Datumskachel, Titel, Ort mit Icon, Dienst-Besetzung bzw. \"% · anwesend · entschuldigt · abwesend\", CTAs und Tap wie Ionic. Abweichung Meta: Flutter lässt die Uhrzeit bei ganztägigen Typen weg (Ionic zeigt start_time, z. B. Plan-Start) und nimmt für den Datumsbereich duration_days des Termins statt des Typs.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 273,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (isConductor || isHelper ? oldAttendances.length : viewerAttendances.length)",
+     "@if (pastList.length > pastPreviewCount)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "class": "ev-more-link"
+    },
+    "events": [
+     "(click)=showAllPast = !showAllPast"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Weniger anzeigen",
+     "Alle ",
+     " anzeigen"
+    ],
+    "text": "{{ showAllPast ? 'Weniger anzeigen' : 'Alle ' + pastList.length + ' anzeigen' }}",
+    "id": "attendance/att-list/att-list.page#action-ed4d02b3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:612"
+    ],
+    "n": "„Alle {n} anzeigen“/„Weniger anzeigen“ ab >3 Einträgen; Liste je Rolle wie Ionic (Beobachter inkl. nächstem Termin).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 223,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (attendances.length && (isConductor || isHelper))",
+     "@for (group of upcomingGroups; track group.key)",
+     "@for (att of group.items; track att.id)",
+     "@if (isConductor)"
+    ],
+    "tag": "ion-item-options",
+    "attrs": {
+     "side": "end"
+    },
+    "events": [
+     "(ionSwipe)=remove(att.id, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#action-fcf40bb8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:450",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:457"
+    ],
+    "n": "Wischen-Löschen in kommenden Zeilen nur Admin/Verantwortlich (Ionic @if isConductor); Helfer/Stimmführer-Helfer können hier in beiden Apps nicht löschen, Beobachter sieht den Abschnitt nicht.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 265,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (isConductor || isHelper ? oldAttendances.length : viewerAttendances.length)",
+     "@for (att of pastPreview; track att.id)"
+    ],
+    "tag": "ion-item-options",
+    "attrs": {
+     "side": "end"
+    },
+    "events": [
+     "(ionSwipe)=remove(att.id, slider)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/att-list/att-list.page#action-fcf40bb8-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:586",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:450"
+    ],
+    "n": "Vergangene Zeilen: Wischen-Löschen nur Admin/Verantwortlich (Ionic [disabled]=\"!isConductor\"); Helfer, Stimmführer-Helfer, Beobachter nicht.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "attendance/att-list/att-list.page.ts",
+    "line": 371,
+    "method": "AttListPage.createAttendances",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "31b60d35",
+    "roleGuarded": true,
+    "id": "attendance/att-list/att-list.page#loading-64f98ca9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:850",
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:475",
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:491"
+    ],
+    "n": "Ionic: blockierendes Loading-Overlay (Utils.getLoadingElement, endet spätestens nach 3 s) / Flutter: kein Overlay, Spinner im Absenden-Eintrag, Eintrag deaktiviert, Sheet per PopScope/shouldCloseOnMinExtent nicht schließbar; übrige Felder bleiben bedienbar.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "attendance/att-list/att-list.page.ts",
+    "line": 450,
+    "method": "AttListPage.openDutyDistribution",
+    "cond": [],
+    "component": "DutyDistributeModalComponent",
+    "props": [],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "bb54b6aa",
+    "mbody": "5f6884b9",
+    "roleGuarded": true,
+    "id": "attendance/att-list/att-list.page#modal-9df27ec0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:314-322",
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:20-26"
+    ],
+    "n": "Nur Admin/Verantwortlich und nur mit Dienst-Typ (duty_mode) – Beobachter/Helfer in beiden nicht. Vollbild-Modal, nach Speichern Liste neu.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "attendance/att-list/att-list.page.ts",
+    "line": 257,
+    "method": "AttListPage.onTenantChange",
+    "cond": [],
+    "via": "router.navigateByUrl",
+    "to": "Utils.getUrl(this.db.tenantUser().role)",
+    "src": "0f9aa057",
+    "mbody": "a99fac6c",
+    "roleGuarded": true,
+    "id": "attendance/att-list/att-list.page#nav-ebedf641"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:301",
+     "lib/shared/widgets/tenant/tenant_switcher_title.dart:389-405",
+     "lib/core/constants/enums.dart:137-141"
+    ],
+    "n": "Umschalter nur bei mehreren Instanzen; Ziel je Rolle in der neuen Instanz: Admin/Verantw./Beobachter → /people (≙ /tabs/player), Eltern → /parents, sonst /signout. Ionic-Default /register nur bei undefinierter Rolle (Randfall).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 245,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (isConductor || isHelper ? oldAttendances.length : viewerAttendances.length)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-pill"
+    },
+    "bindings": [
+     "[ngClass]=\"'ion-color-' + percColor(perc)\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ perc }}%"
+    ],
+    "text": "{{ perc }}%",
+    "id": "attendance/att-list/att-list.page#text-1083fd67"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:581",
+     "lib/core/providers/attendance_providers.dart:252",
+     "lib/core/providers/realtime_providers.dart:253"
+    ],
+    "n": "Durchschnitt über beendete Termine des Typfilters ohne unbesetzte Dienste, gerundet; archivierte zählen nur bei Admin/Verantwortlich mit (für andere Rollen in beiden Apps gar nicht geladen). Randfall: Ionic behält bei leerer Grundmenge den alten Wert, Flutter zeigt 0 %.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+    "lib/core/providers/attendance_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 184,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (attendances.length && (isConductor || isHelper))"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "signout.upcoming"
+    ],
+    "de": [
+     "Anstehend"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.upcoming' | transloco }}",
+    "id": "attendance/att-list/att-list.page#text-326ff95d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:525",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:526"
+    ],
+    "n": "„Anstehend“ nur für Dirigent/Helfer (staff = canAddAttendance) und nur mit weiteren kommenden Terminen; Beobachter nicht.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 244,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (isConductor || isHelper ? oldAttendances.length : viewerAttendances.length)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-summary__label"
+    },
+    "keys": [
+     "attList.average"
+    ],
+    "de": [
+     "Durchschnitt"
+    ],
+    "literals": [],
+    "text": "{{ 'attList.average' | transloco }}",
+    "id": "attendance/att-list/att-list.page#text-4b25b852"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:579"
+    ],
+    "n": "„Durchschnitt“ im Abschnitt für alle Rollen der Seite.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 27,
+    "cond": [
+     "@else (not (db.tenants()?.length ?? 0) > 1)"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "attList.events"
+    ],
+    "de": [
+     "Termine"
+    ],
+    "literals": [],
+    "text": "{{ 'attList.events' | transloco }}",
+    "id": "attendance/att-list/att-list.page#text-6a3aa5b0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:303",
+     "lib/shared/widgets/tenant/tenant_switcher_title.dart:51"
+    ],
+    "n": "Bei ≤1 Instanz Titel „Termine“, für alle Rollen der Seite.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 239,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (isConductor || isHelper ? oldAttendances.length : viewerAttendances.length)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Vergangen",
+     "Termine"
+    ],
+    "bound": [
+     "{{ isConductor || isHelper ? 'Vergangen' : 'Termine' }}"
+    ],
+    "text": "{{ isConductor || isHelper ? 'Vergangen' : 'Termine' }}",
+    "id": "attendance/att-list/att-list.page#text-788af3c8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:574",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:378"
+    ],
+    "n": "Dirigent/Helfer: „Vergangen“ (beendete Termine); Beobachter: „Termine“ (nächster Termin + beendete) – Flutter staff = canAddAttendance wie Ionic isConductor||isHelper.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 240,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (isConductor || isHelper ? oldAttendances.length : viewerAttendances.length)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-section__count"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ isConductor || isHelper ? oldAttendances.length : viewerAttendances.length }}"
+    ],
+    "text": "{{ isConductor || isHelper ? oldAttendances.length : viewerAttendances.length }}",
+    "id": "attendance/att-list/att-list.page#text-8664b4a7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:575",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:378"
+    ],
+    "n": "Anzahl je Rolle wie Ionic (Beobachter inkl. nächstem Termin).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 185,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (attendances.length && (isConductor || isHelper))"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-section__count"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ attendances.length }}"
+    ],
+    "text": "{{ attendances.length }}",
+    "id": "attendance/att-list/att-list.page#text-c90cc320"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:526"
+    ],
+    "n": "Anzahl der kommenden Termine ohne den aktuellen; Archiv-Filter wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 188,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (attendances.length && (isConductor || isHelper))",
+     "@for (group of upcomingGroups; track group.key)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "ev-month"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ group.label }}"
+    ],
+    "text": "{{ group.label }}",
+    "id": "attendance/att-list/att-list.page#text-cfdf6516"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:528",
+     "lib/core/utils/event_list_utils.dart:136"
+    ],
+    "n": "Monatskopf „MMMM yyyy“ (z. B. „November 2026“), nur im Dirigent/Helfer-Abschnitt.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/att-list/att-list.page.html",
+    "line": 126,
+    "cond": [
+     "@else if (loaded && allAttendances.length)",
+     "@if (currentAttendance && (isConductor || isHelper))"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "ev-month"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Heute",
+     "Nächster Termin"
+    ],
+    "bound": [
+     "{{ isRunning(currentAttendance) ? 'Heute' : 'Nächster Termin' }}"
+    ],
+    "text": "{{ isRunning(currentAttendance) ? 'Heute' : 'Nächster Termin' }}",
+    "id": "attendance/att-list/att-list.page#text-ffabfdf3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:487",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:489"
+    ],
+    "n": "„Heute“ (Termin läuft heute, inkl. mehrtägiger) bzw. „Nächster Termin“; nur Admin, Verantwortlich, Helfer, Stimmführer-Helfer (Ionic isConductor||isHelper = Flutter canAddAttendance). Beobachter bekommt den nächsten Termin stattdessen oben in der Liste „Termine“ – in beiden Apps.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/att-list/att-list.page.ts",
+    "line": 385,
+    "method": "AttListPage.createAttendances",
+    "cond": [
+     "(!type)"
+    ],
+    "message": {
+     "keys": [
+      "attList.invalidType"
+     ],
+     "de": [
+      "Ungültiger Anwesenheitstyp ausgewählt"
+     ],
+     "literals": [],
+     "expr": "translate('attList.invalidType')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f409b8be",
+    "mbody": "31b60d35",
+    "roleGuarded": true,
+    "id": "attendance/att-list/att-list.page#toast-2921a95c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:821"
+    ],
+    "n": "Ionic: Toast (danger) „Ungültiger Anwesenheitstyp ausgewählt“, wenn type_id keinem Typ entspricht (z. B. kein sichtbarer Typ) / Flutter: neutrale SnackBar „Bitte wähle einen Veranstaltungstyp“ (attListInvalidType ungenutzt), Prüfung vor der Datumsprüfung.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/att-list/att-list.page.ts",
+    "line": 415,
+    "method": "AttListPage.createAttendances",
+    "cond": [],
+    "message": {
+     "keys": [
+      "attList.eventAdded",
+      "attList.eventsAdded"
+     ],
+     "de": [
+      "Termin hinzugefügt",
+      "Termine hinzugefügt"
+     ],
+     "literals": [],
+     "expr": "dates.length === 1 ? translate('attList.eventAdded') : translate('attList.eventsAdded')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "52c7f707",
+    "mbody": "31b60d35",
+    "roleGuarded": true,
+    "id": "attendance/att-list/att-list.page#toast-ec2c10b2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:877-880"
+    ],
+    "n": "„Termin hinzugefügt“ / „Termine hinzugefügt“ je Anzahl eindeutiger Tage, grün. Rollen: Anlege-Sheet in Flutter nur mit Anlegerecht (Admin/Verantw., Helfer mit attendance_create) wie Ionic-FAB; Ionic-Leerzustand öffnet es für alle (bereits action-4fff8ad6). Flutter prüft zusätzlich vor dem Schreiben (Extra „Anlegen: Rechteprüfung“).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "extra": {
+    "id": "x-57163c321f",
+    "title": "Vergangene Dienst-Termine mit Besetzungs-Pill",
+    "n": "Ionic: vergangene Termine immer mit \"{percentage}%\" / Flutter: Dienst-Termine der letzten 180 Tage zeigen die Besetzung (\"1/2\", \"1/2 ?\").",
+    "sev": "niedrig",
+    "ionic": "src/app/attendance/att-list/att-list.page.html:263",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:433",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:608"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "extra": {
+    "id": "x-62e5886e11",
+    "title": "\"Deine Dienste: bitte bestätigen\" – Quelle und Anzeige",
+    "n": "Ionic: aus allen geladenen Terminen, nicht beendet (auch laufende mehrtägige), nur mit myPersonId (Dirigent/Helfer); Titel getEventTitle, Meta mit Jahr und Endzeit / Flutter: myDutyOverviewProvider ab heute 00:00 (laufende mehrtägige Dienste fehlen), für jede Rolle mit eigener Person (z. B. Beobachter), Titel ohne hide_name-Logik, Meta \"Di, 20.10. · 19:00\".",
+    "sev": "niedrig",
+    "ionic": "src/app/attendance/att-list/att-list.page.ts:485",
+    "f": [
+     "lib/core/providers/duty_providers.dart:148",
+     "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:71",
+     "lib/data/repositories/duty_repository.dart:254"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/providers/duty_providers.dart",
+    "lib/features/duty/presentation/widgets/my_duty_requests_section.dart",
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "extra": {
+    "id": "x-70670a344b",
+    "title": "Dauer-Vorbelegung beim Default-Typ",
+    "n": "Flutter besser: Ionic ruft onTypeChange für den vorausgewählten Typ nicht auf → allDayDuration 1 statt duration_days des Typs / Flutter ruft _onTypeChanged auch für die Vorauswahl.",
+    "sev": "niedrig",
+    "ionic": "src/app/attendance/att-list/att-list.page.ts:139",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:159",
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:675"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "extra": {
+    "id": "x-8a16c9ab3f",
+    "title": "Anlegen: Rechteprüfung und Fehlermeldung",
+    "n": "Flutter besser: Flutter prüft vor dem Schreiben erneut das Anlegerecht (Toast \"Keine Berechtigung\") und zeigt Schreibfehler als SnackBar / Ionic prüft nicht und bleibt bei Fehlern stumm (Overlay endet nach 3 s).",
+    "sev": "niedrig",
+    "ionic": "src/app/attendance/att-list/att-list.page.ts:370",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:841",
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:894"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "extra": {
+    "id": "x-9a86a96938",
+    "title": "Meta-Zeile: Uhrzeit bei ganztägigen Typen",
+    "n": "Ionic getEventMeta zeigt eventTimeRange(start_time/end_time) auch bei ganztägigen Typen (z. B. Plan-Start) / Flutter lässt die Uhrzeit bei allDay-Typen weg.",
+    "sev": "niedrig",
+    "ionic": "src/app/attendance/att-list/att-list.page.ts:699",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:412"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "extra": {
+    "id": "x-ad2ef27978",
+    "title": "Datumsbereich mehrtägiger ganztägiger Termine",
+    "n": "Flutter besser: Ionic Utils.getReadableDate nutzt duration_days des Typs, auch wenn der Termin eine andere Dauer hat / Flutter nutzt duration_days des Termins (Fallback Typ).",
+    "sev": "niedrig",
+    "ionic": "src/app/utilities/Utils.ts:1594",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:387"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+   ]
+  }
+ ]
+}

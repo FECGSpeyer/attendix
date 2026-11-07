@@ -1,0 +1,386 @@
+{
+ "batch": "zz-verify6-opus-23",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "services/song-actions/song-actions.service#actionsheet-6742ebe7": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:197",
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:109"
+   ],
+   "n": "Buttons und Reihenfolge weiterhin gleich (Notenlink öffnen, Noten downloaden, Noten anzeigen, Noten drucken, Aufnahme anhören, Aufnahme herunterladen, Liedtext ansehen, Abbrechen destruktiv). Header Ionic '<number>. <name>' / Flutter '<prefix><number>. <name>' (ohne Nummer nur Name). f auf aktuelle Zeilen gesetzt.",
+   "v": "bestätigt"
+  },
+  "services/song-actions/song-actions.service#actionsheet-9e3330e3": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:153",
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:54"
+   ],
+   "n": "Header 'Noten für {song} auswählen', Dateinamen + 'Abbrechen' (destruktiv) gleich. Ionic: {song} = '<number>. <name>' ohne Präfix, Sheet auf iPhone/iPad (auch Browser/PWA, isPlatform('ios')) nie erreichbar / Flutter: mit Präfix, canDownload = kIsWeb || !iOS → im Web auch auf iOS. Nur nativ iOS ausgeblendet wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/song-actions/song-actions.service#actionsheet-9e3330e3-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:159",
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:54"
+   ],
+   "n": "Header 'Noten für {song} auswählen', Dateinamen, 'Abbrechen' gleich, Auswahl öffnet die Datei; {song} Ionic '<number>. <name>' ohne Präfix / Flutter mit Präfix (z.B. 'A12. Name').",
+   "v": "bestätigt"
+  },
+  "services/song-actions/song-actions.service#actionsheet-ee67de06": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:164",
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:132"
+   ],
+   "n": "Header 'Noten für {song} drucken', Dateinamen, 'Abbrechen' gleich; {song} Ionic ohne Präfix / Flutter mit Präfix. Druck: Ionic PrintService.printSongFile (Ladeoverlay 'Datei wird geladen...', Druckname '<Dateiname>.pdf') / Flutter SongPrintService.printEntries ohne Ladeoverlay, Druckname '<Werkname>.pdf'; 'keine druckbaren Noten'-Warnung vorhanden. Druckdetails eigene Unit.",
+   "v": "bestätigt"
+  },
+  "services/song-actions/song-actions.service#actionsheet-f2b52b99": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:185",
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:54"
+   ],
+   "n": "Header 'Liedtext für {song} auswählen', Dateinamen (instrumentId 2), 'Abbrechen' gleich; {song} Ionic ohne Präfix / Flutter mit Präfix.",
+   "v": "bestätigt"
+  },
+  "services/song-actions/song-actions.service#effect-2999b087": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:178",
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:74"
+   ],
+   "n": "'Aufnahme herunterladen' auf allen Plattformen wie Ionic; Mac-iOS-App → Browser-Download (downloadInMacBrowser) gleich, nativ Cache + Systemviewer gleich. Ionic: mobiles Web (Android) → Teilen-Menü (Web Share), Desktop → Anchor-Download / Flutter: installierte PWA Anchor-Download, Browser-Tab öffnet ?download=-URL, kein Teilen-Menü.",
+   "v": "bestätigt"
+  },
+  "services/song-actions/song-actions.service#effect-a62dbd79": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:148",
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:74"
+   ],
+   "n": "Ionic: 'Noten downloaden' fehlt bei isPlatform('ios') – auch iPhone/iPad im Browser/PWA; Download lädt die Datei aus Storage und gibt sie im mobilen Web ans Teilen-Menü, am Desktop als Anchor-Download, nativ Cache + FileViewer / Flutter: Button im Web immer (auch iOS-Web), PWA Anchor-Download, Browser-Tab ?download=-URL ohne Teilen-Menü, nativ Cache + Systemviewer. Gleiche Funktion.",
+   "v": "bestätigt"
+  },
+  "services/song-actions/song-actions.service#effect-a62dbd79-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:155",
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:74"
+   ],
+   "n": "Wie Einzeldatei-Download nach Dateiauswahl: Ionic blendet 'Noten downloaden' auch auf iOS-Web aus und nutzt im mobilen Web das Teilen-Menü / Flutter zeigt den Button im Web immer, Anchor-Download bzw. ?download=-URL ohne Teilen-Menü.",
+   "v": "bestätigt"
+  },
+  "services/song-actions/song-actions.service#logic-91f46ed9": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:100",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:144",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:277"
+   ],
+   "n": "hasNotesForInstrument (inkl. 'Chor (alle)'), printFileFor (Chor-Fallback), printScores ('Keine Noten gefunden'-Warnung) und openSongOptions (gleiche Buttons/Reihenfolge, ohne Instrument keine Dateien, Chor-Dateien per fileName dedupliziert, Auswahl-Sheets bei mehreren Dateien, Warn-Toast ohne Aktionen) portiert. Der frühere Unterschied 'Toast auch ohne Instrument' ist behoben (playerInstrumentId != null). Verbleibend (alles niedrig): Download-Button auf iOS-Web, Präfix in Sheet-Titeln und Audiotitel, Druck ohne Ladeoverlay/anderer Druckname.",
+   "v": "bestätigt"
+  },
+  "services/song-actions/song-actions.service#toast-448502f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:113"
+   ],
+   "n": "Jetzt gleich: Toast 'Für dein Instrument sind leider keine Noten verfügbar.' (rot) nur wenn ein Instrument übergeben ist und hasSongNotesForPlayer false (Ionic instrumentId && !hasNotesForInstrument, Chor: 'Chor (alle)' zählt). Ohne Instrument (Terminliste-Ablaufplan) kein Toast wie Ionic. Der frühere Unterschied ist behoben.",
+   "v": "korrigiert"
+  },
+  "services/song-actions/song-actions.service#toast-cfd2b633": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:192"
+   ],
+   "n": "Warn-Toast 'Für dieses Werk sind keine Aktionen verfügbar.', wenn außer Abbrechen nichts da ist (Ionic buttons.length === 1, Flutter actions.isEmpty); Sheet öffnet dann nicht.",
+   "v": "bestätigt"
+  },
+  "x-8f2a5391fd": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:176"
+   ],
+   "n": "Weiterhin: Ionic 'Aufnahme anhören' startet den Player mit Titel '<number> <name>' / Flutter '<prefix><number> <name>' (fullNumber, getrimmt). Nur Anzeige.",
+   "v": "bestätigt"
+  },
+  "services/song-category/song-category.service#db-1d35ec20": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/song_repository.dart:484",
+    "lib/core/providers/song_providers.dart:621",
+    "lib/core/providers/song_providers.dart:649"
+   ],
+   "n": "Umbenennen schreibt name (getrimmt, leer → Fehler-Toast wie Ionic), Umsortieren sofort index 0..n (Ionic schreibt das ganze Objekt mit neuem index – gleiche Wirkung); Flutter zusätzlich .eq('tenant_id', songTenantId) = effektive Werk-Instanz wie Ionic effectiveSongTenantId.",
+   "v": "bestätigt"
+  },
+  "services/song-category/song-category.service#db-769b608f": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/song_repository.dart:500"
+   ],
+   "n": "Delete nach id ohne Neu-Nummerierung wie Ionic; Flutter zusätzlich .eq('tenant_id', songTenantId).",
+   "v": "bestätigt"
+  },
+  "services/song-category/song-category.service#db-b81915ee": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/song_repository.dart:442",
+    "lib/data/repositories/public_song_repository.dart:104"
+   ],
+   "n": "song_categories der effektiven Werk-Instanz (songTenantId = song_source_tenant_id ?? aktuelle) nach index aufsteigend; geteilte Werkliste über public_song_repository mit tenant_id der Freigabe.",
+   "v": "bestätigt"
+  },
+  "services/song-category/song-category.service#db-e31017a2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/song_repository.dart:460",
+    "lib/core/providers/song_providers.dart:598"
+   ],
+   "n": "Flutter besser: gleiche Spalten name (getrimmt), index, tenant_id (effektive Werk-Instanz). Ionic (songs.page) index = Anzahl Kategorien → nach Löschen (ohne Neunummerierung) doppelter index möglich / Flutter: höchster index + 1. Wert weicht nur in diesem Fehlerfall ab, neue Kategorie landet in beiden am Ende.",
+   "v": "bestätigt"
+  },
+  "services/song-category/song-category.service#logic-524df545": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/song_repository.dart:442",
+    "lib/data/repositories/song_repository.dart:460",
+    "lib/data/repositories/song_repository.dart:484",
+    "lib/data/repositories/song_repository.dart:500",
+    "lib/core/providers/song_providers.dart:591",
+    "lib/data/repositories/public_song_repository.dart:104"
+   ],
+   "n": "Laden (effektive Werk-Instanz bzw. geteilte Instanz, nach index), Anlegen, Umbenennen/Umsortieren, Löschen ohne Neunummerierung portiert; Flutter filtert Update/Delete zusätzlich nach tenant_id. Einziger Unterschied: index beim Anlegen (siehe db-Item, Flutter besser).",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-0074db7d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_song_repository.dart:202"
+   ],
+   "n": "Gleiche Spalten (name, number, prefix ?? null, withChoir/withSolo false, instrument_ids [], category null, category_ids [], …fields, copied_from, tenantId der Ziel-Bibliothek).",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-155bea19": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_song_repository.dart:286"
+   ],
+   "n": "Rückbau nur bei neu angelegtem Werk (existingSongId leer); Flutter zusätzlich .eq('tenantId', libraryId).",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-23a63c9e": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/song_repository.dart:244",
+    "lib/features/songs/presentation/widgets/add_song_sheet.dart:78"
+   ],
+   "n": "Explizite Felder wie Ionic songs.page (number, name, link, withChoir, withSolo, instrument_ids, prefix '' als Default) + tenantId der effektiven Werk-Instanz; link nur wenn gesetzt, Name getrimmt.",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-4fc60603": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_song_repository.dart:191"
+   ],
+   "n": "Gleiche Felder (übernommene fields, additional_fields gemergt, copied_from nur wenn leer, Update nur wenn etwas zu schreiben ist); Flutter filtert zusätzlich tenantId der Ziel-Bibliothek.",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-4fc60603-2": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_song_repository.dart:269",
+    "lib/data/repositories/org_song_repository.dart:264",
+    "lib/core/utils/song_copy.dart:99"
+   ],
+   "n": "files = bestehende + neue (storageName, fileName, fileType, url, instrumentId ?? null, note), instrument_ids ohne null/reservierte Ids/Hauptgruppe, dedupliziert. Bestehende Dateien: Ionic nach instrumentId sortiert (getSong), Flutter in gespeicherter Reihenfolge – Reihenfolge innerhalb einer Stimme gleich, Anzeige sortiert ohnehin.",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-52157af4": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/song_repository.dart:283"
+   ],
+   "n": "Update der übergebenen Felder (ohne id/created_at/tenantId/berechnete Felder) nach id, Flutter zusätzlich .eq('tenantId', songTenantId).",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-6ca0fd0d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_song_repository.dart:242",
+    "lib/data/repositories/org_song_repository.dart:320"
+   ],
+   "n": "Lebendig nur über copyOrgSong: Download aus Bucket songs mit dem Pfad aus der öffentlichen URL (Flutter storagePathFromPublicUrl, zusätzlich ohne Query und URL-dekodiert).",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-7609f151": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_song_repository.dart:258"
+   ],
+   "n": "getPublicUrl für 'songs/<Bibliothek>/<songId>/<storageName>' als url der neuen Datei.",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-a8efa0d8": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_song_repository.dart:281"
+   ],
+   "n": "Bei Fehler werden die in diesem Lauf hochgeladenen Pfade entfernt.",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-ae5c34c0": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/song_repository.dart:226",
+    "lib/data/repositories/song_repository.dart:695"
+   ],
+   "n": "id + tenantId (effektive Werk-Instanz), Dateien nach instrumentId (null → 0) sortiert; maybeSingle statt single.",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-b99e04f3": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/song_repository.dart:311"
+   ],
+   "n": "Flutter besser: Ionic entfernt '<tenantId>/<songId>/<fileName>' (ohne Präfix 'songs/', Anzeigename statt storageName) – die echten Objekte 'songs/<tenantId>/<songId>/<storageName>' (DbService.uploadSongFile) bleiben liegen / Flutter löscht 'songs/<songTenantId>/<songId>/<storageName ?? fileName>' (best effort), Dateiliste frisch aus der DB. Unbedenklich: Kopien (copySongToTenant/copyOrgSong) laden Dateien neu hoch, keine geteilten Objekte.",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-bb6065f5": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_song_repository.dart:43",
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:117"
+   ],
+   "n": "Gleiche Parameter (p_tenant_id aktuelle Instanz, p_query getrimmt, p_tenant_ids alle gewählt → null, p_only_with_files, p_limit 50, p_offset).",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-c372e06b": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/song_repository.dart:148"
+   ],
+   "n": "Gleiche Abfrage (tenantId effektive Werk-Instanz, order number/id aufsteigend, Seiten à 1000), Cache danach geschrieben (Flutter Key pro Benutzer). Flutter fällt bei Netzwerkfehlern auf den Cache zurück, Ionic liefert bei Fehler auf Seite 1 null.",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-d6b1b3a5": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_song_repository.dart:142"
+   ],
+   "n": "Gleich: name, index = höchster index + 1 (fortlaufend), tenant_id der Ziel-Bibliothek; Namensvergleich trim/lowercase. Flutter prüft zusätzlich, dass die Bibliothek zur Organisation gehört und der Nutzer dort Admin/Verantwortlich ist (wie die Ionic-Zielliste).",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-d957876c": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_song_repository.dart:246"
+   ],
+   "n": "Pfad 'songs/<Bibliothek>/<songId>/<storageName>', upsert. Flutter wählt einen noch freien storageName und setzt contentType; Sanitizing des storageName leicht anders – nur interner Objektname.",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-d9929d1c": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_song_repository.dart:131"
+   ],
+   "n": "Lebendig nur über ensureSongCategories (org-songs.page): song_categories der Ziel-Bibliothek nach index aufsteigend.",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#db-e603c5b1": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/song_repository.dart:336"
+   ],
+   "n": "Delete songs nach id, Flutter zusätzlich .eq('tenantId', songTenantId); Fehler wird weitergereicht wie Ionic (throw).",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#logic-77d06c32": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/song_repository.dart:129",
+    "lib/data/repositories/song_repository.dart:226",
+    "lib/data/repositories/song_repository.dart:244",
+    "lib/data/repositories/song_repository.dart:283",
+    "lib/data/repositories/song_repository.dart:311",
+    "lib/data/repositories/org_song_repository.dart:35",
+    "lib/data/repositories/org_song_repository.dart:127",
+    "lib/data/repositories/org_song_repository.dart:162"
+   ],
+   "n": "Lebendige Methoden (nur getSongs, getSong, addSong, editSong, removeSong, ensureSongCategories, searchOrgSongs, copyOrgSong werden über songSvc aufgerufen) portiert: getSongs (Seiten à 1000, Offline-Cache, Flutter zusätzlich Cache-Fallback bei Netzwerkfehler), getSong (Dateien sortiert), addSong, editSong, removeSong, ensureSongCategories, searchOrgSongs, copyOrgSong inkl. Rückbau. Abweichung nur beim Löschen der Storage-Dateien (siehe db-Item, Flutter besser). uploadSongFile, downloadSongFile(FromPath außer copyOrgSong), deleteSongFile, copySongToTenant, uploadSongFileToTenant und die Kategorie-Methoden sind in SongService toter Code.",
+   "v": "bestätigt"
+  },
+  "services/song/song.service#native-20d780b6": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/song_repository.dart:141"
+   ],
+   "n": "Network.getStatus ↔ connectivityCheckProvider; offline wird der Cache (oder leere Liste) gelesen.",
+   "v": "bestätigt"
+  },
+  "services/super-developer.guard#logic-85893776": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/router/app_router.dart:1274",
+    "lib/core/router/app_router.dart:1312",
+    "lib/core/providers/dashboard_providers.dart:31"
+   ],
+   "n": "Gleiche Prüfung (E-Mail = developer@attendix.de) für settings/administration und /dashboard (Redirect-Zeilen 1277/1314). Ionic: sonst Umleitung nach /tabs/player / Flutter: nach /settings. f auf aktuelle Zeilen korrigiert (alte 1240/1279 zeigten auf andere Routen).",
+   "v": "bestätigt"
+  },
+  "services/super-developer.guard#nav-5ef82b68": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/router/app_router.dart:1277",
+    "lib/core/router/app_router.dart:1314"
+   ],
+   "n": "Ionic: Nicht-Super-Developer werden nach '/tabs/player' (Personen) umgeleitet / Flutter: nach '/settings'. Zugriff bleibt in beiden gesperrt; nur bei direktem Aufruf der URL sichtbar. f auf aktuelle Zeilen korrigiert.",
+   "v": "bestätigt"
+  },
+  "services/telegram/telegram.service#logic-be595d17": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/services/telegram_service.dart:257",
+    "lib/core/services/telegram_service.dart:307",
+    "lib/core/services/telegram_service.dart:357",
+    "lib/core/services/telegram_service.dart:241",
+    "lib/data/repositories/sign_in_out_repository.dart:117"
+   ],
+   "n": "encodeFilename/cleanName (NFD, Sonderzeichen → '-', '_<100-999>'+Endung, leer → 'file'), Upload in Bucket attendances (upsert, contentType), öffentliche URL mit ?download=<Name>, send-photo/send-document, Löschen nach 10 s (auch bei Fehler), send-document mit sendAsUrl, quick-processor (über SignInOutRepository._notify inkl. isSelf; TelegramService.notifyPerTelegram ohne isSelf ist ungenutzt) und playerPaused gleich. Abweichungen nur bei Ladeanzeige und Toast-Texten der Aufrufer (Erfolg/Fehler vorhanden, andere Worte).",
+   "v": "bestätigt"
+  },
+  "services/tenant/tenant.service#db-397565f1": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2102",
+    "lib/data/repositories/player_repository.dart:2166",
+    "lib/data/repositories/sign_in_out_repository.dart:563"
+   ],
+   "n": "additional_fields der Ziel-Instanz beim Eintragen in Termine einer anderen Instanz bzw. seasonStart je Instanz für 'Meine Termine'; Flutter liest dieselben tenants-Zeilen per id, nur die benötigten Spalten (maybeSingle statt single).",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

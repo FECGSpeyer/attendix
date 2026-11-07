@@ -1,0 +1,82 @@
+{
+ "batch": "zz-fixed-zz-querschnitt-r5-nachtrag",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "afterRound": 5,
+ "note": "Sortier-Befunde aus Runde 5 Teil B, behoben durch #332 (alle .order() mit ascending: true); vom Paritäts-Thread auf master 0f74333 geprüft.",
+ "items": {
+  "services/conductor/conductor.service#db-36e64412": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:236"
+   ],
+   "n": "Dirigentenliste jetzt .order('lastName', ascending: true) wie Ionic (A→Z); Vorauswahl wieder der alphabetisch erste aktive Dirigent.",
+   "v": "korrigiert"
+  },
+  "services/conductor/conductor.service#logic-f1c154da": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:236"
+   ],
+   "n": "Sortierung behoben (aufsteigend wie Ionic); Filter, Offline-Cache, Ausgetretene und Fehler-Toast wie zuvor gleich.",
+   "v": "korrigiert"
+  },
+  "services/duty/duty.service#db-7ef6118a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:350"
+   ],
+   "n": "Regeln „Regelmäßig verhindert“ jetzt .order('created_at', ascending: true), älteste zuerst wie Ionic.",
+   "v": "korrigiert"
+  },
+  "services/group-category/group-category.service#db-bab11025": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:280"
+   ],
+   "n": "Kategorien jetzt sort_order aufsteigend (nulls last), dann name aufsteigend wie Ionic.",
+   "v": "korrigiert"
+  },
+  "services/group/group.service#db-799fb770": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:24",
+    "lib/data/repositories/group_repository.dart:26"
+   ],
+   "n": "Gruppen jetzt category, sort_order (nulls last), name aufsteigend wie Ionic; Standardgruppe (groups()[0]) wieder dieselbe.",
+   "v": "korrigiert"
+  },
+  "services/player-absence/player-absence.service#db-99111af5": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_absence_repository.dart:35"
+   ],
+   "n": "Abwesenheiten jetzt .order('from_date', ascending: true), älteste zuerst wie Ionic.",
+   "v": "korrigiert"
+  },
+  "services/player/player.service#db-d3a9e9fb": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:166"
+   ],
+   "n": "Ausstehende Personen jetzt .order('created_at', ascending: true) wie Ionic.",
+   "v": "korrigiert"
+  },
+  "services/db.service#db-cc6767aa": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/dashboard_repository.dart:83"
+   ],
+   "n": "Übersicht lädt jetzt .gte(heute).order('date', ascending: true).limit(5), also die 5 nächsten Termine; „Nächster Termin“ zeigt den richtigen Termin wie Ionic.",
+   "v": "korrigiert"
+  },
+  "services/db.service#db-e7a94696": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/dashboard_repository.dart:110"
+   ],
+   "n": "getUpcomingEventsIncludingRunning jetzt aufsteigend; „Aktueller Plan“ nimmt wie Ionic den ersten laufenden oder nächsten Termin mit Plan.",
+   "v": "korrigiert"
+  }
+ }
+}

@@ -1,0 +1,425 @@
+{
+ "batch": "zz-verify6-sonnet-37",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "stats/stats.page#text-729fe4d0": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:88",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:237",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:203"
+   ],
+   "n": "Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfällt der Abschnitt, stattdessen Leerzustand 'Keine Daten im ausgewählten Zeitraum'. Funktion und Daten sonst gleich. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#text-a54abdb5": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:88",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:239",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:203"
+   ],
+   "n": "Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfällt der Abschnitt, stattdessen Leerzustand 'Keine Daten im ausgewählten Zeitraum'. Funktion und Daten sonst gleich. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#text-f6dad6f9": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:88",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:241",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:203"
+   ],
+   "n": "Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfällt der Abschnitt, stattdessen Leerzustand 'Keine Daten im ausgewählten Zeitraum'. Funktion und Daten sonst gleich. Zeilen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#text-80978ea5": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1096",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1015",
+    "lib/core/router/app_router.dart:193"
+   ],
+   "v": "bestätigt",
+   "n": "Rolle: Statistik nur Admin/Verantwortlich (Route-Guard _isAdminOrResponsible, Side-Nav-Eintrag nur isAdmin); Abschnitt nur bei Organisation; '🏢 {Name}'."
+  },
+  "stats/stats.page#text-8808d9e3": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1224"
+   ],
+   "v": "bestätigt",
+   "n": "Name Vorname Nachname; Sortierung meiste Instanzen zuerst."
+  },
+  "stats/stats.page#text-89697536": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:445"
+   ],
+   "v": "bestätigt"
+  },
+  "stats/stats.page#text-8ee10fbd": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1139"
+   ],
+   "v": "bestätigt",
+   "n": "Anzahl eindeutiger Personen, Instanzfilter lokal wie filterInstances."
+  },
+  "stats/stats.page#text-98ec1180": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:444"
+   ],
+   "v": "bestätigt"
+  },
+  "stats/stats.page#text-9d79b85d": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:507"
+   ],
+   "v": "bestätigt"
+  },
+  "stats/stats.page#text-9f46e7f6": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:510"
+   ],
+   "v": "bestätigt",
+   "n": "Gesamt = aktuelle + ausgetretene Personen."
+  },
+  "stats/stats.page#text-c9d5517b": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:274",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:917"
+   ],
+   "v": "bestätigt"
+  },
+  "stats/stats.page#text-dd5dc127": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:453"
+   ],
+   "v": "bestätigt"
+  },
+  "stats/stats.page#text-f8479cf2": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:455",
+    "lib/data/models/attendance/attendance.dart:332"
+   ],
+   "v": "bestätigt"
+  },
+  "stats/stats.page#text-f8479cf2-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:464",
+    "lib/data/models/attendance/attendance.dart:332"
+   ],
+   "v": "bestätigt"
+  },
+  "tabs/side-nav/side-nav.component#action-0465a216": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:262"
+   ],
+   "v": "bestätigt"
+  },
+  "tabs/side-nav/side-nav.component#action-136d171b": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:326"
+   ],
+   "v": "bestätigt",
+   "n": "Profil-Button öffnet /settings (wie /tabs/settings), Name, Rollenlabel gleich."
+  },
+  "tabs/side-nav/side-nav.component#action-a8d16ecc": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:365",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:133"
+   ],
+   "v": "bestätigt",
+   "n": "Logout ohne Rückfrage; Flutter entfernt zusätzlich Push-Token (besser/neutral)."
+  },
+  "tabs/side-nav/side-nav.component#action-b52e84d3": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/nav_items.dart:70-226",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:150-205",
+    "lib/core/providers/role_permission_providers.dart:116-120"
+   ],
+   "v": "bestätigt",
+   "n": "buildNavGroups Zeile für Zeile verglichen: Rollenbedingungen (isAdmin, isConductor, Helfer inkl. Stimmführer-Helfer, Mitgliederliste, Werke, Meine Stimme, Übersicht bei >1 Instanz, Organisation nur Admin, Team/Dateiablage) identisch; Badges Anträge nur Admin/Verantw., Aufgaben, 99+."
+  },
+  "tabs/side-nav/side-nav.component#action-e344604a": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:270"
+   ],
+   "v": "bestätigt"
+  },
+  "tabs/side-nav/side-nav.component#action-f967a167": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:729"
+   ],
+   "v": "bestätigt",
+   "n": "Avatar mit Bild oder Initialen."
+  },
+  "tabs/side-nav/side-nav.component#embed-972ec73c": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:278"
+   ],
+   "v": "bestätigt"
+  },
+  "tabs/side-nav/side-nav.component#text-179b9e05": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:664",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:671"
+   ],
+   "v": "bestätigt",
+   "n": "Tooltip longName; eine Instanz nicht antippbar, mehrere Popup."
+  },
+  "tabs/side-nav/side-nav.component#text-5522586b": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/nav_items.dart:215-225",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:195-196"
+   ],
+   "v": "bestätigt"
+  },
+  "tabs/side-nav/side-nav.component#text-b58c667f": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:649"
+   ],
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#action-222258cc": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:111-134"
+   ],
+   "v": "bestätigt",
+   "n": "Runder grüner Button mit Häkchen, nur wenn nicht erledigt, bei Speichern deaktiviert, setzt status=completed + Toast 'Erledigt – danke!'."
+  },
+  "tasks/task-detail/task-detail.page#action-367e5078": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:94",
+    "lib/core/providers/push_providers.dart:313"
+   ],
+   "n": "In-App identisch (pop). Push/Deep-Link: Ionic ion-back-button defaultHref=backHref / Flutter: AppBar-Zurück, bei Push-Einstieg auf /settings/tasks/:id landet man in den Einstellungen. Gleiche Funktion, anderes Ziel nur im Randfall.",
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#action-5099bb1b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:97-102"
+   ],
+   "v": "bestätigt",
+   "n": "Nur isTeamLeader (Admin/Verantwortlich, identisch zu Ionic isTeamLeaderRole) und geladene Aufgabe; öffnet Formular-Sheet."
+  },
+  "tasks/task-detail/task-detail.page#action-96d71bae": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:152-155"
+   ],
+   "n": "Ionic: routerLink immer zu backHref (Leitung Teamorganisation, sonst /tabs/signout) / Flutter: pop() wenn möglich, sonst go(Teamorganisation bzw. /signout). Ziel ohne Verlauf gleich.",
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#action-b4ae1052": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:103-107"
+   ],
+   "v": "bestätigt",
+   "n": "Rotes Papierkorb-Icon nur Leitung (Admin/Verantwortlich) und geladene Aufgabe; Bestätigung."
+  },
+  "tasks/task-detail/task-detail.page#action-b9c30d9d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:279",
+    "lib/core/router/legacy_routes.dart:54"
+   ],
+   "v": "bestätigt",
+   "n": "Ziel /settings/protocol/:id entspricht /tabs/attendance/:id/protocol; Untertitel '{Typ} vom {Datum}'."
+  },
+  "tasks/task-detail/task-detail.page#action-c566ab32": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:281-290",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:291-296"
+   ],
+   "v": "bestätigt",
+   "n": "Nur Leitung klickbar -> /settings/agenda-items/:id; andere Rollen nicht klickbare Zeile nur mit Titel, wie Ionic."
+  },
+  "tasks/task-detail/task-detail.page#alert-3b0ee21a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:97-107",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:64-81",
+    "lib/data/repositories/task_repository.dart:165-186"
+   ],
+   "v": "bestätigt",
+   "n": "Dialog 'Aufgabe löschen?' mit Abbrechen/Löschen (destruktiv), nur Leitung (Admin+Verantwortlich, nicht nur Admin). deleteTask mit id+tenant_id-Filter, Fehler bei 0 Zeilen, Toast, danach Teamorganisation; Fehler-Toast bei Misserfolg."
+  },
+  "tasks/task-detail/task-detail.page#field-98dcebe4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:222-228",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:51-62"
+   ],
+   "n": "Optionen Offen/In Arbeit/Erledigt gleich. Ionic: optimistischer Wechsel / Flutter: Segment springt erst nach Speichern um, während Speichern deaktiviert; Fehler-Toast 'Status konnte nicht geändert werden' in beiden.",
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#text-0a1f7670": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:241-246"
+   ],
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#text-0b47706e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:250-252",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:287"
+   ],
+   "v": "bestätigt",
+   "n": "Farben low=medium, medium=warning, high=danger."
+  },
+  "tasks/task-detail/task-detail.page#text-0f3ee4e8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:268"
+   ],
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#text-1119b153": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:243"
+   ],
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#text-1426d778": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:234-236"
+   ],
+   "v": "bestätigt",
+   "n": "Nur Leitung (Admin/Verantwortlich)."
+  },
+  "tasks/task-detail/task-detail.page#text-2a6306ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:260"
+   ],
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#text-42f959f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:240"
+   ],
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#text-4f08b74c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:237"
+   ],
+   "v": "bestätigt",
+   "n": "Nur Leitung; Name oder 'Niemand'."
+  },
+  "tasks/task-detail/task-detail.page#text-52aa1928": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:295"
+   ],
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#text-7cddd11e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:293"
+   ],
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#text-8b7082f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:232"
+   ],
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#text-bee01c7b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:205"
+   ],
+   "v": "bestätigt",
+   "n": "Erledigt durchgestrichen und grau."
+  },
+  "tasks/task-detail/task-detail.page#text-c11b97ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:176-180",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:215"
+   ],
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#text-c959bd9a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:301-306"
+   ],
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#text-ca279706": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:249"
+   ],
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#text-f23a3681": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:257"
+   ],
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#toast-530c6140": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:76"
+   ],
+   "v": "bestätigt",
+   "n": "Toast 'Aufgabe gelöscht' nach Löschen (nur Leitung)."
+  }
+ },
+ "extra": [
+  {
+   "unit": "tabs/side-nav/side-nav.component",
+   "title": "Instanz-Logo im Side-Nav",
+   "n": "Ionic: zeigt tenant.logo_url als Bild, sonst Initialen / Flutter: immer nur Initialen. Reine Optik.",
+   "sev": "niedrig",
+   "ionic": "src/app/tabs/side-nav/side-nav.component.html:25",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:600"
+   ]
+  }
+ ]
+}

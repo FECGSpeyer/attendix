@@ -1,0 +1,336 @@
+{
+ "batch": "zz-verify2-b06-overview",
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
+ "items": {
+  "messages/message-detail/message-detail.page#toast-12c5a899": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:95-111",
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:76"
+   ],
+   "n": "Nach gesendeter Antwort grüner Toast 'Danke! Du bist jetzt entschuldigt.' (accepted) bzw. 'Danke! Deine Rückmeldung wurde geschickt.', danach Termin-Karte neu geladen. Erreichbar nur für Nicht-Manager mit canRespond, wie Ionic (archivierte Termine: siehe x-ad6a974bce).",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#effect-6fdffe28": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:84-90",
+    "lib/core/constants/enums.dart:137-141",
+    "lib/core/router/legacy_routes.dart:42"
+   ],
+   "n": "Zurück ohne Verlauf: Manager → /settings/messages (= /tabs/settings/messages), sonst Startseite der Rolle wie Utils.getUrl: Admin/Verantwortlich/Beobachter /people (= /tabs/player), Eltern /parents, Helfer/Stimmführer(-Helfer)/Spieler/Bewerber/NONE /signout.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#action-27ae197e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:131-138",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:92-108",
+    "lib/data/repositories/message_repository.dart:254-260"
+   ],
+   "n": "Papierkorb rot. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich. Dialog 'Mitteilung löschen?' + Hinweistext, Abbrechen/Löschen (destruktiv); DELETE messages per id (Flutter zusätzlich tenantId), danach /settings/messages, Fehler-Toast 'Fehler beim Löschen'.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#action-91d55a5f": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:110-114",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:206"
+   ],
+   "n": "Pull-to-refresh lädt Mitteilung und Empfänger neu. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#action-f228d859": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:212-245"
+   ],
+   "n": "Titel, 'dd.MM.yyyy, HH:mm' · Absender · 'Nachricht anzeigen/ausblenden', Chevron auf/ab, Tippen klappt Inhalt (Start zugeklappt). Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-979626ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:176-182",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:547-553"
+   ],
+   "n": "Personalisierter Titel als Überschrift der Nachricht (showTitle = !isManager). Mitgliederansicht (!isManager): alle Rollen außer Admin/Verantwortlich, in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-8cb3a397": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:554-559"
+   ],
+   "n": "'Von {Absender|Unbekannt} · dd.MM.yyyy, HH:mm'. Mitgliederansicht (!isManager): alle Rollen außer Admin/Verantwortlich, in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-4920b42c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:183-184",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:115-138"
+   ],
+   "n": "Termin-Karte bei Mitteilung mit Termin: 'typeInfo bzw. Termintyp · Datum' fett. Mitgliederansicht (!isManager): alle Rollen außer Admin/Verantwortlich, in beiden gleich. Abweichung bei archivierten Terminen separat in x-ad6a974bce.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-09b02ea9": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:139",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:206-229"
+   ],
+   "n": "Status-Pill (Keine Rückmeldung/Anwesend/Entschuldigt/Zu spät/Unentschuldigt/Verspätet entschuldigt) nur wenn eigener person_attendance-Status vorhanden, wie Ionic.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-3a2e95de": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:144-174"
+   ],
+   "n": "Eigene Antwort: 'Wird geprüft/Übernommen/Nicht übernommen' · Grund · 'Ich war doch da', Icon Kreuz bei abgelehnt sonst Haken; gleiche Bedingung.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#action-5e32ddc8": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:176-196",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:84-93"
+   ],
+   "n": "'Ich war doch da' (Outline) nur ohne eigene Antwort und bei canRespond (allow_responses, eigene person_attendance, bis 8 Tage nach Termin); öffnet Antwortdialog kind 'was_present'. Mitgliederansicht (!isManager): alle Rollen außer Admin/Verantwortlich, in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-c1ec1779": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:196"
+   ],
+   "n": "'„Ich war doch da“ geht als Hinweis an die Verantwortlichen.' unter dem Button, gleiche Bedingung.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#action-6e9d8cde": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:185-194"
+   ],
+   "n": "'Zum Termin' mit Kalender-Icon bei Termin-Mitteilung → /attendance/:id (Ionic /tabs/attendance/:id), Route für Admin/Verantwortlich erlaubt. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-dc8412d2": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:272"
+   ],
+   "n": "'Der Versand läuft noch. Ziehe nach unten, um zu aktualisieren.' bei status 'sending'. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-0831ef43": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:273-287"
+   ],
+   "n": "'Übersicht'. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-8939c3f4": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:290",
+    "lib/features/messages/presentation/message_format.dart:120-150"
+   ],
+   "n": "'{read} / {total}' (read_at gezählt). Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-fffffa33": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:290"
+   ],
+   "n": "'in der App gelesen'. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-76fc0593": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:291-294",
+    "lib/features/messages/presentation/message_format.dart:120-150"
+   ],
+   "n": "'{pushDelivered} / {pushTotal}' (push_sent_at oder telegram_sent_at / push_enabled). Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-1c7f5885": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:293"
+   ],
+   "n": "'Push/Telegram zugestellt'. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-98080bcc": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:298"
+   ],
+   "n": "'{emailDelivered} / {emailTotal}'. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-17551393": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:298"
+   ],
+   "n": "'E-Mail zugestellt'. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-b9117b34": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:299"
+   ],
+   "n": "'≈ {emailOpened}'. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-38a4bb6c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:299"
+   ],
+   "n": "'E-Mail geöffnet (ungefähr)'. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-7e52a06c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:301"
+   ],
+   "n": "Hinweis '„Geöffnet“ bei E-Mails ist ein Schätzwert …'. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#field-daef3c09": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:305-314",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:255-260"
+   ],
+   "n": "Segment 'Alle/Gelesen/Offen/Probleme {n}' (total/readAny/open/problems), Filter gleich (gelesen = read_at oder email_opened_at; Problem = Push/E-Mail fehlgeschlagen oder unerreichbar). Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-742d6e9a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:316-319"
+   ],
+   "n": "'Keine Personen in dieser Ansicht.' bei leerer Filterliste (Flutter beim ersten Laden Spinner). Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-d6a206b1": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:438"
+   ],
+   "n": "Name bzw. 'Unbekannt'. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-301d7e0b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:441-445"
+   ],
+   "n": "Gruppenname klein/grau hinter dem Namen, nur wenn vorhanden. Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#text-be3895d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:454-467",
+    "lib/features/messages/presentation/message_format.dart:54-108"
+   ],
+   "n": "Chips in gleicher Reihenfolge, Texten und Tönen (chipsFor ↔ recipientChips, Zeitformat HH:mm bzw. dd.MM. HH:mm). Nur Manager = Admin/Verantwortlich bei Mitteilung der aktuellen Instanz (Ionic isManager; Flutter role.isAdmin||isResponsible + tenantId-Check, :49/:121); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "messages/message-list/message-list.page#nav-e075183e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:25-30",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:262-270"
+   ],
+   "n": "Nach erfolgreichem Senden liefert Compose die id → push /messages/:id (Ionic navigateByUrl /tabs/messages/:id). Liste nur Admin/Verantwortlich in beiden (Ionic settings isAdmin, Flutter Guard '/settings/messages' _isAdminOrResponsible).",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#text-68264c2e": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:250",
+    "lib/features/notifications/presentation/pages/notifications_page.dart:324-325"
+   ],
+   "n": "'Instanz-Einstellungen' wenn Benachrichtigungen aktiv und der Nutzer Instanzen hat. Seiteneintrag in beiden für alle Rollen ohne Bedingung; Instanzliste = alle tenantUsers-Instanzen des Nutzers (jede Rolle), in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#field-fbc6770a": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:329-337",
+    "lib/core/services/telegram_service.dart:150-162",
+    "lib/core/services/telegram_service.dart:207-212",
+    "lib/core/providers/tenant_providers.dart:176-226"
+   ],
+   "n": "Schalter je Instanz (Langname, Favoriten zuerst), an = enabled_tenants enthält id; Umschalten fügt hinzu/entfernt und speichert die notifications-Zeile des Nutzers (update per id). Flutter fällt bei leerem longName auf shortName zurück (kosmetisch).",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#text-445b00dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1414-1450",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1374-1410"
+   ],
+   "n": "Personen-Sheet der Organisation: je Instanz eine Zeile mit Langname. Statistik nur Admin/Verantwortlich (Ionic settings isAdmin, Flutter Guard '/statistics'), Abschnitt nur bei Organisation – gleich. Randfall: Flutter sammelt Instanznamen als Set (doppelte Zeilen derselben Person in einer Instanz nur einmal, Ionic zweimal).",
+   "v": "bestätigt"
+  },
+  "x-b5f5a215de": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/data/repositories/message_repository.dart:48-66",
+    "lib/core/providers/message_providers.dart:58-68",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:145-161"
+   ],
+   "n": "Real: Ionic getMessage ohne Instanzfilter; RLS 'recipient can read messages' (add_messages.sql) lässt die eigene Kopie auch nach Austritt lesen (alter Push-/E-Mail-Link, Glocke 'Alle Instanzen'), Ionic zeigt dann die Mitgliederansicht. Flutter getMessageById filtert auf aktuelle + eigene Instanzen → 'Diese Mitteilung gibt es nicht mehr oder du hast keinen Zugriff darauf.' Seltener Fall, mittel passt.",
+   "v": "bestätigt"
+  },
+  "x-ad6a974bce": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:241-256",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:69-74",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:116"
+   ],
+   "n": "Real: Ionic AutoMessageService.getAttendanceInfo ohne Archiv-Filter (RLS auf attendance nicht aktiv, add_attendance_archived.sql) → Mitglieder sehen Termin-Karte, Status und 'Grund nachtragen'/'Ich war doch da' auch bei archiviertem Termin. Flutter verwirft archivierte Termine für alle außer Admin/Verantwortlich; da die Karte nur Nicht-Managern gezeigt wird, fehlt sie bei archivierten Terminen immer. Betrifft Archivierung innerhalb der 8-Tage-Antwortfrist.",
+   "v": "bestätigt"
+  },
+  "x-6a02894975": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:737-803",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:827-893",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1008-1075",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1100-1168"
+   ],
+   "n": "Real: fl_chart 0.69.2 (pub-cache) hat keine Drehung, BarChart zeichnet senkrechte Balken, bottomTitles sind aus. leftTitles laufen über die Y-Achse (side_titles_widget.dart: iterateThroughAxis minY..maxY), getTitlesWidget nimmt value.toInt() als Index → data[0] bei 0, data[20] bei 20 … Namen stehen an Wert-Teilstrichen statt an den Balken, meist nur der erste sichtbar. Betrifft Top 20, pro Instrument, Unentschuldigte, Ø-Alter. Ionic: horizontale Balken mit Namen je Balken. Zuordnung nur per Tooltip → hoch bestätigt.",
+   "v": "bestätigt"
+  },
+  "x-ab8ae02d16": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:234-273",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:516-600"
+   ],
+   "n": "Real: Ionic Chart.js-Titel 'Anwesenheitsverlauf (letzte 20 Termine)', 'Statusverteilung (in %)', 'Top 20 - Anwesenheits-Elite 🏆', 'Anwesenheitsquote nach Instrument', 'Unentschuldigte Abwesenheiten', 'Altersverteilung 🎂', 'Durchschnittsalter pro Instrument' + Achsentitel '%'/'Jahre'. Die ARB-Keys statsHistoryChart … werden in Flutter nirgends genutzt; nur Abschnittsüberschriften, '%' steckt in den Tick-Labels. Flutter zeigt auch nur die letzten 20 Termine, der Hinweis darauf fehlt → mittel.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

@@ -1,0 +1,399 @@
+{
+ "batch": "zz-verify6-opus-25",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "settings/files/files.page#modal-b8bd9613": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:611-623",
+    "lib/features/settings/presentation/widgets/files_move_modal.dart:20-38"
+   ],
+   "n": "Rollenprüfung (_canEdit → „Du darfst Dateien nicht bearbeiten.“) vor dem Öffnen wie Ionic; übergeben werden Einträge, aktueller Ordner und das an den Tenant gebundene Repository (= tenantId). Ionic: Vollbild-Modal ohne presentingElement / Flutter iOS: Karten-Modal (showIosCardModal), md showIonModal. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#nav-c401b9ed": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1186-1194",
+    "lib/features/settings/presentation/pages/files_page.dart:210-211"
+   ],
+   "n": "Ionic: ngOnInit ohne canAccessFiles → Toast + navCtrl.back() / Flutter bleibt auf der Seite und zeigt „Du hast keinen Zugriff auf Dateien.“ als Inhalt, Menü ausgeblendet; _init lädt trotzdem die Liste (Storage-RLS). Einstiege (Einstellungen, Termin-Ordner, open-file) prüfen den Zugriff in beiden Apps vorher. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#nav-ce9fcd43": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "korrigiert",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1078",
+    "lib/features/settings/presentation/pages/files_page.dart:1088",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:25-37",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:720"
+   ],
+   "n": "Flutter besser: Ionic goBack führt immer per navigateBack nach /tabs/settings – auch wenn die Dateiablage aus einem Termin (attendance openFilesFolder, Meine Termine/Übersicht) geöffnet wurde / Flutter: canPop ? pop : go('/settings') → zurück zum aufrufenden Termin (dort per push geöffnet). Aus den Einstellungen bzw. über open-file (go) gleich. Erstreview übersah die anderen Einstiege."
+  },
+  "settings/files/files.page#text-7c9c40ef": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1202",
+    "lib/features/settings/presentation/pages/files_page.dart:1249-1254",
+    "lib/core/providers/role_permission_providers.dart:143",
+    "lib/core/providers/files_providers.dart:117-125"
+   ],
+   "n": "Nur canEditFiles (Admin/Verantwortlich, = Ionic canEditFiles) mit geladener Belegung (RPC files_used_bytes mit p_tenant_id, nur bei Bearbeitungsrecht geladen) und Limit tenants.files_max_bytes: „Speicher: {used} von {max} belegt“ + Statuszusatz; formatFileSize identisch. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#text-9dbd2f61": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1202",
+    "lib/features/settings/presentation/pages/files_page.dart:1252-1254"
+   ],
+   "n": "Ohne Limit „Speicher: {used} belegt“; gleiche Rollen-/Ladebedingung wie text-7c9c40ef. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#text-c3f98fef": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1202",
+    "lib/features/settings/presentation/pages/files_page.dart:246-254",
+    "lib/features/settings/presentation/pages/files_page.dart:1260"
+   ],
+   "n": "Nur Admin/Verantwortlich mit geladener Belegung; „ · fast voll“ ab 80 %, „ · voll“ ab 100 % an den Speichertext gehängt wie Ionic storageStatusLabel. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-030d7a9b": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:387-402",
+    "lib/core/services/telegram_service.dart:357-366"
+   ],
+   "n": "Fehler beim Signieren der URL gleich („Telegram-Versand fehlgeschlagen: {error}“, rot). Fehler der Edge Function send-document: Ionic (TelegramService.sendSongPerTelegram) „Fehler beim Senden der Nachricht, versuche es später erneut!“ / Flutter „Telegram-Versand fehlgeschlagen: {error}“ – beide rot, Nutzer erfährt den Fehlschlag. Menüpunkt in beiden nur mit telegram_chat_id, keine Rollenprüfung. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-1b899539": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:611-616",
+    "lib/features/settings/presentation/pages/files_page.dart:657-658",
+    "lib/core/providers/role_permission_providers.dart:143"
+   ],
+   "n": "_moveEntries bricht wie Ionic ohne Bearbeitungsrecht mit „Du darfst Dateien nicht bearbeiten.“ ab; canEditFilesFor = Admin/Verantwortlich wie Ionic canEditFiles (Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nie). Text {ok}/{skipped}/{failed}, Warnfarbe und Fallreihenfolge gleich. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-1d01aef6": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:490"
+   ],
+   "n": "Grüner Toast „Eintrag wurde umbenannt.“; Umbenennen nur im Menü für canEdit. Zeile aktualisiert."
+  },
+  "settings/files/files.page#toast-264882fe": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:653-654"
+   ],
+   "n": "Einzelner Eintrag fehlgeschlagen → roter Toast „Verschieben fehlgeschlagen: {error}“ mit letztem Fehler. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-2e9bf690": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:630-649"
+   ],
+   "n": "Fehler beim Lesen des Zielordners → Ausnahme läuft durch _withLoading, roter Toast „Verschieben fehlgeschlagen: {error}“, nichts verschoben, Rückgabe false. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-354386ea": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:676-679"
+   ],
+   "n": "Nach Bestätigung grüner Toast „Eintrag wurde gelöscht.“ und Neuladen. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-3992cefe": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:659-660"
+   ],
+   "n": "Gleiche Rollen-/Fallbedingung wie moveSummary; Plural „Eintrag wurde verschoben.“ / „# Einträge wurden verschoben.“, grün. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-4647060a": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:346-356"
+   ],
+   "n": "Roter Toast „Bildvorschau fehlgeschlagen: {error}“, wenn keine signierte URL erzeugt werden kann; für alle Rollen mit Dateizugriff. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-571055f7": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:473-474"
+   ],
+   "n": "Roter Toast „Ordner konnte nicht erstellt werden: {error}“. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-5dc634c6": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:492-493"
+   ],
+   "n": "Roter Toast „Umbenennen fehlgeschlagen: {error}“. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-767d441c": {
+   "s": "ok",
+   "v": "korrigiert",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:430-454",
+    "lib/core/utils/system_share/system_share_web.dart:10-17",
+    "lib/core/utils/system_share/system_share_stub.dart:2"
+   ],
+   "n": "Code geändert, Abweichung behoben: _shareEntry folgt jetzt Ionic – zuerst System-Teilen (Web nur mit navigator.share, Abbruch = nichts), sonst Link kopieren („Link kopiert“), und erst wenn die Zwischenablage fehlschlägt Toast „Link: {url}“ (showInfo ≈ medium). Dass nativ (Android-WebView ohne navigator.share) Ionic kopiert und Flutter das Teilen-Menü öffnet, gehört zur Teilen-Aktion, nicht zu diesem Toast."
+  },
+  "settings/files/files.page#toast-7acc9af8": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:471"
+   ],
+   "n": "Grüner Toast „Ordner wurde erstellt.“ und Neuladen. Zeile aktualisiert."
+  },
+  "settings/files/files.page#toast-97edb5ea": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:577",
+    "lib/features/settings/presentation/pages/files_page.dart:598-600"
+   ],
+   "n": "Mehrfach-Löschen nur mit canEdit; bei Fehlern Warn-Toast „{ok} gelöscht, {failed} fehlgeschlagen.“. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-a1bcde4f": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:363-380"
+   ],
+   "n": "Roter Toast „Fehler beim Abspielen: {error}“; Warteschlange aller (gefilterten) Audiodateien ab der gewählten, für alle Rollen mit Dateizugriff. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-d3727a66": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:404-415"
+   ],
+   "n": "Roter Toast „Download fehlgeschlagen: {error}“ (auch wenn das Öffnen scheitert). Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-d3bd6d1e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:712-731",
+    "lib/core/providers/feedback_providers.dart:43-64",
+    "lib/data/repositories/base_repository.dart:169-172"
+   ],
+   "n": "Roter Toast „Fehler beim Senden der Anfrage: {error}“ in beiden. Ionic: {error} = error.message, dazu Service-Toast „Fehler beim Senden der Frage“ / Flutter: {error} = toString der RepositoryException („RepositoryException: … (operation: sendQuestion…)“), kein zweiter Toast. Nutzer erfährt den Fehlschlag. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-d5528849": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:601-602"
+   ],
+   "n": "Ohne Fehler grüner Plural-Toast „Eintrag wurde gelöscht.“ / „# Einträge wurden gelöscht.“. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-e09b9e9c": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:655-656"
+   ],
+   "n": "Einzelner Eintrag mit gleichem Namen im Ziel → Warn-Toast „Im Zielordner gibt es schon „{name}“. Nichts verschoben.“. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-e8156c86": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:685-731",
+    "lib/features/settings/presentation/pages/files_page.dart:1202",
+    "lib/features/settings/presentation/pages/files_page.dart:1269-1274",
+    "lib/features/settings/presentation/pages/files_page.dart:774-787"
+   ],
+   "n": "Grüner Toast nach gesendeter Anfrage (questions-Insert über feedbackNotifier, gleiche Nachricht mit Instanz/Belegung). „Mehr Speicher anfragen“ nur für canEditFiles (Admin/Verantwortlich) über die Speicheranzeige ab 80 % bzw. den Speicher-voll-Dialog – gleich. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-f1cb9a95": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:680-681"
+   ],
+   "n": "Roter Toast „Löschen fehlgeschlagen: {error}“. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-f38f08f1": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:382-393",
+    "lib/features/settings/presentation/pages/files_page.dart:969",
+    "lib/core/providers/tenant_providers.dart:360-377"
+   ],
+   "n": "Bedingung ist telegram_chat_id der eigenen tenantUsers-Zeile (currentTenantUserProvider, tenantId+userId), keine Rolle. Warn-Toast „Bitte verbinde zuerst Telegram in den Benachrichtigungen.“ praktisch nur bei Race erreichbar, da der Menüpunkt ohne Chat-ID in beiden ausgeblendet ist. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-f5e032f8": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:269-287",
+    "lib/core/providers/role_permission_providers.dart:116-120",
+    "lib/core/providers/role_permission_providers.dart:262-266"
+   ],
+   "n": "Roter Toast „Fehler beim Laden der Dateien: {error}“. Zugriff canAccessFiles: files_shared → alle außer Bewerber/ohne Rolle, sonst Admin/Verantwortlich/Helfer/Stimmführer-Helfer – identisch. Zeilen aktualisiert."
+  },
+  "settings/files/files.page#toast-f69d0e8d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1186-1194"
+   ],
+   "n": "Ionic: roter Toast „Du hast keinen Zugriff auf Dateien.“ + zurück / Flutter: kein Toast, derselbe Text als Seiteninhalt (Nutzer erfährt es). Zeilen aktualisiert."
+  },
+  "x-0f583f0feb": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1319-1322",
+    "lib/features/settings/presentation/pages/files_page.dart:318-324"
+   ],
+   "n": "Befund weiter real: Ionic ersetzt während loadEntries die Liste durch einen Spinner / Flutter zeigt den Spinner nur bei leerer Liste; beim Ordnerwechsel bleibt die alte Liste sichtbar, bis die neue geladen ist (Breadcrumb zeigt schon den neuen Ordner). Nur Darstellung. Zeilen aktualisiert."
+  },
+  "settings/general/branding/branding.page#nav-de11d527": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/branding_page.dart:119-122",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:495",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:193"
+   ],
+   "n": "Flutter besser: Ionic navigateBack immer nach /tabs/settings/org-settings – auch wenn das Branding aus Allgemeine Einstellungen geöffnet wurde / Flutter: Navigator.maybePop zurück zur aufrufenden Seite (Allgemeine Einstellungen bzw. Organisation, beide per push). Zeilen aktualisiert."
+  },
+  "settings/general/extra-fields/extra-fields.page#nav-599a827b": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:622-626",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:591-603",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:610-615",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:659"
+   ],
+   "n": "Ziel gleich (zurück zu Allgemeine Einstellungen, einziger Aufrufer). Flutter besser: bei ungespeicherten Änderungen Dialog „Ungespeicherte Änderungen“ / „Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?“ (Abbrechen/Verwerfen), während des Speicherns gesperrt; Ionic verwirft still. Zeilen aktualisiert."
+  },
+  "x-a3d381bce7": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:195-208",
+    "lib/data/repositories/extra_fields_repository.dart:124-166",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:189-193"
+   ],
+   "n": "Flutter besser (bewusst, Kommentar im Code): Befund weiter real. Ionic backfillSongAdditionalFields auf db.getSongs() schreibt bei genutzter Quell-Bibliothek die Werkfelder der eigenen Instanz in die Werke der Quell-Instanz und löscht dort Werte von Feldern, die nur die Quell-Instanz kennt – fremde Instanzdaten werden verändert. Flutter bereinigt Werke nur, wenn die Werk-Instanz die eigene ist. Folge: in Bibliothekswerken bleiben ungültige Auswahlwerte/Reste gelöschter Felder; fehlende Werte zeigt die Werkseite ohnehin als Standard. Bewusst niedrig trotz anderem DB-Effekt, da Ionic hier mandantenfremde Daten überschreibt; Leon entscheidet."
+  },
+  "x-b7ea470e58": {
+   "s": "ok",
+   "v": "korrigiert",
+   "f": [
+    "lib/data/repositories/extra_fields_repository.dart:76-94",
+    "lib/data/repositories/extra_fields_repository.dart:124-133",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:201"
+   ],
+   "n": "Behoben, Befund zurückgezogen: sanitizeValues('player') lädt jetzt mit activeOnly nur left IS NULL und pending = false der Instanz (tenantId-Filter) = Ionic db.getPlayers(); Update mit id+tenantId. Rest: Flutter lädt gepaged auch über 1000 Personen hinaus (Ionic max. 1000 Zeilen) – nur bei >1000 aktiven Personen, ohne sichtbare Folge."
+  },
+  "settings/general/general.page#action-b6b291b1": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:638-642",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:373-385"
+   ],
+   "n": "Flutter besser: meldet einen Kopierfehler (Toast „Link konnte nicht kopiert werden“), Ionic (writeText ohne await) zeigt immer den Erfolgs-Toast. Sonst gleich: Bedingung gespeicherte tenant.song_sharing_id, Text „Link kopieren“, Link https://attendix.de/<id> (lokale _songSharingId = gespeicherte id, solange die Zeile sichtbar ist). Zeilen aktualisiert."
+  },
+  "settings/general/general.page#action-c0d0384b": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:584-590",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:373-385"
+   ],
+   "n": "Flutter besser: meldet einen Kopierfehler (Toast „Link konnte nicht kopiert werden“), Ionic zeigt immer den Erfolgs-Toast. Sonst gleich: Bedingung Toggle an UND gespeicherte tenant.register_id, Text „Link kopieren“, Link https://attendix.de/register/<id>. Zeilen aktualisiert."
+  },
+  "settings/general/general.page#alert-c2833d76": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:274-298",
+    "lib/core/utils/page_reload.dart:4"
+   ],
+   "n": "Nach Erfolgs-Toast Dialog „Einstellungen gespeichert“ / „Die Einstellungen wurden erfolgreich gespeichert. Bitte lade die Seite neu …“ mit „Abbrechen“/„Neu laden“ gleich. Ionic: „Neu laden“ lädt Seite/App neu (auch nativ via window.location.reload) / Flutter: Reload nur im Web, nativ ohne Wirkung – currentTenantProvider/userTenantsProvider werden nach dem Speichern ohnehin invalidiert, Änderungen also sichtbar. Zeilen aktualisiert."
+  },
+  "settings/general/general.page#loading-c8bf88e0": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:209",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:415-427"
+   ],
+   "n": "Ionic: blockierendes Overlay „Einstellungen werden gespeichert...“ / Flutter: nur Spinner im (deaktivierten) Speichern-FAB, kein Overlay, kein Text; Formular bleibt bedienbar. Zeilen aktualisiert."
+  },
+  "settings/general/general.page#nav-0643e80a": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:403-411",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:391-395",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:857-887",
+    "lib/features/settings/presentation/pages/settings_page.dart:220"
+   ],
+   "n": "Zurück-Pfeil: bei ungespeicherten Änderungen Dialog (Abbrechen/Verwerfen/Speichern) wie Ionic navigateBack, sonst context.pop() zu den Einstellungen (einziger Aufrufer, per push). Zeilen aktualisiert."
+  },
+  "settings/general/general.page#toast-41f907d8": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:191-193"
+   ],
+   "n": "Roter Toast „Der Kurzname darf nicht leer sein.“ als zweite Prüfung nach dem Gruppennamen, vor jedem Schreiben. Zeilen aktualisiert."
+  }
+ },
+ "extra": [
+  {
+   "unit": "settings/general/general.page",
+   "title": "Abgeschalteter Werk-/Registrierungslink lebt beim Wiedereinschalten auf",
+   "n": "Ionic: nach Speichern mit ausgeschaltetem „Werke teilen“ bzw. „Registrierung erlauben“ setzt updateTenantData die Instanz neu (song_sharing_id/register_id = null); erneutes Einschalten + Speichern erzeugt per crypto.randomUUID() eine NEUE id, der alte (bewusst widerrufene) Link bleibt ungültig / Flutter: _songSharingId/_registerId werden nach dem Speichern nie geleert und die Seite lädt nicht neu; Wiedereinschalten in derselben Sitzung nimmt die alte id (Toggle erzeugt nur bei null) → tenants.song_sharing_id/register_id = alte id, der widerrufene Link funktioniert wieder. Anderer DB-Wert mit Sicherheitsbezug; nur innerhalb eines Seitenbesuchs.",
+   "sev": "mittel",
+   "ionic": "src/app/settings/general/general.page.ts:290-303",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:150-152",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:245-246",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:565-568",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:633-636"
+   ]
+  }
+ ]
+}

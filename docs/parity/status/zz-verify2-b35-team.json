@@ -1,0 +1,361 @@
+{
+  "batch": "zz-verify2-b35-team",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "tasks/task-detail/task-detail.page#action-5099bb1b": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/pages/task_detail_page.dart:77",
+        "lib/features/team_organization/presentation/pages/task_detail_page.dart:81",
+        "lib/core/providers/team_org_providers.dart:129"
+      ],
+      "n": "Nur Leitung + geladene Aufgabe; Stift öffnet Aufgabenformular (Sheet wie Ionic breakpoints [0,1]), danach Neuladen per Invalidierung (Ionic: task = updated). Rollen: Ionic isLeader = db.isTeamLeader() (ADMIN|RESPONSIBLE), Flutter isTeamLeaderProvider (gleiche Rollen aus tenantUsers.role) – Admin/Verantwortlich ja; Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nein; kein Tenant-Flag.",
+      "v": "bestätigt"
+    },
+    "tasks/task-detail/task-detail.page#text-1426d778": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/pages/task_detail_page.dart:206",
+        "lib/features/team_organization/presentation/pages/task_detail_page.dart:208"
+      ],
+      "n": "„Verantwortlich“ nur für Leitung (if (isLeader)). Rollen: Ionic isLeader = db.isTeamLeader() (ADMIN|RESPONSIBLE), Flutter isTeamLeaderProvider (gleiche Rollen aus tenantUsers.role) – Admin/Verantwortlich ja; Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nein; kein Tenant-Flag.",
+      "v": "bestätigt"
+    },
+    "tasks/task-detail/task-detail.page#text-4f08b74c": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/pages/task_detail_page.dart:209"
+      ],
+      "n": "Nur Leitung; „Vorname Nachname“ oder „Niemand“ (tasksNobody).",
+      "v": "bestätigt"
+    },
+    "tasks/task-detail/task-detail.page#action-c566ab32": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/pages/task_detail_page.dart:254",
+        "lib/features/team_organization/presentation/pages/task_detail_page.dart:261"
+      ],
+      "n": "Nur Leitung: Icon Liste, „Thema“, Untertitel Thementitel oder „Thema öffnen“, öffnet /settings/agenda-items/:id. Andere Rollen: nicht klickbare Zeile nur mit Titel (TD:263), wie Ionic @else if.",
+      "v": "bestätigt"
+    },
+    "team-organization/protocols-tab/protocols-tab.component#text-53f38ed5": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/protocols_tab.dart:123",
+        "lib/features/team_organization/presentation/widgets/protocols_tab.dart:124"
+      ],
+      "n": "Leerzustand Leitung „Noch keine Protokolle“. Rollen: Ionic isLeader = db.isTeamLeader() (ADMIN|RESPONSIBLE), Flutter isTeamLeaderProvider (gleiche Rollen aus tenantUsers.role) – Admin/Verantwortlich ja; Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nein; kein Tenant-Flag. Ladefehler-Abweichung bereits als extra protocols-tab erfasst.",
+      "v": "bestätigt"
+    },
+    "team-organization/protocols-tab/protocols-tab.component#text-405cf743": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/protocols_tab.dart:124"
+      ],
+      "n": "Hinweis Leitung wortgleich (teamOrgNoProtocolsHint).",
+      "v": "bestätigt"
+    },
+    "team-organization/protocols-tab/protocols-tab.component#text-2dca94d6": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/protocols_tab.dart:125"
+      ],
+      "n": "Alle Nicht-Leitungsrollen: „Noch keine Protokolle freigegeben“ (else-Zweig in beiden).",
+      "v": "bestätigt"
+    },
+    "team-organization/protocols-tab/protocols-tab.component#text-05380ad1": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/protocols_tab.dart:125"
+      ],
+      "n": "Nicht-Leitung: Hinweis wortgleich (teamOrgNoPublishedHint).",
+      "v": "bestätigt"
+    },
+    "team-organization/tasks-tab/tasks-tab.component#action-77c35df5": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/tasks_tab.dart:115",
+        "lib/features/team_organization/presentation/widgets/tasks_tab.dart:121"
+      ],
+      "n": "Chipleiste nur Leitung und nur wenn Aufgaben existieren; „Alle · {offene}“ setzt Filter all. Rollen: Ionic isLeader = db.isTeamLeader() (ADMIN|RESPONSIBLE), Flutter isTeamLeaderProvider (gleiche Rollen aus tenantUsers.role) – Admin/Verantwortlich ja; Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nein; kein Tenant-Flag.",
+      "v": "bestätigt"
+    },
+    "team-organization/tasks-tab/tasks-tab.component#action-da4e5bf3": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/tasks_tab.dart:122",
+        "lib/features/team_organization/presentation/widgets/tasks_tab.dart:123"
+      ],
+      "n": "„Meine · {n}“ nur Leitung mit eigener Person (myPersonId); Zählung offene eigene Aufgaben gleich.",
+      "v": "bestätigt"
+    },
+    "team-organization/tasks-tab/tasks-tab.component#action-ad45d8d4": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/tasks_tab.dart:124",
+        "lib/features/team_organization/presentation/widgets/tasks_tab.dart:126",
+        "lib/features/planning/presentation/widgets/ion_items.dart:474"
+      ],
+      "n": "Rolle/Label/Filter gleich (nur Leitung, ohne eigene Person, „{Kurzname} · {Anzahl}“). Ionic: [title]=voller Name als Hover-Tooltip / Flutter: IonFilterChip ohne Tooltip. Erstprüfer nannte das Fehlen selbst, wertete aber ok; nur bei Maus-Hover (Web/Desktop) sichtbar. Sortierung siehe extra tasks-tab.utils.",
+      "v": "korrigiert"
+    },
+    "team-organization/tasks-tab/tasks-tab.component#action-82982f92": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/tasks_tab.dart:137",
+        "lib/features/team_organization/presentation/widgets/tasks_tab.dart:141"
+      ],
+      "n": "Leerzustand-Button „Aufgabe anlegen“ (Plus) nur Leitung und nur ohne Aufgaben; öffnet Aufgabenformular, Liste per Invalidierung aktualisiert.",
+      "v": "bestätigt"
+    },
+    "team-organization/tasks-tab/tasks-tab.component#action-b57d4ec0": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/tasks_tab.dart:69",
+        "lib/features/team_organization/presentation/widgets/tasks_tab.dart:73"
+      ],
+      "n": "FAB „Aufgabe anlegen“ nur Leitung, auch während Laden (wie Ionic). Rollen: Ionic isLeader = db.isTeamLeader() (ADMIN|RESPONSIBLE), Flutter isTeamLeaderProvider (gleiche Rollen aus tenantUsers.role) – Admin/Verantwortlich ja; Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber nein; kein Tenant-Flag.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#action-d04855de": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:29",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:396",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:400"
+      ],
+      "n": "Banner nur Leitung bei offenen Vorschlägen: „1 neuer Vorschlag“/„n neue Vorschläge“ (ICU-Plural), „Von Mitgliedern eingereicht“, Glühbirne warning; Tippen öffnet Prüf-Sheet. Topics-Tab: Leitung → Leitungsansicht in beiden (Ionic @else if (isLeader), Flutter TopicsTab → _LeaderTopics); übrige Rollen nie.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#action-a3959875": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:402",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:408"
+      ],
+      "n": "Kleiner gefüllter Button „Prüfen“ öffnet Prüf-Sheet, nur Leitung.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#text-35aed666": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:417"
+      ],
+      "n": "„Nächster Termin“ bzw. „Gewählter Termin“ (Vergleich mit erstem kommenden Termin), nur Leitung.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#action-3157cfe0": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:418",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:69"
+      ],
+      "n": "„Ändern“ im Listenkopf öffnet Terminauswahl (Inhalt siehe actionsheet-8e3d3c47), nur Leitung.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#action-a454cdde": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:423",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:431"
+      ],
+      "n": "Kalender-Icon, „{Typ} · {Wt}, {TT.MM.}“, Minuten-Notiz nur > 0, Chevron; öffnet /attendance/:id (Leitung darf Termin öffnen, attendance_detail_guard). Nur Leitung.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#action-a9fd8aa7": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:433",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:441"
+      ],
+      "n": "„TOP n · Name“, Leitung als Untertitel, „{min} min“; Tippen → Aktionsblatt Öffnen/Entfernen (Plan-Update mit tenantId-Filter). Nur Leitung.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#text-3367c740": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:443",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:445"
+      ],
+      "n": "„Noch keine Themen auf der Tagesordnung.“ grau, nur Leitung.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#action-5a533757": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:447",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:451"
+      ],
+      "n": "„Themen aufnehmen“ (Plus-Kreis, primary) öffnet Themenauswahl für den gezeigten Termin; Darstellung siehe modal-54dabea2. Nur Leitung.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#text-5af62190": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:458"
+      ],
+      "n": "Kopf „Nächster Termin“ ohne geplanten Termin, nur Leitung.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#text-8ee75432": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:461"
+      ],
+      "n": "„Kein Termin mit Protokoll & Tagesordnung geplant.“ grau, nur Leitung.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#action-a6616d6f": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:463",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:466",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:115"
+      ],
+      "n": "„Termin anlegen“ während Anlegen deaktiviert; Schnellanlage (Typwahl, Tag) und Auswahl des neuen Termins. Nur Leitung.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#text-a13b4369": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:473"
+      ],
+      "n": "„Themenspeicher“, nur Leitung.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#text-0a7991a6": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:476"
+      ],
+      "n": "„{n} offen“ (Anzahl offener Themen), nur Leitung.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#action-db6a6c6f": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:479",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:508"
+      ],
+      "n": "Titel, Badges „vertagt“/„eingeplant“, Untertitel Verantwortlich · Vorschlag von, Prioritäts-Badge; öffnet /settings/agenda-items/:id. Nur Leitung. Sortierung siehe extra team-org.utils.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#text-d8a32d79": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:510",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:512"
+      ],
+      "n": "„Keine offenen Themen. Lege mit + ein neues an.“, nur Leitung.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#field-ab65ddc9": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:516",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:519"
+      ],
+      "n": "Schalter „Erledigte anzeigen ({n})“ nur bei erledigten/verworfenen Themen, Standard aus, nur Leitung.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#action-7f827458": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:524",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:537"
+      ],
+      "n": "Titel durchgestrichen grau, „Verworfen“/„Erledigt“ · Verantwortlich; öffnet Thema. Nur Leitung bei eingeschaltetem Schalter.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#action-699aa11a": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:362",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:365"
+      ],
+      "n": "FAB „Thema anlegen“ → /settings/agenda-items/new, nur Leitung. Randnotiz: Flutter zeigt den FAB schon während des Skeletons (Ionic erst nach dem Laden) – ohne praktische Wirkung.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#action-051b8f7f": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:257",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:260"
+      ],
+      "n": "Schließen-X (Tooltip „Schließen“) links im Prüf-Sheet.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#text-d2385962": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:262"
+      ],
+      "n": "Sheet-Titel „Vorschläge“.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#text-c03f0b71": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:273"
+      ],
+      "n": "Hinweis wortgleich, solange Vorschläge offen sind (Ionic-Sheet schließt sich, wenn keine mehr offen sind; Abweichung des Offenbleibens unter modal-f91a5777).",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#text-1e54bcf8": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:281",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:285"
+      ],
+      "n": "Initialen-Avatar 36 px, primary-shade, weiß; „?“ ohne Namen.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#text-921d34f9": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:289",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:290"
+      ],
+      "n": "Name bzw. „Mitglied“ (teamOrgFlutterMember).",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#text-1e977710": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:293"
+      ],
+      "n": "relativeDay: heute/gestern/vor n Tagen/Datum ab 14 Tagen, gleich.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#text-5ea5f4d9": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:296"
+      ],
+      "n": "Vorschlagstitel fett (600).",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#text-1373b371": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:297"
+      ],
+      "n": "Beschreibung nur wenn vorhanden, Zeilenumbrüche erhalten.",
+      "v": "bestätigt"
+    },
+    "team-organization/topics-tab/topics-tab.component#action-8d43340c": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:247",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:312",
+        "lib/features/team_organization/presentation/widgets/topics_tab.dart:229"
+      ],
+      "n": "Grauer Outline-Button „Ablehnen“, nur Leitung, Schreibvorgang gleich. Ionic: [disabled]=isDeciding → während des Speicherns gesperrt / Flutter: Sheet-Inhalt (Consumer) baut bei setState(_deciding) der Seite nicht neu, Button bleibt während des Updates aktiv; erneutes Tippen öffnet den Ablehnen-Dialog nochmal, Bestätigen bleibt dann wirkungslos (Guard in _decide). Erstprüfer: „während Entscheidung gesperrt“ trifft nicht zu.",
+      "v": "korrigiert"
+    }
+  },
+  "extra": []
+}

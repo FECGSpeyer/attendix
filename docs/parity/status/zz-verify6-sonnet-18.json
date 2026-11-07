@@ -1,0 +1,458 @@
+{
+ "batch": "zz-verify6-sonnet-18",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "planning/plan-viewer/plan-viewer.component#text-628d3333": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:169"
+   ],
+   "v": "bestätigt",
+   "n": "Titel = Termindatum (dateFmt, pro Plan verschoben). Ionic leer ohne Datum, Flutter fällt auf Plantitel zurück; harmlos. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-6a2e9a3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:155"
+   ],
+   "v": "bestätigt",
+   "n": "Blockdauer = Summe der Unterpunkte (groupDuration/displayMinutes), „{min} min“. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-b60f09db": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:215"
+   ],
+   "v": "bestätigt",
+   "n": "„Kein Ablaufplan verfügbar.“ in Karte. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-d24cd7da": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:221"
+   ],
+   "v": "bestätigt",
+   "n": "Listenkopf „Ablauf“ nur wenn Felder vorhanden. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-d513c68c": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:213",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:218"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: Ende-Zeile nur wenn plan.end gesetzt / Flutter: ohne plan.end aus Start + Minuten berechnet und angezeigt (zeigt mehr, gleiche Funktion).",
+   "sev": "niedrig"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-eeca2ac6": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:172"
+   ],
+   "v": "bestätigt",
+   "n": "Blockname als Titel der Kopfzeile. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/plan-viewer/plan-viewer.component#toast-41712142": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:154",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:167",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:170"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: „Plan wird per Telegram gesendet...“ sofort + Lade-Overlay / Flutter: kein Overlay, Erfolgs-Toast nach dem Senden, Fehler-Toast bei Fehlschlag (auch ohne verknüpftes Telegram). Gleiche Funktion, Zeitpunkt/Overlay anders.",
+   "sev": "niedrig"
+  },
+  "planning/plan-viewer/plan-viewer.component#toast-dd66afe1": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:154",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:167",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:170"
+   ],
+   "v": "bestätigt",
+   "n": "Wie toast-41712142: Telegram-Versand (PDF/2x/Bild) gleicher Upload+send-document/send-photo; Toast erst nach Erfolg, Fehler werden gemeldet.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#action-0732e4a5": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1709"
+   ],
+   "v": "bestätigt",
+   "n": "„Programmblock hinzufügen“ öffnet Dialog Name/Ausführender/Info, danach Unterpunkt-Dialog; wie Ionic."
+  },
+  "planning/planning.page#action-09d2cf03": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1712",
+    "lib/features/planning/presentation/pages/planning_page.dart:1596"
+   ],
+   "v": "bestätigt",
+   "n": "Nur mit Werken und Instanztyp ≠ general; öffnet „Werk auswählen“, fügt Werk (id=Werk-ID, 20 min, Präfix Nummer bzw. Instanzname, Dirigent aus History, songId) an; gleich."
+  },
+  "planning/planning.page#action-1f4d1515": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1708",
+    "lib/features/planning/presentation/pages/planning_page.dart:1484"
+   ],
+   "v": "bestätigt",
+   "n": "„Feld hinzufügen“: Dialog, id=name, 20 min Default, Ionic fügt leere Namen ein, Flutter verlangt Namen (Flutter besser, s. alert-43003bc8)."
+  },
+  "planning/planning.page#action-2ef02082": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1717",
+    "lib/features/planning/presentation/pages/planning_page.dart:1768"
+   ],
+   "v": "bestätigt",
+   "n": "Bedingung Protokolltyp && kein Platzhalter && Plan 0 gleich; Handler fügt Platzhalter mit 0 min an, sonst Warn-Toast „agendaExists“."
+  },
+  "planning/planning.page#action-2f7f8cb6": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2254",
+    "lib/features/planning/presentation/pages/planning_page.dart:2044"
+   ],
+   "v": "bestätigt",
+   "n": "Refresh-Button im Listenkopf „Zugehöriger Termin“ → Bestätigung → Typ-Standardplan; gleich. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-332ea66c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1710",
+    "lib/features/planning/presentation/pages/planning_page.dart:1496"
+   ],
+   "v": "bestätigt",
+   "n": "„Notizfeld hinzufügen“: id „noteFld <text>“, 0 min; gleich."
+  },
+  "planning/planning.page#action-45191162": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:655",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:658"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: voller Wisch (ionSwipe, expandable) löscht das Feld / Flutter: Slidable mit Ein-/Ausrücken + Löschen-Button, kein Full-Swipe-Löschen (Löschen per Tippen). canIndent-Regel identisch.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#action-4a3f975d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:198"
+   ],
+   "v": "bestätigt",
+   "n": "Plus-Button neben „Dirigenten“ fügt leeres Feld an; gleich. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-50b70669": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2194",
+    "lib/features/planning/presentation/pages/planning_page.dart:2197"
+   ],
+   "v": "bestätigt",
+   "n": "Plan-Optionen (…) neben den Plan-Chips, nur bei >1 Plan; öffnet Plan-Optionen. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-582ffbd8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2142"
+   ],
+   "v": "bestätigt",
+   "n": "Link-teilen-Button in der Toolbar. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-62a2b6ee": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:525",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:535",
+    "lib/features/songs/presentation/utils/song_utils.dart:115",
+    "lib/features/planning/presentation/pages/planning_page.dart:1642",
+    "lib/core/providers/player_providers.dart:116"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser (bewusst): Ionic „Ohne …“ zählt alle Nicht-Haupt-Gruppen ohne Stimme / Flutter: für Dirigent/Helfer nur Gruppen mit Spielern (missingInstrumentsText mit playerCounts), andere Rollen alle. Beamer-Zeile („Beamer-Datei fehlt“) und Reihenfolge Warnung → Zeit gleich. Leon entscheidet, ob die Filterung bleibt.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#action-672f5288": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:185"
+   ],
+   "v": "bestätigt",
+   "n": "Plus neben „Gruppen“ fügt leere Gruppe an; gleich. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-6b842de4": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1722",
+    "lib/features/planning/presentation/pages/planning_page.dart:1726",
+    "lib/features/planning/presentation/pages/planning_page.dart:1599"
+   ],
+   "v": "bestätigt",
+   "n": "„{Name} {n} min“ fügt Kopie des Blocks an; Papierkorb nur Rolle Admin (Ionic isAdmin = ADMIN, Flutter role.isAdmin = admin); gleich. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-72e84a9d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:450",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:306"
+   ],
+   "v": "bestätigt",
+   "n": "Zeile „Unterpunkt hinzufügen“ am Blockende öffnet Unterpunkt-Dialog (5 min). (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-73acf9c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2335",
+    "lib/features/planning/presentation/pages/planning_page.dart:1234"
+   ],
+   "v": "bestätigt",
+   "n": "„Nächste“ (arrow-forward) → _navigate(1); gleich. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-7d1b99e1": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:194"
+   ],
+   "v": "bestätigt",
+   "n": "Entfernen-Button je Gruppe nur wenn >2 Gruppen; gleich. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-85b27656": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:176"
+   ],
+   "v": "bestätigt",
+   "n": "Schließen-Button der Registerplan-Maske. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-8653a152": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1747",
+    "lib/features/planning/presentation/pages/planning_page.dart:1636"
+   ],
+   "v": "bestätigt",
+   "n": "„{Name} {min} min“ fügt Kopie des Org-Felds an; gleich. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-a24dc177": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2182"
+   ],
+   "v": "bestätigt",
+   "n": "„+“-Button am Listenkopf „Ablauf“ öffnet das Add-Menü. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-a889bd7d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2327",
+    "lib/features/planning/presentation/pages/planning_page.dart:1234"
+   ],
+   "v": "bestätigt",
+   "n": "„Vorige“ → _navigate(-1); gleich. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-adbe4668": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:207"
+   ],
+   "v": "bestätigt",
+   "n": "Entfernen-Button je Dirigent nur wenn >1; gleich. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-be594a20": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:171",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:619"
+   ],
+   "v": "bestätigt",
+   "n": "Tippen auf Blockkopf öffnet Block-Optionen (Block bearbeiten, Unterpunkt, Vorlage speichern nur Admin, auflösen, löschen). (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-c9cebc20": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1742",
+    "lib/features/planning/presentation/pages/planning_page.dart:1625"
+   ],
+   "v": "bestätigt",
+   "n": "Org-Vorlage ersetzt Ablauf ohne Rückfrage, Platzhalter aufgelöst (ohne Typpräfix), Startzeit der Vorlage; gleich."
+  },
+  "planning/planning.page#action-cd40d93a": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2145"
+   ],
+   "v": "bestätigt",
+   "n": "Schließen-Button der Toolbar (speichert zuvor). (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-d8619c2b": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1711",
+    "lib/features/planning/presentation/pages/planning_page.dart:1555"
+   ],
+   "v": "bestätigt",
+   "n": "Bedingung Instanztyp ≠ general in beiden; keine Rollenbedingung im Menü; gleich."
+  },
+  "planning/planning.page#action-e0026e3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:523",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:385"
+   ],
+   "v": "bestätigt",
+   "n": "Blockkopf zeigt Name, Zeitspanne, „ | Ausführender“, Info; gleich. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-e8f75e46": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2189"
+   ],
+   "v": "bestätigt",
+   "n": "Plan-Chips nur bei >1 Plan; gleich. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#action-fa7d7f11": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:242",
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:330"
+   ],
+   "v": "bestätigt",
+   "n": "„Exportieren“ (PDF speichern), deaktiviert wie isPlanExportDisabled (Dirigenten, Gruppen ≥2, Zeit, keine leeren Namen). (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#actionsheet-5a0aa6c6": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1362",
+    "lib/features/planning/presentation/pages/planning_page.dart:1306"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: Plan-Optionen ohne Icons / Flutter: gleiche Einträge (Umbenennen, anderen Tag, links/rechts, Löschen) mit Icons; gleiche Bedingungen.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#alert-183c84e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2044",
+    "lib/features/planning/presentation/pages/planning_page.dart:2046"
+   ],
+   "v": "bestätigt",
+   "n": "„Plan zurücksetzen“ mit Text, „Abbrechen“/„Zurücksetzen“ → Typ-Standardplan. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#alert-28ec2e49": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1555",
+    "lib/features/planning/presentation/pages/planning_page.dart:1575",
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:35"
+   ],
+   "v": "bestätigt",
+   "n": "Alle aktuellen Werke schon im offenen Plan → „Bereits hinzugefügt“, „Abbrechen“/„Erneut hinzufügen“ fügt alle erneut an; Instanztyp ≠ general wie Ionic."
+  },
+  "planning/planning.page#alert-43003bc8": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1484",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:40"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser: leerer Name wird abgelehnt (Ionic fügt ein leeres Feld hinzu); Namen getrimmt; zusätzlich Feldbeschriftungen.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#alert-4f031d78": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:306",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:40"
+   ],
+   "v": "bestätigt",
+   "n": "Unterpunkt-Dialog: Ionic Eingaben nur mit Platzhaltern / Flutter zusätzlich Feldbeschriftungen, Ausführender getrimmt; 5 min Default, Name Pflicht („Bitte einen Punkt eingeben“), Einfügen am Blockende. Referenz korrigiert (222 war der Feld-Bearbeiten-Dialog).",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#alert-70a7354c": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1511",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:40"
+   ],
+   "v": "bestätigt",
+   "n": "Block-Dialog: Name/Ausführender/Info, „Erstellen“, leerer Name → „Bitte einen Namen eingeben“; danach Unterpunkt-Dialog; Flutter zusätzlich Feldbeschriftungen.",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#alert-7d28e1b3": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1604",
+    "lib/features/planning/presentation/pages/planning_page.dart:1726",
+    "lib/core/providers/plan_providers.dart:215",
+    "lib/data/repositories/plan_repository.dart:183"
+   ],
+   "v": "bestätigt",
+   "n": "Papierkorb nur Rolle Admin. „Vorlage löschen?“, Text mit Name, „Abbrechen“/„Löschen“ (rot); schreibt tenants.plan_block_templates ohne die Vorlage (Filter tenants.id = Mandant); gleich."
+  },
+  "planning/planning.page#alert-84b74bbf": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1496"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser: leere Notiz wird mit „Bitte eine Notiz eingeben.“ abgelehnt (Ionic fügt ein leeres Notizfeld hinzu).",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#alert-e2e08e47": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:365"
+   ],
+   "v": "bestätigt",
+   "n": "„Block bearbeiten“: Name/Ausführender/Info, „Speichern“, leerer Name abgelehnt, 0 min. Referenz korrigiert (281 war der Typ-Seiten-Dialog)."
+  },
+  "planning/planning.page#alert-e644d562": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1450"
+   ],
+   "v": "bestätigt",
+   "n": "„Plan löschen?“, „Der Plan „{label}“ wird gelöscht.“, „Abbrechen“/„Löschen“ (rot); danach Nachbarplan geladen (letzter Plan: leerer Editor). (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#field-0c644b5c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2306"
+   ],
+   "v": "bestätigt",
+   "n": "Textfeld „Ablaufplan Überschrift“, Platzhalter „Standardtitel verwenden“, nur mit Termin, speichert beim Verlassen des Feldes. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#field-0f4d0d97": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:217"
+   ],
+   "v": "bestätigt",
+   "n": "„Zeit in Minuten“, Default 60, nur Ziffern; leer → Export deaktiviert. (Zeilenreferenz auf aktuellen Stand korrigiert)"
+  },
+  "planning/planning.page#field-181f005d": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1249",
+    "lib/features/planning/presentation/pages/planning_page.dart:2259"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: ion-select als Modal, Label mit Typ-Logik (typeInfo, sonst hide_name ? „“ : Typname) / Flutter: Dropdown, Label typeInfo sonst Typname (ohne hide_name); bei leerer Liste zusätzlich „Keine Termine vorhanden“. (Zeilenreferenz auf aktuellen Stand korrigiert)",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#field-2174584b": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2225"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: deaktiviertes ion-datetime im Modal / Flutter: nur Anzeige-Chip ohne Picker; Ionic zeigt Ende bei gesetztem end, Flutter sobald Felder vorhanden. (Zeilenreferenz auf aktuellen Stand korrigiert)",
+   "sev": "niedrig"
+  }
+ },
+ "extra": []
+}

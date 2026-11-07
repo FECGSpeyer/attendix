@@ -1,0 +1,30 @@
+{
+  "batch": "zz-verify4-b05-overview", "ionic": "1923d203", "flutter": "8004a44",
+  "items": {
+    "dashboard/dashboard.page#media-236b1c5b": {
+      "s": "ok",
+      "f": ["lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:181", "lib/core/router/app_router.dart:1305", "lib/core/providers/dashboard_providers.dart:31"],
+      "n": "Rolle: Seite in beiden nur für den Super-Developer (Ionic SuperDeveloperGuard = E-Mail developer@attendix.de; Flutter Route-Redirect + Provider isSuperDeveloperProvider, Einstieg über Administration). Diagramm: senkrechte Balken, Label '#<tenant_id>', Top 10, gleiche Palette, ohne Legende; nur Höhe 280 statt 360 px.",
+      "v": "bestätigt"
+    },
+    "home-dashboard/components/next-event-card/next-event-card.component#action-057151b4": {
+      "s": "ok",
+      "f": ["lib/features/dashboard/presentation/widgets/event_cards.dart:43", "lib/features/dashboard/presentation/widgets/event_cards.dart:121", "lib/core/router/app_router.dart:199"],
+      "n": "canOpen-Rollen identisch (Admin, Verantwortlich, Helfer, Stimmführer & Helfer); die Startseite selbst ist in beiden nur für Admin/Verantwortlich erreichbar (Ionic Tab/Side-Nav/isUrlAccessAllowed, Flutter Route-Guard), daher tippbar für genau diese Rollen. Zeile: blaue Datumskachel (solid wenn heute), Typinfo, 'Wochentag · {start – end} Uhr', relative Tage; Tap öffnet den Termin, danach Neuladen.",
+      "v": "bestätigt"
+    },
+    "home-dashboard/components/next-event-card/next-event-card.component#action-debeb343": {
+      "s": "ok",
+      "f": ["lib/features/dashboard/presentation/widgets/event_cards.dart:101"],
+      "n": "Gleiche Rollenbedingung wie die Nächster-Termin-Zeile (onTap nur bei canOpen). Graue Kachel, Typinfo, '{present}/{total} anwesend · {excused} entschuldigt', Prozent-Chip grün ≥75 / orange ≥50 / rot.",
+      "v": "bestätigt"
+    },
+    "messages/message-compose/message-compose.component#action-2fb6390f": {
+      "s": "ok",
+      "f": ["lib/features/messages/presentation/pages/message_compose_page.dart:179", "lib/features/messages/presentation/pages/message_compose_page.dart:508"],
+      "n": "canSend ohne Rollenanteil, Bedingungen gleich (nicht sendend, Titel, Text, Push oder E-Mail, Preset/alle/≥1 Gruppe, Empfänger > 0); Öffner (Mitteilungsliste, Termin-Panel 'Unentschuldigte anschreiben') in beiden nur Admin/Verantwortlich. Volle Breite, Senden-Icon, öffnet Bestätigung. Randfall ohne Praxisbedeutung: Text nur aus Leerzeichen zählt in Ionic als Text, in Flutter nicht.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

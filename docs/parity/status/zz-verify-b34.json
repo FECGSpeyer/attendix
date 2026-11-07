@@ -1,0 +1,192 @@
+{
+  "batch": "zz-verify-b34",
+  "ionic": "9f9b82af",
+  "flutter": "1aba6be",
+  "items": {
+    "agenda-items/agenda-item-detail/agenda-item-detail.page#logic-6eb2caff": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:71",
+        "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:133",
+        "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:138",
+        "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:378",
+        "lib/core/providers/team_org_providers.dart:212",
+        "lib/core/providers/team_org_providers.dart:221",
+        "lib/core/providers/team_org_providers.dart:255"
+      ],
+      "n": "Selbst geprüft: Leitungsrolle (admin/verantwortlich), Personenliste (nicht ausgetreten/ausstehend), Neu-Defaults (open/medium/null), Speichern (Titel trim, Beschreibung leer→null, Dauer>0, tenant_id beim Anlegen, URL-Ersatz), Löschen mit Zurück zum Themen-Tab, Einplanen (6 Termine, „bereits eingeplant“ deaktiviert, Neuer Termin, Plan vor dem Schreiben neu gelesen), Verlauf-Status/-Sortierung, Aufgaben-Untertitel und Farben gleich. Erst-Extras zutreffend: Verlauf/Thema aus nicht autoDispose-Providern (nach Ergebnis im Protokoll weiter „Geplant“, mittel), „Thema nicht gefunden“ (Flutter besser). Neu (extra): Einplanen-Liste aus gecachtem upcomingProtocolAttendancesProvider (mittel); Einplanen-Button/-Werte nach gespeichertem statt ungespeichertem Formular (niedrig).",
+      "v": "bestätigt"
+    },
+    "agenda-items/agenda-item-detail/agenda-item-detail.page#field-75815c26": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:79",
+        "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:327"
+      ],
+      "n": "Label „Dauer pro Sitzung (Min.)“, Platzhalter „Standard“, rechtsbündig, nur Leitung gleich. Ionic: NumericValueAccessor (parseFloat) + Math.round – „12.5“ wird 13 / Flutter: int.tryParse ohne Eingabefilter – „12.5“ (Android-Zifferntastatur/Web erlauben Punkt) wird still als null = Standard gespeichert.",
+      "v": "bestätigt"
+    },
+    "protocols/protocol/protocol-pdf#logic-3a7d97db": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/team_organization/protocol_pdf.dart:54",
+        "lib/features/team_organization/protocol_pdf.dart:68",
+        "lib/features/team_organization/protocol_pdf.dart:148",
+        "lib/features/team_organization/tiptap_delta.dart:408",
+        "lib/features/team_organization/tiptap_delta.dart:435",
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:668"
+      ],
+      "n": "Inhalt (Branding-Kopf, Status, Anwesend/Entschuldigt, Abschnitte mit Meta/Ergebnis, „Keine Notizen“, „Aufgabe: …“, Allgemeine Notizen, Weitere Aufgaben, „Seite i von n“) gleich. Hoch bestätigt: pw.Document() ohne Theme → Helvetica Type1, nur U+0000–00FF (pdf-3.13.1 pdf/obj/type1_font.dart:126), alles andere als Placeholder-Kästchen (widgets/text.dart:905); im Projekt keine TTF/fontFallback. Trifft fast jedes PDF: Zeitspanne im Untertitel „19:00–21:00 Uhr“ (U+2013), Listenpunkte „•“, Zitate (Flutter setzt selbst „…“), iOS-Smart-Quotes/Apostrophe, „…“, kyrillische Namen/Notizen. Ionic: eingebettete Noto Sans. Layout-Unterschiede niedrig (Erst-Extra).",
+      "v": "bestätigt"
+    },
+    "protocols/protocol/protocol.page#logic-82b3528c": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:220",
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:393",
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:451",
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:519",
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:557",
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:786",
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:797",
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:970"
+      ],
+      "n": "Selbst geprüft: Laden (Termin/Protokoll/Aufgaben, Mitglied ohne Protokoll → nicht freigegeben, sonst Ladefehler), Abschnitte/TOP/Startzeiten/Planstart, Live-Modus (20 s, nur heute, nur Leitung), Autosave 800 ms je Abschnitt über save_protocol_section (p_doc/p_outcome/p_clear_outcome wie Ionic), Fehler-Toast max. alle 10 s, Ergebnis-Umschalten mit Rücknahme, ensureProtocol, Aufgabe mit Referenz, spontaner Punkt (agenda_items + Plan), Freigabe (publish_protocol, Themen auf completed, PDF in Bucket attendances/protocols, team-notify, Löschen nach 60 s), PDF-Daten, Spaltenbreiten, Tastenkürzel gleich. Erst-Extras geprüft und zutreffend: fremde Notizen vor Freigabe nur für nie geöffnete Abschnitte übernommen (Ionic merged zusätzlich nach publish_protocol) – mittel; Abbruch bei Speicherfehler (Flutter besser); spontaner Punkt (|| vs ??, kein Fokus/Scroll); Teilnehmer-Sortierung/„Unbekannt“. Keine weiteren versteckten Abweichungen gefunden.",
+      "v": "bestätigt"
+    },
+    "protocols/protocol/protocol.page#alert-0750ecfb": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:561",
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:592"
+      ],
+      "n": "Titel „Spontaner Punkt“, Hinweis „Wird als neues Thema angelegt …“, Felder Titel/Dauer (vorbelegt mit Standarddauer), Abbrechen/Hinzufügen gleich (Platzhalter als Feld-Label). Ionic: leerer Titel → Warn-Toast „Bitte einen Titel eingeben“, Alert bleibt offen (return false) / Flutter: Dialog schließt, dann derselbe Warn-Toast – geänderte Dauer geht verloren. Randfall: „12.5“ Ionic parseInt → 12, Flutter → Standarddauer.",
+      "v": "bestätigt"
+    },
+    "protocols/protocol/protocol.page#text-7951a5bf": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:1411"
+      ],
+      "n": "Handy-Layout Leitung, nur wenn veröffentlicht: grüner Haken + „Freigegeben am dd.MM.yyyy“, bei Änderung >60 s danach „… · geändert am …“; nach Speichern/Freigabe live aktualisiert (applyRow).",
+      "v": "bestätigt"
+    },
+    "protocols/protocol/protocol.page#action-0bec9107": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:1891"
+      ],
+      "n": "Plus-Icon-Button im Kopf „Allgemeine Notizen“ (breites Layout, Leitung), Tooltip „Aufgabe zu den allgemeinen Notizen“; legt ggf. Protokoll an, öffnet Aufgaben-Formular (Kontext „Allgemeine Notizen“, ohne Thema) und fügt die Referenz in die allgemeinen Notizen ein.",
+      "v": "bestätigt"
+    },
+    "protocols/protocol/protocol.page#text-158e2b35": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:2043"
+      ],
+      "n": "Leseansicht: „Keine Notizen“ (grau) bei Abschnitt ohne Notizen und ohne Aufgaben; Kartenbedingung (TOP, Notizen, Ergebnis oder Aufgaben) gleich.",
+      "v": "bestätigt"
+    },
+    "protocols/protocol/protocol.page#modal-ee22855e": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:1196",
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:1204"
+      ],
+      "n": "Auslöser (Tippen auf Teilnehmer-Zeile) und Daten (Anwesend/Entschuldigt/Sonstige) gleich. Ionic: Sheet mit Breakpoints [0, 0.6, 1] (Start 60 %, auf Vollbild ziehbar) / Flutter: Bottom-Sheet fester Höhe 70 %, nur nach unten wegwischbar.",
+      "v": "bestätigt"
+    },
+    "protocols/protocol/protocol.page#text-19804570": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:1223"
+      ],
+      "n": "Name „Vorname Nachname“ je anwesender Person im Teilnehmer-Sheet. Randfall leerer Name (Ionic „Unbekannt“, Flutter leer) und Sortierung siehe Erst-Extra „Teilnehmende: Sortierung/Fallback“.",
+      "v": "bestätigt"
+    },
+    "protocols/protocol/protocol.page#modal-310a0a39": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:1258",
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:1303"
+      ],
+      "n": "Auslöser (Footer „Notizen“), Inhalt allgemeine Notizen und Speichern beim Schließen gleich (Flutter speichert sofort statt nach Debounce). Ionic: Sheet mit Breakpoints [0, 0.75, 1] (auf Vollbild ziehbar) / Flutter: feste Höhe 80 %, nicht ziehbar.",
+      "v": "bestätigt"
+    },
+    "protocols/protocol/protocol.page#action-9e2bdbdb": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:1287"
+      ],
+      "n": "Button „Aufgabe“ mit Plus im Notizen-Sheet, Aufgabe mit Protokoll-Anlage und Referenz in den allgemeinen Notizen gleich. Ionic: Formular öffnet über dem Sheet, danach ist man wieder im Notizen-Sheet (Referenz sichtbar, Weiterschreiben möglich) / Flutter: Sheet wird vor dem Formular geschlossen, danach landet man auf der Protokollseite und muss „Notizen“ erneut öffnen. Erstprüfung niedrig – sichtbare Ablaufänderung, daher mittel.",
+      "v": "korrigiert"
+    },
+    "protocols/protocol/protocol.page#text-fd7a6a5e": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/pages/protocol_page.dart:878"
+      ],
+      "n": "„{n} Thema/Themen besprochen“ (Plural gleich) mit Namensliste, nur wenn besprochene TOPs vorhanden; Zählung wie publishSummary.",
+      "v": "bestätigt"
+    },
+    "tasks/my-tasks/my-tasks.component#logic-91cfedd0": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:34",
+        "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:53",
+        "lib/core/providers/team_org_providers.dart:151",
+        "lib/core/providers/team_org_providers.dart:277",
+        "lib/core/providers/dashboard_providers.dart:304",
+        "lib/features/self_service/presentation/pages/signout_page.dart:91"
+      ],
+      "n": "Sichtbarkeit (Teamorganisation an + offene Aufgaben), Quelle (tasks der eigenen Person, tenant_id), Sortierung groupTasksByDue, Limit 5, Untertitel „n offen · n überfällig“, Fälligkeitstexte, optimistisches Erledigen (status completed + updated_at) mit Rücknahme und Toasts gleich. Status/sev bleiben, Begründung korrigiert: Erst-Extra „Flutter besser, Ionic lädt nur einmal je Mandant“ ist falsch – Dashboard und „Meine Termine“ rufen load() bei jeder Rückkehr (ionViewWillEnter) und bei Pull-to-Refresh auf. Tatsächlicher Unterschied: Flutter lädt nicht bei Rückkehr, nur nach eigenen Aufgaben-Änderungen und Pull-to-Refresh (siehe extra).",
+      "v": "korrigiert"
+    }
+  },
+  "extra": [
+    {
+      "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+      "title": "Einplanen-Liste aus Cache",
+      "n": "Ionic: planIntoAttendance lädt bei jedem Tippen getUpcomingAttendances neu (neue/gelöschte Termine, aktuelle Pläne für „bereits eingeplant“) / Flutter: upcomingProtocolAttendancesProvider (nicht autoDispose) wird nur nach Team-Org-Aktionen invalidiert (Einplanen, spontaner Punkt, Schnellanlage „Neuer Termin“, Themen-Tab-Refresh, Tagesordnung im Termin) – über die normale Terminanlage erstellte Termine fehlen im Sheet, gelöschte bleiben (Einplanen scheitert dann mit Fehler-Toast), im Ablaufplan-Editor entfernte TOPs bleiben als „(bereits eingeplant)“ gesperrt.",
+      "sev": "mittel",
+      "ionic": "src/app/agenda-items/agenda-item-detail/agenda-item-detail.page.ts:195",
+      "f": [
+        "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:138",
+        "lib/core/providers/team_org_providers.dart:255"
+      ]
+    },
+    {
+      "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+      "title": "Einplanen nach gespeichertem Stand",
+      "n": "Ionic: item ist per ngModel ans Formular gebunden – Status-Auswahl ≠ „Offen“ blendet „Einplanen“ sofort (ungespeichert) aus, eingeplant werden ungespeicherter Titel und Dauer / Flutter: Button-Bedingung und eingeplantes Feld (Name, Dauer) kommen aus dem gespeicherten Thema (agendaItemByIdProvider), Formularänderungen wirken erst nach Speichern. Betrifft Item action-6d6140de (Erstprüfung ok).",
+      "sev": "niedrig",
+      "ionic": "src/app/agenda-items/agenda-item-detail/agenda-item-detail.page.html:106",
+      "f": [
+        "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:260",
+        "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:264"
+      ]
+    },
+    {
+      "unit": "tasks/my-tasks/my-tasks.component",
+      "title": "Meine Aufgaben: kein Neuladen bei Rückkehr",
+      "n": "Ersetzt Erst-Extra „Karte aktualisiert sich“ (Flutter besser), dessen Prämisse falsch ist. Ionic: Dashboard (home-dashboard.page.ts:51) und „Meine Termine“ (signout.page.ts:1064) laden die Karte bei jeder Rückkehr auf die Seite und per Pull-to-Refresh neu / Flutter: myTasksProvider (nicht autoDispose) wird nur nach eigenen Aufgaben-Änderungen (TeamTaskNotifier) und per Pull-to-Refresh invalidiert – von der Leitung neu zugewiesene oder anderswo geänderte Aufgaben erscheinen beim Zurückkehren nicht. Dashboard-Teil deckt sich mit b05-Extra „Meine Aufgaben beim Zurückkehren“.",
+      "sev": "niedrig",
+      "ionic": "src/app/tasks/my-tasks/my-tasks.component.ts:63",
+      "f": [
+        "lib/core/providers/team_org_providers.dart:151",
+        "lib/core/providers/team_org_providers.dart:277",
+        "lib/core/providers/dashboard_providers.dart:304",
+        "lib/features/self_service/presentation/pages/signout_page.dart:91"
+      ]
+    }
+  ]
+}

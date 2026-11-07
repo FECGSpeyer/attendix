@@ -1,0 +1,25 @@
+{
+ "batch": "zz-scope-zz-sol",
+ "ionic": "1923d203",
+ "flutter": "8004a44",
+ "afterRound": 4,
+ "note": "Vier Punkte aus zz-scope-optik nach Sol-Review 6656217368 wieder mittel (fehlende Fehler-/Validierungsmeldung ist Funktion).",
+ "items": {
+  "services/cross-tenant/cross-tenant.service#toast-119dd1e0": {
+   "sev": "mittel",
+   "n": "Sol-Review 6656217368: doch Funktion – beim Wiederherstellen des Instanzfilters wird ein Ladefehler verschluckt, es bleibt ungewarnt „Alle anzeigen“ aktiv (people_list_page.dart:234), also andere Personen ohne Fehlermeldung. Befund: Filter 'Mitglied anderer Instanz'. Ionic: Toast 'Fehler beim Laden der Benutzer' (danger) beim Auswählen und beim Wiederherstellen des gespeicherten Filters / Flutter: beim Auswählen Fehler-Toast 'Fehler: <Fehlermeldung>' (anderer Text), beim Wiederherstellen still (Filter bleibt 'Alle anzeigen'). Erstprüfer: 'missing, still ignoriert' – Auswahl-Pfad mit Toast übersehen."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-ce98be7f": {
+   "sev": "mittel",
+   "n": "Sol-Review 6656217368: doch Funktion – bei leerem Namen tut der Bestätigen-Knopf nichts (plan_field_dialogs.dart:358), keine Meldung, was fehlt. Befund: Titel, Platzhalter „Name der Vorlage...“, „Abbrechen“/„Hinzufügen“ gleich. Ionic: leerer Name → Meldung „Bitte einen Namen eingeben.“ im Dialog / Flutter: „Hinzufügen“ tut bei leerem Namen nichts, keine Meldung (der Toast in Z.130 ist unerreichbar, showPlanTextPrompt gibt nie leer zurück)."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-e458236c": {
+   "sev": "mittel",
+   "n": "Sol-Review 6656217368: doch Funktion – bei leerem Namen tut der Bestätigen-Knopf nichts (plan_field_dialogs.dart:358), keine Meldung, was fehlt. Befund: Titel „Vorlage umbenennen“, Vorbelegung, Platzhalter, „Abbrechen“/„Speichern“ gleich. Ionic: leerer Name → Meldung „Bitte einen Namen eingeben.“ / Flutter: Button tut nichts, keine Meldung."
+  },
+  "org-settings/org-settings.page#alert-14d3ff8c": {
+   "sev": "mittel",
+   "n": "Sol-Review 6656217368: doch Funktion – bei leerem Namen tut der Bestätigen-Knopf nichts, keine Meldung, was fehlt. Befund: Titel „Organisation umbenennen“, Vorbelegung, Platzhalter, „Abbrechen“/„Speichern“, Speichern des getrimmten Namens gleich. Ionic: leerer Name → Meldung „Bitte gib einen gültigen Namen ein.“ / Flutter: „Speichern“ tut nichts, keine Meldung (Warn-Toast Z.39 unerreichbar)."
+  }
+ }
+}

@@ -1,0 +1,348 @@
+{
+  "batch": "zz-verify3-b04-attendance",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "attendance/attendance/attendance.page#nav-a04742ad": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:376"
+      ],
+      "n": "Mandantenwechsel bei offenem Termin → go('/attendance') (Ionic navigateByUrl('/tabs/attendance')); nur Mandanten-, keine Rollenbedingung – gleich.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#alert-1a679783": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:55",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:600",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:765",
+        "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:197"
+      ],
+      "n": "Flutter besser: Helfer (HELPER) ohne player_notes_view bekommt in Ionic im Dialog „Eigene Notiz“ die echte Notiz vorbelegt (value = player.notes); Flutter belegt die maskierte Notiz „Notiz hinzugefügt“ vor (visibleNotes) und speichert sie unverändert nicht zurück. Sonst gleich (Platzhalter „Notiz eingeben...“, Abbrechen/Speichern, leer bei Standardgrund aus tenant.absence_reasons, alle Rollen der Seite); Flutter trimmt. Erstprüfer übersah die Rollen-Maskierung.",
+      "v": "korrigiert"
+    },
+    "attendance/attendance/attendance.page#alert-a33e2289": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_actions.dart:87",
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:157"
+      ],
+      "n": "Nur bei eigener angefragter Einteilung (myPersonId = player.appId im Mandanten), für jede Rolle der Seite unabhängig von canManageDuty – wie Ionic. „Kann nicht“, Textfeld „Grund (optional)“, Abbrechen/Bestätigen; signOut isSelf + duty-notify understaffed.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#toast-ea1a4203": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_actions.dart:118"
+      ],
+      "n": "„Abgesagt, das Team wird informiert.“ (Erfolg) nach der Absage.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#modal-e75634f5": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:75",
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:272",
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:334",
+        "lib/features/duty/presentation/widgets/duty_assign_sheet.dart:33"
+      ],
+      "n": "Nur canManageDuty = Admin/Verantwortlich (Ionic isTeamLeader). Sheet 0.75, Titel „Typ · dd.MM.“, offene Plätze, Kandidaten aus der (Helfer-)Gruppenliste nach Monatsdiensten, Monat.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#toast-f7e53881": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:249"
+      ],
+      "n": "Plural-Toast nach Einteilen (Sheet und direkte „Einteilen“-Buttons), nur Admin/Verantwortlich wie Ionic.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#alert-2268569a": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:256"
+      ],
+      "n": "Nur Admin/Verantwortlich; „Aus dem Dienst austragen?“, „{Vorname} ist dann nicht mehr eingeteilt.“, Abbrechen/Austragen (destruktiv); keepStatus bei Anwesenden wie Ionic.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#effect-839f92ba": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:115",
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:121",
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:143",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:111"
+      ],
+      "n": "Ionic (Termin mit mehreren Plänen): Sheet mit „Nur <Plan>“/„Alle n Pläne“ × „Exportieren (PDF)“/„Exportieren (PDF 2x A5)“ → exportAttendancePlans; PDF-Titel plan.title || planning_title („Titel (typeInfo)“) / typeInfo / Typname, Datei „…_DD_MM_YYYY[_alle][_2x]“. Flutter: PDF A4/2x A5 nur für den gezeigten Plan, alle Pläne nur als A4 („PDF exportieren (alle Pläne)“), 2x A5 für alle fehlt (vgl. actionsheet-19467990); Titel plan.title || typeInfo || „Ablaufplan“ – planning_title und Typname fehlen (gilt auch beim Ein-Plan-Export), Dateiname ohne _alle/_2x. Rollen gleich (alle außer Beobachter)."
+    },
+    "attendance/attendance/attendance.page#modal-9d951002": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:198",
+        "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:44",
+        "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:18"
+      ],
+      "n": "Nur enable_protocol && Admin/Verantwortlich (isTeamLeaderProvider), bei vorhandenem Plan nur für Plan 1 – wie Ionic. Vollhohes Sheet statt Vollbild-Modal; Plan wird danach neu geladen.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#effect-7cdd0978": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:136",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:71",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:114",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:126"
+      ],
+      "n": "Ionic (mehrere Pläne, nur mit telegram_chat_id): Telegram „PDF“/„PDF 2x A5“ für nur diesen oder alle Pläne (exportAttendancePlans asBlob, Name „…_alle“), „Bild“ nur für einen Plan. Flutter: Telegram PDF/2x A5/Bild nur für den gezeigten Plan (mit Chat-ID); „alle Pläne“ per Telegram fehlt (vgl. actionsheet-19467990); Titel/Dateiname ohne planning_title/Typname und ohne „_alle“. Rollen gleich."
+    },
+    "attendance/attendance/attendance.page#alert-5a49adc7": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:89",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2150",
+        "lib/features/attendance/presentation/attendance_song_history.dart:85"
+      ],
+      "n": "Werke-Abschnitt nur bei manage_songs und Mandant ≠ general (showSongsForType), keine Rollenbedingung – gleich. Radios aktive Dirigenten + „Anderer Dirigent“, Abbrechen/Speichern; Update person_id/otherConductor der history-Zeile.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#alert-1119c6cc": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:145"
+      ],
+      "n": "„Dirigent eingeben“, Platzhalter „Dirigent“, vorbelegt mit otherConductor; leerer Name speichert nichts.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#alert-a4a881ba": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2477",
+        "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:240",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:774"
+      ],
+      "n": "Nur ohne isHelper = role === HELPER (Stimmführer-Helfer darf) – Flutter showModifierInfo: role != helper. Header, Text mit Name, Abbrechen/Entfernen (destruktiv) gleich.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#toast-68ebef24": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2503"
+      ],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#toast-d1c36dcb": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2506"
+      ],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#effect-8f43ff82": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2407",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2430",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2442",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:571",
+        "lib/core/services/export_service.dart:657"
+      ],
+      "n": "Ionic exportiert this.players: für Helfer/Stimmführer-Helfer ohne attendance_all_groups nur die eigene Gruppe, sortiert nach Hauptgruppe/Gruppenreihenfolge/Name. Flutter exportiert _personsInAttendance(persons) ohne Gruppenfilter → eingeschränkte Helfer bekommen Namen, Status (und Notizen) aller Gruppen; Reihenfolge nur nach Nachname. Flutter besser: HELPER ohne player_notes_view bekommt leere Notizspalte (Ionic: echte Notizen). Spalten, Statuscodes, Gemeinde-Spalte, Dateiname „{Name}_{Datum}_Anwesenheit.xlsx“ sonst gleich."
+    },
+    "attendance/attendance/attendance.page#toast-010be423": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1559"
+      ],
+      "n": "„Bitte einen Text eingeben“ (Warnung), Dialog bleibt offen. Erreichbar wie Ionic: Menü „Checkliste starten“ ohne HELPER (canMutate), Akkordeon-Button für alle mit Checklisten-Sicht (HELPER nur mit checklist_view).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#alert-742e0a0f": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1164",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1151"
+      ],
+      "n": "Nur Admin/Verantwortlich und beendete oder archivierte Termine (canArchiveAttendance) wie Ionic; „Termin archivieren?“, Hinweistext, Abbrechen/Archivieren; Wiederherstellen ohne Rückfrage.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#toast-3c53fce6": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1193"
+      ],
+      "n": "„Termin archiviert“ / „Termin wiederhergestellt“ (Erfolg).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#toast-d7a6342e": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1196"
+      ],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#modal-2087914f": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1123",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1392",
+        "lib/features/attendance/presentation/widgets/attendance_detail/ad_hoc_reminder_sheet.dart:52"
+      ],
+      "n": "Menü nur ohne HELPER (Admin/Verantwortlich/Stimmführer-Helfer), pro Person im Mehr-Sheet für alle Rollen – wie Ionic. Gleiche Vorgaben (Titel/Nachricht/Link, „nur ohne Rückmeldung“). Person ohne Account siehe actionsheet-1aaa2155.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#toast-f2ad9095": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1412"
+      ],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#toast-d8dd95d2": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1410"
+      ],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#alert-69df322a": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1244",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1108"
+      ],
+      "n": "Nur wenn sortierbare Felder existieren (Personen-Zusatzfelder ohne textarea + Anmeldefelder), keine Rollenbedingung; Radios „Standard (Gruppe)“ und je Feld ↑/↓, Abbrechen/OK, gleiche Speicher-Keys.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-f0a03b1c": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:498"
+      ],
+      "n": "Offline-Chip (Warnfarbe, Wolken-Icon) mit „{count} ausstehend“ aus der Offline-Queue, für alle Rollen."
+    },
+    "attendance/attendance/attendance.page#text-828d786f": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:498"
+      ],
+      "n": "„Offline“ im selben Chip, wenn nichts aussteht."
+    },
+    "attendance/attendance/attendance.page#action-9cb015ae": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1132",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1147"
+      ],
+      "n": "Menüeintrag „Archivieren“/„Wiederherstellen“ nur Admin/Verantwortlich und beendete/archivierte Termine wie Ionic.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-880e7fa9": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:305",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:612"
+      ],
+      "n": "canAccessFiles wie Ionic (files_shared: alle außer Bewerber/none, sonst Admin/Verantwortlich/Helfer/Stimmführer-Helfer) – für alle Rollen der Seite sichtbar.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-8c75c0fd": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:308"
+      ],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-39683a30": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:316",
+        "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:336"
+      ],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-eea3b09d": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:348",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:669"
+      ],
+      "n": "Chip öffnet /settings/files?path=… (Ionic /tabs/settings/files).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-bf208af8": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:355"
+      ],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-3afb4fa9": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:361",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2216"
+      ],
+      "n": "Entfernt ohne Rückfrage, files_folder = null wie Ionic.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-eeca698c": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2203",
+        "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:173"
+      ],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-c838c3fb": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/songs_history_accordion.dart:31",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:683"
+      ],
+      "n": "„Werke (n)“ bei manage_songs und Mandant ≠ general, ohne Rollenbedingung wie Ionic.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-543c2011": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/songs_history_accordion.dart:48"
+      ],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-904249c9": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:128"
+      ],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-bb56681b": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:152"
+      ],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#modal-8e3ed7fa": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:237"
+      ],
+      "n": "Vollbild-Seite.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-bbc3b99a": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:318"
+      ],
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

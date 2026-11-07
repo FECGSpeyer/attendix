@@ -1,0 +1,120 @@
+{
+  "batch": "zz-verify3-b08-people",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "people/list/list.page#nav-90d2a585": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/tenant/tenant_switcher_title.dart:405", "lib/core/constants/enums.dart:137"],
+      "n": "Instanzwechsel im Header → router.go(role.defaultRoute) mit der Rolle der Zielinstanz. Je Rolle wie Utils.getUrl: Admin/Verantwortlicher/Beobachter → Personen, Eltern → Eltern-Seite, Spieler/Helfer/Stimmführer/Stimmführer & Helfer/Bewerber/keine Rolle → Abmelde-Seite (Ionic-Default '/register' nur für unbekannte Rollenwerte). Fehlendes Overlay: loading-a2fa55fe.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#effect-42a1d825": {
+      "s": "ok",
+      "f": ["lib/core/constants/enums.dart:137", "lib/shared/widgets/tenant/tenant_switcher_title.dart:405"],
+      "n": "Role.defaultRoute bildet Utils.getUrl für alle 10 Rollen gleich ab (siehe nav-90d2a585).",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#db-ce70f764": {
+      "s": "ok",
+      "f": ["lib/core/providers/realtime_providers.dart:79", "lib/core/providers/realtime_providers.dart:94"],
+      "n": "Abo auf Tabelle player: Ionic lädt bei tenantId der aktuellen Instanz oder vorhandenem old.id neu / Flutter: Filter tenantId (alle Ereignisse) + DELETE über bekannte ids, Neuaufbau bei Instanzwechsel. Keine Rollenbedingung (Seite nur Admin/Verantwortlicher/Beobachter). Im Reorder-Modus eigene Id-Liste statt ausgesetztem Reload.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#db-883313ef": {
+      "s": "ok",
+      "f": ["lib/core/providers/realtime_providers.dart:80"],
+      "n": "Kanalname 'player_changes_<tenantId>' statt 'player-changes'; gleiche Tabelle/Ereignisse, nicht sichtbar.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#actionsheet-95b42378": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/people_list_page.dart:1366", "lib/features/people/presentation/pages/people_list_page.dart:607", "lib/shared/widgets/adaptive/app_action_sheet.dart:59"],
+      "n": "Nur Admin/Verantwortlicher (Wisch-Option nur bei isAdmin, Beobachter ohne Wischaktionen) wie Ionic. Eigene Person (appId = Auth-User) → roter Toast statt Sheet wie Ionic. Sheet ohne Titel: 'Archivieren' / 'Entfernen' / 'Abbrechen'; Archivieren öffnet den Archiv-Dialog, Entfernen die Bestätigung.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#native-79bc7764": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/people_list_page.dart:1471", "lib/core/utils/haptic_helper.dart:15"],
+      "n": "Haptik Medium (try/catch) vor der Entfernen-Bestätigung; nur über das Admin/Verantwortlicher-Sheet erreichbar.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#alert-3e99f381": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/people_list_page.dart:1472", "lib/core/utils/dialog_helper.dart:12"],
+      "n": "'Person wirklich entfernen?' / 'Diese Aktion kann nicht rückgängig gemacht werden!', 'Abbrechen' / 'Entfernen' (Flutter rot); löscht Person und entzieht Zugang wie db.removePlayer. Nur Admin/Verantwortlicher.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#toast-aac6b1fb": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/people_list_page.dart:1483"],
+      "n": "'Person wurde entfernt.' grün.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#toast-8b738017": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/people_list_page.dart:1485"],
+      "n": "Roter Toast mit Fehlertext; Flutter 'Fehler: <lesbare Meldung>' statt rohem Fehlerobjekt.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#toast-f68d8cd2": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/pause_person_sheet.dart:271"],
+      "n": "'Fehler bei {Kurzname}: {Fehler}' rot je fehlgeschlagener Instanz. Angebotene Instanzen (nur verwaltbare) siehe alert-86b4fbec.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#text-61be9cf5": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/people_list_page.dart:1768", "lib/features/people/people_list_utils.dart:36"],
+      "n": "'Geburtstag heute' bei genau einem Geburtstag; gleiche Auswahl (birthday gesetzt, correctBirthday, Monat/Tag lokal = heute) aus allen geladenen Personen, für alle Rollen der Liste. Banner zusätzlich im Flutter-Auswahlmodus ausgeblendet."
+    },
+    "people/list/list.page#text-632aa7d5": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/people_list_page.dart:1769"],
+      "n": "'{count} Geburtstage heute' bei mehreren, gleiche Bedingung wie text-61be9cf5."
+    },
+    "people/list/list.page#text-75888fce": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/people_list_page.dart:617"],
+      "n": "'Personen (n)' mit Anzahl der gefilterten Personen; keine Rollenbedingung.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-99ad824e-2": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/people_list_page.dart:1653", "lib/features/people/presentation/widgets/ion/ion_widgets.dart:387"],
+      "n": "Avatar nur mit Ansicht 'Passbild' (Standard aus), Fehler/leer → Platzhalter; alle Rollen. Fehlender Avatar im Flutter-Reorder-Modus gehört zu action-e7b7f732 / Extra 'Reorder-Modus'.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-846fa8d2": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/people_list_page.dart:629", "lib/features/people/presentation/pages/people_list_page.dart:605"],
+      "n": "Sortierung ≠ Gruppe: flache Liste ohne Trenner und ohne Reorder. Wischaktionen (Papierkorb, Pause/Play) nur Admin/Verantwortlicher, Beobachter ohne – wie Ionic. Zeileninhalt siehe action-0df20264.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#action-99ad824e-3": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/people_list_page.dart:1653", "lib/features/people/presentation/widgets/ion/ion_widgets.dart:387"],
+      "n": "Wie action-99ad824e-2 in der flachen Liste.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#text-b78dc42f": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/people_list_page.dart:580"],
+      "n": "'Keine Personen gefunden' bei Personen vorhanden, aber Filter/Suche ohne Treffer; alle Rollen.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#text-6468ac89": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/people_list_page.dart:581"],
+      "n": "'Die aktiven Filter ergeben keine Treffer.' gleiche Bedingung.",
+      "v": "bestätigt"
+    },
+    "people/list/list.page#text-6f2a6577": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/pages/people_list_page.dart:559"],
+      "n": "'Bisher wurden noch keine Personen angelegt' für alle Rollen der Liste. Der daneben stehende Button 'Person hinzufügen' ohne Rollenprüfung (Beobachter kann anlegen) ist bei action-4792cae3 erfasst.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

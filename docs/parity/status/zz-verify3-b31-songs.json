@@ -1,0 +1,207 @@
+{
+  "batch": "zz-verify3-b31-songs",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "songs/song/song.page#toast-1ed088c6": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:305",
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:307",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:937",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:938"
+      ],
+      "n": "Upload-Sheet und Datei-Drop nur bei !readOnly (Ionic readOnly = Rolle ≠ Admin/Verantwortlich bzw. Freigabe-Link; Flutter song_providers.dart:468 gleich, FileDropTarget enabled: !readOnly). Text „Die Datei {name} überschreitet die maximale Größe von 20MB.“, rot; Flutter prüft auch beim Einzeldatei-Drop (öffnet dann kein Modal).",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#alert-794195d5": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:376",
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:383",
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:392"
+      ],
+      "n": "Nur Bearbeiter (Admin/Verantwortlich) im Mehrfach-Upload. „Warnung: Liedtext-Format“, Plural-Text, „Abbrechen“/„Trotzdem hochladen“ gleich, Einzel-Upload ohne Warnung (beide). PDF-Erkennung: Ionic warnt nur, wenn MIME ≠ PDF und Name nicht .pdf / Flutter nur nach Endung (Randfall PDF ohne Endung).",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#effect-3284e3a8": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:342",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:350",
+        "lib/core/services/native/native_file_service.dart:103",
+        "lib/core/services/native/native_file_service.dart:123",
+        "lib/core/services/web_window_web.dart:36"
+      ],
+      "n": "„Externen Noten-Link öffnen“ nur lesend mit Link (alle Rollen außer Admin/Verantwortlich, Freigabe-Link) in beiden. Web: window.open(_blank), in installierter PWA per Link-Klick wie Utils.openInNewTab; nativ In-App-Browser wie Browser.open, iOS-App auf Mac extern."
+    },
+    "songs/song/song.page#alert-d42250e4": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:1110",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:1150",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:1154",
+        "lib/core/services/song_file_service.dart:333"
+      ],
+      "n": "„Datei löschen“ im Aktionsblatt nur bei !readOnly (beide). Titel, Text mit Dateiname, „Abbrechen“/„Löschen“ (rot) gleich; entfernt Datei aus files, instrument_ids aus restlichen Dateien (ohne null/1/Hauptgruppe), lädt neu. Storage-Pfad: Flutter songs/<tenant>/<song>/<storageName> = Upload-Pfad (Ionic db.deleteSongFile ohne „songs/“, Service-Batch).",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#alert-e783eb34": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:974",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:978",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:984",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:987",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:1022",
+        "lib/core/services/song_file_service.dart:384"
+      ],
+      "n": "„…“-Menü mit „Alle Dateien löschen“ nur bei !readOnly und vorhandenen Dateien (beide). Titel/Text/Buttons gleich; Flutter leert files in einem Schritt und setzt instrument_ids auf [] (Ionic Datei für Datei, Endzustand gleich). Overlay-Unterschied in loading-2199f93e.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#nav-0c47252a": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:196",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:198",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:275",
+        "lib/core/router/app_router.dart:967"
+      ],
+      "n": "Löschen-Knopf nur bei !readOnly (beide). Nach erfolgreichem Löschen context.go('/settings/songs') wie Ionic tabs/settings/songs, auch aus dem Werke-Tab (Beta-Zweig ausgenommen).",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#toast-ba50d7ca": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/group_pdf_print.dart:22",
+        "lib/features/songs/presentation/widgets/group_pdf_print.dart:26",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:1022"
+      ],
+      "n": "„Gruppen-PDFs drucken“ nur bei !readOnly (beide). Gruppen-PDFs = instrumentId > 2 und PDF (Typ oder Endung); sonst Warn-Toast „Keine Gruppen-PDFs zum Drucken gefunden“.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#alert-68e471fc": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/group_pdf_print.dart:38",
+        "lib/features/songs/presentation/widgets/group_pdf_print.dart:75",
+        "lib/features/songs/presentation/widgets/group_pdf_print.dart:89"
+      ],
+      "n": "„Druckoptionen“, „Wie viele Ausdrucke pro Gruppe?“, 5 Radio-Optionen (1 pro Person vorausgewählt), „Abbrechen“/„Drucken“; Kopien ceil(aktive Personen/Verhältnis) bzw. 1. Nur Bearbeiter (beide).",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-9e854d49": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:334",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:631",
+        "lib/core/providers/song_providers.dart:482",
+        "lib/data/repositories/song_repository.dart:711"
+      ],
+      "n": "„ · <Titel>“ hinter dem Datum, Titel = typeInfo sonst Name der Terminart wie Ionic getHistoryBySongId; Werkhistorie nur für Admin/Verantwortlich geladen (beide), aus dem aktuellen Tenant."
+    },
+    "songs/song/song.page#media-250650fa": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:513",
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:514"
+      ],
+      "n": "Dünner Fortschrittsbalken unter der Kopfzeile während des Uploads (Anteil hochgeladener Bytes) wie Ionic Toolbar-Progressbar; Upload nur Admin/Verantwortlich."
+    },
+    "songs/song/song.page#text-793d6d7b": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:522",
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:535"
+      ],
+      "n": "Text im Akkordeon „Wichtige Infos“ gleich (Zeilenumbrüche statt <br>). Ionic rendert songs.uploadInfo als HTML mit antippbarem Link „Gruppeneinstellungen“ (/tabs/settings/instruments) / Flutter entfernt die Tags, der Link ist nicht antippbar. Wie text-f1fbf407."
+    },
+    "songs/song/song.page#media-250650fa-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:543",
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:553",
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:568",
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:575"
+      ],
+      "n": "Während des Uploads statt Drop-Zone: „{done} von {total} …“ + Prozent, Fortschrittsbalken, „Fenster nicht schließen“-Hinweis; gleiche Berechnung (Bytes)."
+    },
+    "songs/song/song.page#text-b9605891": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:862",
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:869"
+      ],
+      "n": "Label „Freitext“ bei Auswahl „Sonstige (Freitext)“ im Mehrfach-Upload (nur Bearbeiter, beide).",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#field-0853d34b": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:865",
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:870",
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:874"
+      ],
+      "n": "Platzhalter „Kategorie eingeben...“, vorbelegt mit der Notiz, gesperrt während des Uploads; Eingabe berechnet Konflikte/Ersetzen-Vorauswahl neu wie updateFileNote. Flutter trimmt die Notiz.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-b9605891-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/single_file_upload_sheet.dart:321",
+        "lib/features/songs/presentation/widgets/single_file_upload_sheet.dart:326"
+      ],
+      "n": "Überschrift „Freitext“ im Einzel-Upload (nur nach Datei-Drop durch Bearbeiter, beide).",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#field-2e1ef4e3": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/single_file_upload_sheet.dart:330",
+        "lib/features/songs/presentation/widgets/single_file_upload_sheet.dart:334"
+      ],
+      "n": "Platzhalter „Kategorie eingeben...“, Eingabe aktualisiert die Konflikte wie onSingleFileNoteChange.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-9fb9abf3": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_beamer_file_section.dart:22",
+        "lib/features/songs/presentation/widgets/song_beamer_file_section.dart:33",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:340"
+      ],
+      "n": "„Ändern kannst du die Datei in der Gemeinde App.“ bei verknüpfter Datei. Bedingung rollenunabhängig: Org mit Gemeinde-App-Verknüpfung und Beamer-Dateien (beamerActive) – alle Rollen sehen den Abschnitt in beiden. Freigabe-Ansicht siehe text-3cb4b466.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-03dd3867": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_beamer_file_section.dart:22",
+        "lib/features/songs/presentation/widgets/song_beamer_file_section.dart:32"
+      ],
+      "n": "„Noch keine Datei verknüpft“ ohne Datei; gleiche rollenunabhängige Org-Bedingung (beamerActive). Freigabe-Ansicht siehe text-3cb4b466.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-fecc9174": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_beamer_file_section.dart:22",
+        "lib/features/songs/presentation/widgets/song_beamer_file_section.dart:33"
+      ],
+      "n": "„Verknüpfen kannst du die Datei in der Gemeinde App.“ ohne Datei; gleiche rollenunabhängige Org-Bedingung. Freigabe-Ansicht siehe text-3cb4b466.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-b9605891-3": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:1108",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:1268",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:1274"
+      ],
+      "n": "„Freitext“ im Dialog „Kategorie ändern“ bei Auswahl Sonstige; Aktion nur bei !readOnly (beide). Dialogform siehe modal-81e9f13d.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

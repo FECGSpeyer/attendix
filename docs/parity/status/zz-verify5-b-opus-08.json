@@ -1,0 +1,372 @@
+{
+ "batch": "zz-verify5-b-opus-08",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "services/db.service#toast-8452ec8e": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:362",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:281"
+   ],
+   "n": "„Instanz wurde erfolgreich gelöscht!“ (grün, ToastHelper.showSuccess) nach erfolgreichem Löschen; nur Admin der Instanz und nicht Demo (wie Ionic canDeleteTenant), deleteTenant prüft zusätzlich die Admin-Rolle. Flutter-eigene Detailseite (tenant_detail_page) nutzt andere Texte, ändert den Ionic-Pfad nicht.",
+   "v": "bestätigt"
+  },
+  "services/db.service#toast-aa4cdecb": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:367",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:281"
+   ],
+   "n": "„Fehler beim Löschen der Instanz, bitte versuche es später erneut.“ (rot) bei Fehler des Löschvorgangs; Admin-/Demo-Bedingung wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-02bd826b": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:399"
+   ],
+   "n": "Insert person_unavailability mit gleichem Payload (tenant_id = aktuelle Instanz, type_ids/reason-Defaults über Modell, valid_until leer → null, created_by aktueller Nutzer wie Ionic-Aufrufer).",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-08f908d3": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:136"
+   ],
+   "n": "duty_state/assigned_by/at null, bei !keepStatus Status Neutral + notes '', changed_by/at; ID vorab über attendance.tenantId geprüft.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-0f54bc54": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:391"
+   ],
+   "n": "Update mit gleichem Payload inkl. created_by (aktueller Nutzer, wie Ionic save()); zusätzlich Filter tenant_id.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-55cf5d45": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:186"
+   ],
+   "n": "RPC duty_take mit p_attendance_id; Termin vorab gegen Tenant geprüft; bei 'ok' duty-notify 'filled' (Flutter wartet darauf, notify wirft nie).",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-67423715": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:265"
+   ],
+   "n": "Gleiche Spalten/Filter (tenantId, type_id in Dienst-Typen, date ≥ heute 0 Uhr bzw. from, optional ≤ until), order date aufsteigend; Fehlerverhalten (Flutter wirft statt []) siehe Extra.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-7067bf2c": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:161"
+   ],
+   "n": "duty_state 'confirmed', Status Anwesend, notes '', changed_by/at; ID vorab gegen Tenant geprüft.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-7d46abd1": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:363"
+   ],
+   "n": "select * mit tenant_id; Fehler → leere Liste wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-7ef6118a": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:350",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:256"
+   ],
+   "n": "Ionic: .order('created_at') = aufsteigend (postgrest-js), Regeln „Regelmäßig verhindert“ älteste zuerst / Flutter: .order('created_at') ohne ascending = absteigend (postgrest-dart 2.6.0), unavailability_page zeigt die Liste unsortiert → neueste Regel zuerst. Ersteinschätzung übersah den Sortier-Default.",
+   "v": "korrigiert"
+  },
+  "services/duty/duty.service#db-807d7b5e": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:97"
+   ],
+   "n": "Gleiche Spalten (duty_state 'confirmed', duty_assigned_by/at, duty_reminder_sent true, changed_by/at; Status bleibt); IDs vorab über attendance.tenantId geprüft.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-807d7b5e-2": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:109"
+   ],
+   "n": "'requested', Status Neutral, notes '', reminder_sent false, assigned_by/at, changed_by/at; danach duty-notify 'assigned' mit den angefragten IDs.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-851bf368": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:428",
+    "lib/data/repositories/duty_repository.dart:449"
+   ],
+   "n": "Gleiche Abfrage (person_id, attendance.tenantId, date ≥ heute) und Filterlogik; Fehler → {0, []} wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-8727fa30": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:477"
+   ],
+   "n": "Status Entschuldigt, notes unavailabilityNote (identisch, lib/core/utils/duty_utils.dart:218), changed_by/at für dieselbe ID-Auswahl.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-8bd7fb45": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:410"
+   ],
+   "n": "Delete per id, zusätzlich Filter tenant_id.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-976ff62c": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:428",
+    "lib/data/repositories/duty_repository.dart:467"
+   ],
+   "n": "Gleiche Abfrage; Lookup-Fehler → 0 ohne Änderung wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/duty/duty.service#db-9a8744f6": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/duty_repository.dart:214"
+   ],
+   "n": "duty-notify mit gleichem Body (type, tenantId, attendanceId, personAttendanceIds); Fehler nur geloggt; im Demo-Konto unterdrückt.",
+   "v": "bestätigt"
+  },
+  "services/files/files.service#db-0e5d3df4": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/files_repository.dart:437",
+    "lib/data/repositories/files_repository.dart:256"
+   ],
+   "n": "move oldKey → newKey im Bucket files, Tenant-Präfix geprüft.",
+   "v": "bestätigt"
+  },
+  "services/files/files.service#db-2c06e09a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/files_repository.dart:358"
+   ],
+   "n": "createSignedUrl mit gleichem Key und Ablauf (Default 600 s, Öffnen 3600 s).",
+   "v": "bestätigt"
+  },
+  "services/files/files.service#db-6f807a3a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/files_repository.dart:252"
+   ],
+   "n": "remove in 100er-Blöcken; Flutter prüft zusätzlich den Tenant-Präfix.",
+   "v": "bestätigt"
+  },
+  "services/files/files.service#db-7f0c9e3b": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/files_repository.dart:322"
+   ],
+   "n": "RPC files_used_bytes mit p_tenant_id.",
+   "v": "bestätigt"
+  },
+  "services/files/files.service#db-b377e15a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/files_repository.dart:262",
+    "lib/data/repositories/files_repository.dart:256"
+   ],
+   "n": "Alle Keys rekursiv gesammelt und einzeln verschoben wie Ionic (Flutter listet seitenweise über 1000 hinaus).",
+   "v": "bestätigt"
+  },
+  "services/files/files.service#db-f1c9ca0e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:408",
+    "lib/features/settings/presentation/pages/files_page.dart:410"
+   ],
+   "n": "Flutter lädt über signierte URL mit download=<Name> und NativeFileService.openUrl (nativ: Cache + Systemviewer wie downloadFileNative, Web: Browser-Download) statt storage.download-Blob; gleiche Datei, Fehler-Toast „files.downloadFailed“.",
+   "v": "bestätigt"
+  },
+  "services/group-category/group-category.service#db-0dccc13f": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:298"
+   ],
+   "n": "Insert {name, tenant_id} + select single.",
+   "v": "bestätigt"
+  },
+  "services/group-category/group-category.service#db-4913a14b": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:390"
+   ],
+   "n": "Delete per id, zusätzlich tenant_id.",
+   "v": "bestätigt"
+  },
+  "services/group-category/group-category.service#db-bab11025": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/data/repositories/group_repository.dart:279",
+    "lib/data/repositories/group_repository.dart:280",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:237",
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:116"
+   ],
+   "n": "Ionic: order sort_order asc nullslast, dann name asc / Flutter: .order('name') ohne ascending = absteigend (postgrest-dart 2.6.0). Kategorien ohne/gleiche sort_order (Standard bis zum ersten Umsortieren, Spalte ohne Default) erscheinen umgekehrt alphabetisch: Kategorien-Sheet und Standard-Gruppen des Registerplans (Ionic planning loadPlanGroups: Kategorienamen in DB-Reihenfolge). Ersteinschätzung übersah den Sortier-Default.",
+   "v": "korrigiert"
+  },
+  "services/group-category/group-category.service#db-bbeac978": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:374",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:43"
+   ],
+   "n": "sort_order 1..n wie Ionic handleCategoryReorder (dazu globale Instrument-Reihenfolge wie updateGlobalSortOrder), zusätzlich Filter tenant_id.",
+   "v": "bestätigt"
+  },
+  "services/group-category/group-category.service#db-e5a432a0": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:329",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:345"
+   ],
+   "n": "Update {name} per id + tenant_id; leerer Name → Toast „instruments.enterName“, Dialog bleibt offen.",
+   "v": "bestätigt"
+  },
+  "services/group-category/group-category.service#logic-519c274b": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:273",
+    "lib/data/repositories/group_repository.dart:292",
+    "lib/data/repositories/group_repository.dart:321",
+    "lib/data/repositories/group_repository.dart:370",
+    "lib/data/repositories/group_repository.dart:387",
+    "lib/core/providers/group_providers.dart:98"
+   ],
+   "n": "CRUD, Sortier-Updates und Offline-Cache (OfflineListCache) entsprechen; die Sortierabweichung beim Laden (name absteigend) steht beim Item db-bab11025, Toast-Abweichungen bei den Toast-Items.",
+   "v": "bestätigt"
+  },
+  "services/group/group.service#db-1b7059eb": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:143"
+   ],
+   "n": "pickGroupFields wie Ionic, zusätzlich Filter tenantId; 23505 → „svc.onlyOneMainGroup“-Meldung.",
+   "v": "bestätigt"
+  },
+  "services/group/group.service#db-5235a536": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:109",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:381",
+    "lib/data/repositories/tenant_create_repository.dart:59",
+    "lib/features/tenant_selection/tenant_defaults.dart:65"
+   ],
+   "n": "Instrument {name, maingroup false, category?} plus tenantId und Defaults tuning 'C'/clefs ['g']; Hauptgruppe bei Tenant-Erstellung über buildMainGroupPayload.",
+   "v": "bestätigt"
+  },
+  "services/group/group.service#db-799fb770": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/data/repositories/group_repository.dart:24",
+    "lib/data/repositories/group_repository.dart:26",
+    "lib/core/providers/group_providers.dart:53",
+    "lib/features/people/presentation/pages/person_create_page.dart:276",
+    "lib/features/settings/presentation/pages/handover_page.dart:119"
+   ],
+   "n": "Ionic: order category asc, sort_order asc nullslast, name asc (postgrest-js) / Flutter: .order('category') und .order('name') ohne ascending = absteigend (postgrest-dart 2.6.0); groupsProvider übernimmt die DB-Reihenfolge. Folge: Gruppen-Auswahllisten (Person anlegen, Übergabe, Massenbearbeitung …) anders sortiert und die Standardgruppe einer neuen Person bzw. der Übergabe (Ionic db.groups()[0]) ist eine andere. Gruppenliste selbst sortiert clientseitig (instrument_sort.dart) und ist nicht betroffen. Ersteinschätzung übersah den Sortier-Default.",
+   "v": "korrigiert"
+  },
+  "services/group/group.service#db-9bbeb42c": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:259"
+   ],
+   "n": "Delete per id, zusätzlich tenantId-Filter und Vorab-Prüfung auf zugeordnete (auch archivierte) Personen wie die Ionic-Seite.",
+   "v": "bestätigt"
+  },
+  "services/group/group.service#logic-66f1135a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart:18",
+    "lib/data/repositories/group_repository.dart:94",
+    "lib/data/repositories/group_repository.dart:129",
+    "lib/data/repositories/group_repository.dart:244"
+   ],
+   "n": "getGroups/addGroup/updateGroup/removeGroup entsprechen GroupRepository (pickGroupFields gleich); Sortierabweichung beim Laden steht beim Item db-799fb770. Kategorie-/Lehrer-Methoden und getMainGroup der Klasse sind toter Code.",
+   "v": "bestätigt"
+  },
+  "services/history/history.service#db-3f68f645": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/attendance_song_history.dart:92",
+    "lib/data/repositories/attendance_repository.dart:907",
+    "lib/features/attendance/presentation/attendance_create_writes.dart:427"
+   ],
+   "n": "Insert history mit songId, attendance_id, date des Termins, tenantId (erzwungen), person_id null bei anderem Dirigenten, otherConductor, visible true.",
+   "v": "bestätigt"
+  },
+  "services/history/history.service#db-bf7ab02d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:935",
+    "lib/features/history/presentation/pages/history_page.dart:614",
+    "lib/features/attendance/presentation/attendance_song_history.dart:82"
+   ],
+   "n": "Delete per id, zusätzlich tenantId; Historie-Seite fragt vorher „history.removeConfirm“ (Abbrechen/Ja), Fehler-Toast.",
+   "v": "bestätigt"
+  },
+  "services/history/history.service#db-e0dfe811": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:562",
+    "lib/data/repositories/attendance_repository.dart:907"
+   ],
+   "n": "Gleiche Spalten inkl. tenantId, visible true, person_id null bei anderem Dirigenten; Datum als 'YYYY-MM-DD' statt ISO-Zeitstempel (gleicher Tag).",
+   "v": "bestätigt"
+  },
+  "services/history/history.service#logic-c395b5b7": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/song_repository.dart:520",
+    "lib/data/repositories/song_repository.dart:539",
+    "lib/data/repositories/song_repository.dart:637",
+    "lib/data/repositories/attendance_repository.dart:889",
+    "lib/data/repositories/attendance_repository.dart:907",
+    "lib/data/repositories/attendance_repository.dart:920",
+    "lib/data/repositories/attendance_repository.dart:935"
+   ],
+   "n": "Methoden entsprechen Song-/AttendanceRepository (Sortierungen mit explizitem ascending: date absteigend, songId/id aufsteigend); Abweichungen (visible-Sync, Paging, Toast) stehen bei den Items. getUpcomingHistory/getCurrentSongs sind toter Code.",
+   "v": "bestätigt"
+  },
+  "services/image/image.service#db-0414a654": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:499",
+    "lib/data/repositories/player_repository.dart:1793"
+   ],
+   "n": "Gleiche Logik: profiles/<quelle> → profiles/<neue Personen-ID> (vorher remove), Fehler → URL behalten, Cache-Bust ?v=, img-Update mit tenantId.",
+   "v": "bestätigt"
+  },
+  "services/image/image.service#db-04a84907": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:1104",
+    "lib/features/attendance/presentation/attendance_extra_actions.dart:80"
+   ],
+   "n": "Bucket attendances, Key <id>, upsert, danach attendance.img = publicUrl (mit tenantId). Flutter setzt keinen contentType (octet-stream); Anzeige als Bild unverändert.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

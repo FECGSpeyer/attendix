@@ -1,0 +1,24 @@
+{
+ "batch": "zz-fixed-release-r6",
+ "ionic": "1923d203",
+ "afterRound": 6,
+ "flutter": "43a315b",
+ "items": {
+  "x-4beeb3b857": {
+   "s": "ok",
+   "f": [
+    "scripts/store_build.sh",
+    "docs/push-setup.md"
+   ],
+   "n": "Store-Builds über scripts/store_build.sh: --build-name = displayVersion (5.0.0), --build-number = pubspec-Build + 100 (aktuell 241 > Ionic versionCode 230), Abbruch bei zu kleinen Werten; docs/push-setup.md aktualisiert. PR #345."
+  },
+  "x-cb1c5c9d93": {
+   "s": "ok",
+   "f": [
+    "scripts/store_build.sh",
+    "docs/push-setup.md"
+   ],
+   "n": "iOS: CFBundleShortVersionString/CFBundleVersion kommen aus --build-name 5.0.0 / --build-number 241 (> Ionic 4.19.9 / 239); vor dem Xcode-Archiv scripts/store_build.sh ios --config-only. PR #345."
+  }
+ }
+}

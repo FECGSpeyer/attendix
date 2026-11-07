@@ -1,0 +1,93 @@
+{
+ "batch": "zz-zz-overrides",
+ "afterRound": 2,
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
+ "note": "Korrekturen nach der zweiten Prüfung: Duplikate und widerlegte Annahmen bei zusätzlichen Befunden (items: Urteil unter der Befund-ID x-…, extraOverride: ältere Form nach Baustein und Titel).",
+ "items": {
+  "x-72494b483e": {
+   "s": "na",
+   "n": "Duplikat von field-a9922b49 (gleiche Abweichung, gleiche Schwere); dort wird es angeglichen.",
+   "v": "korrigiert"
+  },
+  "x-fc8b0a67b8": {
+   "s": "na",
+   "n": "Duplikat von field-ac71b961 (gleiche Abweichung, gleiche Schwere); dort wird es angeglichen.",
+   "v": "korrigiert"
+  },
+  "x-7daa6d5e06": {
+   "s": "na",
+   "n": "Duplikat von nav-4df0f2ac (gleiche Abweichung, gleiche Schwere); dort wird es angeglichen.",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#text-34177970": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:76",
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:211"
+   ],
+   "n": "Ionic: Prozent über getPersonAttendances der Person in der anderen Instanz (nur ab Saisonstart der aktuellen Instanz, archivierte Termine für Nicht-Admins ausgeblendet, shift_excused_as_present) / Flutter: alle Termine bis heute ohne Saison-/Archiv-/Schicht-Filter → andere Prozentwerte. Ohne Wert zeigt Ionic „Nicht verfügbar“ in warning (person.page.ts:251-253), Flutter „n/a“ in grau.",
+   "v": "korrigiert"
+  },
+  "terms/terms.page#logic-e0824f5f": {
+   "sev": "niedrig",
+   "n": "Zusammenfassung der Klasse: Prüfungen, Datenschutz-Modal, refreshSession/signOut, updateUser terms_accepted_at und Toasts gleich. Einzige Abweichung (Ziel nach Zustimmung) steht und wird angeglichen bei nav-4df0f2ac; hier nicht doppelt gezählt.",
+   "v": "korrigiert"
+  },
+  "x-312c3d991b": {
+   "s": "na",
+   "n": "Zurückgenommen: widerlegt durch x-3fa2a4cf82 (Flutter-Launcher-Activity liegt im Namespace de.attendix.attendix, nicht io.stephanus.attendix). Die übrigen Punkte stehen als eigene Befunde da.",
+   "v": "korrigiert"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-288e4f1d": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:230",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:79"
+   ],
+   "v": "korrigiert",
+   "n": "Rollen/Bedingung gleich (Leitung, Thema geladen oder neu); gleiche Spalten (title, description, status, priority, responsible_person_id, default_duration, beim Anlegen tenant_id), Prüfung „Bitte einen Titel eingeben“, Toast „Gespeichert“. Abweichung bei der Dauer – Ionic: Number() + Math.round („7.5“ → 8) / Flutter: int.tryParse → bei Dezimaleingabe 0 → default_duration = null, eine bestehende Dauer wird gelöscht. Randfall (Android/Web; der iOS-Ziffernblock hat kein Komma). Der Unterschied beim Ladeoverlay gehört zum eigenen loading-Eintrag. [Umgestuft auf mittel: Eine bestehende Dauer wird beim Speichern gelöscht (Datenverlust).]"
+  }
+ },
+ "extra": [],
+ "extraOverride": [
+  {
+   "unit": "app-routing.module",
+   "title": "Beobachter kann Termin-Detail nicht öffnen",
+   "sev": "niedrig",
+   "why": "Beobachter erreichen /tabs/attendance/:id in Ionic nur per eingetippter URL (Liste, Themen-Tab und Nachrichten zeigen den Einstieg nur anderen Rollen); siehe zz-verify-app"
+  },
+  {
+   "unit": "attendance/att-list/att-list.page",
+   "title": "Ablaufplan-Viewer aus der Liste unvollständig",
+   "drop": true,
+   "why": "Duplikat von modal-c5dfef61 / modal-66d0050c"
+  },
+  {
+   "unit": "attendance/att-list/att-list.page",
+   "title": "Info-Sheet beim ersten Öffnen nur Spinner",
+   "drop": true,
+   "why": "Duplikat von modal-f5836528"
+  },
+  {
+   "unit": "selfService/signout/signout.page",
+   "title": "Ablaufplan ohne weitere Tagespläne",
+   "drop": true,
+   "why": "Duplikat von modal-ef7b9f1b und plan-viewer-Befund ‚Weitere Ablaufpläne fehlen im Viewer‘"
+  },
+  {
+   "unit": "services/user-registration/user-registration.service",
+   "title": "Zusammenführen: Rolle Verantwortlich statt Spieler",
+   "drop": true,
+   "why": "Duplikat von services/db.service ‚Zusammenführen: Rolle des übernommenen Kontos‘"
+  },
+  {
+   "unit": "tasks/my-tasks/my-tasks.component",
+   "title": "Karte aktualisiert sich",
+   "drop": true,
+   "why": "widerlegt: Ionic lädt die Karte bei jeder Rückkehr neu; ersetzt durch Befund aus zz-verify-b34"
+  }
+ ]
+}

@@ -1,0 +1,1888 @@
+{
+ "batch": "zz-verify5c-opus-07",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "extra": {
+    "id": "x-69dc9e912d",
+    "title": "Kein Auto-Scroll zum aktiven Programmpunkt",
+    "n": "Ionic: scrollToActive scrollt im Live-Modus einmal je Plan das aktive Feld in die Bildschirmmitte / Flutter: kein Scrollen",
+    "sev": "niedrig",
+    "ionic": "src/app/org-plan-public/org-plan-public.page.ts:310",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:86"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "extra": {
+    "id": "x-95e1a74a13",
+    "title": "Ladeanzeige",
+    "n": "Ionic: 3 Skeleton-Zeilen in Inset-Liste / Flutter: Spinner (AppSpinner)",
+    "sev": "niedrig",
+    "ionic": "src/app/org-plan-public/org-plan-public.page.html:27",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:297"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "extra": {
+    "id": "x-9860b49fd3",
+    "title": "Fehler beim Laden/Aktualisieren",
+    "n": "Ionic: Supabase-Fehler beim Laden der Pläne → leere Liste („Keine bevorstehenden Org-Pläne vorhanden.“) / Flutter: Fehler beim ersten Laden → „Link ungültig oder abgelaufen.“; Fehler beim Pull-to-Refresh → _loadPlans wirft ungefangen, _loading bleibt true (Spinner ohne Refresher), Polling-Timer bleibt gestoppt",
+    "sev": "niedrig",
+    "ionic": "src/app/org-plan-public/org-plan-public.page.ts:102",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:90",
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:100",
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:319"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "extra": {
+    "id": "x-ebdd8364a6",
+    "title": "Live-Modus vor Beginn",
+    "n": "Ionic: in den 5 min vor Start ist das erste Feld aktiv (hervorgehoben, Countdown bis Ende des ersten Feldes) / Flutter: vor Start kein aktives Feld (activeIndex −1), stattdessen in der Start-Zeile „beginnt in X Min.“",
+    "sev": "niedrig",
+    "ionic": "src/app/org-plan-public/org-plan-public.page.ts:293",
+    "f": [
+     "lib/core/utils/plan_utils.dart:455",
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:88"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/utils/plan_utils.dart",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "org-plans/org-plans.page.ts",
+    "line": 253,
+    "method": "OrgPlansPage.managePublicLink",
+    "cond": [
+     "(this.publicKey)"
+    ],
+    "header": {
+     "keys": [
+      "plans.publicLink"
+     ],
+     "de": [
+      "Öffentlicher Link"
+     ],
+     "literals": [],
+     "expr": "translate('plans.publicLink')"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "plans.copyLink"
+       ],
+       "de": [
+        "Link kopieren"
+       ],
+       "literals": [],
+       "expr": "translate('plans.copyLink')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { await navigator.clipboard.writeText(url); Utils.showToast(translate('plans.linkCopied'), 'success'); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "plans.revokeLink"
+       ],
+       "de": [
+        "Link widerrufen"
+       ],
+       "literals": [],
+       "expr": "translate('plans.revokeLink')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { await this.db.orgSvc.revokePublicPlanKey(org.id); this.publicKey = null; const org2 = this.db.organisation(); if (org2) { (org2 as any).public_plan_key = null; } Utils.showToast(translate('plans.revokeLink'), 'success'); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "src": "10c0708b",
+    "mbody": "df7e1a51",
+    "roleGuarded": true,
+    "id": "org-plans/org-plans.page#actionsheet-76cc5ad8"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:117"
+    ],
+    "n": "Header „Öffentlicher Link“, „Link kopieren“, „Link widerrufen“ (destruktiv, ohne Rückfrage), „Abbrechen“ gleich. Ionic: ohne Icons / Flutter: Icons copy, link_off",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "org-plans/org-plans.page.ts",
+    "line": 259,
+    "method": "OrgPlansPage.managePublicLink",
+    "cond": [
+     "(this.publicKey)"
+    ],
+    "call": "navigator.clipboard.writeText",
+    "args": "url",
+    "src": "c926664a",
+    "mbody": "df7e1a51",
+    "roleGuarded": true,
+    "id": "org-plans/org-plans.page#effect-bb4d0f68"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:120",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:166"
+    ],
+    "n": "Ionic: kopiert immer `https://attendix.de/org-plan?key=…` / Flutter: nativ gleich, im Web `<origin><path>#/org-plan?key=…` (planPublicUrl, Hash-URL der aktuellen Domain)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "org-plans/org-plans.page.ts",
+    "line": 284,
+    "method": "OrgPlansPage.managePublicLink",
+    "cond": [
+     "!(this.publicKey)"
+    ],
+    "call": "navigator.clipboard.writeText",
+    "args": "url",
+    "src": "c926664a",
+    "mbody": "df7e1a51",
+    "roleGuarded": true,
+    "id": "org-plans/org-plans.page#effect-bb4d0f68-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:138",
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:144",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:166"
+    ],
+    "n": "Neuer Schlüssel (16 Hex-Zeichen, Random.secure) wird in tenant_groups.public_plan_key gespeichert, Link kopiert, Toast „Link erstellt“ wie Ionic. Ionic: kopiert immer https://attendix.de/org-plan?key=… / Flutter: nativ gleich, im Web <origin><path>#/org-plan?key=… (Hash-URL der aktuellen Domain).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "org-plans/org-plans.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "ngOnInit:53-60",
+     "handleRefresh:62-65",
+     "loadPlans:67-101",
+     "loadAdHocPlans:103-108",
+     "getPlanTitle:110-115",
+     "getPlanDate:117-120",
+     "getPlanTime:122-125",
+     "getPlanTenantLabel:127-130",
+     "getFieldCount:132-135",
+     "openPlan:137-169",
+     "toggleOrgTab:171-174",
+     "deleteAdHocPlan:176-199",
+     "subscribeCalendar:201-220",
+     "showCalendarAlert:222-245",
+     "managePublicLink:247-287"
+    ],
+    "bodies": {
+     "ngOnInit": "e14418bd",
+     "handleRefresh": "5476094d",
+     "loadPlans": "0ae4fdae",
+     "loadAdHocPlans": "714ddb22",
+     "getPlanTitle": "2c15f78f",
+     "getPlanDate": "35eb4fb8",
+     "getPlanTime": "2b5b5086",
+     "getPlanTenantLabel": "05fb39a4",
+     "getFieldCount": "f292f44f",
+     "openPlan": "5bd38fe0",
+     "toggleOrgTab": "c5697d07",
+     "deleteAdHocPlan": "8d8cea1f",
+     "subscribeCalendar": "7d861801",
+     "showCalendarAlert": "36822c19",
+     "managePublicLink": "df7e1a51"
+    },
+    "id": "org-plans/org-plans.page#logic-26fb5248"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:178",
+     "lib/core/providers/plan_providers.dart:150",
+     "lib/core/providers/plan_providers.dart:129",
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:41"
+    ],
+    "n": "Laden (Termine is_org_plan der Org-Instanzen + Ad-hoc-Pläne org_id, Ad-hoc-Fehler → leer), Sortierung/Aufteilung kommend (heute+) / vergangen (absteigend), Titel/Datum „dd, TT.MM.JJJJ“/Punkte/Instanz-Label, Öffnen im Plan-Viewer mit Live an Plantag, Tab-Schalter (user_metadata showOrgPlansTab_<tenantId>), Ad-hoc-Löschen, Kalender, öffentlicher Link (16 Hex-Zeichen) gleich. Abweichungen im Fehler-/Ladezustand und bei Fehlermeldungen des öffentlichen Links: siehe extra.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart",
+    "lib/core/providers/plan_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "native",
+    "file": "org-plans/org-plans.page.ts",
+    "line": 238,
+    "method": "OrgPlansPage.showCalendarAlert",
+    "cond": [],
+    "plugin": "Browser",
+    "call": "open",
+    "args": "{ url: isPlatform('ios') ? 'https://support.apple.com/de-de/102301' : 'https://support.google.com/calendar/answer/37100?hl=de&co=GENIE.Platform%3DAndroid' }",
+    "src": "d8825ab2",
+    "mbody": "36822c19",
+    "id": "org-plans/org-plans.page#native-1a59de28"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:100",
+     "lib/core/services/native/native_file_service.dart:123"
+    ],
+    "n": "In-App-Browser (nativ) bzw. extern (Web) mit Apple-/Google-Hilfe-URL. Ionic: isPlatform('ios') ist auch im iPhone-Browser/PWA wahr → Apple-Anleitung / Flutter: `!kIsWeb && iOS` → in der PWA auf dem iPhone wird die Google-Anleitung geöffnet",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-plans/org-plans.page.ts",
+    "line": 271,
+    "method": "OrgPlansPage.managePublicLink",
+    "cond": [
+     "(this.publicKey)"
+    ],
+    "message": {
+     "keys": [
+      "plans.revokeLink"
+     ],
+     "de": [
+      "Link widerrufen"
+     ],
+     "literals": [],
+     "expr": "translate('plans.revokeLink')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "b05b27a5",
+    "mbody": "df7e1a51",
+    "roleGuarded": true,
+    "id": "org-plans/org-plans.page#toast-7283895c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:133"
+    ],
+    "n": "„Link widerrufen“ success nur nach erfolgreichem Update public_plan_key = null (tenant_groups, eq id); Ionic bei Fehler Service-Toast + throw, Flutter kein Erfolgs-Toast. Rollen gleich.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-plans/org-plans.page.ts",
+    "line": 260,
+    "method": "OrgPlansPage.managePublicLink",
+    "cond": [
+     "(this.publicKey)"
+    ],
+    "message": {
+     "keys": [
+      "plans.linkCopied"
+     ],
+     "de": [
+      "Link kopiert"
+     ],
+     "literals": [],
+     "expr": "translate('plans.linkCopied')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "6bebbfdc",
+    "mbody": "df7e1a51",
+    "roleGuarded": true,
+    "id": "org-plans/org-plans.page#toast-c19318c2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:130",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:159"
+    ],
+    "n": "Nur mit Organisation und vorhandenem Key: Sheet „Öffentlicher Link“ → „Link kopieren“ → „Link kopiert“ success. (Kopierte URL im Web: Flutter Origin + #/org-plan statt https://attendix.de/org-plan – eigenes Effekt-Item.)",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "extra": {
+    "id": "x-0828227b29",
+    "title": "Fehlermeldungen öffentlicher Link",
+    "n": "Ionic: Widerrufen fehlgeschlagen → Toast „Fehler beim Widerrufen des öffentlichen Links“; Erstellen fehlgeschlagen → „Fehler beim Erstellen des öffentlichen Links“ / Flutter: Widerrufen fehlgeschlagen → keine Meldung (nur Erfolgs-Toast entfällt); Erstellen fehlgeschlagen → „Fehler beim Erstellen des Links“",
+    "sev": "niedrig",
+    "ionic": "src/app/services/organisation/organisation.service.ts:335",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:133",
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:141"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "extra": {
+    "id": "x-50bd7526a2",
+    "title": "Ladezustand",
+    "n": "Ionic: 3 Skeleton-Zeilen, darunter bereits „Ablaufplanung öffnen“ / Flutter: Spinner, Aktionskasten erst nach dem Laden",
+    "sev": "niedrig",
+    "ionic": "src/app/org-plans/org-plans.page.html:43",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:250",
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:261"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "extra": {
+    "id": "x-b106a68ca5",
+    "title": "Fehler beim Laden der Org-Pläne",
+    "n": "Ionic: Toast „Fehler beim Laden der Organisationspläne“ (danger), Seite zeigt Leerzustand „Keine bevorstehenden Org-Pläne …“ sowie „Ablaufplanung öffnen“ und ggf. den Öffentlicher-Link-Hinweis / Flutter: kein Toast, statt der Liste „Fehler: <Meldung>“; „Ablaufplanung öffnen“, „Vergangene Pläne“ und der Öffentlicher-Link-Kasten fehlen im Fehlerzustand",
+    "sev": "niedrig",
+    "ionic": "src/app/services/organisation/organisation.service.ts:287",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:264"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 197,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditModalOpen\">",
+     "@if (editingField)",
+     "@else (not editingField.type === fieldTypes.SELECT)",
+     "@else (not editingField.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"editingField.defaultValue\"",
+    "bindings": [
+     "[label]=\"'extraFields.defaultValue' | transloco\"",
+     "[type]=\"editingField.type === fieldTypes.NUMBER ? 'number' : editingField.type === fieldTypes.DATE ? 'date' : 'text'\""
+    ],
+    "icons": [],
+    "keys": [
+     "extraFields.defaultValue"
+    ],
+    "de": [
+     "Standardwert"
+    ],
+    "literals": [],
+    "text": "[label]=\"'extraFields.defaultValue' | transloco\"",
+    "id": "org-settings/org-person-fields/org-person-fields.page#field-3207b9c2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+    ],
+    "n": "geänderter Zahl-Standardwert wird als Zahl gespeichert (leer = null wie ion-input type=number)",
+    "v": null,
+    "src": "zz-fixed-querschnitt-r5.json",
+    "flutterAt": "0f74333"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:26-32",
+     "ngOnInit:34-38",
+     "getFieldTypeName:40-50",
+     "addField:52-84",
+     "removeField:86-96",
+     "openEditField:98-105",
+     "closeEditFieldModal:107-123",
+     "handleReorder:125-127",
+     "updateOptions:129-134",
+     "onNewFieldTypeChanged:136-140",
+     "addNewOption:142-144",
+     "updateNewOption:146-149",
+     "removeNewOption:151-153",
+     "addEditOption:155-158",
+     "updateEditOption:160-163",
+     "removeEditOption:165-167",
+     "save:169-193",
+     "goBack:195-197",
+     "emptyField:199-210",
+     "toFieldId:212-214"
+    ],
+    "bodies": {
+     "constructor": "98217c79",
+     "ngOnInit": "fc223e5f",
+     "getFieldTypeName": "d8f8c194",
+     "addField": "a559d72d",
+     "removeField": "5a4ef672",
+     "openEditField": "29f097e5",
+     "closeEditFieldModal": "d7ab81b3",
+     "handleReorder": "eebb2134",
+     "updateOptions": "e4704f5e",
+     "onNewFieldTypeChanged": "de5ec186",
+     "addNewOption": "bc9198e9",
+     "updateNewOption": "f644e337",
+     "removeNewOption": "aa0aba9d",
+     "addEditOption": "c21d8ca4",
+     "updateEditOption": "4fc3e5b8",
+     "removeEditOption": "d8812e5b",
+     "save": "3d81f814",
+     "goBack": "828a52e2",
+     "emptyField": "e16f6fa3",
+     "toFieldId": "d1a28e09"
+    },
+    "id": "org-settings/org-person-fields/org-person-fields.page#logic-b640ed70"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:45",
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:94",
+     "lib/core/providers/plan_providers.dart:252",
+     "lib/data/repositories/org_plan_repository.dart:260",
+     "lib/data/repositories/org_plan_repository.dart:304"
+    ],
+    "n": "Laden aus organisation.additional_fields, Admin-Recht (Rolle ADMIN), ID-Bildung org_<orgId>_<name>, Löschen mit Rückfrage, Umsortieren, Speichern (Validierung, update additional_fields, Löschen der Werte gelöschter Felder in tenant_group_person_fields) gleich. updateOptions ist in Ionic ungenutzt (toter Code). Abweichungen: Standardwerte beim Typwechsel und Bearbeiten nicht-textueller Standardwerte (siehe field-Items), Fehlermeldungen beim Speichern (extra).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart",
+    "lib/core/providers/plan_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "line": 196,
+    "method": "OrgPersonFieldsPage.goBack",
+    "cond": [],
+    "via": "navController.back",
+    "to": "",
+    "src": "1c595136",
+    "mbody": "828a52e2",
+    "id": "org-settings/org-person-fields/org-person-fields.page#nav-e3374715"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:166"
+    ],
+    "n": "Navigator.maybePop → zurück zu Organisationseinstellungen",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "line": 75,
+    "method": "OrgPersonFieldsPage.addField",
+    "cond": [
+     "(!field.options.length)",
+     "(field.type === FieldType.SELECT)"
+    ],
+    "message": {
+     "keys": [
+      "orgFields.addOption"
+     ],
+     "de": [
+      "Bitte füge mindestens eine Auswahloption hinzu."
+     ],
+     "literals": [],
+     "expr": "translate('orgFields.addOption')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "b6fa6750",
+    "mbody": "a559d72d",
+    "roleGuarded": true,
+    "id": "org-settings/org-person-fields/org-person-fields.page#toast-04d937da"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:356-359",
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:153-157"
+    ],
+    "n": "Nur Admin (Plus deaktiviert für Verantwortlich wie Ionic [disabled]=!isSuperAdmin); Auswahlfeld ohne nicht-leere Option → „Bitte füge mindestens eine Auswahloption hinzu.“ danger, Sheet bleibt offen.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "line": 177,
+    "method": "OrgPersonFieldsPage.save",
+    "cond": [
+     "(field.type === FieldType.SELECT && !(field.options ?? []).length)"
+    ],
+    "message": {
+     "keys": [
+      "orgFields.needsOptions"
+     ],
+     "de": [
+      "Das Auswahlfeld „{name}“ benötigt Optionen."
+     ],
+     "literals": [],
+     "expr": "translate('orgFields.needsOptions', { name: field.name })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "88fe0719",
+    "mbody": "3d81f814",
+    "roleGuarded": true,
+    "id": "org-settings/org-person-fields/org-person-fields.page#toast-4bf625f4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:101"
+    ],
+    "n": "save nur Admin (Guard + Haken deaktiviert in beiden); „Das Auswahlfeld „{name}“ benötigt Optionen.“ danger.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "line": 56,
+    "method": "OrgPersonFieldsPage.addField",
+    "cond": [
+     "(!organisationId || !name)"
+    ],
+    "message": {
+     "keys": [
+      "extraFields.invalidName"
+     ],
+     "de": [
+      "Bitte gib einen gültigen Namen für das Zusatzfeld ein."
+     ],
+     "literals": [],
+     "expr": "translate('extraFields.invalidName')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "67b9ce9f",
+    "mbody": "a559d72d",
+    "roleGuarded": true,
+    "id": "org-settings/org-person-fields/org-person-fields.page#toast-77469d60"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:347-351",
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:153-157"
+    ],
+    "n": "Nur Admin. Leerer (getrimmter) Name → „Bitte gib einen gültigen Namen für das Zusatzfeld ein.“ danger, Sheet bleibt offen. Fall „ohne Organisation“ unerreichbar (Plus nur mit org.id).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "line": 173,
+    "method": "OrgPersonFieldsPage.save",
+    "cond": [
+     "(!field.name.trim() || !field.id.startsWith(`org_${this.db.organisation()?.id}_`))"
+    ],
+    "message": {
+     "keys": [
+      "orgFields.invalid"
+     ],
+     "de": [
+      "Ungültige Organisations-Zusatzfelder."
+     ],
+     "literals": [],
+     "expr": "translate('orgFields.invalid')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "1f6a5fcc",
+    "mbody": "3d81f814",
+    "roleGuarded": true,
+    "id": "org-settings/org-person-fields/org-person-fields.page#toast-89565647"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:97"
+    ],
+    "n": "„Ungültige Organisations-Zusatzfelder.“",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "line": 62,
+    "method": "OrgPersonFieldsPage.addField",
+    "cond": [
+     "(this.fields.some(field => field.id === id))"
+    ],
+    "message": {
+     "keys": [
+      "orgFields.nameExists"
+     ],
+     "de": [
+      "Ein Zusatzfeld mit diesem Namen existiert bereits."
+     ],
+     "literals": [],
+     "expr": "translate('orgFields.nameExists')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "235ec636",
+    "mbody": "a559d72d",
+    "roleGuarded": true,
+    "id": "org-settings/org-person-fields/org-person-fields.page#toast-a15cd8e0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:61",
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:352"
+    ],
+    "n": "Behoben (#307): Namensprüfung (orgFieldId wie Ionic org_<orgId>_<name>) läuft im Sheet vor dem Schließen; Toast „Ein Zusatzfeld mit diesem Namen existiert bereits.“ (rot), Sheet bleibt mit allen Eingaben offen.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "line": 189,
+    "method": "OrgPersonFieldsPage.save",
+    "cond": [],
+    "message": {
+     "keys": [
+      "orgFields.saved"
+     ],
+     "de": [
+      "Organisations-Zusatzfelder gespeichert."
+     ],
+     "literals": [],
+     "expr": "translate('orgFields.saved')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "846a01eb",
+    "mbody": "3d81f814",
+    "roleGuarded": true,
+    "id": "org-settings/org-person-fields/org-person-fields.page#toast-ffb36bd8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:96-120",
+     "lib/core/providers/plan_providers.dart:288-293",
+     "lib/data/repositories/org_plan_repository.dart:304-316"
+    ],
+    "n": "Nur Admin; Prüfungen wie Ionic, dann Update tenant_groups.additional_fields (eq id) + Löschen tenant_group_person_fields (tenant_group, field_id in entfernte), danach „Organisations-Zusatzfelder gespeichert.“ success.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "extra": {
+    "id": "x-9eb577887f",
+    "title": "Fehlermeldung beim Speichern",
+    "n": "Ionic: „Fehler beim Speichern der Organisations-Zusatzfelder“ bzw. „Fehler beim Löschen der gemeinsamen Zusatzfeldwerte“ (danger) / Flutter: einheitlich „Fehler beim Speichern“",
+    "sev": "niedrig",
+    "ionic": "src/app/services/organisation/organisation.service.ts:21",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:116"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:21-24",
+     "ngOnInit:26-32",
+     "addDefaultField:36-78",
+     "changeDefaultField:80-122",
+     "removeDefaultField:124-128",
+     "handleDefaultFieldReorder:130-133",
+     "saveDefaultFields:135-137",
+     "addTemplate:141-166",
+     "renameTemplate:168-193",
+     "removeTemplate:195-205",
+     "toggleTemplate:207-209",
+     "saveTemplates:211-213",
+     "addOrgDefaultField:217-222",
+     "addExtraField:224-264",
+     "addNoteField:266-292",
+     "addSongPlaceholder:294-304",
+     "changeField:306-368",
+     "removeField:370-375",
+     "handleReorder:377-381",
+     "calculateTime:383-393",
+     "onStartTimeChange:395-398",
+     "updateTemplateEndPublic:400-402",
+     "updateTemplateEnd:404-406",
+     "computeEnd:408-417",
+     "templateDuration:419-426",
+     "trackByIndex:428-430"
+    ],
+    "bodies": {
+     "constructor": "38671061",
+     "ngOnInit": "565cfb52",
+     "addDefaultField": "241cb367",
+     "changeDefaultField": "ccb0df42",
+     "removeDefaultField": "32f847dd",
+     "handleDefaultFieldReorder": "363b9dae",
+     "saveDefaultFields": "db110f63",
+     "addTemplate": "2ae0ff48",
+     "renameTemplate": "ff77062f",
+     "removeTemplate": "d54ca2b5",
+     "toggleTemplate": "6d7eda5b",
+     "saveTemplates": "f20b9908",
+     "addOrgDefaultField": "0ccdced5",
+     "addExtraField": "c70c737a",
+     "addNoteField": "3762443b",
+     "addSongPlaceholder": "c6c526b6",
+     "changeField": "5016830b",
+     "removeField": "d3ddfef6",
+     "handleReorder": "0b412024",
+     "calculateTime": "dceef9c3",
+     "onStartTimeChange": "a9b6c4b9",
+     "updateTemplateEndPublic": "77f126c1",
+     "updateTemplateEnd": "34edcd24",
+     "computeEnd": "38413c61",
+     "templateDuration": "41acaf4b",
+     "trackByIndex": "2e14e025"
+    },
+    "id": "org-settings/org-planning-templates/org-planning-templates.page#logic-833a03a8"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:38",
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:248",
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:536"
+    ],
+    "n": "Gleich: Laden von default_fields/planning_templates der Organisation, Standardfelder anlegen (Name Pflicht, „Bitte einen Feldnamen eingeben.“)/bearbeiten/löschen (Wischen)/sortieren, Vorlagen anlegen (danach aufgeklappt)/umbenennen/löschen (Auswahl-Index wird nachgezogen), Feld/Notiz/Werk-Platzhalter („Werk Platzhalter n“, id song-placeholder-n, nicht bei Typ general)/Standardfelder einfügen, Uhrzeiten je Feld nur mit Startzeit, „Ende ca.“, Dauer „{h} h {m} min“, Speichern nach jeder Änderung in tenant_groups. Abweichungen siehe extra (Zeitformat/end beim Speichern, Programmblock-Funktionen, Fehlertext, Langdruck-Menü, Button „Updaten“ statt „Speichern“ im Feld-Dialog).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "extra": {
+    "id": "x-1faf0b8269",
+    "title": "Programmblöcke in Vorlagen",
+    "n": "Ionic: Vorlagenfelder sind eine flache Liste, Wisch-Option nur Löschen / Flutter: gemeinsamer PlanFieldsEditor bietet zusätzlich „Einrücken/Ausrücken“ (groupId), Block-Köpfe mit Block-Optionen und „Unterpunkt hinzufügen“ – Vorlagen können Programmblöcke enthalten.",
+    "sev": "niedrig",
+    "ionic": "src/app/org-settings/org-planning-templates/org-planning-templates.page.html:139",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:549",
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:246"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "extra": {
+    "id": "x-27217fab1f",
+    "title": "Zusätzlicher Bedienweg Vorlage",
+    "n": "Ionic: Umbenennen/Löschen nur über Wisch-Optionen / Flutter besser: zusätzlich Langdruck auf die Vorlage öffnet Action-Sheet „Vorlage umbenennen“/„Löschen“.",
+    "sev": "niedrig",
+    "ionic": "src/app/org-settings/org-planning-templates/org-planning-templates.page.html:91",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:447"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "extra": {
+    "id": "x-5dfb4436f3",
+    "title": "Startzeit-Format und end beim Speichern",
+    "n": "Ionic: ion-datetime schreibt tpl.time als ISO-Datum-Zeit (YYYY-MM-DDTHH:mm…), end bleibt '' (templateEnds nur lokal) / Flutter: schreibt time als „HH:mm“ und bei jedem Speichern end = berechnetes Ende „HH:mm“ in jede Vorlage; Leser beider Apps akzeptieren beide Formate, Ionic applyTemplate nutzt end nicht.",
+    "sev": "niedrig",
+    "ionic": "src/app/org-settings/org-planning-templates/org-planning-templates.page.html:109",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:43",
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:261"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "extra": {
+    "id": "x-7ea8e45361",
+    "title": "Feld-Dialog in Vorlagen: Button-Text",
+    "n": "Ionic changeField (Vorlagenfeld bearbeiten): Bestätigen-Button „Speichern“ / Flutter PlanFieldsEditor._editField: „Updaten“ (planning.update); Titel/Labels sonst gleich.",
+    "sev": "niedrig",
+    "ionic": "src/app/org-settings/org-planning-templates/org-planning-templates.page.ts:348",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:171"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "ionic": {
+    "ts": "org-settings/org-planning-templates/org-planning-templates.page.ts",
+    "html": "org-settings/org-planning-templates/org-planning-templates.page.html"
+   },
+   "extra": {
+    "id": "x-e08795a22d",
+    "title": "Fehlertext beim Speichern",
+    "n": "Ionic: Toast „Fehler beim Speichern der Planvorlagen“ bzw. „Fehler beim Speichern der Standardfelder“ (Service) / Flutter: Toast „Fehler beim Speichern“.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/organisation/organisation.service.ts:355",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:40",
+     "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:47"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-settings.page.html",
+    "line": 144,
+    "cond": [
+     "@if (db.organisation())",
+     "@if (isAdmin)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "routerLink": "/tabs/settings/handover",
+     "lines": "none"
+    },
+    "events": [],
+    "link": "/tabs/settings/handover",
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "swap-horizontal-outline"
+    ],
+    "keys": [
+     "handover.title"
+    ],
+    "de": [
+     "Personenübergabe"
+    ],
+    "literals": [],
+    "text": "{{ 'handover.title' | transloco }}",
+    "id": "org-settings/org-settings.page#action-973a2bad"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:261",
+     "lib/core/router/app_router.dart:177"
+    ],
+    "n": "Admin + Verantwortlich; /settings/handover ebenso admin/verantwortlich-geschützt.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-settings.page.html",
+    "line": 157,
+    "cond": [
+     "@if (db.organisation())",
+     "@if (isAdmin && linkedTenants.length > 0)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "routerLink": "/tabs/settings/org-settings/songs",
+     "lines": "none"
+    },
+    "events": [],
+    "link": "/tabs/settings/org-settings/songs",
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "search-outline"
+    ],
+    "keys": [
+     "orgSongs.title",
+     "orgSongs.entryHint"
+    ],
+    "de": [
+     "Werke in der Organisation suchen",
+     "Werke anderer Instanzen finden und übernehmen"
+    ],
+    "literals": [],
+    "text": "{{ 'orgSongs.title' | transloco }} {{ 'orgSongs.entryHint' | transloco }}",
+    "id": "org-settings/org-settings.page#action-fd83ac3d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:271"
+    ],
+    "n": "Admin + Verantwortlich mit verknüpften Instanzen; Ziel /settings/org-settings/songs.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 227,
+    "method": "OrgSettingsPage.deleteOrganisation",
+    "cond": [],
+    "header": {
+     "keys": [
+      "org.unlink"
+     ],
+     "de": [
+      "Organisation von Instanz trennen?"
+     ],
+     "literals": [],
+     "expr": "translate('org.unlink')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "org.unlinkMessage"
+     ],
+     "de": [
+      "Möchtest du die Organisation „{name}“ wirklich von der Instanz trennen?"
+     ],
+     "literals": [],
+     "expr": "translate('org.unlinkMessage', { name: org.name })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "org.unlinkButton"
+       ],
+       "de": [
+        "Trennen"
+       ],
+       "literals": [],
+       "expr": "translate('org.unlinkButton')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { await this.db.unlinkTenantFromOrganisation(org.id); this.db.organisation.set(null); Utils.showToast(translate('org.unlinked'), 'success'); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "77b7a89d",
+    "mbody": "c9637f85",
+    "roleGuarded": true,
+    "id": "org-settings/org-settings.page#alert-49a6136a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:44-58",
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:180-185",
+     "lib/data/repositories/organisation_repository.dart:91"
+    ],
+    "n": "Eintrag nur bei isSuperAdmin (Admin) in beiden. „Organisation von Instanz trennen?“, „Möchtest du die Organisation „{name}“ wirklich…“, Abbrechen/„Trennen“ (destruktiv); löscht tenant_group_tenants (tenant_id + tenant_group) und die leere Organisation, Toast „org.unlinked“.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/organisation_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 45,
+    "method": "OrgSettingsPage.openOrganisationAlert",
+    "cond": [
+     "(organisations.length)"
+    ],
+    "header": {
+     "keys": [
+      "org.select"
+     ],
+     "de": [
+      "Organisation auswählen"
+     ],
+     "literals": [],
+     "expr": "translate('org.select')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "org.choose"
+       ],
+       "de": [
+        "Auswählen"
+       ],
+       "literals": [],
+       "expr": "translate('org.choose')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (data: Organisation) => { if (data) { const loading = await Utils.getLoadingElement(); loading.present(); try { await this.db.linkTenantToOrganisation(this.db.tenant().id, data); Utils.showToast(translate('org.selected'), 'success');…"
+     },
+     {
+      "text": {
+       "keys": [
+        "org.createNew"
+       ],
+       "de": [
+        "Neue Organisation erstellen"
+       ],
+       "literals": [],
+       "expr": "translate('org.createNew')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { alert.dismiss(); this.openCreateOrganisationAlert(); }"
+     }
+    ],
+    "inputs": [
+     {
+      "expr": "organisations.map((org: Organisation, index: number) => ({ type: 'radio', checked: index === 0, label: org.name, value:…",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "226c57ee",
+    "mbody": "ad849673",
+    "roleGuarded": true,
+    "id": "org-settings/org-settings.page#alert-d66bdd77"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:30",
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:158"
+    ],
+    "n": "Nur Admin ohne Organisation („Organisation erstellen oder verknüpfen“ nur bei isSuperAdmin in beiden). „Organisation auswählen“, Radioliste der Orgs aus Instanzen mit Rolle 1/5 (erste vorausgewählt), „Abbrechen“/„Auswählen“/„Neue Organisation erstellen“; ohne Orgs direkt „Organisation erstellen“. Nuance: Ladefehler → Ionic nur Fehler-Toast, Flutter Erstellen-Dialog.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 155,
+    "method": "OrgSettingsPage.createGemeindeAppKey",
+    "cond": [],
+    "header": {
+     "keys": [
+      "org.gaKeyHeader"
+     ],
+     "de": [
+      "Verbindungsschlüssel"
+     ],
+     "literals": [],
+     "expr": "translate('org.gaKeyHeader')"
+    },
+    "subHeader": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "key"
+    },
+    "message": {
+     "keys": [
+      "org.gaKeyMessage"
+     ],
+     "de": [
+      "Nur jetzt sichtbar. Trag ihn in der Gemeinde App unter Mehr › Ablaufpläne ein."
+     ],
+     "literals": [],
+     "expr": "translate('org.gaKeyMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "org.gaCopy"
+       ],
+       "de": [
+        "Kopieren"
+       ],
+       "literals": [],
+       "expr": "translate('org.gaCopy')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { navigator.clipboard?.writeText(key); Utils.showToast(translate('org.gaCopied'), 'success'); return false; }"
+     },
+     {
+      "text": {
+       "keys": [
+        "common.close"
+       ],
+       "de": [
+        "Schließen"
+       ],
+       "literals": [],
+       "expr": "translate('common.close')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "de03e5c3",
+    "mbody": "ed1b85c6",
+    "roleGuarded": true,
+    "id": "org-settings/org-settings.page#alert-eca98d48"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:94"
+    ],
+    "n": "Nur Admin + fecg_link_enabled (Ionic showGemeindeApp, Flutter isSuperAdmin && PlanBeamer.gemeindeAppLinked). Nach Speichern von Hash/Hint: „Verbindungsschlüssel“, Schlüssel (atx_+48 hex, Flutter monospace), „Nur jetzt sichtbar…“, „Kopieren“ (bleibt offen) / „Schließen“.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "org-settings/org-settings.page.html",
+    "line": 181,
+    "cond": [
+     "@if (db.organisation())",
+     "@if (isSuperAdmin && linkedTenants.length > 0)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "action-sheet",
+     "slot": "end"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"selectedSongSourceTenantId\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"null\"",
+      "keys": [
+       "org.noneOwnSongs"
+      ],
+      "de": [
+       "Keine (eigene Werke)"
+      ],
+      "literals": [],
+      "text": "{{ 'org.noneOwnSongs' | transloco }}"
+     },
+     {
+      "value": "\"t.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ t.shortName }}"
+     }
+    ],
+    "keys": [
+     "org.noneOwnSongs"
+    ],
+    "de": [
+     "Keine (eigene Werke)"
+    ],
+    "literals": [],
+    "text": "{{ 'org.noneOwnSongs' | transloco }} {{ t.shortName }}",
+    "id": "org-settings/org-settings.page#field-cfa42488"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:94",
+     "lib/data/repositories/song_repository.dart:402"
+    ],
+    "n": "Nur Admin. Optionen „Keine (eigene Werke)“ + Kurznamen, Action-Sheet (iOS), Bestätigung beim Deaktivieren, schreibt tenants.song_source_tenant_id (id = eigene Instanz), Toast „gespeichert“. Speichern zeigt Inline-Spinner statt Overlay (eigenes loading-Item).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 59,
+    "method": "OrgSettingsPage.openOrganisationAlert",
+    "cond": [
+     "(data)",
+     "(organisations.length)"
+    ],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "ad849673",
+    "roleGuarded": true,
+    "id": "org-settings/org-settings.page#loading-fa858e41"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:70"
+    ],
+    "n": "Ionic: blockierendes Lade-Overlay während des Verknüpfens / Flutter: kein Overlay, wartet ohne Anzeige.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:23-27",
+     "ngOnInit:29-39",
+     "openOrganisationAlert:41-88",
+     "openCreateOrganisationAlert:90-123",
+     "get showGemeindeApp:126-128",
+     "toggleBeamerFiles:130-136",
+     "createGemeindeAppKey:139-172",
+     "confirm:174-186",
+     "renameOrg:188-221",
+     "deleteOrganisation:223-244",
+     "openLinkPersons:246-254",
+     "saveSongSync:256-273",
+     "confirmDeactivation:275-287"
+    ],
+    "bodies": {
+     "constructor": "f2ab55b8",
+     "ngOnInit": "17e46f60",
+     "openOrganisationAlert": "ad849673",
+     "openCreateOrganisationAlert": "53b08e21",
+     "get showGemeindeApp": "935cf5db",
+     "toggleBeamerFiles": "cb871ef1",
+     "createGemeindeAppKey": "ed1b85c6",
+     "confirm": "f6b411ba",
+     "renameOrg": "76b2378e",
+     "deleteOrganisation": "c9637f85",
+     "openLinkPersons": "befec0b6",
+     "saveSongSync": "e2a28fa6",
+     "confirmDeactivation": "fd37cb0f"
+    },
+    "id": "org-settings/org-settings.page#logic-6f27dc28"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:127",
+     "lib/core/providers/organisation_providers.dart:39"
+    ],
+    "n": "Gleich: isSuperAdmin = Rolle Admin, isAdmin = Admin/Verantwortlicher, verknüpfte Instanzen der Organisation (ohne eigene), Abschnitts-Sichtbarkeit, Org-Auswahl/-Erstellung, Umbenennen, Trennen (löscht Org ohne Instanzen), Gemeinde-App-Schalter und Schlüssel (atx_ + 24 Zufallsbytes hex, SHA-256-Hash + letzte 4 Zeichen), Werk-Synchronisierung mit Rückfrage beim Deaktivieren. Abweichungen siehe extra (Fehlertexte, Aktualisierung der Instanzliste).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-settings.page.html",
+    "line": 202,
+    "cond": [
+     "@if (db.organisation())",
+     "@if (linkedTenants.length > 0)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "org.thisTenant"
+    ],
+    "de": [
+     "Diese Instanz"
+    ],
+    "literals": [],
+    "text": "{{ 'org.thisTenant' | transloco }}",
+    "id": "org-settings/org-settings.page#text-03183d75"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:287"
+    ],
+    "n": "„Diese Instanz“; gleiche Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-settings.page.html",
+    "line": 171,
+    "cond": [
+     "@if (db.organisation())",
+     "@if (isSuperAdmin && linkedTenants.length > 0)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "org.songSync"
+    ],
+    "de": [
+     "Werk-Synchronisierung"
+    ],
+    "literals": [],
+    "text": "{{ 'org.songSync' | transloco }}",
+    "id": "org-settings/org-settings.page#text-372954be"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:280",
+     "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:117"
+    ],
+    "n": "Nur Admin + verknüpfte Instanzen (OrgSongSyncSection) – gleich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  }
+ ]
+}

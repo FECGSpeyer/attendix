@@ -1,0 +1,384 @@
+{
+ "batch": "zz-verify6-sonnet-28",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "settings/auto-messages/rule/auto-message-rule.page#text-0e19135e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:709-710"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-0f142178": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:800-805"
+   ],
+   "v": "bestätigt",
+   "n": "Nur beim ersten Termin, nur wenn erfasst und sendAt vorhanden; 'TT.MM.JJJJ, HH:mm' in Ortszeit."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-0feada82": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:640-653"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-115b7e1e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:658"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-15e0e4b5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:794-799"
+   ],
+   "v": "bestätigt",
+   "n": "Plural =0/one/other wie Ionic."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-1df8701c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:594"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-1fd81b04": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:731"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-2676777b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:481-485"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-2d04584b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:734"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-2ea3e80a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:714"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-36aa01c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:873"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-3f080ffa": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:411"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-4eef9834": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:788-792"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-5e0e3b93": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:862"
+   ],
+   "v": "bestätigt",
+   "n": "Kachel 'Personen angeschrieben' = Summe recipient_count der Läufe mit Status sent, wie totals.sent."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-5e3550a7": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:583-587"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-5f839d06": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:815"
+   ],
+   "v": "bestätigt",
+   "n": "Gruppenname aus groupsProvider, leer wenn unbekannt - wie Ionic groupName."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-605dd4f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:863"
+   ],
+   "v": "bestätigt",
+   "n": "Kachel 'gelesen' = Summe der Gelesen der sent-Läufe, wie totals.read."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-648a41a3": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:816"
+   ],
+   "v": "bestätigt",
+   "n": "'· nur E-Mail' bei !app && email, per ' · ' hinter Gruppenname. Rollen: Seite nur Admin/Verantwortlich (Route-Guard app_router.dart:179), wie Ionic."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-67638bdf": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:864"
+   ],
+   "v": "bestätigt",
+   "n": "Kachel 'Antworten' = Summe der Antworten der sent-Läufe, wie totals.responses."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-6ad37b5c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:821-826"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-7ad6028c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:503-507"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-8c5c58ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:775"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-946e1029": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:812"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-98712f30": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:782"
+   ],
+   "v": "bestätigt",
+   "n": "'Titel · TT.MM.JJJJ' + ' · Startzeit' nur mit Startzeit."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-99a9cfb0": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:434"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-9c429bcd": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:488"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-9dc55767": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:449"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-a48abb79": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:524"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-ad39a8c9": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:581"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-ad6a48bc": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:360"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-b069a66d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:466"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-b324328d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:862"
+   ],
+   "v": "bestätigt",
+   "n": "Kachel mit totals.sent, gleiche Berechnung."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-bcc226f6": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:817"
+   ],
+   "v": "bestätigt",
+   "n": "'· nicht erreichbar' bei !app && !email, Rollen wie text-648a41a3."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-d31f0533": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:387"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-d67231b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:830"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-f169770b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:527-546"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-f57382c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:683"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-f6a959cd": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:550"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-f6ee86c6": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:448"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-f8541de1": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:863"
+   ],
+   "v": "bestätigt",
+   "n": "Kachel-Label 'gelesen'."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-fc73bc02": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:383"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-fd68f1a2": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:864"
+   ],
+   "v": "bestätigt",
+   "n": "Kachel-Label 'Antworten'."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#toast-34d74721": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:264"
+   ],
+   "v": "bestätigt",
+   "n": "Erfolgs-Toast 'autoMessagesSaved' nach Speichern, danach pop zur Liste."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#toast-3fda15ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:267"
+   ],
+   "v": "bestätigt",
+   "n": "Fehler-Toast 'autoMessagesSaveFailed' (danger) beim Speichern; Löschfehler siehe nächster Eintrag."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#toast-6aab2a50": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:291"
+   ],
+   "v": "bestätigt",
+   "n": "Fehler-Toast beim Löschen nach Bestätigungsdialog; gleicher Text wie Ionic."
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#toast-6b7dde03": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:236-255"
+   ],
+   "n": "Flutter besser: gleiche Prüfungen/Reihenfolge (Name, Status, Kanal, Text), erster Fehler als Warn-Toast. Ionic akzeptiert beim eigenen Text einen Body mit nur Leerzeichen (prüft nur auf \"text\"-Knoten) / Flutter verlangt nicht-leeren Text (TiptapConverter.hasText). Nur strengere Validierung mit Hinweis, nichts geht verloren.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-14d154d9": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1211-1230",
+    "lib/features/settings/presentation/pages/files_page.dart:318-324"
+   ],
+   "n": "„Root“-Breadcrumb führt zur Wurzel, gleiche Funktion. Ionic: openRoot behält den Suchbegriff / Flutter: _navigateTo leert das Suchfeld. Kein Funktionsverlust.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-26c5be9a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1101"
+   ],
+   "n": "⋮-Menü-Button in der Toolbar (nicht im Auswahlmodus) öffnet Menü mit Upload/Ordner/Auswählen/Teilen/Sortierung wie Ionic; nur mit Zugriff (Ionic verlässt die Seite sonst).",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-2b16d7a4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1122-1128"
+   ],
+   "n": "Text 'Link zu diesem Ordner teilen' / 'Link zur Dateiablage teilen' je nach Pfad, für alle Rollen sichtbar wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#action-37361b16": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:1356-1420",
+    "lib/features/settings/presentation/pages/files_page.dart:942-1010",
+    "lib/features/settings/presentation/pages/files_page.dart:329-343"
+   ],
+   "n": "Zeile (Icon/Vorschaubild, Name, Größe + '· Geändert: dd.MM.yyyy, HH:mm'), ⋯-Menü mit gleichen Einträgen/Reihenfolge/Bedingungen (Telegram nur mit chat_id, Bearbeiten nur canEdit), Tap öffnet bzw. wählt aus. Ionic behält beim Öffnen eines Ordners den Suchbegriff / Flutter leert ihn.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

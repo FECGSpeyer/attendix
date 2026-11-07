@@ -1,0 +1,30 @@
+{
+  "batch": "zz-verify4-b09-people", "ionic": "1923d203", "flutter": "8004a44",
+  "items": {
+    "people/person/person.page#text-b7dada5f": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/late_warning_card.dart:56", "lib/features/people/presentation/pages/person_detail_page.dart:1702", "lib/features/people/presentation/pages/person_detail_page.dart:1856"],
+      "n": "Ionic !readOnly && isAdmin: readOnly = !isAdmin (Liste/Startseite) bzw. true im Archiv → sichtbar nur Admin/Verantwortlich bei nicht ausgetretenen Personen (auch Freigabe-Modus). Flutter canEdit = Admin/Verantwortlich && !left – gleich. Schwelle aus erster critical_rule mit Status Verspätet (sonst 999); Text 'Diese Person ist {n}x unentschuldigt zu spät gekommen.' mit fettem Zähler.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#action-f401ebe4": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:719", "lib/features/people/presentation/widgets/church_picker_sheet.dart:10"],
+      "n": "Kirchenfeld (auch aus Organisationsfeldern) mit Label Kirchenname / 'Nicht gelistet' / 'Bitte wählen'; Tap öffnet Auswahl mit Suche. Bearbeitbar nur Admin/Verantwortlich bei nicht ausgetretenen Personen (Ionic [disabled]=readOnly, Flutter editable: canEdit), für Lesende nur Anzeige – gleich.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#text-408e4921": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:215", "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:28", "lib/features/people/presentation/pages/person_detail_page.dart:1890"],
+      "n": "Fix #284 trägt: Instanzen des Personen-Accounts (tenantUsers.userId = appId), nur mit der aktuellen über tenant_group verknüpfte, ohne Rolle Beobachter (wie Ionic getTenantsFromUser/getLinkedTenants); h2 = longName. Sichtbar für jede Rolle, die die Person öffnen kann, nur mit Account – wie Ionic.",
+      "v": "bestätigt"
+    },
+    "people/person/person.page#text-a48aa58c": {
+      "s": "ok",
+      "f": ["lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:104", "lib/data/repositories/user_registration_repository.dart:47"],
+      "n": "Fix #284 trägt: Rollentext wie Utils.getRoleText (Admin, Mitglied, Beobachter, Helfer, Verantwortlicher, Elternteil, Stimmführer, Stimmführer & Helfer; NONE → Mitglied; Bewerber → Unbekannt).",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

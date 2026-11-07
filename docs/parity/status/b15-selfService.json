@@ -1,0 +1,1495 @@
+{
+ "batch": "b15-selfService",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "selfService/signout/signout.page#logic-382df5cb": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:66",
+    "lib/core/providers/signout_providers.dart:90",
+    "lib/core/providers/signout_providers.dart:168",
+    "lib/core/providers/duty_providers.dart:148",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:373",
+    "lib/data/repositories/player_absence_repository.dart:191",
+    "lib/features/self_service/presentation/pages/signout_page.dart:87"
+   ],
+   "n": "Laden/Aufteilen (aktuell/anstehend/vergangen), Prozent, Verspätungen, Dienst-Filter (applyDutyView/applyDutyLayout), Offene Dienste, Anmeldefelder, Aktionsblatt-Regeln, Pause/Abwesenheit, Notizen stimmen überein. Abweichungen siehe extra: Push-Öffnen ohne Dienst-Logik, Status-Pill ohne \"Bitte bestätigen\", Abwesenheit schreibt andere Zeilen, Pull-to-Refresh lädt Dienste nicht neu, Ablaufplan ohne weitere Tagespläne, kleinere Punkte.",
+   "sev": "hoch"
+  },
+  "selfService/signout/signout.page#loading-6042fa43": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:95"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay während setTenant + Navigation / Flutter: kein Overlay, Wechsel läuft ohne Sperre (bei Fehler Toast \"signoutFlutterSwitchTenantFailed\").",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#nav-abe2527f": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:110",
+    "lib/core/constants/enums.dart:137"
+   ],
+   "n": "Ionic Utils.getUrl(role) → /tabs/player | /tabs/parents | /tabs/signout; Flutter role.defaultRoute → /people | /parents | /signout (gleiche Ziele). Unbekannte Rolle: Ionic /register, Flutter /signout (Randfall)."
+  },
+  "selfService/signout/signout.page#effect-8c8a4f8d": {
+   "s": "ok",
+   "f": [
+    "lib/core/constants/enums.dart:137",
+    "lib/features/self_service/presentation/pages/signout_page.dart:104"
+   ]
+  },
+  "selfService/signout/signout.page#loading-3ab7973e": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:265",
+    "lib/core/providers/signout_providers.dart:284"
+   ],
+   "n": "Ionic: Lade-Overlay (max. 10 s) während Absage/Verspätung gespeichert wird / Flutter: kein blockierendes Overlay (submitSignout speichert im Hintergrund, danach Toast).",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#toast-2a800d7e": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:275"
+   ]
+  },
+  "selfService/signout/signout.page#alert-bf9b84ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:345",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:451"
+   ],
+   "n": "Dialog \"Notiz für Anmeldung\", Platzhalter \"Gib hier deine Notiz ein\", Abbrechen / Anmelden → handleSigninWithFields mit Notiz."
+  },
+  "selfService/signout/signout.page#toast-f428f7f6": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:339"
+   ]
+  },
+  "selfService/signout/signout.page#modal-dd81cc61": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:724",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:447"
+   ],
+   "n": "Sheet 0.75 mit Titel, Datum (dateFmt), Werken, Instrument; \"Ablaufplan öffnen\" nur bei hasPlan (Ionic canOpenPlan → openPlanViewer)."
+  },
+  "selfService/signout/signout.page#modal-2b19c5d0": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:21",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:249",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:354"
+   ],
+   "n": "Ionic UnavailabilityModalComponent (Vollbild-Modal, personId) / Flutter Vollbild-Seite mit personId; Neuladen über Invalidierung."
+  },
+  "selfService/signout/signout.page#toast-4119f982": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_actions.dart:79"
+   ],
+   "n": "Flutter zusätzlich Fehler-Toast svcConfirmFailed (Ionic zeigt ihn im Service)."
+  },
+  "selfService/signout/signout.page#toast-8c4e1e04": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_actions.dart:162"
+   ]
+  },
+  "selfService/signout/signout.page#toast-f3239a75": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_actions.dart:164"
+   ]
+  },
+  "selfService/signout/signout.page#toast-3dea23e3": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_actions.dart:168"
+   ]
+  },
+  "selfService/signout/signout.page#nav-fa2ccf4c": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:25",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:133"
+   ],
+   "n": "Ionic /tabs/settings/files?path=…&t=… (push) / Flutter push /settings/files?path=…."
+  },
+  "selfService/signout/signout.page#native-90a9db81": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1140",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:227"
+   ]
+  },
+  "selfService/signout/signout.page#effect-d259dd3f": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1108",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:239"
+   ],
+   "n": "Gleiche Logik: iOS (auch iOS-Browser) Auswahl Apple Karten / Google Maps, sonst Google Maps."
+  },
+  "selfService/signout/signout.page#effect-1e56ad93": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:447"
+   ]
+  },
+  "selfService/signout/signout.page#alert-4cca859e": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:355",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:451"
+   ]
+  },
+  "selfService/signout/signout.page#toast-ec5f8f8d": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:366"
+   ]
+  },
+  "selfService/signout/signout.page#effect-1e56ad93-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:508",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:421"
+   ]
+  },
+  "selfService/signout/signout.page#toast-dd39dbcc": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:457"
+   ]
+  },
+  "selfService/signout/signout.page#actionsheet-6737d9dc": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:373",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:461"
+   ],
+   "n": "Einträge, Reihenfolge und Filterregeln (Zusagen/Abmeldung zurücknehmen, Anmelden mit Notiz, Abmelden, Verspätung eintragen, Anmeldefelder anpassen, Notiz anpassen, Werke/Ablaufplan/Beschreibung/Anhang/Navigation/Dateiablage, \"Abbrechen\" rot) gleich. Ionic: Aktionsblatt ohne Kopf und ohne Icons / Flutter: Kopf mit Termin-Titel + Meta-Zeile und Icons je Eintrag. Randfall: \"Ablaufplan anzeigen\" Ionic bei share_plan && plan, Flutter nur wenn der Plan Felder hat.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#alert-1e78c190": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:564",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:677"
+   ],
+   "n": "Kopf = Feldname; Text/Ja-Nein/Optionen/Checkboxen; Anmelde-Modus nur \"Anmelden\" und nicht wegtippbar, Bearbeiten-Modus \"Abbrechen\"/\"Speichern\"."
+  },
+  "selfService/signout/signout.page#toast-36f88117": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:310",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:305"
+   ],
+   "n": "Einzelfeld-Dialog: gleicher Warn-Toast. Ionic: auch im Anmeldefelder-Modal (2+ Felder) Toast \"Bitte \"{field}\" ausfüllen\" / Flutter: dort roter Hinweistext im Sheet statt Toast.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#toast-dd2b303a": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:329"
+   ]
+  },
+  "selfService/signout/signout.page#modal-ef7b9f1b": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:716",
+    "lib/features/self_service/presentation/widgets/plan_viewer_sheet.dart:384",
+    "lib/data/repositories/sign_in_out_repository.dart:21"
+   ],
+   "n": "Ionic: PlanViewer bekommt attendance inkl. extra_plans/duration_days → bei mehrtägigen Terminen Tages-/Plan-Chips (heute vorausgewählt), Live-Modus nur im Zeitfenster (isLiveNow) / Flutter: extra_plans werden in \"Meine Termine\" weder geladen (kSignoutAttendanceColumns) noch übergeben → nur der erste Plan; Live-Modus startet an jedem Termintag (defaultLive = isToday). Vollbild wie Ionic.",
+   "sev": "hoch"
+  },
+  "selfService/signout/signout.page#native-f179cb3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:252",
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:18"
+   ]
+  },
+  "selfService/signout/signout.page#toast-f998f8b6": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:395"
+   ]
+  },
+  "selfService/signout/signout.page#toast-f735d008": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:115"
+   ],
+   "n": "Flutter Text \"Fehler: …\" (signoutFlutterError), rot."
+  },
+  "selfService/signout/signout.page#toast-e5ca1d58": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:251"
+   ],
+   "n": "In beiden Apps praktisch unerreichbar, weil der Button bei fehlenden Angaben deaktiviert ist."
+  },
+  "selfService/signout/signout.page#loading-45966010": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:59"
+   ],
+   "n": "Ionic: Lade-Overlay während Abwesenheit gespeichert und Termine entschuldigt werden / Flutter: kein blockierendes Overlay.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#toast-94e9b1fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:78",
+    "lib/features/people/presentation/widgets/planned_absences.dart:25"
+   ]
+  },
+  "selfService/signout/signout.page#alert-cf2e9968": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:248",
+    "lib/data/repositories/player_absence_repository.dart:228",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:184"
+   ],
+   "n": "Titel, Text, \"Abbrechen\"/\"Löschen\" (destruktiv) gleich. Wirkung abweichend: Ionic setzt nur Termine der geladenen anstehenden Liste zurück (in der Dienstplan-Ansicht nur \"Weitere Termine\", ohne nicht zugeteilte Dienste) / Flutter setzt alle eigenen kommenden person_attendances im Zeitraum mit Status Entschuldigt und Notiz = Grund zurück (siehe extra \"Abwesenheit: andere Zeilen\").",
+   "sev": "mittel"
+  },
+  "selfService/signout/signout.page#loading-19b27361": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:248"
+   ],
+   "n": "Ionic: Lade-Overlay beim Löschen der Abwesenheit / Flutter: kein blockierendes Overlay.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#toast-97b7c060": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:270"
+   ]
+  },
+  "selfService/signout/signout.page#alert-f9609962": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:120"
+   ],
+   "n": "Pausierung beenden / Text / Abbrechen + Reaktivieren; Historie \"Selbst reaktiviert\", paused=false, paused_until=null, wieder in kommende Termine."
+  },
+  "selfService/signout/signout.page#toast-479275a1": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:133"
+   ]
+  },
+  "selfService/signout/signout.page#action-92b05db6": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:165"
+   ]
+  },
+  "selfService/signout/signout.page#action-39d272cd": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:127",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:45"
+   ]
+  },
+  "selfService/signout/signout.page#popover-65a161dc": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:103",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:126"
+   ]
+  },
+  "selfService/signout/signout.page#action-9d141753": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:126",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:350",
+    "lib/features/self_service/presentation/pages/signout_page.dart:95"
+   ]
+  },
+  "selfService/signout/signout.page#text-77db81e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:132"
+   ]
+  },
+  "selfService/signout/signout.page#action-2c096895": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:139",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:82"
+   ]
+  },
+  "selfService/signout/signout.page#action-031946f4": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:145",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:120"
+   ]
+  },
+  "selfService/signout/signout.page#action-39d272cd-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:151"
+   ]
+  },
+  "selfService/signout/signout.page#modal-f2aa6151": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:983"
+   ],
+   "n": "Sheet halbe Höhe, Kopf \"Legende\", 6 Zeilen in gleicher Reihenfolge."
+  },
+  "selfService/signout/signout.page#text-e8bf457a": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1024",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1082"
+   ]
+  },
+  "selfService/signout/signout.page#text-3d03860d": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990"
+   ]
+  },
+  "selfService/signout/signout.page#text-7562e7f3": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990"
+   ]
+  },
+  "selfService/signout/signout.page#text-bd8d8b9d": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:991"
+   ]
+  },
+  "selfService/signout/signout.page#text-22bc62c7": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:991"
+   ]
+  },
+  "selfService/signout/signout.page#text-3498335e": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:992"
+   ]
+  },
+  "selfService/signout/signout.page#text-4b0cd214": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:992"
+   ]
+  },
+  "selfService/signout/signout.page#text-d8823545": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:993"
+   ]
+  },
+  "selfService/signout/signout.page#text-2737587f": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:993"
+   ]
+  },
+  "selfService/signout/signout.page#text-4add412e": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:994"
+   ]
+  },
+  "selfService/signout/signout.page#text-25f27460": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:994"
+   ]
+  },
+  "selfService/signout/signout.page#text-a2654379": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:995"
+   ]
+  },
+  "selfService/signout/signout.page#text-fb214f33": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:995"
+   ]
+  },
+  "selfService/signout/signout.page#embed-77581ed3": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:157"
+   ]
+  },
+  "selfService/signout/signout.page#text-62f375d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:217"
+   ]
+  },
+  "selfService/signout/signout.page#text-eb37ab2f": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:210"
+   ]
+  },
+  "selfService/signout/signout.page#text-77db81e5-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:268"
+   ]
+  },
+  "selfService/signout/signout.page#action-47659591": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:87",
+    "lib/features/self_service/presentation/pages/signout_page.dart:259"
+   ],
+   "n": "Ionic handleRefresh: getAttendances (inkl. loadOpenDuties → Dienst-Termine neu) + Aufgaben / Flutter _refresh: invalidiert signoutData, Person, Werke, Aufgaben, aber nicht upcomingDutyTermineProvider → \"Bitte bestätigen\", \"Offene Dienste\", \"Meine Dienste\", Kachel-Zähler bleiben nach Pull-to-Refresh veraltet.",
+   "sev": "mittel"
+  },
+  "selfService/signout/signout.page#action-cbdd0bb5": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:357"
+   ],
+   "n": "Ionic: Bild lädt nicht → Platzhalter-Avatar / Flutter: Platzhalter nur bei leerem img; bei kaputter URL bleibt der Kreis leer (kein onBackgroundImageError).",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#text-eb37ab2f-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:370"
+   ]
+  },
+  "selfService/signout/signout.page#text-22841d1b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:388"
+   ]
+  },
+  "selfService/signout/signout.page#text-d9438f20": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:403"
+   ]
+  },
+  "selfService/signout/signout.page#text-223aca41": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:405"
+   ]
+  },
+  "selfService/signout/signout.page#text-14785b63": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:413"
+   ]
+  },
+  "selfService/signout/signout.page#action-c24f2cc3": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:445",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:427"
+   ]
+  },
+  "selfService/signout/signout.page#action-51be7392": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:446"
+   ]
+  },
+  "selfService/signout/signout.page#action-313d3830": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:448"
+   ]
+  },
+  "selfService/signout/signout.page#action-ff28907b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:434",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:299"
+   ]
+  },
+  "selfService/signout/signout.page#action-5c9afb25": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:441",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:40"
+   ]
+  },
+  "selfService/signout/signout.page#action-299b3a28": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:449",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:268",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:317"
+   ],
+   "n": "Untertitel \"alles besetzt\" / \"1 offen\" / \"n offen\" gleich."
+  },
+  "selfService/signout/signout.page#text-d67f2672": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:87"
+   ]
+  },
+  "selfService/signout/signout.page#text-bafe7147": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:87",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:471"
+   ]
+  },
+  "selfService/signout/signout.page#text-1871da89": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:99",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:272"
+   ],
+   "n": "Ionic: Datumskachel (Wochentag + Tag) links / Flutter: keine Kachel, Datum steht als \"Di, 05.11.\" in der Textzeile.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#text-ed1a1b2e": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:99",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:272"
+   ],
+   "n": "Ionic: Datumskachel mit Tag / Flutter: keine Kachel, Tag in der Textzeile \"Di, 05.11. · 19:00 Uhr\".",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#text-d0cf994d": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:97"
+   ]
+  },
+  "selfService/signout/signout.page#text-76bcf174": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:99",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:278"
+   ],
+   "n": "Ionic getEventMeta(att, true, false): \"Di., 05.11.2026 · 19:00–21:00\" / Flutter _dateLine: \"Di, 05.11. · 19:00 Uhr\" (ohne Jahr, ohne Endzeit).",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#text-9cb90d02": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:101"
+   ]
+  },
+  "selfService/signout/signout.page#action-1978eaee": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:105",
+    "lib/features/duty/presentation/widgets/duty_actions.dart:70"
+   ]
+  },
+  "selfService/signout/signout.page#action-8cc3cbd4": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:111",
+    "lib/features/duty/presentation/widgets/duty_actions.dart:129"
+   ],
+   "n": "Grund-Auswahl (Abmeldung), Entschuldigt + understaffed-Hinweis, Toast \"Vielen Dank für deine rechtzeitige Abmeldung …\"."
+  },
+  "selfService/signout/signout.page#modal-bb6f0815": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:317"
+   ],
+   "n": "Sheet 0.75 wie Ionic."
+  },
+  "selfService/signout/signout.page#text-4ddd96dd": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:334"
+   ]
+  },
+  "selfService/signout/signout.page#action-8fd5a983": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:335"
+   ]
+  },
+  "selfService/signout/signout.page#text-3e9b3859": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:346"
+   ]
+  },
+  "selfService/signout/signout.page#text-9febe693": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:347"
+   ],
+   "n": "Ionic: nur dutyMeta \"19:00 · 1 von 2 besetzt\" (kein Datum im Modal) / Flutter: zusätzlich Datum vorne \"Di, 05.11. · …\".",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#action-e7fbeddd": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:348",
+    "lib/features/duty/presentation/widgets/duty_actions.dart:157"
+   ],
+   "n": "Ionic schließt das Modal nach Übernahme, wenn keine offenen Dienste mehr da sind; Flutter lässt es offen (siehe extra)."
+  },
+  "selfService/signout/signout.page#text-ffd9437f": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:341"
+   ]
+  },
+  "selfService/signout/signout.page#action-0ad28852": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:354"
+   ]
+  },
+  "selfService/signout/signout.page#modal-817fa88b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:299",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:61"
+   ],
+   "n": "Sheet 0.8 (mehrere Termine) / 0.6."
+  },
+  "selfService/signout/signout.page#action-b492506d": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:78"
+   ]
+  },
+  "selfService/signout/signout.page#text-9ddaf7b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:77"
+   ]
+  },
+  "selfService/signout/signout.page#action-38eb4831": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:87",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:29"
+   ],
+   "n": "PDF \"aktuelle_noten.pdf\" der eigenen Stimme (Chor: Chor (alle)); Warn-Toast wenn keine Noten."
+  },
+  "selfService/signout/signout.page#text-b04b96f3": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:175"
+   ],
+   "n": "Ionic Gruppenkopf \"05.11.2026 | Probe\" / Flutter \"Heute · Probe\", \"Morgen · …\" bzw. \"Mi, 5. Nov · Probe\" (DateHelper.getReadableDate).",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#action-79cc09bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:200",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:264"
+   ]
+  },
+  "selfService/signout/signout.page#action-50b441ab": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:252"
+   ]
+  },
+  "selfService/signout/signout.page#embed-c2ceeb43": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:278",
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:52"
+   ],
+   "n": "Nur bei aktivierter Teamorganisation."
+  },
+  "selfService/signout/signout.page#text-ed265ebd": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:177"
+   ]
+  },
+  "selfService/signout/signout.page#text-bf502373": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:291"
+   ]
+  },
+  "selfService/signout/signout.page#text-dc70bcdf": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:292"
+   ]
+  },
+  "selfService/signout/signout.page#action-6edb2695": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:293",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:183"
+   ]
+  },
+  "selfService/signout/signout.page#action-82c6a8f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:245",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:18"
+   ],
+   "n": "Ionic app-excuse-reason-picker → onExcuseConfirm; Flutter showExcuseReasonSheet → submitSignout (Inhalt der Auswahl eigene Unit)."
+  },
+  "selfService/signout/signout.page#modal-819b10ac": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:425"
+   ],
+   "n": "Ionic: Sheet 60 % mit Toolbar (\"Beschreibung\" + X) und quill-view, d. h. formatiertes HTML (fett, Listen, anklickbare Links) / Flutter: Sheet mit Griff, Titel als Text, Beschreibung per QuillUtils.stripHtml als reiner Text (Formatierung weg, Links nicht anklickbar).",
+   "sev": "mittel"
+  },
+  "selfService/signout/signout.page#text-24cd62e0": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:439"
+   ]
+  },
+  "selfService/signout/signout.page#action-5aeab82c": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:425"
+   ],
+   "n": "Ionic: X-Button in der Toolbar / Flutter: kein Schließen-Button, nur Wischen bzw. Tippen außerhalb.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#text-853f6c93": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:201"
+   ],
+   "n": "\"Anmeldefrist: … Uhr\" / \"Anmeldefrist abgelaufen\"."
+  },
+  "selfService/signout/signout.page#text-4d732655": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:203"
+   ]
+  },
+  "selfService/signout/signout.page#action-0547ed34": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:205"
+   ]
+  },
+  "selfService/signout/signout.page#action-81c2bdec": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:211"
+   ],
+   "n": "Öffnet den Plan-Viewer (Abweichung im Viewer siehe modal-ef7b9f1b)."
+  },
+  "selfService/signout/signout.page#action-9e318750": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:217"
+   ],
+   "n": "Öffnet die Beschreibung (Darstellungsabweichung siehe modal-819b10ac)."
+  },
+  "selfService/signout/signout.page#action-c1386577": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:223"
+   ]
+  },
+  "selfService/signout/signout.page#action-3dbfcf11": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:229"
+   ]
+  },
+  "selfService/signout/signout.page#action-58742e6e": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:235"
+   ]
+  },
+  "selfService/signout/signout.page#text-341d2a0e": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:130"
+   ]
+  },
+  "selfService/signout/signout.page#text-5aa30f5e": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:143"
+   ],
+   "n": "Ionic: Datumskachel (Wochentag) / Flutter: keine Kachel, Datum in der Textzeile \"Di, 05.11. · 19:00 Uhr\".",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#text-0a41e2ca": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:143"
+   ],
+   "n": "Ionic: Datumskachel (Tag) / Flutter: keine Kachel, Tag in der Textzeile.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#text-a25b156c": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:141"
+   ]
+  },
+  "selfService/signout/signout.page#text-4beefbd6": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:143",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:278"
+   ],
+   "n": "Ionic \"Di., 05.11.2026 · 19:00–21:00\" / Flutter \"Di, 05.11. · 19:00 Uhr\" (ohne Jahr/Endzeit).",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#text-35e2d1b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:149"
+   ]
+  },
+  "selfService/signout/signout.page#text-de14a933": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:150"
+   ]
+  },
+  "selfService/signout/signout.page#action-b5878c89": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:157",
+    "lib/features/duty/presentation/widgets/duty_actions.dart:129"
+   ]
+  },
+  "selfService/signout/signout.page#text-74a3b56c": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:170"
+   ]
+  },
+  "selfService/signout/signout.page#action-6dcae27f": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:173"
+   ]
+  },
+  "selfService/signout/signout.page#text-5a0ac94b": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:190"
+   ],
+   "n": "Ionic: Datumskachel links / Flutter: keine Kachel, \"Di, 05.11.\" am Anfang der Untertitelzeile.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#text-ceeea6ff": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:190"
+   ],
+   "n": "Ionic: Datumskachel (Tag) / Flutter: Tag in der Untertitelzeile.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#text-3e9b3859-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:189"
+   ]
+  },
+  "selfService/signout/signout.page#text-9febe693-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:190"
+   ]
+  },
+  "selfService/signout/signout.page#text-4dca8fd9": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:190"
+   ],
+   "n": "Ionic: \"Dringend\" rot und fett vor der Meta-Zeile / Flutter: \"Dringend\" als normaler Text nach dem Datum.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#action-1351f460": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:191"
+   ]
+  },
+  "selfService/signout/signout.page#text-ff2e0c87": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:183"
+   ]
+  },
+  "selfService/signout/signout.page#text-1914b2e8": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:205"
+   ]
+  },
+  "selfService/signout/signout.page#text-5f79bd8f": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:205"
+   ]
+  },
+  "selfService/signout/signout.page#action-afccefe5": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:211",
+    "lib/features/self_service/presentation/pages/signout_page.dart:305"
+   ],
+   "n": "Tippen → Aktionsblatt und Pill \"bestätigt\" gleich. Ionic: Datumskachel, Meta \"19:00–21:00 · Ort · mit Namen\" / Flutter: ohne Kachel, \"Di, 05.11. · 19:00 Uhr · mit Namen\" (ohne Ort, ohne Endzeit).",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#action-92b10fb3": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:237",
+    "lib/features/self_service/presentation/pages/signout_page.dart:295"
+   ]
+  },
+  "selfService/signout/signout.page#action-07592d89": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:245"
+   ]
+  },
+  "selfService/signout/signout.page#action-dd3099f2": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:251",
+    "lib/features/self_service/presentation/pages/signout_page.dart:299"
+   ]
+  },
+  "selfService/signout/signout.page#text-14a391d6": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:492"
+   ]
+  },
+  "selfService/signout/signout.page#text-f3fe22c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:497",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:696"
+   ]
+  },
+  "selfService/signout/signout.page#text-3ec229f3": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:497",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:696"
+   ]
+  },
+  "selfService/signout/signout.page#text-321ae3a4": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:498"
+   ]
+  },
+  "selfService/signout/signout.page#text-12426941": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:499"
+   ]
+  },
+  "selfService/signout/signout.page#text-7ab3ea5e": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:501"
+   ],
+   "n": "Ionic statusLabelOf/statusColorOf: zugeteilter, unbestätigter Dienst (duty_state requested) → Pill \"Bitte bestätigen\" in Orange / Flutter: immer EventPill.status(att.status) → z. B. \"Neutral\" grau.",
+   "sev": "mittel"
+  },
+  "selfService/signout/signout.page#text-d89e83ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:501",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:227"
+   ]
+  },
+  "selfService/signout/signout.page#text-6f78d5d8": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:502",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:732"
+   ]
+  },
+  "selfService/signout/signout.page#text-751098ef": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:485",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:756"
+   ]
+  },
+  "selfService/signout/signout.page#action-22f32baf": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:171",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:858"
+   ],
+   "n": "Bedingungen/Wirkung gleich. Ionic: bei Zugesagt gefüllt grün, aber disabled (halbe Deckkraft) / Flutter: gefüllt grün in voller Deckkraft, Tippen ohne Wirkung.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#action-c9b28995": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:177",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:858"
+   ],
+   "n": "Bedingungen/Wirkung gleich. Ionic: bei \"Verspätung gemeldet\" gefüllt rosa + disabled (halbe Deckkraft) / Flutter: gefüllt rosa in voller Deckkraft, Tippen ohne Wirkung.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#action-b6ce9099": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:184",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:858"
+   ],
+   "n": "Bedingungen/Wirkung gleich. Ionic: bei Entschuldigt gefüllt orange + disabled (halbe Deckkraft) / Flutter: gefüllt orange in voller Deckkraft, Tippen ohne Wirkung.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#action-7d0a5a99": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:507",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:794"
+   ]
+  },
+  "selfService/signout/signout.page#text-3822774c": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:518"
+   ]
+  },
+  "selfService/signout/signout.page#text-037f4b7e": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:518"
+   ]
+  },
+  "selfService/signout/signout.page#text-8bc5216f": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:520"
+   ]
+  },
+  "selfService/signout/signout.page#action-836ea596": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:525",
+    "lib/features/self_service/presentation/pages/signout_page.dart:550"
+   ],
+   "n": "Zeile, Dienst-Tag, Meta, Info-Text, Chips, \"Nicht eingeladen\" und Tippen → Aktionsblatt gleich. Ionic: unbestätigter zugeteilter Dienst zeigt Pill \"Bitte bestätigen\" (orange) / Flutter: normale Status-Pill (z. B. \"Neutral\").",
+   "sev": "mittel"
+  },
+  "selfService/signout/signout.page#text-9fa1e53c": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:565"
+   ]
+  },
+  "selfService/signout/signout.page#text-86de3c2f": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:565"
+   ]
+  },
+  "selfService/signout/signout.page#text-472eaa05": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:569",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:908"
+   ]
+  },
+  "selfService/signout/signout.page#text-037e423c": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:917"
+   ]
+  },
+  "selfService/signout/signout.page#text-14785b63-2": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:920"
+   ]
+  },
+  "selfService/signout/signout.page#text-70ddef87": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:572",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:925"
+   ],
+   "n": "Ionic: jeder Punkt hat title-Tooltip \"Datum: Status\" und die Reihe aria-label \"Status der letzten Termine\" / Flutter: Punkte ohne Tooltip/Semantik.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#action-eaedcf38": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:575",
+    "lib/features/self_service/presentation/pages/signout_page.dart:592"
+   ]
+  },
+  "selfService/signout/signout.page#action-0547ed34-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:583"
+   ]
+  },
+  "selfService/signout/signout.page#action-fbc3e42a": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:594"
+   ]
+  },
+  "selfService/signout/signout.page#action-f143d5dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:603"
+   ]
+  },
+  "selfService/signout/signout.page#modal-caf54574": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:84"
+   ]
+  },
+  "selfService/signout/signout.page#text-a2e0ff58": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:412"
+   ]
+  },
+  "selfService/signout/signout.page#action-e63e1734": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:414"
+   ]
+  },
+  "selfService/signout/signout.page#field-b8a7d60e": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:423"
+   ]
+  },
+  "selfService/signout/signout.page#text-d2c703b8": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:438"
+   ]
+  },
+  "selfService/signout/signout.page#text-00a164fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:439"
+   ]
+  },
+  "selfService/signout/signout.page#text-7a9b80b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:441"
+   ]
+  },
+  "selfService/signout/signout.page#action-a3f4a02c": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:445"
+   ]
+  },
+  "selfService/signout/signout.page#field-4434ae39": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:455"
+   ],
+   "n": "Flutter besser: Kalender erst ab heute (vergangene Daten nicht wählbar) / Ionic ion-datetime ohne min, vergangene \"bis\"-Daten möglich (führen zur sofortigen Auto-Reaktivierung).",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#action-95ff56f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:462",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:82"
+   ],
+   "n": "Text \"Grund (bis dd.MM.yyyy)\", paused/paused_until/Historie, aus kommenden Terminen entfernt, Telegram-Hinweis."
+  },
+  "selfService/signout/signout.page#modal-40e4838d": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:46"
+   ]
+  },
+  "selfService/signout/signout.page#text-6732b90d": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:314"
+   ]
+  },
+  "selfService/signout/signout.page#action-5f654a29": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:316"
+   ]
+  },
+  "selfService/signout/signout.page#text-bf54f1e3": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:334"
+   ]
+  },
+  "selfService/signout/signout.page#field-21e89f82": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:327"
+   ]
+  },
+  "selfService/signout/signout.page#text-dfe3a332": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:270"
+   ]
+  },
+  "selfService/signout/signout.page#text-d5872503": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:270"
+   ]
+  },
+  "selfService/signout/signout.page#text-8ef0331d": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:282"
+   ]
+  },
+  "selfService/signout/signout.page#action-21c846cb": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:289"
+   ]
+  },
+  "selfService/signout/signout.page#field-4c957531": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:343",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:226"
+   ],
+   "n": "Erster/zweiter Tipp mit Tausch gleich. Ionic: gewählter Zeitraum im Kalender farbig hervorgehoben, keine Datumsgrenzen / Flutter CalendarDatePicker: nur ein markierter Tag, keine Bereichs-Hervorhebung, Auswahl nur Vorjahr bis +5 Jahre.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#text-146f176e": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:350"
+   ]
+  },
+  "selfService/signout/signout.page#action-89fbd54f": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:358"
+   ]
+  },
+  "selfService/signout/signout.page#modal-76fb71e5": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:238"
+   ],
+   "n": "Ionic: Sheet 85 %, backdropDismiss=false in beiden Modi / Flutter: Sheet in Inhaltshöhe, im Bearbeiten-Modus durch Tippen außerhalb schließbar.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#text-bb12f68e": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:389"
+   ]
+  },
+  "selfService/signout/signout.page#action-e5b8dd6d": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:393"
+   ],
+   "n": "Ionic: \"Abbrechen\" nur im Bearbeiten-Modus / Flutter: \"Abbrechen\" auch im Anmelde-Modus.",
+   "sev": "niedrig"
+  },
+  "selfService/signout/signout.page#field-c03cb92a": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:361"
+   ]
+  },
+  "selfService/signout/signout.page#text-cdb21ed4": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:317"
+   ]
+  },
+  "selfService/signout/signout.page#field-778b0d8d": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:317"
+   ]
+  },
+  "selfService/signout/signout.page#field-10c68b6f": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:322"
+   ]
+  },
+  "selfService/signout/signout.page#text-cdb21ed4-2": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:341"
+   ]
+  },
+  "selfService/signout/signout.page#action-5e305659": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:345"
+   ]
+  },
+  "selfService/signout/signout.page#field-4af21fc3": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:346"
+   ]
+  },
+  "selfService/signout/signout.page#action-d2d1b707": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:406"
+   ]
+  }
+ },
+ "extra": [
+  {
+   "unit": "selfService/signout/signout.page",
+   "title": "Push/Deep-Link öffnet Termin ohne Dienst-Logik",
+   "sev": "mittel",
+   "n": "Ionic openAttendanceById: wartet auf Daten; eigener Dienst in der Dienstplan-Ansicht → scrollt zu \"Bitte bestätigen\" bzw. \"Meine Dienste\" statt Aktionsblatt; nicht zugeteilter Dienst (aus Liste gefiltert) in openDuties → öffnet \"Offene Dienste\". / Flutter _openPendingAttendance: sucht in den ungefilterten Daten und öffnet immer das Aktionsblatt; kein Scrollen, kein \"Offene Dienste\"-Sheet (Push \"wer springt ein?\" zeigt Aktionsblatt des nicht zugeteilten Dienstes oder nichts).",
+   "ionic": "src/app/selfService/signout/signout.page.ts:581",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:66"
+   ]
+  },
+  {
+   "unit": "selfService/signout/signout.page",
+   "title": "Status-Pill ohne \"Bitte bestätigen\"",
+   "sev": "mittel",
+   "n": "Ionic statusLabelOf/statusColorOf: duty_state requested (nicht abgesagt, nicht vorbei) → \"Bitte bestätigen\" orange auf aktueller Karte und in \"Anstehend\". / Flutter: EventPill.status(att.status) ohne Dienst-Ausnahme.",
+   "ionic": "src/app/selfService/signout/signout.page.ts:1002",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:501",
+    "lib/features/self_service/presentation/pages/signout_page.dart:550"
+   ]
+  },
+  {
+   "unit": "selfService/signout/signout.page",
+   "title": "Abwesenheit: andere Zeilen entschuldigt/zurückgesetzt",
+   "sev": "hoch",
+   "n": "Ionic confirmAbsence/deleteAbsence arbeiten auf currentAttendance + actualAttendances: ohne nicht zugeteilte Dienst-Termine (applyDutyView) und in der Dienstplan-Ansicht nur \"Weitere Termine\" (eigene Dienste bleiben unberührt); im \"alle Termine\"-Modus auch fremde Termine ohne id (Update schlägt fehl). / Flutter: Query über alle eigenen kommenden person_attendances im Zeitraum (inkl. eigener und nicht zugeteilter Dienste) → entschuldigt bzw. setzt mehr Zeilen; kein understaffed-Hinweis für dabei abgesagte Dienste.",
+   "ionic": "src/app/selfService/signout/signout.page.ts:1240",
+   "f": [
+    "lib/data/repositories/player_absence_repository.dart:122",
+    "lib/data/repositories/player_absence_repository.dart:191",
+    "lib/data/repositories/player_absence_repository.dart:228"
+   ]
+  },
+  {
+   "unit": "selfService/signout/signout.page",
+   "title": "Pull-to-Refresh lädt Dienste nicht neu",
+   "sev": "mittel",
+   "n": "Ionic handleRefresh → getAttendances → loadOpenDuties lädt die Dienst-Termine neu. / Flutter _refresh invalidiert upcomingDutyTermineProvider nicht → Offene Dienste, Bitte bestätigen, Meine Dienste, Zähler bleiben veraltet.",
+   "ionic": "src/app/selfService/signout/signout.page.ts:1070",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:87",
+    "lib/core/providers/duty_providers.dart:67"
+   ]
+  },
+  {
+   "unit": "selfService/signout/signout.page",
+   "title": "Ablaufplan ohne weitere Tagespläne",
+   "sev": "hoch",
+   "n": "Ionic openPlanViewer übergibt attendance mit extra_plans/duration_days (geladen in getPersonAttendances) → Tages-Chips bei mehrtägigen Terminen. / Flutter: extra_plans fehlen in kSignoutAttendanceColumns und werden nicht an showPlanViewerSheet übergeben → nur erster Plan; zusätzlich Live-Modus an jedem Termintag statt nur im Zeitfenster.",
+   "ionic": "src/app/selfService/signout/signout.page.ts:1077",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:21",
+    "lib/features/self_service/presentation/pages/signout_page.dart:716",
+    "lib/features/self_service/presentation/widgets/plan_viewer_sheet.dart:384"
+   ]
+  },
+  {
+   "unit": "selfService/signout/signout.page",
+   "title": "Sortierung am selben Tag",
+   "sev": "niedrig",
+   "n": "Flutter besser: Ionic sortiert nur nach date (gleicher Tag in DB-Reihenfolge) / Flutter nach Datum + Startzeit, dann eigene Termine zuerst, dann attendance_id.",
+   "ionic": "src/app/selfService/signout/signout.page.ts:336",
+   "f": [
+    "lib/core/providers/signout_providers.dart:98"
+   ]
+  },
+  {
+   "unit": "selfService/signout/signout.page",
+   "title": "Offene-Dienste-Sheet bleibt offen",
+   "sev": "niedrig",
+   "n": "Ionic takeDuty: schließt das Modal, wenn danach keine offenen Dienste mehr da sind / Flutter: Sheet bleibt offen und zeigt \"Gerade sind alle Dienste besetzt. Danke!\".",
+   "ionic": "src/app/selfService/signout/signout.page.ts:576",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_actions.dart:157",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:317"
+   ]
+  },
+  {
+   "unit": "selfService/signout/signout.page",
+   "title": "Aktuelle Werke aus ungefilterten Terminen",
+   "sev": "niedrig",
+   "n": "Ionic loadAttendanceSongs nach applyDutyView (ohne nicht zugeteilte Dienst-Termine) / Flutter signoutAttendanceSongsProvider/upcomingSongsProvider auf ungefilterten signoutData → Werke nicht zugeteilter Dienst-Termine können in \"Aktuelle Werke\" erscheinen.",
+   "ionic": "src/app/selfService/signout/signout.page.ts:372",
+   "f": [
+    "lib/features/self_service/data/providers/upcoming_songs_provider.dart:29",
+    "lib/features/self_service/data/providers/upcoming_songs_provider.dart:53"
+   ]
+  },
+  {
+   "unit": "selfService/signout/signout.page",
+   "title": "changed_by bei Abmeldung",
+   "sev": "niedrig",
+   "n": "Flutter besser: Ionic db.signout schreibt changed_by = null (kein userId) / Flutter schreibt changed_by = angemeldeter Nutzer.",
+   "ionic": "src/app/services/sign-in-out/sign-in-out.service.ts:23",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:201",
+    "lib/data/repositories/sign_in_out_repository.dart:111"
+   ]
+  },
+  {
+   "unit": "selfService/signout/signout.page",
+   "title": "Fehler-Toasts und Leerzustände",
+   "sev": "niedrig",
+   "n": "Flutter besser: Flutter meldet fehlgeschlagene Zusage/Absage/Notiz/Anmeldefelder/Instanzwechsel per Fehler-Toast (Ionic: unbehandelte Exception, kein Hinweis) und zeigt \"Keine Termine gefunden\" bzw. Hinweis ohne verknüpfte Person (Ionic: leere Seite).",
+   "ionic": "src/app/selfService/signout/signout.page.ts:227",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:281",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:341",
+    "lib/features/self_service/presentation/pages/signout_page.dart:113",
+    "lib/features/self_service/presentation/pages/signout_page.dart:281",
+    "lib/features/self_service/presentation/pages/signout_page.dart:327"
+   ]
+  }
+ ]
+}

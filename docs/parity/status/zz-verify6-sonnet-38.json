@@ -1,0 +1,444 @@
+{
+ "batch": "zz-verify6-sonnet-38",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "tasks/task-detail/task-detail.page#toast-6ad4cd08": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:68",
+    "lib/data/repositories/task_repository.dart:165"
+   ],
+   "v": "bestätigt",
+   "n": "Roter Toast „Löschen fehlgeschlagen“ im catch von _delete (Zeile 79); Repo wirft bei 0 gelöschten Zeilen. Button nur für Leitung. f-Zeilen korrigiert."
+  },
+  "tasks/task-form/task-form.component#field-68caad4a": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:127",
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:300",
+    "lib/shared/widgets/adaptive/app_pickers.dart:12"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: ion-datetime mit OK/Abbrechen/Löschen (Löschen setzt dueDate=null) / Flutter: Datumsdialog (iOS: Tippen übernimmt, Material: OK/Abbrechen), Entfernen über X-Icon neben dem Datum; gleiche Funktion, nur Bedienung anders, Bereich Jahr−2..+5.",
+   "sev": "niedrig"
+  },
+  "teacher/teacher.page#action-1d0733b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:428"
+   ],
+   "v": "bestätigt",
+   "n": "Schließen-X (Tooltip „Schließen“) im Vollbild-Bearbeiten, pop ohne Speichern. f-Zeile korrigiert."
+  },
+  "teacher/teacher.page#action-6c1f7380": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:395"
+   ],
+   "v": "bestätigt",
+   "n": "Button „Lehrer updaten“ (nicht neu) gibt Teacher zurück, Seite ruft updateTeacher (name, number, notes, private, instruments, tenantId-Filter) und Toast „Lehrer aktualisiert“."
+  },
+  "teacher/teacher.page#field-1cbc213b": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:362"
+   ],
+   "v": "bestätigt",
+   "n": "Schalter „Privatlehrer“ vorbelegt, wird als private gespeichert (Update-Map Zeile 160). f-Zeile korrigiert."
+  },
+  "teacher/teacher.page#field-a8b17730": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:374"
+   ],
+   "v": "bestätigt",
+   "n": "Notizen-Feld, gespeichert als notes."
+  },
+  "teacher/teacher.page#field-fa0a11d8": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:350"
+   ],
+   "v": "bestätigt",
+   "n": "Name-Feld (Wörter groß), gespeichert als name."
+  },
+  "teacher/teacher.page#field-fa382e19": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:368"
+   ],
+   "v": "bestätigt",
+   "n": "Kontakt-Feld, gespeichert als number."
+  },
+  "teacher/teacher.page#field-fc1d0925": {
+   "s": "diff",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:147",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:265",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:356"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: ion-select interface=modal, alle Gruppen inkl. Hauptgruppe, Mehrfachauswahl, keine Validierung beim Bearbeiten / Flutter: Dialog mit Checkboxen und Abbrechen/OK, gleiche Optionen (alle Gruppen), Label „Instrumente“, Validierung nur beim Anlegen. Nur Darstellung.",
+   "sev": "niedrig"
+  },
+  "teacher/teacher.page#text-1bdd08c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:388"
+   ],
+   "v": "bestätigt",
+   "n": "Spielerliste „Vorname Nachname“ der Schüler dieses Lehrers (p.teacher == id). f-Zeile korrigiert."
+  },
+  "teacher/teacher.page#text-b7c51796": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:383"
+   ],
+   "v": "bestätigt",
+   "n": "ExpansionTile „Spieler“, anfangs offen, nur bei vorhandenen Schülern."
+  },
+  "teachers/teachers.page#action-26f99aac": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:395",
+    "lib/data/repositories/teacher_repository.dart:49",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:135"
+   ],
+   "v": "bestätigt",
+   "n": "Button „Hinzufügen“: Validierung, createTeacher (name, instruments, notes, number, private, tenantId), Liste lädt neu; Flutter trimmt Texte; nur Admin/Verantwortlich per FAB (Zeile 101)."
+  },
+  "teachers/teachers.page#field-23cb755d": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:374"
+   ],
+   "v": "bestätigt",
+   "n": "Notizen-Feld im Anlegen-Sheet."
+  },
+  "teachers/teachers.page#field-8a21ddb5": {
+   "s": "diff",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:362",
+    "lib/data/repositories/teacher_repository.dart:57"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser: Ionic: addTeacher bekommt private.value der ion-toggle (Formularwert, standardmäßig „on“), pri === 'true' ist nie wahr → neue Lehrer immer private=false / Flutter speichert den Schalterzustand. Leon entscheidet, ob so bleiben soll.",
+   "sev": "niedrig"
+  },
+  "teachers/teachers.page#field-cfeef758": {
+   "s": "diff",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:116",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:265",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:356"
+   ],
+   "v": "bestätigt",
+   "n": "Gruppen ohne Hauptgruppe (Zeile 119), Label „Instrumente“, Mehrfachauswahl. Ionic: ion-select interface=modal, Auswahl bleibt nach dem Anlegen für das nächste Öffnen (selInstruments) / Flutter: Dialog Checkboxen Abbrechen/OK, Formular startet jedes Mal leer. Nur Komfort/Darstellung.",
+   "sev": "niedrig"
+  },
+  "teachers/teachers.page#field-ebd5df11": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:350"
+   ],
+   "v": "bestätigt",
+   "n": "Name-Feld im Anlegen-Sheet."
+  },
+  "teachers/teachers.page#field-ebd5df11-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:368"
+   ],
+   "v": "bestätigt",
+   "n": "Kontakt-Feld im Anlegen-Sheet."
+  },
+  "teachers/teachers.page#text-01272e39": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:376"
+   ],
+   "v": "bestätigt",
+   "n": "Label „Notizen“."
+  },
+  "teachers/teachers.page#text-7cf94b57": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:363"
+   ],
+   "v": "bestätigt",
+   "n": "Label „Privatlehrer“."
+  },
+  "teachers/teachers.page#text-887b3cdf": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:345"
+   ],
+   "v": "bestätigt",
+   "n": "Titel „Lehrer hinzufügen“ im Sheet."
+  },
+  "teachers/teachers.page#text-b210d81e": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:352"
+   ],
+   "v": "bestätigt",
+   "n": "Label „Name“."
+  },
+  "teachers/teachers.page#text-e78eb077": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:370"
+   ],
+   "v": "bestätigt",
+   "n": "Label „Kontakt“."
+  },
+  "teachers/teachers.page#toast-449601dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:310",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:315",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:26"
+   ],
+   "v": "bestätigt",
+   "n": "Gleiche Bedingung (Name < 3 Zeichen oder kein Instrument, nur beim Anlegen), roter Toast „Bitte fülle alle Felder aus...“, Sheet bleibt offen."
+  },
+  "team-organization/protocols-tab/protocols-tab.component#text-05380ad1": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:122"
+   ],
+   "v": "bestätigt",
+   "n": "Nicht-Leitung: „Sobald die Leitung ein Protokoll freigibt, findest du es hier.“ (isTeamLeaderProvider = Admin/Verantwortlich wie Ionic). f-Zeile korrigiert."
+  },
+  "team-organization/protocols-tab/protocols-tab.component#text-2dca94d6": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:122"
+   ],
+   "v": "bestätigt",
+   "n": "Nicht-Leitung: „Noch keine Protokolle freigegeben“. f-Zeile korrigiert."
+  },
+  "team-organization/protocols-tab/protocols-tab.component#text-405cf743": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:121"
+   ],
+   "v": "bestätigt",
+   "n": "Leitung: Hinweis wortgleich. f-Zeile korrigiert."
+  },
+  "team-organization/protocols-tab/protocols-tab.component#text-53f38ed5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:121"
+   ],
+   "v": "bestätigt",
+   "n": "Leitung: „Noch keine Protokolle“. Rollen: Admin/Verantwortlich ja, alle anderen nein; kein Tenant-Flag. f-Zeile korrigiert."
+  },
+  "team-organization/protocols-tab/protocols-tab.component#text-8203da2e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:129",
+    "lib/features/team_organization/team_org_utils.dart:593"
+   ],
+   "v": "bestätigt",
+   "n": "Monatsgruppe (Monatsname + Jahr bzw. „Ohne Datum“), gleiche Gruppierung. f-Zeile korrigiert."
+  },
+  "team-organization/protocols-tab/protocols-tab.component#text-bdca479c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:124"
+   ],
+   "v": "bestätigt",
+   "n": "„Keine Treffer“ bei Suche ohne Treffer. f-Zeile korrigiert."
+  },
+  "team-organization/protocols-tab/protocols-tab.component#text-c43452f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart:124"
+   ],
+   "v": "bestätigt",
+   "n": "„Kein Protokoll passt zu „{search}““. f-Zeile korrigiert."
+  },
+  "team-organization/tasks-tab/tasks-tab.component#action-82982f92": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:128",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:54"
+   ],
+   "v": "bestätigt",
+   "n": "Leerzustand-Button „Aufgabe anlegen“ nur Leitung und ohne Aufgaben; öffnet Aufgabenformular, Liste wird aktualisiert."
+  },
+  "team-organization/tasks-tab/tasks-tab.component#action-82b056e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:148",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:216",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:233",
+    "lib/core/providers/team_org_providers.dart:169"
+   ],
+   "v": "bestätigt",
+   "n": "Leitung: alle Aufgaben mit Person; Mitglieder: nur eigene, Untertitel wie Ionic subtitle(); Badges „In Arbeit“/„Hoch“ (nur nicht erledigt); öffnet /settings/tasks/:id."
+  },
+  "team-organization/tasks-tab/tasks-tab.component#action-95de4093": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:235",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:33"
+   ],
+   "v": "bestätigt",
+   "n": "Rundes Häkchen für alle Rollen mit sichtbaren Aufgaben, schaltet erledigt/offen optimistisch (update status), Fehlertoast „Status konnte nicht geändert werden“; Doppeltipp gesperrt."
+  },
+  "team-organization/tasks-tab/tasks-tab.component#action-ad45d8d4": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:115",
+    "lib/features/planning/presentation/widgets/ion_items.dart:474"
+   ],
+   "v": "bestätigt",
+   "n": "Rolle/Label/Filter gleich (nur Leitung mit Aufgaben, ohne eigene Person, „{Kurzname} · {Anzahl}“). Ionic: [title]=voller Name als Hover-Tooltip / Flutter: kein Tooltip. Nur Maus-Hover.",
+   "sev": "niedrig"
+  },
+  "team-organization/tasks-tab/tasks-tab.component#action-da4e5bf3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:113"
+   ],
+   "v": "bestätigt",
+   "n": "„Meine · {n}“ nur Leitung mit eigener Person; Zählung gleich."
+  },
+  "team-organization/tasks-tab/tasks-tab.component#field-cf2e1135": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:156"
+   ],
+   "v": "bestätigt",
+   "n": "Schalter „Ältere erledigte anzeigen“ + Hinweis, nur bei archivierten Aufgaben oder aktivem Schalter."
+  },
+  "team-organization/tasks-tab/tasks-tab.component#text-f28d8b0a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:143"
+   ],
+   "v": "bestätigt",
+   "n": "Anzahl je Gruppe als Note."
+  },
+  "team-organization/tasks-tab/tasks-tab.component#text-f8c29ade": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:137",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:139",
+    "lib/features/team_organization/team_org_utils.dart:358"
+   ],
+   "v": "bestätigt",
+   "n": "Gruppenüberschrift (Überfällig rot, Woche, Später, Ohne Datum, Erledigt)."
+  },
+  "team-organization/tasks-tab/tasks-tab.component#toast-b2f47c86": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:48"
+   ],
+   "v": "bestätigt",
+   "n": "Roter Toast „Status konnte nicht geändert werden“ im catch von _toggle."
+  },
+  "team-organization/team-organization.page#action-a5d08482": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:74"
+   ],
+   "v": "bestätigt",
+   "n": "Zurück-Pfeil der AppBar (automatisch, Seite per push geöffnet). f-Zeile korrigiert."
+  },
+  "team-organization/team-organization.page#embed-05e88de7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:89"
+   ],
+   "v": "bestätigt",
+   "n": "Tab Aufgaben (TasksTab) im ersten TabBarView-Zweig. f-Zeile korrigiert."
+  },
+  "team-organization/team-organization.page#embed-159b52d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:91"
+   ],
+   "v": "bestätigt",
+   "n": "Tab Protokolle (ProtocolsTab). f-Zeile korrigiert."
+  },
+  "team-organization/team-organization.page#embed-334beee4": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:90"
+   ],
+   "v": "bestätigt",
+   "n": "Tab Themen (TopicsTab). f-Zeile korrigiert."
+  },
+  "team-organization/team-organization.page#field-33021d7d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart:77"
+   ],
+   "v": "bestätigt",
+   "n": "Segment Aufgaben/Themen/Protokolle in zweiter Leiste (AppBar.bottom), Start-Tab per ?tab; zusätzlich wischbar. f-Zeile korrigiert."
+  },
+  "team-organization/topics-tab/topics-tab.component#action-051b8f7f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:257",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:260"
+   ],
+   "v": "bestätigt",
+   "n": "Schließen-X (Tooltip „Schließen“) links im Prüf-Sheet; Sheet nur in Leitungsansicht (_LeaderTopics)."
+  },
+  "team-organization/topics-tab/topics-tab.component#action-3118994b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:718"
+   ],
+   "v": "bestätigt",
+   "n": "Textbutton „Abbrechen“ links im Vorschlag-Sheet (nur _MemberTopics, also Kreis-Mitglieder ohne Leitung wie Ionic). f-Zeile korrigiert."
+  },
+  "team-organization/topics-tab/topics-tab.component#action-3157cfe0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:405",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:69"
+   ],
+   "v": "bestätigt",
+   "n": "„Ändern“ im Listenkopf öffnet Terminauswahl (Aktionsliste bis 8 Termine, Datum ändern, neuer Termin), nur Leitung. f-Zeile korrigiert."
+  },
+  "team-organization/topics-tab/topics-tab.component#action-3d3811bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:750",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:688",
+    "lib/core/providers/team_org_providers.dart:380",
+    "lib/data/repositories/agenda_item_repository.dart:100"
+   ],
+   "v": "bestätigt",
+   "n": "Button deaktiviert bei leerem Titel oder beim Senden; Insert agenda_items (tenant_id, title, description, proposed_by, status open, priority medium, proposal_status pending); Toast „Vorschlag gesendet“. f-Zeilen korrigiert."
+  },
+  "team-organization/topics-tab/topics-tab.component#action-5a533757": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:434",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:437"
+   ],
+   "v": "bestätigt",
+   "n": "„Themen aufnehmen“ öffnet Themenauswahl für den gezeigten Termin; nur Leitung. f-Zeile korrigiert."
+  },
+  "team-organization/topics-tab/topics-tab.component#action-82525c3b": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:317",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:160",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:226",
+    "lib/core/providers/team_org_providers.dart:373"
+   ],
+   "v": "bestätigt",
+   "n": "Rollen gleich (Prüfen-Sheet nur Leitung). Dialog mit Prioritäts-Radios, Abbrechen/Übernehmen; Schreiben gleich (proposal_status accepted, priority, decision_note null) + team-notify proposal_decided, Toast. Ionic: Sheet schließt nach der letzten Entscheidung automatisch / Flutter: bleibt offen mit „Alle Vorschläge sind entschieden.“, X zum Schließen. Gleiche Funktion, nur Komfort.",
+   "sev": "niedrig"
+  }
+ },
+ "extra": []
+}

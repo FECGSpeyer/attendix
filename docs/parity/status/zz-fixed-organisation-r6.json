@@ -1,0 +1,96 @@
+{
+ "batch": "zz-fixed-organisation-r6",
+ "ionic": "1923d203",
+ "afterRound": 6,
+ "flutter": "4de3564",
+ "items": {
+  "x-f732854d4b": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart",
+    "lib/data/repositories/organisation_repository.dart"
+   ],
+   "n": "Ladefehler beim Verknüpfen zeigt einen Toast statt des Dialogs „Organisation erstellen“ wie Ionic. PR #342."
+  },
+  "services/organisation/organisation.service#toast-f9193a09": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart",
+    "lib/data/repositories/organisation_repository.dart"
+   ],
+   "n": "„Fehler beim Laden der Mandanten“ beim Laden der eigenen Instanzen. PR #342."
+  },
+  "services/organisation/organisation.service#toast-dfc90bbf": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart",
+    "lib/data/repositories/organisation_repository.dart"
+   ],
+   "n": "„Fehler beim Laden der Organisationen“ beim Laden der Verknüpfungen. PR #342."
+  },
+  "services/organisation/organisation.service#toast-db3d69ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ],
+   "n": "Statistik, Organisationsabschnitt: Ladefehler von Organisation/Instanzen zeigt „Fehler beim Laden der Organisationen“ statt still zu verschwinden. PR #342."
+  },
+  "services/organisation/organisation.service#toast-c69e2a47": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ],
+   "n": "Statistik, Organisationsabschnitt: Ladefehler der Personen zeigt „Fehler beim Laden der Personen“. PR #342."
+  },
+  "x-0828227b29": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart"
+   ],
+   "n": "Fehler beim Widerrufen des öffentlichen Links wird gemeldet wie Ionic. PR #342."
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-3207b9c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ],
+   "n": "Zahl-Standardwert wird wie Ionic als String gespeichert („5“, geleert „“), beim Hinzufügen und Bearbeiten. PR #342."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#field-0fbdb2fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart",
+    "lib/core/utils/plan_utils.dart"
+   ],
+   "n": "Startzeit als YYYY-MM-DDTHH:mm:00 ohne Zeitzone wie Ionics Zeitwähler (als Text zusammengesetzt, auch in der Sommerzeitlücke). PR #342."
+  },
+  "x-5dfb4436f3": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart"
+   ],
+   "n": "Vorlagen speichern schreibt end nicht mehr mit, wie Ionic. PR #342."
+  },
+  "services/live-activity/live-activity.service#db-9e7fa6e4": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/live_activity_service.dart"
+   ],
+   "n": "Ad-hoc-Org-Plan wird auch in den übrigen Organisationen des Nutzers gesucht (immer mit org_id-Filter), wie Ionic. PR #342."
+  },
+  "services/live-activity/live-activity.service#modal-e1ddab08": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/live_activity_service.dart"
+   ],
+   "n": "Tipp auf die Live Activity öffnet den Ad-hoc-Plan auch ohne passende aktuelle Organisation. PR #342."
+  },
+  "x-211bae05a6": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart"
+   ],
+   "n": "/settings/general/link-persons nur für Admins wie Ionic isSuperAdmin. PR #342."
+  }
+ }
+}

@@ -1,0 +1,2356 @@
+{
+ "batch": "zz-verify5c-sonnet-13",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 247,
+    "method": "OrgSettingsPage.openLinkPersons",
+    "cond": [],
+    "component": "LinkPersonsPage",
+    "props": [],
+    "sheet": true,
+    "breakpoints": "[0, 0.5, 1]",
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "c7ff759c",
+    "mbody": "befec0b6",
+    "id": "org-settings/org-settings.page#modal-fd2da8e9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:248"
+    ],
+    "n": "Ionic: LinkPersonsPage als Sheet-Modal (Breakpoints 0/0,5/1, voll geöffnet, ohne Griff) / Flutter: normale Push-Seite /settings/general/link-persons.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-settings.page.html",
+    "line": 46,
+    "cond": [
+     "@if (db.organisation())"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "org.title"
+    ],
+    "de": [
+     "Organisation"
+    ],
+    "literals": [],
+    "text": "{{ 'org.title' | transloco }}",
+    "id": "org-settings/org-settings.page#text-020d4514"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:175"
+    ],
+    "n": "Listen-Header „Organisation“ nur mit Organisation, für Admin und Verantwortlich sichtbar wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-settings.page.html",
+    "line": 88,
+    "cond": [
+     "@if (db.organisation())",
+     "@if (showGemeindeApp)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "org.gemeindeApp"
+    ],
+    "de": [
+     "Gemeinde App"
+    ],
+    "literals": [],
+    "text": "{{ 'org.gemeindeApp' | transloco }}",
+    "id": "org-settings/org-settings.page#text-03add0f2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:212"
+    ],
+    "n": "„Gemeinde App“ nur Admin + fecg_link_enabled in beiden; Verantwortlich sieht den Bereich in beiden nicht.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-settings.page.html",
+    "line": 119,
+    "cond": [
+     "@if (db.organisation())",
+     "@if (isSuperAdmin)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "org.persons"
+    ],
+    "de": [
+     "Personen"
+    ],
+    "literals": [],
+    "text": "{{ 'org.persons' | transloco }}",
+    "id": "org-settings/org-settings.page#text-1a2c91b5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:240"
+    ],
+    "n": "Abschnitt „Personen“ nur Admin (isSuperAdmin) in beiden.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-settings.page.html",
+    "line": 68,
+    "cond": [
+     "@if (db.organisation())"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "org.appearancePlans"
+    ],
+    "de": [
+     "Darstellung & Pläne"
+    ],
+    "literals": [],
+    "text": "{{ 'org.appearancePlans' | transloco }}",
+    "id": "org-settings/org-settings.page#text-248ea768"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:190"
+    ],
+    "n": "„Darstellung & Pläne“ nur mit Organisation, ohne weitere Rollenprüfung (Admin + Verantwortlich) wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-settings.page.html",
+    "line": 27,
+    "cond": [
+     "@if (!db.organisation())",
+     "@else (not isSuperAdmin)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "org.noneAdminOnly"
+    ],
+    "de": [
+     "Diese Instanz ist keiner Organisation zugewiesen. Nur Administratoren können Organisationen verwalten."
+    ],
+    "literals": [],
+    "text": "{{ 'org.noneAdminOnly' | transloco }}",
+    "id": "org-settings/org-settings.page#text-2df945fe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:156"
+    ],
+    "n": "Verantwortliche (nicht Admin) ohne Organisation sehen „Nur Administratoren können Organisationen verwalten.“ – gleich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-settings.page.html",
+    "line": 113,
+    "cond": [
+     "@if (db.organisation())",
+     "@if (showGemeindeApp)"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "ga-hint"
+    },
+    "keys": [
+     "org.gaHint"
+    ],
+    "de": [
+     "Nur für FECG Speyer und FECG Schwegenheim. Ein neuer Schlüssel trennt die alte Verbindung."
+    ],
+    "literals": [],
+    "text": "{{ 'org.gaHint' | transloco }}",
+    "id": "org-settings/org-settings.page#text-841b3f4c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:234"
+    ],
+    "n": "Hinweis unter dem Bereich, gleiche Bedingung (Admin + fecg_link_enabled).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-settings.page.html",
+    "line": 25,
+    "cond": [
+     "@if (!db.organisation())",
+     "@if (isSuperAdmin)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "org.noneIntro"
+    ],
+    "de": [
+     "Erstelle eine neue Organisation oder verknüpfe diese Instanz mit einer bestehenden, um Personen organisationsweit zu verbinden und gemeinsame Pläne zu nutzen."
+    ],
+    "literals": [],
+    "text": "{{ 'org.noneIntro' | transloco }}",
+    "id": "org-settings/org-settings.page#text-cb7ad407"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:154",
+     "lib/core/router/app_router.dart:181",
+     "lib/features/settings/presentation/pages/settings_page.dart:411"
+    ],
+    "n": "Rollen geprüft: Seite nur Admin/Verantwortlich (Ionic Einstellungen isAdmin + isUrlAccessAllowed / Flutter settings isAdmin + _protectedRoutes). Text nur Admin (isSuperAdmin = role == admin), Verantwortliche sehen noneAdminOnly – gleich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-settings.page.html",
+    "line": 23,
+    "cond": [
+     "@if (!db.organisation())"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "org.noneLinked"
+    ],
+    "de": [
+     "Keine Organisation verknüpft"
+    ],
+    "literals": [],
+    "text": "{{ 'org.noneLinked' | transloco }}",
+    "id": "org-settings/org-settings.page#text-ce868386"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:153",
+     "lib/features/settings/presentation/pages/settings_page.dart:411",
+     "lib/core/router/app_router.dart:186"
+    ],
+    "n": "„Keine Organisation verknüpft“ ohne Organisation. Seite in beiden Apps nur für Admin/Verantwortlich (Einstellungen „Organisation“ isAdmin, Flutter-Guard /settings/org-settings).",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 111,
+    "method": "OrgSettingsPage.openCreateOrganisationAlert",
+    "cond": [
+     "(data.name.length)"
+    ],
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "error.message"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "1d391e0d",
+    "mbody": "53b08e21",
+    "id": "org-settings/org-settings.page#toast-6d088b19"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:106"
+    ],
+    "n": "Ionic: Service-Toast „Fehler beim Erstellen der Organisation“, dann error.message (danger) / Flutter: nur „Fehler beim Erstellen der Organisation“ (danger).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-settings.page",
+   "ionic": {
+    "ts": "org-settings/org-settings.page.ts",
+    "html": "org-settings/org-settings.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "org-settings/org-settings.page.ts",
+    "line": 108,
+    "method": "OrgSettingsPage.openCreateOrganisationAlert",
+    "cond": [
+     "(data.name.length)"
+    ],
+    "message": {
+     "keys": [
+      "org.created"
+     ],
+     "de": [
+      "Die Organisation wurde erfolgreich erstellt."
+     ],
+     "literals": [],
+     "expr": "translate('org.created')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "8898376b",
+    "mbody": "53b08e21",
+    "id": "org-settings/org-settings.page#toast-7cb48d62"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:101"
+    ],
+    "n": "Text „Die Organisation wurde erfolgreich erstellt.“ gleich. Ionic: Erfolg nur, wenn Erstellen und Verknüpfen klappen / Flutter: Erfolgs-Toast auch, wenn das anschließende Verknüpfen fehlschlägt (Ergebnis von linkCurrentTenant wird ignoriert).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-settings/org-songs/org-songs.page",
+   "ionic": {
+    "ts": "org-settings/org-songs/org-songs.page.ts",
+    "html": "org-settings/org-songs/org-songs.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-songs/org-songs.page.html",
+    "line": 94,
+    "cond": [
+     "in <ion-modal isOpen=\"isCopyOpen\">"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "[disabled]": "\"!canCopy\""
+    },
+    "events": [
+     "(click)=copy()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "songs.copy"
+    ],
+    "de": [
+     "Kopieren"
+    ],
+    "literals": [],
+    "text": "{{ 'songs.copy' | transloco }}",
+    "id": "org-settings/org-songs/org-songs.page#action-6bc33df9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:418",
+     "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:327",
+     "lib/data/repositories/org_song_repository.dart:163"
+    ],
+    "n": "Flutter besser: Demo-Konto – Ionic copy() und songSvc.copyOrgSong haben keine Demo-Sperre, das Demo-Konto kann Werke in andere Instanzen kopieren / Flutter: DemoGuard.blocked() bzw. ensureNotDemo zeigt den Demo-Hinweis und kopiert nicht (nur relevant, wenn die Demo-Instanz einer Organisation mit weiteren Instanzen angehört). Sonst gleich: „Kopieren“ im Kopf, deaktiviert bei !canCopy (gleiche Bedingungen); Seite nur Admin/Verantwortlich mit Organisation, Ziele nur Instanzen mit Rolle Admin/Verantwortlich (buildOrgSongCopyTargets, zusätzlich _ensureOrgLibrary).",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/org_song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 5,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/bulk-edit/bulk-edit.page#action-5c670508"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:268-271"
+    ],
+    "n": "Flutter besser: Ionic: X schließt das Modal immer (auch während Speichern) / Flutter: X während _isSaving deaktiviert.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 176,
+    "cond": [
+     "@if (selectedField)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "[disabled]": "\"changedCount === 0 || isSaving\""
+    },
+    "events": [
+     "(click)=save()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "people.saving",
+     "people.saveChanges",
+     "people.noChanges"
+    ],
+    "de": [
+     "Speichern...",
+     "{count, plural, one {# Änderung speichern} other {# Änderungen speichern}}",
+     "Keine Änderungen"
+    ],
+    "literals": [],
+    "text": "{{ 'people.saving' | transloco }} {{ 'people.saveChanges' | transloco: { count: changedCount } }} {{ 'people.noChanges' | transloco }}",
+    "id": "people/bulk-edit/bulk-edit.page#action-a2a2fcd3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:433"
+    ],
+    "n": "Texte 'Speichern...' / '# Änderung(en) speichern' / 'Keine Änderungen' und Deaktivierung gleich. Ionic: Spinner vor 'Speichern...' / Flutter: nur Text.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 84,
+    "cond": [
+     "@if (selectedField)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "size": "small",
+     "fill": "outline",
+     "class": "bulk-apply-btn"
+    },
+    "events": [
+     "(click)=applyToAll()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark-done-outline"
+    ],
+    "keys": [
+     "people.setForAll"
+    ],
+    "de": [
+     "Für alle setzen"
+    ],
+    "literals": [],
+    "text": "{{ 'people.setForAll' | transloco }}",
+    "id": "people/bulk-edit/bulk-edit.page#action-ac3f725b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:353-361",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:154-161"
+    ],
+    "n": "Outline-Button 'Für alle setzen' mit done_all-Icon; setzt alle Werte auf den Sammelwert.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 118,
+    "cond": [
+     "@if (selectedField)",
+     "@for (player of players; track player.id)",
+     "@else if (selectedField.key === 'notes')"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [
+     "(ionChange)=setEditedValue(player.id, $event.detail.value)"
+    ],
+    "link": null,
+    "model": "[ngModel]=\"getEditedValue(player.id)\"",
+    "bindings": [
+     "[placeholder]=\"'people.notePlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "people.notePlaceholder"
+    ],
+    "de": [
+     "Notiz..."
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'people.notePlaceholder' | transloco\"",
+    "id": "people/bulk-edit/bulk-edit.page#field-0c27356e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:519-520"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 144,
+    "cond": [
+     "@if (selectedField)",
+     "@for (player of players; track player.id)",
+     "@else if (selectedField.fieldType === FieldType.SELECT)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [
+     "(ionChange)=setEditedValue(player.id, $event.detail.value)"
+    ],
+    "link": null,
+    "model": "[ngModel]=\"getEditedValue(player.id)\"",
+    "bindings": [
+     "[placeholder]=\"selectedField.label\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"option\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ option }}"
+     }
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[placeholder]=\"selectedField.label\" {{ option }}",
+    "id": "people/bulk-edit/bulk-edit.page#field-0e4833d3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:610"
+    ],
+    "n": "Dropdown mit Optionen des Auswahlfelds, Platzhalter = Feldname, in „Für alle setzen“ und pro Person.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart (Referenz ungültig)"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 157,
+    "cond": [
+     "@if (selectedField)",
+     "@for (player of players; track player.id)",
+     "@else if (selectedField.fieldType === FieldType.BFECG_CHURCH)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [
+     "(ionChange)=setEditedValue(player.id, $event.detail.value)"
+    ],
+    "link": null,
+    "model": "[ngModel]=\"getEditedValue(player.id)\"",
+    "bindings": [
+     "[placeholder]=\"selectedField.label\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"church.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ church.name }}"
+     }
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[placeholder]=\"selectedField.label\" {{ church.name }}",
+    "id": "people/bulk-edit/bulk-edit.page#field-0e4833d3-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:617"
+    ],
+    "n": "Dropdown Gemeinden (nur Kirchen mit id), Platzhalter Feldname; Standard erste Gemeinde via extraFieldDefaultValue.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart (Referenz ungültig)"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 55,
+    "cond": [
+     "@if (selectedField)",
+     "@else if (selectedField.key === 'notes')"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"bulkValue\"",
+    "bindings": [
+     "[placeholder]=\"'people.notePlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "people.notePlaceholder"
+    ],
+    "de": [
+     "Notiz..."
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'people.notePlaceholder' | transloco\"",
+    "id": "people/bulk-edit/bulk-edit.page#field-2be5734e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:519-520"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 57,
+    "cond": [
+     "@if (selectedField)",
+     "@else if (selectedField.key === 'phone')"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "tel"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"bulkValue\"",
+    "bindings": [
+     "[placeholder]=\"'people.phonePlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "people.phonePlaceholder"
+    ],
+    "de": [
+     "Telefon..."
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'people.phonePlaceholder' | transloco\"",
+    "id": "people/bulk-edit/bulk-edit.page#field-399cfe3f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:521"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 16,
+    "cond": [],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [
+     "(ionChange)=onFieldSelected()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"selectedFieldKey\"",
+    "bindings": [
+     "[label]=\"'people.chooseField' | transloco\"",
+     "[placeholder]=\"'people.chooseFieldPlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "",
+      "keys": [
+       "people.standardFields"
+      ],
+      "de": [
+       "Standard-Felder"
+      ],
+      "literals": [],
+      "text": "{{ 'people.standardFields' | transloco }}"
+     },
+     {
+      "value": "\"field.key\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ field.label }}"
+     },
+     {
+      "value": "",
+      "keys": [
+       "people.extraFields"
+      ],
+      "de": [
+       "Zusatzfelder"
+      ],
+      "literals": [],
+      "text": "{{ 'people.extraFields' | transloco }}"
+     },
+     {
+      "value": "\"field.key\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ field.label }}"
+     }
+    ],
+    "keys": [
+     "people.chooseField",
+     "people.chooseFieldPlaceholder",
+     "people.standardFields",
+     "people.extraFields"
+    ],
+    "de": [
+     "Feld auswählen",
+     "Feld wählen...",
+     "Standard-Felder",
+     "Zusatzfelder"
+    ],
+    "literals": [],
+    "text": "[label]=\"'people.chooseField' | transloco\" [placeholder]=\"'people.chooseFieldPlaceholder' | transloco\" {{ 'people.standardFields' | transloco }} {{ field.label }} {{ 'people.extraFields' | transloco …",
+    "id": "people/bulk-edit/bulk-edit.page#field-3f70cbe7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:282-322"
+    ],
+    "n": "Flutter besser: Label 'Feld auswählen', Platzhalter 'Feld wählen...', 'Standard-Felder' (deaktiviert) + Gruppe/Stimmführer/Notizen/Telefon, 'Zusatzfelder' + Felder gleich. Ionic: Zusatzfeld-Block nur wenn db.tenant().additional_fields.length > 0 (Org-Felder fehlen also, wenn der Tenant keine eigenen Felder hat) / Flutter: sobald irgendein Zusatzfeld (Org oder Tenant) existiert (hasExtra).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 114,
+    "cond": [
+     "@if (selectedField)",
+     "@for (player of players; track player.id)",
+     "@else if (selectedField.key === 'isLeader')"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=setEditedValue(player.id, $event.detail.checked)"
+    ],
+    "link": null,
+    "model": "[ngModel]=\"getEditedValue(player.id)\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/bulk-edit/bulk-edit.page#field-40247d7a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:514"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 140,
+    "cond": [
+     "@if (selectedField)",
+     "@for (player of players; track player.id)",
+     "@else if (selectedField.fieldType === FieldType.BOOLEAN)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=setEditedValue(player.id, $event.detail.checked)"
+    ],
+    "link": null,
+    "model": "[ngModel]=\"getEditedValue(player.id)\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/bulk-edit/bulk-edit.page#field-40247d7a-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:597"
+    ],
+    "n": "Schalter für Ja/Nein; bei „Für alle setzen“ mit Feldname, pro Person ohne Label; Standard true wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart (Referenz ungültig)"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 130,
+    "cond": [
+     "@if (selectedField)",
+     "@for (player of players; track player.id)",
+     "@else if (selectedField.fieldType === FieldType.TEXT)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [
+     "(ionChange)=setEditedValue(player.id, $event.detail.value)"
+    ],
+    "link": null,
+    "model": "[ngModel]=\"getEditedValue(player.id)\"",
+    "bindings": [
+     "[placeholder]=\"selectedField.label\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[placeholder]=\"selectedField.label\"",
+    "id": "people/bulk-edit/bulk-edit.page#field-4964deb8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:573-574"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 135,
+    "cond": [
+     "@if (selectedField)",
+     "@for (player of players; track player.id)",
+     "@else if (selectedField.fieldType === FieldType.NUMBER)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "number"
+    },
+    "events": [
+     "(ionChange)=setEditedValue(player.id, $event.detail.value)"
+    ],
+    "link": null,
+    "model": "[ngModel]=\"getEditedValue(player.id)\"",
+    "bindings": [
+     "[placeholder]=\"selectedField.label\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[placeholder]=\"selectedField.label\"",
+    "id": "people/bulk-edit/bulk-edit.page#field-4964deb8-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:531-536",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:475-479"
+    ],
+    "n": "Flutter besser: Ionic: (ionChange) $event.detail.value liefert bei ion-input einen String → Zusatzfeld wird als \"5\" gespeichert (laut Ionic-Core; @ionic/angular nicht im Container) / Flutter: parst zu num (Komma erlaubt), leer → null. Ionic übernimmt erst bei Blur, Flutter bei jedem Tastendruck.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 152,
+    "cond": [
+     "@if (selectedField)",
+     "@for (player of players; track player.id)",
+     "@else if (selectedField.fieldType === FieldType.TEXTAREA)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [
+     "(ionChange)=setEditedValue(player.id, $event.detail.value)"
+    ],
+    "link": null,
+    "model": "[ngModel]=\"getEditedValue(player.id)\"",
+    "bindings": [
+     "[placeholder]=\"selectedField.label\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[placeholder]=\"selectedField.label\"",
+    "id": "people/bulk-edit/bulk-edit.page#field-4964deb8-3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:573-574"
+    ],
+    "n": "Pro Person in beiden einzeilig (Ionic ion-input).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 165,
+    "cond": [
+     "@if (selectedField)",
+     "@for (player of players; track player.id)",
+     "@else if (selectedField.fieldType === FieldType.DATE)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "date"
+    },
+    "events": [
+     "(ionChange)=setEditedValue(player.id, $event.detail.value)"
+    ],
+    "link": null,
+    "model": "[ngModel]=\"getEditedValue(player.id)\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/bulk-edit/bulk-edit.page#field-4964deb8-4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:552-572"
+    ],
+    "n": "Ionic: natives input type=date (Wert leerbar) / Flutter: Button mit Datumsauswahl, zeigt 'Kein Datum gewählt' bzw. Datum, Wert kann nicht geleert werden. Format yyyy-MM-dd gleich.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 61,
+    "cond": [
+     "@if (selectedField)",
+     "@else if (selectedField.fieldType === FieldType.TEXT)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"bulkValue\"",
+    "bindings": [
+     "[placeholder]=\"selectedField.label\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[placeholder]=\"selectedField.label\"",
+    "id": "people/bulk-edit/bulk-edit.page#field-523de84f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:573-574",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:123-133"
+    ],
+    "n": "Eingabefeld mit Platzhalter = Feldname gleich. Startwert: Ionic immer '' (getFieldTypeDefaultValue ohne defaultValue) / Flutter: konfigurierter Standardwert des Feldes, sonst ''.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 81,
+    "cond": [
+     "@if (selectedField)",
+     "@else if (selectedField.fieldType === FieldType.DATE)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "date"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"bulkValue\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/bulk-edit/bulk-edit.page#field-523de84f-3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:552",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:115"
+    ],
+    "n": "Ionic: natives input type=date (leerbar), Startwert new Date().toISOString() (nicht angezeigt, aber von 'Für alle setzen' geschrieben) / Flutter: Button mit Datumsdialog ('Kein Datum gewählt'), nicht leerbar, Startwert Standardwert oder '' → schreibt ''.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 123,
+    "cond": [
+     "@if (selectedField)",
+     "@for (player of players; track player.id)",
+     "@else if (selectedField.key === 'phone')"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "tel"
+    },
+    "events": [
+     "(ionChange)=setEditedValue(player.id, $event.detail.value)"
+    ],
+    "link": null,
+    "model": "[ngModel]=\"getEditedValue(player.id)\"",
+    "bindings": [
+     "[placeholder]=\"'people.phonePlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "people.phonePlaceholder"
+    ],
+    "de": [
+     "Telefon..."
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'people.phonePlaceholder' | transloco\"",
+    "id": "people/bulk-edit/bulk-edit.page#field-82a98603"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:521-525"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 53,
+    "cond": [
+     "@if (selectedField)",
+     "@else if (selectedField.key === 'isLeader')"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"bulkValue\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "people.voiceLeader"
+    ],
+    "de": [
+     "Stimmführer"
+    ],
+    "literals": [],
+    "text": "{{ 'people.voiceLeader' | transloco }}",
+    "id": "people/bulk-edit/bulk-edit.page#field-9dd7902a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:514-518"
+    ],
+    "n": "Ionic: ion-toggle mit Beschriftung 'Stimmführer' / Flutter: nur Switch rechts ohne Beschriftung. Startwert false in beiden.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 73,
+    "cond": [
+     "@if (selectedField)",
+     "@else if (selectedField.fieldType === FieldType.TEXTAREA)"
+    ],
+    "tag": "ion-textarea",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"bulkValue\"",
+    "bindings": [
+     "[placeholder]=\"selectedField.label\"",
+     "[autoGrow]=\"true\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[placeholder]=\"selectedField.label\"",
+    "id": "people/bulk-edit/bulk-edit.page#field-d2bdf3b7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:573-574",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:469-485"
+    ],
+    "n": "Ionic: ion-textarea mit autoGrow (mehrzeilig) / Flutter: einzeiliges TextFormField (default-Zweig). Startwert Ionic '' / Flutter Standardwert des Feldes oder ''.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 106,
+    "cond": [
+     "@if (selectedField)",
+     "@for (player of players; track player.id)",
+     "@if (selectedField.key === 'instrument')"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [
+     "(ionChange)=setEditedValue(player.id, $event.detail.value)"
+    ],
+    "link": null,
+    "model": "[ngModel]=\"getEditedValue(player.id)\"",
+    "bindings": [
+     "[placeholder]=\"'people.groupPlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"group.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ group.name }}"
+     }
+    ],
+    "keys": [
+     "people.groupPlaceholder"
+    ],
+    "de": [
+     "Gruppe..."
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'people.groupPlaceholder' | transloco\" {{ group.name }}",
+    "id": "people/bulk-edit/bulk-edit.page#field-e33a38c1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:398-406",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:504-513"
+    ],
+    "n": "Platzhalter 'Gruppe...'.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 67,
+    "cond": [
+     "@if (selectedField)",
+     "@else if (selectedField.fieldType === FieldType.SELECT)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"bulkValue\"",
+    "bindings": [
+     "[placeholder]=\"selectedField.label\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"option\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ option }}"
+     }
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[placeholder]=\"selectedField.label\" {{ option }}",
+    "id": "people/bulk-edit/bulk-edit.page#field-fc367be8"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:542-545",
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:126-130"
+    ],
+    "n": "Dropdown mit Optionen in Reihenfolge, Platzhalter = Feldname gleich. Startwert: Ionic immer erste Option / Flutter: Standardwert des Feldes, sonst erste Option.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 100,
+    "cond": [
+     "@if (selectedField)",
+     "@for (player of players; track player.id)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ player.firstName }} {{ player.lastName }}"
+    ],
+    "text": "{{ player.firstName }} {{ player.lastName }}",
+    "id": "people/bulk-edit/bulk-edit.page#text-24646e77"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:413"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 95,
+    "cond": [
+     "@if (selectedField)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.peopleCount"
+    ],
+    "de": [
+     "Personen ({count})"
+    ],
+    "literals": [],
+    "text": "{{ 'people.peopleCount' | transloco: { count: players.length } }}",
+    "id": "people/bulk-edit/bulk-edit.page#text-44853193"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:377"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 192,
+    "cond": [
+     "@if (!selectedField)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "people.bulkEditHint"
+    ],
+    "de": [
+     "Wähle ein Feld aus, um die Werte für alle Personen zu bearbeiten."
+    ],
+    "literals": [],
+    "text": "{{ 'people.bulkEditHint' | transloco }}",
+    "id": "people/bulk-edit/bulk-edit.page#text-48f2cb53"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:326-344"
+    ],
+    "n": "Icon edit_note statt create-outline (48px, grau).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 40,
+    "cond": [
+     "@if (selectedField)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.setForAll"
+    ],
+    "de": [
+     "Für alle setzen"
+    ],
+    "literals": [],
+    "text": "{{ 'people.setForAll' | transloco }}",
+    "id": "people/bulk-edit/bulk-edit.page#text-91a4384e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:349"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/bulk-edit/bulk-edit.page",
+   "ionic": {
+    "ts": "people/bulk-edit/bulk-edit.page.ts",
+    "html": "people/bulk-edit/bulk-edit.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/bulk-edit/bulk-edit.page.html",
+    "line": 101,
+    "cond": [
+     "@if (selectedField)",
+     "@for (player of players; track player.id)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ player.groupName }}"
+    ],
+    "text": "{{ player.groupName }}",
+    "id": "people/bulk-edit/bulk-edit.page#text-f4a32189"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:414"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/import/import.page.html",
+    "line": 136,
+    "cond": [
+     "@if (step === 'preview')"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "[disabled]": "\"isImporting || !importableRows.length\""
+    },
+    "events": [
+     "(click)=startImport()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "people.importCount"
+    ],
+    "de": [
+     "{count} importieren"
+    ],
+    "literals": [],
+    "text": "{{ 'people.importCount' | transloco: { count: importableRows.length } }}",
+    "id": "people/import/import.page#action-0df4f9a4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:296-297",
+     "lib/features/people/presentation/widgets/import_widgets.dart:217"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/import/import.page.html",
+    "line": 125,
+    "cond": [
+     "@if (step === 'mapping')"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=step = 'file'"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.back"
+    ],
+    "de": [
+     "Zurück"
+    ],
+    "literals": [],
+    "text": "{{ 'common.back' | transloco }}",
+    "id": "people/import/import.page#action-0ebf9e46"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:289-290",
+     "lib/features/people/presentation/widgets/import_widgets.dart:215"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/import/import.page.html",
+    "line": 133,
+    "cond": [
+     "@if (step === 'preview')"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=backToMapping()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.back"
+    ],
+    "de": [
+     "Zurück"
+    ],
+    "literals": [],
+    "text": "{{ 'common.back' | transloco }}",
+    "id": "people/import/import.page#action-3ba65881"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:294-295",
+     "lib/features/people/presentation/widgets/import_widgets.dart:215"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/import/import.page.html",
+    "line": 5,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "people/import/import.page#action-9212f462"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:235-238"
+    ],
+    "n": "Während busy deaktiviert (Ionic: Overlay blockiert).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "people/import/import.page.html",
+    "line": 128,
+    "cond": [
+     "@if (step === 'mapping')"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "[disabled]": "\"!canProceedFromMapping\""
+    },
+    "events": [
+     "(click)=proceedToPreview()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.next"
+    ],
+    "de": [
+     "Weiter"
+    ],
+    "literals": [],
+    "text": "{{ 'common.next' | transloco }}",
+    "id": "people/import/import.page#action-a2aac1cb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:324",
+     "lib/features/people/presentation/pages/person_import_page.dart:327",
+     "lib/core/utils/import_mapper.dart:235"
+    ],
+    "n": "'Weiter' aktiv nur wenn 'Name' oder 'Vorname'+'Nachname' zugeordnet (mappingHasName identisch), zusätzlich gesperrt während Laden (Ionic blockiert per Overlay). Keine Rollenbedingung im Button; Import-Öffner in beiden nur Admin/Verantwortlich (Personenliste isAdmin).",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "people/import/import.page.ts",
+    "line": 254,
+    "method": "ImportPage.showFailureDetails",
+    "cond": [],
+    "header": {
+     "keys": [
+      "people.notImported"
+     ],
+     "de": [
+      "Nicht importierte Personen"
+     ],
+     "literals": [],
+     "expr": "translate('people.notImported')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "list + more"
+    },
+    "buttons": [
+     {
+      "expr": "'OK'",
+      "keys": [],
+      "de": [],
+      "literals": [
+       "OK"
+      ]
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "773b6e93",
+    "mbody": "a1282adf",
+    "id": "people/import/import.page#alert-3b9d1c7b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:198",
+     "lib/features/people/presentation/pages/person_import_page.dart:220",
+     "lib/features/people/presentation/widgets/import_widgets.dart:226-243"
+    ],
+    "n": "Titel 'Nicht importierte Personen', max. 10 Zeilen '• Vorname Nachname: Grund', '… und N weitere', Button 'OK' gleich. Grund: Ionic error.message / Flutter '$e' (z. B. 'RepositoryException: … (operation: …, code: …)').",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/import/import.page.html",
+    "line": 102,
+    "cond": [
+     "@if (step === 'preview')",
+     "@for (row of mappedRows; track row.rowIndex)",
+     "@if (rowStatus(row) !== 'error')"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "interface": "popover"
+    },
+    "events": [
+     "(ionChange)=onRowGroupChange(row)"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"row.player.instrument\"",
+    "bindings": [
+     "[label]=\"'people.group' | transloco\"",
+     "[class.unresolved-group]=\"!row.groupResolved\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"group.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ group.name }}"
+     }
+    ],
+    "keys": [
+     "people.group"
+    ],
+    "de": [
+     "Gruppe"
+    ],
+    "literals": [],
+    "text": "[label]=\"'people.group' | transloco\" {{ group.name }}",
+    "id": "people/import/import.page#field-018f6a18"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:364-385"
+    ],
+    "n": "Gruppen-Dropdown pro Zeile (nicht bei Fehlern), Auswahl setzt groupResolved, gleich. Ionic: Label 'Gruppe' immer über dem Wert, ungeklärte Gruppe mit orangem Rahmen / Flutter: 'Gruppe' nur als Hinweis bei leerem Wert, ungeklärte Gruppe als orange Schrift.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "people/import/import.page.html",
+    "line": 78,
+    "cond": [
+     "@if (step === 'preview')"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"createAccounts\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "people.createAccounts"
+    ],
+    "de": [
+     "Konten erstellen"
+    ],
+    "literals": [],
+    "text": "{{ 'people.createAccounts' | transloco }}",
+    "id": "people/import/import.page#field-147e444a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:335-339"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/import/import.page.ts",
+    "line": 97,
+    "method": "ImportPage.onFileSelect",
+    "cond": [],
+    "message": {
+     "keys": [
+      "people.readingFile"
+     ],
+     "de": [
+      "Datei wird gelesen..."
+     ],
+     "literals": [],
+     "expr": "translate('people.readingFile')"
+    },
+    "duration": "10000",
+    "src": "c4db7da7",
+    "mbody": "f6e57fc8",
+    "id": "people/import/import.page#loading-3194637c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:82",
+     "lib/features/people/presentation/pages/person_import_page.dart:262-284"
+    ],
+    "n": "Flutter blockiert mit Overlay (Spinner) und deaktiviertem X, aber ohne Text 'Datei wird gelesen...' (peopleReadingFile ungenutzt).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "people/import/import.page.ts",
+    "line": 135,
+    "method": "ImportPage.proceedToPreview",
+    "cond": [],
+    "message": {
+     "keys": [
+      "people.checkingData"
+     ],
+     "de": [
+      "Daten werden geprüft..."
+     ],
+     "literals": [],
+     "expr": "translate('people.checkingData')"
+    },
+    "duration": "10000",
+    "src": "8cc24fdc",
+    "mbody": "7b21b3cd",
+    "id": "people/import/import.page#loading-b32cfbfa"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:137",
+     "lib/features/people/presentation/pages/person_import_page.dart:262-284"
+    ],
+    "n": "Ionic: blockierendes Overlay 'Daten werden geprüft...' / Flutter: Overlay nur mit Spinner (peopleCheckingData ungenutzt), 'Zurück' in der unteren Leiste bleibt bedienbar.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "people/import/import.page.html",
+    "line": 110,
+    "cond": [
+     "@if (step === 'preview')",
+     "@for (row of mappedRows; track row.rowIndex)",
+     "@else (not rowStatus(row) !== 'error')"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ groupName(row.player.instrument) }}"
+    ],
+    "text": "{{ groupName(row.player.instrument) }}",
+    "id": "people/import/import.page#text-14720394"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:386-387"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ]
+  }
+ ]
+}

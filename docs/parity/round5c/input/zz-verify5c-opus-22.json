@@ -1,0 +1,1563 @@
+{
+ "batch": "zz-verify5c-opus-22",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 226,
+    "method": "OrganisationService.getOrganisationsFromUser",
+    "cond": [
+     "(fetchError)"
+    ],
+    "message": {
+     "keys": [
+      "db.loadTenantsFailed2"
+     ],
+     "de": [
+      "Fehler beim Laden der Mandanten"
+     ],
+     "literals": [],
+     "expr": "translate('db.loadTenantsFailed2')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f194a615",
+    "mbody": "d5cd4ba4",
+    "roleGuarded": true,
+    "id": "services/organisation/organisation.service#toast-f9193a09"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:17"
+    ],
+    "n": "Ionic: Toast \"Fehler beim Laden der Mandanten\", es öffnet sich kein Dialog. / Flutter: Fehler wird zu leerer Liste, danach öffnet sich direkt \"Organisation erstellen\".",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-0ad62f2775",
+    "title": "Flutter besser: zusätzliche Zugriffsprüfungen",
+    "n": "Ionic: verknüpft/trennt Instanzen und lädt Instanzen/Personen/verknüpfte Instanzen ohne eigene Rollen- bzw. Mitgliedsprüfung (nur RLS); doppelte Verknüpfung erzeugt Fehler. / Flutter: prüft vor Verknüpfen/Trennen Rolle 1/5 in tenantUsers, vor dem Laden Mitgliedschaft; doppelte Verknüpfung wird still ignoriert.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/organisation/organisation.service.ts:124",
+    "f": [
+     "lib/data/repositories/organisation_repository.dart:50",
+     "lib/data/repositories/organisation_repository.dart:66",
+     "lib/data/repositories/organisation_repository.dart:190",
+     "lib/data/repositories/organisation_repository.dart:237"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/organisation_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-2885ebb729",
+    "title": "Flutter besser: gemeinsame Feldwerte seitenweise geladen",
+    "n": "Ionic: lädt Feldwerte für viele Personen in einer Abfrage (bei vielen Personen durch max-rows abgeschnitten). / Flutter: lädt in Blöcken/seitenweise, dadurch vollständig.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/organisation/organisation.service.ts:50",
+    "f": [
+     "lib/data/repositories/shared_person_fields.dart:66"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/shared_person_fields.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player-absence/player-absence.service",
+   "ionic": {
+    "ts": "services/player-absence/player-absence.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player-absence/player-absence.service.ts",
+    "line": 46,
+    "method": "PlayerAbsenceService.addAbsence",
+    "cond": [],
+    "table": "player_absences",
+    "op": "insert",
+    "payload": "absence",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "001edb16",
+    "mbody": "97c1a4a4",
+    "id": "services/player-absence/player-absence.service#db-7fbdf33d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_absence_repository.dart:72",
+     "lib/core/providers/player_absence_providers.dart:87"
+    ],
+    "n": "insert player_absences {person_id, from_date, until_date, reason, tenant_id = aktuelle Instanz} .select().single() wie Ionic (Personendetail und Meine Termine).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_absence_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player-absence/player-absence.service",
+   "ionic": {
+    "ts": "services/player-absence/player-absence.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player-absence/player-absence.service.ts",
+    "line": 61,
+    "method": "PlayerAbsenceService.deleteAbsence",
+    "cond": [],
+    "table": "player_absences",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', id)"
+    ],
+    "tenantFilter": false,
+    "src": "5cc4d7d1",
+    "mbody": "a53108f2",
+    "id": "services/player-absence/player-absence.service#db-936de012"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_absence_repository.dart:102"
+    ],
+    "n": "delete player_absences .eq(id), Flutter zusätzlich .eq(tenant_id).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_absence_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/player-absence/player-absence.service",
+   "ionic": {
+    "ts": "services/player-absence/player-absence.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player-absence/player-absence.service.ts",
+    "line": 16,
+    "method": "PlayerAbsenceService.getAbsencesForPerson",
+    "cond": [],
+    "table": "player_absences",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('person_id', personId)",
+     "eq('tenant_id', tenantId)",
+     "order('from_date')"
+    ],
+    "tenantFilter": true,
+    "src": "e4efcbe1",
+    "mbody": "e5c00771",
+    "id": "services/player-absence/player-absence.service#db-99111af5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_absence_repository.dart:35"
+    ],
+    "n": "Abwesenheiten jetzt .order('from_date', ascending: true), älteste zuerst wie Ionic.",
+    "v": "korrigiert",
+    "src": "zz-fixed-zz-querschnitt-r5-nachtrag.json",
+    "flutterAt": "0f74333"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player-absence/player-absence.service",
+   "ionic": {
+    "ts": "services/player-absence/player-absence.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player-absence/player-absence.service.ts",
+    "line": 32,
+    "method": "PlayerAbsenceService.getAbsencesForTenant",
+    "cond": [],
+    "table": "player_absences",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenant_id', tenantId)"
+    ],
+    "tenantFilter": true,
+    "src": "8444ad33",
+    "mbody": "ce0b85c6",
+    "id": "services/player-absence/player-absence.service#db-d999637c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_absence_repository.dart:50",
+     "lib/data/repositories/dashboard_repository.dart:124"
+    ],
+    "n": "select * .eq(tenant_id) wie Ionic, Flutter seitenweise mit stabiler Sortierung nach id (Ionic ohne Sortierung; Verbraucher filtern/sortieren selbst).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_absence_repository.dart",
+    "lib/data/repositories/dashboard_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player-absence/player-absence.service",
+   "ionic": {
+    "ts": "services/player-absence/player-absence.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/player-absence/player-absence.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "getAbsencesForPerson:15-29",
+     "getAbsencesForTenant:31-43",
+     "addAbsence:45-58",
+     "deleteAbsence:60-70"
+    ],
+    "bodies": {
+     "getAbsencesForPerson": "e5c00771",
+     "getAbsencesForTenant": "ce0b85c6",
+     "addAbsence": "97c1a4a4",
+     "deleteAbsence": "a53108f2"
+    },
+    "id": "services/player-absence/player-absence.service#logic-e07a19b4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/player_absence_repository.dart:30",
+     "lib/data/repositories/player_absence_repository.dart:50"
+    ],
+    "n": "Laden/Anlegen/Löschen gleich. Unterschied siehe Extra (Flutter besser).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_absence_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player-absence/player-absence.service",
+   "ionic": {
+    "ts": "services/player-absence/player-absence.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-f64ec4c4ee",
+    "title": "Flutter besser: Abwesenheiten seitenweise, Löschen mit tenant_id",
+    "n": "Ionic: lädt Abwesenheiten der Instanz in einer Abfrage (max-rows) und löscht nur per id. / Flutter: lädt seitenweise und löscht zusätzlich mit tenant_id-Filter.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/player-absence/player-absence.service.ts:32",
+    "f": [
+     "lib/data/repositories/player_absence_repository.dart:50",
+     "lib/data/repositories/player_absence_repository.dart:105"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_absence_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 22,
+    "method": "PlayerService.getPlayerByAppId",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('appId', appId)",
+     "eq('tenantId', tenantId)"
+    ],
+    "tenantFilter": true,
+    "src": "dae0c676",
+    "mbody": "0e7fd42c",
+    "id": "services/player/player.service#db-08cf0e97"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:139"
+    ],
+    "n": "select * .eq(appId).eq(tenantId), bei mehreren Zeilen die aktive (nicht pending, nicht ausgetreten) bevorzugt wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 430,
+    "method": "PlayerService.removePlayer",
+    "cond": [],
+    "table": "player",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: player.id })"
+    ],
+    "tenantFilter": false,
+    "src": "c44fc78c",
+    "mbody": "548481a6",
+    "id": "services/player/player.service#db-4b96ef3d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:814",
+     "lib/core/providers/player_providers.dart:218"
+    ],
+    "n": "delete player .eq(id) (+ tenantId), danach bei appId Zugang zur Instanz entfernen wie db.removePlayer (Liste und Personendetail). Fehlendes Tracking beim Zusammenführen ist als eigener Zusatzbefund erfasst.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 255,
+    "method": "PlayerService.reassignPlayerAbsences",
+    "cond": [],
+    "table": "player_absences",
+    "op": "update",
+    "payload": "{ person_id: toId }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('person_id', fromId)"
+    ],
+    "tenantFilter": false,
+    "src": "bb061736",
+    "mbody": "d06f36c3",
+    "id": "services/player/player.service#db-9a7299b3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:1989"
+    ],
+    "n": "update player_absences {person_id: Ziel} .eq(person_id, Bewerber) beim Zusammenführen, nach den Anwesenheiten wie Ionic; Flutter zusätzlich tenant_id-Filter, Prüfung beider Personen und Abbruch, wenn noch Zeilen übrig sind.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 419,
+    "method": "PlayerService.updatePlayerField",
+    "cond": [],
+    "table": "player",
+    "op": "update",
+    "payload": "{ [field]: value } as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "826f1bd2",
+    "mbody": "b1289404",
+    "id": "services/player/player.service#db-bd0f56d3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/pages/bulk_edit_page.dart:189",
+     "lib/data/repositories/player_repository.dart:586"
+    ],
+    "n": "Massenbearbeitung Standardfeld: update player {[feld]: wert} .eq(id) (+ tenantId), parallel, Gruppenwechsel danach mit syncPlayerWithUpcomingAttendances wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 375,
+    "method": "PlayerService.updatePlayerHistory",
+    "cond": [],
+    "table": "player",
+    "op": "update",
+    "payload": "{ history: history as any[] }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "c2c54a39",
+    "mbody": "f4b15fd3",
+    "id": "services/player/player.service#db-c1a7cd43"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:328",
+     "lib/data/repositories/player_repository.dart:586"
+    ],
+    "n": "update player {history} (+ tenantId) nach „Eintrag entfernen?“ (Abbrechen/Ja), Toasts „entfernt“/Fehler wie Ionic. Randfall unverändert: Flutter entfernt Einträge mit gleichem Datum+Typ+Text, Ionic alle mit gleichem Datum.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 168,
+    "method": "PlayerService.getLeftPlayers",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "is('pending', false)",
+     "eq('tenantId', tenantId)",
+     "not('left', 'is', null)",
+     "order('left', { ascending: false })"
+    ],
+    "tenantFilter": true,
+    "src": "5421259d",
+    "mbody": "df0af889",
+    "id": "services/player/player.service#db-c8b7f696"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:178",
+     "lib/features/settings/presentation/pages/left_players_page.dart:23"
+    ],
+    "n": "pending false, tenantId, left not null, order left ascending:false wie Ionic; danach wie getModifiedPlayersForList nach Gruppe sortiert.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 217,
+    "method": "PlayerService.getPossibleDuplicatesInTenant",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*, instrumentGroup:instrument(name)'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "is('pending', false)",
+     "is('appId', null)",
+     "neq('id', excludeId)",
+     "or(orParts.join(','))",
+     "limit(500)"
+    ],
+    "tenantFilter": true,
+    "src": "316a5589",
+    "mbody": "9ebbe087",
+    "id": "services/player/player.service#db-ca2edd62"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:1902",
+     "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:17"
+    ],
+    "n": "tenantId, pending false, appId null, neq id, or(firstName/lastName ilike Präfix), limit 500, Ranking Schwelle 0,65 wie Ionic; Gruppenname aus groupsMapProvider statt Join. Stiller Ladefehler ist in toast-f8ff8801 erfasst.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 149,
+    "method": "PlayerService.getPendingPersons",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "is('pending', true)",
+     "eq('tenantId', tenantId)",
+     "order('created_at', { ascending: true })"
+    ],
+    "tenantFilter": true,
+    "src": "ebbc78af",
+    "mbody": "8e286fc8",
+    "id": "services/player/player.service#db-d3a9e9fb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:166"
+    ],
+    "n": "Ausstehende Personen jetzt .order('created_at', ascending: true) wie Ionic.",
+    "v": "korrigiert",
+    "src": "zz-fixed-zz-querschnitt-r5-nachtrag.json",
+    "flutterAt": "0f74333"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/player/player.service.ts",
+    "line": 127,
+    "method": "PlayerService.getPlayersByGroup",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "eq('instrument', groupId)",
+     "is('left', null)",
+     "is('pending', false)",
+     "order('isLeader', { ascending: false })",
+     "order('lastName')"
+    ],
+    "tenantFilter": true,
+    "src": "607298aa",
+    "mbody": "0f57c3f0",
+    "roleGuarded": true,
+    "id": "services/player/player.service#db-e018cb94"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:201",
+     "lib/features/voice_leader/data/providers/voice_leader_providers.dart:73",
+     "lib/core/router/route_access.dart:96",
+     "lib/features/settings/presentation/pages/settings_page.dart:198"
+    ],
+    "n": "player: tenantId, instrument, left null, pending false wie Ionic. Flutter-Query sortiert lastName absteigend (postgrest-dart), wirkt sich nicht aus: beide sortieren danach nach Nachname, Vorname (localeCompare). Rolle unverändert: Einstieg und Routen-Gate nur VOICE_LEADER/VOICE_LEADER_HELPER (canSeeVoiceLeaderSettings, Einstellungen nur !isGeneral && !sp).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/player/player.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:19-19",
+     "getPlayerByAppId:21-50",
+     "getPlayerProfile:52-59",
+     "getPlayers:61-124",
+     "getPlayersByGroup:126-146",
+     "getPendingPersons:148-165",
+     "getLeftPlayers:167-180",
+     "getPlayersWithoutAccount:182-196",
+     "getPossibleDuplicatesInTenant:203-238",
+     "sanitizeOrToken:244-249",
+     "reassignPlayerAbsences:252-263",
+     "getConductors:265-285",
+     "addPlayer:287-313",
+     "updatePlayer:315-372",
+     "updatePlayerHistory:374-387",
+     "setGlobalPersonId:389-398",
+     "updatePlayerAdditionalFields:404-413",
+     "updatePlayerField:418-427",
+     "removePlayer:429-435",
+     "archivePlayer:437-448",
+     "reactivatePlayer:450-461",
+     "checkAndUnpausePlayers:463-500",
+     "updateProfile:502-512",
+     "searchPersonsByName:514-532",
+     "resetExtraFieldValues:534-567",
+     "updateExtraFieldValue:569-600"
+    ],
+    "bodies": {
+     "constructor": "e58f9596",
+     "getPlayerByAppId": "0e7fd42c",
+     "getPlayerProfile": "6d16e99e",
+     "getPlayers": "c0c02630",
+     "getPlayersByGroup": "0f57c3f0",
+     "getPendingPersons": "8e286fc8",
+     "getLeftPlayers": "df0af889",
+     "getPlayersWithoutAccount": "5f7d9232",
+     "getPossibleDuplicatesInTenant": "9ebbe087",
+     "sanitizeOrToken": "4ecee5eb",
+     "reassignPlayerAbsences": "d06f36c3",
+     "getConductors": "9f1f67b5",
+     "addPlayer": "dce2bc67",
+     "updatePlayer": "ca5d304e",
+     "updatePlayerHistory": "f4b15fd3",
+     "setGlobalPersonId": "ac0ee9cc",
+     "updatePlayerAdditionalFields": "30d1b74d",
+     "updatePlayerField": "b1289404",
+     "removePlayer": "548481a6",
+     "archivePlayer": "c91a224b",
+     "reactivatePlayer": "fd469449",
+     "checkAndUnpausePlayers": "8c29b41d",
+     "updateProfile": "afde927e",
+     "searchPersonsByName": "0a2ecde5",
+     "resetExtraFieldValues": "c8812ed8",
+     "updateExtraFieldValue": "e65cd3b1"
+    },
+    "id": "services/player/player.service#logic-039a9e56"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/player_repository.dart:138",
+     "lib/data/repositories/extra_fields_repository.dart:73",
+     "lib/data/repositories/extra_fields_repository.dart:137"
+    ],
+    "n": "Lebende Methoden (getPlayerByAppId, getPlayersByGroup, ausstehende/ausgetretene Personen, Personen ohne Konto, Duplikate, Abwesenheiten umhängen, Historie, globale Person-ID, Zusatzfelder, Feld-Update, Entfernen, Zusatzfeldwerte zurücksetzen/umbenennen) haben Gegenstücke; viele Methoden sind toter Code (DbService eigene Implementierungen). Unterschiede siehe Extras.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart",
+    "lib/data/repositories/extra_fields_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-130f30b192",
+    "title": "Zusatzfeldwerte: Abbruch beim ersten Fehler",
+    "n": "Ionic: aktualisiert jede Person einzeln, zählt Erfolge und macht bei Einzelfehlern weiter (\"{n} Personen aktualisiert\"). / Flutter: bricht beim ersten fehlgeschlagenen Update ab und zeigt \"Fehler beim updaten der Zusatzfelder\"; bereits aktualisierte Personen bleiben geändert.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/player/player.service.ts:556",
+    "f": [
+     "lib/data/repositories/extra_fields_repository.dart:137",
+     "lib/data/repositories/extra_fields_repository.dart:158"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/extra_fields_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-6caeb92ca1",
+    "title": "Flutter besser: Zusatzfeldwerte seitenweise geladen",
+    "n": "Ionic: lädt alle Personen der Instanz für Zurücksetzen/Umbenennen in einer Abfrage (max-rows). / Flutter: lädt seitenweise.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/player/player.service.ts:535",
+    "f": [
+     "lib/data/repositories/extra_fields_repository.dart:73"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/extra_fields_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/player/player.service",
+   "ionic": {
+    "ts": "services/player/player.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-afee7b801d",
+    "title": "Kein PlayerRemoved-Tracking beim Zusammenführen",
+    "n": "Ionic: Zusammenführen von Duplikaten entfernt die doppelte Person über removePlayer inkl. Historien-/Tracking-Eintrag (db.service.ts:3429). / Flutter: Zusammenführen löscht/archiviert ohne diesen Tracking-Eintrag.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/player/player.service.ts:434",
+    "f": [
+     "lib/data/repositories/player_repository.dart:2026"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/push/push.service.ts",
+    "line": 385,
+    "method": "PushService.removeToken",
+    "cond": [],
+    "table": "device_tokens",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('token', this.currentToken)"
+    ],
+    "tenantFilter": false,
+    "src": "d352280a",
+    "mbody": "9e4ea8a4",
+    "id": "services/push/push.service#db-b54d7781"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/device_token_repository.dart:106",
+     "lib/core/services/push/push_service.dart:446",
+     "lib/core/providers/push_providers.dart:87"
+    ],
+    "n": "Flutter besser: Token wird vor dem Abmelden gelöscht (zusätzlich nach user_id), FCM-Token auch auf Android gelöscht. Ionic löscht erst im SIGNED_OUT-Handler (app.component.ts:166) – ohne Sitzung greift RLS \"Users can manage their own tokens\", der Delete ist wirkungslos; auf Android kommen danach weiter Pushes des alten Kontos.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/push/push_service.dart",
+    "lib/core/providers/push_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "nav",
+    "file": "services/push/push.service.ts",
+    "line": 286,
+    "method": "PushService.navigateFromData",
+    "cond": [
+     "(data.type === 'message' && data.messageId)"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "`/tabs/messages/${data.messageId}`",
+    "src": "1bcada73",
+    "mbody": "969d95dc",
+    "roleGuarded": true,
+    "id": "services/push/push.service#nav-1a9e006e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_navigation.dart:94",
+     "lib/core/providers/push_providers.dart:306"
+    ],
+    "n": "/tabs/messages/:id → /messages/:id (push), kein Markieren als gelesen (Seite macht das), Route ohne Rollen-Gate wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/providers/push_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "nav",
+    "file": "services/push/push.service.ts",
+    "line": 314,
+    "method": "PushService.navigateFromData",
+    "cond": [],
+    "via": "router.navigateByUrl",
+    "to": "data.attendanceId ? `/tabs/attendance/${data.attendanceId}/protocol` : '/tabs/settings/team-organization?tab=protocols'",
+    "src": "42424226",
+    "mbody": "969d95dc",
+    "roleGuarded": true,
+    "id": "services/push/push.service#nav-20f8d0b6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_navigation.dart:117",
+     "lib/core/router/legacy_routes.dart:54"
+    ],
+    "n": "protocol: /tabs/attendance/:id/protocol → /settings/protocol/:id (nicht unter dem /attendance-Rollen-Gate, also für alle Empfänger erreichbar wie Ionic); sonst team-organization?tab=protocols.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "nav",
+    "file": "services/push/push.service.ts",
+    "line": 305,
+    "method": "PushService.navigateFromData",
+    "cond": [
+     "(data.route)"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "data.route",
+    "src": "ca1ef032",
+    "mbody": "969d95dc",
+    "roleGuarded": true,
+    "id": "services/push/push.service#nav-6fe135b6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_navigation.dart:108",
+     "lib/core/router/legacy_routes.dart:22"
+    ],
+    "n": "data.route (team-notify: /tabs/settings/tasks/:id, /tabs/attendance/:id/protocol, team-organization?tab=topics) über legacyRouteRedirect; Zielrouten ohne Rollen-Gate wie Ionic (Seiten prüfen selbst).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/push/push.service",
+   "ionic": {
+    "ts": "services/push/push.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "nav",
+    "file": "services/push/push.service.ts",
+    "line": 365,
+    "method": "PushService.navigateToAttendance",
+    "cond": [
+     "(role === Role.PARENT)",
+     "!(role === Role.ADMIN || role === Role.RESPONSIBLE || role === Role.HELPER || role === Role.VOICE_LEADER_HELPER)"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "'/tabs/parents'",
+    "src": "a76cfdc7",
+    "mbody": "1ae39548",
+    "roleGuarded": true,
+    "id": "services/push/push.service#nav-b578f3e6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/services/push/push_navigation.dart:81",
+     "lib/core/providers/push_providers.dart:295",
+     "lib/features/parents/presentation/pages/parents_portal_page.dart:388"
+    ],
+    "n": "Eltern → /parents mit pendingAttendanceId, das Elternportal öffnet den Termin – wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/core/providers/push_providers.dart",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/register.guard",
+   "ionic": {
+    "ts": "services/register.guard.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "services/register.guard.ts",
+    "line": 18,
+    "method": "RegisterGuard.canActivate",
+    "cond": [
+     "(this.db.tenantUser())",
+     "!(this.db.user && Boolean(this.db.tenants()?.length === 0))"
+    ],
+    "call": "Utils.getUrl",
+    "args": "this.db.tenantUser().role",
+    "src": "599c2113",
+    "mbody": "64db3669",
+    "roleGuarded": true,
+    "id": "services/register.guard#effect-e90908cd"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:337",
+     "lib/core/router/app_router.dart:352",
+     "lib/core/router/app_router.dart:358",
+     "lib/core/utils/dashboard_logic.dart:56"
+    ],
+    "n": "Angemeldet mit Instanz auf /register: Ionic RegisterGuard → Utils.getUrl(role) ohne Dashboard-Prüfung (Admin/Verantwortlich → Personenliste). Flutter → homeRouteFor inkl. Dashboard (Admin/Verantwortlich mit Dashboard-Tab → Dashboard) und mit 'Instanzauswahl aktivieren' oder noch nicht geladener Instanz → /tenants. Ohne Instanz: beide Seite 'Neue Instanz anlegen'. Seltener Pfad (manuelle URL).",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/register.guard",
+   "ionic": {
+    "ts": "services/register.guard.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "nav",
+    "file": "services/register.guard.ts",
+    "line": 22,
+    "method": "RegisterGuard.canActivate",
+    "cond": [
+     "!(this.db.tenantUser())",
+     "!(this.db.user && Boolean(this.db.tenants()?.length === 0))"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "'/login'",
+    "src": "bd94d0e7",
+    "mbody": "64db3669",
+    "roleGuarded": true,
+    "id": "services/register.guard#nav-28791f97"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:289",
+     "lib/core/router/app_router.dart:334",
+     "lib/core/router/app_router.dart:450"
+    ],
+    "n": "Ionic: nicht angemeldet auf /register → Weiterleitung auf /login. / Flutter: /register ist die Konto-Registrierung (RegisterPage) und wird ohne Login direkt angezeigt, keine Weiterleitung auf /login. Nur bei direktem Aufruf der URL.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/register.guard",
+   "ionic": {
+    "ts": "services/register.guard.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "nav",
+    "file": "services/register.guard.ts",
+    "line": 19,
+    "method": "RegisterGuard.canActivate",
+    "cond": [
+     "(this.db.tenantUser())",
+     "!(this.db.user && Boolean(this.db.tenants()?.length === 0))"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "url",
+    "src": "bf7180ad",
+    "mbody": "64db3669",
+    "roleGuarded": true,
+    "id": "services/register.guard#nav-7b570795"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:337",
+     "lib/core/router/app_router.dart:352",
+     "lib/core/router/app_router.dart:358",
+     "lib/core/utils/dashboard_logic.dart:56"
+    ],
+    "n": "Wie effect-e90908cd: Ionic RegisterGuard ohne Dashboard (Admin/Verantwortlich → Personenliste), Flutter mit Dashboard bzw. /tenants bei 'Instanzauswahl aktivieren'.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/shift/shift.service.ts",
+    "line": 69,
+    "method": "ShiftService.updateShift",
+    "cond": [],
+    "table": "shifts",
+    "op": "update",
+    "payload": "shift as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: shift.id })"
+    ],
+    "tenantFilter": false,
+    "src": "5bf2039d",
+    "mbody": "31471b3f",
+    "id": "services/shift/shift.service#db-33af5718"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/shift_repository.dart:93"
+    ],
+    "n": "Ionic schreibt das ganze ShiftPlan-Objekt, Flutter dieselben Inhaltsfelder (name, description, definition, shifts) ohne id/created_at/tenant_id; Filter id + tenant_id. Segment-Reihenfolge siehe extra (Sortierung).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/shift_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/shift/shift.service.ts",
+    "line": 81,
+    "method": "ShiftService.deleteShift",
+    "cond": [],
+    "table": "shifts",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "7889c341",
+    "mbody": "0002eeab",
+    "id": "services/shift/shift.service#db-75386190"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/shift_repository.dart:109",
+     "lib/core/providers/shift_providers.dart:149"
+    ],
+    "n": "Delete shifts nach id + tenant_id. Vorher wie DbService.deleteShift: alle nicht-pending Personen des Plans (getPlayersByShift) per updateShiftAssignmentsForPerson mit shift_id null zurückgesetzt; Demo-Sperre davor.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/shift_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/shift/shift.service.ts",
+    "line": 15,
+    "method": "ShiftService.loadShifts",
+    "cond": [],
+    "table": "shifts",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenant_id', tenantId)",
+     "order('name', { ascending: true })"
+    ],
+    "tenantFilter": true,
+    "src": "e3447f93",
+    "mbody": "06c18568",
+    "id": "services/shift/shift.service#db-7b43b654"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/shift_repository.dart:19"
+    ],
+    "n": "Gleiche Abfrage (shifts, tenant_id, order name). Sortierung der definition nach index fehlt in Flutter – siehe extra der Unit.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/shift_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/shift/shift.service.ts",
+    "line": 48,
+    "method": "ShiftService.addShift",
+    "cond": [],
+    "table": "shifts",
+    "op": "insert",
+    "payload": "{ name: shift.name, description: shift.description, tenant_id: tenantId, definition: (shift.definition || []) as any, shifts: (shift.shifts || []) as any, }",
+    "options": [],
+    "columns": "'id'",
+    "filters": [
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "5b9ccb1c",
+    "mbody": "e1e95e3c",
+    "id": "services/shift/shift.service#db-8236c105"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/shift_repository.dart:53",
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:281"
+    ],
+    "n": "Insert shifts mit name, description, tenant_id, definition, shifts (Neu: ShiftPlan.toJson ohne id/created_at, tenant_id aktuell; Kopie: '<Name> (Kopie)', tenant_id der Ziel-Instanz, Segmente ohne IDs). Kleinigkeiten: Flutter trimmt Name/Beschreibung beim Anlegen.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/shift_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/shift/shift.service.ts",
+    "line": 93,
+    "method": "ShiftService.getPlayersWithShift",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, appId, shift_name, shift_start'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "eq('shift_id', shiftId)",
+     "not('appId', 'is', null)"
+    ],
+    "tenantFilter": true,
+    "src": "61e35479",
+    "mbody": "47d5a500",
+    "id": "services/shift/shift.service#db-de95fd8a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:43",
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:334",
+     "lib/data/repositories/shift_repository.dart:141"
+    ],
+    "n": "Ionic: liest Personen mit dieser Schicht nur mit appId (not appId is null); davon hängt ab, ob die Zuweisungs-Abfrage kommt und welche Anzahl genannt wird / Flutter: Anzahl über getShiftUsageCount ohne appId-Filter (zählt auch Personen ohne Konto), der Kopiervorgang liest dann tenantId+shift_id und filtert appId erst in Dart. Schalter 'Zuweisungen kopieren' und Personenanzahl können daher abweichen.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart",
+    "lib/data/repositories/shift_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/shift/shift.service.ts",
+    "line": 33,
+    "method": "ShiftService.isShiftUsed",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id'",
+    "filters": [
+     "eq('shift_id', id)",
+     "limit(1)"
+    ],
+    "tenantFilter": false,
+    "src": "d680a605",
+    "mbody": "16c805dd",
+    "id": "services/shift/shift.service#db-eb72dd6f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/shift_repository.dart:141",
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:96",
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:222"
+    ],
+    "n": "getShiftUsageCount (player.shift_id, zusätzlich tenantId), 'benutzt' = Anzahl > 0; sperrt wie Ionic isUsed Löschen/Name/Datum der festen Schichten. Fehler-Toast ist eigenes toast-Item.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/shift_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/shift/shift.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "loadShifts:14-30",
+     "isShiftUsed:32-45",
+     "addShift:47-66",
+     "updateShift:68-78",
+     "deleteShift:80-90",
+     "getPlayersWithShift:92-106",
+     "assignShiftToPlayersInTenant:108-159",
+     "updateShiftAttendancesInTenant:161-245"
+    ],
+    "bodies": {
+     "loadShifts": "06c18568",
+     "isShiftUsed": "16c805dd",
+     "addShift": "e1e95e3c",
+     "updateShift": "31471b3f",
+     "deleteShift": "0002eeab",
+     "getPlayersWithShift": "47d5a500",
+     "assignShiftToPlayersInTenant": "ce90c87e",
+     "updateShiftAttendancesInTenant": "84e2f044"
+    },
+    "id": "services/shift/shift.service#logic-8cc479ce"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/models/shift/shift_plan.dart:22",
+     "lib/data/repositories/shift_repository.dart:17",
+     "lib/core/providers/shift_providers.dart:77",
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:68",
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:237"
+    ],
+    "n": "Erstprüfung überholt: beide Abweichungen behoben – Segmente werden beim Laden stabil nach index sortiert (Konverter in shift_plan.dart, gilt für Liste und Detail), Kopieren fragt/zählt nur Personen mit appId (getPlayersWithShift). loadShifts/addShift/updateShift/deleteShift/isShiftUsed, Zuweisen aktiver Zielpersonen per appId (shift_id/shift_name/shift_start), Neuberechnung künftiger Termine (nicht ganztägig, nur Entschuldigt bei Default-Status) wie Ionic, Flutter zusätzlich mit tenantId-Filtern. Ohne Gewicht: scheitert ein einzelnes Personen-Update, meldet Flutter 'Kopieren fehlgeschlagen' (Ionic zählt die Person nur nicht).",
+    "v": "korrigiert",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/shift_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/shift/shift.service",
+   "ionic": {
+    "ts": "services/shift/shift.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-a0e73b9118",
+    "title": "Kopieren: Personenzahl inkl. Personen ohne Account",
+    "n": "Ionic: getPlayersWithShift zählt nur Personen mit appId; ohne solche wird direkt nur der Plan kopiert, die Zahl im Hinweis = Personen mit Account / Flutter: shiftUsageCountProvider zählt alle Personen mit dieser Schicht – Schalter 'Zuweisungen kopieren' erscheint auch, wenn niemand einen Account hat, Zahl höher; dann Meldung 'copiedNoMatch' statt 'copied'.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/shift/shift.service.ts:98",
+    "f": [
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:43",
+     "lib/data/repositories/shift_repository.dart:141"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart",
+    "lib/data/repositories/shift_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/sign-in-out/sign-in-out.service",
+   "ionic": {
+    "ts": "services/sign-in-out/sign-in-out.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/sign-in-out/sign-in-out.service.ts",
+    "line": 68,
+    "method": "SignInOutService.updatePersonAttendance",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "update",
+    "payload": "dbFields as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "f002479a",
+    "mbody": "a9f85224",
+    "id": "services/sign-in-out/sign-in-out.service#db-574d5c66"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/sign_in_out_repository.dart:104"
+    ],
+    "n": "Flutter besser: gleiche Tabelle/Spalten (status, notes, changed_at, Duty-Sync bei Anmelden) nach id, aber changed_by: Ionic schreibt bei Abmeldung (DbService.signout gibt keine userId weiter) null, sonst die User-ID / Flutter immer die aktuelle User-ID. Folge: 'Zuletzt geändert von' zeigt nach Abmeldung in Flutter einen Namen statt 'Status wurde noch nicht geändert'. Duty-Sync bei Abmeldung fehlt in Flutter, ist für Entschuldigt/Verspätung gemeldet aber wirkungslos (dutyStateAfterStatus unverändert).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/sign_in_out_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/sign-in-out/sign-in-out.service",
+   "ionic": {
+    "ts": "services/sign-in-out/sign-in-out.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/sign-in-out/sign-in-out.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "signout:15-37",
+     "signin:39-51",
+     "updateAttendanceNote:53-56",
+     "updatePersonAttendance:58-77"
+    ],
+    "bodies": {
+     "signout": "bbddadad",
+     "signin": "ed645de3",
+     "updateAttendanceNote": "e555457e",
+     "updatePersonAttendance": "a9f85224"
+    },
+    "id": "services/sign-in-out/sign-in-out.service#logic-6ffa52b8"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/sign_in_out_repository.dart:164",
+     "lib/data/repositories/sign_in_out_repository.dart:201",
+     "lib/data/repositories/sign_in_out_repository.dart:245",
+     "lib/data/repositories/sign_in_out_repository.dart:104",
+     "lib/data/repositories/sign_in_out_repository.dart:141"
+    ],
+    "n": "signout/signin/updateAttendanceNote gleich: Status Entschuldigt bzw. Verspätung gemeldet (lateExcused) mit Grund als notes, Anmelden → Anwesend mit notes, Notiz-Update; danach quick-processor mit signout/lateSignout/noteUpdate bzw. Vorstatus; Pflicht-Status-Sync wie syncDutyWithStatus (Flutter im selben Update). Flutter prüft zusätzlich die Mandanten-/Eigentümerschaft der IDs. Einziger Unterschied: changed_by bei der Abmeldung (siehe db-Item).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/sign_in_out_repository.dart"
+   ]
+  }
+ ]
+}

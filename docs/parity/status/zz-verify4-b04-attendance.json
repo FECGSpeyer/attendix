@@ -1,0 +1,244 @@
+{
+  "batch": "zz-verify4-b04-attendance",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "attendance/attendance/attendance.page#logic-8c42fa1f": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:128",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:239",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:552",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:569",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1072",
+        "lib/core/providers/attendance_detail_providers.dart:159",
+        "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:26"
+      ],
+      "n": "Wie Ionic: paralleles Laden (Termin, Personenzeilen, Typ direkt per id statt Katalog-Refresh), Werke-Nebenladungen unabhängig von der Liste (Fehler → leere Werke), Realtime (ein Kanal statt zwei, gleiche Wirkung) mit Resubscribe beim Wiedersichtbarwerden, Rauswurf bei Mandantenwechsel, Klick-Statuszyklus (gleiche Mappings), Helfer-Gruppenfilter für Liste/Titel/Statusübersicht, Notiz-Maskierung nur HELPER, Gruppen- und Feldsortierung, Statusfilter, Ansicht-Prefs (gleiche Keys), Frist-Default, Checklisten-Fälligkeiten, Schichtneuberechnung bei Zeitänderung, Archivieren. Abweichungen hinter der UI siehe extra: Checkliste wird nicht nachgeladen und überschreibt Fremdänderungen (hoch), Gemeinde-Übersicht und „nur Unentschiedene“ ohne Helfer-Gruppenfilter, „Person hinzufügen“ mit ausstehenden Registrierungen, Feldsortierung bei Gleichstand, zwei „Flutter besser“; dazu x-4dd0cff1ed, x-33b53c7e65, x-5905254b84. Excel ohne Gruppenfilter steht bei effect-8f43ff82, Ablaufplan-Zeilen bei action-0c508800."
+    },
+    "attendance/attendance/attendance.page#native-248ec156": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/core/services/offline_queue_service.dart:540",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:383"
+      ],
+      "n": "Flutter besser: Ionic teardown ruft Network.removeAllListeners() und entfernt damit auch den globalen Reconnect-Listener der OfflineQueue (offline-queue.service.ts:44) → nach dem ersten Öffnen/Schließen eines Termins werden offline erfasste Status bei Reconnect nicht mehr automatisch gesendet (nur noch bei offenem Termin oder App-Neustart). Flutter: Seiten-Listener endet mit dem Widget, OfflineQueueNotifier flusht weiter global bei jedem Reconnect."
+    },
+    "attendance/attendance/attendance.page#db-1caf1a5d": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:195",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:288"
+      ],
+      "n": "dispose → _unsubscribeFromRealtimeChanges → removeChannel des Termin-Kanals (attendance- und person_attendances-Listener liegen auf einem Kanal)."
+    },
+    "attendance/attendance/attendance.page#db-4559214d": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:195",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:288"
+      ],
+      "n": "Wie db-1caf1a5d: der person_attendances-Listener wird mit demselben Kanal beim dispose entfernt."
+    },
+    "attendance/attendance/attendance.page#toast-821c46bb": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/attendance/presentation/pages/attendance_detail_page.dart:410"],
+      "n": "Ionic: Termin nicht ladbar (nach Retries/Fallback) → Toast (danger) „Anwesenheit konnte nicht geladen werden — bitte erneut öffnen.“ und automatisch zurück (navigateBack), für alle Rollen. Flutter: kein Toast, kein Zurück; Fehlerseite mit demselben Text und Button „Neu laden“ (alle Rollen gleich)."
+    },
+    "attendance/attendance/attendance.page#db-2892edb3": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:147",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:288"
+      ],
+      "n": "Vor dem Neu-Abonnieren beim Wiedersichtbarwerden (_onBecameVisible) wird der alte Kanal entfernt, wie Ionic subsribeOnChannels."
+    },
+    "attendance/attendance/attendance.page#db-461cedd5": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:147",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:288"
+      ],
+      "n": "Wie db-2892edb3 (ein gemeinsamer Kanal)."
+    },
+    "attendance/attendance/attendance.page#db-e9c2c94c": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/pages/attendance_detail_page.dart:285"],
+      "n": "subscribe() des Termin-Kanals beim Öffnen und beim Wiedersichtbarwerden."
+    },
+    "attendance/attendance/attendance.page#db-aec79a62": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:244",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:267",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:279"
+      ],
+      "n": "Ionic: eigener Kanal att-detail-changes-<id>-<zeit>-<zufall> auf attendance (alle Events, Client-Filter auf id). Flutter: Kanal person-att-<id> mit attendance UPDATE (Filter id → Termin neu laden) und DELETE (→ „deletedByOther“ + zurück) – gleiche Wirkung. Der eindeutige Topic-Name ist in Flutter nicht nötig: realtime_client 2.7.0 legt bei channel() immer einen neuen Kanal an (kein Wiederverwenden eines belegten Topics wie supabase-js), und kein anderer Flutter-Kanal nutzt diesen Namen."
+    },
+    "attendance/attendance/attendance.page#db-3049a21a": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/pages/attendance_detail_page.dart:285"],
+      "n": "Gleiches subscribe() (person_attendances-Listener auf demselben Kanal)."
+    },
+    "attendance/attendance/attendance.page#db-6edfb9e8": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:244",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:259"
+      ],
+      "n": "Ionic: Kanal att-detail-person-changes-… auf person_attendances (alle Events, Client-Filter attendance_id). Flutter: person_attendances alle Events mit Serverfilter attendance_id plus ungefiltertes DELETE (Zeile gelöscht → Toast + zurück); Status/Notiz/duty_state wie Ionic übernommen, eigene laufende Writes übersprungen."
+    },
+    "attendance/attendance/attendance.page#effect-839f92ba": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:115",
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:121",
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:143",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:111"
+      ],
+      "n": "Bestätigt. Ionic (mehrere Pläne): Teilen-Sheet mit Segment „Nur <Plan>“/„Alle n Pläne“ × PDF / PDF 2x A5 → exportAttendancePlans; Titel plan.title || getPlanningTitle („planning_title (typeInfo)“, sonst planning_title/typeInfo/Typname); Datei „<Titel>_<Datum des Plans>[_alle][_2x]“. Flutter: kein Segment; PDF A4/2x A5 nur für den gezeigten Plan, „PDF exportieren (alle Pläne)“ nur A4 (2x A5 für alle fehlt); Titel plan.title || typeInfo || „Ablaufplan“ (planning_title/Typname fehlen); Dateiname ohne _alle/_2x und mit Termin-Startdatum statt Plandatum. Rollen gleich (alle außer Beobachter).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#effect-7cdd0978": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:136",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:71",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:114",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:126"
+      ],
+      "n": "Bestätigt. Ionic (mehrere Pläne, nur mit Telegram-Chat-ID): Telegram PDF / PDF 2x A5 für diesen oder alle Pläne (Name „…_alle“), Bild nur für einen Plan. Flutter: Telegram PDF/2x A5/Bild nur für den gezeigten Plan (mit Chat-ID); „alle Pläne“ per Telegram fehlt; Titel ohne planning_title/Typname, Name ohne „_alle“ (_2x wird angehängt), Datum = Termin-Start statt Plandatum. Rollen gleich.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#effect-8f43ff82": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2407",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2430",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2442",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:571",
+        "lib/core/services/export_service.dart:657"
+      ],
+      "n": "Bestätigt auf 8004a44: Ionic exportiert this.players – für Helfer/Stimmführer-Helfer ohne attendance_all_groups nur die eigene Gruppe, Reihenfolge Hauptgruppe/Gruppen-sort_order/Nachname. Flutter exportiert _personsInAttendance(alle Personen) ohne attendanceGroupScope (der Filter steht nur in der Liste, Z. 571) → eingeschränkte Helfer erhalten Namen und Status aller Gruppen; Reihenfolge nur Nachname (Query-Order). Flutter besser: HELPER ohne player_notes_view bekommt leere Notizspalte (Ionic: echte Notizen). Spalten, Statuscodes, Gemeinde-Spalte, Dateiname sonst gleich. Der Excel-Eintrag ist für alle Rollen der Seite sichtbar (beide).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-f1fce3a1": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:29",
+        "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:31"
+      ],
+      "n": "„· geändert am dd.MM.yyyy“ hinter „Freigegeben am …“ bei veröffentlichtem Protokoll mit updated_at > 60 s nach published_at (isEditedAfterPublish identisch). Karte nur bei Typ mit enable_protocol, sonst keine Rollenprüfung – in beiden Apps für jede Rolle der Seite; welches Protokoll sichtbar ist, entscheidet RLS (gleiche Abfrage, Flutter zusätzlich tenant_id).",
+      "v": "bestätigt"
+    },
+    "x-4dd0cff1ed": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/attendance/presentation/pages/attendance_detail_page.dart:2280"],
+      "n": "Weiter real (Ionic attendance.page.ts:1533–1537 unverändert): onInfoChanged setzt nach Info/Notizen/Zeiten/Frist alle Werke-Einträge auf visible = save_in_history, wenn der erste abweicht; Flutter liest save_in_history nirgends. Wirkt nur bei Alt-Terminen mit save_in_history false/null (beide Apps legen true an, Feld nicht editierbar), daher niedrig.",
+      "v": "bestätigt"
+    },
+    "x-33b53c7e65": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:60"],
+      "n": "Weiter real: Ionic sortiert gleiche Gruppen nach Nachname/Vorname mit localeCompare (attendance.page.ts:2444), Flutter computeAddPersonCandidates mit String.compareTo (Umlaute/Kleinbuchstaben hinten). Die Personenliste selbst nutzt localeCompareDe, nur „Person hinzufügen“ nicht.",
+      "v": "bestätigt"
+    },
+    "x-5905254b84": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:569",
+        "lib/core/providers/role_permission_providers.dart:227"
+      ],
+      "n": "Flutter besser, weiter real: Ionic (Z. 425–437) zeigt einem eingeschränkten Helfer/Stimmführer-Helfer bei Fehler beim Profil-Laden oder Profil ohne Gruppe die ungefilterte Liste aller Gruppen; Flutter zeigt dann niemanden (AttendanceGroupScope.denied, auch während des Ladens). Fehlt die Berechtigungszeile, sehen beide alle Gruppen.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": [
+    {
+      "unit": "attendance/attendance/attendance.page",
+      "title": "Checkliste wird nicht nachgeladen – Fremdänderungen werden überschrieben",
+      "n": "Ionic: Realtime-Update (this.attendance = payload.new) und Resume-Refetch zeigen Checklisten-Änderungen anderer sofort; Abhaken/Hinzufügen/Löschen arbeitet auf der aktuellen Liste / Flutter: _localChecklist wird einmal geladen (_checklistLoaded), _onAttendanceUpdated und _onBecameVisible laden nur den Termin neu, die angezeigte Checkliste bleibt alt; das nächste Abhaken/Hinzufügen/Löschen schreibt die ganze alte Liste (_saveChecklist) und macht Häkchen oder Punkte anderer rückgängig; eine von anderen begonnene Checkliste erscheint nicht, „Checkliste starten“ bleibt im Menü.",
+      "sev": "hoch",
+      "ionic": "src/app/attendance/attendance/attendance.page.ts:670",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:156",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:552",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1420",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1673"
+      ]
+    },
+    {
+      "unit": "attendance/attendance/attendance.page",
+      "title": "Gemeinde-Übersicht ohne Helfer-Gruppenfilter",
+      "n": "Ionic: showChurchOverview zählt this.players – bei Helfer/Stimmführer-Helfer ohne attendance_all_groups nur die eigene Gruppe / Flutter: _showChurchOverview übergibt alle Personen des Termins ohne attendanceGroupScope → eingeschränkte Helfer sehen die Anwesenden aller Gruppen je Gemeinde (Menüeintrag in beiden für alle Rollen mit Gemeinde-Feld).",
+      "sev": "mittel",
+      "ionic": "src/app/attendance/attendance/attendance.page.ts:2246",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1360",
+        "lib/features/attendance/presentation/attendance_extra_actions.dart:102"
+      ]
+    },
+    {
+      "unit": "attendance/attendance/attendance.page",
+      "title": "Erinnerung „nur Unentschiedene“ ohne Gruppenfilter",
+      "n": "Ionic: neutralAppIds (und hasNeutralPersons) aus this.players → ein Stimmführer-Helfer ohne attendance_all_groups erinnert mit „nur Unentschiedene“ nur die eigene Gruppe / Flutter: neutralAppIds aus allen Personen des Termins → Push/E-Mail an Unentschiedene aller Gruppen. HELPER kann in beiden nicht senden.",
+      "sev": "mittel",
+      "ionic": "src/app/attendance/attendance/attendance.page.ts:2321",
+      "f": ["lib/features/attendance/presentation/pages/attendance_detail_page.dart:1383"]
+    },
+    {
+      "unit": "attendance/attendance/attendance.page",
+      "title": "„Person hinzufügen“ bietet ausstehende Registrierungen an",
+      "n": "Ionic: Kandidaten aus db.getPlayers(true) = player mit pending = false (db.service.ts:1564) / Flutter: allPersonsForAttendanceProvider lädt alle player des Mandanten ohne pending-Filter, computeAddPersonCandidates filtert nur pausiert/ausgetreten → noch nicht freigegebene Anmeldungen stehen in der Liste und können dem Termin hinzugefügt werden.",
+      "sev": "mittel",
+      "ionic": "src/app/attendance/attendance/attendance.page.ts:2385",
+      "f": [
+        "lib/core/providers/attendance_detail_providers.dart:159",
+        "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:33"
+      ]
+    },
+    {
+      "unit": "attendance/attendance/attendance.page",
+      "title": "Feldsortierung: Reihenfolge bei gleichem Wert",
+      "n": "Ionic: sortiert this.players (bereits Hauptgruppe/Gruppe/Nachname) stabil → gleiche Werte bleiben nach Gruppe und Name geordnet / Flutter: sortiert die nach Nachname geladene Liste mit List.sort (ab 33 Personen nicht stabil) → gleiche Werte nur nach Nachname bzw. beliebig.",
+      "sev": "niedrig",
+      "ionic": "src/app/attendance/attendance/attendance.page.ts:133",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:578",
+        "lib/features/attendance/presentation/widgets/attendance_detail/attendance_view_options.dart:124"
+      ]
+    },
+    {
+      "unit": "attendance/attendance/attendance.page",
+      "title": "Realtime übernimmt mehr",
+      "n": "Flutter besser: von anderen Geräten hinzugefügte Personenzeilen (INSERT) erscheinen sofort, changed_by/changed_at werden live übernommen („Wer hat geändert?“ aktuell) / Ionic: INSERT wird ignoriert (players[-1]), Änderer-Info bleibt auf dem Ladestand.",
+      "sev": "niedrig",
+      "ionic": "src/app/attendance/attendance/attendance.page.ts:691",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:307",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:352"
+      ]
+    },
+    {
+      "unit": "attendance/attendance/attendance.page",
+      "title": "„Person hinzufügen“: Kandidaten",
+      "n": "Flutter besser: (1) Ionic schließt nur Personen aus this.players aus – ein eingeschränkter Stimmführer-Helfer bekommt Personen anderer Gruppen angeboten, die schon im Termin sind (Doppelzeile möglich); Flutter schließt alle vorhandenen Zeilen aus. (2) Ionic sucht die Gruppe in this.instruments ohne Hauptgruppe → Personen der Hauptgruppe heißen „Keine Gruppe“ und stehen ganz unten; Flutter zeigt deren Gruppennamen und sortiert nach deren sort_order.",
+      "sev": "niedrig",
+      "ionic": "src/app/attendance/attendance/attendance.page.ts:2388",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1356",
+        "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:55",
+        "lib/features/attendance/presentation/attendance_add_persons.dart:51"
+      ]
+    }
+  ]
+}

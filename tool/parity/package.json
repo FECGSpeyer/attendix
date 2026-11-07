@@ -1,0 +1,10 @@
+{
+  "name": "attendix-parity-tools",
+  "private": true,
+  "type": "module",
+  "description": "Builds the Ionic→Flutter parity inventory (see docs/parity/README.md)",
+  "dependencies": {
+    "@angular/compiler": "21.1.2",
+    "typescript": "5.9.3"
+  }
+}

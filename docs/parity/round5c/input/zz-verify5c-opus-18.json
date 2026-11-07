@@ -1,0 +1,1691 @@
+{
+ "batch": "zz-verify5c-opus-18",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 525,
+    "method": "AttendanceService.deletePersonAttendanceById",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "a4c67c43",
+    "mbody": "c063ff6e",
+    "id": "services/attendance/attendance.service#db-0be3b674"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:554",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2613"
+    ],
+    "n": "Delete person_attendances per id nach Mandantenprüfung (validatePersonAttendanceTenant); Bestätigungsdialog 'Person entfernen', Erfolgs-/Fehler-Toast wie Ionic removeFromAttendance.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 111,
+    "method": "AttendanceService.reassignPersonAttendances",
+    "cond": [
+     "(conflictingIds.length)"
+    ],
+    "table": "person_attendances",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "in('id', conflictingIds)"
+    ],
+    "tenantFilter": false,
+    "src": "54da32c5",
+    "mbody": "3485faf0",
+    "id": "services/attendance/attendance.service#db-10ae6c21"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:2333"
+    ],
+    "n": "Gleiche Löschung der Konfliktzeilen (in id), Flutter in 200er-Blöcken und zusätzlich .eq('person_id', fromId); Aufrufer mergePendingPlayerIntoExisting prüft vorher beide Personen auf den Mandanten.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 89,
+    "method": "AttendanceService.reassignPersonAttendances",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, attendance_id'",
+    "filters": [
+     "eq('person_id', fromId)"
+    ],
+    "tenantFilter": false,
+    "src": "f070acc6",
+    "mbody": "3485faf0",
+    "id": "services/attendance/attendance.service#db-171db1c8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:2313",
+     "lib/data/repositories/player_repository.dart:2347"
+    ],
+    "n": "Gleicher Select (id, attendance_id, person_id = fromId); Flutter lädt alle Seiten (order id, range) statt max. 1000 Zeilen.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 98,
+    "method": "AttendanceService.reassignPersonAttendances",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'attendance_id'",
+    "filters": [
+     "eq('person_id', toId)"
+    ],
+    "tenantFilter": false,
+    "src": "261f62d4",
+    "mbody": "3485faf0",
+    "id": "services/attendance/attendance.service#db-171db1c8-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:2316",
+     "lib/data/repositories/player_repository.dart:2347"
+    ],
+    "n": "Gleicher Select (person_id = toId), Flutter liest zusätzlich id und alle Seiten – gleiches Ergebnis.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 116,
+    "method": "AttendanceService.reassignPersonAttendances",
+    "cond": [
+     "(movableIds.length)"
+    ],
+    "table": "person_attendances",
+    "op": "update",
+    "payload": "{ person_id: toId }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "in('id', movableIds)"
+    ],
+    "tenantFilter": false,
+    "src": "b02a4da8",
+    "mbody": "3485faf0",
+    "id": "services/attendance/attendance.service#db-47905dba"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:2340"
+    ],
+    "n": "Gleiches Update {person_id: toId} (in id), Flutter in Blöcken und zusätzlich .eq('person_id', fromId).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 411,
+    "method": "AttendanceService.updateAttendance",
+    "cond": [],
+    "table": "attendance",
+    "op": "update",
+    "payload": "att as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "cf075355",
+    "mbody": "9c3b3bf8",
+    "id": "services/attendance/attendance.service#db-5d15bc79"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:251",
+     "lib/data/repositories/attendance_repository.dart:273"
+    ],
+    "n": "Update attendance per id + tenantId, entfernt id/created_at/tenantId/persons; Archiv-Spalten nur Admin/Verantwortlich (nur die Archivieren-Aktion sendet sie). Fehler werden weitergeworfen wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 500,
+    "method": "AttendanceService.writePersonAttendanceToDb",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "update",
+    "payload": "dbFields as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "f002479a",
+    "mbody": "bbcee647",
+    "id": "services/attendance/attendance.service#db-8bef7f4d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:653",
+     "lib/data/repositories/attendance_repository.dart:722",
+     "lib/core/utils/duty_utils.dart:51"
+    ],
+    "n": "Gleiche Felder + changed_by/changed_at; Dienststatus (syncDutyWithStatus) im selben Update statt zweitem Update – gleiches Ergebnis; zusätzlich Mandantenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 426,
+    "method": "AttendanceService.removeAttendance",
+    "cond": [],
+    "table": "attendance",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "c714b161",
+    "mbody": "980e63a8",
+    "id": "services/attendance/attendance.service#db-9d206b1f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:295",
+     "lib/core/providers/attendance_providers.dart:414",
+     "lib/features/attendance/presentation/pages/attendance_list_page.dart:109"
+    ],
+    "n": "Delete attendance per id, Flutter zusätzlich .eq('tenantId'). Fehler: Ionic ignoriert sie, Flutter-Notifier fängt sie ohne Hinweis ab – gleiches Verhalten; danach Liste neu geladen.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 55,
+    "method": "AttendanceService.addPersonAttendances",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "insert",
+    "payload": "personAttendances as any",
+    "options": [],
+    "columns": null,
+    "filters": [],
+    "tenantFilter": false,
+    "src": "075286a4",
+    "mbody": "2491ab4f",
+    "id": "services/attendance/attendance.service#db-a93f1d01"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:636",
+     "lib/features/attendance/presentation/attendance_create_writes.dart:409",
+     "lib/features/attendance/presentation/attendance_add_persons.dart:88"
+    ],
+    "n": "Gleiche Spalten (attendance_id, person_id, status, notes). Ionic schluckt Duplikatfehler 23505 still; Flutter filtert vorhandene Personen vorher aus und meldet einen Fehler sonst (Flutter besser, bereits als extra erfasst).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 195,
+    "method": "AttendanceService.getAttendanceById",
+    "cond": [],
+    "table": "attendance",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "attendanceSelect",
+    "filters": [
+     "match({ id })",
+     "order('date', { ascending: false })",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "57b4d921",
+    "mbody": "0860a624",
+    "id": "services/attendance/attendance.service#db-d97eeb61"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:149"
+    ],
+    "n": "Gleicher Select (persons mit person:firstName,lastName,img,instrument(id,name),joined,appId,additional_fields; registration_answers über *), Flutter zusätzlich .eq('tenantId'), maybeSingle.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 71,
+    "method": "AttendanceService.deletePersonAttendances",
+    "cond": [],
+    "table": "person_attendances",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "in('attendance_id', attendanceIds)",
+     "eq('person_id', personId)"
+    ],
+    "tenantFilter": false,
+    "src": "591bf9d3",
+    "mbody": "bcd1367c",
+    "id": "services/attendance/attendance.service#db-f66ab5d4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:946",
+     "lib/data/repositories/player_repository.dart:2268"
+    ],
+    "n": "Gleiche Löschung (person_id + attendance_id in …) beim Entfernen aus kommenden Terminen und beim Gruppen-/Feld-Abgleich; Termin-Ids nur des Mandanten.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/attendance/attendance.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:23-29",
+     "getCurrentAttDate:31-34",
+     "setCurrentAttDate:36-38",
+     "addAttendance:40-52",
+     "addPersonAttendances:54-68",
+     "deletePersonAttendances:70-80",
+     "reassignPersonAttendances:88-119",
+     "getAttendance:121-170",
+     "getUpcomingAttendances:172-181",
+     "getAttendancesByDate:183-192",
+     "getAttendanceById:194-203",
+     "getAttendanceByIdRobust:222-361",
+     "safeModify:370-388",
+     "raceTokenRefreshOrSleep:394-408",
+     "updateAttendance:410-423",
+     "removeAttendance:425-430",
+     "getPersonAttendances:432-468",
+     "getParentAttendances:470-483",
+     "updatePersonAttendance:485-492",
+     "writePersonAttendanceToDb:494-509",
+     "signOut:512-514",
+     "signIn:517-519",
+     "deletePersonAttendanceById:524-533"
+    ],
+    "bodies": {
+     "constructor": "494c6a57",
+     "getCurrentAttDate": "3f60e836",
+     "setCurrentAttDate": "bb247654",
+     "addAttendance": "de4123ac",
+     "addPersonAttendances": "2491ab4f",
+     "deletePersonAttendances": "bcd1367c",
+     "reassignPersonAttendances": "3485faf0",
+     "getAttendance": "54735829",
+     "getUpcomingAttendances": "27149f4c",
+     "getAttendancesByDate": "16af3af4",
+     "getAttendanceById": "0860a624",
+     "getAttendanceByIdRobust": "7d5cf80d",
+     "safeModify": "54b99003",
+     "raceTokenRefreshOrSleep": "0bccc6ab",
+     "updateAttendance": "9c3b3bf8",
+     "removeAttendance": "980e63a8",
+     "getPersonAttendances": "4cc2e690",
+     "getParentAttendances": "96d5388d",
+     "updatePersonAttendance": "d8d208b0",
+     "writePersonAttendanceToDb": "bbcee647",
+     "signOut": "1131b252",
+     "signIn": "c402b43e",
+     "deletePersonAttendanceById": "c063ff6e"
+    },
+    "id": "services/attendance/attendance.service#logic-5d9a8b40"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:149",
+     "lib/data/repositories/attendance_repository.dart:251",
+     "lib/data/repositories/attendance_repository.dart:295",
+     "lib/data/repositories/attendance_repository.dart:545",
+     "lib/data/repositories/attendance_repository.dart:567",
+     "lib/data/repositories/attendance_repository.dart:644",
+     "lib/data/repositories/player_repository.dart:2281",
+     "lib/core/providers/attendance_detail_providers.dart:37",
+     "lib/core/providers/attendance_detail_providers.dart:100",
+     "lib/features/attendance/presentation/person_attendance_writes.dart:97",
+     "lib/core/services/offline_queue_service.dart:445"
+    ],
+    "n": "Lebendige Methoden portiert (Anlegen, Personen hinzufügen/entfernen, Zusammenführen, Laden mit Offline-Cache, Update mit changed_by/changed_at + Dienst-Sync, Offline-Queue). Abweichungen in Randfällen – siehe extra. getCurrentAttDate/setCurrentAttDate/getAttendance/getUpcomingAttendances/getAttendancesByDate/getPersonAttendances/getParentAttendances/signIn/signOut sind hier toter Code.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart",
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-62d961e0c5",
+    "title": "Zusammenführen mit vielen Anwesenheiten",
+    "n": "Flutter besser: Ionic reassignPersonAttendances liest je Person nur die ersten 1000 Zeilen (PostgREST-Limit) / Flutter liest alle Seiten und schreibt in Blöcken, bricht ab, wenn etwas nicht übertragen wurde.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/attendance/attendance.service.ts:88",
+    "f": [
+     "lib/data/repositories/player_repository.dart:2281",
+     "lib/data/repositories/player_repository.dart:2340"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/attendance/attendance.service",
+   "ionic": {
+    "ts": "services/attendance/attendance.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-644f0a317b",
+    "title": "Duplicate-Key beim Hinzufügen von Personen",
+    "n": "Flutter besser: Ionic addPersonAttendances behandelt Fehler 23505 als Erfolg (kein Datensatz eingefügt, trotzdem Erfolgsmeldung) / Flutter wirft den Fehler, Aufrufer zeigen den Fehler-Toast.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/attendance/attendance.service.ts:62",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:627"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/audio-player/audio-player.service",
+   "ionic": {
+    "ts": "services/audio-player/audio-player.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/audio-player/audio-player.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "currentFile:16-16",
+     "currentSongName:17-17",
+     "isPlaying:18-18",
+     "progress:20-20",
+     "currentTime:21-21",
+     "duration:22-22",
+     "queue:25-25",
+     "queueIndex:26-26",
+     "hasQueue:27-27",
+     "hasNext:28-28",
+     "hasPrevious:29-29",
+     "coverUrl:38-38",
+     "isAudioFile:57-63",
+     "play:66-70",
+     "playFromUrl:75-77",
+     "playQueue:80-83",
+     "next:85-88",
+     "previous:90-100",
+     "togglePlayPause:102-109",
+     "resume:111-114",
+     "pause:116-120",
+     "stop:122-126",
+     "seek:129-134",
+     "startSeeking:137-139",
+     "stopSeeking:142-145",
+     "formatTime:148-153",
+     "playQueueItem:155-176",
+     "resolveItemUrl:178-187",
+     "prefetch:189-194",
+     "onEnded:196-204",
+     "getAudio:207-244",
+     "registerMediaSessionHandlers:246-261",
+     "syncPositionState:263-266",
+     "startPlayback:268-287",
+     "resetPlayback:289-303",
+     "clearQueue:305-309",
+     "createVirtualFile:311-318"
+    ],
+    "bodies": {
+     "currentFile": "10236476",
+     "currentSongName": "2c1ddc5b",
+     "isPlaying": "858efcdc",
+     "progress": "dfe72514",
+     "currentTime": "e4c2dbd9",
+     "duration": "77a60947",
+     "queue": "bb242fde",
+     "queueIndex": "dbae679b",
+     "hasQueue": "0edc8a3f",
+     "hasNext": "6251c2b4",
+     "hasPrevious": "913dc538",
+     "coverUrl": "9c19917b",
+     "isAudioFile": "def1f259",
+     "play": "ac91bf77",
+     "playFromUrl": "d9cdf5f8",
+     "playQueue": "433cece8",
+     "next": "32548865",
+     "previous": "abc5a4f5",
+     "togglePlayPause": "662c921e",
+     "resume": "219b3df0",
+     "pause": "b3dcd2dc",
+     "stop": "a2ed7bc3",
+     "seek": "e5d68a1d",
+     "startSeeking": "e9101405",
+     "stopSeeking": "acbfc5d4",
+     "formatTime": "b411a1a0",
+     "playQueueItem": "4154b176",
+     "resolveItemUrl": "6626abc1",
+     "prefetch": "1afe9307",
+     "onEnded": "fec2a0e5",
+     "getAudio": "1a3df366",
+     "registerMediaSessionHandlers": "94c6b428",
+     "syncPositionState": "026c6e1f",
+     "startPlayback": "56f447d6",
+     "resetPlayback": "edd280b4",
+     "clearQueue": "35b94414",
+     "createVirtualFile": "a55c599b"
+    },
+    "id": "services/audio-player/audio-player.service#logic-3ca5bbf3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/services/audio_player/audio_player_service.dart:170",
+     "lib/core/services/audio_player/audio_player_service.dart:182",
+     "lib/core/services/audio_player/audio_player_service.dart:192",
+     "lib/core/services/audio_player/audio_player_service.dart:212",
+     "lib/core/services/audio_player/audio_player_service.dart:270",
+     "lib/core/services/audio_player/audio_player_service.dart:302",
+     "lib/shared/widgets/audio_player/audio_player_widget.dart:25"
+    ],
+    "n": "Kernverhalten gleich (ein Titel zur Zeit, Warteschlange mit Auto-Weiter, 'Zurück' >3 s = Neustart, m:ss, Lockscreen-Handler, Seek-Schutz beim Ziehen). Abweichungen bei URL-Vorladen, Fehlerfall, Audio-Erkennung und Titelwechsel (Leiste verschwindet kurz) – siehe extra.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/audio_player/audio_player_service.dart",
+    "lib/shared/widgets/audio_player/audio_player_widget.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/audio-player/audio-player.service",
+   "ionic": {
+    "ts": "services/audio-player/audio-player.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-355fd327ba",
+    "title": "Kein Vorladen der nächsten Titel-URL",
+    "n": "Ionic: löst die signierte URL des nächsten Warteschlangen-Titels vorab auf und cacht URLs 30 min (Weiterschalten ohne Netzrundlauf, z. B. bei gesperrtem Bildschirm) / Flutter: URL wird erst beim Weiterschalten aufgelöst, kein Cache.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/audio-player/audio-player.service.ts:178",
+    "f": [
+     "lib/core/services/audio_player/audio_player_service.dart:201"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/services/audio_player/audio_player_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/audio-player/audio-player.service",
+   "ionic": {
+    "ts": "services/audio-player/audio-player.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-917da3618f",
+    "title": "Player-Leiste verschwindet beim Titelwechsel",
+    "n": "Ionic: startPlayback setzt currentFile sofort, die Leiste bleibt beim Laden des nächsten Titels sichtbar (0:00) / Flutter: _load ruft zuerst _stopInternal(keepQueue: true) → state = AudioPlayerState() (currentUrl null, hasFile false); die Leiste verschwindet, bis setUrl den neuen Titel geladen hat, und erscheint dann wieder (auch beim ersten Abspielen erst nach dem Laden).",
+    "sev": "niedrig",
+    "ionic": "src/app/services/audio-player/audio-player.service.ts:268",
+    "f": [
+     "lib/core/services/audio_player/audio_player_service.dart:217",
+     "lib/core/services/audio_player/audio_player_service.dart:357",
+     "lib/core/services/audio_player/audio_player_state.dart:25"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/services/audio_player/audio_player_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/audio-player/audio-player.service",
+   "ionic": {
+    "ts": "services/audio-player/audio-player.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-9b9565055f",
+    "title": "Fehler beim Starten der Wiedergabe",
+    "n": "Ionic: schlägt audio.play() fehl (Autoplay/Netz), bleibt der Titel pausiert in der Player-Leiste; schlägt die URL-Auflösung eines Warteschlangen-Titels fehl, wird die Wiedergabe zurückgesetzt / Flutter: bei setUrl/play-Fehler wird der Player komplett geschlossen (Leiste verschwindet); bei URL-Fehler bleibt der vorige Titel pausiert stehen, Index steht schon auf dem neuen Titel.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/audio-player/audio-player.service.ts:281",
+    "f": [
+     "lib/core/services/audio_player/audio_player_service.dart:260",
+     "lib/core/services/audio_player/audio_player_service.dart:207"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/services/audio_player/audio_player_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/audio-player/audio-player.service",
+   "ionic": {
+    "ts": "services/audio-player/audio-player.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-dd0f22a1dd",
+    "title": "Audio-Erkennung nur per Dateiendung",
+    "n": "Ionic isAudioFile prüft zuerst den MIME-Typ (audio/*), dann die Endung / Flutter AudioPlayerService.isAudioFile nur die Endung; Song-Seite ergänzt SongUtils.isAudio, die Dateien-Seite nutzt in beiden Apps nur den Namen.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/audio-player/audio-player.service.ts:57",
+    "f": [
+     "lib/core/services/audio_player/audio_player_service.dart:78",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:1095"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/services/audio_player/audio_player_service.dart",
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auth.guard",
+   "ionic": {
+    "ts": "services/auth.guard.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/auth.guard.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:11-14",
+     "canActivate:16-45"
+    ],
+    "bodies": {
+     "constructor": "c4fbefcc",
+     "canActivate": "544f7919"
+    },
+    "id": "services/auth.guard#logic-377dcf4f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:276",
+     "lib/core/router/app_router.dart:333",
+     "lib/core/router/app_router.dart:395",
+     "lib/core/router/app_router.dart:214",
+     "lib/core/router/route_access.dart:68"
+    ],
+    "n": "Flutter besser: Ionic AuthGuard hängt am /tabs-Elternroute und prüft nur beim ersten Eintritt (Reload/Direktaufruf), Default-Zweig erlaubt nur Admin/Verantwortl./Beobachter – z. B. Reload auf /tabs/members als Spieler wird blockiert / Flutter prüft jede Navigation per roleRouteRedirect (AuthGuard + TabsPage-Regeln) und leitet auf die Startseite der Rolle um statt abzubrechen. Einzelrouten: Routing-Batch.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auth.guard",
+   "ionic": {
+    "ts": "services/auth.guard.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "nav",
+    "file": "services/auth.guard.ts",
+    "line": 23,
+    "method": "AuthGuard.canActivate",
+    "cond": [
+     "(!role)"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "'/login'",
+    "src": "bd94d0e7",
+    "mbody": "544f7919",
+    "roleGuarded": true,
+    "id": "services/auth.guard#nav-ae1f9a67"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:333",
+     "lib/core/router/app_router.dart:395"
+    ],
+    "n": "Ohne Session in beiden Apps /login. Ionic: auch mit Session, aber ohne tenantUser-Rolle → /login (Login-Formular) / Flutter: mit Session und noch nicht geladener Rolle bzw. ohne Instanz → /tenants (Instanzauswahl).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auth/auth.service",
+   "ionic": {
+    "ts": "services/auth/auth.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/auth/auth.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:21-26",
+     "listenToAuthChanges:28-46",
+     "handleSession:48-54",
+     "checkToken:56-59",
+     "login:61-109",
+     "register:111-144",
+     "resendConfirmationEmail:146-161",
+     "logout:163-168",
+     "changePassword:170-172",
+     "resetPassword:174-185",
+     "updatePassword:187-196",
+     "registerUser:198-267",
+     "informUserAboutApproval:269-284",
+     "informUserAboutReject:286-299"
+    ],
+    "bodies": {
+     "constructor": "f87cedd2",
+     "listenToAuthChanges": "8075cb10",
+     "handleSession": "b1734bd7",
+     "checkToken": "8ed66e3e",
+     "login": "c825b586",
+     "register": "42dead46",
+     "resendConfirmationEmail": "e4c51ec0",
+     "logout": "32dc885f",
+     "changePassword": "9fc625b6",
+     "resetPassword": "c8dcba6a",
+     "updatePassword": "f2d7851e",
+     "registerUser": "234b209b",
+     "informUserAboutApproval": "6ca45682",
+     "informUserAboutReject": "f7b20d43"
+    },
+    "id": "services/auth/auth.service#logic-9ee33b52"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/config/supabase_config.dart:50",
+     "lib/core/config/supabase_config.dart:81",
+     "lib/features/auth/data/auth_flow_service.dart:334",
+     "lib/features/auth/data/auth_flow_service.dart:76",
+     "lib/features/auth/data/auth_flow_service.dart:417",
+     "lib/features/auth/presentation/pages/login_page.dart:196",
+     "lib/features/profile/presentation/widgets/account_dialogs.dart:75"
+    ],
+    "n": "Lebendig sind nur Session-Beobachtung/checkToken, login (Teams-Verknüpfung), resendConfirmationEmail und changePassword; register/logout/resetPassword/updatePassword/registerUser/informUserAbout* sind toter Code. Teams-Login zeigt in Flutter die Texte von DbService.login statt AuthService.login – siehe Toast-Items.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 183,
+    "method": "AutoMessageService.getAttendanceInfo",
+    "cond": [],
+    "table": "attendance",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, date, typeInfo, type_id'",
+    "filters": [
+     "in('id', ids)"
+    ],
+    "tenantFilter": false,
+    "src": "b2ef787c",
+    "mbody": "026b3be9",
+    "id": "services/auto-message/auto-message.service#db-c24634de"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:244",
+     "lib/data/repositories/auto_message_repository.dart:251"
+    ],
+    "n": "Ionic: liefert alle angefragten Termine / Flutter: selektiert zusätzlich archived und blendet archivierte Termine für Rollen außer Admin/Verantwortl. aus – in der Nachrichtendetailansicht fehlen dann Termin-Karte und Antwortmöglichkeit.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/auto-message/auto-message.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function templateText:20-22",
+     "function defaultAutoMessageRule:29-51",
+     "getRules:65-73",
+     "getRule:75-83",
+     "saveRule:86-102",
+     "setEnabled:104-115",
+     "deleteRule:117-120",
+     "preview:122-128",
+     "getRuns:130-139",
+     "getRunsForAttendance:141-148",
+     "getRecentRuns:151-160",
+     "suspend:163-173",
+     "unsuspend:175-178",
+     "getAttendanceInfo:181-189",
+     "getRecipientsOf:192-201",
+     "getResponsesForAttendance:203-211",
+     "getResponsesForMessages:213-221",
+     "getOwnResponse:224-232",
+     "submitResponse:234-240",
+     "decideResponse:242-247",
+     "getPersonAttendanceStatus:250-257",
+     "function functionError:260-268",
+     "function formatTerminDate:271-277",
+     "function escapeHtml:279-281",
+     "function fillPlaceholders:284-290",
+     "function personalizeMessage:296-308",
+     "function textToDoc:311-322"
+    ],
+    "bodies": {
+     "function templateText": "f9435d41",
+     "function defaultAutoMessageRule": "b055a59e",
+     "getRules": "573a0019",
+     "getRule": "029d8492",
+     "saveRule": "7af9e246",
+     "setEnabled": "1c52c9f0",
+     "deleteRule": "5798d3bf",
+     "preview": "0d68b96b",
+     "getRuns": "11b6d790",
+     "getRunsForAttendance": "3f934119",
+     "getRecentRuns": "b39f7a48",
+     "suspend": "787b1501",
+     "unsuspend": "3075cef3",
+     "getAttendanceInfo": "026b3be9",
+     "getRecipientsOf": "fbd9627b",
+     "getResponsesForAttendance": "0cbe9356",
+     "getResponsesForMessages": "79cb4378",
+     "getOwnResponse": "8c86b9d7",
+     "submitResponse": "76f7f4ee",
+     "decideResponse": "fd269915",
+     "getPersonAttendanceStatus": "9d634090",
+     "function functionError": "02bb407c",
+     "function formatTerminDate": "186fd7b0",
+     "function escapeHtml": "14344ed5",
+     "function fillPlaceholders": "e91582a3",
+     "function personalizeMessage": "e82af0f5",
+     "function textToDoc": "0bc104e2"
+    },
+    "id": "services/auto-message/auto-message.service#logic-ca4e54c4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:31",
+     "lib/data/repositories/auto_message_repository.dart:65",
+     "lib/data/repositories/auto_message_repository.dart:132",
+     "lib/data/repositories/auto_message_repository.dart:206",
+     "lib/data/repositories/auto_message_repository.dart:241",
+     "lib/data/repositories/auto_message_repository.dart:404",
+     "lib/data/models/auto_message/auto_message.dart:81",
+     "lib/data/models/auto_message/auto_message.dart:189",
+     "lib/data/models/auto_message/auto_message.dart:400",
+     "lib/data/models/auto_message/auto_message.dart:418",
+     "lib/data/models/auto_message/auto_message.dart:478",
+     "lib/data/models/auto_message/auto_message.dart:500",
+     "lib/features/messages/presentation/auto_message_texts.dart:46"
+    ],
+    "n": "Alle Methoden und Hilfsfunktionen portiert (gleiche Defaults, enabled_at-Logik, Platzhalter, HTML-Escape, Tiptap-Dokument), Flutter filtert zusätzlich überall tenantId. Abweichungen: archivierte Termine in getAttendanceInfo, Datumsformat bei Zeitstempeln – siehe extra.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/auto-message/auto-message.service",
+   "ionic": {
+    "ts": "services/auto-message/auto-message.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-b947f0c25e",
+    "title": "Archivierte Termine bei Nachrichten",
+    "n": "Ionic getAttendanceInfo filtert archivierte Termine nicht – Mitglieder sehen in der Nachricht die Termin-Karte und können antworten / Flutter blendet archivierte Termine für alle außer Admin/Verantwortl. aus (keine Termin-Karte, keine Antwort).",
+    "sev": "niedrig",
+    "ionic": "src/app/services/auto-message/auto-message.service.ts:181",
+    "f": [
+     "lib/data/repositories/auto_message_repository.dart:251"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/church/church.service",
+   "ionic": {
+    "ts": "services/church/church.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/church/church.service.ts",
+    "line": 74,
+    "method": "ChurchService.mergeChurches",
+    "cond": [
+     "(fields?.bfecg_church === duplicateId)"
+    ],
+    "table": "player",
+    "op": "update",
+    "payload": "{ additional_fields: fields }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: player.id })"
+    ],
+    "tenantFilter": false,
+    "src": "02b0e0b7",
+    "mbody": "5d299ada",
+    "id": "services/church/church.service#db-2c27320f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/church_repository.dart:101"
+    ],
+    "n": "Gleiches Update {additional_fields}, Flutter zusätzlich .eq('tenantId', Zeilen-tenantId) und Ergebnisprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/church_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/church/church.service",
+   "ionic": {
+    "ts": "services/church/church.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/church/church.service.ts",
+    "line": 61,
+    "method": "ChurchService.mergeChurches",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, additional_fields'",
+    "filters": [
+     "not('additional_fields', 'is', null)"
+    ],
+    "tenantFilter": false,
+    "src": "beb129b6",
+    "mbody": "5d299ada",
+    "id": "services/church/church.service#db-3cb26f5e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/church_repository.dart:151"
+    ],
+    "n": "Ionic lädt alle Personen mit additional_fields (max. 1000 Zeilen) und filtert im Client / Flutter lädt serverseitig gefiltert additional_fields->>bfecg_church = Duplikat, alle Seiten – siehe extra.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/church_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/church/church.service",
+   "ionic": {
+    "ts": "services/church/church.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/church/church.service.ts",
+    "line": 27,
+    "method": "ChurchService.updateChurch",
+    "cond": [],
+    "table": "churches",
+    "op": "update",
+    "payload": "{ name }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "65366c4d",
+    "mbody": "3adf9990",
+    "id": "services/church/church.service#db-ab01b0b0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/church_repository.dart:59"
+    ],
+    "n": "update churches {name} .eq('id') – globale Tabelle ohne tenantId (wie Ionic).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/church_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/church/church.service",
+   "ionic": {
+    "ts": "services/church/church.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/church/church.service.ts",
+    "line": 13,
+    "method": "ChurchService.getChurches",
+    "cond": [],
+    "table": "churches",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "order('name', { ascending: true })"
+    ],
+    "tenantFilter": false,
+    "src": "ceb5207b",
+    "mbody": "5dbf9704",
+    "id": "services/church/church.service#db-bccbac64"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/church_repository.dart:20"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/church_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/church/church.service",
+   "ionic": {
+    "ts": "services/church/church.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/church/church.service.ts",
+    "line": 39,
+    "method": "ChurchService.createChurch",
+    "cond": [],
+    "table": "churches",
+    "op": "insert",
+    "payload": "{ name, created_from: userId ?? null, }",
+    "options": [],
+    "columns": "'id'",
+    "filters": [
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "483a048f",
+    "mbody": "f4b0f6a6",
+    "id": "services/church/church.service#db-dd2888cc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/church_repository.dart:38"
+    ],
+    "n": "Insert churches {name, created_from: aktueller Nutzer} mit select('id').single() – gleich.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/church_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/church/church.service",
+   "ionic": {
+    "ts": "services/church/church.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/church/church.service.ts",
+    "line": 84,
+    "method": "ChurchService.mergeChurches",
+    "cond": [],
+    "table": "churches",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: duplicateId })"
+    ],
+    "tenantFilter": false,
+    "src": "5d5e94c3",
+    "mbody": "5d299ada",
+    "id": "services/church/church.service#db-e51e3c81"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/church_repository.dart:117",
+     "lib/data/repositories/church_repository.dart:131"
+    ],
+    "n": "Flutter besser: Ionic löscht die doppelte Gemeinde immer, auch wenn Personen-Updates fehlschlugen / Flutter löscht nur, wenn alle Personen umgestellt sind und keine Referenz mehr existiert, sonst Fehler 'Zusammenführen fehlgeschlagen'.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/church_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/church/church.service",
+   "ionic": {
+    "ts": "services/church/church.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/church/church.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "getChurches:12-24",
+     "updateChurch:26-36",
+     "createChurch:38-54",
+     "mergeChurches:59-92"
+    ],
+    "bodies": {
+     "getChurches": "5dbf9704",
+     "updateChurch": "3adf9990",
+     "createChurch": "f4b0f6a6",
+     "mergeChurches": "5d299ada"
+    },
+    "id": "services/church/church.service#logic-d50e1210"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/church_repository.dart:18",
+     "lib/data/repositories/church_repository.dart:35",
+     "lib/data/repositories/church_repository.dart:56",
+     "lib/data/repositories/church_repository.dart:87",
+     "lib/core/providers/church_providers.dart:8",
+     "lib/core/providers/dashboard_providers.dart:373"
+    ],
+    "n": "Laden/Anlegen/Umbenennen gleich. Zusammenführen in Flutter robuster (alle betroffenen Personen, Löschen nur bei vollständiger Umstellung) – siehe extra.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/church_repository.dart",
+    "lib/core/providers/church_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/church/church.service",
+   "ionic": {
+    "ts": "services/church/church.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-77d6c21aca",
+    "title": "Gemeinden zusammenführen",
+    "n": "Flutter besser: Ionic liest nur die ersten 1000 Personen mit Zusatzfeldern (PostgREST-Limit) und löscht das Duplikat auch bei Teilfehlern – Personen können auf eine gelöschte Gemeinde zeigen / Flutter liest alle referenzierenden Personen seitenweise und löscht nur bei vollständiger Umstellung.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/church/church.service.ts:59",
+    "f": [
+     "lib/data/repositories/church_repository.dart:87",
+     "lib/data/repositories/church_repository.dart:148"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/church_repository.dart"
+   ]
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/conductor/conductor.service",
+   "ionic": {
+    "ts": "services/conductor/conductor.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/conductor/conductor.service.ts",
+    "line": 31,
+    "method": "ConductorService.getConductors",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('instrument', mainGroupId)",
+     "is('pending', false)",
+     "eq('tenantId', tenantId)",
+     "order('lastName')"
+    ],
+    "tenantFilter": true,
+    "src": "28c08c91",
+    "mbody": "3d2b4e0a",
+    "id": "services/conductor/conductor.service#db-36e64412"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:236"
+    ],
+    "n": "Dirigentenliste jetzt .order('lastName', ascending: true) wie Ionic (A→Z); Vorauswahl wieder der alphabetisch erste aktive Dirigent.",
+    "v": "korrigiert",
+    "src": "zz-fixed-zz-querschnitt-r5-nachtrag.json",
+    "flutterAt": "0f74333"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "services/conductor/conductor.service",
+   "ionic": {
+    "ts": "services/conductor/conductor.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/conductor/conductor.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "getConductors:17-49"
+    ],
+    "bodies": {
+     "getConductors": "3d2b4e0a"
+    },
+    "id": "services/conductor/conductor.service#logic-f1c154da"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:236"
+    ],
+    "n": "Sortierung behoben (aufsteigend wie Ionic); Filter, Offline-Cache, Ausgetretene und Fehler-Toast wie zuvor gleich.",
+    "v": "korrigiert",
+    "src": "zz-fixed-zz-querschnitt-r5-nachtrag.json",
+    "flutterAt": "0f74333"
+   }
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/cross-tenant/cross-tenant.service",
+   "ionic": {
+    "ts": "services/cross-tenant/cross-tenant.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/cross-tenant/cross-tenant.service.ts",
+    "line": 202,
+    "method": "CrossTenantService.getUserRolesForTenants",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "db.loadTenantsFailed2"
+     ],
+     "de": [
+      "Fehler beim Laden der Mandanten"
+     ],
+     "literals": [],
+     "expr": "translate('db.loadTenantsFailed2')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f194a615",
+    "mbody": "49b0745c",
+    "roleGuarded": true,
+    "id": "services/cross-tenant/cross-tenant.service#toast-2e9148a8"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:429"
+    ],
+    "n": "Ionic: Toast 'Fehler beim Laden der Mandanten' beim Laden der Einstellungen / Flutter: kein Toast; die Instanzliste zeigt eine Fehleransicht.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 1774,
+    "method": "DbService.addPlayer",
+    "cond": [
+     "(existing?.id)",
+     "(player.appId)"
+    ],
+    "table": "player",
+    "op": "update",
+    "payload": "reactivateFields",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', existing.id)",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "0f1db4f6",
+    "mbody": "5c6579b3",
+    "roleGuarded": true,
+    "id": "services/db.service#db-01e8ff41"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/player_repository.dart:387",
+     "lib/data/repositories/player_repository.dart:504"
+    ],
+    "n": "Wie beim Insert: Ionic pickPersonFields ohne img (vorhandenes Bild der reaktivierten Zeile bleibt) / Flutter _personInsertData schreibt eine Nicht-data:-URL (z.B. übernommenes Bild eines Treffers aus anderer Instanz) mit; sonst left = null, Filter id + tenantId.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 3755,
+    "method": "DbService.personExistsInTenant",
+    "cond": [
+     "(email)"
+    ],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id'",
+    "filters": [
+     "eq('tenantId', targetTenantId)",
+     "ilike('email', email)",
+     "limit(1)"
+    ],
+    "tenantFilter": true,
+    "src": "9d19e100",
+    "mbody": "78495022",
+    "id": "services/db.service#db-09697835"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:1600"
+    ],
+    "n": "playerExistsInTenant: player.id nach Ziel-tenantId + ilike(email, getrimmt), limit 1; danach Namens-Fallback wie Ionic. Flutter maskiert LIKE-Platzhalter (% _) – exakter Treffer statt Muster, praktisch gleich.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 898,
+    "method": "DbService.deleteParent",
+    "cond": [],
+    "table": "parents",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: parent.id })"
+    ],
+    "tenantFilter": false,
+    "src": "9303163f",
+    "mbody": "4d915662",
+    "id": "services/db.service#db-0d132f59"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/parent_repository.dart:81"
+    ],
+    "n": "Wie Ionic: erst Zugang entziehen (Admins bleiben), dann parents per id + tenantId.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/parent_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/db.service",
+   "ionic": {
+    "ts": "services/db.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/db.service.ts",
+    "line": 1561,
+    "method": "DbService.getPlayers",
+    "cond": [
+     "(all)"
+    ],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "is('pending', false)",
+     "eq('tenantId', this.tenant().id)"
+    ],
+    "tenantFilter": true,
+    "src": "671706b9",
+    "mbody": "435d8d9d",
+    "roleGuarded": true,
+    "id": "services/db.service#db-1c4d7b0d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:63",
+     "lib/data/repositories/player_repository.dart:95"
+    ],
+    "n": "getPlayers(all: true): tenantId + pending=false inkl. archivierter, für alle Rollen; Aufrufer laden teils mit eigenen tenantId-Abfragen (z. B. getPlayersByShift). Sortierung in Ionic ohne order – irrelevant.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  }
+ ]
+}

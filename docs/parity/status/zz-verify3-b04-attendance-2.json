@@ -1,0 +1,258 @@
+{
+  "batch": "zz-verify3-b04-attendance-2",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "attendance/attendance/attendance.page#action-ae2384c0": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:321"
+      ],
+      "n": "Häkchen schließt „Werke auswählen“ und übernimmt die Auswahl. Rollen/Mandant gleich: Werke-Bereich für alle Rollen mit Terminzugriff (Admin, Verantwortlich, Helfer, StF-Helfer), nur bei Typ manage_songs und Mandant ≠ general (showSongsForType), keine weitere Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#field-3ee5c084": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:330",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:343"
+      ],
+      "n": "Ionic: ion-searchbar mit Lösch-X (ionClear → resetSongSearch) / Flutter: SearchBar ohne Lösch-Button, Text nur manuell löschbar. Platzhalter „Werk suchen...“ und Suche über „Präfix+Nummer Name“ gleich. Rollen/Mandant gleich: Werke-Bereich für alle Rollen mit Terminzugriff (Admin, Verantwortlich, Helfer, StF-Helfer), nur bei Typ manage_songs und Mandant ≠ general (showSongsForType), keine weitere Rollenprüfung. Erstprüfung übersah das fehlende Clear.",
+      "v": "korrigiert"
+    },
+    "attendance/attendance/attendance.page#action-c44054d3": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:360"
+      ],
+      "n": "Tap schaltet Auswahl um; „Präfix+Nummer Name“, Komponist als Unterzeile. Rollen/Mandant gleich: Werke-Bereich für alle Rollen mit Terminzugriff (Admin, Verantwortlich, Helfer, StF-Helfer), nur bei Typ manage_songs und Mandant ≠ general (showSongsForType), keine weitere Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#field-2eb6811a": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:361"
+      ],
+      "n": "Checkbox zeigt Auswahl. Rollen/Mandant gleich: Werke-Bereich für alle Rollen mit Terminzugriff (Admin, Verantwortlich, Helfer, StF-Helfer), nur bei Typ manage_songs und Mandant ≠ general (showSongsForType), keine weitere Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#field-2a3cbef9": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:163",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:95"
+      ],
+      "n": "Optionen (aktive Dirigenten + „Anderer Dirigent“), Label „Dirigent“ und Rollen gleich. Aber Vorauswahl: Ionic setzt immer den ersten aktiven Dirigenten / Flutter liest im postFrameCallback ref.read(activeConductorsProvider).valueOrNull; der Provider wird erst beim Öffnen des Sheets erzeugt und ist dann noch AsyncLoading → beim ersten Öffnen pro App-Sitzung keine Vorauswahl („Wählen“), „Werk(e) hinzufügen“ bleibt bis zur manuellen Auswahl deaktiviert. Erstprüfung nahm Vorauswahl als gegeben an.",
+      "v": "korrigiert"
+    },
+    "attendance/attendance/attendance.page#field-4babf8fd": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:194"
+      ],
+      "n": "Name des anderen Dirigenten; Flutter zeigt das Feld direkt bei „Anderer Dirigent“ statt nach dem Alert (Ablauf siehe alert-aadedcba). Rollen/Mandant gleich: Werke-Bereich für alle Rollen mit Terminzugriff (Admin, Verantwortlich, Helfer, StF-Helfer), nur bei Typ manage_songs und Mandant ≠ general (showSongsForType), keine weitere Rollenprüfung.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-92340212": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:111"
+      ],
+      "n": "Nur canManageDuty = Admin/Verantwortlich (Ionic isTeamLeader, Flutter canManageDutyProvider); Helfer/StF-Helfer sehen es in beiden nicht. Deaktiviert bei ≤1; schreibt attendance.duty_required (Flutter zusätzlich tenantId-Filter).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-fc5e0c8f": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:115"
+      ],
+      "n": "Nur canManageDuty = Admin/Verantwortlich (Ionic isTeamLeader, Flutter canManageDutyProvider); Helfer/StF-Helfer sehen es in beiden nicht.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-a8da4198": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:117"
+      ],
+      "n": "Nur canManageDuty = Admin/Verantwortlich (Ionic isTeamLeader, Flutter canManageDutyProvider); Helfer/StF-Helfer sehen es in beiden nicht. Erhöht duty_required um 1.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#media-5cb3848f": {
+      "s": "missing",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:126"
+      ],
+      "n": "Ionic: Besetzungsblock zeigt vor jeder eingeteilten Person ein ion-avatar mit pa.img (für alle Rollen) / Flutter: ListTile ohne leading, kein Bild.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-c4e7782d": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:140",
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:255"
+      ],
+      "n": "Nur canManageDuty = Admin/Verantwortlich (Ionic isTeamLeader, Flutter canManageDutyProvider); Helfer/StF-Helfer sehen es in beiden nicht. Bestätigung „Aus dem Dienst austragen?“ / „Austragen“ (destruktiv); gleiche person_attendances-Felder (duty_state null, ohne Anwesenheit Status neutral + Notiz leer).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-d7c6dece": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:172"
+      ],
+      "n": "Nur canManageDuty = Admin/Verantwortlich (Ionic isTeamLeader, Flutter canManageDutyProvider); Helfer/StF-Helfer sehen es in beiden nicht. Öffnet Einteilungs-Sheet (Kandidaten mit Dienstanzahl im Monat, Verhinderung, gleicher Tag).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-4210b23c": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:177"
+      ],
+      "n": "Nur canManageDuty = Admin/Verantwortlich (Ionic isTeamLeader, Flutter canManageDutyProvider); Helfer/StF-Helfer sehen es in beiden nicht. Nur bei ≥1 anwesender, nicht eingeteilter Person.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-da1403f3-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:181"
+      ],
+      "n": "Nur canManageDuty = Admin/Verantwortlich (Ionic isTeamLeader, Flutter canManageDutyProvider); Helfer/StF-Helfer sehen es in beiden nicht.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-82619b7c": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:184"
+      ],
+      "n": "Nur canManageDuty = Admin/Verantwortlich (Ionic isTeamLeader, Flutter canManageDutyProvider); Helfer/StF-Helfer sehen es in beiden nicht. Direktes Einteilen, anwesende Person sofort bestätigt (wie Ionic assignDuty), Toast „… benachrichtigt“.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-7b36322f": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:189"
+      ],
+      "n": "Nur canManageDuty = Admin/Verantwortlich (Ionic isTeamLeader, Flutter canManageDutyProvider); Helfer/StF-Helfer sehen es in beiden nicht.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-da1403f3-3": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:193"
+      ],
+      "n": "Nur canManageDuty = Admin/Verantwortlich (Ionic isTeamLeader, Flutter canManageDutyProvider); Helfer/StF-Helfer sehen es in beiden nicht.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-82619b7c-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:196"
+      ],
+      "n": "Nur canManageDuty = Admin/Verantwortlich (Ionic isTeamLeader, Flutter canManageDutyProvider); Helfer/StF-Helfer sehen es in beiden nicht. Einteilen → Status neutral + Anfrage-Push (requested).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-25ce998f": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:116",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:712"
+      ],
+      "n": "Bei type.enable_protocol für alle Rollen mit Terminzugriff, ohne Rollenprüfung (Inhalt per RLS) – gleich.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-4c355ed6": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:24"
+      ],
+      "n": "Bei type.enable_protocol für alle Rollen mit Terminzugriff, ohne Rollenprüfung (Inhalt per RLS) – gleich. Für Helfer ohne Freigabe ebenfalls „Noch nicht begonnen“ (Entwurf per RLS unsichtbar).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-5baa85b0": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:28"
+      ],
+      "n": "Bei type.enable_protocol für alle Rollen mit Terminzugriff, ohne Rollenprüfung (Inhalt per RLS) – gleich. Datum dd.MM.yyyy lokal.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-f1fce3a1": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:29",
+        "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:31"
+      ],
+      "n": "„· geändert am dd.MM.yyyy“ hinter „Freigegeben am …“, wenn updated_at > 60 s nach published_at (isEditedAfterPublish wie Ionic). Keine Rollenprüfung, wie Ionic."
+    },
+    "attendance/attendance/attendance.page#text-d57576ea": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:36"
+      ],
+      "n": "Bei type.enable_protocol für alle Rollen mit Terminzugriff, ohne Rollenprüfung (Inhalt per RLS) – gleich. Format „dd.MM.yyyy, HH:mm“, updated_at sonst created_at.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-94989341": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:129"
+      ],
+      "n": "Bei type.enable_protocol für alle Rollen mit Terminzugriff, ohne Rollenprüfung (Inhalt per RLS) – gleich. „Freigegeben“ grün / „Entwurf“ grau.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-d6bad509": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:134"
+      ],
+      "n": "Nur isTeamLeader = Admin/Verantwortlich in beiden (Flutter isTeamLeaderProvider). Text/Icon je nach Protokoll; Ziel /settings/protocol/:id (Ionic /tabs/attendance/:id/protocol, siehe nav-eec13fdd).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-1728cada": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:144"
+      ],
+      "n": "Nicht-Leitung (Helfer, StF-Helfer) nur bei freigegebenem Protokoll – gleich; Ziel Protokollseite.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-7145cf86": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:154"
+      ],
+      "n": "Bei type.enable_protocol für alle Rollen mit Terminzugriff, ohne Rollenprüfung (Inhalt per RLS) – gleich. Nur bei ≥1 Aufgabe.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-faee518d": {
+      "s": "ok",
+      "f": [
+        "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:163"
+      ],
+      "n": "Bei type.enable_protocol für alle Rollen mit Terminzugriff, ohne Rollenprüfung (Inhalt per RLS) – gleich. Icon, Durchstreichen, „Niemand zugewiesen“, „· fällig dd.MM.“ (nicht bei erledigt), Statuslabel; Tap → /settings/tasks/:id (in beiden ohne Rollensperre).",
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#alert-ca65276f": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:196",
+        "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:204"
+      ],
+      "n": "Rollen gleich: Panel nur Admin/Verantwortlich und erst nach Terminbeginn (Ionic isManager && started, Flutter role.isAdmin||isResponsible + Startprüfung). Titel = Name, Text je nach Art, Buttons „Abbrechen“ / „Auf anwesend“|„Entschuldigen“|„Ablehnen“ (rot); Edge-Function attendance-response decide.",
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#modal-0f458f28": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:79",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:973",
+        "lib/features/messages/presentation/pages/message_compose_page.dart:23"
+      ],
+      "n": "Rollen gleich: Menüpunkt nur Admin/Verantwortlich, Termin begonnen, ≥1 Unentschuldigter (Abwesend, nicht ausgetreten). Vollbild-Compose mit festen Empfängern (person_id), attendanceId, allowResponses, Label „N unentschuldigte Personen dieses Termins“, Titel „Wir haben euch vermisst“, Text mit termin/datum/instanz.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

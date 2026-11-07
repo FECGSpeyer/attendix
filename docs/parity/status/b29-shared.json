@@ -1,0 +1,999 @@
+{
+ "batch": "b29-shared",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "shared/attendance-response-modal/attendance-response-modal.component#logic-412c5f37": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:63",
+    "lib/data/repositories/auto_message_repository.dart:404"
+   ],
+   "n": "send(): Edge Function attendance-response {action:'submit', messageId, kind, reasonCode nur bei 'reason', text getrimmt/''} identisch; Doppelklick-Sperre über _sending; Ergebnis-State wird zurückgegeben, Aufrufer (message_termin_section.dart:96) zeigt respDone/respDoneInstant wie Ionic. cancel() schließt ohne Ergebnis."
+  },
+  "shared/attendance-response-modal/attendance-response-modal.component#toast-83a5af5a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:80",
+    "lib/data/repositories/auto_message_repository.dart:449"
+   ],
+   "n": "Fehlercode aus body.error ('expired'/'alreadyDecided') → respExpired/respAlreadyDecided, sonst respFailed; roter Toast (showError)"
+  },
+  "shared/attendance-response-modal/attendance-response-modal.component#action-b9975cc1": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:103"
+   ],
+   "n": "„Abbrechen“ links in der Toolbar; Flutter sperrt den Button zusätzlich während des Sendens (Ionic nicht) – kaum bemerkbar"
+  },
+  "shared/attendance-response-modal/attendance-response-modal.component#text-6376cf9e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:111"
+   ]
+  },
+  "shared/attendance-response-modal/attendance-response-modal.component#text-3eb8cec2": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:118"
+   ],
+   "n": "Termin-Label zentriert, medium; Label wird vom Aufrufer gleich gebaut (typeInfo|Typname · Datum)"
+  },
+  "shared/attendance-response-modal/attendance-response-modal.component#field-5e8ac748": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:124"
+   ],
+   "n": "Segment „Ich hatte einen Grund“/„Ich war doch da“, Startwert = übergebenes kind"
+  },
+  "shared/attendance-response-modal/attendance-response-modal.component#text-b7a53c05": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:134"
+   ]
+  },
+  "shared/attendance-response-modal/attendance-response-modal.component#action-97564697": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:138",
+    "lib/data/models/auto_message/auto_message.dart:26",
+    "lib/features/messages/presentation/auto_message_texts.dart:68"
+   ],
+   "n": "Chips Krank, Arbeit / Schule, Familie, Abmelden vergessen, Sonstiges in gleicher Reihenfolge, Default 'sick', gewählt = primary, sonst Outline medium"
+  },
+  "shared/attendance-response-modal/attendance-response-modal.component#field-d92b83d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:150"
+   ],
+   "n": "Label „Ergänzung (optional)“ gestapelt, max. 500 Zeichen, min. 3 Zeilen, wächst mit"
+  },
+  "shared/attendance-response-modal/attendance-response-modal.component#text-4919261c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:165"
+   ]
+  },
+  "shared/attendance-response-modal/attendance-response-modal.component#text-e6f303ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:167"
+   ]
+  },
+  "shared/attendance-response-modal/attendance-response-modal.component#action-cf57d8b5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:169"
+   ],
+   "n": "Block-Button „Senden“, während des Sendens deaktiviert (Flutter zeigt dabei Spinner im Button)"
+  },
+  "shared/attendance-songs/attendance-songs.component#logic-b374fc61": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:314",
+    "lib/core/utils/attendance_songs.dart:32",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:147"
+   ],
+   "n": "missingNotes (nicht linkOnly, Instrument gesetzt, keine Noten fürs Instrument bzw. Chor-alle-Datei bei Chören), canTap/open (linkOnly → nur Link, sonst Notenoptionen), openLink, canPrint (nicht linkOnly, Werke vorhanden), print (Datei fürs Instrument, Chor-Fallback, Dateiname aus Untertitel mit gleichem Regex, Toast „signout.noScoresFound“ wenn leer) und dismiss('plan') → Ablaufplan entsprechen Ionic. Anzeige-Unterschiede der Zeile siehe action-d37ad3ce."
+  },
+  "shared/attendance-songs/attendance-songs.component#native-3e96c37b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:18",
+    "lib/core/services/native/native_file_service.dart:123"
+   ],
+   "n": "Browser.open → launchUrl inAppBrowserView (nativ), Fallback extern"
+  },
+  "shared/attendance-songs/attendance-songs.component#action-6a0e4cc8": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:385"
+   ]
+  },
+  "shared/attendance-songs/attendance-songs.component#text-0b1d1394": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:381"
+   ]
+  },
+  "shared/attendance-songs/attendance-songs.component#text-924dfa8a": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:366"
+   ],
+   "n": "Untertitel „Titel · Datum“ unter „Werke“"
+  },
+  "shared/attendance-songs/attendance-songs.component#action-874165f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:392",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:336"
+   ],
+   "n": "Druck-Icon rechts nur ohne linkOnly und mit Werken; druckt alle eigenen Noten als ein PDF"
+  },
+  "shared/attendance-songs/attendance-songs.component#action-d37ad3ce": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:228",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:406"
+   ],
+   "n": "Funktion gleich (Tippen → Notenoptionen bzw. bei Eltern nur Link; Untertitel „Für dich sind keine Noten hinterlegt“ statt „Dirigent: …“). Ionic: Zeile ohne Noten leicht rot getönt (8 % danger) mit rotem Hinweistext, kein Chevron ([detail]=false), Name „{number}. {name}“ / Flutter: Zeile vollflächig rot mit weißer Schrift, im iOS-Look Chevron rechts, Name mit Präfix („{prefix}{number}. {name}“, ohne Nummer nur Name).",
+   "sev": "niedrig"
+  },
+  "shared/attendance-songs/attendance-songs.component#action-86fcebf4": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:252"
+   ],
+   "n": "Download-Icon rechts nur mit Werk-Link, öffnet Link im In-App-Browser ohne Zeilen-Tap auszulösen"
+  },
+  "shared/attendance-songs/attendance-songs.component#action-d8f3a11f": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:419",
+    "lib/features/self_service/presentation/pages/signout_page.dart:730",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:109"
+   ],
+   "n": "Eigene Inset-Liste, Icon + Text primary, Chevron; nur wenn Termin geteilten Plan hat; schließt Sheet und öffnet Ablaufplan"
+  },
+  "shared/audio-player/audio-player.component#logic-bc6be67c": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:24",
+    "lib/core/services/audio_player/audio_player_service.dart:187",
+    "lib/core/services/audio_player/audio_player_service.dart:293"
+   ],
+   "n": "Zurück/Weiter, Seek-Start/-Ende (Positionsupdates während Ziehen ignoriert) wie Ionic; Bar nur bei geladener Datei, über der Tab-Leiste (main_shell.dart:256). Einziger Unterschied: fehlender Fehler-Toast von showError → siehe toast-8cb59de1."
+  },
+  "shared/audio-player/audio-player.component#toast-8cb59de1": {
+   "s": "missing",
+   "n": "Ionic: onPrevious/onNext fangen Fehler (z. B. Queue-URL nicht auflösbar) und zeigen roten Toast „Fehler beim Abspielen: {error}“ / Flutter: audio_player_widget.dart:72/84 ruft svc.previous/svc.next ohne catch auf, Fehler bleibt unbehandelt, Player schließt sich ggf. stumm (_load → _stopInternal); ARB-Key audioPlayFailed wird nirgends genutzt",
+   "sev": "mittel"
+  },
+  "shared/audio-player/audio-player.component#action-79c00bc9": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:71"
+   ],
+   "n": "nur bei Queue (>1 Titel), primary, 22px"
+  },
+  "shared/audio-player/audio-player.component#action-9bbdb2ac": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:76"
+   ],
+   "n": "Play/Pause-Kreis-Icon 36px primary, schaltet Wiedergabe"
+  },
+  "shared/audio-player/audio-player.component#action-c346ccde": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:82"
+   ],
+   "n": "nur bei Queue; ohne nächsten Titel ausgegraut (35 %) und nicht tippbar"
+  },
+  "shared/audio-player/audio-player.component#text-6d380bee": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:98"
+   ],
+   "n": "Songname, sonst Dateiname; einzeilig mit Ellipse"
+  },
+  "shared/audio-player/audio-player.component#text-e24bb605": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:111"
+   ]
+  },
+  "shared/audio-player/audio-player.component#action-4b13b062": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:119"
+   ],
+   "n": "graues close-circle (Icons.cancel), stoppt und blendet Bar aus"
+  },
+  "shared/audio-player/audio-player.component#text-c16c5e16": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:130",
+    "lib/core/services/audio_player/audio_player_service.dart:115"
+   ],
+   "n": "Format m:ss, 0 → „0:00“"
+  },
+  "shared/audio-player/audio-player.component#field-2b108a9d": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:149"
+   ],
+   "n": "Ionic Prozent-Range 0–100, Flutter Slider in ms – gleiches Verhalten (Ziehen → beim Loslassen springen)"
+  },
+  "shared/audio-player/audio-player.component#text-05909793": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:173"
+   ]
+  },
+  "shared/church-overview/church-overview.component#logic-58512849": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:32",
+    "lib/features/attendance/presentation/attendance_extra_actions.dart:101",
+    "lib/features/people/presentation/pages/people_list_page.dart:1128"
+   ],
+   "n": "Zählung (gesamt, leer/null → ohne Gemeinde, je Gemeinde, unbekannte ID → „Unbekannte Gemeinde“), Sortierung nach Anzahl absteigend, Sheet bei 0.5 Höhe, Aufrufer (Anwesende mit Status Anwesend/Verspätet/Verspätung gemeldet bzw. gefilterte Personenliste) gleich. Abweichung nur im Gleichstand-Sortierschlüssel (siehe extra).",
+   "sev": "niedrig"
+  },
+  "shared/church-overview/church-overview.component#text-d9ee911a": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:130"
+   ],
+   "n": "Titel „Gemeinde-Übersicht“ als Überschrift im Sheet (unter Drag-Handle, linksbündig) statt in einer Toolbar"
+  },
+  "shared/church-overview/church-overview.component#action-d91ac356": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:77"
+   ],
+   "n": "Ionic: X-Schließen-Button rechts in der Toolbar / Flutter: kein Schließen-Button, nur Drag-Handle, Wischen nach unten oder Tippen außerhalb",
+   "sev": "niedrig"
+  },
+  "shared/church-overview/church-overview.component#text-6c7dd067": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:132"
+   ]
+  },
+  "shared/church-overview/church-overview.component#text-86cc4886": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:135"
+   ],
+   "n": "„Anwesende“ (Termin) bzw. „Personen“ (Personenliste), Icon people-outline"
+  },
+  "shared/church-overview/church-overview.component#text-88e12ac8": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:136"
+   ]
+  },
+  "shared/church-overview/church-overview.component#text-5f807570": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:140"
+   ]
+  },
+  "shared/church-overview/church-overview.component#text-70927b09": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:141"
+   ]
+  },
+  "shared/church-overview/church-overview.component#text-5f807570-2": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:144"
+   ]
+  },
+  "shared/church-overview/church-overview.component#text-c9cad4e7": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:146"
+   ]
+  },
+  "shared/church-overview/church-overview.component#text-f512e54e": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:146"
+   ]
+  },
+  "shared/church-overview/church-overview.component#text-ec308b41": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:149"
+   ]
+  },
+  "shared/church-overview/church-overview.component#text-a8a283bc": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:151"
+   ]
+  },
+  "shared/church-overview/church-overview.component#text-2af9b894": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:152"
+   ],
+   "n": "Badge grau (medium)"
+  },
+  "shared/church-overview/church-overview.component#text-80557a74": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:155"
+   ]
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#logic-350cdf98": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:18",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:60",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:71"
+   ],
+   "n": "Gründe je nach Verspätung/Abmeldung, Vorauswahl (heute → freier Text, sonst erster Grund, leer → freier Text), Bestätigbarkeit (freier Text getrimmt > 4 Zeichen), Rückgabe getrimmter Text bzw. Grund gleich. Breakpoint-Wechsel 0.6↔1 und Tastatur-Scrolllogik durch inhaltshohes Sheet mit viewInsets-Padding ersetzt. Sichtbare Abweichungen siehe action-9be93d63 und field-432c437c."
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#native-c4a31197": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:85"
+   ],
+   "n": "Flutter-nativ: Sheet wird um die Tastaturhöhe (viewInsets) angehoben, TextField scrollt sich beim Fokus selbst in den sichtbaren Bereich"
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#modal-f35f9845": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:25"
+   ],
+   "n": "Bottom-Sheet mit Griff in beiden; Ionic startet bei 60 % Höhe (bei freiem Text 100 %), Flutter passt die Höhe dem Inhalt an"
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#action-e4239dd0": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:98"
+   ]
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#text-7faca216": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:94"
+   ]
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#action-9be93d63": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:105",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:146"
+   ],
+   "n": "Häkchen rechts in der Kopfzeile, deaktiviert solange nicht bestätigbar – gleich. Ionic: nur dieses Häkchen / Flutter: zusätzlich ein großer Button „Bestätigen“ unter der Liste",
+   "sev": "niedrig"
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#field-d6ba74db": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:113"
+   ],
+   "n": "Gründe der Instanz in Reihenfolge, danach „Sonstiger Grund (Text)“; iOS Häkchen links, MD Radio"
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#text-35e99679": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:138"
+   ],
+   "n": "„Grund“ als Feld-Label"
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#field-432c437c": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:127"
+   ],
+   "n": "Label „Grund“, Platzhalter „Mindestens 5 Zeichen eingeben...“, Satzanfang groß – gleich. Ionic: Textarea ohne Autofokus, wächst unbegrenzt (autoGrow) / Flutter: autofocus: true – Tastatur öffnet sofort, sobald „Sonstiger Grund“ gewählt ist bzw. beim Öffnen am Termintag (Vorauswahl freier Text); umrandetes Feld, 2–5 Zeilen",
+   "sev": "niedrig"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#logic-3be50423": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:173",
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:219",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2203"
+   ],
+   "n": "Bucket files, Präfix {tenantId}/Pfad, limit 1000, .keep ausgeblendet, nur Ordner; Start im gespeicherten Ordner, bei Fehler in Unterordner zurück zum Hauptordner; Hoch/Breadcrumb-Navigation, Auswahl gibt relativen Pfad zurück (Aufrufer schreibt files_folder). Abweichung: Sortierung (siehe extra); UI-Abweichungen an den Items.",
+   "sev": "niedrig"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#toast-6a3e186f": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:250"
+   ],
+   "n": "Ionic: roter Toast „Fehler beim Laden der Ordner: {error}“ / Flutter: gleicher Text als rote Zeile im Sheet statt Toast",
+   "sev": "niedrig"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#modal-9164bfef": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:180",
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:262"
+   ],
+   "n": "Ionic: Sheet mit Breakpoints [0, 1], öffnet in voller Höhe mit Toolbar / Flutter: Bottom-Sheet mit Drag-Handle, Höhe nach Inhalt bis max. 75 %",
+   "sev": "niedrig"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-0d52550a": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:180"
+   ],
+   "n": "Ionic: X-Button links in der Toolbar / Flutter: kein Schließen-Button, nur Drag-Handle, Wischen oder Tippen außerhalb",
+   "sev": "niedrig"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#text-f7fafed0": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:269"
+   ],
+   "n": "„Ordner wählen“ als Überschrift im Sheet statt Toolbar-Titel"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-ef82aba3": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:333"
+   ],
+   "n": "Ionic: Häkchen rechts in der Toolbar (deaktiviert im Hauptordner/beim Laden) wählt aktuellen Ordner / Flutter: kein Häkchen in der Kopfzeile; dieselbe Funktion nur über den Button „Diesen Ordner wählen“ unten (siehe action-c2019029)",
+   "sev": "niedrig"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-7349d8ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:276"
+   ],
+   "n": "Home-Icon springt zum Hauptordner; Breadcrumb-Zeile horizontal scrollbar statt Ionic-Einklappen ab 4 Einträgen"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-c1e8afee": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:280"
+   ],
+   "n": "Segmente mit Chevron getrennt, Tippen navigiert zu diesem Pfad"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-c2019029": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:330"
+   ],
+   "n": "Ionic: oberste Listenzeile in primary-Farbe mit checkmark-circle-Icon „Diesen Ordner wählen: {Ordnername}“, beim Laden deaktiviert / Flutter: FilledButton mit Häkchen am unteren Rand „Diesen Ordner wählen“ (ohne Ordnernamen), auch während des Ladens aktiv; nur außerhalb des Hauptordners in beiden",
+   "sev": "mittel"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-630a0002": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:302"
+   ],
+   "n": "nur außerhalb des Hauptordners; Flutter blendet die Zeile während des Ladens mit aus (Spinner ersetzt die ganze Liste)"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-a9992099": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:308"
+   ],
+   "n": "Tippen öffnet Unterordner – gleich. Ionic: Ordner-Icon in primary, im iOS-Look Chevron (button-Item) / Flutter: Ordner-Icon in Standardfarbe, kein Chevron",
+   "sev": "niedrig"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-d009a6e6": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:312"
+   ],
+   "n": "Text-Button „Wählen“ rechts wählt den Unterordner direkt und schließt"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#text-ba5048f6": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:325"
+   ]
+  },
+  "shared/image-viewer/image-viewer.component#logic-6075d2db": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:16",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:128",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:138",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:382"
+   ],
+   "n": "Vollbild über allem (Fade-Route), Zoom 1–5×, Doppeltipp → 2,5× am Tippunkt bzw. zurück, Einfachtipp blendet Leisten aus/ein, Pinch/Mausrad über InteractiveViewer, Pan nur gezoomt, Tastatur Esc/+/=/-/0, Bild füllt den Bildschirm (BoxFit.contain). Alle Abweichungen hängen an Items: Wisch-Schließen (action-dd54e64c), fallbackSrc (action-54bf8f0b), Titel (text-c27ded53), Hinweis (text-59c21e83), Zoomschritt 1,5 statt 1,6 (action-24790a96/236047c8, gilt auch für +/- Tasten). Der viewerActions-Slot (Ersetzen/Entfernen im Passbild-Viewer) fehlt in Flutter – geprüft in b09 people/person/person.page#action-ea218e71/-0a1221be."
+  },
+  "shared/image-viewer/image-viewer.component#action-dd54e64c": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:163",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:204",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:230"
+   ],
+   "n": "Pinch/Pan/Mausrad-Zoom und Fehleranzeige „Bild konnte nicht geladen werden“ vorhanden. Ionic: Wischen nach oben ODER unten schließt (ab 110 px oder schneller Wisch > 0,6 px/ms), Bild folgt auch seitlich, fliegt animiert raus; elastisches Über-Zoomen/Rand-Gummiband; Fehler-Icon image-outline / Flutter: nur nach unten, erst ab 120 px (schneller kurzer Wisch schließt nicht), kein Gummiband; Fehler-Icon broken_image",
+   "sev": "niedrig"
+  },
+  "shared/image-viewer/image-viewer.component#action-54bf8f0b": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:224"
+   ],
+   "n": "Spinner während des Ladens, danach Bild – gleich. Ionic: bei Ladefehler wird fallbackSrc versucht (Passbild in Einstellungen/Person: Avatar-Platzhalter assets/icon/avatar-placeholder.svg) / Flutter: kein Fallback, direkt Fehleranzeige",
+   "sev": "niedrig"
+  },
+  "shared/image-viewer/image-viewer.component#text-c27ded53": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:274",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:164",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:150",
+    "lib/features/settings/presentation/pages/files_page.dart:357"
+   ],
+   "n": "Ionic: Titel = Dateiname bzw. „Bildvorschau“ (Dateiablage); beim Passbild (settings.page.html:282, person.page.html:49) wird nur [attr.title] gesetzt, das @Input title bleibt leer → kein Titel / Flutter: immer ein Titel: Dateiname, „{Vorname Nachname}.jpg“ (Person) bzw. „Passbild.jpg“ (Stammdaten)",
+   "sev": "niedrig"
+  },
+  "shared/image-viewer/image-viewer.component#action-4620a8c0": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:285"
+   ],
+   "n": "X oben rechts schließt (Ionic runder Glas-Button, Flutter weißes Icon auf Verlauf)"
+  },
+  "shared/image-viewer/image-viewer.component#text-59c21e83": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:348"
+   ],
+   "n": "Text „Doppeltippen oder mit zwei Fingern zoomen“ gleich. Ionic: nur beim allerersten Öffnen (localStorage imageViewerHintSeen), 3,2 s, mit Hand-Icon, verschwindet mit den Leisten / Flutter: bei jedem Öffnen 3 s, ohne Icon, unabhängig vom Ausblenden der Leisten",
+   "sev": "niedrig"
+  },
+  "shared/image-viewer/image-viewer.component#action-24790a96": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:311"
+   ],
+   "n": "Minus-Button, deaktiviert bei 100 % – gleich. Ionic: Faktor 1/1,6 (auch Taste -) / Flutter: 1/1,5",
+   "sev": "niedrig"
+  },
+  "shared/image-viewer/image-viewer.component#action-3ac52411": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:318"
+   ],
+   "n": "„{n} %“ mit geschütztem Leerzeichen, Tippen setzt auf 100 % zurück"
+  },
+  "shared/image-viewer/image-viewer.component#action-236047c8": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:337"
+   ],
+   "n": "Plus-Button, deaktiviert bei 500 % – gleich. Ionic: Faktor 1,6 (auch Tasten +/=) / Flutter: 1,5",
+   "sev": "niedrig"
+  },
+  "shared/message-editor/message-editor.component#logic-58a8ed28": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:345",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:617",
+    "lib/core/utils/tiptap_converter.dart:1",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:164"
+   ],
+   "n": "Flutter-nativ mit flutter_quill (11.6.0) statt Tiptap: Inhalt wird beim Speichern in dasselbe Tiptap-JSON umgewandelt (Absatz, Überschrift h2/h3, Aufzählung/Nummerierung, fett/kursiv/unterstrichen/durchgestrichen/Link), Platzhalter-Einfügen an der Cursorposition (insertText) und Vorlage-Laden (setContent) vorhanden; keine Code/Zitat/Trennlinie wie Ionic. Abweichungen in der Toolbar und im Link-Dialog an den Items."
+  },
+  "shared/message-editor/message-editor.component#alert-bc736d27": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:356",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:628"
+   ],
+   "n": "Ionic: Alert „Link“ mit Feld URL (Platzhalter „https://…“, vorbelegt mit aktuellem Link) und – nur ohne Markierung/Link – „Angezeigter Text (optional)“; Buttons „Abbrechen“, „Entfernen“ (nur auf bestehendem Link, entfernt ihn), „Übernehmen“; ohne Schema wird automatisch https:// vorangestellt / Flutter: Standarddialog von flutter_quill (pub-cache link_dialog.dart) mit Feldern „Text“ und „Link“ (Hinweise „z.B. 'Mehr erfahren'“/„z.B. 'https://example.com'“) und nur Button „OK“; kein Abbrechen-/Entfernen-Button; „OK“ bleibt deaktiviert, solange der Link nicht mit http(s)://, mailto:, tel: … beginnt (kein automatisches https://); ARB-Keys editorLink/editorLinkText ungenutzt",
+   "sev": "mittel"
+  },
+  "shared/message-editor/message-editor.component#action-09d3e2e6": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:349"
+   ],
+   "n": "Fett-Umschalter mit aktivem Zustand; Icon statt Buchstabe „B“"
+  },
+  "shared/message-editor/message-editor.component#action-4644f4d6": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:350"
+   ]
+  },
+  "shared/message-editor/message-editor.component#action-12f261f9": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:351"
+   ]
+  },
+  "shared/message-editor/message-editor.component#action-fcb4e51a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:352"
+   ]
+  },
+  "shared/message-editor/message-editor.component#action-ee5fa118": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:353",
+    "lib/core/utils/tiptap_converter.dart:47"
+   ],
+   "n": "Ionic: ein Umschalt-Button „H“ (Überschrift Ebene 2 an/aus) / Flutter: Dropdown „Überschrift“ mit H1, H2, H3, Normal (H1 wird beim Speichern zu Ebene 2, H3 bleibt Ebene 3)",
+   "sev": "niedrig"
+  },
+  "shared/message-editor/message-editor.component#action-953dc469": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:354"
+   ],
+   "n": "Aufzählung vorhanden; Reihenfolge zur Nummerierung siehe action-b11ec5dc"
+  },
+  "shared/message-editor/message-editor.component#action-b11ec5dc": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:355"
+   ],
+   "n": "Nummerierte Liste vorhanden. Ionic: Reihenfolge Aufzählung, dann Nummerierung / Flutter (flutter_quill-Toolbar): erst Nummerierung, dann Aufzählung",
+   "sev": "niedrig"
+  },
+  "shared/message-editor/message-editor.component#action-c5c5103a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:356"
+   ],
+   "n": "Link-Button in der Toolbar mit aktivem Zustand vorhanden; Dialoginhalt weicht ab → alert-bc736d27"
+  },
+  "shared/message-editor/message-editor.component#action-445826b3": {
+   "s": "missing",
+   "n": "Ionic: Rückgängig-Button „↶“ am Ende der Toolbar / Flutter: showUndo: false (message_compose_page.dart:373, auto_message_rule_page.dart:645) – kein Rückgängig-Button, nur Tastenkürzel auf Hardware-Tastatur",
+   "sev": "mittel"
+  },
+  "shared/message-editor/message-editor.component#text-97c148f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:386",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:657"
+   ],
+   "n": "Platzhalter editor.messagePlaceholder bei leerem Editor"
+  },
+  "shared/notification-bell/notification-bell.component#logic-a18396dd": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:39",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:98",
+    "lib/core/providers/message_providers.dart:193",
+    "lib/core/providers/message_providers.dart:223"
+   ],
+   "n": "Badge = ungelesene der aktuellen Instanz (99+), Öffnen: erst aktuelle Instanz, leer → „Alle“, ganz leer → Toast statt Sheet; Realtime je Nutzer mit Neuabo bei Instanzwechsel; Alle-markieren mit Rückfrage nur im Segment „Alle“; Löschen-Alle mit segmentabhängigem Text; Umschalten gelesen/ungelesen in-place; Tippen markiert gelesen und navigiert (Nachricht, eigene Route, Termin je Rolle wie PushService.navigateToAttendance). Abweichungen siehe extra (Instanzwechsel beim Tippen, Fehlermeldungen) sowie loading-Items.",
+   "sev": "mittel"
+  },
+  "shared/notification-bell/notification-bell.component#db-f8a48025": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/message_providers.dart:223"
+   ],
+   "n": "postgres_changes auf user_notifications, Filter user_id=eq.{userId}, alle Events; Flutter lädt Badge und Listen bei jeder Änderung neu (Ionic nur bei passender Instanz bzw. Segment „Alle“) – gleiches sichtbares Ergebnis"
+  },
+  "shared/notification-bell/notification-bell.component#db-f8a48025-2": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/message_providers.dart:232"
+   ],
+   "n": "eigenes Topic je Abo: user-notif-{userId}-{eindeutiger Suffix}"
+  },
+  "shared/notification-bell/notification-bell.component#loading-5bd47fec": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:319",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:423"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay beim Segmentwechsel / Flutter: kein Overlay, Spinner nur im Listenbereich solange noch keine Daten für das Segment geladen sind",
+   "sev": "niedrig"
+  },
+  "shared/notification-bell/notification-bell.component#loading-603fb6e6": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:39"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay nach Tipp auf die Glocke, bis Liste geladen ist / Flutter: keine Ladeanzeige, Sheet bzw. Toast erscheint erst nach dem Laden",
+   "sev": "niedrig"
+  },
+  "shared/notification-bell/notification-bell.component#toast-2da5fd16": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:55"
+   ],
+   "n": "„Keine Benachrichtigungen vorhanden.“ wenn in keiner Instanz etwas da ist; Flutter Info-Toast in Standardfarbe statt Ionic medium (grau)"
+  },
+  "shared/notification-bell/notification-bell.component#alert-7b9d7085": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:206"
+   ],
+   "n": "nur im Segment „Alle“: „Alle als gelesen markieren?“ / Text / „Abbrechen“, „Markieren“ → alle Instanzen; im Segment „Aktuelle Instanz“ ohne Rückfrage"
+  },
+  "shared/notification-bell/notification-bell.component#alert-e3402013": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:219"
+   ],
+   "n": "Header, Text je Segment (Alle → bell.deleteAllMessage, sonst common.cannotUndo), „Abbrechen“ / „Löschen“ (rot) → alle Instanzen bzw. nur aktuelle"
+  },
+  "shared/notification-bell/notification-bell.component#nav-a59d7530": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:112"
+   ],
+   "n": "Nachrichten-Benachrichtigung öffnet die Nachricht (Ionic /tabs/messages/{id}, Flutter /messages/{id}); Flutter wechselt die Instanz vorher selbst, Ionic überlässt das der Nachrichtenseite"
+  },
+  "shared/notification-bell/notification-bell.component#nav-7f660468": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:117"
+   ],
+   "n": "eigene Route (Teamorganisation) nach evtl. Instanzwechsel; Flutter übersetzt die Ionic-Route (mapIonicRoute) und navigiert nur, wenn sie existiert"
+  },
+  "shared/notification-bell/notification-bell.component#db-5d50b7c0": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/message_providers.dart:250"
+   ],
+   "n": "removeChannel beim Verwerfen des Abos (Unmount/Instanzwechsel)"
+  },
+  "shared/notification-bell/notification-bell.component#action-9de90710": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:160"
+   ],
+   "n": "Glocke notifications-outline mit rotem Badge (>99 → „99+“), nur bei ungelesenen; Seitenglocken bei aktivem Seitenpanel ausgeblendet wie Ionic-CSS"
+  },
+  "shared/notification-bell/notification-bell.component#modal-1aef5bd5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:71"
+   ],
+   "n": "Sheet mit Start bei 75 % und Ziehen bis 100 %"
+  },
+  "shared/notification-bell/notification-bell.component#text-b40affdd": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:349",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:396"
+   ]
+  },
+  "shared/notification-bell/notification-bell.component#action-d04c1557": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:285"
+   ],
+   "n": "Doppelhaken-Icon nur bei ungelesenen der aktuellen Instanz"
+  },
+  "shared/notification-bell/notification-bell.component#action-28195174": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:296"
+   ],
+   "n": "roter Papierkorb nur bei vorhandenen Einträgen"
+  },
+  "shared/notification-bell/notification-bell.component#field-6a120234": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:309"
+   ],
+   "n": "„Aktuelle Instanz“ / „Alle“ im zweiten Kopfbereich; Startsegment wie Ionic (aktuelle, bei leer „Alle“)"
+  },
+  "shared/notification-bell/notification-bell.component#action-2c78ceb5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:415"
+   ],
+   "n": "Pull-to-Refresh lädt Liste und Badge neu"
+  },
+  "shared/notification-bell/notification-bell.component#text-4bda2e83": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:437"
+   ],
+   "n": "Icon notifications-off + „Keine Benachrichtigungen“"
+  },
+  "shared/notification-bell/notification-bell.component#action-dd7004d9": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:489"
+   ],
+   "n": "Wischen nach rechts: primary, Icon je Zustand (ungelesen/gelesen), schaltet Lesestatus in der Zeile um; Flutter ohne Durchwischen (expandable)"
+  },
+  "shared/notification-bell/notification-bell.component#action-37616b6e": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:479",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:268"
+   ],
+   "n": "Roter Punkt bei ungelesen, Instanzname nur im Segment „Alle“, Text, Datum „dd.MM.yyyy HH:mm“, Tippen markiert gelesen und navigiert – gleich. Ionic: Button-Optik/Chevron nur bei Termin- oder Nachrichten-Benachrichtigung / Flutter: Chevron auch bei Einträgen mit eigener Route (Teamorganisation)",
+   "sev": "niedrig"
+  },
+  "shared/notification-bell/notification-bell.component#action-c59a8490": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:505"
+   ],
+   "n": "Wischen nach links: rot, Papierkorb, löscht ohne Rückfrage"
+  },
+  "shared/tiptap-editor/extensions/slash-commands#logic-aecc73dd": {
+   "s": "na",
+   "n": "toter Code: buildCommandItems wird nirgends aufgerufen und die Extension SlashCommands ist weder in tiptap-editor.component.ts:161-184 registriert noch sonst importiert (grep „SlashCommands“/„slash“ in src/app nur in dieser Datei); ihr '/'-Shortcut gibt nur false zurück. Ionic hat damit kein Slash-Menü – Flutter hat eines zusätzlich (siehe extra der Unit tiptap-editor)."
+  },
+  "shared/tiptap-editor/extensions/task-ref-node#logic-04d024f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:16",
+    "lib/features/team_organization/team_org_utils.dart:33",
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:111"
+   ],
+   "n": "taskRefText gleich: „✅ Titel · Erledigt“ bei completed, sonst „📋 Titel · Offen/In Arbeit“, unbekannter Status als Rohtext, ohne Status nur „📋 Titel“; Live-Status aus taskStatuses vor dem gespeicherten Status. Darstellung als Block mit linkem primary-Rand wie Ionic .task-ref-node."
+  },
+  "shared/tiptap-editor/tiptap-editor.component#logic-80afa222": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:186",
+    "lib/features/team_organization/tiptap_delta.dart:1",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:350"
+   ],
+   "n": "Flutter-nativ mit flutter_quill: gespeichertes Tiptap-JSON wird hin- und zurückkonvertiert (Absätze, Überschriften 1–3, verschachtelte Aufzählung/Nummerierung/Aufgabenliste, Zitat, Code, Marks fett/kursiv/unterstrichen/durchgestrichen/Code/Link, taskRef/agendaItemRef als Chips an gleicher Stelle); Platzhalter editor.notesPlaceholder nur bei bearbeitbar; schreibgeschützt ohne Toolbar; Aufgaben-Referenz einfügen am Cursor; Speichern verzögert (Seite: 800 ms statt Editor-Debounce 600 ms). Abweichungen siehe extra.",
+   "sev": "niedrig"
+  },
+  "shared/tiptap-editor/tiptap-editor.component#action-bad87fa3": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:362"
+   ],
+   "n": "Fett vorhanden. Ionic: dunkles schwebendes Bubble-Menü, erscheint nur bei markiertem Text / Flutter: feste flutter_quill-Toolbar über dem Editor (immer sichtbar beim Bearbeiten), Icon statt „B“",
+   "sev": "niedrig"
+  },
+  "shared/tiptap-editor/tiptap-editor.component#action-35002b54": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:363"
+   ],
+   "n": "Kursiv vorhanden; Bubble-Menü bei Auswahl vs. feste Toolbar (wie action-bad87fa3)",
+   "sev": "niedrig"
+  },
+  "shared/tiptap-editor/tiptap-editor.component#action-ea36a1eb": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:364"
+   ],
+   "n": "Unterstrichen vorhanden; Bubble-Menü bei Auswahl vs. feste Toolbar (wie action-bad87fa3)",
+   "sev": "niedrig"
+  },
+  "shared/tiptap-editor/tiptap-editor.component#action-a4f9e0da": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:365"
+   ],
+   "n": "Durchgestrichen vorhanden; Bubble-Menü bei Auswahl vs. feste Toolbar (wie action-bad87fa3)",
+   "sev": "niedrig"
+  },
+  "shared/tiptap-editor/tiptap-editor.component#action-5574f0fb": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:376"
+   ],
+   "n": "Ionic: eigener Umschalt-Button „H1“ im Bubble-Menü (nochmal tippen → Absatz) / Flutter: Eintrag „Überschrift 1“ im Überschriften-Dropdown der festen Toolbar (zurück über „Normal“)",
+   "sev": "niedrig"
+  },
+  "shared/tiptap-editor/tiptap-editor.component#action-b55962f5": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:376"
+   ],
+   "n": "Ionic: Button „H2“ im Bubble-Menü / Flutter: Eintrag im Überschriften-Dropdown (wie action-5574f0fb)",
+   "sev": "niedrig"
+  },
+  "shared/tiptap-editor/tiptap-editor.component#action-db26f149": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:376"
+   ],
+   "n": "Ionic: Button „H3“ im Bubble-Menü / Flutter: Eintrag im Überschriften-Dropdown (wie action-5574f0fb)",
+   "sev": "niedrig"
+  },
+  "shared/tiptap-editor/tiptap-editor.component#action-e7be6f33": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:378"
+   ],
+   "n": "Aufzählung vorhanden. Ionic: im Bubble-Menü vor „1.“ / Flutter: feste Toolbar, Aufzählung steht hinter der Nummerierung",
+   "sev": "niedrig"
+  },
+  "shared/tiptap-editor/tiptap-editor.component#action-a754f1aa": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:377"
+   ],
+   "n": "Nummerierte Liste vorhanden; Bubble-Menü bei Auswahl vs. feste Toolbar, Reihenfolge mit Aufzählung vertauscht",
+   "sev": "niedrig"
+  }
+ },
+ "extra": [
+  {
+   "unit": "shared/church-overview/church-overview.component",
+   "title": "Gleichstand-Sortierung der Gemeinden",
+   "n": "Ionic: bei gleicher Anzahl a.name.localeCompare(b.name) (Umlaute/Groß-Klein natürlich) / Flutter: a.name.compareTo(b.name) (Codepoint-Reihenfolge, z. B. „Ärzte…“ hinter „Zion“, Kleinbuchstaben hinter Großbuchstaben)",
+   "sev": "niedrig",
+   "ionic": "src/app/shared/church-overview/church-overview.component.ts:49",
+   "f": [
+    "lib/shared/widgets/sheets/church_overview_sheet.dart:55"
+   ]
+  },
+  {
+   "unit": "shared/files-folder-picker/files-folder-picker.component",
+   "title": "Ordner-Sortierung",
+   "n": "Ionic: FilesService.listEntries sortiert Ordner zusätzlich mit localeCompare (Groß-/Kleinschreibung und Umlaute natürlich) / Flutter: übernimmt die Storage-Reihenfolge (name asc der Datenbank) ohne Nachsortierung – Reihenfolge kann bei Groß-/Kleinschreibung bzw. Umlauten abweichen",
+   "sev": "niedrig",
+   "ionic": "src/app/services/files/files.service.ts:280",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:238"
+   ]
+  },
+  {
+   "unit": "shared/notification-bell/notification-bell.component",
+   "title": "Instanzwechsel beim Tippen auf jede fremde Benachrichtigung",
+   "n": "Ionic: onTap wechselt die Instanz nur bei Einträgen mit eigener Route oder Termin und nur, wenn data.tenantId gesetzt ist; Geburtstags-/Problemfall-Einträge (ohne Ziel) schließen nur das Sheet, Nachrichten wechseln erst auf der Nachrichtenseite / Flutter: _navigate wechselt vorab für JEDE Benachrichtigung auf targetTenantId (data.tenantId, sonst Zeilen-tenantId) – Tippen auf einen Eintrag ohne Ziel aus einer anderen Instanz (Segment „Alle“) schaltet die aktive Instanz um; ist die Instanz nicht mehr in der Nutzerliste, passiert gar nichts",
+   "sev": "mittel",
+   "ionic": "src/app/shared/notification-bell/notification-bell.component.ts:278",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:100",
+    "lib/data/models/user_notification/user_notification.dart:44"
+   ]
+  },
+  {
+   "unit": "shared/notification-bell/notification-bell.component",
+   "title": "Fehler bei Markieren/Löschen",
+   "n": "Flutter besser: Ionic markAll/deleteAll/toggleRead/deleteOne haben kein try/catch – DB-Fehler bleiben unbemerkt / Flutter: _guard zeigt roten Toast „svcSaveFailed“ und lädt die Liste neu",
+   "sev": "niedrig",
+   "ionic": "src/app/shared/notification-bell/notification-bell.component.ts:230",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:198"
+   ]
+  },
+  {
+   "unit": "shared/tiptap-editor/tiptap-editor.component",
+   "title": "Hervorhebung und Textausrichtung gehen verloren",
+   "n": "Ionic: Editor lädt Highlight und TextAlign (Markdown ==Text==, Tastenkürzel Strg+Umschalt+H bzw. L/E/R/J) und speichert mark highlight bzw. attrs.textAlign / Flutter: tiptap_delta.dart kennt beide nicht – werden nicht angezeigt und beim Bearbeiten/Speichern eines solchen Protokollabschnitts entfernt",
+   "sev": "niedrig",
+   "ionic": "src/app/shared/tiptap-editor/tiptap-editor.component.ts:163",
+   "f": [
+    "lib/features/team_organization/tiptap_delta.dart:5"
+   ]
+  },
+  {
+   "unit": "shared/tiptap-editor/tiptap-editor.component",
+   "title": "Nur in Flutter: Slash-Menü",
+   "n": "Ionic: kein Slash-Menü (SlashCommands-Extension toter Code, nicht registriert) / Flutter: Tippen von „/“ öffnet unter dem Editor eine Liste „Überschrift 1/2, Aufzählung, Nummerierte Liste, Neue Aufgabe, /tagesordnung – {Thema}“",
+   "sev": "niedrig",
+   "ionic": "src/app/shared/tiptap-editor/extensions/slash-commands.ts:61",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:260",
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:400"
+   ]
+  },
+  {
+   "unit": "shared/tiptap-editor/tiptap-editor.component",
+   "title": "Nur in Flutter: zusätzliche Toolbar-Buttons und klickbare Referenzen",
+   "n": "Ionic: Bubble-Menü nur mit B/I/U/S, H1–H3, Listen; Aufgaben-/Themen-Referenzen nicht anklickbar (cursor: default) / Flutter: Toolbar zusätzlich mit Rückgängig/Wiederholen, Checkliste, Zitat, Einrücken/Ausrücken, Link; Tippen auf eine Aufgaben-Referenz öffnet /settings/tasks/{id}, auf eine Themen-Referenz (Leitung) /settings/agenda-items/{id}",
+   "sev": "niedrig",
+   "ionic": "src/app/shared/tiptap-editor/tiptap-editor.component.ts:37",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocol_editor.dart:358",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1332"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1651 @@
+{
+ "batch": "zz-verify5c-opus-17",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 345,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "<ng-template #eventChips>",
+     "@if (showDeadlineInfo(att) || att.notes || att.attendance?.description || att.attendance?.attachment_url || hasFilesFolder(att) || hasPlan(att) || att.attendance?.place || songsOf(att).length)",
+     "@if (showDeadlineInfo(att))"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-chip ev-chip--danger"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getDeadlineText(att) }}"
+    ],
+    "text": "{{ getDeadlineText(att) }}",
+    "id": "selfService/signout/signout.page#text-853f6c93"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:201",
+     "lib/core/utils/event_list_utils.dart:248",
+     "lib/core/router/route_access.dart:73"
+    ],
+    "n": "Bedingung deadline gesetzt in beiden; Text „Anmeldefrist: dd.MM.yyyy HH:mm Uhr“ / „Anmeldefrist abgelaufen“, gleiche Wandzeit-Logik (UTC-Komponenten als lokale Zeit). Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 562,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (pastAttendances.length)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-section__count"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ pastAttendances.length }}"
+    ],
+    "text": "{{ pastAttendances.length }}",
+    "id": "selfService/signout/signout.page#text-86de3c2f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:565",
+     "lib/core/router/route_access.dart:73"
+    ],
+    "n": "Anzahl eigener vergangener Termine (ohne nicht zugeteilte Dienste). Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 689,
+    "cond": [
+     "@else (not isApplicant)",
+     "in <ion-modal isOpen=\"isAbsenceModalOpen\">",
+     "@else (not !absenceFrom / !absenceUntil)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "range-selected"
+    },
+    "keys": [
+     "common.ngDayMonth",
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.",
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ absenceFrom | date: ('common.ngDayMonth' | transloco) }} – {{ absenceUntil | date: ('common.ngDate' | transloco) }}",
+    "id": "selfService/signout/signout.page#text-8ef0331d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:282"
+    ],
+    "n": "\"dd.MM. – dd.MM.yyyy\".",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 194,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (dutyRequests.length)",
+     "@for (att of dutyRequests; track att.attendance_id ?? att.id)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-pill ev-today__status ion-color-warning"
+    },
+    "keys": [
+     "signout.youAreAssigned"
+    ],
+    "de": [
+     "Du bist eingeteilt"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.youAreAssigned' | transloco }}",
+    "id": "selfService/signout/signout.page#text-9cb90d02"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:101"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 561,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (pastAttendances.length)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "signout.past"
+    ],
+    "de": [
+     "Vergangen"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.past' | transloco }}",
+    "id": "selfService/signout/signout.page#text-9fa1e53c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:565",
+     "lib/core/router/route_access.dart:73"
+    ],
+    "n": "„Vergangen“ auch in der Dienstplan-Ansicht sichtbar wie Ionic. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 223,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "in <ion-modal isOpen=\"isOpenDutiesModalOpen\">",
+     "@if (openDuties.length)",
+     "@for (t of openDuties; track t.attendance.id)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ dutyMeta(t) }}"
+    ],
+    "text": "{{ dutyMeta(t) }}",
+    "id": "selfService/signout/signout.page#text-9febe693"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:347"
+    ],
+    "n": "Ionic: nur dutyMeta \"19:00 · 1 von 2 besetzt\" (kein Datum im Modal) / Flutter: zusätzlich Datum vorne \"Di, 05.11. · …\".",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 414,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (useDutyView)",
+     "@for (t of openDutiesPreview; track t.attendance.id)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ dutyMeta(t) }}"
+    ],
+    "text": "{{ dutyMeta(t) }}",
+    "id": "selfService/signout/signout.page#text-9febe693-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:190",
+     "lib/core/providers/duty_providers.dart:131"
+    ],
+    "n": "dutyMeta „HH:mm · x von y besetzt“, „Dringend“ davor, gleich; Flutter setzt das Datum als Text vorne statt Datumskachel (Kachel ist eigenes Element). Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart",
+    "lib/core/providers/duty_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 382,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (useDutyView)",
+     "@if (nextDuty)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "ev-today__title"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getEventTitle(nextDuty) }}"
+    ],
+    "text": "{{ getEventTitle(nextDuty) }}",
+    "id": "selfService/signout/signout.page#text-a25b156c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:141",
+     "lib/data/repositories/duty_repository.dart:41",
+     "lib/core/providers/duty_providers.dart:131"
+    ],
+    "n": "Titel typeInfo || Typname (Ionic-Join ohne hide_name, daher kein Unterschied zu DutyTermin.title). Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart",
+    "lib/data/repositories/duty_repository.dart",
+    "lib/core/providers/duty_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 613,
+    "cond": [
+     "@else (not isApplicant)",
+     "in <ion-modal isOpen=\"isPauseModalOpen\">"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "signout.pause"
+    ],
+    "de": [
+     "Pausieren"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.pause' | transloco }}",
+    "id": "selfService/signout/signout.page#text-a2e0ff58"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:412"
+    ],
+    "n": "Titel \"Pausieren\".",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 182,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (dutyRequests.length)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-section__count"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ dutyRequests.length }}"
+    ],
+    "text": "{{ dutyRequests.length }}",
+    "id": "selfService/signout/signout.page#text-bafe7147"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:87",
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:471"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 727,
+    "cond": [
+     "@else (not isApplicant)",
+     "in <ion-modal isOpen=\"isRegFieldsModalOpen\">"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Anmeldefelder",
+     "Anmeldung"
+    ],
+    "bound": [
+     "{{ regFieldsMode === 'edit' ? 'Anmeldefelder' : 'Anmeldung' }}"
+    ],
+    "text": "{{ regFieldsMode === 'edit' ? 'Anmeldefelder' : 'Anmeldung' }}",
+    "id": "selfService/signout/signout.page#text-bb12f68e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:390"
+    ],
+    "n": "\"Anmeldefelder\" (Bearbeiten) / \"Anmeldung\" (Anmelden). Keine Rollenbedingung; Felder aus attType.registration_fields (in Flutter geladen).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 309,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (canPlannedAbsence && playerAbsences.length)",
+     "@for (absence of playerAbsences; track absence.id)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ absence.from_date | date: ('common.ngDate' | transloco) }} – {{ absence.until_date | date: ('common.ngDate' | transloco) }}",
+    "id": "selfService/signout/signout.page#text-bf502373"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:291",
+     "lib/features/people/presentation/widgets/planned_absences.dart:17"
+    ],
+    "n": "dd.MM.yyyy – dd.MM.yyyy.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 677,
+    "cond": [
+     "@else (not isApplicant)",
+     "in <ion-modal isOpen=\"isAbsenceModalOpen\">"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "signout.reasonRequired"
+    ],
+    "de": [
+     "Grund *"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.reasonRequired' | transloco }}",
+    "id": "selfService/signout/signout.page#text-bf54f1e3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:334"
+    ],
+    "n": "\"Grund *\" als Label über dem Feld.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 746,
+    "cond": [
+     "@else (not isApplicant)",
+     "in <ion-modal isOpen=\"isRegFieldsModalOpen\">",
+     "@if (pendingSigninAttendance)",
+     "@for (field of getRegistrationFields(pendingSigninAttendance); track field.id)",
+     "@else if (field.type === 'boolean')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.label }}"
+    ],
+    "text": "{{ field.label }}",
+    "id": "selfService/signout/signout.page#text-cdb21ed4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:317"
+    ],
+    "n": "Feldname links vom Schalter.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 760,
+    "cond": [
+     "@else (not isApplicant)",
+     "in <ion-modal isOpen=\"isRegFieldsModalOpen\">",
+     "@if (pendingSigninAttendance)",
+     "@for (field of getRegistrationFields(pendingSigninAttendance); track field.id)",
+     "@else if (field.type === 'multi_select')"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.label }}"
+    ],
+    "text": "{{ field.label }}",
+    "id": "selfService/signout/signout.page#text-cdb21ed4-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:343"
+    ],
+    "n": "Feldname als Überschrift der Mehrfachauswahl.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 410,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (useDutyView)",
+     "@for (t of openDutiesPreview; track t.attendance.id)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-tile__day"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ day(t.attendance.date) }}"
+    ],
+    "text": "{{ day(t.attendance.date) }}",
+    "id": "selfService/signout/signout.page#text-ceeea6ff"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:190"
+    ],
+    "n": "Ionic: Datumskachel (Tag) / Flutter: Tag in der Untertitelzeile.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 192,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (dutyRequests.length)",
+     "@for (att of dutyRequests; track att.attendance_id ?? att.id)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "ev-today__title"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getEventTitle(att) }}"
+    ],
+    "text": "{{ getEventTitle(att) }}",
+    "id": "selfService/signout/signout.page#text-d0cf994d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:97",
+     "lib/data/repositories/duty_repository.dart:41"
+    ],
+    "n": "typeInfo || Typname; Ionic getEventTitle nutzt attType ohne hide_name → gleiches Ergebnis.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart",
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 630,
+    "cond": [
+     "@else (not isApplicant)",
+     "in <ion-modal isOpen=\"isPauseModalOpen\">"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "signout.pausedUntil"
+    ],
+    "de": [
+     "Pausiert bis (optional)"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.pausedUntil' | transloco }}",
+    "id": "selfService/signout/signout.page#text-d2c703b8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:438"
+    ],
+    "n": "\"Pausiert bis (optional)\" als aufklappbare Kopfzeile mit Kalender.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 687,
+    "cond": [
+     "@else (not isApplicant)",
+     "in <ion-modal isOpen=\"isAbsenceModalOpen\">",
+     "@else if (!absenceUntil)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "range-hint"
+    },
+    "keys": [
+     "signout.chooseEnd"
+    ],
+    "de": [
+     "Endtag wählen"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.chooseEnd' | transloco }}",
+    "id": "selfService/signout/signout.page#text-d5872503"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:270"
+    ],
+    "n": "\"Endtag wählen\" nach dem Start.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 181,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (dutyRequests.length)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "signout.pleaseConfirm"
+    ],
+    "de": [
+     "Bitte bestätigen"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.pleaseConfirm' | transloco }}",
+    "id": "selfService/signout/signout.page#text-d67f2672"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:87"
+    ],
+    "n": "Für alle Rollen der Seite, unabhängig von der Dienstplan-Ansicht.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 124,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (useDutyView)"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [
+     "signout.yourDutyRoster"
+    ],
+    "de": [
+     "Dein Dienstplan"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.yourDutyRoster' | transloco }}",
+    "id": "selfService/signout/signout.page#text-d9438f20"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:403",
+     "lib/core/providers/duty_providers.dart:131"
+    ],
+    "n": "useDutyView = tenant.duty_view && im Dienstkreis (Ionic applyDutyLayout).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart",
+    "lib/core/providers/duty_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 310,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (canPlannedAbsence && playerAbsences.length)",
+     "@for (absence of playerAbsences; track absence.id)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ absence.reason }}"
+    ],
+    "text": "{{ absence.reason }}",
+    "id": "selfService/signout/signout.page#text-dc70bcdf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/planned_absences.dart:292"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/people/presentation/widgets/planned_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 387,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (useDutyView)",
+     "@if (nextDuty)",
+     "@for (name of dutyTeam(nextDuty); track name)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "duty-chip"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ name }}"
+    ],
+    "text": "{{ name }}",
+    "id": "selfService/signout/signout.page#text-de14a933"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:150",
+     "lib/core/providers/duty_providers.dart:141",
+     "lib/core/providers/duty_providers.dart:131"
+    ],
+    "n": "Vornamen der anderen belegenden Personen (occupiesDuty) wie Ionic dutyTeam. Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart",
+    "lib/core/providers/duty_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 685,
+    "cond": [
+     "@else (not isApplicant)",
+     "in <ion-modal isOpen=\"isAbsenceModalOpen\">",
+     "@if (!absenceFrom)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "range-hint"
+    },
+    "keys": [
+     "signout.chooseStart"
+    ],
+    "de": [
+     "Starttag wählen"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.chooseStart' | transloco }}",
+    "id": "selfService/signout/signout.page#text-dfe3a332"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:270"
+    ],
+    "n": "\"Starttag wählen\" solange kein Start.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 92,
+    "cond": [
+     "@if (isApplicant)",
+     "@if (player)"
+    ],
+    "tag": "h1",
+    "attrs": {
+     "class": "title"
+    },
+    "keys": [
+     "signout.greeting"
+    ],
+    "de": [
+     "Shalom {name}!"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.greeting' | transloco: { name: player?.firstName } }}",
+    "id": "selfService/signout/signout.page#text-eb37ab2f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:194",
+     "lib/features/self_service/presentation/pages/signout_page.dart:210"
+    ],
+    "n": "isApplicantProvider = Rolle 7 wie Ionic isApplicant; Gruß nur wenn Person geladen, dann \"Registrierung eingereicht\"-Text.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 118,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)"
+    ],
+    "tag": "h1",
+    "attrs": {},
+    "keys": [
+     "signout.greeting"
+    ],
+    "de": [
+     "Shalom {name}!"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.greeting' | transloco: { name: player.firstName } }}",
+    "id": "selfService/signout/signout.page#text-eb37ab2f-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/pages/signout_page.dart:370"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 189,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (dutyRequests.length)",
+     "@for (att of dutyRequests; track att.attendance_id ?? att.id)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "ev-tile__day"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ day(att.date) }}"
+    ],
+    "text": "{{ day(att.date) }}",
+    "id": "selfService/signout/signout.page#text-ed1a1b2e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:99",
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:272"
+    ],
+    "n": "Ionic: Datumskachel mit Tag / Flutter: keine Kachel, Tag in der Textzeile \"Di, 05.11. · 19:00 Uhr\".",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 304,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (canPlannedAbsence && playerAbsences.length)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "signout.plannedAbsences"
+    ],
+    "de": [
+     "Geplante Abwesenheiten"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.plannedAbsences' | transloco }}",
+    "id": "selfService/signout/signout.page#text-ed265ebd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:167",
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:177"
+    ],
+    "n": "Nur bei player_planned_absence der eigenen Rolle und vorhandenen Abwesenheiten (person_id + tenant_id, nach from_date).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 425,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (useDutyView)",
+     "@empty of openDutiesPreview"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "color": "medium"
+    },
+    "keys": [
+     "signout.allDutiesFilled"
+    ],
+    "de": [
+     "Gerade sind alle Dienste besetzt. Danke!"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.allDutiesFilled' | transloco }}",
+    "id": "selfService/signout/signout.page#text-ff2e0c87"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:183",
+     "lib/core/providers/duty_providers.dart:131"
+    ],
+    "n": "„Gerade sind alle Dienste besetzt. Danke!“ bei leerer Vorschau. Dienstplan-Ansicht: Ionic useDutyView = tenant.duty_view && im Dienstkreis, keine Rollenprüfung; Flutter MyDutyOverview.useDutyView identisch. Rollen gleich: Ionic lädt player nur für Spieler/Helfer/Stimmführer/SF-Helfer/NONE, Tab+URL nur !Dirigent&&!Eltern, Bewerber nur Wartekarte; Flutter route_access.dart:73 + main_shell canSeeSelfServiceTab dieselbe Menge, Bewerber ebenfalls nur Wartekarte.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart",
+    "lib/core/providers/duty_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 230,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "in <ion-modal isOpen=\"isOpenDutiesModalOpen\">",
+     "@else (not openDuties.length)"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "ion-padding ion-text-center"
+    },
+    "keys": [
+     "signout.allDutiesFilled"
+    ],
+    "de": [
+     "Gerade sind alle Dienste besetzt. Danke!"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.allDutiesFilled' | transloco }}",
+    "id": "selfService/signout/signout.page#text-ffd9437f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:341"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 243,
+    "method": "SignoutPage.onExcuseConfirm",
+    "cond": [],
+    "message": {
+     "keys": [
+      "signout.thanksLate",
+      "signout.thanksSignout"
+     ],
+     "de": [
+      "Vielen Dank für die Info und Gottes Segen dir!",
+      "Vielen Dank für deine rechtzeitige Abmeldung und Gottes Segen dir."
+     ],
+     "literals": [],
+     "expr": "isLate ? translate('signout.thanksLate') : translate('signout.thanksSignout')"
+    },
+    "color": "success",
+    "duration": "4000",
+    "src": "6e795f20",
+    "mbody": "0fbde54d",
+    "roleGuarded": true,
+    "id": "selfService/signout/signout.page#toast-2a800d7e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:266-284",
+     "lib/core/providers/signout_providers.dart:284-300"
+    ],
+    "n": "Gleicher Text je isLate, grün; isSelf=true und understaffed-Hinweis für abgesagte eigene Dienste wie Ionic. Seite nur für Nicht-Dirigenten/Nicht-Eltern in beiden.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart",
+    "lib/core/providers/signout_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 1280,
+    "method": "SignoutPage.confirmAbsence",
+    "cond": [],
+    "message": {
+     "keys": [
+      "signout.absenceEnteredCount",
+      "signout.absenceEntered"
+     ],
+     "de": [
+      "Abwesenheit eingetragen ({count, plural, one {# Termin} other {# Termine}} entschuldigt)",
+      "Abwesenheit eingetragen"
+     ],
+     "literals": [],
+     "expr": "toExcuse.length > 0 ? translate('signout.absenceEnteredCount', { count: toExcuse.length }) : translate('signout.absenceEntered')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "568c1e1b",
+    "mbody": "cc9dce7b",
+    "roleGuarded": true,
+    "id": "selfService/signout/signout.page#toast-94e9b1fc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:78-114",
+     "lib/features/people/presentation/widgets/planned_absences.dart:26-29",
+     "lib/data/repositories/player_absence_repository.dart:204-238"
+    ],
+    "n": "Nur mit player_planned_absence der eigenen Rolle. Grüner Toast „Abwesenheit eingetragen (n Termin(e) entschuldigt)“ bzw. ohne Anzahl bei 0. Entschuldigt (und gezählt) werden jetzt dieselben Termine wie in Ionic (onlyIds = aktueller + anstehende nach Dienst-Filter/Dienstplan-Ansicht, Status ≠ entschuldigt, Tag im Zeitraum); die Abweichung aus x-1962646a5f ist damit behoben. Randfall „Alle Termine“: Termine ohne eigene Zeile überspringt Flutter, Ionic versucht sie zu schreiben.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_absence_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 819,
+    "method": "SignoutPage.presentActionSheetForChoice",
+    "cond": [
+     "(buttons.length <= 1)"
+    ],
+    "message": {
+     "keys": [
+      "signout.noActions"
+     ],
+     "de": [
+      "Für diesen Termin sind keine Aktionen verfügbar."
+     ],
+     "literals": [],
+     "expr": "translate('signout.noActions')"
+    },
+    "color": "warning",
+    "duration": "4000",
+    "src": "c17579db",
+    "mbody": "b194e193",
+    "roleGuarded": true,
+    "id": "selfService/signout/signout.page#toast-dd39dbcc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:455-458"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 1242,
+    "method": "SignoutPage.confirmAbsence",
+    "cond": [
+     "(!this.absenceReason || !this.absenceFrom || !this.absenceUntil)"
+    ],
+    "message": {
+     "keys": [
+      "signout.fillRequired"
+     ],
+     "de": [
+      "Bitte fülle alle Pflichtfelder aus"
+     ],
+     "literals": [],
+     "expr": "translate('signout.fillRequired')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "1c135774",
+    "mbody": "cc9dce7b",
+    "roleGuarded": true,
+    "id": "selfService/signout/signout.page#toast-e5ca1d58"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_absences.dart:246-252"
+    ],
+    "n": "In beiden praktisch unerreichbar, weil der Button bei fehlenden Angaben deaktiviert ist.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "selfService/signout/signout.page.ts",
+    "line": 702,
+    "method": "SignoutPage.presentActionSheetForChoice",
+    "cond": [],
+    "message": {
+     "keys": [
+      "signout.noteUpdated"
+     ],
+     "de": [
+      "Notiz erfolgreich aktualisiert."
+     ],
+     "literals": [],
+     "expr": "translate('signout.noteUpdated')"
+    },
+    "color": "success",
+    "duration": "4000",
+    "src": "82744bb6",
+    "mbody": "b194e193",
+    "roleGuarded": true,
+    "id": "selfService/signout/signout.page#toast-ec5f8f8d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:366"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "extra": {
+    "id": "x-1a458121e1",
+    "title": "Offene-Dienste-Sheet bleibt offen",
+    "n": "Ionic takeDuty: schließt das Modal, wenn danach keine offenen Dienste mehr da sind / Flutter: Sheet bleibt offen und zeigt \"Gerade sind alle Dienste besetzt. Danke!\".",
+    "sev": "niedrig",
+    "ionic": "src/app/selfService/signout/signout.page.ts:576",
+    "f": [
+     "lib/features/duty/presentation/widgets/duty_actions.dart:157",
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:317"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "extra": {
+    "id": "x-97da4e3911",
+    "title": "Fehler-Toasts und Leerzustände",
+    "n": "Flutter besser: Flutter meldet fehlgeschlagene Zusage/Absage/Notiz/Anmeldefelder/Instanzwechsel per Fehler-Toast (Ionic: unbehandelte Exception, kein Hinweis) und zeigt \"Keine Termine gefunden\" bzw. Hinweis ohne verknüpfte Person (Ionic: leere Seite).",
+    "sev": "niedrig",
+    "ionic": "src/app/selfService/signout/signout.page.ts:227",
+    "f": [
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:281",
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:341",
+     "lib/features/self_service/presentation/pages/signout_page.dart:113",
+     "lib/features/self_service/presentation/pages/signout_page.dart:281",
+     "lib/features/self_service/presentation/pages/signout_page.dart:327"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart",
+    "lib/features/self_service/presentation/pages/signout_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "extra": {
+    "id": "x-db4615b9c2",
+    "title": "changed_by bei Abmeldung",
+    "n": "Flutter besser: Ionic db.signout schreibt changed_by = null (kein userId) / Flutter schreibt changed_by = angemeldeter Nutzer.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/sign-in-out/sign-in-out.service.ts:23",
+    "f": [
+     "lib/data/repositories/sign_in_out_repository.dart:201",
+     "lib/data/repositories/sign_in_out_repository.dart:111"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/sign_in_out_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "extra": {
+    "id": "x-e518bd9a17",
+    "title": "Sortierung am selben Tag",
+    "n": "Flutter besser: Ionic sortiert nur nach date (gleicher Tag in DB-Reihenfolge) / Flutter nach Datum + Startzeit, dann eigene Termine zuerst, dann attendance_id.",
+    "sev": "niedrig",
+    "ionic": "src/app/selfService/signout/signout.page.ts:336",
+    "f": [
+     "lib/core/providers/signout_providers.dart:98"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/providers/signout_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/ai.service",
+   "ionic": {
+    "ts": "services/ai.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/ai.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:10-12",
+     "getGroupSynonyms:14-23"
+    ],
+    "bodies": {
+     "constructor": "530e6d84",
+     "getGroupSynonyms": "f2fb5f45"
+    },
+    "id": "services/ai.service#logic-930c241a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/services/ai_service.dart:18",
+     "lib/core/services/ai_service.dart:30",
+     "lib/features/instruments/presentation/pages/instruments_list_page.dart:517"
+    ],
+    "n": "Gleicher Edge-Function-Aufruf; Flutter bereinigt die Antwort (normalizeSynonyms) und wirft bei leerer Antwort – siehe extra.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ]
+  }
+ ]
+}

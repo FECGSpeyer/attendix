@@ -1,0 +1,264 @@
+{
+  "batch": "zz-verify3-b25-settings-main",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "settings/settings/settings.page#nav-64addfe6": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/language_picker_tile.dart:82",
+        "lib/features/settings/presentation/widgets/language_picker_tile.dart:98",
+        "lib/core/providers/locale_provider.dart:80",
+        "lib/main.dart:243"
+      ],
+      "n": "Ionic: Sprache speichern (lokal + am Konto), dann window.location.reload() – Seite bleibt, alle Texte in der neuen Sprache / Flutter: setLanguage speichert lokal + am Konto, MaterialApp.locale wechselt sofort, Seite bleibt – gleiche Wirkung ohne Neuladen. Gleiche Sprache gewählt: nichts (beide). Für alle Rollen (nur bei >1 Sprache, de/en in beiden)."
+    },
+    "settings/settings/settings.page#db-6d9b276f": {
+      "s": "ok",
+      "f": [
+        "lib/core/providers/realtime_providers.dart:358",
+        "lib/core/providers/realtime_providers.dart:370",
+        "lib/features/settings/presentation/pages/settings_page.dart:86"
+      ],
+      "v": "bestätigt",
+      "n": "Ionic abonniert 'pending-player-changes' für jede Rolle, die Pending-Karte sieht aber nur Admin/Verantwortlich / Flutter abonniert nur für Admin/Verantwortlich (isAdmin) 'pending_player_changes_<tenantId>' mit tenantId-Filter + DELETE-Listener; Auslöser gleich (pending-Insert oder old.id) → für keine Rolle sichtbarer Unterschied."
+    },
+    "settings/settings/settings.page#nav-78b78dd3": {
+      "s": "ok",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:192",
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:202",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:405",
+        "lib/core/constants/enums.dart:137"
+      ],
+      "v": "bestätigt",
+      "n": "Ziel nach Rolle in der neuen Instanz wie Utils.getUrl: Admin/Verantwortlich/Beobachter → /people (=/tabs/player), Eltern → /parents, Helfer/Stimmführer/SF-Helfer/Spieler/Bewerber/ohne Rolle → /signout; Verlauf ersetzt; aktuelle Instanz angetippt: nichts. Instanzwechsel für alle Rollen (beide)."
+    },
+    "settings/settings/settings.page#effect-4e3df8e4": {
+      "s": "ok",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:192",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:405",
+        "lib/core/constants/enums.dart:137"
+      ],
+      "v": "bestätigt",
+      "n": "Utils.getUrl(role) ↔ role.defaultRoute, gleiche Zuordnung für alle Rollen wie nav-78b78dd3."
+    },
+    "settings/settings/settings.page#toast-05890c58": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:241",
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:250",
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:254"
+      ],
+      "v": "korrigiert",
+      "n": "Flutter besser: Erfolgs-Toast gleich ('Die Instanz „…“ wurde als Favorit gesetzt/entfernt.', success, 3 s; Wischaktion für alle Rollen in beiden). Schlägt das Speichern fehl, zeigt nur Flutter 'Fehler beim Speichern' (Ionic schließt nur das Loading). Erster Prüfer führte das als ok mit Notiz – laut Brief diff/niedrig."
+    },
+    "settings/settings/settings.page#toast-d085d424": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:38",
+        "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:39",
+        "lib/features/settings/presentation/pages/settings_page.dart:452"
+      ],
+      "v": "bestätigt",
+      "n": "Nur Admin/Verantwortlich in Vorkurs-Instanz (Kurz-/Langname enthält 'vorkurs'), Bewerber nie – gleich. Warn-Toast gleicher Text; dass der Dialog in Flutter dabei schließt, steht bei alert-7be72d9c."
+    },
+    "settings/settings/settings.page#toast-f95d3c4b": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:46",
+        "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:49"
+      ],
+      "v": "bestätigt",
+      "n": "Warn-Toast gleicher Text; gleicher Filter (nicht ausgetreten/pausiert/ausstehend, Gruppe gewählt)."
+    },
+    "settings/settings/settings.page#effect-19f49e82": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:53",
+        "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:57",
+        "lib/core/services/certificate_service.dart:29",
+        "lib/core/services/native/native_file_service.dart:167"
+      ],
+      "n": "PDF gleich (eine A4-Seite je Person mit Hintergrund, Name Times fett-kursiv 48→28 pt, 'hat die Vorkursprüfung / erfolgreich bestanden', 'Speyer, den D.M.YYYY'), Dateiname Urkunden_Vorkurs_YYYY-MM-DD.pdf, nativ Cache + Dateiansicht wie Ionic. Ionic mobiles Web (iOS/Android): Teilen-Dialog (navigator.share) / Flutter Web: immer Anker-Download (Printing.sharePdf). Gleicher Befund wie utilities/Utils#effect-c485f21b. Rollen wie toast-d085d424."
+    },
+    "settings/settings/settings.page#toast-6c20ad47": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:58",
+        "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:59"
+      ],
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#alert-4edfb328": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:43",
+        "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:48",
+        "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:55",
+        "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:85",
+        "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:117",
+        "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:131",
+        "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:146",
+        "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:160",
+        "lib/features/settings/presentation/pages/settings_page.dart:435"
+      ],
+      "v": "bestätigt",
+      "n": "Rollen gleich: Admin/Verantwortlich → Instanz-Feed; alle anderen (Helfer, SF-Helfer, Stimmführer, Spieler, Eltern, Beobachter) mit eigenem player-Eintrag (appId) → persönlicher Feed &personId + Checkbox 'Abgesagte Termine ausblenden' (&hideExcused=1), ohne Eintrag → Instanz-Feed; Bewerber sehen den Eintrag nicht. &lang bei ≠de. 'Link kopieren' lässt offen, 'Anleitung öffnen' schließt, 'Schließen'."
+    },
+    "settings/settings/settings.page#toast-ab89dfb2": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:133",
+        "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:136",
+        "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:141"
+      ],
+      "v": "korrigiert",
+      "n": "Flutter besser: gleicher Erfolgs-Toast 'Der Link wurde in die Zwischenablage kopiert'. Ionic ruft clipboard.writeText ohne await auf und zeigt den Erfolg auch, wenn das Kopieren scheitert / Flutter wartet und zeigt dann stattdessen 'Link konnte nicht kopiert werden'. Erster Prüfer: ok ohne diesen Unterschied."
+    },
+    "settings/settings/settings.page#native-d27820c1": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:149",
+        "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:151"
+      ],
+      "v": "bestätigt",
+      "n": "iOS: Apple-Anleitung, sonst Google-Anleitung; Dialog schließt (beide); nativ In-App-Browser (openLinkInApp ↔ Browser.open), Web neuer Tab."
+    },
+    "settings/settings/settings.page#alert-311384de": {
+      "s": "ok",
+      "f": [
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:203",
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:208",
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:209",
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:210",
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:211"
+      ],
+      "v": "bestätigt",
+      "n": "Nur in 'Meine Stammdaten' bei eigenem, nicht Standard-Passbild – jede Rolle mit eigenem player-Eintrag (beide). Titel 'Passbild entfernen', Nachricht, Abbrechen / Entfernen (destruktiv)."
+    },
+    "settings/settings/settings.page#toast-629827a8": {
+      "s": "ok",
+      "f": [
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:218"
+      ],
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#toast-c11515af": {
+      "s": "ok",
+      "f": [
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:220",
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:222",
+        "lib/data/repositories/profile_repository.dart:456"
+      ],
+      "v": "bestätigt",
+      "n": "Auch im Demo-Modus gleich (checkDemoRestriction ↔ ensureNotDemo wirft → dieser Toast)."
+    },
+    "settings/settings/settings.page#text-bfb46f54": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/settings_page.dart:335",
+        "lib/features/settings/presentation/pages/settings_page.dart:338",
+        "lib/core/providers/role_permission_providers.dart:116"
+      ],
+      "v": "bestätigt",
+      "n": "Nur allgemeine Instanzen ohne Sidepanel; canAccessFiles gleich: files_shared → alle außer Bewerber/ohne Rolle, sonst Admin/Verantwortlich/Helfer/SF-Helfer."
+    },
+    "settings/settings/settings.page#action-01c7c3ee-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/settings_page.dart:340",
+        "lib/features/settings/presentation/pages/settings_page.dart:342",
+        "lib/features/settings/presentation/pages/settings_page.dart:343"
+      ],
+      "v": "bestätigt",
+      "n": "'Dateiablage' → /settings/files, gleiche Bedingung wie text-bfb46f54."
+    },
+    "settings/settings/settings.page#text-cb4c66f8": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/settings_page.dart:102",
+        "lib/features/settings/presentation/pages/settings_page.dart:106",
+        "lib/features/settings/presentation/pages/settings_page.dart:109",
+        "lib/features/settings/presentation/pages/settings_page.dart:352"
+      ],
+      "v": "bestätigt",
+      "n": "showPlanning = Admin/Verantwortlich; showTeam = Termintyp mit Protokoll && (Leitung || im Kreis (Gruppe passt, nicht ausgetreten, nie Eltern/Bewerber) || eigene Aufgaben) – gleiche Berechnung und gleiche Aufgaben-Abfrage (tenant_id + responsible_person_id)."
+    },
+    "settings/settings/settings.page#action-1309c10c": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/settings_page.dart:355",
+        "lib/features/settings/presentation/pages/settings_page.dart:358",
+        "lib/features/settings/presentation/pages/settings_page.dart:360",
+        "lib/core/router/route_access.dart:110"
+      ],
+      "v": "bestätigt",
+      "n": "Nur Admin/Verantwortlich ohne Sidepanel (beide). Modal vs. Seite: modal-574f5f7c."
+    },
+    "settings/settings/settings.page#action-95044898": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/settings_page.dart:362",
+        "lib/features/settings/presentation/pages/settings_page.dart:364",
+        "lib/features/settings/presentation/pages/settings_page.dart:366"
+      ],
+      "v": "bestätigt",
+      "n": "Nur Admin/Verantwortlich → /settings/planung (Route ebenso auf Admin/Verantw. begrenzt)."
+    },
+    "settings/settings/settings.page#action-6fae9650": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/settings_page.dart:368",
+        "lib/features/settings/presentation/pages/settings_page.dart:371",
+        "lib/features/settings/presentation/pages/settings_page.dart:373"
+      ],
+      "v": "bestätigt",
+      "n": "Nur Admin/Verantwortlich mit verknüpfter Organisation."
+    },
+    "settings/settings/settings.page#action-dd62459d": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/settings_page.dart:385",
+        "lib/features/settings/presentation/pages/settings_page.dart:387",
+        "lib/features/settings/presentation/pages/settings_page.dart:389"
+      ],
+      "v": "bestätigt",
+      "n": "Teamorg aktiv, keine Leitung, im Kreis oder mit eigenen Aufgaben (Eltern/Bewerber nur mit eigenen Aufgaben) → team-organization?tab=tasks; gleich."
+    },
+    "settings/settings/settings.page#action-ba3051a1": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/settings_page.dart:398",
+        "lib/features/settings/presentation/pages/settings_page.dart:400",
+        "lib/features/settings/presentation/pages/settings_page.dart:402"
+      ],
+      "v": "bestätigt",
+      "n": "Nur Nicht-Leitung im Kreis → team-organization?tab=protocols; gleich."
+    },
+    "settings/settings/settings.page#text-7dea9c51": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/shared/widgets/sheets/version_history_sheet.dart:165",
+        "lib/shared/widgets/sheets/version_history_sheet.dart:166",
+        "assets/version_history.json:1"
+      ],
+      "n": "Format gleich: Listenkopf 'Version x (Datum)'. Daten: Ionic version-history.json (Ionic-Versionen bis 4.19.7) / Flutter assets/version_history.json mit eigener Flutter-Historie (0.39.1 …, andere Einträge) – gleicher Befund wie text-8938a6a0."
+    },
+    "settings/settings/settings.page#text-b8c80f4b": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/shared/widgets/sheets/version_history_sheet.dart:167",
+        "assets/version_history.json:1"
+      ],
+      "n": "Fallback 'Version x' ohne Datum vorhanden. Ionic zeigt ihn für alte Einträge ohne Datum (≤ 3.5.0) / in der Flutter-Historie hat jeder Eintrag ein Datum → erscheint nie. Ursache wie text-7dea9c51 (eigene Flutter-Historie)."
+    }
+  },
+  "extra": []
+}

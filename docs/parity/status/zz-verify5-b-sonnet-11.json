@@ -1,0 +1,361 @@
+{
+ "batch": "zz-verify5-b-sonnet-11",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "shared/files-folder-picker/files-folder-picker.component#text-f7fafed0": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:278"
+   ],
+   "n": "„Ordner wählen“ als Titel in der Sheet-Zeile (X, Titel, Haken), Zeilen verschoben.",
+   "v": "bestätigt"
+  },
+  "shared/message-editor/message-editor.component#action-09d3e2e6": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_editor_toolbar.dart:19-29"
+   ],
+   "n": "Fett: QuillSimpleToolbar-Button (Icon statt Buchstabe) mit Toggle/aktivem Zustand; Compose-Seite nutzt jetzt MessageEditorToolbar (message_compose_page.dart:~350).",
+   "v": "bestätigt"
+  },
+  "shared/message-editor/message-editor.component#action-12f261f9": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_editor_toolbar.dart:19-29"
+   ],
+   "n": "Unterstreichen: QuillSimpleToolbar-Button (Icon statt Buchstabe) mit Toggle/aktivem Zustand; Compose-Seite nutzt jetzt MessageEditorToolbar (message_compose_page.dart:~350).",
+   "v": "bestätigt"
+  },
+  "shared/message-editor/message-editor.component#action-4644f4d6": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_editor_toolbar.dart:19-29"
+   ],
+   "n": "Kursiv: QuillSimpleToolbar-Button (Icon statt Buchstabe) mit Toggle/aktivem Zustand; Compose-Seite nutzt jetzt MessageEditorToolbar (message_compose_page.dart:~350).",
+   "v": "bestätigt"
+  },
+  "shared/message-editor/message-editor.component#action-953dc469": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_editor_toolbar.dart:19-29"
+   ],
+   "n": "Aufzählung: QuillSimpleToolbar-Button (Icon statt Buchstabe) mit Toggle/aktivem Zustand; Compose-Seite nutzt jetzt MessageEditorToolbar (message_compose_page.dart:~350).",
+   "v": "bestätigt"
+  },
+  "shared/message-editor/message-editor.component#action-c5c5103a": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_editor_toolbar.dart:50-55"
+   ],
+   "n": "Link-Button (Icon, Tooltip „Link“) in Toolbar nach Liste vorhanden, Alert wie Ionic (siehe alert-bc736d27). Aber nur als Custom-Button ohne aktiven Zustand: Ionic hebt ihn bei Cursor in Link hervor (isActive(link)), Flutter nicht. Nur Optik, niedrig. Erste Notiz „mit aktivem Zustand“ ist nach Umbau auf MessageEditorToolbar überholt.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "shared/message-editor/message-editor.component#action-fcb4e51a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_editor_toolbar.dart:19-29"
+   ],
+   "n": "Durchstreichen: QuillSimpleToolbar-Button (Icon statt Buchstabe) mit Toggle/aktivem Zustand; Compose-Seite nutzt jetzt MessageEditorToolbar (message_compose_page.dart:~350).",
+   "v": "bestätigt"
+  },
+  "shared/message-editor/message-editor.component#text-97c148f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:~362",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:627"
+   ],
+   "n": "Platzhalter editorMessagePlaceholder bei leerem Quill-Editor in beiden Seiten, Zeilen verschoben.",
+   "v": "bestätigt"
+  },
+  "songs/import/import.page#toast-3014b190": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:83",
+    "lib/features/songs/presentation/pages/song_import_page.dart:86",
+    "lib/core/utils/spreadsheet_reader.dart:160"
+   ],
+   "n": "Danger-Toast „Die Datei konnte nicht gelesen werden.“ bei Lesefehler; .xls wird inzwischen wie in Ionic (SheetJS) gelesen (xls_reader.dart), Hinweis der Erstnotiz zu .xls veraltet, kein Nachteil.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-00eba127": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:221-226",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:261-264",
+    "lib/core/router/app_router.dart:988-995",
+    "lib/core/router/app_router.dart:1321-1327",
+    "lib/core/router/app_router.dart:1365-1376"
+   ],
+   "n": "Zurück-Pfeil: verschachtelte Routen (/songs/:id, /songs-tab/:id, /:songSharingId/:songId) geben Zurück zur jeweiligen Liste wie defaultHref; Fallback im Lade-/Fehlerzustand für Freigabe-Link vorhanden.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-5ecaccc5": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1498-1505"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-ba85a1db": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1362-1384",
+    "lib/core/utils/choir_file_utils.dart:35-47",
+    "lib/core/services/song_file_service.dart:426-476"
+   ],
+   "n": "Speichern: Chor(alle) -> instrumentId null/note „Chor“, Freitext -> null/Text, Gruppe -> note null; Schreiben auf songs.files + instrument_ids (ohne 1, 2, Hauptgruppe) mit tenantId-Filter wie Ionic saveFileChange.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#alert-68e471fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_pdf_print.dart:78-125"
+   ],
+   "n": "Druckoptionen-Dialog: Titel, Text, 5 Optionen (1 pro Person vorgewählt), Abbrechen/Drucken; Kopien ceil(aktive/Verhältnis) bzw. 1; Zählung aktiv (nicht left/paused/pending) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#alert-e783eb34": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1148-1162",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1188-1233"
+   ],
+   "n": "Menü nur bei !readOnly und vorhandenen Dateien (Drucken/Alle herunterladen/Alle löschen); Bestätigung „Alle Dateien löschen“ mit Löschen/Abbrechen; leert files + instrument_ids. Blockierendes Overlay fehlt (nur Fortschrittsbalken), siehe loading-Item.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-97354b89": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1434-1442",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1362-1376"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#modal-5707ce35": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1005-1036",
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:56-75"
+   ],
+   "n": "Öffner „In andere Instanz kopieren“: andere Instanzen der Organisation, in denen der Nutzer Admin(1)/Verantwortlich(5) ist; nicht im Freigabe-Link. Sheet Start 60 %. Rollenquelle userTenantsProvider (tenantUsers.role) entspricht Ionic tenantUsers().",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#modal-76810b09": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1083-1135",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1188-1193"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-9e854d49": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:783-805",
+    "lib/data/repositories/song_repository.dart:539-550",
+    "lib/core/providers/song_providers.dart:483-489"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-9fb9abf3": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_beamer_file_section.dart:33",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:504"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-c06f7b53": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1496"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-c6ba34e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:75"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#toast-38f80bcf": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart"
+   ],
+   "n": "Erfolgs-Toast „songs.copied“ nach Kopieren, Sheet schließt; Insert mit tenantId des Ziels.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#toast-50abc710": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_pdf_print.dart:96-108"
+   ],
+   "n": "Erfolgs-Toast „printPrepared“ mit Gruppenzusammenfassung „Name: Nx“; zusätzlich Warn-Toasts bei 0 Seiten/übersprungenen Dateien.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#toast-52095095": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart"
+   ],
+   "n": "Fehler-Toast songs.copyFailed mit Fehlertext; Download-Fehler bricht Kopie ab wie Ionic.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#toast-ba50d7ca": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_pdf_print.dart:26-30"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-5cbe4f9b": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:~260",
+    "lib/shared/widgets/layout/side_nav/side_nav_layout.dart:111"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-8679efba": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:~275"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#field-c5082654": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:~403",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:~80",
+    "lib/core/providers/song_filter_providers.dart:211"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "tabs/side-nav/side-nav.component#modal-4c4a8837": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:100-115",
+    "lib/features/statistics/presentation/pages/statistics_page.dart:45"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "tabs/side-nav/side-nav.component#nav-e03aff1e": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:116-121"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#text-2ff03e0b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:148"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#toast-7ac8159c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:38"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#toast-c72a240e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:36"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "teacher/teacher.page#toast-e7e95130": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:~160"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "teachers/teachers.page#action-5b603f4a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/teacher_repository.dart:115",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "teachers/teachers.page#modal-285aa196": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:~100-120"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "team-organization/protocols-tab/protocols-tab.component#action-d09ac42f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "team-organization/protocols-tab/protocols-tab.component#field-7b62387b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "team-organization/tasks-tab/tasks-tab.component#action-77c35df5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  },
+  "team-organization/tasks-tab/tasks-tab.component#action-b57d4ec0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart"
+   ],
+   "n": "Aktuellen Flutter-Code geprüft: Element noch vorhanden, Funktion/Text/Bedingung wie Ionic 4.19.9.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "songs/songs.page",
+   "title": "Menüeintrag „Werk-Kategorien“ nur für Admin/Verantwortlich",
+   "n": "Ionic: Eintrag „Werk-Kategorien“ im ⋮-Menü ohne Rollenprüfung (alle Rollen, auch Freigabe-Ansicht). Flutter: nur bei isAdmin. Evtl. gewollt (Schreiben scheitert für andere per RLS), Leon entscheidet.",
+   "sev": "niedrig",
+   "ionic": "src/app/songs/songs.page.html:23",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:302"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1690 @@
+{
+ "batch": "zz-verify5c-opus-23",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "services/song-actions/song-actions.service.ts",
+    "line": 282,
+    "method": "SongActionsService.openSongOptions",
+    "cond": [],
+    "header": {
+     "keys": [],
+     "de": [],
+     "literals": [
+      "${song.number}. ${song.name}"
+     ],
+     "expr": "`${song.number}. ${song.name}`"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "expr": "buttons",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "src": "c5af9557",
+    "mbody": "da77b30c",
+    "roleGuarded": true,
+    "id": "services/song-actions/song-actions.service#actionsheet-6742ebe7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:191",
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:135"
+    ],
+    "n": "Buttons und Reihenfolge gleich (Notenlink öffnen, Noten herunterladen, Noten anzeigen, Noten drucken, Aufnahme anhören, Aufnahme herunterladen, Liedtext ansehen, Abbrechen). Header Ionic '<number>. <name>' / Flutter '<prefix><number>. <name>' (ohne Nummer nur Name).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "services/song-actions/song-actions.service.ts",
+    "line": 144,
+    "method": "SongActionsService.openSongOptions",
+    "cond": [
+     "(!isPlatform('ios'))",
+     "(files.length > 1)",
+     "!(files.length === 1)"
+    ],
+    "header": {
+     "keys": [
+      "signout.chooseScoresFor"
+     ],
+     "de": [
+      "Noten für {song} auswählen"
+     ],
+     "literals": [
+      "${song.number}. ${song.name}"
+     ],
+     "expr": "translate('signout.chooseScoresFor', { song: `${song.number}. ${song.name}` })"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "expr": "fileOptions",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "src": "4d4578c6",
+    "mbody": "da77b30c",
+    "roleGuarded": true,
+    "id": "services/song-actions/song-actions.service#actionsheet-9e3330e3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:149",
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:54"
+    ],
+    "n": "Header 'Noten für {song} auswählen', Dateinamen + 'Abbrechen' (destruktiv) gleich. Ionic: {song} = '<number>. <name>' ohne Präfix, Sheet auf iOS-Web nie erreichbar / Flutter: mit Präfix (fullNumber), im Web auch auf iOS.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "services/song-actions/song-actions.service.ts",
+    "line": 173,
+    "method": "SongActionsService.openSongOptions",
+    "cond": [
+     "(files.length > 1)",
+     "!(files.length === 1)"
+    ],
+    "header": {
+     "keys": [
+      "signout.chooseScoresFor"
+     ],
+     "de": [
+      "Noten für {song} auswählen"
+     ],
+     "literals": [
+      "${song.number}. ${song.name}"
+     ],
+     "expr": "translate('signout.chooseScoresFor', { song: `${song.number}. ${song.name}` })"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "expr": "fileOptions",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "src": "4d4578c6",
+    "mbody": "da77b30c",
+    "roleGuarded": true,
+    "id": "services/song-actions/song-actions.service#actionsheet-9e3330e3-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:156"
+    ],
+    "n": "Header 'Noten für {song} auswählen', Dateinamen, 'Abbrechen' gleich; {song} Ionic '<number>. <name>' ohne Präfix / Flutter mit Präfix (z.B. 'A12. Name').",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "services/song-actions/song-actions.service.ts",
+    "line": 201,
+    "method": "SongActionsService.openSongOptions",
+    "cond": [
+     "(files.length > 1)",
+     "!(files.length === 1)"
+    ],
+    "header": {
+     "keys": [
+      "signout.printScoresFor"
+     ],
+     "de": [
+      "Noten für {song} drucken"
+     ],
+     "literals": [
+      "${song.number}. ${song.name}"
+     ],
+     "expr": "translate('signout.printScoresFor', { song: `${song.number}. ${song.name}` })"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "expr": "fileOptions",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "src": "47b9249f",
+    "mbody": "da77b30c",
+    "roleGuarded": true,
+    "id": "services/song-actions/song-actions.service#actionsheet-ee67de06"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:160",
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:126"
+    ],
+    "n": "Header 'Noten für {song} drucken', Dateinamen, 'Abbrechen' gleich; {song} Ionic ohne Präfix / Flutter mit Präfix. Druck über SongPrintService statt PrintService.printSongFile (eigene Unit).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "services/song-actions/song-actions.service.ts",
+    "line": 258,
+    "method": "SongActionsService.openSongOptions",
+    "cond": [
+     "(liedtextFiles.length > 1)",
+     "!(liedtextFiles.length === 1)"
+    ],
+    "header": {
+     "keys": [
+      "signout.chooseLyricsFor"
+     ],
+     "de": [
+      "Liedtext für {song} auswählen"
+     ],
+     "literals": [
+      "${song.number}. ${song.name}"
+     ],
+     "expr": "translate('signout.chooseLyricsFor', { song: `${song.number}. ${song.name}` })"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "expr": "fileOptions",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "src": "ccb46f17",
+    "mbody": "da77b30c",
+    "roleGuarded": true,
+    "id": "services/song-actions/song-actions.service#actionsheet-f2b52b99"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:182"
+    ],
+    "n": "Header 'Liedtext für {song} auswählen', Dateinamen, 'Abbrechen' gleich; {song} Ionic ohne Präfix / Flutter mit Präfix.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "services/song-actions/song-actions.service.ts",
+    "line": 224,
+    "method": "SongActionsService.openSongOptions",
+    "cond": [
+     "(audioFile)"
+    ],
+    "call": "Utils.downloadFileNative",
+    "args": "blob, audioFile.fileName",
+    "src": "fe123547",
+    "mbody": "da77b30c",
+    "roleGuarded": true,
+    "id": "services/song-actions/song-actions.service#effect-2999b087"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:172",
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:74"
+    ],
+    "n": "Aufnahme herunterladen auf allen Plattformen (gleich). Ionic: mobiles Web → Teilen-Menü (Web Share), Desktop → Anchor-Download / Flutter: PWA Anchor-Download, Browser-Tab öffnet ?download=-URL, kein Teilen-Menü.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "services/song-actions/song-actions.service.ts",
+    "line": 96,
+    "method": "SongActionsService.openSongOptions",
+    "cond": [
+     "(file)",
+     "(!isPlatform('ios'))",
+     "(files.length === 1)"
+    ],
+    "call": "Utils.downloadFileNative",
+    "args": "blob, file.fileName",
+    "src": "7eea5896",
+    "mbody": "da77b30c",
+    "roleGuarded": true,
+    "id": "services/song-actions/song-actions.service#effect-a62dbd79"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:124",
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:74"
+    ],
+    "n": "Ionic: 'Noten herunterladen' fehlt bei isPlatform('ios') – das gilt auch für iPhone/iPad im Browser/PWA; Download lädt die Datei aus dem Storage und gibt sie im mobilen Web an das Teilen-Menü (Web Share), am Desktop als Anchor-Download, nativ Cache + FileViewer / Flutter: Button im Web immer sichtbar (auch iOS-Web), PWA lädt per Anchor-Download (kein Teilen-Menü), Browser-Tab öffnet URL mit ?download=, nativ Cache + Systemviewer.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "effect",
+    "file": "services/song-actions/song-actions.service.ts",
+    "line": 133,
+    "method": "SongActionsService.openSongOptions",
+    "cond": [
+     "(!isPlatform('ios'))",
+     "(files.length > 1)",
+     "!(files.length === 1)"
+    ],
+    "call": "Utils.downloadFileNative",
+    "args": "blob, file.fileName",
+    "src": "7eea5896",
+    "mbody": "da77b30c",
+    "roleGuarded": true,
+    "id": "services/song-actions/song-actions.service#effect-a62dbd79-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:146",
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:74"
+    ],
+    "n": "Wie Einzeldatei-Download: Ionic blendet 'Noten herunterladen' auch auf iOS-Web aus und nutzt im mobilen Web das Teilen-Menü / Flutter zeigt den Button im Web immer, Anchor-Download bzw. ?download=-URL ohne Teilen-Menü.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/song-actions/song-actions.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "hasNotesForInstrument:26-33",
+     "printFileFor:36-42",
+     "printScores:45-58",
+     "openSongOptions:60-288"
+    ],
+    "bodies": {
+     "hasNotesForInstrument": "61954563",
+     "printFileFor": "3d5dd34a",
+     "printScores": "40a405cc",
+     "openSongOptions": "da77b30c"
+    },
+    "id": "services/song-actions/song-actions.service#logic-91f46ed9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:100",
+     "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:144",
+     "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:277"
+    ],
+    "n": "hasNotesForInstrument (inkl. 'Chor (alle)'), printFileFor (Chor-Fallback), printScores und openSongOptions (gleiche Buttons in gleicher Reihenfolge, Chor-Dateien dedupliziert, Auswahl-Sheets bei mehreren Dateien) portiert. Abweichungen siehe Items (Toast ohne Instrument, Download-Button auf iOS-Web, Präfix im Titel) und extra (Audiotitel).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/song-actions/song-actions.service.ts",
+    "line": 62,
+    "method": "SongActionsService.openSongOptions",
+    "cond": [
+     "(instrumentId && !this.hasNotesForInstrument(song, instrumentId))"
+    ],
+    "message": {
+     "keys": [
+      "signout.noScoresForInstrument"
+     ],
+     "de": [
+      "Für dein Instrument sind leider keine Noten verfügbar."
+     ],
+     "literals": [],
+     "expr": "translate('signout.noScoresForInstrument')"
+    },
+    "color": "danger",
+    "duration": "4000",
+    "src": "891cf28f",
+    "mbody": "da77b30c",
+    "roleGuarded": true,
+    "id": "services/song-actions/song-actions.service#toast-448502f0"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:111"
+    ],
+    "n": "Ionic: Toast 'Für dein Instrument sind leider keine Noten verfügbar.' (danger, 4 s) nur wenn eine instrumentId gesetzt ist / Flutter: zeigt den Toast auch ohne Instrument (playerInstrumentId null, kein Chor), z.B. im Ablaufplan ohne eigene Person.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/song-actions/song-actions.service.ts",
+    "line": 278,
+    "method": "SongActionsService.openSongOptions",
+    "cond": [
+     "(buttons.length === 1)"
+    ],
+    "message": {
+     "keys": [
+      "signout.noSongActions"
+     ],
+     "de": [
+      "Für dieses Werk sind keine Aktionen verfügbar."
+     ],
+     "literals": [],
+     "expr": "translate('signout.noSongActions')"
+    },
+    "color": "warning",
+    "duration": "4000",
+    "src": "60a6a72d",
+    "mbody": "da77b30c",
+    "roleGuarded": true,
+    "id": "services/song-actions/song-actions.service#toast-cfd2b633"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:186"
+    ],
+    "n": "Warn-Toast \"Für dieses Werk sind keine Aktionen verfügbar.\", wenn außer Abbrechen nichts da ist (Ionic buttons.length === 1, Flutter actions.isEmpty).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-actions/song-actions.service",
+   "ionic": {
+    "ts": "services/song-actions/song-actions.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-8f2a5391fd",
+    "title": "Audiotitel mit Präfix",
+    "n": "Ionic: Aufnahme anhören startet den Player mit Titel '<number> <name>' / Flutter: '<prefix><number> <name>'.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/song-actions/song-actions.service.ts:216",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:170"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-category/song-category.service",
+   "ionic": {
+    "ts": "services/song-category/song-category.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song-category/song-category.service.ts",
+    "line": 41,
+    "method": "SongCategoryService.updateSongCategory",
+    "cond": [],
+    "table": "song_categories",
+    "op": "update",
+    "payload": "category",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "0463ed1b",
+    "mbody": "fb83d642",
+    "id": "services/song-category/song-category.service#db-1d35ec20"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/song_repository.dart:484",
+     "lib/core/providers/song_providers.dart:624",
+     "lib/core/providers/song_providers.dart:657"
+    ],
+    "n": "Umbenennen schreibt name, Umsortieren index 0..n (Ionic schreibt beim Sortieren das ganze Objekt mit neuem index – gleiche Wirkung); Flutter zusätzlich .eq('tenant_id', songTenantId) = effektive Werk-Instanz wie Ionic effectiveSongTenantId.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-category/song-category.service",
+   "ionic": {
+    "ts": "services/song-category/song-category.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song-category/song-category.service.ts",
+    "line": 50,
+    "method": "SongCategoryService.removeSongCategory",
+    "cond": [],
+    "table": "song_categories",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "cc668718",
+    "mbody": "999bbb94",
+    "id": "services/song-category/song-category.service#db-769b608f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/song_repository.dart:500"
+    ],
+    "n": "Delete nach id ohne Neu-Nummerierung wie Ionic; Flutter zusätzlich .eq('tenant_id').",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-category/song-category.service",
+   "ionic": {
+    "ts": "services/song-category/song-category.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song-category/song-category.service.ts",
+    "line": 12,
+    "method": "SongCategoryService.getSongCategories",
+    "cond": [],
+    "table": "song_categories",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenant_id', tenantId)",
+     "order('index', { ascending: true, })"
+    ],
+    "tenantFilter": true,
+    "src": "c48850f5",
+    "mbody": "0dd655cc",
+    "id": "services/song-category/song-category.service#db-b81915ee"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/song_repository.dart:444"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-category/song-category.service",
+   "ionic": {
+    "ts": "services/song-category/song-category.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song-category/song-category.service.ts",
+    "line": 24,
+    "method": "SongCategoryService.addSongCategory",
+    "cond": [],
+    "table": "song_categories",
+    "op": "insert",
+    "payload": "{ ...category, tenant_id: tenantId, } as SongCategory",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "e89b9008",
+    "mbody": "21e10600",
+    "id": "services/song-category/song-category.service#db-e31017a2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/song_repository.dart:460",
+     "lib/core/providers/song_providers.dart:597"
+    ],
+    "n": "Flutter besser: gleiche Spalten name (getrimmt), index, tenant_id (effektive Werk-Instanz). Ionic (songs.page) index = Anzahl Kategorien → nach Löschen doppelter index möglich / Flutter: höchster index + 1.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart",
+    "lib/core/providers/song_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song-category/song-category.service",
+   "ionic": {
+    "ts": "services/song-category/song-category.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/song-category/song-category.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "getSongCategories:11-21",
+     "addSongCategory:23-38",
+     "updateSongCategory:40-47",
+     "removeSongCategory:49-54"
+    ],
+    "bodies": {
+     "getSongCategories": "0dd655cc",
+     "addSongCategory": "21e10600",
+     "updateSongCategory": "fb83d642",
+     "removeSongCategory": "999bbb94"
+    },
+    "id": "services/song-category/song-category.service#logic-524df545"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/song_repository.dart:442",
+     "lib/data/repositories/song_repository.dart:460",
+     "lib/data/repositories/song_repository.dart:484",
+     "lib/data/repositories/song_repository.dart:500",
+     "lib/core/providers/song_providers.dart:590",
+     "lib/data/repositories/public_song_repository.dart:103"
+    ],
+    "n": "Laden (effektive Werk-Instanz bzw. geteilte Instanz, nach index), Anlegen, Umbenennen/Umsortieren, Löschen ohne Neunummerierung portiert; Flutter filtert Update/Delete zusätzlich nach tenant_id. Einziger Unterschied: index beim Anlegen (siehe db-Item, Flutter besser).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart",
+    "lib/core/providers/song_providers.dart",
+    "lib/data/repositories/public_song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 432,
+    "method": "SongService.copyOrgSong",
+    "cond": [
+     "!(existingSongId)"
+    ],
+    "table": "songs",
+    "op": "insert",
+    "payload": "{ name: source.name, number: source.number, prefix: source.prefix ?? null, withChoir: false, withSolo: false, instrument_ids: [], category: null, category_ids:…",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "7a6e3a95",
+    "mbody": "20cd656c",
+    "id": "services/song/song.service#db-0074db7d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_song_repository.dart:202"
+    ],
+    "n": "Gleiche Spalten (name, number, prefix, withChoir/withSolo false, instrument_ids [], category null, category_ids [], …fields, copied_from, tenantId der Bibliothek).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/org_song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 499,
+    "method": "SongService.copyOrgSong",
+    "cond": [
+     "(!existingSongId)"
+    ],
+    "table": "songs",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: song.id })"
+    ],
+    "tenantFilter": false,
+    "src": "1a15187d",
+    "mbody": "20cd656c",
+    "id": "services/song/song.service#db-155bea19"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_song_repository.dart:286"
+    ],
+    "n": "Nur bei neu angelegtem Werk; Flutter zusätzlich .eq('tenantId').",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/org_song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 84,
+    "method": "SongService.addSong",
+    "cond": [],
+    "table": "songs",
+    "op": "insert",
+    "payload": "{ ...song, tenantId } as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "a89fd06f",
+    "mbody": "18b847aa",
+    "id": "services/song/song.service#db-23a63c9e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/song_repository.dart:244"
+    ],
+    "n": "Explizite Felder wie Ionic songs.page (number, name, link, withChoir, withSolo, instrument_ids, prefix '' als Default) + tenantId der effektiven Werk-Instanz; link nur wenn gesetzt, Name getrimmt.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 427,
+    "method": "SongService.copyOrgSong",
+    "cond": [
+     "(Object.keys(update).length)",
+     "(existingSongId)"
+    ],
+    "table": "songs",
+    "op": "update",
+    "payload": "update as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: song.id })"
+    ],
+    "tenantFilter": false,
+    "src": "b0fca3c9",
+    "mbody": "20cd656c",
+    "id": "services/song/song.service#db-4fc60603"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_song_repository.dart:191"
+    ],
+    "n": "Gleiche Felder (übernommene fields, additional_fields gemergt, copied_from nur wenn leer); Flutter filtert zusätzlich tenantId der Ziel-Bibliothek.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/org_song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 488,
+    "method": "SongService.copyOrgSong",
+    "cond": [],
+    "table": "songs",
+    "op": "update",
+    "payload": "{ files: allFiles, instrument_ids } as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: song.id })"
+    ],
+    "tenantFilter": false,
+    "src": "1df3b773",
+    "mbody": "20cd656c",
+    "id": "services/song/song.service#db-4fc60603-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_song_repository.dart:264",
+     "lib/data/repositories/org_song_repository.dart:269",
+     "lib/core/utils/song_copy.dart:99"
+    ],
+    "n": "files = bestehende + neue (storageName, fileName, fileType, url, instrumentId, note), instrument_ids ohne 1/2/Hauptgruppe. Bestehende Dateien: Ionic in nach instrumentId sortierter Reihenfolge (getSong), Flutter in gespeicherter – gleicher Inhalt, Anzeige sortiert ohnehin.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/org_song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 94,
+    "method": "SongService.editSong",
+    "cond": [],
+    "table": "songs",
+    "op": "update",
+    "payload": "song as any",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "3327bc99",
+    "mbody": "90f3e362",
+    "id": "services/song/song.service#db-52157af4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/song_repository.dart:283"
+    ],
+    "n": "Update der übergebenen Felder (ohne id/created_at/tenantId/berechnete Felder) nach id, Flutter zusätzlich .eq('tenantId').",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 181,
+    "method": "SongService.downloadSongFileFromPath",
+    "cond": [],
+    "table": "storage:songs",
+    "op": "download",
+    "payload": "filePath",
+    "filters": [],
+    "src": "5e8421b8",
+    "mbody": "47d6417c",
+    "id": "services/song/song.service#db-6ca0fd0d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_song_repository.dart:242",
+     "lib/data/repositories/org_song_repository.dart:320"
+    ],
+    "n": "Lebendig nur über copyOrgSong: Download aus Bucket songs mit dem Pfad aus der öffentlichen URL (Flutter storagePathFromPublicUrl, zusätzlich URL-dekodiert).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/org_song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 467,
+    "method": "SongService.copyOrgSong",
+    "cond": [],
+    "table": "storage:songs",
+    "op": "getPublicUrl",
+    "payload": "filePath",
+    "filters": [],
+    "src": "2590cf60",
+    "mbody": "20cd656c",
+    "id": "services/song/song.service#db-7609f151"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_song_repository.dart:258"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/org_song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 496,
+    "method": "SongService.copyOrgSong",
+    "cond": [
+     "(uploadedPaths.length)"
+    ],
+    "table": "storage:songs",
+    "op": "remove",
+    "payload": "uploadedPaths",
+    "filters": [],
+    "src": "ed4add38",
+    "mbody": "20cd656c",
+    "id": "services/song/song.service#db-a8efa0d8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_song_repository.dart:281"
+    ],
+    "n": "Bei Fehler werden die in diesem Lauf hochgeladenen Pfade entfernt.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/org_song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 70,
+    "method": "SongService.getSong",
+    "cond": [],
+    "table": "songs",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "match({ id })",
+     "match({ tenantId })",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "a94dc347",
+    "mbody": "7c550bff",
+    "id": "services/song/song.service#db-ae5c34c0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/song_repository.dart:228",
+     "lib/data/repositories/song_repository.dart:695"
+    ],
+    "n": "id + tenantId, Dateien nach instrumentId sortiert; maybeSingle statt single.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 105,
+    "method": "SongService.removeSong",
+    "cond": [
+     "(song.files && song.files.length)"
+    ],
+    "table": "storage:songs",
+    "op": "remove",
+    "payload": "paths",
+    "filters": [],
+    "src": "7b1b577d",
+    "mbody": "73ff14ff",
+    "id": "services/song/song.service#db-b99e04f3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/song_repository.dart:311"
+    ],
+    "n": "Flutter besser: Ionic entfernt '<tenantId>/<songId>/<fileName>' (ohne Präfix 'songs/', Anzeigename statt storageName) – die echten Objekte 'songs/<tenantId>/<songId>/<storageName>' (DbService.uploadSongFile) bleiben liegen / Flutter löscht 'songs/<tenantId>/<songId>/<storageName ?? fileName>' (best effort), Dateiliste frisch aus der DB.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 383,
+    "method": "SongService.searchOrgSongs",
+    "cond": [],
+    "table": "rpc:search_org_songs",
+    "op": "rpc",
+    "payload": "{ p_tenant_id: tenantId, p_query: query ?? '', p_tenant_ids: options.tenantIds?.length ? options.tenantIds : null, p_only_with_files: !!options.onlyWithFiles, p_limit: options.limit ?? 50, p_offset: options.offset ?? 0, }",
+    "filters": [],
+    "src": "8d984c7f",
+    "mbody": "cd0e3608",
+    "id": "services/song/song.service#db-bb6065f5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_song_repository.dart:43",
+     "lib/features/organisation/presentation/pages/org_songs_page.dart:117"
+    ],
+    "n": "Gleiche Parameter (p_tenant_id aktuelle Instanz, p_query getrimmt, p_tenant_ids alle gewählt → null, p_only_with_files, p_limit 50, p_offset).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/org_song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 49,
+    "method": "SongService.getSongs",
+    "cond": [],
+    "table": "songs",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "order('number', { ascending: true })",
+     "order('id', { ascending: true })",
+     "range(from, from + pageSize - 1)"
+    ],
+    "tenantFilter": true,
+    "src": "914286a1",
+    "mbody": "553718d1",
+    "id": "services/song/song.service#db-c372e06b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/song_repository.dart:148"
+    ],
+    "n": "Gleiche Abfrage/Sortierung/Paging, Cache danach geschrieben (Flutter Key pro Benutzer). Flutter fällt bei Netzwerkfehlern auf den Cache zurück, Ionic liefert bei Fehler auf Seite 1 null.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 366,
+    "method": "SongService.ensureSongCategories",
+    "cond": [],
+    "table": "song_categories",
+    "op": "insert",
+    "payload": "{ name, index: nextIndex++, tenant_id: tenantId } as SongCategory",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "7eb324a0",
+    "mbody": "8caecfb4",
+    "id": "services/song/song.service#db-d6b1b3a5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_song_repository.dart:142"
+    ],
+    "n": "Gleich: name, index = höchster index + 1 (fortlaufend), tenant_id der Ziel-Bibliothek; Namensvergleich trim/lowercase. Flutter prüft zusätzlich, dass die Bibliothek zur Organisation gehört und der Nutzer dort Admin/Verantwortlich ist.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/org_song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 464,
+    "method": "SongService.copyOrgSong",
+    "cond": [],
+    "table": "storage:songs",
+    "op": "upload",
+    "payload": "filePath, blob, { upsert: true }",
+    "filters": [],
+    "src": "8a9bfc0f",
+    "mbody": "20cd656c",
+    "id": "services/song/song.service#db-d957876c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_song_repository.dart:246"
+    ],
+    "n": "Pfad 'songs/<Bibliothek>/<songId>/<storageName>', upsert. Flutter wählt einen noch freien storageName und setzt contentType; Sanitizing des storageName leicht anders (Leerzeichen → '-', keine NFD-Umwandlung) – nur interner Objektname.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/org_song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 320,
+    "method": "SongService.getSongCategories",
+    "cond": [],
+    "table": "song_categories",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenant_id', tenantId)",
+     "order('index', { ascending: true })"
+    ],
+    "tenantFilter": true,
+    "src": "d13838d4",
+    "mbody": "fc4a7078",
+    "id": "services/song/song.service#db-d9929d1c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_song_repository.dart:131"
+    ],
+    "n": "Lebendig nur über ensureSongCategories (org-songs.page): song_categories der Ziel-Bibliothek nach index. Kategorien der eigenen Instanz laufen über SongCategoryService.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/org_song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/song/song.service.ts",
+    "line": 108,
+    "method": "SongService.removeSong",
+    "cond": [],
+    "table": "songs",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: song.id })"
+    ],
+    "tenantFilter": false,
+    "src": "3f5b621b",
+    "mbody": "73ff14ff",
+    "id": "services/song/song.service#db-e603c5b1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/song_repository.dart:336"
+    ],
+    "n": "Delete songs nach id, Flutter zusätzlich .eq('tenantId').",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/song/song.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:16-16",
+     "encodeFilename:18-34",
+     "getSongs:36-67",
+     "getSong:69-81",
+     "addSong:83-91",
+     "editSong:93-100",
+     "removeSong:102-116",
+     "uploadSongFile:118-171",
+     "downloadSongFile:173-178",
+     "downloadSongFileFromPath:180-184",
+     "deleteSongFile:186-204",
+     "copySongToTenant:206-286",
+     "uploadSongFileToTenant:288-316",
+     "getSongCategories:319-327",
+     "addSongCategory:329-338",
+     "updateSongCategory:340-347",
+     "removeSongCategory:349-354",
+     "ensureSongCategories:359-376",
+     "searchOrgSongs:378-393",
+     "copyOrgSong:400-503"
+    ],
+    "bodies": {
+     "constructor": "e58f9596",
+     "encodeFilename": "56ffbb65",
+     "getSongs": "553718d1",
+     "getSong": "7c550bff",
+     "addSong": "18b847aa",
+     "editSong": "90f3e362",
+     "removeSong": "73ff14ff",
+     "uploadSongFile": "c17b983c",
+     "downloadSongFile": "c4c1db13",
+     "downloadSongFileFromPath": "47d6417c",
+     "deleteSongFile": "b416edb7",
+     "copySongToTenant": "d521ba9b",
+     "uploadSongFileToTenant": "28da6b4d",
+     "getSongCategories": "fc4a7078",
+     "addSongCategory": "0d397b2e",
+     "updateSongCategory": "fb83d642",
+     "removeSongCategory": "999bbb94",
+     "ensureSongCategories": "8caecfb4",
+     "searchOrgSongs": "cd0e3608",
+     "copyOrgSong": "20cd656c"
+    },
+    "id": "services/song/song.service#logic-77d06c32"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/song_repository.dart:129",
+     "lib/data/repositories/song_repository.dart:226",
+     "lib/data/repositories/song_repository.dart:244",
+     "lib/data/repositories/song_repository.dart:283",
+     "lib/data/repositories/song_repository.dart:311",
+     "lib/data/repositories/org_song_repository.dart:35",
+     "lib/data/repositories/org_song_repository.dart:127",
+     "lib/data/repositories/org_song_repository.dart:162"
+    ],
+    "n": "Lebendige Methoden portiert: getSongs (Seiten à 1000, Offline-Cache), getSong (Dateien nach instrumentId sortiert), addSong, editSong, removeSong, ensureSongCategories, searchOrgSongs, copyOrgSong (inkl. Rückbau bei Fehler). Abweichung nur beim Löschen der Storage-Dateien (siehe db-Item). uploadSongFile, downloadSongFile, deleteSongFile, copySongToTenant, uploadSongFileToTenant sowie add/update/removeSongCategory sind in SongService toter Code (DbService/SongCategoryService haben eigene Implementierungen). Flutter prüft bei Org-Kopien zusätzlich Admin/Verantwortlich-Rolle in der Ziel-Bibliothek (wie die Ionic-Zielliste).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart",
+    "lib/data/repositories/org_song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/song/song.service",
+   "ionic": {
+    "ts": "services/song/song.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "native",
+    "file": "services/song/song.service.ts",
+    "line": 38,
+    "method": "SongService.getSongs",
+    "cond": [],
+    "plugin": "Network",
+    "call": "getStatus",
+    "args": "",
+    "src": "a6015b27",
+    "mbody": "553718d1",
+    "id": "services/song/song.service#native-20d780b6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/song_repository.dart:141"
+    ],
+    "n": "Network.getStatus ↔ connectivityCheckProvider; offline wird der Cache gelesen.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/super-developer.guard",
+   "ionic": {
+    "ts": "services/super-developer.guard.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/super-developer.guard.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:10-13",
+     "canActivate:15-22"
+    ],
+    "bodies": {
+     "constructor": "c5626bf4",
+     "canActivate": "6ecc5356"
+    },
+    "id": "services/super-developer.guard#logic-85893776"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1240",
+     "lib/core/router/app_router.dart:1279",
+     "lib/core/providers/dashboard_providers.dart:31"
+    ],
+    "n": "Gleiche Prüfung (E-Mail = developer@attendix.de) für /settings/administration und /dashboard. Ionic: sonst Umleitung nach /tabs/player / Flutter: nach /settings.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/super-developer.guard",
+   "ionic": {
+    "ts": "services/super-developer.guard.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "nav",
+    "file": "services/super-developer.guard.ts",
+    "line": 20,
+    "method": "SuperDeveloperGuard.canActivate",
+    "cond": [],
+    "via": "router.navigateByUrl",
+    "to": "'/tabs/player'",
+    "src": "3ff633cb",
+    "mbody": "6ecc5356",
+    "id": "services/super-developer.guard#nav-5ef82b68"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1243",
+     "lib/core/router/app_router.dart:1280"
+    ],
+    "n": "Ionic: Nicht-Super-Developer werden nach '/tabs/player' (Personen) umgeleitet / Flutter: nach '/settings'. Nur bei direktem Aufruf der URL sichtbar.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/telegram/telegram.service",
+   "ionic": {
+    "ts": "services/telegram/telegram.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/telegram/telegram.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "encodeFilename:11-23",
+     "sendPlanPerTelegram:25-77",
+     "sendSongPerTelegram:79-94",
+     "notifyPerTelegram:96-108",
+     "notifyPlayerPaused:110-115"
+    ],
+    "bodies": {
+     "encodeFilename": "47eab8a4",
+     "sendPlanPerTelegram": "4ce08636",
+     "sendSongPerTelegram": "a4a3cd8a",
+     "notifyPerTelegram": "9ae97051",
+     "notifyPlayerPaused": "5ede848b"
+    },
+    "id": "services/telegram/telegram.service#logic-be595d17"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/services/telegram_service.dart:258",
+     "lib/core/services/telegram_service.dart:306",
+     "lib/core/services/telegram_service.dart:356",
+     "lib/core/services/telegram_service.dart:241",
+     "lib/data/repositories/sign_in_out_repository.dart:117"
+    ],
+    "n": "encodeFilename/cleanName (NFD, Sonderzeichen → '-', '_<100-999>'+Endung, leer → 'file'), Upload in Bucket attendances, öffentliche URL mit ?download=<Name>, send-photo/send-document, Löschen nach 10 s (auch bei Fehler), send-document mit sendAsUrl, quick-processor (signout/lateSignout/noteUpdate/Vorstatus inkl. isSelf) und playerPaused gleich. Abweichungen nur bei Ladeanzeige und Toasts (siehe Items).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/telegram_service.dart",
+    "lib/data/repositories/sign_in_out_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/tenant/tenant.service",
+   "ionic": {
+    "ts": "services/tenant/tenant.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/tenant/tenant.service.ts",
+    "line": 31,
+    "method": "TenantService.getTenantById",
+    "cond": [],
+    "table": "tenants",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('id', id)",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "42b02313",
+    "mbody": "cdc5146d",
+    "id": "services/tenant/tenant.service#db-397565f1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:2102",
+     "lib/data/repositories/player_repository.dart:2166",
+     "lib/data/repositories/sign_in_out_repository.dart:563"
+    ],
+    "n": "Zusatzfelder (additional_fields) der Ziel-Instanz beim Eintragen in Termine einer anderen Instanz bzw. seasonStart je Instanz für 'Meine Termine'; Flutter liest dieselben tenants-Zeilen per id, nur die benötigten Spalten.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  }
+ ]
+}

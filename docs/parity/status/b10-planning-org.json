@@ -1,0 +1,1232 @@
+{
+ "batch": "b10-planning-org",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "org-plan-public/org-plan-public.page#logic-7396311f": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:69",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:100",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:125",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:86",
+    "lib/core/utils/plan_utils.dart:455"
+   ],
+   "n": "Laden (Org per public_plan_key, Instanzen, Termine is_org_plan + shared_plans), Sortierung, Aufteilung kommend/vergangen (vergangen absteigend), Titel-Fallback „Plan“, Live-Fenster (−5 min … Ende+15 min), Auto-Live beim Laden, Countdown-Format gleich. Abweichungen im Live-Modus vor Beginn, kein Auto-Scroll, Fehlerfall, Lade-Skeleton, Vergangene-Pläne-Darstellung: siehe extra. Realtime→Polling: siehe db-Items.",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#db-5baeaaf1": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/public_plan_repository.dart:222"
+   ],
+   "n": "gleiche Abfrage tenant_groups id,name eq public_plan_key; maybeSingle statt single (beides → „Link ungültig“ bei 0 Zeilen)"
+  },
+  "org-plan-public/org-plan-public.page#db-d81107f4": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/public_plan_repository.dart:240"
+   ],
+   "n": "gleiche Abfrage; Flutter liest sie bei jedem Laden/Polling erneut (Ionic nur in ngOnInit)"
+  },
+  "org-plan-public/org-plan-public.page#db-f11d79f7": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/public_plan_repository.dart:256"
+   ],
+   "n": "gleiche Spalten und Filter (inFilter tenantId der Org-Instanzen, is_org_plan, archived=false, plan not null, order date)"
+  },
+  "org-plan-public/org-plan-public.page#db-f2623177": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/public_plan_repository.dart:270"
+   ],
+   "n": "gleiche Zeilen (eq org_id, order date); Flutter selektiert explizite Spalten ohne edit_key statt '*' – angezeigte Daten identisch"
+  },
+  "org-plan-public/org-plan-public.page#db-b7046159": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:46",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:125",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:342"
+   ],
+   "n": "Ionic: Realtime-Kanal je kommendem Plan, Änderungen erscheinen sofort / Flutter: kein Realtime-Kanal (SOL_FIX7: Payload enthielte share_edit_key/edit_key für anonyme Betrachter); stattdessen Polling der öffentlichen Selects alle 15 s, nur bereits angezeigte kommende Einträge werden aktualisiert → Änderungen erscheinen bis zu 15 s später (attendance UPDATE id=eq)",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#db-b99f855a": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:46",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:125"
+   ],
+   "n": "Ionic: Kanal `org-att-${id}` / Flutter: kein Kanal, Polling alle 15 s (siehe db-b7046159)",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#db-2f01c860": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:46",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:125",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:342"
+   ],
+   "n": "Ionic: Realtime-Kanal je kommendem Plan, Änderungen erscheinen sofort / Flutter: kein Realtime-Kanal (SOL_FIX7: Payload enthielte share_edit_key/edit_key für anonyme Betrachter); stattdessen Polling der öffentlichen Selects alle 15 s, nur bereits angezeigte kommende Einträge werden aktualisiert → Änderungen erscheinen bis zu 15 s später (shared_plans UPDATE id=eq)",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#db-508eb016": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:46",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:125"
+   ],
+   "n": "Ionic: Kanal `org-adhoc-${id}` / Flutter: kein Kanal, Polling alle 15 s (siehe db-b7046159)",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#actionsheet-876a0d5b": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:154",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:404"
+   ],
+   "n": "Header „Kalender abonnieren“, Buttons „Einfach (1 Termin je Plan)“, „Detailliert (je Programmpunkt)“, „Abbrechen“ und Links (…/functions/v1/ical-org-plans?key=…[&lang=xx][&detailed=true]) gleich. Ionic: Buttons ohne Icons / Flutter: zusätzlich Icons (event, event_note)",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#alert-c3af9876": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:167"
+   ],
+   "n": "Header „Kalender abonnieren“, Text „Kopiere den folgenden Link in deine Kalender-App: …“ und „Link kopieren“ (Dialog bleibt offen) / „Schließen“ gleich. Ionic: dritter Button „Anleitung öffnen“ (Apple-/Google-Kalender-Hilfe) / Flutter: fehlt im öffentlichen Org-Plan (nur auf org_plans_page vorhanden)",
+   "sev": "mittel"
+  },
+  "org-plan-public/org-plan-public.page#effect-c4281c2a": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:157",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:173"
+   ],
+   "n": "Clipboard.setData(link)"
+  },
+  "org-plan-public/org-plan-public.page#toast-653c57ac": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:159"
+   ],
+   "n": "„Link kopiert“, success"
+  },
+  "org-plan-public/org-plan-public.page#native-c9096ded": {
+   "s": "missing",
+   "n": "Ionic: „Anleitung öffnen“ öffnet support.apple.com/de-de/102301 (iOS) bzw. Google-Kalender-Hilfe (sonst) im Browser / Flutter: Button fehlt im Kalender-Dialog der öffentlichen Org-Plan-Seite (org_plan_public_page.dart:172-175)",
+   "sev": "mittel"
+  },
+  "org-plan-public/org-plan-public.page#actionsheet-4c267725": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:180",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:59"
+   ],
+   "n": "Header „Exportieren“, „PDF (A4)“, „PDF (2x A5)“, „Abbrechen“ gleich (kein Bild/Telegram). Ionic: ohne Icons / Flutter: mit Icons (picture_as_pdf, content_copy)",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#effect-45237c25": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:180",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:91",
+    "lib/core/providers/branding_providers.dart:40"
+   ],
+   "n": "PDF A4 wird erzeugt und geteilt/gespeichert. Unterschiede: (1) Flutter fügt das Branding der aktuell gewählten Instanz ein, wenn der Betrachter eingeloggt ist (resolvePdfBranding), Ionic exportiert hier immer ohne Branding; (2) Untertitel: Ionic Datum aus plan.time (bei „HH:mm“ das heutige Datum) / Flutter Plandatum (PlanUtils.longDate); (3) Flutter besser: Plan ohne Felder → Warn-Toast statt leerem PDF",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#effect-b996f803": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:180",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:104",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:111"
+   ],
+   "n": "PDF 2x A5 (sideBySide) wird erzeugt und geteilt/gespeichert. Unterschiede: (1) Flutter fügt das Branding der aktuell gewählten Instanz ein, wenn der Betrachter eingeloggt ist (resolvePdfBranding), Ionic exportiert hier immer ohne Branding; (2) Untertitel: Ionic Datum aus plan.time (bei „HH:mm“ das heutige Datum) / Flutter Plandatum (PlanUtils.longDate); (3) Flutter besser: Plan ohne Felder → Warn-Toast statt leerem PDF",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#text-8d2c4133": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:268",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:281"
+   ],
+   "n": "orgName bzw. Fallback „Organisationspläne“ (plansFlutterOrgPlansTitle)"
+  },
+  "org-plan-public/org-plan-public.page#action-b3c45e32": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:283"
+   ],
+   "n": "Kalender-Button (calendar_month_outlined, Tooltip „Kalender abonnieren“) immer sichtbar wie Ionic. Ionic: ohne key in der URL tut der Button nichts (`if (!this.publicKey) return`) / Flutter: öffnet trotzdem das Sheet mit Link „…?key=null“",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#action-cf309d5a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:288"
+   ],
+   "n": "nur bei vergangenen Plänen; Icon schedule statt time-outline, Tooltip „Vergangene Pläne“"
+  },
+  "org-plan-public/org-plan-public.page#action-cd29a676": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:319"
+   ],
+   "n": "IonRefresher → _loadPlans (nur sichtbar, wenn geladen und Link gültig)"
+  },
+  "org-plan-public/org-plan-public.page#text-8d2c4133-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:271"
+   ],
+   "n": "IonLargeTitle (iOS-Look) mit gleichem Titel"
+  },
+  "org-plan-public/org-plan-public.page#text-092b2e71": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:306",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:314"
+   ],
+   "n": "„Link ungültig oder abgelaufen.“ (Karte statt Inset-Liste)"
+  },
+  "org-plan-public/org-plan-public.page#text-48b8a885": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:325"
+   ],
+   "n": "Text „Keine bevorstehenden Org-Pläne vorhanden.“ gleich. Ionic: grauer p-Text in Inset-Liste / Flutter: ListTile mit zusätzlichem Icon event_outlined, normale Textfarbe",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#text-80d2f3fd": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:217",
+    "lib/core/utils/plan_utils.dart:508"
+   ],
+   "n": "Format „Wochentag, TT.MM.JJJJ“ gleich. Ionic: ohne Datum (Ad-hoc-Plan ohne date) wird der Titel angezeigt / Flutter: leere Zeile (longDate(null) = '')",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#text-278f4c08": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:215",
+    "lib/core/providers/plan_providers.dart:119"
+   ],
+   "n": "Ionic: Instanzname nur bei Termin-Plänen, Stil GROSSBUCHSTABEN/fett 0.75rem / Flutter: Instanzname bei Termin-Plänen, bei Ad-hoc-Plänen zusätzlich „Org-Plan“; 12px grau, nicht uppercase/fett",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#action-610d3d65": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:220"
+   ],
+   "n": "Live-Schalter nur bei isLiveNow, Farbe danger/primary, toggelt Live-Modus ohne das Akkordeon zu schalten – gleich. Ionic: Icon radio/radio-outline (Funkwellen) neben dem Akkordeon-Pfeil / Flutter: radio_button_checked/unchecked, ersetzt den Aufklapp-Pfeil (ExpansionTile.trailing), Tooltip „Live“",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#action-905ad3b9": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:230"
+   ],
+   "n": "„Exportieren“ mit Teilen-Icon in Primärfarbe → Export-Sheet"
+  },
+  "org-plan-public/org-plan-public.page#text-9bfc6bc4": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:236",
+    "lib/core/providers/plan_providers.dart:107"
+   ],
+   "n": "Titel: plan.title || typeInfo || „Plan“ bzw. plan_title || „Plan“"
+  },
+  "org-plan-public/org-plan-public.page#text-07043320": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:97"
+   ],
+   "n": "„Start“"
+  },
+  "org-plan-public/org-plan-public.page#text-24593650": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:102"
+   ],
+   "n": "„{time} Uhr“ mit HH:mm gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#text-e42e4358": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:166"
+   ],
+   "n": "Ionic: field.name / Flutter: PlanUtils.fieldDisplayName → bei Tagesordnungs-Feldern „TOP n · Titel“; Agenda-Platzhalter-Feld wird in Flutter ausgeblendet, in Ionic als Zeile angezeigt",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#text-8367e2d0": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:130",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:133"
+   ],
+   "n": "Startzeit + „ | Dirigent“ gleich. Ionic: Programmblock-Kopf zeigt nur Startzeit / Flutter: Zeitspanne „10:37 – 10:55“",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#text-cf5a89a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:138"
+   ],
+   "n": "Info kursiv grau, nicht bei Notizfeldern"
+  },
+  "org-plan-public/org-plan-public.page#text-902a9ead": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:144",
+    "lib/core/utils/plan_utils.dart:470"
+   ],
+   "n": "Countdown „mm:ss“/„h:mm:ss“ in primärer Plakette (IonBadge) beim aktiven Feld"
+  },
+  "org-plan-public/org-plan-public.page#text-4841bd3c": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:149"
+   ],
+   "n": "„{min} min“ (Block-Kopf = Summe der Unterpunkte) gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#text-188d296f": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:207"
+   ],
+   "n": "Ionic: Zeile „Ende“ nur wenn plan.end gesetzt / Flutter: ohne plan.end wird Ende aus Start + Summe der Dauern berechnet und angezeigt",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#text-24593650-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:214"
+   ],
+   "n": "„{time} Uhr“ gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#modal-a0d38218": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:243"
+   ],
+   "n": "Vollbild-Modal (fullscreenDialog) über Uhr-Button"
+  },
+  "org-plan-public/org-plan-public.page#text-370bc016": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:249"
+   ],
+   "n": "„Vergangene Pläne“"
+  },
+  "org-plan-public/org-plan-public.page#action-62549630": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:251"
+   ],
+   "n": "Schließen-Icon close"
+  },
+  "org-plan-public/org-plan-public.page#text-80d2f3fd-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:217",
+    "lib/core/utils/plan_utils.dart:508"
+   ],
+   "n": "wie text-80d2f3fd: ohne Datum Ionic Titel / Flutter leer",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#text-278f4c08-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:215",
+    "lib/core/providers/plan_providers.dart:119"
+   ],
+   "n": "wie text-278f4c08: Flutter zeigt bei Ad-hoc-Plänen „Org-Plan“, anderer Stil (nicht uppercase/fett)",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#action-905ad3b9-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:230"
+   ],
+   "n": "„Exportieren“ auch in vergangenen Plänen"
+  },
+  "org-plan-public/org-plan-public.page#text-9bfc6bc4-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:236"
+   ]
+  },
+  "org-plan-public/org-plan-public.page#text-07043320-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:97"
+   ]
+  },
+  "org-plan-public/org-plan-public.page#text-24593650-3": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:102"
+   ],
+   "n": "„{time} Uhr“ gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#text-e42e4358-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:166"
+   ],
+   "n": "wie text-e42e4358: „TOP n · Titel“ für Tagesordnungs-Felder, Agenda-Platzhalter ausgeblendet",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#text-8367e2d0-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:130"
+   ],
+   "n": "wie text-8367e2d0: Block-Kopf Zeitspanne statt Startzeit",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#text-4841bd3c-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:149"
+   ],
+   "n": "„{min} min“ gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#text-188d296f-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:207"
+   ],
+   "n": "wie text-188d296f: Flutter zeigt berechnetes Ende auch ohne plan.end",
+   "sev": "niedrig"
+  },
+  "org-plan-public/org-plan-public.page#text-24593650-4": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:214"
+   ],
+   "n": "„{time} Uhr“ gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#logic-26fb5248": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:178",
+    "lib/core/providers/plan_providers.dart:150",
+    "lib/core/providers/plan_providers.dart:129",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:41"
+   ],
+   "n": "Laden (Termine is_org_plan der Org-Instanzen + Ad-hoc-Pläne org_id, Ad-hoc-Fehler → leer), Sortierung/Aufteilung kommend (heute+) / vergangen (absteigend), Titel/Datum „dd, TT.MM.JJJJ“/Punkte/Instanz-Label, Öffnen im Plan-Viewer mit Live an Plantag, Tab-Schalter (user_metadata showOrgPlansTab_<tenantId>), Ad-hoc-Löschen, Kalender, öffentlicher Link (16 Hex-Zeichen) gleich. Abweichungen im Fehler-/Ladezustand und bei Fehlermeldungen des öffentlichen Links: siehe extra.",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#db-ca5619e2": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_plan_repository.dart:167",
+    "lib/core/providers/plan_providers.dart:157"
+   ],
+   "n": "shared_plans select('*') eq org_id order date; Fehler → leere Liste wie Ionic"
+  },
+  "org-plans/org-plans.page#modal-4a412146": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:41",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:223"
+   ],
+   "n": "Plan-Viewer als Vollbild-Dialog mit attendance, plan, defaultLive = Plantag ist heute (zusätzlich title = Plantitel)"
+  },
+  "org-plans/org-plans.page#modal-7c1c00f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:45",
+    "lib/core/providers/plan_providers.dart:99"
+   ],
+   "n": "Ad-hoc: PlanAttendance nur mit date, Plan aus time/end_time/fields/plan_title, defaultLive heute – wie Ionic"
+  },
+  "org-plans/org-plans.page#actionsheet-f5bf6fdd": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:64"
+   ],
+   "n": "Header = Plantitel bzw. „Plan“, „Plan löschen“ (destruktiv), „Abbrechen“ gleich. Ionic: ohne Icon / Flutter: Icon delete_outline",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#db-d2b74a95": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_plan_repository.dart:185",
+    "lib/core/providers/plan_providers.dart:279"
+   ],
+   "n": "shared_plans delete eq id; Flutter zusätzlich eq org_id (aktuelle Organisation) – gleiche Wirkung für Pläne der Org; danach Liste neu geladen (invalidate)"
+  },
+  "org-plans/org-plans.page#toast-8a03f01d": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:74"
+   ],
+   "n": "„Fehler beim Löschen“, danger"
+  },
+  "org-plans/org-plans.page#actionsheet-4bd02dbc": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:77",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:404"
+   ],
+   "n": "Header „Kalender abonnieren“, „Einfach (1 Termin je Plan)“, „Detailliert (je Programmpunkt)“, „Abbrechen“ und Links gleich. Ionic: ohne Icons / Flutter: Icons event, event_note",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#alert-9793c6fc": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:90"
+   ],
+   "n": "Header, Text mit Link, Buttons „Link kopieren“ (bleibt offen) / „Anleitung öffnen“ / „Schließen“ gleich. Ionic: „Anleitung öffnen“ schließt den Dialog / Flutter: Dialog bleibt nach „Anleitung öffnen“ offen",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#effect-35b5f6e6": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:157",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:97"
+   ]
+  },
+  "org-plans/org-plans.page#toast-83ae2924": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:159"
+   ],
+   "n": "„Link kopiert“, success"
+  },
+  "org-plans/org-plans.page#native-1a59de28": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:100",
+    "lib/core/services/native/native_file_service.dart:123"
+   ],
+   "n": "In-App-Browser (nativ) bzw. extern (Web) mit Apple-/Google-Hilfe-URL. Ionic: isPlatform('ios') ist auch im iPhone-Browser/PWA wahr → Apple-Anleitung / Flutter: `!kIsWeb && iOS` → in der PWA auf dem iPhone wird die Google-Anleitung geöffnet",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#actionsheet-76cc5ad8": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:117"
+   ],
+   "n": "Header „Öffentlicher Link“, „Link kopieren“, „Link widerrufen“ (destruktiv, ohne Rückfrage), „Abbrechen“ gleich. Ionic: ohne Icons / Flutter: Icons copy, link_off",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#effect-bb4d0f68": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:120",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:166"
+   ],
+   "n": "Ionic: kopiert immer `https://attendix.de/org-plan?key=…` / Flutter: nativ gleich, im Web `<origin><path>#/org-plan?key=…` (planPublicUrl, Hash-URL der aktuellen Domain)",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#toast-c19318c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:159"
+   ],
+   "n": "„Link kopiert“, success"
+  },
+  "org-plans/org-plans.page#toast-7283895c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:134"
+   ],
+   "n": "„Link widerrufen“, success (nach erfolgreichem Update public_plan_key = null)"
+  },
+  "org-plans/org-plans.page#effect-bb4d0f68-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:138",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:144",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:166"
+   ],
+   "n": "Neuer Schlüssel (16 Hex-Zeichen) wird gespeichert und Link kopiert wie Ionic. Ionic: kopiert immer `https://attendix.de/org-plan?key=…` / Flutter: nativ gleich, im Web `<origin><path>#/org-plan?key=…` (planPublicUrl, Hash-URL der aktuellen Domain)",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#toast-95142758": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:144"
+   ],
+   "n": "„Link erstellt und kopiert“, success"
+  },
+  "org-plans/org-plans.page#action-407ee540": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:191",
+    "lib/core/router/app_router.dart:1142"
+   ],
+   "n": "AppBar-Zurück (automatisch) unter /settings/org-plans, keiner im Tab /org-plans-tab"
+  },
+  "org-plans/org-plans.page#text-87e35452": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:192"
+   ],
+   "n": "„Org-Pläne“"
+  },
+  "org-plans/org-plans.page#action-fb132ec9": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:195",
+    "lib/core/providers/optional_tabs_providers.dart:73"
+   ],
+   "n": "Icon bookmark/bookmark_outline, Tooltip „Tab ausblenden“/„Als Tab anzeigen“, schreibt user_metadata showOrgPlansTab_<tenantId>; Flutter zeigt bei Fehler zusätzlich „Fehler beim Speichern“"
+  },
+  "org-plans/org-plans.page#action-e2f1f806": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:213"
+   ],
+   "n": "nur bei vorhandenem public_plan_key"
+  },
+  "org-plans/org-plans.page#action-04994ce0": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:219"
+   ],
+   "n": "Öffnet Verwalten-Sheet bzw. erzeugt Link wie Ionic. Ionic: Button immer sichtbar, Icon link/link-outline / Flutter: nur wenn Organisation vorhanden, Icon link/add_link (ohne Schlüssel)",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#action-4926c6f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:238"
+   ],
+   "n": "IonRefresher → orgPlansProvider neu laden"
+  },
+  "org-plans/org-plans.page#text-87e35452-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:249"
+   ],
+   "n": "IonLargeTitle „Org-Pläne“"
+  },
+  "org-plans/org-plans.page#text-5c845db6": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:252"
+   ],
+   "n": "„Diese Instanz ist keiner Organisation zugeordnet.“ mit Info-Icon"
+  },
+  "org-plans/org-plans.page#text-1a55f32d": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:268"
+   ],
+   "n": "„Keine bevorstehenden Org-Pläne. Pläne können über die Ablaufplanung …“ mit Kalender-Icon"
+  },
+  "org-plans/org-plans.page#action-6428e040": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:156",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:276"
+   ],
+   "n": "Titel, „dd, TT.MM.JJJJ · N Punkte“ (Punkte nur > 0), Instanzname bzw. „Org-Plan“, Tipp öffnet Plan-Viewer – gleich. Ionic: Instanz-Label GROSSBUCHSTABEN/fett, Chevron auch bei Ad-hoc-Plänen neben dem Papierkorb / Flutter: Label 12px grau normal, Ad-hoc-Zeilen ohne Chevron",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#action-07229903": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:168"
+   ],
+   "n": "Papierkorb (delete_outline, grau) nur bei Ad-hoc-Plänen → Lösch-Sheet"
+  },
+  "org-plans/org-plans.page#action-cff3f483": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:279",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:318"
+   ],
+   "n": "„Ablaufplanung öffnen“ (add_circle_outline, primär) → /org-plans-tab/planung bzw. /settings/org-plans/planung; während Laden/Fehler ausgeblendet (siehe extra)"
+  },
+  "org-plans/org-plans.page#action-3a0eef49": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:287"
+   ],
+   "n": "„Vergangene Pläne“ grau mit Uhr-Icon (history), nur bei vergangenen Plänen"
+  },
+  "org-plans/org-plans.page#text-65b70e40": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:294"
+   ],
+   "n": "„Öffentlicher Link aktiv. …“ mit Globus-Icon (grün)"
+  },
+  "org-plans/org-plans.page#action-0ad682ab": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:298"
+   ],
+   "n": "„Verwalten“ → _managePublicLink"
+  },
+  "org-plans/org-plans.page#modal-e1461116": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:147"
+   ],
+   "n": "Ionic: ion-modal (Vollbild-Modal über allem, inkl. Tabbar) / Flutter: normale Push-Seite (MaterialPageRoute ohne fullscreenDialog, im Shell-Navigator) mit Zurück-Pfeil, Einträge ohne Inset-Liste",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#text-bac34896": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:150"
+   ],
+   "n": "„Vergangene Pläne“"
+  },
+  "org-plans/org-plans.page#action-c21a87b3": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:150"
+   ],
+   "n": "Ionic: Schließen-Button (X) rechts / Flutter: kein X, nur automatischer Zurück-Pfeil links",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#action-6428e040-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:151",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:156"
+   ],
+   "n": "Titel, „dd, TT.MM.JJJJ · N Punkte“ (Punkte nur > 0), Instanzname bzw. „Org-Plan“, Tipp öffnet Plan-Viewer – gleich. Ionic: Instanz-Label GROSSBUCHSTABEN/fett, Chevron auch bei Ad-hoc-Plänen neben dem Papierkorb / Flutter: Label 12px grau normal, Ad-hoc-Zeilen ohne Chevron",
+   "sev": "niedrig"
+  },
+  "org-plans/org-plans.page#action-07229903-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:151",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:171"
+   ],
+   "n": "Löschen per Sheet wie Ionic. Ionic: Verlaufs-Modal ist an pastPlans gebunden, gelöschter Plan verschwindet sofort / Flutter: Verlaufsseite zeigt eine beim Öffnen kopierte Liste (_showHistory(split.past)) – gelöschter Plan bleibt sichtbar, bis die Seite neu geöffnet wird",
+   "sev": "mittel"
+  },
+  "org-plans/org-plans.page#action-7c2f6fd4": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:228"
+   ],
+   "n": "FAB „+“ nur im Tab und iOS → /org-plans-tab/planung"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#logic-b640ed70": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:45",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:94",
+    "lib/core/providers/plan_providers.dart:252",
+    "lib/data/repositories/org_plan_repository.dart:260",
+    "lib/data/repositories/org_plan_repository.dart:304"
+   ],
+   "n": "Laden aus organisation.additional_fields, Admin-Recht (Rolle ADMIN), ID-Bildung org_<orgId>_<name>, Löschen mit Rückfrage, Umsortieren, Speichern (Validierung, update additional_fields, Löschen der Werte gelöschter Felder in tenant_group_person_fields) gleich. updateOptions ist in Ionic ungenutzt (toter Code). Abweichungen: Standardwerte beim Typwechsel und Bearbeiten nicht-textueller Standardwerte (siehe field-Items), Fehlermeldungen beim Speichern (extra).",
+   "sev": "niedrig"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-77469d60": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:304"
+   ],
+   "n": "„Bitte gib einen gültigen Namen für das Zusatzfeld ein.“ (danger), Sheet bleibt offen; ohne Organisation ist „+“ deaktiviert"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-a15cd8e0": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:60"
+   ],
+   "n": "Text „Ein Zusatzfeld mit diesem Namen existiert bereits.“ gleich. Ionic: Prüfung vor dem Schließen, Modal bleibt mit den Eingaben offen / Flutter: Prüfung erst nach dem Schließen des Sheets – Toast erscheint, Sheet ist zu und alle Eingaben (Typ, Optionen, Standardwert …) sind verloren",
+   "sev": "mittel"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-04d937da": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:309"
+   ],
+   "n": "„Bitte füge mindestens eine Auswahloption hinzu.“ (danger), Sheet bleibt offen"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#alert-81661d54": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:83",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:369"
+   ],
+   "n": "„Zusatzfeld löschen?“, „Möchtest du das Zusatzfeld „{name}“ wirklich löschen?“, „Abbrechen“ / „Löschen“ (destruktiv) → Feld lokal entfernt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-c77d8a1e": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:309"
+   ],
+   "n": "gleiche Prüfung beim Übernehmen im Bearbeiten-Sheet"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-89565647": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:97"
+   ],
+   "n": "„Ungültige Organisations-Zusatzfelder.“"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-4bf625f4": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:101"
+   ],
+   "n": "„Das Auswahlfeld „{name}“ benötigt Optionen.“"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-ffb36bd8": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:114"
+   ],
+   "n": "„Organisations-Zusatzfelder gespeichert.“, success"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#nav-e3374715": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:166"
+   ],
+   "n": "Navigator.maybePop → zurück zu Organisationseinstellungen"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#action-15c25421": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:164"
+   ],
+   "n": "Pfeil zurück (arrow_back) links"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-aa477a56": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:168"
+   ],
+   "n": "„Personen-Zusatzfelder“"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#action-dbb21843": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:170"
+   ],
+   "n": "Häkchen, deaktiviert während Speichern oder ohne Admin-Rolle"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-aa477a56-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:184"
+   ],
+   "n": "IonLargeTitle (iOS)"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-58c0edec": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:186",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:210"
+   ],
+   "n": "Intro mit Info-Icon (grau)"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-9356a51e": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:200",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:222"
+   ],
+   "n": "„Zusätzliche Felder für Personen“ als Listen-Header"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#action-0bece271": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:151"
+   ],
+   "n": "„+“ im Header, nur für Admin aktiv, öffnet Hinzufügen-Sheet"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#modal-b6eb6b51": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:52",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:269"
+   ],
+   "n": "Bottom-Sheet mit Titel „Neues Feld hinzufügen“ (Ionic Sheet mit Breakpoints [0,1]); Flutter startet jedes Mal leer, Ionic behält nach Wegwischen die letzten Eingaben"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-2cad8859": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:344"
+   ],
+   "n": "„Neues Feld hinzufügen“"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-64695ee6": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:353"
+   ],
+   "n": "Auswahl „Typ“ mit Text, Textbereich, Zahl, Datum, Ja/Nein, Auswahl (Standard Text) gleich. Ionic: onNewFieldTypeChanged setzt den Standardwert per getFieldTypeDefaultValue – Zahl → 0, Datum → aktueller ISO-Zeitstempel, Ja/Nein → false; dieser Wert wird ohne Eingabe in additional_fields gespeichert (und z. B. beim Verknüpfen von Personen als Wert übernommen) / Flutter: Typwechsel ändert nichts, Standardwert bleibt '' (Zahl/Datum leer)",
+   "sev": "mittel"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-a8961219": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:362"
+   ],
+   "n": "„Name“, Großschreibung am Satzanfang"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-520a069e": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:367"
+   ],
+   "n": "„Anzeige in Listen“: Als Chip / Unter dem Namen, Standard Chip"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-e81d372e": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:377"
+   ],
+   "n": "„Für Mitglieder sichtbar“ mit Hilfetext, Standard aus"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-d6141d03": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:384"
+   ],
+   "n": "„Von Mitgliedern bearbeitbar“ mit Hilfetext nur bei sichtbar; Flutter speichert editableByPlayers=false, wenn „sichtbar“ aus ist (Ionic behält den Wert) – ohne sichtbare Wirkung"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-c96d82b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:395"
+   ],
+   "n": "„Optionen“"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#action-a128acc3": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:396"
+   ],
+   "n": "„+“ fügt leere Option an"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-e85d8c9c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:402"
+   ],
+   "n": "„Keine Optionen ausgewählt“"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-1e4f0881": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:407"
+   ],
+   "n": "Platzhalter „Wert eingeben...“, Hilfetext „Erste Option ist der Standardwert“ bei der ersten Option"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#action-8b32ffc1": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:416"
+   ],
+   "n": "Papierkorb (rot) entfernt Option"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-8e53f70a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:425"
+   ],
+   "n": "„Standardwert“"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-ca3e38af": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:423"
+   ],
+   "n": "Schalter Standardwert (Ja/Nein), Standard aus"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-44f78df0": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:430"
+   ],
+   "n": "Label „Standardwert (optional)“, Zahlen-Tastatur bei Zahl gleich. Ionic: bei Typ Datum Eingabe type=date (Datumsauswahl) / Flutter: freies Textfeld ohne Datumsauswahl",
+   "sev": "niedrig"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#action-ca7f0f1f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:436"
+   ],
+   "n": "„Feld hinzufügen“ (FilledButton statt primärem Listeneintrag)"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#modal-1fbef7b1": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:68"
+   ],
+   "n": "Bottom-Sheet mit aktuellem Feld; Verwerfen beim Wegwischen wie Ionic"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-a8a25bcf": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:344"
+   ],
+   "n": "„Feld bearbeiten“"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#action-db01f6fe": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:344"
+   ],
+   "n": "Ionic: Schließen-Button (X) in der Kopfzeile des Bearbeiten-Modals / Flutter: kein X, Schließen nur durch Wegwischen/Antippen außerhalb",
+   "sev": "niedrig"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-ff653f98": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:349"
+   ],
+   "n": "„Typ“ (nicht änderbar)"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-8be14847": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:350"
+   ],
+   "n": "Typname rechts"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-7b3e761d": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:302"
+   ],
+   "n": "Flutter besser: leerer Name beim Übernehmen → Toast „Bitte gib einen gültigen Namen für das Zusatzfeld ein.“ / Ionic übernimmt den leeren Namen, Fehler erst beim Speichern („Ungültige Organisations-Zusatzfelder.“)",
+   "sev": "niedrig"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-0f91184f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:367"
+   ]
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-adf149eb": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:377"
+   ]
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-1670ed1e": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:384"
+   ]
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-c96d82b0-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:395"
+   ]
+  },
+  "org-settings/org-person-fields/org-person-fields.page#action-a6168cd8": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:396"
+   ]
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-079ad93e": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:402"
+   ],
+   "n": "Ionic (Bearbeiten): „Keine Optionen“ / Flutter: „Keine Optionen ausgewählt“ (gleicher Text wie beim Hinzufügen)",
+   "sev": "niedrig"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-da360cbb": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:407"
+   ]
+  },
+  "org-settings/org-person-fields/org-person-fields.page#action-da6ba8f3": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:416"
+   ]
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-8e53f70a-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:425"
+   ]
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-b8cf354d": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:286",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:423"
+   ]
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-3207b9c2": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:280",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:430"
+   ],
+   "n": "Label „Standardwert“ gleich. Ionic: Eingabe zeigt den gespeicherten Standardwert jeder Art (z. B. Zahl 0, Datum) und behält ihn / Flutter: nur String-Werte werden vorbelegt – ein nicht-String-Standardwert (z. B. die von Ionic gesetzte Zahl 0) erscheint leer und wird beim „Änderungen übernehmen“ durch '' ersetzt; Datum ohne Datumsauswahl",
+   "sev": "mittel"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#action-08983ea4": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:436"
+   ],
+   "n": "„Änderungen übernehmen“; Auswahl: Optionen getrimmt, erste = Standardwert"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-f87b8a1c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:133"
+   ],
+   "n": "„Es wurden noch keine organisationsweiten Zusatzfelder hinzugefügt.“"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#action-9a1af10d": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:134",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:238"
+   ],
+   "n": "Umsortieren nur für Admin (Griff), Zeilen Name / „Typ: …“ / „Anzeige: …“ / „Für Mitglieder sichtbar (bearbeitbar)“ gleich. Ionic: Augen-Icon vor „Für Mitglieder sichtbar“ / Flutter: ohne Icon (reiner Untertitel)",
+   "sev": "niedrig"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#action-c43ceb90": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:254"
+   ],
+   "n": "Stift (primär), nur Admin"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#action-cdcf5534": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:258"
+   ],
+   "n": "Papierkorb (rot), nur Admin → Rückfrage"
+  }
+ },
+ "extra": [
+  {
+   "unit": "org-plan-public/org-plan-public.page",
+   "title": "Live-Modus vor Beginn",
+   "n": "Ionic: in den 5 min vor Start ist das erste Feld aktiv (hervorgehoben, Countdown bis Ende des ersten Feldes) / Flutter: vor Start kein aktives Feld (activeIndex −1), stattdessen in der Start-Zeile „beginnt in X Min.“",
+   "sev": "niedrig",
+   "ionic": "src/app/org-plan-public/org-plan-public.page.ts:293",
+   "f": [
+    "lib/core/utils/plan_utils.dart:455",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:88"
+   ]
+  },
+  {
+   "unit": "org-plan-public/org-plan-public.page",
+   "title": "Kein Auto-Scroll zum aktiven Programmpunkt",
+   "n": "Ionic: scrollToActive scrollt im Live-Modus einmal je Plan das aktive Feld in die Bildschirmmitte / Flutter: kein Scrollen",
+   "sev": "niedrig",
+   "ionic": "src/app/org-plan-public/org-plan-public.page.ts:310",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:86"
+   ]
+  },
+  {
+   "unit": "org-plan-public/org-plan-public.page",
+   "title": "Live-Modus: Programmblock-Kopf",
+   "n": "Ionic: Block-Köpfe vor dem aktiven Feld werden wie erledigte Felder ausgegraut (opacity .4), kein Block-Rahmen / Flutter: Kopf des laufenden Blocks bleibt voll sichtbar und erhält einen blauen linken Rand; Köpfe werden nie aktiv",
+   "sev": "niedrig",
+   "ionic": "src/app/org-plan-public/org-plan-public.page.html:94",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:113",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:198"
+   ]
+  },
+  {
+   "unit": "org-plan-public/org-plan-public.page",
+   "title": "Vergangene Pläne: Darstellung",
+   "n": "Ionic: alle Felder im Verlauf ausgegraut (class done-slot, opacity .4) und ohne Info-Zeile / Flutter: Felder voll sichtbar, Info-Zeile wird angezeigt",
+   "sev": "niedrig",
+   "ionic": "src/app/org-plan-public/org-plan-public.page.html:169",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:237",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:138"
+   ]
+  },
+  {
+   "unit": "org-plan-public/org-plan-public.page",
+   "title": "Fehler beim Laden/Aktualisieren",
+   "n": "Ionic: Supabase-Fehler beim Laden der Pläne → leere Liste („Keine bevorstehenden Org-Pläne vorhanden.“) / Flutter: Fehler beim ersten Laden → „Link ungültig oder abgelaufen.“; Fehler beim Pull-to-Refresh → _loadPlans wirft ungefangen, _loading bleibt true (Spinner ohne Refresher), Polling-Timer bleibt gestoppt",
+   "sev": "niedrig",
+   "ionic": "src/app/org-plan-public/org-plan-public.page.ts:102",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:90",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:100",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:319"
+   ]
+  },
+  {
+   "unit": "org-plan-public/org-plan-public.page",
+   "title": "Ladeanzeige",
+   "n": "Ionic: 3 Skeleton-Zeilen in Inset-Liste / Flutter: Spinner (AppSpinner)",
+   "sev": "niedrig",
+   "ionic": "src/app/org-plan-public/org-plan-public.page.html:27",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:297"
+   ]
+  },
+  {
+   "unit": "org-plans/org-plans.page",
+   "title": "Fehler beim Laden der Org-Pläne",
+   "n": "Ionic: Toast „Fehler beim Laden der Organisationspläne“ (danger), Seite zeigt Leerzustand „Keine bevorstehenden Org-Pläne …“ sowie „Ablaufplanung öffnen“ und ggf. den Öffentlicher-Link-Hinweis / Flutter: kein Toast, statt der Liste „Fehler: <Meldung>“; „Ablaufplanung öffnen“, „Vergangene Pläne“ und der Öffentlicher-Link-Kasten fehlen im Fehlerzustand",
+   "sev": "niedrig",
+   "ionic": "src/app/services/organisation/organisation.service.ts:287",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:264"
+   ]
+  },
+  {
+   "unit": "org-plans/org-plans.page",
+   "title": "Ladezustand",
+   "n": "Ionic: 3 Skeleton-Zeilen, darunter bereits „Ablaufplanung öffnen“ / Flutter: Spinner, Aktionskasten erst nach dem Laden",
+   "sev": "niedrig",
+   "ionic": "src/app/org-plans/org-plans.page.html:43",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:250",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:261"
+   ]
+  },
+  {
+   "unit": "org-plans/org-plans.page",
+   "title": "Fehlermeldungen öffentlicher Link",
+   "n": "Ionic: Widerrufen fehlgeschlagen → Toast „Fehler beim Widerrufen des öffentlichen Links“; Erstellen fehlgeschlagen → „Fehler beim Erstellen des öffentlichen Links“ / Flutter: Widerrufen fehlgeschlagen → keine Meldung (nur Erfolgs-Toast entfällt); Erstellen fehlgeschlagen → „Fehler beim Erstellen des Links“",
+   "sev": "niedrig",
+   "ionic": "src/app/services/organisation/organisation.service.ts:335",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:133",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:141"
+   ]
+  },
+  {
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "title": "Fehlermeldung beim Speichern",
+   "n": "Ionic: „Fehler beim Speichern der Organisations-Zusatzfelder“ bzw. „Fehler beim Löschen der gemeinsamen Zusatzfeldwerte“ (danger) / Flutter: einheitlich „Fehler beim Speichern“",
+   "sev": "niedrig",
+   "ionic": "src/app/services/organisation/organisation.service.ts:21",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:116"
+   ]
+  }
+ ]
+}

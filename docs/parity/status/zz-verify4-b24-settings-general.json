@@ -1,0 +1,38 @@
+{
+  "batch": "zz-verify4-b24-settings-general",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "settings/general/type/type.page#text-d58b9b25": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:91",
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:189",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:493"
+      ],
+      "n": "„Erinnerungen werden alle 5 Minuten geprüft und versendet.“ mit fettem Teil (StrongHtmlText), Uhr-Icon in Primärfarbe, nur bei aktivem „Terminerinnerung“ (type.notification bzw. _notification). Sheet→inline ist bei modal-0895b1d0 erfasst. Seite nur Admin/Verantwortlich (beide).",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-c9c25629": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:93",
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:189",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:493"
+      ],
+      "n": "„Die Erinnerung wird versendet, sobald die verbleibende Zeit dem konfigurierten Wert entspricht.“ mit fettem Teil, Rechner-Icon, nur bei notification. Rolle wie Seite (Admin/Verantwortlich).",
+      "v": "bestätigt"
+    },
+    "settings/general/type/type.page#text-79b4c15e": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:96",
+        "lib/features/settings/presentation/widgets/type_reminders_editor.dart:189",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:493"
+      ],
+      "n": "„Maximal 3 Erinnerungen pro Termintyp möglich.“ mit fettem Teil, Glocken-Icon, nur bei notification. Rolle wie Seite (Admin/Verantwortlich).",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

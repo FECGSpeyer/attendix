@@ -1,0 +1,368 @@
+{
+  "batch": "zz-verify2-b15-selfService",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "selfService/signout/signout.page#action-39d272cd": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:127",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:45",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:61"
+      ],
+      "n": "Rollen: Seite für Spieler/ohne Rolle, Helfer, Stimmführer(+Helfer), Bewerber (Admin/Verantw./Beobachter → /people, Eltern → /parents, route_access.dart:73 = Ionic Tab-Bedingung). Schalter bei >1 Instanz für alle diese Rollen inkl. Bewerber, Text longName + Chevron gleich.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#popover-65a161dc": {
+      "s": "ok",
+      "f": [
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:103",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:118",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:212"
+      ],
+      "n": "Popover 220 breit, gleiche Instanzliste (alle tenantUsers, Favoriten zuerst, longName), Badge \"Aktuell\".",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-9d141753": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:95",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:126",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:332"
+      ],
+      "n": "Gleiche Instanz → nichts; sonst Rolle der Zielinstanz laden, setzen, go(role.defaultRoute) = Utils.getUrl(role). Fehlendes Lade-Overlay gehört zum loading-Item.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-77db81e5": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:132"
+      ],
+      "n": "shortName als Titel bei ≤1 Instanz, auch für Bewerber.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-eb37ab2f": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:194",
+        "lib/features/self_service/presentation/pages/signout_page.dart:210"
+      ],
+      "n": "isApplicantProvider = Rolle 7 wie Ionic isApplicant; Gruß nur wenn Person geladen, dann \"Registrierung eingereicht\"-Text.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-77db81e5-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:267",
+        "lib/shared/widgets/layout/ionic_ios.dart:496"
+      ],
+      "n": "Großer Titel nur bei Person und ≤1 Instanz; nur iOS-Look (Ionic collapse=\"condense\" ebenfalls nur iOS).",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-eb37ab2f-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:370"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-22841d1b": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:388"
+      ],
+      "n": "Unabhängig von player_self_pause, wie Ionic.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-d9438f20": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:403",
+        "lib/core/providers/duty_providers.dart:131"
+      ],
+      "n": "useDutyView = tenant.duty_view && im Dienstkreis (Ionic applyDutyLayout).",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-223aca41": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:405"
+      ],
+      "n": "Nur ohne Dienstplan-Ansicht und perc > 0, Farbe percentageColor.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-14785b63": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:413"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-c24f2cc3": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:445",
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:427"
+      ],
+      "n": "Nur in Dienstplan-Ansicht (tenant.duty_view + Dienstkreis); Zähler inkl. angefragter Dienste im Monat wie Ionic; scrollt zu duty-mine.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-51be7392": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:446"
+      ],
+      "n": "Warnfarbe bei >0, scrollt zu \"Bitte bestätigen\".",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-313d3830": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:448"
+      ],
+      "n": "Zählt offene Dienste (duty_self_signup ≠ false, nicht zugeteilt, nicht abgesagt, nicht voll), scrollt zu duty-open.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-ff28907b": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:434",
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:299"
+      ],
+      "n": "Nur ohne Dienstplan-Ansicht und bei Werken ab heute; kein Rollen-/Instanztyp-Filter, wie Ionic.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-5c9afb25": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:441",
+        "lib/features/self_service/presentation/widgets/self_service_absences.dart:40",
+        "lib/core/providers/player_absence_providers.dart:69"
+      ],
+      "n": "canSelfReportAbsenceProvider = player_planned_absence der eigenen Rolle (Ionic getPermissionForRole(tenantUser.role)); ohne Zeile (z. B. Rolle 99) aus, wie Ionic.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-299b3a28": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:449",
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:268",
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:317"
+      ],
+      "n": "Nur ohne Dienstplan-Ansicht und im Dienstkreis; Untertitel \"alles besetzt\" / \"1 offen\" / \"n offen\".",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-d67f2672": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:87"
+      ],
+      "n": "Für alle Rollen der Seite, unabhängig von der Dienstplan-Ansicht.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-d0cf994d": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:97",
+        "lib/data/repositories/duty_repository.dart:41"
+      ],
+      "n": "typeInfo || Typname; Ionic getEventTitle nutzt attType ohne hide_name → gleiches Ergebnis.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-9cb90d02": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:101"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-1978eaee": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:105",
+        "lib/features/duty/presentation/widgets/duty_actions.dart:70",
+        "lib/data/repositories/duty_repository.dart:153"
+      ],
+      "n": "Gleicher Write: person_attendances duty_state confirmed, status Anwesend, notes '', changed_by/at; Toast \"Dienst bestätigt\".",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-8cc3cbd4": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:111",
+        "lib/features/duty/presentation/widgets/duty_actions.dart:129",
+        "lib/core/providers/duty_providers.dart:256"
+      ],
+      "n": "Grund-Auswahl (Abmeldung), signOut isSelf → Entschuldigt + understaffed-Hinweis, Toast \"Vielen Dank für deine rechtzeitige Abmeldung …\".",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#modal-bb6f0815": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:317",
+        "lib/features/self_service/presentation/pages/signout_page.dart:454"
+      ],
+      "n": "Sheet 0.75 wie Ionic, Trigger Kachel. Push-Trigger (\"wer springt ein?\") weicht ab, steht im Zusatzbefund aus Runde 1 (mittel); dort zusätzlich: das Aktionsblatt des nicht zugeteilten Dienstes bietet \"Zusagen\", das nur Status Anwesend schreibt und den Dienst nicht übernimmt.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-4ddd96dd": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:334"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-8fd5a983": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:335"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-3e9b3859": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:346",
+        "lib/data/repositories/duty_repository.dart:41"
+      ],
+      "n": "typeInfo || Typname || \"Dienst\" wie dutyTitle.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-e7fbeddd": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:348",
+        "lib/features/duty/presentation/widgets/duty_actions.dart:157",
+        "lib/data/repositories/duty_repository.dart:174"
+      ],
+      "n": "RPC duty_take, bei ok duty-notify filled, Toasts ok/voll/nicht erlaubt gleich. Sheet bleibt nach letzter Übernahme offen – bereits Zusatzbefund Runde 1 (niedrig).",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-ffd9437f": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:341"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-0ad28852": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:354",
+        "lib/features/duty/presentation/pages/unavailability_page.dart:21"
+      ],
+      "n": "Schließt Sheet, öffnet \"Regelmäßig verhindert\" als Vollbild für die eigene Person; Icon event_busy statt calendar-clear (kosmetisch).",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#modal-817fa88b": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:299",
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:61"
+      ],
+      "n": "Sheet 0.8 (mehrere Termine) / 0.6. Instrument für Rotmarkierung/Notenoptionen im Sheet kommt aus einer Abfrage ohne tenantId → siehe extra.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-b492506d": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:78"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-9ddaf7b2": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:77"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-38eb4831": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:87",
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:29"
+      ],
+      "n": "PDF \"aktuelle_noten.pdf\" der eigenen Stimme aus der instanzgefilterten Person (Chor: Chor (alle)); Warn-Toast wenn keine Noten.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-50b441ab": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:252"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#embed-c2ceeb43": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/signout_page.dart:278",
+        "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:52",
+        "lib/core/providers/team_org_providers.dart:123"
+      ],
+      "n": "Nur bei Teamorganisation (Typ mit enable_protocol), wie Ionic teamOrgEnabled; Aufgaben nach tenant_id + eigener Person.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-ed265ebd": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_absences.dart:167",
+        "lib/features/self_service/presentation/widgets/self_service_absences.dart:177"
+      ],
+      "n": "Nur bei player_planned_absence der eigenen Rolle und vorhandenen Abwesenheiten (person_id + tenant_id, nach from_date).",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-bf502373": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/widgets/planned_absences.dart:291",
+        "lib/features/people/presentation/widgets/planned_absences.dart:17"
+      ],
+      "n": "dd.MM.yyyy – dd.MM.yyyy.",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#text-dc70bcdf": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/widgets/planned_absences.dart:292"
+      ],
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-6edb2695": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/widgets/planned_absences.dart:293",
+        "lib/features/self_service/presentation/widgets/self_service_absences.dart:183",
+        "lib/features/people/presentation/widgets/planned_absences.dart:248"
+      ],
+      "n": "Gleiche Rollenbedingung; Alert \"Abwesenheit löschen\" mit gleichem Text, Löschen/Abbrechen, Toast \"Abwesenheit gelöscht\". Welche Termine zurückgesetzt werden, weicht in Randfällen ab – bereits Zusatzbefund Runde 1 (hoch).",
+      "v": "bestätigt"
+    },
+    "selfService/signout/signout.page#action-82c6a8f8": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:245",
+        "lib/shared/widgets/event_list/excuse_reason_sheet.dart:18",
+        "lib/features/self_service/presentation/pages/signout_page.dart:698"
+      ],
+      "n": "Gründe der Instanz bzw. gleiche Standardgründe; Absage/Verspätung → signOut isSelf + understaffed-Hinweis + Dank-Toast.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": [
+    {
+      "unit": "selfService/signout/signout.page",
+      "title": "Aktuelle Werke: Instrument aus anderer Instanz",
+      "n": "Ionic: Rotmarkierung (hasSongNotesForPlayer) und Notenoptionen (openSongOptions) nutzen this.player.instrument (Person per appId + tenantId). / Flutter: UpcomingSongsSheet nimmt currentPlayerInstrumentProvider = player per appId ohne tenantId, limit(1). Bei Personen in mehreren Instanzen kann die Stimme einer anderen Instanz kommen → alle Werke rot, Toast \"keine Noten für dein Instrument\", Notenoptionen ohne eigene Stimme. Drucken nutzt die gefilterte Person (ok).",
+      "sev": "hoch",
+      "ionic": "src/app/selfService/signout/signout.page.ts:1141",
+      "f": [
+        "lib/features/self_service/data/providers/upcoming_songs_provider.dart:87",
+        "lib/features/self_service/data/providers/upcoming_songs_provider.dart:96",
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:56",
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:127",
+        "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:266"
+      ]
+    }
+  ]
+}

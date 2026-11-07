@@ -1,0 +1,448 @@
+{
+ "batch": "zz-verify6-sonnet-34",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "shared-plan/shared-plan.page#action-47ec43ec": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:756-762"
+   ],
+   "v": "bestätigt",
+   "n": "Live-Schalter nur bei isLiveNow, danger/primary, schaltet Live-Modus; Auto-Start beim Laden vorhanden (Z.295). Ionic: Icon radio / Flutter: sensors.",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#action-942dc972": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:674"
+   ],
+   "v": "bestätigt",
+   "n": "„Feld hinzufügen“ im Popover am „+“ (nur Bearbeitungsmodus)."
+  },
+  "shared-plan/shared-plan.page#action-dd1ccee4": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:675"
+   ],
+   "v": "bestätigt",
+   "n": "„Notizfeld hinzufügen“ im Popover."
+  },
+  "shared-plan/shared-plan.page#action-f8b2b6c5": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:518-540",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:790"
+   ],
+   "v": "bestätigt",
+   "n": "Plan-Chips, Wechsel setzt Live neu; im Bearbeitungsmodus werden offene Änderungen vorher gespeichert (Flutter besser). Ionic: Live-Zustand beim Wechsel fehlerhaft.",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#actionsheet-7d9d8ba7": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:718-740",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:71-77"
+   ],
+   "v": "bestätigt",
+   "n": "Header „Exportieren“, „PDF (A4)“, „PDF (2x A5)“, „Abbrechen“; ohne Bild/Telegram wie Ionic. Nur Icons zusätzlich.",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#alert-0caf6a44": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:651-667"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: Alert mit Zeitfeld, Speichern/Abbrechen / Flutter: System-Zeitwahl 24 h. Gespeichert: Ad-hoc-Plan `${date}T${HH:mm}` wie Ionic; Termin-Plan Flutter nur „HH:mm“ (Ionic schreibt „date T HH:mm“, was seine eigene Termin-Seite mit substring(0,2) nicht lesen kann – Flutter-Format ist das kompatible). Flutter speichert zudem time/end_time beim geteilten Plan (Ionic nur fields+plan_title) – Flutter besser.",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#alert-29f54454": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/shared_plan_edit_list.dart:45-80",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:177-191"
+   ],
+   "v": "korrigiert",
+   "n": "Korrektur der Referenz: geteilter Plan nutzt shared_plan_edit_list.dart (nicht plan_fields_editor). „Feld bearbeiten“ mit Programmpunkt/Ausführender/Info/Dauer; Notiz nur Text; Speichern/Abbrechen gleich; Dauer wird nur bei >0 übernommen wie Ionic. Unterschiede: leerer Name zeigt Fehlermeldung (Ionic stumm), Block-Kopf ohne Dauerfeld, Beschriftung „Minuten“ statt „Dauer (min)“. Tippen auf Block-Kopf öffnet hier ebenfalls das Feld-Dialog (frühere Notiz falsch).",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#alert-5d93ade6": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:693-706"
+   ],
+   "v": "bestätigt",
+   "n": "Titel „Notizfeld hinzufügen“ statt „Notiz hinzufügen“; Meldung bei leerer Notiz (Ionic stumm); Notiz-Feld (noteFld, Dauer 0) gleich.",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#alert-fe4c6b4f": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:680-692",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:177-191"
+   ],
+   "v": "bestätigt",
+   "n": "Feld hinzufügen: gleiche Felder, Dauer 20, id `${name}-${ts}`, getrimmt; Flutter zeigt Meldung bei leerem Namen (Ionic stumm).",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#popover-84d9bbdf": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:669-676"
+   ],
+   "v": "bestätigt",
+   "n": "Popover am „+“ (nur Bearbeitungsmodus) mit beiden Einträgen."
+  },
+  "shared-plan/shared-plan.page#text-36e09e6c": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:836-841",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:207-217"
+   ],
+   "v": "bestätigt",
+   "n": "„Ende“: Bearbeitungsmodus nur bei gespeichertem end (wie Ionic); Nur-Lesen berechnet Ende zusätzlich aus Start + Dauern.",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#text-5a696bcb": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:778-784"
+   ],
+   "v": "bestätigt",
+   "n": "„Plan nicht gefunden. …“ in Karte."
+  },
+  "shared-plan/shared-plan.page#toast-2ab6b1bd": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:633"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter besser: „Fehler beim Speichern“ (danger) bei jedem fehlgeschlagenen Speichern; Ionic nur bei geworfener Exception.",
+   "sev": "niedrig"
+  },
+  "shared/attendance-response-modal/attendance-response-modal.component#toast-83a5af5a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:78-88",
+    "lib/data/repositories/auto_message_repository.dart:419-421"
+   ],
+   "v": "bestätigt",
+   "n": "Fehlercode expired/alreadyDecided → eigene Texte, sonst respFailed; roter Toast."
+  },
+  "shared/audio-player/audio-player.component#action-4b13b062": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:132"
+   ],
+   "v": "bestätigt",
+   "n": "Close-Icon stoppt Wiedergabe und blendet Leiste aus."
+  },
+  "shared/audio-player/audio-player.component#field-2b108a9d": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:162"
+   ],
+   "v": "bestätigt",
+   "n": "Seek-Slider, Springen beim Loslassen (startSeeking/stopSeeking)."
+  },
+  "shared/audio-player/audio-player.component#text-05909793": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:186"
+   ],
+   "v": "bestätigt",
+   "n": "Gesamtdauer m:ss."
+  },
+  "shared/audio-player/audio-player.component#text-6d380bee": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:112"
+   ],
+   "v": "bestätigt",
+   "n": "Songname, sonst Dateiname, einzeilig."
+  },
+  "shared/audio-player/audio-player.component#text-c16c5e16": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:143",
+    "lib/core/services/audio_player/audio_player_service.dart:116"
+   ],
+   "v": "bestätigt",
+   "n": "Aktuelle Zeit m:ss."
+  },
+  "shared/audio-player/audio-player.component#text-e24bb605": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:127"
+   ],
+   "v": "bestätigt",
+   "n": "Warteschlangenposition „n/m“ nur bei Queue."
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#action-9be93d63": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:105-110",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:148-151"
+   ],
+   "v": "bestätigt",
+   "n": "Häkchen rechts, deaktiviert bis bestätigbar (>4 Zeichen bei freiem Text); zusätzlich großer „Bestätigen“-Button.",
+   "sev": "niedrig"
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#action-e4239dd0": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:98-102"
+   ],
+   "v": "bestätigt",
+   "n": "X links schließt ohne Ergebnis."
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#field-432c437c": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:130-146"
+   ],
+   "v": "bestätigt",
+   "n": "Label „Grund“, Platzhalter „Mindestens 5 Zeichen eingeben...“, Großschreibung, 5-Zeichen-Regel gleich. Flutter: Autofokus, umrandet, 2–5 Zeilen.",
+   "sev": "niedrig"
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#field-d6ba74db": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:115-129"
+   ],
+   "v": "bestätigt",
+   "n": "Gründe in Reihenfolge + „Sonstiger Grund (Text)“; Vorauswahl heute = freier Text, sonst erster Grund."
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#modal-f35f9845": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:27-33"
+   ],
+   "v": "bestätigt",
+   "n": "Bottom-Sheet; Höhe nach Inhalt statt Breakpoints (nur Optik)."
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#text-35e99679": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:140"
+   ],
+   "v": "bestätigt",
+   "n": "„Grund“ als Label."
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#text-7faca216": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:97"
+   ],
+   "v": "bestätigt",
+   "n": "Titel „Verspätung“/„Abmeldung“ je nach isLate."
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-0d52550a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:271-275"
+   ],
+   "v": "korrigiert",
+   "n": "Flutter hat jetzt X-Button links in der Kopfzeile (schließt ohne Auswahl); frühere Abweichung behoben."
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-a9992099": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:342-351"
+   ],
+   "v": "korrigiert",
+   "n": "Ordnerzeile: Ordner-Icon in primary, Tippen öffnet Unterordner, trailing „Wählen“ wählt diesen Unterordner (Pfad ab Instanz-Präfix). Frühere Notiz zu Icon-Farbe überholt."
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-ef82aba3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:282-287"
+   ],
+   "v": "korrigiert",
+   "n": "Häkchen rechts in der Kopfzeile, deaktiviert im Hauptordner/beim Laden, wählt aktuellen Ordner; zusätzlich Zeile „Diesen Ordner wählen: …“ wie Ionic. Frühere Abweichung behoben."
+  },
+  "shared/files-folder-picker/files-folder-picker.component#modal-9164bfef": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:175-190"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: Sheet voll hoch / Flutter: Bottom-Sheet bis max. 75 %, Drag-Handle. Nur Darstellung.",
+   "sev": "niedrig"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#toast-6a3e186f": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:248-251"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: roter Toast „Fehler beim Laden der Ordner: {error}“ / Flutter: gleicher Text als rote Zeile im Sheet; Fehler bleibt sichtbar. Rückfall auf Hauptordner wie Ionic.",
+   "sev": "niedrig"
+  },
+  "shared/image-viewer/image-viewer.component#action-236047c8": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:357-361"
+   ],
+   "v": "bestätigt",
+   "n": "Plus, deaktiviert bei 500 %, Faktor 1,5 statt 1,6; Tasten +/= vorhanden.",
+   "sev": "niedrig"
+  },
+  "shared/image-viewer/image-viewer.component#action-24790a96": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:331-335"
+   ],
+   "v": "bestätigt",
+   "n": "Minus, deaktiviert bei 100 %, Faktor 1/1,5 statt 1/1,6.",
+   "sev": "niedrig"
+  },
+  "shared/image-viewer/image-viewer.component#action-3ac52411": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:338-356"
+   ],
+   "v": "bestätigt",
+   "n": "„{n} %“ mit geschütztem Leerzeichen, Tippen = 100 %."
+  },
+  "shared/image-viewer/image-viewer.component#action-4620a8c0": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:303-307"
+   ],
+   "v": "bestätigt",
+   "n": "X oben rechts schließt; Esc ebenfalls."
+  },
+  "shared/image-viewer/image-viewer.component#action-54bf8f0b": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:242-262"
+   ],
+   "v": "bestätigt",
+   "n": "Spinner, dann Bild; Ladefehler: Flutter ohne fallbackSrc (Avatar-Platzhalter), direkt Fehleranzeige. Viewer wird für Passbild nur bei vorhandenem Bild geöffnet.",
+   "sev": "niedrig"
+  },
+  "shared/image-viewer/image-viewer.component#action-dd54e64c": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:181-204",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:227-233",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:248-261"
+   ],
+   "v": "bestätigt",
+   "n": "Pinch/Pan/Mausrad/Doppeltipp, Fehlertext „Bild konnte nicht geladen werden“. Ionic: Wischen hoch/runter ab 110 px oder Schnellwisch, Gummiband / Flutter: nur runter ab 120 px, kein Gummiband.",
+   "sev": "niedrig"
+  },
+  "shared/image-viewer/image-viewer.component#text-59c21e83": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:402-425"
+   ],
+   "v": "bestätigt",
+   "n": "Hinweistext gleich; Flutter bei jedem Öffnen 3 s ohne Icon, Ionic nur beim ersten Öffnen.",
+   "sev": "niedrig"
+  },
+  "shared/image-viewer/image-viewer.component#text-c27ded53": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:293-302",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:164",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:154",
+    "lib/features/settings/presentation/pages/files_page.dart:358"
+   ],
+   "v": "bestätigt",
+   "n": "Titel: Dateiablage Dateiname wie Ionic; Passbild zeigt Flutter zusätzlich einen Titel (Ionic keinen).",
+   "sev": "niedrig"
+  },
+  "shared/message-editor/message-editor.component#action-b11ec5dc": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_editor_toolbar.dart:28-29"
+   ],
+   "v": "bestätigt",
+   "n": "Nummerierte Liste vorhanden (flutter_quill-Toolbar); Reihenfolge Nummerierung/Aufzählung vertauscht. Korrektur der Referenz: Toolbar liegt in message_editor_toolbar.dart.",
+   "sev": "niedrig"
+  },
+  "shared/message-editor/message-editor.component#action-ee5fa118": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_editor_toolbar.dart:27",
+    "lib/core/utils/tiptap_converter.dart:47"
+   ],
+   "v": "bestätigt",
+   "n": "Ionic: Umschalter „H“ (Ebene 2) / Flutter: Überschrift-Dropdown (H1→2, H2, H3→3, Normal); Server rendert h2/h3. Referenz korrigiert.",
+   "sev": "niedrig"
+  },
+  "shared/notification-bell/notification-bell.component#action-28195174": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:307-316",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:230-240"
+   ],
+   "v": "bestätigt",
+   "n": "Roter Papierkorb nur bei Einträgen; Rückfrage „Alle löschen“ (Text je nach Segment, „Löschen“ destruktiv), löscht je Segment."
+  },
+  "shared/notification-bell/notification-bell.component#action-2c78ceb5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:426-432"
+   ],
+   "v": "bestätigt",
+   "n": "Pull-to-Refresh lädt Liste und Badge neu."
+  },
+  "shared/notification-bell/notification-bell.component#action-37616b6e": {
+   "s": "diff",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:279-286",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:98-163",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:581-590"
+   ],
+   "v": "bestätigt",
+   "n": "Tippen markiert gelesen und navigiert (Nachricht, Route mit Instanzwechsel, Termin rollenabhängig Detail/Signout/Parents wie push.navigateToAttendance; ohne Ziel nur schließen). Ionic: Chevron nur bei Termin/Nachricht / Flutter auch bei Routeneinträgen.",
+   "sev": "niedrig"
+  },
+  "shared/notification-bell/notification-bell.component#action-9de90710": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:171-180"
+   ],
+   "v": "bestätigt",
+   "n": "Glocke mit rotem Badge (>99 → 99+) nur bei ungelesenen."
+  },
+  "shared/notification-bell/notification-bell.component#action-c59a8490": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:512-522"
+   ],
+   "v": "bestätigt",
+   "n": "Wischen links: danger, Papierkorb, löscht ohne Rückfrage."
+  },
+  "shared/notification-bell/notification-bell.component#action-d04c1557": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:296-306"
+   ],
+   "v": "bestätigt",
+   "n": "Doppelhaken nur bei ungelesenen der aktuellen Instanz; markiert je Segment."
+  },
+  "shared/notification-bell/notification-bell.component#action-dd7004d9": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:500-511"
+   ],
+   "v": "bestätigt",
+   "n": "Wischen rechts: primary, Icon je Lesezustand, schaltet um."
+  },
+  "shared/notification-bell/notification-bell.component#alert-7b9d7085": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:217-228",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:242-271"
+   ],
+   "v": "bestätigt",
+   "n": "Nur Segment „Alle“: Rückfrage „Alle als gelesen markieren?“ / Abbrechen / „Markieren“; aktuelle Instanz ohne Rückfrage."
+  }
+ },
+ "extra": []
+}

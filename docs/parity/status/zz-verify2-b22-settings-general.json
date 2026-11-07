@@ -1,0 +1,39 @@
+{
+  "batch": "zz-verify2-b22-settings-general",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "settings/general/branding/branding.page#media-198547cf": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:172",
+        "lib/features/settings/presentation/pages/branding_page.dart:183"
+      ],
+      "n": "Logo-Vorschau gleich: nur mit Organisation und vorhandenem Logo, im Abschnitt 'Logo' über 'Logo ersetzen', zentriert, max. 200×120, weißer Hintergrund, Radius 8, Padding 8, contain; Seite nur Admin/Verantwortlich (Route /settings/general). Ionic alt='Logo' fehlt in Flutter (Image.network ohne semanticLabel; Screenreader/Ladefehler zeigt nur Symbol)."
+    },
+    "x-b7ea470e58": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/data/repositories/extra_fields_repository.dart:72",
+        "lib/data/repositories/extra_fields_repository.dart:94",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:186"
+      ],
+      "n": "Flutter besser: Befund real (Flutter bereinigt alle Personen der Instanz inkl. archivierter und ausstehender, gepaged; Ionic db.getPlayers() nur aktive, nicht ausstehende, max. 1000), aber ohne sichtbare Folge: fehlende Werte zeigen beide Apps ohnehin als Standard an, entfernt werden nur Werte gelöschter Felder, ungültige Auswahlwerte werden ersetzt. Ergebnis: konsistente Daten auch bei Archivierten/Bewerbern. Erstreview mittel zu hoch.",
+      "v": "korrigiert"
+    },
+    "x-a3d381bce7": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/data/repositories/extra_fields_repository.dart:72",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:187",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:112"
+      ],
+      "n": "Flutter besser (mit Einschränkung): Befund real. Ionic schreibt bei genutzter Quell-Bibliothek die Werkfelder der eigenen Instanz in die Werke der Quell-Instanz (RLS admins_manage_songs erlaubt es) und löscht dort Werte von Feldern, die nur die Quell-Instanz kennt – fremde Daten werden verändert. Flutter fasst nur eigene Werke an. Folge in Flutter: ungültige Auswahlwerte/Reste gelöschter Felder in Bibliothekswerken bleiben; fehlende Standardwerte zeigen beide Apps beim Öffnen ohnehin an. Erstreview mittel zu hoch.",
+      "v": "korrigiert"
+    }
+  },
+  "extra": []
+}

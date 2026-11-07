@@ -1,0 +1,417 @@
+{
+ "batch": "zz-verify6-opus-19",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "services/db.service#db-1e5584c0": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2141",
+    "lib/data/repositories/player_repository.dart:2158",
+    "lib/data/repositories/player_repository.dart:925",
+    "lib/data/repositories/player_repository.dart:652"
+   ],
+   "n": "Eintritt: addPlayerToAttendancesByDate lädt Termine der Instanz (tenantId bzw. Ziel-tenantId bei Übergabe) mit date > Eintrittstag, paginiert, Typ-/Zusatzfeldfilter, default_status – Anlegen, Import, Genehmigen, Übergabe, Selbstregistrierung wie Ionic. Austritt: archivePlayer → removeFromUpcomingAttendances(from: left) mit date >= Austrittstag (Termine 12 Uhr normiert → gleiche Menge). Sortierung ohne Bedeutung. Zusammenführen nutzt in Flutter einen anderen Weg (siehe extra).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-241c9ebf": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/admin_repository.dart:153",
+    "lib/core/providers/admin_providers.dart:67",
+    "lib/data/repositories/player_repository.dart:672"
+   ],
+   "n": "deleteAdmin (Einstellungen „Administrator entfernen“): tenantUsers delete mit tenantId + role=ADMIN + userId in AdminRepository.removeAdmin; gleicher Zweig in PlayerRepository.removeUserFromTenant(deleteAdmin). Unverändert.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-2d9e88d3": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:950",
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:175"
+   ],
+   "n": "Termin verschieben: history.date = neues, auf 12 Uhr normiertes Datum, Filter attendance_id + tenantId, nach dem Termin-Update wie Ionic changeAttendanceDate.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-35a09ab7": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:925",
+    "lib/data/repositories/player_repository.dart:937",
+    "lib/data/repositories/player_repository.dart:873",
+    "lib/data/repositories/cross_tenant_person_repository.dart:340"
+   ],
+   "n": "Pause mit Startdatum: Termine der Instanz mit date >= Startdatum (tenantId) → person_attendances der Person löschen, auch vergangene; ohne Datum ab heute. Pause in anderer Instanz: deren tenantId wie Ionic (Flutter nur für Instanzen mit Admin/Verantwortlich, am Pause-Dialog erfasst).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-50229123": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/song_repository.dart:738",
+    "lib/data/repositories/song_repository.dart:680",
+    "lib/data/repositories/public_song_repository.dart:156",
+    "lib/data/repositories/dashboard_repository.dart:148"
+   ],
+   "n": "history nach tenantId (eigene bzw. freigegebene Instanz), date > heute 0 Uhr (lokal), Gruppierung „TT.MM.JJJJ | typeInfo/sichtbarer Typname“, Gruppen nach Datum aufsteigend und gleiche Tage nach max. attendance_id, Einträge nach attendance_id absteigend – wie Ionic. Übersicht-Karte nutzt eigene gleichwertige Abfrage.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-674632d0": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/import_repository.dart:80",
+    "lib/features/songs/presentation/pages/song_import_page.dart:117"
+   ],
+   "n": "songs number/prefix der effektiven Werkbibliothek (song_source_tenant_id, sonst eigene Instanz), seitenweise 1000, Schlüssel prefix+number für Duplikate beim Werk-Import – wie Ionic effectiveSongTenantId().",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-6c2884c9": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/parent_repository.dart:55",
+    "lib/core/providers/parent_providers.dart:99",
+    "lib/core/providers/parent_providers.dart:123"
+   ],
+   "n": "registerUser(Rolle Elternteil) → insert parents {appId, email, firstName, lastName, tenantId} → tenantUsers.parent_id (linkParentToTenantUser); Insert-Fehler → „Fehler beim hinzufügen des Elternteils.“ wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-6ed0d891": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:1152",
+    "lib/features/people/presentation/pages/people_list_page.dart:135",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:192"
+   ],
+   "n": "player mit tenantId, paused=true, paused_until nicht null und <= heute → paused=false, paused_until=null, History „Automatisch reaktiviert (Pausendatum erreicht)“ (UNPAUSED), Aufnahme in kommende Termine mit Schichtstatus. Auslöser wie Ionic: Personenliste nur Admin/Verantwortlich, Meine Termine bei erlaubter Selbstpause; Demo-Sperre wie updatePlayer.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-6f76f783": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/organisation_repository.dart:335"
+   ],
+   "n": "Verknüpfte Instanzen = andere Instanzen derselben Organisation(en); Flutter filtert serverseitig (tenant_group in eigenen Gruppen, tenant_id ≠ aktuelle) und prüft zusätzlich die eigene Mitgliedschaft (für jede Rolle gegeben). Keine Rollenbedingung.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-6f7cc08a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:692"
+   ],
+   "n": "Mit personId: weitere aktive Person desselben Kontos (tenantId, appId, left null, id ≠ personId, limit 1) → Zugang bleibt. Alle Aufrufer (Archivieren :624, Löschen :827, Ablehnen :1293, Konto trennen :1524) übergeben personId wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-73e39b3e": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:539"
+   ],
+   "n": "pickPersonFields(Person) ohne id/created_at; tenantId nicht im Body, dafür Filter id + tenantId; img nicht enthalten wie Ionic; Demo-Sperre wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-7905be27": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:590",
+    "lib/data/repositories/sign_in_out_repository.dart:631",
+    "lib/data/repositories/sign_in_out_repository.dart:29"
+   ],
+   "n": "Flutter besser: Ionic wählt attendance ohne „archived“, der Rollenfilter im Aufrufer (canSeeArchivedAttendances je Mitgliedsrolle) greift daher nie → instanzübergreifende Übersicht zeigt archivierte Termine allen Rollen und zählt sie mit / Flutter lädt archived und blendet sie für alle außer Admin/Verantwortlich aus (= erkennbare Ionic-Absicht). Sonst gleich: person_id, attendance.tenantId (inner join), date > seasonStart bzw. 2023-01-01.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/db.service#db-7932c0e0": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:376",
+    "lib/data/repositories/player_repository.dart:1757",
+    "lib/features/registration/data/providers/registration_providers.dart:236",
+    "lib/features/people/presentation/pages/person_create_page.dart:1017",
+    "lib/features/people/presentation/pages/person_import_page.dart:236"
+   ],
+   "n": "player.id nach appId + tenantId (bzw. Ziel-tenantId bei Übergabe), limit 1, maybeSingle → vorhandene Zeile wird mit left=null reaktiviert statt eingefügt; Anlegen, Import mit Konten, Übergabe und Selbstregistrierung. Rolle des neuen Kontos gleich (Hauptgruppe → Verantwortlich, sonst Spieler).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-7ea61b92": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:362",
+    "lib/data/repositories/player_repository.dart:1550",
+    "lib/data/repositories/player_repository.dart:1573",
+    "lib/data/repositories/attendance_repository.dart:392",
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:91"
+   ],
+   "n": "person_attendances der Person mit Join auf attendance (tenantId); archivierte nur für Admin/Verantwortlich (Meine Termine, Personenseite Statistik/Historie, Elternportal). Datumsgrenze: Meine Termine Saisonstart bzw. 2020; Personenseite lädt alles und filtert clientseitig (Saisonstart/„Alle anzeigen“ sind Seiten-Items); Elternportal ohne 2020-Grenze (praktisch gleich).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-8d10beae": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:63",
+    "lib/data/repositories/player_repository.dart:79",
+    "lib/core/providers/realtime_providers.dart:56",
+    "lib/features/members/data/providers/members_providers.dart:68",
+    "lib/features/people/people_list_utils.dart:60"
+   ],
+   "n": "Standardzweig: tenantId, left null, pending=false; Sortierung jetzt wie Ionic instrument aufsteigend, isLeader absteigend, lastName aufsteigend (ascending explizit). Anzeigende Aufrufer sortieren zusätzlich clientseitig wie Ionic getModifiedPlayersForList. Eltern erreichen keine Seite mit getPlayers() (eigener Weg getChildrenForParent).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-973409b9": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:892",
+    "lib/core/providers/song_providers.dart:171",
+    "lib/data/repositories/song_repository.dart:738"
+   ],
+   "n": "Planung: Dirigentenname, „Aktuelle Werke“ und Werk-Platzhalter aus künftiger history der aktuellen Instanz (currentTenantId). Ionic filtert clientseitig nach Termin- bzw. Eintragsdatum ab heute in DB-Reihenfolge, Flutter serverseitig nach history.date (beim Verschieben mitgeführt), nach Datum sortiert – praktisch gleich.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-9dda4c79": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/viewer_repository.dart:38",
+    "lib/core/providers/viewer_providers.dart:87"
+   ],
+   "n": "registerUser(Rolle Beobachter) → insert viewers {appId, email, firstName, lastName, tenantId}; Insert-Fehler → „Fehler beim hinzufügen des Beobachters.“ wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-9e81b5f6": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:715",
+    "lib/data/repositories/player_repository.dart:758",
+    "lib/data/repositories/player_repository.dart:768"
+   ],
+   "n": "Mit E-Mail zuerst Konto anlegen/verknüpfen (appId in player), dann left = null + History „Person wieder aktiviert“ (RETURNED), Filter id + tenantId; danach Aufnahme in kommende Termine mit Schicht-/Zusatzfeldfiltern. Vorhandener Zugang wird wiederverwendet statt neu registriert (Ionic würde hier abbrechen).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-9f804cab": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:1617"
+   ],
+   "n": "Namens-Fallback: Ziel-tenantId + ilike firstName/lastName (getrimmt, Flutter maskiert %/_), limit 1, auch wenn eine E-Mail gesetzt war, aber nicht gefunden; beide leer → false – wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-c465c027": {
+   "s": "diff",
+   "f": [
+    "lib/core/providers/user_preferences_provider.dart:139",
+    "lib/core/providers/user_preferences_provider.dart:150",
+    "lib/core/providers/tenant_providers.dart:273"
+   ],
+   "n": "Ionic: updateUser({data:{currentTenantId, wantInstanceSelection}}) – GoTrue führt nur diese zwei Schlüssel zusammen / Flutter: updateCurrentTenantId schickt die komplette lokale user_metadata plus currentTenantId. Ist die lokale Kopie veraltet (showSongsTab_*/dashboardCards_* zwischenzeitlich auf anderem Gerät geändert), setzt ein Instanzwechsel diese Einstellungen in der DB auf den alten Wert zurück. Erstprüfung „niedrig“ zu niedrig: anderer gespeicherter Wert (Einstellungen gehen verloren), wenn auch nur bei Mehrgeräte-Nutzung. Bedingung (nur bei geändertem currentTenantId) gleich.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "services/db.service#db-c9fc0740": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/player_repository.dart:605",
+    "lib/data/repositories/player_repository.dart:623",
+    "lib/data/repositories/player_repository.dart:645",
+    "lib/data/repositories/player_repository.dart:652"
+   ],
+   "n": "Flutter besser: Ionic entfernt Zugang (tenantUsers, außer Admin/weitere aktive Person) und appId beim Archivieren nur bei appId UND E-Mail – ein Konto ohne E-Mail behält Zugang zur Instanz / Flutter bei appId. left, History „Kein Grund angegeben“-Fallback (ARCHIVED), Filter id + tenantId und Entfernen aus Terminen ab Austritt gleich.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/db.service#db-cc6767aa": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/dashboard_repository.dart:62",
+    "lib/data/repositories/dashboard_repository.dart:83",
+    "lib/core/utils/dashboard_logic.dart:107"
+   ],
+   "n": "Fix greift: Übersicht „Termine“ lädt die 5 letzten Termine vor heute (> Saisonstart, absteigend) und die 5 nächsten ab heute (aufsteigend) mit Personen; letzter beendeter / erster nicht beendeter Termin (laufende mehrtägige zählen als kommend) wie Ionic. Archiv-Filter ohne Wirkung, da Übersicht nur Admin/Verantwortlich (Route-Guard) – wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-cc6767aa-2": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:49",
+    "lib/core/providers/plan_providers.dart:52",
+    "lib/core/providers/attendance_providers.dart:275"
+   ],
+   "n": "Termine ohne Personen-Anwesenheit nach tenantId, date > Saisonstart (Fallback 2023), Datum absteigend; archivierte nur für Admin/Verantwortlich wie filterArchivedForRole (Planung, Prozentwerte der Personenliste).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-d030c88f": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/profile_repository.dart:356",
+    "lib/data/repositories/profile_repository.dart:374",
+    "lib/data/repositories/profile_repository.dart:393",
+    "lib/core/providers/profile_providers.dart:188"
+   ],
+   "n": "Flutter besser: Ionic schreibt firstName/lastName/phone/birthday/img/correctBirthday UND additional_fields der aktuellen Instanz in alle player-Zeilen mit appId (überschreibt Zusatzfelder anderer Instanzen) / Flutter: Stammdaten (getrimmt, correctBirthday nur bei geändertem Geburtstag) in alle eigenen Zeilen, additional_fields nur in der aktuellen Instanz; img nicht in diesem Speichern (Bild separat, ebenfalls instanzübergreifend).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/db.service#db-d20467f8": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:253",
+    "lib/data/repositories/player_repository.dart:266",
+    "lib/features/parents/data/providers/parents_providers.dart:227"
+   ],
+   "n": "Erstverdikt überholt: getChildrenForParent sortiert jetzt wie Ionic instrument aufsteigend, isLeader absteigend, lastName; Filter tenantId, parent_id, pending=false, left null gleich. Ionic sortiert im Elternportal nicht nach → gleiche Reihenfolge. Ionic kürzt die Personen-History, die aber in keinem der beiden Elternportale angezeigt wird.",
+   "v": "korrigiert"
+  },
+  "services/db.service#db-d2175ed2": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/player_repository.dart:682",
+    "lib/data/repositories/player_repository.dart:670",
+    "lib/data/repositories/player_repository.dart:1511"
+   ],
+   "n": "Flutter besser: Rollenlogik gleich (Konto mit Rolle Admin in der Instanz behält Zugang, sonst tenantUsers-Zeile löschen; deleteAdmin löscht nur die Admin-Zeile). Demo-Konto: Ionic removeUserFromTenant hat keine Demo-Sperre – „Account entfernen“ (Personenseite) löscht die tenantUsers-Zeile, erst das folgende updatePlayer bricht mit Demo-Toast ab / Flutter blockt vorher (ensureNotDemo in unlinkAccount und removeUserFromTenant).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/db.service#db-df38a8de": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/viewer_repository.dart:64"
+   ],
+   "n": "Vorher tenantUsers-Zeile des Kontos (tenantId, außer Admin) entfernen, bei Fehler Abbruch mit „Fehler beim Entfernen der E-Mail aus der Authentifizierung“; dann viewers per id + tenantId löschen, Fehler „Fehler beim Löschen des Beobachters“ – wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-e6a0665f": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/import_repository.dart:27",
+    "lib/features/people/presentation/pages/person_import_page.dart:174"
+   ],
+   "n": "E-Mails der aktuellen Instanz (tenantId, seitenweise 1000, getrimmt/klein) für Duplikate beim Personen-Import; Import nur für Admin/Verantwortlich in beiden Apps.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-e7a94696": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/dashboard_repository.dart:99",
+    "lib/data/repositories/dashboard_repository.dart:110",
+    "lib/core/utils/dashboard_logic.dart:244"
+   ],
+   "n": "Fix greift: getUpcomingEventsIncludingRunning (tenantId, date > heute−31 Tage) jetzt aufsteigend; „Aktueller Plan“ nimmt den ersten nicht beendeten Termin mit Plan-Feldern, für Nicht-Admins nur mit share_plan – wie Ionic getUpcomingAttendances(undefined, true).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-e99cfee5": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:603",
+    "lib/core/services/cross_tenant_service.dart:64"
+   ],
+   "n": "Flutter besser: Ionic .single() liefert bei mehreren Zeilen des Kontos in der Instanz (archiviert + aktiv) null – Termine der Instanz fehlen in der Übersicht, persönlicher Kalender-Link/eigene Markierung entfallen / Flutter lädt alle Zeilen (tenantId + appId) und wählt die aktive (wie Ionic CrossTenantService).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/db.service#db-f46be416": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:703"
+   ],
+   "n": "tenantUsers delete nach tenantId + userId, außer Konto ist Admin der Instanz oder (mit personId) eine weitere aktive Person hält den Zugang; Fehler → „Fehler beim Löschen des Accounts vom Mandanten“.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-fa2a3d2a": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/player_repository.dart:525",
+    "lib/data/repositories/player_repository.dart:533",
+    "lib/data/repositories/player_repository.dart:403"
+   ],
+   "n": "Flutter besser: Ionic insert ohne img (pickPersonFields) – das beim Anlegen aus einem Treffer anderer Instanz übernommene Bild (applyMatchedPerson setzt player.img) geht verloren / Flutter schreibt eine Nicht-data:-URL beim Insert mit; gewähltes Foto (data:) wird wie Ionic nach dem Insert hochgeladen. Sonst gleiche Felder, tenantId, client-seitige id.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/db.service#loading-9f4b6f7d": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:86",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:114",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:385"
+   ],
+   "n": "Erstverdikt überholt: Nach der Anmeldung mit „Instanzauswahl aktivieren“ fragt Flutter per Radio-Alert (_askWantedTenant) und zeigt dabei und bis zur Navigation eine ganzseitige Lade-Ansicht (Spinner, kein Text) – blockiert gleichwertig zu Ionics Loading ohne Meldung. Flutter zeigt sie auch bei unveränderter Auswahl.",
+   "v": "korrigiert"
+  },
+  "services/db.service#nav-748cf4c0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:585",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:144",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:521"
+   ],
+   "n": "Abmelden (Einstellungen, Seitenleiste, Instanz-anlegen-Seite): signOut, Zustand leeren, go('/login') ohne Rückfrage wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/db.service#nav-db276870": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:398"
+   ],
+   "n": "Ohne Mitgliedschaft zeigt /tenants im normalen Design die nicht schließbare TenantCreatePage (= Ionic /register).",
+   "v": "bestätigt"
+  },
+  "services/db.service#toast-1cd73328": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:594"
+   ],
+   "n": "„Instanz wurde erfolgreich erstellt!“ nach dem Anlegen, danach Wechsel in die neue Instanz.",
+   "v": "bestätigt"
+  },
+  "services/db.service#toast-44d19a85": {
+   "s": "diff",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:195",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:546"
+   ],
+   "n": "Ionic: Toast „Fehler beim Laden der Kinder“ (nur Eltern) / Flutter: Fehleransicht im Elternportal „Fehler: {Fehler}“ mit Erneut-Knopf – Nutzer erfährt den Fehler.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-74190cc0": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:614"
+   ],
+   "n": "Ionic: „Fehler beim Erstellen der Instanz, bitte versuche es später erneut.“ (rot) plus Seiten-Toast „Fehler beim Erstellen der Instanz: {Fehler}“ / Flutter: nur „Fehler beim Erstellen der Instanz: {Fehler}“ (rot).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-8b3301cf": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1825",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1598",
+    "lib/features/settings/presentation/pages/settings_page.dart:703",
+    "lib/data/repositories/user_registration_repository.dart:174"
+   ],
+   "n": "Personenseite „Account erstellen“: gleicher Text „{Vorname Nachname} - Fehler beim Erstellen des Accounts: {Fehler}“ (rot). Ionic zeigt den Toast in createAccount bei jedem Aufruf / Flutter beim Reaktivieren nur „Fehler: {Fehler}“ (ohne Name), bei „Accounts erstellen“ (Einstellungen) nur der Sammeltoast „Fehler beim Erstellen der Accounts: …“ statt Einzel- + Sammeltoast. Fehler wird jeweils gemeldet.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-adc1be2e": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:614",
+    "lib/data/repositories/tenant_create_repository.dart:50"
+   ],
+   "n": "Ionic: „Fehler beim Erstellen des Benutzers, bitte versuche es später erneut.“ (rot) + Seiten-Toast / Flutter: einheitlich „Fehler beim Erstellen der Instanz: {Fehler}“ – Fehler wird gemeldet, nur ohne Hinweis, dass die Mitgliedschaft fehlschlug.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  }
+ },
+ "extra": [
+  {
+   "unit": "services/db.service",
+   "title": "Zusammenführen: Termin-Nachtrag der Zielperson",
+   "n": "Flutter besser: Ionic mergePendingPlayerIntoExisting ruft addPlayerToAttendancesByDate(target) – Zielperson wird in alle fehlenden Termine seit ihrem Eintritt (auch vergangene, auch während Pause/Gruppenwechsel ausgelassene, auch wenn pausiert) mit default_status eingetragen / Flutter: nur kommende Termine (addToUpcomingAttendances, mit Schichtstatus) und nicht bei pausierter Zielperson. Im Normalfall (aktive Person, vollständige Termine) gleiches Ergebnis.",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:3425",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2054"
+   ]
+  }
+ ]
+}

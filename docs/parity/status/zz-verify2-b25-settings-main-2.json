@@ -1,0 +1,116 @@
+{
+  "batch": "zz-verify2-b25-settings-main-2",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "settings/settings/settings.page#text-7683867c": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/settings_page.dart:305", "lib/features/settings/presentation/pages/settings_page.dart:308"],
+      "n": "Gleiche Bedingung !isGeneral && !isApplicant && (!sp || isAdmin || isHelper); isAdmin = Admin/Verantw., isHelper = Helfer/Stf.-Helfer in beiden. Ohne Sidepanel sehen auch Spieler, Stimmführer, Beobachter, Eltern den Block; Bewerber und allgemeine Instanzen nie. Sidepanel-Grenze 768 px gleich.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#action-2ec504ba": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/settings_page.dart:310", "lib/features/settings/presentation/pages/settings_page.dart:315", "lib/core/router/app_router.dart:964"],
+      "n": "Nur ohne Sidepanel, für alle Rollen des Blocks (auch Eltern/Beobachter) → /settings/songs; Route ohne Rollen-Gate wie Ionic (isUrlAccessAllowed true). Mit Sidepanel: Werke-Eintrag im Panel für !general/!Bewerber/!Eltern in beiden gleich (nav_items.dart:140).",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#action-7c8d3cef": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/settings_page.dart:317", "lib/features/settings/presentation/pages/settings_page.dart:323", "lib/core/router/route_access.dart:102"],
+      "n": "Nur Admin/Verantw./Helfer/Stf.-Helfer (Stimmführer, Spieler, Beobachter, Eltern nicht) in beiden; iOS Karten-Modal, md /history mit demselben Gate (inkl. !general).",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#action-01c7c3ee": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/settings_page.dart:325", "lib/features/settings/presentation/pages/settings_page.dart:329", "lib/core/providers/role_permission_providers.dart:116"],
+      "n": "canAccessFilesFor = Ionic canAccessFiles: files_shared → alle außer Bewerber/NONE (inkl. Eltern, Beobachter, Stimmführer), sonst nur Admin/Verantw./Helfer/Stf.-Helfer; jeweils nur ohne Sidepanel.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#text-7ccbeb61": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/settings_page.dart:411", "lib/features/settings/presentation/pages/settings_page.dart:414"],
+      "n": "Nur Admin/Verantwortlicher in beiden.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#action-6d5f3647": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/settings_page.dart:416", "lib/features/settings/presentation/pages/settings_page.dart:418", "lib/features/settings/presentation/pages/settings_page.dart:419", "lib/features/settings/presentation/pages/settings_page.dart:420"],
+      "n": "Nur Admin/Verantw.; Organisationsname bzw. „Organisation“ + Notiz „Nicht verknüpft“; Route /settings/org-settings admin/verantw. wie Ionic.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#text-b30c4fab": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/settings_page.dart:426", "lib/features/settings/presentation/pages/settings_page.dart:429"],
+      "n": "Alle außer Bewerber (auch Eltern, Beobachter, NONE) in beiden.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#action-7740317e": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/settings_page.dart:431", "lib/features/settings/presentation/pages/settings_page.dart:435", "lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:48"],
+      "n": "Alle außer Bewerber; Admin/Verantw. Instanz-Feed, alle anderen persönlicher Feed über player.appId (+ Checkbox „Abgesagte ausblenden“), ohne eigene player-Zeile (Beobachter/Eltern) Instanz-Feed – wie Ionic.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#action-223af3ae": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/settings_page.dart:438", "lib/features/settings/presentation/pages/settings_page.dart:441", "lib/features/settings/presentation/pages/settings_page.dart:443"],
+      "n": "Nur Admin/Verantw. und nur ohne Sidepanel (dort Panel-Eintrag); Route /statistics admin/verantw.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#action-094f3e92": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/settings_page.dart:445", "lib/features/settings/presentation/pages/settings_page.dart:447", "lib/features/settings/presentation/pages/settings_page.dart:449"],
+      "n": "Nur Admin/Verantw. (auch mit Sidepanel), Modal; Beobachter nicht.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#action-96f2fe49": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/settings_page.dart:452", "lib/features/settings/presentation/pages/settings_page.dart:457", "lib/core/services/certificate_service.dart:14"],
+      "n": "Nur Admin/Verantw. in Instanzen mit „vorkurs“ im Kurz- oder Langnamen (isVorkursTenantName = isVorkursTenant).",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#text-65c38342": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/settings_page.dart:463"],
+      "n": "Nur Admin/Verantw.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#text-e8ef8ce5": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/settings_page.dart:460", "lib/features/settings/presentation/pages/settings_page.dart:465", "lib/data/repositories/player_repository.dart:147"],
+      "n": "Gleiche Menge (player: tenantId, pending=false, left not null; getModifiedPlayersForList filtert nichts), nur bei > 0, Farbe medium.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#modal-bdb71a9d": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/settings_page.dart:466", "lib/features/settings/presentation/pages/left_players_page.dart:27"],
+      "n": "Nur Admin/Verantw.; Sheet initial halbe Höhe, auf volle Höhe ziehbar.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#text-e74671e3": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/left_players_page.dart:77", "lib/features/settings/presentation/pages/left_players_page.dart:83"],
+      "n": "Zentrierter grauer Text „Keine archivierten Personen“ bei leerem Archiv.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#action-0b6bb97b": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:502", "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:506", "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:509"],
+      "n": "Instanzliste für alle Rollen; voller Wisch nach links toggelt den Favoriten (tenantUsers.favorite, gefiltert auf userId + tenantId wie Ionic).",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#action-d97dcdca": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:515", "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:252", "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:255"],
+      "n": "Aktion für alle sichtbar; Handler prüft wie Ionic canDeleteTenant die Rolle ADMIN in genau dieser Instanz (tenantUsers.role) und !Demo, sonst Toast „Du kannst diese Instanz nicht löschen.“ (Verantwortliche dürfen in beiden nicht löschen).",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#action-a468909d": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:521", "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:524", "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:234"],
+      "n": "Für alle Rollen; gelbe Aktion, Stern bzw. Stern-Umriss je nach Favorit; schreibt nur den eigenen tenantUsers-Eintrag wie Ionic.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

@@ -1,0 +1,102 @@
+{
+  "batch": "zz-verify4-b06-overview", "ionic": "1923d203", "flutter": "8004a44",
+  "items": {
+    "messages/message-detail/message-detail.page#action-df113b87": {
+      "s": "ok",
+      "f": ["lib/features/messages/presentation/pages/message_detail_page.dart:82", "lib/features/messages/presentation/pages/message_detail_page.dart:127", "lib/core/constants/enums.dart:137"],
+      "n": "Zurück mit Verlauf = pop; ohne Verlauf Admin/Verantwortlich → /settings/messages, sonst Startseite der Rolle (Dirigent/Verantwortlich/Beobachter → Personen, Eltern → /parents, übrige → /signout) wie Ionic backHref/Utils.getUrl.",
+      "v": "bestätigt"
+    },
+    "messages/message-detail/message-detail.page#text-1f52bc34": {
+      "s": "ok",
+      "f": ["lib/features/messages/presentation/widgets/message_termin_section.dart:166", "lib/features/messages/presentation/pages/message_detail_page.dart:174", "lib/features/messages/presentation/auto_message_texts.dart:68"],
+      "n": "Nur Nicht-Manager (alle Rollen außer Admin/Verantwortlich, bzw. Nachricht einer anderen Instanz) bei Termin-Nachricht mit eigener Antwort; '· Krank / Arbeit / Schule / Familie / Abmelden vergessen / Sonstiges' – gleich.",
+      "v": "bestätigt"
+    },
+    "messages/message-detail/message-detail.page#text-2053c566": {
+      "s": "ok",
+      "f": ["lib/features/messages/presentation/widgets/message_termin_section.dart:167"],
+      "n": "'· Ich war doch da' bei kind 'was_present'; gleiche Rollen-/Instanzbedingung (isManager = Admin/Verantwortlich und eigene Instanz).",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#media-ac43f03a": {
+      "s": "diff", "sev": "mittel",
+      "f": ["lib/features/statistics/presentation/pages/statistics_page.dart:516", "lib/core/providers/statistics_providers.dart:323"],
+      "n": "Daten gleich (letzte 20 Termine nach Datum, gerundete Prozent, Label dd.MM., Y 0–100, gefüllte Linie). Ionic: Diagrammtitel 'Anwesenheitsverlauf (letzte 20 Termine)', Y-Achsentitel '%', Punkte, Tooltip 'Anwesenheit %: 87' / Flutter: kein Diagrammtitel – Hinweis 'letzte 20 Termine' fehlt; Ticks '0%…100%', keine Punkte, Standard-Tooltip '87.0'. Ohne Termine im Zeitraum Ionic leeres Diagramm, Flutter Leerzustand statt Abschnitt.",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#media-57ebfc11": {
+      "s": "diff", "sev": "hoch",
+      "f": ["lib/features/statistics/presentation/pages/statistics_page.dart:831", "lib/features/statistics/presentation/pages/statistics_page.dart:877", "lib/core/providers/statistics_providers.dart:391"],
+      "n": "Daten gleich (aktive Personen 'Vorname N.', Anwesend+Verspätet+verspätet entsch., Top 20). Ionic: waagrechte Balken mit Namen an jedem Balken, X 0–100 '%', Titel 'Top 20 - Anwesenheits-Elite 🏆' / Flutter: fl_chart 0.69.2 ohne Drehung: senkrechte Balken, untere Achse ohne Beschriftung; Namen als leftTitles, die fl_chart mit Y-Werten aufruft (side_titles_widget.dart: vertikale Achse = minY..maxY), also data[0] bei 0 %, data[10] bei 10 % usw. – Namen stehen nicht an ihren Balken, Zuordnung nur per Tooltip.",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#media-315d630a": {
+      "s": "diff", "sev": "hoch",
+      "f": ["lib/features/statistics/presentation/pages/statistics_page.dart:741", "lib/features/statistics/presentation/pages/statistics_page.dart:787", "lib/core/providers/statistics_providers.dart:359"],
+      "n": "Daten gleich (Quote je Gruppe über aktive Personen, absteigend). Ionic: waagrechte Balken mit Gruppennamen, X 0–100 '%', Titel 'Anwesenheitsquote nach Instrument' / Flutter: senkrechte Balken ohne Beschriftung darunter; Gruppennamen als leftTitles an den Y-Ticks (data[Y-Wert]), also falsch zugeordnet bzw. fehlend; Zuordnung nur per Tooltip.",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#media-42266499": {
+      "s": "diff", "sev": "hoch",
+      "f": ["lib/features/statistics/presentation/pages/statistics_page.dart:1104", "lib/features/statistics/presentation/pages/statistics_page.dart:1153", "lib/core/providers/statistics_providers.dart:443"],
+      "n": "Daten gleich (Status Abwesend je aktiver Person, Top 15). Ionic: waagrechte Balken mit Namen, Titel 'Unentschuldigte Abwesenheiten' / Flutter: senkrechte Balken ohne Beschriftung darunter; Namen als leftTitles an den Y-Ticks (bei Y-Max = max+2 an 0, 1, 2 …), wirken wie Achsenwerte und stehen nicht an ihren Balken; Zuordnung nur per Tooltip.",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#media-9766bdb9": {
+      "s": "diff", "sev": "hoch",
+      "f": ["lib/features/statistics/presentation/pages/statistics_page.dart:1012", "lib/features/statistics/presentation/pages/statistics_page.dart:1060", "lib/core/providers/statistics_providers.dart:550"],
+      "n": "Daten gleich ('Gruppe (Anzahl)', Ø-Alter gerundet, absteigend). Ionic: waagrechte Balken mit Gruppenlabel, X-Achsentitel 'Jahre', Titel 'Durchschnittsalter pro Instrument' / Flutter: senkrechte Balken ohne Beschriftung darunter; Gruppenlabels als leftTitles an den Y-Ticks (data[Y-Wert]), nicht an ihren Balken; Zuordnung nur per Tooltip.",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#text-80978ea5": {
+      "s": "ok",
+      "f": ["lib/features/statistics/presentation/pages/statistics_page.dart:1321", "lib/features/statistics/presentation/pages/statistics_page.dart:1241", "lib/core/router/app_router.dart:193"],
+      "n": "Statistik in beiden nur Admin/Verantwortlich (Ionic isAdmin-Einstieg Einstellungen/Side-Nav, Flutter Route-Guard /statistics); Abschnitt nur wenn die Instanz einer Organisation angehört (Ionic db.organisation(), Flutter currentOrganisationProvider). '🏢 {Name}' gleich.",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#action-1729e009": {
+      "s": "ok",
+      "f": ["lib/features/statistics/presentation/pages/statistics_page.dart:1349"],
+      "n": "'Instanzen' mit Badge 'Alle (N)' bzw. Anzahl gewählter Instanzen; Tap zeigt Alert 'Instanzen der Organisation' mit kommagetrennten Namen und OK. Gleiche Rollen-/Org-Bedingung.",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#text-666d20ee": {
+      "s": "ok",
+      "f": ["lib/features/statistics/presentation/pages/statistics_page.dart:1361"],
+      "n": "'Personen über alle Instanzen'; gleiche Rollen-/Org-Bedingung.",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#text-8ee10fbd": {
+      "s": "ok",
+      "f": ["lib/features/statistics/presentation/pages/statistics_page.dart:1362", "lib/features/statistics/presentation/pages/statistics_page.dart:1378"],
+      "n": "Anzahl eindeutiger Personen (Schlüssel global_person_id → appId → Name+Geburtstag; nicht pending, nicht ausgetreten), Instanzfilter wie filterInstances; Flutter zeigt beim ersten Laden einen Spinner statt 0.",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#modal-54866a37": {
+      "s": "ok",
+      "f": ["lib/features/statistics/presentation/pages/statistics_page.dart:1365", "lib/features/statistics/presentation/pages/statistics_page.dart:1418"],
+      "n": "Bottom-Sheet in voller Höhe wie Sheet mit Breakpoint 1; gleiche Rollen-/Org-Bedingung des Auslösers.",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#text-4d5d9eb5": {
+      "s": "ok",
+      "f": ["lib/features/statistics/presentation/pages/statistics_page.dart:1428"],
+      "n": "'Personen ({count})'.",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#text-8808d9e3": {
+      "s": "ok",
+      "f": ["lib/features/statistics/presentation/pages/statistics_page.dart:1449"],
+      "n": "'{Vorname} {Nachname}' (Person.fullName); Reihenfolge meiste Instanzen zuerst, dann Nachname.",
+      "v": "bestätigt"
+    },
+    "stats/stats.page#text-70364d9b": {
+      "s": "ok",
+      "f": ["lib/features/statistics/presentation/pages/statistics_page.dart:1451"],
+      "n": "Badge = Anzahl Instanzen der Person (nach Filter). Randfall: Flutter zählt Instanznamen als Set (gleichnamige Instanzen/Doppelzeilen in einer Instanz würden zusammenfallen) – praktisch ohne Bedeutung.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

@@ -1,0 +1,427 @@
+{
+ "batch": "zz-verify5-a-opus-03",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "register/tenant-register/tenant-register.page#toast-23c76f81": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1152",
+    "lib/features/registration/data/providers/registration_providers.dart:73"
+   ],
+   "n": "Fix greift: Ja/Nein-Feld ohne booleschen Wert (kein Default, Schalter unberührt) → 'Bitte geben Sie einen gültigen Wert für das Feld \"{field}\" ein.' wie Ionic validate(); danach Einverständnis-Prüfung in gleicher Reihenfolge.",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#actionsheet-1394033e": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:375",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:386",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:444"
+   ],
+   "n": "Fix greift: Übersicht nutzt buildActions im overviewMode (Optionen je Status inkl. Entschuldigt/Verspätung gemeldet, Reihenfolge, Abbrechen) und presentActions wie Ionic presentActionSheetForChoice.",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#logic-1ed68b7a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/providers/self_service_providers.dart",
+    "lib/data/repositories/sign_in_out_repository.dart",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:386"
+   ],
+   "n": "Erstreview hoch nur wegen des Aktionsblatts bei Entschuldigt/Verspätung gemeldet – behoben (#298, x-9e43a66882 ok). Laden, Aufteilung, Prozent, Gruppierung, Schnellaktionen und Schreibvorgänge gleich. Offen nur noch niedrig-Extras (Typfilter im Aktionsblatt, archivierte Termine, Person je Instanz, changed_by, Dienst-Sync anderer Instanzen, Instanzfarben, Fehlerbehandlung) → sev niedrig.",
+   "v": "korrigiert"
+  },
+  "x-9e43a66882": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:386",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:394"
+   ],
+   "n": "Befund behoben: im overviewMode bietet das Aktionsblatt bei Entschuldigt bzw. Verspätung gemeldet dieselben Optionen wie Ionic presentActionSheetForChoice.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#logic-ed920d8b": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/parents/data/providers/parents_providers.dart:227",
+    "lib/data/repositories/player_repository.dart:266",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:461"
+   ],
+   "n": "Benachrichtigung bei Anmeldung nach 'Verspätung gemeldet' behoben (x-3b9835638f). Offen: Kinder-Reihenfolge weiterhin falsch (x-afb9c7a207, mittel: postgrest-dart sortiert ohne ascending absteigend) sowie niedrig-Extras (hide_name im Titel, laufender Termin, Zeitraum, changed_by, Fehlerbehandlung, Leerzustände, Ablaufplan ohne Felder).",
+   "v": "bestätigt"
+  },
+  "x-3b9835638f": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:461",
+    "lib/data/repositories/sign_in_out_repository.dart"
+   ],
+   "n": "Befund behoben: Anmelden eines Kindes nach 'Verspätung gemeldet' läuft über signIn mit Benachrichtigung wie Ionic.",
+   "v": "bestätigt"
+  },
+  "x-afb9c7a207": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/data/repositories/player_repository.dart:266",
+    "lib/data/repositories/player_repository.dart:268",
+    "lib/features/parents/data/providers/parents_providers.dart:294"
+   ],
+   "n": "Fix unvollständig: getChildrenForParent übernimmt Ionics Sortierfolge instrument, isLeader absteigend, lastName – aber .order('instrument') und .order('lastName') ohne ascending sind in postgrest-dart 2.6.0 absteigend (order(column, {ascending = false}), postgrest_transform_builder.dart:72-75); postgrest-js (Ionic) sortiert aufsteigend. Kinder (und über childOrder die Termin-Zeilen je Kind) erscheinen in umgekehrter Instrument-/Nachnamen-Reihenfolge.",
+   "v": "korrigiert"
+  },
+  "selfService/signout/signout.page#action-47659591": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:122"
+   ],
+   "n": "Pull-to-Refresh lädt Termine und Dienste neu (_refresh) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-836ea596": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:545",
+    "lib/features/self_service/presentation/pages/signout_page.dart:561"
+   ],
+   "n": "Termin-Zeile mit Wochentag/Tag, Titel, 'Dienst', Status-Pill bzw. 'Nicht eingeladen'; Tippen öffnet die Termin-Aktionen wie Ionic.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-89fbd54f": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:49",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:398",
+    "lib/data/repositories/player_absence_repository.dart"
+   ],
+   "n": "Fix greift: 'Abwesenheit eintragen' entschuldigt nur die Kandidaten-Termine (limitToIds: aktueller + angezeigte Termine, ohne nicht zugeteilte Dienste) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#logic-382df5cb": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:23",
+    "lib/features/self_service/presentation/widgets/plan_viewer_sheet.dart:406",
+    "lib/core/providers/signout_providers.dart:168",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:49",
+    "lib/features/self_service/presentation/pages/signout_page.dart:74"
+   ],
+   "n": "Beide hoch-Befunde des Erstreviews behoben: extra_plans in kSignoutAttendanceColumns und bis in den Plan-Viewer durchgereicht; Abwesenheit schreibt nur die Kandidaten-Zeilen (x-1962646a5f ok); Push-Öffnen mit Dienst-Logik (x-f56fb3f1cc ok). Offen nur niedrig-Extras (Sortierung am selben Tag, Offene-Dienste-Sheet bleibt offen, Aktuelle Werke aus ungefilterten Terminen, changed_by, Fehler-Toasts/Leerzustände) → sev niedrig.",
+   "v": "korrigiert"
+  },
+  "selfService/signout/signout.page#modal-819b10ac": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:425"
+   ],
+   "n": "Fix greift: Termin-Beschreibung öffnet als Sheet (showEventDescriptionSheet) mit gleichem Inhalt wie Ionic-Modal.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-7ab3ea5e": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:561"
+   ],
+   "n": "Status-Label des aktuellen Termins (statusLabelOf) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "x-1962646a5f": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_absence_repository.dart",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:49"
+   ],
+   "n": "Befund behoben: excuseUpcomingAttendances/resetExcusedAttendances begrenzen auf die Kandidaten-IDs (limitToIds) wie Ionic currentAttendance + actualAttendances; Dienstplan-Ansicht ohne nicht zugeteilte Dienste.",
+   "v": "bestätigt"
+  },
+  "x-f56fb3f1cc": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:74",
+    "lib/features/self_service/presentation/pages/signout_page.dart:276"
+   ],
+   "n": "Befund behoben: _openPendingAttendance öffnet Push/Deep-Link-Termine über dieselben Aktionen mit Dienst-Logik (applySignoutDutyView) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/attendance-type/attendance-type.service#db-c4d1a223": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_type_repository.dart:192",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1955"
+   ],
+   "n": "Fix greift: delete auf attendance_types nach id (+ tenant_id) ohne Vorab-Sperre wie Ionic; Fehler → Toast.",
+   "v": "bestätigt"
+  },
+  "services/attendance-type/attendance-type.service#logic-f7488593": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_type_repository.dart:25",
+    "lib/data/repositories/attendance_type_repository.dart:192",
+    "lib/core/providers/attendance_type_providers.dart"
+   ],
+   "n": "Erstreview hoch nur wegen 'Verwendeter Anwesenheitstyp nicht löschbar' – behoben (#295, Extra zurückgezogen): Löschen ohne Vorprüfung wie Ionic. Laden (tenant_id, index aufsteigend), Anlegen, Aktualisieren gleich; keine offenen Extras.",
+   "v": "korrigiert"
+  },
+  "services/cross-tenant/cross-tenant.service#toast-119dd1e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:247",
+    "lib/features/people/presentation/pages/people_list_page.dart:1183",
+    "lib/data/repositories/cross_tenant_person_repository.dart:240"
+   ],
+   "n": "Fix greift: Ladefehler der Benutzer einer anderen Instanz → Toast 'Fehler beim Laden der Benutzer' (danger) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-6ed0d891": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:1152",
+    "lib/features/people/presentation/pages/people_list_page.dart:135",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:185"
+   ],
+   "n": "Fix greift: pausierte Personen mit paused_until <= heute (tenantId-Filter) werden beim Öffnen der Personenliste und nach Abwesenheit entpausiert wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-cc6767aa-2": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:49",
+    "lib/core/providers/plan_providers.dart:52",
+    "lib/core/providers/attendance_providers.dart:274"
+   ],
+   "n": "Fix greift: Termine ohne Personen-Anwesenheit nach tenantId, Datum absteigend; archivierte nur wie in Ionic berücksichtigt.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-ffa8e5a7": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:23",
+    "lib/features/self_service/presentation/widgets/plan_viewer_sheet.dart:406"
+   ],
+   "n": "Fix greift: Spaltenliste enthält extra_plans (und archived); Zeitraum ab heute − 31 Tage, aufsteigend; Tagespläne erreichen den Plan-Viewer.",
+   "v": "bestätigt"
+  },
+  "services/db.service#effect-3e8f334d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:353",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:364",
+    "lib/core/utils/dashboard_logic.dart:56"
+   ],
+   "n": "Fix weitgehend wirksam (nach Löschen Startseite der offenen Instanz bzw. Auto-Weiterleitung). Rest: Ionic deleteInstance nutzt Utils.getUrl → Admin/Verantwortlich immer Personen; Flutter homeRouteFor → Dashboard, wenn showDashboardTab_<id> gesetzt. Gleiche Instanz, andere Startseite.",
+   "v": "korrigiert"
+  },
+  "services/db.service#logic-0e1c2e0b": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/providers/tenant_providers.dart:44",
+    "lib/core/providers/tenant_providers.dart:76",
+    "lib/features/auth/presentation/pages/login_page.dart:334"
+   ],
+   "n": "Höchste Abweichung des Erstreviews (Vorrang Server-Metadaten vs. lokale Instanz, mittel) ist behoben: preferredTenantIds/_initializeTenant nehmen zuerst die gespeicherte Instanz des Geräts (Extra zurückgezogen). Offen nur niedrig-Extras (getAppIdByEmail Teilstring/Stimmführer, registerUser normalisiert E-Mail, Logout löscht gespeicherte Instanz, removeEmailFromAuth-Nachprüfung) → sev niedrig.",
+   "v": "korrigiert"
+  },
+  "services/db.service#nav-51ad9728": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:353",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:364",
+    "lib/core/utils/dashboard_logic.dart:56"
+   ],
+   "n": "Wie effect-3e8f334d: Navigation nach Löschen ersetzt die Historie zur Startseite; Ionic Utils.getUrl (Admin/Verantwortlich → Personen), Flutter homeRouteFor (→ Dashboard bei showDashboardTab).",
+   "v": "korrigiert"
+  },
+  "x-ca607be234": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2025"
+   ],
+   "n": "Befund behoben: mergePendingPlayerIntoExisting schreibt immer Role.player in tenantUsers und Freigabe-Mail wie Ionic (Role.PLAYER), unabhängig von der Hauptgruppe.",
+   "v": "bestätigt"
+  },
+  "services/files/files.service#db-68243270": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/files_repository.dart:332",
+    "lib/data/repositories/files_repository.dart:131",
+    "lib/core/utils/nfkd_fold.dart"
+   ],
+   "n": "Fix greift: Upload im Bucket files mit Tenant-Präfix; Namensbereinigung jetzt mit NFKD-Tabelle (kNfkdAsciiFold) + Entfernen U+0300–U+036F wie Ionic. Nachgerechnet für Latin-1/Extended-A/B/Additional, Ligaturen, Vollbreite, NFD: 'Wędrówka' → 'Wedrowka', 'März' (NFD) → 'Marz' in beiden. Restabweichung nur bei exotischen Zeichen außerhalb der Tabelle (siehe Extra).",
+   "v": "bestätigt"
+  },
+  "services/files/files.service#db-77218a19": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/files_repository.dart:397",
+    "lib/data/repositories/files_repository.dart:131",
+    "lib/core/utils/nfkd_fold.dart"
+   ],
+   "n": "Fix greift: Umbenennen (move) im Bucket files mit Tenant-Präfix; Namensbereinigung jetzt mit NFKD-Tabelle (kNfkdAsciiFold) + Entfernen U+0300–U+036F wie Ionic. Nachgerechnet für Latin-1/Extended-A/B/Additional, Ligaturen, Vollbreite, NFD: 'Wędrówka' → 'Wedrowka', 'März' (NFD) → 'Marz' in beiden. Restabweichung nur bei exotischen Zeichen außerhalb der Tabelle (siehe Extra).",
+   "v": "bestätigt"
+  },
+  "services/files/files.service#db-c711efdc": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/files_repository.dart:301",
+    "lib/data/repositories/files_repository.dart:131",
+    "lib/core/utils/nfkd_fold.dart"
+   ],
+   "n": "Fix greift: .keep-Upload (upsert false, text/plain) im Bucket files mit Tenant-Präfix; Namensbereinigung jetzt mit NFKD-Tabelle (kNfkdAsciiFold) + Entfernen U+0300–U+036F wie Ionic. Nachgerechnet für Latin-1/Extended-A/B/Additional, Ligaturen, Vollbreite, NFD: 'Wędrówka' → 'Wedrowka', 'März' (NFD) → 'Marz' in beiden. Restabweichung nur bei exotischen Zeichen außerhalb der Tabelle (siehe Extra).",
+   "v": "bestätigt"
+  },
+  "services/files/files.service#logic-efa4d0f6": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/files_repository.dart:131",
+    "lib/data/repositories/files_repository.dart:182",
+    "lib/data/repositories/files_repository.dart:291",
+    "lib/features/public_links/presentation/pages/open_file_page.dart:22",
+    "lib/main.dart:80"
+   ],
+   "n": "Mittel-Befunde behoben: Namensbereinigung per NFKD-Tabelle (db-Items ok) und ausstehender Datei-Link jetzt in SharedPreferences 'pendingFileLink' (restore vor runApp, consume löscht) wie Ionic localStorage. Offen nur niedrig: Sortierung toLowerCase statt localeCompare, Listing über 1000 Einträge (Flutter besser), Sonderzeichen außerhalb der NFKD-Tabelle (neues Extra) → sev niedrig.",
+   "v": "korrigiert"
+  },
+  "services/group-category/group-category.service#native-d88b5602": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/group_providers.dart:98",
+    "lib/core/services/offline_list_cache.dart:20"
+   ],
+   "n": "Fix greift: groupCategoriesProvider liest über OfflineListCache (offline der zuletzt geladene Stand je Nutzer/Instanz) wie Ionic Network.getStatus + Storage. Neu gefunden: Sortierung bei gleichem sort_order (siehe Extra).",
+   "v": "bestätigt"
+  },
+  "services/help/help-content.service#logic-93285162": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/data/help_content_service.dart:62",
+    "lib/features/help/data/fuse_search.dart:18"
+   ],
+   "n": "Erstreview mittel nur wegen der Suche – behoben: FuseSearch ist ein Port von Fuse.js 7 (Bitap mit ganzem Muster, threshold 0.35, ignoreLocation, normierte Gewichte 2/1,5/1, Feldnorm 1/√Wörter, Number.EPSILON, Sortierung Score/Index, 32er-Chunks). Kategorien/Artikel/Glossar gleich, Glossar-Sortierung praktisch gleich (Umlaut-Collation statt localeCompare).",
+   "v": "korrigiert"
+  },
+  "x-8c653dac0c": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/data/fuse_search.dart:18",
+    "lib/features/help/data/help_content_service.dart:62"
+   ],
+   "n": "Befund behoben: eigene Wortsuche durch Fuse.js-Port ersetzt (gleiche Keys/Gewichte, Schwelle, ignoreLocation, Scoring und Sortierung); Hilfe- und Glossarseite nutzen service.search.",
+   "v": "bestätigt"
+  },
+  "services/history/history.service#db-1996dec2": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:920",
+    "lib/features/attendance/presentation/attendance_song_history.dart:85"
+   ],
+   "n": "Weiterhin: Dirigent-Änderung gleich (person_id/otherConductor, jetzt mit tenantId). Ionic ruft beim Speichern der Termin-Infos zusätzlich updateHistoryEntry({visible: attendance.save_in_history}), wenn die Einträge abweichen (attendance.page.ts:1533-1535; Alt-Termine mit save_in_history false/null → Werke verschwinden aus der Historie) / Flutter schreibt visible nie.",
+   "v": "bestätigt"
+  },
+  "services/history/history.service#db-1c319cab": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:889"
+   ],
+   "n": "Fix greift: history nach attendance_id + tenantId, jetzt .order('songId', ascending: true) wie Ionic (explizit aufsteigend, postgrest-dart-Default wäre absteigend).",
+   "v": "bestätigt"
+  },
+  "services/holiday/holiday.service#logic-ca1c3edf": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/holiday_service.dart:67",
+    "lib/core/services/holiday_service.dart:184",
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart:796"
+   ],
+   "n": "Erstreview mittel nur wegen der Vergangen-Markierung – behoben: isHolidayGone vergleicht Starttag mit heute auf Tagesebene wie dayjs(startDate).isBefore(dayjs(), 'day'). Zeitraum Jahresbeginn bis Ende Folgejahr, Feiertage + Schulferien gleich; keine offenen Extras.",
+   "v": "korrigiert"
+  },
+  "services/image/image.service#db-58f14585": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:431",
+    "lib/data/repositories/player_repository.dart:462",
+    "lib/data/repositories/profile_repository.dart:26",
+    "lib/features/registration/data/providers/registration_providers.dart:286"
+   ],
+   "n": "Fix greift: bei eigener appId schreibt syncOwnPlayerImage {img} in alle player-Zeilen des Kontos (je id + tenantId + appId) – Personen-Seite (updateImage), Profil und Registrierung eines angemeldeten Nutzers wie Ionic match({appId}).",
+   "v": "bestätigt"
+  },
+  "services/image/image.service#db-a8a5f597": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:290",
+    "lib/data/repositories/player_repository.dart:462",
+    "lib/data/repositories/profile_repository.dart:26"
+   ],
+   "n": "Fix greift: Entfernen auf der Personen-Seite leert img ('') und bei eigener appId per syncOwnImage in allen Instanzen wie Ionic removeImage.",
+   "v": "bestätigt"
+  },
+  "services/live-update/live-update.service#logic-2b61e241": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/core/services/native/store_update_service.dart:52",
+    "lib/features/auth/presentation/pages/login_page.dart:674",
+    "lib/features/settings/presentation/pages/settings_page.dart:552"
+   ],
+   "n": "OTA-Bundles gibt es in Flutter nicht; Ersatz StoreUpdateService (App Store/Play) mit 'Update installieren' auf Login und Einstellungen (x-6fc37335ce).",
+   "v": "bestätigt"
+  },
+  "x-6fc37335ce": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/core/services/native/store_update_service.dart:52",
+    "lib/features/auth/presentation/pages/login_page.dart:674",
+    "lib/features/settings/presentation/pages/settings_page.dart:552"
+   ],
+   "n": "Befund real, technisch bedingt: Ionic lädt signierte Web-Bundles still und aktiviert sie beim Kaltstart bzw. auf /login, /register / Flutter prüft beim Kaltstart die Store-Version (ab 5.0.0) und bietet 'Update installieren' (Store-Seite bzw. Play In-App-Update); Hotfixes erst nach Store-Freigabe. login_page.dart nur verschoben (Banner jetzt Zeile 674).",
+   "v": "bestätigt"
+  },
+  "services/login.guard#effect-45cebb67": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:347",
+    "lib/core/providers/user_preferences_provider.dart:12",
+    "lib/core/router/app_router.dart:142",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:80",
+    "lib/core/utils/dashboard_logic.dart:45"
+   ],
+   "n": "Fix greift: InstanceSelectionGate.afterSignIn wird nur bei AuthChangeEvent.signedIn gesetzt; Sitzungs-Wiederherstellung meldet initialSession/tokenRefreshed (gotrue 2.18.0 recoverSession), daher bei Kaltstart keine Instanzliste, sondern Startseite. Ziel wie LoginGuard: Admin/Verantwortlich mit showDashboardTab → Dashboard, sonst Personen (Admin/Verantwortlich/Beobachter), Elternportal, Meine Termine.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "services/group-category/group-category.service",
+   "title": "Kategorien bei gleichem sort_order absteigend nach Name",
+   "n": "Ionic: order('sort_order', asc, nullsLast).order('name', asc) – neue Kategorien (sort_order NULL, Spalte ohne Default) stehen A→Z / Flutter: .order('name') ohne ascending ist in postgrest-dart 2.6.0 absteigend → Kategorien ohne/mit gleichem sort_order Z→A im Kategorien-Sheet, in den Register-Plan-Vorgaben und überall, wo die Provider-Reihenfolge genutzt wird (Instrumentenliste sortiert selbst und ist nicht betroffen).",
+   "sev": "mittel",
+   "ionic": "src/app/services/group-category/group-category.service.ts:29",
+   "f": [
+    "lib/data/repositories/group_repository.dart:280",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:68"
+   ]
+  },
+  {
+   "unit": "services/files/files.service",
+   "title": "Dateinamen: Sonderzeichen außerhalb der NFKD-Tabelle",
+   "n": "Ionic: .normalize('NFKD') zerlegt auch hoch-/tiefgestellte Zeichen, ™, ①, römische Zahlzeichen ('Logo™' → 'LogoTM', 'H₂O' → 'H2O', 'Kapitel Ⅳ' → 'Kapitel IV') / Flutter: kNfkdAsciiFold deckt nur Latin-1, Latin Extended, Allgemeine Interpunktion, Ligaturen und Vollbreite ab → 'Logo', 'H-O', 'Kapitel'. Lateinische Buchstaben sind gleich.",
+   "sev": "niedrig",
+   "ionic": "src/app/services/files/files.service.ts:80",
+   "f": [
+    "lib/core/utils/nfkd_fold.dart:661",
+    "lib/data/repositories/files_repository.dart:131"
+   ]
+  }
+ ]
+}

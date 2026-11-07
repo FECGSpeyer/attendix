@@ -1,0 +1,416 @@
+{
+ "batch": "zz-verify6-opus-11",
+ "ionic": "1923d203",
+ "flutter": "0f74333",
+ "items": {
+  "planning/planning.page#modal-5f3c6ffd": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1821",
+    "lib/features/planning/presentation/pages/planning_page.dart:1855",
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:24"
+   ],
+   "n": "Ionic: openAgendaPicker öffnet AgendaPickerComponent als Vollbild-Modal (kein Sheet) mit Termin (Plan = Bildschirmstand, wenn Felder vorhanden) und Typ; Ergebnis 'saved' übernimmt den Plan / Flutter: _openAgendaPicker speichert zuerst, lädt die Termin-Zeile, ersetzt den Plan durch den Bildschirmstand und öffnet showAgendaPickerSheet als Bottom-Sheet (90 % Höhe); danach wird der gespeicherte Hauptplan geladen. Bedingung gleich (canAddTopics: erster Plan, Protokoll-Typ, isTeamLeader). Zusätzlich: bei ungültigem Plan nach eigenen Änderungen blockiert Flutter das Öffnen mit Validierungs-Toast (Ionic öffnet trotzdem). Referenz :1775 war veraltet.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "planning/planning.page#modal-bbd6596e": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:169",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:220",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:40"
+   ],
+   "n": "Nur Dialogtyp: Ionic PlanFieldEditComponent als Vollbild-Modal (Abbrechen / „Feld bearbeiten“ / „Updaten“; Programmpunkt, Ausführender, Info, Minuten, Beamer-Abschnitt nur bei verknüpfter Org; leerer Name → „Bitte gib einen Programmpunkt ein“) / Flutter: showPlanFieldDialog als AlertDialog mit denselben Feldern, Texten, Beamer-Schalter und demselben Ergebnis (Minuten-Start field.time sonst 20). Referenzen aktualisiert.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-0cf859bade": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:940",
+    "lib/features/planning/presentation/pages/planning_page.dart:568",
+    "lib/features/planning/presentation/pages/planning_page.dart:620"
+   ],
+   "n": "Bestätigt. Ionic: jede Änderung wird sofort gespeichert (calculateEnd → updateAttendance), keine Entwürfe / Flutter: Autosave nach 400 ms über die Schreib-Warteschlange (PlanningWriteSync), lokale Entwürfe (PlanningDraftStore) mit Wiederherstellung (Toast „Entwurf wiederhergestellt“) und Konfliktdialog (Entwurf übernehmen/verwerfen) bei parallelen Änderungen. Referenzen aktualisiert.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-ab06b6d72f": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:434",
+    "lib/features/planning/presentation/pages/planning_page.dart:2208"
+   ],
+   "n": "Bestätigt. Ionic: ohne Felder bleibt die Ablaufliste leer (z. B. „Plan zurücksetzen“ ohne Typ-Vorlage, leerer Zusatzplan) / Flutter: PlanFieldsEditor ohne emptyText zeigt grauen Text „Keine Programmpunkte“. Referenzen aktualisiert.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-da444ed5b8": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:892",
+    "lib/features/planning/presentation/pages/planning_page.dart:1555",
+    "lib/data/repositories/song_repository.dart:738"
+   ],
+   "n": "Befund gültig. Ionic getUpcomingHistory: alle Historie-Einträge der Instanz, clientseitig über attendance_id.date (sonst history.date) nach heute 0 Uhr gefiltert, unsortiert (DB-Reihenfolge) / Flutter currentSongsProvider → loadCurrentSongsForTenant: Server-Filter history.date > heute 0 Uhr (tenantId), Gruppen nach Datum aufsteigend, im Termin nach Termin-ID absteigend. „Aktuelle Werke hinzufügen“ und song-placeholder können andere Werke/Reihenfolge ergeben; Ionic-Reihenfolge ist nicht definiert, daher niedrig.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-fde84859d1": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1003",
+    "lib/features/planning/presentation/pages/planning_page.dart:1222",
+    "lib/features/planning/presentation/pages/planning_page.dart:2113",
+    "lib/features/planning/presentation/pages/planning_page.dart:248"
+   ],
+   "n": "Flutter besser: bestätigt. Ionic: updateAttendance/saveOpenPlan verwerfen einen ungültigen Plan (keine Felder, fehlende Minuten) beim Termin-/Planwechsel oder Schließen still (validate(false) → return) / Flutter _flushSaves: Wechsel, Schließen und Tab-Wechsel werden nach eigenen Änderungen mit Validierungs-Toast blockiert (auch wenn alle Felder gelöscht wurden: Verlassen erst nach Hinzufügen eines Felds); ein fehlgeschlagenes Speichern lässt die Seite mit Fehler-Toast offen.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-464fba6ba8": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/protocol_pdf.dart:96",
+    "lib/features/team_organization/protocol_pdf.dart:112",
+    "lib/features/team_organization/protocol_pdf.dart:120"
+   ],
+   "n": "Bestätigt, nur Layout. Ionic: Ergebnis hinter dem Abschnittstitel („TOP 1 · X  –  Beschlossen“), graue Trennlinie vor jedem Abschnitt, „Anwesend (n): Namen“ in einer Zeile, Entschuldigt-Zeile grau, Überschriften 13/12/11 pt nach Ebene, Seitenzahl grau / Flutter: Ergebnis rechtsbündig in Akzentfarbe, keine Trennlinien, „Anwesend (n)“ als farbige Zwischenüberschrift mit Namen darunter, Überschriften einheitlich 12 pt, Seitenzahl schwarz. Inhalte gleich.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "protocols/protocol/protocol.page#loading-e7e42088": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:584",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:645"
+   ],
+   "n": "Ionic: insertSpontaneousTopic zeigt ein blockierendes Lade-Overlay (max. 3 s) / Flutter _addSpontaneousTopic: kein Overlay, Seite bleibt während Lesen/Anlegen/Speichern bedienbar.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "protocols/protocol/protocol.page#toast-9d50a18f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:670"
+   ],
+   "n": "Roter Toast „Punkt konnte nicht hinzugefügt werden“ bei jedem Fehler; spontaner Punkt nur in der Leitungsansicht (isTeamLeader wie Ionic isLeader).",
+   "v": "bestätigt"
+  },
+  "x-524535cdbc": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:741",
+    "lib/data/models/team_org/team_org.dart:279"
+   ],
+   "n": "Bestätigt. Ionic: Teilnehmende per localeCompare sortiert, leerer Name → „Unbekannt“ / Flutter: String.compareTo (Groß-/Kleinschreibung, Umlaute hinter Z), leerer Name bleibt leer (Avatar-Reihe, Sheet, Chips, PDF).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-56295c046c": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:585",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:631",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:667"
+   ],
+   "n": "Bestätigt. Ionic: legt das Thema zuerst an und liest dann den Termin; bei inzwischen gelöschtem Plan schreibt es den geladenen Plan zurück; Standarddauer agenda_default_duration || 10; neuer Punkt wird danach aktiviert, fokussiert und ins Bild gescrollt / Flutter: prüft Termin und Plan vor dem Anlegen und bricht bei gelöschtem Termin/Plan mit „Punkt konnte nicht hinzugefügt werden“ ab (besser), Standarddauer agenda_default_duration ?? 10 (0 → 1 min statt 10), neuer Punkt wird nur ausgewählt (_activeId, kein Fokus/Scroll).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-bc05e57609": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:818",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1020"
+   ],
+   "n": "Flutter besser: bestätigt. Ionic öffnet den Freigabe-Dialog und gibt frei, auch wenn das Speichern eines Abschnitts fehlschlug (flushAll ohne Ergebnis) / Flutter bricht Öffnen und Freigabe mit „Notizen konnten nicht gespeichert werden. Prüfe deine Verbindung.“ ab.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "public-planning/my-plans/my-plans.component#db-2f715edb": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:252",
+    "lib/core/providers/plan_providers.dart:82"
+   ],
+   "n": "shared_plans select * eq creator_user_id = eigener Nutzer, order created_at ascending:false (absteigend wie Ionic). Tabelle ohne tenantId.",
+   "v": "bestätigt"
+  },
+  "public-planning/my-plans/my-plans.component#db-65684aa5": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:298",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1067"
+   ],
+   "n": "Flutter besser: delete auf shared_plans eq id zusätzlich eq creator_user_id (Ionic nur eq id, RLS); ohne Sitzung kein Aufruf. Bestätigung und Fehler-Toast „Plan konnte nicht gelöscht werden“ wie Ionic; Liste danach neu geladen. Referenz aktualisiert.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "public-planning/my-plans/my-plans.component#db-7410a6fd": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:254",
+    "lib/core/providers/plan_providers.dart:83"
+   ],
+   "n": "Nutzer-ID aus der Sitzung (auth.currentUser); ohne Nutzer leere Liste wie Ionic.",
+   "v": "bestätigt"
+  },
+  "public-planning/my-plans/my-plans.component#logic-42314d12": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1019",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1067",
+    "lib/data/repositories/plan_repository.dart:252"
+   ],
+   "n": "Laden (eigene Pläne, created_at absteigend, ohne Nutzer leer, Spinner), Zeile Titel/„Ablaufplan“ + Datum (dateFmt) + „n Felder“, Öffnen gibt den Plan zurück, Löschen mit Bestätigung und Fehler-Toast, Schließen wie Ionic; einziger Unterschied Ladefehler (Extra x-38ebb805fc). Referenzen aktualisiert.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-38ebb805fc": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1035"
+   ],
+   "n": "Flutter besser: bestätigt. Ionic: Fehler beim Laden ergibt still eine leere Liste („Keine Pläne“) / Flutter: zeigt „Fehler: …“.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#action-d456b0fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:555",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:654",
+    "lib/core/utils/plan_utils.dart:157"
+   ],
+   "n": "„Einrücken“/„Ausrücken“ (grau) als Wisch-Aktion nur bei canIndent (Block direkt darüber bzw. Unterpunkt), gleiche Logik wie Ionic toggleIndent; keine Rollenbedingung (auch anonym). Referenzen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#db-252fc2e5": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:314",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:668"
+   ],
+   "n": "Nur mit Organisation: Validierung, Speichern, update shared_plans set org_id = Org-ID where id; Toasts „zur Organisation hinzugefügt“/Fehler gleich. Flutter filtert zusätzlich creator_user_id und bricht ab, wenn das Speichern scheitert (Toast „Plan konnte nicht gespeichert werden“).",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#db-99a947c6": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:314",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:668"
+   ],
+   "n": "update shared_plans set org_id = null where id, nur mit Plan-ID; Toasts „entfernt“/Fehler gleich; Flutter zusätzlich eq creator_user_id.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#db-9fadbb62": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:324",
+    "lib/data/repositories/plan_repository.dart:275"
+   ],
+   "n": "Nutzer aus der Sitzung, ohne Sitzung kein Speichern; upsert shared_plans onConflict id mit creator_user_id. Flutter bindet zusätzlich an das Konto, das die Seite geöffnet hat, und vergibt die Plan-ID erst nach erfolgreichem Speichern.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#db-b17aa9e7": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:275",
+    "lib/data/repositories/plan_repository.dart:290",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:300",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:324"
+   ],
+   "n": "Upsert shared_plans onConflict id mit id, edit_key, plan_title (getrimmt/„Ablaufplan“), date, time/end_time (Datum + HH:mm), fields, branding_id (explizit null bei „Kein Branding“), creator_user_id; org_id wird nicht überschrieben (wie Ionic). Debounce 500 ms nur eingeloggt. Flutter besser: Autosave-Fehler → Toast.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#db-f6ff5ae6": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:249",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:244",
+    "lib/data/repositories/plan_repository.dart:332"
+   ],
+   "n": "Nach Wiederherstellen (eingeloggt, gespeicherte Plan-ID) select org_id where id maybeSingle, übernimmt isOrgPlan und speichert lokales Backup; Fehler/keine Zeile → lokaler Stand bleibt. Flutter zusätzlich eq creator_user_id (gleiche Daten, Entwürfe sind je Konto).",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#effect-433919fa": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:736",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:148",
+    "lib/core/services/plan_export_service.dart:138",
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "n": "Dateiname jetzt gleich („Titel_JJJJ-MM-TT.png“, _imageFileName); nativ: Datei in den Cache schreiben und öffnen wie Ionic; Desktop-Web: Download wie Ionic. Rest-Unterschied mobiles Web: Ionic teilt die PNG über das Web-Share-Sheet (Dateien, AirDrop …), Flutter lädt sie per Download-Link herunter (printing sharePdf). Nur Weg, Datei kommt an.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#effect-5c5e4502": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:772",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:795",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:183",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:217"
+   ],
+   "n": "Eingeloggt: Plan wird vorher gespeichert (Fehler → „Link konnte nicht erstellt werden“), dann Systemteilen mit URL und Titel (getrimmt/„Ablaufplan“); ohne Web Share oder bei Fehler Link kopieren + Toast wie Ionic. Ionic: URL immer https://attendix.de/plan?key=…[&edit=…] / Flutter: nativ gleich, im Web `<origin><path>#/plan?key=…` (planPublicUrl). Web-Teilen läuft jetzt über die Web Share API (shareUrlInBrowser), das frühere zusätzliche Kopieren mit Toast nach erfolgreichem Teilen ist behoben. Android-App: Flutter öffnet den Teilen-Dialog, Ionic-WebView kopiert mangels navigator.share.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#effect-5c5e4502-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:788",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:795",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:183",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:217"
+   ],
+   "n": "Anonym: einmaliges Insert in shared_plans ohne creator_user_id (Fehler → „Link konnte nicht erstellt werden“), dann Systemteilen mit URL und Titel; ohne Web Share oder bei Fehler Kopieren + Toast wie Ionic. Ionic: URL immer https://attendix.de/plan?key=…[&edit=…] / Flutter: nativ gleich, im Web `<origin><path>#/plan?key=…`. Web-Teilen jetzt über die Web Share API, das frühere zusätzliche Kopieren mit Toast ist behoben.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#logic-f87732cd": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:210",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:290",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:324",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:373",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:96"
+   ],
+   "n": "Erneut geprüft, keine Regression. Wie Ionic: 5 Vorlagen mit gleichen IDs/Startzeiten, neue IDs beim Klonen, Platzhalter „Chor/Orchester“/„Werk N“ und song-placeholder (Präfix „Nr. “), Org-Vorlagen/-Felder und Blockvorlagen nur eingeloggt, Zeiten/Ende, Validierung („mind. ein Feld“/„Dauer ausfüllen“), Bearbeiten/Löschen/Blöcke/Ein-/Ausrücken, lokale Sicherung mit denselben Feldern, shared_plans-Upsert nach 500 ms nur eingeloggt, Teilen (anonym einmaliges Insert), Org-Zuordnung, Neuer Plan/Plan laden. Zeilen ohne Cache (Schlüssel id bzw. id#n, Unterpunkt-Zeile). Abweichungen als Extras (alle niedrig): Werke-Quelle/Reihenfolge, keine Speicherung beim Öffnen, Hinweis bei leerem Ablauf, Entwurf je Konto (Flutter besser).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#modal-c85eff60": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:659",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1019"
+   ],
+   "n": "Ionic: Sheet-Modal (Breakpoints 0/0.5/0.9, Start 0.9, Griff ohne Breakpoint-Wechsel) / Flutter: Vollbild-Seite (fullscreenDialog) „Meine Pläne“ mit „Schließen“; Auswahl lädt den Plan wie Ionic (ausstehende Änderungen werden vorher gespeichert). Button nur eingeloggt wie Ionic.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-8685373170": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:434",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:985"
+   ],
+   "n": "Bestätigt. Ionic: ohne Felder (Vorlage „Leerer Ablauf“, „Neuer Plan“) ist die Liste leer, „Ende“ wird trotzdem angezeigt / Flutter: grauer Text „Keine Programmpunkte“, Ende-Zeile nur mit Feldern.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-ad78dde98b": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:241",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:840",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:324"
+   ],
+   "n": "Befund gültig. Ionic ngOnInit ruft nach Vorlage/Wiederherstellen und nach Laden von Werken/Historie (Platzhalter-Auflösung) calculateEnd → lokale Sicherung und, eingeloggt, shared_plans-Upsert nach 500 ms – auch ohne Änderung; ein frischer Entwurf erscheint so sofort in „Meine Pläne“ / Flutter: Startvorlage mit persist: false, Platzhalter nur im Speicher ersetzt; lokal und in der DB erst bei der nächsten Änderung gespeichert (Teilen/Org-Zuordnung speichern vorher). Kein Datenverlust, daher niedrig.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-baf4e996fa": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:365",
+    "lib/data/repositories/song_repository.dart:738"
+   ],
+   "n": "Befund gültig. Ionic getUpcomingHistory: alle Historie-Einträge der Instanz, deren Termindatum (sonst history.date) nach heute 0 Uhr liegt, unsortiert (DB-Reihenfolge) / Flutter currentSongsProvider: Server-Filter history.date > heute 0 Uhr, nach Datum gruppiert und sortiert. Platzhalter und „Aktuelle Werke hinzufügen“ können andere Werke bzw. Reihenfolge ergeben; Ionic-Reihenfolge ist nicht definiert.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "x-d381b2c451": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:136",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:210",
+    "lib/core/services/public_plan_draft_storage.dart:28",
+    "lib/core/services/public_plan_draft_storage.dart:45"
+   ],
+   "n": "Flutter besser: bestätigt. Ionic: ein gemeinsamer localStorage-Eintrag „attendix-public-plan“ für anonym und alle Konten (Entwurf samt Plan-ID/Bearbeitungsschlüssel wandert zwischen /planung und App bzw. Konten) / Flutter: Entwurf je Auth-Nutzer bzw. anonym getrennt, alter globaler Eintrag wird verworfen, beim Abmelden/Kontowechsel gelöscht.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "register/register.page#action-44a0b310": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:195",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:525"
+   ],
+   "n": "„Konto löschen“ mit Papierkorb-Icon, beides rot, im Konto-Menü nur ohne Instanz (canDismiss false); öffnet die Bestätigung. Referenzen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "register/register.page#action-c25bfc83": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:187",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:516"
+   ],
+   "n": "„Abmelden“ mit Logout-Icon im Konto-Menü (nur ohne Instanz): Push-Token entfernen, signOut, Zustand leeren, /login (Ionic db.logout). Referenzen aktualisiert.",
+   "v": "bestätigt"
+  },
+  "register/register.page#loading-f7a14784": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:472",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:481"
+   ],
+   "n": "Ionic: blockierendes Overlay „Instanz wird erstellt...“ / Flutter: Spinner und Text „Instanz wird erstellt...“ im deaktivierten Button, Schließen/Typauswahl gesperrt, Felder bleiben bedienbar.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "register/register.page#logic-697bd367": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:573",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:516",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:525",
+    "lib/data/repositories/tenant_create_repository.dart:21"
+   ],
+   "n": "Instanz anlegen (gleiche Tenant-Defaults, Admin-Zuordnung, Hauptgruppe, Standard-Typen, Erfolgs-Toast, setTenant, Admin-Startseite, Modal schließen), Typ-Platzhalter/-Labels, Abmelden und Konto löschen gleich. Unterschiede niedrig: Laden als Button-Spinner statt Overlay, Konto löschen mit Info-Toast statt blockierendem Overlay, Namen werden getrimmt (Ionic speichert ungetrimmt, akzeptiert nur Leerzeichen).",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "register/register.page#text-0d484e0a": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:412"
+   ],
+   "n": "Name fett wie Ionic. Ionic: die ganze erste Summary-Zeile ist ein ion-label-<p> und damit grau / Flutter: Standard-Textfarbe (schwarz), nur Zeilen 2–3 grau (#999). Text und Daten gleich; Bedingung ist Formularzustand.",
+   "v": "bestätigt",
+   "sev": "niedrig"
+  },
+  "register/register.page#text-1f43fa56": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:449"
+   ],
+   "n": "„Instanz-Kürzel fehlt“ als Listenpunkt, wenn das Kürzel leer ist (getrimmt).",
+   "v": "bestätigt"
+  },
+  "register/register.page#text-68203b72": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:76",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:317"
+   ],
+   "n": "„Ideal für Vereine, Teams oder sonstige Gruppen.“ mit grünem Häkchen unter Schritt 1 bei Typ general (auch Startwert, wie Ionic). Bedingung ist der gewählte Typ.",
+   "v": "bestätigt"
+  },
+  "register/register.page#text-6f9b8d26": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:419"
+   ],
+   "n": "„Typ: Allgemeine Gruppe/Chor/Orchester“ (getTypeLabel = registerType*), grau. Bedingung ist Formularzustand.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

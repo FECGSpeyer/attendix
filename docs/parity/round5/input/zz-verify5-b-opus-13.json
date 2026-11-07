@@ -1,0 +1,1819 @@
+{
+ "batch": "zz-verify5-b-opus-13",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/attendance-response-modal/attendance-response-modal.component",
+   "ionic": {
+    "ts": "shared/attendance-response-modal/attendance-response-modal.component.ts",
+    "html": "shared/attendance-response-modal/attendance-response-modal.component.ts (inline)"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "shared/attendance-response-modal/attendance-response-modal.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "cancel:78-80",
+     "send:82-102"
+    ],
+    "bodies": {
+     "cancel": "330d06ee",
+     "send": "03226b1d"
+    },
+    "id": "shared/attendance-response-modal/attendance-response-modal.component#logic-412c5f37"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/attendance_response_page.dart:63",
+     "lib/data/repositories/auto_message_repository.dart:404"
+    ],
+    "n": "send(): Edge Function attendance-response {action:'submit', messageId, kind, reasonCode nur bei 'reason', text getrimmt/''} identisch; Doppelklick-Sperre über _sending; Ergebnis-State wird zurückgegeben, Aufrufer (message_termin_section.dart:96) zeigt respDone/respDoneInstant wie Ionic. cancel() schließt ohne Ergebnis.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/auto_message_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/attendance-songs/attendance-songs.component",
+   "ionic": {
+    "ts": "shared/attendance-songs/attendance-songs.component.ts",
+    "html": "shared/attendance-songs/attendance-songs.component.html"
+   },
+   "item": {
+    "kind": "native",
+    "file": "shared/attendance-songs/attendance-songs.component.ts",
+    "line": 61,
+    "method": "AttendanceSongsComponent.openLink",
+    "cond": [
+     "(link)"
+    ],
+    "plugin": "Browser",
+    "call": "open",
+    "args": "{ url: link }",
+    "src": "8c32a81c",
+    "mbody": "e23025c6",
+    "id": "shared/attendance-songs/attendance-songs.component#native-3e96c37b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/self_service/presentation/widgets/song_options_sheet.dart:18",
+     "lib/core/services/native/native_file_service.dart:123"
+    ],
+    "n": "Browser.open → launchUrl inAppBrowserView (nativ), Fallback extern",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/audio-player/audio-player.component",
+   "ionic": {
+    "ts": "shared/audio-player/audio-player.component.ts",
+    "html": "shared/audio-player/audio-player.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "shared/audio-player/audio-player.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:17-17",
+     "onPrevious:19-21",
+     "onNext:23-25",
+     "onKnobMoveStart:27-29",
+     "onKnobMoveEnd:31-33",
+     "showError:35-37"
+    ],
+    "bodies": {
+     "constructor": "615cc6c3",
+     "onPrevious": "35f2d3b3",
+     "onNext": "dd368d20",
+     "onKnobMoveStart": "f3ccda85",
+     "onKnobMoveEnd": "9323b6dd",
+     "showError": "1fbcfabf"
+    },
+    "id": "shared/audio-player/audio-player.component#logic-bc6be67c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/audio_player/audio_player_widget.dart:24",
+     "lib/core/services/audio_player/audio_player_service.dart:187",
+     "lib/core/services/audio_player/audio_player_service.dart:293"
+    ],
+    "n": "Zurück/Weiter, Seek-Start/-Ende (Positionsupdates während Ziehen ignoriert) wie Ionic; Bar nur bei geladener Datei, über der Tab-Leiste (main_shell.dart:256). Einziger Unterschied: fehlender Fehler-Toast von showError → siehe toast-8cb59de1.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart",
+    "lib/core/services/audio_player/audio_player_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/excuse-reason-picker/excuse-reason-picker.component",
+   "ionic": {
+    "ts": "shared/excuse-reason-picker/excuse-reason-picker.component.ts",
+    "html": "shared/excuse-reason-picker/excuse-reason-picker.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "shared/excuse-reason-picker/excuse-reason-picker.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:37-37",
+     "get reasons:39-41",
+     "open:50-56",
+     "onReasonChange:58-63",
+     "isConfirmable:65-71",
+     "onConfirm:73-77",
+     "dismiss:79-81",
+     "onDidDismiss:83-87",
+     "onCustomReasonFocus:99-138",
+     "registerKeyboardListener:140-151",
+     "removeKeyboardListener:153-156"
+    ],
+    "bodies": {
+     "constructor": "b01583f4",
+     "get reasons": "1ae5645a",
+     "open": "b7308324",
+     "onReasonChange": "1c159910",
+     "isConfirmable": "cc70baca",
+     "onConfirm": "d162a42f",
+     "dismiss": "299c412f",
+     "onDidDismiss": "7c0feae8",
+     "onCustomReasonFocus": "c05b3772",
+     "registerKeyboardListener": "94dae669",
+     "removeKeyboardListener": "2cb431ee"
+    },
+    "id": "shared/excuse-reason-picker/excuse-reason-picker.component#logic-350cdf98"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:18",
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:60",
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:71"
+    ],
+    "n": "Gründe je nach Verspätung/Abmeldung, Vorauswahl (heute → freier Text, sonst erster Grund, leer → freier Text), Bestätigbarkeit (freier Text getrimmt > 4 Zeichen), Rückgabe getrimmter Text bzw. Grund gleich. Breakpoint-Wechsel 0.6↔1 und Tastatur-Scrolllogik durch inhaltshohes Sheet mit viewInsets-Padding ersetzt. Sichtbare Abweichungen siehe action-9be93d63 und field-432c437c.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/excuse-reason-picker/excuse-reason-picker.component",
+   "ionic": {
+    "ts": "shared/excuse-reason-picker/excuse-reason-picker.component.ts",
+    "html": "shared/excuse-reason-picker/excuse-reason-picker.component.html"
+   },
+   "item": {
+    "kind": "native",
+    "file": "shared/excuse-reason-picker/excuse-reason-picker.component.ts",
+    "line": 146,
+    "method": "ExcuseReasonPickerComponent.registerKeyboardListener",
+    "cond": [],
+    "plugin": "Keyboard",
+    "call": "addListener",
+    "args": "'keyboardWillShow', () => { this.customReasonField?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'center' }); }",
+    "src": "19dea657",
+    "mbody": "94dae669",
+    "id": "shared/excuse-reason-picker/excuse-reason-picker.component#native-c4a31197"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:85"
+    ],
+    "n": "Flutter-nativ: Sheet wird um die Tastaturhöhe (viewInsets) angehoben, TextField scrollt sich beim Fokus selbst in den sichtbaren Bereich",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/image-viewer/image-viewer.component",
+   "ionic": {
+    "ts": "shared/image-viewer/image-viewer.component.ts",
+    "html": "shared/image-viewer/image-viewer.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "shared/image-viewer/image-viewer.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "loading:57-57",
+     "failed:58-58",
+     "chromeVisible:59-59",
+     "showHint:60-60",
+     "zoomPercent:61-61",
+     "backdropOpacity:62-62",
+     "ngAfterViewInit:89-100",
+     "ngOnDestroy:102-105",
+     "close:109-115",
+     "zoomIn:117-119",
+     "zoomOut:121-123",
+     "resetZoom:125-127",
+     "onImageLoad:129-132",
+     "fitImage:135-146",
+     "onImageError:148-156",
+     "onKeyDown:160-180",
+     "onWheel:184-191",
+     "onPointerDown:195-213",
+     "onPointerMove:215-250",
+     "onPointerUp:252-289",
+     "beginSinglePointer:293-300",
+     "beginPinch:302-312",
+     "updatePinch:314-333",
+     "handleTap:335-362",
+     "finishDismiss:364-381",
+     "startInertia:383-418",
+     "settle:421-430",
+     "zoomTo:433-436",
+     "zoomAt:438-448",
+     "trackVelocity:450-460",
+     "bounds:463-472",
+     "toCenter:474-477",
+     "rubberBand:479-487",
+     "clamp:489-491",
+     "clampScale:493-495",
+     "applyTransform:497-505",
+     "clearTimers:507-514"
+    ],
+    "bodies": {
+     "loading": "25851dfe",
+     "failed": "b3ead7ab",
+     "chromeVisible": "ad965434",
+     "showHint": "abbb17c7",
+     "zoomPercent": "289bf4f5",
+     "backdropOpacity": "5c48600e",
+     "ngAfterViewInit": "2f685ae0",
+     "ngOnDestroy": "0fe5d93d",
+     "close": "edd521f1",
+     "zoomIn": "10399b2a",
+     "zoomOut": "feec770a",
+     "resetZoom": "1cb84dba",
+     "onImageLoad": "e70b6704",
+     "fitImage": "dc9c35bf",
+     "onImageError": "674e2881",
+     "onKeyDown": "f8f9db3d",
+     "onWheel": "85eb91c8",
+     "onPointerDown": "f8eff991",
+     "onPointerMove": "176ee3fd",
+     "onPointerUp": "c7ccadfb",
+     "beginSinglePointer": "cd9bd4aa",
+     "beginPinch": "cd6893bb",
+     "updatePinch": "30d5baa3",
+     "handleTap": "2f2a46e5",
+     "finishDismiss": "cfd9f64c",
+     "startInertia": "4d3a79ae",
+     "settle": "b2cb0881",
+     "zoomTo": "acdad240",
+     "zoomAt": "ec3d0fba",
+     "trackVelocity": "36f167c7",
+     "bounds": "d743b14f",
+     "toCenter": "c1d1c85c",
+     "rubberBand": "92f27fc3",
+     "clamp": "514a50b1",
+     "clampScale": "26727d6a",
+     "applyTransform": "607ca254",
+     "clearTimers": "8eddd5b2"
+    },
+    "id": "shared/image-viewer/image-viewer.component#logic-6075d2db"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:16",
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:128",
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:138",
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:382"
+    ],
+    "n": "Vollbild über allem (Fade-Route), Zoom 1–5×, Doppeltipp → 2,5× am Tippunkt bzw. zurück, Einfachtipp blendet Leisten aus/ein, Pinch/Mausrad über InteractiveViewer, Pan nur gezoomt, Tastatur Esc/+/=/-/0, Bild füllt den Bildschirm (BoxFit.contain). Alle Abweichungen hängen an Items: Wisch-Schließen (action-dd54e64c), fallbackSrc (action-54bf8f0b), Titel (text-c27ded53), Hinweis (text-59c21e83), Zoomschritt 1,5 statt 1,6 (action-24790a96/236047c8, gilt auch für +/- Tasten). Der viewerActions-Slot (Ersetzen/Entfernen im Passbild-Viewer) fehlt in Flutter – geprüft in b09 people/person/person.page#action-ea218e71/-0a1221be.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/message-editor/message-editor.component",
+   "ionic": {
+    "ts": "shared/message-editor/message-editor.component.ts",
+    "html": "shared/message-editor/message-editor.component.ts (inline)"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "shared/message-editor/message-editor.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "ngAfterViewInit:117-143",
+     "ngOnDestroy:145-147",
+     "cmd:149-152",
+     "toggleHeading:154-156",
+     "isActive:158-160",
+     "insertText:163-165",
+     "setContent:168-173",
+     "editLink:175-212"
+    ],
+    "bodies": {
+     "ngAfterViewInit": "c0a73448",
+     "ngOnDestroy": "1804234b",
+     "cmd": "55f58f76",
+     "toggleHeading": "aeb7ae54",
+     "isActive": "3c788579",
+     "insertText": "4b1e3916",
+     "setContent": "3db95d46",
+     "editLink": "9fab09eb"
+    },
+    "id": "shared/message-editor/message-editor.component#logic-58a8ed28"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_compose_page.dart:345",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:617",
+     "lib/core/utils/tiptap_converter.dart:1",
+     "lib/features/messages/presentation/pages/auto_message_rule_page.dart:164"
+    ],
+    "n": "Flutter-nativ mit flutter_quill (11.6.0) statt Tiptap: Inhalt wird beim Speichern in dasselbe Tiptap-JSON umgewandelt (Absatz, Überschrift h2/h3, Aufzählung/Nummerierung, fett/kursiv/unterstrichen/durchgestrichen/Link), Platzhalter-Einfügen an der Cursorposition (insertText) und Vorlage-Laden (setContent) vorhanden; keine Code/Zitat/Trennlinie wie Ionic. Abweichungen in der Toolbar und im Link-Dialog an den Items.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/notification-bell/notification-bell.component",
+   "ionic": {
+    "ts": "shared/notification-bell/notification-bell.component.ts",
+    "html": "shared/notification-bell/notification-bell.component.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "shared/notification-bell/notification-bell.component.ts",
+    "line": 60,
+    "method": "NotificationBellComponent.subscribe",
+    "cond": [],
+    "table": "realtime",
+    "op": "subscribe",
+    "payload": null,
+    "filters": [],
+    "src": "6ba02540",
+    "mbody": "ca9a77f4",
+    "roleGuarded": true,
+    "id": "shared/notification-bell/notification-bell.component#db-f8a48025"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/providers/message_providers.dart:223-252",
+     "lib/features/messages/presentation/widgets/notification_bell.dart:157"
+    ],
+    "n": "postgres_changes auf user_notifications, Filter user_id=eq.{userId}, alle Events; Guard ohne Nutzer/Instanz kein Abo wie Ionic; Glocke für alle Rollen. Flutter lädt Badge und Listen bei jeder Änderung neu (Ionic gezielter) – gleiches sichtbares Ergebnis.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared/notification-bell/notification-bell.component",
+   "ionic": {
+    "ts": "shared/notification-bell/notification-bell.component.ts",
+    "html": "shared/notification-bell/notification-bell.component.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "shared/notification-bell/notification-bell.component.ts",
+    "line": 263,
+    "method": "NotificationBellComponent.onTap",
+    "cond": [
+     "(n.type === 'message' && n.data?.messageId)"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "`/tabs/messages/${n.data.messageId}`",
+    "src": "c2fb762f",
+    "mbody": "6c277ca5",
+    "roleGuarded": true,
+    "id": "shared/notification-bell/notification-bell.component#nav-a59d7530"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/notification_bell.dart:98-114",
+     "lib/features/messages/presentation/widgets/notification_bell.dart:268-275"
+    ],
+    "n": "Nachrichten-Benachrichtigung: als gelesen markieren, Sheet schließen, Nachricht öffnen (Ionic /tabs/messages/{id}, Flutter /messages/{id}, Route für alle Rollen). Flutter wechselt die Instanz vorher selbst, Ionic auf der Nachrichtenseite – gleiches Ergebnis. Randfall verlassene Instanz (Flutter: nichts passiert) ist in x-d204a080f2 erfasst.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "song-viewer/song-viewer.page",
+   "ionic": {
+    "ts": "song-viewer/song-viewer.page.ts",
+    "html": "song-viewer/song-viewer.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "song-viewer/song-viewer.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "trackBySongId:19-19",
+     "constructor:27-30",
+     "ngOnInit:32-46",
+     "openSong:48-51"
+    ],
+    "bodies": {
+     "trackBySongId": "35ff54ff",
+     "constructor": "c4a744a6",
+     "ngOnInit": "af80cc25",
+     "openSong": "d4b57ee5"
+    },
+    "id": "song-viewer/song-viewer.page#logic-e405a309"
+   },
+   "first": {
+    "s": "na",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:61",
+     "lib/core/router/app_router.dart:1337"
+    ],
+    "n": "SongViewerPage ist in Ionic nirgends geroutet/geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage) – toter Code ohne Nutzerwirkung; keine Referenz auf SongViewerPageModule. Template ruft zudem nicht existierende Member auf (search, sortOpt, onFilterChanged, instruments, viewOpts, onViewChanged). Die echte öffentliche Werkliste ist SongsPage ↔ Flutter songs_list_page.dart (_isPublic) und wird in deren Unit geprüft.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/song/song.page.html",
+    "line": 505,
+    "cond": [
+     "@if (song)",
+     "@if (!readOnly || song.link)",
+     "@if (readOnly)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=openLink(song.link)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "songs.openExternalLink"
+    ],
+    "de": [
+     "Externen Noten-Link öffnen"
+    ],
+    "literals": [],
+    "text": "{{ 'songs.openExternalLink' | transloco }}",
+    "id": "songs/song/song.page#action-1c80f6e4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:342-352"
+    ],
+    "n": "„Externen Noten-Link öffnen“ (primary) nur lesend und mit Link – alle Nur-Lese-Rollen und Freigabe-Link wie Ionic; Öffnen wie openLink.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/song/song.page.html",
+    "line": 189,
+    "cond": [
+     "@if (song)",
+     "@else if (song.files && song.files.length > 0)",
+     "@if (!readOnly)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [
+     "(click)=isFilesModalOpen = true"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "cloud-upload-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "songs/song/song.page#action-59e01f20"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:1016-1021",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:911-929"
+    ],
+    "n": "Upload-Knopf nur Admin/Verantwortlich, bei vorhandenen Dateien vor dem …-Menü; öffnet das Upload-Sheet.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/song/song.page.html",
+    "line": 217,
+    "cond": [
+     "@if (song)",
+     "@else if (!readOnly)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [
+     "(click)=isFilesModalOpen = true"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "cloud-upload-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "songs/song/song.page#action-59e01f20-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:1016-1021",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:911-929"
+    ],
+    "n": "Ohne Dateien ebenfalls nur für Admin/Verantwortlich (Flutter: ein Knopf für beide Ionic-Zweige).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "songs/song/song.page.ts",
+    "line": 556,
+    "method": "SongPage.openLink",
+    "cond": [
+     "(!Capacitor.isNativePlatform())"
+    ],
+    "call": "Utils.openInNewTab",
+    "args": "link",
+    "src": "9d1a4c68",
+    "mbody": "a929e6ea",
+    "id": "songs/song/song.page#effect-3284e3a8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:342",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:350",
+     "lib/core/services/native/native_file_service.dart:103",
+     "lib/core/services/native/native_file_service.dart:123",
+     "lib/core/services/web_window_web.dart:36"
+    ],
+    "n": "„Externen Noten-Link öffnen“ nur lesend mit Link (alle Rollen außer Admin/Verantwortlich, Freigabe-Link) in beiden. Web: window.open(_blank), in installierter PWA per Link-Klick wie Utils.openInNewTab; nativ In-App-Browser wie Browser.open, iOS-App auf Mac extern.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart",
+    "lib/core/services/web_window_web.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/song/song.page.html",
+    "line": 152,
+    "cond": [
+     "@if (song)",
+     "@if (db.tenant()?.song_additional_fields?.length)",
+     "@for (field of db.tenant().song_additional_fields; track field.id)",
+     "@else if (field.type === 'number')"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "number",
+     "[readonly]": "\"readOnly\""
+    },
+    "events": [
+     "(ionBlur)=update()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"song.additional_fields[field.id]\"",
+    "bindings": [
+     "[label]=\"field.name\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[label]=\"field.name\"",
+    "id": "songs/song/song.page#field-3398e748"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:605-616",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:136-140"
+    ],
+    "n": "Zahl-Zusatzfeld (Zahlentastatur), Nur-Lese-Rollen readOnly, speichert beim Verlassen. Freigabe-Ansicht s. text-e14adf08.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/song/song.page.html",
+    "line": 155,
+    "cond": [
+     "@if (song)",
+     "@if (db.tenant()?.song_additional_fields?.length)",
+     "@for (field of db.tenant().song_additional_fields; track field.id)",
+     "@else (not field.type === 'boolean' / field.type === 'select' / field.type === 'number')"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "text",
+     "[readonly]": "\"readOnly\""
+    },
+    "events": [
+     "(ionBlur)=update()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"song.additional_fields[field.id]\"",
+    "bindings": [
+     "[label]=\"field.name\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[label]=\"field.name\"",
+    "id": "songs/song/song.page#field-3398e748-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:605-616",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:136-140"
+    ],
+    "n": "Text-Zusatzfeld, Nur-Lese-Rollen readOnly, speichert beim Verlassen. Freigabe-Ansicht s. text-e14adf08.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/song/song.page.html",
+    "line": 56,
+    "cond": [
+     "@if (song)",
+     "@if (!readOnly)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "#": "name"
+    },
+    "events": [
+     "(ionBlur)=update()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"song.name\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "songs/song/song.page#field-4e7c4cef"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:419-426",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:146"
+    ],
+    "n": "Textfeld, speichert beim Verlassen; nur Admin/Verantwortlich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/song/song.page.html",
+    "line": 52,
+    "cond": [
+     "@if (song)",
+     "@if (!readOnly)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "number",
+     "#": "number"
+    },
+    "events": [
+     "(ionBlur)=update()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"song.number\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "songs/song/song.page#field-8bb7c59d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:410-417",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:145"
+    ],
+    "n": "Zahlenfeld, speichert beim Verlassen (int.tryParse); nur Admin/Verantwortlich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/song/song.page.html",
+    "line": 511,
+    "cond": [
+     "@if (song)",
+     "@if (!readOnly || song.link)",
+     "@else (not readOnly)"
+    ],
+    "tag": "ion-textarea",
+    "attrs": {
+     "#": "link"
+    },
+    "events": [
+     "(ionBlur)=update()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"song.link\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "songs/song/song.page#field-9b3e97d3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:353-370",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:147"
+    ],
+    "n": "Mehrzeiliges Feld (1–5 Zeilen), speichert beim Verlassen (leer → null); nur Admin/Verantwortlich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "songs/song/song.page.html",
+    "line": 47,
+    "cond": [
+     "@if (song)",
+     "@if (!readOnly)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "text",
+     "#": "prefix"
+    },
+    "events": [
+     "(ionBlur)=update()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"song.prefix\"",
+    "bindings": [
+     "[helperText]=\"'songs.prefixHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "songs.prefixHelper"
+    ],
+    "de": [
+     "Bspw. um Weihnachtslieder kennzeichnen zu können (z.B. W für Weihnachten -> W1)"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'songs.prefixHelper' | transloco\"",
+    "id": "songs/song/song.page#field-a1c5c8c4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:397-408",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:382-387",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:144"
+    ],
+    "n": "Textfeld mit Hilfetext „Bspw. um Weihnachtslieder …“, Satzanfang groß, speichert beim Verlassen; nur Admin/Verantwortlich. Flutter schreibt getrimmt.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "native",
+    "file": "songs/song/song.page.ts",
+    "line": 563,
+    "method": "SongPage.openLink",
+    "cond": [],
+    "plugin": "Browser",
+    "call": "open",
+    "args": "{ url: link }",
+    "src": "8c32a81c",
+    "mbody": "a929e6ea",
+    "id": "songs/song/song.page#native-51a26cad"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:342-352",
+     "lib/core/services/native/native_file_service.dart:123-134"
+    ],
+    "n": "openLinkInApp: nativ In-App-Browser (SFSafariViewController/Custom Tabs), iOS-App auf Mac und Web extern/neuer Tab wie Ionic openLink.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "songs/song/song.page.html",
+    "line": 33,
+    "cond": [
+     "@if (readOnly)",
+     "@if (song)"
+    ],
+    "tag": "ion-title",
+    "attrs": {
+     "size": "large"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ song.number }} {{ song.name }}"
+    ],
+    "text": "{{ song.number }} {{ song.name }}",
+    "id": "songs/song/song.page#text-0685e298-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:305",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:252-254"
+    ],
+    "n": "Großer Titel (iOS condense) mit gleicher readOnly-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "songs/song/song.page.html",
+    "line": 46,
+    "cond": [
+     "@if (song)",
+     "@if (!readOnly)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "songs.prefixOptional"
+    ],
+    "de": [
+     "Präfix (optional)"
+    ],
+    "literals": [],
+    "text": "{{ 'songs.prefixOptional' | transloco }}",
+    "id": "songs/song/song.page#text-0dee90a4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:404",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:307",
+     "lib/core/providers/song_providers.dart:466-468"
+    ],
+    "n": "„Präfix (optional)“; Formular nur Admin/Verantwortlich. ",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "songs/song/song.page.html",
+    "line": 102,
+    "cond": [
+     "@if (song)",
+     "@if (readOnly && song.category_ids?.length)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "songs.categories"
+    ],
+    "de": [
+     "Kategorien"
+    ],
+    "literals": [],
+    "text": "{{ 'songs.categories' | transloco }}",
+    "id": "songs/song/song.page#text-2352fce9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:308-309"
+    ],
+    "n": "Überschrift „Kategorien“ nur lesend und mit Kategorien – alle Nur-Lese-Rollen und Freigabe-Link wie Ionic (Kategorienamen in der Freigabe-Ansicht s. text-21178ee6).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "songs/song/song.page.html",
+    "line": 36,
+    "cond": [
+     "@else (not readOnly)"
+    ],
+    "tag": "ion-title",
+    "attrs": {
+     "size": "large"
+    },
+    "keys": [
+     "songs.editSong"
+    ],
+    "de": [
+     "Werk bearbeiten"
+    ],
+    "literals": [],
+    "text": "{{ 'songs.editSong' | transloco }}",
+    "id": "songs/song/song.page#text-3f41f257-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:305",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:252-254"
+    ],
+    "n": "Großer Titel „Werk bearbeiten“, gleiche Rollenbedingung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "songs/song/song.page.html",
+    "line": 117,
+    "cond": [
+     "@if (song)",
+     "@if (readOnly && (song.withChoir || song.withSolo || (isOrchestra && song.instrument_ids?.length)))",
+     "@if (song.withChoir)"
+    ],
+    "tag": "ion-chip",
+    "attrs": {
+     "color": "primary"
+    },
+    "keys": [
+     "songs.choirOrchestra"
+    ],
+    "de": [
+     "Chor & Orchester"
+    ],
+    "literals": [],
+    "text": "{{ 'songs.choirOrchestra' | transloco }}",
+    "id": "songs/song/song.page#text-5406c8fa"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:328-332",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:516-517"
+    ],
+    "n": "Chip „Chor & Orchester“ (primary) für Nur-Lese-Rollen/Freigabe wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "songs/song/song.page.html",
+    "line": 120,
+    "cond": [
+     "@if (song)",
+     "@if (readOnly && (song.withChoir || song.withSolo || (isOrchestra && song.instrument_ids?.length)))",
+     "@if (song.withSolo)"
+    ],
+    "tag": "ion-chip",
+    "attrs": {
+     "color": "primary"
+    },
+    "keys": [
+     "songs.withSoloSinging"
+    ],
+    "de": [
+     "Mit Solo-Gesang"
+    ],
+    "literals": [],
+    "text": "{{ 'songs.withSoloSinging' | transloco }}",
+    "id": "songs/song/song.page#text-65a55078"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_detail_page.dart:328-332",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:518-519"
+    ],
+    "n": "Chip „Mit Solo-Gesang“ (primary), gleiche Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/song/song.page",
+   "ionic": {
+    "ts": "songs/song/song.page.ts",
+    "html": "songs/song/song.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "songs/song/song.page.ts",
+    "line": 226,
+    "method": "SongPage.addFiles",
+    "cond": [
+     "(file.size > 20 * 1024 * 1024)"
+    ],
+    "message": {
+     "keys": [
+      "songs.fileTooLarge"
+     ],
+     "de": [
+      "Die Datei {name} überschreitet die maximale Größe von 20MB."
+     ],
+     "literals": [],
+     "expr": "translate('songs.fileTooLarge', { name: file.name })"
+    },
+    "color": "danger",
+    "duration": "5000",
+    "src": "03507fb7",
+    "mbody": "347aa203",
+    "roleGuarded": true,
+    "id": "songs/song/song.page#toast-1ed088c6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/file_upload_sheet.dart:305",
+     "lib/features/songs/presentation/widgets/file_upload_sheet.dart:307",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:937",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:938"
+    ],
+    "n": "Upload-Sheet und Datei-Drop nur bei !readOnly (Ionic readOnly = Rolle ≠ Admin/Verantwortlich bzw. Freigabe-Link; Flutter song_providers.dart:468 gleich, FileDropTarget enabled: !readOnly). Text „Die Datei {name} überschreitet die maximale Größe von 20MB.“, rot; Flutter prüft auch beim Einzeldatei-Drop (öffnet dann kein Modal).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "songs/songs.page.ts",
+    "line": 159,
+    "method": "SongsPage.subscribeToUpdates",
+    "cond": [],
+    "table": "realtime",
+    "op": "subscribe",
+    "payload": null,
+    "filters": [],
+    "src": "55f2e125",
+    "mbody": "e721e1ed",
+    "id": "songs/songs.page#db-3dd65a36"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/providers/song_providers.dart:205",
+     "lib/core/providers/song_providers.dart:220",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:157"
+    ],
+    "n": "Ionic: alle Events auf public.songs ohne Filter, Reload wenn new.tenantId = effektiver Werk-Tenant oder old.id vorhanden / Flutter: INSERT/UPDATE mit Filter tenantId = effektiver Werk-Tenant, DELETE nur wenn ID in geladenen Werken, 300 ms Debounce. Sichtbares Ergebnis gleich (Liste aktualisiert sich). Öffentliche Seite: Flutter ohne Realtime (Ionic abonniert dort den eingeloggten Tenant bzw. wirft ohne Login).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/song_providers.dart",
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "songs/songs.page.ts",
+    "line": 159,
+    "method": "SongsPage.subscribeToUpdates",
+    "cond": [],
+    "table": "realtime",
+    "op": "channel",
+    "payload": "`songs-changes-${effectiveTenantId}`",
+    "filters": [],
+    "src": "74332a45",
+    "mbody": "e721e1ed",
+    "id": "songs/songs.page#db-f4cfc4cb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/providers/song_providers.dart:221"
+    ],
+    "n": "Kanal `songs-changes-<song_source_tenant_id ?? tenantId>` identisch",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/song_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "songs/songs.page.html",
+    "line": 12,
+    "cond": [
+     "@if (tenantData)"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ tenantData.longName }}"
+    ],
+    "text": "{{ tenantData.longName }}",
+    "id": "songs/songs.page#text-5ecb67ec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:245",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:257"
+    ],
+    "n": "Öffentlicher Freigabe-Link (ohne Login): Titel = longName der freigegebenen Instanz (Flutter title bei data.isPublic). Keine Rollenbedingung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "songs/songs.page.html",
+    "line": 14,
+    "cond": [
+     "@else (not tenantData)"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "songs.songsCount"
+    ],
+    "de": [
+     "Werke ({count})"
+    ],
+    "literals": [],
+    "text": "{{ 'songs.songsCount' | transloco: { count: songs?.length } }}",
+    "id": "songs/songs.page#text-b8539fda"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:245-247",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:257"
+    ],
+    "n": "„Werke ({count})“ mit Anzahl aller Werke; öffentlich longName wie Ionic. Während des Ladens zeigt Flutter „Werke“ statt „Werke (0)“.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/tabs.page",
+   "ionic": {
+    "ts": "tabs/tabs.page.ts",
+    "html": "tabs/tabs.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "tabs/tabs.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:30-41",
+     "initialize:43-74",
+     "ionViewDidEnter:76-81",
+     "ionViewDidLeave:83-85"
+    ],
+    "bodies": {
+     "constructor": "bdb8b3ed",
+     "initialize": "25a9a0fa",
+     "ionViewDidEnter": "26d28b3d",
+     "ionViewDidLeave": "88e3dce1"
+    },
+    "id": "tabs/tabs.page#logic-658293a9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/main_shell.dart:60",
+     "lib/shared/widgets/layout/main_shell.dart:309",
+     "lib/core/router/app_router.dart:214"
+    ],
+    "n": "Rollenflags und Tab-Sichtbarkeit gleich; unerlaubte URL -> Startseite der Rolle über Router-Redirect; Seiten-Glocke wird bei Sidepanel ausgeblendet. Einzige Abweichung beim Werke-Tab für Eltern (siehe action-8d0f89f7).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-detail/task-detail.page",
+   "ionic": {
+    "ts": "tasks/task-detail/task-detail.page.ts",
+    "html": "tasks/task-detail/task-detail.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "tasks/task-detail/task-detail.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:42-48",
+     "get isLeader:50-52",
+     "get backHref:54-56",
+     "get isMine:58-61",
+     "get isOverdue:63-65",
+     "get assigneeText:67-72",
+     "get attendanceLabel:75-80",
+     "get hasSource:82-84",
+     "ngOnInit:86-90",
+     "load:92-103",
+     "handleRefresh:105-108",
+     "setStatus:110-125",
+     "edit:127-131",
+     "deleteTask:133-156"
+    ],
+    "bodies": {
+     "constructor": "ea087758",
+     "get isLeader": "c3cc14d1",
+     "get backHref": "2da04c9e",
+     "get isMine": "fcee26b7",
+     "get isOverdue": "55b1de6e",
+     "get assigneeText": "2f8b43a9",
+     "get attendanceLabel": "dd79bffa",
+     "get hasSource": "fc94036b",
+     "ngOnInit": "83ca3569",
+     "load": "6158feb8",
+     "handleRefresh": "e7cea427",
+     "setStatus": "89ed5360",
+     "edit": "53fbc9e7",
+     "deleteTask": "bd998b2f"
+    },
+    "id": "tasks/task-detail/task-detail.page#logic-945723cf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:28",
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:141",
+     "lib/features/team_organization/team_org_utils.dart:341"
+    ],
+    "n": "isLeader/isMine/isOverdue/assigneeText/attendanceLabel/hasSource, Laden, Status, Bearbeiten, Löschen gleich; sichtbare Abweichungen nur in den Items (Segment nicht optimistisch, Zurück/Refresh).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tasks/task-form/task-form.component",
+   "ionic": {
+    "ts": "tasks/task-form/task-form.component.ts",
+    "html": "tasks/task-form/task-form.component.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "tasks/task-form/task-form.component.ts",
+    "line": 31,
+    "method": "openTaskForm",
+    "cond": [],
+    "component": "TaskFormComponent",
+    "props": [],
+    "sheet": true,
+    "breakpoints": "[0, 1]",
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "b31f1259",
+    "mbody": "f04f0593",
+    "roleGuarded": true,
+    "id": "tasks/task-form/task-form.component#modal-fbcd872a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:17",
+     "lib/features/team_organization/presentation/pages/task_detail_page.dart:81",
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:477",
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:69",
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:137"
+    ],
+    "n": "Alle Aufrufer nur Leitung, wie Ionic: Aufgabe bearbeiten (Detail, isLeader), „Aufgabe hinzufügen“ am Thema, Protokoll (nur Leitungs-Layouts), Aufgaben-Tab FAB/Leer-Button. Bottom-Sheet in voller Höhe (Ionic breakpoints [0,1], initial 1); liefert gespeicherte Aufgabe oder null.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "teacher/teacher.page",
+   "ionic": {
+    "ts": "teacher/teacher.page.ts",
+    "html": "teacher/teacher.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "teacher/teacher.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:21-24",
+     "ngOnInit:26-29",
+     "dismiss:31-33",
+     "editTeacher:35-41"
+    ],
+    "bodies": {
+     "constructor": "66924267",
+     "ngOnInit": "bd499f41",
+     "dismiss": "69a7489b",
+     "editTeacher": "a9435b56"
+    },
+    "id": "teacher/teacher.page#logic-4aa9911c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:135",
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:435",
+     "lib/features/teachers/presentation/pages/teachers_list_page.dart:340"
+    ],
+    "n": "Kopie des Lehrers bearbeiten, Schüler = aktive Personen mit diesem Lehrer, Speichern ohne Validierung (name, number, notes, private, instruments), Erfolgs-Toast, Schließen und Neuladen der Liste. Flutter speichert erst nach dem Schließen in der Liste und trimmt die Texte; Fehler werden in beiden nicht gemeldet (Notifier liefert null, Ionic prüft den Fehler nicht).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/tasks-tab/tasks-tab.component",
+   "ionic": {
+    "ts": "team-organization/tasks-tab/tasks-tab.component.ts",
+    "html": "team-organization/tasks-tab/tasks-tab.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "team-organization/tasks-tab/tasks-tab.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:52-55",
+     "get isLeader:57-59",
+     "ngOnInit:61-63",
+     "reload:65-79",
+     "setFilter:81-84",
+     "onArchivedToggle:86-88",
+     "rebuild:90-98",
+     "get myOpenCount:100-102",
+     "get allOpenCount:104-106",
+     "get emptyText:108-113",
+     "isOverdue:115-117",
+     "dueLabel:119-121",
+     "subtitle:123-130",
+     "initials:132-135",
+     "toggle:137-158",
+     "addTask:160-166"
+    ],
+    "bodies": {
+     "constructor": "d7659af8",
+     "get isLeader": "c3cc14d1",
+     "ngOnInit": "5e249a05",
+     "reload": "b22b48d9",
+     "setFilter": "d0857eae",
+     "onArchivedToggle": "104224d3",
+     "rebuild": "014c4318",
+     "get myOpenCount": "a6839c4a",
+     "get allOpenCount": "eb81950a",
+     "get emptyText": "65473d6f",
+     "isOverdue": "e3c0ec8e",
+     "dueLabel": "79dbe7fc",
+     "subtitle": "d445339b",
+     "initials": "8407b620",
+     "toggle": "447539d2",
+     "addTask": "bc090338"
+    },
+    "id": "team-organization/tasks-tab/tasks-tab.component#logic-a2306e01"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:28",
+     "lib/features/team_organization/presentation/widgets/tasks_tab.dart:89"
+    ],
+    "n": "Laden (Leitung alle, Mitglieder eigene), Chips/Filter, Archiv-Zählung, Gruppen, Leertexte, Untertitel, optimistisches Abhaken und Anlegen gleich; Refresh/Fehler siehe action-411a87d7 und toast-1b91ff64.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "terms/terms.page",
+   "ionic": {
+    "ts": "terms/terms.page.ts",
+    "html": "terms/terms.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "terms/terms.page.ts",
+    "line": 24,
+    "method": "TermsPage.ngOnInit",
+    "cond": [
+     "(!this.db.user)"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "'/login'",
+    "src": "bd94d0e7",
+    "mbody": "799c954a",
+    "roleGuarded": true,
+    "id": "terms/terms.page#nav-8447fd12"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/router/app_router.dart:335-337",
+     "lib/core/router/app_router.dart:375-376"
+    ],
+    "n": "Ohne Sitzung leitet der Router /terms auf /login um (Ionic ngOnInit nach checkToken).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "terms/terms.page",
+   "ionic": {
+    "ts": "terms/terms.page.ts",
+    "html": "terms/terms.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "terms/terms.page.ts",
+    "line": 48,
+    "method": "TermsPage.accept",
+    "cond": [
+     "(refreshError)"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "'/login'",
+    "src": "bd94d0e7",
+    "mbody": "ee8ce7f2",
+    "roleGuarded": true,
+    "id": "terms/terms.page#nav-efbc7cef"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/legal/presentation/pages/terms_page.dart:59-61"
+    ],
+    "n": "Refresh-Fehler → Abmelden und /login.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/legal/presentation/pages/terms_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "terms/terms.page",
+   "ionic": {
+    "ts": "terms/terms.page.ts",
+    "html": "terms/terms.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "terms/terms.page.ts",
+    "line": 42,
+    "method": "TermsPage.accept",
+    "cond": [
+     "(!this.privacyAccepted)"
+    ],
+    "message": {
+     "keys": [
+      "terms.pleaseAccept"
+     ],
+     "de": [
+      "Bitte akzeptiere die Nutzungsbedingungen und Datenschutzerklärung."
+     ],
+     "literals": [],
+     "expr": "translate('terms.pleaseAccept')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "9061c287",
+    "mbody": "ee8ce7f2",
+    "roleGuarded": true,
+    "id": "terms/terms.page#toast-16e05266"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/legal/presentation/pages/terms_page.dart:49-52"
+    ],
+    "n": "In beiden Apps praktisch unerreichbar (Button deaktiviert).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/legal/presentation/pages/terms_page.dart"
+   ]
+  }
+ ]
+}
