@@ -233,11 +233,17 @@ final songsRealtimeProvider = Provider.autoDispose<void>((ref) {
   Timer? debounce;
   void refresh() {
     debounce?.cancel();
+    if (ref.read(songsBulkDeleteRunningProvider)) return;
     debounce = Timer(const Duration(milliseconds: 300), () {
       if (ref.read(songsBulkDeleteRunningProvider)) return;
       ref.invalidate(songsProvider);
     });
   }
+
+  // A bulk delete reloads once at its end: no reload waiting from before.
+  ref.listen(songsBulkDeleteRunningProvider, (_, running) {
+    if (running) debounce?.cancel();
+  });
 
   final channel = supabase
       .channel('songs-changes-$songTenantId')

@@ -1330,34 +1330,38 @@ class _RadioAlertState<T> extends State<_RadioAlert<T>> {
                     child: Text(message),
                   ),
                 for (final (value, label) in widget.options)
-                  InkWell(
-                    onTap: () => setState(() => _value = value),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 22),
-                      child: Container(
-                        constraints: const BoxConstraints(minHeight: 48),
-                        padding: const EdgeInsets.symmetric(vertical: 11),
-                        decoration: BoxDecoration(
-                          border: Border(top: BorderSide(color: rd.line, width: 0.5)),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                label,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  height: 1.3,
-                                  fontWeight: value == _value ? FontWeight.w600 : FontWeight.w400,
-                                  color: value == _value ? rd.primary : rd.text,
+                  Semantics(
+                    checked: value == _value,
+                    inMutuallyExclusiveGroup: true,
+                    child: InkWell(
+                      onTap: () => setState(() => _value = value),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 22),
+                        child: Container(
+                          constraints: const BoxConstraints(minHeight: 48),
+                          padding: const EdgeInsets.symmetric(vertical: 11),
+                          decoration: BoxDecoration(
+                            border: Border(top: BorderSide(color: rd.line, width: 0.5)),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  label,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    height: 1.3,
+                                    fontWeight: value == _value ? FontWeight.w600 : FontWeight.w400,
+                                    color: value == _value ? rd.primary : rd.text,
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 12),
-                            value == _value
-                                ? Icon(Icons.check, size: 22, color: rd.primary)
-                                : const SizedBox(width: 22),
-                          ],
+                              const SizedBox(width: 12),
+                              value == _value
+                                  ? Icon(Icons.check, size: 22, color: rd.primary)
+                                  : const SizedBox(width: 22),
+                            ],
+                          ),
                         ),
                       ),
                     ),
