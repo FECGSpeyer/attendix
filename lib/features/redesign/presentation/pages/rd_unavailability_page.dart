@@ -81,11 +81,15 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
     return DateFormat(dateFmt()).format(until);
   }
 
-  void _update(_Draft draft, PersonUnavailability rule) => setState(() => draft.rule = rule);
+  /// No change while saving (it would be lost or overwritten).
+  void _update(_Draft draft, PersonUnavailability rule) {
+    if (_saving) return;
+    setState(() => draft.rule = rule);
+  }
 
   void _add() {
     final tenantId = _tenantId;
-    if (tenantId == null) return;
+    if (tenantId == null || _saving) return;
     // Like the old page: a new rule starts with the Dienst types.
     final dutyTypeIds = _types.where((t) => t.dutyMode && t.id != null).map((t) => t.id!).toList();
     setState(() {
@@ -98,6 +102,7 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
 
   Future<void> _remove(_Draft draft) async {
     final l10n = context.l10n;
+    if (_saving) return;
     if (draft.original == null) {
       setState(() => _drafts = [...?_drafts]..remove(draft));
       return;
@@ -110,14 +115,19 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
       confirmText: l10n.commonDelete,
       destructive: true,
     );
-    if (!confirmed || !mounted || !_sameGroup) return;
-    final ok = await notifier.deleteUnavailability(draft.original!);
+    if (!confirmed || !mounted || !_sameGroup || _saving) return;
+    final deleted = draft.original!;
+    final ok = await notifier.deleteUnavailability(deleted);
     if (!mounted) return;
     if (!ok) {
       ToastHelper.showError(context, l10n.dutyFlutterDeleteFailed);
       return;
     }
-    setState(() => _drafts = [...?_drafts]..remove(draft));
+    setState(() {
+      _drafts = [...?_drafts]..remove(draft);
+      // A deleted rule adjusts no planned Termine.
+      _toOffer.removeWhere((r) => r.id == deleted.id);
+    });
   }
 
   Future<void> _editReason(_Draft draft) async {
@@ -189,7 +199,10 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
       draft
         ..rule = result
         ..original = result;
-      _toOffer.add(result);
+      // Only the newest state of a rule is offered.
+      _toOffer
+        ..removeWhere((r) => r.id == result.id)
+        ..add(result);
     }
     while (_toOffer.isNotEmpty) {
       if (!mounted || !_sameGroup) break;
@@ -276,49 +289,52 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
               ),
               Expanded(
                 // Locked while saving: a change made now would not be saved.
-                child: AbsorbPointer(
-                  absorbing: _saving,
-                  child: RdFormBody(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
-                        child: Text(
-                          widget.forOther
-                              ? l10n.redesignUnavailabilityIntro(widget.personName)
-                              : l10n.redesignUnavailabilityIntroSelf,
-                          style: RdType.body(p).copyWith(color: p.text2),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      if (drafts == null)
-                        rulesAsync.hasError
-                            ? RdInfoCard(
-                              text: l10n.redesignTodayLoadFailed,
-                              icon: Icons.cloud_off_outlined,
-                              action: RdOutlineButton(
-                                label: l10n.redesignCommonRetry,
-                                onPressed: () => ref.invalidate(unavailabilityByPersonProvider(widget.personId)),
-                              ),
-                            )
-                            : RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
-                      else ...[
-                        if (drafts.isEmpty) ...[
-                          const SizedBox(height: 14),
-                          RdInfoCard(
-                            icon: Icons.event_busy_outlined,
-                            text: widget.forOther ? l10n.dutyNoRuleOther : l10n.dutyNoRuleSelf,
+                child: ExcludeFocus(
+                  excluding: _saving,
+                  child: AbsorbPointer(
+                    absorbing: _saving,
+                    child: RdFormBody(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+                          child: Text(
+                            widget.forOther
+                                ? l10n.redesignUnavailabilityIntro(widget.personName)
+                                : l10n.redesignUnavailabilityIntroSelf,
+                            style: RdType.body(p).copyWith(color: p.text2),
                           ),
-                        ],
-                        for (final (i, d) in drafts.indexed) _ruleSection(i, d),
-                        const SizedBox(height: 22),
-                        RdOutlineButton(
-                          icon: Icons.add,
-                          label: l10n.redesignUnavailabilityAdd,
-                          onPressed: _saving ? null : _add,
                         ),
-                        RdListNote(l10n.dutyRuleHint),
+                        const SizedBox(height: 8),
+                        if (drafts == null)
+                          rulesAsync.hasError
+                              ? RdInfoCard(
+                                text: l10n.redesignTodayLoadFailed,
+                                icon: Icons.cloud_off_outlined,
+                                action: RdOutlineButton(
+                                  label: l10n.redesignCommonRetry,
+                                  onPressed: () => ref.invalidate(unavailabilityByPersonProvider(widget.personId)),
+                                ),
+                              )
+                              : RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
+                        else ...[
+                          if (drafts.isEmpty) ...[
+                            const SizedBox(height: 14),
+                            RdInfoCard(
+                              icon: Icons.event_busy_outlined,
+                              text: widget.forOther ? l10n.dutyNoRuleOther : l10n.dutyNoRuleSelf,
+                            ),
+                          ],
+                          for (final (i, d) in drafts.indexed) _ruleSection(i, d),
+                          const SizedBox(height: 22),
+                          RdOutlineButton(
+                            icon: Icons.add,
+                            label: l10n.redesignUnavailabilityAdd,
+                            onPressed: _saving ? null : _add,
+                          ),
+                          RdListNote(l10n.dutyRuleHint),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
               ),
