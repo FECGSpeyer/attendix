@@ -52,6 +52,14 @@ const DAILY_LIMIT_TENANT = 2000;
 /// Decoded picture size; the app sends at most this (PartVisionService.maxImageBytes).
 const MAX_IMAGE_BYTES = 1_500_000;
 const MAX_GROUPS = 150;
+
+/// Other names a group was given (synonyms, learned by earlier imports):
+/// at most 12, each as short as a part name.
+function otherNames(raw: unknown): { also?: string[] } {
+  if (typeof raw !== "string") return {};
+  const names = raw.split(",").map((s) => s.trim().slice(0, 40)).filter((s) => s).slice(0, 12);
+  return names.length ? { also: names } : {};
+}
 const BASE64 = /^[A-Za-z0-9+/]+={0,2}$/;
 
 /// What a page can be (`kind`).
@@ -84,7 +92,7 @@ function imageMime(b64: string): string | null {
 
 const SYSTEM = [
   "You identify the part of a sheet-music page for a music group's app.",
-  "The user message contains a JSON list of the group's parts (id and name) and an image of the first page of one part.",
+  "The user message contains a JSON list of the group's parts (id, name and other names \"also\" it is known by) and an image of the first page of one part.",
   "Read the part / instrument name printed on the page (usually top left or top centre, e.g. \"Violin II\",",
   "\"Clarinet in B♭ 1\", \"Horn in F 3\", \"Sopran\", \"Partitur\"). Ignore the title, composer and movement numbers.",
   "Pick the ONE part from the list that the page belongs to, taking part numbers into account",
@@ -162,7 +170,7 @@ Deno.serve(async (req: Request) => {
   // 4. The tenant's groups, from the database.
   const { data: rows, error: groupsErr } = await admin
     .from("instruments")
-    .select("id, name")
+    .select("id, name, synonyms")
     .eq("tenantId", tenantId)
     .order("id")
     .limit(MAX_GROUPS);
@@ -172,7 +180,7 @@ Deno.serve(async (req: Request) => {
   }
   const groups = (rows ?? [])
     .filter((g) => Number.isInteger(g.id) && typeof g.name === "string" && g.name.trim())
-    .map((g) => ({ id: g.id as number, name: (g.name as string).trim().slice(0, 80) }));
+    .map((g) => ({ id: g.id as number, name: (g.name as string).trim().slice(0, 80), ...otherNames(g.synonyms) }));
   if (groups.length === 0) return json({ groupId: null, label: null, confidence: "low" });
 
   // 5. Budget: counted before the paid call, refused when used up or unknown.
