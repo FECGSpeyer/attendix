@@ -2635,6 +2635,7 @@
   "rdOrgFieldTypeFixed": "The type cannot be changed after the field was created.",
   "rdOrgFieldsAdd": "Add field",
   "rdOrgFieldsEmpty": "No shared extra fields yet.",
+  "rdOrgFieldsSaving": "Saving change …",
   "rdOrgFilter": "Filter",
   "rdOrgFilterGroup": "In {group}",
   "rdOrgFilterOlder": "Older than {date}",

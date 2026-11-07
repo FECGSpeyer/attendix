@@ -9698,6 +9698,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdOrgFieldsEmpty => 'Noch keine gemeinsamen Zusatzfelder.';
 
   @override
+  String get rdOrgFieldsSaving => 'Änderung wird gespeichert …';
+
+  @override
   String get rdOrgFilter => 'Filter';
 
   @override

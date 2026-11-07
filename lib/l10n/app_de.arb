@@ -12108,6 +12108,10 @@
   "@rdOrgFieldsEmpty": {
     "description": "rdOrg.fieldsEmpty"
   },
+  "rdOrgFieldsSaving": "Änderung wird gespeichert …",
+  "@rdOrgFieldsSaving": {
+    "description": "rdOrg.fieldsSaving"
+  },
   "rdOrgFilter": "Filter",
   "@rdOrgFilter": {
     "description": "rdOrg.filter"

@@ -9,6 +9,7 @@ import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../data/models/organisation/organisation.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -21,10 +22,19 @@ import '../widgets/rd_widgets.dart';
 
 Future<void>? _orgFieldWrites;
 
+/// Writes of the shared fields not finished yet (also of a closed page).
+/// While one runs the list is locked, so no form starts from a list that is
+/// about to change.
+final _orgFieldWritesPending = ValueNotifier<int>(0);
+
 /// Runs [task] after every earlier write of the shared fields (also of a
 /// closed page); never throws.
 Future<bool> _serialOrgFieldWrite(Future<bool> Function() task) {
-  final result = (_orgFieldWrites ?? Future<void>.value()).then((_) => task()).catchError((Object _) => false);
+  _orgFieldWritesPending.value++;
+  final result = (_orgFieldWrites ?? Future<void>.value())
+      .then((_) => task())
+      .catchError((Object _) => false)
+      .whenComplete(() => _orgFieldWritesPending.value--);
   _orgFieldWrites = result.then((_) {});
   return result;
 }
@@ -65,34 +75,40 @@ class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
     final read = ProviderScope.containerOf(context, listen: false).read;
     String? error;
     final ok = await _serialOrgFieldWrite(() async {
-      if (read(effectiveRoleProvider) != Role.admin) return false;
-      // Waits for a running (re)load: after a write this is the reloaded list.
-      final org = await read(currentOrganisationProvider.future);
-      if (org?.id != orgId) return false;
-      final next = change([...?org!.additionalFields]);
-      if (next == null) return false;
-      for (final f in next) {
-        if (f.name.trim().isEmpty || !f.id.startsWith('org_${orgId}_')) {
-          error = l10n.orgFieldsInvalid;
-          return false;
+      try {
+        if (read(effectiveRoleProvider) != Role.admin) return false;
+        // Waits for a running (re)load: after a write this is the reloaded list.
+        final org = await read(currentOrganisationProvider.future);
+        if (org?.id != orgId) return false;
+        final next = change([...?org!.additionalFields]);
+        if (next == null) return false;
+        for (final f in next) {
+          if (f.name.trim().isEmpty || !f.id.startsWith('org_${orgId}_')) {
+            error = l10n.orgFieldsInvalid;
+            return false;
+          }
+          if (f.type == 'select' && f.options.isEmpty) {
+            error = l10n.orgFieldsNeedsOptions(f.name);
+            return false;
+          }
         }
-        if (f.type == 'select' && f.options.isEmpty) {
-          error = l10n.orgFieldsNeedsOptions(f.name);
-          return false;
+        // Written only into [orgId] (checked again right before the write).
+        final stored = await read(
+          planSettingsNotifierProvider.notifier,
+        ).updateOrgExtraFields(next, deleted, orgId: orgId);
+        if (stored) {
+          // The queue moves on once the stored list is loaded again, so the
+          // next change builds on it; a failed reload shows the error below.
+          await read(currentOrganisationProvider.future);
+        } else {
+          error = l10n.extraFieldsSaveFailed;
         }
-      }
-      // Written only into [orgId] (checked again right before the write).
-      final stored = await read(
-        planSettingsNotifierProvider.notifier,
-      ).updateOrgExtraFields(next, deleted, orgId: orgId);
-      if (stored) {
-        // The queue moves on once the stored list is loaded again, so the
-        // next change builds on it.
-        await read(currentOrganisationProvider.future).catchError((Object _) => null);
-      } else {
+        return stored;
+      } catch (_) {
+        // E.g. the organisation could not be loaded again.
         error = l10n.extraFieldsSaveFailed;
+        return false;
       }
-      return stored;
     });
     if (mounted) {
       if (ok) {
@@ -155,10 +171,25 @@ class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
     final l10n = context.l10n;
     final async = ref.watch(currentOrganisationProvider);
     final org = rdLoadedValue(async);
-    final orgId = org?.id;
     final isSuperAdmin = ref.watch(effectiveRoleProvider) == Role.admin;
-    final fields = org?.additionalFields ?? const <OrgExtraField>[];
+    return ValueListenableBuilder<int>(
+      valueListenable: _orgFieldWritesPending,
+      builder: (context, pending, _) => _list(l10n, async, org, isSuperAdmin, saving: pending > 0),
+    );
+  }
 
+  /// [saving]: a write still runs; the list is locked until it is stored
+  /// and loaded again.
+  Widget _list(
+    AppLocalizations l10n,
+    AsyncValue<Organisation?> async,
+    Organisation? org,
+    bool isSuperAdmin, {
+    required bool saving,
+  }) {
+    final canEdit = isSuperAdmin && !saving;
+    final orgId = org?.id;
+    final fields = org?.additionalFields ?? const <OrgExtraField>[];
     String summary(OrgExtraField f) => [
       orgFieldTypeName(l10n, f.type),
       f.displayMode == 'underneath' ? l10n.extraFieldsUnderName : l10n.extraFieldsAsChip,
@@ -167,6 +198,7 @@ class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
 
     return RdManageListPage(
       key: ValueKey(orgId),
+      notice: saving ? l10n.rdOrgFieldsSaving : null,
       title: l10n.rdOrgPersonFields,
       intro: l10n.orgFieldsIntro,
       backLabel: l10n.rdOrgBack,
@@ -182,7 +214,7 @@ class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
                         id: f.id,
                         title: f.name,
                         subtitle: summary(f),
-                        onTap: isSuperAdmin && orgId != null ? () => _edit(orgId, f) : null,
+                        onTap: canEdit && orgId != null ? () => _edit(orgId, f) : null,
                       ),
                   ],
                 ),
@@ -192,8 +224,8 @@ class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
       emptyText: l10n.rdOrgFieldsEmpty,
       emptyIcon: Icons.list_alt,
       addLabel: isSuperAdmin ? l10n.rdOrgFieldsAdd : null,
-      onAdd: isSuperAdmin && orgId != null ? () => _add(orgId) : null,
-      onReorder: isSuperAdmin && orgId != null ? (sections) => _saveOrder(orgId, sections) : null,
+      onAdd: canEdit && orgId != null ? () => _add(orgId) : null,
+      onReorder: canEdit && orgId != null ? (sections) => _saveOrder(orgId, sections) : null,
     );
   }
 }

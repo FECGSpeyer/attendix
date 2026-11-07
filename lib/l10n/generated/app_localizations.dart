@@ -15941,6 +15941,12 @@ abstract class AppLocalizations {
   /// **'Noch keine gemeinsamen Zusatzfelder.'**
   String get rdOrgFieldsEmpty;
 
+  /// rdOrg.fieldsSaving
+  ///
+  /// In de, this message translates to:
+  /// **'Änderung wird gespeichert …'**
+  String get rdOrgFieldsSaving;
+
   /// rdOrg.filter
   ///
   /// In de, this message translates to:

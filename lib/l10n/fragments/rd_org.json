@@ -51,7 +51,8 @@
       "fieldsEmpty": "Noch keine gemeinsamen Zusatzfelder.",
       "fieldDelete": "Feld löschen",
       "fieldDeleteHint": "Die Werte bei allen Personen der Organisation werden mit gelöscht.",
-      "fieldTypeFixed": "Der Typ lässt sich nach dem Anlegen nicht mehr ändern."
+      "fieldTypeFixed": "Der Typ lässt sich nach dem Anlegen nicht mehr ändern.",
+      "fieldsSaving": "Änderung wird gespeichert …"
     }
   },
   "en": {
@@ -106,7 +107,8 @@
       "fieldsEmpty": "No shared extra fields yet.",
       "fieldDelete": "Delete field",
       "fieldDeleteHint": "The values of all persons of the organisation are deleted too.",
-      "fieldTypeFixed": "The type cannot be changed after the field was created."
+      "fieldTypeFixed": "The type cannot be changed after the field was created.",
+      "fieldsSaving": "Saving change …"
     }
   }
 }
