@@ -131,7 +131,7 @@ class RdPersonPage extends ConsumerWidget {
             action: role.isAdmin || role.isResponsible
                 ? RdPrimaryButton(
                     label: l10n.redesignPersonReview,
-                    onPressed: () => context.push('/people/$personId'),
+                    onPressed: () => context.push(RedesignRoutes.approvalReview(personId)),
                   )
                 : null,
           ),
