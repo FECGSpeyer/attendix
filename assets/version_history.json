@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.73.0",
+      "date": "7.11.2026",
+      "changes": [
+        "✨ Beta: „Stimme ändern“ einer Werk-Datei als Blatt „Für wen ist die Datei?“ mit gruppierter Auswahl; Freitext nur bei „Sonstige“",
+        "✨ Beta: „Werk in andere Gruppe kopieren“ als Blatt mit Ziel-Gruppe als Zeile, Dateiliste und Fortschritt im Knopf"
+      ]
+    },
+    {
       "version": "0.72.0",
       "date": "7.11.2026",
       "changes": [
