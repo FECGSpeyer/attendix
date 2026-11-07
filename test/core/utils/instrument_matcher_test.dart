@@ -123,6 +123,12 @@ void main() {
       expect([_label('07 - Coro.pdf', groups), _label('Наши межи - S. A..pdf', groups)], [kChoirAllNote, kChoirAllNote]);
       // A "Vocal score" is no "Gesang" part.
       expect(_label('Vocal score.pdf', [...groups, 'Gesang']), 'Klavierauszug');
+      // Outside a choir too a soprano gets a group of its own; "Alt" and
+      // "Bass" stay instruments there.
+      expect(InstrumentMatcher.knownGroup('Wo sind sie alle SOS. sib 6 - Sopran SOS .pdf'), 'Sopran');
+      expect(InstrumentMatcher.knownGroups('Soprano Sax.pdf'), isNot(contains('Sopran')));
+      expect(InstrumentMatcher.knownGroups('Sop. Cornet.pdf'), isNot(contains('Sopran')));
+      expect(InstrumentMatcher.knownGroup('Alt.pdf'), isNull);
     });
 
     test('a more specific group wins', () {

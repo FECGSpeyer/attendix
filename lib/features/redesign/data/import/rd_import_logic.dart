@@ -908,7 +908,8 @@ bool _maybeSeveral(String name, FileCategoryGuess guess, List<InstrumentInfo> in
   if (id != null && id <= InstrumentMatcher.lyricsId) return false;
   final named = InstrumentMatcher.knownGroups(name, isChoir: isChoir);
   if (named.length < 2) return false;
-  if (isChoir && named.length >= 3 && InstrumentMatcher.knownGroups(name).isEmpty) return false;
+  // (no instrument besides the voices; outside a choir only "Sopran" counts)
+  if (isChoir && named.length >= 3 && InstrumentMatcher.knownGroups(name).every((g) => g == 'Sopran')) return false;
   if (id != null && guess.confidence == MatchConfidence.sure) {
     final own = instruments.where((g) => g.id == id).firstOrNull;
     if (own != null && InstrumentMatcher.knownGroups(own.name, isChoir: isChoir).length > 1) return false;

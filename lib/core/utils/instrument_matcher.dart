@@ -484,6 +484,22 @@ class InstrumentMatcher {
   static const Set<String> _noGroupFamilies = {'partitur', 'stimmen'};
   static const Set<String> _voiceFamilies = {'sopran', 'alt', 'tenor', 'bass'};
 
+  /// Outside a choir a soprano is a voice of its own too (Leon, 07.11.2026:
+  /// a new group per voice). Only the full words: "Sop." is also the soprano
+  /// cornet, and "Alt", "Tenor", "Bass" mostly mean instruments there.
+  static const List<String> _sopranoWords = ['sopran', 'soprano', 'сопрано'];
+  static final _InstrumentTerms _sopranoOutsideChoir = () {
+    final sopran = _familyGroups.firstWhere((g) => g.family == 'sopran').terms;
+    return (
+      groupNumber: null,
+      families: sopran.families,
+      candidates: [
+        for (final c in sopran.candidates)
+          if (_sopranoWords.contains(c.term.join(' '))) c,
+      ],
+    );
+  }();
+
   /// Every family as a group that does not exist yet, named in German
   /// ("altsaxophon" → Altsaxophon).
   static final List<({String family, String name, _InstrumentTerms terms})> _familyGroups = [
@@ -552,15 +568,21 @@ class InstrumentMatcher {
     final hits = <({_Hit hit, int start, int end})>[];
     for (var i = 0; i < _familyGroups.length; i++) {
       final g = _familyGroups[i];
-      if (isChoir ? g.family == 'gesang' : _voiceFamilies.contains(g.family)) continue;
-      final hit = _scoreTerms(words, i, g.terms, familySpans);
+      final soprano = !isChoir && g.family == 'sopran';
+      if (!soprano && (isChoir ? g.family == 'gesang' : _voiceFamilies.contains(g.family))) continue;
+      final hit = _scoreTerms(words, i, soprano ? _sopranoOutsideChoir : g.terms, familySpans);
       if (hit == null) continue;
       final at = _find(words.tokens, tokenize(hit.term));
       hits.add((hit: hit, start: at?.start ?? 0, end: at?.end ?? 0));
     }
-    return [
+    final kept = [
       for (final h in hits)
         if (!hits.any((o) => o.hit.score > h.hit.score && o.start <= h.start && o.end >= h.end && o.end > o.start)) h,
+    ];
+    // One group once.
+    return [
+      for (final h in kept)
+        if (!kept.any((o) => o.hit.id == h.hit.id && (o.hit.score > h.hit.score || (o.hit.score == h.hit.score && o.start < h.start)))) h,
     ];
   }
 
