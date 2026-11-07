@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/choir_file_utils.dart';
@@ -123,13 +126,14 @@ String rdImportCategoryLabel(BuildContext context, RdImportPlan plan, RdImportCa
 
 /// Sheet with every category, the groups ("Stimmen", with the [newGroups]
 /// still to be created) apart from the other kinds of files; returns the
-/// one picked.
+/// one picked. [header] stands above them (the file's first page).
 Future<RdImportCategory?> rdPickImportCategory(
   BuildContext context,
   RdImportPlan plan, {
   required String title,
   RdImportCategory? current,
   List<String> newGroups = const [],
+  Widget? header,
 }) {
   final options = rdImportCategoryOptions(context, plan, newGroups: newGroups);
   final partCount = plan.instruments.length + newGroups.length;
@@ -156,6 +160,7 @@ Future<RdImportCategory?> rdPickImportCategory(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                if (header != null) ...[header, const SizedBox(height: 16)],
                 if (parts.isNotEmpty) ...[
                   RdGroupLabel(l10n.redesignImportCategoryParts),
                   RdGroupedList(children: [for (final o in parts) row(o)]),
@@ -170,6 +175,128 @@ Future<RdImportCategory?> rdPickImportCategory(
       );
     }),
   );
+}
+
+/// The first page of a file to decide its part: [page] loads it, [link]
+/// opens the file elsewhere when there is none to show (Drive), [read] is
+/// the part name the KI read on it. A tap shows the page large, to zoom.
+class RdImportPagePreview extends StatefulWidget {
+  const RdImportPagePreview({super.key, required this.name, required this.page, this.link, this.read});
+
+  final String name;
+  final Future<Uint8List?> Function() page;
+  final Uri? link;
+  final String? read;
+
+  @override
+  State<RdImportPagePreview> createState() => _RdImportPagePreviewState();
+}
+
+class _RdImportPagePreviewState extends State<RdImportPagePreview> {
+  late final Future<Uint8List?> _page = widget.page().catchError((Object _) => null);
+
+  Future<void> _open(Uri link) async {
+    try {
+      await launchUrl(link, mode: LaunchMode.externalApplication);
+    } catch (_) {}
+  }
+
+  void _enlarge(Uint8List bytes) {
+    showDialog<void>(
+      context: context,
+      useRootNavigator: true,
+      builder: (context) => Dialog.fullscreen(
+        backgroundColor: Colors.white,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: InteractiveViewer(
+                maxScale: 6,
+                child: Center(
+                  child: Image.memory(bytes, fit: BoxFit.contain, semanticLabel: context.l10n.redesignImportPreviewOf(widget.name)),
+                ),
+              ),
+            ),
+            SafeArea(
+              child: Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: IconButton.filledTonal(
+                    tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final read = widget.read;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        FutureBuilder<Uint8List?>(
+          future: _page,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const SizedBox(height: 160, child: Center(child: CircularProgressIndicator.adaptive()));
+            }
+            final bytes = snapshot.data;
+            if (bytes == null) {
+              final link = widget.link;
+              return RdCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l10n.redesignImportPreviewNone, style: RdType.meta(p)),
+                    if (link != null)
+                      TextButton.icon(
+                        onPressed: () => _open(link),
+                        icon: const Icon(Icons.open_in_new, size: 18),
+                        label: Text(l10n.redesignImportPreviewDrive),
+                      ),
+                  ],
+                ),
+              );
+            }
+            return Semantics(
+              button: true,
+              label: '${l10n.redesignImportPreviewOf(widget.name)}, ${l10n.redesignImportPreviewZoom}',
+              child: ExcludeSemantics(
+                child: GestureDetector(
+                  onTap: () => _enlarge(bytes),
+                  child: Container(
+                    constraints: const BoxConstraints(maxHeight: 340),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: p.track),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    // The top of the page: the part name is printed there.
+                    child: Image.memory(bytes, fit: BoxFit.fitWidth, alignment: Alignment.topCenter),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+        if (read != null) ...[
+          const SizedBox(height: 8),
+          Text(l10n.redesignImportPageRead(read), style: RdType.meta(p, size: 13)),
+        ],
+      ],
+    );
+  }
 }
 
 /// Date as the app shows it ("12.3.2024").

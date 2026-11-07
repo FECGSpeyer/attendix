@@ -708,6 +708,7 @@ class RdImportPlan {
     this.isChoir = false,
     this.newPrefix,
     this.takenNumbers = const {},
+    this.pageReads = const {},
   });
 
   final List<RdImportWork> works;
@@ -731,9 +732,26 @@ class RdImportPlan {
   /// other Sammlungen than [songs].
   final Set<String> takenNumbers;
 
+  /// What the KI read on page 1 of files whose name says no part, by path.
+  final Map<String, RdImportPageRead> pageReads;
+
   int get fileCount => works.fold(0, (sum, w) => sum + w.files.length);
 
   RdImportWork? work(String key) => works.where((w) => w.key == key).firstOrNull;
+}
+
+/// The part the KI read on the first page of a file ([rdImportPagesToRead]).
+class RdImportPageRead {
+  const RdImportPageRead(this.category, {this.label, this.sure = false});
+
+  final RdImportCategory category;
+
+  /// The part name as printed ("1. Violine").
+  final String? label;
+
+  /// Taken without a look; otherwise only proposed and the file stays
+  /// "Stimme unklar".
+  final bool sure;
 }
 
 /// Files of the same size whose content must be compared (hash) to find
@@ -817,6 +835,7 @@ RdImportPlan rdBuildImportPlan(
   RdImportPlanCache? cache,
   String? newPrefix,
   Set<String> takenNumbers = const {},
+  Map<String, RdImportPageRead> pageReads = const {},
 }) {
   final folderOf = cache == null
       ? rdFindWorkFolders(entries, songs: songs, instruments: instruments)
@@ -987,7 +1006,7 @@ RdImportPlan rdBuildImportPlan(
     final live = files.where((f) => f.hardSkip == null).toList();
     final keys = <String, Set<String>>{};
     for (final f in live) {
-      final clash = rdImportClashKey(_decided(f, categories, answers, instruments, title));
+      final clash = rdImportClashKey(_decided(f, categories, answers, instruments, title, pageReads));
       keys.putIfAbsent(f.fassungKey, () => <String>{});
       if (clash != null) keys[f.fassungKey]!.add(clash);
     }
@@ -1108,6 +1127,7 @@ RdImportPlan rdBuildImportPlan(
     junk: junk,
     newPrefix: newPrefix,
     takenNumbers: takenNumbers,
+    pageReads: pageReads,
   );
 }
 
@@ -1269,6 +1289,7 @@ class RdFileState {
     this.canToggle = true,
     this.unclear = false,
     this.byHand = false,
+    this.pageRead,
   });
 
   final bool take;
@@ -1285,19 +1306,25 @@ class RdFileState {
 
   /// Category chosen by hand or by an answer (remembered as synonym).
   final bool byHand;
+
+  /// The part the KI read on page 1, while nobody chose one ([unclear]
+  /// still when it is not sure).
+  final RdImportPageRead? pageRead;
 }
 
-RdImportCategory _categoryOf(RdImportDecisions d, RdImportFile f, RdImportWork work, List<InstrumentInfo> instruments) =>
-    _decided(f, d.categories, d.answers, instruments, work.title);
+RdImportCategory _categoryOf(RdImportPlan plan, RdImportDecisions d, RdImportFile f, RdImportWork work) =>
+    _decided(f, d.categories, d.answers, plan.instruments, work.title, plan.pageReads);
 
 /// The part of [f]: chosen by hand, else the answer to its question (with
-/// the file's own part number), else the guess.
+/// the file's own part number), else what the KI read on page 1, else the
+/// guess.
 RdImportCategory _decided(
   RdImportFile f,
   Map<String, RdImportCategory> categories,
   Map<String, RdImportCategory> answers,
   List<InstrumentInfo> instruments,
   String workTitle,
+  Map<String, RdImportPageRead> pageReads,
 ) {
   final own = categories[f.path];
   if (own != null) return own;
@@ -1309,11 +1336,11 @@ RdImportCategory _decided(
     }
     return answer;
   }
-  return f.guessed;
+  return pageReads[f.path]?.category ?? f.guessed;
 }
 
 RdFileState rdFileState(RdImportPlan plan, RdImportDecisions d, RdImportWork work, RdImportFile f) {
-  final category = _categoryOf(d, f, work, plan.instruments);
+  final category = _categoryOf(plan, d, f, work);
   final byHand = d.categories.containsKey(f.path) || (f.questionKey != null && d.answers.containsKey(f.questionKey));
   if (f.hardSkip != null) return RdFileState(take: false, category: category, reason: f.hardSkip, canToggle: false);
   final target = rdTargetOf(plan, d, work);
@@ -1330,7 +1357,7 @@ RdFileState rdFileState(RdImportPlan plan, RdImportDecisions d, RdImportWork wor
           work.files.any((x) =>
               x.fassungKey == fassung &&
               x.hardSkip == null &&
-              _categoryOf(d, x, work, plan.instruments).instrumentId == InstrumentMatcher.lyricsId));
+              _categoryOf(plan, d, x, work).instrumentId == InstrumentMatcher.lyricsId));
   if (otherFassung) {
     reason = RdSkipReason.otherFassung;
   } else if (song != null && song.files.any((x) => x.fileName == f.name)) {
@@ -1346,13 +1373,16 @@ RdFileState rdFileState(RdImportPlan plan, RdImportDecisions d, RdImportWork wor
   }
   final manual = d.take[f.path];
   final take = manual ?? reason == null;
-  final unclear = take && !byHand && f.guess.confidence != MatchConfidence.sure && f.newGroup == null;
+  final pageRead = byHand ? null : plan.pageReads[f.path];
+  final unclear =
+      take && !byHand && f.guess.confidence != MatchConfidence.sure && f.newGroup == null && !(pageRead?.sure ?? false);
   return RdFileState(
     take: take,
     category: category,
     reason: take ? null : (manual == false ? RdSkipReason.byHand : reason),
     unclear: unclear,
     byHand: byHand,
+    pageRead: pageRead,
   );
 }
 
@@ -1558,6 +1588,16 @@ Map<String, String> rdImportMovedWorks(RdImportPlan before, RdImportPlan after) 
   return moved..removeWhere((k, _) => split.contains(k));
 }
 
+/// Files whose part nobody knows yet and the KI did not read: their first
+/// page is read ([RdImportPageRead]), in the order of the Werke. Werke with
+/// "Passt so" stay as they were confirmed.
+List<String> rdImportPagesToRead(RdImportPlan plan, RdImportDecisions d) => [
+      for (final w in plan.works)
+        if (!d.confirmed.contains(w.key))
+          for (final e in rdWorkState(plan, d, w).files.entries)
+            if (e.value.unclear && e.value.pageRead == null && !plan.pageReads.containsKey(e.key)) e.key,
+    ];
+
 /// The new groups the files go to as decided so far, to pick them for other
 /// files too before they exist ("Neue Gruppe: Oboe").
 List<String> rdImportPendingGroups(RdImportPlan plan, RdImportDecisions d) {
@@ -1566,7 +1606,7 @@ List<String> rdImportPendingGroups(RdImportPlan plan, RdImportDecisions d) {
   for (final work in plan.works) {
     for (final f in work.files) {
       if (f.hardSkip != null) continue;
-      final name = _decided(f, d.categories, d.answers, plan.instruments, work.title).newGroup;
+      final name = _decided(f, d.categories, d.answers, plan.instruments, work.title, plan.pageReads).newGroup;
       if (name == null || existing.contains(name.trim().toLowerCase())) continue;
       names.putIfAbsent(name.trim().toLowerCase(), () => name);
     }

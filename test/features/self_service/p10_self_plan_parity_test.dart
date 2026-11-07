@@ -35,14 +35,14 @@ void main() {
     final now = DateTime(2026, 10, 29, 12);
 
     test('Meine Termine: always shown (Ionic signout showDeadlineInfo)', () {
-      final a = att(deadline: DateTime(2026, 11, 20, 18).toUtc().toIso8601String());
+      final a = att(deadline: DateTime.utc(2026, 11, 20, 18).toIso8601String());
       expect(actions().deadlineChipText(a, now: now), isNotNull);
     });
 
     test('Übersicht: only within 3 days before the deadline', () {
-      final far = att(deadline: DateTime(2026, 11, 20, 18).toUtc().toIso8601String());
-      final soon = att(deadline: DateTime(2026, 10, 31, 18).toUtc().toIso8601String());
-      final passed = att(deadline: DateTime(2026, 10, 28, 18).toUtc().toIso8601String());
+      final far = att(deadline: DateTime.utc(2026, 11, 20, 18).toIso8601String());
+      final soon = att(deadline: DateTime.utc(2026, 10, 31, 18).toIso8601String());
+      final passed = att(deadline: DateTime.utc(2026, 10, 28, 18).toIso8601String());
       final o = actions(overview: true);
       expect(o.deadlineChipText(far, now: now), isNull);
       expect(o.deadlineChipText(passed, now: now), isNull);

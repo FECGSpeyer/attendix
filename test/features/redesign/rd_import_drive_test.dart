@@ -120,6 +120,25 @@ void main() {
       expect(drive.calls.last, {'action': 'head', 'tenantId': 7, 'file': {'id': 'a000000001'}});
     });
 
+    test('a file to look at: small ones by head, larger whole, none over 10 MB', () async {
+      final drive = FakeDrive({
+        'root00000001': [
+          file('a000000001', 'Klein.pdf', size: 1000),
+          file('a000000002', 'Gross.pdf', size: 3 * 1024 * 1024),
+          file('a000000003', 'Riesig.pdf', size: 11 * 1024 * 1024),
+        ],
+      });
+      final source = await RdDriveSource.load(RdDriveApi(drive.call), 7, const RdDriveRef('root00000001'), 'Noten');
+      expect(await source.content('Noten/Klein.pdf'), isNotNull);
+      expect(drive.calls.last['action'], 'head');
+      expect(await source.content('Noten/Gross.pdf'), isNotNull);
+      expect(drive.calls.last, {'action': 'file', 'tenantId': 7, 'file': {'id': 'a000000002'}});
+      final before = drive.calls.length;
+      expect(await source.content('Noten/Riesig.pdf'), isNull);
+      expect(drive.calls, hasLength(before));
+      expect(source.viewLink('Noten/Gross.pdf').toString(), 'https://drive.google.com/file/d/a000000002/view');
+    });
+
     test('a folder that links back to itself is read once', () async {
       final drive = FakeDrive({
         'root00000001': [folder('sub0000001', 'Sub')],
@@ -199,8 +218,13 @@ void main() {
     }
     expect(src, contains('if (e instanceof BudgetRefused) return e.response;'));
     // The bytes of the windows of a head are taken before the first request.
-    final head = body.substring(body.indexOf('case "head"'), body.indexOf('case "copy"'));
+    final head = body.substring(body.indexOf('case "head"'), body.indexOf('case "file"'));
     expect(head.indexOf('take(0, HEAD_WINDOW * 2)'), lessThan(head.indexOf('meta(')));
+    // A whole file: its size is checked and its bytes taken before the download.
+    final whole = body.substring(body.indexOf('case "file"'), body.indexOf('case "copy"'));
+    expect(whole.indexOf('m.size > MAX_VIEW_BYTES'), lessThan(whole.indexOf('take(0, m.size)')));
+    expect(whole.indexOf('take(0, m.size)'), lessThan(whole.indexOf('drive(charge, file.id')));
+    expect(whole, contains('readAtMost(res, m.size)'));
     // The bytes of a copy are taken before the download, which stops there.
     final copy = body.substring(body.indexOf('case "copy"'));
     expect(copy.indexOf('take(0, m.size)'), lessThan(copy.indexOf('drive(charge, file.id')));

@@ -34,6 +34,7 @@ class FakeDrive {
           'children': {for (final f in folders) f['id']: tree[f['id']] ?? const []},
         };
       case 'head':
+      case 'file':
         final id = (body['file'] as Map)['id'] as String;
         return {'data': base64Encode(latin1.encode(dates[id] ?? '%PDF')), 'size': 10};
       case 'copy':
