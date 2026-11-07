@@ -362,6 +362,7 @@ class _TargetSheetState extends State<_TargetSheet> {
                                     name: rdParseWorkName(widget.work.folderName).title.isEmpty
                                         ? widget.work.folderName
                                         : rdParseWorkName(widget.work.folderName).title,
+                                    prefix: widget.plan.newPrefix,
                                   ),
                       ),
                     ),

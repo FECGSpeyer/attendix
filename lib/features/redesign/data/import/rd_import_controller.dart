@@ -630,7 +630,9 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       _datesRunning--;
       if (!_disposed && _datesRunning == 0) state = state.copyWith(readingDates: false);
     }
-    if (_disposed || !identical(_input, input)) return false;
+    // A Sammlung chosen meanwhile keeps the files and their dates (the
+    // same map): the plan is made anew with them.
+    if (_disposed || _input == null || !identical(_input!.dates, input.dates)) return false;
     _replan();
     return true;
   }
@@ -966,7 +968,8 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         if (tenantChanged()) return;
         try {
           final song = await songs.createSong(
-              Song(name: target.name!, number: target.number, prefix: target.prefix, collectionId: state.collectionId));
+              // A new Werk chosen by hand gets the Sammlung's Kürzel too.
+              Song(name: target.name!, number: target.number, prefix: target.prefix ?? plan.newPrefix, collectionId: state.collectionId));
           if (song.id == null) throw StateError('no id');
           _created[work.key] = songIds[work.key] = song.id!;
           progress = progress.copyWith(newWorks: progress.newWorks + 1);

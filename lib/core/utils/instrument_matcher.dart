@@ -670,10 +670,14 @@ class InstrumentMatcher {
     return parts.length > 1 ? parts.last : '';
   }
 
+  /// [filename] without its ending (".pdf"); a dot inside a name ("Posaune
+  /// u. Tuba", "Vl. 2") is no ending.
   static String _stripExtension(String filename) {
-    final dot = filename.lastIndexOf('.');
-    return dot > 0 && filename.length - dot <= 6 ? filename.substring(0, dot) : filename;
+    final ending = _ending.firstMatch(filename);
+    return ending != null && ending.start > 0 ? filename.substring(0, ending.start) : filename;
   }
+
+  static final _ending = RegExp(r'\.[A-Za-z0-9]{1,5}$');
 
   /// The part of [filename] that names the part, to remember it as a
   /// synonym of a group: the Werk name, leading numbers and the extension
