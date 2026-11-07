@@ -135,6 +135,9 @@ void main() {
       expect(_label('Soprano Cornet.pdf', ['Sopran', 'Kornett']), 'Kornett');
       expect(_label('Sopran Saxophon.pdf', ['Sopran', 'Saxophon']), 'Saxophon');
       expect(_label('Sopran.pdf', ['Sopran', 'Kornett']), 'Sopran');
+      // A group of that kind stays; a Sopran apart from the instrument too.
+      expect(_label('Sopran Saxophon.pdf', ['Sopran Saxophon', 'Saxophon']), 'Sopran Saxophon');
+      expect(_label('Die Geige - Sopran.pdf', ['Sopran', 'Violine']), 'Sopran');
       expect(InstrumentMatcher.knownGroup('Alt.pdf'), isNull);
     });
 

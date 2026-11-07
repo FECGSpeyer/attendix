@@ -242,16 +242,24 @@ class InstrumentMatcher {
     final familySpans = _familySpans(tokens);
     final hits = [
       for (final instrument in instruments)
-        if (_scoreInstrument(words, instrument, familySpans) case final hit?) (hit: hit, instrument: instrument),
+        if (_scoreInstrument(words, instrument, familySpans) case final hit?)
+          (hit: hit, instrument: instrument, at: _spanOf(tokens, hit.term)),
     ];
-    // "Sopran" beside an instrument names its kind ("Soprano Cornet",
-    // "Sopran Saxophon"), not the group of the singers.
-    bool soprano(InstrumentInfo i) => _termsOf(i).families.contains('sopran');
-    final instrumentNamed = hits.any((h) => !h.hit.weak && !soprano(h.instrument));
+    // "Sopran" right before or after an instrument names its kind ("Soprano
+    // Cornet", "Sopran Saxophon"), not the group of the singers (a group
+    // "Sopran Saxophon" is no such group).
+    bool singers(InstrumentInfo i) {
+      final families = _termsOf(i).families;
+      return families.contains('sopran') && families.every(_voiceFamilies.contains);
+    }
+
+    bool kindOfInstrument(({int start, int end})? at) =>
+        at != null &&
+        hits.any((o) => !o.hit.weak && !singers(o.instrument) && o.at != null && _adjacent(words, at, o.at!));
     _Hit? best;
     _Hit? second;
-    for (final (:hit, :instrument) in hits) {
-      if (instrumentNamed && soprano(instrument)) continue;
+    for (final (:hit, :instrument, :at) in hits) {
+      if (singers(instrument) && kindOfInstrument(at)) continue;
       if (best == null || hit.score > best.score) {
         second = best;
         best = hit;
@@ -591,11 +599,29 @@ class InstrumentMatcher {
       for (final h in kept)
         if (!kept.any((o) => o.hit.id == h.hit.id && (o.hit.score > h.hit.score || (o.hit.score == h.hit.score && o.start < h.start)))) h,
     ];
-    // Outside a choir "Sopran" beside an instrument names its kind
-    // ("Sopran Saxophon", "Soprano Cornet"), not a sung voice.
+    // Outside a choir "Sopran" right before or after an instrument names its
+    // kind ("Sopran Saxophon", "Soprano Cornet"), not a sung voice.
+    if (isChoir) return once;
     bool isSoprano(({_Hit hit, int start, int end}) h) => _familyGroups[h.hit.id].family == 'sopran';
-    if (!isChoir && once.any((h) => !isSoprano(h) && !h.hit.weak)) return [for (final h in once) if (!isSoprano(h)) h];
-    return once;
+    return [
+      for (final h in once)
+        if (!isSoprano(h) ||
+            !once.any((o) => !isSoprano(o) && !o.hit.weak && _adjacent(words, (start: h.start, end: h.end), (start: o.start, end: o.end))))
+          h,
+    ];
+  }
+
+  /// Where [term] stands in [tokens].
+  static ({int start, int end})? _spanOf(List<String> tokens, String term) {
+    final at = _find(tokens, tokenize(term));
+    return at == null ? null : (start: at.start, end: at.end);
+  }
+
+  /// Whether the words at [a] and [b] stand right next to each other with
+  /// no separator between ("Soprano Cornet", not "Die Geige - Sopran").
+  static bool _adjacent(_Words words, ({int start, int end}) a, ({int start, int end}) b) {
+    final (first, second) = a.start <= b.start ? (a, b) : (b, a);
+    return first.end > first.start && second.start == first.end && second.start < words.tokens.length && !words.hardBefore[second.start];
   }
 
   /// Families a group with [nameTokens] belongs to.
