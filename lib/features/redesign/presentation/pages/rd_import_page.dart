@@ -480,14 +480,26 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     final created = await ref
         .read(songCollectionNotifierProvider.notifier)
         .add(SongCollection(name: trimmed, prefix: rdCollectionPrefixSuggestion(trimmed)));
-    // Its Kürzel counts for the new Werke: chosen once the list has it.
-    await ref.read(songCollectionsProvider.future).catchError((_) => const <SongCollection>[]);
+    // Its Kürzel counts for the new Werke: chosen only once the list has it.
+    final loaded = created?.id == null
+        ? null
+        : await ref
+            .read(songCollectionsProvider.future)
+            .then<List<SongCollection>?>((list) => list)
+            .catchError((_) => null);
     if (!mounted) return;
     setState(() => _addingCollection = false);
     if (created?.id == null) {
       ToastHelper.showError(context, l10n.collectionsAddFailed);
       return;
     }
+    if (loaded == null || !loaded.any((c) => c.id == created!.id)) {
+      ToastHelper.showError(context, l10n.redesignImportCollectionNotLoaded);
+      return;
+    }
+    // Only before the review: afterwards the target stays as it is.
+    final step = ref.read(rdImportProvider).step;
+    if (step != RdImportStep.source && step != RdImportStep.reading && step != RdImportStep.questions) return;
     _controller.setCollection(created!.id);
   }
 
@@ -513,7 +525,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
               label: c?.name ?? l10n.collectionsRepertoire,
               icon: rdCollectionIcon(c),
               selected: c?.id == chosen?.id,
-              onTap: () => _controller.setCollection(c?.id),
+              onTap: _addingCollection ? null : () => _controller.setCollection(c?.id),
             ),
           if (canAdd)
             RdChoiceChip(
@@ -866,10 +878,14 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
                 style: RdType.meta(p, size: 13),
               ),
             ),
-            for (final g in rdImportQuestionGroups(questions, {
-              if (state.useAi)
-                for (final e in state.ai.entries) e.key: e.value.category,
-            })) ...[
+            for (final g in rdImportQuestionGroups(
+              questions,
+              answers: d.answers,
+              ai: {
+                if (state.useAi)
+                  for (final e in state.ai.entries) e.key: e.value.category,
+              },
+            )) ...[
               Builder(builder: (context) {
                 final title = g.category == null
                     ? l10n.redesignImportGroupUnclear
@@ -942,7 +958,8 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
         RdPrimaryButton(
           label: _preparing ? l10n.redesignImportPreparing : l10n.redesignImportToReview,
           loading: _preparing,
-          onPressed: _toReview,
+          // A Sammlung being made is the target: on only once it is chosen.
+          onPressed: _addingCollection ? null : _toReview,
         ),
       ],
     );

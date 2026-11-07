@@ -11645,6 +11645,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'The folders are compared with the works of this collection, new works get its prefix.';
 
   @override
+  String get redesignImportCollectionNotLoaded =>
+      'The collection was created but could not be loaded. Please choose it again in a moment.';
+
+  @override
   String get redesignImportCollectionTitle => 'Into which collection?';
 
   @override

@@ -444,10 +444,18 @@ void main() {
       RdImportQuestion(key: 'ob', label: 'Ob', fileCount: 2, works: [], newGroup: 'Oboe'),
       RdImportQuestion(key: 'trumpet', label: 'Trumpet', fileCount: 1, works: []),
     ];
-    final groups = rdImportQuestionGroups(q, {'trumpet': const RdImportCategory(instrumentId: 10)});
+    final groups = rdImportQuestionGroups(q, ai: {'trumpet': const RdImportCategory(instrumentId: 10)});
     expect([for (final g in groups) g.category], [null, const RdImportCategory(instrumentId: 10), const RdImportCategory(newGroup: 'Oboe')]);
     expect([for (final g in groups) g.questions.map((x) => x.key).join(',')], ['x', 'trp,tromp,trumpet', 'ob']);
     expect(groups[1].fileCount, 13);
+    // An answer, also the KI's, decides the group before the proposal.
+    final answered = rdImportQuestionGroups(
+      q,
+      answers: {'tromp': const RdImportCategory(instrumentId: 11)},
+      ai: {'trumpet': const RdImportCategory(instrumentId: 10), 'ob': const RdImportCategory(instrumentId: 12)},
+    );
+    expect([for (final g in answered) g.questions.map((x) => x.key).join(',')], ['x', 'tromp', 'trp,trumpet', 'ob']);
+    expect(answered.last.category, const RdImportCategory(instrumentId: 12));
   });
 
   group('a part for several groups ("Posaune und Tuba")', () {

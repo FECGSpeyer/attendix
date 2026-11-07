@@ -19121,6 +19121,12 @@ abstract class AppLocalizations {
   /// **'Die Ordner werden mit den Werken dieser Sammlung verglichen, neue Werke bekommen ihr Kürzel.'**
   String get redesignImportCollectionHint;
 
+  /// redesign.import.collectionNotLoaded
+  ///
+  /// In de, this message translates to:
+  /// **'Die Sammlung ist angelegt, konnte aber nicht geladen werden. Wähle sie bitte gleich noch einmal.'**
+  String get redesignImportCollectionNotLoaded;
+
   /// redesign.import.collectionTitle
   ///
   /// In de, this message translates to:

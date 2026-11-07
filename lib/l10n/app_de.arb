@@ -14630,6 +14630,10 @@
   "@redesignImportCollectionHint": {
     "description": "redesign.import.collectionHint"
   },
+  "redesignImportCollectionNotLoaded": "Die Sammlung ist angelegt, konnte aber nicht geladen werden. Wähle sie bitte gleich noch einmal.",
+  "@redesignImportCollectionNotLoaded": {
+    "description": "redesign.import.collectionNotLoaded"
+  },
   "redesignImportCollectionTitle": "In welche Sammlung?",
   "@redesignImportCollectionTitle": {
     "description": "redesign.import.collectionTitle"

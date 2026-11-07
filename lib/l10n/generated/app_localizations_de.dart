@@ -11770,6 +11770,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Die Ordner werden mit den Werken dieser Sammlung verglichen, neue Werke bekommen ihr Kürzel.';
 
   @override
+  String get redesignImportCollectionNotLoaded =>
+      'Die Sammlung ist angelegt, konnte aber nicht geladen werden. Wähle sie bitte gleich noch einmal.';
+
+  @override
   String get redesignImportCollectionTitle => 'In welche Sammlung?';
 
   @override

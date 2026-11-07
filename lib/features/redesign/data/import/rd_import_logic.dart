@@ -353,7 +353,11 @@ bool _isStructural(String name, List<InstrumentInfo> instruments) {
   if (_versionWordsN.contains(words.first)) return true;
   if (instruments.isNotEmpty) {
     final match = InstrumentMatcher.detect('$name.pdf', instruments);
-    if (match.instrumentId != null && match.confidence == MatchConfidence.sure) return true;
+    if (match.instrumentId != null && match.confidence == MatchConfidence.sure) {
+      // A number before more than the part is a Werk ("12 Le viole").
+      final term = match.term;
+      return rdParseWorkName(name).number == null || term == null || InstrumentMatcher.namesOnlyPart(name, term);
+    }
   }
   return false;
 }
@@ -1930,8 +1934,9 @@ DateTime? rdZipDate(int dosDateTime) {
 }
 
 /// Questions about names that most likely mean the same ([category]: the
-/// proposed new group, the KI's answer or the matcher's guess; null when
-/// nobody has a guess), to answer many with one tap ("Alle als Trompete").
+/// answer, the KI's answer, the proposed new group or the matcher's guess;
+/// null when nobody has a guess), to answer many with one tap ("Alle als
+/// Trompete").
 class RdImportQuestionGroup {
   const RdImportQuestionGroup(this.category, this.questions);
 
@@ -1941,14 +1946,22 @@ class RdImportQuestionGroup {
   int get fileCount => questions.fold(0, (n, q) => n + q.fileCount);
 }
 
-/// [questions] by what they most likely mean ([ai]: the KI's answers by
-/// key). The group without a guess comes first, then the ones with the
-/// most files. A question stays in its group when it is answered, so
-/// nothing moves while the person answers.
-List<RdImportQuestionGroup> rdImportQuestionGroups(List<RdImportQuestion> questions, Map<String, RdImportCategory> ai) {
+/// [questions] by what they most likely mean: the answer given ([answers],
+/// also the ones the KI filled in), the KI's answer ([ai]), the proposed
+/// new group, the matcher's guess. The group without a guess comes first,
+/// then the ones with the most files. An answered question goes to the
+/// group of its answer, so "Alle als …" never takes another one.
+List<RdImportQuestionGroup> rdImportQuestionGroups(
+  List<RdImportQuestion> questions, {
+  Map<String, RdImportCategory> answers = const {},
+  Map<String, RdImportCategory> ai = const {},
+}) {
   final byCategory = <RdImportCategory?, List<RdImportQuestion>>{};
   for (final q in questions) {
-    final guess = q.proposed ?? ai[q.key] ?? (q.suggestion == null ? null : RdImportCategory(instrumentId: q.suggestion));
+    final guess = answers[q.key] ??
+        ai[q.key] ??
+        q.proposed ??
+        (q.suggestion == null ? null : RdImportCategory(instrumentId: q.suggestion));
     byCategory.putIfAbsent(guess, () => []).add(q);
   }
   final groups = [for (final e in byCategory.entries) RdImportQuestionGroup(e.key, e.value)];

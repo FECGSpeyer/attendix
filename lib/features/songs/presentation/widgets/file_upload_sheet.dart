@@ -47,7 +47,8 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
   if (any(['liedtext', 'songtext', 'lyrics', 'text', 'texte', 'words', 'текст', 'tekst', 'слова', 'slova'])) {
     return (instrumentId: 2, note: null);
   }
-  if (any(['chor', 'choir', 'choral', 'chorsatz', 'хор', 'khor', 'хоровая'])) {
+  // "S. A." / "T. B.": the choir's voices in two sheets.
+  if (any(['chor', 'choir', 'choral', 'chorsatz', 'coro', 'cori', 'satb', 's a t b', 's a', 't b', 'хор', 'khor', 'хоровая'])) {
     return (instrumentId: null, note: kChoirAllNote);
   }
   return null;

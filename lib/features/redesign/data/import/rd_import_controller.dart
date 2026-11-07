@@ -903,9 +903,12 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         final paths = [
           for (final p in rdImportPagesToRead(plan, state.decisions))
             if (!_pagesTried.contains(p) && PartVisionService.supports(p)) p,
-        ].take(rdImportMaxPageReads - _pagesTried.length).toList();
-        if (paths.isEmpty) return;
-        total += paths.length;
+        ];
+        // The budget is spent on what is taken, so a Werk opened later is
+        // read too when its pages lie beyond the first ones.
+        var left = rdImportMaxPageReads - _pagesTried.length;
+        if (paths.isEmpty || left <= 0) return;
+        total += paths.length < left ? paths.length : left;
         show();
         final pending = [...paths];
         final workOf = {
@@ -914,7 +917,8 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         };
         // The Werk open now first, then in the order of the Werke.
         String? take() {
-          if (pending.isEmpty) return null;
+          if (pending.isEmpty || left <= 0) return null;
+          left--;
           final first = _readFirst;
           final i = first == null ? -1 : pending.indexWhere((p) => workOf[p] == first);
           return pending.removeAt(i < 0 ? 0 : i);
