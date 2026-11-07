@@ -1460,8 +1460,18 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
                 showChevron: false,
                 onTap: () => deletePlannedAbsenceFlow(context, ref, a),
               ),
-            row(l10n.personAddAbsence, () => addPlannedAbsenceFlow(context, ref, personId: _personId, showLongAbsenceHint: true, forOther: true),
-                icon: Icons.add_circle_outline),
+            row(
+              l10n.personAddAbsence,
+              () => addPlannedAbsenceFlow(
+                context,
+                ref,
+                personId: _personId,
+                showLongAbsenceHint: true,
+                forOther: true,
+                firstName: person.firstName,
+              ),
+              icon: Icons.add_circle_outline,
+            ),
             if (ref.watch(hasDutyTypesProvider))
               row(
                 l10n.signoutRegularlyUnavailable,

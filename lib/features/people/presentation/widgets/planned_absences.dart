@@ -4,11 +4,14 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/player_absence_providers.dart';
+import '../../../../core/providers/redesign_providers.dart' show redesignEnabledProvider;
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/player_absence/player_absence.dart';
+import '../../../redesign/presentation/widgets/event/rd_absence_sheet.dart' show showRdAbsenceInputSheet;
+import '../pages/person_detail_page.dart' show personProvider;
 import 'person_detail/upcoming_appointments_accordion.dart';
 import '../../../../core/utils/date_helper.dart';
 import '../../../../l10n/l10n.dart';
@@ -215,19 +218,43 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
 
 /// Opens the sheet, stores the absence, excuses upcoming attendances and
 /// shows the result toast. Returns true on success.
+///
+/// REDESIGN: in the Beta the sheet of Ich › Abwesenheit
+/// ([showRdAbsenceInputSheet], "Abwesenheit für [firstName]"); the save
+/// stays the same.
 Future<bool> addPlannedAbsenceFlow(
   BuildContext context,
   WidgetRef ref, {
   required int personId,
   bool showLongAbsenceHint = false,
   bool forOther = false,
+  String? firstName,
 }) async {
-  final input = await showAbsenceInputSheet(
-    context,
-    showLongAbsenceHint: showLongAbsenceHint,
-    forOther: forOther,
-  );
+  // The person belongs to this group: nothing is saved after a switch.
+  final tenantId = ref.read(currentTenantIdProvider);
+  final AbsenceInput? input;
+  if (ref.read(redesignEnabledProvider)) {
+    final l10n = context.l10n;
+    final name = (firstName ?? ref.read(personProvider(personId)).valueOrNull?.firstName ?? '').trim();
+    input = await showRdAbsenceInputSheet(
+      context,
+      personId: personId,
+      title: forOther && name.isNotEmpty ? l10n.redesignAbsenceForOther(name) : l10n.redesignAbsenceTitle,
+      hint: !showLongAbsenceHint
+          ? null
+          : forOther
+              ? l10n.personLongAbsenceHint
+              : l10n.signoutLongAbsenceHint,
+    );
+  } else {
+    input = await showAbsenceInputSheet(
+      context,
+      showLongAbsenceHint: showLongAbsenceHint,
+      forOther: forOther,
+    );
+  }
   if (input == null || !context.mounted) return false;
+  if (ref.read(currentTenantIdProvider) != tenantId) return false;
 
   final count = await ref.read(playerAbsenceNotifierProvider.notifier).addAbsence(
         personId: personId,

@@ -10,6 +10,10 @@ import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../core/constants/enums.dart' show AttendanceStatus;
+import '../../../../../data/repositories/player_absence_repository.dart' show PlayerAbsenceRepository;
+import '../../../../people/presentation/widgets/person_detail/upcoming_appointments_accordion.dart'
+    show upcomingAttendancesProvider;
 import '../../../../people/presentation/widgets/planned_absences.dart' show AbsenceInput;
 import '../../../../self_service/presentation/widgets/self_service_absences.dart';
 import '../rd_widgets.dart';
@@ -70,12 +74,62 @@ Future<void> showRdAbsenceSheet(
   }
 }
 
+/// REDESIGN: the same sheet when the leadership enters an absence for
+/// someone else ("Abwesenheit für Lea", `addPlannedAbsenceFlow`). Returns
+/// the input or null; the caller saves it for [personId] as before.
+/// "Betrifft N Termine" counts the person's coming Termine in the period
+/// that are not excused yet (what the save changes).
+Future<AbsenceInput?> showRdAbsenceInputSheet(
+  BuildContext context, {
+  required int personId,
+  required String title,
+  String? hint,
+}) {
+  return showModalBottomSheet<AbsenceInput>(
+    context: context,
+    useRootNavigator: true,
+    isScrollControlled: true,
+    showDragHandle: true,
+    useSafeArea: true,
+    backgroundColor: context.rd.bg,
+    builder: (_) => _AbsenceSheet(canSelfPause: false, personId: personId, title: title, hint: hint),
+  );
+}
+
+/// Coming Termine of [upcoming] (rows of `upcomingAttendancesProvider`)
+/// that an absence from [from] to [until] excuses: in the period, not ended
+/// and not excused yet (`excuseUpcomingAttendances`).
+List<Map<String, dynamic>> rdOtherTermineInRange(
+  List<Map<String, dynamic>> upcoming,
+  DateTime from,
+  DateTime until, {
+  DateTime? now,
+}) {
+  final fromIso = DateFormat('yyyy-MM-dd').format(from);
+  final untilIso = DateFormat('yyyy-MM-dd').format(until);
+  return upcoming.where((a) {
+    if (a['status'] == AttendanceStatus.excused.value) return false;
+    return PlayerAbsenceRepository.isUpcomingInAbsenceRange(
+      a['date']?.toString() ?? '',
+      null,
+      fromIso,
+      untilIso,
+      now: now,
+    );
+  }).toList();
+}
+
 const _pause = 'pause';
 
 class _AbsenceSheet extends ConsumerStatefulWidget {
-  const _AbsenceSheet({required this.canSelfPause});
+  const _AbsenceSheet({required this.canSelfPause, this.personId, this.title, this.hint});
 
   final bool canSelfPause;
+
+  /// Someone else (leadership): their Termine, [title] and [hint].
+  final int? personId;
+  final String? title;
+  final String? hint;
 
   @override
   ConsumerState<_AbsenceSheet> createState() => _AbsenceSheetState();
@@ -111,7 +165,10 @@ class _AbsenceSheetState extends ConsumerState<_AbsenceSheet> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Semantics(header: true, child: Text(l10n.redesignAbsenceTitle, style: RdType.cardTitle(p))),
+            Semantics(
+              header: true,
+              child: Text(widget.title ?? l10n.redesignAbsenceTitle, style: RdType.cardTitle(p)),
+            ),
             if (widget.canSelfPause) ...[
               const SizedBox(height: 14),
               RdSegmented<bool>(
@@ -150,18 +207,34 @@ class _AbsenceSheetState extends ConsumerState<_AbsenceSheet> {
         : until == null
             ? '${day(from)} · ${l10n.redesignAbsenceChooseEnd}'
             : '${day(from)} – ${day(until)}';
-    // Same Termine the save changes (selfServiceAbsenceCandidateIds): no
-    // unassigned duties, no own duties in the Dienstplan view.
-    final data = ref.watch(signoutDataProvider).valueOrNull;
-    final duty = ref.watch(myDutyOverviewProvider).valueOrNull;
-    final affected = from == null || until == null || data == null || duty == null
-        ? null
-        : rdTermineInRange(
-            absenceCandidates(data, useDutyView: duty.useDutyView),
-            from,
-            until,
-            tenantId: ref.watch(currentTenantIdProvider),
-          );
+    final other = widget.personId;
+    final List<({String? date, String title})>? affected;
+    if (other != null) {
+      // Someone else: their coming Termine the save excuses.
+      final upcoming = ref.watch(upcomingAttendancesProvider(other)).valueOrNull;
+      affected = from == null || until == null || upcoming == null
+          ? null
+          : [
+              for (final a in rdOtherTermineInRange(upcoming, from, until))
+                (date: a['date']?.toString(), title: a['meetingName']?.toString() ?? ''),
+            ];
+    } else {
+      // Same Termine the save changes (selfServiceAbsenceCandidateIds): no
+      // unassigned duties, no own duties in the Dienstplan view.
+      final data = ref.watch(signoutDataProvider).valueOrNull;
+      final duty = ref.watch(myDutyOverviewProvider).valueOrNull;
+      affected = from == null || until == null || data == null || duty == null
+          ? null
+          : [
+              for (final a in rdTermineInRange(
+                absenceCandidates(data, useDutyView: duty.useDutyView),
+                from,
+                until,
+                tenantId: ref.watch(currentTenantIdProvider),
+              ))
+                (date: a.date, title: a.eventTitle),
+            ];
+    }
 
     return [
       RdCard(
@@ -238,7 +311,9 @@ class _AbsenceSheetState extends ConsumerState<_AbsenceSheet> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                l10n.redesignAbsenceAffects(affected.length),
+                other != null
+                    ? l10n.redesignAbsenceAffectsOther(affected.length)
+                    : l10n.redesignAbsenceAffects(affected.length),
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: p.text),
               ),
               if (affected.isNotEmpty) ...[
@@ -249,7 +324,7 @@ class _AbsenceSheetState extends ConsumerState<_AbsenceSheet> {
                     final date = d == null
                         ? ''
                         : '${DateFormat.E(locale).format(d).replaceAll('.', '')} ${DateFormat('d.M.').format(d)}';
-                    return '$date ${a.eventTitle}'.trim();
+                    return '$date ${a.title}'.trim();
                   }).join(' · '),
                   style: RdType.meta(p, size: 13),
                 ),
@@ -257,6 +332,10 @@ class _AbsenceSheetState extends ConsumerState<_AbsenceSheet> {
             ],
           ),
         ),
+      ],
+      if (widget.hint != null) ...[
+        const SizedBox(height: 14),
+        RdHintBox(widget.hint!),
       ],
       const SizedBox(height: 18),
       RdPrimaryButton(
