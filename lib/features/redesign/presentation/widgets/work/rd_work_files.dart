@@ -24,7 +24,6 @@ import '../../../../../data/models/song/song.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../../../shared/widgets/adaptive/app_select.dart';
-import '../../../../songs/presentation/pages/song_detail_page.dart' show FileCategoryDialog;
 import '../../../../songs/presentation/utils/song_utils.dart';
 import '../../../../songs/presentation/widgets/file_drop/file_drop_target.dart';
 import '../../../../songs/presentation/widgets/file_upload_sheet.dart'
@@ -34,6 +33,7 @@ import '../../../data/rd_work_files_controller.dart';
 import '../../../data/rd_work_files_logic.dart';
 import '../../../data/rd_works_logic.dart';
 import '../../rd_actions.dart';
+import 'rd_file_category_sheet.dart';
 import '../rd_widgets.dart';
 
 /// REDESIGN: desktop file workspace of a Werk (shown on wide screens to
@@ -362,14 +362,13 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
     var target = category;
     if (target == null) {
       // "Sonstige …": free text in the dialog of the old page.
-      final result = await showAppDialog<({int? instrumentId, String? note})>(
-        context: context,
-        builder:
-            (_) => FileCategoryDialog(
-              instruments: widget.data.instruments,
-              initialInstrumentId: null,
-              initialNote: file.instrumentId == null ? (file.note ?? '') : '',
-            ),
+      final result = await showRdFileCategorySheet(
+        context,
+        title: file.fileName,
+        instruments: widget.data.instruments,
+        isChoir: widget.data.isChoir,
+        initialInstrumentId: null,
+        initialNote: file.instrumentId == null ? (file.note ?? '') : '',
       );
       if (result == null) return;
       target = (id: result.instrumentId, note: result.note);
