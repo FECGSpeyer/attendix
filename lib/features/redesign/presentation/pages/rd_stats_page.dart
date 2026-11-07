@@ -45,7 +45,7 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
   Future<void> _refresh() async {
     ref.invalidate(filteredAttendancesForStatsProvider);
     ref.invalidate(activePlayersForStatsProvider);
-    await ref.read(filteredAttendancesForStatsProvider.future);
+    await ref.read(filteredAttendancesForStatsProvider.future).then((_) {}, onError: (Object _) {});
   }
 
   @override

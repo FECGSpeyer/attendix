@@ -268,7 +268,9 @@ class _RdGroupEditPageState extends ConsumerState<RdGroupEditPage> {
       try {
         count = await ref.read(groupRepositoryWithTenantProvider).getPlayerCountInGroup(_groupId, includeArchived: true);
       } catch (_) {
-        count = 0;
+        // Unknown member count: never delete a group that may still have people.
+        if (mounted) ToastHelper.showError(context, l10n.redesignGroupEditDeleteFailed);
+        return;
       }
       if (!mounted) return;
       if (count > 0) {

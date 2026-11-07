@@ -449,7 +449,7 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     final openCount = data.allUpcoming.where(waiting).length;
     final source = _past ? data.past : data.allUpcoming;
     final list = source
-        .where((a) => !_onlyOpen || waiting(a))
+        .where((a) => !_onlyOpen || openCount == 0 || waiting(a))
         .where((a) => _matches(a.eventTitle, a.place))
         .toList();
     final sections = rdGroupEvents(list, (a) => a.date, past: _past);
@@ -563,7 +563,7 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     final openCount = upcoming.where((g) => rdOpenChildren(g) > 0).length;
     final source = _past ? past : upcoming;
     final list = source
-        .where((g) => _past || !_onlyOpen || rdOpenChildren(g) > 0)
+        .where((g) => _past || !_onlyOpen || openCount == 0 || rdOpenChildren(g) > 0)
         .where((g) => _matches(titleOf(g), g.place))
         .toList();
     final sections = rdGroupEvents(list, (g) => g.date, past: _past);
@@ -719,7 +719,11 @@ class _LeaderEventCard extends StatelessWidget {
                     ),
                     if (type != null && type!.name.isNotEmpty && type!.name != info.title) ...[
                       const SizedBox(width: 8),
-                      RdPill(type!.name, tone: type!.highlight ? RdTone.excused : RdTone.primary),
+                      // A long type name ellipsizes instead of overflowing the card.
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 140),
+                        child: RdPill(type!.name, tone: type!.highlight ? RdTone.excused : RdTone.primary),
+                      ),
                     ],
                   ],
                 ),

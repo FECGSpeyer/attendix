@@ -22,9 +22,13 @@ import '../rd_widgets.dart';
 /// has no Sammlungen (then every Sammlung feature stays hidden) or they are
 /// not loaded. Leads (admin, responsible, viewer) see all of them.
 final rdVisibleCollectionsProvider = Provider.autoDispose<List<SongCollection>?>((ref) {
-  final all = ref.watch(songCollectionsProvider).valueOrNull;
-  if (all == null) return null;
+  final async = ref.watch(songCollectionsProvider);
   final role = ref.watch(effectiveRoleProvider);
+  // Members: while the Sammlungen reload or failed, a previous value is no
+  // proof of the current visibility, so it counts as unknown (null).
+  if (!role.isConductor && (async.isLoading || async.hasError)) return null;
+  final all = async.valueOrNull;
+  if (all == null) return null;
   final groups = ref.watch(groupsProvider).valueOrNull ?? const <Group>[];
   final groupId = ref.watch(currentSelfServicePlayerProvider).valueOrNull?.instrument;
   final ownGroup = groups.where((g) => g.id == groupId).firstOrNull;

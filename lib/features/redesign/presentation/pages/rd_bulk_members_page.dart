@@ -17,7 +17,9 @@ import '../../../../data/repositories/player_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../people/presentation/widgets/pause_person_sheet.dart' show buildPauseHistoryText;
 import '../../data/rd_members_logic.dart';
+import '../../../settings/presentation/pages/left_players_page.dart' show leftPlayersProvider;
 import '../widgets/manage/rd_manage_entries.dart' show rdManagePendingProvider;
+import '../widgets/manage/rd_settings_sheets.dart' show showRdChoiceSheet, showRdTextSheet;
 import '../widgets/rd_widgets.dart';
 
 /// Runs [change] for every person and counts successes and failures, so
@@ -98,9 +100,14 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
     persons = persons.where((p) => p.tenantId == repo.currentTenantId).toList();
     if (persons.isEmpty) return;
     setState(() => _busy = true);
+    // Bound before the await: the page may be closed while the writes run.
+    final container = ProviderScope.containerOf(context, listen: false);
     final result = await rdApplyToAll(persons, (p) => change(repo, p));
-    ref.invalidate(realtimePlayersProvider);
-    ref.invalidate(playersProvider);
+    container
+      ..invalidate(realtimePlayersProvider)
+      ..invalidate(playersProvider)
+      ..invalidate(leftPlayersProvider)
+      ..invalidate(archivedPlayersProvider);
     if (!mounted) return;
     setState(() {
       _busy = false;
@@ -120,50 +127,46 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
     final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
     final mainGroup = ref.read(mainGroupProvider.future);
     final groups = ref.read(groupsProvider).valueOrNull ?? const [];
-    final groupId = await showModalBottomSheet<int>(
-      context: context,
-      useRootNavigator: true,
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (ctx) => SafeArea(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.7),
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-                child: Text(l10n.redesignBulkPickGroup, style: RdType.section(ctx.rd)),
-              ),
-              for (final g in groups)
-                if (g.id != null)
-                  ListTile(title: Text(g.name), onTap: () => Navigator.pop(ctx, g.id)),
-            ],
-          ),
-        ),
-      ),
+    final general = ref.read(currentTenantProvider)?.type == 'general';
+    final groupId = await showRdChoiceSheet<int>(
+      context,
+      title: l10n.redesignBulkPickGroup,
+      options: [for (final g in groups) if (g.id != null) (g.id!, g.name)],
     );
     if (groupId == null || !mounted) return;
     final names = {for (final g in groups) g.id: g.name};
     final mainId = (await mainGroup)?.id;
     if (!mounted) return;
     await _run(boundRepo: repo, persons.where((p) => p.instrument != groupId).toList(), (repo, p) async {
-      // Ionic continueUpdatingPlayer: joining or leaving the main group
-      // makes the account Verantwortlicher or Spieler (admins stay). Done
-      // before the Register change: if it fails the person stays in the old
-      // Register and a retry repeats both steps; if the Register change
-      // fails, the old role is restored.
+      // Ionic continueUpdatingPlayer (syncPersonRoles): joining or leaving
+      // the main group makes the account Verantwortlicher or Spieler (admins
+      // stay); a moved Stimmführer loses the Stimmführer role. Both role
+      // changes come before the Register change: if one fails the person
+      // stays in the old Register (counted as failed, a retry repeats every
+      // step); if the Register change fails, the old role is restored.
       final appId = p.appId;
       Role? previousRole;
-      if (appId != null && mainId != null && (groupId == mainId || p.instrument == mainId)) {
-        final role = await registration.getTenantUserRole(appId);
-        final next = groupId == mainId ? Role.responsible : Role.player;
-        if (role != null && role != Role.admin && role != next) {
-          await registration.updateTenantUserRole(appId, next);
-          previousRole = role;
-        }
-      }
       try {
+        if (appId != null && mainId != null && (groupId == mainId || p.instrument == mainId)) {
+          final role = await registration.getTenantUserRole(appId);
+          final next = groupId == mainId ? Role.responsible : Role.player;
+          if (role != null && role != Role.admin && role != next) {
+            await registration.updateTenantUserRole(appId, next);
+            previousRole = role;
+          }
+        }
+        if (p.isLeader && appId != null && !general) {
+          final role = await registration.getTenantUserRole(appId);
+          final next = switch (role) {
+            Role.voiceLeader => Role.player,
+            Role.voiceLeaderHelper => Role.helper,
+            _ => null,
+          };
+          if (next != null) {
+            await registration.updateTenantUserRole(appId, next);
+            previousRole ??= role;
+          }
+        }
         await _changeGroup(repo, p, groupId, names);
       } catch (_) {
         if (appId != null && previousRole != null) {
@@ -182,6 +185,7 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
   static Future<void> _changeGroup(PlayerRepository repo, Person p, int groupId, Map<int?, String> names) =>
       repo.updatePlayerFields(p.id!, {
         'instrument': groupId,
+        'isLeader': false,
         'history': [
           ...p.history.map((h) => h.toJson()),
           {
@@ -199,26 +203,12 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
     // Already paused members keep their pause (no second entry).
     final targets = persons.where((p) => !p.paused).toList();
     if (targets.isEmpty) return;
-    final controller = TextEditingController();
-    final reason = await showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.redesignBulkActionPause),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          decoration: InputDecoration(labelText: l10n.redesignBulkPauseReason),
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.commonCancel)),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: Text(l10n.redesignBulkActionPause),
-          ),
-        ],
-      ),
+    final reason = await showRdTextSheet(
+      context,
+      title: l10n.redesignBulkActionPause,
+      hint: l10n.redesignBulkPauseReason,
+      required: true,
     );
-    controller.dispose();
     if (reason == null || reason.isEmpty) return;
     await _run(boundRepo: repo, targets, (repo, p) => repo.pausePlayer(p, null, buildPauseHistoryText(reason)));
   }
@@ -345,7 +335,7 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
                                 color: _selected.contains(person.id) ? p.primary : p.text2,
                               ),
                               title: '${person.firstName} ${person.lastName}'.trim(),
-                              subtitle: person.paused ? l10n.redesignBulkActionPause : null,
+                              subtitle: person.paused ? l10n.redesignPersonPaused : null,
                               selected: _selected.contains(person.id),
                               showChevron: false,
                               onTap: () => _toggle(person.id!),

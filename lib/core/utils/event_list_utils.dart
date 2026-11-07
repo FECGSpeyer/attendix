@@ -244,6 +244,11 @@ abstract final class EventListUtils {
         parsed.minute, parsed.second);
   }
 
+  /// [local] as stored deadline: local wall time in UTC notation (the
+  /// reverse of [deadlineLocal]; Ionic's ion-datetime writes it this way).
+  static String deadlineToStore(DateTime local) =>
+      DateTime.utc(local.year, local.month, local.day, local.hour, local.minute).toIso8601String();
+
   /// "Anmeldefrist: 20.10.2026 18:00 Uhr" / "Anmeldefrist abgelaufen".
   static String deadlineText(String? deadline, {DateTime? now}) {
     final local = deadlineLocal(deadline);

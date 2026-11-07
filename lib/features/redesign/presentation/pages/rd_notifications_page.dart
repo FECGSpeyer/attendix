@@ -94,9 +94,11 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> {
   Future<void> _update(NotificationConfig next) async {
     final previous = _config;
     setState(() => _config = next);
+    // Read before the await: the page may be left while saving.
+    final tracking = ref.read(trackingServiceProvider);
     try {
       await ref.read(telegramServiceProvider).updateNotificationConfig(next);
-      ref.read(trackingServiceProvider).track(
+      tracking.track(
         TrackingEvent.notificationSettingsChanged,
         properties: {'enabled': next.enabled, 'pushEnabled': next.pushEnabled},
       );

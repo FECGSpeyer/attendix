@@ -24,6 +24,7 @@ import '../../../people/presentation/pages/person_detail_page.dart'
 import '../../../people/presentation/widgets/pause_person_sheet.dart' show pausePersonFlow;
 import '../../../settings/presentation/pages/left_players_page.dart' show LeftPlayersPage;
 import '../../data/rd_members_logic.dart';
+import '../../../settings/presentation/pages/left_players_page.dart' show leftPlayersProvider;
 import '../widgets/event/rd_record_widgets.dart' show rdStatusLook;
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
@@ -465,6 +466,11 @@ class _Actions extends ConsumerWidget {
     if (person.id != null) ref.invalidate(personProvider(person.id!));
     ref.invalidate(realtimePlayersProvider);
     ref.invalidate(playerAttendancePercentagesProvider);
+    // Not realtime: an archived person must leave the lists that offer
+    // "Fehlende Accounts anlegen" and show up in the Archiv right away.
+    ref.invalidate(playersProvider);
+    ref.invalidate(leftPlayersProvider);
+    ref.invalidate(archivedPlayersProvider);
   }
 
   Future<void> _togglePause(BuildContext context, WidgetRef ref) async {
