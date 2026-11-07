@@ -530,6 +530,14 @@ void main() {
       ]);
       expect(only('Violine 2 und Cello.pdf', const []).category,
           const RdImportCategory.several([RdImportCategory(newGroup: 'Violine 2'), RdImportCategory(newGroup: 'Cello')]));
+      // Only "Violine 1" there: "Violine 2" is new, not Violine 1.
+      expect(only('Violine 2 und Cello.pdf', const [InstrumentInfo(id: 30, name: 'Violine 1'), InstrumentInfo(id: 31, name: 'Cello')]).category,
+          const RdImportCategory.several([RdImportCategory(newGroup: 'Violine 2'), RdImportCategory(instrumentId: 31)]));
+      // The Werk name is no part: "Le viole - Vl II" is Violine 2 only.
+      const strings = [InstrumentInfo(id: 30, name: 'Violine 1'), InstrumentInfo(id: 32, name: 'Violine 2'), InstrumentInfo(id: 33, name: 'Viola')];
+      final viole = rdBuildImportPlan([_e('Noten/12 Le viole/Le viole - Vl II.pdf')], songs: const [], instruments: strings, isChoir: false);
+      expect(rdWorkState(viole, const RdImportDecisions(), viole.works.single).files.values.single.category,
+          const RdImportCategory(instrumentId: 32));
     });
   });
 
