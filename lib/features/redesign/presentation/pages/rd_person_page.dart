@@ -34,7 +34,7 @@ import 'rd_members_page.dart' show rdPercentColor;
 /// REDESIGN: a person (canvas "PersonDetail"): contact, attendance with
 /// the last ten Termine, birthday, absence, note, Pausieren / Archivieren.
 /// "Bearbeiten" opens the Beta "Person bearbeiten" page, "Prüfen und
-/// freigeben" (pending) the approval page of the normal app, "Alle Termine
+/// freigeben" (pending) the Beta "Anfrage prüfen" page, "Alle Termine
 /// ansehen" the Beta "Verlauf" page.
 class RdPersonPage extends ConsumerWidget {
   const RdPersonPage({super.key, required this.personId});
@@ -131,7 +131,7 @@ class RdPersonPage extends ConsumerWidget {
             action: role.isAdmin || role.isResponsible
                 ? RdPrimaryButton(
                     label: l10n.redesignPersonReview,
-                    onPressed: () => context.push('/people/$personId'),
+                    onPressed: () => context.push(RedesignRoutes.approvalReview(personId)),
                   )
                 : null,
           ),

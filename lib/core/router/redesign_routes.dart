@@ -120,8 +120,12 @@ class RedesignRoutes {
   static const String archive = '$manage/archiv';
 
   /// Verwaltung › Freigaben: persons waiting for approval (replaces the old
-  /// pending sheet; a person still opens the old review page).
+  /// pending sheet).
   static const String approvals = '$manage/freigaben';
+
+  /// Freigaben › "Anfrage prüfen" of a person (replaces the old review
+  /// page `/people/:id` in the Beta; leads only like [approvals]).
+  static String approvalReview(int id) => '$approvals/$id';
 
   /// Verwaltung › Lehrer (replaces `/settings/teachers` in the Beta).
   static const String teachers = '$manage/lehrer';

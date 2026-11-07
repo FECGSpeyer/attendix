@@ -78,6 +78,7 @@ class RdImportWorkPage extends ConsumerWidget {
                             current: fs.category,
                             title: f.name,
                             newGroups: rdImportPendingGroups(plan, d),
+                            several: _several(plan, f, work.title),
                             header: _previewable(f)
                                 ? RdImportPagePreview(
                                     name: f.name,
@@ -418,4 +419,12 @@ class _TargetSheetState extends State<_TargetSheet> {
       ),
     );
   }
+}
+
+/// "Posaune + Tuba" to pick for a file whose name names several instruments,
+/// also when one of their groups is not sure.
+RdImportCategory? _several(RdImportPlan plan, RdImportFile f, String workTitle) {
+  if (f.guessed.isSeveral) return f.guessed;
+  final named = rdImportNamedGroups(rdImportWithoutWorkName(f.name, workTitle), plan.instruments, isChoir: plan.isChoir).groups;
+  return named.length > 1 ? RdImportCategory.several(named) : null;
 }

@@ -9847,6 +9847,104 @@ class AppLocalizationsDe extends AppLocalizations {
       'Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen.';
 
   @override
+  String get rdPeopleCopyHint =>
+      'Die Person wird in der Zielgruppe angelegt und bleibt hier aktiv.';
+
+  @override
+  String rdPeopleCopyTitle(Object name) {
+    return '$name kopieren';
+  }
+
+  @override
+  String get rdPeopleGroupSwitched =>
+      'Die Gruppe wurde gewechselt. Es wurde nichts gespeichert.';
+
+  @override
+  String get rdPeoplePauseFrom => 'Ab';
+
+  @override
+  String get rdPeoplePauseHint =>
+      'Ein Start in der Vergangenheit nimmt die Person auch aus den Terminen ab diesem Tag. Mit Enddatum wird sie danach automatisch wieder aktiv.';
+
+  @override
+  String get rdPeoplePauseNoEnd => 'Ohne Ende';
+
+  @override
+  String rdPeoplePauseOthersHint(Object name) {
+    return '$name ist auch in diesen Gruppen. Wähle, wo die Pause ebenfalls gelten soll.';
+  }
+
+  @override
+  String get rdPeoplePauseOthersTitle => 'Auch in anderen Gruppen pausieren?';
+
+  @override
+  String get rdPeoplePauseReasonHint => 'Grund eingeben';
+
+  @override
+  String get rdPeoplePauseSelfHint =>
+      'Solange du pausierst, stehst du in keinem neuen Termin. Mit Enddatum bist du danach automatisch wieder dabei.';
+
+  @override
+  String rdPeoplePauseTitle(Object name) {
+    return '$name pausieren';
+  }
+
+  @override
+  String get rdPeoplePauseToday => 'Heute';
+
+  @override
+  String get rdPeoplePauseUntil => 'Bis';
+
+  @override
+  String get rdPeopleReviewApprove => 'Aufnehmen';
+
+  @override
+  String get rdPeopleReviewDetails => 'Angaben';
+
+  @override
+  String get rdPeopleReviewDone => 'Diese Anfrage ist schon erledigt.';
+
+  @override
+  String get rdPeopleReviewDuplicateHint =>
+      'Diese Person gibt es hier vielleicht schon. Zusammenführen übernimmt die Anmeldung in die vorhandene Person.';
+
+  @override
+  String get rdPeopleReviewDuplicateTitle => 'Mögliche Doppelung';
+
+  @override
+  String rdPeopleReviewRequestedOn(Object date) {
+    return 'Anfrage vom $date';
+  }
+
+  @override
+  String get rdPeopleReviewTitle => 'Anfrage prüfen';
+
+  @override
+  String get rdPeopleTransferChoose => 'Auswählen';
+
+  @override
+  String get rdPeopleTransferHint =>
+      'Die Person wird in der Zielgruppe angelegt und hier archiviert.';
+
+  @override
+  String get rdPeopleTransferNoRegisters => 'Keine Register';
+
+  @override
+  String get rdPeopleTransferNoTargets =>
+      'Es gibt keine anderen Gruppen in deiner Organisation.';
+
+  @override
+  String get rdPeopleTransferRegister => 'Register';
+
+  @override
+  String get rdPeopleTransferTarget => 'Zielgruppe';
+
+  @override
+  String rdPeopleTransferTitle(Object name) {
+    return '$name übertragen';
+  }
+
+  @override
   String get rdSettingsAddRule => 'Regel hinzufügen';
 
   @override
@@ -11888,6 +11986,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String redesignImportCategoryNewShort(Object name) {
+    return '$name (neu)';
+  }
+
+  @override
   String get redesignImportCategoryOther => 'Sonstige';
 
   @override
@@ -12375,6 +12478,20 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String redesignImportQuestionsOpenTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count offene Fragen',
+      one: '1 offene Frage',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportQuestionsShowAll => 'Alle Fragen zeigen';
 
   @override
   String redesignImportQuestionsTitle(num count) {

@@ -12305,6 +12305,129 @@
   "@rdOrgWorksNoPermission": {
     "description": "rdOrg.worksNoPermission"
   },
+  "rdPeopleCopyHint": "Die Person wird in der Zielgruppe angelegt und bleibt hier aktiv.",
+  "@rdPeopleCopyHint": {
+    "description": "rdPeople.copyHint"
+  },
+  "rdPeopleCopyTitle": "{name} kopieren",
+  "@rdPeopleCopyTitle": {
+    "description": "rdPeople.copyTitle",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdPeopleGroupSwitched": "Die Gruppe wurde gewechselt. Es wurde nichts gespeichert.",
+  "@rdPeopleGroupSwitched": {
+    "description": "rdPeople.groupSwitched"
+  },
+  "rdPeoplePauseFrom": "Ab",
+  "@rdPeoplePauseFrom": {
+    "description": "rdPeople.pauseFrom"
+  },
+  "rdPeoplePauseHint": "Ein Start in der Vergangenheit nimmt die Person auch aus den Terminen ab diesem Tag. Mit Enddatum wird sie danach automatisch wieder aktiv.",
+  "@rdPeoplePauseHint": {
+    "description": "rdPeople.pauseHint"
+  },
+  "rdPeoplePauseNoEnd": "Ohne Ende",
+  "@rdPeoplePauseNoEnd": {
+    "description": "rdPeople.pauseNoEnd"
+  },
+  "rdPeoplePauseOthersHint": "{name} ist auch in diesen Gruppen. Wähle, wo die Pause ebenfalls gelten soll.",
+  "@rdPeoplePauseOthersHint": {
+    "description": "rdPeople.pauseOthersHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdPeoplePauseOthersTitle": "Auch in anderen Gruppen pausieren?",
+  "@rdPeoplePauseOthersTitle": {
+    "description": "rdPeople.pauseOthersTitle"
+  },
+  "rdPeoplePauseReasonHint": "Grund eingeben",
+  "@rdPeoplePauseReasonHint": {
+    "description": "rdPeople.pauseReasonHint"
+  },
+  "rdPeoplePauseSelfHint": "Solange du pausierst, stehst du in keinem neuen Termin. Mit Enddatum bist du danach automatisch wieder dabei.",
+  "@rdPeoplePauseSelfHint": {
+    "description": "rdPeople.pauseSelfHint"
+  },
+  "rdPeoplePauseTitle": "{name} pausieren",
+  "@rdPeoplePauseTitle": {
+    "description": "rdPeople.pauseTitle",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdPeoplePauseToday": "Heute",
+  "@rdPeoplePauseToday": {
+    "description": "rdPeople.pauseToday"
+  },
+  "rdPeoplePauseUntil": "Bis",
+  "@rdPeoplePauseUntil": {
+    "description": "rdPeople.pauseUntil"
+  },
+  "rdPeopleReviewApprove": "Aufnehmen",
+  "@rdPeopleReviewApprove": {
+    "description": "rdPeople.reviewApprove"
+  },
+  "rdPeopleReviewDetails": "Angaben",
+  "@rdPeopleReviewDetails": {
+    "description": "rdPeople.reviewDetails"
+  },
+  "rdPeopleReviewDone": "Diese Anfrage ist schon erledigt.",
+  "@rdPeopleReviewDone": {
+    "description": "rdPeople.reviewDone"
+  },
+  "rdPeopleReviewDuplicateHint": "Diese Person gibt es hier vielleicht schon. Zusammenführen übernimmt die Anmeldung in die vorhandene Person.",
+  "@rdPeopleReviewDuplicateHint": {
+    "description": "rdPeople.reviewDuplicateHint"
+  },
+  "rdPeopleReviewDuplicateTitle": "Mögliche Doppelung",
+  "@rdPeopleReviewDuplicateTitle": {
+    "description": "rdPeople.reviewDuplicateTitle"
+  },
+  "rdPeopleReviewRequestedOn": "Anfrage vom {date}",
+  "@rdPeopleReviewRequestedOn": {
+    "description": "rdPeople.reviewRequestedOn",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "rdPeopleReviewTitle": "Anfrage prüfen",
+  "@rdPeopleReviewTitle": {
+    "description": "rdPeople.reviewTitle"
+  },
+  "rdPeopleTransferChoose": "Auswählen",
+  "@rdPeopleTransferChoose": {
+    "description": "rdPeople.transferChoose"
+  },
+  "rdPeopleTransferHint": "Die Person wird in der Zielgruppe angelegt und hier archiviert.",
+  "@rdPeopleTransferHint": {
+    "description": "rdPeople.transferHint"
+  },
+  "rdPeopleTransferNoRegisters": "Keine Register",
+  "@rdPeopleTransferNoRegisters": {
+    "description": "rdPeople.transferNoRegisters"
+  },
+  "rdPeopleTransferNoTargets": "Es gibt keine anderen Gruppen in deiner Organisation.",
+  "@rdPeopleTransferNoTargets": {
+    "description": "rdPeople.transferNoTargets"
+  },
+  "rdPeopleTransferRegister": "Register",
+  "@rdPeopleTransferRegister": {
+    "description": "rdPeople.transferRegister"
+  },
+  "rdPeopleTransferTarget": "Zielgruppe",
+  "@rdPeopleTransferTarget": {
+    "description": "rdPeople.transferTarget"
+  },
+  "rdPeopleTransferTitle": "{name} übertragen",
+  "@rdPeopleTransferTitle": {
+    "description": "rdPeople.transferTitle",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "rdSettingsAddRule": "Regel hinzufügen",
   "@rdSettingsAddRule": {
     "description": "rdSettings.addRule"
@@ -14775,6 +14898,13 @@
       "name": {}
     }
   },
+  "redesignImportCategoryNewShort": "{name} (neu)",
+  "@redesignImportCategoryNewShort": {
+    "description": "redesign.import.categoryNewShort",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "redesignImportCategoryOther": "Sonstige",
   "@redesignImportCategoryOther": {
     "description": "redesign.import.categoryOther"
@@ -15308,6 +15438,19 @@
         "type": "num"
       }
     }
+  },
+  "redesignImportQuestionsOpenTitle": "{count, plural, one {1 offene Frage} other {{count} offene Fragen}}",
+  "@redesignImportQuestionsOpenTitle": {
+    "description": "redesign.import.questionsOpenTitle",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportQuestionsShowAll": "Alle Fragen zeigen",
+  "@redesignImportQuestionsShowAll": {
+    "description": "redesign.import.questionsShowAll"
   },
   "redesignImportQuestionsTitle": "{count, plural, one {1 Frage zu euren Stimmen} other {{count} Fragen zu euren Stimmen}}",
   "@redesignImportQuestionsTitle": {

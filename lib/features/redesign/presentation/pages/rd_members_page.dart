@@ -269,7 +269,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
               onTap: person.id == null
                   ? null
                   : () => filter == RdMembersFilter.pending
-                      ? context.push('/people/${person.id}')
+                      ? context.push(RedesignRoutes.approvalReview(person.id!))
                       : RdSplitScope.open(context, RedesignRoutes.person(person.id!)),
             ),
         ]));

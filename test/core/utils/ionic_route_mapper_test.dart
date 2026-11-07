@@ -19,11 +19,18 @@ void main() {
     test('maps the protocol route', () {
       expect(mapIonicRoute('/tabs/attendance/42/protocol'),
           '/settings/protocol/42');
+      expect(mapIonicRoute('/attendance/42/protocol?tenantId=3'),
+          '/settings/protocol/42?tenantId=3');
     });
 
     test('maps the former meetings area to the team organization', () {
       expect(mapIonicRoute('/tabs/settings/meetings/3'),
           '/settings/team-organization');
+    });
+
+    test('uses the link table for every Ionic tab (no song-share fallback)', () {
+      expect(mapIonicRoute('/tabs/player'), '/people');
+      expect(mapIonicRoute('/tabs/list?tenantId=3'), '/attendance?tenantId=3');
     });
 
     test('leaves Flutter routes untouched', () {

@@ -71,6 +71,15 @@ String rdImportReadErrorText(AppLocalizations l10n, RdImportReadError error) => 
 class _RdImportPageState extends ConsumerState<RdImportPage> {
   _Filter? _filter;
 
+  /// The questions still open when "Fragen beantworten" was tapped in the
+  /// review: only they are shown (answered ones stay until the review);
+  /// null = the questions step with everything.
+  Set<String>? _openOnly;
+
+  /// The questions were opened from the review ("Fragen beantworten"):
+  /// back goes there, also after "Alle Fragen zeigen".
+  bool _fromReview = false;
+
   /// "Zur Prüfung" was tapped and the plan is made again (a second or so
   /// with thousands of files): the button says so meanwhile.
   bool _preparing = false;
@@ -291,6 +300,8 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
       case RdImportStep.reading:
       case RdImportStep.done:
         _leave();
+      case RdImportStep.questions when _fromReview:
+        await _toReview();
       case RdImportStep.questions:
         if (await _confirmDiscard() && mounted) {
           setState(() {
@@ -315,6 +326,8 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
       _check = null;
       _error = null;
       _filter = null;
+      _openOnly = null;
+      _fromReview = false;
     });
     _controller.restart();
   }
@@ -693,8 +706,10 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     final d = state.decisions;
     final existing = plan.works.where((w) => w.match.songId != null).length;
     final created = plan.works.where((w) => rdDefaultTarget(plan, w).isNew).length;
-    final unanswered = plan.questions.where((q) => d.answers[q.key] == null && q.newGroup == null).length;
+    final unanswered = plan.questions.where((q) => d.answers[q.key] == null && q.proposed == null).length;
     final pendingGroups = rdImportPendingGroups(plan, d);
+    final openOnly = _openOnly;
+    final questions = openOnly == null ? plan.questions : [for (final q in plan.questions) if (openOnly.contains(q.key)) q];
     // Werk folders the KI is asked about, or answered for.
     final askWorks =
         rdImportWorksToAsk(plan).isNotEmpty || plan.works.any((w) => w.match.kind == RdMatchKind.byAi);
@@ -709,39 +724,42 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
       ],
     );
     return RdImportFrame(
-      backLabel: l10n.redesignImportStepSource,
+      backLabel: _fromReview ? l10n.redesignImportStepReview : l10n.redesignImportStepSource,
       onBack: _back,
       title: l10n.redesignImportTitle,
       step: 2,
       children: [
-        RdCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(state.sourceName ?? '', style: RdType.section(p)),
-              const SizedBox(height: 4),
-              Text(
-                [
-                  l10n.redesignImportFoundFiles(plan.fileCount),
-                  l10n.redesignImportFoundWorks(plan.works.length),
-                ].join(' · '),
-                style: RdType.body(p),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                [
-                  l10n.redesignImportFoundExisting(existing),
-                  l10n.redesignImportFoundNew(created),
-                ].join(' · '),
-                style: RdType.meta(p),
-              ),
-            ],
+        // From the review: only the open questions, then back to it.
+        if (openOnly == null) ...[
+          RdCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(state.sourceName ?? '', style: RdType.section(p)),
+                const SizedBox(height: 4),
+                Text(
+                  [
+                    l10n.redesignImportFoundFiles(plan.fileCount),
+                    l10n.redesignImportFoundWorks(plan.works.length),
+                  ].join(' · '),
+                  style: RdType.body(p),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  [
+                    l10n.redesignImportFoundExisting(existing),
+                    l10n.redesignImportFoundNew(created),
+                  ].join(' · '),
+                  style: RdType.meta(p),
+                ),
+              ],
+            ),
           ),
-        ),
-        // Changing it compares the Werke again (their decisions start over).
-        ..._collectionChoice(context, state),
-        const SizedBox(height: 20),
-        if (plan.questions.isEmpty) ...[
+          // Changing it compares the Werke again (their decisions start over).
+          ..._collectionChoice(context, state),
+          const SizedBox(height: 20),
+        ],
+        if (questions.isEmpty) ...[
           RdCard(child: Text(l10n.redesignImportQuestionsNone, style: RdType.body(p))),
           // Unsure Werk folders go to the KI too: the switch stays.
           if (askWorks) ...[
@@ -749,7 +767,11 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
             aiSwitch,
           ],
         ] else ...[
-          RdSectionHeader(l10n.redesignImportQuestionsTitle(plan.questions.length)),
+          RdSectionHeader(
+            openOnly == null
+                ? l10n.redesignImportQuestionsTitle(questions.length)
+                : l10n.redesignImportQuestionsOpenTitle(questions.length),
+          ),
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: Text(l10n.redesignImportQuestionsIntro, style: RdType.meta(p, size: 13)),
@@ -780,7 +802,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
                 ),
               ),
             ),
-          for (final q in plan.questions) ...[
+          for (final q in questions) ...[
             _QuestionCard(
               plan: plan,
               question: q,
@@ -795,25 +817,35 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
             ),
             const SizedBox(height: 10),
           ],
+          if (openOnly != null && questions.length < plan.questions.length)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                onPressed: () => setState(() => _openOnly = null),
+                child: Text(l10n.redesignImportQuestionsShowAll),
+              ),
+            ),
         ],
-        const SizedBox(height: 10),
-        RdSectionHeader(l10n.redesignImportOptionsTitle),
-        RdGroupedList(
-          children: [
-            RdSwitchRow(
-              title: l10n.redesignImportOptionFassung,
-              subtitle: l10n.redesignImportOptionFassungDetail,
-              value: d.proposeFassung,
-              onChanged: _controller.setProposeFassung,
-            ),
-            RdSwitchRow(
-              title: l10n.redesignImportOptionWord,
-              subtitle: l10n.redesignImportOptionWordDetail,
-              value: d.skipWordBesidePdf,
-              onChanged: _controller.setSkipWordBesidePdf,
-            ),
-          ],
-        ),
+        if (openOnly == null) ...[
+          const SizedBox(height: 10),
+          RdSectionHeader(l10n.redesignImportOptionsTitle),
+          RdGroupedList(
+            children: [
+              RdSwitchRow(
+                title: l10n.redesignImportOptionFassung,
+                subtitle: l10n.redesignImportOptionFassungDetail,
+                value: d.proposeFassung,
+                onChanged: _controller.setProposeFassung,
+              ),
+              RdSwitchRow(
+                title: l10n.redesignImportOptionWord,
+                subtitle: l10n.redesignImportOptionWordDetail,
+                value: d.skipWordBesidePdf,
+                onChanged: _controller.setSkipWordBesidePdf,
+              ),
+            ],
+          ),
+        ],
         const SizedBox(height: 24),
         if (unanswered > 0) ...[
           Text(l10n.redesignImportQuestionsOpen(unanswered), style: RdType.meta(p, size: 13)),
@@ -847,6 +879,8 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     }
     setState(() {
       _filter = null;
+      _openOnly = null;
+      _fromReview = false;
       _preparing = true;
     });
     // Show "Wird vorbereitet …" before the work blocks the page.
@@ -894,7 +928,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     final d = state.decisions;
     final states = {for (final w in plan.works) w.key: rdWorkState(plan, d, w)};
     final summary = rdImportSummary(plan, d);
-    final unanswered = plan.questions.where((q) => d.answers[q.key] == null && q.newGroup == null).length;
+    final unanswered = plan.questions.where((q) => d.answers[q.key] == null && q.proposed == null).length;
     final open = plan.works.where((w) => states[w.key]!.open).toList();
     final created = plan.works.where((w) => states[w.key]!.target.isNew).toList();
     final filter = _filter ?? (open.isNotEmpty ? _Filter.open : _Filter.all);
@@ -915,7 +949,16 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
             icon: Icons.help_outline,
             action: RdOutlineButton(
               label: l10n.redesignImportReviewAnswer,
-              onPressed: () => _controller.goTo(RdImportStep.questions),
+              onPressed: () {
+                setState(() {
+                  _openOnly = {
+                    for (final q in plan.questions)
+                      if (d.answers[q.key] == null && q.proposed == null) q.key,
+                  };
+                  _fromReview = true;
+                });
+                _controller.goTo(RdImportStep.questions);
+              },
             ),
           ),
           const SizedBox(height: 16),
@@ -1215,15 +1258,15 @@ class _QuestionCard extends StatelessWidget {
     // each instrument is offered on its own, the group if there is one.
     final parts = question.newGroup == null ? InstrumentMatcher.knownGroups(label, isChoir: plan.isChoir) : const <String>[];
     final split = parts.length > 1;
-    final partChoices = <RdImportCategory>[
-      if (split)
-        for (final name in parts)
-          if (InstrumentMatcher.detect(name, plan.instruments) case final m
-              when m.instrumentId != null && m.confidence == MatchConfidence.sure)
-            RdImportCategory(instrumentId: m.instrumentId)
-          else
-            RdImportCategory(newGroup: name),
-    ].where((c) => c != suggestion).toSet().toList();
+    // Each with its own number where written apart ("Posaune 1 und Tuba").
+    final eachPart = split ? rdImportNamedGroups(label, plan.instruments, isChoir: plan.isChoir).groups : const <RdImportCategory>[];
+    // The file goes to every group it names (Leon, 07.11.2026): offered
+    // first, then each one alone.
+    final both = eachPart.length > 1 ? RdImportCategory.several(eachPart) : null;
+    final partChoices = [
+      if (both != null) both,
+      ...eachPart.where((c) => c != suggestion),
+    ];
     // The KI's guess gets its own chip unless one of the fixed ones is it.
     final aiChip = ai != null &&
         ai != suggestion &&
@@ -1258,7 +1301,7 @@ class _QuestionCard extends StatelessWidget {
         selected: answer == c,
         onTap: onTap ??
             () {
-              if (answer != c || filled) onAnswer(c);
+              if (answer != c || filled || proposedOnly) onAnswer(c);
             },
       );
     }

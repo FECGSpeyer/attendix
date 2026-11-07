@@ -16187,6 +16187,168 @@ abstract class AppLocalizations {
   /// **'Nur Admins und Verantwortliche einer Gruppe mit Organisation können Werke organisationsweit suchen.'**
   String get rdOrgWorksNoPermission;
 
+  /// rdPeople.copyHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Person wird in der Zielgruppe angelegt und bleibt hier aktiv.'**
+  String get rdPeopleCopyHint;
+
+  /// rdPeople.copyTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{name} kopieren'**
+  String rdPeopleCopyTitle(Object name);
+
+  /// rdPeople.groupSwitched
+  ///
+  /// In de, this message translates to:
+  /// **'Die Gruppe wurde gewechselt. Es wurde nichts gespeichert.'**
+  String get rdPeopleGroupSwitched;
+
+  /// rdPeople.pauseFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Ab'**
+  String get rdPeoplePauseFrom;
+
+  /// rdPeople.pauseHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ein Start in der Vergangenheit nimmt die Person auch aus den Terminen ab diesem Tag. Mit Enddatum wird sie danach automatisch wieder aktiv.'**
+  String get rdPeoplePauseHint;
+
+  /// rdPeople.pauseNoEnd
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Ende'**
+  String get rdPeoplePauseNoEnd;
+
+  /// rdPeople.pauseOthersHint
+  ///
+  /// In de, this message translates to:
+  /// **'{name} ist auch in diesen Gruppen. Wähle, wo die Pause ebenfalls gelten soll.'**
+  String rdPeoplePauseOthersHint(Object name);
+
+  /// rdPeople.pauseOthersTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Auch in anderen Gruppen pausieren?'**
+  String get rdPeoplePauseOthersTitle;
+
+  /// rdPeople.pauseReasonHint
+  ///
+  /// In de, this message translates to:
+  /// **'Grund eingeben'**
+  String get rdPeoplePauseReasonHint;
+
+  /// rdPeople.pauseSelfHint
+  ///
+  /// In de, this message translates to:
+  /// **'Solange du pausierst, stehst du in keinem neuen Termin. Mit Enddatum bist du danach automatisch wieder dabei.'**
+  String get rdPeoplePauseSelfHint;
+
+  /// rdPeople.pauseTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{name} pausieren'**
+  String rdPeoplePauseTitle(Object name);
+
+  /// rdPeople.pauseToday
+  ///
+  /// In de, this message translates to:
+  /// **'Heute'**
+  String get rdPeoplePauseToday;
+
+  /// rdPeople.pauseUntil
+  ///
+  /// In de, this message translates to:
+  /// **'Bis'**
+  String get rdPeoplePauseUntil;
+
+  /// rdPeople.reviewApprove
+  ///
+  /// In de, this message translates to:
+  /// **'Aufnehmen'**
+  String get rdPeopleReviewApprove;
+
+  /// rdPeople.reviewDetails
+  ///
+  /// In de, this message translates to:
+  /// **'Angaben'**
+  String get rdPeopleReviewDetails;
+
+  /// rdPeople.reviewDone
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Anfrage ist schon erledigt.'**
+  String get rdPeopleReviewDone;
+
+  /// rdPeople.reviewDuplicateHint
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Person gibt es hier vielleicht schon. Zusammenführen übernimmt die Anmeldung in die vorhandene Person.'**
+  String get rdPeopleReviewDuplicateHint;
+
+  /// rdPeople.reviewDuplicateTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Mögliche Doppelung'**
+  String get rdPeopleReviewDuplicateTitle;
+
+  /// rdPeople.reviewRequestedOn
+  ///
+  /// In de, this message translates to:
+  /// **'Anfrage vom {date}'**
+  String rdPeopleReviewRequestedOn(Object date);
+
+  /// rdPeople.reviewTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Anfrage prüfen'**
+  String get rdPeopleReviewTitle;
+
+  /// rdPeople.transferChoose
+  ///
+  /// In de, this message translates to:
+  /// **'Auswählen'**
+  String get rdPeopleTransferChoose;
+
+  /// rdPeople.transferHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Person wird in der Zielgruppe angelegt und hier archiviert.'**
+  String get rdPeopleTransferHint;
+
+  /// rdPeople.transferNoRegisters
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Register'**
+  String get rdPeopleTransferNoRegisters;
+
+  /// rdPeople.transferNoTargets
+  ///
+  /// In de, this message translates to:
+  /// **'Es gibt keine anderen Gruppen in deiner Organisation.'**
+  String get rdPeopleTransferNoTargets;
+
+  /// rdPeople.transferRegister
+  ///
+  /// In de, this message translates to:
+  /// **'Register'**
+  String get rdPeopleTransferRegister;
+
+  /// rdPeople.transferTarget
+  ///
+  /// In de, this message translates to:
+  /// **'Zielgruppe'**
+  String get rdPeopleTransferTarget;
+
+  /// rdPeople.transferTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{name} übertragen'**
+  String rdPeopleTransferTitle(Object name);
+
   /// rdSettings.addRule
   ///
   /// In de, this message translates to:
@@ -19325,6 +19487,12 @@ abstract class AppLocalizations {
   /// **'Neue Gruppe: {name}'**
   String redesignImportCategoryNewGroup(Object name);
 
+  /// redesign.import.categoryNewShort
+  ///
+  /// In de, this message translates to:
+  /// **'{name} (neu)'**
+  String redesignImportCategoryNewShort(Object name);
+
   /// redesign.import.categoryOther
   ///
   /// In de, this message translates to:
@@ -19996,6 +20164,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {Noch 1 Frage offen. Ohne Antwort ordnest du diese Stimme in jedem Werk einzeln zu.} other {Noch {count} Fragen offen. Ohne Antwort ordnest du diese Stimmen in jedem Werk einzeln zu.}}'**
   String redesignImportQuestionsOpen(num count);
+
+  /// redesign.import.questionsOpenTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 offene Frage} other {{count} offene Fragen}}'**
+  String redesignImportQuestionsOpenTitle(num count);
+
+  /// redesign.import.questionsShowAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Fragen zeigen'**
+  String get redesignImportQuestionsShowAll;
 
   /// redesign.import.questionsTitle
   ///
