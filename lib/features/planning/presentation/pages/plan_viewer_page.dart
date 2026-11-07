@@ -159,7 +159,7 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
   });
 
   /// REDESIGN (Termin-Werkzeuge T1): Beta detail page. "Ganzer Ablauf /
-  /// Jetzt" replaces the live button, plans are chips, ••• exports.
+  /// Jetzt" replaces the live button, plans are chips, the share button exports.
   Widget _buildBeta(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
@@ -190,10 +190,12 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
               ),
               const SizedBox(width: 8),
             ],
+            // The sheet only shares/exports the plan, so the header shows a
+            // direct share button instead of a "•••" menu.
             RdCircleButton(
-              key: const Key('rd-plan-view-more'),
-              icon: Icons.more_horiz,
-              label: l10n.planningExport,
+              key: const Key('rd-plan-view-share'),
+              icon: Icons.ios_share,
+              label: l10n.plansShareExport,
               onPressed: _export,
             ),
           ],

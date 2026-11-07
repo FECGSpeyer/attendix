@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.78.1",
+      "date": "7.11.2026",
+      "changes": [
+        "✨ Beta-Ablaufplan: Teilen-Button direkt oben statt im •••-Menü"
+      ]
+    },
+    {
       "version": "0.74.2",
       "date": "7.11.2026",
       "changes": [
