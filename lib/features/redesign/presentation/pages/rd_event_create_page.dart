@@ -25,6 +25,7 @@ import '../../../attendance/presentation/attendance_create_writes.dart';
 import '../../../attendance/presentation/widgets/multi_date_calendar.dart';
 import '../../../attendance/presentation/widgets/songs_selection_sheet.dart';
 import '../../data/rd_create_logic.dart';
+import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../widgets/event/rd_create_sheets.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
@@ -229,25 +230,14 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
   Future<bool> _confirmDiscard() async {
     if (!_touched) return true;
     final l10n = context.l10n;
-    final discard = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.redesignCreateDiscardTitle),
-        content: Text(l10n.redesignCreateDiscardBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n.redesignCreateKeepEditing),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: ctx.rd.absent),
-            child: Text(l10n.redesignCreateDiscard),
-          ),
-        ],
-      ),
+    return showAppConfirm(
+      context,
+      title: l10n.redesignCreateDiscardTitle,
+      message: l10n.redesignCreateDiscardBody,
+      confirmText: l10n.redesignCreateDiscard,
+      cancelText: l10n.redesignCreateKeepEditing,
+      destructive: true,
     );
-    return discard == true;
   }
 
   Future<void> _cancel() async {

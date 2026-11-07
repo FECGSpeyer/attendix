@@ -117,12 +117,13 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
   /// Ionic dismiss(): with input ask "Änderungen verwerfen?" first.
   Future<bool> _confirmDiscard() async {
     if (!_hasInput) return true;
-    return DialogHelper.showConfirmation(
+    return showAppConfirm(
       context,
       title: context.l10n.personDiscardChanges,
-      message: context.l10n.personDiscardChangesMessage,
-      confirmText: context.l10n.commonYes,
-      cancelText: context.l10n.commonCancel,
+      message: context.l10n.redesignCreateDiscardBody,
+      confirmText: context.l10n.redesignCreateDiscard,
+      cancelText: context.l10n.redesignCreateKeepEditing,
+      destructive: true,
     );
   }
 

@@ -65,7 +65,7 @@ class RdSheetHead extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: Text(l10n.redesignCommonCancel, style: TextStyle(color: p.primary, fontSize: 16)),
+                child: Text(l10n.redesignCommonCancel, style: TextStyle(color: p.link, fontSize: 16)),
               ),
             ),
           ),
@@ -92,7 +92,7 @@ class RdSheetHead extends StatelessWidget {
                         onPressed: onDone,
                         child: Text(
                           doneLabel ?? l10n.redesignCommonDone,
-                          style: TextStyle(color: p.primary, fontSize: 16, fontWeight: FontWeight.w600),
+                          style: TextStyle(color: p.link, fontSize: 16, fontWeight: FontWeight.w600),
                         ),
                       ),
             ),

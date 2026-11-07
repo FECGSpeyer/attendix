@@ -212,36 +212,10 @@ class _RdTeacherEditPageState extends ConsumerState<RdTeacherEditPage> {
         bottom: false,
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 4, 8, 6),
-              child: Row(
-                children: [
-                  const SizedBox(width: 88),
-                  Expanded(
-                    child: Semantics(
-                      header: true,
-                      child: Text(
-                        l10n.redesignTeacherEditTitle,
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: p.text),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 88,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: RdTextLink(
-                        key: const Key('rd-teacher-edit-done'),
-                        label: l10n.redesignCommonDone,
-                        onTap: _done,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+            RdEditTopBar(
+              title: l10n.redesignTeacherEditTitle,
+              doneKey: const Key('rd-teacher-edit-done'),
+              onDone: _done,
             ),
             Expanded(child: body),
           ],

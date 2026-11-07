@@ -32,6 +32,7 @@ import '../../data/providers/rd_today_providers.dart' show rdDeadlineLabel;
 import '../../data/rd_create_logic.dart' show rdRecentPlaces;
 import '../../data/rd_event_details_logic.dart';
 import '../../data/rd_event_phase.dart' show rdEffectiveDurationDays;
+import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart';
@@ -182,21 +183,13 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
   Future<void> _delete() async {
     final l10n = context.l10n;
     if (DemoGuard.blocked()) return; // DEMO_GUARD
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.attListRemoveConfirm),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.commonCancel)),
-          TextButton(
-            style: TextButton.styleFrom(foregroundColor: context.rd.absent),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(l10n.attListContinue),
-          ),
-        ],
-      ),
+    final confirmed = await showAppConfirm(
+      context,
+      title: l10n.attListRemoveConfirm,
+      confirmText: l10n.commonDelete,
+      destructive: true,
     );
-    if (confirmed != true || !mounted || !_session.isCurrent()) return;
+    if (!confirmed || !mounted || !_session.isCurrent()) return;
     final router = GoRouter.of(context);
     HapticHelper.medium();
     try {

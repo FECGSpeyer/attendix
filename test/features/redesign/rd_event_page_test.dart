@@ -845,7 +845,7 @@ void main() {
 
       await tester.tap(find.text('Termin löschen'));
       await _settle(tester);
-      await tester.tap(find.text('Fortfahren'));
+      await tester.tap(find.text('Löschen'));
       await _settle(tester);
       verify(() => h.repo.deleteAttendance(21)).called(1);
       expect(find.text('page termine'), findsOneWidget);
