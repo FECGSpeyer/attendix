@@ -11853,6 +11853,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String redesignImportCategoryNewShort(Object name) {
+    return '$name (neu)';
+  }
+
+  @override
   String get redesignImportCategoryOther => 'Sonstige';
 
   @override
@@ -12340,6 +12345,20 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String redesignImportQuestionsOpenTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count offene Fragen',
+      one: '1 offene Frage',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportQuestionsShowAll => 'Alle Fragen zeigen';
 
   @override
   String redesignImportQuestionsTitle(num count) {

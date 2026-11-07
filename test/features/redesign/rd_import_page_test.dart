@@ -971,6 +971,51 @@ void main() {
     semantics.dispose();
   });
 
+  testWidgets('review: "Fragen beantworten" shows only the open questions, back goes to the review', (tester) async {
+    tester.view.physicalSize = const Size(430, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final zip = _zip({
+      'Noten/120 Wie wunderbar/Qfl 1.pdf': '%PDF q1',
+      'Noten/157 Jesus ruft dich/Qfl 2.pdf': '%PDF q2',
+      'Noten/157 Jesus ruft dich/Oboe.pdf': '%PDF o',
+    });
+    await tester.pumpWidget(ProviderScope(
+      overrides: _overrides(_FakeFiles(), _FakeSongs(), _FakeGroupNotifier()),
+      child: MaterialApp(
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+        home: const RdImportPage(),
+      ),
+    ));
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdImportPage)));
+    await tester.runAsync(
+        () => container.read(rdImportProvider.notifier).read([PlatformFile(name: 'Noten.zip', size: zip.length, bytes: zip)]));
+    await tester.pump();
+    await tester.ensureVisible(find.text('Zur Prüfung'));
+    await tester.pump();
+    await tester.tap(find.text('Zur Prüfung'));
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('Schritt 3 von 4 · Prüfen'), findsOneWidget);
+
+    await tester.tap(find.text('Fragen beantworten'));
+    await tester.pump();
+    expect(find.text('1 offene Frage'), findsOneWidget);
+    expect(find.text('„Qfl“ gehört zu …'), findsOneWidget);
+    // The proposed new group is not open; nor are the source and options.
+    expect(find.text('„Oboe“ gehört zu …'), findsNothing);
+    expect(find.text('Neueste Fassung vorschlagen'), findsNothing);
+    await tester.scrollUntilVisible(find.text('Alle Fragen zeigen'), 200, scrollable: find.byType(Scrollable).first);
+    expect(find.text('Alle Fragen zeigen'), findsOneWidget);
+
+    await tester.tap(find.text('Prüfen'));
+    await tester.pumpAndSettle();
+    expect(find.text('Schritt 3 von 4 · Prüfen'), findsOneWidget);
+  });
+
   testWidgets('questions: a known instrument\'s new group shows the KI\'s ✦ and a tap takes it', (tester) async {
     tester.view.physicalSize = const Size(430, 1600);
     tester.view.devicePixelRatio = 1;

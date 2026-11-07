@@ -436,6 +436,115 @@ void main() {
     });
   });
 
+  group('a part for several groups ("Posaune und Tuba")', () {
+    const brass = [InstrumentInfo(id: 20, name: 'Posaune'), InstrumentInfo(id: 21, name: 'Tuba')];
+    RdImportPlan plan(List<InstrumentInfo> instruments, {List<RdImportSong> songs = const []}) => rdBuildImportPlan(
+          [_e('Noten/120 Wie wunderbar/Posaune und Tuba.pdf')],
+          songs: songs,
+          instruments: instruments,
+          isChoir: false,
+        );
+
+    test('goes to each group, without a question when both exist', () {
+      final p = plan(brass);
+      final s = rdWorkState(p, const RdImportDecisions(), p.works.single).files.values.single;
+      expect(s.category, const RdImportCategory.several([RdImportCategory(instrumentId: 20), RdImportCategory(instrumentId: 21)]));
+      expect(s.unclear, isFalse);
+      expect(p.questions, isEmpty);
+      final items = rdImportUploads(p, RdImportDecisions(confirmed: {p.works.single.key}));
+      expect(items.single.stores, [const RdImportCategory(instrumentId: 20), const RdImportCategory(instrumentId: 21)]);
+      // "Nur Posaune" by hand is not learned as a term of Posaune.
+      final onlyPosaune = RdImportDecisions(
+        categories: {p.works.single.files.single.path: const RdImportCategory(instrumentId: 20)},
+        confirmed: {p.works.single.key},
+      );
+      expect(rdImportLearnedTerms(p, onlyPosaune, rdImportUploads(p, onlyPosaune), instruments: brass), isEmpty);
+    });
+
+    test('a missing group is proposed as new and asked about; a combined group stays one', () {
+      final p = plan([brass.first]);
+      expect(p.questions.single.proposed,
+          const RdImportCategory.several([RdImportCategory(instrumentId: 20), RdImportCategory(newGroup: 'Tuba')]));
+      final items = rdImportUploads(p, RdImportDecisions(confirmed: {p.works.single.key}));
+      expect(rdImportNewGroups(items), ['Tuba']);
+
+      final combined = plan(const [InstrumentInfo(id: 23, name: 'Posaune/Tuba')]);
+      expect(rdWorkState(combined, const RdImportDecisions(), combined.works.single).files.values.single.category,
+          const RdImportCategory(instrumentId: 23));
+    });
+
+    test('the Werk in Attendix gets only the part it lacks; left out when it has both', () {
+      SongFile file(int id) => SongFile(fileName: 'p$id.pdf', fileType: 'application/pdf', url: 'u', instrumentId: id);
+      final half = plan(brass, songs: [RdImportSong(id: 1, number: 120, name: 'Wie wunderbar', files: [file(20)])]);
+      final d = RdImportDecisions(confirmed: {half.works.single.key});
+      expect(rdImportUploads(half, d).single.stores, [const RdImportCategory(instrumentId: 21)]);
+
+      final full = plan(brass, songs: [RdImportSong(id: 1, number: 120, name: 'Wie wunderbar', files: [file(20), file(21)])]);
+      expect(rdWorkState(full, const RdImportDecisions(), full.works.single).files.values.single.reason, RdSkipReason.partExists);
+    });
+
+    test('same name at one group only, part numbers, Fassungen and choir voices', () {
+      // The file is at Posaune by name already: Tuba still gets it.
+      final named = plan(brass, songs: [
+        RdImportSong(id: 1, number: 120, name: 'Wie wunderbar', files: [
+          SongFile(fileName: 'Posaune und Tuba.pdf', fileType: 'application/pdf', url: 'u', instrumentId: 20),
+        ]),
+      ]);
+      expect(rdImportUploads(named, RdImportDecisions(confirmed: {named.works.single.key})).single.stores,
+          [const RdImportCategory(instrumentId: 21)]);
+
+      const numbered = [InstrumentInfo(id: 20, name: 'Posaune 1'), InstrumentInfo(id: 22, name: 'Posaune 2'), InstrumentInfo(id: 21, name: 'Tuba')];
+      RdFileState only(String name, List<InstrumentInfo> instruments, {bool isChoir = false}) {
+        final p = rdBuildImportPlan([_e('Noten/1 Eins/$name')], songs: const [], instruments: instruments, isChoir: isChoir);
+        return rdWorkState(p, const RdImportDecisions(), p.works.single).files.values.single;
+      }
+
+      expect(only('Posaune 2 und Tuba.pdf', numbered).category,
+          const RdImportCategory.several([RdImportCategory(instrumentId: 22), RdImportCategory(instrumentId: 21)]));
+      // Which Posaune is not sure: asked, not given to one group.
+      expect(only('Posaune und Tuba.pdf', numbered).unclear, isTrue);
+      expect(only('Sopran und Tenor.pdf', const [], isChoir: true).category,
+          const RdImportCategory.several([RdImportCategory(newGroup: 'Sopran'), RdImportCategory(newGroup: 'Tenor')]));
+
+      final versions = rdBuildImportPlan(
+        [_e('Noten/120 Wie wunderbar/A/Posaune und Tuba.pdf'), _e('Noten/120 Wie wunderbar/B/Posaune und Tuba.pdf', size: 2000)],
+        songs: const [],
+        instruments: brass,
+        isChoir: false,
+      );
+      expect(versions.works.single.fassungen, hasLength(2));
+
+      // One question for "Posaune 1 und Tuba" and "Posaune 2 und Tuba": each
+      // file keeps its Posaune; a new Violine keeps its number.
+      final two = rdBuildImportPlan(
+        [_e('Noten/1 Eins/Posaune 1 und Tuba.pdf'), _e('Noten/2 Zwei/Posaune 2 und Tuba.pdf')],
+        songs: const [],
+        instruments: numbered.take(2).toList(),
+        isChoir: false,
+      );
+      final q = two.questions.single;
+      final answered = RdImportDecisions(answers: {q.key: q.proposed!});
+      expect([for (final w in two.works) rdWorkState(two, answered, w).files.values.single.category], [
+        const RdImportCategory.several([RdImportCategory(instrumentId: 20), RdImportCategory(newGroup: 'Tuba')]),
+        const RdImportCategory.several([RdImportCategory(instrumentId: 22), RdImportCategory(newGroup: 'Tuba')]),
+      ]);
+      expect(only('Violine 2 und Cello.pdf', const []).category,
+          const RdImportCategory.several([RdImportCategory(newGroup: 'Violine 2'), RdImportCategory(newGroup: 'Cello')]));
+      // Only "Violine 1" there: "Violine 2" is new, not Violine 1.
+      expect(only('Violine 2 und Cello.pdf', const [InstrumentInfo(id: 30, name: 'Violine 1'), InstrumentInfo(id: 31, name: 'Cello')]).category,
+          const RdImportCategory.several([RdImportCategory(newGroup: 'Violine 2'), RdImportCategory(instrumentId: 31)]));
+      // The Werk name is no part: "Le viole - Vl II" is Violine 2 only.
+      const strings = [InstrumentInfo(id: 30, name: 'Violine 1'), InstrumentInfo(id: 32, name: 'Violine 2'), InstrumentInfo(id: 33, name: 'Viola')];
+      final viole = rdBuildImportPlan([_e('Noten/12 Le viole/Le viole - Vl II.pdf')], songs: const [], instruments: strings, isChoir: false);
+      expect(rdWorkState(viole, const RdImportDecisions(), viole.works.single).files.values.single.category,
+          const RdImportCategory(instrumentId: 32));
+      // The Werk number is no part number: which Violine stays open.
+      final air = rdBuildImportPlan([_e('Noten/02 Air/02 Air Violine und Cello.pdf')],
+          songs: const [], instruments: [...strings, const InstrumentInfo(id: 31, name: 'Cello')], isChoir: false);
+      expect(rdWorkState(air, const RdImportDecisions(), air.works.single).files.values.single.unclear, isTrue);
+    });
+  });
+
   test('page 1 read by the KI: sure takes the file out of "Stimme unklar", unsure is proposed', () {
     final entries = [_e('Noten/Eins/Tag.pdf'), _e('Noten/Eins/Nacht.pdf'), _e('Noten/Eins/Viola.pdf')];
     const d = RdImportDecisions();

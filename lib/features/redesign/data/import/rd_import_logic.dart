@@ -444,7 +444,14 @@ Map<String, String?> rdFindWorkFolders(
 /// What a file becomes in Attendix: a group (part), a type (Partitur …),
 /// a group still to be created, or "Sonstige" (all null).
 class RdImportCategory {
-  const RdImportCategory({this.instrumentId, this.note, this.newGroup});
+  const RdImportCategory({this.instrumentId, this.note, this.newGroup}) : groups = const [];
+
+  /// A part for several groups ("Posaune und Tuba"): the file is stored once
+  /// for each of [groups] (Leon, 07.11.2026).
+  const RdImportCategory.several(this.groups)
+      : instrumentId = null,
+        note = null,
+        newGroup = null;
 
   static const RdImportCategory other = RdImportCategory();
 
@@ -454,14 +461,29 @@ class RdImportCategory {
   /// Name of a group created on upload ("Neue Gruppe anlegen").
   final String? newGroup;
 
-  bool get isPart => newGroup != null || (instrumentId != null && instrumentId! > InstrumentMatcher.lyricsId);
+  /// The groups of a part for several groups (each a group or a new group);
+  /// empty for any other category.
+  final List<RdImportCategory> groups;
+
+  bool get isSeveral => groups.isNotEmpty;
+
+  /// What a file of this category is stored as: once per group of a part
+  /// for several groups, else once as it is.
+  List<RdImportCategory> get each => groups.isEmpty ? [this] : groups;
+
+  bool get isPart => isSeveral || newGroup != null || (instrumentId != null && instrumentId! > InstrumentMatcher.lyricsId);
 
   @override
   bool operator ==(Object other) =>
-      other is RdImportCategory && other.instrumentId == instrumentId && other.note == note && other.newGroup == newGroup;
+      other is RdImportCategory &&
+      other.instrumentId == instrumentId &&
+      other.note == note &&
+      other.newGroup == newGroup &&
+      other.groups.length == groups.length &&
+      Iterable.generate(groups.length).every((i) => other.groups[i] == groups[i]);
 
   @override
-  int get hashCode => Object.hash(instrumentId, note, newGroup);
+  int get hashCode => Object.hash(instrumentId, note, newGroup, Object.hashAll(groups));
 }
 
 /// Types that clash with the same type already at the Werk.
@@ -475,6 +497,24 @@ String? rdImportClashKey(RdImportCategory c) {
   if (id != null) return id > InstrumentMatcher.lyricsId ? 'g$id' : null;
   final note = c.note;
   return note != null && _uniqueNotes.contains(note) ? 'n$note' : null;
+}
+
+/// Whether the Werk [song] already has a file of [c]'s kind (its part).
+bool _atSong(RdImportSong song, RdImportCategory c) {
+  final clash = rdImportClashKey(c);
+  return clash != null &&
+      song.files.any((x) => rdImportClashKey(RdImportCategory(instrumentId: x.instrumentId, note: x.instrumentId == null ? x.note : null)) == clash);
+}
+
+/// Whether the Werk [song] has a file named [name] already; for a part for
+/// several groups only when every group has it ("Posaune und Tuba.pdf" at
+/// Posaune only: Tuba still gets it).
+bool _sameName(RdImportSong song, String name, RdImportCategory c) {
+  final same = song.files.where((x) => x.fileName == name);
+  if (!c.isSeveral) return same.isNotEmpty;
+  return c.groups.every((g) => same.any((x) =>
+      rdImportClashKey(RdImportCategory(instrumentId: x.instrumentId, note: x.instrumentId == null ? x.note : null)) ==
+      rdImportClashKey(g)));
 }
 
 /// Roman numerals as part numbers ("Violine II").
@@ -579,6 +619,7 @@ class RdImportFile {
     this.hardSkip,
     this.besidePdf = false,
     this.newGroup,
+    this.several = const [],
   });
 
   final RdImportEntry entry;
@@ -602,12 +643,18 @@ class RdImportFile {
   /// group unless the person decides otherwise.
   final String? newGroup;
 
+  /// The name names two or more instruments ("Posaune und Tuba"): their
+  /// groups (or new groups), the file goes to each of them.
+  final List<RdImportCategory> several;
+
   String get path => entry.path;
   String get name => entry.name;
 
-  RdImportCategory get guessed => guess.instrumentId == null && guess.note == null && newGroup != null
-      ? RdImportCategory(newGroup: newGroup)
-      : RdImportCategory(instrumentId: guess.instrumentId, note: guess.note);
+  RdImportCategory get guessed => several.isNotEmpty
+      ? RdImportCategory.several(several)
+      : guess.instrumentId == null && guess.note == null && newGroup != null
+          ? RdImportCategory(newGroup: newGroup)
+          : RdImportCategory(instrumentId: guess.instrumentId, note: guess.note);
 }
 
 /// A version of a Werk: the files of one sub-folder.
@@ -673,6 +720,7 @@ class RdImportQuestion {
     this.files = const [],
     this.suggestion,
     this.newGroup,
+    this.several = const [],
   });
 
   final String key;
@@ -694,8 +742,16 @@ class RdImportQuestion {
   /// the answer while the person gives none.
   final String? newGroup;
 
+  /// The groups a part for several groups goes to while the person gives no
+  /// answer ("Posaune und Tuba", one of them new).
+  final List<RdImportCategory> several;
+
   /// The answer that counts while none is given.
-  RdImportCategory? get proposed => newGroup == null ? null : RdImportCategory(newGroup: newGroup);
+  RdImportCategory? get proposed => several.isNotEmpty
+      ? RdImportCategory.several(several)
+      : newGroup == null
+          ? null
+          : RdImportCategory(newGroup: newGroup);
 }
 
 class RdImportPlan {
@@ -784,17 +840,18 @@ Set<String> rdImportPathsToDate(RdImportPlan plan) => {
 class RdImportPlanCache {
   Map<String, String?>? _folders;
   final Map<String, RdWorkMatch> _matches = {};
-  final Map<String, ({FileCategoryGuess guess, String? newGroup})> _files = {};
+  final Map<String, ({FileCategoryGuess guess, String? newGroup, List<RdImportCategory> several})> _files = {};
 }
 
 /// The part of [e] read from its name (or its folder's), and the new group
 /// a known instrument without a group in Attendix becomes ("Oboe").
-({FileCategoryGuess guess, String? newGroup}) _readName(
+({FileCategoryGuess guess, String? newGroup, List<RdImportCategory> several}) _readName(
   RdImportEntry e,
   String folder,
   List<InstrumentInfo> instruments,
   bool isChoir,
   Set<String> groupNames,
+  String workName,
 ) {
   var guess = guessFileCategory(e.name, instruments: instruments, isChoir: isChoir);
   // A part named only by its folder ("Violine 1/Seite 1.pdf").
@@ -818,7 +875,110 @@ class RdImportPlanCache {
     if (newGroup != null && groupNames.contains(newGroup.toLowerCase())) newGroup = null;
     if (newGroup != null && choirOnly) guess = const FileCategoryGuess(instrumentId: null, note: null, confidence: MatchConfidence.none);
   }
-  return (guess: guess, newGroup: newGroup);
+  var several = const <RdImportCategory>[];
+  // Only the part of the name counts: "Le viole - Vl II.pdf" names no viola.
+  final part = rdImportWithoutWorkName(e.name, workName);
+  if (newGroup == null && _maybeSeveral(part, guess, instruments, isChoir, choirOnly: choirOnly)) {
+    final named = rdImportNamedGroups(part, instruments, isChoir: isChoir);
+    if (named.groups.length > 1) {
+      if (named.sure) {
+        several = named.groups;
+      } else if (guess.confidence == MatchConfidence.sure) {
+        // An instrument whose group is not sure ("Posaune 1 und Tuba" with
+        // only "Posaune 1/2" … ): asked, not taken for one group.
+        guess = FileCategoryGuess(instrumentId: guess.instrumentId, note: guess.note, confidence: MatchConfidence.unsure);
+      }
+    }
+  }
+  return (guess: guess, newGroup: newGroup, several: several);
+}
+
+/// Whether a part named [name] may go to several groups: it names two or
+/// more instruments and is not a group of its own ("Posaune/Tuba"), a
+/// recording, text or note like Partitur, nor a sheet with three or more
+/// choir voices (the choir).
+bool _maybeSeveral(String name, FileCategoryGuess guess, List<InstrumentInfo> instruments, bool isChoir, {required bool choirOnly}) {
+  final id = guess.instrumentId;
+  // In a choir a sheet of voices without groups is "Chor" only for now.
+  if (guess.note != null && !choirOnly) return false;
+  if (id != null && id <= InstrumentMatcher.lyricsId) return false;
+  final named = InstrumentMatcher.knownGroups(name, isChoir: isChoir);
+  if (named.length < 2) return false;
+  if (isChoir && named.length >= 3 && InstrumentMatcher.knownGroups(name).isEmpty) return false;
+  if (id != null && guess.confidence == MatchConfidence.sure) {
+    final own = instruments.where((g) => g.id == id).firstOrNull;
+    if (own != null && InstrumentMatcher.knownGroups(own.name, isChoir: isChoir).length > 1) return false;
+  }
+  return true;
+}
+
+/// [name] without its file ending and the Werk name [workName] in it ("Le
+/// viole - Vl II.pdf" of "Le viole" → "Vl II"), for the instruments it names.
+String rdImportWithoutWorkName(String name, String? workName) {
+  var stem = name.replaceFirst(RegExp(r'\.[A-Za-z0-9]{1,5}$'), '');
+  final words = (workName ?? '')
+      .split(RegExp(r'[^\p{L}\p{N}]+', unicode: true))
+      .where((w) => w.isNotEmpty)
+      .map(RegExp.escape)
+      .toList();
+  if (words.isEmpty) return stem;
+  // With the Werk number in front of it ("02 Air Violine und Cello"): no
+  // part number.
+  stem = stem.replaceAll(
+    RegExp('(?:^\\s*\\d+[\\s._\\-]*)?(?<![\\p{L}\\p{N}])${words.join(r'[\s_\-.,]+')}(?![\\p{L}\\p{N}])',
+        caseSensitive: false, unicode: true),
+    ' ',
+  );
+  final rest = stem.replaceAll(RegExp(r'^[\s\-–.,()]+|[\s\-–.,()]+$'), '').trim();
+  return rest.isEmpty ? name : rest;
+}
+
+/// The groups of the instruments [name] names ("Posaune 1 und Tuba"): each
+/// matched with its own number where it is written apart, a known
+/// instrument without a group as a new group. [sure] is false when a group
+/// is not sure (several groups "Posaune 1", "Posaune 2" for "Posaune"); the
+/// likely one is in [groups] then.
+({List<RdImportCategory> groups, bool sure}) rdImportNamedGroups(
+  String name,
+  List<InstrumentInfo> instruments, {
+  required bool isChoir,
+}) {
+  final stem = name.replaceFirst(RegExp(r'\.[A-Za-z0-9]{1,5}$'), '');
+  final pieces = stem.split(RegExp(r'\s+(?:und|u\.?|and|&|\+)\s+|\s*[,;&+]\s*|\s+[-–]\s+', caseSensitive: false));
+  final groups = <RdImportCategory>[];
+  var sure = true;
+  int? group(PartMatch m) => m.instrumentId != null && m.instrumentId! > InstrumentMatcher.lyricsId ? m.instrumentId : null;
+  String? missingNumbered(String piece, List<String> names) {
+    if (names.length != 1) return null;
+    final numbered = InstrumentMatcher.knownGroup(piece, isChoir: isChoir);
+    if (numbered == null || numbered == names.single) return null;
+    return instruments.any((g) => g.name.trim().toLowerCase() == numbered.toLowerCase()) ? null : numbered;
+  }
+  for (final piece in pieces) {
+    final names = InstrumentMatcher.knownGroups(piece, isChoir: isChoir);
+    for (final n in names) {
+      // A piece for one instrument is matched with its number ("Posaune 1").
+      final own = InstrumentMatcher.detect(names.length == 1 ? piece : n, instruments);
+      final byName = names.length == 1 ? InstrumentMatcher.detect(n, instruments) : own;
+      final RdImportCategory c;
+      if (group(own) != null && own.confidence == MatchConfidence.sure) {
+        c = RdImportCategory(instrumentId: group(own));
+      } else if (group(byName) != null && byName.confidence == MatchConfidence.sure) {
+        c = RdImportCategory(instrumentId: group(byName));
+      } else if (group(own) == null && group(byName) == null) {
+        // As for one part: "Violine 1" keeps its number.
+        c = RdImportCategory(newGroup: names.length == 1 ? InstrumentMatcher.knownGroup(piece, isChoir: isChoir) ?? n : n);
+      } else if (missingNumbered(piece, names) case final numbered?) {
+        // "Violine 2" named, only "Violine 1" there: a new group, not Violine 1.
+        c = RdImportCategory(newGroup: numbered);
+      } else {
+        sure = false;
+        c = RdImportCategory(instrumentId: group(own) ?? group(byName));
+      }
+      if (!groups.contains(c)) groups.add(c);
+    }
+  }
+  return (groups: groups, sure: sure);
 }
 
 RdImportPlan rdBuildImportPlan(
@@ -939,7 +1099,7 @@ RdImportPlan rdBuildImportPlan(
       } else if (e.size > rdMaxUploadBytes) {
         hard = RdSkipReason.tooLarge;
       }
-      final read = cache?._files[e.path] ?? _readName(e, folderOf[e.path] ?? '', instruments, isChoir, groupNames);
+      final read = cache?._files[e.path] ?? _readName(e, folderOf[e.path] ?? '', instruments, isChoir, groupNames, workName);
       cache?._files[e.path] = read;
       raw.add(RdImportFile(
         entry: e,
@@ -947,6 +1107,7 @@ RdImportPlan rdBuildImportPlan(
         guess: read.guess,
         hardSkip: hard,
         newGroup: hard == null ? read.newGroup : null,
+        several: hard == null ? read.several : const [],
       ));
     }
 
@@ -987,12 +1148,17 @@ RdImportPlan rdBuildImportPlan(
           fassungKey: f.fassungKey,
           guess: f.guess,
           newGroup: f.newGroup,
+          several: f.several,
           hardSkip: f.hardSkip ?? (duplicates.contains(f.path) ? RdSkipReason.duplicate : null),
           besidePdf: _textExtensions.contains(f.entry.extension) &&
               pdfStems.contains('${f.entry.folders.join('/')}/${stem(f.name)}'),
           questionKey: f.hardSkip == null &&
                   !duplicates.contains(f.path) &&
-                  f.guess.confidence != MatchConfidence.sure &&
+                  // A part for several groups is asked about only when it
+                  // makes a new group.
+                  (f.several.isEmpty
+                      ? f.guess.confidence != MatchConfidence.sure
+                      : f.several.any((c) => c.newGroup != null)) &&
                   f.entry.extension != 'sib'
               ? rdImportQuestionKey(f.name, workName: workName)
               : null,
@@ -1006,9 +1172,12 @@ RdImportPlan rdBuildImportPlan(
     final live = files.where((f) => f.hardSkip == null).toList();
     final keys = <String, Set<String>>{};
     for (final f in live) {
-      final clash = rdImportClashKey(_decided(f, categories, answers, instruments, title, pageReads));
       keys.putIfAbsent(f.fassungKey, () => <String>{});
-      if (clash != null) keys[f.fassungKey]!.add(clash);
+      // A part for several groups counts for each of them.
+      for (final c in _decided(f, categories, answers, instruments, title, pageReads, isChoir).each) {
+        final clash = rdImportClashKey(c);
+        if (clash != null) keys[f.fassungKey]!.add(clash);
+      }
     }
     final competing = <String>{};
     final keyList = keys.keys.toList();
@@ -1094,6 +1263,7 @@ RdImportPlan rdBuildImportPlan(
     final labels = <String, int>{};
     final suggestions = <int, int>{};
     final newGroups = <String, int>{};
+    final severals = <RdImportCategory, int>{};
     for (final q in list) {
       final label = q.label;
       if (label != null) labels[label] = (labels[label] ?? 0) + 1;
@@ -1101,9 +1271,13 @@ RdImportPlan rdBuildImportPlan(
       if (id != null) suggestions[id] = (suggestions[id] ?? 0) + 1;
       final group = q.file.newGroup;
       if (group != null) newGroups[group] = (newGroups[group] ?? 0) + 1;
+      if (q.file.several.isNotEmpty) {
+        final c = RdImportCategory.several(q.file.several);
+        severals[c] = (severals[c] ?? 0) + 1;
+      }
     }
     // A new group is asked about even for one file: it is created on upload.
-    if (list.length < 2 && newGroups.isEmpty) continue;
+    if (list.length < 2 && newGroups.isEmpty && severals.isEmpty) continue;
     String top(Map<String, int> counts) => (counts.entries.toList()..sort((a, b) => b.value.compareTo(a.value))).first.key;
     final suggestion = suggestions.isEmpty ? null : (suggestions.entries.toList()..sort((a, b) => b.value.compareTo(a.value))).first.key;
     questions.add(RdImportQuestion(
@@ -1114,6 +1288,7 @@ RdImportPlan rdBuildImportPlan(
       files: {for (final q in list) q.file.name}.take(3).toList(),
       suggestion: suggestion,
       newGroup: newGroups.isEmpty ? null : top(newGroups),
+      several: severals.isEmpty ? const [] : (severals.entries.toList()..sort((a, b) => b.value.compareTo(a.value))).first.key.groups,
     ));
   }
   questions.sort((a, b) => b.fileCount != a.fileCount ? b.fileCount.compareTo(a.fileCount) : a.label.compareTo(b.label));
@@ -1313,7 +1488,7 @@ class RdFileState {
 }
 
 RdImportCategory _categoryOf(RdImportPlan plan, RdImportDecisions d, RdImportFile f, RdImportWork work) =>
-    _decided(f, d.categories, d.answers, plan.instruments, work.title, plan.pageReads);
+    _decided(f, d.categories, d.answers, plan.instruments, work.title, plan.pageReads, plan.isChoir);
 
 /// The part of [f]: chosen by hand, else the answer to its question (with
 /// the file's own part number), else what the KI read on page 1, else the
@@ -1325,6 +1500,7 @@ RdImportCategory _decided(
   List<InstrumentInfo> instruments,
   String workTitle,
   Map<String, RdImportPageRead> pageReads,
+  bool isChoir,
 ) {
   final own = categories[f.path];
   if (own != null) return own;
@@ -1334,9 +1510,46 @@ RdImportCategory _decided(
     if (id != null && id > InstrumentMatcher.lyricsId) {
       return RdImportCategory(instrumentId: rdImportSiblingGroup(id, f.name, instruments, workName: workTitle));
     }
+    if (answer.isSeveral) return _severalOf(answer, f, instruments, isChoir, workTitle);
     return answer;
   }
   return pageReads[f.path]?.category ?? f.guessed;
+}
+
+/// An answer for several groups as file [f] has it: one answer is given for
+/// "Posaune 1 und Tuba" and "Posaune 2 und Tuba", so a group of the same
+/// instrument that the file's own name gives for sure ("Posaune 2", "Violine
+/// 2 (neu)") takes the place of the answer's.
+RdImportCategory _severalOf(
+  RdImportCategory answer,
+  RdImportFile f,
+  List<InstrumentInfo> instruments,
+  bool isChoir,
+  String workTitle,
+) {
+  var own = f.several;
+  if (own.isEmpty) {
+    final named = rdImportNamedGroups(rdImportWithoutWorkName(f.name, workTitle), instruments, isChoir: isChoir);
+    if (named.sure) own = named.groups;
+  }
+  if (own.isEmpty) return answer;
+  String? instrument(RdImportCategory c) {
+    final name = c.newGroup ?? instruments.where((g) => g.id == c.instrumentId).firstOrNull?.name;
+    final known = name == null ? const <String>[] : InstrumentMatcher.knownGroups(name, isChoir: isChoir);
+    return known.length == 1 ? known.single : null;
+  }
+
+  final mine = <String, RdImportCategory>{
+    for (final c in own)
+      if (instrument(c) case final k?) k: c,
+  };
+  final groups = <RdImportCategory>[];
+  for (final c in answer.groups) {
+    final k = instrument(c);
+    final g = (k == null ? null : mine[k]) ?? c;
+    if (!groups.contains(g)) groups.add(g);
+  }
+  return groups.length > 1 ? RdImportCategory.several(groups) : groups.single;
 }
 
 RdFileState rdFileState(RdImportPlan plan, RdImportDecisions d, RdImportWork work, RdImportFile f) {
@@ -1360,22 +1573,19 @@ RdFileState rdFileState(RdImportPlan plan, RdImportDecisions d, RdImportWork wor
               _categoryOf(plan, d, x, work).instrumentId == InstrumentMatcher.lyricsId));
   if (otherFassung) {
     reason = RdSkipReason.otherFassung;
-  } else if (song != null && song.files.any((x) => x.fileName == f.name)) {
+  } else if (song != null && _sameName(song, f.name, category)) {
     reason = RdSkipReason.sameName;
   } else if (d.skipWordBesidePdf && f.besidePdf) {
     reason = RdSkipReason.wordNextToPdf;
-  } else if (song != null) {
-    final clash = rdImportClashKey(category);
-    if (clash != null &&
-        song.files.any((x) => rdImportClashKey(RdImportCategory(instrumentId: x.instrumentId, note: x.instrumentId == null ? x.note : null)) == clash)) {
-      reason = RdSkipReason.partExists;
-    }
+  } else if (song != null && category.each.every((c) => _atSong(song, c))) {
+    // A part for several groups is left out only when every group has it.
+    reason = RdSkipReason.partExists;
   }
   final manual = d.take[f.path];
   final take = manual ?? reason == null;
   final pageRead = byHand ? null : plan.pageReads[f.path];
   final unclear =
-      take && !byHand && f.guess.confidence != MatchConfidence.sure && f.newGroup == null && !(pageRead?.sure ?? false);
+      take && !byHand && f.guess.confidence != MatchConfidence.sure && f.newGroup == null && f.several.isEmpty && !(pageRead?.sure ?? false);
   return RdFileState(
     take: take,
     category: category,
@@ -1454,7 +1664,8 @@ RdWorkState rdWorkState(RdImportPlan plan, RdImportDecisions d, RdImportWork wor
 String rdWorkSelection(RdImportPlan plan, RdImportDecisions d, RdImportWork work) {
   final s = rdWorkState(plan, d, work);
   final t = s.target;
-  String category(RdImportCategory c) => '${c.instrumentId}|${c.note}|${c.newGroup}';
+  String category(RdImportCategory c) =>
+      c.isSeveral ? '[${c.groups.map(category).join(',')}]' : '${c.instrumentId}|${c.note}|${c.newGroup}';
   return [
     'target ${t.skip}|${t.songId}|${t.prefix}|${t.number}|${t.name}',
     'fassung ${rdFassungOf(d, work)}',
@@ -1529,11 +1740,16 @@ RdImportSummary rdImportSummary(RdImportPlan plan, RdImportDecisions d) {
 
 /// One file to upload.
 class RdUploadItem {
-  const RdUploadItem({required this.work, required this.file, required this.category});
+  RdUploadItem({required this.work, required this.file, required this.category, List<RdImportCategory>? stores})
+      : stores = stores ?? category.each;
 
   final RdImportWork work;
   final RdImportFile file;
   final RdImportCategory category;
+
+  /// What the file is stored as: once, or once per group of a part for
+  /// several groups (without the groups the Werk already has the part of).
+  final List<RdImportCategory> stores;
 }
 
 /// Files of the ready Werke, Werk by Werk.
@@ -1542,14 +1758,29 @@ List<RdUploadItem> rdImportUploads(RdImportPlan plan, RdImportDecisions d) => [
         for (final s in [rdWorkState(plan, d, w)])
           if (s.ready)
             for (final f in w.files)
-              if (s.files[f.path]!.take) RdUploadItem(work: w, file: f, category: s.files[f.path]!.category),
+              if (s.files[f.path]!.take)
+                RdUploadItem(
+                  work: w,
+                  file: f,
+                  category: s.files[f.path]!.category,
+                  stores: _toStore(s.files[f.path]!.category, plan.songs[s.target.songId]),
+                ),
     ];
+
+/// The groups a part for several groups still lacks at [song]; all of them
+/// when it lacks none (taken by hand) or the Werk is new.
+List<RdImportCategory> _toStore(RdImportCategory c, RdImportSong? song) {
+  if (!c.isSeveral || song == null) return c.each;
+  final missing = [for (final g in c.groups) if (!_atSong(song, g)) g];
+  return missing.isEmpty ? c.groups : missing;
+}
 
 /// Group names to create (answers and choices "Neue Gruppe anlegen") used by
 /// [items].
 List<String> rdImportNewGroups(List<RdUploadItem> items) => {
       for (final i in items)
-        if (i.category.newGroup != null) i.category.newGroup!,
+        for (final c in i.stores)
+          if (c.newGroup != null) c.newGroup!,
     }.toList();
 
 /// The folder names of Werke the comparison is not sure about (new, only
@@ -1606,9 +1837,11 @@ List<String> rdImportPendingGroups(RdImportPlan plan, RdImportDecisions d) {
   for (final work in plan.works) {
     for (final f in work.files) {
       if (f.hardSkip != null) continue;
-      final name = _decided(f, d.categories, d.answers, plan.instruments, work.title, plan.pageReads).newGroup;
-      if (name == null || existing.contains(name.trim().toLowerCase())) continue;
-      names.putIfAbsent(name.trim().toLowerCase(), () => name);
+      for (final c in _decided(f, d.categories, d.answers, plan.instruments, work.title, plan.pageReads, plan.isChoir).each) {
+        final name = c.newGroup;
+        if (name == null || existing.contains(name.trim().toLowerCase())) continue;
+        names.putIfAbsent(name.trim().toLowerCase(), () => name);
+      }
     }
   }
   return names.values.toList()..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
@@ -1628,6 +1861,8 @@ Map<int, List<String>> rdImportLearnedTerms(
   for (final i in items) {
     final byHand = d.categories.containsKey(i.file.path) || (i.file.questionKey != null && d.answers.containsKey(i.file.questionKey));
     if (!byHand) continue;
+    // "Posaune und Tuba" is never a term of one group.
+    if (InstrumentMatcher.knownGroups(i.file.name, isChoir: plan.isChoir).length > 1) continue;
     final id = i.category.newGroup != null ? groupIds[i.category.newGroup] : i.category.instrumentId;
     if (id == null) continue;
     final term = learnableTerm(i.file.name, chosenId: id, instruments: instruments, workName: i.work.title);

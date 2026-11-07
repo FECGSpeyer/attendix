@@ -14734,6 +14734,13 @@
       "name": {}
     }
   },
+  "redesignImportCategoryNewShort": "{name} (neu)",
+  "@redesignImportCategoryNewShort": {
+    "description": "redesign.import.categoryNewShort",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "redesignImportCategoryOther": "Sonstige",
   "@redesignImportCategoryOther": {
     "description": "redesign.import.categoryOther"
@@ -15267,6 +15274,19 @@
         "type": "num"
       }
     }
+  },
+  "redesignImportQuestionsOpenTitle": "{count, plural, one {1 offene Frage} other {{count} offene Fragen}}",
+  "@redesignImportQuestionsOpenTitle": {
+    "description": "redesign.import.questionsOpenTitle",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportQuestionsShowAll": "Alle Fragen zeigen",
+  "@redesignImportQuestionsShowAll": {
+    "description": "redesign.import.questionsShowAll"
   },
   "redesignImportQuestionsTitle": "{count, plural, one {1 Frage zu euren Stimmen} other {{count} Fragen zu euren Stimmen}}",
   "@redesignImportQuestionsTitle": {

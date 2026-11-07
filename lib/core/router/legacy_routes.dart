@@ -57,7 +57,11 @@ String _mapTabs(List<String> s) {
       return '/attendance/${rest.first}';
     case 'songs-tab':
       // Ionic tabs route songs-tab/:id (Werke tab stays selected).
-      return rest.isEmpty ? '/songs-tab' : '/songs-tab/${rest.first}';
+      if (rest.isEmpty) return '/songs-tab';
+      // LINK_AUDIT: Ionic songs/import (Excel import) has no route here; the
+      // import opens from the Werke menu. Not a Werk with id "import".
+      if (rest.first == 'import') return '/songs-tab';
+      return '/songs-tab/${rest.first}';
     case 'messages':
       return rest.isEmpty ? '/settings/messages' : '/messages/${rest.first}';
     case 'org-plans':
@@ -90,6 +94,10 @@ String _mapSettings(List<String> t) {
       return '/settings/team-organization';
     case 'register': // Ionic "Neue Instanz registrieren"
       return '/tenants/new';
+    case 'songs':
+      // LINK_AUDIT: Ionic settings/songs/import → the Werke list (see above).
+      if (rest.isNotEmpty && rest.first == 'import') return '/settings/songs';
+      return '/settings/${t.join('/')}';
     case 'general':
       if (rest.isEmpty) return '/settings/general';
       if (rest.first == 'types') {
