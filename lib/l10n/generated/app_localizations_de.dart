@@ -10016,10 +10016,27 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String redesignAbsenceAffectsOther(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Das betrifft $count Termine',
+      one: 'Das betrifft 1 Termin',
+      zero: 'In diesem Zeitraum stehen keine Termine an.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignAbsenceChooseEnd => 'Tippe auf den letzten Tag.';
 
   @override
   String get redesignAbsenceChooseStart => 'Tippe auf den ersten Tag.';
+
+  @override
+  String redesignAbsenceForOther(Object name) {
+    return 'Abwesenheit für $name';
+  }
 
   @override
   String get redesignAbsenceNextMonth => 'Nächster Monat';
@@ -11664,6 +11681,41 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignHelpSearch => 'Frage oder Stichwort suchen';
+
+  @override
+  String get redesignHistoryAll => 'Alles';
+
+  @override
+  String get redesignHistoryAverage => 'Durchschnitt';
+
+  @override
+  String redesignHistoryAverageLate(Object count) {
+    return 'Durchschnitt · $count× zu spät';
+  }
+
+  @override
+  String get redesignHistoryEmpty => 'Noch keine Einträge.';
+
+  @override
+  String get redesignHistoryList => 'Verlauf';
+
+  @override
+  String get redesignHistoryMore => 'Weitere Aktionen';
+
+  @override
+  String get redesignHistoryNeutral => 'Neutral';
+
+  @override
+  String get redesignHistoryPresent => 'Anwesend';
+
+  @override
+  String get redesignHistoryRemove => 'Eintrag löschen';
+
+  @override
+  String get redesignHistorySeason => 'Seit Saisonbeginn';
+
+  @override
+  String get redesignHistoryUpcoming => 'Kommende Termine';
 
   @override
   String get redesignImportAiConfirmButton => 'Übernehmen';
@@ -14477,6 +14529,53 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get redesignTypesListIntro =>
       'Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.';
+
+  @override
+  String get redesignUnavailabilityAdd => 'Regel hinzufügen';
+
+  @override
+  String get redesignUnavailabilityAll => 'Alle';
+
+  @override
+  String get redesignUnavailabilityDelete => 'Regel löschen';
+
+  @override
+  String redesignUnavailabilityIntro(Object name) {
+    return '$name wird an diesen Tagen nicht für Dienste vorgeschlagen und bei neuen Terminen automatisch abgemeldet.';
+  }
+
+  @override
+  String get redesignUnavailabilityIntroSelf =>
+      'Du wirst an diesen Tagen nicht für Dienste vorgeschlagen und bei neuen Terminen automatisch abgemeldet.';
+
+  @override
+  String get redesignUnavailabilityOptional => 'Optional';
+
+  @override
+  String get redesignUnavailabilityPickDate => 'Datum wählen …';
+
+  @override
+  String get redesignUnavailabilityReason => 'Grund';
+
+  @override
+  String redesignUnavailabilityRule(Object number) {
+    return 'Regel $number';
+  }
+
+  @override
+  String get redesignUnavailabilityTermine => 'Termine';
+
+  @override
+  String get redesignUnavailabilityTitle => 'Nicht verfügbar';
+
+  @override
+  String get redesignUnavailabilityUnlimited => 'Unbefristet';
+
+  @override
+  String get redesignUnavailabilityUntil => 'Gilt bis';
+
+  @override
+  String get redesignUnavailabilityWeekdays => 'Wochentage';
 
   @override
   String get redesignViewersListAdd => 'Beobachter einladen';

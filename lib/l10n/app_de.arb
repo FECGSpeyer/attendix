@@ -12502,6 +12502,15 @@
       }
     }
   },
+  "redesignAbsenceAffectsOther": "{count, plural, =0 {In diesem Zeitraum stehen keine Termine an.} one {Das betrifft 1 Termin} other {Das betrifft {count} Termine}}",
+  "@redesignAbsenceAffectsOther": {
+    "description": "redesign.absence.affectsOther",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "redesignAbsenceChooseEnd": "Tippe auf den letzten Tag.",
   "@redesignAbsenceChooseEnd": {
     "description": "redesign.absence.chooseEnd"
@@ -12509,6 +12518,13 @@
   "redesignAbsenceChooseStart": "Tippe auf den ersten Tag.",
   "@redesignAbsenceChooseStart": {
     "description": "redesign.absence.chooseStart"
+  },
+  "redesignAbsenceForOther": "Abwesenheit für {name}",
+  "@redesignAbsenceForOther": {
+    "description": "redesign.absence.forOther",
+    "placeholders": {
+      "name": {}
+    }
   },
   "redesignAbsenceNextMonth": "Nächster Monat",
   "@redesignAbsenceNextMonth": {
@@ -14511,6 +14527,53 @@
   "redesignHelpSearch": "Frage oder Stichwort suchen",
   "@redesignHelpSearch": {
     "description": "redesign.help.search"
+  },
+  "redesignHistoryAll": "Alles",
+  "@redesignHistoryAll": {
+    "description": "redesign.history.all"
+  },
+  "redesignHistoryAverage": "Durchschnitt",
+  "@redesignHistoryAverage": {
+    "description": "redesign.history.average"
+  },
+  "redesignHistoryAverageLate": "Durchschnitt · {count}× zu spät",
+  "@redesignHistoryAverageLate": {
+    "description": "redesign.history.averageLate",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignHistoryEmpty": "Noch keine Einträge.",
+  "@redesignHistoryEmpty": {
+    "description": "redesign.history.empty"
+  },
+  "redesignHistoryList": "Verlauf",
+  "@redesignHistoryList": {
+    "description": "redesign.history.list"
+  },
+  "redesignHistoryMore": "Weitere Aktionen",
+  "@redesignHistoryMore": {
+    "description": "redesign.history.more"
+  },
+  "redesignHistoryNeutral": "Neutral",
+  "@redesignHistoryNeutral": {
+    "description": "redesign.history.neutral"
+  },
+  "redesignHistoryPresent": "Anwesend",
+  "@redesignHistoryPresent": {
+    "description": "redesign.history.present"
+  },
+  "redesignHistoryRemove": "Eintrag löschen",
+  "@redesignHistoryRemove": {
+    "description": "redesign.history.remove"
+  },
+  "redesignHistorySeason": "Seit Saisonbeginn",
+  "@redesignHistorySeason": {
+    "description": "redesign.history.season"
+  },
+  "redesignHistoryUpcoming": "Kommende Termine",
+  "@redesignHistoryUpcoming": {
+    "description": "redesign.history.upcoming"
   },
   "redesignImportAiConfirmButton": "Übernehmen",
   "@redesignImportAiConfirmButton": {
@@ -17919,6 +17982,68 @@
   "redesignTypesListIntro": "Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.",
   "@redesignTypesListIntro": {
     "description": "redesign.typesList.intro"
+  },
+  "redesignUnavailabilityAdd": "Regel hinzufügen",
+  "@redesignUnavailabilityAdd": {
+    "description": "redesign.unavailability.add"
+  },
+  "redesignUnavailabilityAll": "Alle",
+  "@redesignUnavailabilityAll": {
+    "description": "redesign.unavailability.all"
+  },
+  "redesignUnavailabilityDelete": "Regel löschen",
+  "@redesignUnavailabilityDelete": {
+    "description": "redesign.unavailability.delete"
+  },
+  "redesignUnavailabilityIntro": "{name} wird an diesen Tagen nicht für Dienste vorgeschlagen und bei neuen Terminen automatisch abgemeldet.",
+  "@redesignUnavailabilityIntro": {
+    "description": "redesign.unavailability.intro",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignUnavailabilityIntroSelf": "Du wirst an diesen Tagen nicht für Dienste vorgeschlagen und bei neuen Terminen automatisch abgemeldet.",
+  "@redesignUnavailabilityIntroSelf": {
+    "description": "redesign.unavailability.introSelf"
+  },
+  "redesignUnavailabilityOptional": "Optional",
+  "@redesignUnavailabilityOptional": {
+    "description": "redesign.unavailability.optional"
+  },
+  "redesignUnavailabilityPickDate": "Datum wählen …",
+  "@redesignUnavailabilityPickDate": {
+    "description": "redesign.unavailability.pickDate"
+  },
+  "redesignUnavailabilityReason": "Grund",
+  "@redesignUnavailabilityReason": {
+    "description": "redesign.unavailability.reason"
+  },
+  "redesignUnavailabilityRule": "Regel {number}",
+  "@redesignUnavailabilityRule": {
+    "description": "redesign.unavailability.rule",
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "redesignUnavailabilityTermine": "Termine",
+  "@redesignUnavailabilityTermine": {
+    "description": "redesign.unavailability.termine"
+  },
+  "redesignUnavailabilityTitle": "Nicht verfügbar",
+  "@redesignUnavailabilityTitle": {
+    "description": "redesign.unavailability.title"
+  },
+  "redesignUnavailabilityUnlimited": "Unbefristet",
+  "@redesignUnavailabilityUnlimited": {
+    "description": "redesign.unavailability.unlimited"
+  },
+  "redesignUnavailabilityUntil": "Gilt bis",
+  "@redesignUnavailabilityUntil": {
+    "description": "redesign.unavailability.until"
+  },
+  "redesignUnavailabilityWeekdays": "Wochentage",
+  "@redesignUnavailabilityWeekdays": {
+    "description": "redesign.unavailability.weekdays"
   },
   "redesignViewersListAdd": "Beobachter einladen",
   "@redesignViewersListAdd": {

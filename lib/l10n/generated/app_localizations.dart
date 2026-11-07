@@ -16463,6 +16463,12 @@ abstract class AppLocalizations {
   /// **'{count, plural, =0 {In diesem Zeitraum hast du keine Termine.} one {Das betrifft 1 Termin} other {Das betrifft {count} Termine}}'**
   String redesignAbsenceAffects(num count);
 
+  /// redesign.absence.affectsOther
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {In diesem Zeitraum stehen keine Termine an.} one {Das betrifft 1 Termin} other {Das betrifft {count} Termine}}'**
+  String redesignAbsenceAffectsOther(num count);
+
   /// redesign.absence.chooseEnd
   ///
   /// In de, this message translates to:
@@ -16474,6 +16480,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Tippe auf den ersten Tag.'**
   String get redesignAbsenceChooseStart;
+
+  /// redesign.absence.forOther
+  ///
+  /// In de, this message translates to:
+  /// **'Abwesenheit für {name}'**
+  String redesignAbsenceForOther(Object name);
 
   /// redesign.absence.nextMonth
   ///
@@ -18976,6 +18988,72 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Frage oder Stichwort suchen'**
   String get redesignHelpSearch;
+
+  /// redesign.history.all
+  ///
+  /// In de, this message translates to:
+  /// **'Alles'**
+  String get redesignHistoryAll;
+
+  /// redesign.history.average
+  ///
+  /// In de, this message translates to:
+  /// **'Durchschnitt'**
+  String get redesignHistoryAverage;
+
+  /// redesign.history.averageLate
+  ///
+  /// In de, this message translates to:
+  /// **'Durchschnitt · {count}× zu spät'**
+  String redesignHistoryAverageLate(Object count);
+
+  /// redesign.history.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Einträge.'**
+  String get redesignHistoryEmpty;
+
+  /// redesign.history.list
+  ///
+  /// In de, this message translates to:
+  /// **'Verlauf'**
+  String get redesignHistoryList;
+
+  /// redesign.history.more
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Aktionen'**
+  String get redesignHistoryMore;
+
+  /// redesign.history.neutral
+  ///
+  /// In de, this message translates to:
+  /// **'Neutral'**
+  String get redesignHistoryNeutral;
+
+  /// redesign.history.present
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesend'**
+  String get redesignHistoryPresent;
+
+  /// redesign.history.remove
+  ///
+  /// In de, this message translates to:
+  /// **'Eintrag löschen'**
+  String get redesignHistoryRemove;
+
+  /// redesign.history.season
+  ///
+  /// In de, this message translates to:
+  /// **'Seit Saisonbeginn'**
+  String get redesignHistorySeason;
+
+  /// redesign.history.upcoming
+  ///
+  /// In de, this message translates to:
+  /// **'Kommende Termine'**
+  String get redesignHistoryUpcoming;
 
   /// redesign.import.aiConfirmButton
   ///
@@ -23356,6 +23434,90 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.'**
   String get redesignTypesListIntro;
+
+  /// redesign.unavailability.add
+  ///
+  /// In de, this message translates to:
+  /// **'Regel hinzufügen'**
+  String get redesignUnavailabilityAdd;
+
+  /// redesign.unavailability.all
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get redesignUnavailabilityAll;
+
+  /// redesign.unavailability.delete
+  ///
+  /// In de, this message translates to:
+  /// **'Regel löschen'**
+  String get redesignUnavailabilityDelete;
+
+  /// redesign.unavailability.intro
+  ///
+  /// In de, this message translates to:
+  /// **'{name} wird an diesen Tagen nicht für Dienste vorgeschlagen und bei neuen Terminen automatisch abgemeldet.'**
+  String redesignUnavailabilityIntro(Object name);
+
+  /// redesign.unavailability.introSelf
+  ///
+  /// In de, this message translates to:
+  /// **'Du wirst an diesen Tagen nicht für Dienste vorgeschlagen und bei neuen Terminen automatisch abgemeldet.'**
+  String get redesignUnavailabilityIntroSelf;
+
+  /// redesign.unavailability.optional
+  ///
+  /// In de, this message translates to:
+  /// **'Optional'**
+  String get redesignUnavailabilityOptional;
+
+  /// redesign.unavailability.pickDate
+  ///
+  /// In de, this message translates to:
+  /// **'Datum wählen …'**
+  String get redesignUnavailabilityPickDate;
+
+  /// redesign.unavailability.reason
+  ///
+  /// In de, this message translates to:
+  /// **'Grund'**
+  String get redesignUnavailabilityReason;
+
+  /// redesign.unavailability.rule
+  ///
+  /// In de, this message translates to:
+  /// **'Regel {number}'**
+  String redesignUnavailabilityRule(Object number);
+
+  /// redesign.unavailability.termine
+  ///
+  /// In de, this message translates to:
+  /// **'Termine'**
+  String get redesignUnavailabilityTermine;
+
+  /// redesign.unavailability.title
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht verfügbar'**
+  String get redesignUnavailabilityTitle;
+
+  /// redesign.unavailability.unlimited
+  ///
+  /// In de, this message translates to:
+  /// **'Unbefristet'**
+  String get redesignUnavailabilityUnlimited;
+
+  /// redesign.unavailability.until
+  ///
+  /// In de, this message translates to:
+  /// **'Gilt bis'**
+  String get redesignUnavailabilityUntil;
+
+  /// redesign.unavailability.weekdays
+  ///
+  /// In de, this message translates to:
+  /// **'Wochentage'**
+  String get redesignUnavailabilityWeekdays;
 
   /// redesign.viewersList.add
   ///

@@ -54,6 +54,8 @@ final upcomingAttendancesProvider =
 
     return {
       'date': attendance['date']?.toString(),
+      // Beta "Verlauf": a tap opens the Termin.
+      'attendanceId': attendance['id'],
       'meetingName': meetingName,
       'status': statusInt,
       'notes': a['notes']?.toString(),

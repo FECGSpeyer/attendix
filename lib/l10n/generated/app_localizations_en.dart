@@ -9908,10 +9908,27 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String redesignAbsenceAffectsOther(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'This affects $count events',
+      one: 'This affects 1 event',
+      zero: 'There are no events in this period.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignAbsenceChooseEnd => 'Tap the last day.';
 
   @override
   String get redesignAbsenceChooseStart => 'Tap the first day.';
+
+  @override
+  String redesignAbsenceForOther(Object name) {
+    return 'Absence for $name';
+  }
 
   @override
   String get redesignAbsenceNextMonth => 'Next month';
@@ -11540,6 +11557,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignHelpSearch => 'Search a question or keyword';
+
+  @override
+  String get redesignHistoryAll => 'Everything';
+
+  @override
+  String get redesignHistoryAverage => 'Average';
+
+  @override
+  String redesignHistoryAverageLate(Object count) {
+    return 'Average · $count× late';
+  }
+
+  @override
+  String get redesignHistoryEmpty => 'No entries yet.';
+
+  @override
+  String get redesignHistoryList => 'History';
+
+  @override
+  String get redesignHistoryMore => 'More actions';
+
+  @override
+  String get redesignHistoryNeutral => 'Neutral';
+
+  @override
+  String get redesignHistoryPresent => 'Present';
+
+  @override
+  String get redesignHistoryRemove => 'Delete entry';
+
+  @override
+  String get redesignHistorySeason => 'Since season start';
+
+  @override
+  String get redesignHistoryUpcoming => 'Upcoming events';
 
   @override
   String get redesignImportAiConfirmButton => 'Use them';
@@ -14332,6 +14384,53 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get redesignTypesListIntro =>
       'Attendance types set the name, time, default status and other defaults of new events.';
+
+  @override
+  String get redesignUnavailabilityAdd => 'Add rule';
+
+  @override
+  String get redesignUnavailabilityAll => 'All';
+
+  @override
+  String get redesignUnavailabilityDelete => 'Delete rule';
+
+  @override
+  String redesignUnavailabilityIntro(Object name) {
+    return '$name will not be suggested for duties on these days and is signed out of new events automatically.';
+  }
+
+  @override
+  String get redesignUnavailabilityIntroSelf =>
+      'You will not be suggested for duties on these days and are signed out of new events automatically.';
+
+  @override
+  String get redesignUnavailabilityOptional => 'Optional';
+
+  @override
+  String get redesignUnavailabilityPickDate => 'Choose date …';
+
+  @override
+  String get redesignUnavailabilityReason => 'Reason';
+
+  @override
+  String redesignUnavailabilityRule(Object number) {
+    return 'Rule $number';
+  }
+
+  @override
+  String get redesignUnavailabilityTermine => 'Events';
+
+  @override
+  String get redesignUnavailabilityTitle => 'Not available';
+
+  @override
+  String get redesignUnavailabilityUnlimited => 'Unlimited';
+
+  @override
+  String get redesignUnavailabilityUntil => 'Valid until';
+
+  @override
+  String get redesignUnavailabilityWeekdays => 'Weekdays';
 
   @override
   String get redesignViewersListAdd => 'Invite observer';
