@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/services/part_vision_service.dart';
 import '../../../../core/services/song_file_service.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/instrument_matcher.dart';
@@ -113,6 +114,7 @@ class RdImportState {
     this.aiFilled = const {},
     this.readingDates = false,
     this.collectionId,
+    this.pages = const (done: 0, total: 0, limit: false),
   });
 
   final RdImportStep step;
@@ -155,6 +157,10 @@ class RdImportState {
   /// with its Werke, new ones are created in it with its Kürzel.
   final int? collectionId;
 
+  /// First pages the KI reads in the review: done of total, and whether
+  /// the day's budget ran out.
+  final ({int done, int total, bool limit}) pages;
+
   RdImportState copyWith({
     RdImportStep? step,
     String? sourceName,
@@ -173,6 +179,7 @@ class RdImportState {
     bool? readingDates,
     int? collectionId,
     bool toRepertoire = false,
+    ({int done, int total, bool limit})? pages,
   }) =>
       RdImportState(
         step: step ?? this.step,
@@ -190,8 +197,12 @@ class RdImportState {
         aiFilled: aiFilled ?? this.aiFilled,
         readingDates: readingDates ?? this.readingDates,
         collectionId: toRepertoire ? null : (collectionId ?? this.collectionId),
+        pages: pages ?? this.pages,
       );
 }
+
+/// First pages the KI reads at most in one import.
+const int rdImportMaxPageReads = 300;
 
 /// ZIPs read in the browser are held in memory: more than this together
 /// is refused there (the Drive link or the app can take it).
@@ -317,6 +328,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   /// Back to the start (another ZIP).
   void restart() {
     _aiRun++;
+    _clearPages();
     _dated.clear();
     _confirmedAs.clear();
     _source?.close();
@@ -490,6 +502,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     }
     _source?.close();
     _source = source;
+    _clearPages();
     state = state.copyWith(sourceName: source.name, fileCount: source.entries.length);
 
     final target = _target(data.songs);
@@ -556,6 +569,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       ai: const {},
       aiFilled: const {},
       aiStatus: RdImportAiStatus.off,
+      pages: const (done: 0, total: 0, limit: false),
     );
     _aiWorks = const {};
     _worksRun++;
@@ -728,13 +742,16 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       );
       _dropStaleConfirmations();
       _worksRun++;
-      if (_aiWorks.isNotEmpty) {
+      _pagesRun++;
+      if (_aiWorks.isNotEmpty || _pageReads.isNotEmpty) {
         _aiWorks = const {};
         _replan();
       }
       return;
     }
     state = state.copyWith(useAi: true);
+    if (_pageReads.isNotEmpty) _replan();
+    if (state.step == RdImportStep.review) unawaited(_readPages());
     if (state.ai.isNotEmpty) {
       state = state.copyWith(aiStatus: RdImportAiStatus.done);
       if (state.step == RdImportStep.questions) _applyAi();
@@ -792,6 +809,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       cache: input.cache,
       newPrefix: input.newPrefix,
       takenNumbers: input.takenNumbers,
+      pageReads: state.useAi ? _pageReads : const {},
     );
     // A Werk whose key changed (KI hint came or went) keeps what the person
     // decided about it: target, skip, Fassung, "Passt so".
@@ -814,6 +832,137 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   }
 
   Future<void> _pause() => Future<void>.delayed(Duration.zero);
+
+  /// What the KI read on page 1, by path ([rdBuildImportPlan] `pageReads`).
+  Map<String, RdImportPageRead> _pageReads = const {};
+
+  /// Paths whose first page was read or is being read (each once).
+  final Set<String> _pagesTried = {};
+
+  /// First pages rendered, the last [_keptPages] (the preview opens at once).
+  final Map<String, Uint8List> _pageImages = {};
+  static const _keptPages = 40;
+
+  bool _pagesBusy = false;
+
+  /// Counts the page reads: a change of the import stops the running one.
+  int _pagesRun = 0;
+
+  void _clearPages() {
+    _pagesRun++;
+    _pageReads = const {};
+    _pagesTried.clear();
+    _pageImages.clear();
+  }
+
+  /// Lets the KI read page 1 of the files whose part nobody knows (four at
+  /// a time, at most [rdImportMaxPageReads] per import) while the review is
+  /// shown; Werke with "Passt so" are left alone. A sure read of a group
+  /// takes the file out of "Stimme unklar" (✦ Seite 1); other reads are
+  /// proposed, and the file stays to be checked.
+  Future<void> _readPages() async {
+    final source = _source;
+    final tenantId = _tenantId;
+    if (_pagesBusy || source == null || tenantId == null) return;
+    final run = _pagesRun;
+    bool stopped() =>
+        _disposed ||
+        run != _pagesRun ||
+        !identical(_source, source) ||
+        !state.useAi ||
+        state.pages.limit ||
+        state.step != RdImportStep.review;
+    final vision = ref.read(partVisionServiceProvider);
+    _pagesBusy = true;
+    try {
+      while (!stopped()) {
+        final plan = state.plan;
+        if (plan == null) return;
+        final paths = [
+          for (final p in rdImportPagesToRead(plan, state.decisions))
+            if (!_pagesTried.contains(p) && PartVisionService.supports(p)) p,
+        ].take(rdImportMaxPageReads - _pagesTried.length).toList();
+        if (paths.isEmpty) return;
+        _pagesTried.addAll(paths);
+        state = state.copyWith(pages: (done: state.pages.done, total: state.pages.total + paths.length, limit: false));
+        var next = 0;
+        Future<void> worker() async {
+          while (next < paths.length && !stopped()) {
+            final path = paths[next++];
+            RdImportPageRead? read;
+            try {
+              final image = await _pageImage(source, path);
+              final found = image == null || stopped() ? null : await vision.readImage(image, tenantId: tenantId);
+              if (found != null) {
+                read = rdImportPageRead(
+                  groupId: found.groupId,
+                  label: found.label,
+                  sure: found.sure,
+                  instruments: plan.instruments,
+                  isChoir: plan.isChoir,
+                );
+              }
+            } on PartVisionLimit {
+              if (run == _pagesRun) state = state.copyWith(pages: (done: state.pages.done, total: state.pages.total, limit: true));
+            }
+            if (run != _pagesRun || _disposed) return;
+            if (read != null && !_confirmedNow(path)) {
+              _pageReads = {..._pageReads, path: read};
+              _replan();
+            }
+            state = state.copyWith(pages: (done: state.pages.done + 1, total: state.pages.total, limit: state.pages.limit));
+          }
+        }
+
+        await Future.wait([for (var i = 0; i < 4; i++) worker()]);
+        // Not read (stopped): another time, and out of the count.
+        final left = paths.skip(next).toList();
+        if (left.isNotEmpty && run == _pagesRun) {
+          _pagesTried.removeAll(left);
+          state = state.copyWith(pages: (done: state.pages.done, total: state.pages.total - left.length, limit: state.pages.limit));
+        }
+      }
+    } finally {
+      _pagesBusy = false;
+    }
+  }
+
+  /// The Werk of [path] got its "Passt so" (what was confirmed stays).
+  bool _confirmedNow(String path) {
+    final plan = state.plan;
+    if (plan == null) return false;
+    final work = plan.works.where((w) => w.files.any((f) => f.path == path)).firstOrNull;
+    return work != null && state.decisions.confirmed.contains(work.key);
+  }
+
+  /// Page 1 of the file at [path] as a picture; null when it cannot be had.
+  Future<Uint8List?> _pageImage(RdImportFiles source, String path) async {
+    final kept = _pageImages.remove(path);
+    if (kept != null) return _pageImages[path] = kept;
+    final bytes = await source.content(path);
+    if (bytes == null) return null;
+    final image = await PartVisionService.firstPage(bytes, path.split('/').last);
+    if (image == null || !identical(_source, source)) return image;
+    _pageImages[path] = image;
+    while (_pageImages.length > _keptPages) {
+      _pageImages.remove(_pageImages.keys.first);
+    }
+    return image;
+  }
+
+  /// Page 1 of the file at [path] to look at in the review (photos as they
+  /// are); null when there is none.
+  Future<Uint8List?> pagePreview(String path) async {
+    final source = _source;
+    if (source == null) return null;
+    final lower = path.toLowerCase();
+    if (lower.endsWith('.pdf')) return _pageImage(source, path);
+    if (lower.endsWith('.png') || lower.endsWith('.jpg') || lower.endsWith('.jpeg')) return source.content(path);
+    return null;
+  }
+
+  /// Where the file at [path] opens outside the app (Drive); null for ZIPs.
+  Uri? viewLink(String path) => _source?.viewLink(path);
 
   /// The bytes of a picked file that came as a stream.
   Future<PlatformFile> _collect(PlatformFile zip) async {
@@ -842,6 +991,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       }
     }
     state = state.copyWith(step: step);
+    if (step == RdImportStep.review) unawaited(_readPages());
   }
 
   void _decide(RdImportDecisions Function(RdImportDecisions d) change) {

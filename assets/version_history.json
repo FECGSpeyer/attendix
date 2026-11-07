@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.73.0",
+      "date": "7.11.2026",
+      "changes": [
+        "✨ Noten-Import: In der Werk-Prüfung zeigt die Stimmen-Auswahl die erste Seite der Datei (zum Vergrößern antippen), bei Drive-Dateien ohne Vorschau ein Link zu Google Drive",
+        "✨ Noten-Import: Die KI liest bei unklaren Stimmen die erste Seite; sicher erkannte bekommen „✦ Seite 1“, unsichere werden vorgeschlagen und bleiben zu prüfen",
+        "✨ Werke-Import (Drive): Dateien bis 10 MB lassen sich ganz laden (für Vorschau und KI)"
+      ]
+    },
+    {
       "version": "0.72.0",
       "date": "7.11.2026",
       "changes": [

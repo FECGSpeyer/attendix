@@ -436,6 +436,25 @@ void main() {
     });
   });
 
+  test('page 1 read by the KI: sure takes the file out of "Stimme unklar", unsure is proposed', () {
+    final entries = [_e('Noten/Eins/Tag.pdf'), _e('Noten/Eins/Nacht.pdf'), _e('Noten/Eins/Viola.pdf')];
+    const d = RdImportDecisions();
+    expect(rdImportPagesToRead(_plan(entries), d), ['Noten/Eins/Nacht.pdf', 'Noten/Eins/Tag.pdf']);
+    final plan = rdBuildImportPlan(entries, songs: const [], instruments: _instruments, isChoir: false, pageReads: const {
+      'Noten/Eins/Tag.pdf': RdImportPageRead(RdImportCategory(instrumentId: 11), label: '2. Violine', sure: true),
+      'Noten/Eins/Nacht.pdf': RdImportPageRead(RdImportCategory(newGroup: 'Oboe'), label: 'Oboe'),
+    });
+    final work = plan.works.single;
+    RdFileState state(String name) => rdFileState(plan, d, work, work.files.firstWhere((f) => f.name == name));
+    expect((state('Tag.pdf').category, state('Tag.pdf').unclear), (const RdImportCategory(instrumentId: 11), false));
+    expect((state('Nacht.pdf').category, state('Nacht.pdf').unclear), (const RdImportCategory(newGroup: 'Oboe'), true));
+    expect(rdImportPagesToRead(plan, d), isEmpty);
+    // Chosen by hand, the read no longer counts.
+    final byHand = RdImportDecisions(categories: {'Noten/Eins/Tag.pdf': RdImportCategory.other});
+    final tag = rdFileState(plan, byHand, work, work.files.firstWhere((f) => f.name == 'Tag.pdf'));
+    expect((tag.category, tag.pageRead), (RdImportCategory.other, null));
+  });
+
   group('dates', () {
     test('creation date in the PDF info, else XMP', () {
       expect(rdPdfDate('%PDF-1.4 /CreationDate (D:20240312101500+01\'00\')'.codeUnits), DateTime(2024, 3, 12, 10, 15));
