@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [master]
 
+# A new push to a PR cancels its still-running CI. Pushes (master, develop)
+# get a group of their own (run_id), so they are never cancelled or replaced.
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   analyze:
     name: Analyze
@@ -25,6 +31,11 @@ jobs:
 
       - name: Analyze code
         run: dart analyze lib/ --fatal-warnings
+
+      - name: Check changelog fragments
+        # PRs add changelog/unreleased/*.json instead of bumping the version;
+        # the deploy workflow turns them into a version after the merge.
+        run: python3 tool/release/release_version.py --check
 
   test:
     name: Test

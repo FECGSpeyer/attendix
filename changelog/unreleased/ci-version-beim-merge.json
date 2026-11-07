@@ -1,0 +1,1 @@
+{"bump": "minor", "changes": ["🔧 CI: Version wird erst beim Merge vergeben (Changelog-Fragmente), alte PR-Runs werden abgebrochen, Deploy-Previews ohne doppelten Testlauf"]}
