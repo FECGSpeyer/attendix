@@ -94,6 +94,14 @@ void main() {
       expect(_confidence('French Horn 2.pdf', _orchestra), MatchConfidence.sure);
     });
 
+    test('"Cor." is a horn unless cornets or an English horn could be meant', () {
+      expect((_label('6 Полный радости -2Cor..pdf', _orchestra), _confidence('2 Cor. in F.pdf', _orchestra)),
+          ('Horn', MatchConfidence.sure));
+      expect(_confidence('Cor anglais.pdf', _orchestra), MatchConfidence.unsure);
+      expect(_confidence('Solo Cor.pdf', [..._orchestra, 'Kornett']), MatchConfidence.unsure);
+      expect(InstrumentMatcher.knownGroup('Святая ночь - Chimes.pdf'), 'Röhrenglocken');
+    });
+
     test('a more specific group wins', () {
       final groups = ['Klarinette', 'Bassklarinette', 'Horn', 'Englischhorn', 'Saxophon', 'Altsaxophon'];
       expect(_label('Bassklarinette.pdf', groups), 'Bassklarinette');

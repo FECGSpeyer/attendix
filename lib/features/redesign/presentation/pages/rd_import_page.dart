@@ -1006,9 +1006,12 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
                     final pills when pills.isNotEmpty => Wrap(spacing: 6, runSpacing: 6, children: pills),
                     _ => null,
                   },
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(builder: (_) => RdImportWorkPage(workKey: w.key)),
-                  ),
+                  onTap: () {
+                    _controller.readFirst(w.key);
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(builder: (_) => RdImportWorkPage(workKey: w.key)),
+                    );
+                  },
                 ),
             ],
           ),

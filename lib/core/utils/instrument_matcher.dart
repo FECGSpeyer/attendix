@@ -91,6 +91,7 @@ class InstrumentMatcher {
     'becken': ['cymbals', 'тарелки', 'tarelki', 'piatti'],
     'triangel': ['triangle', 'треугольник', 'treugolnik', 'triangolo'],
     'pauke': ['timpani', 'pauken', 'kettledrum', 'timbales', 'литавры', 'litavry', 'litavri'],
+    'röhrenglocken': ['chimes', 'tubular bells', 'campane tubolari', 'колокола', 'kolokola'],
     'glockenspiel': [
       'mallets', 'xylophon', 'xylophone', 'vibraphon', 'vibraphone', 'marimba',
       'ксилофон', 'ksilofon', 'xilofono', 'колокольчики', 'kolokolchiki', 'campanelli',
@@ -251,8 +252,19 @@ class InstrumentMatcher {
     if (best == null) return PartMatch.none;
 
     final tie = second != null && second.score == best.score;
-    final confidence = best.weak || tie ? MatchConfidence.unsure : MatchConfidence.sure;
+    final weak = best.weak && !(best.term == 'cor' && _corIsHorn(filename, instruments));
+    final confidence = weak || tie ? MatchConfidence.unsure : MatchConfidence.sure;
     return PartMatch(instrumentId: best.id, confidence: confidence, term: best.term);
+  }
+
+  /// "Cor." (Corno) is a horn, unless the tenant also has cornets or an
+  /// English horn ("Solo Cor." in a brass band) or the name names another
+  /// instrument ("Cor anglais").
+  static bool _corIsHorn(String filename, List<InstrumentInfo> instruments) {
+    const others = {'kornett', 'englischhorn'};
+    if (instruments.any((i) => _termsOf(i).families.any(others.contains))) return false;
+    final named = knownGroups(filename);
+    return named.isEmpty || (named.length == 1 && named.single == 'Horn');
   }
 
   /// Lower-case words of [text]: umlauts folded (ö → oe), split at every

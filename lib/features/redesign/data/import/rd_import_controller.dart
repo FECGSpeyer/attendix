@@ -858,7 +858,15 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   /// The run whose loop is going ([_readPages]); null when none is.
   int? _pagesLoop;
 
+  /// The Werk open in the review ([readFirst]): its pages are read next.
+  String? _readFirst;
+
+  /// The Werk [workKey] is opened in the review: the KI reads its unclear
+  /// pages before those of the other Werke.
+  void readFirst(String workKey) => _readFirst = workKey;
+
   void _clearPages() {
+    _readFirst = null;
     _pagesRun++;
     _pageReads = const {};
     _pagesTried.clear();
@@ -899,10 +907,23 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         if (paths.isEmpty) return;
         total += paths.length;
         show();
-        var next = 0;
+        final pending = [...paths];
+        final workOf = {
+          for (final w in plan.works)
+            for (final f in w.files) f.path: w.key,
+        };
+        // The Werk open now first, then in the order of the Werke.
+        String? take() {
+          if (pending.isEmpty) return null;
+          final first = _readFirst;
+          final i = first == null ? -1 : pending.indexWhere((p) => workOf[p] == first);
+          return pending.removeAt(i < 0 ? 0 : i);
+        }
+
         Future<void> worker() async {
-          while (next < paths.length && !stopped()) {
-            final path = paths[next++];
+          while (!stopped()) {
+            final path = take();
+            if (path == null) return;
             RdImportPageRead? read;
             var limit = false;
             try {
