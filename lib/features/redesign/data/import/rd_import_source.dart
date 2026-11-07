@@ -50,6 +50,14 @@ abstract class RdImportFiles {
     int? mainGroupId,
   });
 
+  /// The whole file at [path], to show its first page in the review and let
+  /// the KI read it; null when it cannot be had (too large, a Google Doc,
+  /// not available).
+  Future<Uint8List?> content(String path);
+
+  /// Where the file at [path] opens outside the app (Drive); null for ZIPs.
+  Uri? viewLink(String path);
+
   Future<void> close();
 }
 
@@ -199,6 +207,18 @@ class RdImportSource implements RdImportFiles {
       keepBesetzung: true,
     );
   }
+
+  @override
+  Future<Uint8List?> content(String path) async {
+    try {
+      return await Future(() => read(path));
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Uri? viewLink(String path) => null;
 
   @override
   Future<void> close() async {

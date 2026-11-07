@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:attendix/core/utils/choir_file_utils.dart';
+import 'package:attendix/core/utils/instrument_matcher.dart';
 import 'package:attendix/features/redesign/data/import/rd_import_ai.dart';
 import 'package:attendix/features/redesign/data/import/rd_import_logic.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -41,6 +42,20 @@ void main() {
       expect(cat(a('choir'), isChoir: true), const RdImportCategory(note: kChoirAllNote));
       expect(cat(a('delete everything')), isNull);
     });
+  });
+
+  test('page 1: a group of the tenant, else what the printed name says', () {
+    const groups = [InstrumentInfo(id: 10, name: 'Violine 1'), InstrumentInfo(id: 14, name: 'Flöte')];
+    RdImportPageRead? read({int? groupId, String? label, bool sure = true}) =>
+        rdImportPageRead(groupId: groupId, label: label, sure: sure, instruments: groups, isChoir: false);
+    final group = read(groupId: 14, label: 'Flöte 2')!;
+    expect((group.category, group.sure, group.label), (const RdImportCategory(instrumentId: 14), true, 'Flöte 2'));
+    expect(read(groupId: 99, label: 'Partitur')!.category, const RdImportCategory(note: 'Partitur'));
+    // A known instrument without a group is proposed, never taken unseen.
+    final oboe = read(label: 'Oboe 1')!;
+    expect((oboe.category, oboe.sure), (const RdImportCategory(newGroup: 'Oboe'), false));
+    expect(read(label: 'Posaune u. Tuba'), isNull);
+    expect(read(label: ''), isNull);
   });
 
   group('suggest', () {
