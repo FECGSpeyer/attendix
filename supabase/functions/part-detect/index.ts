@@ -22,7 +22,9 @@
 // - the groups come from the database (tenant filter), not from the caller;
 //   group names are passed as quoted data, never as instructions.
 //
-// Secrets: OPEN_AI_KEY (as synonyms-gpt), SUPABASE_URL, SUPABASE_ANON_KEY,
+// Secrets: OPEN_AI_KEY_IMPORT (own OpenAI key of the Noten import, so its
+// costs show apart; falls back to OPEN_AI_KEY as synonyms-gpt), SUPABASE_URL,
+// SUPABASE_ANON_KEY,
 // SUPABASE_SERVICE_ROLE_KEY (set by Supabase).
 //
 // Setup: run supabase/sql/part_detect_usage.sql once, then
@@ -185,7 +187,7 @@ Deno.serve(async (req: Request) => {
 
   // 6. The model; rules and data are kept apart.
   try {
-    const client = new OpenAI({ apiKey: Deno.env.get("OPEN_AI_KEY") });
+    const client = new OpenAI({ apiKey: Deno.env.get("OPEN_AI_KEY_IMPORT") || Deno.env.get("OPEN_AI_KEY") });
     const response = await client.chat.completions.create({
       model: MODEL,
       stream: false,
