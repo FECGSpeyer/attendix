@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.75.0",
+      "date": "7.11.2026",
+      "changes": [
+        "✨ Noten-Import: Eine Stimme für mehrere Instrumente („Posaune und Tuba“) kommt in jede genannte Gruppe; fehlende Gruppen werden vorgeschlagen und angelegt",
+        "✨ Noten-Import: Hat das Werk eine der Stimmen schon, kommt die Datei nur zu den anderen; einzeln wählbar bleibt jede Gruppe"
+      ]
+    },
+    {
       "version": "0.74.1",
       "date": "7.11.2026",
       "changes": [
