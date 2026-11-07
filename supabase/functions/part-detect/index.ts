@@ -37,9 +37,10 @@ const MODEL = "gpt-6-luna";
 /// Roles that edit the tenant (app: `Role.canEdit`).
 const EDIT_ROLES = [1, 4, 5, 9];
 
-/// Calls per day (UTC): per account over all its tenants, per tenant; about 0.1 cent each.
-const DAILY_LIMIT_USER = 200;
-const DAILY_LIMIT_TENANT = 500;
+/// Calls per day (UTC): per account over all its tenants, per tenant (shared
+/// with part-suggest and work-match); a page costs well under 0.1 cent.
+const DAILY_LIMIT_USER = 1000;
+const DAILY_LIMIT_TENANT = 2000;
 
 /// Decoded picture size; the app sends at most this (PartVisionService.maxImageBytes).
 const MAX_IMAGE_BYTES = 1_500_000;
