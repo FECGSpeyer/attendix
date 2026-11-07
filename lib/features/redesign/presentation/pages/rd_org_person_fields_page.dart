@@ -40,9 +40,25 @@ class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
 
   bool get _isSuperAdmin => ref.read(effectiveRoleProvider) == Role.admin;
 
-  List<OrgExtraField>? _storedFields(int orgId) {
-    final org = ref.read(currentOrganisationProvider).valueOrNull;
-    return org?.id == orgId ? [...?org?.additionalFields] : null;
+  /// The list this page last stored for [_confirmedOrg]; the next change
+  /// builds on it, not on a provider value that may still be reloading.
+  List<OrgExtraField>? _confirmed;
+  int? _confirmedOrg;
+
+  /// The fields of organisation [orgId] as stored now: waits for a running
+  /// (re)load; null when another organisation is current.
+  Future<List<OrgExtraField>?> _fieldsFor(int orgId) async {
+    final org = await ref.read(currentOrganisationProvider.future);
+    if (!mounted || org?.id != orgId) return null;
+    final confirmed = _confirmedOrg == orgId ? _confirmed : null;
+    return [...?(confirmed ?? org!.additionalFields)];
+  }
+
+  /// Synchronous check for the form (name taken): the shown list.
+  List<OrgExtraField> _shownFields(int orgId) {
+    if (_confirmedOrg == orgId && _confirmed != null) return _confirmed!;
+    final org = rdLoadedValue(ref.read(currentOrganisationProvider));
+    return org?.id == orgId ? (org!.additionalFields ?? const []) : const [];
   }
 
   /// Saves the list [change] builds from the fields stored now (null: no
@@ -59,8 +75,8 @@ class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
     final result = _writes
         .then((_) async {
           if (!mounted || !_isSuperAdmin) return false;
-          final stored = _storedFields(orgId);
-          if (stored == null) return false;
+          final stored = await _fieldsFor(orgId);
+          if (stored == null || !mounted) return false;
           final next = change(stored);
           if (next == null) return false;
           for (final f in next) {
@@ -73,9 +89,12 @@ class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
               return false;
             }
           }
-          // The organisation may have changed while waiting.
-          if (_storedFields(orgId) == null) return false;
-          final ok = await notifier.updateOrgExtraFields(next, deleted);
+          // Written only into [orgId] (checked again right before the write).
+          final ok = await notifier.updateOrgExtraFields(next, deleted, orgId: orgId);
+          if (ok) {
+            _confirmed = List.unmodifiable(next);
+            _confirmedOrg = orgId;
+          }
           if (mounted) {
             if (ok) {
               ToastHelper.showSuccess(context, success ?? l10n.orgFieldsSaved);
@@ -93,7 +112,7 @@ class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
   Future<void> _add(int orgId) async {
     final field = await _openForm(
       context,
-      nameExists: (name) => (_storedFields(orgId) ?? const []).any((f) => f.id == orgFieldId(orgId, name)),
+      nameExists: (name) => _shownFields(orgId).any((f) => f.id == orgFieldId(orgId, name)),
     );
     if (field is! OrgExtraField || !mounted) return;
     final id = orgFieldId(orgId, field.name);

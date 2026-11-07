@@ -233,9 +233,15 @@ class PlanSettingsNotifier extends Notifier<AsyncValue<void>> {
     );
   }
 
-  Future<bool> _updateOrg(Future<Organisation> Function(OrgPlanRepository repo, int orgId) action) async {
+  /// [expectedOrgId]: write only when that organisation is still the
+  /// current one (a caller that built the data for it).
+  Future<bool> _updateOrg(
+    Future<Organisation> Function(OrgPlanRepository repo, int orgId) action, {
+    int? expectedOrgId,
+  }) async {
     final org = await ref.read(currentOrganisationProvider.future);
     if (org?.id == null) return false;
+    if (expectedOrgId != null && org!.id != expectedOrgId) return false;
     return _run(
       () => action(ref.read(orgPlanRepositoryProvider), org!.id!),
       invalidate: [currentOrganisationProvider],
@@ -285,12 +291,14 @@ class PlanSettingsNotifier extends Notifier<AsyncValue<void>> {
       _updateOrg((repo, id) => repo.updateOrgGemeindeApp(id, updates));
 
   /// Saves org person fields and removes values of deleted fields.
-  Future<bool> updateOrgExtraFields(List<OrgExtraField> fields, List<String> deletedFieldIds) =>
+  /// [orgId]: the organisation the caller built [fields] for; nothing is
+  /// written when another one is current by then.
+  Future<bool> updateOrgExtraFields(List<OrgExtraField> fields, List<String> deletedFieldIds, {int? orgId}) =>
       _updateOrg((repo, id) async {
         final org = await repo.updateOrgExtraFields(id, fields);
         await repo.deletePersonFieldValues(id, deletedFieldIds);
         return org;
-      });
+      }, expectedOrgId: orgId);
 
   Future<String?> generatePublicPlanKey() async {
     final org = await ref.read(currentOrganisationProvider.future);

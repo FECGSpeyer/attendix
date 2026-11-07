@@ -103,7 +103,12 @@ class _RdGroupCategoriesPageState extends ConsumerState<RdGroupCategoriesPage> {
 
   /// Old sheet: category sort_order 1..n and the resulting order of all
   /// groups (Ionic `saveCategoryOrder` + `updateGlobalSortOrder`).
-  Future<bool> _saveOrder(int? tenantId, List<GroupCategory> categories, List<RdManageListSection> sections) async {
+  Future<bool> _saveOrder(
+    int? tenantId,
+    List<GroupCategory> categories,
+    List<Group> groups,
+    List<RdManageListSection> sections,
+  ) async {
     final l10n = context.l10n;
     final byId = {
       for (final c in categories)
@@ -121,7 +126,8 @@ class _RdGroupCategoriesPageState extends ConsumerState<RdGroupCategoriesPage> {
       if (c.id != null) categoryOrders[c.id!] = i + 1;
       updated.add(c.copyWith(sortOrder: i + 1));
     }
-    final groups = ref.read(groupsProvider).valueOrNull ?? const <Group>[];
+    // [groups] are the loaded groups of [tenantId] (sorting waits for them).
+    if (!_stillIn(tenantId)) return false;
     final ok = await ref
         .read(groupNotifierProvider.notifier)
         .saveCategoryOrder(
@@ -176,7 +182,11 @@ class _RdGroupCategoriesPageState extends ConsumerState<RdGroupCategoriesPage> {
       emptyIcon: Icons.sell_outlined,
       addLabel: l10n.instrumentsNewCategory,
       onAdd: _add,
-      onReorder: categories == null ? null : (sections) => _saveOrder(tenantId, categories, sections),
+      // Only with the groups loaded: the new order renumbers them too.
+      onReorder:
+          categories == null || groups == null
+              ? null
+              : (sections) => _saveOrder(tenantId, categories, groups, sections),
       onRefresh: _refresh,
     );
   }
