@@ -9,6 +9,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/song_copy.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../organisation/presentation/pages/org_songs_page.dart';
+import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
 
@@ -54,7 +55,7 @@ class _RdOrgSongsPageState extends ConsumerState<RdOrgSongsPage> with OrgSongsLo
       });
     }
     final header = <Widget>[
-      RdBackLink(label: l10n.commonBack, onTap: _back),
+      RdBackLink(label: l10n.rdOrgBack, onTap: _back),
       const SizedBox(height: 4),
       Semantics(header: true, child: Text(l10n.rdOrgWorks, style: RdType.largeTitle(p))),
       const SizedBox(height: 12),
@@ -62,7 +63,7 @@ class _RdOrgSongsPageState extends ConsumerState<RdOrgSongsPage> with OrgSongsLo
     if (orgAsync.isLoading && org == null) {
       return RdPage(children: [
         ...header,
-        Center(child: Padding(padding: const EdgeInsets.all(32), child: CircularProgressIndicator(color: p.primary))),
+        RdInfoCard(text: l10n.redesignTodayLoading, loading: true),
       ]);
     }
     if (!allowed) return RdPage(children: [...header, RdListNote(l10n.rdOrgWorksNoPermission)]);

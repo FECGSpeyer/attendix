@@ -25,6 +25,8 @@ import '../../../attendance/presentation/attendance_create_writes.dart';
 import '../../../attendance/presentation/widgets/multi_date_calendar.dart';
 import '../../../attendance/presentation/widgets/songs_selection_sheet.dart';
 import '../../data/rd_create_logic.dart';
+import '../../../../shared/widgets/adaptive/app_dialog.dart';
+import '../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import '../widgets/event/rd_create_sheets.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
@@ -194,14 +196,19 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
   Future<void> _pickTime({required bool start}) async {
     final current = start ? _start : _end;
     final parts = (current ?? (start ? '19:00' : '21:00')).split(':');
-    final picked = await showAppTimePicker(
+    final initial = TimeOfDay(
+      hour: int.tryParse(parts.first) ?? 19,
+      minute: parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0,
+    );
+    final iosLook = useIosLook(context);
+    var picked = await showAppTimePicker(
       context: context,
-      initialTime: TimeOfDay(
-        hour: int.tryParse(parts.first) ?? 19,
-        minute: parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0,
-      ),
+      initialTime: initial,
       helpText: start ? context.l10n.redesignCreateStart : context.l10n.redesignCreateEnd,
     );
+    // The iOS wheel returns null when the shown time was confirmed unchanged:
+    // with no time yet, that shown default is the choice.
+    if (picked == null && iosLook && current == null) picked = initial;
     if (picked == null || !mounted) return;
     final value = '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
     _touch(() => start ? _start = value : _end = value);
@@ -229,25 +236,14 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
   Future<bool> _confirmDiscard() async {
     if (!_touched) return true;
     final l10n = context.l10n;
-    final discard = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.redesignCreateDiscardTitle),
-        content: Text(l10n.redesignCreateDiscardBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n.redesignCreateKeepEditing),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: ctx.rd.absent),
-            child: Text(l10n.redesignCreateDiscard),
-          ),
-        ],
-      ),
+    return showAppConfirm(
+      context,
+      title: l10n.redesignCreateDiscardTitle,
+      message: l10n.redesignCreateDiscardBody,
+      confirmText: l10n.redesignCreateDiscard,
+      cancelText: l10n.redesignCreateKeepEditing,
+      destructive: true,
     );
-    return discard == true;
   }
 
   Future<void> _cancel() async {

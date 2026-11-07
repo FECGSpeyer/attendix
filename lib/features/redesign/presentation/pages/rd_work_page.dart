@@ -34,6 +34,7 @@ import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/work/rd_work_file_actions.dart';
 import '../widgets/work/rd_work_files.dart';
+import '../../../../core/providers/debug_providers.dart' show effectiveRoleProvider;
 import '../widgets/works/rd_collections_ui.dart';
 
 /// REDESIGN: a work, one page for everybody (canvas "Werke neu gedacht",
@@ -108,6 +109,25 @@ class RdWorkPage extends ConsumerWidget {
     // Sammlungen (null while the database has none, or on the public page).
     final collections = data.isPublic ? null : ref.watch(songCollectionsProvider).valueOrNull;
     final collection = rdCollectionById(collections ?? const [], song.collectionId);
+    // A Werk of a Sammlung hidden from the viewer (e.g. "Nur Leitung"),
+    // opened from a link or the overview: not shown, like in the list.
+    // While the visibility is unknown (Sammlungen loading or failed) a
+    // member does not see it either.
+    if (!data.isPublic && song.collectionId != null && !ref.watch(effectiveRoleProvider).isConductor) {
+      final visible = ref.watch(rdVisibleCollectionsProvider);
+      if (visible == null || !visible.any((c) => c.id == song.collectionId)) {
+        final loading = visible == null && ref.watch(songCollectionsProvider).isLoading;
+        return RdPage(
+          children: [
+            Row(children: [Expanded(child: back)]),
+            const SizedBox(height: 8),
+            loading
+                ? RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
+                : RdInfoCard(text: l10n.redesignWorkNotFound, icon: Icons.music_off_outlined),
+          ],
+        );
+      }
+    }
     final groupId = ref.watch(currentSelfServicePlayerProvider).valueOrNull?.instrument;
     final ownGroup = groups.where((g) => g.id == groupId).firstOrNull;
     final lead = rdWorkLead(song, groupId, isMainGroup: ownGroup?.maingroup ?? false, choir: data.isChoir);

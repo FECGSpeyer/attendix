@@ -19,6 +19,7 @@ import '../../../../l10n/l10n.dart';
 import '../../data/providers/rd_members_providers.dart';
 import '../../data/rd_members_logic.dart';
 import '../../../members/data/providers/members_providers.dart' show membersEinteilungOptionsProvider;
+import '../../../people/people_list_utils.dart' show withExtraFieldDefaults;
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
 import '../widgets/members/rd_invite_sheet.dart';
 import '../widgets/rd_split_view.dart';
@@ -374,7 +375,12 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
     final p = context.rd;
     final l10n = context.l10n;
     final peopleAsync = ref.watch(realtimePlayersProvider);
-    final people = peopleAsync.valueOrNull ?? const <Person>[];
+    // Like the old list (membersGroupedProvider): a person without an
+    // "Einteilung" value counts under the field's default option.
+    final people = withExtraFieldDefaults(
+      peopleAsync.valueOrNull ?? const <Person>[],
+      ref.watch(personListExtraFieldsProvider),
+    );
     final groups = ref.watch(groupsProvider).valueOrNull ?? const [];
     final options = ref.watch(membersEinteilungOptionsProvider);
     final einteilung = options.contains(_einteilung) ? _einteilung : '';

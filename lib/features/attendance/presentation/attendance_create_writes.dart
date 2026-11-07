@@ -15,6 +15,7 @@ import '../../../core/providers/song_providers.dart';
 import '../../../core/providers/tenant_providers.dart';
 import '../../../core/utils/attendance_logic_utils.dart';
 import '../../../core/utils/duty_utils.dart';
+import '../../../core/utils/event_list_utils.dart';
 import '../../../core/utils/shift_utils.dart';
 import '../../../data/models/attendance/attendance.dart';
 import '../../../data/models/duty/person_unavailability.dart';
@@ -248,7 +249,7 @@ class AttendanceCreateWriter {
       if (type.dutyMode && input.dutyRequiredFor(normalizedDate) != type.dutyRequired)
         'duty_required': input.dutyRequiredFor(normalizedDate),
       // REDESIGN: Abmeldeschluss chosen while creating (none = Ionic)
-      if (deadline != null) 'deadline': deadline.toUtc().toIso8601String(),
+      if (deadline != null) 'deadline': EventListUtils.deadlineToStore(deadline),
     }).select().single();
 
     final attendanceId = response['id'] as int;

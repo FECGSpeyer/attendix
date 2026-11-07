@@ -860,8 +860,8 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
   Future<void> _resetLateCount(Person person) async {
     try {
       await ref.read(playerNotifierProvider.notifier).resetLateCount(person);
-      ref.invalidate(personProvider(_personId));
-      ref.invalidate(personAttendanceStatsProvider(_personId));
+      _container.invalidate(personProvider(_personId));
+      _container.invalidate(personAttendanceStatsProvider(_personId));
       if (mounted) ToastHelper.showSuccess(context, context.l10n.personLateCounterReset);
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.personResetFailed);
@@ -919,7 +919,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     if (DemoGuard.blocked()) return; // DEMO_GUARD
     try {
       await ref.read(playerNotifierProvider.notifier).unlinkAccount(person);
-      ref.invalidate(personProvider(_personId));
+      _container.invalidate(personProvider(_personId));
       if (mounted) ToastHelper.showSuccess(context, context.l10n.personUserRemoved);
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.personUserRemoveFailed);
@@ -952,7 +952,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
       // AUTH: attendix-user Edge Function; Verantwortlicher for the main
       // group, otherwise Spieler (Ionic).
       await ref.read(accountCreationNotifierProvider.notifier).createAccount(person);
-      ref.invalidate(personProvider(_personId));
+      _container.invalidate(personProvider(_personId));
       if (mounted) ToastHelper.showSuccess(context, context.l10n.personFlutterAccountCreatedMail);
     } catch (e) {
       if (mounted) {
@@ -973,9 +973,9 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
       await ref
           .read(accountCreationNotifierProvider.notifier)
           .createAccount(person.copyWith(email: tenantUser?.email ?? user.email));
-      ref.invalidate(personProvider(_personId));
-      ref.invalidate(realtimePlayersProvider);
-      ref.invalidate(currentTenantUserProvider);
+      _container.invalidate(personProvider(_personId));
+      _container.invalidate(realtimePlayersProvider);
+      _container.invalidate(currentTenantUserProvider);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.personUserAssigned);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
@@ -1058,8 +1058,8 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     if (!confirmed || !mounted) return;
     try {
       await ref.read(playerNotifierProvider.notifier).reactivatePlayer(person);
-      ref.invalidate(realtimePlayersProvider);
-      ref.invalidate(personProvider(_personId));
+      _container.invalidate(realtimePlayersProvider);
+      _container.invalidate(personProvider(_personId));
       if (!mounted) return;
       ToastHelper.showSuccess(context, context.l10n.personReactivated);
       _done();

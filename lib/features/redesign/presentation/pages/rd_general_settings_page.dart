@@ -25,6 +25,7 @@ import '../../../settings/presentation/pages/general_settings_page.dart'
     show holidayRegions, initialRegistrationFields, normalizeReasons, normalizeShowAllInfoText;
 import '../../../settings/presentation/widgets/critical_rule_sheet.dart';
 import '../../data/rd_manage_logic.dart' show RdManageArea;
+import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
 
@@ -402,7 +403,7 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
       return RdPage(
         children: [
           ...header,
-          Center(child: Padding(padding: const EdgeInsets.all(32), child: CircularProgressIndicator(color: p.primary))),
+          RdInfoCard(text: l10n.redesignTodayLoading, loading: true),
         ],
       );
     }

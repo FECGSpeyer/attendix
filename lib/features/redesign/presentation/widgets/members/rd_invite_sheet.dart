@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/utils/toast_helper.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -92,8 +93,7 @@ class _InviteSheet extends ConsumerWidget {
                     onTap: () async {
                       await Clipboard.setData(ClipboardData(text: link));
                       if (context.mounted) {
-                        ScaffoldMessenger.maybeOf(context)
-                            ?.showSnackBar(SnackBar(content: Text(l10n.redesignInviteCopied)));
+                        ToastHelper.showSuccess(context, l10n.redesignInviteCopied);
                       }
                     },
                   ),

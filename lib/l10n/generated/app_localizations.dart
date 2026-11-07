@@ -24176,7 +24176,7 @@ abstract class AppLocalizations {
   /// redesign.works.openMineHint
   ///
   /// In de, this message translates to:
-  /// **'{count, plural, one {Deine Stimme als PDF, auch zum Drucken} other {{count} Stimmen als ein PDF, auch zum Drucken}}'**
+  /// **'{count, plural, one {Deine Stimme als PDF, auch zum Drucken} other {{count} Noten als ein PDF, auch zum Drucken}}'**
   String redesignWorksOpenMineHint(num count);
 
   /// redesign.works.resetFilter

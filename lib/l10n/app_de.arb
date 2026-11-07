@@ -18537,7 +18537,7 @@
   "@redesignWorksOpenMine": {
     "description": "redesign.works.openMine"
   },
-  "redesignWorksOpenMineHint": "{count, plural, one {Deine Stimme als PDF, auch zum Drucken} other {{count} Stimmen als ein PDF, auch zum Drucken}}",
+  "redesignWorksOpenMineHint": "{count, plural, one {Deine Stimme als PDF, auch zum Drucken} other {{count} Noten als ein PDF, auch zum Drucken}}",
   "@redesignWorksOpenMineHint": {
     "description": "redesign.works.openMineHint",
     "placeholders": {

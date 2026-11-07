@@ -576,7 +576,7 @@
         "allEvents": "Alle Termine",
         "eventWorks": "{count, plural, one {1 Werk} other {{count} Werke}}",
         "openMine": "Meine Noten öffnen",
-        "openMineHint": "{count, plural, one {Deine Stimme als PDF, auch zum Drucken} other {{count} Stimmen als ein PDF, auch zum Drucken}}",
+        "openMineHint": "{count, plural, one {Deine Stimme als PDF, auch zum Drucken} other {{count} Noten als ein PDF, auch zum Drucken}}",
         "missingNotes": "Noten fehlen",
         "statusPart": "Deine Stimme",
         "statusRecording": "Aufnahme",

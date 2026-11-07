@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/utils/toast_helper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -331,7 +332,7 @@ Future<void> rdParentSignOut(
 }
 
 void _rdParentFailed(BuildContext context) {
-  ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.l10n.redesignTodayChildFailed)));
+  ToastHelper.showError(context, context.l10n.redesignTodayChildFailed);
 }
 
 /// "Alle Kinder": answer for every child at once, like the old portal.

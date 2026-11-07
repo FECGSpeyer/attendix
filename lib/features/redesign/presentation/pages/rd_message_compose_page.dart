@@ -374,12 +374,10 @@ class _RdMessageComposePageState extends ConsumerState<RdMessageComposePage> {
             children: [
               for (final g in groups)
                 if (g.id != null)
-                  FilterChip(
-                    label: Text(g.name),
+                  RdChoiceChip(
+                    label: g.name,
                     selected: _groups.contains(g.id),
-                    selectedColor: p.soft,
-                    checkmarkColor: p.softText,
-                    onSelected: (on) => _change(() => on ? _groups.add(g.id!) : _groups.remove(g.id)),
+                    onTap: () => _change(() => _groups.contains(g.id) ? _groups.remove(g.id) : _groups.add(g.id!)),
                   ),
             ],
           ),

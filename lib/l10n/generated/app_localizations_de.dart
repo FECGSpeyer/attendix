@@ -14983,7 +14983,7 @@ class AppLocalizationsDe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Stimmen als ein PDF, auch zum Drucken',
+      other: '$count Noten als ein PDF, auch zum Drucken',
       one: 'Deine Stimme als PDF, auch zum Drucken',
     );
     return '$_temp0';

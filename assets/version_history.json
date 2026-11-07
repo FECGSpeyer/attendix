@@ -1,13 +1,37 @@
 {
   "versions": [
     {
-      "version": "0.71.0",
+      "version": "0.72.0",
       "date": "7.11.2026",
       "changes": [
         "✨ Noten-Import: Ziel-Sammlung wählbar (Repertoire, Streicher …); Werke werden mit dieser Sammlung verglichen, neue bekommen ihr Kürzel",
         "🐛 Noten-Import: Schlägt die KI dieselbe neue Gruppe vor wie das erkannte Instrument (z. B. „Oboe“), ist sie wieder mit ✦ markiert",
         "🐛 Noten-Import: Ein Tipp auf die vorgeschlagene neue Gruppe übernimmt sie, statt den Namensdialog zu öffnen",
-        "🐛 Noten-Import: Keine Gruppe mehr aus zwei Instrumenten („Posaune und Tuba“), stattdessen beide einzeln zur Wahl"
+        "🐛 Noten-Import: Keine Gruppe mehr aus zwei Instrumenten („Posaune und Tuba“, „Posaune u. Tuba“), stattdessen beide einzeln zur Wahl",
+        "🐛 Noten-Import: Neues Werk von Hand bekommt in einer Sammlung deren Kürzel; nach Sammlungswechsel zählen die Fassungs-Daten der PDFs",
+        "🔧 KI-Tageslimit nur noch pro Gruppe (2000 Aufrufe), keins mehr pro Person"
+      ]
+    },
+    {
+      "version": "0.71.2",
+      "date": "7.11.2026",
+      "changes": [
+        "💄 Beta: Verwaltungs- und Einstellungsseiten laden mit derselben Ladekarte wie die Listen; Ladefehler mit „Erneut versuchen“",
+        "💄 Beta: Erinnern, „Link kopiert“ und Eltern-Fehler als normale Meldung (auch über offenen Blättern sichtbar)",
+        "💄 Beta: Gruppenauswahl beim Mitteilung schreiben mit den gleichen Chips wie überall"
+      ]
+    },
+    {
+      "version": "0.71.1",
+      "date": "7.11.2026",
+      "changes": [
+        "🐛 Beta: Antwortfrist beim Anlegen und Bearbeiten eines Termins wird als Ortszeit gespeichert (vorher 1–2 Std. zu früh)",
+        "🐛 Beta: iOS-Zeitrad übernimmt die angezeigte Vorgabezeit (Beginn/Ende, Frist) statt nichts oder 23:59",
+        "🐛 Beta: Filter „nur offene“ fällt weg, wenn nichts mehr offen ist; eigenes Antwort-Blatt zeigt Fehler statt Endlos-Laden; lange Termintypen überlaufen die Karte nicht",
+        "🐛 Beta: Archivieren aktualisiert Mitglieder-, Archiv- und Account-Listen sofort; Register-Wechsel mehrerer Personen nimmt Stimmführer und deren Rolle weg",
+        "🐛 Beta: Leseliste zählt Personen ohne Einteilung unter der Vorgabe; Gruppe löschen bricht bei unbekannter Mitgliederzahl ab",
+        "🐛 Beta: Werke aus verborgenen Sammlungen erscheinen nicht mehr in der Übersicht und lassen sich nicht öffnen; Suche und „Fehlen oft“ starten nach Gruppenwechsel leer",
+        "💄 Beta: einheitliche Kopfleisten, Bestätigungs- und Auswahlblätter (Termin löschen, Verwerfen, Mehrfach-Aktionen)"
       ]
     },
     {
