@@ -17,5 +17,15 @@ String mapIonicRoute(String route) {
   final path = route.trim();
   final uri = Uri.tryParse(path);
   if (uri == null) return path;
-  return legacyRouteRedirect(uri) ?? path;
+  final legacy = legacyRouteRedirect(uri);
+  if (legacy != null) return legacy;
+  // Without the /tabs prefix: Ionic's protocol route has no Flutter twin.
+  final protocol = RegExp(r'^/attendance/(\d+)/protocol$').firstMatch(uri.path);
+  if (protocol != null) {
+    return Uri(
+      path: '/settings/protocol/${protocol.group(1)}',
+      queryParameters: uri.queryParameters.isEmpty ? null : uri.queryParameters,
+    ).toString();
+  }
+  return path;
 }

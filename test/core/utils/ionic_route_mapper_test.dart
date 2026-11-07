@@ -19,6 +19,8 @@ void main() {
     test('maps the protocol route', () {
       expect(mapIonicRoute('/tabs/attendance/42/protocol'),
           '/settings/protocol/42');
+      expect(mapIonicRoute('/attendance/42/protocol?tenantId=3'),
+          '/settings/protocol/42?tenantId=3');
     });
 
     test('maps the former meetings area to the team organization', () {
