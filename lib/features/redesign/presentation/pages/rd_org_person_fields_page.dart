@@ -27,6 +27,10 @@ Future<void>? _orgFieldWrites;
 /// about to change.
 final _orgFieldWritesPending = ValueNotifier<int>(0);
 
+/// Error of a write whose page was closed meanwhile; the open page (or the
+/// next one opened) shows it.
+final _orgFieldWriteLostError = ValueNotifier<String?>(null);
+
 /// Runs [task] after every earlier write of the shared fields (also of a
 /// closed page); never throws.
 Future<bool> _serialOrgFieldWrite(Future<bool> Function() task) {
@@ -54,6 +58,26 @@ class RdOrgPersonFieldsPage extends ConsumerStatefulWidget {
 }
 
 class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
+  @override
+  void initState() {
+    super.initState();
+    _orgFieldWriteLostError.addListener(_showLostError);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _showLostError());
+  }
+
+  @override
+  void dispose() {
+    _orgFieldWriteLostError.removeListener(_showLostError);
+    super.dispose();
+  }
+
+  void _showLostError() {
+    final error = _orgFieldWriteLostError.value;
+    if (error == null || !mounted) return;
+    _orgFieldWriteLostError.value = null;
+    ToastHelper.showError(context, error);
+  }
+
   /// Synchronous check for the form (name taken): the shown list.
   List<OrgExtraField> _shownFields(int orgId) {
     final org = rdLoadedValue(ref.read(currentOrganisationProvider));
@@ -116,6 +140,8 @@ class _RdOrgPersonFieldsPageState extends ConsumerState<RdOrgPersonFieldsPage> {
       } else if (error != null) {
         ToastHelper.showError(context, error!);
       }
+    } else if (error != null) {
+      _orgFieldWriteLostError.value = error;
     }
     return ok;
   }
