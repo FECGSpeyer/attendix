@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.80.0",
+      "version": "0.81.0",
       "date": "7.11.2026",
       "changes": [
         "✨ Noten-Import: Viele offene Fragen werden nach Instrument gebündelt, eine ganze Gruppe geht mit „Alle als …“",
@@ -9,7 +9,20 @@
         "✨ Noten-Import: Vorschläge der KI stehen als „✦ Vorschlag prüfen“ im Werk",
         "✨ Noten-Import: Partitur, Klavierauszug und Chorsatz werden auf Seite 1 erkannt",
         "🐛 Noten-Import: „Cor.“ zählt als Horn (wenn es kein Kornett/Englischhorn gibt), „Chimes“ als Röhrenglocken",
-        "⚡ Noten-Import: Das geöffnete Werk wird zuerst gelesen; die KI bekommt gelernte Gruppennamen, Dateinamen und die übrigen Dateien des Werks"
+        "⚡ Noten-Import: Das geöffnete Werk wird zuerst gelesen; die KI bekommt gelernte Gruppennamen, Dateinamen und die übrigen Dateien des Werks",
+        "🐛 Noten-Import: Erkennt jetzt auch „Viole“, „Coro“, „S. A./T. B.“, „V-ni/V-le/V-c/C-b“ und „Vokal“; Becken, Triangel, Glocken und Pauke ohne eigene Gruppe gehen ins Schlagwerk",
+        "🐛 Noten-Import: Eine Gruppe namens „Schlagwerk“, „Bratsche“ oder „Piano“ wird als solche erkannt; ein nummerierter Werk-Ordner wie „12 Le viole“ zählt nicht als Stimmen-Ordner"
+      ]
+    },
+    {
+      "version": "0.80.0",
+      "date": "7.11.2026",
+      "changes": [
+        "💄 Beta: Freigaben › „Anfrage prüfen“ als eigene Seite mit Hinweis auf mögliche Doppelung, Angaben zum Bearbeiten, „Ablehnen“ und „Aufnehmen“",
+        "💄 Beta: „Pausieren“ als neues Blatt mit Grund-Auswahl, „Ab“ und „Bis“; danach „Auch in anderen Gruppen pausieren?“ mit Häkchen je Gruppe",
+        "💄 Beta: Ich › „Pausieren“ im selben Blatt (ohne „Ab“)",
+        "💄 Beta: Person übertragen / kopieren mit „Zielgruppe“ und „Register“ als Auswahlzeilen",
+        "🐛 Beta: Nach einem Gruppenwechsel wird beim Pausieren, Übertragen oder Freigeben nichts mehr in die falsche Gruppe geschrieben"
       ]
     },
     {

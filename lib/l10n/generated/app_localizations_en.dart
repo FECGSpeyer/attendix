@@ -9716,6 +9716,104 @@ class AppLocalizationsEn extends AppLocalizations {
       'Only admins and leads of a group in an organisation can search works across the organisation.';
 
   @override
+  String get rdPeopleCopyHint =>
+      'The person is created in the target group and stays active here.';
+
+  @override
+  String rdPeopleCopyTitle(Object name) {
+    return 'Copy $name';
+  }
+
+  @override
+  String get rdPeopleGroupSwitched =>
+      'The group was switched. Nothing was saved.';
+
+  @override
+  String get rdPeoplePauseFrom => 'From';
+
+  @override
+  String get rdPeoplePauseHint =>
+      'A start in the past also removes the person from the events from that day. With an end date they become active again automatically.';
+
+  @override
+  String get rdPeoplePauseNoEnd => 'No end';
+
+  @override
+  String rdPeoplePauseOthersHint(Object name) {
+    return '$name is also in these groups. Choose where the pause should apply as well.';
+  }
+
+  @override
+  String get rdPeoplePauseOthersTitle => 'Also pause in other groups?';
+
+  @override
+  String get rdPeoplePauseReasonHint => 'Enter a reason';
+
+  @override
+  String get rdPeoplePauseSelfHint =>
+      'While you are paused you are not part of any new event. With an end date you are back automatically afterwards.';
+
+  @override
+  String rdPeoplePauseTitle(Object name) {
+    return 'Pause $name';
+  }
+
+  @override
+  String get rdPeoplePauseToday => 'Today';
+
+  @override
+  String get rdPeoplePauseUntil => 'Until';
+
+  @override
+  String get rdPeopleReviewApprove => 'Accept';
+
+  @override
+  String get rdPeopleReviewDetails => 'Details';
+
+  @override
+  String get rdPeopleReviewDone => 'This request has already been handled.';
+
+  @override
+  String get rdPeopleReviewDuplicateHint =>
+      'This person may already exist here. Merging moves the registration into the existing person.';
+
+  @override
+  String get rdPeopleReviewDuplicateTitle => 'Possible duplicate';
+
+  @override
+  String rdPeopleReviewRequestedOn(Object date) {
+    return 'Request from $date';
+  }
+
+  @override
+  String get rdPeopleReviewTitle => 'Review request';
+
+  @override
+  String get rdPeopleTransferChoose => 'Choose';
+
+  @override
+  String get rdPeopleTransferHint =>
+      'The person is created in the target group and archived here.';
+
+  @override
+  String get rdPeopleTransferNoRegisters => 'No sections';
+
+  @override
+  String get rdPeopleTransferNoTargets =>
+      'There are no other groups in your organisation.';
+
+  @override
+  String get rdPeopleTransferRegister => 'Section';
+
+  @override
+  String get rdPeopleTransferTarget => 'Target group';
+
+  @override
+  String rdPeopleTransferTitle(Object name) {
+    return 'Transfer $name';
+  }
+
+  @override
   String get rdSettingsAddRule => 'Add rule';
 
   @override
