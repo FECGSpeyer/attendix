@@ -1284,6 +1284,10 @@ RdImportPlan rdBuildImportPlan(
     if (list.length < 2 && newGroups.isEmpty && severals.isEmpty) continue;
     String top(Map<String, int> counts) => (counts.entries.toList()..sort((a, b) => b.value.compareTo(a.value))).first.key;
     final suggestion = suggestions.isEmpty ? null : (suggestions.entries.toList()..sort((a, b) => b.value.compareTo(a.value))).first.key;
+    // A part for several groups is the answer only when at least half of
+    // the files are one: a single "Klavier - Oboe" does not decide for 96
+    // files "Oboe".
+    final several = severals.isEmpty ? null : (severals.entries.toList()..sort((a, b) => b.value.compareTo(a.value))).first;
     questions.add(RdImportQuestion(
       key: entry.key,
       label: labels.isEmpty ? entry.key : top(labels),
@@ -1292,7 +1296,7 @@ RdImportPlan rdBuildImportPlan(
       files: {for (final q in list) q.file.name}.take(3).toList(),
       suggestion: suggestion,
       newGroup: newGroups.isEmpty ? null : top(newGroups),
-      several: severals.isEmpty ? const [] : (severals.entries.toList()..sort((a, b) => b.value.compareTo(a.value))).first.key.groups,
+      several: several == null || several.value * 2 < list.length ? const [] : several.key.groups,
     ));
   }
   questions.sort((a, b) => b.fileCount != a.fileCount ? b.fileCount.compareTo(a.fileCount) : a.label.compareTo(b.label));
