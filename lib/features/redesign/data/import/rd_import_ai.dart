@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/utils/choir_file_utils.dart';
+import '../../../../core/utils/instrument_matcher.dart';
 import 'rd_import_logic.dart';
 
 /// REDESIGN: suggestions of the KI for the questions of "Noten importieren".
@@ -54,6 +55,8 @@ RdImportCategory? rdImportAiCategory(Map<String, dynamic> answer, {required Set<
       final name = answer['newGroup'];
       if (name is! String) return null;
       final trimmed = name.trim();
+      // A group is one instrument: "Posaune und Tuba" is no answer.
+      if (InstrumentMatcher.knownGroups(trimmed, isChoir: isChoir).length > 1) return null;
       return trimmed.isEmpty || trimmed.length > 40 ? null : RdImportCategory(newGroup: trimmed);
     case 'recording':
       return const RdImportCategory(instrumentId: 1);

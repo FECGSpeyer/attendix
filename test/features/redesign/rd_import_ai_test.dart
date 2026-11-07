@@ -25,6 +25,8 @@ void main() {
       expect(cat(a('new', {'newGroup': ' Saxophon '})), const RdImportCategory(newGroup: 'Saxophon'));
       expect(cat(a('new', {'newGroup': ''})), isNull);
       expect(cat(a('new', {'newGroup': 'x' * 41})), isNull);
+      // One group is one instrument.
+      expect(cat(a('new', {'newGroup': 'Posaune und Tuba'})), isNull);
     });
 
     test('kinds of files', () {

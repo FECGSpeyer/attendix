@@ -11731,6 +11731,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportCategoryParts => 'Parts';
 
   @override
+  String get redesignImportCollectionHint =>
+      'The folders are compared with the works of this collection, new works get its prefix.';
+
+  @override
+  String get redesignImportCollectionTitle => 'Into which collection?';
+
+  @override
   String get redesignImportConfirmButton => 'Import';
 
   @override

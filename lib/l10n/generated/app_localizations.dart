@@ -19271,6 +19271,18 @@ abstract class AppLocalizations {
   /// **'Stimmen'**
   String get redesignImportCategoryParts;
 
+  /// redesign.import.collectionHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Ordner werden mit den Werken dieser Sammlung verglichen, neue Werke bekommen ihr Kürzel.'**
+  String get redesignImportCollectionHint;
+
+  /// redesign.import.collectionTitle
+  ///
+  /// In de, this message translates to:
+  /// **'In welche Sammlung?'**
+  String get redesignImportCollectionTitle;
+
   /// redesign.import.confirmButton
   ///
   /// In de, this message translates to:

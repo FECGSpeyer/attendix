@@ -3190,6 +3190,8 @@
   "redesignImportCategoryNewGroup": "New group: {name}",
   "redesignImportCategoryOther": "Other",
   "redesignImportCategoryParts": "Parts",
+  "redesignImportCollectionHint": "The folders are compared with the works of this collection, new works get its prefix.",
+  "redesignImportCollectionTitle": "Into which collection?",
   "redesignImportConfirmButton": "Import",
   "redesignImportConfirmKeepOpen": "Keep this page open until everything is done.",
   "redesignImportConfirmMessage": "{files, plural, one {1 file will be uploaded to {works}.} other {{files} files will be uploaded to {works}.}}",

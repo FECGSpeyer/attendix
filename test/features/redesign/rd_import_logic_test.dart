@@ -421,6 +421,19 @@ void main() {
       expect(summary.open, 1); // 120: number fits, title not
       expect(summary.openQuestions, 0);
     });
+
+    test('into a Sammlung: new Werke get its Kürzel, numbers of the whole group count', () {
+      final entries = [_e('Noten/157 Jesus ruft dich/Viola.pdf'), _e('Noten/12 Neu/Viola.pdf')];
+      final plan = rdBuildImportPlan(entries,
+          songs: const [],
+          instruments: _instruments,
+          isChoir: false,
+          newPrefix: 'S',
+          takenNumbers: {rdImportNumberKey('s', 12)});
+      RdWorkTarget target(String title) => rdDefaultTarget(plan, plan.works.firstWhere((w) => w.title == title));
+      expect((target('Jesus ruft dich').prefix, target('Jesus ruft dich').number), ('S', 157));
+      expect((target('Neu').prefix, target('Neu').number), ('S', null));
+    });
   });
 
   group('dates', () {

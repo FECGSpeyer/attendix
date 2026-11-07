@@ -13,7 +13,7 @@
 // - a real signed-in account (auth.getUser; the public anon JWT is refused),
 // - that account edits the tenant (tenantUsers role admin, responsible,
 //   helper, voice-leader helper),
-// - a daily budget per account and per tenant (`part_detect_take`, see
+// - a daily budget per tenant (`part_detect_take`, see
 //   supabase/sql/part_detect_usage.sql; missing → every call refused),
 // - the groups come from the database (tenant filter), not from the caller;
 //   group names are passed as quoted data, never as instructions.
@@ -37,9 +37,11 @@ const MODEL = "gpt-6-luna";
 /// Roles that edit the tenant (app: `Role.canEdit`).
 const EDIT_ROLES = [1, 4, 5, 9];
 
-/// Calls per day (UTC): per account over all its tenants, per tenant; about 0.1 cent each.
-const DAILY_LIMIT_USER = 200;
-const DAILY_LIMIT_TENANT = 500;
+/// Calls per day (UTC) per tenant, shared with part-suggest and work-match;
+/// a page costs well under 0.1 cent.
+/// No limit per account (Leon, 07.11.2026): only the tenant's counts.
+const DAILY_LIMIT_USER = 2_147_483_647;
+const DAILY_LIMIT_TENANT = 2000;
 
 /// Decoded picture size; the app sends at most this (PartVisionService.maxImageBytes).
 const MAX_IMAGE_BYTES = 1_500_000;
