@@ -4043,6 +4043,12 @@ abstract class AppLocalizations {
   /// **'Sammlung löschen'**
   String get collectionsDelete;
 
+  /// collections.deleteChoose
+  ///
+  /// In de, this message translates to:
+  /// **'Was soll mit den Werken in „{name}“ passieren?'**
+  String collectionsDeleteChoose(Object name);
+
   /// collections.deleteConfirm
   ///
   /// In de, this message translates to:
@@ -4054,6 +4060,54 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Die Sammlung konnte nicht gelöscht werden.'**
   String get collectionsDeleteFailed;
+
+  /// collections.deleteKeepWorks
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Das Werk ins Repertoire verschieben} other {Die {count} Werke ins Repertoire verschieben}}'**
+  String collectionsDeleteKeepWorks(num count);
+
+  /// collections.deleteWithWorks
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Das Werk samt Noten löschen} other {Alle {count} Werke samt Noten löschen}}'**
+  String collectionsDeleteWithWorks(num count);
+
+  /// collections.deleteWorksConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Endgültig löschen'**
+  String get collectionsDeleteWorksConfirm;
+
+  /// collections.deleteWorksFailed
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk konnte nicht gelöscht werden. Es bleibt mit der Sammlung erhalten.} other {{count} Werke konnten nicht gelöscht werden. Sie bleiben mit der Sammlung erhalten.}}'**
+  String collectionsDeleteWorksFailed(num count);
+
+  /// collections.deleteWorksMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Die Werke in „{name}“ werden mit allen Noten und Dateien gelöscht, danach die Sammlung. Das lässt sich nicht rückgängig machen.'**
+  String collectionsDeleteWorksMessage(Object name);
+
+  /// collections.deleteWorksTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk endgültig löschen?} other {{count} Werke endgültig löschen?}}'**
+  String collectionsDeleteWorksTitle(num count);
+
+  /// collections.deletedWorks
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Sammlung und 1 Werk gelöscht} other {Sammlung und {count} Werke gelöscht}}'**
+  String collectionsDeletedWorks(num count);
+
+  /// collections.deletingWorks
+  ///
+  /// In de, this message translates to:
+  /// **'Wird gelöscht … {done} von {total}'**
+  String collectionsDeletingWorks(Object done, Object total);
 
   /// collections.editHint
   ///

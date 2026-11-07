@@ -11,6 +11,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../data/rd_collections_logic.dart';
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
@@ -22,7 +23,7 @@ import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 /// Bestimmte Gruppen), "Im Termin-Programm planbar", "Im öffentlichen
 /// Werke-Link"; saved right away (text when the field loses focus or the
 /// page closes). "Sammlung löschen" at the bottom: its Werke go back to the
-/// Repertoire.
+/// Repertoire, or (chosen, asked twice) are deleted with their files.
 class RdCollectionEditPage extends ConsumerStatefulWidget {
   const RdCollectionEditPage({super.key, required this.collectionId});
 
@@ -42,6 +43,9 @@ class _RdCollectionEditPageState extends ConsumerState<RdCollectionEditPage> {
   bool _filled = false;
   bool _deleted = false;
   bool _deleting = false;
+
+  /// Werke deleted with the Sammlung so far, of how many.
+  (int, int)? _progress;
 
   /// As last stored (to save text only when it changed).
   String _storedName = '';
@@ -150,28 +154,83 @@ class _RdCollectionEditPageState extends ConsumerState<RdCollectionEditPage> {
     context.canPop() ? context.pop() : context.go(RedesignRoutes.collections);
   }
 
+  /// Without Werke one question; with Werke the choice "ins Repertoire" or
+  /// "samt Noten löschen", the latter asked once more (it cannot be undone).
   Future<void> _delete(SongCollection c) async {
     if (_deleting) return;
     final l10n = context.l10n;
-    final confirmed = await DialogHelper.showConfirmation(
-      context,
-      title: l10n.collectionsDelete,
-      message: l10n.collectionsDeleteConfirm(_name.text.trim().isEmpty ? c.name : _name.text.trim()),
-      confirmText: l10n.commonDelete,
-      isDestructive: true,
-    );
-    if (!confirmed || !mounted) return;
+    final name = _name.text.trim().isEmpty ? c.name : _name.text.trim();
+    final count = rdWorksIn(_songs ?? const <Song>[], _id).length;
+    var withWorks = false;
+    if (count == 0) {
+      final confirmed = await DialogHelper.showConfirmation(
+        context,
+        title: l10n.collectionsDelete,
+        message: l10n.collectionsDeleteConfirm(name),
+        confirmText: l10n.commonDelete,
+        isDestructive: true,
+      );
+      if (!confirmed || !mounted) return;
+    } else {
+      final choice = await showAppRadioAlert<bool>(
+        context,
+        title: l10n.collectionsDelete,
+        subtitle: l10n.collectionsDeleteChoose(name),
+        options: [
+          (false, l10n.collectionsDeleteKeepWorks(count)),
+          (true, l10n.collectionsDeleteWithWorks(count)),
+        ],
+        initialValue: false,
+        confirmText: l10n.commonDelete,
+      );
+      final value = choice?.value;
+      if (value == null || !mounted) return;
+      withWorks = value;
+      if (withWorks) {
+        final sure = await DialogHelper.showConfirmation(
+          context,
+          title: l10n.collectionsDeleteWorksTitle(count),
+          message: l10n.collectionsDeleteWorksMessage(name),
+          confirmText: l10n.collectionsDeleteWorksConfirm,
+          isDestructive: true,
+        );
+        if (!sure || !mounted) return;
+      }
+    }
     setState(() => _deleting = true);
     await _queue;
     if (!mounted) return;
     _deleted = true;
-    final ok = await _notifier.delete(_id);
-    if (!mounted) return;
-    setState(() => _deleting = false);
-    if (!ok) {
-      _deleted = false;
-      ToastHelper.showError(context, l10n.collectionsDeleteFailed);
-      return;
+    if (withWorks) {
+      final result = await _notifier.deleteWithWorks(
+        _id,
+        onProgress: (done, total) {
+          if (mounted) setState(() => _progress = (done, total));
+        },
+      );
+      if (!mounted) return;
+      setState(() {
+        _deleting = false;
+        _progress = null;
+      });
+      if (!result.ok) {
+        _deleted = false;
+        ToastHelper.showError(
+          context,
+          result.failed > 0 ? l10n.collectionsDeleteWorksFailed(result.failed) : l10n.collectionsDeleteFailed,
+        );
+        return;
+      }
+      ToastHelper.showSuccess(context, l10n.collectionsDeletedWorks(result.deleted));
+    } else {
+      final ok = await _notifier.delete(_id);
+      if (!mounted) return;
+      setState(() => _deleting = false);
+      if (!ok) {
+        _deleted = false;
+        ToastHelper.showError(context, l10n.collectionsDeleteFailed);
+        return;
+      }
     }
     context.canPop() ? context.pop() : context.go(RedesignRoutes.collections);
   }
@@ -345,7 +404,11 @@ class _RdCollectionEditPageState extends ConsumerState<RdCollectionEditPage> {
             RdListRow(
               key: const Key('rd-collection-delete'),
               title: l10n.collectionsDelete,
-              subtitle: count == 0 ? null : l10n.collectionsWorks(count),
+              subtitle: _progress != null
+                  ? l10n.collectionsDeletingWorks(_progress!.$1, _progress!.$2)
+                  : count == 0
+                  ? null
+                  : l10n.collectionsWorks(count),
               titleColor: p.absent,
               leading: Icon(Icons.delete_outline, color: p.absent),
               showChevron: false,

@@ -3025,6 +3025,13 @@
   "@collectionsDelete": {
     "description": "collections.delete"
   },
+  "collectionsDeleteChoose": "Was soll mit den Werken in „{name}“ passieren?",
+  "@collectionsDeleteChoose": {
+    "description": "collections.deleteChoose",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "collectionsDeleteConfirm": "„{name}“ löschen? Ihre Werke kommen ins Repertoire zurück.",
   "@collectionsDeleteConfirm": {
     "description": "collections.deleteConfirm",
@@ -3035,6 +3042,70 @@
   "collectionsDeleteFailed": "Die Sammlung konnte nicht gelöscht werden.",
   "@collectionsDeleteFailed": {
     "description": "collections.deleteFailed"
+  },
+  "collectionsDeleteKeepWorks": "{count, plural, one {Das Werk ins Repertoire verschieben} other {Die {count} Werke ins Repertoire verschieben}}",
+  "@collectionsDeleteKeepWorks": {
+    "description": "collections.deleteKeepWorks",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "collectionsDeleteWithWorks": "{count, plural, one {Das Werk samt Noten löschen} other {Alle {count} Werke samt Noten löschen}}",
+  "@collectionsDeleteWithWorks": {
+    "description": "collections.deleteWithWorks",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "collectionsDeleteWorksConfirm": "Endgültig löschen",
+  "@collectionsDeleteWorksConfirm": {
+    "description": "collections.deleteWorksConfirm"
+  },
+  "collectionsDeleteWorksFailed": "{count, plural, one {1 Werk konnte nicht gelöscht werden. Es bleibt mit der Sammlung erhalten.} other {{count} Werke konnten nicht gelöscht werden. Sie bleiben mit der Sammlung erhalten.}}",
+  "@collectionsDeleteWorksFailed": {
+    "description": "collections.deleteWorksFailed",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "collectionsDeleteWorksMessage": "Die Werke in „{name}“ werden mit allen Noten und Dateien gelöscht, danach die Sammlung. Das lässt sich nicht rückgängig machen.",
+  "@collectionsDeleteWorksMessage": {
+    "description": "collections.deleteWorksMessage",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "collectionsDeleteWorksTitle": "{count, plural, one {1 Werk endgültig löschen?} other {{count} Werke endgültig löschen?}}",
+  "@collectionsDeleteWorksTitle": {
+    "description": "collections.deleteWorksTitle",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "collectionsDeletedWorks": "{count, plural, one {Sammlung und 1 Werk gelöscht} other {Sammlung und {count} Werke gelöscht}}",
+  "@collectionsDeletedWorks": {
+    "description": "collections.deletedWorks",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "collectionsDeletingWorks": "Wird gelöscht … {done} von {total}",
+  "@collectionsDeletingWorks": {
+    "description": "collections.deletingWorks",
+    "placeholders": {
+      "done": {},
+      "total": {}
+    }
   },
   "collectionsEditHint": "Änderungen werden sofort gespeichert.",
   "@collectionsEditHint": {

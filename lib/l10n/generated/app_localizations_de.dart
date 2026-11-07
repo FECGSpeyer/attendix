@@ -2448,6 +2448,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get collectionsDelete => 'Sammlung löschen';
 
   @override
+  String collectionsDeleteChoose(Object name) {
+    return 'Was soll mit den Werken in „$name“ passieren?';
+  }
+
+  @override
   String collectionsDeleteConfirm(Object name) {
     return '„$name“ löschen? Ihre Werke kommen ins Repertoire zurück.';
   }
@@ -2455,6 +2460,76 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get collectionsDeleteFailed =>
       'Die Sammlung konnte nicht gelöscht werden.';
+
+  @override
+  String collectionsDeleteKeepWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Die $count Werke ins Repertoire verschieben',
+      one: 'Das Werk ins Repertoire verschieben',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String collectionsDeleteWithWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Alle $count Werke samt Noten löschen',
+      one: 'Das Werk samt Noten löschen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get collectionsDeleteWorksConfirm => 'Endgültig löschen';
+
+  @override
+  String collectionsDeleteWorksFailed(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count Werke konnten nicht gelöscht werden. Sie bleiben mit der Sammlung erhalten.',
+      one:
+          '1 Werk konnte nicht gelöscht werden. Es bleibt mit der Sammlung erhalten.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String collectionsDeleteWorksMessage(Object name) {
+    return 'Die Werke in „$name“ werden mit allen Noten und Dateien gelöscht, danach die Sammlung. Das lässt sich nicht rückgängig machen.';
+  }
+
+  @override
+  String collectionsDeleteWorksTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke endgültig löschen?',
+      one: '1 Werk endgültig löschen?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String collectionsDeletedWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Sammlung und $count Werke gelöscht',
+      one: 'Sammlung und 1 Werk gelöscht',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String collectionsDeletingWorks(Object done, Object total) {
+    return 'Wird gelöscht … $done von $total';
+  }
 
   @override
   String get collectionsEditHint => 'Änderungen werden sofort gespeichert.';

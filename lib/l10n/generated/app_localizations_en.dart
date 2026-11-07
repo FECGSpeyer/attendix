@@ -2425,12 +2425,85 @@ class AppLocalizationsEn extends AppLocalizations {
   String get collectionsDelete => 'Delete collection';
 
   @override
+  String collectionsDeleteChoose(Object name) {
+    return 'What should happen to the pieces in \"$name\"?';
+  }
+
+  @override
   String collectionsDeleteConfirm(Object name) {
     return 'Delete \"$name\"? Its pieces go back to the repertoire.';
   }
 
   @override
   String get collectionsDeleteFailed => 'The collection could not be deleted.';
+
+  @override
+  String collectionsDeleteKeepWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Move the $count pieces to the repertoire',
+      one: 'Move the piece to the repertoire',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String collectionsDeleteWithWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Delete all $count pieces with their sheet music',
+      one: 'Delete the piece with its sheet music',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get collectionsDeleteWorksConfirm => 'Delete for good';
+
+  @override
+  String collectionsDeleteWorksFailed(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pieces could not be deleted. They stay in the collection.',
+      one: '1 piece could not be deleted. It stays in the collection.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String collectionsDeleteWorksMessage(Object name) {
+    return 'The pieces in \"$name\" are deleted with all sheet music and files, then the collection. This cannot be undone.';
+  }
+
+  @override
+  String collectionsDeleteWorksTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Delete $count pieces for good?',
+      one: 'Delete 1 piece for good?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String collectionsDeletedWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Collection and $count pieces deleted',
+      one: 'Collection and 1 piece deleted',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String collectionsDeletingWorks(Object done, Object total) {
+    return 'Deleting … $done of $total';
+  }
 
   @override
   String get collectionsEditHint => 'Changes are saved right away.';
