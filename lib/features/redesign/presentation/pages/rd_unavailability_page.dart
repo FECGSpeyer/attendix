@@ -58,9 +58,16 @@ class RdUnavailabilityPage extends ConsumerStatefulWidget {
 }
 
 class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
-  late final int? _tenantId = ref.read(currentTenantIdProvider);
+  /// The group when the page opened.
+  int? _tenantId;
   List<_Draft>? _drafts;
   bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tenantId = ref.read(currentTenantIdProvider);
+  }
 
   bool get _sameGroup => _tenantId != null && ref.read(currentTenantIdProvider) == _tenantId;
 
@@ -173,6 +180,7 @@ class _RdUnavailabilityPageState extends ConsumerState<RdUnavailabilityPage> {
     setState(() => _saving = true);
     final saved = <PersonUnavailability>[];
     for (final draft in changed) {
+      if (!_sameGroup) break;
       final result = await notifier.saveUnavailability(draft.rule.copyWith(reason: draft.rule.reason.trim()));
       if (!mounted) return;
       if (result == null) {
