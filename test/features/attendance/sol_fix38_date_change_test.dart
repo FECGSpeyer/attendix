@@ -33,6 +33,8 @@ void main() {
 
   test('shiftDeadline keeps the wall time of the stored deadline (also across DST)', () {
     expect(shiftDeadline('2026-03-28T18:00:00.000Z', 1), '2026-03-29T18:00:00.000Z');
+    expect(shiftDeadline('2026-03-28T02:30:00.000Z', 1), '2026-03-29T02:30:00.000Z');
+    expect(shiftDeadline('2026-03-29T02:30:00.000Z', -1), '2026-03-28T02:30:00.000Z');
     expect(shiftDeadline(null, 1), isNull);
   });
 }

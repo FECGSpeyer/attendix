@@ -36,9 +36,15 @@ DateTime shiftByCalendarDays(DateTime value, int days) {
 /// Moves a stored deadline (local wall time in UTC notation) by [days]
 /// calendar days, keeping its wall time across DST changes.
 String? shiftDeadline(String? deadline, int days) {
-  final local = EventListUtils.deadlineLocal(deadline);
-  if (local == null) return deadline;
-  return EventListUtils.deadlineToStore(DateTime(local.year, local.month, local.day + days, local.hour, local.minute));
+  if (deadline == null || deadline.isEmpty) return deadline;
+  final parsed = DateTime.tryParse(deadline);
+  if (parsed == null) return deadline;
+  // A value without zone is local time: store it the usual way first.
+  final stored = parsed.isUtc ? parsed : DateTime.parse(EventListUtils.deadlineToStore(parsed));
+  // UTC calendar arithmetic on the wall-time components: no local DST gap
+  // can move the time (02:30 stays 02:30).
+  return DateTime.utc(stored.year, stored.month, stored.day + days, stored.hour, stored.minute, stored.second)
+      .toIso8601String();
 }
 
 /// Ionic `hasNonDefaultStatus`: someone deviates from the type's default.
