@@ -12,6 +12,7 @@ import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../core/utils/dialog_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/player_repository.dart';
 import '../../../../l10n/l10n.dart';
@@ -218,21 +219,15 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
     final l10n = context.l10n;
     // Bound before the dialog (tenant switch safety).
     final repo = ref.read(playerRepositoryWithTenantProvider);
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.redesignBulkArchiveConfirm(persons.length)),
-        content: Text(l10n.redesignBulkArchiveHint),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.commonCancel)),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(l10n.redesignBulkActionArchive),
-          ),
-        ],
-      ),
+    // Same confirmation as the other destructive steps of the Beta.
+    final confirmed = await DialogHelper.showConfirmation(
+      context,
+      title: l10n.redesignBulkArchiveConfirm(persons.length),
+      message: l10n.redesignBulkArchiveHint,
+      confirmText: l10n.redesignBulkActionArchive,
+      isDestructive: true,
     );
-    if (confirmed != true) return;
+    if (!confirmed) return;
     final today = DateTime.now().toIso8601String();
     await _run(boundRepo: repo, persons, (repo, p) => repo.archivePlayer(p, today, null));
   }
