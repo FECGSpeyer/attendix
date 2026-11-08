@@ -18956,7 +18956,7 @@ abstract class AppLocalizations {
   /// redesign.events.no
   ///
   /// In de, this message translates to:
-  /// **'Abmelden'**
+  /// **'Kann nicht'**
   String get redesignEventsNo;
 
   /// redesign.events.noMatch
@@ -19034,7 +19034,7 @@ abstract class AppLocalizations {
   /// redesign.events.yes
   ///
   /// In de, this message translates to:
-  /// **'Dabei'**
+  /// **'Bin dabei'**
   String get redesignEventsYes;
 
   /// redesign.events.you
@@ -21641,6 +21641,60 @@ abstract class AppLocalizations {
   /// **'Niemand wartet auf Freigabe.'**
   String get redesignMembersEmptyPending;
 
+  /// redesign.members.filterCritical
+  ///
+  /// In de, this message translates to:
+  /// **'Fehlen oft'**
+  String get redesignMembersFilterCritical;
+
+  /// redesign.members.filterField
+  ///
+  /// In de, this message translates to:
+  /// **'{name}: {value}'**
+  String redesignMembersFilterField(Object name, Object value);
+
+  /// redesign.members.filterGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen'**
+  String get redesignMembersFilterGroups;
+
+  /// redesign.members.filterNoAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Konto'**
+  String get redesignMembersFilterNoAccount;
+
+  /// redesign.members.filterNoMatch
+  ///
+  /// In de, this message translates to:
+  /// **'Niemand passt zu den Filtern.'**
+  String get redesignMembersFilterNoMatch;
+
+  /// redesign.members.filterOtherChip
+  ///
+  /// In de, this message translates to:
+  /// **'Auch in {name}'**
+  String redesignMembersFilterOtherChip(Object name);
+
+  /// redesign.members.filterOtherInstance
+  ///
+  /// In de, this message translates to:
+  /// **'Auch Mitglied in'**
+  String get redesignMembersFilterOtherInstance;
+
+  /// redesign.members.filterRemove
+  ///
+  /// In de, this message translates to:
+  /// **'Filter „{name}“ entfernen'**
+  String redesignMembersFilterRemove(Object name);
+
+  /// redesign.members.filterShow
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Niemand passt} one {1 Person anzeigen} other {{count} Personen anzeigen}}'**
+  String redesignMembersFilterShow(num count);
+
   /// redesign.members.leader
   ///
   /// In de, this message translates to:
@@ -23164,6 +23218,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Ich kann nicht'**
   String get redesignSignoutCannot;
+
+  /// redesign.signout.childCannot
+  ///
+  /// In de, this message translates to:
+  /// **'Absagen'**
+  String get redesignSignoutChildCannot;
+
+  /// redesign.signout.childLater
+  ///
+  /// In de, this message translates to:
+  /// **'Später kommen'**
+  String get redesignSignoutChildLater;
+
+  /// redesign.signout.childPrivacy
+  ///
+  /// In de, this message translates to:
+  /// **'Den Grund sieht nur die Leitung.'**
+  String get redesignSignoutChildPrivacy;
 
   /// redesign.signout.later
   ///

@@ -329,10 +329,13 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
               : RdInfoCard(
                 text: async.hasError ? l10n.redesignTodayLoadFailed : l10n.redesignWorkNotFound,
                 icon: Icons.error_outline,
-                action: RdOutlineButton(
-                  label: l10n.redesignCommonRetry,
-                  onPressed: () => ref.invalidate(songDetailDataProvider(_params)),
-                ),
+                // Retry only helps after an error, not when it is gone.
+                action: async.hasError
+                    ? RdOutlineButton(
+                      label: l10n.redesignCommonRetry,
+                      onPressed: () => ref.invalidate(songDetailDataProvider(_params)),
+                    )
+                    : null,
               ),
         ],
       );

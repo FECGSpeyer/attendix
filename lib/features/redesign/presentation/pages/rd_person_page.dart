@@ -74,10 +74,13 @@ class RdPersonPage extends ConsumerWidget {
             : RdInfoCard(
                 text: async.hasError ? l10n.redesignTodayLoadFailed : l10n.redesignPersonNotFound,
                 icon: Icons.person_off_outlined,
-                action: RdOutlineButton(
-                  label: l10n.redesignCommonRetry,
-                  onPressed: () => ref.invalidate(personProvider(personId)),
-                ),
+                // Retry only helps after an error, not when it is gone.
+                action: async.hasError
+                    ? RdOutlineButton(
+                      label: l10n.redesignCommonRetry,
+                      onPressed: () => ref.invalidate(personProvider(personId)),
+                    )
+                    : null,
               ),
       ]);
     }

@@ -13,7 +13,7 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../data/providers/rd_events_providers.dart' show rdAttendanceDurationDays, rdUnrecordedProvider;
+import '../../../data/providers/rd_events_providers.dart' show rdAttendanceDurationDays, rdSortStartOf, rdUnrecordedProvider;
 import '../../../data/providers/rd_members_providers.dart';
 import '../../../data/providers/rd_today_providers.dart';
 import '../rd_desktop.dart';
@@ -39,8 +39,7 @@ class RdLeaderToday extends ConsumerWidget {
     final upcoming = all
         .where((a) => !EventListUtils.hasEnded(a.date, rdAttendanceDurationDays(a, types), now: current))
         .toList();
-    DateTime keyOf(Attendance a) =>
-        rdStartOf(a.date, a.startTime) ?? DateTime(9999);
+    DateTime keyOf(Attendance a) => rdSortStartOf(a, types) ?? DateTime(9999);
     upcoming.sort((a, b) => keyOf(a).compareTo(keyOf(b)));
     return upcoming;
   }

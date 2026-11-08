@@ -498,14 +498,15 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
                   sort != SongSortOption.numberAsc
                       ? Align(
                         alignment: AlignmentDirectional.centerStart,
-                        child: _SortChip(
+                        child: RdRemovableChip(
                           label: rdWorksSortLabel(l10n, sort, orchestra: data.isOrchestra),
+                          semanticLabel: l10n.redesignWorksSortRemove(rdWorksSortLabel(l10n, sort, orchestra: data.isOrchestra)),
                           onRemove: () => filterNotifier.setSortOption(SongSortOption.numberAsc),
                         ),
                       )
                       : Text(l10n.redesignWorksEventWorks(shown.length), style: RdType.meta(p, size: 13)),
             ),
-            _FilterLink(
+            RdFilterLink(
               label: filterCount > 0 ? '${l10n.redesignWorksFilter} · $filterCount' : l10n.redesignWorksFilter,
               onTap:
                   () => showRdWorksFilterSheet(
@@ -729,87 +730,6 @@ class _LeadEventRow extends StatelessWidget {
                   ),
                 ),
                 if (onTap != null) ...[const SizedBox(width: 4), Icon(Icons.chevron_right, size: 20, color: p.text2)],
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// The chosen sort order above the list, removable.
-class _SortChip extends StatelessWidget {
-  const _SortChip({required this.label, required this.onRemove});
-
-  final String label;
-  final VoidCallback onRemove;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    return Semantics(
-      button: true,
-      label: context.l10n.redesignWorksSortRemove(label),
-      excludeSemantics: true,
-      child: Material(
-        color: p.soft,
-        shape: const StadiumBorder(),
-        child: InkWell(
-          customBorder: const StadiumBorder(),
-          onTap: onRemove,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 36),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Text(
-                      label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: p.softText),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Icon(Icons.close, size: 16, color: p.softText),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// "Filter" (with the number of active filters) above the list.
-class _FilterLink extends StatelessWidget {
-  const _FilterLink({required this.label, required this.onTap});
-
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    return Semantics(
-      button: true,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 44),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.tune, size: 18, color: p.link),
-                const SizedBox(width: 6),
-                Text(label, style: TextStyle(fontSize: 15, color: p.link)),
               ],
             ),
           ),
