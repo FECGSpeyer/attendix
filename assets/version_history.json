@@ -1,10 +1,25 @@
 {
   "versions": [
     {
-      "version": "0.94.4",
+      "version": "0.95.2",
       "date": "8.11.2026",
       "changes": [
         "💄 Beta-Mitglied: „Meinen Benutzer zuweisen“ erscheint nur noch, solange du in der Gruppe mit keinem Mitglied verknüpft bist"
+      ]
+    },
+    {
+      "version": "0.95.1",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta: Ein ausgetretenes Mitglied zeigt oben „Ausgetreten“ (für die Leitung mit Grund) und „Wiederherstellen“ als Hauptaktion, darunter Anwesenheit und alle Angaben zum Lesen"
+      ]
+    },
+    {
+      "version": "0.95.0",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta Lehrer anlegen: ein Blatt „Neuer Lehrer“ (Name und Instrumente als Auswahl, „Anlegen“ oben rechts) – in Verwaltung › Lehrer und bei „Neuer Lehrer“ in „Person bearbeiten“; keine zweite Seite mehr, der neue Lehrer steht gleich in der Liste. Was fehlt, steht direkt im Blatt; schlägt das Speichern fehl, bleibt die Eingabe erhalten",
+        "💄 Beta Lehrer-Liste: „0 Spieler“ in ruhigem Grau statt rot"
       ]
     },
     {
