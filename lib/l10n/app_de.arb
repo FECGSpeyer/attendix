@@ -13356,6 +13356,10 @@
   "@redesignCreateEnd": {
     "description": "redesign.create.end"
   },
+  "redesignCreateEndBeforeStart": "Das Ende kann nicht vor dem Beginn liegen.",
+  "@redesignCreateEndBeforeStart": {
+    "description": "redesign.create.endBeforeStart"
+  },
   "redesignCreateFewer": "Weniger",
   "@redesignCreateFewer": {
     "description": "redesign.create.fewer"
@@ -13871,6 +13875,25 @@
   "redesignEventEditTitle": "Termin bearbeiten",
   "@redesignEventEditTitle": {
     "description": "redesign.eventEdit.title"
+  },
+  "redesignEventEditTypeStatusAdopt": "Anpassen",
+  "@redesignEventEditTypeStatusAdopt": {
+    "description": "redesign.eventEdit.typeStatusAdopt"
+  },
+  "redesignEventEditTypeStatusMessage": "{count, plural, one {1 Person steht noch auf „{from}“, dem Standard der bisherigen Art. Soll sie auf „{to}“ wechseln?} other {{count} Personen stehen noch auf „{from}“, dem Standard der bisherigen Art. Sollen sie auf „{to}“ wechseln?}}",
+  "@redesignEventEditTypeStatusMessage": {
+    "description": "redesign.eventEdit.typeStatusMessage",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "from": {},
+      "to": {}
+    }
+  },
+  "redesignEventEditTypeStatusTitle": "Status anpassen?",
+  "@redesignEventEditTypeStatusTitle": {
+    "description": "redesign.eventEdit.typeStatusTitle"
   },
   "redesignEventExportExcel": "Als Excel exportieren",
   "@redesignEventExportExcel": {

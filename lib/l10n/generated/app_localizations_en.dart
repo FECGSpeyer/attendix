@@ -10631,6 +10631,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignCreateEnd => 'End';
 
   @override
+  String get redesignCreateEndBeforeStart =>
+      'The end cannot be before the start.';
+
+  @override
   String get redesignCreateFewer => 'Fewer';
 
   @override
@@ -11051,6 +11055,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignEventEditTitle => 'Edit event';
+
+  @override
+  String get redesignEventEditTypeStatusAdopt => 'Adjust';
+
+  @override
+  String redesignEventEditTypeStatusMessage(num count, Object from, Object to) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count people are still on \"$from\", the default of the previous type. Switch them to \"$to\"?',
+      one:
+          '1 person is still on \"$from\", the default of the previous type. Switch to \"$to\"?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignEventEditTypeStatusTitle => 'Adjust status?';
 
   @override
   String get redesignEventExportExcel => 'Export as Excel';

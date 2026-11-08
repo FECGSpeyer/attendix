@@ -506,7 +506,8 @@
         "discard": "Verwerfen",
         "keepEditing": "Weiter bearbeiten",
         "noPermission": "Du darfst keine Termine anlegen.",
-        "noTypes": "Es gibt noch keine Termin-Art. Lege zuerst eine in den Einstellungen an."
+        "noTypes": "Es gibt noch keine Termin-Art. Lege zuerst eine in den Einstellungen an.",
+        "endBeforeStart": "Das Ende kann nicht vor dem Beginn liegen."
       },
       "members": {
         "stats": "Auswertung",
@@ -1300,7 +1301,10 @@
         "deadlinePick": "Datum und Uhrzeit wählen",
         "deadlineLocked": "Der Termin liegt in der Vergangenheit.",
         "folderNone": "Keiner",
-        "saved": "Gespeichert"
+        "saved": "Gespeichert",
+        "typeStatusTitle": "Status anpassen?",
+        "typeStatusMessage": "{count, plural, one {1 Person steht noch auf „{from}“, dem Standard der bisherigen Art. Soll sie auf „{to}“ wechseln?} other {{count} Personen stehen noch auf „{from}“, dem Standard der bisherigen Art. Sollen sie auf „{to}“ wechseln?}}",
+        "typeStatusAdopt": "Anpassen"
       },
       "plan": {
         "back": "Termin",
@@ -2019,7 +2023,8 @@
         "discard": "Discard",
         "keepEditing": "Keep editing",
         "noPermission": "You may not create events.",
-        "noTypes": "There is no event type yet. Create one in the settings first."
+        "noTypes": "There is no event type yet. Create one in the settings first.",
+        "endBeforeStart": "The end cannot be before the start."
       },
       "members": {
         "stats": "Statistics",
@@ -2813,7 +2818,10 @@
         "deadlinePick": "Choose date and time",
         "deadlineLocked": "The event is in the past.",
         "folderNone": "None",
-        "saved": "Saved"
+        "saved": "Saved",
+        "typeStatusTitle": "Adjust status?",
+        "typeStatusMessage": "{count, plural, one {1 person is still on \"{from}\", the default of the previous type. Switch to \"{to}\"?} other {{count} people are still on \"{from}\", the default of the previous type. Switch them to \"{to}\"?}}",
+        "typeStatusAdopt": "Adjust"
       },
       "plan": {
         "back": "Event",

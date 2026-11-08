@@ -211,7 +211,17 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     if (picked == null && iosLook && current == null) picked = initial;
     if (picked == null || !mounted) return;
     final value = '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
-    _touch(() => start ? _start = value : _end = value);
+    // The Ende never lies before the Beginn: a later Beginn moves the Ende
+    // along, an earlier Ende is refused.
+    final times = rdPickedTimes(start: _start, end: _end, pickedStart: start, value: value);
+    if (times == null) {
+      ToastHelper.showError(context, context.l10n.redesignCreateEndBeforeStart);
+      return;
+    }
+    _touch(() {
+      _start = times.start;
+      _end = times.end;
+    });
   }
 
   Future<void> _pickType(List<AttendanceType> types) async {

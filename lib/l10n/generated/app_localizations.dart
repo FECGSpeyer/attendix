@@ -17573,6 +17573,12 @@ abstract class AppLocalizations {
   /// **'Ende'**
   String get redesignCreateEnd;
 
+  /// redesign.create.endBeforeStart
+  ///
+  /// In de, this message translates to:
+  /// **'Das Ende kann nicht vor dem Beginn liegen.'**
+  String get redesignCreateEndBeforeStart;
+
   /// redesign.create.fewer
   ///
   /// In de, this message translates to:
@@ -18172,6 +18178,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Termin bearbeiten'**
   String get redesignEventEditTitle;
+
+  /// redesign.eventEdit.typeStatusAdopt
+  ///
+  /// In de, this message translates to:
+  /// **'Anpassen'**
+  String get redesignEventEditTypeStatusAdopt;
+
+  /// redesign.eventEdit.typeStatusMessage
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Person steht noch auf „{from}“, dem Standard der bisherigen Art. Soll sie auf „{to}“ wechseln?} other {{count} Personen stehen noch auf „{from}“, dem Standard der bisherigen Art. Sollen sie auf „{to}“ wechseln?}}'**
+  String redesignEventEditTypeStatusMessage(num count, Object from, Object to);
+
+  /// redesign.eventEdit.typeStatusTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Status anpassen?'**
+  String get redesignEventEditTypeStatusTitle;
 
   /// redesign.event.exportExcel
   ///

@@ -201,3 +201,45 @@ List<String> rdRecentPlaces(List<Attendance> attendances, {int limit = 3}) {
   final keys = counts.keys.toList()..sort((a, b) => counts[b]!.compareTo(counts[a]!));
   return [for (final k in keys.take(limit)) shown[k]!];
 }
+
+int? _rdMinutes(String? hhmm) {
+  final parts = (hhmm ?? '').split(':');
+  if (parts.length < 2) return null;
+  final h = int.tryParse(parts[0]);
+  final m = int.tryParse(parts[1]);
+  if (h == null || m == null) return null;
+  return h * 60 + m;
+}
+
+String _rdHhmm(int minutes) =>
+    '${(minutes ~/ 60).toString().padLeft(2, '0')}:${(minutes % 60).toString().padLeft(2, '0')}';
+
+/// True when [end] lies before [start] (both 'HH:mm'; missing = fine).
+bool rdEndBeforeStart(String? start, String? end) {
+  final s = _rdMinutes(start);
+  final e = _rdMinutes(end);
+  return s != null && e != null && e < s;
+}
+
+/// Beginn and Ende after the user picked [value] for one of them, so the
+/// Ende never lies before the Beginn:
+/// - a Beginn after the Ende moves the Ende along, keeping the former
+///   duration (one hour when there was none), at most until 23:59;
+/// - an Ende before the Beginn is refused: null.
+({String? start, String? end})? rdPickedTimes({
+  required String? start,
+  required String? end,
+  required bool pickedStart,
+  required String value,
+}) {
+  if (!pickedStart) {
+    return rdEndBeforeStart(start, value) ? null : (start: start, end: value);
+  }
+  final s = _rdMinutes(value);
+  final e = _rdMinutes(end);
+  if (s == null || e == null || e >= s) return (start: value, end: end);
+  final oldStart = _rdMinutes(start);
+  final duration = oldStart != null && e >= oldStart ? e - oldStart : 60;
+  final newEnd = s + duration;
+  return (start: value, end: _rdHhmm(newEnd > 23 * 60 + 59 ? 23 * 60 + 59 : newEnd));
+}

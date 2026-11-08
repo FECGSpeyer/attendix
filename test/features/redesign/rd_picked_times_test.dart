@@ -1,0 +1,24 @@
+import 'package:attendix/features/redesign/data/rd_create_logic.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  test('a later Beginn moves the Ende along with the former duration', () {
+    expect(rdPickedTimes(start: '19:00', end: '21:00', pickedStart: true, value: '22:00'),
+        (start: '22:00', end: '23:59'));
+    expect(rdPickedTimes(start: '19:00', end: '21:00', pickedStart: true, value: '20:30'),
+        (start: '20:30', end: '21:00'));
+    expect(rdPickedTimes(start: '10:00', end: '11:30', pickedStart: true, value: '12:00'),
+        (start: '12:00', end: '13:30'));
+    // Already broken (22:00–21:00): one hour.
+    expect(rdPickedTimes(start: '22:00', end: '21:00', pickedStart: true, value: '21:30'),
+        (start: '21:30', end: '22:30'));
+  });
+
+  test('an Ende before the Beginn is refused', () {
+    expect(rdPickedTimes(start: '19:00', end: '21:00', pickedStart: false, value: '18:00'), isNull);
+    expect(rdPickedTimes(start: '19:00', end: '21:00', pickedStart: false, value: '19:00'),
+        (start: '19:00', end: '19:00'));
+    expect(rdPickedTimes(start: null, end: null, pickedStart: false, value: '08:00'), (start: null, end: '08:00'));
+    expect(rdEndBeforeStart('22:00', '21:00'), isTrue);
+  });
+}
