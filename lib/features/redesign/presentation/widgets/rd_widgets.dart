@@ -1431,7 +1431,7 @@ Future<T?> showRdSheet<T>(BuildContext context, Widget child) {
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
-    builder: (_) => SafeArea(top: false, child: RdSheetCap(child: child)),
+    builder: (_) => RdSheetCap(child: SafeArea(top: false, child: child)),
   );
 }
 
