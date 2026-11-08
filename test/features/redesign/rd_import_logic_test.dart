@@ -636,6 +636,34 @@ void main() {
     expect((tag.category, tag.pageRead), (RdImportCategory.other, null));
   });
 
+  test('"Von Seite 1 lesen" as an answer: each file as its page 1 says, never learned', () {
+    final entries = [_e('Noten/Eins/Solo.pdf'), _e('Noten/Zwei/Solo.pdf')];
+    final plan = rdBuildImportPlan(entries, songs: const [], instruments: _instruments, isChoir: false, pageReads: const {
+      'Noten/Eins/Solo.pdf': RdImportPageRead(RdImportCategory(instrumentId: 11), label: '2. Violine', sure: true),
+    });
+    final key = plan.questions.single.key;
+    final d = RdImportDecisions(answers: {key: const RdImportCategory.fromPage()});
+    RdFileState state(String folder) {
+      final work = plan.works.firstWhere((w) => w.files.single.path.contains(folder));
+      return rdFileState(plan, d, work, work.files.single);
+    }
+
+    expect((state('Eins').category, state('Eins').unclear), (const RdImportCategory(instrumentId: 11), false));
+    expect(state('Zwei').unclear, isTrue);
+    expect(rdImportPagesToRead(plan, d), ['Noten/Zwei/Solo.pdf']);
+    expect(rdImportLearnedTerms(plan, d, rdImportUploads(plan, d), instruments: _instruments), isEmpty);
+    // "Ohne Zuordnung" decides: nothing is read.
+    expect(rdImportPagesToRead(plan, RdImportDecisions(answers: {key: RdImportCategory.other})), isEmpty);
+
+    // Also where the name proposes a new group ("Oboe"); a PDF is always among the examples.
+    final oboe = rdBuildImportPlan(
+        [_e('Noten/Eins/Oboe.png'), _e('Noten/Zwei/Oboe.png'), _e('Noten/Drei/Oboe.png'), _e('Noten/Vier/Oboe.pdf')],
+        songs: const [], instruments: _instruments, isChoir: false);
+    final q = oboe.questions.single;
+    expect(q.examples.first.file.name, 'Oboe.pdf');
+    expect(rdImportPagesToRead(oboe, RdImportDecisions(answers: {q.key: const RdImportCategory.fromPage()})), hasLength(4));
+  });
+
   group('dates', () {
     test('creation date in the PDF info, else XMP', () {
       expect(rdPdfDate('%PDF-1.4 /CreationDate (D:20240312101500+01\'00\')'.codeUnits), DateTime(2024, 3, 12, 10, 15));

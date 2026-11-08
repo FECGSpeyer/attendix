@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.98.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Noten-Import: Ein Tipp auf eine Stimm-Frage zeigt die erste Seite von bis zu drei ihrer Dateien, die Antworten direkt darunter",
+        "✨ Noten-Import: Neue Antwort „Von Seite 1 lesen“: Die KI liest bei Namen wie „Solo“ die Stimme jeder Datei von ihrer ersten Seite; statt „Ohne Zuordnung“ schlägt die KI das vor, wenn es PDFs gibt"
+      ]
+    },
+    {
       "version": "0.97.0",
       "date": "8.11.2026",
       "changes": [
