@@ -23,6 +23,7 @@ import '../../pages/rd_general_settings_page.dart' show showRdSharingSheet;
 import '../rd_split_view.dart' show rdManageSplitOpen;
 import 'rd_data_sheets.dart';
 import '../../../../songs/presentation/widgets/song_categories_sheet.dart';
+import '../../../data/providers/rd_members_providers.dart' show rdMembersSelectingProvider;
 import '../../../data/rd_manage_logic.dart';
 
 /// REDESIGN: titles, icons and actions of the Verwaltung entries. Every entry
@@ -346,7 +347,9 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry,
     case RdManageEntry.teachers:
       open(RedesignRoutes.teachers);
     case RdManageEntry.bulkMembers:
-      open(RedesignRoutes.bulkMembers);
+      // Now "Auswählen" in the Mitglieder tab.
+      ref.read(rdMembersSelectingProvider.notifier).state = true;
+      context.go(RedesignRoutes.members);
     case RdManageEntry.missingAccounts:
       createMissingAccounts(context, ref, ref.read(rdMissingAccountsProvider));
     case RdManageEntry.archive:

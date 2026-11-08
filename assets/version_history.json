@@ -1,11 +1,34 @@
 {
   "versions": [
     {
-      "version": "0.96.0",
+      "version": "0.97.0",
       "date": "8.11.2026",
       "changes": [
         "💄 Beta Desktop: Die Verwaltung zeigt links alle Einträge kompakt (Titel und Anzahl), rechts öffnet sich direkt die gewählte Seite statt einer Zwischenliste; ohne Auswahl rechts eine Übersicht mit Gruppe, zuletzt geöffnet und noch nicht genutzt",
         "💄 Beta: Name und Kürzel, Mitteilungen und Organisation öffnen sich innerhalb der Verwaltung"
+      ]
+    },
+    {
+      "version": "0.96.1",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta-Mitglied: „Meinen Benutzer zuweisen“ erscheint nur noch, solange du in der Gruppe mit keinem Mitglied verknüpft bist"
+      ]
+    },
+    {
+      "version": "0.96.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta Mitglieder: „Mehrere auswählen“ (unter •••) direkt in der Mitgliederliste – Personen oder ganze Register antippen, dann unten Register, Pausieren, Feld oder Archivieren",
+        "✨ Neu „Feld“: Notizen oder ein Zusatzfeld für alle Ausgewählten auf einmal setzen (wie Ionic „Mehrfach bearbeiten“)",
+        "♻️ Die eigene Seite „Mitglieder bearbeiten“ in der Verwaltung entfällt; die Suche dort führt in die Mitgliederliste"
+      ]
+    },
+    {
+      "version": "0.95.1",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta: Ein ausgetretenes Mitglied zeigt oben „Ausgetreten“ (für die Leitung mit Grund) und „Wiederherstellen“ als Hauptaktion, darunter Anwesenheit und alle Angaben zum Lesen"
       ]
     },
     {

@@ -13497,6 +13497,10 @@
   "@redesignBulkActionArchive": {
     "description": "redesign.bulk.actionArchive"
   },
+  "redesignBulkActionField": "Feld",
+  "@redesignBulkActionField": {
+    "description": "redesign.bulk.actionField"
+  },
   "redesignBulkActionGroup": "Register",
   "@redesignBulkActionGroup": {
     "description": "redesign.bulk.actionGroup"
@@ -13504,6 +13508,10 @@
   "redesignBulkActionPause": "Pausieren",
   "@redesignBulkActionPause": {
     "description": "redesign.bulk.actionPause"
+  },
+  "redesignBulkAllPaused": "Die Ausgewählten sind schon pausiert.",
+  "@redesignBulkAllPaused": {
+    "description": "redesign.bulk.allPaused"
   },
   "redesignBulkArchiveConfirm": "{count, plural, one {1 Person archivieren?} other {{count} Personen archivieren?}}",
   "@redesignBulkArchiveConfirm": {
@@ -13540,6 +13548,31 @@
       }
     }
   },
+  "redesignBulkFieldApply": "Setzen",
+  "@redesignBulkFieldApply": {
+    "description": "redesign.bulk.fieldApply"
+  },
+  "redesignBulkFieldConfirm": "{name} für {count, plural, one {1 Person} other {{count} Personen}} setzen?",
+  "@redesignBulkFieldConfirm": {
+    "description": "redesign.bulk.fieldConfirm",
+    "placeholders": {
+      "name": {},
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignBulkFieldConfirmHint": "Neuer Wert: {value}. Der bisherige Wert wird überschrieben.",
+  "@redesignBulkFieldConfirmHint": {
+    "description": "redesign.bulk.fieldConfirmHint",
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "redesignBulkFieldEmpty": "leer",
+  "@redesignBulkFieldEmpty": {
+    "description": "redesign.bulk.fieldEmpty"
+  },
   "redesignBulkHint": "Mitglieder antippen, dann unten eine Aktion wählen.",
   "@redesignBulkHint": {
     "description": "redesign.bulk.hint"
@@ -13552,6 +13585,10 @@
   "@redesignBulkPauseReason": {
     "description": "redesign.bulk.pauseReason"
   },
+  "redesignBulkPickField": "Feld setzen",
+  "@redesignBulkPickField": {
+    "description": "redesign.bulk.pickField"
+  },
   "redesignBulkPickGroup": "Neues Register",
   "@redesignBulkPickGroup": {
     "description": "redesign.bulk.pickGroup"
@@ -13559,6 +13596,14 @@
   "redesignBulkSearch": "Mitglied suchen",
   "@redesignBulkSearch": {
     "description": "redesign.bulk.search"
+  },
+  "redesignBulkSelect": "Auswählen",
+  "@redesignBulkSelect": {
+    "description": "redesign.bulk.select"
+  },
+  "redesignBulkSelectAll": "Alle auswählen",
+  "@redesignBulkSelectAll": {
+    "description": "redesign.bulk.selectAll"
   },
   "redesignBulkSelectGroup": "Alle in {group}",
   "@redesignBulkSelectGroup": {
@@ -13576,7 +13621,7 @@
       }
     }
   },
-  "redesignBulkTitle": "Mitglieder bearbeiten",
+  "redesignBulkTitle": "Mehrere auswählen",
   "@redesignBulkTitle": {
     "description": "redesign.bulk.title"
   },

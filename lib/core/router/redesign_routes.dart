@@ -90,9 +90,6 @@ class RedesignRoutes {
   /// Verwaltung › Mitteilung schreiben.
   static const String compose = '$manage/mitteilung';
 
-  /// Verwaltung › Mitglieder bearbeiten (several members at once).
-  static const String bulkMembers = '$manage/mitglieder-bearbeiten';
-
   /// Verwaltung › Name und Kürzel (same page as `/settings/general`, here
   /// so it opens on the right of the list on wide screens).
   static const String groupName = '$manage/name';
