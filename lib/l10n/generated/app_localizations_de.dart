@@ -10378,13 +10378,6 @@ class AppLocalizationsDe extends AppLocalizations {
       'Regeln bestimmen, wann eine Person als Problemfall gilt.';
 
   @override
-  String get rdSettingsDutyView => 'Dienste zuerst zeigen (klassische Ansicht)';
-
-  @override
-  String get rdSettingsDutyViewHint =>
-      'Dienst-Teams sehen unter „Meine Termine“ zuerst ihre Dienste. Im Beta haben Dienste immer einen eigenen Bereich.';
-
-  @override
   String get rdSettingsEmptyValue => 'Bitte gib einen Wert ein.';
 
   @override

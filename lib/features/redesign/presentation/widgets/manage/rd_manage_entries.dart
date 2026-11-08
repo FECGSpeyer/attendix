@@ -244,7 +244,6 @@ List<String> rdManageKeywords(AppLocalizations l10n, RdManageEntry entry) => swi
           l10n.redesignManageGeneralTitle,
           l10n.rdSettingsAllEvents,
           l10n.rdSettingsInfoText,
-          l10n.rdSettingsDutyView,
           l10n.rdSettingsMembersList,
           l10n.rdSettingsPermCreate,
           l10n.rdSettingsPermAbsence,

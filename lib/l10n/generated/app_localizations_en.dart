@@ -10268,13 +10268,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Rules decide when a person counts as a problem case.';
 
   @override
-  String get rdSettingsDutyView => 'Show duties first (classic view)';
-
-  @override
-  String get rdSettingsDutyViewHint =>
-      'Duty teams see their duties first under “My events”. In the Beta, duties always have their own section.';
-
-  @override
   String get rdSettingsEmptyValue => 'Please enter a value.';
 
   @override

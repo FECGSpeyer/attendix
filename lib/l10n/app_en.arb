@@ -2811,8 +2811,6 @@
   "rdSettingsCopyRegisterLink": "Copy sign-up link",
   "rdSettingsCopyWorksLink": "Copy works link",
   "rdSettingsCriticalHint": "Rules decide when a person counts as a problem case.",
-  "rdSettingsDutyView": "Show duties first (classic view)",
-  "rdSettingsDutyViewHint": "Duty teams see their duties first under “My events”. In the Beta, duties always have their own section.",
   "rdSettingsEmptyValue": "Please enter a value.",
   "rdSettingsFilesForAll": "File storage readable for everyone",
   "rdSettingsFilesForAllHint": "Otherwise only admins, responsibles and helpers. Only admins and responsibles can upload.",

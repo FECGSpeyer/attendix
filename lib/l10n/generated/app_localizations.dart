@@ -16997,18 +16997,6 @@ abstract class AppLocalizations {
   /// **'Regeln bestimmen, wann eine Person als Problemfall gilt.'**
   String get rdSettingsCriticalHint;
 
-  /// rdSettings.dutyView
-  ///
-  /// In de, this message translates to:
-  /// **'Dienste zuerst zeigen (klassische Ansicht)'**
-  String get rdSettingsDutyView;
-
-  /// rdSettings.dutyViewHint
-  ///
-  /// In de, this message translates to:
-  /// **'Dienst-Teams sehen unter „Meine Termine“ zuerst ihre Dienste. Im Beta haben Dienste immer einen eigenen Bereich.'**
-  String get rdSettingsDutyViewHint;
-
   /// rdSettings.emptyValue
   ///
   /// In de, this message translates to:

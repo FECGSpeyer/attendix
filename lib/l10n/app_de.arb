@@ -12921,14 +12921,6 @@
   "@rdSettingsCriticalHint": {
     "description": "rdSettings.criticalHint"
   },
-  "rdSettingsDutyView": "Dienste zuerst zeigen (klassische Ansicht)",
-  "@rdSettingsDutyView": {
-    "description": "rdSettings.dutyView"
-  },
-  "rdSettingsDutyViewHint": "Dienst-Teams sehen unter „Meine Termine“ zuerst ihre Dienste. Im Beta haben Dienste immer einen eigenen Bereich.",
-  "@rdSettingsDutyViewHint": {
-    "description": "rdSettings.dutyViewHint"
-  },
   "rdSettingsEmptyValue": "Bitte gib einen Wert ein.",
   "@rdSettingsEmptyValue": {
     "description": "rdSettings.emptyValue"

@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/providers/attendance_type_providers.dart';
-import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/files_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
@@ -572,13 +571,6 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
                       ? t.showAllAttendancesInfoText
                       : l10n.defaultsShowAllInfoText,
                   onTap: enabled ? () => _editInfoText(t) : null,
-                ),
-              if (ref.watch(hasDutyTypesProvider))
-                RdSwitchRow(
-                  title: l10n.rdSettingsDutyView,
-                  subtitle: l10n.rdSettingsDutyViewHint,
-                  value: t.dutyView,
-                  onChanged: on((v) => _save(t.id, {'duty_view': v}, (c) => c.copyWith(dutyView: v))),
                 ),
               RdSwitchRow(
                 title: l10n.rdSettingsMembersList,
