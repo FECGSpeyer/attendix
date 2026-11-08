@@ -15905,6 +15905,36 @@ abstract class AppLocalizations {
   /// **'Teilnahme-Urkunden als PDF'**
   String get rdAdminCertificatesHint;
 
+  /// rdAdmin.counting
+  ///
+  /// In de, this message translates to:
+  /// **'So wird gezählt'**
+  String get rdAdminCounting;
+
+  /// rdAdmin.critical
+  ///
+  /// In de, this message translates to:
+  /// **'Problemfälle'**
+  String get rdAdminCritical;
+
+  /// rdAdmin.criticalCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Regel} other {{count} Regeln}}'**
+  String rdAdminCriticalCount(num count);
+
+  /// rdAdmin.criticalHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wann jemand als Problemfall gilt'**
+  String get rdAdminCriticalHint;
+
+  /// rdAdmin.criticalIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Wer nach diesen Regeln zu oft fehlt, gilt als Problemfall und fällt unter Heute und im Mitglieder-Tab auf.'**
+  String get rdAdminCriticalIntro;
+
   /// rdAdmin.data
   ///
   /// In de, this message translates to:
@@ -15941,12 +15971,6 @@ abstract class AppLocalizations {
   /// **'früher „{name}“'**
   String rdAdminFormerly(Object name);
 
-  /// rdAdmin.generalHint
-  ///
-  /// In de, this message translates to:
-  /// **'Name, Saison, Gründe, Anmeldung, Funktionen'**
-  String get rdAdminGeneralHint;
-
   /// rdAdmin.groups
   ///
   /// In de, this message translates to:
@@ -15964,6 +15988,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {1 Mitglied} other {{count} Mitglieder}}'**
   String rdAdminHeroMembers(num count);
+
+  /// rdAdmin.holidays
+  ///
+  /// In de, this message translates to:
+  /// **'Ferien und Feiertage'**
+  String get rdAdminHolidays;
+
+  /// rdAdmin.holidaysHint
+  ///
+  /// In de, this message translates to:
+  /// **'Beim Planen von Terminen hervorgehoben'**
+  String get rdAdminHolidaysHint;
+
+  /// rdAdmin.holidaysIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Ferien und Feiertage eures Bundeslands werden beim Anlegen von Terminen hervorgehoben.'**
+  String get rdAdminHolidaysIntro;
 
   /// rdAdmin.homeEvent
   ///
@@ -16007,6 +16049,30 @@ abstract class AppLocalizations {
   /// **'Zugänge anlegen'**
   String get rdAdminMissing;
 
+  /// rdAdmin.name
+  ///
+  /// In de, this message translates to:
+  /// **'Name und Kürzel'**
+  String get rdAdminName;
+
+  /// rdAdmin.nameHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wie die Gruppe heißt, Kürzel für Dateinamen'**
+  String get rdAdminNameHint;
+
+  /// rdAdmin.off
+  ///
+  /// In de, this message translates to:
+  /// **'Aus'**
+  String get rdAdminOff;
+
+  /// rdAdmin.on
+  ///
+  /// In de, this message translates to:
+  /// **'An'**
+  String get rdAdminOn;
+
   /// rdAdmin.organisationHint
   ///
   /// In de, this message translates to:
@@ -16024,6 +16090,42 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {1 Anfrage wartet auf Freigabe} other {{count} Anfragen warten auf Freigabe}}'**
   String rdAdminPendingBadge(num count);
+
+  /// rdAdmin.reasons
+  ///
+  /// In de, this message translates to:
+  /// **'Abmeldegründe'**
+  String get rdAdminReasons;
+
+  /// rdAdmin.reasonsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl beim Abmelden und Verspäten'**
+  String get rdAdminReasonsHint;
+
+  /// rdAdmin.reasonsIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Gründe stehen zur Auswahl, wenn sich jemand abmeldet oder verspätet.'**
+  String get rdAdminReasonsIntro;
+
+  /// rdAdmin.registration
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldung per Link'**
+  String get rdAdminRegistration;
+
+  /// rdAdmin.registrationHint
+  ///
+  /// In de, this message translates to:
+  /// **'Neue melden sich selbst an'**
+  String get rdAdminRegistrationHint;
+
+  /// rdAdmin.registrationIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Wer den Link öffnet, meldet sich bei euch an. Teilen kannst du ihn auch im Mitglieder-Tab beim Einladen.'**
+  String get rdAdminRegistrationIntro;
 
   /// rdAdmin.roles
   ///
@@ -16043,6 +16145,18 @@ abstract class AppLocalizations {
   /// **'Suchen, z. B. Saison, Eltern, Register'**
   String get rdAdminSearch;
 
+  /// rdAdmin.sharing
+  ///
+  /// In de, this message translates to:
+  /// **'Werke öffentlich teilen'**
+  String get rdAdminSharing;
+
+  /// rdAdmin.sharingHint
+  ///
+  /// In de, this message translates to:
+  /// **'Werkliste per Link, ohne Anmeldung'**
+  String get rdAdminSharingHint;
+
   /// rdAdmin.shiftsHint
   ///
   /// In de, this message translates to:
@@ -16052,13 +16166,13 @@ abstract class AppLocalizations {
   /// rdAdmin.statsHint
   ///
   /// In de, this message translates to:
-  /// **'Statistik und Export'**
+  /// **'Statistik, Saison, Zählweise und Export'**
   String get rdAdminStatsHint;
 
   /// rdAdmin.statsHintCertificates
   ///
   /// In de, this message translates to:
-  /// **'Statistik, Export und Urkunden'**
+  /// **'Statistik, Saison, Zählweise, Export und Urkunden'**
   String get rdAdminStatsHintCertificates;
 
   /// rdAdmin.teachersHint
@@ -16091,11 +16205,47 @@ abstract class AppLocalizations {
   /// **'Vorgaben für neue Termine wie Zeit und Status'**
   String get rdAdminTypesHint;
 
+  /// rdAdmin.unused
+  ///
+  /// In de, this message translates to:
+  /// **'Noch nicht genutzt'**
+  String get rdAdminUnused;
+
+  /// rdAdmin.unusedNote
+  ///
+  /// In de, this message translates to:
+  /// **'Was aus ist, steht hier mit einem Satz, wofür es gut ist. Einmal eingeschaltet, rückt es in seinen Abschnitt.'**
+  String get rdAdminUnusedNote;
+
+  /// rdAdmin.unusedParents
+  ///
+  /// In de, this message translates to:
+  /// **'Eltern sehen Termine und Anwesenheit ihrer Kinder und melden sie ab.'**
+  String get rdAdminUnusedParents;
+
+  /// rdAdmin.unusedSharing
+  ///
+  /// In de, this message translates to:
+  /// **'Ein Link zeigt eure Werkliste, ganz ohne Anmeldung.'**
+  String get rdAdminUnusedSharing;
+
+  /// rdAdmin.unusedTeachers
+  ///
+  /// In de, this message translates to:
+  /// **'Wer welchen Spieler unterrichtet, mit Schülerliste je Lehrer.'**
+  String get rdAdminUnusedTeachers;
+
   /// rdAdmin.viewersHint
   ///
   /// In de, this message translates to:
   /// **'Sehen alles, ändern nichts'**
   String get rdAdminViewersHint;
+
+  /// rdAdmin.visibility
+  ///
+  /// In de, this message translates to:
+  /// **'Was Mitglieder sehen'**
+  String get rdAdminVisibility;
 
   /// rdAdmin.workHistory
   ///
@@ -16817,12 +16967,6 @@ abstract class AppLocalizations {
   /// **'Bitte gib einen Wert ein.'**
   String get rdSettingsEmptyValue;
 
-  /// rdSettings.generalTitle
-  ///
-  /// In de, this message translates to:
-  /// **'Allgemein'**
-  String get rdSettingsGeneralTitle;
-
   /// rdSettings.holidays
   ///
   /// In de, this message translates to:
@@ -17002,48 +17146,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Saisonbeginn'**
   String get rdSettingsSeasonStart;
-
-  /// rdSettings.sectionAttendance
-  ///
-  /// In de, this message translates to:
-  /// **'Anwesenheit'**
-  String get rdSettingsSectionAttendance;
-
-  /// rdSettings.sectionCritical
-  ///
-  /// In de, this message translates to:
-  /// **'Problemfälle'**
-  String get rdSettingsSectionCritical;
-
-  /// rdSettings.sectionFeatures
-  ///
-  /// In de, this message translates to:
-  /// **'Funktionen'**
-  String get rdSettingsSectionFeatures;
-
-  /// rdSettings.sectionMembers
-  ///
-  /// In de, this message translates to:
-  /// **'Für Mitglieder'**
-  String get rdSettingsSectionMembers;
-
-  /// rdSettings.sectionReasons
-  ///
-  /// In de, this message translates to:
-  /// **'Gründe'**
-  String get rdSettingsSectionReasons;
-
-  /// rdSettings.sectionRegistration
-  ///
-  /// In de, this message translates to:
-  /// **'Anmeldung'**
-  String get rdSettingsSectionRegistration;
-
-  /// rdSettings.sectionWorks
-  ///
-  /// In de, this message translates to:
-  /// **'Werke'**
-  String get rdSettingsSectionWorks;
 
   /// rdSettings.shareWorksHint
   ///

@@ -12107,6 +12107,31 @@
   "@rdAdminCertificatesHint": {
     "description": "rdAdmin.certificatesHint"
   },
+  "rdAdminCounting": "So wird gezählt",
+  "@rdAdminCounting": {
+    "description": "rdAdmin.counting"
+  },
+  "rdAdminCritical": "Problemfälle",
+  "@rdAdminCritical": {
+    "description": "rdAdmin.critical"
+  },
+  "rdAdminCriticalCount": "{count, plural, one {1 Regel} other {{count} Regeln}}",
+  "@rdAdminCriticalCount": {
+    "description": "rdAdmin.criticalCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdAdminCriticalHint": "Wann jemand als Problemfall gilt",
+  "@rdAdminCriticalHint": {
+    "description": "rdAdmin.criticalHint"
+  },
+  "rdAdminCriticalIntro": "Wer nach diesen Regeln zu oft fehlt, gilt als Problemfall und fällt unter Heute und im Mitglieder-Tab auf.",
+  "@rdAdminCriticalIntro": {
+    "description": "rdAdmin.criticalIntro"
+  },
   "rdAdminData": "Daten",
   "@rdAdminData": {
     "description": "rdAdmin.data"
@@ -12134,10 +12159,6 @@
       "name": {}
     }
   },
-  "rdAdminGeneralHint": "Name, Saison, Gründe, Anmeldung, Funktionen",
-  "@rdAdminGeneralHint": {
-    "description": "rdAdmin.generalHint"
-  },
   "rdAdminGroups": "Register",
   "@rdAdminGroups": {
     "description": "rdAdmin.groups"
@@ -12154,6 +12175,18 @@
         "type": "num"
       }
     }
+  },
+  "rdAdminHolidays": "Ferien und Feiertage",
+  "@rdAdminHolidays": {
+    "description": "rdAdmin.holidays"
+  },
+  "rdAdminHolidaysHint": "Beim Planen von Terminen hervorgehoben",
+  "@rdAdminHolidaysHint": {
+    "description": "rdAdmin.holidaysHint"
+  },
+  "rdAdminHolidaysIntro": "Ferien und Feiertage eures Bundeslands werden beim Anlegen von Terminen hervorgehoben.",
+  "@rdAdminHolidaysIntro": {
+    "description": "rdAdmin.holidaysIntro"
   },
   "rdAdminHomeEvent": "Im Termin unter „Programm“",
   "@rdAdminHomeEvent": {
@@ -12183,6 +12216,22 @@
   "@rdAdminMissing": {
     "description": "rdAdmin.missing"
   },
+  "rdAdminName": "Name und Kürzel",
+  "@rdAdminName": {
+    "description": "rdAdmin.name"
+  },
+  "rdAdminNameHint": "Wie die Gruppe heißt, Kürzel für Dateinamen",
+  "@rdAdminNameHint": {
+    "description": "rdAdmin.nameHint"
+  },
+  "rdAdminOff": "Aus",
+  "@rdAdminOff": {
+    "description": "rdAdmin.off"
+  },
+  "rdAdminOn": "An",
+  "@rdAdminOn": {
+    "description": "rdAdmin.on"
+  },
   "rdAdminOrganisationHint": "Gruppenübergreifend: Personen, Branding, Vorlagen, Org-Pläne",
   "@rdAdminOrganisationHint": {
     "description": "rdAdmin.organisationHint"
@@ -12200,6 +12249,30 @@
       }
     }
   },
+  "rdAdminReasons": "Abmeldegründe",
+  "@rdAdminReasons": {
+    "description": "rdAdmin.reasons"
+  },
+  "rdAdminReasonsHint": "Auswahl beim Abmelden und Verspäten",
+  "@rdAdminReasonsHint": {
+    "description": "rdAdmin.reasonsHint"
+  },
+  "rdAdminReasonsIntro": "Diese Gründe stehen zur Auswahl, wenn sich jemand abmeldet oder verspätet.",
+  "@rdAdminReasonsIntro": {
+    "description": "rdAdmin.reasonsIntro"
+  },
+  "rdAdminRegistration": "Anmeldung per Link",
+  "@rdAdminRegistration": {
+    "description": "rdAdmin.registration"
+  },
+  "rdAdminRegistrationHint": "Neue melden sich selbst an",
+  "@rdAdminRegistrationHint": {
+    "description": "rdAdmin.registrationHint"
+  },
+  "rdAdminRegistrationIntro": "Wer den Link öffnet, meldet sich bei euch an. Teilen kannst du ihn auch im Mitglieder-Tab beim Einladen.",
+  "@rdAdminRegistrationIntro": {
+    "description": "rdAdmin.registrationIntro"
+  },
   "rdAdminRoles": "Rollen und Rechte",
   "@rdAdminRoles": {
     "description": "rdAdmin.roles"
@@ -12212,15 +12285,23 @@
   "@rdAdminSearch": {
     "description": "rdAdmin.search"
   },
+  "rdAdminSharing": "Werke öffentlich teilen",
+  "@rdAdminSharing": {
+    "description": "rdAdmin.sharing"
+  },
+  "rdAdminSharingHint": "Werkliste per Link, ohne Anmeldung",
+  "@rdAdminSharingHint": {
+    "description": "rdAdmin.sharingHint"
+  },
   "rdAdminShiftsHint": "Wer Schicht hat, ist automatisch entschuldigt",
   "@rdAdminShiftsHint": {
     "description": "rdAdmin.shiftsHint"
   },
-  "rdAdminStatsHint": "Statistik und Export",
+  "rdAdminStatsHint": "Statistik, Saison, Zählweise und Export",
   "@rdAdminStatsHint": {
     "description": "rdAdmin.statsHint"
   },
-  "rdAdminStatsHintCertificates": "Statistik, Export und Urkunden",
+  "rdAdminStatsHintCertificates": "Statistik, Saison, Zählweise, Export und Urkunden",
   "@rdAdminStatsHintCertificates": {
     "description": "rdAdmin.statsHintCertificates"
   },
@@ -12244,9 +12325,33 @@
   "@rdAdminTypesHint": {
     "description": "rdAdmin.typesHint"
   },
+  "rdAdminUnused": "Noch nicht genutzt",
+  "@rdAdminUnused": {
+    "description": "rdAdmin.unused"
+  },
+  "rdAdminUnusedNote": "Was aus ist, steht hier mit einem Satz, wofür es gut ist. Einmal eingeschaltet, rückt es in seinen Abschnitt.",
+  "@rdAdminUnusedNote": {
+    "description": "rdAdmin.unusedNote"
+  },
+  "rdAdminUnusedParents": "Eltern sehen Termine und Anwesenheit ihrer Kinder und melden sie ab.",
+  "@rdAdminUnusedParents": {
+    "description": "rdAdmin.unusedParents"
+  },
+  "rdAdminUnusedSharing": "Ein Link zeigt eure Werkliste, ganz ohne Anmeldung.",
+  "@rdAdminUnusedSharing": {
+    "description": "rdAdmin.unusedSharing"
+  },
+  "rdAdminUnusedTeachers": "Wer welchen Spieler unterrichtet, mit Schülerliste je Lehrer.",
+  "@rdAdminUnusedTeachers": {
+    "description": "rdAdmin.unusedTeachers"
+  },
   "rdAdminViewersHint": "Sehen alles, ändern nichts",
   "@rdAdminViewersHint": {
     "description": "rdAdmin.viewersHint"
+  },
+  "rdAdminVisibility": "Was Mitglieder sehen",
+  "@rdAdminVisibility": {
+    "description": "rdAdmin.visibility"
   },
   "rdAdminWorkHistory": "Gespielte Werke",
   "@rdAdminWorkHistory": {
@@ -12788,10 +12893,6 @@
   "@rdSettingsEmptyValue": {
     "description": "rdSettings.emptyValue"
   },
-  "rdSettingsGeneralTitle": "Allgemein",
-  "@rdSettingsGeneralTitle": {
-    "description": "rdSettings.generalTitle"
-  },
   "rdSettingsHolidays": "Ferien und Feiertage zeigen",
   "@rdSettingsHolidays": {
     "description": "rdSettings.holidays"
@@ -12914,34 +13015,6 @@
   "rdSettingsSeasonStart": "Saisonbeginn",
   "@rdSettingsSeasonStart": {
     "description": "rdSettings.seasonStart"
-  },
-  "rdSettingsSectionAttendance": "Anwesenheit",
-  "@rdSettingsSectionAttendance": {
-    "description": "rdSettings.sectionAttendance"
-  },
-  "rdSettingsSectionCritical": "Problemfälle",
-  "@rdSettingsSectionCritical": {
-    "description": "rdSettings.sectionCritical"
-  },
-  "rdSettingsSectionFeatures": "Funktionen",
-  "@rdSettingsSectionFeatures": {
-    "description": "rdSettings.sectionFeatures"
-  },
-  "rdSettingsSectionMembers": "Für Mitglieder",
-  "@rdSettingsSectionMembers": {
-    "description": "rdSettings.sectionMembers"
-  },
-  "rdSettingsSectionReasons": "Gründe",
-  "@rdSettingsSectionReasons": {
-    "description": "rdSettings.sectionReasons"
-  },
-  "rdSettingsSectionRegistration": "Anmeldung",
-  "@rdSettingsSectionRegistration": {
-    "description": "rdSettings.sectionRegistration"
-  },
-  "rdSettingsSectionWorks": "Werke",
-  "@rdSettingsSectionWorks": {
-    "description": "rdSettings.sectionWorks"
   },
   "rdSettingsShareWorksHint": "Jeder mit dem Link kann die Werke ansehen",
   "@rdSettingsShareWorksHint": {

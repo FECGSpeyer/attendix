@@ -68,16 +68,29 @@ Widget _app(Widget home, {Organisation? org}) => ProviderScope(
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  testWidgets('Allgemein shows the settings without a save button', (tester) async {
+  testWidgets('the old Allgemein, split by where it acts, saves without a button', (tester) async {
     tester.view.physicalSize = const Size(390, 3000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(_app(const RdGeneralSettingsPage()));
     await tester.pump(const Duration(milliseconds: 200));
     expect(tester.takeException(), isNull);
+    expect(find.text('Name und Kürzel'), findsOneWidget);
     expect(find.text('Stephanus Chor'), findsOneWidget);
-    expect(find.text('Saisonbeginn'), findsOneWidget);
+    expect(find.text('Saisonbeginn'), findsNothing);
     expect(find.text('Speichern'), findsNothing);
+
+    await tester.pumpWidget(_app(const RdGeneralSettingsPage(section: RdTenantSettings.registration)));
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.text('Anmeldung per Link'), findsOneWidget);
+    expect(find.text('Stephanus Chor'), findsNothing);
+
+    // Auswertung: Saison and Zählweise as a block.
+    await tester.pumpWidget(
+      _app(const Scaffold(body: RdTenantSettingsBlock(sections: [RdTenantSettings.counting], label: 'Zählweise'))),
+    );
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.text('Saisonbeginn'), findsOneWidget);
   });
 
   testWidgets('Branding without an organisation points to the organisation', (tester) async {

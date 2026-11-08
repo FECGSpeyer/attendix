@@ -9718,6 +9718,30 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdAdminCertificatesHint => 'Teilnahme-Urkunden als PDF';
 
   @override
+  String get rdAdminCounting => 'So wird gezählt';
+
+  @override
+  String get rdAdminCritical => 'Problemfälle';
+
+  @override
+  String rdAdminCriticalCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Regeln',
+      one: '1 Regel',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdAdminCriticalHint => 'Wann jemand als Problemfall gilt';
+
+  @override
+  String get rdAdminCriticalIntro =>
+      'Wer nach diesen Regeln zu oft fehlt, gilt als Problemfall und fällt unter Heute und im Mitglieder-Tab auf.';
+
+  @override
   String get rdAdminData => 'Daten';
 
   @override
@@ -9739,10 +9763,6 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get rdAdminGeneralHint =>
-      'Name, Saison, Gründe, Anmeldung, Funktionen';
-
-  @override
   String get rdAdminGroups => 'Register';
 
   @override
@@ -9759,6 +9779,16 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get rdAdminHolidays => 'Ferien und Feiertage';
+
+  @override
+  String get rdAdminHolidaysHint => 'Beim Planen von Terminen hervorgehoben';
+
+  @override
+  String get rdAdminHolidaysIntro =>
+      'Ferien und Feiertage eures Bundeslands werden beim Anlegen von Terminen hervorgehoben.';
 
   @override
   String get rdAdminHomeEvent => 'Im Termin unter „Programm“';
@@ -9782,6 +9812,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdAdminMissing => 'Zugänge anlegen';
 
   @override
+  String get rdAdminName => 'Name und Kürzel';
+
+  @override
+  String get rdAdminNameHint => 'Wie die Gruppe heißt, Kürzel für Dateinamen';
+
+  @override
+  String get rdAdminOff => 'Aus';
+
+  @override
+  String get rdAdminOn => 'An';
+
+  @override
   String get rdAdminOrganisationHint =>
       'Gruppenübergreifend: Personen, Branding, Vorlagen, Org-Pläne';
 
@@ -9800,6 +9842,26 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get rdAdminReasons => 'Abmeldegründe';
+
+  @override
+  String get rdAdminReasonsHint => 'Auswahl beim Abmelden und Verspäten';
+
+  @override
+  String get rdAdminReasonsIntro =>
+      'Diese Gründe stehen zur Auswahl, wenn sich jemand abmeldet oder verspätet.';
+
+  @override
+  String get rdAdminRegistration => 'Anmeldung per Link';
+
+  @override
+  String get rdAdminRegistrationHint => 'Neue melden sich selbst an';
+
+  @override
+  String get rdAdminRegistrationIntro =>
+      'Wer den Link öffnet, meldet sich bei euch an. Teilen kannst du ihn auch im Mitglieder-Tab beim Einladen.';
+
+  @override
   String get rdAdminRoles => 'Rollen und Rechte';
 
   @override
@@ -9809,14 +9871,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdAdminSearch => 'Suchen, z. B. Saison, Eltern, Register';
 
   @override
+  String get rdAdminSharing => 'Werke öffentlich teilen';
+
+  @override
+  String get rdAdminSharingHint => 'Werkliste per Link, ohne Anmeldung';
+
+  @override
   String get rdAdminShiftsHint =>
       'Wer Schicht hat, ist automatisch entschuldigt';
 
   @override
-  String get rdAdminStatsHint => 'Statistik und Export';
+  String get rdAdminStatsHint => 'Statistik, Saison, Zählweise und Export';
 
   @override
-  String get rdAdminStatsHintCertificates => 'Statistik, Export und Urkunden';
+  String get rdAdminStatsHintCertificates =>
+      'Statistik, Saison, Zählweise, Export und Urkunden';
 
   @override
   String get rdAdminTeachersHint => 'Wer welchen Spieler unterrichtet';
@@ -9835,7 +9904,29 @@ class AppLocalizationsDe extends AppLocalizations {
       'Vorgaben für neue Termine wie Zeit und Status';
 
   @override
+  String get rdAdminUnused => 'Noch nicht genutzt';
+
+  @override
+  String get rdAdminUnusedNote =>
+      'Was aus ist, steht hier mit einem Satz, wofür es gut ist. Einmal eingeschaltet, rückt es in seinen Abschnitt.';
+
+  @override
+  String get rdAdminUnusedParents =>
+      'Eltern sehen Termine und Anwesenheit ihrer Kinder und melden sie ab.';
+
+  @override
+  String get rdAdminUnusedSharing =>
+      'Ein Link zeigt eure Werkliste, ganz ohne Anmeldung.';
+
+  @override
+  String get rdAdminUnusedTeachers =>
+      'Wer welchen Spieler unterrichtet, mit Schülerliste je Lehrer.';
+
+  @override
   String get rdAdminViewersHint => 'Sehen alles, ändern nichts';
+
+  @override
+  String get rdAdminVisibility => 'Was Mitglieder sehen';
 
   @override
   String get rdAdminWorkHistory => 'Gespielte Werke';
@@ -10259,9 +10350,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdSettingsEmptyValue => 'Bitte gib einen Wert ein.';
 
   @override
-  String get rdSettingsGeneralTitle => 'Allgemein';
-
-  @override
   String get rdSettingsHolidays => 'Ferien und Feiertage zeigen';
 
   @override
@@ -10361,27 +10449,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdSettingsSeasonStart => 'Saisonbeginn';
-
-  @override
-  String get rdSettingsSectionAttendance => 'Anwesenheit';
-
-  @override
-  String get rdSettingsSectionCritical => 'Problemfälle';
-
-  @override
-  String get rdSettingsSectionFeatures => 'Funktionen';
-
-  @override
-  String get rdSettingsSectionMembers => 'Für Mitglieder';
-
-  @override
-  String get rdSettingsSectionReasons => 'Gründe';
-
-  @override
-  String get rdSettingsSectionRegistration => 'Anmeldung';
-
-  @override
-  String get rdSettingsSectionWorks => 'Werke';
 
   @override
   String get rdSettingsShareWorksHint =>

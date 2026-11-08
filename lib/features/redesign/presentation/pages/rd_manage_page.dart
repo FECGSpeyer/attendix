@@ -13,10 +13,12 @@ import '../../../../core/providers/viewer_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../settings/presentation/pages/general_settings_page.dart' show holidayRegions;
 import '../../../settings/presentation/pages/left_players_page.dart' show leftPlayersProvider;
 import '../../data/rd_manage_logic.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/manage/rd_manage_entries.dart';
+import '../widgets/manage/rd_settings_sheets.dart' show RdListNote;
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
@@ -72,10 +74,11 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
           rdManageTitle(l10n, e),
           rdManagePlace(l10n, e, access),
           rdManageHint(l10n, e, access),
-          rdManageFormerName(l10n, e) ?? '',
+          [rdManageFormerName(l10n, e) ?? '', ...rdManageKeywords(l10n, e)].join(' '),
         ))
           e,
     ];
+    final unused = rdManageUnused(access);
 
     return RdPage(
       children: [
@@ -160,19 +163,34 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
               RdGroupLabel(rdManageAreaName(l10n, area)),
               _AreaList(area: area, access: access),
             ],
+          if (unused.isNotEmpty) ...[
+            const SizedBox(height: 28),
+            RdGroupLabel(l10n.rdAdminUnused),
+            RdGroupedList(
+              children: [
+                for (final e in unused) _EntryRow(entry: e, subtitle: rdManageUnusedText(l10n, e)),
+              ],
+            ),
+            RdListNote(l10n.rdAdminUnusedNote),
+          ],
         ],
       ],
     );
   }
 
-  /// Where the result is ("Mitglieder", "Im Werke-Tab unter •••"), plus the
-  /// old name when only that matched ("früher „Gruppen“").
+  /// Where the result is ("Mitglieder", "Im Werke-Tab unter •••"), plus
+  /// the old name or the switch when only that matched ("früher
+  /// „Gruppen“", "Auswertung · Saisonbeginn").
   String _searchSubtitle(AppLocalizations l10n, RdManageAccess access, RdManageEntry e) {
     final place = rdManagePlace(l10n, e, access);
+    final title = rdManageTitle(l10n, e);
+    if (rdManageMatches(_query, title, place, rdManageHint(l10n, e, access))) return place;
     final former = rdManageFormerName(l10n, e);
-    if (former == null) return place;
-    final matchesNow = rdManageMatches(_query, rdManageTitle(l10n, e), place, rdManageHint(l10n, e, access));
-    return matchesNow ? place : '$place · ${l10n.rdAdminFormerly(former)}';
+    if (former != null && rdManageMatches(_query, title, place, former)) {
+      return '$place · ${l10n.rdAdminFormerly(former)}';
+    }
+    final keyword = rdManageKeywords(l10n, e).where((k) => rdManageMatches(_query, title, place, k)).firstOrNull;
+    return keyword == null ? place : '$place · $keyword';
   }
 
   /// "Register, Eigene Felder, Archiv …" (the section's rows).
@@ -309,8 +327,9 @@ class RdManageAreaPage extends ConsumerWidget {
 }
 
 /// A row that opens [entry]; with [counts] it shows how many the entry
-/// holds (Register, Admins, Archiv …). Moved entries show ↗: they open in
-/// another tab or page.
+/// holds (Register, Admins, Archiv …) or how it is set (Anmeldung An,
+/// Feiertage Bundesland). Moved entries show ↗: they open in another tab or
+/// page.
 class _EntryRow extends ConsumerWidget {
   const _EntryRow({required this.entry, this.subtitle, this.counts = false});
 
@@ -341,7 +360,7 @@ class _EntryRow extends ConsumerWidget {
       leading: RdRowIcon(rdManageIcon(entry)),
       title: rdManageTitle(l10n, entry),
       subtitle: subtitle == null || subtitle!.isEmpty ? null : subtitle,
-      value: shown && !warn ? '$count' : null,
+      value: shown && !warn ? '$count' : (counts ? _setting(ref, l10n) : null),
       trailing: shown && warn
           ? RdPill('$count', tone: RdTone.late)
           : entry.moved
@@ -350,5 +369,21 @@ class _EntryRow extends ConsumerWidget {
       showChevron: !entry.moved,
       onTap: () => rdOpenManageEntry(context, ref, entry),
     );
+  }
+
+  /// How a setting of the old "Allgemein" is set.
+  String? _setting(WidgetRef ref, AppLocalizations l10n) {
+    final t = ref.watch(currentTenantProvider);
+    if (t == null) return null;
+    return switch (entry) {
+      RdManageEntry.registration => (t.registerId ?? '').isNotEmpty ? l10n.rdAdminOn : l10n.rdAdminOff,
+      RdManageEntry.critical =>
+        (t.criticalRules ?? const []).isEmpty ? null : l10n.rdAdminCriticalCount(t.criticalRules!.length),
+      RdManageEntry.holidays => !t.showHolidays
+          ? l10n.rdAdminOff
+          : holidayRegions.where((r) => r.$1.isNotEmpty && r.$1 == t.region).map((r) => r.$1).firstOrNull ??
+              l10n.rdAdminOn,
+      _ => null,
+    };
   }
 }

@@ -38,6 +38,7 @@ import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/works/rd_collections_ui.dart';
 import '../widgets/works/rd_works_filter_sheet.dart';
 import 'rd_folder_page.dart' show rdEventLabel;
+import 'rd_general_settings_page.dart' show showRdSharingSheet;
 
 /// Search text of the Werke list, shared by every copy of the list (the
 /// split view builds a new one when the first Werk opens).
@@ -117,7 +118,11 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
           AppActionSheetAction(value: 'history', icon: Icons.history, label: l10n.rdAdminWorkHistory),
         if (ref.read(canAccessFilesProvider))
           AppActionSheetAction(value: 'files', icon: Icons.folder_outlined, label: l10n.settingsFileStorage),
-        if (sharingId != null && sharingId.isNotEmpty)
+        // Leads switch sharing here (from the old "Allgemein"), the sheet
+        // also copies the link.
+        if (isAdmin)
+          AppActionSheetAction(value: 'sharing', icon: Icons.share_outlined, label: l10n.rdAdminSharing)
+        else if (sharingId != null && sharingId.isNotEmpty)
           AppActionSheetAction(value: 'share', icon: Icons.link, label: l10n.songsCopyLink),
         AppActionSheetAction(value: 'pdf', icon: Icons.description_outlined, label: l10n.songsCatalogPdf),
       ],
@@ -132,6 +137,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         await showHistoryModal(context);
       case 'files':
         await context.push('/settings/files');
+      case 'sharing':
+        await showRdSharingSheet(context);
       case 'share':
         await Clipboard.setData(ClipboardData(text: SongUtils.shareLink(sharingId!)));
         if (mounted) ToastHelper.showSuccess(context, l10n.songsLinkCopied);
