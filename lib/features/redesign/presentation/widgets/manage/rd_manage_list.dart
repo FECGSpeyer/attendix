@@ -285,14 +285,8 @@ class _RdManageListPageState extends State<RdManageListPage> {
       ];
     } else if (_itemCount == 0) {
       body = [
-        RdInfoCard(
-          icon: widget.emptyIcon,
-          text: widget.emptyText,
-          action:
-              widget.onAdd == null || widget.addLabel == null
-                  ? null
-                  : RdOutlineButton(icon: Icons.add, label: widget.addLabel!, onPressed: widget.onAdd),
-        ),
+        // No second add button: the "+" below is the one way to add.
+        RdInfoCard(icon: widget.emptyIcon, text: widget.emptyText),
       ];
     } else {
       final shown = sorting ?? sections;

@@ -12995,7 +12995,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignInviteEmptyMembers =>
-      'Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.';
+      'Noch keine Mitglieder. Über „+“ teilst du den Einladungslink oder zeigst den QR-Code in der nächsten Probe.';
 
   @override
   String get redesignInviteFullscreen => 'Vollbild zeigen';

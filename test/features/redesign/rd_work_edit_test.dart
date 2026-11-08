@@ -293,7 +293,9 @@ void main() {
     await tester.enterText(find.byKey(const Key('rd-work-create-name')), 'Tochter Zion');
     await tester.pump();
     // No number and no Werk before the list is there to check against.
-    expect(tester.widget<RdPrimaryButton>(find.byKey(const Key('rd-work-create-submit'))).onPressed, isNull);
+    await tester.tap(find.byKey(const Key('rd-work-create-submit')));
+    await tester.pump();
+    expect(repo.created, isEmpty);
     songs.complete(const [_song, _ave]);
     await _settle(tester);
 
