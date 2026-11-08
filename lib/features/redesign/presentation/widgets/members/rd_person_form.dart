@@ -14,6 +14,7 @@ import '../../../../../core/providers/teacher_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/extra_field_utils.dart' show parseExtraFieldNumber;
+import '../../../../../data/models/parent/parent_model.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../data/models/shift/shift_plan.dart';
 import '../../../../../data/models/tenant/tenant.dart';
@@ -339,7 +340,10 @@ class _RdPersonMoreFieldsState extends ConsumerState<RdPersonMoreFields> {
         .where((t) => _p.instrument == null || t.instruments.contains(_p.instrument))
         .toList();
     final allTeachers = ref.watch(teachersProvider).valueOrNull ?? const [];
-    final parents = (tenant?.parents ?? false) ? ref.watch(parentsProvider).valueOrNull ?? const [] : const [];
+    // Typed on purpose: an untyped `const []` made the list dynamic, so the
+    // `fullName` extension getter failed at runtime and the tap did nothing.
+    final List<ParentModel> parents =
+        (tenant?.parents ?? false) ? ref.watch(parentsProvider).valueOrNull ?? const [] : const [];
     final membership = <Widget>[
       if ((tenant?.parents ?? false) && !isMain)
         RdListRow(

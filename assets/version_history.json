@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.84.2",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Beta: In „Person bearbeiten“ öffnet „Eltern“ wieder die Elternliste, die Auswahl wird gespeichert"
+      ]
+    },
+    {
       "version": "0.84.1",
       "date": "7.11.2026",
       "changes": [
