@@ -1,5 +1,6 @@
 import '../../../core/utils/people_sort.dart';
 import '../../../data/models/person/person.dart';
+import '../../../data/models/tenant/tenant.dart' show ExtraField;
 import '../../people/people_list_utils.dart' show isNewPerson;
 
 /// REDESIGN: "Sortieren & Filtern" of the Mitglieder tab. The filter and
@@ -99,12 +100,14 @@ class RdMembersListFilter {
 }
 
 /// The persons of [people] passing [filter]. [otherInstanceUserIds] are the
-/// accounts of the chosen linked tenant (null while loading: no narrowing).
+/// accounts of the chosen linked tenant (the page passes an empty set while
+/// they load, so nobody shows instead of everybody).
 /// Extra field defaults must already be filled in (withExtraFieldDefaults).
 List<Person> rdFilterMembers(
   List<Person> people,
   RdMembersListFilter filter, {
   Set<String>? otherInstanceUserIds,
+  List<ExtraField> fieldDefs = const [],
   DateTime? now,
 }) {
   if (filter.count == 0) return people;
@@ -122,7 +125,11 @@ List<Person> rdFilterMembers(
       if (!ok) return false;
     }
     for (final e in filter.fields.entries) {
-      if (p.additionalFields?[e.key]?.toString() != e.value) return false;
+      // Like the old list: a person without values counts a Ja/Nein field
+      // as its default (else Ja).
+      final def = fieldDefs.where((f) => f.id == e.key).firstOrNull;
+      final raw = p.additionalFields?[e.key] ?? (def?.type == 'boolean' ? (def!.defaultValue ?? true) : null);
+      if (raw?.toString() != e.value) return false;
     }
     final ids = otherInstanceUserIds;
     if (filter.otherTenantId != null && ids != null && !(p.appId != null && ids.contains(p.appId))) {

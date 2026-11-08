@@ -116,13 +116,18 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
     final hasChurch = fields.any((f) => f.type == 'bfecg_church');
     final churches = hasChurch ? ref.watch(churchesProvider).valueOrNull ?? const [] : const <Church>[];
     final linkedTenants = ref.watch(allLinkedTenantsProvider).valueOrNull ?? const [];
-    final otherIds = listFilter.otherTenantId == null
+    // "Auch Mitglied in": while loading nobody, on an error a hint (the
+    // chip must never stand over an unfiltered list).
+    final otherAsync = listFilter.otherTenantId == null
         ? null
-        : ref.watch(rdOtherInstanceUserIdsProvider(listFilter.otherTenantId!)).valueOrNull;
+        : ref.watch(rdOtherInstanceUserIdsProvider(listFilter.otherTenantId!));
+    final otherIds = otherAsync == null ? null : otherAsync.valueOrNull ?? const <String>{};
     // Extra field filters see the old list's values: shared organisation
     // values, then the field defaults (Ionic getModifiedPlayersForList).
+    // Always prepared when the group has such fields, so the count of the
+    // sheet matches the list from the first chip on.
     List<Person> prepared(List<Person> list) {
-      if (listFilter.fields.isEmpty) return list;
+      if (fields.isEmpty) return list;
       final shared = ref.watch(sharedPersonFieldValuesProvider).valueOrNull ?? const {};
       return withExtraFieldDefaults(
         mergeSharedPersonFieldValues(list, shared),
@@ -134,7 +139,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
     final allPeople = prepared(rawPeople);
     final allPending = prepared(rawPending);
     List<Person> apply(List<Person> list, RdMembersListFilter f, Set<String>? ids) =>
-        rdFilterMembers(list, f, otherInstanceUserIds: ids);
+        rdFilterMembers(list, f, otherInstanceUserIds: ids, fieldDefs: fields);
     final people = apply(allPeople, listFilter, otherIds);
     final pending = apply(allPending, listFilter, otherIds);
 
@@ -155,6 +160,19 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
       RdMembersFilter.paused => paused,
       RdMembersFilter.pending => pending,
     };
+
+    // Register of every person, so the search finds "Streicher" in every
+    // sort order and in the count of the sheet.
+    final registerOf = <int?, String>{
+      for (final s in rdMemberSections(
+        [...allPeople, ...allPending],
+        groups: groups,
+        percentages: const {},
+        noGroupLabel: l10n.attendanceNoGroup,
+      ))
+        for (final x in s.people) x.id: s.title,
+    };
+    bool matches(Person x) => rdPersonMatches(x, _query, register: registerOf[x.id]);
 
     // Another sort than by group: one list without register headers.
     final sections = listFilter.sort == RdMembersSort.group
@@ -191,7 +209,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
             };
             var list = apply(base.toList(), f, ids);
             if (critical && filter == RdMembersFilter.active) list = rdCriticalMembers(list);
-            return list.where((x) => rdPersonMatches(x, _query, register: x.groupName)).length;
+            return list.where(matches).length;
           },
           groups: [for (final g in groups) if (usedGroups.contains(g.id)) g],
           fields: fields,
@@ -203,10 +221,10 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
         );
     final filtered = [
       for (final s in sections)
-        if (s.people.any((x) => rdPersonMatches(x, _query, register: s.title)))
+        if (s.people.any(matches))
           RdMemberSection(
             title: s.title,
-            people: s.people.where((x) => rdPersonMatches(x, _query, register: s.title)).toList(),
+            people: s.people.where(matches).toList(),
             average: s.average,
             isRegister: s.isRegister,
           ),
@@ -319,6 +337,17 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
           onPressed: () => ref.invalidate(realtimePlayersProvider),
         ),
       ));
+    } else if (otherAsync != null && otherAsync.hasError && !otherAsync.hasValue) {
+      body.add(RdInfoCard(
+        text: l10n.redesignTodayLoadFailed,
+        icon: Icons.cloud_off_outlined,
+        action: RdOutlineButton(
+          label: l10n.redesignCommonRetry,
+          onPressed: () => ref.invalidate(rdOtherInstanceUserIdsProvider(listFilter.otherTenantId!)),
+        ),
+      ));
+    } else if (otherAsync != null && !otherAsync.hasValue) {
+      body.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
     } else if (filtered.isEmpty && rawPeople.isEmpty && _query.trim().isEmpty && canApprove) {
       // UX D1: a new group starts with the invitation.
       body.add(RdInfoCard(
