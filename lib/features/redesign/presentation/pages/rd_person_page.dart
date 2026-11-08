@@ -6,6 +6,10 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
+import '../../../../core/providers/church_providers.dart';
+import '../../../../core/providers/group_providers.dart';
+import '../../../../core/providers/profile_providers.dart'
+    show personExtraFieldsProvider, personListExtraFieldsProvider, profileRepositoryWithTenantProvider;
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
@@ -15,10 +19,14 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/contact_links.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../core/utils/extra_field_utils.dart' show formatExtraFieldValue;
+import '../../../../core/utils/tenant_label_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../data/models/church/church.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart' show showAppDatePicker;
+import '../../../people/person_write.dart' show organisationPersonKey;
 import '../../../people/presentation/pages/person_detail_page.dart'
     show personProvider, personAttendanceStatsProvider, personHistoryProvider;
 import '../../../people/presentation/widgets/pause_person_sheet.dart' show pausePersonFlow;
@@ -86,6 +94,7 @@ class RdPersonPage extends ConsumerWidget {
     }
 
     final name = '${person.firstName} ${person.lastName}'.trim();
+    final left = person.left != null;
     final joined = DateTime.tryParse(person.joined ?? '');
     final meta = [
       if ((person.groupName ?? '').isNotEmpty) person.groupName!,
@@ -126,6 +135,14 @@ class RdPersonPage extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 14),
+        // Archived (Verwaltung › Archiv or a link): the same page as for an
+        // active member, the "Ausgetreten" state on top with "Wiederherstellen"
+        // as the one main action, the data to read (no Bearbeiten, no
+        // Pausieren/Archivieren), like the old read-only page of a person who left.
+        if (left) ...[
+          _LeftCard(person: person, canRestore: role.isAdmin || role.isResponsible),
+          const SizedBox(height: 12),
+        ],
         _ContactGrid(phone: person.phone, email: person.email, firstName: person.firstName),
         if (person.pending) ...[
           RdInfoCard(
@@ -143,28 +160,18 @@ class RdPersonPage extends ConsumerWidget {
           _AttendanceCard(personId: personId),
           const SizedBox(height: 12),
         ],
-        _InfoList(person: person),
-        // Archived (opened from Verwaltung › Archiv): read-only like the old
-        // person page of an archived person, only "Wiederherstellen".
-        if (person.left != null) ...[
-          const SizedBox(height: 12),
-          RdInfoCard(
-            icon: Icons.archive_outlined,
-            text: l10n.settingsLeftOn(_formatLeft(person.left!)),
-            action: role.isAdmin || role.isResponsible
-                ? RdOutlineButton(
-                    icon: Icons.restore,
-                    label: l10n.redesignArchiveListRestore,
-                    onPressed: () async {
-                      await LeftPlayersPage.reactivateWithConfirmation(context, ref, person);
-                      if (context.mounted) ref.invalidate(personProvider(personId));
-                    },
-                  )
-                : null,
-          ),
-        ] else if (role.canEdit && !person.pending) ...[
-          const SizedBox(height: 12),
-          _Actions(person: person),
+        // The full data to read only for the leads (they would see it in
+        // Bearbeiten); others keep the usual info rows.
+        if (left && (role.isAdmin || role.isResponsible))
+          _LeftDetails(person: person)
+        else if (left)
+          _InfoList(person: person)
+        else ...[
+          _InfoList(person: person),
+          if (role.canEdit && !person.pending) ...[
+            const SizedBox(height: 12),
+            _Actions(person: person),
+          ],
         ],
       ],
     );
@@ -175,6 +182,177 @@ class RdPersonPage extends ConsumerWidget {
 String _formatLeft(String left) {
   final date = DateTime.tryParse(left);
   return date == null ? left : DateFormat(dateFmt()).format(date);
+}
+
+/// The reason given when the person was archived (last "archived" history
+/// entry); null when none was given.
+String? rdLeftReason(Person person) {
+  final entries = person.history.where((e) => e.type == PlayerHistoryType.archived.value);
+  final text = entries.isEmpty ? '' : (entries.last.text ?? '').trim();
+  // archivePlayer writes this placeholder when no reason was entered.
+  if (text.isEmpty || text == 'Kein Grund angegeben') return null;
+  return text;
+}
+
+/// "Ausgetreten: …" with the reason and "Wiederherstellen" (Admins and
+/// Verantwortliche) as the page's main action.
+class _LeftCard extends ConsumerWidget {
+  const _LeftCard({required this.person, required this.canRestore});
+
+  final Person person;
+  final bool canRestore;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    // The reason only for the leads: the Verlauf hides archive entries
+    // from everyone else too.
+    final reason = canRestore ? rdLeftReason(person) : null;
+    return RdCard(
+      key: const Key('rd-person-left'),
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.archive_outlined, color: p.softText),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  l10n.settingsLeftOn(_formatLeft(person.left!)),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: p.text),
+                ),
+              ),
+            ],
+          ),
+          if (reason != null) ...[
+            const SizedBox(height: 4),
+            Text(reason, style: RdType.meta(p, size: 14)),
+          ],
+          if (canRestore) ...[
+            const SizedBox(height: 12),
+            RdPrimaryButton(
+              key: const Key('rd-person-restore'),
+              icon: Icons.restore,
+              label: l10n.redesignArchiveListRestore,
+              onPressed: () async {
+                await LeftPlayersPage.reactivateWithConfirmation(context, ref, person);
+                if (!context.mounted) return;
+                if (person.id != null) ref.invalidate(personProvider(person.id!));
+                ref.invalidate(archivedPlayersProvider);
+              },
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Zusatzfeld values of a person who left: the person's own values, the
+/// organisation fields from `tenant_group_person_fields` (like the old
+/// person page; their copy in `additionalFields` may be stale).
+final _leftFieldValuesProvider = FutureProvider.autoDispose.family<Map<String, dynamic>, Person>((ref, person) async {
+  final values = <String, dynamic>{...?person.additionalFields};
+  final fields = await ref.watch(personExtraFieldsProvider.future);
+  final orgIds = fields.where((f) => f.isOrganisationField).map((f) => f.id).toSet();
+  if (orgIds.isEmpty) return values;
+  values.removeWhere((id, _) => orgIds.contains(id));
+  final repo = ref.watch(profileRepositoryWithTenantProvider);
+  final key = organisationPersonKey(person);
+  final orgId = await repo.getOrganisationId();
+  if (orgId == null || key == null) return values;
+  final shared = await repo.getSharedFieldValues(orgId, key);
+  for (final e in shared.entries) {
+    if (orgIds.contains(e.key)) values[e.key] = e.value;
+  }
+  return values;
+});
+
+/// "Angaben" of a person who left, to read (Bearbeiten is closed while
+/// archived): group, dates, the other filled columns, filled Zusatzfelder
+/// and the note. Empty values are left out, long ones shown in full.
+class _LeftDetails extends ConsumerWidget {
+  const _LeftDetails({required this.person});
+
+  final Person person;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final tenant = ref.watch(currentTenantProvider);
+    final groups = ref.watch(groupsMapProvider).valueOrNull ?? const <int, String>{};
+    final churches = ref.watch(churchesProvider).valueOrNull ?? const <Church>[];
+    final churchNames = {
+      for (final c in churches)
+        if (c.id != null) c.id!: c.name,
+    };
+    final role = ref.watch(effectiveRoleProvider);
+    final long = DateFormat.yMMMd(currentIntlLocale());
+
+    String? text(String? s) => (s ?? '').trim().isEmpty ? null : s!.trim();
+    String? date(String? s) {
+      final d = DateTime.tryParse(s ?? '');
+      return d == null ? null : long.format(d);
+    }
+
+    Widget block(String title, String value) => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: p.text)),
+              const SizedBox(height: 2),
+              Text(value, style: RdType.meta(p, size: 14)),
+            ],
+          ),
+        );
+    Widget info(String title, String value) => value.length > 28 || value.contains('\n')
+        ? block(title, value)
+        : RdListRow(title: title, value: value, showChevron: false);
+
+    final group = person.groupName ?? (person.instrument == null ? null : groups[person.instrument]);
+    // Zusatzfelder with the organisation's values (shown once loaded).
+    final additional = ref.watch(_leftFieldValuesProvider(person)).valueOrNull ?? const <String, dynamic>{};
+    final pausedUntil = DateTime.tryParse(person.pausedUntil ?? '');
+    // Internal note: only Admins and Verantwortliche (like _InfoList).
+    final notes = role.isAdmin || role.isResponsible ? text(person.notes) : null;
+    final rows = <Widget>[
+      if (text(group) case final v?) info(groupLabel(tenant?.type), v),
+      // Archiving keeps a pause; restoring brings it back.
+      if (person.paused)
+        info(
+          l10n.redesignPersonPaused,
+          pausedUntil == null ? l10n.redesignPersonPausedOpen : l10n.redesignMembersPausedUntil(long.format(pausedUntil)),
+        ),
+      if (date(person.birthday) case final v?) info(l10n.redesignPersonBirthday, v),
+      if (date(person.joined) case final v?) info(l10n.redesignPersonJoined, v),
+      if (date(person.playsSince) case final v?) info(l10n.personPlaysSince, v),
+      if (text(person.range) case final v?) info(l10n.personVocalRange, v),
+      if (text(person.instruments) case final v?) info(l10n.peopleInstruments, v),
+      if (text(person.otherExercise) case final v?) info(l10n.peopleOtherDuties, v),
+      if ((person.otherOrchestras ?? const <String>[]).isNotEmpty)
+        info(l10n.personOtherOrchestras, person.otherOrchestras!.join(', ')),
+      if (person.examinee) info(l10n.peopleCandidate, l10n.commonYes),
+      if (text(person.testResult) case final v?) info(l10n.peopleTestResult, v),
+      for (final f in ref.watch(personListExtraFieldsProvider))
+        if (additional[f.id] != null)
+          if (formatExtraFieldValue(additional, f, churchNames: churchNames).trim() case final v when v.isNotEmpty)
+            info(f.name, v),
+      if (notes != null) block(l10n.redesignPersonNotes, notes),
+    ];
+    if (rows.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RdGroupLabel(l10n.rdPeopleReviewDetails),
+        RdGroupedList(children: rows),
+      ],
+    );
+  }
 }
 
 /// Anrufen · WhatsApp · Telegram · E-Mail as white tiles (only the ones
