@@ -47,7 +47,7 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
 
   /// Wide screens: search and scroll position shared with the other
   /// Verwaltung routes (each builds its own list).
-  RdManageListMemory? _memory;
+  bool _shared = false;
   ScrollController? _scroll;
 
   @override
@@ -59,14 +59,13 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_memory != null || RdSplitScope.of(context) == null) return;
+    if (_shared || RdSplitScope.of(context) == null) return;
+    _shared = true;
     final memory = ref.read(rdManageListMemoryProvider);
     final scroll = ScrollController(initialScrollOffset: memory.offset);
     scroll.addListener(() => memory.offset = scroll.offset);
-    _memory = memory;
     _scroll = scroll;
-    _query = memory.query;
-    _search.text = memory.query;
+    _query = _search.text = ref.read(rdManageQueryProvider);
   }
 
   @override
@@ -77,10 +76,10 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
     super.dispose();
   }
 
-  void _setQuery(String value) => setState(() {
-        _query = value;
-        _memory?.query = value;
-      });
+  void _setQuery(String value) {
+    setState(() => _query = value);
+    if (_shared) ref.read(rdManageQueryProvider.notifier).state = value;
+  }
 
   void _clear() {
     _search.clear();
@@ -95,8 +94,17 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
     final searchable = rdManageSearchable(access);
     final areas = rdManageAreas(access);
     final split = RdSplitScope.of(context);
-    // Kept while any Verwaltung list is open.
-    if (split != null) ref.watch(rdManageListMemoryProvider);
+    if (split != null) {
+      // Kept while any Verwaltung list is open.
+      ref.watch(rdManageListMemoryProvider);
+      // One search for every list (a list further down the stack shows the
+      // same search when it is visible again).
+      ref.listen<String>(rdManageQueryProvider, (_, next) {
+        if (next == _query) return;
+        _search.text = next;
+        setState(() => _query = next);
+      });
+    }
     final recent = ref.watch(rdManageRecentProvider).where(searchable.contains).toList();
     final searching = _query.trim().isNotEmpty;
     final results = [
@@ -340,15 +348,18 @@ class RdManageSplit extends StatelessWidget {
   }
 }
 
-/// Search and scroll position of the Verwaltung list on wide screens. The
-/// overview and every page are routes of their own, each with its own list;
-/// they share this, so opening the first page keeps the list as it was.
+/// Scroll position of the Verwaltung list on wide screens. The overview and
+/// every page are routes of their own, each with its own list; a new list
+/// starts where the last one was scrolled to.
 class RdManageListMemory {
-  String query = '';
   double offset = 0;
 }
 
 final rdManageListMemoryProvider = Provider.autoDispose<RdManageListMemory>((ref) => RdManageListMemory());
+
+/// The search of the Verwaltung lists on wide screens: one search for all
+/// of them, so a list shows what the user typed last wherever it was.
+final rdManageQueryProvider = StateProvider.autoDispose<String>((ref) => '');
 
 /// The right side of the Verwaltung on wide screens while no page is open.
 class _ManageOverview extends ConsumerWidget {

@@ -382,13 +382,25 @@ void main() {
       expect(router.routerDelegate.currentConfiguration.uri.path, RedesignRoutes.attendanceTypes);
 
       // Pushed from elsewhere (a picker): "‹ Zurück" pops back there
-      // instead of leaving it for "Ich".
+      // instead of leaving it for "Ich"; pages opened from a pushed list
+      // are pushed too and the list below shows the same search.
       router.go('/ich');
       await _settle(tester);
       router.push(RedesignRoutes.groups);
       await _settle(tester);
       expect(find.text('page groups'), findsOneWidget);
       expect(find.text('Ich'), findsNothing);
+      await tester.enterText(find.byType(TextField), 'termin');
+      await _settle(tester);
+      await tester.tap(find.text('Terminarten'));
+      await _settle(tester);
+      expect(find.text('page types'), findsOneWidget);
+      await tester.enterText(find.byType(TextField), 'lehrer');
+      await _settle(tester);
+      await tester.tap(find.text('Zurück'));
+      await _settle(tester);
+      expect(find.text('page groups'), findsOneWidget);
+      expect(find.widgetWithText(TextField, 'lehrer'), findsOneWidget);
       await tester.tap(find.text('Zurück'));
       await _settle(tester);
       expect(find.text('page me'), findsOneWidget);
