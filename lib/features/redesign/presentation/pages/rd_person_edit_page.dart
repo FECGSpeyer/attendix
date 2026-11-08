@@ -1385,7 +1385,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
           RdGroupLabel(l10n.peopleProblemCase),
           RdGroupedList(children: [
             // Why (the rule that hits); none while it cannot be worked out.
-            if (ref.watch(rdCriticalReasonsProvider).valueOrNull?[person.id] case final reason?)
+            if (rdCriticalContextOf(ref)?.reasonOf(person) case final reason?)
               RdListRow(
                 title: rdCriticalHitText(reason.rule, reason.result, l10n),
                 titleColor: p.absent,

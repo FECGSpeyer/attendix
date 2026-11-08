@@ -1,26 +1,41 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/attendance_providers.dart';
-import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../rd_critical_logic.dart';
 
-/// REDESIGN: recorded statuses of the group's Termine after [since] up to
+/// Which group and from which day the Problemfall data is loaded. The
+/// group is part of the key, so a group switch never shows the previous
+/// group's people while the new data loads.
+typedef RdCriticalKey = ({int tenantId, DateTime since});
+
+/// The key for [rules] of [tenant] (null without a group).
+RdCriticalKey? rdCriticalKeyFor(Tenant? tenant, Iterable<CriticalRule> rules) {
+  final id = tenant?.id;
+  if (id == null) return null;
+  return (
+    tenantId: id,
+    since: rdCriticalLoadStart(rules, seasonStart: rdSeasonStartOf(tenant?.seasonStart), today: DateTime.now()),
+  );
+}
+
+/// REDESIGN: recorded statuses of the group's Termine after `since` up to
 /// now, by person – what the Problemfall rules count (preview in the rule
-/// editor, reasons on Mitglieder and the person). Leads only: the rows come
-/// from `person_attendances` of the current group (tenant filter in the
-/// repository). [since] is a whole day from [rdCriticalLoadStart], so the
-/// pages share one load.
-final rdCriticalEntriesProvider = FutureProvider.autoDispose.family<Map<int, List<RdCriticalEntry>>, DateTime>((
+/// editor, hit counts, reasons on Mitglieder and the person). Leads only:
+/// the rows come from `person_attendances` of the current group (tenant
+/// filter in the repository). Reloads when a Termin's attendance changes.
+final rdCriticalEntriesProvider = FutureProvider.autoDispose.family<Map<int, List<RdCriticalEntry>>, RdCriticalKey>((
   ref,
-  since,
+  key,
 ) async {
+  ref.watch(attendanceRefetchCounter);
   final repo = ref.watch(attendanceRepositoryWithTenantProvider);
-  if (!repo.hasTenantId) return const {};
+  if (!repo.hasTenantId || repo.currentTenantId != key.tenantId) return const {};
   final now = DateTime.now();
-  final attendances = await repo.getAttendances(since: since);
+  final attendances = await repo.getAttendances(since: key.since);
   final byId = <int, ({DateTime date, String? typeId})>{};
   for (final a in attendances) {
     final id = a.id;
@@ -50,40 +65,68 @@ class RdCriticalReason {
   final RdRuleResult result;
 }
 
-/// The reason of every person the server marked as Problemfall (by id).
-/// A person missing here is still a Problemfall (the server decides), e.g.
-/// right after the rules changed; the pages then show no reason.
-final rdCriticalReasonsProvider = FutureProvider.autoDispose<Map<int, RdCriticalReason>>((ref) async {
-  final tenant = ref.watch(currentTenantProvider);
-  final rules = tenant?.criticalRules ?? const <CriticalRule>[];
-  if (rules.isEmpty) return const {};
-  final season = rdSeasonStartOf(tenant?.seasonStart);
-  final start = rdCriticalLoadStart(rules, seasonStart: season, today: DateTime.now());
-  final persons = await ref.watch(criticalPlayersProvider.future);
-  if (persons.isEmpty) return const {};
-  final entries = await ref.watch(rdCriticalEntriesProvider(start).future);
-  final now = DateTime.now();
-  return {
-    for (final x in persons)
-      if (x.id != null)
-        if (_reasonOf(x, rules, entries[x.id] ?? const [], season, now) case final reason?) x.id!: reason,
-  };
-});
+/// The group's rules with the loaded statuses; the pages ask it about the
+/// person they show (their own, live copy of the person).
+class RdCriticalContext {
+  RdCriticalContext({
+    required this.tenantId,
+    required this.rules,
+    required this.entries,
+    this.seasonStart,
+    DateTime? now,
+  }) : now = now ?? DateTime.now();
 
-RdCriticalReason? _reasonOf(
-  Person person,
-  List<CriticalRule> rules,
-  List<RdCriticalEntry> entries,
-  DateTime? season,
-  DateTime now,
-) {
-  final hits = rdCriticalHits(
-    rules,
-    entries,
-    lastSolve: person.lastSolve == null ? null : DateTime.tryParse(person.lastSolve!),
-    seasonStart: season,
+  /// The group this was computed for.
+  final int tenantId;
+  final List<CriticalRule> rules;
+  final Map<int, List<RdCriticalEntry>> entries;
+  final DateTime? seasonStart;
+  final DateTime now;
+
+  DateTime? _lastSolve(Person person) => person.lastSolve == null ? null : DateTime.tryParse(person.lastSolve!);
+
+  /// [rule] on its own for [person].
+  RdRuleResult resultOf(CriticalRule rule, Person person) => rdEvaluateCriticalRule(
+    rule,
+    entries[person.id] ?? const [],
+    lastSolve: _lastSolve(person),
+    seasonStart: seasonStart,
     now: now,
   );
-  if (hits.isEmpty) return null;
-  return RdCriticalReason(hits.first.$1, hits.first.$2);
+
+  /// Why [person] is a Problemfall by all rules; null when no rule hits
+  /// (e.g. right after the rules changed, before the server checked again).
+  RdCriticalReason? reasonOf(Person person) {
+    final hits = rdCriticalHits(
+      rules,
+      entries[person.id] ?? const [],
+      lastSolve: _lastSolve(person),
+      seasonStart: seasonStart,
+      now: now,
+    );
+    return hits.isEmpty ? null : RdCriticalReason(hits.first.$1, hits.first.$2);
+  }
+}
+
+/// [RdCriticalContext] for the current group's rules; null without rules.
+final rdCriticalContextProvider = FutureProvider.autoDispose<RdCriticalContext?>((ref) async {
+  final tenant = ref.watch(currentTenantProvider);
+  final rules = tenant?.criticalRules ?? const <CriticalRule>[];
+  final key = rdCriticalKeyFor(tenant, rules);
+  if (rules.isEmpty || key == null) return null;
+  final entries = await ref.watch(rdCriticalEntriesProvider(key).future);
+  return RdCriticalContext(
+    tenantId: key.tenantId,
+    rules: rules,
+    entries: entries,
+    seasonStart: rdSeasonStartOf(tenant?.seasonStart),
+  );
+});
+
+/// The loaded [RdCriticalContext] of the current group: keeps the last
+/// value while statuses reload, but never shows another group's.
+RdCriticalContext? rdCriticalContextOf(WidgetRef ref) {
+  final ctx = ref.watch(rdCriticalContextProvider).valueOrNull;
+  final tenantId = ref.watch(currentTenantProvider)?.id;
+  return ctx != null && ctx.tenantId == tenantId ? ctx : null;
 }

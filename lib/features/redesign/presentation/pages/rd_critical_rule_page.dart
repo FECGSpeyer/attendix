@@ -15,6 +15,7 @@ import '../../../../l10n/l10n.dart';
 import '../../data/providers/rd_critical_providers.dart';
 import '../../data/rd_critical_logic.dart';
 import '../widgets/event/rd_form_widgets.dart';
+import '../widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
 
@@ -55,7 +56,7 @@ class _RdCriticalRulePageState extends ConsumerState<RdCriticalRulePage> {
   late final _id = widget.rule?.id ?? const Uuid().v4();
 
   late CriticalRule _rule =
-      widget.rule ??
+      _normalised(widget.rule) ??
       rdCriticalPresetRule(
         RdCriticalPreset.oftenAbsent,
         id: _id,
@@ -63,6 +64,16 @@ class _RdCriticalRulePageState extends ConsumerState<RdCriticalRulePage> {
       );
 
   late final _name = TextEditingController(text: _rule.name ?? '');
+
+  /// Legacy Ionic rules without period type count their days (or all
+  /// time): keep that meaning explicitly, so saving never changes it.
+  static CriticalRule? _normalised(CriticalRule? rule) {
+    if (rule == null || rule.periodType != null) return rule;
+    final days = rule.periodDays;
+    return days != null && days > 0
+        ? rule.copyWith(periodType: CriticalRulePeriodType.days)
+        : rule.copyWith(periodType: CriticalRulePeriodType.allTime, periodDays: null);
+  }
 
   /// Tap handlers of the sentence parts, renewed on every build.
   final _recognizers = <TapGestureRecognizer>[];
@@ -378,8 +389,9 @@ class _Preview extends ConsumerWidget {
     final tenant = ref.watch(currentTenantProvider);
     final season = rdSeasonStartOf(tenant?.seasonStart);
     final now = DateTime.now();
-    final start = rdCriticalLoadStart([...?tenant?.criticalRules, rule], seasonStart: season, today: now);
-    final entries = ref.watch(rdCriticalEntriesProvider(start));
+    final key = rdCriticalKeyFor(tenant, [...?tenant?.criticalRules, rule]);
+    if (key == null) return const SizedBox.shrink();
+    final entries = ref.watch(rdCriticalEntriesProvider(key));
     final players = ref.watch(playersProvider);
 
     Widget note(String text, {bool spinner = false}) => Padding(
@@ -396,8 +408,9 @@ class _Preview extends ConsumerWidget {
     );
 
     if (entries.hasError || players.hasError) return note(l10n.rdCriticalPreviewError);
-    final data = entries.valueOrNull;
-    final people = players.valueOrNull;
+    // Only data of this group: nothing from before a group switch.
+    final data = entries.valueOrNull; // the key holds the group
+    final people = rdLoadedValue(players);
     if (data == null || people == null) return note(l10n.rdCriticalPreviewLoading, spinner: true);
 
     final hits = <(Person, RdRuleResult)>[];

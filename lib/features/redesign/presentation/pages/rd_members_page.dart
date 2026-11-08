@@ -406,7 +406,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
         ));
       }
       // Why each one is a Problemfall, while only those are shown.
-      final reasons = criticalOnly ? ref.watch(rdCriticalReasonsProvider).valueOrNull : null;
+      final critical = criticalOnly ? rdCriticalContextOf(ref) : null;
       for (final s in filtered) {
         if (s.title.isNotEmpty) body.add(_SectionHeader(section: s));
         body.add(RdGroupedList(children: [
@@ -417,7 +417,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
               sortHint: _sortHint(person, listFilter.sort),
               percent: filter == RdMembersFilter.pending || person.id == null ? null : percentages[person.id],
               absence: person.id == null ? null : rdCurrentAbsence(absences, person.id!),
-              reason: switch (reasons?[person.id]) {
+              reason: switch (critical?.reasonOf(person)) {
                 final r? => rdCriticalHitText(r.rule, r.result, l10n),
                 null => null,
               },

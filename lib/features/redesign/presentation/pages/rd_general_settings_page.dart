@@ -24,6 +24,7 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/presentation/pages/general_settings_page.dart'
     show holidayRegions, initialRegistrationFields, normalizeReasons, normalizeShowAllInfoText;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
 import 'rd_critical_rule_page.dart';
@@ -805,10 +806,10 @@ class _CriticalRuleList extends ConsumerWidget {
     final tenant = ref.watch(currentTenantProvider);
     final season = rdSeasonStartOf(tenant?.seasonStart);
     final now = DateTime.now();
-    final entries = rules.isEmpty
-        ? null
-        : ref.watch(rdCriticalEntriesProvider(rdCriticalLoadStart(rules, seasonStart: season, today: now))).valueOrNull;
-    final people = rules.isEmpty ? null : ref.watch(playersProvider).valueOrNull;
+    final key = rules.isEmpty ? null : rdCriticalKeyFor(tenant, rules);
+    // Only data of this group: nothing from before a group switch.
+    final entries = key == null ? null : ref.watch(rdCriticalEntriesProvider(key)).valueOrNull;
+    final people = key == null ? null : rdLoadedValue(ref.watch(playersProvider));
 
     int? hitsOf(CriticalRule rule) {
       if (entries == null || people == null) return null;
