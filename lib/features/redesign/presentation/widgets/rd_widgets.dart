@@ -1408,17 +1408,18 @@ class RdHintBox extends StatelessWidget {
 /// Height cap of the new design's sheets: 85 % of the screen, so the drag
 /// handle and a strip of the page above (tap closes the sheet) always stay
 /// visible, however long the content is. Measured on every build, so it
-/// follows rotation and window resizes.
+/// follows rotation and window resizes. The cap includes the Material drag
+/// handle (48 px, drawn above [child] by `showDragHandle`).
 class RdSheetCap extends StatelessWidget {
   const RdSheetCap({super.key, required this.child});
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.85),
-        child: child,
-      );
+  Widget build(BuildContext context) {
+    final max = MediaQuery.sizeOf(context).height * 0.85 - kMinInteractiveDimension;
+    return ConstrainedBox(constraints: BoxConstraints(maxHeight: max < 0 ? 0 : max), child: child);
+  }
 }
 
 /// Bottom sheet of the new design (page background, drag handle, at most
