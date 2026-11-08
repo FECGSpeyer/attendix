@@ -283,11 +283,15 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     if (DemoGuard.blocked()) return; // DEMO_GUARD
     final all = await ref.read(attendanceTypesProvider.future).catchError((_) => const <AttendanceType>[]);
     if (!mounted) return;
+    // The current type from the list itself: the row may be tapped before
+    // the Termin's type finished loading.
+    final currentId = att.typeId;
+    current = currentId == null ? null : all.where((t) => t.id == currentId).firstOrNull;
     final types = [
       for (final t in all)
         if (t.visible == true || t.id == current?.id) t,
     ];
-    if (types.isEmpty) {
+    if (types.isEmpty || (currentId != null && current == null)) {
       ToastHelper.showError(context, l10n.redesignTodayLoadFailed);
       return;
     }
