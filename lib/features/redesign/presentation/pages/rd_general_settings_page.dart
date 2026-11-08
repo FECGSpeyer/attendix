@@ -10,6 +10,7 @@ import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/files_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -809,7 +810,7 @@ class _CriticalRuleList extends ConsumerWidget {
     final key = rules.isEmpty ? null : rdCriticalKeyFor(tenant, rules);
     // Only data of this group: nothing from before a group switch.
     final entries = key == null ? null : ref.watch(rdCriticalEntriesProvider(key)).valueOrNull;
-    final people = key == null ? null : rdLoadedValue(ref.watch(playersProvider));
+    final people = key == null ? null : rdLoadedValue(ref.watch(realtimePlayersProvider));
 
     int? hitsOf(CriticalRule rule) {
       if (entries == null || people == null) return null;

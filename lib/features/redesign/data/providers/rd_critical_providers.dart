@@ -1,4 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../../../core/config/supabase_config.dart';
 
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
@@ -35,6 +40,7 @@ final rdCriticalEntriesProvider = FutureProvider.autoDispose.family<Map<int, Lis
   // when the Termine list is not open.
   ref.watch(attendanceRealtimeSubscriptionProvider);
   ref.watch(attendanceRefetchCounter);
+  ref.watch(rdPersonAttendanceAddRemoveSubscriptionProvider);
   final repo = ref.watch(attendanceRepositoryWithTenantProvider);
   if (!repo.hasTenantId || repo.currentTenantId != key.tenantId) return const {};
   final now = DateTime.now();
@@ -58,6 +64,44 @@ final rdCriticalEntriesProvider = FutureProvider.autoDispose.family<Map<int, Lis
     );
   }
   return result;
+});
+
+/// Supabase realtime for INSERT and DELETE on `person_attendances`: people
+/// added to or removed from a Termin on any device (the shared subscription
+/// only sees status updates). The table has no tenant column, so events are
+/// not filtered; a spurious event only reloads the tenant-filtered query
+/// above. Debounced: a new Termin inserts one row per person at once.
+final AutoDisposeProvider<void> rdPersonAttendanceAddRemoveSubscriptionProvider = Provider.autoDispose<void>((ref) {
+  final tenantId = ref.watch(currentTenantProvider)?.id;
+  if (tenantId == null) return;
+  final supabase = ref.watch(supabaseClientProvider);
+  Timer? debounce;
+  void onChanged(PostgresChangePayload _) {
+    debounce?.cancel();
+    debounce = Timer(const Duration(seconds: 2), () {
+      ref.invalidate(rdCriticalEntriesProvider);
+    });
+  }
+
+  final channel = supabase
+      .channel('rd_critical_person_attendances_$tenantId')
+      .onPostgresChanges(
+        event: PostgresChangeEvent.insert,
+        schema: 'public',
+        table: 'person_attendances',
+        callback: onChanged,
+      )
+      .onPostgresChanges(
+        event: PostgresChangeEvent.delete,
+        schema: 'public',
+        table: 'person_attendances',
+        callback: onChanged,
+      )
+      .subscribe();
+  ref.onDispose(() {
+    debounce?.cancel();
+    channel.unsubscribe();
+  });
 });
 
 /// Why a person is a Problemfall: the first rule that hits, with its count.

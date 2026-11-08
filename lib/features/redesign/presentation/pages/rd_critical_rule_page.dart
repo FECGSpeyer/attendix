@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -392,7 +392,8 @@ class _Preview extends ConsumerWidget {
     final key = rdCriticalKeyFor(tenant, [...?tenant?.criticalRules, rule]);
     if (key == null) return const SizedBox.shrink();
     final entries = ref.watch(rdCriticalEntriesProvider(key));
-    final players = ref.watch(playersProvider);
+    // Live people: a talk („Mit Person gesprochen“) or a pause counts at once.
+    final players = ref.watch(realtimePlayersProvider);
 
     Widget note(String text, {bool spinner = false}) => Padding(
       padding: const EdgeInsets.fromLTRB(4, 22, 4, 0),
