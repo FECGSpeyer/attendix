@@ -121,19 +121,21 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
 
   /// Queues [save] for the group and account the page shows. [done] gets
   /// the result unless the page was left or switched to another group;
-  /// after an account switch nothing is written at all (the shared client
-  /// already carries the other account's session).
-  void _enqueue(Future<bool> Function() save, void Function(bool ok) done) {
+  /// after an account switch nothing more is written (the shared client
+  /// already carries the other account's session): [save] checks
+  /// `sameAccount` before each of its writes.
+  void _enqueue(Future<bool> Function(bool Function() sameAccount) save, void Function(bool ok) done) {
     final container = ProviderScope.containerOf(context, listen: false);
     final account = container.read(currentAuthUserIdProvider);
+    bool sameAccount() => container.read(currentAuthUserIdProvider) == account;
     final generation = _generation;
     _pending++;
     _queue = _queue.then((_) async {
       try {
-        if (container.read(currentAuthUserIdProvider) != account) return;
+        if (!sameAccount()) return;
         bool ok;
         try {
-          ok = await save();
+          ok = await save(sameAccount);
         } catch (_) {
           ok = false; // never break the queue
         }
@@ -174,8 +176,9 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     _edits.add(change);
     setState(_showEdits);
     final notifier = ref.read(rolePermissionNotifierProvider.notifier);
-    _enqueue(() async {
+    _enqueue((sameAccount) async {
       for (final MapEntry(key: role, value: apply) in change.entries) {
+        if (!sameAccount()) return false;
         final row = apply(saved[role]!);
         if (!await notifier.save([row], repo: repo)) return false;
         saved[role] = row;
@@ -194,7 +197,7 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     final change = ++_filesChanges;
     setState(() => _filesShared = value);
     final notifier = ref.read(rolePermissionNotifierProvider.notifier);
-    _enqueue(() => notifier.save(const [], filesShared: value, repo: repo), (ok) {
+    _enqueue((_) => notifier.save(const [], filesShared: value, repo: repo), (ok) {
       if (ok) {
         _savedFilesShared = value;
         return;

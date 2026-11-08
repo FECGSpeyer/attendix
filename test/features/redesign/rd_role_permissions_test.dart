@@ -1,3 +1,4 @@
+import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
 import 'package:attendix/core/providers/duty_providers.dart';
@@ -47,6 +48,9 @@ class _FakeNotifier extends RolePermissionNotifier {
   }
 }
 
+/// The signed-in account; a test switches it while a save runs.
+final _account = StateProvider<String?>((ref) => 'a');
+
 final _permissions = [
   for (final role in [Role.helper, Role.voiceLeaderHelper, Role.voiceLeader, Role.player, Role.viewer, Role.parent])
     TenantRolePermission(id: role.value, tenantId: 7, role: role.value),
@@ -65,6 +69,7 @@ Widget _app(
   return ProviderScope(
     overrides: [
       effectiveRoleProvider.overrideWithValue(role),
+      currentAuthUserIdProvider.overrideWith((ref) => ref.watch(_account)),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
       rolePermissionsProvider.overrideWith((ref) async => _permissions),
       hasDutyTypesProvider.overrideWithValue(false),
@@ -217,6 +222,23 @@ void main() {
       expect(saves.last.single.attendanceCreate, !create);
       expect(_switchOf(tester, 'Termine anlegen').value, !create);
       expect(find.textContaining('Bei Stimmführern ist es noch anders'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('after an account switch the Stimmführer row is not written any more', (tester) async {
+      tester.view.physicalSize = const Size(393, 4000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final saves = <List<TenantRolePermission>>[];
+      await tester.pumpWidget(_app(saves));
+      await _settle(tester);
+
+      // Switched to another account while the Helfer row is written.
+      await tester.tap(find.text('Termine anlegen'));
+      await tester.pump(const Duration(milliseconds: 50));
+      ProviderScope.containerOf(tester.element(find.byType(RdRolePermissionsPage))).read(_account.notifier).state = 'b';
+      await _settle(tester);
+      expect(saves.map((s) => s.single.role), [Role.helper.value]);
       await tester.pump(const Duration(seconds: 5));
     });
 
