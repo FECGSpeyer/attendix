@@ -653,7 +653,15 @@
         "addImport": "Werkliste importieren",
         "addImportHint": "Excel oder CSV mit Nummer, Titel, Kategorie",
         "addOrg": "Aus anderer Gruppe übernehmen",
-        "addOrgHint": "Werke deiner Organisation durchsuchen und kopieren"
+        "addOrgHint": "Werke deiner Organisation durchsuchen und kopieren",
+        "current": "Aktuell",
+        "currentPart": "Deine Stimme: {name}",
+        "currentAllPdf": "Alle als PDF",
+        "currentLast": "zuletzt {date}",
+        "currentNoPart": "Keine Stimme",
+        "currentBack": "Zurück blättern",
+        "currentForward": "Weiter blättern",
+        "foldersMenu": "Noten nach Stimme"
       },
       "workCreate": {
         "title": "Neues Werk",
@@ -945,7 +953,8 @@
         "membersPaused": "pausiert",
         "membersPending": "Anfragen",
         "membersBirthdays": "Nächste Geburtstage",
-        "membersCritical": "Auffällige Anwesenheit"
+        "membersCritical": "Auffällige Anwesenheit",
+        "worksCurrentHint": "Deine Noten für die nächsten Termine. Links findest du alle Werke."
       },
       "files": {
         "title": "Noten & Dateien",
@@ -2185,7 +2194,15 @@
         "addImport": "Import work list",
         "addImportHint": "Excel or CSV with number, title, category",
         "addOrg": "Take over from another group",
-        "addOrgHint": "Search and copy works of your organisation"
+        "addOrgHint": "Search and copy works of your organisation",
+        "current": "Current",
+        "currentPart": "Your part: {name}",
+        "currentAllPdf": "All as PDF",
+        "currentLast": "last {date}",
+        "currentNoPart": "No part",
+        "currentBack": "Scroll back",
+        "currentForward": "Scroll forward",
+        "foldersMenu": "Sheet music by part"
       },
       "workCreate": {
         "title": "New work",
@@ -2477,7 +2494,8 @@
         "membersPaused": "paused",
         "membersPending": "requests",
         "membersBirthdays": "Upcoming birthdays",
-        "membersCritical": "Attendance to watch"
+        "membersCritical": "Attendance to watch",
+        "worksCurrentHint": "Your sheet music for the coming events. All works are on the left."
       },
       "files": {
         "title": "Sheet music & files",

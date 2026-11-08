@@ -3,12 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
+import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
@@ -17,9 +20,12 @@ import '../../data/providers/rd_members_providers.dart';
 import '../../data/rd_collections_logic.dart';
 import '../../data/rd_members_logic.dart' show RdMembersFilter;
 import '../../data/rd_overview_logic.dart';
+import '../../data/rd_works_logic.dart';
+import '../pages/rd_folder_page.dart' show rdEventLabel;
 import 'rd_widgets.dart';
 import 'today/rd_today_common.dart' show RdInfoCard;
 import 'works/rd_collections_ui.dart';
+import 'works/rd_current_works.dart' show rdOpenCurrentWork;
 
 /// REDESIGN: what the empty detail column of the split view shows while
 /// nothing is chosen on the left (Werke, Mitglieder): a short overview with
@@ -71,6 +77,13 @@ class RdWorksOverviewPanel extends ConsumerWidget {
           ),
     );
     final dateFmt = DateFormat.yMMMEd(Localizations.localeOf(context).toLanguageTag());
+
+    // Members: their current Noten by Termin instead of the counts, which
+    // only matter to whoever looks after the Werke.
+    if (!role.isConductor) {
+      final current = _MemberCurrentWorks.sections(context, ref, data, collections);
+      if (current != null) return _OverviewPage(hint: l10n.redesignSplitWorksCurrentHint, children: current);
+    }
 
     void open(Song s) {
       if (s.id != null) context.go(RedesignRoutes.work(s.id!));
@@ -215,13 +228,84 @@ class RdMembersOverviewPanel extends ConsumerWidget {
   }
 }
 
+/// The members' overview of the Werke: "Aktuell" ([rdCurrentWorkCards])
+/// grouped by Termin, then the Werke played lately; a tap opens the own
+/// part like the cards of the list.
+abstract final class _MemberCurrentWorks {
+  /// The sections, null when nothing is current.
+  static List<Widget>? sections(
+    BuildContext context,
+    WidgetRef ref,
+    SongsListData data,
+    List<SongCollection>? collections,
+  ) {
+    final l10n = context.l10n;
+    final own = ref.watch(currentSelfServicePlayerProvider).valueOrNull?.instrument;
+    final ownGroup = data.groups.where((g) => g.id == own && g.maingroup != true).firstOrNull;
+    final now = DateTime.now();
+    final attendances = ref.watch(realtimeAttendanceListProvider).valueOrNull ?? const <Attendance>[];
+    final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
+    final works = rdCurrentWorkCards(
+      rdWithoutEndedEvents(
+        rdNextEvents(data.currentSongs, data.songs),
+        now: now,
+        attendances: attendances,
+        types: types,
+      ),
+      data.songs,
+      now: now,
+      // Unknown visibility: the Werke outside every Sammlung only.
+      visible: collections ?? const [],
+    );
+    if (works.isEmpty) return null;
+    final played = data.isOrchestra ? l10n.redesignWorksSortLastPlayed : l10n.redesignWorksSortLastSung;
+    // One section per Termin (two of a day stay apart, then with their
+    // time), the played ones last.
+    final byEvent = <(int?, DateTime?)?, List<RdCurrentWork>>{};
+    for (final w in works) {
+      (byEvent[w.event == null ? null : (w.event!.attendanceId, w.event!.date)] ??= []).add(w);
+    }
+    final labels = {
+      for (final w in works)
+        if (w.event != null) (w.event!.attendanceId, w.event!.date): rdEventLabel(w.event!),
+    };
+    String label((int?, DateTime?)? key) {
+      if (key == null) return played;
+      final text = labels[key]!;
+      final twice = labels.values.where((l) => l == text).length > 1;
+      // The date of a Termin holds no start time: its own, else its type's.
+      final start = twice ? rdEventStartTime(key.$1, attendances, types) : null;
+      return start == null ? text : '$text · $start';
+    }
+
+    return [
+      for (final MapEntry(:key, value: list) in byEvent.entries) ...[
+        RdGroupLabel(label(key)),
+        RdGroupedList(
+          children: [
+            for (final w in list)
+              RdListRow(
+                key: ValueKey('rd-overview-current-${w.song.id}'),
+                title: w.song.fullNumber.isEmpty ? w.song.name : '${w.song.fullNumber}  ${w.song.name}',
+                subtitle:
+                    ownGroup == null
+                        ? null
+                        : rdMemberPartFiles(w.song, ownGroup.id, choir: data.isChoir).any(rdIsNotes)
+                        ? l10n.redesignWorksStatusPart
+                        : l10n.redesignWorksStatusNoPart(ownGroup.name),
+                value: w.lastPlayed == null ? null : SongUtils.formatDate(w.song.lastSung),
+                onTap: () => rdOpenCurrentWork(context, ref, w.song, ownGroup?.id, choir: data.isChoir),
+              ),
+          ],
+        ),
+        const SizedBox(height: 24),
+      ],
+    ];
+  }
+}
+
 class _OverviewPage extends StatelessWidget {
-  const _OverviewPage({
-    required this.hint,
-    required this.children,
-    this.failed = false,
-    this.onRetry,
-  });
+  const _OverviewPage({required this.hint, required this.children, this.failed = false, this.onRetry});
 
   final String hint;
 
