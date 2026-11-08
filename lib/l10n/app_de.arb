@@ -16469,6 +16469,57 @@
   "@redesignMembersEmptyPending": {
     "description": "redesign.members.emptyPending"
   },
+  "redesignMembersFilterCritical": "Fehlen oft",
+  "@redesignMembersFilterCritical": {
+    "description": "redesign.members.filterCritical"
+  },
+  "redesignMembersFilterField": "{name}: {value}",
+  "@redesignMembersFilterField": {
+    "description": "redesign.members.filterField",
+    "placeholders": {
+      "name": {},
+      "value": {}
+    }
+  },
+  "redesignMembersFilterGroups": "Gruppen",
+  "@redesignMembersFilterGroups": {
+    "description": "redesign.members.filterGroups"
+  },
+  "redesignMembersFilterNoAccount": "Ohne Konto",
+  "@redesignMembersFilterNoAccount": {
+    "description": "redesign.members.filterNoAccount"
+  },
+  "redesignMembersFilterNoMatch": "Niemand passt zu den Filtern.",
+  "@redesignMembersFilterNoMatch": {
+    "description": "redesign.members.filterNoMatch"
+  },
+  "redesignMembersFilterOtherChip": "Auch in {name}",
+  "@redesignMembersFilterOtherChip": {
+    "description": "redesign.members.filterOtherChip",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignMembersFilterOtherInstance": "Auch Mitglied in",
+  "@redesignMembersFilterOtherInstance": {
+    "description": "redesign.members.filterOtherInstance"
+  },
+  "redesignMembersFilterRemove": "Filter „{name}“ entfernen",
+  "@redesignMembersFilterRemove": {
+    "description": "redesign.members.filterRemove",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignMembersFilterShow": "{count, plural, =0 {Niemand passt} one {1 Person anzeigen} other {{count} Personen anzeigen}}",
+  "@redesignMembersFilterShow": {
+    "description": "redesign.members.filterShow",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "redesignMembersLeader": "Stimmführung",
   "@redesignMembersLeader": {
     "description": "redesign.members.leader"

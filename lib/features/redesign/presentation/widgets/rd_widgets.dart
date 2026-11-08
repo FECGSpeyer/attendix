@@ -1448,3 +1448,88 @@ class RdSheetCheck extends StatelessWidget {
   Widget build(BuildContext context) =>
       selected ? Icon(Icons.check, size: 22, color: context.rd.primary) : const SizedBox(width: 22);
 }
+
+/// An active filter or sort order above a list: tap removes it.
+class RdRemovableChip extends StatelessWidget {
+  const RdRemovableChip({super.key, required this.label, required this.onRemove, this.semanticLabel});
+
+  final String label;
+  final VoidCallback onRemove;
+
+  /// Read out instead of [label] (e.g. "Sortierung „Titel“ entfernen").
+  final String? semanticLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return Semantics(
+      button: true,
+      label: semanticLabel ?? label,
+      excludeSemantics: true,
+      child: Material(
+        color: p.soft,
+        shape: const StadiumBorder(),
+        child: InkWell(
+          customBorder: const StadiumBorder(),
+          onTap: onRemove,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 36),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: p.softText),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Icon(Icons.close, size: 16, color: p.softText),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// "Filter" (with the number of active filters) above a list; opens the
+/// "Sortieren & Filtern" sheet.
+class RdFilterLink extends StatelessWidget {
+  const RdFilterLink({super.key, required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return Semantics(
+      button: true,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 44),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.tune, size: 18, color: p.link),
+                const SizedBox(width: 6),
+                Text(label, style: TextStyle(fontSize: 15, color: p.link)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

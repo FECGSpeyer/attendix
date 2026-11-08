@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.86.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta: Mitglieder lassen sich filtern und sortieren (Gruppe, Stimmführung, Ohne Konto, Fehlen oft, Zusatzfelder, andere Instanz; Name, Anwesenheit, Geburtstag, Beitritt), aktive Filter stehen als Chips über der Liste"
+      ]
+    },
+    {
       "version": "0.85.0",
       "date": "8.11.2026",
       "changes": [

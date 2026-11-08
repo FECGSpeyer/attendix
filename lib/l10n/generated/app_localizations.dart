@@ -21437,6 +21437,60 @@ abstract class AppLocalizations {
   /// **'Niemand wartet auf Freigabe.'**
   String get redesignMembersEmptyPending;
 
+  /// redesign.members.filterCritical
+  ///
+  /// In de, this message translates to:
+  /// **'Fehlen oft'**
+  String get redesignMembersFilterCritical;
+
+  /// redesign.members.filterField
+  ///
+  /// In de, this message translates to:
+  /// **'{name}: {value}'**
+  String redesignMembersFilterField(Object name, Object value);
+
+  /// redesign.members.filterGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen'**
+  String get redesignMembersFilterGroups;
+
+  /// redesign.members.filterNoAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Konto'**
+  String get redesignMembersFilterNoAccount;
+
+  /// redesign.members.filterNoMatch
+  ///
+  /// In de, this message translates to:
+  /// **'Niemand passt zu den Filtern.'**
+  String get redesignMembersFilterNoMatch;
+
+  /// redesign.members.filterOtherChip
+  ///
+  /// In de, this message translates to:
+  /// **'Auch in {name}'**
+  String redesignMembersFilterOtherChip(Object name);
+
+  /// redesign.members.filterOtherInstance
+  ///
+  /// In de, this message translates to:
+  /// **'Auch Mitglied in'**
+  String get redesignMembersFilterOtherInstance;
+
+  /// redesign.members.filterRemove
+  ///
+  /// In de, this message translates to:
+  /// **'Filter „{name}“ entfernen'**
+  String redesignMembersFilterRemove(Object name);
+
+  /// redesign.members.filterShow
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Niemand passt} one {1 Person anzeigen} other {{count} Personen anzeigen}}'**
+  String redesignMembersFilterShow(num count);
+
   /// redesign.members.leader
   ///
   /// In de, this message translates to:
