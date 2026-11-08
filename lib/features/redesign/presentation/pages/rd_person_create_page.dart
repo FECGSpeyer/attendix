@@ -27,6 +27,7 @@ import '../../../people/person_write.dart';
 import '../../../people/presentation/widgets/person_detail/allgemein_accordion.dart' show personExtraFields;
 import '../../../people/presentation/widgets/person_image_picker.dart';
 import '../../../people/presentation/widgets/person_match_suggestions.dart' show showEmailTakenDialog;
+import '../widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/members/rd_person_form.dart';
 import '../widgets/rd_widgets.dart';
@@ -468,6 +469,7 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
         const SizedBox(height: 20),
         RdGroupLabel(groupLabel(tenant?.type)),
         RdPersonGroupChips(
+          onManage: ref.watch(rdManageAccessProvider).isAdmin ? () => context.push(RedesignRoutes.groups) : null,
           selected: _draft.instrument,
           onSelected: (id) => setState(() {
             _touched = true;

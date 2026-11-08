@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.93.0",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta: Im Mitglieder-Tab öffnet „•••“ für die Leitung Auswertung, Mitglieder bearbeiten, Register, Problemfälle, Archiv und Export (statt nur Auswertung)",
+        "✨ Beta: Mitglieder mit E-Mail, aber ohne Zugang zur App, zeigt die Mitgliederliste als Hinweis mit „Zugänge anlegen“",
+        "✨ Beta: „Terminarten verwalten“ in der Auswahl der Terminart, „Register verwalten“ unter der Register-Auswahl einer Person und „Ferien und Feiertage einblenden“ bei „Weitere Daten“ (nur Leitung)"
+      ]
+    },
+    {
       "version": "0.92.0",
       "date": "8.11.2026",
       "changes": [

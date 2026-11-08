@@ -10,6 +10,7 @@ import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/services/holiday_service.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -28,6 +29,7 @@ import '../../data/rd_create_logic.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import '../widgets/event/rd_create_sheets.dart';
+import '../widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
@@ -174,7 +176,13 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     });
   }
 
+  /// Leads open a Verwaltung page from a picker ("Terminarten verwalten");
+  /// the form stays below.
+  VoidCallback? _manage(String route) =>
+      ref.read(rdManageAccessProvider).isAdmin ? () => context.push(route) : null;
+
   Future<void> _pickRepeat(HolidayData holidays) async {
+    final holidaysOff = ref.read(currentTenantProvider)?.showHolidays != true;
     final choice = await showRdRepeatSheet(
       context,
       start: _date,
@@ -182,6 +190,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
       until: _until.isAfter(_date) ? _until : rdAddDays(_date, 42),
       skipHolidays: _skipHolidays,
       holidays: holidays,
+      onShowHolidays: holidaysOff ? _manage(RedesignRoutes.holidays) : null,
     );
     if (choice == null || !mounted) return;
     if (choice.custom) return _pickCustomDates();
@@ -225,7 +234,12 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
   }
 
   Future<void> _pickType(List<AttendanceType> types) async {
-    final picked = await showRdTypePicker(context, types: types, selected: _type);
+    final picked = await showRdTypePicker(
+      context,
+      types: types,
+      selected: _type,
+      onManage: _manage(RedesignRoutes.attendanceTypes),
+    );
     if (picked == null || !mounted || picked.id == _type?.id) return;
     _touch(() {
       _applyType(picked);

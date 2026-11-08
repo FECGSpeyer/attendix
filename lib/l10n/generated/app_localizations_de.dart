@@ -9809,7 +9809,25 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdAdminHomeWorks => 'Im Werke-Tab unter •••';
 
   @override
+  String get rdAdminManageGroups => 'Register verwalten';
+
+  @override
+  String get rdAdminManageTypes => 'Terminarten verwalten';
+
+  @override
   String get rdAdminMissing => 'Zugänge anlegen';
+
+  @override
+  String rdAdminMissingBanner(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count Mitglieder haben eine E-Mail, aber noch keinen Zugang zur App.',
+      one: '1 Mitglied hat eine E-Mail, aber noch keinen Zugang zur App.',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get rdAdminName => 'Name und Kürzel';
@@ -9879,6 +9897,9 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get rdAdminShiftsHint =>
       'Wer Schicht hat, ist automatisch entschuldigt';
+
+  @override
+  String get rdAdminShowHolidays => 'Ferien und Feiertage einblenden';
 
   @override
   String get rdAdminStatsHint => 'Statistik, Saison, Zählweise und Export';

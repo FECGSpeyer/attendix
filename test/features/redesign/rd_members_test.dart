@@ -555,7 +555,12 @@ void main() {
       await _settle(tester);
       verify(() => repo.checkAndUnpausePlayers()).called(1);
       expect(find.byType(FloatingActionButton), findsOneWidget);
-      expect(find.bySemanticsLabel('Auswertung'), findsOneWidget);
+      // Auswertung and the other member tools sit behind "•••".
+      await tester.tap(find.byKey(const Key('rd-members-more')));
+      await _settle(tester);
+      for (final label in ['Auswertung', 'Mitglieder bearbeiten', 'Register', 'Problemfälle', 'Archiv', 'Export']) {
+        expect(find.text(label), findsWidgets, reason: label);
+      }
     });
 
     testWidgets('Beobachter reads only: no add, no Auswertung, no Wartet', (tester) async {
@@ -564,7 +569,7 @@ void main() {
       await _settle(tester);
       verifyNever(() => repo.checkAndUnpausePlayers());
       expect(find.byType(FloatingActionButton), findsNothing);
-      expect(find.bySemanticsLabel('Auswertung'), findsNothing);
+      expect(find.byKey(const Key('rd-members-more')), findsNothing);
       expect(find.text('Wartet · 1'), findsNothing);
       expect(find.text('Anna Berg'), findsOneWidget);
     });

@@ -13,11 +13,13 @@ import '../rd_widgets.dart';
 /// REDESIGN: sheets of "Termin anlegen" (Art, Abmeldeschluss, weitere
 /// Daten).
 
-/// Picks the Art of the new Termin.
+/// Picks the Art of the new Termin. With [onManage] (leads) a last row
+/// "Terminarten verwalten" closes the sheet and calls it.
 Future<AttendanceType?> showRdTypePicker(
   BuildContext context, {
   required List<AttendanceType> types,
   AttendanceType? selected,
+  VoidCallback? onManage,
 }) {
   return showRdSheet<AttendanceType>(
     context,
@@ -42,6 +44,24 @@ Future<AttendanceType?> showRdTypePicker(
                 ),
             ]),
           ),
+          if (onManage != null) ...[
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: RdGroupedList(children: [
+                RdListRow(
+                  leading: const RdRowIcon(Icons.category_outlined),
+                  title: l10n.rdAdminManageTypes,
+                  titleColor: context.rd.primary,
+                  showChevron: false,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    onManage();
+                  },
+                ),
+              ]),
+            ),
+          ],
         ],
       );
     }),
@@ -102,6 +122,7 @@ Future<RdRepeatChoice?> showRdRepeatSheet(
   required DateTime until,
   required bool skipHolidays,
   required HolidayData holidays,
+  VoidCallback? onShowHolidays,
 }) {
   return showRdSheet<RdRepeatChoice>(
     context,
@@ -111,6 +132,7 @@ Future<RdRepeatChoice?> showRdRepeatSheet(
       until: until,
       skipHolidays: skipHolidays,
       holidays: holidays,
+      onShowHolidays: onShowHolidays,
     ),
   );
 }
@@ -122,12 +144,17 @@ class _RepeatSheet extends StatefulWidget {
     required this.until,
     required this.skipHolidays,
     required this.holidays,
+    this.onShowHolidays,
   });
 
   final DateTime start;
   final RdRepeat repeat;
   final DateTime until;
   final bool skipHolidays;
+
+  /// Leads in groups without Ferien und Feiertage: a row to switch them on
+  /// (Verwaltung › Ferien und Feiertage), so series can leave them out.
+  final VoidCallback? onShowHolidays;
   final HolidayData holidays;
 
   @override
@@ -204,6 +231,16 @@ class _RepeatSheetState extends State<_RepeatSheet> {
                   onChanged: (v) => setState(() => _skip = v),
                 ),
                 onTap: () => setState(() => _skip = !_skip),
+              )
+            else if (widget.onShowHolidays != null)
+              RdListRow(
+                title: l10n.rdAdminShowHolidays,
+                titleColor: p.primary,
+                showChevron: false,
+                onTap: () {
+                  Navigator.of(context).pop();
+                  widget.onShowHolidays!();
+                },
               ),
           ]),
           const SizedBox(height: 14),

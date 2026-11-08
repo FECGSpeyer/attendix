@@ -12212,9 +12212,26 @@
   "@rdAdminHomeWorks": {
     "description": "rdAdmin.homeWorks"
   },
+  "rdAdminManageGroups": "Register verwalten",
+  "@rdAdminManageGroups": {
+    "description": "rdAdmin.manageGroups"
+  },
+  "rdAdminManageTypes": "Terminarten verwalten",
+  "@rdAdminManageTypes": {
+    "description": "rdAdmin.manageTypes"
+  },
   "rdAdminMissing": "Zugänge anlegen",
   "@rdAdminMissing": {
     "description": "rdAdmin.missing"
+  },
+  "rdAdminMissingBanner": "{count, plural, one {1 Mitglied hat eine E-Mail, aber noch keinen Zugang zur App.} other {{count} Mitglieder haben eine E-Mail, aber noch keinen Zugang zur App.}}",
+  "@rdAdminMissingBanner": {
+    "description": "rdAdmin.missingBanner",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "rdAdminName": "Name und Kürzel",
   "@rdAdminName": {
@@ -12296,6 +12313,10 @@
   "rdAdminShiftsHint": "Wer Schicht hat, ist automatisch entschuldigt",
   "@rdAdminShiftsHint": {
     "description": "rdAdmin.shiftsHint"
+  },
+  "rdAdminShowHolidays": "Ferien und Feiertage einblenden",
+  "@rdAdminShowHolidays": {
+    "description": "rdAdmin.showHolidays"
   },
   "rdAdminStatsHint": "Statistik, Saison, Zählweise und Export",
   "@rdAdminStatsHint": {

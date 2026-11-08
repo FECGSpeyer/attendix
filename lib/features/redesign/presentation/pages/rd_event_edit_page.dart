@@ -38,6 +38,7 @@ import '../../data/rd_event_phase.dart' show rdEffectiveDurationDays;
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import '../widgets/event/rd_create_sheets.dart' show showRdTypePicker;
+import '../widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart';
@@ -308,7 +309,13 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
       ToastHelper.showError(context, l10n.redesignTodayLoadFailed);
       return;
     }
-    final picked = await showRdTypePicker(context, types: types, selected: current);
+    final picked = await showRdTypePicker(
+      context,
+      types: types,
+      selected: current,
+      // Leads: "Terminarten verwalten" (Verwaltung), the Termin stays below.
+      onManage: ref.read(rdManageAccessProvider).isAdmin ? () => context.push(RedesignRoutes.attendanceTypes) : null,
+    );
     if (picked == null || !mounted || picked.id == current?.id) return;
     // #232: session of the acting user, captured before the first write.
     final writeSession = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();

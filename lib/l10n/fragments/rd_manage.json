@@ -72,7 +72,11 @@
       "unusedTeachers": "Wer welchen Spieler unterrichtet, mit Schülerliste je Lehrer.",
       "unusedParents": "Eltern sehen Termine und Anwesenheit ihrer Kinder und melden sie ab.",
       "unusedSharing": "Ein Link zeigt eure Werkliste, ganz ohne Anmeldung.",
-      "switchesFrom": "Schalter aus „{name}“"
+      "switchesFrom": "Schalter aus „{name}“",
+      "manageTypes": "Terminarten verwalten",
+      "manageGroups": "Register verwalten",
+      "showHolidays": "Ferien und Feiertage einblenden",
+      "missingBanner": "{count, plural, one {1 Mitglied hat eine E-Mail, aber noch keinen Zugang zur App.} other {{count} Mitglieder haben eine E-Mail, aber noch keinen Zugang zur App.}}"
     }
   },
   "en": {
@@ -148,7 +152,11 @@
       "unusedTeachers": "Who teaches which player, with a list of students per teacher.",
       "unusedParents": "Parents see their children's events and attendance and excuse them.",
       "unusedSharing": "A link shows your list of works, no sign-in needed.",
-      "switchesFrom": "Switches from “{name}”"
+      "switchesFrom": "Switches from “{name}”",
+      "manageTypes": "Manage event types",
+      "manageGroups": "Manage sections",
+      "showHolidays": "Show holidays",
+      "missingBanner": "{count, plural, one {1 member has an e-mail address but no app account yet.} other {{count} members have an e-mail address but no app account yet.}}"
     }
   }
 }
