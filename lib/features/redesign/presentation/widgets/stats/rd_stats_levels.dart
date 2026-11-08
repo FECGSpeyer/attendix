@@ -390,6 +390,8 @@ class _Table extends StatelessWidget {
                             button: true,
                             selected: c.sorted,
                             label: l10n.rdStatsSortBy(c.label),
+                            // The action sits here: the excluded InkWell's is gone.
+                            onTap: c.onSort,
                             excludeSemantics: true,
                             child: InkWell(
                               onTap: c.onSort,
@@ -415,6 +417,7 @@ class _Table extends StatelessWidget {
             Semantics(
               button: true,
               label: label,
+              onTap: onTap,
               excludeSemantics: true,
               child: InkWell(
                 onTap: onTap,

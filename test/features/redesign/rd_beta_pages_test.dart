@@ -58,7 +58,7 @@ Widget _app(Widget home) => ProviderScope(
               ],
             ]),
         activePlayersForStatsProvider.overrideWith((ref) async => _people),
-        rdStatsPreviousResultProvider.overrideWith((ref) => null),
+        rdStatsPreviousDataProvider.overrideWith((ref) async => null),
         playersProvider.overrideWith((ref) async => _people),
         archivedPlayersProvider.overrideWith((ref) async => const <Person>[]),
         realtimePlayersProvider.overrideWith((ref) => Stream.value(_people)),
@@ -168,6 +168,8 @@ void main() {
       final prev = rdStatsPreviousPeriod(DateTime(2026, 10, 1), DateTime(2026, 10, 10, 18));
       expect((prev!.start, prev.end), (DateTime(2026, 9, 21), DateTime(2026, 10, 1)));
       expect(rdStatsPreviousPeriod(DateTime(2026, 10, 1), DateTime(2026, 10, 3)), isNull);
+      // March has 31 days also across the change to summer time.
+      expect(rdStatsPreviousPeriod(DateTime(2026, 3, 1), DateTime(2026, 3, 31))?.start, DateTime(2026, 1, 29));
       final before = run(const RdStatsFilter(), shift: true);
       expect(rdStatsBiggestDrop(all, before)?.$1.group.name, 'Cello');
       expect(rdStatsBiggestDrop(before, all), isNull);

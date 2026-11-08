@@ -7,6 +7,7 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/statistics_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/attendance_repository.dart' show attendanceRepositoryForTenantProvider;
 import '../rd_stats_logic.dart';
 
@@ -31,19 +32,32 @@ final rdStatsFilterProvider = StateProvider<RdStatsFilter>((ref) {
 /// REDESIGN: the Auswertung for the chosen period and filter, counted one
 /// way for the Ø, the Termine, the Register and the persons
 /// ([rdComputeStats]). Empty while the Termine are loading.
+///
+/// Riverpod keeps the old value while a provider reloads, also after a
+/// group or account change. The data is therefore keyed by the group:
+/// Termine or persons of another group give an empty result instead of
+/// mixing in (the page shows loading meanwhile). Entries are matched to the
+/// Termine by their id.
 final rdStatsResultProvider = Provider<RdStatsResult>((ref) {
+  final tenantId = ref.watch(currentTenantIdProvider);
   final attendances = ref.watch(filteredAttendancesForStatsProvider).valueOrNull;
-  if (attendances == null || attendances.isEmpty) return RdStatsResult.empty;
+  if (tenantId == null || attendances == null || attendances.isEmpty) return RdStatsResult.empty;
+  if (!rdStatsOfTenant(attendances.map((a) => a.tenantId), tenantId)) return RdStatsResult.empty;
+  final players = ref.watch(activePlayersForStatsProvider).valueOrNull ?? const <Person>[];
   return rdComputeStats(
     attendances: attendances,
     personAttendances: ref.watch(allPersonAttendancesForStatsProvider).valueOrNull ?? const [],
     types: ref.watch(attendanceTypesProvider).valueOrNull ?? const [],
-    players: ref.watch(activePlayersForStatsProvider).valueOrNull ?? const [],
+    players: rdStatsOfTenant(players.map((p) => p.tenantId), tenantId) ? players : const [],
     groups: ref.watch(groupsProvider).valueOrNull ?? const [],
     filter: ref.watch(rdStatsFilterProvider),
     shiftExcusedAsPresent: ref.watch(currentTenantProvider)?.shiftExcusedAsPresent ?? false,
   );
 });
+
+/// Whether loaded rows with these tenant ids belong to [tenantId] (rows
+/// without one are taken as such).
+bool rdStatsOfTenant(Iterable<int?> tenantIds, int tenantId) => tenantIds.every((id) => id == null || id == tenantId);
 
 /// REDESIGN: order of the Termine level of the Auswertung.
 final rdStatsEventSortProvider = StateProvider<RdStatsEventSort>((ref) {
@@ -60,11 +74,12 @@ final rdStatsPersonSortProvider = StateProvider<RdStatsPersonSort>((ref) {
 });
 
 /// REDESIGN: Termine and entries of the period of the same length before
-/// the chosen one ([rdStatsPreviousPeriod]), for "ggü. davor". Null when
-/// there is no sensible comparison or loading failed (the comparison is
-/// only extra).
-final _rdStatsPreviousDataProvider =
-    FutureProvider.autoDispose<(List<Attendance>, List<PersonAttendance>)?>((ref) async {
+/// the chosen one ([rdStatsPreviousPeriod]), for "ggü. davor", with the
+/// group they were loaded for. Null when there is no sensible comparison or
+/// loading failed (the comparison is only extra). The page invalidates it
+/// together with the Auswertung when pulled to refresh.
+final rdStatsPreviousDataProvider =
+    FutureProvider.autoDispose<(int, List<Attendance>, List<PersonAttendance>)?>((ref) async {
   final tenantId = ref.watch(currentTenantIdProvider);
   final range = ref.watch(statisticsDateRangeProvider);
   if (tenantId == null) return null;
@@ -85,7 +100,7 @@ final _rdStatsPreviousDataProvider =
       tenantId,
       [for (final a in attendances) if (a.id != null) a.id!],
     );
-    return (attendances, rows);
+    return (tenantId, attendances, rows);
   } catch (e) {
     debugPrint('Auswertung: comparison period not loaded: $e');
     return null;
@@ -94,15 +109,19 @@ final _rdStatsPreviousDataProvider =
 
 /// REDESIGN: the Auswertung of the period before, with the same filter.
 /// Null without a comparison (also with fewer than
-/// [rdStatsMinCompareEvents] Termine of the shown Terminarten).
+/// [rdStatsMinCompareEvents] Termine of the shown Terminarten), while it
+/// reloads for another period or group, and for data of another group.
 final rdStatsPreviousResultProvider = Provider.autoDispose<RdStatsResult?>((ref) {
-  final data = ref.watch(_rdStatsPreviousDataProvider).valueOrNull;
-  if (data == null) return null;
+  final tenantId = ref.watch(currentTenantIdProvider);
+  final async = ref.watch(rdStatsPreviousDataProvider);
+  final data = async.isReloading ? null : async.valueOrNull;
+  if (data == null || data.$1 != tenantId) return null;
+  final players = ref.watch(activePlayersForStatsProvider).valueOrNull ?? const <Person>[];
   final result = rdComputeStats(
-    attendances: data.$1,
-    personAttendances: data.$2,
+    attendances: data.$2,
+    personAttendances: data.$3,
     types: ref.watch(attendanceTypesProvider).valueOrNull ?? const [],
-    players: ref.watch(activePlayersForStatsProvider).valueOrNull ?? const [],
+    players: rdStatsOfTenant(players.map((p) => p.tenantId), data.$1) ? players : const [],
     groups: ref.watch(groupsProvider).valueOrNull ?? const [],
     filter: ref.watch(rdStatsFilterProvider),
     shiftExcusedAsPresent: ref.watch(currentTenantProvider)?.shiftExcusedAsPresent ?? false,

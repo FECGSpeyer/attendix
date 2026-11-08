@@ -47,14 +47,28 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
   _Level _level = _Level.overview;
   final _swipePos = ValueNotifier<double?>(null);
 
+  /// While pulled to refresh the shown numbers stay until the new ones are
+  /// there; otherwise a reload (other group, other period) shows loading.
+  bool _refreshing = false;
+
   @override
   void initState() {
     super.initState();
     // The date range is shared with the old statistics page: apply the
     // chosen preset again (a custom range stays as it is).
+    // On the same days it only reloads quietly, the numbers stay meanwhile.
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final range = ref.read(rdStatsRangeProvider);
-      if (range != RdStatsRange.custom) _setRange(range);
+      if (range == RdStatsRange.custom) return;
+      final now = DateTime.now();
+      final current = ref.read(statisticsDateRangeProvider);
+      final start = rdStatsRangeStart(range, now, seasonStart: ref.read(currentTenantProvider)?.seasonStart);
+      if (DateUtils.isSameDay(current.start, start) && DateUtils.isSameDay(current.end, now)) {
+        _refresh();
+      } else {
+        _setRange(range);
+      }
     });
   }
 
@@ -81,9 +95,18 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
   }
 
   Future<void> _refresh() async {
+    setState(() => _refreshing = true);
     ref.invalidate(filteredAttendancesForStatsProvider);
     ref.invalidate(activePlayersForStatsProvider);
-    await ref.read(allPersonAttendancesForStatsProvider.future).then((_) {}, onError: (Object _) {});
+    ref.invalidate(rdStatsPreviousDataProvider);
+    try {
+      await Future.wait([
+        ref.read(allPersonAttendancesForStatsProvider.future).then((_) {}, onError: (Object _) {}),
+        ref.read(rdStatsPreviousDataProvider.future).then((_) {}, onError: (Object _) {}),
+      ]);
+    } finally {
+      if (mounted) setState(() => _refreshing = false);
+    }
   }
 
   void _setFilter(RdStatsFilter next) => ref.read(rdStatsFilterProvider.notifier).state = next;
@@ -107,9 +130,13 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
     final groups = ref.watch(groupsProvider).valueOrNull ?? const <Group>[];
     final tenant = ref.watch(currentTenantProvider);
     final dates = ref.watch(statisticsDateRangeProvider);
+    // Watched on every level, so a refresh can wait for it.
+    final previous = ref.watch(rdStatsPreviousResultProvider);
+    // Riverpod keeps the old values while reloading, also those of the group
+    // before: only a pull to refresh shows them meanwhile.
+    bool waiting(AsyncValue<Object?> a) => a.isLoading && (!a.hasValue || !_refreshing);
     final loading =
-        (attendancesAsync.isLoading && !attendancesAsync.hasValue) ||
-        ((attendancesAsync.valueOrNull?.isNotEmpty ?? false) && rowsAsync.isLoading && !rowsAsync.hasValue);
+        waiting(attendancesAsync) || ((attendancesAsync.valueOrNull?.isNotEmpty ?? false) && waiting(rowsAsync));
     final shortDate = DateFormat(dateFmt(DateFmtKind.short));
 
     return RdPage(
@@ -215,7 +242,7 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
                 RdCard(child: Text(l10n.redesignStatsEmpty, style: RdType.body(p)))
               else
                 ...switch (_level) {
-                  _Level.overview => _overview(context, result, filter, types, groups),
+                  _Level.overview => _overview(context, result, previous, filter, types, groups),
                   _Level.events => _events(context, result, groups),
                   _Level.register => _register(context, result, filter),
                   _Level.people => _people(context, result, groups),
@@ -271,13 +298,13 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
   List<Widget> _overview(
     BuildContext context,
     RdStatsResult result,
+    RdStatsResult? previous,
     RdStatsFilter filter,
     List<AttendanceType> types,
     List<Group> groups,
   ) {
     final p = context.rd;
     final l10n = context.l10n;
-    final previous = ref.watch(rdStatsPreviousResultProvider);
     final players = ref.watch(activePlayersForStatsProvider).valueOrNull ?? const [];
     final active =
         filter.groupIds.isEmpty
@@ -385,36 +412,35 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
         ),
       ),
     ];
-    if (_wide) {
-      children.add(RdStatsEventsTable(
-        events: events,
-        groups: groups,
-        sort: sort,
-        onSort: (s) => ref.read(rdStatsEventSortProvider.notifier).state = s,
-      ));
-      return children;
-    }
-    if (!byDate) {
-      children.add(RdGroupedList(children: [for (final e in events) row(e)]));
-      return children;
-    }
-    final now = DateTime.now();
-    final months = <DateTime, List<RdStatsEvent>>{};
-    for (final e in events) {
-      months.putIfAbsent(DateTime(e.date.year, e.date.month), () => []).add(e);
-    }
-    var first = true;
-    for (final entry in months.entries) {
-      if (!first) children.add(const SizedBox(height: 14));
-      first = false;
-      children
-        ..add(
+    List<Widget> list() {
+      if (!byDate) return [RdGroupedList(children: [for (final e in events) row(e)])];
+      final now = DateTime.now();
+      final months = <DateTime, List<RdStatsEvent>>{};
+      for (final e in events) {
+        months.putIfAbsent(DateTime(e.date.year, e.date.month), () => []).add(e);
+      }
+      return [
+        for (final (i, entry) in months.entries.indexed) ...[
+          if (i > 0) const SizedBox(height: 14),
           RdGroupLabel(
             DateFormat(entry.key.year == now.year ? 'MMMM' : 'MMMM y', currentIntlLocale()).format(entry.key),
           ),
-        )
-        ..add(RdGroupedList(children: [for (final e in entry.value) row(e)]));
+          RdGroupedList(children: [for (final e in entry.value) row(e)]),
+        ],
+      ];
     }
+
+    children.add(
+      _ByWidth(
+        wide: () => RdStatsEventsTable(
+          events: events,
+          groups: groups,
+          sort: sort,
+          onSort: (s) => ref.read(rdStatsEventSortProvider.notifier).state = s,
+        ),
+        narrow: list,
+      ),
+    );
     return children;
   }
 
@@ -461,31 +487,47 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
           style: RdType.meta(p, size: 13),
         ),
       ),
-      if (_wide)
-        RdStatsPeopleTable(
+      _ByWidth(
+        wide: () => RdStatsPeopleTable(
           result: result,
           people: people,
           groups: groups,
           sort: sort,
           onSort: (s) => ref.read(rdStatsPersonSortProvider.notifier).state = s,
-        )
-      else
-        RdGroupedList(
-          children: [
-            for (final person in people)
-              RdStatsPersonRow(
-                key: ValueKey('rd-stats-person-${person.person.id}'),
-                person: person,
-                groupName: groupName,
-                onTap: () => showRdStatsPersonSheet(context, result, person, groups),
-              ),
-          ],
         ),
+        narrow: () => [
+          RdGroupedList(
+            children: [
+              for (final person in people)
+                RdStatsPersonRow(
+                  key: ValueKey('rd-stats-person-${person.person.id}'),
+                  person: person,
+                  groupName: groupName,
+                  onTap: () => showRdStatsPersonSheet(context, result, person, groups),
+                ),
+            ],
+          ),
+        ],
+      ),
     ];
   }
+}
 
-  /// Wide enough for the tables (content width of [RdPage]).
-  bool get _wide => MediaQuery.sizeOf(context).width - 40 >= rdStatsTableWidth;
+/// The table when the content is wide enough for it (Mac, tablet), else the
+/// list. The width the page really has counts, after the sidebar and the
+/// padding.
+class _ByWidth extends StatelessWidget {
+  const _ByWidth({required this.wide, required this.narrow});
+
+  final Widget Function() wide;
+  final List<Widget> Function() narrow;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+        builder: (context, c) => c.maxWidth >= rdStatsTableWidth
+            ? wide()
+            : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: narrow()),
+      );
 }
 
 /// Active filters as removable chips.

@@ -128,6 +128,7 @@ class RdStatsBars extends StatelessWidget {
                   child: Semantics(
                     button: true,
                     label: label(events[i]),
+                    onTap: () => onTap(events[i]),
                     excludeSemantics: true,
                     child: Tooltip(
                       message: label(events[i]),
@@ -315,6 +316,7 @@ class RdStatsGroupRow extends StatelessWidget {
     return Semantics(
       label: [name, if (meta != null) meta!, valueText ?? rdPercent(percent)].join(', '),
       button: onTap != null,
+      onTap: onTap,
       excludeSemantics: true,
       child: onTap == null
           ? row

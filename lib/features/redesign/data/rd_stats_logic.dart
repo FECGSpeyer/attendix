@@ -360,10 +360,12 @@ List<RdStatsTypeRow> rdStatsByType(List<RdStatsEvent> events) {
 /// `start` inclusive, `end` exclusive. Null for less than a week or more
 /// than 400 days (no sensible comparison).
 ({DateTime start, DateTime end})? rdStatsPreviousPeriod(DateTime start, DateTime end) {
-  final from = DateTime(start.year, start.month, start.day);
-  final to = DateTime(end.year, end.month, end.day);
-  final days = to.difference(from).inDays + 1;
+  // Calendar days via UTC: a local difference loses a day across the
+  // change to summer time (1–31 March would be 30 days).
+  final days =
+      DateTime.utc(end.year, end.month, end.day).difference(DateTime.utc(start.year, start.month, start.day)).inDays + 1;
   if (days < 7 || days > 400) return null;
+  final from = DateTime(start.year, start.month, start.day);
   return (start: DateTime(from.year, from.month, from.day - days), end: from);
 }
 
