@@ -61,6 +61,9 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
   final _swipePos = ValueNotifier<double?>(null);
   final _search = TextEditingController();
 
+  /// Count of the open "Sortieren & Filtern" sheet, renewed every build.
+  final _countFor = ValueNotifier<RdMembersCount?>(null);
+
   @override
   void initState() {
     super.initState();
@@ -87,6 +90,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
   void dispose() {
     _search.dispose();
     _swipePos.dispose();
+    _countFor.dispose();
     super.dispose();
   }
 
@@ -199,18 +203,27 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
 
     // Groups to filter by: those with someone in the (unfiltered) lists.
     final usedGroups = {for (final x in [...allPeople, ...allPending]) x.instrument};
-    void openFilter() => showRdMembersFilterSheet(
+    int countFor(RdMembersListFilter f, bool critical, Set<String> ids) {
+      final base = switch (filter) {
+        RdMembersFilter.active => allPeople.where((x) => !x.paused),
+        RdMembersFilter.paused => allPeople.where((x) => x.paused),
+        RdMembersFilter.pending => allPending,
+      };
+      var list = apply(base.toList(), f, ids);
+      if (critical && filter == RdMembersFilter.active) list = rdCriticalMembers(list);
+      return list.where(matches).length;
+    }
+
+    // The open sheet counts with the data of the latest build (Org values
+    // or persons arriving later), not with the lists of the moment it opened.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _countFor.value = countFor;
+    });
+    void openFilter() {
+      _countFor.value = countFor;
+      showRdMembersFilterSheet(
           context,
-          countFor: (f, critical, ids) {
-            final base = switch (filter) {
-              RdMembersFilter.active => allPeople.where((x) => !x.paused),
-              RdMembersFilter.paused => allPeople.where((x) => x.paused),
-              RdMembersFilter.pending => allPending,
-            };
-            var list = apply(base.toList(), f, ids);
-            if (critical && filter == RdMembersFilter.active) list = rdCriticalMembers(list);
-            return list.where(matches).length;
-          },
+          countFor: _countFor,
           groups: [for (final g in groups) if (usedGroups.contains(g.id)) g],
           fields: fields,
           churches: churches,
@@ -219,6 +232,8 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
           general: general,
           withCritical: filter == RdMembersFilter.active,
         );
+    }
+
     final filtered = [
       for (final s in sections)
         if (s.people.any(matches))

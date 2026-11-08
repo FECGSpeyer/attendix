@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -60,13 +61,13 @@ String rdMembersFieldValueLabel(AppLocalizations l10n, ExtraField field, String 
 }
 
 /// Number of persons a filter would show (for the button of the sheet).
-typedef RdMembersCount = int Function(RdMembersListFilter filter, bool criticalOnly, Set<String>? otherIds);
+typedef RdMembersCount = int Function(RdMembersListFilter filter, bool criticalOnly, Set<String> otherIds);
 
 /// "Sortieren & Filtern" of the Mitglieder tab (same sheet as in Werke):
 /// changes apply at once, the button shows how many persons are left.
 Future<void> showRdMembersFilterSheet(
   BuildContext context, {
-  required RdMembersCount countFor,
+  required ValueListenable<RdMembersCount?> countFor,
   required List<Group> groups,
   required List<ExtraField> fields,
   required List<Church> churches,
@@ -117,7 +118,7 @@ class _FilterSheet extends ConsumerStatefulWidget {
   });
 
   final ScrollController controller;
-  final RdMembersCount countFor;
+  final ValueListenable<RdMembersCount?> countFor;
   final List<Group> groups;
   final List<ExtraField> fields;
   final List<Church> churches;
@@ -161,11 +162,10 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
     final l10n = context.l10n;
     final filter = ref.watch(rdMembersListFilterProvider);
     final critical = widget.withCritical && ref.watch(rdMembersCriticalOnlyProvider);
-    final otherIds =
-        filter.otherTenantId == null
-            ? null
-            : ref.watch(rdOtherInstanceUserIdsProvider(filter.otherTenantId!)).valueOrNull;
-    final count = widget.countFor(filter, critical, otherIds);
+    // "Auch Mitglied in" still loading or failed: no number until it is
+    // there (it would count everybody).
+    final otherAsync =
+        filter.otherTenantId == null ? null : ref.watch(rdOtherInstanceUserIdsProvider(filter.otherTenantId!));
 
     final sorts = [
       for (final s in RdMembersSort.values)
@@ -328,10 +328,29 @@ class _FilterSheetState extends ConsumerState<_FilterSheet> {
           ),
         ],
         const SizedBox(height: 24),
-        RdPrimaryButton(
-          key: const Key('rd-members-filter-show'),
-          label: l10n.redesignMembersFilterShow(count),
-          onPressed: () => Navigator.of(context).pop(),
+        if (otherAsync != null && otherAsync.hasError && !otherAsync.hasValue) ...[
+          RdOutlineButton(
+            label: l10n.redesignCommonRetry,
+            onPressed: () => ref.invalidate(rdOtherInstanceUserIdsProvider(filter.otherTenantId!)),
+          ),
+          const SizedBox(height: 8),
+        ],
+        ValueListenableBuilder<RdMembersCount?>(
+          valueListenable: widget.countFor,
+          builder: (context, countFor, _) {
+            final ids = otherAsync == null ? const <String>{} : otherAsync.valueOrNull;
+            final String label;
+            if (otherAsync != null && ids == null) {
+              label = otherAsync.hasError ? l10n.redesignTodayLoadFailed : l10n.redesignTodayLoading;
+            } else {
+              label = l10n.redesignMembersFilterShow(countFor?.call(filter, critical, ids!) ?? 0);
+            }
+            return RdPrimaryButton(
+              key: const Key('rd-members-filter-show'),
+              label: label,
+              onPressed: () => Navigator.of(context).pop(),
+            );
+          },
         ),
       ],
     );
