@@ -1,11 +1,25 @@
 {
   "versions": [
     {
+      "version": "0.87.0",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta: Jede Seite hat nur noch eine Hauptaktion – „Anlegen“/„Fertig“ oben in der Leiste statt zusätzlich unten (Termin, Person, Werk, Gruppe, Zusatzfeld, Lehrer, Sammlung); bei sehr großer Schrift wird sie kleiner statt abgeschnitten",
+        "💄 Beta: Mitglieder hinzufügen und einladen über das eine „+“, leere Listen ohne zweiten Anlegen-Button, Werk ohne Noten ohne doppeltes „Hinzufügen“"
+      ]
+    },
+    {
       "version": "0.86.0",
       "date": "8.11.2026",
       "changes": [
-        "💄 Beta: Jede Seite hat nur noch eine Hauptaktion – „Anlegen“/„Fertig“ oben in der Leiste statt zusätzlich unten (Termin, Person, Werk, Gruppe, Zusatzfeld, Lehrer, Sammlung)",
-        "💄 Beta: Mitglieder hinzufügen und einladen über das eine „+“, leere Listen ohne zweiten Anlegen-Button, Werk ohne Noten ohne doppeltes „Hinzufügen“"
+        "✨ Beta: Der Einladungs-QR-Code zeigt das Attendix-Logo in der Mitte, auch im Vollbild (hohe Fehlerkorrektur, scannt weiterhin zuverlässig)"
+      ]
+    },
+    {
+      "version": "0.85.1",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Beta: In „Person bearbeiten“ öffnet „Eltern“ wieder die Elternliste, die Auswahl wird gespeichert"
       ]
     },
     {

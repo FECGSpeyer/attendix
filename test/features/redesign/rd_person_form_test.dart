@@ -15,12 +15,14 @@ import 'package:attendix/core/providers/teacher_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
+import 'package:attendix/data/models/parent/parent_model.dart';
 import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/data/repositories/cross_tenant_person_repository.dart';
 import 'package:attendix/features/people/presentation/pages/person_detail_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_person_create_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_person_edit_page.dart';
+import 'package:attendix/features/redesign/presentation/widgets/members/rd_person_form.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,6 +43,12 @@ class _TenantNotifier extends CurrentTenantNotifier {
 
 final _person = TestFactories.createPerson(id: 1, tenantId: 42, firstName: 'Anna', lastName: 'Beispiel')
     .copyWith(phone: '0176 1234567');
+
+class _ParentsTenant extends StateNotifier<Tenant?> implements CurrentTenantNotifier {
+  _ParentsTenant() : super(const Tenant(id: 42, shortName: 'X', longName: 'X', parents: true, type: 'orchestra'));
+  @override
+  dynamic noSuchMethod(Invocation i) => null;
+}
 
 class _MockCrossTenantRepository extends Mock implements CrossTenantPersonRepository {}
 
@@ -251,5 +259,48 @@ void main() {
     verifyNever(() => repo.updatePlayerFields(any(), any()));
     final field = tester.widget<TextField>(find.byKey(const Key('rd-person-email')));
     expect(field.controller!.text, _person.email ?? '');
+  });
+
+  testWidgets('Weitere Angaben: "Eltern" opens the parent list and links the chosen parent', (tester) async {
+    tester.view.physicalSize = const Size(430, 3000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    Map<String, dynamic>? written;
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        currentTenantProvider.overrideWith((ref) => _ParentsTenant()),
+        groupsProvider.overrideWith((ref) async => const []),
+        churchesProvider.overrideWith((ref) async => const []),
+        teachersProvider.overrideWith((ref) async => const []),
+        parentsProvider.overrideWith((ref) async =>
+            const [ParentModel(id: 7, appId: 'a', email: 'e', firstName: 'Paula', lastName: 'Muster')]),
+        shiftsProvider.overrideWith((ref) async => const []),
+      ],
+      child: MaterialApp(
+        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: RdPersonMoreFields(
+              person: const Person(id: 1, firstName: 'A', lastName: 'B'),
+              isMainGroup: false,
+              additionalValues: const {},
+              onColumns: (c, {typing = false}) => written = c,
+              onExtra: (a, b, {typing = false}) {},
+            ),
+          ),
+        ),
+      ),
+    ));
+    await tester.pump(const Duration(seconds: 1));
+
+    await tester.tap(find.text('Eltern'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Paula Muster'));
+    await tester.pumpAndSettle();
+
+    expect(written, {'parent_id': 7});
   });
 }
