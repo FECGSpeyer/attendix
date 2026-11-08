@@ -7,6 +7,7 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/statistics_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/attendance_repository.dart' show attendanceRepositoryForTenantProvider;
 import '../rd_stats_logic.dart';
@@ -58,6 +59,19 @@ final rdStatsResultProvider = Provider<RdStatsResult>((ref) {
 /// Whether loaded rows with these tenant ids belong to [tenantId] (rows
 /// without one are taken as such).
 bool rdStatsOfTenant(Iterable<int?> tenantIds, int tenantId) => tenantIds.every((id) => id == null || id == tenantId);
+
+/// The Terminarten of [async] that belong to [tenantId] (none of the group
+/// before while the list reloads after a group change).
+List<AttendanceType> rdStatsTypesOf(AsyncValue<List<AttendanceType>> async, int? tenantId) => [
+  for (final t in async.valueOrNull ?? const <AttendanceType>[])
+    if (tenantId != null && (t.tenantId == null || t.tenantId == tenantId)) t,
+];
+
+/// The Register of [async] that belong to [tenantId], like [rdStatsTypesOf].
+List<Group> rdStatsGroupsOf(AsyncValue<List<Group>> async, int? tenantId) => [
+  for (final g in async.valueOrNull ?? const <Group>[])
+    if (tenantId != null && (g.tenantId == null || g.tenantId == tenantId)) g,
+];
 
 /// The persons of [async] when they belong to [tenantId], else none (the
 /// list of the group before while it reloads after a group change).

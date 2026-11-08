@@ -791,7 +791,7 @@ class RdStatsCountedTypes extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
+    final types = rdStatsTypesOf(ref.watch(attendanceTypesProvider), ref.watch(currentTenantIdProvider));
     final names = [for (final t in types) if (t.includeInAverage) t.name];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -852,7 +852,7 @@ class _CountedTypesSheetState extends ConsumerState<_CountedTypesSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
+    final types = rdStatsTypesOf(ref.watch(attendanceTypesProvider), ref.watch(currentTenantIdProvider));
     return ListView(
       shrinkWrap: true,
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),

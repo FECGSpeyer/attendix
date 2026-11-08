@@ -52,6 +52,15 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
   /// there; otherwise a reload (other group, other period) shows loading.
   bool _refreshing = false;
 
+  /// Counts the refreshes: only the latest one ends [_refreshing], and
+  /// another period or group ends it at once.
+  int _refreshGen = 0;
+
+  void _stopRefreshing() {
+    _refreshing = false;
+    _refreshGen++;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -81,6 +90,7 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
 
   void _setRange(RdStatsRange range) {
     if (!mounted) return;
+    _stopRefreshing();
     ref.read(rdStatsRangeProvider.notifier).state = range;
     final now = DateTime.now();
     final start = rdStatsRangeStart(range, now, seasonStart: ref.read(currentTenantProvider)?.seasonStart);
@@ -91,11 +101,13 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
     final current = ref.read(statisticsDateRangeProvider);
     final picked = await showRdStatsRangeSheet(context, DateTimeRange(start: current.start, end: current.end));
     if (picked == null || !mounted) return;
+    _stopRefreshing();
     ref.read(rdStatsRangeProvider.notifier).state = RdStatsRange.custom;
     ref.read(statisticsDateRangeProvider.notifier).setRange(picked.start, picked.end);
   }
 
   Future<void> _refresh() async {
+    final gen = ++_refreshGen;
     setState(() => _refreshing = true);
     ref.invalidate(filteredAttendancesForStatsProvider);
     ref.invalidate(activePlayersForStatsProvider);
@@ -113,7 +125,7 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
         done(ref.read(archivedPlayersProvider.future)),
       ]);
     } finally {
-      if (mounted) setState(() => _refreshing = false);
+      if (mounted && gen == _refreshGen) setState(() => _refreshing = false);
     }
   }
 
@@ -134,8 +146,13 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
     final rowsAsync = ref.watch(allPersonAttendancesForStatsProvider);
     final result = ref.watch(rdStatsResultProvider);
     final filter = ref.watch(rdStatsFilterProvider);
-    final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
-    final groups = ref.watch(groupsProvider).valueOrNull ?? const <Group>[];
+    // Another group shows loading, not the numbers kept while refreshing.
+    ref.listen(currentTenantIdProvider, (before, now) {
+      if (before != now) _stopRefreshing();
+    });
+    final tenantId = ref.watch(currentTenantIdProvider);
+    final types = rdStatsTypesOf(ref.watch(attendanceTypesProvider), tenantId);
+    final groups = rdStatsGroupsOf(ref.watch(groupsProvider), tenantId);
     final tenant = ref.watch(currentTenantProvider);
     final dates = ref.watch(statisticsDateRangeProvider);
     // Watched on every level, so a refresh can wait for it.
@@ -313,7 +330,7 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
   ) {
     final p = context.rd;
     final l10n = context.l10n;
-    final players = ref.watch(activePlayersForStatsProvider).valueOrNull ?? const [];
+    final players = rdStatsPeopleOf(ref.watch(activePlayersForStatsProvider), ref.watch(currentTenantIdProvider));
     final active =
         filter.groupIds.isEmpty
             ? players.length
