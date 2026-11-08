@@ -30,9 +30,10 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
         _availableStatuses.contains(_defaultStatus) ? _defaultStatus : (statuses.firstOrNull ?? _defaultStatus);
     final start = _formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0));
     final end = _formatTime(_endTime ?? const TimeOfDay(hour: 20, minute: 30));
-    final planCount = _planFields.length;
     final groupCount = _relevantGroups.length;
-    String onOff(bool v) => v ? l10n.redesignTypeOn : l10n.redesignTypeOff;
+    final features = _rdFeatures(l10n);
+    final active = features.where((f) => f.on).toList();
+    final name = _nameController.text.trim();
 
     Widget toggle(String title, String? subtitle, bool value, void Function(bool) set, {Key? key}) => RdListRow(
       key: key,
@@ -42,8 +43,6 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
       onTap: () => _rdSet(() => set(!value)),
       trailing: Switch.adaptive(value: value, onChanged: (v) => _rdSet(() => set(v))),
     );
-    Widget feature(IconData icon, String title, String value, VoidCallback onTap, {String? subtitle}) =>
-        RdListRow(leading: RdRowIcon(icon), title: title, subtitle: subtitle, value: value, onTap: onTap);
 
     return RdPage(
       children: [
@@ -68,52 +67,34 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
         const SizedBox(height: 4),
         Semantics(
           header: true,
-          child: Text(
-            _nameController.text.trim().isEmpty ? l10n.typeSettingsFlutterTypeTitle : _nameController.text.trim(),
-            style: RdType.title(p),
-          ),
+          child: Text(name.isEmpty ? l10n.typeSettingsFlutterTypeTitle : name, style: RdType.title(p)),
         ),
+        if (_usageCount > 0) ...[
+          const SizedBox(height: 4),
+          Text(l10n.rdTypeUsage(_usageCount), style: RdType.meta(p, size: 13)),
+        ],
         if (_rdInvalid) ...[
           const SizedBox(height: 12),
           RdInfoCard(icon: Icons.error_outline, text: l10n.redesignTypeInvalid),
-        ],
-        if (_usageCount > 0) ...[
-          const SizedBox(height: 12),
-          RdInfoCard(icon: Icons.info_outline, text: l10n.redesignTypeUsage(_usageCount)),
         ],
         const SizedBox(height: 16),
         RdGroupedList(
           children: [
             RdPlanTextRow(label: l10n.planningName, controller: _nameController, onChanged: (_) => _rdSet(() {})),
-          ],
-        ),
-        const SizedBox(height: 16),
-        RdGroupLabel(l10n.redesignTypeAttendance),
-        RdGroupedList(
-          children: [
             RdListRow(
-              title: l10n.redesignTypeStatuses,
-              subtitle: statuses.map(_getStatusName).join(', '),
-              onTap: _pickAvailableStatuses,
-            ),
-            RdListRow(
-              title: l10n.redesignTypeDefault,
-              value: _getStatusName(defaultStatus),
-              onTap: () => _rdPickDefaultStatus(statuses),
-            ),
-            toggle(
-              l10n.typeSettingsCountForAvg,
-              l10n.typeSettingsCountForAvgHelper,
-              _includeInAverage,
-              (v) => _includeInAverage = v,
+              key: const Key('rd-type-look'),
+              title: l10n.rdTypeLook,
+              subtitle: l10n.rdTypeLookHint,
+              onTap: () => _rdOpenSub(l10n.rdTypeLook, _rdLookBody),
+              trailing: _rdTypePill(name.isEmpty ? l10n.typeSettingsFlutterTypeTitle : name),
             ),
           ],
         ),
         const SizedBox(height: 16),
-        RdGroupLabel(l10n.redesignTypeTime),
+        RdGroupLabel(l10n.rdTypeEveryEvent),
         RdGroupedList(
           children: [
-            toggle(l10n.typeSettingsAllDay, null, _allDay, (v) => _allDay = v),
+            toggle(l10n.rdTypeAllDay, null, _allDay, (v) => _allDay = v),
             if (_allDay)
               RdListRow(
                 title: l10n.redesignTypeDays,
@@ -135,91 +116,75 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
                   ],
                 ),
               )
-            else ...[
+            else
               RdListRow(
-                title: l10n.typeSettingsStart,
-                subtitle: l10n.redesignTypeTimeHint,
-                value: start,
-                onTap: () => _pickTime(isStart: true),
+                title: l10n.rdTypeTime,
+                subtitle: l10n.rdTypeTimeHint,
+                showChevron: false,
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    RdValueBox(start, semantics: l10n.typeSettingsStart, onTap: () => _pickTime(isStart: true)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      child: Text('–', style: TextStyle(color: p.text2)),
+                    ),
+                    RdValueBox(end, semantics: l10n.typeSettingsEnd, onTap: () => _pickTime(isStart: false)),
+                  ],
+                ),
               ),
-              RdListRow(title: l10n.typeSettingsEnd, value: end, onTap: () => _pickTime(isStart: false)),
-            ],
-          ],
-        ),
-        const SizedBox(height: 16),
-        RdGroupLabel(l10n.redesignTypeInList),
-        RdGroupedList(
-          children: [
-            toggle(l10n.typeSettingsActive, l10n.typeSettingsActiveHelper, _visible, (v) => _visible = v),
-            toggle(l10n.typeSettingsHighlight, null, _highlight, (v) => _highlight = v),
-            toggle(l10n.typeSettingsHideName, null, _hideName, (v) => _hideName = v),
             RdListRow(
-              title: l10n.typeSettingsColor,
-              onTap: _pickColor,
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.circle, color: ColorUtils.getColorForPicker(_color)),
-                  Icon(Icons.chevron_right, color: p.text2),
-                ],
-              ),
+              key: const Key('rd-type-attendance'),
+              title: l10n.rdTypeAttendance,
+              subtitle: l10n.rdTypeAttendanceValue(_getStatusName(defaultStatus), statuses.length),
+              onTap: () => _rdOpenSub(l10n.rdTypeAttendance, _rdAttendanceBody),
+            ),
+            toggle(
+              l10n.rdTypeCountsForQuota,
+              l10n.rdTypeCountsForQuotaHint,
+              _includeInAverage,
+              (v) => _includeInAverage = v,
+              key: const Key('rd-type-quota'),
+            ),
+            RdListRow(
+              title: l10n.rdTypeInvited,
+              subtitle: l10n.rdTypeInvitedHint,
+              value: groupCount == 0 ? l10n.rdTypeInvitedAll : l10n.rdTypeInvitedSome(groupCount),
+              onTap: () => _rdOpenSub(l10n.rdTypeInvited, _buildFilterSection),
             ),
           ],
         ),
         const SizedBox(height: 16),
-        RdGroupLabel(l10n.redesignTypeFeatures),
+        RdGroupLabel(l10n.rdTypeAutomatic),
         RdGroupedList(
           children: [
-            if (!_isGeneral) toggle(l10n.typeSettingsManageSongs, null, _manageSongs, (v) => _manageSongs = v),
-            toggle(l10n.redesignTypeLocation, null, _placeEnabled, (v) => _placeEnabled = v),
-            feature(
-              Icons.list,
-              l10n.typeSettingsRunSheet,
-              planCount == 0 ? l10n.redesignTypeOff : l10n.redesignPlanItemCount(planCount),
-              () => _rdOpenSub(l10n.typeSettingsRunSheet, _buildPlanSection),
-            ),
-            feature(
-              Icons.notifications_outlined,
-              l10n.typeSettingsEventReminders,
-              _notification ? l10n.redesignTypeRemindersActive(_reminders.length) : l10n.redesignTypeOff,
-              () => _rdOpenSub(l10n.typeSettingsEventReminders, _rdRemindersBody),
-            ),
-            feature(
-              Icons.checklist,
-              l10n.typeSettingsChecklist,
-              onOff(_checklistEnabled),
-              () => _rdOpenSub(l10n.typeSettingsChecklist, _rdChecklistBody),
-            ),
-            feature(
-              Icons.assignment_ind_outlined,
-              l10n.typeSettingsDutyRoster,
-              onOff(_dutyMode),
-              () => _rdOpenSub(l10n.typeSettingsDutyRoster, _buildDutySection),
-            ),
-            feature(
-              Icons.event_note_outlined,
-              l10n.typeSettingsProtocolAgenda,
-              onOff(_protocol.enableProtocol),
-              () => _rdOpenSub(l10n.typeSettingsProtocolAgenda, _rdProtocolBody),
-            ),
-            feature(
-              Icons.help_outline,
-              l10n.typeSettingsSignupFields,
-              '${_registrationFields.length}',
-              () => _rdOpenSub(l10n.typeSettingsSignupFields, _rdSignupBody),
-            ),
-            feature(
-              Icons.groups_outlined,
-              l10n.redesignTypeWhoBelongs,
-              groupCount == 0 ? l10n.redesignTypeAll : '$groupCount',
-              () => _rdOpenSub(l10n.redesignTypeWhoBelongs, _buildFilterSection),
-              subtitle: l10n.redesignTypeWhoBelongsHint,
-            ),
+            for (final f in active)
+              RdListRow(
+                key: Key('rd-type-feature-${f.id}'),
+                leading: RdRowIcon(f.icon),
+                title: f.title,
+                value: f.value,
+                onTap: f.open,
+              ),
+            if (active.length < features.length)
+              RdListRow(
+                key: const Key('rd-type-add'),
+                leading: RdRowIcon(Icons.add),
+                title: l10n.rdTypeAdd,
+                titleColor: p.link,
+                showChevron: false,
+                onTap: () => _rdAddFeature(features.where((f) => !f.on).toList()),
+              ),
           ],
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+          child: Text(l10n.rdTypeAutomaticHint, style: RdType.meta(p, size: 13)),
         ),
         const SizedBox(height: 24),
         RdGroupedList(
           children: [
+            toggle(l10n.rdTypeOffer, l10n.rdTypeOfferHint, _visible, (v) => _visible = v, key: const Key('rd-type-offer')),
             RdListRow(
               leading: RdRowIcon(Icons.delete_outline, color: p.absent, background: p.absentSoft),
               title: l10n.redesignTypeDelete,
@@ -228,6 +193,177 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
               onTap: _deleteType,
             ),
           ],
+        ),
+      ],
+    );
+  }
+
+  /// The pill the type shows in the Termin list (Hervorheben = orange).
+  Widget _rdTypePill(String label) {
+    final color = ColorUtils.getColorForPicker(_color);
+    return Padding(
+      padding: const EdgeInsets.only(right: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.circle, size: 14, color: color),
+          const SizedBox(width: 6),
+          RdPill(label, tone: _highlight ? RdTone.excused : RdTone.primary),
+        ],
+      ),
+    );
+  }
+
+  /// Everything new Termine of the type can get: shown on the page when on,
+  /// else offered under "Hinzufügen".
+  List<_RdTypeFeature> _rdFeatures(AppLocalizations l10n) {
+    final planCount = _planFields.length;
+    return [
+      _RdTypeFeature(
+        id: 'plan',
+        icon: Icons.list,
+        title: l10n.rdTypePlan,
+        hint: l10n.rdTypePlanHint,
+        on: planCount > 0,
+        value: l10n.rdTypePlanValue(planCount),
+        open: () => _rdOpenSub(l10n.rdTypePlan, _buildPlanSection),
+      ),
+      _RdTypeFeature(
+        id: 'reminders',
+        icon: Icons.notifications_outlined,
+        title: l10n.rdTypeReminders,
+        hint: l10n.rdTypeRemindersHint,
+        on: _notification,
+        value: l10n.rdTypeRemindersValue(_reminders.length),
+        open: () => _rdOpenSub(l10n.rdTypeReminders, _rdRemindersBody),
+        enable: () => _notification = true,
+      ),
+      _RdTypeFeature(
+        id: 'checklist',
+        icon: Icons.checklist,
+        title: l10n.rdTypeChecklist,
+        hint: l10n.rdTypeChecklistHint,
+        on: _checklistEnabled,
+        value: l10n.rdTypeChecklistValue(_checklist.length),
+        open: () => _rdOpenSub(l10n.rdTypeChecklist, _rdChecklistBody),
+        enable: () {
+          _checklistEnabled = true;
+          _checklist = [];
+        },
+      ),
+      _RdTypeFeature(
+        id: 'duty',
+        icon: Icons.assignment_ind_outlined,
+        title: l10n.rdTypeDuty,
+        hint: l10n.rdTypeDutyHint,
+        on: _dutyMode,
+        value: l10n.rdTypeOn,
+        open: () => _rdOpenSub(l10n.rdTypeDuty, _buildDutySection),
+      ),
+      _RdTypeFeature(
+        id: 'protocol',
+        icon: Icons.event_note_outlined,
+        title: l10n.rdTypeProtocol,
+        hint: l10n.rdTypeProtocolHint,
+        on: _protocol.enableProtocol,
+        value: l10n.rdTypeOn,
+        open: () => _rdOpenSub(l10n.rdTypeProtocol, _rdProtocolBody),
+      ),
+      _RdTypeFeature(
+        id: 'signup',
+        icon: Icons.help_outline,
+        title: l10n.rdTypeSignup,
+        hint: l10n.rdTypeSignupHint,
+        on: _registrationFields.isNotEmpty,
+        value: l10n.rdTypeSignupValue(_registrationFields.length),
+        open: () => _rdOpenSub(l10n.rdTypeSignup, _rdSignupBody),
+      ),
+    ];
+  }
+
+  /// "Hinzufügen": the features that are off, each with one sentence. The
+  /// picked one is switched on where that is a plain switch and opens.
+  Future<void> _rdAddFeature(List<_RdTypeFeature> off) async {
+    final l10n = context.l10n;
+    final picked = await showRdPlanSheet<_RdTypeFeature>(
+      context,
+      title: l10n.rdTypeAdd,
+      subtitle: l10n.rdTypeAddHint,
+      builder:
+          (ctx, pop) => [
+            RdGroupedList(
+              children: [
+                for (final f in off)
+                  RdListRow(
+                    key: Key('rd-type-add-${f.id}'),
+                    leading: RdRowIcon(f.icon),
+                    title: f.title,
+                    subtitle: f.hint,
+                    showChevron: false,
+                    onTap: () => pop(f),
+                  ),
+              ],
+            ),
+          ],
+    );
+    if (picked == null || !mounted) return;
+    final enable = picked.enable;
+    if (enable != null) _rdSet(enable);
+    picked.open();
+  }
+
+  Widget _rdLookBody() {
+    final l10n = context.l10n;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RdListRow(
+          title: l10n.typeSettingsColor,
+          onTap: _pickColor,
+          trailing: Icon(Icons.circle, color: ColorUtils.getColorForPicker(_color)),
+        ),
+        RdListRow(
+          title: l10n.typeSettingsHighlight,
+          subtitle: l10n.rdTypeLookHighlightHint,
+          showChevron: false,
+          onTap: () => _rdSet(() => _highlight = !_highlight),
+          trailing: Switch.adaptive(value: _highlight, onChanged: (v) => _rdSet(() => _highlight = v)),
+        ),
+        RdListRow(
+          title: l10n.rdTypeLookHideName,
+          subtitle: l10n.rdTypeLookHideNameHint,
+          showChevron: false,
+          onTap: () => _rdSet(() => _hideName = !_hideName),
+          trailing: Switch.adaptive(value: _hideName, onChanged: (v) => _rdSet(() => _hideName = v)),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 12, 4, 4),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: _rdTypePill(_nameController.text.trim()),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _rdAttendanceBody() {
+    final l10n = context.l10n;
+    final current = _AttendanceTypeEditPageState._statusOrder.where(_availableStatuses.contains).toList();
+    final defaultStatus =
+        _availableStatuses.contains(_defaultStatus) ? _defaultStatus : (current.firstOrNull ?? _defaultStatus);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RdListRow(
+          title: l10n.rdTypeStatuses,
+          subtitle: current.map(_getStatusName).join(', '),
+          onTap: _pickAvailableStatuses,
+        ),
+        RdListRow(
+          title: l10n.rdTypeDefaultStatus,
+          value: _getStatusName(defaultStatus),
+          onTap: () => _rdPickDefaultStatus(current),
         ),
       ],
     );
@@ -318,7 +454,6 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
       _rdSavedJson = json;
       _rdFailedJson = null;
       _originalType = updated;
-      await _offerDutyView();
     } on DemoModeException {
       // DEMO_GUARD: the demo warning toast was already shown; not again for
       // the same state.
@@ -429,4 +564,30 @@ extension _AttendanceTypeBeta on _AttendanceTypeEditPageState {
     fields: _registrationFields,
     onChanged: (fields) => _rdSet(() => _registrationFields = fields),
   );
+}
+
+/// One feature of the type on the Beta page ("Neue Termine dieser Art
+/// bekommen automatisch" / "Hinzufügen").
+class _RdTypeFeature {
+  const _RdTypeFeature({
+    required this.id,
+    required this.icon,
+    required this.title,
+    required this.hint,
+    required this.on,
+    required this.value,
+    required this.open,
+    this.enable,
+  });
+
+  final String id;
+  final IconData icon;
+  final String title;
+  final String hint;
+  final bool on;
+  final String value;
+  final VoidCallback open;
+
+  /// Switches it on before [open] (features with a plain on switch).
+  final VoidCallback? enable;
 }

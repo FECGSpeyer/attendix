@@ -102,6 +102,20 @@ class AttendanceTypeNotifier extends Notifier<AsyncValue<void>> {
     }
   }
 
+  /// Beta "Startet wie": copies [templateId] as a new type. Rethrows.
+  Future<AttendanceType> copyType(String templateId, String name) async {
+    state = const AsyncValue.loading();
+    try {
+      final result = await _repo.copyType(templateId, name);
+      state = const AsyncValue.data(null);
+      ref.invalidate(attendanceTypesProvider);
+      return result;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      rethrow;
+    }
+  }
+
   /// Saves the type. Returns null when the save itself failed (caller shows
   /// `typeSettings.updateFailed`); rethrows [DemoModeException] so the demo
   /// block is not reported as a generic failure.

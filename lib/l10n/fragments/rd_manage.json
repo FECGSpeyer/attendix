@@ -88,7 +88,8 @@
       "noGroups": "Es gibt noch keine Register, die du auswählen kannst.",
       "hint": "Kontakt, Notizen und Privatlehrer ergänzt du danach beim Lehrer.",
       "done": "{name} angelegt"
-    }
+    },
+    "rdAdminPickHint": "Wähle links einen Eintrag, er öffnet sich hier."
   },
   "en": {
     "rdAdmin": {
@@ -179,6 +180,7 @@
       "noGroups": "There are no sections to choose from yet.",
       "hint": "Add contact, notes and private teacher afterwards on the teacher.",
       "done": "{name} created"
-    }
+    },
+    "rdAdminPickHint": "Pick an entry on the left, it opens here."
   }
 }

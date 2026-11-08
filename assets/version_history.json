@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.100.0",
+      "version": "0.102.0",
       "date": "8.11.2026",
       "changes": [
         "✨ Beta Auswertung neu: oben Zeitraum (Saison, 3 Monate, 12 Monate oder eigener Von/Bis-Zeitraum) und Filter nach Terminart und Register, darunter die Ebenen „Überblick“ und „Termine“ (Umschalter oder Wischen)",
@@ -13,6 +13,24 @@
         "✨ Beta Auswertung: Mitglieder, Alter (je Jahrzehnt, Ø je Register), Zusatzfelder und Organisation aus Ionic im Beta-Design",
         "✨ Beta Auswertung: „Zählt zur Anwesenheitsquote“ direkt hier umschaltbar; der Terminart-Filter gilt nur für die Ansicht",
         "🐛 Beta Auswertung: alles wird gezählt wie bei den Mitgliedern (nur zählende Terminarten, Dienste nur Eingeteilte, Schichtbedingt-Einstellung, Neutral zählt als nicht da); Dirigent ist kein Register mehr; „100 %“ bricht nicht mehr um"
+      ]
+    },
+    {
+      "version": "0.101.0",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta Terminart einfacher: oben Name und „Aussehen“ (Farbe, hervorheben, Name verbergen), dann „Jeder Termin dieser Art“ (Uhrzeit wie bei „Termin bearbeiten“, Anwesenheit, „Zählt zur Anwesenheitsquote“, Eingeplant) und „Neue Termine dieser Art bekommen automatisch“ mit nur den eingeschalteten Funktionen, der Rest unter „Hinzufügen“; „Für neue Termine anbieten“ und Löschen unten",
+        "✨ Beta „Neue Terminart“: ein Blatt mit Name und „Startet wie“ (eine bestehende Art übernehmen oder leer) statt des alten großen Formulars",
+        "✨ Beta Ort und Werke an jedem Termin: keine Schalter mehr an der Terminart; wird ein Ort oder Werk eingetragen, schaltet die App es an der Art selbst ein (damit die alte App es auch zeigt)",
+        "✨ Beta Ablauf am Termin: „Für neue Termine dieser Art übernehmen“ (Werke werden zu Platzhaltern)"
+      ]
+    },
+    {
+      "version": "0.100.0",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta Desktop: Die Verwaltung zeigt links alle Einträge kompakt (Titel und Anzahl), rechts öffnet sich direkt die gewählte Seite statt einer Zwischenliste; ohne Auswahl rechts eine Übersicht mit Gruppe, zuletzt geöffnet und noch nicht genutzt",
+        "💄 Beta: Name und Kürzel, Mitteilungen und Organisation öffnen sich innerhalb der Verwaltung"
       ]
     },
     {

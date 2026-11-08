@@ -17,6 +17,7 @@ import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/rd_widgets.dart';
+import '../widgets/rd_split_view.dart' show RdManageBackLink;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
 /// REDESIGN: Verwaltung › Rollen und Rechte as a settings page of the Beta
@@ -244,7 +245,7 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     }
 
     final header = <Widget>[
-      RdBackLink(
+      RdManageBackLink(
         label: l10n.redesignMeAdmin,
         onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.manage),
       ),

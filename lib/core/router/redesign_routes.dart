@@ -90,6 +90,16 @@ class RedesignRoutes {
   /// Verwaltung › Mitteilung schreiben.
   static const String compose = '$manage/mitteilung';
 
+  /// Verwaltung › Name und Kürzel (same page as `/settings/general`, here
+  /// so it opens on the right of the list on wide screens).
+  static const String groupName = '$manage/name';
+
+  /// Verwaltung › Mitteilungen (same page as `/settings/messages`).
+  static const String messages = '$manage/mitteilungen';
+
+  /// Verwaltung › Organisation (same page as `/settings/org-settings`).
+  static const String organisation = '$manage/organisation';
+
   /// Verwaltung › Anmeldung per Link (from the old "Allgemein").
   static const String registration = '$manage/anmeldung';
 

@@ -12266,6 +12266,10 @@
       }
     }
   },
+  "rdAdminPickHint": "Wähle links einen Eintrag, er öffnet sich hier.",
+  "@rdAdminPickHint": {
+    "description": "rdAdminPickHint"
+  },
   "rdAdminReasons": "Abmeldegründe",
   "@rdAdminReasons": {
     "description": "rdAdmin.reasons"
@@ -13869,6 +13873,277 @@
   "rdTeacherNewTitle": "Neuer Lehrer",
   "@rdTeacherNewTitle": {
     "description": "rdTeacherNew.title"
+  },
+  "rdTypeAdd": "Hinzufügen",
+  "@rdTypeAdd": {
+    "description": "rdType.add"
+  },
+  "rdTypeAddHint": "Wählst du etwas aus, bekommen es alle neuen Termine dieser Art.",
+  "@rdTypeAddHint": {
+    "description": "rdType.addHint"
+  },
+  "rdTypeAllDay": "Ganztägig",
+  "@rdTypeAllDay": {
+    "description": "rdType.allDay"
+  },
+  "rdTypeAttendance": "Anwesenheit",
+  "@rdTypeAttendance": {
+    "description": "rdType.attendance"
+  },
+  "rdTypeAttendanceValue": "Vorbelegt mit {status} · {count} Status",
+  "@rdTypeAttendanceValue": {
+    "description": "rdType.attendanceValue",
+    "placeholders": {
+      "status": {},
+      "count": {}
+    }
+  },
+  "rdTypeAutomatic": "Neue Termine dieser Art bekommen automatisch",
+  "@rdTypeAutomatic": {
+    "description": "rdType.automatic"
+  },
+  "rdTypeAutomaticHint": "Nur was eingeschaltet ist, steht hier. Ort und Werke trägst du direkt am Termin ein.",
+  "@rdTypeAutomaticHint": {
+    "description": "rdType.automaticHint"
+  },
+  "rdTypeChecklist": "Checkliste",
+  "@rdTypeChecklist": {
+    "description": "rdType.checklist"
+  },
+  "rdTypeChecklistHint": "Aufgaben vor dem Termin, z. B. Stühle stellen",
+  "@rdTypeChecklistHint": {
+    "description": "rdType.checklistHint"
+  },
+  "rdTypeChecklistValue": "{count, plural, =0 {an} one {1 Aufgabe} other {{count} Aufgaben}}",
+  "@rdTypeChecklistValue": {
+    "description": "rdType.checklistValue",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdTypeCountsForQuota": "Zählt zur Anwesenheitsquote",
+  "@rdTypeCountsForQuota": {
+    "description": "rdType.countsForQuota"
+  },
+  "rdTypeCountsForQuotaHint": "Aus z. B. für Feiern oder freiwillige Termine",
+  "@rdTypeCountsForQuotaHint": {
+    "description": "rdType.countsForQuotaHint"
+  },
+  "rdTypeDefaultStatus": "Vorbelegt mit",
+  "@rdTypeDefaultStatus": {
+    "description": "rdType.defaultStatus"
+  },
+  "rdTypeDuty": "Dienste einteilen",
+  "@rdTypeDuty": {
+    "description": "rdType.duty"
+  },
+  "rdTypeDutyHint": "Wer macht Technik, Kaffee und Co.",
+  "@rdTypeDutyHint": {
+    "description": "rdType.dutyHint"
+  },
+  "rdTypeEveryEvent": "Jeder Termin dieser Art",
+  "@rdTypeEveryEvent": {
+    "description": "rdType.everyEvent"
+  },
+  "rdTypeFlagsFailed": "Termin angelegt. Die Terminart konnte nicht angepasst werden, daher zeigt die alte App Ort oder Werke evtl. nicht.",
+  "@rdTypeFlagsFailed": {
+    "description": "rdType.flagsFailed"
+  },
+  "rdTypeInvited": "Eingeplant",
+  "@rdTypeInvited": {
+    "description": "rdType.invited"
+  },
+  "rdTypeInvitedAll": "Alle",
+  "@rdTypeInvitedAll": {
+    "description": "rdType.invitedAll"
+  },
+  "rdTypeInvitedHint": "Wer zu diesen Terminen gehört",
+  "@rdTypeInvitedHint": {
+    "description": "rdType.invitedHint"
+  },
+  "rdTypeInvitedSome": "{count, plural, one {1 Register} other {{count} Register}}",
+  "@rdTypeInvitedSome": {
+    "description": "rdType.invitedSome",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdTypeLook": "Aussehen",
+  "@rdTypeLook": {
+    "description": "rdType.look"
+  },
+  "rdTypeLookHideName": "Name in der Liste verbergen",
+  "@rdTypeLookHideName": {
+    "description": "rdType.lookHideName"
+  },
+  "rdTypeLookHideNameHint": "Termine ohne eigenen Titel zeigen dann das Datum statt des Namens der Art (klassische Ansicht und Eltern).",
+  "@rdTypeLookHideNameHint": {
+    "description": "rdType.lookHideNameHint"
+  },
+  "rdTypeLookHighlightHint": "Die Art steht in der Terminliste auffällig markiert.",
+  "@rdTypeLookHighlightHint": {
+    "description": "rdType.lookHighlightHint"
+  },
+  "rdTypeLookHint": "Farbe, hervorheben, Titel in der Liste",
+  "@rdTypeLookHint": {
+    "description": "rdType.lookHint"
+  },
+  "rdTypeNewCreate": "Anlegen",
+  "@rdTypeNewCreate": {
+    "description": "rdType.newCreate"
+  },
+  "rdTypeNewEmpty": "Leer",
+  "@rdTypeNewEmpty": {
+    "description": "rdType.newEmpty"
+  },
+  "rdTypeNewEmptyHint": "Nur Anwesenheit, sonst nichts",
+  "@rdTypeNewEmptyHint": {
+    "description": "rdType.newEmptyHint"
+  },
+  "rdTypeNewName": "Name",
+  "@rdTypeNewName": {
+    "description": "rdType.newName"
+  },
+  "rdTypeNewNameHint": "z. B. Registerprobe",
+  "@rdTypeNewNameHint": {
+    "description": "rdType.newNameHint"
+  },
+  "rdTypeNewStartsLike": "Startet wie",
+  "@rdTypeNewStartsLike": {
+    "description": "rdType.newStartsLike"
+  },
+  "rdTypeNewStartsLikeHint": "Übernimmt Zeit, Status, Ablauf und alles Eingeschaltete. Danach kannst du alles ändern.",
+  "@rdTypeNewStartsLikeHint": {
+    "description": "rdType.newStartsLikeHint"
+  },
+  "rdTypeNewTitle": "Neue Terminart",
+  "@rdTypeNewTitle": {
+    "description": "rdType.newTitle"
+  },
+  "rdTypeOffer": "Für neue Termine anbieten",
+  "@rdTypeOffer": {
+    "description": "rdType.offer"
+  },
+  "rdTypeOfferHint": "Aus: steht beim Anlegen nicht mehr zur Wahl, bestehende Termine bleiben",
+  "@rdTypeOfferHint": {
+    "description": "rdType.offerHint"
+  },
+  "rdTypeOn": "an",
+  "@rdTypeOn": {
+    "description": "rdType.on"
+  },
+  "rdTypePlan": "Ablauf",
+  "@rdTypePlan": {
+    "description": "rdType.plan"
+  },
+  "rdTypePlanHint": "Programmpunkte mit Uhrzeit",
+  "@rdTypePlanHint": {
+    "description": "rdType.planHint"
+  },
+  "rdTypePlanValue": "{count, plural, one {1 Punkt} other {{count} Punkte}}",
+  "@rdTypePlanValue": {
+    "description": "rdType.planValue",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdTypeProtocol": "Protokoll und Tagesordnung",
+  "@rdTypeProtocol": {
+    "description": "rdType.protocol"
+  },
+  "rdTypeProtocolHint": "Themen sammeln und mitschreiben",
+  "@rdTypeProtocolHint": {
+    "description": "rdType.protocolHint"
+  },
+  "rdTypeReminders": "Erinnerungen",
+  "@rdTypeReminders": {
+    "description": "rdType.reminders"
+  },
+  "rdTypeRemindersHint": "Push-Nachricht vor Beginn",
+  "@rdTypeRemindersHint": {
+    "description": "rdType.remindersHint"
+  },
+  "rdTypeRemindersValue": "{count, plural, =0 {an} one {1 Erinnerung} other {{count} Erinnerungen}}",
+  "@rdTypeRemindersValue": {
+    "description": "rdType.remindersValue",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdTypeSignup": "Anmeldefragen",
+  "@rdTypeSignup": {
+    "description": "rdType.signup"
+  },
+  "rdTypeSignupHint": "z. B. „Bringst du Essen mit?“",
+  "@rdTypeSignupHint": {
+    "description": "rdType.signupHint"
+  },
+  "rdTypeSignupValue": "{count, plural, one {1 Frage} other {{count} Fragen}}",
+  "@rdTypeSignupValue": {
+    "description": "rdType.signupValue",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdTypeStatuses": "Mögliche Status",
+  "@rdTypeStatuses": {
+    "description": "rdType.statuses"
+  },
+  "rdTypeTakeOverPlan": "Für neue Termine dieser Art übernehmen",
+  "@rdTypeTakeOverPlan": {
+    "description": "rdType.takeOverPlan"
+  },
+  "rdTypeTakeOverPlanConfirm": "Neue Termine der Art „{type}“ bekommen dann diesen Ablauf. Bestehende Termine bleiben, wie sie sind.",
+  "@rdTypeTakeOverPlanConfirm": {
+    "description": "rdType.takeOverPlanConfirm",
+    "placeholders": {
+      "type": {}
+    }
+  },
+  "rdTypeTakeOverPlanDone": "Neue Termine der Art „{type}“ bekommen jetzt diesen Ablauf",
+  "@rdTypeTakeOverPlanDone": {
+    "description": "rdType.takeOverPlanDone",
+    "placeholders": {
+      "type": {}
+    }
+  },
+  "rdTypeTakeOverPlanFailed": "Der Ablauf konnte nicht übernommen werden.",
+  "@rdTypeTakeOverPlanFailed": {
+    "description": "rdType.takeOverPlanFailed"
+  },
+  "rdTypeTakeOverPlanHint": "Neue Termine der Art „{type}“ bekommen diesen Ablauf",
+  "@rdTypeTakeOverPlanHint": {
+    "description": "rdType.takeOverPlanHint",
+    "placeholders": {
+      "type": {}
+    }
+  },
+  "rdTypeTime": "Uhrzeit",
+  "@rdTypeTime": {
+    "description": "rdType.time"
+  },
+  "rdTypeTimeHint": "Vorschlag, am Termin änderbar",
+  "@rdTypeTimeHint": {
+    "description": "rdType.timeHint"
+  },
+  "rdTypeUsage": "Änderungen gelten auch für {count, plural, one {den bestehenden Termin} other {die {count} bestehenden Termine}}.",
+  "@rdTypeUsage": {
+    "description": "rdType.usage",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "rdWmCategoriesIntro": "Kategorien ordnen die Werke, etwa nach Anlass oder Kirchenjahr.",
   "@rdWmCategoriesIntro": {

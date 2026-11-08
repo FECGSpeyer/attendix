@@ -7,6 +7,7 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/app_action_sheet.dart';
 import '../rd_widgets.dart';
+import '../rd_split_view.dart' show RdManageBackLink;
 import '../today/rd_today_common.dart' show RdInfoCard;
 
 /// REDESIGN: template "Verwaltungsliste" (canvas "Einheitliche Beta-UX",
@@ -245,7 +246,7 @@ class _RdManageListPageState extends State<RdManageListPage> {
         if (sorting != null)
           RdTextLink(key: const Key('rd-manage-list-cancel'), label: l10n.redesignCommonCancel, onTap: _cancelSorting)
         else
-          Expanded(child: RdBackLink(label: widget.backLabel ?? l10n.redesignMeAdmin, onTap: _back)),
+          Expanded(child: RdManageBackLink(label: widget.backLabel ?? l10n.redesignMeAdmin, onTap: _back)),
         if (sorting != null) ...[
           const Spacer(),
           if (_saving)
