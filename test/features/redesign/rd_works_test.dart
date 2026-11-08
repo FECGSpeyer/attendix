@@ -657,8 +657,8 @@ void main() {
 
       expect(find.text('Nach Stimme'), findsOneWidget);
       expect(find.byKey(const Key('rd-works-open-mine')), findsNothing);
-      // Both Termine still lack Noten (Ave has none).
-      expect(find.text('Noten fehlen'), findsNWidgets(2));
+      // Leads have the Termine tab: no "Als Nächstes" in the Werke list.
+      expect(find.text('Als Nächstes'), findsNothing);
       expect(find.text('ohne Noten'), findsOneWidget);
       // A single missing part is normal: no pill in the list.
       expect(find.text('Klarinette fehlt'), findsNothing);
