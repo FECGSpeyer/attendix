@@ -182,15 +182,16 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
   /// the form stays below. Back on the form, the chosen Art is read anew
   /// (filters or default status may have changed), the inputs stay.
   Future<void> _manage(String route) async {
+    // Tenant repository read before the first await (account switch).
+    final repo = ref.read(attendanceTypeRepositoryWithTenantProvider);
     await context.push(route);
     final id = _type?.id;
     if (!mounted || id == null) return;
     final List<AttendanceType> types;
     try {
-      // getTypeRows rethrows a failed load (getTypes answers it with []), so
-      // a missing Art below is a confirmed removal. On an error the draft
-      // stays as it is.
-      final rows = await ref.read(attendanceTypeRepositoryWithTenantProvider).getTypeRows();
+      // Read the rows directly: a failed load throws and leaves the draft as
+      // it is, an Art missing from a successful load was deleted or hidden.
+      final rows = await repo.getTypeRows();
       types = [for (final row in rows) AttendanceType.fromJson(row)];
     } catch (_) {
       return;
