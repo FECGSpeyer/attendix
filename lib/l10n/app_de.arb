@@ -13764,6 +13764,10 @@
   "@redesignBulkActionArchive": {
     "description": "redesign.bulk.actionArchive"
   },
+  "redesignBulkActionField": "Feld",
+  "@redesignBulkActionField": {
+    "description": "redesign.bulk.actionField"
+  },
   "redesignBulkActionGroup": "Register",
   "@redesignBulkActionGroup": {
     "description": "redesign.bulk.actionGroup"
@@ -13771,6 +13775,10 @@
   "redesignBulkActionPause": "Pausieren",
   "@redesignBulkActionPause": {
     "description": "redesign.bulk.actionPause"
+  },
+  "redesignBulkAllPaused": "Die Ausgewählten sind schon pausiert.",
+  "@redesignBulkAllPaused": {
+    "description": "redesign.bulk.allPaused"
   },
   "redesignBulkArchiveConfirm": "{count, plural, one {1 Person archivieren?} other {{count} Personen archivieren?}}",
   "@redesignBulkArchiveConfirm": {
@@ -13807,6 +13815,31 @@
       }
     }
   },
+  "redesignBulkFieldApply": "Setzen",
+  "@redesignBulkFieldApply": {
+    "description": "redesign.bulk.fieldApply"
+  },
+  "redesignBulkFieldConfirm": "{name} für {count, plural, one {1 Person} other {{count} Personen}} setzen?",
+  "@redesignBulkFieldConfirm": {
+    "description": "redesign.bulk.fieldConfirm",
+    "placeholders": {
+      "name": {},
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignBulkFieldConfirmHint": "Neuer Wert: {value}. Der bisherige Wert wird überschrieben.",
+  "@redesignBulkFieldConfirmHint": {
+    "description": "redesign.bulk.fieldConfirmHint",
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "redesignBulkFieldEmpty": "leer",
+  "@redesignBulkFieldEmpty": {
+    "description": "redesign.bulk.fieldEmpty"
+  },
   "redesignBulkHint": "Mitglieder antippen, dann unten eine Aktion wählen.",
   "@redesignBulkHint": {
     "description": "redesign.bulk.hint"
@@ -13819,6 +13852,10 @@
   "@redesignBulkPauseReason": {
     "description": "redesign.bulk.pauseReason"
   },
+  "redesignBulkPickField": "Feld setzen",
+  "@redesignBulkPickField": {
+    "description": "redesign.bulk.pickField"
+  },
   "redesignBulkPickGroup": "Neues Register",
   "@redesignBulkPickGroup": {
     "description": "redesign.bulk.pickGroup"
@@ -13826,6 +13863,14 @@
   "redesignBulkSearch": "Mitglied suchen",
   "@redesignBulkSearch": {
     "description": "redesign.bulk.search"
+  },
+  "redesignBulkSelect": "Auswählen",
+  "@redesignBulkSelect": {
+    "description": "redesign.bulk.select"
+  },
+  "redesignBulkSelectAll": "Alle auswählen",
+  "@redesignBulkSelectAll": {
+    "description": "redesign.bulk.selectAll"
   },
   "redesignBulkSelectGroup": "Alle in {group}",
   "@redesignBulkSelectGroup": {
@@ -13843,7 +13888,7 @@
       }
     }
   },
-  "redesignBulkTitle": "Mitglieder bearbeiten",
+  "redesignBulkTitle": "Mehrere auswählen",
   "@redesignBulkTitle": {
     "description": "redesign.bulk.title"
   },
@@ -15650,6 +15695,10 @@
   "@redesignImportAiOptionDetail": {
     "description": "redesign.import.aiOptionDetail"
   },
+  "redesignImportAnswerFromPage": "Von Seite 1 lesen",
+  "@redesignImportAnswerFromPage": {
+    "description": "redesign.import.answerFromPage"
+  },
   "redesignImportAnswerNewGroup": "Neue Gruppe „{name}“",
   "@redesignImportAnswerNewGroup": {
     "description": "redesign.import.answerNewGroup",
@@ -16150,6 +16199,10 @@
       "name": {}
     }
   },
+  "redesignImportGroupAllFromPage": "Alle von Seite 1 lesen",
+  "@redesignImportGroupAllFromPage": {
+    "description": "redesign.import.groupAllFromPage"
+  },
   "redesignImportGroupAnswered": "Beantwortet",
   "@redesignImportGroupAnswered": {
     "description": "redesign.import.groupAnswered"
@@ -16311,6 +16364,10 @@
   "redesignImportPreviewZoom": "Tippen zum Vergrößern",
   "@redesignImportPreviewZoom": {
     "description": "redesign.import.previewZoom"
+  },
+  "redesignImportQuestionLook": "Erste Seite ansehen",
+  "@redesignImportQuestionLook": {
+    "description": "redesign.import.questionLook"
   },
   "redesignImportQuestionTitle": "„{name}“ gehört zu …",
   "@redesignImportQuestionTitle": {
@@ -18401,6 +18458,10 @@
   "@redesignSplitWorksCount": {
     "description": "redesign.split.worksCount"
   },
+  "redesignSplitWorksCurrentHint": "Deine Noten für die nächsten Termine. Links findest du alle Werke.",
+  "@redesignSplitWorksCurrentHint": {
+    "description": "redesign.split.worksCurrentHint"
+  },
   "redesignSplitWorksEmpty": "Wähle links ein Werk aus.",
   "@redesignSplitWorksEmpty": {
     "description": "redesign.split.worksEmpty"
@@ -19808,6 +19869,40 @@
   "@redesignWorksAllEvents": {
     "description": "redesign.works.allEvents"
   },
+  "redesignWorksCurrent": "Aktuell",
+  "@redesignWorksCurrent": {
+    "description": "redesign.works.current"
+  },
+  "redesignWorksCurrentAllPdf": "Alle als PDF",
+  "@redesignWorksCurrentAllPdf": {
+    "description": "redesign.works.currentAllPdf"
+  },
+  "redesignWorksCurrentBack": "Zurück blättern",
+  "@redesignWorksCurrentBack": {
+    "description": "redesign.works.currentBack"
+  },
+  "redesignWorksCurrentForward": "Weiter blättern",
+  "@redesignWorksCurrentForward": {
+    "description": "redesign.works.currentForward"
+  },
+  "redesignWorksCurrentLast": "zuletzt {date}",
+  "@redesignWorksCurrentLast": {
+    "description": "redesign.works.currentLast",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignWorksCurrentNoPart": "Keine Stimme",
+  "@redesignWorksCurrentNoPart": {
+    "description": "redesign.works.currentNoPart"
+  },
+  "redesignWorksCurrentPart": "Deine Stimme: {name}",
+  "@redesignWorksCurrentPart": {
+    "description": "redesign.works.currentPart",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "redesignWorksEmpty": "Noch keine Werke.",
   "@redesignWorksEmpty": {
     "description": "redesign.works.empty"
@@ -19840,6 +19935,10 @@
   "redesignWorksFolders": "Nach Stimme",
   "@redesignWorksFolders": {
     "description": "redesign.works.folders"
+  },
+  "redesignWorksFoldersMenu": "Noten nach Stimme",
+  "@redesignWorksFoldersMenu": {
+    "description": "redesign.works.foldersMenu"
   },
   "redesignWorksForGroup": "Für Gruppe",
   "@redesignWorksForGroup": {

@@ -16,6 +16,7 @@ import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
+import '../../../../core/providers/self_service_providers.dart' show currentSelfServicePlayerProvider;
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
@@ -580,7 +581,10 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
         await _repo!.syncPlayerWithUpcomingAttendances(
           (_person ?? person).copyWith(additionalFields: next),
           oldInstrument: (_person ?? person).instrument,
-          oldAdditionalFields: old,
+          // Every changed field with its old value, also one never stored
+          // (null = its default): an organisation field missing here would
+          // count as unchanged.
+          oldAdditionalFields: {...old, for (final k in changes.keys) k: old[k]},
         );
       } catch (e, st) {
         ErrorReporter.report(e, st, where: 'rd_person_edit_page');
@@ -780,6 +784,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
   void _setAppId(String appId) {
     final p = _person;
     if (p == null) return;
+    _container.invalidate(currentSelfServicePlayerProvider);
     if (_disposing || !mounted) {
       _person = p.copyWith(appId: appId);
       return;
@@ -920,6 +925,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     try {
       await ref.read(playerNotifierProvider.notifier).unlinkAccount(person);
       _container.invalidate(personProvider(_personId));
+      _container.invalidate(currentSelfServicePlayerProvider);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.personUserRemoved);
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.personUserRemoveFailed);
@@ -976,6 +982,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
       _container.invalidate(personProvider(_personId));
       _container.invalidate(realtimePlayersProvider);
       _container.invalidate(currentTenantUserProvider);
+      _container.invalidate(currentSelfServicePlayerProvider);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.personUserAssigned);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
@@ -1250,6 +1257,10 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     final isAdmin = role.isAdmin || role.isResponsible;
     final tenant = ref.watch(currentTenantProvider);
     final main = ref.watch(mainGroupProvider).valueOrNull;
+    final ownMember = ref.watch(currentSelfServicePlayerProvider);
+    // Settled only: hasValue stays true while reloading / after an error.
+    final ownMemberMissing =
+        !ownMember.isLoading && !ownMember.hasError && ownMember.hasValue && ownMember.value == null;
     final isMainGroup = main?.id != null && main!.id == person.instrument;
     final textStyle = TextStyle(fontSize: 17, color: p.text);
     final userId = ref.watch(currentAuthUserIdProvider);
@@ -1497,7 +1508,9 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
         RdGroupLabel(l10n.personActions),
         RdGroupedList(children: [
           row(l10n.redesignPersonHistory, () => context.push(RedesignRoutes.personHistory(_personId)), icon: Icons.history),
-          if (person.appId == null)
+          // Only while the signed-in user has no member of their own in this
+          // group (hidden while loading): one login, one member.
+          if (person.appId == null && ownMemberMissing)
             row(l10n.personAssignMyUser, () => _assignMyAccount(person), icon: Icons.person_pin_outlined),
           if (_canTransfer) ...[
             row(l10n.redesignPersonFormTransferOther, () => _transfer(copy: false), icon: Icons.drive_file_move_outline),
