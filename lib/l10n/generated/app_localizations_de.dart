@@ -9860,6 +9860,10 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get rdAdminPickHint =>
+      'Wähle links einen Eintrag, er öffnet sich hier.';
+
+  @override
   String get rdAdminReasons => 'Abmeldegründe';
 
   @override
