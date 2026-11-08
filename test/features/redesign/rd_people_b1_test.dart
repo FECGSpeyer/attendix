@@ -124,9 +124,12 @@ void main() {
     expect(find.text('Mögliche Doppelung'), findsOneWidget);
     expect(find.byKey(const Key('rd-review-merge-3')), findsOneWidget);
     expect(find.text('ANGABEN'), findsOneWidget);
-    expect(find.byKey(const Key('rd-review-first')), findsOneWidget);
-    // Like the old approval page the e-mail is shown, not edited.
-    expect(tester.widget<TextField>(find.byKey(const Key('rd-review-email'))).readOnly, isTrue);
+    // The registration is read, not edited: no inputs, only the group can
+    // be changed; empty values (Telefon) are left out.
+    expect(find.byType(TextField), findsNothing);
+    expect(find.text('neu@test.de'), findsOneWidget);
+    expect(find.byKey(const Key('rd-review-phone')), findsNothing);
+    expect(find.byKey(const Key('rd-review-group')), findsOneWidget);
     expect(find.text('Ablehnen'), findsOneWidget);
     expect(find.text('Aufnehmen'), findsOneWidget);
   });
