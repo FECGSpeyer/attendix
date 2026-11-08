@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.93.2",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Beta-Mitglieder: Die rote Zahl am Tab erklärt sich jetzt. Oben in der Liste steht „1 neue Anmeldung“, ein Tipp öffnet „Wartet“",
+        "💄 Beta-Mitglieder am Desktop: Die Kachel „Anfragen“ im Überblick öffnet „Wartet“"
+      ]
+    },
+    {
       "version": "0.93.1",
       "date": "8.11.2026",
       "changes": [
