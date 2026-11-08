@@ -20915,6 +20915,12 @@ abstract class AppLocalizations {
   /// **'Tippen zum Vergrößern'**
   String get redesignImportPreviewZoom;
 
+  /// redesign.import.questionLook
+  ///
+  /// In de, this message translates to:
+  /// **'Erste Seite ansehen'**
+  String get redesignImportQuestionLook;
+
   /// redesign.import.questionTitle
   ///
   /// In de, this message translates to:

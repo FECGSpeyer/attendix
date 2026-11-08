@@ -724,6 +724,7 @@ class RdImportQuestion {
     required this.fileCount,
     required this.works,
     this.files = const [],
+    this.examples = const [],
     this.suggestion,
     this.newGroup,
     this.several = const [],
@@ -740,6 +741,10 @@ class RdImportQuestion {
 
   /// Names of some files it appears in ("Sax 1.pdf").
   final List<String> files;
+
+  /// Some of its files with their Werk, to look at the first page (PDFs
+  /// and images first).
+  final List<({RdImportFile file, String work})> examples;
 
   /// Group the name might mean (unsure match).
   final int? suggestion;
@@ -1299,6 +1304,10 @@ RdImportPlan rdBuildImportPlan(
       fileCount: list.length,
       works: {for (final q in list) q.work}.take(2).toList(),
       files: {for (final q in list) q.file.name}.take(3).toList(),
+      examples: [
+        for (final q in [...list.where((q) => rdImportPreviewable(q.file)), ...list.where((q) => !rdImportPreviewable(q.file))].take(3))
+          (file: q.file, work: q.work),
+      ],
       suggestion: suggestion,
       newGroup: newGroups.isEmpty ? null : top(newGroups),
       several: several == null || severalFiles * 2 < list.length ? const [] : several.key.groups,
@@ -1318,6 +1327,9 @@ RdImportPlan rdBuildImportPlan(
     pageReads: pageReads,
   );
 }
+
+/// Whether the first page of [file] can be shown (PDF or image).
+bool rdImportPreviewable(RdImportFile file) => const {'pdf', 'png', 'jpg', 'jpeg'}.contains(file.entry.extension);
 
 /// Key of a Werk number for [RdImportPlan.takenNumbers] ("S|12").
 String rdImportNumberKey(String? prefix, int number) => '${(prefix ?? '').trim().toUpperCase()}|$number';

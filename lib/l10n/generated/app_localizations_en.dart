@@ -12887,6 +12887,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportPreviewZoom => 'Tap to enlarge';
 
   @override
+  String get redesignImportQuestionLook => 'See the first page';
+
+  @override
   String redesignImportQuestionTitle(Object name) {
     return '“$name” belongs to …';
   }

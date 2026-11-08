@@ -21,6 +21,7 @@ import 'package:attendix/features/redesign/data/import/rd_import_logic.dart';
 import 'package:attendix/features/redesign/data/import/rd_import_source.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_import_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart' show RdChoiceChip, RdPrimaryButton;
+import 'package:attendix/features/redesign/presentation/widgets/import/rd_import_widgets.dart' show RdImportQuestionPreview;
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/shared/widgets/layout/route_leave_guard.dart';
 import 'package:file_picker/file_picker.dart';
@@ -1013,6 +1014,12 @@ void main() {
     await tester.tap(find.text('Neue Gruppe anlegen').last);
     await tester.pumpAndSettle();
     expect(find.text('Neue Gruppe „Saxophon“'), findsOneWidget);
+    // A tap on the question shows the first page of its files above the choices.
+    await tester.tap(find.text('„Kazoo“ gehört zu …'));
+    await tester.pumpAndSettle();
+    expect(find.byType(RdImportQuestionPreview), findsOneWidget);
+    await tester.tap(find.text('Neue Gruppe „Saxophon“').last);
+    await tester.pumpAndSettle();
 
     await tester.ensureVisible(find.text('Zur Prüfung'));
     await tester.pump();

@@ -13021,6 +13021,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportPreviewZoom => 'Tippen zum Vergrößern';
 
   @override
+  String get redesignImportQuestionLook => 'Erste Seite ansehen';
+
+  @override
   String redesignImportQuestionTitle(Object name) {
     return '„$name“ gehört zu …';
   }

@@ -16041,6 +16041,10 @@
   "@redesignImportPreviewZoom": {
     "description": "redesign.import.previewZoom"
   },
+  "redesignImportQuestionLook": "Erste Seite ansehen",
+  "@redesignImportQuestionLook": {
+    "description": "redesign.import.questionLook"
+  },
   "redesignImportQuestionTitle": "„{name}“ gehört zu …",
   "@redesignImportQuestionTitle": {
     "description": "redesign.import.questionTitle",

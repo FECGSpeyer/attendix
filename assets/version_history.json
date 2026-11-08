@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.96.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Noten-Import: Ein Tipp auf eine Stimm-Frage zeigt die erste Seite von bis zu drei ihrer Dateien, die Antworten direkt darunter"
+      ]
+    },
+    {
       "version": "0.95.1",
       "date": "8.11.2026",
       "changes": [

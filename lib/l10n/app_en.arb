@@ -3464,6 +3464,7 @@
   "redesignImportPreviewNone": "No preview for this file here.",
   "redesignImportPreviewOf": "First page of {name}",
   "redesignImportPreviewZoom": "Tap to enlarge",
+  "redesignImportQuestionLook": "See the first page",
   "redesignImportQuestionTitle": "“{name}” belongs to …",
   "redesignImportQuestionWhere": "{count} files, e.g. in {works}",
   "redesignImportQuestionsAnswered": "{answered} of {total} answered",
