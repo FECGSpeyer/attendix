@@ -35,13 +35,7 @@ class RdBrandingPage extends ConsumerStatefulWidget {
 class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
   bool _busy = false;
 
-  void _back() {
-    if (context.canPop()) {
-      context.pop();
-    } else {
-      context.go('/settings/org-settings');
-    }
-  }
+  void _back() => rdBack(context, '/settings/org-settings');
 
   /// The organisation as `updateBranding` returned it. The page shows and
   /// edits this one, so a later change always starts from what was saved,

@@ -188,7 +188,7 @@ class _RdWorkHistoryPageState extends ConsumerState<RdWorkHistoryPage> {
       title: rdManageTitle(l10n, RdManageEntry.workHistory),
       // Opened from the Werke tab's "•••" (and Werk bearbeiten).
       backLabel: l10n.redesignTabWorks,
-      onBack: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.works),
+      onBack: () => rdBack(context, RedesignRoutes.works),
       intro: l10n.rdWmHistoryIntro,
       header:
           history == null || history.isEmpty

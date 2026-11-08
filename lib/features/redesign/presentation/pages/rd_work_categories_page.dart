@@ -13,6 +13,7 @@ import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
 import '../widgets/manage/rd_settings_sheets.dart';
+import '../widgets/rd_widgets.dart' show rdBack;
 
 /// REDESIGN: Verwaltung › Werk-Kategorien in the template "Verwaltungsliste"
 /// (canvas "Beta: Gruppe und Daten", board "G4 Werk-Kategorien"). Replaces
@@ -152,7 +153,7 @@ class _RdWorkCategoriesPageState extends ConsumerState<RdWorkCategoriesPage> {
       title: rdManageTitle(l10n, RdManageEntry.workCategories),
       // Opened from the Werke tab's "•••" (and Werk bearbeiten).
       backLabel: l10n.redesignTabWorks,
-      onBack: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.works),
+      onBack: () => rdBack(context, RedesignRoutes.works),
       intro: l10n.rdWmCategoriesIntro,
       sections:
           categories == null

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
@@ -109,7 +108,7 @@ class _TeamOrganizationPageState extends ConsumerState<TeamOrganizationPage>
                 children: [
                   RdBackLink(
                     label: l10n.redesignTabMe,
-                    onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.me),
+                    onTap: () => rdBack(context, RedesignRoutes.me),
                   ),
                   const SizedBox(height: 8),
                   Text(l10n.teamOrgTitle, style: RdType.largeTitle(p)),

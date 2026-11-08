@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/services/app_update_service.dart';
 import '../../../../core/services/update_hint.dart';
-import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_palette.dart';
@@ -69,10 +68,9 @@ class RdShell extends ConsumerWidget {
     final location = GoRouterState.of(context).matchedLocation;
     final selected = rdSelectedIndex(destinations, location);
     // Waiting approvals on the Mitglieder tab, where they are handled (the
-    // "Freigaben" filter); leads only.
-    final pending = role.isAdmin || role.isResponsible
-        ? (ref.watch(pendingPlayersProvider).valueOrNull?.length ?? 0)
-        : 0;
+    // "Freigaben" filter); leads only, live like the Mitglieder list (new
+    // sign-ups, approvals by other leads).
+    final pending = ref.watch(rdManagePendingProvider).length;
     final badges = {RdTab.members: pending};
     final width = MediaQuery.sizeOf(context).width;
     final page = NativeAppAdGate(child: child);

@@ -16,6 +16,7 @@ import 'package:attendix/features/redesign/data/rd_manage_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_manage_page.dart';
 import 'package:attendix/features/redesign/presentation/shell/rd_destinations.dart';
 import 'package:attendix/features/redesign/presentation/widgets/manage/rd_manage_entries.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart' show rdBack;
 import 'package:attendix/features/settings/presentation/pages/left_players_page.dart'
     show leftPlayersProvider;
 import 'package:attendix/l10n/l10n.dart';
@@ -188,6 +189,54 @@ void main() {
       expect(rdIsManageLocation(RedesignRoutes.workHistory), isFalse);
       expect(rdIsManageLocation(RedesignRoutes.me), isFalse);
     });
+  });
+
+  testWidgets('back from a page opened by its URL leads to its tab, not to the routes beneath', (tester) async {
+    GoRouter router(String initial) => GoRouter(
+          initialLocation: initial,
+          routes: [
+            ShellRoute(
+              builder: (_, __, child) => child,
+              routes: [
+                GoRoute(path: RedesignRoutes.works, builder: (_, __) => const Text('works')),
+                GoRoute(
+                  path: RedesignRoutes.me,
+                  builder: (_, __) => const Text('me'),
+                  routes: [
+                    GoRoute(
+                      path: 'verwaltung',
+                      builder: (_, __) => const Text('manage'),
+                      routes: [
+                        GoRoute(
+                          path: 'werkhistorie',
+                          builder: (context, __) => GestureDetector(
+                            onTap: () => rdBack(context, RedesignRoutes.works),
+                            child: const Text('back'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+    // Reload or link: Ich › Verwaltung is built beneath, back still leads
+    // to the Werke tab.
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router(RedesignRoutes.workHistory)));
+    await tester.tap(find.text('back'));
+    await tester.pumpAndSettle();
+    expect(find.text('works'), findsOneWidget);
+
+    // Pushed (from the Werke tab's "•••"): back returns where it came from.
+    final pushed = router(RedesignRoutes.me);
+    await tester.pumpWidget(MaterialApp.router(key: UniqueKey(), routerConfig: pushed));
+    pushed.push(RedesignRoutes.workHistory);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('back'));
+    await tester.pumpAndSettle();
+    expect(find.text('me'), findsOneWidget);
   });
 
   group('Verwaltung page', () {

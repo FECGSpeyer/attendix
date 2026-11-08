@@ -132,11 +132,7 @@ extension _FilesPageBeta on _FilesPageState {
       _navigateTo(segments.sublist(0, segments.length - 1).join('/'));
       return;
     }
-    if (context.canPop()) {
-      context.pop();
-    } else {
-      context.go(_betaFromWorks ? RedesignRoutes.works : RedesignRoutes.me);
-    }
+    rdBack(context, _betaFromWorks ? RedesignRoutes.works : RedesignRoutes.me);
   }
 
   /// The Dateiablage opens from the Werke tab's "•••"; in groups without a
