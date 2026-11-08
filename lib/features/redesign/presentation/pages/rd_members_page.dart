@@ -478,9 +478,11 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: body),
     ));
 
-    // The selection (kept across Aktiv / Pausiert and the search).
+    // The selection (kept across Aktiv / Pausiert and the search). The
+    // stored rows, not the list's prepared ones: those carry organisation
+    // values and defaults that must not be written into the player row.
     final selection = selecting
-        ? allPeople.where((x) => x.id != null && bulkSelected.contains(x.id)).toList()
+        ? rawPeople.where((x) => x.id != null && bulkSelected.contains(x.id)).toList()
         : const <Person>[];
 
     final page = RdPage(
@@ -510,32 +512,34 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
           : null,
       children: children,
     );
-    if (selection.isEmpty) return page;
+    // Always the same Stack, so the list keeps its scroll position when the
+    // bar comes and goes.
     return Stack(
       children: [
         page,
-        Positioned(
-          left: 12,
-          right: 12,
-          bottom: 12 + MediaQuery.of(context).padding.bottom,
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 560),
-              child: RdBulkActionBar(
-                key: const Key('rd-members-bulk-bar'),
-                label: l10n.redesignBulkSelected(selection.length),
-                busy: bulkBusy,
-                actions: [
-                  (Icons.swap_horiz, l10n.redesignBulkActionGroup, () => bulkMoveToGroup(selection), false),
-                  if (selection.any((x) => !x.paused))
-                    (Icons.pause_circle_outline, l10n.redesignBulkActionPause, () => bulkPause(selection), false),
-                  (Icons.edit_note, l10n.redesignBulkActionField, () => bulkSetField(selection), false),
-                  (Icons.archive_outlined, l10n.redesignBulkActionArchive, () => bulkArchive(selection), true),
-                ],
+        if (selection.isNotEmpty)
+          Positioned(
+            left: 12,
+            right: 12,
+            bottom: 12 + MediaQuery.of(context).padding.bottom,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 560),
+                child: RdBulkActionBar(
+                  key: const Key('rd-members-bulk-bar'),
+                  label: l10n.redesignBulkSelected(selection.length),
+                  busy: bulkBusy,
+                  actions: [
+                    (Icons.swap_horiz, l10n.redesignBulkActionGroup, () => bulkMoveToGroup(selection), false),
+                    if (selection.any((x) => !x.paused))
+                      (Icons.pause_circle_outline, l10n.redesignBulkActionPause, () => bulkPause(selection), false),
+                    (Icons.edit_note, l10n.redesignBulkActionField, () => bulkSetField(selection), false),
+                    (Icons.archive_outlined, l10n.redesignBulkActionArchive, () => bulkArchive(selection), true),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
   }
