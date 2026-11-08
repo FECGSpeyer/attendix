@@ -176,10 +176,13 @@ class RdPersonMatchList extends StatelessWidget {
 
 /// Group chips like in the Werk and Termin forms (Ionic: no "none").
 class RdPersonGroupChips extends ConsumerWidget {
-  const RdPersonGroupChips({super.key, required this.selected, required this.onSelected});
+  const RdPersonGroupChips({super.key, required this.selected, required this.onSelected, this.onManage});
 
   final int? selected;
   final ValueChanged<int>? onSelected;
+
+  /// Leads: "Register verwalten" below the chips (Verwaltung › Register).
+  final VoidCallback? onManage;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -190,7 +193,7 @@ class RdPersonGroupChips extends ConsumerWidget {
           ? Text(context.l10n.redesignTodayLoadFailed, style: RdType.meta(context.rd, size: 13))
           : const LinearProgressIndicator();
     }
-    return Wrap(
+    final chips = Wrap(
       spacing: 8,
       runSpacing: 8,
       children: [
@@ -202,6 +205,15 @@ class RdPersonGroupChips extends ConsumerWidget {
               selected: g.id == selected,
               onTap: onSelected == null ? null : () => onSelected!(g.id!),
             ),
+      ],
+    );
+    if (onManage == null) return chips;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        chips,
+        const SizedBox(height: 4),
+        RdTextLink(label: context.l10n.rdAdminManageGroups, onTap: onManage!),
       ],
     );
   }

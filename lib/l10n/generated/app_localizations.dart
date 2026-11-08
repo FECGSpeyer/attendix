@@ -16043,11 +16043,29 @@ abstract class AppLocalizations {
   /// **'Im Werke-Tab unter •••'**
   String get rdAdminHomeWorks;
 
+  /// rdAdmin.manageGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Register verwalten'**
+  String get rdAdminManageGroups;
+
+  /// rdAdmin.manageTypes
+  ///
+  /// In de, this message translates to:
+  /// **'Terminarten verwalten'**
+  String get rdAdminManageTypes;
+
   /// rdAdmin.missing
   ///
   /// In de, this message translates to:
   /// **'Zugänge anlegen'**
   String get rdAdminMissing;
+
+  /// rdAdmin.missingBanner
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Mitglied hat eine E-Mail, aber noch keinen Zugang zur App.} other {{count} Mitglieder haben eine E-Mail, aber noch keinen Zugang zur App.}}'**
+  String rdAdminMissingBanner(num count);
 
   /// rdAdmin.name
   ///
@@ -16162,6 +16180,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Wer Schicht hat, ist automatisch entschuldigt'**
   String get rdAdminShiftsHint;
+
+  /// rdAdmin.showHolidays
+  ///
+  /// In de, this message translates to:
+  /// **'Ferien und Feiertage einblenden'**
+  String get rdAdminShowHolidays;
 
   /// rdAdmin.statsHint
   ///

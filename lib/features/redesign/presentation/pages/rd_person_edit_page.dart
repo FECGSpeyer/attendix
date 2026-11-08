@@ -1325,7 +1325,11 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
         if (namesEmpty) hint(l10n.personEnterNames, color: p.absent),
         const SizedBox(height: 20),
         RdGroupLabel(groupLabel(tenant?.type)),
-        RdPersonGroupChips(selected: person.instrument, onSelected: _setGroup),
+        RdPersonGroupChips(
+          selected: person.instrument,
+          onSelected: _setGroup,
+          onManage: _canEdit ? () => context.push(RedesignRoutes.groups) : null,
+        ),
         const SizedBox(height: 20),
         RdGroupLabel(l10n.redesignPersonFormContact),
         RdGroupedList(

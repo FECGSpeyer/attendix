@@ -34,6 +34,10 @@ import '../widgets/members/rd_members_filter_sheet.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../widgets/manage/rd_manage_entries.dart'
+    show rdManageIcon, rdManageTitle, rdMissingAccountsProvider, rdOpenManageEntry;
+import '../../data/rd_manage_logic.dart' show RdManageEntry;
+import '../../../settings/presentation/pages/settings_page.dart' show createMissingAccounts;
 
 /// REDESIGN: tab "Mitglieder" (canvas "Menschen"). Dirigent and Beobachter:
 /// Aktiv / Pausiert / Wartet (also by swiping the list), search, registers
@@ -110,6 +114,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
     final percentages = ref.watch(playerAttendancePercentagesProvider).valueOrNull ?? const <int, int>{};
     final groups = ref.watch(groupsProvider).valueOrNull ?? const [];
     final absences = ref.watch(playerAbsencesProvider).valueOrNull ?? const <PlayerAbsence>[];
+    final missing = canApprove ? ref.watch(rdMissingAccountsProvider) : const <Person>[];
 
     // "Sortieren & Filtern" (old list: filter, sort; plus groups).
     final listFilter = ref.watch(rdMembersListFilterProvider);
@@ -254,11 +259,14 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
               child: Text(l10n.redesignTabMembers, style: RdType.largeTitle(p)),
             ),
           ),
+          // What leads do with the members, from the Verwaltung (canvas
+          // "Mitglieder-Tab: •••"): Auswertung, several at once, Register …
           if (canApprove)
             RdCircleButton(
-              icon: Icons.bar_chart_rounded,
-              label: l10n.redesignMembersStats,
-              onPressed: () => context.push(RedesignRoutes.stats),
+              key: const Key('rd-members-more'),
+              icon: Icons.more_horiz,
+              label: l10n.redesignWorksMore,
+              onPressed: _more,
             ),
           if (inSplit && (role.canEdit || canApprove)) ...[
             const SizedBox(width: 8),
@@ -328,6 +336,19 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
         ],
       ),
       const SizedBox(height: 10),
+      // Members with an e-mail but no account (from the Verwaltung: "Zugänge
+      // anlegen"), only on the plain list.
+      if (missing.isNotEmpty && filter == RdMembersFilter.active && !filtering && _query.trim().isEmpty) ...[
+        RdInfoCard(
+          icon: Icons.person_add_alt_outlined,
+          text: l10n.rdAdminMissingBanner(missing.length),
+          action: RdOutlineButton(
+            label: rdManageTitle(l10n, RdManageEntry.missingAccounts),
+            onPressed: () => createMissingAccounts(context, ref, missing),
+          ),
+        ),
+        const SizedBox(height: 12),
+      ],
     ];
 
     final body = <Widget>[];
@@ -498,6 +519,26 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
 
   /// Desktop "+": a new person or an invitation link, as a menu at the
   /// button (one entry: straight to it).
+  /// "•••" of the leads: the Verwaltung entries that act on the members.
+  Future<void> _more() async {
+    final l10n = context.l10n;
+    final entry = await showAppActionSheet<RdManageEntry>(
+      context,
+      actions: [
+        for (final e in const [
+          RdManageEntry.statistics,
+          RdManageEntry.bulkMembers,
+          RdManageEntry.groups,
+          RdManageEntry.critical,
+          RdManageEntry.archive,
+          RdManageEntry.export,
+        ])
+          AppActionSheetAction(value: e, icon: rdManageIcon(e), label: rdManageTitle(l10n, e)),
+      ],
+    );
+    if (entry != null && mounted) rdOpenManageEntry(context, ref, entry);
+  }
+
   Future<void> _add(BuildContext anchor, {required bool canCreate, required bool canInvite}) async {
     final l10n = context.l10n;
     if (!canInvite) {
