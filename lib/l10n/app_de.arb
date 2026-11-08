@@ -15379,6 +15379,10 @@
   "@redesignImportAiOptionDetail": {
     "description": "redesign.import.aiOptionDetail"
   },
+  "redesignImportAnswerFromPage": "Von Seite 1 lesen",
+  "@redesignImportAnswerFromPage": {
+    "description": "redesign.import.answerFromPage"
+  },
   "redesignImportAnswerNewGroup": "Neue Gruppe „{name}“",
   "@redesignImportAnswerNewGroup": {
     "description": "redesign.import.answerNewGroup",
@@ -15878,6 +15882,10 @@
     "placeholders": {
       "name": {}
     }
+  },
+  "redesignImportGroupAllFromPage": "Alle von Seite 1 lesen",
+  "@redesignImportGroupAllFromPage": {
+    "description": "redesign.import.groupAllFromPage"
   },
   "redesignImportGroupAnswered": "Beantwortet",
   "@redesignImportGroupAnswered": {

@@ -656,6 +656,18 @@ void main() {
     expect(state.decisions.answers['kazoo'], const RdImportCategory(instrumentId: 30));
     expect(state.ai['kazoo'], const RdImportAiAnswer(RdImportCategory(instrumentId: 10), sure: false));
     expect(state.aiFilled, isEmpty);
+
+    // "Ohne Zuordnung" for a name with PDFs: page 1 of each file decides.
+    controller.restart();
+    reply = Completer();
+    await controller.read([_zipFile()]);
+    reply.complete({
+      'answers': [
+        {'key': 'kazoo', 'kind': 'other', 'confidence': 'high'},
+      ],
+    });
+    await Future<void>.delayed(Duration.zero);
+    expect(c.read(rdImportProvider).decisions.answers['kazoo'], const RdImportCategory.fromPage());
   });
 
   test('the KI\'s answers count only once the person takes them; late ones wait on the questions', () async {

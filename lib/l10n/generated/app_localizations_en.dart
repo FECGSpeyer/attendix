@@ -12295,6 +12295,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unknown part names, some file names, the names of unsure work folders and, for unclear parts, a picture of the first page are sent to the AI. Sure suggestions are filled in, all can be changed.';
 
   @override
+  String get redesignImportAnswerFromPage => 'Read from page 1';
+
+  @override
   String redesignImportAnswerNewGroup(Object name) {
     return 'New group “$name”';
   }
@@ -12744,6 +12747,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String redesignImportGroupAllAs(Object name) {
     return 'All as $name';
   }
+
+  @override
+  String get redesignImportGroupAllFromPage => 'Read all from page 1';
 
   @override
   String get redesignImportGroupAnswered => 'Answered';

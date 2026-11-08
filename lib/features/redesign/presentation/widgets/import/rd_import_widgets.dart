@@ -117,6 +117,7 @@ List<(RdImportCategory, String)> rdImportCategoryOptions(
 /// Name of [c] as shown.
 String rdImportCategoryLabel(BuildContext context, RdImportPlan plan, RdImportCategory c) {
   final l10n = context.l10n;
+  if (c.fromPage) return l10n.redesignImportAnswerFromPage;
   if (c.isSeveral) {
     // "Posaune + Tuba (neu)"
     return c.groups

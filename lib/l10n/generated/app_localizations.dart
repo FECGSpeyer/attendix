@@ -20087,6 +20087,12 @@ abstract class AppLocalizations {
   /// **'Unbekannte Stimmnamen, einige Dateinamen, die Namen unsicherer Werk-Ordner und bei unklaren Stimmen ein Bild der ersten Seite gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.'**
   String get redesignImportAiOptionDetail;
 
+  /// redesign.import.answerFromPage
+  ///
+  /// In de, this message translates to:
+  /// **'Von Seite 1 lesen'**
+  String get redesignImportAnswerFromPage;
+
   /// redesign.import.answerNewGroup
   ///
   /// In de, this message translates to:
@@ -20710,6 +20716,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Alle als {name}'**
   String redesignImportGroupAllAs(Object name);
+
+  /// redesign.import.groupAllFromPage
+  ///
+  /// In de, this message translates to:
+  /// **'Alle von Seite 1 lesen'**
+  String get redesignImportGroupAllFromPage;
 
   /// redesign.import.groupAnswered
   ///
