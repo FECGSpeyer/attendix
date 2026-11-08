@@ -23,7 +23,7 @@ Future<void> showRdOwnAnswerSheet(BuildContext context, String personAttendanceI
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
-    builder: (_) => _OwnAnswerSheet(personAttendanceId: personAttendanceId),
+    builder: (_) => RdSheetCap(child: _OwnAnswerSheet(personAttendanceId: personAttendanceId)),
   );
 }
 

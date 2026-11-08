@@ -31,7 +31,7 @@ Future<void> showRdInviteSheet(BuildContext context) {
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
-    builder: (_) => const _InviteSheet(),
+    builder: (_) => RdSheetCap(child: const _InviteSheet()),
   );
 }
 

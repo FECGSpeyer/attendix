@@ -64,7 +64,7 @@ Future<RdSignoutChoice?> showRdReasonSheet(
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
-    builder: (_) => _SignoutSheet(
+    builder: (_) => RdSheetCap(child: _SignoutSheet(
       title: title,
       meta: meta,
       absenceReasons: absenceReasons,
@@ -74,7 +74,7 @@ Future<RdSignoutChoice?> showRdReasonSheet(
       late: late,
       ownReasonFirst: ownReasonFirst,
       forChild: forChild,
-    ),
+    )),
   );
 }
 
