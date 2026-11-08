@@ -208,6 +208,17 @@ void main() {
       expect(rdUpcoming(camp, now: now), isEmpty);
     });
 
+    test('a Termin without own time sorts by the time of its type', () {
+      final types = [TestFactories.createAttendanceType(id: 'probe', name: 'Probe').copyWith(startTime: '19:30')];
+      final day = [
+        TestFactories.createAttendance(id: 1, date: _day(1, from: now), typeId: 'probe'), // 19:30 of the type
+        TestFactories.createAttendance(id: 2, date: _day(1, from: now), startTime: '18:00'),
+        TestFactories.createAttendance(id: 3, date: _day(1, from: now), typeId: 'probe', startTime: '17:00'),
+      ];
+      // An own time wins over the type's.
+      expect(rdUpcoming(day, now: now, types: types).map((a) => a.id), [3, 2, 1]);
+    });
+
     test('average only over Termine with a percentage', () {
       expect(rdAveragePercentage(rdPast(list, now: now)), 80);
       expect(rdAveragePercentage(const []), isNull);

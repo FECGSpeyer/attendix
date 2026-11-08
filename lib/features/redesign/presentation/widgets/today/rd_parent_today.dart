@@ -253,7 +253,14 @@ class RdChildAnswerRow extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(children: [Expanded(child: name), const SizedBox(width: 8), pill]),
+            Row(
+              children: [
+                Expanded(child: name),
+                const SizedBox(width: 8),
+                // Large text: the status shrinks instead of pushing the name out.
+                Flexible(child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerRight, child: pill)),
+              ],
+            ),
             Padding(
               // 42 under the name, minus the link's own padding of 8.
               padding: const EdgeInsets.only(left: 34),
