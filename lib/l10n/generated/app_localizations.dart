@@ -17231,6 +17231,342 @@ abstract class AppLocalizations {
   /// **'Rückgängig'**
   String get rdSettingsUndo;
 
+  /// rdType.add
+  ///
+  /// In de, this message translates to:
+  /// **'Hinzufügen'**
+  String get rdTypeAdd;
+
+  /// rdType.addHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wählst du etwas aus, bekommen es alle neuen Termine dieser Art.'**
+  String get rdTypeAddHint;
+
+  /// rdType.allDay
+  ///
+  /// In de, this message translates to:
+  /// **'Ganztägig'**
+  String get rdTypeAllDay;
+
+  /// rdType.attendance
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit'**
+  String get rdTypeAttendance;
+
+  /// rdType.attendanceValue
+  ///
+  /// In de, this message translates to:
+  /// **'Vorbelegt mit {status} · {count} Status'**
+  String rdTypeAttendanceValue(Object status, Object count);
+
+  /// rdType.automatic
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Termine dieser Art bekommen automatisch'**
+  String get rdTypeAutomatic;
+
+  /// rdType.automaticHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nur was eingeschaltet ist, steht hier. Ort und Werke trägst du direkt am Termin ein.'**
+  String get rdTypeAutomaticHint;
+
+  /// rdType.checklist
+  ///
+  /// In de, this message translates to:
+  /// **'Checkliste'**
+  String get rdTypeChecklist;
+
+  /// rdType.checklistHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgaben vor dem Termin, z. B. Stühle stellen'**
+  String get rdTypeChecklistHint;
+
+  /// rdType.checklistValue
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {an} one {1 Aufgabe} other {{count} Aufgaben}}'**
+  String rdTypeChecklistValue(num count);
+
+  /// rdType.countsForQuota
+  ///
+  /// In de, this message translates to:
+  /// **'Zählt zur Anwesenheitsquote'**
+  String get rdTypeCountsForQuota;
+
+  /// rdType.countsForQuotaHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aus z. B. für Feiern oder freiwillige Termine'**
+  String get rdTypeCountsForQuotaHint;
+
+  /// rdType.defaultStatus
+  ///
+  /// In de, this message translates to:
+  /// **'Vorbelegt mit'**
+  String get rdTypeDefaultStatus;
+
+  /// rdType.duty
+  ///
+  /// In de, this message translates to:
+  /// **'Dienste einteilen'**
+  String get rdTypeDuty;
+
+  /// rdType.dutyHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wer macht Technik, Kaffee und Co.'**
+  String get rdTypeDutyHint;
+
+  /// rdType.everyEvent
+  ///
+  /// In de, this message translates to:
+  /// **'Jeder Termin dieser Art'**
+  String get rdTypeEveryEvent;
+
+  /// rdType.invited
+  ///
+  /// In de, this message translates to:
+  /// **'Eingeplant'**
+  String get rdTypeInvited;
+
+  /// rdType.invitedAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get rdTypeInvitedAll;
+
+  /// rdType.invitedHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wer zu diesen Terminen gehört'**
+  String get rdTypeInvitedHint;
+
+  /// rdType.invitedSome
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Register} other {{count} Register}}'**
+  String rdTypeInvitedSome(num count);
+
+  /// rdType.look
+  ///
+  /// In de, this message translates to:
+  /// **'Aussehen'**
+  String get rdTypeLook;
+
+  /// rdType.lookHideName
+  ///
+  /// In de, this message translates to:
+  /// **'Name in der Liste verbergen'**
+  String get rdTypeLookHideName;
+
+  /// rdType.lookHideNameHint
+  ///
+  /// In de, this message translates to:
+  /// **'Termine ohne eigenen Titel zeigen dann das Datum statt des Namens der Art (klassische Ansicht und Eltern).'**
+  String get rdTypeLookHideNameHint;
+
+  /// rdType.lookHighlightHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Art steht in der Terminliste auffällig markiert.'**
+  String get rdTypeLookHighlightHint;
+
+  /// rdType.lookHint
+  ///
+  /// In de, this message translates to:
+  /// **'Farbe, hervorheben, Titel in der Liste'**
+  String get rdTypeLookHint;
+
+  /// rdType.newCreate
+  ///
+  /// In de, this message translates to:
+  /// **'Anlegen'**
+  String get rdTypeNewCreate;
+
+  /// rdType.newEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Leer'**
+  String get rdTypeNewEmpty;
+
+  /// rdType.newEmptyHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Anwesenheit, sonst nichts'**
+  String get rdTypeNewEmptyHint;
+
+  /// rdType.newName
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get rdTypeNewName;
+
+  /// rdType.newNameHint
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. Registerprobe'**
+  String get rdTypeNewNameHint;
+
+  /// rdType.newStartsLike
+  ///
+  /// In de, this message translates to:
+  /// **'Startet wie'**
+  String get rdTypeNewStartsLike;
+
+  /// rdType.newStartsLikeHint
+  ///
+  /// In de, this message translates to:
+  /// **'Übernimmt Zeit, Status, Ablauf und alles Eingeschaltete. Danach kannst du alles ändern.'**
+  String get rdTypeNewStartsLikeHint;
+
+  /// rdType.newTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Terminart'**
+  String get rdTypeNewTitle;
+
+  /// rdType.offer
+  ///
+  /// In de, this message translates to:
+  /// **'Für neue Termine anbieten'**
+  String get rdTypeOffer;
+
+  /// rdType.offerHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aus: steht beim Anlegen nicht mehr zur Wahl, bestehende Termine bleiben'**
+  String get rdTypeOfferHint;
+
+  /// rdType.on
+  ///
+  /// In de, this message translates to:
+  /// **'an'**
+  String get rdTypeOn;
+
+  /// rdType.plan
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf'**
+  String get rdTypePlan;
+
+  /// rdType.planHint
+  ///
+  /// In de, this message translates to:
+  /// **'Programmpunkte mit Uhrzeit'**
+  String get rdTypePlanHint;
+
+  /// rdType.planValue
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Punkt} other {{count} Punkte}}'**
+  String rdTypePlanValue(num count);
+
+  /// rdType.protocol
+  ///
+  /// In de, this message translates to:
+  /// **'Protokoll und Tagesordnung'**
+  String get rdTypeProtocol;
+
+  /// rdType.protocolHint
+  ///
+  /// In de, this message translates to:
+  /// **'Themen sammeln und mitschreiben'**
+  String get rdTypeProtocolHint;
+
+  /// rdType.reminders
+  ///
+  /// In de, this message translates to:
+  /// **'Erinnerungen'**
+  String get rdTypeReminders;
+
+  /// rdType.remindersHint
+  ///
+  /// In de, this message translates to:
+  /// **'Push-Nachricht vor Beginn'**
+  String get rdTypeRemindersHint;
+
+  /// rdType.remindersValue
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {an} one {1 Erinnerung} other {{count} Erinnerungen}}'**
+  String rdTypeRemindersValue(num count);
+
+  /// rdType.signup
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldefragen'**
+  String get rdTypeSignup;
+
+  /// rdType.signupHint
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. „Bringst du Essen mit?“'**
+  String get rdTypeSignupHint;
+
+  /// rdType.signupValue
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Frage} other {{count} Fragen}}'**
+  String rdTypeSignupValue(num count);
+
+  /// rdType.statuses
+  ///
+  /// In de, this message translates to:
+  /// **'Mögliche Status'**
+  String get rdTypeStatuses;
+
+  /// rdType.takeOverPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Für neue Termine dieser Art übernehmen'**
+  String get rdTypeTakeOverPlan;
+
+  /// rdType.takeOverPlanConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Termine der Art „{type}“ bekommen dann diesen Ablauf. Bestehende Termine bleiben, wie sie sind.'**
+  String rdTypeTakeOverPlanConfirm(Object type);
+
+  /// rdType.takeOverPlanDone
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Termine der Art „{type}“ bekommen jetzt diesen Ablauf'**
+  String rdTypeTakeOverPlanDone(Object type);
+
+  /// rdType.takeOverPlanFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Der Ablauf konnte nicht übernommen werden.'**
+  String get rdTypeTakeOverPlanFailed;
+
+  /// rdType.takeOverPlanHint
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Termine der Art „{type}“ bekommen diesen Ablauf'**
+  String rdTypeTakeOverPlanHint(Object type);
+
+  /// rdType.time
+  ///
+  /// In de, this message translates to:
+  /// **'Uhrzeit'**
+  String get rdTypeTime;
+
+  /// rdType.timeHint
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschlag, am Termin änderbar'**
+  String get rdTypeTimeHint;
+
+  /// rdType.usage
+  ///
+  /// In de, this message translates to:
+  /// **'Änderungen gelten auch für {count, plural, one {den bestehenden Termin} other {die {count} bestehenden Termine}}.'**
+  String rdTypeUsage(num count);
+
   /// rdWm.categoriesIntro
   ///
   /// In de, this message translates to:

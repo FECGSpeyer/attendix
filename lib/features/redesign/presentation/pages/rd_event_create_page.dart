@@ -26,6 +26,7 @@ import '../../../attendance/presentation/attendance_create_writes.dart';
 import '../../../attendance/presentation/widgets/multi_date_calendar.dart';
 import '../../../attendance/presentation/widgets/songs_selection_sheet.dart';
 import '../../data/rd_create_logic.dart';
+import '../../data/rd_type_flags.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import '../widgets/event/rd_create_sheets.dart';
@@ -110,7 +111,6 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     _end = type.endTime;
     _durationDays = type.allDay ? (type.durationDays ?? 1) : 1;
     _duty = {};
-    if (!type.manageSongs) _songs = const [];
   }
 
   void _applyTemplate(RdCreateTemplate t) {
@@ -301,7 +301,8 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
   Future<void> _save(List<DateTime> dates) async {
     // UI_TENANT_HOIST: tenant + repositories bound before the first await.
     final writer = AttendanceCreateWriter(ref);
-    final type = _type;
+    final typeNotifier = ref.read(attendanceTypeNotifierProvider.notifier);
+    var type = _type;
     if (_saving || type == null || dates.isEmpty) return;
     if (DemoGuard.blocked()) return; // DEMO_GUARD
     final l10n = context.l10n;
@@ -328,6 +329,9 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     final start = _start ?? type.startTime;
     final title = _title.text.trim();
     final place = _place.text.trim();
+    // Ort and Werke work for every Art: switch them on at the Art when used.
+    type = await rdEnsureTypeFlags(typeNotifier, type, place: place.isNotEmpty, songs: _songs.isNotEmpty);
+    if (!mounted) return;
     final input = AttendanceCreateInput(
       type: type,
       dates: dates,
@@ -520,7 +524,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
               ],
             ),
           ),
-        if (type?.placeEnabled == true)
+        if (type != null)
           RdFieldRow(
             label: l10n.redesignCreatePlace,
             child: Column(
@@ -562,7 +566,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
           value: _repeatLabel(l10n, locale),
           onTap: () => _pickRepeat(holidays),
         ),
-        if (type?.manageSongs == true)
+        if (type != null && ref.watch(currentTenantProvider)?.type != 'general')
           RdListRow(
             title: l10n.redesignCreateSongs,
             value: _songs.isEmpty ? l10n.redesignCreateSongsNone : l10n.redesignCreateSongsCount(_songs.length),

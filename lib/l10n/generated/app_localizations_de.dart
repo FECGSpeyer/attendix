@@ -10507,6 +10507,241 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdSettingsUndo => 'Rückgängig';
 
   @override
+  String get rdTypeAdd => 'Hinzufügen';
+
+  @override
+  String get rdTypeAddHint =>
+      'Wählst du etwas aus, bekommen es alle neuen Termine dieser Art.';
+
+  @override
+  String get rdTypeAllDay => 'Ganztägig';
+
+  @override
+  String get rdTypeAttendance => 'Anwesenheit';
+
+  @override
+  String rdTypeAttendanceValue(Object status, Object count) {
+    return 'Vorbelegt mit $status · $count Status';
+  }
+
+  @override
+  String get rdTypeAutomatic => 'Neue Termine dieser Art bekommen automatisch';
+
+  @override
+  String get rdTypeAutomaticHint =>
+      'Nur was eingeschaltet ist, steht hier. Ort und Werke trägst du direkt am Termin ein.';
+
+  @override
+  String get rdTypeChecklist => 'Checkliste';
+
+  @override
+  String get rdTypeChecklistHint =>
+      'Aufgaben vor dem Termin, z. B. Stühle stellen';
+
+  @override
+  String rdTypeChecklistValue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufgaben',
+      one: '1 Aufgabe',
+      zero: 'an',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTypeCountsForQuota => 'Zählt zur Anwesenheitsquote';
+
+  @override
+  String get rdTypeCountsForQuotaHint =>
+      'Aus z. B. für Feiern oder freiwillige Termine';
+
+  @override
+  String get rdTypeDefaultStatus => 'Vorbelegt mit';
+
+  @override
+  String get rdTypeDuty => 'Dienste einteilen';
+
+  @override
+  String get rdTypeDutyHint => 'Wer macht Technik, Kaffee und Co.';
+
+  @override
+  String get rdTypeEveryEvent => 'Jeder Termin dieser Art';
+
+  @override
+  String get rdTypeInvited => 'Eingeplant';
+
+  @override
+  String get rdTypeInvitedAll => 'Alle';
+
+  @override
+  String get rdTypeInvitedHint => 'Wer zu diesen Terminen gehört';
+
+  @override
+  String rdTypeInvitedSome(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Register',
+      one: '1 Register',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTypeLook => 'Aussehen';
+
+  @override
+  String get rdTypeLookHideName => 'Name in der Liste verbergen';
+
+  @override
+  String get rdTypeLookHideNameHint =>
+      'Termine ohne eigenen Titel zeigen dann das Datum statt des Namens der Art (klassische Ansicht und Eltern).';
+
+  @override
+  String get rdTypeLookHighlightHint =>
+      'Die Art steht in der Terminliste auffällig markiert.';
+
+  @override
+  String get rdTypeLookHint => 'Farbe, hervorheben, Titel in der Liste';
+
+  @override
+  String get rdTypeNewCreate => 'Anlegen';
+
+  @override
+  String get rdTypeNewEmpty => 'Leer';
+
+  @override
+  String get rdTypeNewEmptyHint => 'Nur Anwesenheit, sonst nichts';
+
+  @override
+  String get rdTypeNewName => 'Name';
+
+  @override
+  String get rdTypeNewNameHint => 'z. B. Registerprobe';
+
+  @override
+  String get rdTypeNewStartsLike => 'Startet wie';
+
+  @override
+  String get rdTypeNewStartsLikeHint =>
+      'Übernimmt Zeit, Status, Ablauf und alles Eingeschaltete. Danach kannst du alles ändern.';
+
+  @override
+  String get rdTypeNewTitle => 'Neue Terminart';
+
+  @override
+  String get rdTypeOffer => 'Für neue Termine anbieten';
+
+  @override
+  String get rdTypeOfferHint =>
+      'Aus: steht beim Anlegen nicht mehr zur Wahl, bestehende Termine bleiben';
+
+  @override
+  String get rdTypeOn => 'an';
+
+  @override
+  String get rdTypePlan => 'Ablauf';
+
+  @override
+  String get rdTypePlanHint => 'Programmpunkte mit Uhrzeit';
+
+  @override
+  String rdTypePlanValue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Punkte',
+      one: '1 Punkt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTypeProtocol => 'Protokoll und Tagesordnung';
+
+  @override
+  String get rdTypeProtocolHint => 'Themen sammeln und mitschreiben';
+
+  @override
+  String get rdTypeReminders => 'Erinnerungen';
+
+  @override
+  String get rdTypeRemindersHint => 'Push-Nachricht vor Beginn';
+
+  @override
+  String rdTypeRemindersValue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Erinnerungen',
+      one: '1 Erinnerung',
+      zero: 'an',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTypeSignup => 'Anmeldefragen';
+
+  @override
+  String get rdTypeSignupHint => 'z. B. „Bringst du Essen mit?“';
+
+  @override
+  String rdTypeSignupValue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Fragen',
+      one: '1 Frage',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTypeStatuses => 'Mögliche Status';
+
+  @override
+  String get rdTypeTakeOverPlan => 'Für neue Termine dieser Art übernehmen';
+
+  @override
+  String rdTypeTakeOverPlanConfirm(Object type) {
+    return 'Neue Termine der Art „$type“ bekommen dann diesen Ablauf. Bestehende Termine bleiben, wie sie sind.';
+  }
+
+  @override
+  String rdTypeTakeOverPlanDone(Object type) {
+    return 'Neue Termine der Art „$type“ bekommen jetzt diesen Ablauf';
+  }
+
+  @override
+  String get rdTypeTakeOverPlanFailed =>
+      'Der Ablauf konnte nicht übernommen werden.';
+
+  @override
+  String rdTypeTakeOverPlanHint(Object type) {
+    return 'Neue Termine der Art „$type“ bekommen diesen Ablauf';
+  }
+
+  @override
+  String get rdTypeTime => 'Uhrzeit';
+
+  @override
+  String get rdTypeTimeHint => 'Vorschlag, am Termin änderbar';
+
+  @override
+  String rdTypeUsage(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'die $count bestehenden Termine',
+      one: 'den bestehenden Termin',
+    );
+    return 'Änderungen gelten auch für $_temp0.';
+  }
+
+  @override
   String get rdWmCategoriesIntro =>
       'Kategorien ordnen die Werke, etwa nach Anlass oder Kirchenjahr.';
 

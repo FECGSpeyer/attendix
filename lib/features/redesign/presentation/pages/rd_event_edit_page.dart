@@ -35,6 +35,7 @@ import '../../data/providers/rd_today_providers.dart' show rdDeadlineLabel;
 import '../../data/rd_create_logic.dart' show rdEndAfter, rdEndBeforeStart, rdPickedTimes, rdRecentPlaces;
 import '../../data/rd_event_details_logic.dart';
 import '../../data/rd_event_phase.dart' show rdEffectiveDurationDays;
+import '../../data/rd_type_flags.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import '../widgets/event/rd_create_sheets.dart' show showRdTypePicker;
@@ -95,10 +96,15 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
   /// Set once the Termin is deleted: nothing is written any more.
   bool _deleted = false;
 
+  /// The Termin's Art as last shown; a place switches its Ort on.
+  AttendanceType? _type;
+  late final AttendanceTypeNotifier _typeNotifier;
+
   @override
   void initState() {
     super.initState();
     _repo = ref.read(attendanceRepositoryWithTenantProvider);
+    _typeNotifier = ref.read(attendanceTypeNotifierProvider.notifier);
     _container = ProviderScope.containerOf(context, listen: false);
     _session = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
     for (final (focus, save) in [
@@ -171,7 +177,11 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     _enqueue(() async {
       if (_storedPlace == null || value == _storedPlace) return;
       // Marked as stored only once written, so a failed save is tried again.
-      if (await _write({'place': value.isEmpty ? null : value})) _storedPlace = value;
+      if (await _write({'place': value.isEmpty ? null : value})) {
+        _storedPlace = value;
+        final type = _type;
+        if (value.isNotEmpty && type != null) _type = await rdEnsureTypeFlags(_typeNotifier, type, place: true);
+      }
     });
   }
 
@@ -560,6 +570,7 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     final async = ref.watch(attendanceDetailProvider(_id));
     final att = async.valueOrNull;
     final type = ref.watch(attendanceTypeForAttendanceProvider(_id)).valueOrNull;
+    _type = type;
 
     final Widget body;
     if (att == null) {
@@ -683,7 +694,7 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
       // What members see of the Termin, then what only the Leitung sees.
       RdGroupLabel(l10n.redesignEventForMembers),
       RdGroupedList(children: [
-        if (type?.placeEnabled == true || (att.place ?? '').isNotEmpty)
+        if (type != null || (att.place ?? '').isNotEmpty)
           RdFieldRow(
             label: l10n.redesignCreatePlace,
             child: Column(
