@@ -250,7 +250,11 @@ class _SelfServicePlannedAbsencesState extends ConsumerState<SelfServicePlannedA
                   ref,
                   absence,
                   selfService: true,
-                  onlyIds: () => selfServiceAbsenceCandidateIds(ref),
+                  // Own duties too, whatever the view: the reset only takes
+                  // back Termine excused with this absence's reason, and an
+                  // absence entered in the Beta or by the leadership also
+                  // excused own duties.
+                  onlyIds: () => selfServiceAbsenceCandidateIds(ref, useDutyView: false),
                 );
                 if (ok) _refreshAfterAbsenceChange(ref);
               },

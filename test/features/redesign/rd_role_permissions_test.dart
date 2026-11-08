@@ -128,8 +128,8 @@ void main() {
       // Mitglied's "Abwesenheit selbst eintragen" (the first one).
       await tester.tap(find.text('Abwesenheit selbst eintragen').first);
       await _settle(tester);
-      expect(saves.single.map((p) => p.role), [Role.player.value, Role.voiceLeader.value]);
-      expect(saves.single.every((p) => p.playerPlannedAbsence), isTrue);
+      expect(saves.map((s) => s.single.role), [Role.player.value, Role.voiceLeader.value]);
+      expect(saves.every((s) => s.single.playerPlannedAbsence), isTrue);
 
       // Only Stimmführer-Helfer are limited to their own Stimme.
       await tester.tap(find.text('Stimmführer nur ihre Stimme'));
@@ -195,6 +195,28 @@ void main() {
       expect(saves.last.single.attendanceCreate, create);
       expect(saves.last.single.playerNotesView, isTrue);
       expect(_switchOf(tester, 'Termine anlegen').value, create);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('a partly saved Helfer+Stimmführer change shows as such', (tester) async {
+      tester.view.physicalSize = const Size(393, 4000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final saves = <List<TenantRolePermission>>[];
+      await tester.pumpWidget(_app(saves, results: [true, false, true]));
+      await _settle(tester);
+
+      // Helfer row lands, Stimmführer-Helfer row fails; "Notizen" right
+      // after builds on the landed Helfer row.
+      final create = _switchOf(tester, 'Termine anlegen').value;
+      await tester.tap(find.text('Termine anlegen'));
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.tap(find.text('Notizen zu Personen sehen'));
+      await _settle(tester);
+      expect(saves.map((s) => s.single.role), [Role.helper.value, Role.voiceLeaderHelper.value, Role.helper.value]);
+      expect(saves.last.single.attendanceCreate, !create);
+      expect(_switchOf(tester, 'Termine anlegen').value, !create);
+      expect(find.textContaining('Bei Stimmführern ist es noch anders'), findsOneWidget);
       await tester.pump(const Duration(seconds: 5));
     });
 

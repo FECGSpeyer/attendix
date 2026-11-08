@@ -58,8 +58,10 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
   /// What the switches show (may hold changes still being saved).
   final Map<Role, TenantRolePermission> _permissions = {};
 
-  /// What is confirmed saved; a failed save jumps back to this.
-  final Map<Role, TenantRolePermission> _saved = {};
+  /// What is confirmed saved; a failed save jumps back to this. One map per
+  /// loaded group: queued saves keep confirming into theirs, also after the
+  /// page was left or switched to another group.
+  Map<Role, TenantRolePermission> _saved = {};
   bool _filesShared = false;
   bool _savedFilesShared = false;
   bool _initialized = false;
@@ -94,6 +96,7 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     _repo = repo;
     _loadedFrom = permissions;
     _edits.clear();
+    _saved = {};
     for (final (role, _) in rdConfigurableRoles(context.l10n)) {
       final p = permissions.where((p) => p.role == role.value).firstOrNull;
       if (p != null) _permissions[role] = _saved[role] = p;
@@ -108,7 +111,7 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     _loadedFrom = null;
     _generation++;
     _permissions.clear();
-    _saved.clear();
+    _saved = {};
     _edits.clear();
   }
 
@@ -128,7 +131,12 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     _queue = _queue.then((_) async {
       try {
         if (container.read(currentAuthUserIdProvider) != account) return;
-        final ok = await save();
+        bool ok;
+        try {
+          ok = await save();
+        } catch (_) {
+          ok = false; // never break the queue
+        }
         if (!mounted || generation != _generation) return;
         done(ok);
       } finally {
@@ -150,26 +158,31 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
   }
 
   /// Changes the rights of one or more roles (a base role and its
-  /// Stimmführer role) with one save. The rows are built when the save runs,
-  /// on what is confirmed then: a failed earlier save never rides along.
+  /// Stimmführer role). The rows are built when the save runs, on what is
+  /// confirmed then: a failed earlier save never rides along. One row per
+  /// write, each confirmed as soon as it landed (the page shows a partly
+  /// saved change as such, e.g. "Bei Stimmführern … anders").
   void _setPermissions(Map<Role, _PermEdit> edit) {
     final repo = _repo;
     if (repo == null) return;
+    final saved = _saved;
     final change = {
       for (final e in edit.entries)
-        if (_saved[e.key] != null) e.key: e.value,
+        if (saved[e.key] != null) e.key: e.value,
     };
     if (change.isEmpty) return;
     _edits.add(change);
     setState(_showEdits);
     final notifier = ref.read(rolePermissionNotifierProvider.notifier);
-    var rows = const <Role, TenantRolePermission>{};
-    _enqueue(() {
-      rows = {for (final e in change.entries) e.key: e.value(_saved[e.key]!)};
-      return notifier.save(rows.values.toList(), repo: repo);
+    _enqueue(() async {
+      for (final MapEntry(key: role, value: apply) in change.entries) {
+        final row = apply(saved[role]!);
+        if (!await notifier.save([row], repo: repo)) return false;
+        saved[role] = row;
+      }
+      return true;
     }, (ok) {
       _edits.remove(change);
-      if (ok) _saved.addAll(rows);
       setState(_showEdits);
       if (!ok) _failed();
     });
@@ -340,7 +353,6 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
         permissionsConfirmed(async) &&
         (!_initialized || (_pending == 0 && !identical(async.requireValue, _loadedFrom)))) {
       _permissions.clear();
-      _saved.clear();
       _initFrom(async.requireValue, repo);
     }
 
