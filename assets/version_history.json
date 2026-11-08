@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.85.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta: Im Termin wechselt ein Wisch nach links oder rechts zwischen Überblick, Programm und Anwesenheit"
+      ]
+    },
+    {
       "version": "0.84.1",
       "date": "7.11.2026",
       "changes": [
