@@ -117,6 +117,7 @@ List<(RdImportCategory, String)> rdImportCategoryOptions(
 /// Name of [c] as shown.
 String rdImportCategoryLabel(BuildContext context, RdImportPlan plan, RdImportCategory c) {
   final l10n = context.l10n;
+  if (c.fromPage) return l10n.redesignImportAnswerFromPage;
   if (c.isSeveral) {
     // "Posaune + Tuba (neu)"
     return c.groups
@@ -340,6 +341,55 @@ class _RdImportPagePreviewState extends State<RdImportPagePreview> {
           const SizedBox(height: 8),
           Text(l10n.redesignImportPageRead(read), style: RdType.meta(p, size: 13)),
         ],
+      ],
+    );
+  }
+}
+
+/// First pages of some files of a question ("„Solo“ gehört zu …"): the
+/// file and its Werk to switch between, the page of the chosen one.
+class RdImportQuestionPreview extends StatefulWidget {
+  const RdImportQuestionPreview({super.key, required this.examples, required this.page, required this.link});
+
+  final List<({RdImportFile file, String work})> examples;
+  final Future<Uint8List?> Function(String path) page;
+  final Uri? Function(String path) link;
+
+  @override
+  State<RdImportQuestionPreview> createState() => _RdImportQuestionPreviewState();
+}
+
+class _RdImportQuestionPreviewState extends State<RdImportQuestionPreview> {
+  int _shown = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final examples = widget.examples;
+    final shown = examples[_shown.clamp(0, examples.length - 1)];
+    final path = shown.file.path;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (examples.length > 1) ...[
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (var i = 0; i < examples.length; i++)
+                RdChoiceChip(label: examples[i].work, selected: i == _shown, onTap: () => setState(() => _shown = i)),
+            ],
+          ),
+          const SizedBox(height: 8),
+        ],
+        Text('${shown.file.name} · ${shown.work}', style: RdType.meta(p, size: 13)),
+        const SizedBox(height: 8),
+        RdImportPagePreview(
+          key: ValueKey(path),
+          name: shown.file.name,
+          page: () => widget.page(path),
+          link: widget.link(path),
+        ),
       ],
     );
   }
