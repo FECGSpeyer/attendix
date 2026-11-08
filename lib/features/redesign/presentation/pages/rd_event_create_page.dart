@@ -556,11 +556,6 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
         padding: const EdgeInsets.fromLTRB(4, 12, 4, 20),
         child: Text(l10n.redesignCreateLaterHint, style: RdType.meta(p, size: 13)),
       ),
-      RdPrimaryButton(
-        label: l10n.redesignCreateSubmitMany(dates.length),
-        icon: _saving ? null : Icons.add,
-        onPressed: canSubmit ? () => _save(dates) : null,
-      ),
     ]);
   }
 
