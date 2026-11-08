@@ -530,11 +530,12 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
   );
 
   /// "Aktuell": the Werke of the coming Termine and those played lately,
-  /// the latter only from the Sammlungen the member sees.
+  /// only from the Sammlungen the member sees (unknown: Repertoire only).
   List<RdCurrentWork> _currentWorks(SongsListData data) => rdCurrentWorkCards(
     _nextEvents(data),
-    rdVisibleWorks(data.songs, ref.read(rdVisibleCollectionsProvider) ?? const []),
+    data.songs,
     now: DateTime.now(),
+    visible: ref.read(rdVisibleCollectionsProvider) ?? const [],
   );
 
   /// The own group of a member (never the main group of the conductor), the

@@ -285,12 +285,8 @@ bool _rdEventOver(RdNextEvent event, Attendance? att, List<AttendanceType> types
   final date = event.date;
   if (date == null) return false;
   final type = att?.typeId == null ? null : types.where((t) => t.id == att!.typeId).firstOrNull;
-  final effective =
-      rdEffectiveDurationDays(
-        att?.durationDays,
-        typeAllDay: type?.allDay ?? false,
-        typeDurationDays: type?.durationDays,
-      ) ??
+  final effective = rdEffectiveDurationDays(att?.durationDays,
+          typeAllDay: type?.allDay ?? false, typeDurationDays: type?.durationDays) ??
       1;
   final days = effective < 1 ? 1 : effective;
   final lastDay = rdAddDays(date, days - 1);
@@ -365,20 +361,25 @@ class RdCurrentWork {
 /// What a member plays right now: the Werke of the coming [events] in
 /// their order, then the Werke of [songs] played within [recentDays] up to
 /// [now] (calendar days), latest first. Each Werk once, at most [max];
-/// Werke without id are left out (nothing to open). The played ones keep
-/// "Aktuell" filled while the next Probe has no program yet.
+/// Werke without id are left out (nothing to open), so are Werke of a
+/// Sammlung outside [visible] (planned ones too: a card opens the file
+/// directly, past the Werk page's check). The played ones keep "Aktuell"
+/// filled while the next Probe has no program yet.
 List<RdCurrentWork> rdCurrentWorkCards(
   List<RdNextEvent> events,
   List<Song> songs, {
   required DateTime now,
+  required List<SongCollection> visible,
   int recentDays = 28,
   int max = 12,
 }) {
+  final collections = {for (final c in visible) c.id};
+  bool shown(Song s) => s.id != null && (s.collectionId == null || collections.contains(s.collectionId));
   final seen = <int>{};
   final result = <RdCurrentWork>[];
   for (final e in events) {
     for (final s in e.songs) {
-      if (s.id == null || !seen.add(s.id!)) continue;
+      if (!shown(s) || !seen.add(s.id!)) continue;
       result.add(RdCurrentWork(song: s, event: e));
     }
   }
@@ -388,7 +389,7 @@ List<RdCurrentWork> rdCurrentWorkCards(
   final recent = <RdCurrentWork>[];
   for (final s in songs) {
     final played = DateTime.tryParse(s.lastSung ?? '')?.toLocal();
-    if (played == null || s.id == null || seen.contains(s.id)) continue;
+    if (played == null || !shown(s) || seen.contains(s.id)) continue;
     final day = DateTime(played.year, played.month, played.day);
     if (day.isBefore(from) || day.isAfter(today) || !seen.add(s.id!)) continue;
     recent.add(RdCurrentWork(song: s, lastPlayed: day));
@@ -403,4 +404,16 @@ List<RdCurrentWork> rdCurrentWorkCards(
 SongFile? rdSingleOwnNotes(Song song, int? groupId, {required bool choir}) {
   final notes = rdMemberPartFiles(song, groupId, choir: choir).where(rdIsNotes).toList();
   return notes.length == 1 ? notes.single : null;
+}
+
+/// "19:30": when the Termin [attendanceId] starts, from its own time, else
+/// from its type (the date of a Termin carries no start time). Null when
+/// neither is known.
+String? rdEventStartTime(int? attendanceId, List<Attendance> attendances, List<AttendanceType> types) {
+  final att = attendances.where((a) => a.id == attendanceId).firstOrNull;
+  if (att == null) return null;
+  final type = att.typeId == null ? null : types.where((t) => t.id == att.typeId).firstOrNull;
+  final minutes = _rdClock(att.startTime) ?? _rdClock(type?.startTime);
+  if (minutes == null) return null;
+  return '${(minutes ~/ 60).toString().padLeft(2, '0')}:${(minutes % 60).toString().padLeft(2, '0')}';
 }

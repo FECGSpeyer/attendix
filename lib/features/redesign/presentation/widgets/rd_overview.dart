@@ -11,6 +11,7 @@ import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
@@ -188,10 +189,9 @@ class RdMembersOverviewPanel extends ConsumerWidget {
                   label: l10n.redesignSplitMembersPending,
                   warn: pending > 0,
                   // Opens "Wartet" in the list beside it.
-                  onTap:
-                      pending > 0
-                          ? () => ref.read(rdMembersTabProvider.notifier).state = RdMembersFilter.pending
-                          : null,
+                  onTap: pending > 0
+                      ? () => ref.read(rdMembersTabProvider.notifier).state = RdMembersFilter.pending
+                      : null,
                 ),
               ),
             ],
@@ -243,15 +243,19 @@ abstract final class _MemberCurrentWorks {
     final own = ref.watch(currentSelfServicePlayerProvider).valueOrNull?.instrument;
     final ownGroup = data.groups.where((g) => g.id == own && g.maingroup != true).firstOrNull;
     final now = DateTime.now();
+    final attendances = ref.watch(realtimeAttendanceListProvider).valueOrNull ?? const <Attendance>[];
+    final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
     final works = rdCurrentWorkCards(
       rdWithoutEndedEvents(
         rdNextEvents(data.currentSongs, data.songs),
         now: now,
-        attendances: ref.watch(realtimeAttendanceListProvider).valueOrNull ?? const [],
-        types: ref.watch(attendanceTypesProvider).valueOrNull ?? const [],
+        attendances: attendances,
+        types: types,
       ),
-      rdVisibleWorks(data.songs, collections ?? const []),
+      data.songs,
       now: now,
+      // Unknown visibility: the Werke outside every Sammlung only.
+      visible: collections ?? const [],
     );
     if (works.isEmpty) return null;
     final played = data.isOrchestra ? l10n.redesignWorksSortLastPlayed : l10n.redesignWorksSortLastSung;
@@ -268,9 +272,10 @@ abstract final class _MemberCurrentWorks {
     String label((int?, DateTime?)? key) {
       if (key == null) return played;
       final text = labels[key]!;
-      final date = key.$2;
       final twice = labels.values.where((l) => l == text).length > 1;
-      return twice && date != null ? '$text · ${DateFormat.Hm(currentIntlLocale()).format(date)}' : text;
+      // The date of a Termin holds no start time: its own, else its type's.
+      final start = twice ? rdEventStartTime(key.$1, attendances, types) : null;
+      return start == null ? text : '$text · $start';
     }
 
     return [

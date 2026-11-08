@@ -471,12 +471,35 @@ void main() {
         const Song(name: 'Ohne id', lastSung: '2026-11-02'), // nothing to open
         // 28 calendar days back (across the change to winter time).
         const Song(id: 22, name: 'Grenztag', lastSung: '2026-10-11'),
+        const Song(id: 23, name: 'Versteckt', lastSung: '2026-11-02', collectionId: 9), // hidden Sammlung
       ];
-      final cards = rdCurrentWorkCards(events, songs, now: now);
+      final cards = rdCurrentWorkCards(events, songs, now: now, visible: const []);
       expect(cards.map((c) => c.song.id), [6, 5, 7, 21, 22]);
       expect(cards[0].event?.attendanceId, 1);
       expect(cards[2].lastPlayed, DateTime(2026, 11, 5));
-      expect(rdCurrentWorkCards(events, songs, now: now, max: 2).length, 2);
+      expect(rdCurrentWorkCards(events, songs, now: now, visible: const [], max: 2).length, 2);
+      // Planned Werke of a hidden Sammlung stay out too (a card opens the file).
+      final hidden = [
+        RdNextEvent(date: DateTime(2026, 11, 12), type: 'Probe', attendanceId: 3, songs: [_ave.copyWith(collectionId: 9)]),
+      ];
+      expect(rdCurrentWorkCards(hidden, const [], now: now, visible: const []), isEmpty);
+      expect(
+        rdCurrentWorkCards(hidden, const [], now: now, visible: const [SongCollection(id: 9, name: 'Einspielen')]).length,
+        1,
+      );
+    });
+
+    test('start time of a Termin: its own, else its type (not the stored date)', () {
+      const types = [AttendanceType(id: 't', name: 'Probe', startTime: '19:30:00')];
+      const attendances = [
+        Attendance(id: 1, date: '2026-11-12T12:00:00', startTime: '17:00'),
+        Attendance(id: 2, date: '2026-11-12T12:00:00', typeId: 't'),
+        Attendance(id: 3, date: '2026-11-12T12:00:00'),
+      ];
+      expect(rdEventStartTime(1, attendances, types), '17:00');
+      expect(rdEventStartTime(2, attendances, types), '19:30');
+      expect(rdEventStartTime(3, attendances, types), isNull);
+      expect(rdEventStartTime(4, attendances, types), isNull);
     });
 
     test('Als Nächstes leaves out Termine over today (end, else start; date only until midnight)', () {
