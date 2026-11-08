@@ -10602,6 +10602,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdTypeEveryEvent => 'Jeder Termin dieser Art';
 
   @override
+  String get rdTypeFlagsFailed =>
+      'Termin angelegt. Die Terminart konnte nicht angepasst werden, daher zeigt die alte App Ort oder Werke evtl. nicht.';
+
+  @override
   String get rdTypeInvited => 'Eingeplant';
 
   @override

@@ -330,9 +330,11 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     final title = _title.text.trim();
     final place = _place.text.trim();
     // Ort and Werke work for every Art: switch them on at the Art when used.
-    type = await rdEnsureTypeFlags(typeNotifier, type, place: place.isNotEmpty, songs: _songs.isNotEmpty, onFailed: () {
-      if (mounted) ToastHelper.showError(context, l10n.typeSettingsUpdateFailed);
-    });
+    // A failure is reported after the Termin is created, so the success
+    // toast does not hide it.
+    var flagsFailed = false;
+    type = await rdEnsureTypeFlags(typeNotifier, type,
+        place: place.isNotEmpty, songs: _songs.isNotEmpty, onFailed: () => flagsFailed = true);
     if (!mounted) return;
     final input = AttendanceCreateInput(
       type: type,
@@ -353,7 +355,11 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
       if (!mounted) return;
       AttendanceCreateWriter.invalidateAfterCreate(ref, input);
       ref.invalidate(realtimeAttendanceListProvider);
-      ToastHelper.showSuccess(context, ids.length == 1 ? l10n.attListEventAdded : l10n.attListEventsAdded);
+      if (flagsFailed) {
+        ToastHelper.showError(context, l10n.rdTypeFlagsFailed);
+      } else {
+        ToastHelper.showSuccess(context, ids.length == 1 ? l10n.attListEventAdded : l10n.attListEventsAdded);
+      }
       _touched = false;
       context.go(ids.length == 1 ? RedesignRoutes.event(ids.single) : RedesignRoutes.events);
     } catch (e) {

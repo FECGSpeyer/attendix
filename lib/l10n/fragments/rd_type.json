@@ -56,7 +56,8 @@
       "takeOverPlanHint": "Neue Termine der Art „{type}“ bekommen diesen Ablauf",
       "takeOverPlanConfirm": "Neue Termine der Art „{type}“ bekommen dann diesen Ablauf. Bestehende Termine bleiben, wie sie sind.",
       "takeOverPlanDone": "Neue Termine der Art „{type}“ bekommen jetzt diesen Ablauf",
-      "takeOverPlanFailed": "Der Ablauf konnte nicht übernommen werden."
+      "takeOverPlanFailed": "Der Ablauf konnte nicht übernommen werden.",
+      "flagsFailed": "Termin angelegt. Die Terminart konnte nicht angepasst werden, daher zeigt die alte App Ort oder Werke evtl. nicht."
     }
   },
   "en": {
@@ -116,7 +117,8 @@
       "takeOverPlanHint": "New \"{type}\" events get this schedule",
       "takeOverPlanConfirm": "New \"{type}\" events will then get this schedule. Existing events stay as they are.",
       "takeOverPlanDone": "New \"{type}\" events now get this schedule",
-      "takeOverPlanFailed": "The schedule could not be applied."
+      "takeOverPlanFailed": "The schedule could not be applied.",
+      "flagsFailed": "Event created. The event type could not be updated, so the old app may not show the location or pieces."
     }
   }
 }

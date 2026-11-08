@@ -2875,6 +2875,7 @@
   "rdTypeDuty": "Assign duties",
   "rdTypeDutyHint": "Who does tech, coffee and so on",
   "rdTypeEveryEvent": "Every event of this type",
+  "rdTypeFlagsFailed": "Event created. The event type could not be updated, so the old app may not show the location or pieces.",
   "rdTypeInvited": "Planned",
   "rdTypeInvitedAll": "All",
   "rdTypeInvitedHint": "Who belongs to these events",

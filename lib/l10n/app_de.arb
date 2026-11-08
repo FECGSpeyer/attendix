@@ -13192,6 +13192,10 @@
   "@rdTypeEveryEvent": {
     "description": "rdType.everyEvent"
   },
+  "rdTypeFlagsFailed": "Termin angelegt. Die Terminart konnte nicht angepasst werden, daher zeigt die alte App Ort oder Werke evtl. nicht.",
+  "@rdTypeFlagsFailed": {
+    "description": "rdType.flagsFailed"
+  },
   "rdTypeInvited": "Eingeplant",
   "@rdTypeInvited": {
     "description": "rdType.invited"

@@ -17381,6 +17381,12 @@ abstract class AppLocalizations {
   /// **'Jeder Termin dieser Art'**
   String get rdTypeEveryEvent;
 
+  /// rdType.flagsFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Termin angelegt. Die Terminart konnte nicht angepasst werden, daher zeigt die alte App Ort oder Werke evtl. nicht.'**
+  String get rdTypeFlagsFailed;
+
   /// rdType.invited
   ///
   /// In de, this message translates to:

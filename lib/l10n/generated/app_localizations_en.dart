@@ -10489,6 +10489,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdTypeEveryEvent => 'Every event of this type';
 
   @override
+  String get rdTypeFlagsFailed =>
+      'Event created. The event type could not be updated, so the old app may not show the location or pieces.';
+
+  @override
   String get rdTypeInvited => 'Planned';
 
   @override
