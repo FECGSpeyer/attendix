@@ -13880,6 +13880,15 @@
   "@redesignEventEditTypeStatusAdopt": {
     "description": "redesign.eventEdit.typeStatusAdopt"
   },
+  "redesignEventEditTypeStatusFailed": "{count, plural, one {Bei 1 Person konnte der Status nicht angepasst werden. Bitte in der Anwesenheit nachtragen.} other {Bei {count} Personen konnte der Status nicht angepasst werden. Bitte in der Anwesenheit nachtragen.}}",
+  "@redesignEventEditTypeStatusFailed": {
+    "description": "redesign.eventEdit.typeStatusFailed",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "redesignEventEditTypeStatusMessage": "{count, plural, one {1 Person steht noch auf „{from}“, dem Standard der bisherigen Art. Soll sie auf „{to}“ wechseln?} other {{count} Personen stehen noch auf „{from}“, dem Standard der bisherigen Art. Sollen sie auf „{to}“ wechseln?}}",
   "@redesignEventEditTypeStatusMessage": {
     "description": "redesign.eventEdit.typeStatusMessage",

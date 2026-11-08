@@ -18185,6 +18185,12 @@ abstract class AppLocalizations {
   /// **'Anpassen'**
   String get redesignEventEditTypeStatusAdopt;
 
+  /// redesign.eventEdit.typeStatusFailed
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Bei 1 Person konnte der Status nicht angepasst werden. Bitte in der Anwesenheit nachtragen.} other {Bei {count} Personen konnte der Status nicht angepasst werden. Bitte in der Anwesenheit nachtragen.}}'**
+  String redesignEventEditTypeStatusFailed(num count);
+
   /// redesign.eventEdit.typeStatusMessage
   ///
   /// In de, this message translates to:

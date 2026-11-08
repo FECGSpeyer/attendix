@@ -11060,6 +11060,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignEventEditTypeStatusAdopt => 'Adjust';
 
   @override
+  String redesignEventEditTypeStatusFailed(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'The status of $count people could not be adjusted. Please set it in the attendance.',
+      one:
+          'The status of 1 person could not be adjusted. Please set it in the attendance.',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String redesignEventEditTypeStatusMessage(num count, Object from, Object to) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/constants/enums.dart' show AttendanceStatus;
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
@@ -273,8 +274,10 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
 
   /// "Art" (Beta only, Ionic shows it read-only): another type for this
   /// Termin. Who is still on the old type's default status gets the new
-  /// default when the user agrees; who takes part stays the same. Then the
-  /// shift computation runs again (times and all-day come from the type).
+  /// default when the user agrees (each row only while it still has that
+  /// status, checked in the update itself); who takes part stays the same.
+  /// Times that would put the Ende before the Beginn are corrected. Then
+  /// the shift computation runs again (times and all-day come from the type).
   Future<void> _pickType(Attendance att, AttendanceType? current) async {
     final l10n = context.l10n;
     if (DemoGuard.blocked()) return; // DEMO_GUARD
@@ -292,32 +295,39 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     if (picked == null || !mounted || picked.id == current?.id) return;
     // #232: session of the acting user, captured before the first write.
     final writeSession = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
-    final offlineQueue = ref.read(offlineQueueNotifierProvider.notifier);
 
-    // Rows still on the old default status (never changed by anyone).
-    var onOldDefault = const <PersonAttendance>[];
-    final oldDefault = current?.defaultStatus;
-    if (oldDefault != null && oldDefault != picked.defaultStatus) {
+    Future<List<PersonAttendance>> onDefault(AttendanceStatus status) async {
+      _container.invalidate(personAttendancesForAttendanceProvider(_id));
       final sub = _container.listen(personAttendancesForAttendanceProvider(_id).future, (_, __) {});
       try {
         final rows = await sub.read();
-        onOldDefault = [for (final r in rows) if (r.id != null && r.status == oldDefault) r];
+        return [for (final r in rows) if (r.id != null && r.status == status) r];
+      } finally {
+        sub.close();
+      }
+    }
+
+    // Rows still on the old default status (never changed by anyone).
+    final oldDefault = current?.defaultStatus;
+    final changesDefault = oldDefault != null && oldDefault != picked.defaultStatus;
+    var count = 0;
+    if (changesDefault) {
+      try {
+        count = (await onDefault(oldDefault)).length;
       } catch (_) {
         if (mounted) ToastHelper.showError(context, l10n.dateDialogLoadFailed);
         return;
-      } finally {
-        sub.close();
       }
       if (!mounted) return;
     }
     var adopt = false;
-    if (onOldDefault.isNotEmpty) {
+    if (count > 0) {
       final choice = await showAppDialog<String>(
         context: context,
         builder: (ctx) => AppAlertDialog(
           title: Text(l10n.redesignEventEditTypeStatusTitle),
           content: Text(l10n.redesignEventEditTypeStatusMessage(
-            onOldDefault.length,
+            count,
             ionicStatusLabel(oldDefault!),
             ionicStatusLabel(picked.defaultStatus),
           )),
@@ -331,20 +341,37 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
       if (choice == null || !mounted) return;
       adopt = choice == 'adopt';
     }
-    if (!await _write({'type_id': picked.id})) return;
+
+    // The Ende must not end up before the Beginn with the new type's times
+    // (e.g. own Beginn 20:00, no own Ende, new type ends 19:00).
+    final start = att.startTime ?? picked.startTime;
+    final end = att.endTime ?? picked.endTime;
+    final fixEnd = !picked.allDay && rdEndBeforeStart(start, end)
+        ? rdPickedTimes(start: picked.startTime, end: picked.endTime, pickedStart: true, value: start!)!.end
+        : null;
+    if (!await _write({'type_id': picked.id, if (fixEnd != null) 'end_time': fixEnd})) return;
+    var failed = 0;
     try {
       if (adopt) {
-        for (final r in onOldDefault) {
-          final payload = {'status': picked.defaultStatus.value};
-          if (await offlineQueue.enqueueIfOffline(r.id!, payload, attendanceId: _id, session: writeSession)) {
-            continue;
+        // Read again right before writing: who changed meanwhile is left out,
+        // and each update still checks the old status itself.
+        for (final r in await onDefault(oldDefault!)) {
+          writeSession.ensureCurrent();
+          try {
+            await _repo.updatePersonAttendance(
+              r.id!,
+              {'status': picked.defaultStatus.value},
+              isSessionCurrent: writeSession.isCurrent,
+              actingUserId: writeSession.userId,
+              onlyIfStatus: oldDefault,
+            );
+          } on PersonAttendanceStatusChangedException {
+            continue; // changed meanwhile: keep that person's status
+          } on OfflineSessionChangedException {
+            rethrow;
+          } catch (_) {
+            failed++;
           }
-          await _repo.updatePersonAttendance(
-            r.id!,
-            payload,
-            isSessionCurrent: writeSession.isCurrent,
-            actingUserId: writeSession.userId,
-          );
         }
       }
       writeSession.ensureCurrent();
@@ -360,6 +387,11 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
       _container
         ..invalidate(attendanceTypeForAttendanceProvider(_id))
         ..invalidate(personAttendancesForAttendanceProvider(_id));
+    }
+    // The Art is already changed: name who still has the old status, so it
+    // can be set by hand in the Anwesenheit.
+    if (failed > 0 && mounted) {
+      ToastHelper.showError(context, l10n.redesignEventEditTypeStatusFailed(failed));
     }
   }
 

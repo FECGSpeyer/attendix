@@ -1304,7 +1304,8 @@
         "saved": "Gespeichert",
         "typeStatusTitle": "Status anpassen?",
         "typeStatusMessage": "{count, plural, one {1 Person steht noch auf „{from}“, dem Standard der bisherigen Art. Soll sie auf „{to}“ wechseln?} other {{count} Personen stehen noch auf „{from}“, dem Standard der bisherigen Art. Sollen sie auf „{to}“ wechseln?}}",
-        "typeStatusAdopt": "Anpassen"
+        "typeStatusAdopt": "Anpassen",
+        "typeStatusFailed": "{count, plural, one {Bei 1 Person konnte der Status nicht angepasst werden. Bitte in der Anwesenheit nachtragen.} other {Bei {count} Personen konnte der Status nicht angepasst werden. Bitte in der Anwesenheit nachtragen.}}"
       },
       "plan": {
         "back": "Termin",
@@ -2821,7 +2822,8 @@
         "saved": "Saved",
         "typeStatusTitle": "Adjust status?",
         "typeStatusMessage": "{count, plural, one {1 person is still on \"{from}\", the default of the previous type. Switch to \"{to}\"?} other {{count} people are still on \"{from}\", the default of the previous type. Switch them to \"{to}\"?}}",
-        "typeStatusAdopt": "Adjust"
+        "typeStatusAdopt": "Adjust",
+        "typeStatusFailed": "{count, plural, one {The status of 1 person could not be adjusted. Please set it in the attendance.} other {The status of {count} people could not be adjusted. Please set it in the attendance.}}"
       },
       "plan": {
         "back": "Event",
