@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.95.0",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta Lehrer anlegen: ein Blatt „Neuer Lehrer“ (Name und Instrumente als Auswahl, „Anlegen“ oben rechts) – in Verwaltung › Lehrer und bei „Neuer Lehrer“ in „Person bearbeiten“; keine zweite Seite mehr, der neue Lehrer steht gleich in der Liste. Was fehlt, steht direkt im Blatt; schlägt das Speichern fehl, bleibt die Eingabe erhalten",
+        "💄 Beta Lehrer-Liste: „0 Spieler“ in ruhigem Grau statt rot"
+      ]
+    },
+    {
       "version": "0.94.3",
       "date": "8.11.2026",
       "changes": [
