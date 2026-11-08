@@ -1,5 +1,6 @@
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
+import 'package:attendix/core/providers/duty_providers.dart';
 import 'package:attendix/core/providers/role_permission_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/router/redesign_routes.dart';
@@ -66,6 +67,7 @@ Widget _app(
       effectiveRoleProvider.overrideWithValue(role),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
       rolePermissionsProvider.overrideWith((ref) async => _permissions),
+      hasDutyTypesProvider.overrideWithValue(false),
       rolePermissionNotifierProvider.overrideWith(() => _FakeNotifier(saves, result, results)),
     ],
     child: MaterialApp.router(
@@ -161,8 +163,8 @@ void main() {
   });
 
   test('only Admins and Verantwortliche reach the page', () {
-    expect(RedesignRoutes.roleRedirect(RedesignRoutes.rolePermissions, Role.helper), RedesignRoutes.manage);
-    expect(RedesignRoutes.roleRedirect(RedesignRoutes.rolePermissions, Role.viewer), RedesignRoutes.manage);
+    expect(RedesignRoutes.roleRedirect(RedesignRoutes.rolePermissions, Role.helper), RedesignRoutes.me);
+    expect(RedesignRoutes.roleRedirect(RedesignRoutes.rolePermissions, Role.viewer), RedesignRoutes.me);
     expect(RedesignRoutes.roleRedirect(RedesignRoutes.rolePermissions, Role.responsible), isNull);
   });
 }

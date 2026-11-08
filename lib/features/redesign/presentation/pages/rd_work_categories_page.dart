@@ -13,6 +13,7 @@ import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
 import '../widgets/manage/rd_settings_sheets.dart';
+import '../widgets/rd_widgets.dart' show rdBack;
 
 /// REDESIGN: Verwaltung › Werk-Kategorien in the template "Verwaltungsliste"
 /// (canvas "Beta: Gruppe und Daten", board "G4 Werk-Kategorien"). Replaces
@@ -129,10 +130,10 @@ class _RdWorkCategoriesPageState extends ConsumerState<RdWorkCategoriesPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    // Like the old entry: not in general groups (open by URL → Verwaltung).
+    // Like the old entry: not in general groups (open by URL → Ich).
     if (ref.watch(currentTenantProvider.select((t) => t?.type == 'general'))) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) context.go(RedesignRoutes.manage);
+        if (mounted) context.go(RedesignRoutes.me);
       });
       return const SizedBox.shrink();
     }
@@ -150,6 +151,9 @@ class _RdWorkCategoriesPageState extends ConsumerState<RdWorkCategoriesPage> {
     return RdManageListPage(
       key: ValueKey(tenantId),
       title: rdManageTitle(l10n, RdManageEntry.workCategories),
+      // Opened from the Werke tab's "•••" (and Werk bearbeiten).
+      backLabel: l10n.redesignTabWorks,
+      onBack: () => rdBack(context, RedesignRoutes.works),
       intro: l10n.rdWmCategoriesIntro,
       sections:
           categories == null

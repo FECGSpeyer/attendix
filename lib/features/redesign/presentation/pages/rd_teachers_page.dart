@@ -12,6 +12,7 @@ import '../../../teachers/presentation/pages/teachers_list_page.dart' show showA
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
+import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
 
 /// REDESIGN: Verwaltung › Lehrer in the template "Verwaltungsliste"
 /// (replaces `/settings/teachers` while the Beta is on). Name, instruments
@@ -57,6 +58,8 @@ class RdTeachersPage extends ConsumerWidget {
     return RdManageListPage(
       title: rdManageTitle(l10n, RdManageEntry.teachers),
       intro: l10n.redesignTeachersListIntro,
+      // The switch of the old "Allgemein" (orchestras), for leads.
+      header: isAdmin ? const RdTenantSettingsBlock(sections: [RdTenantSettings.teachers]) : null,
       sections:
           teachers == null
               ? null

@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/constants/enums.dart' show AttendanceStatus;
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/attendance_providers.dart';
+import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
@@ -23,17 +25,20 @@ import '../../../../data/repositories/attendance_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart' show showAppDatePicker, showAppTimePicker;
 import '../../../attendance/presentation/widgets/attendance_date_change.dart';
+import '../../../attendance/presentation/widgets/attendance_detail/status_chip.dart' show ionicStatusLabel;
 import '../../../attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart'
     show showFilesFolderPicker;
 import '../../../attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart';
 import '../../../attendance/presentation/widgets/attendance_detail/general_info_accordion.dart'
     show isDeadlineReadonly;
 import '../../data/providers/rd_today_providers.dart' show rdDeadlineLabel;
-import '../../data/rd_create_logic.dart' show rdRecentPlaces;
+import '../../data/rd_create_logic.dart' show rdEndAfter, rdEndBeforeStart, rdPickedTimes, rdRecentPlaces;
 import '../../data/rd_event_details_logic.dart';
 import '../../data/rd_event_phase.dart' show rdEffectiveDurationDays;
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../../shared/widgets/adaptive/adaptive_platform.dart';
+import '../widgets/event/rd_create_sheets.dart' show showRdTypePicker;
+import '../widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart';
@@ -217,15 +222,22 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     }
   }
 
-  Future<void> _pickTime(Attendance att, {required bool start}) async {
-    final current = start ? att.startTime : att.endTime;
+  Future<void> _pickTime(Attendance att, AttendanceType? type, {required bool start}) async {
+    // Shown times: the Termin's own, else its type's (like the Termin page).
+    final shownStart = att.startTime ?? type?.startTime;
+    final shownEnd = att.endTime ?? type?.endTime;
+    final current = start ? shownStart : shownEnd;
     final parts = (current ?? '').split(':');
     final initial = TimeOfDay(
       hour: int.tryParse(parts.first) ?? (start ? 17 : 20),
       minute: parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0,
     );
     final iosLook = useIosLook(context);
-    var picked = await showAppTimePicker(context: context, initialTime: initial);
+    var picked = await showAppTimePicker(
+      context: context,
+      initialTime: initial,
+      helpText: start ? context.l10n.redesignCreateStart : context.l10n.redesignCreateEnd,
+    );
     // The iOS wheel returns null when the shown time was confirmed unchanged:
     // with no time yet, that shown default is the choice.
     if (picked == null && iosLook && current == null) picked = initial;
@@ -233,8 +245,20 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     // #232: session of the acting user, captured before the first write.
     final writeSession = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
     final value = '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
-    if (value == current) return;
-    if (!await _write({start ? 'start_time' : 'end_time': value})) return;
+    // The Ende never lies before the Beginn: a later Beginn moves the Ende
+    // along, an earlier Ende is refused.
+    final times = rdPickedTimes(start: shownStart, end: shownEnd, pickedStart: start, value: value);
+    if (times == null) {
+      ToastHelper.showError(context, context.l10n.redesignCreateEndBeforeStart);
+      return;
+    }
+    final updates = <String, dynamic>{
+      if (start && times.start != att.startTime) 'start_time': times.start,
+      // A Beginn change writes the Ende only when it moved along.
+      if (start ? times.end != shownEnd : times.end != att.endTime) 'end_time': times.end,
+    };
+    if (updates.isEmpty) return;
+    if (!await _write(updates)) return;
     try {
       // LOGIC_ATT: the time window moved, re-run the shift computation for
       // everyone in this Termin (Ionic onInfoChanged).
@@ -246,6 +270,166 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
       _container.invalidate(personAttendancesForAttendanceProvider(_id));
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
+    }
+  }
+
+  /// "Art" (Beta only, Ionic shows it read-only): another type for this
+  /// Termin. Who is still on the old type's default status gets the new
+  /// default when the user agrees (each row only while it still has that
+  /// status, checked in the update itself); who takes part stays the same.
+  /// Times that would put the Ende before the Beginn are corrected. Then
+  /// the shift computation runs again (times and all-day come from the type).
+  Future<void> _pickType(Attendance att, AttendanceType? current) async {
+    // One type change at a time, including its status adoption.
+    if (_typeChanging) return;
+    _typeChanging = true;
+    try {
+      await _changeType(att, current);
+    } finally {
+      _typeChanging = false;
+    }
+  }
+
+  bool _typeChanging = false;
+
+  Future<void> _changeType(Attendance att, AttendanceType? current) async {
+    final l10n = context.l10n;
+    if (DemoGuard.blocked()) return; // DEMO_GUARD
+    final all = await ref.read(attendanceTypesProvider.future).catchError((_) => const <AttendanceType>[]);
+    if (!mounted) return;
+    // The current type from the list itself: the row may be tapped before
+    // the Termin's type finished loading.
+    final currentId = att.typeId;
+    current = currentId == null ? null : all.where((t) => t.id == currentId).firstOrNull;
+    final types = [
+      for (final t in all)
+        if (t.visible == true || t.id == current?.id) t,
+    ];
+    if (types.isEmpty || (currentId != null && current == null)) {
+      ToastHelper.showError(context, l10n.redesignTodayLoadFailed);
+      return;
+    }
+    final picked = await showRdTypePicker(
+      context,
+      types: types,
+      selected: current,
+      // Leads: "Terminarten verwalten" (Verwaltung), the Termin stays below.
+      onManage: ref.read(rdManageAccessProvider).isAdmin ? () => context.push(RedesignRoutes.attendanceTypes) : null,
+    );
+    if (picked == null || !mounted || picked.id == current?.id) return;
+    // #232: session of the acting user, captured before the first write.
+    final writeSession = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
+
+    Future<List<PersonAttendance>> onDefault(AttendanceStatus status) async {
+      _container.invalidate(personAttendancesForAttendanceProvider(_id));
+      final sub = _container.listen(personAttendancesForAttendanceProvider(_id).future, (_, __) {});
+      try {
+        final rows = await sub.read();
+        return [for (final r in rows) if (r.id != null && r.status == status) r];
+      } finally {
+        sub.close();
+      }
+    }
+
+    // Rows still on the old default status (never changed by anyone).
+    final oldDefault = current?.defaultStatus;
+    final changesDefault = oldDefault != null && oldDefault != picked.defaultStatus;
+    var count = 0;
+    if (changesDefault) {
+      try {
+        count = (await onDefault(oldDefault)).length;
+      } catch (_) {
+        if (mounted) ToastHelper.showError(context, l10n.dateDialogLoadFailed);
+        return;
+      }
+      if (!mounted) return;
+    }
+    var adopt = false;
+    if (count > 0) {
+      final choice = await showAppDialog<String>(
+        context: context,
+        builder: (ctx) => AppAlertDialog(
+          title: Text(l10n.redesignEventEditTypeStatusTitle),
+          content: Text(l10n.redesignEventEditTypeStatusMessage(
+            count,
+            ionicStatusLabel(oldDefault!),
+            ionicStatusLabel(picked.defaultStatus),
+          )),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.commonCancel)),
+            TextButton(onPressed: () => Navigator.pop(ctx, 'keep'), child: Text(l10n.dateDialogKeep)),
+            FilledButton(onPressed: () => Navigator.pop(ctx, 'adopt'), child: Text(l10n.redesignEventEditTypeStatusAdopt)),
+          ],
+        ),
+      );
+      if (choice == null || !mounted) return;
+      adopt = choice == 'adopt';
+    }
+
+    // The Ende must not end up before the Beginn with the new type's times
+    // (e.g. own Beginn 20:00, no own Ende, new type ends 19:00).
+    // Effective times = own ones, else the type's (like the Termin page).
+    // The new Ende keeps the new type's duration, else the former one.
+    final start = att.startTime ?? picked.startTime;
+    final end = att.endTime ?? picked.endTime;
+    final oldStart = att.startTime ?? current?.startTime;
+    final oldEnd = att.endTime ?? current?.endTime;
+    final fixEnd = !picked.allDay && rdEndBeforeStart(start, end)
+        ? (rdEndBeforeStart(picked.startTime, picked.endTime) || picked.startTime == null || picked.endTime == null
+            ? rdEndAfter(start!, from: oldStart, to: oldEnd)
+            : rdEndAfter(start!, from: picked.startTime, to: picked.endTime))
+        : null;
+    if (!await _write({'type_id': picked.id, if (fixEnd != null) 'end_time': fixEnd})) return;
+    var failed = 0;
+    try {
+      if (adopt) {
+        // Read again right before writing: who changed meanwhile is left out,
+        // and each update still checks the old status itself.
+        List<PersonAttendance> rows;
+        try {
+          rows = await onDefault(oldDefault!);
+        } catch (_) {
+          // Nothing adjusted: the hint below asks to do it by hand.
+          failed = count;
+          rows = const [];
+        }
+        for (final r in rows) {
+          writeSession.ensureCurrent();
+          try {
+            await _repo.updatePersonAttendance(
+              r.id!,
+              {'status': picked.defaultStatus.value},
+              isSessionCurrent: writeSession.isCurrent,
+              actingUserId: writeSession.userId,
+              onlyIfStatus: oldDefault,
+            );
+          } on PersonAttendanceStatusChangedException {
+            continue; // changed meanwhile: keep that person's status
+          } on OfflineSessionChangedException {
+            rethrow;
+          } catch (_) {
+            failed++;
+          }
+        }
+      }
+      writeSession.ensureCurrent();
+      // LOGIC_ATT: times and all-day may come from the new type.
+      await _repo.updateShiftAssignmentsForAttendance(
+        _id,
+        isSessionCurrent: writeSession.isCurrent,
+        actingUserId: writeSession.userId,
+      );
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
+    } finally {
+      _container
+        ..invalidate(attendanceTypeForAttendanceProvider(_id))
+        ..invalidate(personAttendancesForAttendanceProvider(_id));
+    }
+    // The Art is already changed: name who still has the old status, so it
+    // can be set by hand in the Anwesenheit.
+    if (failed > 0 && mounted) {
+      ToastHelper.showError(context, l10n.redesignEventEditTypeStatusFailed(failed));
     }
   }
 
@@ -425,6 +609,9 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     final folder = (att.filesFolder ?? '').trim();
     final canFiles = ref.watch(canAccessFilesProvider);
     final role = ref.watch(effectiveRoleProvider);
+    // The loaded type must be this Termin's current one (not the previous
+    // value while it reloads after an Art change).
+    final typeReady = att.typeId == null || type?.id == att.typeId;
     final days = rdEffectiveDurationDays(att.durationDays,
             typeAllDay: type?.allDay ?? false, typeDurationDays: type?.durationDays) ??
         1;
@@ -446,16 +633,18 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
           ),
         ),
         RdListRow(
+          key: const Key('rd-edit-type'),
           title: l10n.redesignCreateType,
           showChevron: false,
           trailing: type == null ? null : RdPill(type.name, tone: type.highlight ? RdTone.excused : RdTone.primary),
+          onTap: () => _pickType(att, type),
         ),
         RdListRow(
           key: const Key('rd-edit-date'),
           title: l10n.redesignCreateDate,
           showChevron: false,
           trailing: RdValueBox(date == null ? '–' : DateFormat.yMMMEd(locale).format(date)),
-          onTap: () => promptAttendanceDateChange(context, ref, _id),
+          onTap: () => promptAttendanceDateChange(context, ref, _id, directPicker: true),
         ),
         if (allDay)
           RdListRow(
@@ -471,18 +660,20 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 RdValueBox(
-                  att.startTime ?? '–',
+                  att.startTime ?? type?.startTime ?? '–',
                   semantics: l10n.redesignCreateStart,
-                  onTap: () => _pickTime(att, start: true),
+                  // The Termin's type gives the times shown and checked.
+                  onTap: typeReady ? () => _pickTime(att, type, start: true) : null,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 6),
                   child: Text('–', style: TextStyle(color: p.text2)),
                 ),
                 RdValueBox(
-                  att.endTime ?? '–',
+                  att.endTime ?? type?.endTime ?? '–',
                   semantics: l10n.redesignCreateEnd,
-                  onTap: () => _pickTime(att, start: false),
+                  error: rdEndBeforeStart(att.startTime ?? type?.startTime, att.endTime ?? type?.endTime),
+                  onTap: typeReady ? () => _pickTime(att, type, start: false) : null,
                 ),
               ],
             ),
@@ -567,9 +758,8 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
         padding: const EdgeInsets.fromLTRB(4, 12, 4, 20),
         child: Text(l10n.redesignEventEditHint, style: RdType.meta(p, size: 13)),
       ),
-      RdPrimaryButton(label: l10n.redesignCommonDone, onPressed: _done),
       if (role.isAdmin || role.isResponsible) ...[
-        const SizedBox(height: 28),
+        const SizedBox(height: 8),
         RdGroupedList(children: [
           RdListRow(
             key: const Key('rd-event-delete'),

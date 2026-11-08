@@ -161,10 +161,10 @@ void main() {
     test('route rights like /settings/teachers; a teacher only for leads', () {
       expect(RedesignRoutes.roleRedirect(RedesignRoutes.teachers, Role.viewer), isNull);
       expect(RedesignRoutes.roleRedirect(RedesignRoutes.teachers, Role.responsible), isNull);
-      expect(RedesignRoutes.roleRedirect(RedesignRoutes.teachers, Role.helper), RedesignRoutes.manage);
-      expect(RedesignRoutes.roleRedirect(RedesignRoutes.teachers, Role.player), RedesignRoutes.manage);
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.teachers, Role.helper), RedesignRoutes.me);
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.teachers, Role.player), RedesignRoutes.me);
       expect(RedesignRoutes.roleRedirect(RedesignRoutes.teacherEdit(3), Role.viewer), RedesignRoutes.teachers);
-      expect(RedesignRoutes.roleRedirect(RedesignRoutes.teacherEdit(3), Role.voiceLeader), RedesignRoutes.manage);
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.teacherEdit(3), Role.voiceLeader), RedesignRoutes.me);
       expect(RedesignRoutes.roleRedirect(RedesignRoutes.teacherEdit(3), Role.admin), isNull);
     });
   });

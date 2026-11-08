@@ -10,6 +10,7 @@ import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/services/holiday_service.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -28,6 +29,7 @@ import '../../data/rd_create_logic.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import '../widgets/event/rd_create_sheets.dart';
+import '../widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
@@ -174,7 +176,34 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     });
   }
 
+  bool get _isLead => ref.read(rdManageAccessProvider).isAdmin;
+
+  /// Leads open a Verwaltung page from a picker ("Terminarten verwalten");
+  /// the form stays below. Back on the form, the chosen Art is read anew
+  /// (filters or default status may have changed), the inputs stay.
+  Future<void> _manage(String route) async {
+    // Tenant repository read before the first await (account switch).
+    final repo = ref.read(attendanceTypeRepositoryWithTenantProvider);
+    await context.push(route);
+    final id = _type?.id;
+    if (!mounted || id == null) return;
+    final List<AttendanceType> types;
+    try {
+      // Read the rows directly: a failed load throws and leaves the draft as
+      // it is, an Art missing from a successful load was deleted or hidden.
+      final rows = await repo.getTypeRows();
+      types = [for (final row in rows) AttendanceType.fromJson(row)];
+    } catch (_) {
+      return;
+    }
+    if (!mounted || _type?.id != id) return;
+    final fresh = types.where((t) => t.id == id && t.visible == true).firstOrNull;
+    // Deleted or hidden: the Art has to be chosen again.
+    if (fresh != _type) setState(() => _type = fresh);
+  }
+
   Future<void> _pickRepeat(HolidayData holidays) async {
+    final holidaysOff = ref.read(currentTenantProvider)?.showHolidays != true;
     final choice = await showRdRepeatSheet(
       context,
       start: _date,
@@ -182,6 +211,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
       until: _until.isAfter(_date) ? _until : rdAddDays(_date, 42),
       skipHolidays: _skipHolidays,
       holidays: holidays,
+      offerHolidays: holidaysOff && _isLead,
     );
     if (choice == null || !mounted) return;
     if (choice.custom) return _pickCustomDates();
@@ -191,6 +221,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
       _skipHolidays = choice.skipHolidays;
       _customDates = const [];
     });
+    if (choice.showHolidays) await _manage(RedesignRoutes.holidays);
   }
 
   Future<void> _pickTime({required bool start}) async {
@@ -211,11 +242,26 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     if (picked == null && iosLook && current == null) picked = initial;
     if (picked == null || !mounted) return;
     final value = '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
-    _touch(() => start ? _start = value : _end = value);
+    // The Ende never lies before the Beginn: a later Beginn moves the Ende
+    // along, an earlier Ende is refused.
+    final times = rdPickedTimes(start: _start, end: _end, pickedStart: start, value: value);
+    if (times == null) {
+      ToastHelper.showError(context, context.l10n.redesignCreateEndBeforeStart);
+      return;
+    }
+    _touch(() {
+      _start = times.start;
+      _end = times.end;
+    });
   }
 
   Future<void> _pickType(List<AttendanceType> types) async {
-    final picked = await showRdTypePicker(context, types: types, selected: _type);
+    final picked = await showRdTypePicker(
+      context,
+      types: types,
+      selected: _type,
+      onManage: _isLead ? () => _manage(RedesignRoutes.attendanceTypes) : null,
+    );
     if (picked == null || !mounted || picked.id == _type?.id) return;
     _touch(() {
       _applyType(picked);
@@ -273,6 +319,11 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
       return;
     }
 
+    // Times from the type or a template can be broken too (e.g. 20–19).
+    if (!type.allDay && rdEndBeforeStart(_start ?? type.startTime, _end ?? type.endTime)) {
+      ToastHelper.showError(context, l10n.redesignCreateEndBeforeStart);
+      return;
+    }
     final deadline = _deadline;
     final start = _start ?? type.startTime;
     final title = _title.text.trim();
@@ -555,11 +606,6 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
       Padding(
         padding: const EdgeInsets.fromLTRB(4, 12, 4, 20),
         child: Text(l10n.redesignCreateLaterHint, style: RdType.meta(p, size: 13)),
-      ),
-      RdPrimaryButton(
-        label: l10n.redesignCreateSubmitMany(dates.length),
-        icon: _saving ? null : Icons.add,
-        onPressed: canSubmit ? () => _save(dates) : null,
       ),
     ]);
   }

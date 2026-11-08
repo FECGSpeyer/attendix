@@ -110,10 +110,33 @@ RdTab rdTabForLocation(String location) {
   if (under(RedesignRoutes.works) ||
       under('/songs-tab') ||
       under('/settings/songs') ||
-      under('/settings/files')) {
+      under('/settings/files') ||
+      // Werkhistorie and Werk-Kategorien open from the Werke tab's "•••".
+      under(RedesignRoutes.workHistory) ||
+      under(RedesignRoutes.workCategories)) {
     return RdTab.works;
   }
   return RdTab.me;
+}
+
+/// Pages of "Ich" that are not part of the Verwaltung (desktop sidebar:
+/// "Ich" stays selected there, not "Verwaltung").
+const _mePages = [
+  '/settings/notifications',
+  '/settings/help',
+  '/settings/voice-leader',
+  '/settings/team-organization',
+  '/settings/delete-account',
+  '/settings/administration',
+];
+
+/// Whether [location] belongs to the Verwaltung (its page, its sub pages
+/// and the old settings pages it opens).
+bool rdIsManageLocation(String location) {
+  bool under(String root) => location == root || location.startsWith('$root/');
+  if (rdTabForLocation(location) != RdTab.me) return false;
+  if (under(RedesignRoutes.manage) || under('/export')) return true;
+  return under('/settings') && !_mePages.any(under);
 }
 
 /// Index of the selected tab in [destinations] (Ich when the location's tab

@@ -9,6 +9,7 @@ import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
+import '../../../../core/providers/role_permission_providers.dart' show canAccessFilesProvider;
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/song_filter_providers.dart';
 import '../../../../core/providers/song_providers.dart';
@@ -22,6 +23,7 @@ import '../../../../data/models/song/song.dart';
 import '../../../../data/models/song/song_filter.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
+import '../../../history/presentation/pages/history_page.dart' show showHistoryModal;
 import '../../../songs/data/song_print_service.dart';
 import '../../../songs/presentation/pages/song_import_page.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
@@ -36,6 +38,7 @@ import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/works/rd_collections_ui.dart';
 import '../widgets/works/rd_works_filter_sheet.dart';
 import 'rd_folder_page.dart' show rdEventLabel;
+import 'rd_general_settings_page.dart' show showRdSharingSheet;
 
 /// Search text of the Werke list, shared by every copy of the list (the
 /// split view builds a new one when the first Werk opens).
@@ -90,6 +93,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
   /// folders have their own places now).
   Future<void> _more(SongsListData data, List<Song> shown, bool isAdmin) async {
     final l10n = context.l10n;
+    final role = ref.read(effectiveRoleProvider);
     final sharingId = data.songSharingId;
     // Sammlungen once the database has them (null before the migration).
     final collections = ref.read(songCollectionsProvider).valueOrNull != null;
@@ -108,7 +112,17 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
             icon: Icons.local_library_outlined,
             label: l10n.redesignWorkEditManageCategories,
           ),
-        if (sharingId != null && sharingId.isNotEmpty)
+        // From the old Verwaltung (canvas "Werke-Tab: •••"): Werkhistorie
+        // for leads and helpers, the Dateiablage for everyone with access.
+        if (isAdmin || role.isHelperRole)
+          AppActionSheetAction(value: 'history', icon: Icons.history, label: l10n.rdAdminWorkHistory),
+        if (ref.read(canAccessFilesProvider))
+          AppActionSheetAction(value: 'files', icon: Icons.folder_outlined, label: l10n.settingsFileStorage),
+        // Leads switch sharing here (from the old "Allgemein"), the sheet
+        // also copies the link.
+        if (isAdmin)
+          AppActionSheetAction(value: 'sharing', icon: Icons.share_outlined, label: l10n.rdAdminSharing)
+        else if (sharingId != null && sharingId.isNotEmpty)
           AppActionSheetAction(value: 'share', icon: Icons.link, label: l10n.songsCopyLink),
         AppActionSheetAction(value: 'pdf', icon: Icons.description_outlined, label: l10n.songsCatalogPdf),
       ],
@@ -119,6 +133,12 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         await context.push(RedesignRoutes.collections);
       case 'categories':
         await showSongCategoriesSheet(context);
+      case 'history':
+        await showHistoryModal(context);
+      case 'files':
+        await context.push('/settings/files');
+      case 'sharing':
+        await showRdSharingSheet(context);
       case 'share':
         await Clipboard.setData(ClipboardData(text: SongUtils.shareLink(sharingId!)));
         if (mounted) ToastHelper.showSuccess(context, l10n.songsLinkCopied);
@@ -394,19 +414,9 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
       return [if (elsewhere != null) elsewhere, baseStatus(song)].where((t) => t.isNotEmpty).join(' · ');
     }
 
-    Widget? pill(Song song) {
-      if (!lead) return null;
-      if (!rdHasNotes(song)) return RdPill(l10n.redesignWorksNoFilesPill, tone: RdTone.late);
-      if (!data.isOrchestra) return null;
-      final missing = rdWorkMissingGroups(song, data.groups, counts);
-      if (missing.isEmpty) return null;
-      return RdPill(
-        missing.length == 1
-            ? l10n.redesignWorkMissingPillOne(missing.single.name)
-            : l10n.redesignWorkMissingPillMany(missing.length),
-        tone: RdTone.late,
-      );
-    }
+    // Only a Werk without any Noten gets a (calm) pill: not every Werk has
+    // a part for every group, so single missing parts stay on the Werk page.
+    Widget? pill(Song song) => lead && !rdHasNotes(song) ? RdPill(l10n.redesignWorksNoFilesPill) : null;
 
     return RdPage(
       onRefresh: _refresh,
@@ -434,7 +444,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
                 for (final e in events.take(3))
                   _LeadEventRow(
                     event: e,
-                    missing: e.songs.any((s) => rdWorkLacksNotes(s, data.groups, counts, orchestra: data.isOrchestra)),
+                    missing: e.songs.any((s) => !rdHasNotes(s)),
                     onTap:
                         e.attendanceId == null || !role.canAddAttendance
                             ? null
@@ -485,14 +495,15 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
                   sort != SongSortOption.numberAsc
                       ? Align(
                         alignment: AlignmentDirectional.centerStart,
-                        child: _SortChip(
+                        child: RdRemovableChip(
                           label: rdWorksSortLabel(l10n, sort, orchestra: data.isOrchestra),
+                          semanticLabel: l10n.redesignWorksSortRemove(rdWorksSortLabel(l10n, sort, orchestra: data.isOrchestra)),
                           onRemove: () => filterNotifier.setSortOption(SongSortOption.numberAsc),
                         ),
                       )
                       : Text(l10n.redesignWorksEventWorks(shown.length), style: RdType.meta(p, size: 13)),
             ),
-            _FilterLink(
+            RdFilterLink(
               label: filterCount > 0 ? '${l10n.redesignWorksFilter} · $filterCount' : l10n.redesignWorksFilter,
               onTap:
                   () => showRdWorksFilterSheet(
@@ -665,8 +676,9 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
   }
 }
 
-/// Leads: a coming Termin with its Werke and, below, "Noten fehlen" when a
-/// Werk still lacks Noten (a pill next to the title would squeeze it).
+/// Leads: a coming Termin with its Werke and, below, a calm "Noten fehlen"
+/// when a Werk has no Noten at all (a pill next to the title would squeeze
+/// it). A single missing part is normal and does not count here.
 class _LeadEventRow extends StatelessWidget {
   const _LeadEventRow({required this.event, required this.missing, required this.onTap});
 
@@ -710,93 +722,12 @@ class _LeadEventRow extends StatelessWidget {
                       if (missing)
                         Padding(
                           padding: const EdgeInsets.only(top: 6),
-                          child: RdPill(context.l10n.redesignWorksMissingNotes, tone: RdTone.late),
+                          child: RdPill(context.l10n.redesignWorksMissingNotes),
                         ),
                     ],
                   ),
                 ),
                 if (onTap != null) ...[const SizedBox(width: 4), Icon(Icons.chevron_right, size: 20, color: p.text2)],
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// The chosen sort order above the list, removable.
-class _SortChip extends StatelessWidget {
-  const _SortChip({required this.label, required this.onRemove});
-
-  final String label;
-  final VoidCallback onRemove;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    return Semantics(
-      button: true,
-      label: context.l10n.redesignWorksSortRemove(label),
-      excludeSemantics: true,
-      child: Material(
-        color: p.soft,
-        shape: const StadiumBorder(),
-        child: InkWell(
-          customBorder: const StadiumBorder(),
-          onTap: onRemove,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 36),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Text(
-                      label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: p.softText),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Icon(Icons.close, size: 16, color: p.softText),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// "Filter" (with the number of active filters) above the list.
-class _FilterLink extends StatelessWidget {
-  const _FilterLink({required this.label, required this.onTap});
-
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    return Semantics(
-      button: true,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 44),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.tune, size: 18, color: p.link),
-                const SizedBox(width: 6),
-                Text(label, style: TextStyle(fontSize: 15, color: p.link)),
               ],
             ),
           ),

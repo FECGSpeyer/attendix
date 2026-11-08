@@ -4,27 +4,40 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/providers/attendance_providers.dart';
+import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
+import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../data/models/church/church.dart';
+import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/player_absence/player_absence.dart';
+import '../../../../data/models/tenant/tenant.dart';
+import '../../../../data/repositories/shared_person_fields.dart' show mergeSharedPersonFieldValues;
 import '../../../../l10n/l10n.dart';
 import '../../data/providers/rd_members_providers.dart';
+import '../../data/rd_members_list_filter.dart';
 import '../../data/rd_members_logic.dart';
 import '../../../members/data/providers/members_providers.dart' show membersEinteilungOptionsProvider;
 import '../../../people/people_list_utils.dart' show withExtraFieldDefaults;
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
 import '../widgets/members/rd_invite_sheet.dart';
+import '../widgets/members/rd_members_filter_sheet.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../widgets/manage/rd_manage_entries.dart'
+    show rdManageIcon, rdManageTitle, rdMissingAccountsProvider, rdOpenManageEntry;
+import '../../data/rd_manage_logic.dart' show RdManageEntry;
+import '../../../settings/presentation/pages/settings_page.dart' show createMissingAccounts;
 
 /// REDESIGN: tab "Mitglieder" (canvas "Menschen"). Dirigent and Beobachter:
 /// Aktiv / Pausiert / Wartet (also by swiping the list), search, registers
@@ -52,6 +65,9 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
   final _swipePos = ValueNotifier<double?>(null);
   final _search = TextEditingController();
 
+  /// Count of the open "Sortieren & Filtern" sheet, renewed every build.
+  final _countFor = ValueNotifier<RdMembersCount?>(null);
+
   @override
   void initState() {
     super.initState();
@@ -78,6 +94,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
   void dispose() {
     _search.dispose();
     _swipePos.dispose();
+    _countFor.dispose();
     super.dispose();
   }
 
@@ -90,21 +107,58 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
     final inSplit = RdSplitScope.of(context) != null;
     final canApprove = role.isAdmin || role.isResponsible;
     final peopleAsync = ref.watch(realtimePlayersProvider);
-    final people = peopleAsync.valueOrNull ?? const <Person>[];
-    final pending = canApprove
+    final rawPeople = peopleAsync.valueOrNull ?? const <Person>[];
+    final rawPending = canApprove
         ? ref.watch(realtimePendingPlayersProvider).valueOrNull ?? const <Person>[]
         : const <Person>[];
     final percentages = ref.watch(playerAttendancePercentagesProvider).valueOrNull ?? const <int, int>{};
     final groups = ref.watch(groupsProvider).valueOrNull ?? const [];
     final absences = ref.watch(playerAbsencesProvider).valueOrNull ?? const <PlayerAbsence>[];
+    final missing = canApprove ? ref.watch(rdMissingAccountsProvider) : const <Person>[];
+
+    // "Sortieren & Filtern" (old list: filter, sort; plus groups).
+    final listFilter = ref.watch(rdMembersListFilterProvider);
+    final tenant = ref.watch(currentTenantProvider);
+    final vos = tenant?.shortName == 'VoS';
+    final general = tenant?.type == 'general';
+    final fields = ref.watch(personListExtraFieldsProvider).where(rdMembersFilterableField).toList();
+    final hasChurch = fields.any((f) => f.type == 'bfecg_church');
+    final churches = hasChurch ? ref.watch(churchesProvider).valueOrNull ?? const [] : const <Church>[];
+    final linkedTenants = ref.watch(allLinkedTenantsProvider).valueOrNull ?? const [];
+    // "Auch Mitglied in": while loading nobody, on an error a hint (the
+    // chip must never stand over an unfiltered list).
+    final otherAsync = listFilter.otherTenantId == null
+        ? null
+        : ref.watch(rdOtherInstanceUserIdsProvider(listFilter.otherTenantId!));
+    final otherIds = otherAsync == null ? null : otherAsync.valueOrNull ?? const <String>{};
+    // Extra field filters see the old list's values: shared organisation
+    // values, then the field defaults (Ionic getModifiedPlayersForList).
+    // Always prepared when the group has such fields, so the count of the
+    // sheet matches the list from the first chip on.
+    List<Person> prepared(List<Person> list) {
+      if (fields.isEmpty) return list;
+      final shared = ref.watch(sharedPersonFieldValuesProvider).valueOrNull ?? const {};
+      return withExtraFieldDefaults(
+        mergeSharedPersonFieldValues(list, shared),
+        fields,
+        churchIds: [for (final c in churches) if (c.id != null) c.id!],
+      );
+    }
+
+    final allPeople = prepared(rawPeople);
+    final allPending = prepared(rawPending);
+    List<Person> apply(List<Person> list, RdMembersListFilter f, Set<String>? ids) =>
+        rdFilterMembers(list, f, otherInstanceUserIds: ids, fieldDefs: fields);
+    final people = apply(allPeople, listFilter, otherIds);
+    final pending = apply(allPending, listFilter, otherIds);
 
     final active = people.where((x) => !x.paused).toList();
     final paused = people.where((x) => x.paused).toList();
-    final filter = _filter == RdMembersFilter.pending && pending.isEmpty ? RdMembersFilter.active : _filter;
+    final filter = _filter == RdMembersFilter.pending && rawPending.isEmpty ? RdMembersFilter.active : _filter;
     final filters = [
       RdMembersFilter.active,
       RdMembersFilter.paused,
-      if (pending.isNotEmpty) RdMembersFilter.pending,
+      if (rawPending.isNotEmpty) RdMembersFilter.pending,
     ];
     // UX D3: "Fehlen oft · N" narrows Aktiv to the critical members.
     final critical = rdCriticalMembers(active);
@@ -116,18 +170,81 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
       RdMembersFilter.pending => pending,
     };
 
-    final sections = rdMemberSections(
-      shown,
-      groups: groups,
-      percentages: percentages,
-      noGroupLabel: l10n.attendanceNoGroup,
-    );
+    // Register of every person, so the search finds "Streicher" in every
+    // sort order and in the count of the sheet.
+    final registerOf = <int?, String>{
+      for (final s in rdMemberSections(
+        [...allPeople, ...allPending],
+        groups: groups,
+        percentages: const {},
+        noGroupLabel: l10n.attendanceNoGroup,
+      ))
+        for (final x in s.people) x.id: s.title,
+    };
+    bool matches(Person x) => rdPersonMatches(x, _query, register: registerOf[x.id]);
+
+    // Another sort than by group: one list without register headers.
+    final sections = listFilter.sort == RdMembersSort.group
+        ? rdMemberSections(
+            shown,
+            groups: groups,
+            percentages: percentages,
+            noGroupLabel: l10n.attendanceNoGroup,
+          )
+        : [
+            if (shown.isNotEmpty)
+              RdMemberSection(
+                title: '',
+                people: rdSortMembers(shown, listFilter.sort, percentages: percentages),
+                isRegister: true,
+              ),
+          ];
+    final filterCount = listFilter.count + (criticalOnly ? 1 : 0);
+    final filtering = filterCount > 0;
+    void resetFilters() {
+      ref.read(rdMembersListFilterProvider.notifier).state = listFilter.clearFilters();
+      ref.read(rdMembersCriticalOnlyProvider.notifier).state = false;
+    }
+
+    // Groups to filter by: those with someone in the (unfiltered) lists.
+    final usedGroups = {for (final x in [...allPeople, ...allPending]) x.instrument};
+    int countFor(RdMembersListFilter f, bool critical, Set<String> ids) {
+      final base = switch (filter) {
+        RdMembersFilter.active => allPeople.where((x) => !x.paused),
+        RdMembersFilter.paused => allPeople.where((x) => x.paused),
+        RdMembersFilter.pending => allPending,
+      };
+      var list = apply(base.toList(), f, ids);
+      if (critical && filter == RdMembersFilter.active) list = rdCriticalMembers(list);
+      return list.where(matches).length;
+    }
+
+    // The open sheet counts with the data of the latest build (Org values
+    // or persons arriving later), not with the lists of the moment it opened.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _countFor.value = countFor;
+    });
+    void openFilter() {
+      _countFor.value = countFor;
+      showRdMembersFilterSheet(
+          context,
+          countFor: _countFor,
+          groups: [for (final g in groups) if (usedGroups.contains(g.id)) g],
+          fields: fields,
+          churches: churches,
+          linkedTenants: linkedTenants,
+          vos: vos,
+          general: general,
+          withCritical: filter == RdMembersFilter.active,
+        );
+    }
+
     final filtered = [
       for (final s in sections)
-        if (s.people.any((x) => rdPersonMatches(x, _query, register: s.title)))
+        if (s.people.any(matches))
           RdMemberSection(
             title: s.title,
-            people: s.people.where((x) => rdPersonMatches(x, _query, register: s.title)).toList(),
+            people: s.people.where(matches).toList(),
             average: s.average,
             isRegister: s.isRegister,
           ),
@@ -142,21 +259,14 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
               child: Text(l10n.redesignTabMembers, style: RdType.largeTitle(p)),
             ),
           ),
-          // UX D1: invite right here (Dirigent, Verantwortlich). On desktop
-          // it is part of the one "+" in the header.
-          if (canApprove && !inSplit) ...[
-            RdPillButton(
-              icon: Icons.person_add_alt_outlined,
-              label: l10n.redesignInviteButton,
-              onPressed: () => showRdInviteSheet(context),
-            ),
-            const SizedBox(width: 8),
-          ],
+          // What leads do with the members, from the Verwaltung (canvas
+          // "Mitglieder-Tab: •••"): Auswertung, several at once, Register …
           if (canApprove)
             RdCircleButton(
-              icon: Icons.bar_chart_rounded,
-              label: l10n.redesignMembersStats,
-              onPressed: () => context.push(RedesignRoutes.stats),
+              key: const Key('rd-members-more'),
+              icon: Icons.more_horiz,
+              label: l10n.redesignWorksMore,
+              onPressed: _more,
             ),
           if (inSplit && (role.canEdit || canApprove)) ...[
             const SizedBox(width: 8),
@@ -189,18 +299,56 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
           onChanged: (f) => setState(() => _filter = f),
         ),
       ),
-      if (filter == RdMembersFilter.active && (critical.isNotEmpty || criticalOnly)) ...[
-        const SizedBox(height: 10),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: RdChoiceChip(
-            label: l10n.redesignMembersCritical(critical.length),
-            selected: criticalOnly,
-            onTap: () => ref.read(rdMembersCriticalOnlyProvider.notifier).state = !criticalOnly,
+      const SizedBox(height: 6),
+      Row(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              clipBehavior: Clip.none,
+              child: Row(
+                children: [
+                  for (final chip in _activeChips(
+                    context,
+                    listFilter: listFilter,
+                    criticalOnly: criticalOnly,
+                    groups: groups,
+                    fields: fields,
+                    churches: churches,
+                    linkedTenants: linkedTenants,
+                  )) ...[chip, const SizedBox(width: 8)],
+                  // UX D3: quick "Fehlen oft · N" while nothing is filtered.
+                  if (!filtering && filter == RdMembersFilter.active && critical.isNotEmpty)
+                    RdChoiceChip(
+                      label: l10n.redesignMembersCritical(critical.length),
+                      selected: false,
+                      onTap: () => ref.read(rdMembersCriticalOnlyProvider.notifier).state = true,
+                    ),
+                ],
+              ),
+            ),
+          ),
+          RdFilterLink(
+            key: const Key('rd-members-filter'),
+            label: filtering ? '${l10n.redesignWorksFilter} · $filterCount' : l10n.redesignWorksFilter,
+            onTap: openFilter,
+          ),
+        ],
+      ),
+      const SizedBox(height: 10),
+      // Members with an e-mail but no account (from the Verwaltung: "Zugänge
+      // anlegen"), only on the plain list.
+      if (missing.isNotEmpty && filter == RdMembersFilter.active && !filtering && _query.trim().isEmpty) ...[
+        RdInfoCard(
+          icon: Icons.person_add_alt_outlined,
+          text: l10n.rdAdminMissingBanner(missing.length),
+          action: RdOutlineButton(
+            label: rdManageTitle(l10n, RdManageEntry.missingAccounts),
+            onPressed: () => createMissingAccounts(context, ref, missing),
           ),
         ),
+        const SizedBox(height: 12),
       ],
-      const SizedBox(height: 16),
     ];
 
     final body = <Widget>[];
@@ -215,39 +363,38 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
           onPressed: () => ref.invalidate(realtimePlayersProvider),
         ),
       ));
-    } else if (filtered.isEmpty && people.isEmpty && _query.trim().isEmpty && canApprove) {
+    } else if (otherAsync != null && otherAsync.hasError && !otherAsync.hasValue) {
+      body.add(RdInfoCard(
+        text: l10n.redesignTodayLoadFailed,
+        icon: Icons.cloud_off_outlined,
+        action: RdOutlineButton(
+          label: l10n.redesignCommonRetry,
+          onPressed: () => ref.invalidate(rdOtherInstanceUserIdsProvider(listFilter.otherTenantId!)),
+        ),
+      ));
+    } else if (otherAsync != null && !otherAsync.hasValue) {
+      body.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
+    } else if (filtered.isEmpty && rawPeople.isEmpty && _query.trim().isEmpty && canApprove) {
       // UX D1: a new group starts with the invitation.
       body.add(RdInfoCard(
         icon: Icons.people_outline,
         text: l10n.redesignInviteEmptyMembers,
-        action: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            RdPrimaryButton(
-              label: l10n.redesignInviteButton,
-              icon: Icons.person_add_alt_outlined,
-              onPressed: () => showRdInviteSheet(context),
-            ),
-            if (role.canEdit) ...[
-              const SizedBox(height: 8),
-              RdOutlineButton(
-                label: l10n.redesignInviteAddPerson,
-                onPressed: () => context.push(RedesignRoutes.personNew),
-              ),
-            ],
-          ],
-        ),
       ));
     } else if (filtered.isEmpty) {
       body.add(RdInfoCard(
         icon: Icons.people_outline,
-        text: _query.trim().isNotEmpty || criticalOnly
-            ? l10n.redesignMembersNoMatch
-            : switch (filter) {
-                RdMembersFilter.active => l10n.redesignMembersEmpty,
-                RdMembersFilter.paused => l10n.redesignMembersEmptyPaused,
-                RdMembersFilter.pending => l10n.redesignMembersEmptyPending,
-              },
+        text: filtering
+            ? l10n.redesignMembersFilterNoMatch
+            : _query.trim().isNotEmpty
+                ? l10n.redesignMembersNoMatch
+                : switch (filter) {
+                    RdMembersFilter.active => l10n.redesignMembersEmpty,
+                    RdMembersFilter.paused => l10n.redesignMembersEmptyPaused,
+                    RdMembersFilter.pending => l10n.redesignMembersEmptyPending,
+                  },
+        action: filtering
+            ? RdOutlineButton(label: l10n.redesignWorksResetFilter, onPressed: resetFilters)
+            : null,
       ));
     } else {
       if (filter == RdMembersFilter.pending) {
@@ -257,12 +404,13 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
         ));
       }
       for (final s in filtered) {
-        body.add(_SectionHeader(section: s));
+        if (s.title.isNotEmpty) body.add(_SectionHeader(section: s));
         body.add(RdGroupedList(children: [
           for (final person in s.people)
             _MemberRow(
               person: person,
               showGroup: s.isRegister,
+              sortHint: _sortHint(person, listFilter.sort),
               percent: filter == RdMembersFilter.pending || person.id == null ? null : percentages[person.id],
               absence: person.id == null ? null : rdCurrentAbsence(absences, person.id!),
               selected: person.id != null && RdSplitScope.of(context)?.selectedId == person.id,
@@ -292,22 +440,105 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
         ref.invalidate(playerAbsencesProvider);
         if (canApprove) ref.invalidate(realtimePendingPlayersProvider);
       },
-      floatingActionButton: role.canEdit && !inSplit
-          ? FloatingActionButton(
-              tooltip: l10n.redesignMembersAdd,
-              backgroundColor: p.primary,
-              foregroundColor: p.onPrimary,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-              onPressed: () => context.push(RedesignRoutes.personNew),
-              child: const Icon(Icons.person_add_alt_1_outlined, size: 26),
+      // One "+" per screen: anlegen and einladen (UX D1) both sit behind
+      // it, on the phone as the button below, on desktop in the header.
+      floatingActionButton: (role.canEdit || canApprove) && !inSplit
+          ? Builder(
+              builder: (button) => FloatingActionButton(
+                key: const Key('rd-members-fab'),
+                tooltip: l10n.redesignMembersAdd,
+                backgroundColor: p.primary,
+                foregroundColor: p.onPrimary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                onPressed: () => _add(button, canCreate: role.canEdit, canInvite: canApprove),
+                child: const Icon(Icons.add, size: 28),
+              ),
             )
           : null,
       children: children,
     );
   }
 
+  /// The active filters above the list, each removable with a tap.
+  List<Widget> _activeChips(
+    BuildContext context, {
+    required RdMembersListFilter listFilter,
+    required bool criticalOnly,
+    required List<Group> groups,
+    required List<ExtraField> fields,
+    required List<Church> churches,
+    required List<Tenant> linkedTenants,
+  }) {
+    final l10n = context.l10n;
+    void set(RdMembersListFilter f) => ref.read(rdMembersListFilterProvider.notifier).state = f;
+    Widget chip(String label, VoidCallback onRemove) => RdRemovableChip(
+          label: label,
+          semanticLabel: l10n.redesignMembersFilterRemove(label),
+          onRemove: onRemove,
+        );
+    return [
+      if (listFilter.sort != RdMembersSort.group)
+        RdRemovableChip(
+          label: rdMembersSortLabel(l10n, listFilter.sort),
+          semanticLabel: l10n.redesignWorksSortRemove(rdMembersSortLabel(l10n, listFilter.sort)),
+          onRemove: () => set(listFilter.copyWith(sort: RdMembersSort.group)),
+        ),
+      if (criticalOnly)
+        chip(l10n.redesignMembersFilterCritical, () => ref.read(rdMembersCriticalOnlyProvider.notifier).state = false),
+      for (final o in RdMembersOnly.values)
+        if (listFilter.only.contains(o)) chip(rdMembersOnlyLabel(l10n, o), () => set(listFilter.toggleOnly(o))),
+      for (final g in groups)
+        if (listFilter.groupIds.contains(g.id)) chip(g.name, () => set(listFilter.toggleGroup(g.id!))),
+      for (final e in listFilter.fields.entries)
+        if (fields.where((f) => f.id == e.key).firstOrNull case final field?)
+          chip(
+            l10n.redesignMembersFilterField(field.name, rdMembersFieldValueLabel(l10n, field, e.value, churches)),
+            () => set(listFilter.withField(e.key, null)),
+          ),
+      if (listFilter.otherTenantId != null)
+        chip(
+          l10n.redesignMembersFilterOtherChip(
+            linkedTenants.where((t) => t.id == listFilter.otherTenantId).map((t) => t.shortName).firstOrNull ?? '…',
+          ),
+          () => set(listFilter.copyWith(otherTenantId: () => null)),
+        ),
+    ];
+  }
+
+  /// Birthday or joining date in the row while the list is sorted by it.
+  String? _sortHint(Person person, RdMembersSort sort) {
+    final date = switch (sort) {
+      RdMembersSort.birthdayAsc || RdMembersSort.birthdayDesc || RdMembersSort.nextBirthday => person.birthday,
+      RdMembersSort.joinedAsc || RdMembersSort.joinedDesc => person.joined,
+      _ => null,
+    };
+    final parsed = DateTime.tryParse(date ?? '');
+    if (parsed == null) return null;
+    return DateFormat.yMd(currentIntlLocale()).format(parsed);
+  }
+
   /// Desktop "+": a new person or an invitation link, as a menu at the
   /// button (one entry: straight to it).
+  /// "•••" of the leads: the Verwaltung entries that act on the members.
+  Future<void> _more() async {
+    final l10n = context.l10n;
+    final entry = await showAppActionSheet<RdManageEntry>(
+      context,
+      actions: [
+        for (final e in const [
+          RdManageEntry.statistics,
+          RdManageEntry.bulkMembers,
+          RdManageEntry.groups,
+          RdManageEntry.critical,
+          RdManageEntry.archive,
+          RdManageEntry.export,
+        ])
+          AppActionSheetAction(value: e, icon: rdManageIcon(e), label: rdManageTitle(l10n, e)),
+      ],
+    );
+    if (entry != null && mounted) rdOpenManageEntry(context, ref, entry);
+  }
+
   Future<void> _add(BuildContext anchor, {required bool canCreate, required bool canInvite}) async {
     final l10n = context.l10n;
     if (!canInvite) {
@@ -524,7 +755,11 @@ class _MemberRow extends StatelessWidget {
     this.selected = false,
     this.readOnly = false,
     this.einteilung,
+    this.sortHint,
   });
+
+  /// Date of the chosen sort order (birthday, joined).
+  final String? sortHint;
 
   /// Spieler/Helfer view: no birthdays, absences, pauses or mail addresses.
   final bool readOnly;
@@ -552,6 +787,7 @@ class _MemberRow extends StatelessWidget {
     final hints = <String>[
       if (showGroup && (person.groupName ?? '').isNotEmpty) person.groupName!,
       if (einteilung != null) einteilung!,
+      if (sortHint != null) sortHint!,
     ];
     final birthdayIn = readOnly ? null : rdDaysToBirthday(person.birthday);
     if (birthdayIn != null && birthdayIn <= 7) {

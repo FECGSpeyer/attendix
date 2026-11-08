@@ -6,10 +6,13 @@ import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/statistics_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/services/certificate_service.dart' show isVorkursTenantName;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../export/presentation/pages/export_page.dart' show showExportModal;
 import '../../data/rd_stats_logic.dart';
+import '../widgets/manage/rd_data_sheets.dart' show rdGenerateCertificates;
+import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/rd_widgets.dart';
 
@@ -53,6 +56,10 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
+    // A new Saisonbeginn (changed below) moves the range "Saison".
+    ref.listen(currentTenantProvider.select((t) => t?.seasonStart), (before, now) {
+      if (before != now && _range == RdStatsRange.season) _setRange(_range);
+    });
     final attendancesAsync = ref.watch(filteredAttendancesForStatsProvider);
     final stats = ref.watch(attendanceStatisticsProvider);
     final trend = ref.watch(trendChartDataProvider);
@@ -60,6 +67,7 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
     final players = ref.watch(activePlayersForStatsProvider).valueOrNull ?? const [];
     final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const [];
     final typeById = {for (final t in types) t.id: t};
+    final tenant = ref.watch(currentTenantProvider);
     final low = rdLowAttendance(
       ref.watch(allPersonAttendancesForStatsProvider).valueOrNull ?? const [],
       players,
@@ -67,25 +75,18 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
         for (final a in attendancesAsync.valueOrNull ?? const [])
           if (a.id != null) a.id!: typeById[a.typeId],
       },
-      shiftExcusedAsPresent: ref.watch(currentTenantProvider)?.shiftExcusedAsPresent ?? false,
+      shiftExcusedAsPresent: tenant?.shiftExcusedAsPresent ?? false,
     );
 
     return RdPage(
       onRefresh: _refresh,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: RdBackLink(
-                  label: l10n.redesignAdminTitle,
-                  onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.manage),
-                ),
-              ),
-            ),
-            RdTextLink(label: l10n.settingsExport, onTap: () => showExportModal(context)),
-          ],
+        Align(
+          alignment: Alignment.centerLeft,
+          child: RdBackLink(
+            label: l10n.redesignAdminTitle,
+            onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.manage),
+          ),
         ),
         const SizedBox(height: 4),
         Semantics(header: true, child: Text(l10n.redesignStatsTitle, style: RdType.largeTitle(p))),
@@ -163,6 +164,30 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
             _LowCard(low: low),
           ],
         ],
+        // Saison and Zählweise (from the old "Allgemein"), Export and
+        // Urkunden (Vorkurs) moved here from the Verwaltung (canvas
+        // "Auswertung: Saison und Zählweise").
+        const SizedBox(height: 24),
+        RdTenantSettingsBlock(sections: const [RdTenantSettings.counting], label: l10n.rdAdminCounting),
+        const SizedBox(height: 24),
+        RdGroupLabel(l10n.rdAdminData),
+        RdGroupedList(
+          children: [
+            RdListRow(
+              leading: const RdRowIcon(Icons.download_outlined),
+              title: l10n.settingsExport,
+              subtitle: l10n.rdAdminExportHint,
+              onTap: () => showExportModal(context),
+            ),
+            if (isVorkursTenantName(tenant?.shortName, tenant?.longName))
+              RdListRow(
+                leading: const RdRowIcon(Icons.workspace_premium_outlined),
+                title: l10n.rdAdminCertificates,
+                subtitle: l10n.rdAdminCertificatesHint,
+                onTap: () => rdGenerateCertificates(context, ref),
+              ),
+          ],
+        ),
       ],
     );
   }

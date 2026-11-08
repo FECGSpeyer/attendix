@@ -1,16 +1,18 @@
-// REDESIGN: pure logic of the Verwaltung (canvas "Verwaltung",
-// "VerwSuche"): the six areas, the entries of the old settings page that
-// sit in them and which role sees which entry. The conditions mirror
+// REDESIGN: pure logic of the Verwaltung (canvas "Beta: Verwaltung neu
+// gedacht", boards "Nachher · Verwaltung auf einer Seite" and "Nachher ·
+// Suche"): one page for Dirigent and Verantwortliche with five sections.
+// Entries of the old settings page that now live where they are used
+// (Mitglieder and Werke tab, Ich, Auswertung, Organisation) stay findable
+// through the search, with a hint where they are now. The conditions mirror
 // `settings_page.dart` (Ionic settings.page.html) and the route guards.
 
-/// The six areas of the Verwaltung, in canvas order. [key] is the path
-/// segment of `/ich/verwaltung/:area`.
+/// The sections of the Verwaltung, in page order. [key] is the path segment
+/// of `/ich/verwaltung/:area` (desktop: the section open on the right).
 enum RdManageArea {
   members('mitglieder'),
+  access('zugaenge'),
   events('termine'),
-  works('werke'),
   data('daten'),
-  communication('kommunikation'),
   group('gruppe');
 
   const RdManageArea(this.key);
@@ -20,46 +22,60 @@ enum RdManageArea {
       values.where((a) => a.key == key).firstOrNull;
 }
 
-/// One entry of the Verwaltung (one row of the old settings page).
+/// Where an entry that left the Verwaltung lives now (search hint).
+enum RdManageHome { members, works, event, stats, organisation, me }
+
+/// One entry of the Verwaltung. Entries with an [area] are rows of the page;
+/// the others moved to their [home] and only show up in the search.
 enum RdManageEntry {
-  approvals(RdManageArea.members),
-  bulkMembers(RdManageArea.members),
-  rolesPermissions(RdManageArea.members),
-  admins(RdManageArea.members),
-  parents(RdManageArea.members),
-  viewers(RdManageArea.members),
-  teachers(RdManageArea.members),
-  missingAccounts(RdManageArea.members),
-  archive(RdManageArea.members),
-  myVoice(RdManageArea.members),
+  // Mitglieder
   groups(RdManageArea.members),
   extraFields(RdManageArea.members),
+  registration(RdManageArea.members),
+  critical(RdManageArea.members),
+  teachers(RdManageArea.members),
+  bulkMembers(RdManageArea.members),
+  missingAccounts(RdManageArea.members),
+  archive(RdManageArea.members),
+  // Zugänge und Rechte
+  rolesPermissions(RdManageArea.access),
+  admins(RdManageArea.access),
+  parents(RdManageArea.access),
+  viewers(RdManageArea.access),
+  // Termine
   attendanceTypes(RdManageArea.events),
+  reasons(RdManageArea.events),
   shiftPlans(RdManageArea.events),
-  runSheets(RdManageArea.events),
+  holidays(RdManageArea.events),
   adHocPlanning(RdManageArea.events),
-  planningTemplates(RdManageArea.events),
-  orgPlans(RdManageArea.events),
-  works(RdManageArea.works),
-  workHistory(RdManageArea.works),
-  workCategories(RdManageArea.works),
-  fileStorage(RdManageArea.works),
+  // Auswertung und Mitteilungen
   statistics(RdManageArea.data),
-  export(RdManageArea.data),
-  certificates(RdManageArea.data),
-  calendar(RdManageArea.data),
-  announcements(RdManageArea.communication),
-  teamOrg(RdManageArea.communication),
-  myTasks(RdManageArea.communication),
-  suggestTopic(RdManageArea.communication),
-  protocols(RdManageArea.communication),
+  announcements(RdManageArea.data),
+  // Gruppe und Organisation
   general(RdManageArea.group),
-  branding(RdManageArea.group),
-  dashboard(RdManageArea.group),
-  organisation(RdManageArea.group);
+  organisation(RdManageArea.group),
+  // Moved to where they are used.
+  approvals(null, RdManageHome.members),
+  workHistory(null, RdManageHome.works),
+  workCategories(null, RdManageHome.works),
+  fileStorage(null, RdManageHome.works),
+  sharing(null, RdManageHome.works),
+  runSheets(null, RdManageHome.event),
+  export(null, RdManageHome.stats),
+  certificates(null, RdManageHome.stats),
+  branding(null, RdManageHome.organisation),
+  planningTemplates(null, RdManageHome.organisation),
+  orgPlans(null, RdManageHome.organisation),
+  calendar(null, RdManageHome.me),
+  team(null, RdManageHome.me);
 
-  const RdManageEntry(this.area);
-  final RdManageArea area;
+  const RdManageEntry(this.area, [this.home]);
+
+  /// Section of the page; null when the entry moved ([home]).
+  final RdManageArea? area;
+  final RdManageHome? home;
+
+  bool get moved => area == null;
 
   static RdManageEntry? fromName(String name) =>
       values.where((e) => e.name == name).firstOrNull;
@@ -71,133 +87,127 @@ class RdManageAccess {
   const RdManageAccess({
     this.isAdmin = false,
     this.isSuperAdmin = false,
-    this.isHelper = false,
-    this.isApplicant = false,
-    this.isVoiceLeader = false,
-    this.canOpenWorks = false,
     this.isGeneral = false,
     this.isDemo = false,
     this.parentsEnabled = false,
     this.maintainTeachers = false,
     this.canAccessFiles = false,
     this.hasOrganisation = false,
-    this.hasPending = false,
     this.hasMissingAccounts = false,
     this.isVorkurs = false,
-    this.teamOrgEnabled = false,
-    this.isTeamLeader = false,
-    this.inTeamCircle = false,
-    this.hasOwnTasks = false,
+    this.showTeam = false,
+    this.isOrchestra = false,
+    this.sharingEnabled = false,
   });
 
-  /// Ionic `isAdmin`: ADMIN or RESPONSIBLE.
+  /// Ionic `isAdmin`: ADMIN or RESPONSIBLE (Dirigent, Verantwortliche).
   final bool isAdmin;
 
-  /// ADMIN only (Administratoren).
+  /// ADMIN only (Admins).
   final bool isSuperAdmin;
 
-  /// Helper or voice-leader helper.
-  final bool isHelper;
-  final bool isApplicant;
-
-  /// Voice leader or voice-leader helper (`canSeeVoiceLeaderSettings`).
-  final bool isVoiceLeader;
-
-  /// The Werke tab is open to the role (`canOpenSongsTab`).
-  final bool canOpenWorks;
-
-  /// `tenants.type == 'general'` (no Werke area).
+  /// `tenants.type == 'general'` (no Werke tab).
   final bool isGeneral;
   final bool isDemo;
   final bool parentsEnabled;
   final bool maintainTeachers;
   final bool canAccessFiles;
   final bool hasOrganisation;
-  final bool hasPending;
   final bool hasMissingAccounts;
 
   /// A Vorkurs tenant (Urkunden).
   final bool isVorkurs;
-  final bool teamOrgEnabled;
-  final bool isTeamLeader;
-  final bool inTeamCircle;
-  final bool hasOwnTasks;
 
-  bool get _showPlanning => isAdmin && !isApplicant;
-  bool get _showTeam => teamOrgEnabled && (isTeamLeader || inTeamCircle || hasOwnTasks);
+  /// Team organisation on and the user in the team (Ich › Team).
+  final bool showTeam;
+
+  /// `tenants.type == 'orchestra'` (only orchestras keep teachers).
+  final bool isOrchestra;
+
+  /// Werke are shared by link (`song_sharing_id`).
+  final bool sharingEnabled;
 }
 
-/// Whether [access] sees [entry] (same conditions as the old settings page).
+/// Whether "Ich" and the sidebar offer the Verwaltung: only Dirigent and
+/// Verantwortliche. What other roles had there now sits in "Ich" or in its
+/// tab (Meine Stimme, Team, Werkhistorie, Dateiablage).
+bool rdShowsManage(RdManageAccess access) => access.isAdmin;
+
+/// Whether [access] sees [entry] (rows of the page and search results).
 bool rdManageVisible(RdManageEntry entry, RdManageAccess access) {
   final a = access;
+  if (!a.isAdmin) return false;
   return switch (entry) {
-    RdManageEntry.approvals => a.isAdmin && a.hasPending,
-    RdManageEntry.rolesPermissions => a.isAdmin,
-    RdManageEntry.bulkMembers => a.isAdmin && !a.isApplicant,
+    // Off: still found and shown under "Noch nicht genutzt" (the switch is
+    // on its page).
+    RdManageEntry.teachers => a.maintainTeachers || a.isOrchestra,
+    RdManageEntry.missingAccounts => a.hasMissingAccounts,
     RdManageEntry.admins => a.isSuperAdmin && !a.isDemo,
-    RdManageEntry.parents => a.isAdmin && a.parentsEnabled,
-    RdManageEntry.viewers => a.isAdmin,
-    RdManageEntry.teachers => a.isAdmin && a.maintainTeachers,
-    RdManageEntry.missingAccounts => a.isAdmin && a.hasMissingAccounts,
-    RdManageEntry.archive => a.isAdmin && !a.isApplicant,
-    RdManageEntry.myVoice => a.isVoiceLeader && !a.isGeneral,
-    RdManageEntry.attendanceTypes ||
-    RdManageEntry.shiftPlans ||
-    RdManageEntry.extraFields =>
-      a.isAdmin,
-    RdManageEntry.runSheets || RdManageEntry.adHocPlanning => a._showPlanning,
-    RdManageEntry.planningTemplates || RdManageEntry.orgPlans => a._showPlanning && a.hasOrganisation,
-    RdManageEntry.works => !a.isGeneral && !a.isApplicant && a.canOpenWorks,
-    RdManageEntry.workHistory => (a.isAdmin || a.isHelper) && !a.isGeneral && !a.isApplicant,
-    RdManageEntry.workCategories => a.isAdmin && !a.isGeneral && !a.isApplicant,
-    RdManageEntry.groups => a.isAdmin,
-    RdManageEntry.fileStorage => a.canAccessFiles && (a.isGeneral || !a.isApplicant),
-    RdManageEntry.statistics || RdManageEntry.export => a.isAdmin && !a.isApplicant,
-    RdManageEntry.certificates => a.isAdmin && !a.isApplicant && a.isVorkurs,
-    RdManageEntry.calendar => !a.isApplicant,
-    RdManageEntry.announcements => a.isAdmin,
-    RdManageEntry.teamOrg => a._showTeam && a.isTeamLeader,
-    RdManageEntry.myTasks => a._showTeam && !a.isTeamLeader,
-    RdManageEntry.suggestTopic ||
-    RdManageEntry.protocols =>
-      a._showTeam && !a.isTeamLeader && a.inTeamCircle,
-    // "Dashboard konfigurieren" only sets the dashboard tab of the classic
-    // view; in the Beta "Heute" is the start page, so it is hidden here.
-    RdManageEntry.dashboard => false,
-    RdManageEntry.general || RdManageEntry.branding || RdManageEntry.organisation => a.isAdmin,
+    RdManageEntry.workHistory || RdManageEntry.workCategories => !a.isGeneral,
+    RdManageEntry.fileStorage => a.canAccessFiles,
+    RdManageEntry.certificates => a.isVorkurs,
+    RdManageEntry.branding ||
+    RdManageEntry.planningTemplates ||
+    RdManageEntry.orgPlans =>
+      a.hasOrganisation,
+    RdManageEntry.team => a.showTeam,
+    _ => true,
   };
 }
 
-/// The entries [access] sees, in area and list order.
-List<RdManageEntry> rdManageEntries(RdManageAccess access, {RdManageArea? area}) => [
-      for (final e in RdManageEntry.values)
-        if ((area == null || e.area == area) && rdManageVisible(e, access)) e,
+/// Features that are off: "Noch nicht genutzt" with one sentence what they
+/// are for; once on, they move into their section.
+List<RdManageEntry> rdManageUnused(RdManageAccess access) => [
+      if (access.isAdmin && access.isOrchestra && !access.maintainTeachers) RdManageEntry.teachers,
+      if (access.isAdmin && !access.parentsEnabled) RdManageEntry.parents,
+      if (access.isAdmin && !access.sharingEnabled) RdManageEntry.sharing,
     ];
 
-/// Areas with at least one visible entry.
+/// Section of [entry] for [access], null when it moved. "Werke öffentlich
+/// teilen" lives in the Werke tab; groups of type "Allgemein" have none, so
+/// there it stays a row of "Gruppe und Organisation".
+RdManageArea? rdManageAreaOf(RdManageEntry entry, RdManageAccess access) =>
+    entry == RdManageEntry.sharing && access.isGeneral ? RdManageArea.group : entry.area;
+
+/// The rows [access] sees, in page order (moved and unused entries are left
+/// out).
+List<RdManageEntry> rdManageEntries(RdManageAccess access, {RdManageArea? area}) {
+  final unused = rdManageUnused(access);
+  return [
+    for (final e in RdManageEntry.values)
+      if (rdManageAreaOf(e, access) case final a?)
+        if ((area == null || a == area) && rdManageVisible(e, access) && !unused.contains(e)) e,
+  ];
+}
+
+/// Every entry the search may find: the rows plus the moved ones.
+List<RdManageEntry> rdManageSearchable(RdManageAccess access) => [
+      for (final e in RdManageEntry.values)
+        if (rdManageVisible(e, access)) e,
+    ];
+
+/// Sections with at least one row.
 List<RdManageArea> rdManageAreas(RdManageAccess access) {
   final entries = rdManageEntries(access);
   return [
     for (final a in RdManageArea.values)
-      if (entries.any((e) => e.area == a)) a,
+      if (entries.any((e) => rdManageAreaOf(e, access) == a)) a,
   ];
 }
 
-/// Entries that already have a place in the new design outside the
-/// Verwaltung (Werke tab, Ich › Kalender abonnieren).
-const rdManageElsewhere = {RdManageEntry.works, RdManageEntry.calendar};
+/// Where a moved entry lives for [access]: the Dateiablage sits in the
+/// Werke tab, in groups without one under Ich.
+RdManageHome? rdManageHome(RdManageEntry entry, RdManageAccess access) {
+  if (rdManageAreaOf(entry, access) != null) return null;
+  return entry == RdManageEntry.fileStorage && access.isGeneral ? RdManageHome.me : entry.home;
+}
 
-/// Whether "Ich" offers the Verwaltung: leads always, everyone else when an
-/// entry is left that the new design does not show anywhere else.
-bool rdShowsManage(RdManageAccess access) =>
-    access.isAdmin ||
-    rdManageEntries(access).any((e) => !rdManageElsewhere.contains(e));
-
-/// Search over the entry title and its area name (all words must match).
-bool rdManageMatches(String query, String title, String areaName, [String hint = '']) {
+/// Search over title, section or new place, hint, former names and the
+/// switches on the page (all words must match).
+bool rdManageMatches(String query, String title, String place, [String hint = '', String keywords = '']) {
   final q = query.trim().toLowerCase();
   if (q.isEmpty) return true;
-  final hay = '$title $areaName $hint'.toLowerCase();
+  final hay = '$title $place $hint $keywords'.toLowerCase();
   return q.split(RegExp(r'\s+')).every(hay.contains);
 }
 
@@ -205,3 +215,8 @@ bool rdManageMatches(String query, String title, String areaName, [String hint =
 /// duplicates, keeping at most [max].
 List<RdManageEntry> rdPushRecent(List<RdManageEntry> recent, RdManageEntry entry, {int max = 3}) =>
     [entry, ...recent.where((e) => e != entry)].take(max).toList();
+
+/// Whether "Ich" shows "Dateien": groups without a Werke tab (there the
+/// Dateiablage sits in the Werke tab's "•••").
+bool rdMeShowsFiles({required bool canAccessFiles, required bool hasWorksTab}) =>
+    canAccessFiles && !hasWorksTab;

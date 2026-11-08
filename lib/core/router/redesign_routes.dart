@@ -77,10 +77,11 @@ class RedesignRoutes {
   /// Ich › Darstellung (Farbwelt, hell/dunkel).
   static const String appearance = '/ich/darstellung';
 
-  /// Ich › Verwaltung (the old settings in six areas).
+  /// Ich › Verwaltung (Dirigent and Verantwortliche: one page, five
+  /// sections).
   static const String manage = '/ich/verwaltung';
 
-  /// One area of the Verwaltung (`RdManageArea.key`).
+  /// One section of the Verwaltung (`RdManageArea.key`; desktop).
   static String manageArea(String key) => '$manage/$key';
 
   /// Verwaltung › Auswertung (statistics of the new design).
@@ -92,7 +93,19 @@ class RedesignRoutes {
   /// Verwaltung › Mitglieder bearbeiten (several members at once).
   static const String bulkMembers = '$manage/mitglieder-bearbeiten';
 
-  /// Verwaltung › Gruppen (replaces `/settings/instruments` in the Beta).
+  /// Verwaltung › Anmeldung per Link (from the old "Allgemein").
+  static const String registration = '$manage/anmeldung';
+
+  /// Verwaltung › Abmeldegründe (from the old "Allgemein").
+  static const String reasons = '$manage/abmeldegruende';
+
+  /// Verwaltung › Problemfälle (rules; from the old "Allgemein").
+  static const String critical = '$manage/problemfaelle';
+
+  /// Verwaltung › Ferien und Feiertage (from the old "Allgemein").
+  static const String holidays = '$manage/feiertage';
+
+  /// Verwaltung › Register (replaces `/settings/instruments` in the Beta).
   static const String groups = '$manage/gruppen';
 
   /// "Gruppe bearbeiten" of the new design.
@@ -145,43 +158,21 @@ class RedesignRoutes {
   /// path because `gruppen/:id` is a group).
   static const String groupCategories = '$manage/gruppen-kategorien';
 
-  /// Verwaltung › Werk-Kategorien (replaces the old categories sheet).
+  /// Werke › ••• › Werk-Kategorien (replaces the old categories sheet).
   static const String workCategories = '$manage/werk-kategorien';
 
-  /// Verwaltung › Werkhistorie (replaces the old history modal).
+  /// Werke › ••• › Gespielte Werke (replaces the old history modal; the
+  /// path stays under the Verwaltung, the tab is Werke).
   static const String workHistory = '$manage/werkhistorie';
 
   /// Ich › Benachrichtigungen.
   static const String notifications = '$me/benachrichtigungen';
-
-  /// Pages for leads only (Admins and Verantwortliche, like the old
-  /// statistics, messages and archive entries, the old group, type and
-  /// shift pages and `/settings/parents|viewers|pending|left`); their sub
-  /// pages too.
-  static const _leadOnly = {
-    stats,
-    compose,
-    bulkMembers,
-    groups,
-    attendanceTypes,
-    shiftPlans,
-    parents,
-    viewers,
-    archive,
-    approvals,
-    rolePermissions,
-    extraFields,
-    workCategories,
-    groupCategories,
-  };
 
   /// Pages for super admins only (the old admins sheet: `role.isAdmin`).
   static const _adminOnly = {admins};
 
   static bool _matches(Set<String> routes, String location) =>
       routes.any((route) => location == route || location.startsWith('$route/'));
-
-  static bool _isLeadOnly(String location) => _matches(_leadOnly, location);
 
   /// True while the new design is switched on (set by
   /// `RedesignSettingsNotifier`).
@@ -249,25 +240,22 @@ class RedesignRoutes {
   ///   (`Role.canSeePeopleTab`, like `/people`); "Neue Person" and "Person
   ///   bearbeiten" only for Admins and Verantwortliche.
   /// * Werke like `/songs-tab` (not for parents and applicants).
-  /// * Verwaltung not for applicants and parents (nothing to manage there);
-  ///   each entry keeps the guard of the page it opens.
-  /// * Lehrer like `/settings/teachers` (`Role.isConductor`: Admins,
-  ///   Verantwortliche and Beobachter see the list); a teacher opens only
-  ///   for Admins and Verantwortliche, like on the old page.
+  /// * Verwaltung and its pages only for Admins and Verantwortliche (like
+  ///   the old statistics, messages, archive, group, type and shift pages
+  ///   and `/settings/parents|viewers|pending|left`); Admins only for the
+  ///   super admins. Two pages stay open to others, like on the old page:
+  ///   the Werkhistorie for helpers (Werke tab › •••) and the Lehrer list
+  ///   for Beobachter (`Role.isConductor`); a teacher opens only for leads.
   static String? roleRedirect(String location, Role role) {
     if (location == manage || location.startsWith('$manage/')) {
-      if (role.isApplicant || role.isParent) return me;
-      if (_isLeadOnly(location) && !(role.isAdmin || role.isResponsible)) return manage;
-      if (_matches(_adminOnly, location) && !role.isAdmin) return manage;
-      // Werkhistorie like the old entry: leads and helpers.
-      if (_matches({workHistory}, location) && !(role.isAdmin || role.isResponsible || role.isHelperRole)) {
-        return manage;
+      if (role.isAdmin || role.isResponsible) {
+        if (_matches(_adminOnly, location) && !role.isAdmin) return manage;
+        return null;
       }
-      if (location == teachers || location.startsWith('$teachers/')) {
-        if (!role.isConductor) return manage;
-        if (location != teachers && !(role.isAdmin || role.isResponsible)) return teachers;
-      }
-      return null;
+      if (role.isHelperRole && _matches({workHistory}, location)) return null;
+      if (role.isConductor && location == teachers) return null;
+      if (role.isConductor && location.startsWith('$teachers/')) return teachers;
+      return me;
     }
     if (location == members || location.startsWith('$members/')) {
       if (!role.canSeePeopleTab) return today;

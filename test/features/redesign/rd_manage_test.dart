@@ -1,8 +1,12 @@
-import 'dart:io';
-
+import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/admin_providers.dart';
+import 'package:attendix/core/providers/attendance_type_providers.dart';
+import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/parent_providers.dart';
+import 'package:attendix/core/providers/player_providers.dart';
+import 'package:attendix/core/providers/shift_providers.dart';
+import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/providers/viewer_providers.dart';
 import 'package:attendix/core/router/redesign_routes.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
@@ -10,7 +14,9 @@ import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/features/redesign/data/rd_manage_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_manage_page.dart';
+import 'package:attendix/features/redesign/presentation/shell/rd_destinations.dart';
 import 'package:attendix/features/redesign/presentation/widgets/manage/rd_manage_entries.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart' show rdBack;
 import 'package:attendix/features/settings/presentation/pages/left_players_page.dart'
     show leftPlayersProvider;
 import 'package:attendix/l10n/l10n.dart';
@@ -18,9 +24,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../factories/test_factories.dart';
+import '../../mocks/supabase_mocks.dart';
 
 /// Bounded pumps: loading spinners never settle.
 Future<void> _settle(WidgetTester tester) async {
@@ -35,34 +43,29 @@ void _phone(WidgetTester tester) {
   addTearDown(tester.view.reset);
 }
 
-Future<void> _tapVisible(WidgetTester tester, Finder finder) async {
-  await tester.ensureVisible(finder);
-  await tester.pump();
-  await tester.tap(finder);
-  await _settle(tester);
+final _auth = () {
+  final auth = MockGoTrueClient();
+  when(() => auth.currentUser).thenReturn(null);
+  when(() => auth.onAuthStateChange).thenAnswer((_) => const Stream.empty());
+  return auth;
+}();
+
+class _TenantNotifier extends CurrentTenantNotifier {
+  _TenantNotifier(super.ref) {
+    state = TestFactories.createTenant(id: 7, shortName: 'ATTX', longName: 'Attendix Test');
+  }
 }
 
 /// A conductor of an orchestra (Vorkurs tenant, organisation linked).
 const _admin = RdManageAccess(
   isAdmin: true,
   isSuperAdmin: true,
-  canOpenWorks: true,
   canAccessFiles: true,
   hasOrganisation: true,
-  hasPending: true,
   isVorkurs: true,
 );
 
-const _helper = RdManageAccess(isHelper: true, canOpenWorks: true);
-
-const _player = RdManageAccess(canOpenWorks: true);
-
-Widget _app(
-  RdManageAccess access, {
-  String initial = RedesignRoutes.manage,
-  List<Person> pending = const [],
-  List<Person> left = const [],
-}) {
+Widget _app(RdManageAccess access, {String initial = RedesignRoutes.manage, List<Person> left = const []}) {
   final router = GoRouter(
     initialLocation: initial,
     routes: [
@@ -74,34 +77,28 @@ Widget _app(
             path: 'verwaltung',
             builder: (_, __) => const RdManagePage(),
             routes: [
-              GoRoute(
-                path: 'terminarten',
-                builder: (_, __) => const Scaffold(body: Text('page beta types')),
-              ),
+              GoRoute(path: 'terminarten', builder: (_, __) => const Scaffold(body: Text('page beta types'))),
+              GoRoute(path: 'freigaben', builder: (_, __) => const Scaffold(body: Text('page approvals'))),
               GoRoute(
                 path: ':area',
-                builder: (_, s) =>
-                    RdManageAreaPage(area: RdManageArea.fromKey(s.pathParameters['area'])),
+                builder: (_, s) => RdManageAreaPage(area: RdManageArea.fromKey(s.pathParameters['area'])),
               ),
             ],
           ),
         ],
       ),
-      GoRoute(
-        path: '/settings',
-        builder: (_, __) => const Scaffold(body: Text('page old settings')),
-        routes: [
-          GoRoute(path: 'types', builder: (_, __) => const Scaffold(body: Text('page types'))),
-        ],
-      ),
-      GoRoute(path: '/werke', builder: (_, __) => const Scaffold(body: Text('page works'))),
     ],
   );
   return ProviderScope(
     overrides: [
+      supabaseAuthProvider.overrideWithValue(_auth),
+      currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
       rdManageAccessProvider.overrideWith((ref) => access),
-      rdManagePendingProvider.overrideWith((ref) => pending),
       rdMissingAccountsProvider.overrideWith((ref) => const []),
+      playersProvider.overrideWith((ref) async => TestFactories.createPersonList(42, tenantId: 7)),
+      groupsProvider.overrideWith((ref) async => const []),
+      attendanceTypesProvider.overrideWith((ref) async => const []),
+      shiftsProvider.overrideWith((ref) async => const []),
       adminsProvider.overrideWith((ref) async => const []),
       parentsProvider.overrideWith((ref) async => const []),
       viewersProvider.overrideWith((ref) async => const []),
@@ -120,300 +117,220 @@ Widget _app(
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  group('visibility (same rules as the old settings page)', () {
-    test('a conductor sees all six areas', () {
+  group('who sees what', () {
+    test('only Dirigent and Verantwortliche have a Verwaltung', () {
+      expect(rdShowsManage(const RdManageAccess(isAdmin: true)), isTrue);
+      expect(rdShowsManage(const RdManageAccess(canAccessFiles: true, showTeam: true)), isFalse);
+      expect(rdManageSearchable(const RdManageAccess(canAccessFiles: true)), isEmpty);
+    });
+
+    test('five sections; moved entries only in the search', () {
       expect(rdManageAreas(_admin), RdManageArea.values);
-      final entries = rdManageEntries(_admin);
-      expect(entries, containsAll([
-        RdManageEntry.approvals,
-        RdManageEntry.admins,
+      final rows = rdManageEntries(_admin);
+      expect(rows, isNot(contains(RdManageEntry.workHistory)));
+      expect(rows, isNot(contains(RdManageEntry.export)));
+      expect(rdManageSearchable(_admin), containsAll([RdManageEntry.workHistory, RdManageEntry.certificates]));
+      expect(rdManageEntries(_admin, area: RdManageArea.access), [
         RdManageEntry.rolesPermissions,
-        RdManageEntry.attendanceTypes,
-        RdManageEntry.planningTemplates,
-        RdManageEntry.workCategories,
-        RdManageEntry.certificates,
-        RdManageEntry.organisation,
-      ]));
-      // Tenant features that are off.
-      expect(entries, isNot(contains(RdManageEntry.parents)));
-      expect(entries, isNot(contains(RdManageEntry.teachers)));
-      expect(entries, isNot(contains(RdManageEntry.missingAccounts)));
-      expect(entries, isNot(contains(RdManageEntry.myVoice)));
-      expect(entries, isNot(contains(RdManageEntry.teamOrg)));
+        RdManageEntry.admins,
+        RdManageEntry.viewers,
+      ]);
     });
 
-    test('Register and Zusatzfelder sit with the members', () {
-      expect(RdManageEntry.groups.area, RdManageArea.members);
-      expect(RdManageEntry.extraFields.area, RdManageArea.members);
-    });
-
-    test('Administratoren only for admins outside the demo', () {
-      const responsible = RdManageAccess(isAdmin: true);
-      expect(rdManageVisible(RdManageEntry.admins, responsible), isFalse);
-      expect(rdManageVisible(RdManageEntry.admins, const RdManageAccess(isAdmin: true, isSuperAdmin: true)), isTrue);
-      expect(
-        rdManageVisible(RdManageEntry.admins, const RdManageAccess(isAdmin: true, isSuperAdmin: true, isDemo: true)),
-        isFalse,
-      );
-    });
-
-    test('tenant features switch entries on', () {
+    test('tenant features and roles switch rows on', () {
       const a = RdManageAccess(isAdmin: true, parentsEnabled: true, maintainTeachers: true, hasMissingAccounts: true);
       expect(rdManageEntries(a, area: RdManageArea.members), [
-        RdManageEntry.bulkMembers,
-        RdManageEntry.rolesPermissions,
-        RdManageEntry.parents,
-        RdManageEntry.viewers,
-        RdManageEntry.teachers,
-        RdManageEntry.missingAccounts,
-        RdManageEntry.archive,
         RdManageEntry.groups,
         RdManageEntry.extraFields,
-      ]);
-      expect(rdManageVisible(RdManageEntry.planningTemplates, a), isFalse);
-      expect(rdManageVisible(RdManageEntry.certificates, a), isFalse);
-      expect(rdManageVisible(RdManageEntry.approvals, a), isFalse);
-    });
-
-    test('a general tenant has no Werke entries, but its Dateiablage', () {
-      const a = RdManageAccess(isAdmin: true, isGeneral: true, canOpenWorks: true, canAccessFiles: true);
-      final works = rdManageEntries(a, area: RdManageArea.works);
-      expect(works, [RdManageEntry.fileStorage]);
-      const voice = RdManageAccess(isVoiceLeader: true, isGeneral: true);
-      expect(rdManageVisible(RdManageEntry.myVoice, voice), isFalse);
-      expect(rdManageVisible(RdManageEntry.myVoice, const RdManageAccess(isVoiceLeader: true)), isTrue);
-    });
-
-    test('helpers keep the Werkhistorie, players only what has a place elsewhere', () {
-      expect(rdManageEntries(_helper), [
-        RdManageEntry.works,
-        RdManageEntry.workHistory,
-        RdManageEntry.calendar,
-      ]);
-      expect(rdShowsManage(_helper), isTrue);
-      expect(rdManageEntries(_player), [RdManageEntry.works, RdManageEntry.calendar]);
-      expect(rdShowsManage(_player), isFalse);
-      expect(rdShowsManage(const RdManageAccess(isAdmin: true)), isTrue);
-    });
-
-    test('applicants see nothing', () {
-      const a = RdManageAccess(isApplicant: true, canAccessFiles: true);
-      expect(rdManageEntries(a), isEmpty);
-      expect(rdShowsManage(a), isFalse);
-      // Even an applicant admin gets no planning, statistics or archive.
-      const lead = RdManageAccess(isApplicant: true, isAdmin: true);
-      for (final e in [
-        RdManageEntry.runSheets,
-        RdManageEntry.statistics,
-        RdManageEntry.export,
-        RdManageEntry.archive,
+        RdManageEntry.registration,
+        RdManageEntry.critical,
+        RdManageEntry.teachers,
         RdManageEntry.bulkMembers,
-        RdManageEntry.workHistory,
-      ]) {
-        expect(rdManageVisible(e, lead), isFalse, reason: e.name);
-      }
+        RdManageEntry.missingAccounts,
+        RdManageEntry.archive,
+      ]);
+      // Off: "Noch nicht genutzt" instead of a row, still found.
+      const off = RdManageAccess(isAdmin: true, isOrchestra: true);
+      expect(rdManageUnused(off), [RdManageEntry.teachers, RdManageEntry.parents, RdManageEntry.sharing]);
+      expect(rdManageEntries(off), isNot(contains(RdManageEntry.parents)));
+      expect(rdManageSearchable(off), containsAll([RdManageEntry.teachers, RdManageEntry.parents]));
+      // Groups of type "Allgemein" have no Werke tab: sharing stays a row.
+      const general = RdManageAccess(isAdmin: true, isGeneral: true);
+      expect(rdManageUnused(general), [RdManageEntry.parents, RdManageEntry.sharing]);
+      const shared = RdManageAccess(isAdmin: true, isGeneral: true, sharingEnabled: true);
+      expect(rdManageEntries(shared, area: RdManageArea.group), contains(RdManageEntry.sharing));
+      expect(rdManageEntries(const RdManageAccess(isAdmin: true, sharingEnabled: true)), isNot(contains(RdManageEntry.sharing)));
+      // Admins only for super admins outside the demo.
+      expect(rdManageVisible(RdManageEntry.admins, a), isFalse);
+      expect(rdManageVisible(RdManageEntry.admins, const RdManageAccess(isAdmin: true, isSuperAdmin: true, isDemo: true)),
+          isFalse);
+      expect(rdManageVisible(RdManageEntry.parents, a), isTrue);
+      expect(rdManageVisible(RdManageEntry.orgPlans, a), isFalse);
     });
 
-    test('team organisation: leader, circle and own tasks', () {
-      const leader = RdManageAccess(teamOrgEnabled: true, isTeamLeader: true);
-      expect(rdManageEntries(leader, area: RdManageArea.communication), [RdManageEntry.teamOrg]);
-      const circle = RdManageAccess(teamOrgEnabled: true, inTeamCircle: true);
-      expect(rdManageEntries(circle, area: RdManageArea.communication), [
-        RdManageEntry.myTasks,
-        RdManageEntry.suggestTopic,
-        RdManageEntry.protocols,
-      ]);
-      const tasks = RdManageAccess(teamOrgEnabled: true, hasOwnTasks: true);
-      expect(rdManageEntries(tasks, area: RdManageArea.communication), [RdManageEntry.myTasks]);
-      expect(rdShowsManage(tasks), isTrue);
-      const off = RdManageAccess(inTeamCircle: true, isTeamLeader: true);
-      expect(rdManageEntries(off, area: RdManageArea.communication), isEmpty);
+    test('the Dateiablage lives in the Werke tab, without one under Ich', () {
+      expect(rdManageHome(RdManageEntry.fileStorage, _admin), RdManageHome.works);
+      const general = RdManageAccess(isAdmin: true, isGeneral: true, canAccessFiles: true);
+      expect(rdManageHome(RdManageEntry.fileStorage, general), RdManageHome.me);
+      expect(rdManageVisible(RdManageEntry.workHistory, general), isFalse);
+      expect(rdMeShowsFiles(canAccessFiles: true, hasWorksTab: false), isTrue);
+      expect(rdMeShowsFiles(canAccessFiles: true, hasWorksTab: true), isFalse);
     });
   });
 
-  group('search and recent entries', () {
-    test('matches title, area and hint, every word', () {
-      expect(rdManageMatches('urk', 'Urkunden generieren', 'Auswertung & Daten'), isTrue);
-      expect(rdManageMatches('daten export', 'Export', 'Auswertung & Daten'), isTrue);
-      expect(rdManageMatches('saison', 'Allgemeine Einstellungen', 'Gruppe', 'Name, Saison'), isTrue);
-      expect(rdManageMatches('xyz', 'Export', 'Auswertung & Daten'), isFalse);
-      expect(rdManageMatches('  ', 'Export', 'Auswertung & Daten'), isTrue);
+  group('routes', () {
+    test('only leads open the Verwaltung; helpers keep the Werkhistorie', () {
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.manage, Role.responsible), isNull);
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.admins, Role.responsible), RedesignRoutes.manage);
+      for (final role in [Role.helper, Role.player, Role.voiceLeader, Role.viewer, Role.parent, Role.applicant]) {
+        expect(RedesignRoutes.roleRedirect(RedesignRoutes.manage, role), RedesignRoutes.me, reason: role.name);
+        expect(RedesignRoutes.roleRedirect(RedesignRoutes.stats, role), RedesignRoutes.me, reason: role.name);
+      }
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.workHistory, Role.helper), isNull);
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.workHistory, Role.player), RedesignRoutes.me);
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.teachers, Role.viewer), isNull);
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.teacherEdit(3), Role.viewer), RedesignRoutes.teachers);
     });
 
-    test('recent: newest first, no duplicates, at most three', () {
-      var recent = <RdManageEntry>[];
-      recent = rdPushRecent(recent, RdManageEntry.export);
-      recent = rdPushRecent(recent, RdManageEntry.statistics);
-      recent = rdPushRecent(recent, RdManageEntry.export);
-      expect(recent, [RdManageEntry.export, RdManageEntry.statistics]);
-      recent = rdPushRecent(recent, RdManageEntry.groups);
-      recent = rdPushRecent(recent, RdManageEntry.general);
-      expect(recent, [RdManageEntry.general, RdManageEntry.groups, RdManageEntry.export]);
+    test('Werkhistorie belongs to the Werke tab; Ich pages are not the Verwaltung', () {
+      expect(rdTabForLocation(RedesignRoutes.workHistory), RdTab.works);
+      expect(rdTabForLocation(RedesignRoutes.workCategories), RdTab.works);
+      expect(rdIsManageLocation(RedesignRoutes.groups), isTrue);
+      expect(rdIsManageLocation('/settings/general'), isTrue);
+      expect(rdIsManageLocation('/export'), isTrue);
+      expect(rdIsManageLocation('/settings/team-organization'), isFalse);
+      expect(rdIsManageLocation(RedesignRoutes.workHistory), isFalse);
+      expect(rdIsManageLocation(RedesignRoutes.me), isFalse);
     });
+  });
 
-    test('area keys are the path segments', () {
-      expect(RdManageArea.fromKey('termine'), RdManageArea.events);
-      expect(RdManageArea.fromKey('gruppe'), RdManageArea.group);
-      expect(RdManageArea.fromKey('x'), isNull);
-      expect(RedesignRoutes.manageArea('daten'), '/ich/verwaltung/daten');
-    });
+  testWidgets('back from a page opened by its URL leads to its tab, not to the routes beneath', (tester) async {
+    GoRouter router(String initial) => GoRouter(
+          initialLocation: initial,
+          routes: [
+            ShellRoute(
+              builder: (_, __, child) => child,
+              routes: [
+                GoRoute(path: RedesignRoutes.works, builder: (_, __) => const Text('works')),
+                GoRoute(
+                  path: RedesignRoutes.me,
+                  builder: (_, __) => const Text('me'),
+                  routes: [
+                    GoRoute(
+                      path: 'verwaltung',
+                      builder: (_, __) => const Text('manage'),
+                      routes: [
+                        GoRoute(
+                          path: 'werkhistorie',
+                          builder: (context, __) => GestureDetector(
+                            onTap: () => rdBack(context, RedesignRoutes.works),
+                            child: const Text('back'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        );
+    // Reload or link: Ich › Verwaltung is built beneath, back still leads
+    // to the Werke tab.
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router(RedesignRoutes.workHistory)));
+    await tester.tap(find.text('back'));
+    await tester.pumpAndSettle();
+    expect(find.text('works'), findsOneWidget);
+
+    // Pushed (from the Werke tab's "•••"): back returns where it came from.
+    final pushed = router(RedesignRoutes.me);
+    await tester.pumpWidget(MaterialApp.router(key: UniqueKey(), routerConfig: pushed));
+    pushed.push(RedesignRoutes.workHistory);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('back'));
+    await tester.pumpAndSettle();
+    expect(find.text('me'), findsOneWidget);
   });
 
   group('Verwaltung page', () {
-    testWidgets('areas, waiting approvals and the footer', (tester) async {
+    testWidgets('the group on top, then the sections with their rows', (tester) async {
       _phone(tester);
-      final pending = [TestFactories.createPerson(id: 1), TestFactories.createPerson(id: 2)];
-      await tester.pumpWidget(_app(_admin, pending: pending));
+      await tester.pumpWidget(_app(_admin, left: TestFactories.createPersonList(4, tenantId: 7)));
       await _settle(tester);
 
-      expect(find.text('Verwaltung'), findsOneWidget);
-      expect(find.text('Einstellung suchen'), findsOneWidget);
-      expect(find.text('2 Personen warten auf Freigabe'), findsOneWidget);
-      for (final area in [
-        'Mitglieder, Register & Rollen',
-        'Termine & Planung',
-        'Werke & Dateien',
-        'Auswertung & Daten',
-        'Kommunikation',
-        'Gruppe',
-      ]) {
-        expect(find.text(area), findsOneWidget, reason: area);
-      }
-      expect(find.text('Anwesenheits-Typen, Schichtpläne, Ablaufpläne, Ad-Hoc Ablaufplanung …'), findsOneWidget);
-      final count = rdManageEntries(_admin).length;
-      await tester.ensureVisible(find.textContaining('bisherigen Einträge'));
-      expect(find.text('Alle $count bisherigen Einträge stecken in diesen Bereichen und sind über die Suche direkt erreichbar.'),
-          findsOneWidget);
+      expect(find.text('Attendix Test'), findsOneWidget);
+      expect(find.text('Orchester · 42 Mitglieder · ATTX'), findsOneWidget);
+      expect(find.text('MITGLIEDER'), findsOneWidget);
+      expect(find.text('Register'), findsOneWidget);
+      expect(find.text('Archiv'), findsOneWidget);
+      expect(find.text('4'), findsOneWidget);
+      expect(find.text('Anmeldung per Link'), findsOneWidget);
+      // What moved is not a row any more.
+      expect(find.text('Gespielte Werke'), findsNothing);
+      expect(find.text('Alle Einstellungen (bisherige Ansicht)'), findsNothing);
+      final page = find.byType(Scrollable).first;
+      await tester.scrollUntilVisible(find.text('Organisation'), 300, scrollable: page);
+      expect(find.text('Terminarten'), findsOneWidget);
       expect(tester.takeException(), isNull);
-    });
 
-    testWidgets('an area lists its entries and opens their pages', (tester) async {
-      _phone(tester);
-      await tester.pumpWidget(_app(_admin));
+      await tester.ensureVisible(find.text('Terminarten'));
+      await tester.pump();
+      await tester.tap(find.text('Terminarten'));
       await _settle(tester);
-
-      await _tapVisible(tester, find.text('Termine & Planung'));
-      expect(find.text('Anwesenheits-Typen'), findsOneWidget);
-      expect(find.text('Schichtpläne'), findsOneWidget);
-      expect(find.text('Ablaufpläne'), findsOneWidget);
-      expect(find.text('Planvorlagen & Felder'), findsOneWidget);
-
-      // Anwesenheits-Typen opens the Verwaltungsliste of the Beta.
-      await _tapVisible(tester, find.text('Anwesenheits-Typen'));
       expect(find.text('page beta types'), findsOneWidget);
     });
 
-    testWidgets('Mitglieder, Register & Rollen shows the counts', (tester) async {
-      _phone(tester);
-      final pending = [TestFactories.createPerson(id: 1), TestFactories.createPerson(id: 2)];
-      final left = TestFactories.createPersonList(4, tenantId: 7);
-      await tester.pumpWidget(_app(_admin, initial: '/ich/verwaltung/mitglieder', pending: pending, left: left));
-      await _settle(tester);
-
-      expect(find.text('Mitglieder, Register & Rollen'), findsOneWidget);
-      expect(find.text('Freigaben'), findsOneWidget);
-      expect(find.text('2'), findsOneWidget);
-      expect(find.text('Archiv'), findsOneWidget);
-      expect(find.text('4'), findsOneWidget);
-      expect(find.text('Administratoren'), findsOneWidget);
-      expect(find.text('Eltern'), findsNothing);
-    });
-
-    testWidgets('search finds entries across areas', (tester) async {
+    testWidgets('search finds moved entries, old names and remembers them', (tester) async {
       _phone(tester);
       await tester.pumpWidget(_app(_admin));
       await _settle(tester);
+
+      await tester.enterText(find.byType(TextField), 'werkhistorie');
+      await _settle(tester);
+      expect(find.text('Gespielte Werke'), findsOneWidget);
+      expect(find.text('Im Werke-Tab unter ••• · früher „Werkhistorie“'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), 'gruppen');
+      await _settle(tester);
+      expect(find.text('Register'), findsOneWidget);
+
+      // A switch of the old "Allgemein" leads to its new place.
+      await tester.enterText(find.byType(TextField), 'saisonbeginn');
+      await _settle(tester);
+      expect(find.text('Auswertung und Mitteilungen · Saisonbeginn'), findsOneWidget);
+      await tester.enterText(find.byType(TextField), 'allgemein');
+      await _settle(tester);
+      expect(find.text('Termine · früher „Allgemeine Einstellungen“'), findsNWidgets(2));
+      expect(find.text('Auswertung und Mitteilungen · Schalter aus „Allgemeine Einstellungen“'), findsOneWidget);
 
       await tester.enterText(find.byType(TextField), 'urk');
       await _settle(tester);
-      expect(find.text('Urkunden generieren'), findsOneWidget);
-      expect(find.text('Auswertung & Daten'), findsOneWidget);
-      expect(find.text('Kommunikation'), findsNothing);
+      expect(find.text('Urkunden'), findsOneWidget);
+      expect(find.text('In der Auswertung · früher „Urkunden generieren“'), findsNothing);
 
-      await tester.enterText(find.byType(TextField), 'kommunikation');
+      // Freigaben moved to the Mitglieder tab; the search still opens it.
+      await tester.enterText(find.byType(TextField), 'freigaben');
       await _settle(tester);
-      expect(find.text('Mitteilungen'), findsOneWidget);
-
-      await tester.enterText(find.byType(TextField), 'xyz');
+      expect(find.text('Im Mitglieder-Tab'), findsOneWidget);
+      await tester.tap(find.text('Freigaben'));
       await _settle(tester);
-      expect(find.text('Keine Einstellung passt zur Suche.'), findsOneWidget);
-    });
-
-    testWidgets('search shows the recently opened entries', (tester) async {
-      _phone(tester);
-      SharedPreferences.setMockInitialValues({
-        rdManageRecentStorageKey: ['export', 'unknown', 'statistics'],
-      });
-      await tester.pumpWidget(_app(_admin));
-      await _settle(tester);
-      expect(find.text('ZULETZT GEÖFFNET'), findsNothing);
-
-      await tester.tap(find.byType(TextField));
-      await _settle(tester);
-      expect(find.text('ZULETZT GEÖFFNET'), findsOneWidget);
-      expect(find.text('Export'), findsOneWidget);
-      expect(find.text('Statistiken'), findsOneWidget);
-    });
-
-    testWidgets('opening an entry remembers it', (tester) async {
-      _phone(tester);
-      await tester.pumpWidget(_app(_admin));
-      await _settle(tester);
-
-      await tester.enterText(find.byType(TextField), 'werke');
-      await _settle(tester);
-      await _tapVisible(tester, find.text('Werke'));
-      expect(find.text('page works'), findsOneWidget);
+      expect(find.text('page approvals'), findsOneWidget);
       final prefs = await SharedPreferences.getInstance();
-      expect(prefs.getStringList(rdManageRecentStorageKey), ['works']);
+      expect(prefs.getStringList(rdManageRecentStorageKey), ['approvals']);
     });
 
-    testWidgets('a helper sees only the Werke area and the data area', (tester) async {
+    testWidgets('a section page (desktop detail or old link)', (tester) async {
       _phone(tester);
-      await tester.pumpWidget(_app(_helper));
+      await tester.pumpWidget(_app(_admin, initial: '/ich/verwaltung/zugaenge'));
       await _settle(tester);
+      expect(find.text('Zugänge und Rechte'), findsOneWidget);
+      expect(find.text('Rollen und Rechte'), findsOneWidget);
+      expect(find.text('Admins'), findsOneWidget);
+      expect(find.text('Register'), findsNothing);
 
-      expect(find.text('Werke & Dateien'), findsOneWidget);
-      expect(find.text('Auswertung & Daten'), findsOneWidget);
-      expect(find.text('Mitglieder, Register & Rollen'), findsNothing);
-      expect(find.textContaining('warten auf Freigabe'), findsNothing);
-    });
-
-    testWidgets('the previous settings stay reachable', (tester) async {
-      _phone(tester);
-      await tester.pumpWidget(_app(_admin));
-      await _settle(tester);
-
-      await _tapVisible(tester, find.text('Alle Einstellungen (bisherige Ansicht)'));
-      expect(find.text('page old settings'), findsOneWidget);
-    });
-
-    testWidgets('an unknown area shows a hint', (tester) async {
-      _phone(tester);
       await tester.pumpWidget(_app(_admin, initial: '/ich/verwaltung/gibtsnicht'));
       await _settle(tester);
       expect(find.text('Keine Einstellung passt zur Suche.'), findsOneWidget);
-    });
-  });
-
-  group('wiring', () {
-    test('Ich, the sidebar and the router lead to the Verwaltung', () {
-      final me = File('lib/features/redesign/presentation/pages/rd_me_page.dart').readAsStringSync();
-      expect(me, contains('context.push(RedesignRoutes.manage)'));
-      expect(me, contains('rdShowsManage('));
-      final shell = File('lib/features/redesign/presentation/shell/rd_shell.dart').readAsStringSync();
-      expect(shell, contains('RedesignRoutes.manage'));
-      final router = File('lib/core/router/app_router.dart').readAsStringSync();
-      expect(router, contains('RdManagePage()'));
-      expect(router, contains('RdManageAreaPage('));
-    });
-
-    test('applicants and parents are sent back from the Verwaltung', () {
-      expect(RedesignRoutes.roleRedirect('/ich/verwaltung', Role.applicant), RedesignRoutes.me);
-      expect(RedesignRoutes.roleRedirect('/ich/verwaltung/daten', Role.parent), RedesignRoutes.me);
-      expect(RedesignRoutes.roleRedirect('/ich/verwaltung', Role.admin), isNull);
-      expect(RedesignRoutes.roleRedirect('/ich/verwaltung', Role.helper), isNull);
-      expect(RedesignRoutes.roleRedirect('/ich', Role.applicant), isNull);
     });
   });
 }

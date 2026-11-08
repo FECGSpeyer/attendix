@@ -12055,6 +12055,336 @@
       "count": {}
     }
   },
+  "rdAdminAdHoc": "Ablaufplan ohne Termin",
+  "@rdAdminAdHoc": {
+    "description": "rdAdmin.adHoc"
+  },
+  "rdAdminAdHocHint": "Für Anlässe außerhalb der Terminliste, per Link teilbar",
+  "@rdAdminAdHocHint": {
+    "description": "rdAdmin.adHocHint"
+  },
+  "rdAdminAdmins": "Admins",
+  "@rdAdminAdmins": {
+    "description": "rdAdmin.admins"
+  },
+  "rdAdminAdminsHint": "Dürfen alles in dieser Gruppe",
+  "@rdAdminAdminsHint": {
+    "description": "rdAdmin.adminsHint"
+  },
+  "rdAdminArchiveHint": "Ausgetretene, jederzeit wiederherstellbar",
+  "@rdAdminArchiveHint": {
+    "description": "rdAdmin.archiveHint"
+  },
+  "rdAdminAreaAccess": "Zugänge und Rechte",
+  "@rdAdminAreaAccess": {
+    "description": "rdAdmin.areaAccess"
+  },
+  "rdAdminAreaData": "Auswertung und Mitteilungen",
+  "@rdAdminAreaData": {
+    "description": "rdAdmin.areaData"
+  },
+  "rdAdminAreaEvents": "Termine",
+  "@rdAdminAreaEvents": {
+    "description": "rdAdmin.areaEvents"
+  },
+  "rdAdminAreaGroup": "Gruppe und Organisation",
+  "@rdAdminAreaGroup": {
+    "description": "rdAdmin.areaGroup"
+  },
+  "rdAdminAreaMembers": "Mitglieder",
+  "@rdAdminAreaMembers": {
+    "description": "rdAdmin.areaMembers"
+  },
+  "rdAdminBulkHint": "Register, Status und mehr für viele auf einmal",
+  "@rdAdminBulkHint": {
+    "description": "rdAdmin.bulkHint"
+  },
+  "rdAdminCertificates": "Urkunden",
+  "@rdAdminCertificates": {
+    "description": "rdAdmin.certificates"
+  },
+  "rdAdminCertificatesHint": "Teilnahme-Urkunden als PDF",
+  "@rdAdminCertificatesHint": {
+    "description": "rdAdmin.certificatesHint"
+  },
+  "rdAdminCounting": "So wird gezählt",
+  "@rdAdminCounting": {
+    "description": "rdAdmin.counting"
+  },
+  "rdAdminCritical": "Problemfälle",
+  "@rdAdminCritical": {
+    "description": "rdAdmin.critical"
+  },
+  "rdAdminCriticalCount": "{count, plural, one {1 Regel} other {{count} Regeln}}",
+  "@rdAdminCriticalCount": {
+    "description": "rdAdmin.criticalCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdAdminCriticalHint": "Wann jemand als Problemfall gilt",
+  "@rdAdminCriticalHint": {
+    "description": "rdAdmin.criticalHint"
+  },
+  "rdAdminCriticalIntro": "Wer nach diesen Regeln zu oft fehlt, gilt als Problemfall und fällt unter Heute und im Mitglieder-Tab auf.",
+  "@rdAdminCriticalIntro": {
+    "description": "rdAdmin.criticalIntro"
+  },
+  "rdAdminData": "Daten",
+  "@rdAdminData": {
+    "description": "rdAdmin.data"
+  },
+  "rdAdminExportHint": "Mitgliederliste oder Anwesenheit als Datei",
+  "@rdAdminExportHint": {
+    "description": "rdAdmin.exportHint"
+  },
+  "rdAdminExtraFields": "Eigene Felder",
+  "@rdAdminExtraFields": {
+    "description": "rdAdmin.extraFields"
+  },
+  "rdAdminExtraFieldsHint": "Zusätzliche Angaben zu Personen und Werken",
+  "@rdAdminExtraFieldsHint": {
+    "description": "rdAdmin.extraFieldsHint"
+  },
+  "rdAdminFiles": "Dateien",
+  "@rdAdminFiles": {
+    "description": "rdAdmin.files"
+  },
+  "rdAdminFormerly": "früher „{name}“",
+  "@rdAdminFormerly": {
+    "description": "rdAdmin.formerly",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdAdminGroups": "Register",
+  "@rdAdminGroups": {
+    "description": "rdAdmin.groups"
+  },
+  "rdAdminGroupsHint": "Instrumente und Stimmen, nach denen sortiert wird",
+  "@rdAdminGroupsHint": {
+    "description": "rdAdmin.groupsHint"
+  },
+  "rdAdminHeroMembers": "{count, plural, one {1 Mitglied} other {{count} Mitglieder}}",
+  "@rdAdminHeroMembers": {
+    "description": "rdAdmin.heroMembers",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdAdminHolidays": "Ferien und Feiertage",
+  "@rdAdminHolidays": {
+    "description": "rdAdmin.holidays"
+  },
+  "rdAdminHolidaysHint": "Beim Planen von Terminen hervorgehoben",
+  "@rdAdminHolidaysHint": {
+    "description": "rdAdmin.holidaysHint"
+  },
+  "rdAdminHolidaysIntro": "Ferien und Feiertage eures Bundeslands werden beim Anlegen von Terminen hervorgehoben.",
+  "@rdAdminHolidaysIntro": {
+    "description": "rdAdmin.holidaysIntro"
+  },
+  "rdAdminHomeEvent": "Im Termin unter „Programm“",
+  "@rdAdminHomeEvent": {
+    "description": "rdAdmin.homeEvent"
+  },
+  "rdAdminHomeMe": "Unter Ich",
+  "@rdAdminHomeMe": {
+    "description": "rdAdmin.homeMe"
+  },
+  "rdAdminHomeMembers": "Im Mitglieder-Tab",
+  "@rdAdminHomeMembers": {
+    "description": "rdAdmin.homeMembers"
+  },
+  "rdAdminHomeOrganisation": "In Organisation",
+  "@rdAdminHomeOrganisation": {
+    "description": "rdAdmin.homeOrganisation"
+  },
+  "rdAdminHomeStats": "In der Auswertung",
+  "@rdAdminHomeStats": {
+    "description": "rdAdmin.homeStats"
+  },
+  "rdAdminHomeWorks": "Im Werke-Tab unter •••",
+  "@rdAdminHomeWorks": {
+    "description": "rdAdmin.homeWorks"
+  },
+  "rdAdminManageGroups": "Register verwalten",
+  "@rdAdminManageGroups": {
+    "description": "rdAdmin.manageGroups"
+  },
+  "rdAdminManageTypes": "Terminarten verwalten",
+  "@rdAdminManageTypes": {
+    "description": "rdAdmin.manageTypes"
+  },
+  "rdAdminMissing": "Zugänge anlegen",
+  "@rdAdminMissing": {
+    "description": "rdAdmin.missing"
+  },
+  "rdAdminMissingBanner": "{count, plural, one {1 Mitglied hat eine E-Mail, aber noch keinen Zugang zur App.} other {{count} Mitglieder haben eine E-Mail, aber noch keinen Zugang zur App.}}",
+  "@rdAdminMissingBanner": {
+    "description": "rdAdmin.missingBanner",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdAdminName": "Name und Kürzel",
+  "@rdAdminName": {
+    "description": "rdAdmin.name"
+  },
+  "rdAdminNameHint": "Wie die Gruppe heißt, Kürzel für Dateinamen",
+  "@rdAdminNameHint": {
+    "description": "rdAdmin.nameHint"
+  },
+  "rdAdminOff": "Aus",
+  "@rdAdminOff": {
+    "description": "rdAdmin.off"
+  },
+  "rdAdminOn": "An",
+  "@rdAdminOn": {
+    "description": "rdAdmin.on"
+  },
+  "rdAdminOrganisationHint": "Gruppenübergreifend: Personen, Branding, Vorlagen, Org-Pläne",
+  "@rdAdminOrganisationHint": {
+    "description": "rdAdmin.organisationHint"
+  },
+  "rdAdminParentsHint": "Sehen ihre Kinder und melden sie ab",
+  "@rdAdminParentsHint": {
+    "description": "rdAdmin.parentsHint"
+  },
+  "rdAdminPendingBadge": "{count, plural, one {1 Anfrage wartet auf Freigabe} other {{count} Anfragen warten auf Freigabe}}",
+  "@rdAdminPendingBadge": {
+    "description": "rdAdmin.pendingBadge",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdAdminReasons": "Abmeldegründe",
+  "@rdAdminReasons": {
+    "description": "rdAdmin.reasons"
+  },
+  "rdAdminReasonsHint": "Auswahl beim Abmelden und Verspäten",
+  "@rdAdminReasonsHint": {
+    "description": "rdAdmin.reasonsHint"
+  },
+  "rdAdminReasonsIntro": "Diese Gründe stehen zur Auswahl, wenn sich jemand abmeldet oder verspätet.",
+  "@rdAdminReasonsIntro": {
+    "description": "rdAdmin.reasonsIntro"
+  },
+  "rdAdminRegistration": "Anmeldung per Link",
+  "@rdAdminRegistration": {
+    "description": "rdAdmin.registration"
+  },
+  "rdAdminRegistrationHint": "Neue melden sich selbst an",
+  "@rdAdminRegistrationHint": {
+    "description": "rdAdmin.registrationHint"
+  },
+  "rdAdminRegistrationIntro": "Wer den Link öffnet, meldet sich bei euch an. Teilen kannst du ihn auch im Mitglieder-Tab beim Einladen.",
+  "@rdAdminRegistrationIntro": {
+    "description": "rdAdmin.registrationIntro"
+  },
+  "rdAdminRoles": "Rollen und Rechte",
+  "@rdAdminRoles": {
+    "description": "rdAdmin.roles"
+  },
+  "rdAdminRolesHint": "Was Helfer und Mitglieder dürfen und sehen",
+  "@rdAdminRolesHint": {
+    "description": "rdAdmin.rolesHint"
+  },
+  "rdAdminSearch": "Suchen, z. B. Saison, Eltern, Register",
+  "@rdAdminSearch": {
+    "description": "rdAdmin.search"
+  },
+  "rdAdminSharing": "Werke öffentlich teilen",
+  "@rdAdminSharing": {
+    "description": "rdAdmin.sharing"
+  },
+  "rdAdminSharingHint": "Werkliste per Link, ohne Anmeldung",
+  "@rdAdminSharingHint": {
+    "description": "rdAdmin.sharingHint"
+  },
+  "rdAdminShiftsHint": "Wer Schicht hat, ist automatisch entschuldigt",
+  "@rdAdminShiftsHint": {
+    "description": "rdAdmin.shiftsHint"
+  },
+  "rdAdminShowHolidays": "Ferien und Feiertage einblenden",
+  "@rdAdminShowHolidays": {
+    "description": "rdAdmin.showHolidays"
+  },
+  "rdAdminStatsHint": "Statistik, Saison, Zählweise und Export",
+  "@rdAdminStatsHint": {
+    "description": "rdAdmin.statsHint"
+  },
+  "rdAdminStatsHintCertificates": "Statistik, Saison, Zählweise, Export und Urkunden",
+  "@rdAdminStatsHintCertificates": {
+    "description": "rdAdmin.statsHintCertificates"
+  },
+  "rdAdminSwitchesFrom": "Schalter aus „{name}“",
+  "@rdAdminSwitchesFrom": {
+    "description": "rdAdmin.switchesFrom",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdAdminTeachersHint": "Wer welchen Spieler unterrichtet",
+  "@rdAdminTeachersHint": {
+    "description": "rdAdmin.teachersHint"
+  },
+  "rdAdminTeam": "Team",
+  "@rdAdminTeam": {
+    "description": "rdAdmin.team"
+  },
+  "rdAdminTeamHint": "Aufgaben, Themen, Protokolle",
+  "@rdAdminTeamHint": {
+    "description": "rdAdmin.teamHint"
+  },
+  "rdAdminTypes": "Terminarten",
+  "@rdAdminTypes": {
+    "description": "rdAdmin.types"
+  },
+  "rdAdminTypesHint": "Vorgaben für neue Termine wie Zeit und Status",
+  "@rdAdminTypesHint": {
+    "description": "rdAdmin.typesHint"
+  },
+  "rdAdminUnused": "Noch nicht genutzt",
+  "@rdAdminUnused": {
+    "description": "rdAdmin.unused"
+  },
+  "rdAdminUnusedNote": "Was aus ist, steht hier mit einem Satz, wofür es gut ist. Einmal eingeschaltet, rückt es in seinen Abschnitt.",
+  "@rdAdminUnusedNote": {
+    "description": "rdAdmin.unusedNote"
+  },
+  "rdAdminUnusedParents": "Eltern sehen Termine und Anwesenheit ihrer Kinder und melden sie ab.",
+  "@rdAdminUnusedParents": {
+    "description": "rdAdmin.unusedParents"
+  },
+  "rdAdminUnusedSharing": "Ein Link zeigt eure Werkliste, ganz ohne Anmeldung.",
+  "@rdAdminUnusedSharing": {
+    "description": "rdAdmin.unusedSharing"
+  },
+  "rdAdminUnusedTeachers": "Wer welchen Spieler unterrichtet, mit Schülerliste je Lehrer.",
+  "@rdAdminUnusedTeachers": {
+    "description": "rdAdmin.unusedTeachers"
+  },
+  "rdAdminViewersHint": "Sehen alles, ändern nichts",
+  "@rdAdminViewersHint": {
+    "description": "rdAdmin.viewersHint"
+  },
+  "rdAdminVisibility": "Was Mitglieder sehen",
+  "@rdAdminVisibility": {
+    "description": "rdAdmin.visibility"
+  },
+  "rdAdminWorkHistory": "Gespielte Werke",
+  "@rdAdminWorkHistory": {
+    "description": "rdAdmin.workHistory"
+  },
   "rdDataAddColumn": "Spalte hinzufügen",
   "@rdDataAddColumn": {
     "description": "rdData.addColumn"
@@ -12591,10 +12921,6 @@
   "@rdSettingsEmptyValue": {
     "description": "rdSettings.emptyValue"
   },
-  "rdSettingsGeneralTitle": "Allgemein",
-  "@rdSettingsGeneralTitle": {
-    "description": "rdSettings.generalTitle"
-  },
   "rdSettingsHolidays": "Ferien und Feiertage zeigen",
   "@rdSettingsHolidays": {
     "description": "rdSettings.holidays"
@@ -12717,34 +13043,6 @@
   "rdSettingsSeasonStart": "Saisonbeginn",
   "@rdSettingsSeasonStart": {
     "description": "rdSettings.seasonStart"
-  },
-  "rdSettingsSectionAttendance": "Anwesenheit",
-  "@rdSettingsSectionAttendance": {
-    "description": "rdSettings.sectionAttendance"
-  },
-  "rdSettingsSectionCritical": "Problemfälle",
-  "@rdSettingsSectionCritical": {
-    "description": "rdSettings.sectionCritical"
-  },
-  "rdSettingsSectionFeatures": "Funktionen",
-  "@rdSettingsSectionFeatures": {
-    "description": "rdSettings.sectionFeatures"
-  },
-  "rdSettingsSectionMembers": "Für Mitglieder",
-  "@rdSettingsSectionMembers": {
-    "description": "rdSettings.sectionMembers"
-  },
-  "rdSettingsSectionReasons": "Gründe",
-  "@rdSettingsSectionReasons": {
-    "description": "rdSettings.sectionReasons"
-  },
-  "rdSettingsSectionRegistration": "Anmeldung",
-  "@rdSettingsSectionRegistration": {
-    "description": "rdSettings.sectionRegistration"
-  },
-  "rdSettingsSectionWorks": "Werke",
-  "@rdSettingsSectionWorks": {
-    "description": "rdSettings.sectionWorks"
   },
   "rdSettingsShareWorksHint": "Jeder mit dem Link kann die Werke ansehen",
   "@rdSettingsShareWorksHint": {
@@ -13356,6 +13654,10 @@
   "@redesignCreateEnd": {
     "description": "redesign.create.end"
   },
+  "redesignCreateEndBeforeStart": "Das Ende kann nicht vor dem Beginn liegen.",
+  "@redesignCreateEndBeforeStart": {
+    "description": "redesign.create.endBeforeStart"
+  },
   "redesignCreateFewer": "Weniger",
   "@redesignCreateFewer": {
     "description": "redesign.create.fewer"
@@ -13872,6 +14174,34 @@
   "@redesignEventEditTitle": {
     "description": "redesign.eventEdit.title"
   },
+  "redesignEventEditTypeStatusAdopt": "Anpassen",
+  "@redesignEventEditTypeStatusAdopt": {
+    "description": "redesign.eventEdit.typeStatusAdopt"
+  },
+  "redesignEventEditTypeStatusFailed": "{count, plural, one {Bei 1 Person konnte der Status nicht angepasst werden. Bitte in der Anwesenheit nachtragen.} other {Bei {count} Personen konnte der Status nicht angepasst werden. Bitte in der Anwesenheit nachtragen.}}",
+  "@redesignEventEditTypeStatusFailed": {
+    "description": "redesign.eventEdit.typeStatusFailed",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignEventEditTypeStatusMessage": "{count, plural, one {1 Person steht noch auf „{from}“, dem Standard der bisherigen Art. Soll sie auf „{to}“ wechseln?} other {{count} Personen stehen noch auf „{from}“, dem Standard der bisherigen Art. Sollen sie auf „{to}“ wechseln?}}",
+  "@redesignEventEditTypeStatusMessage": {
+    "description": "redesign.eventEdit.typeStatusMessage",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "from": {},
+      "to": {}
+    }
+  },
+  "redesignEventEditTypeStatusTitle": "Status anpassen?",
+  "@redesignEventEditTypeStatusTitle": {
+    "description": "redesign.eventEdit.typeStatusTitle"
+  },
   "redesignEventExportExcel": "Als Excel exportieren",
   "@redesignEventExportExcel": {
     "description": "redesign.event.exportExcel"
@@ -14295,7 +14625,7 @@
   "@redesignEventsNew": {
     "description": "redesign.events.new"
   },
-  "redesignEventsNo": "Abmelden",
+  "redesignEventsNo": "Kann nicht",
   "@redesignEventsNo": {
     "description": "redesign.events.no"
   },
@@ -14361,7 +14691,7 @@
       }
     }
   },
-  "redesignEventsYes": "Dabei",
+  "redesignEventsYes": "Bin dabei",
   "@redesignEventsYes": {
     "description": "redesign.events.yes"
   },
@@ -14742,18 +15072,18 @@
   "@redesignGroupEditClefsHint": {
     "description": "redesign.groupEdit.clefsHint"
   },
-  "redesignGroupEditDelete": "Gruppe löschen",
+  "redesignGroupEditDelete": "Register löschen",
   "@redesignGroupEditDelete": {
     "description": "redesign.groupEdit.delete"
   },
-  "redesignGroupEditDeleteConfirm": "Gruppe „{name}“ wirklich löschen?",
+  "redesignGroupEditDeleteConfirm": "Register „{name}“ wirklich löschen?",
   "@redesignGroupEditDeleteConfirm": {
     "description": "redesign.groupEdit.deleteConfirm",
     "placeholders": {
       "name": {}
     }
   },
-  "redesignGroupEditDeleteFailed": "Die Gruppe konnte nicht gelöscht werden.",
+  "redesignGroupEditDeleteFailed": "Das Register konnte nicht gelöscht werden.",
   "@redesignGroupEditDeleteFailed": {
     "description": "redesign.groupEdit.deleteFailed"
   },
@@ -14761,7 +15091,7 @@
   "@redesignGroupEditDeleteMain": {
     "description": "redesign.groupEdit.deleteMain"
   },
-  "redesignGroupEditDeleteMembers": "{count, plural, one {In der Gruppe ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.} other {In der Gruppe sind oder waren noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.}}",
+  "redesignGroupEditDeleteMembers": "{count, plural, one {Im Register ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in ein anderes Register.} other {Im Register sind oder waren noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in ein anderes Register.}}",
   "@redesignGroupEditDeleteMembers": {
     "description": "redesign.groupEdit.deleteMembers",
     "placeholders": {
@@ -14798,7 +15128,7 @@
   "@redesignGroupEditNameEmpty": {
     "description": "redesign.groupEdit.nameEmpty"
   },
-  "redesignGroupEditNotFound": "Diese Gruppe gibt es nicht mehr.",
+  "redesignGroupEditNotFound": "Dieses Register gibt es nicht mehr.",
   "@redesignGroupEditNotFound": {
     "description": "redesign.groupEdit.notFound"
   },
@@ -14814,7 +15144,7 @@
   "@redesignGroupEditSynonyms": {
     "description": "redesign.groupEdit.synonyms"
   },
-  "redesignGroupEditSynonymsHint": "Über die Synonyme ordnet die App hochgeladene Noten automatisch dieser Gruppe zu.",
+  "redesignGroupEditSynonymsHint": "Über die Synonyme ordnet die App hochgeladene Noten automatisch diesem Register zu.",
   "@redesignGroupEditSynonymsHint": {
     "description": "redesign.groupEdit.synonymsHint"
   },
@@ -14822,7 +15152,7 @@
   "@redesignGroupEditSynonymsLabel": {
     "description": "redesign.groupEdit.synonymsLabel"
   },
-  "redesignGroupEditTitle": "Gruppe bearbeiten",
+  "redesignGroupEditTitle": "Register bearbeiten",
   "@redesignGroupEditTitle": {
     "description": "redesign.groupEdit.title"
   },
@@ -14830,15 +15160,15 @@
   "@redesignGroupEditTuning": {
     "description": "redesign.groupEdit.tuning"
   },
-  "redesignGroupsListAdd": "Gruppe hinzufügen",
+  "redesignGroupsListAdd": "Register hinzufügen",
   "@redesignGroupsListAdd": {
     "description": "redesign.groupsList.add"
   },
-  "redesignGroupsListEmpty": "Noch keine Gruppen angelegt.",
+  "redesignGroupsListEmpty": "Noch keine Register angelegt.",
   "@redesignGroupsListEmpty": {
     "description": "redesign.groupsList.empty"
   },
-  "redesignGroupsListIntro": "Gruppen ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.",
+  "redesignGroupsListIntro": "Register ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.",
   "@redesignGroupsListIntro": {
     "description": "redesign.groupsList.intro"
   },
@@ -16021,7 +16351,7 @@
   "@redesignInviteCopy": {
     "description": "redesign.invite.copy"
   },
-  "redesignInviteEmptyMembers": "Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.",
+  "redesignInviteEmptyMembers": "Noch keine Mitglieder. Über „+“ teilst du den Einladungslink oder zeigst den QR-Code in der nächsten Probe.",
   "@redesignInviteEmptyMembers": {
     "description": "redesign.invite.emptyMembers"
   },
@@ -16181,51 +16511,6 @@
   "@redesignManageAnnouncementsHint": {
     "description": "redesign.manage.announcementsHint"
   },
-  "redesignManageAreaCommunication": "Kommunikation",
-  "@redesignManageAreaCommunication": {
-    "description": "redesign.manage.areaCommunication"
-  },
-  "redesignManageAreaData": "Auswertung & Daten",
-  "@redesignManageAreaData": {
-    "description": "redesign.manage.areaData"
-  },
-  "redesignManageAreaEvents": "Termine & Planung",
-  "@redesignManageAreaEvents": {
-    "description": "redesign.manage.areaEvents"
-  },
-  "redesignManageAreaGroup": "Gruppe",
-  "@redesignManageAreaGroup": {
-    "description": "redesign.manage.areaGroup"
-  },
-  "redesignManageAreaMembers": "Mitglieder, Register & Rollen",
-  "@redesignManageAreaMembers": {
-    "description": "redesign.manage.areaMembers"
-  },
-  "redesignManageAreaWorks": "Werke & Dateien",
-  "@redesignManageAreaWorks": {
-    "description": "redesign.manage.areaWorks"
-  },
-  "redesignManageClassic": "Alle Einstellungen (bisherige Ansicht)",
-  "@redesignManageClassic": {
-    "description": "redesign.manage.classic"
-  },
-  "redesignManageExtraFieldsHint": "Eigene Felder für Personen und Werke",
-  "@redesignManageExtraFieldsHint": {
-    "description": "redesign.manage.extraFieldsHint"
-  },
-  "redesignManageFooter": "{count, plural, one {Der bisherige Eintrag steckt in diesen Bereichen und ist über die Suche direkt erreichbar.} other {Alle {count} bisherigen Einträge stecken in diesen Bereichen und sind über die Suche direkt erreichbar.}}",
-  "@redesignManageFooter": {
-    "description": "redesign.manage.footer",
-    "placeholders": {
-      "count": {
-        "type": "num"
-      }
-    }
-  },
-  "redesignManageGeneralHint": "Name, Saison, Gründe, Anmeldung",
-  "@redesignManageGeneralHint": {
-    "description": "redesign.manage.generalHint"
-  },
   "redesignManageGeneralTitle": "Allgemeine Einstellungen",
   "@redesignManageGeneralTitle": {
     "description": "redesign.manage.generalTitle"
@@ -16271,14 +16556,6 @@
   "@redesignManageRecent": {
     "description": "redesign.manage.recent"
   },
-  "redesignManageSearch": "Einstellung suchen",
-  "@redesignManageSearch": {
-    "description": "redesign.manage.search"
-  },
-  "redesignManageSearchLabel": "Verwaltung durchsuchen",
-  "@redesignManageSearchLabel": {
-    "description": "redesign.manage.searchLabel"
-  },
   "redesignMeAbsence": "Abwesenheit eintragen",
   "@redesignMeAbsence": {
     "description": "redesign.me.absence"
@@ -16291,7 +16568,7 @@
   "@redesignMeAdmin": {
     "description": "redesign.me.admin"
   },
-  "redesignMeAdminHint": "Mitglieder, Termintypen, Rechte und mehr",
+  "redesignMeAdminHint": "Register, Rechte, Terminarten, Auswertung und mehr",
   "@redesignMeAdminHint": {
     "description": "redesign.me.adminHint"
   },
@@ -16468,6 +16745,57 @@
   "redesignMembersEmptyPending": "Niemand wartet auf Freigabe.",
   "@redesignMembersEmptyPending": {
     "description": "redesign.members.emptyPending"
+  },
+  "redesignMembersFilterCritical": "Fehlen oft",
+  "@redesignMembersFilterCritical": {
+    "description": "redesign.members.filterCritical"
+  },
+  "redesignMembersFilterField": "{name}: {value}",
+  "@redesignMembersFilterField": {
+    "description": "redesign.members.filterField",
+    "placeholders": {
+      "name": {},
+      "value": {}
+    }
+  },
+  "redesignMembersFilterGroups": "Gruppen",
+  "@redesignMembersFilterGroups": {
+    "description": "redesign.members.filterGroups"
+  },
+  "redesignMembersFilterNoAccount": "Ohne Konto",
+  "@redesignMembersFilterNoAccount": {
+    "description": "redesign.members.filterNoAccount"
+  },
+  "redesignMembersFilterNoMatch": "Niemand passt zu den Filtern.",
+  "@redesignMembersFilterNoMatch": {
+    "description": "redesign.members.filterNoMatch"
+  },
+  "redesignMembersFilterOtherChip": "Auch in {name}",
+  "@redesignMembersFilterOtherChip": {
+    "description": "redesign.members.filterOtherChip",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignMembersFilterOtherInstance": "Auch Mitglied in",
+  "@redesignMembersFilterOtherInstance": {
+    "description": "redesign.members.filterOtherInstance"
+  },
+  "redesignMembersFilterRemove": "Filter „{name}“ entfernen",
+  "@redesignMembersFilterRemove": {
+    "description": "redesign.members.filterRemove",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignMembersFilterShow": "{count, plural, =0 {Niemand passt} one {1 Person anzeigen} other {{count} Personen anzeigen}}",
+  "@redesignMembersFilterShow": {
+    "description": "redesign.members.filterShow",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "redesignMembersLeader": "Stimmführung",
   "@redesignMembersLeader": {
@@ -17008,6 +17336,14 @@
       "name": {}
     }
   },
+  "redesignPlanAddAnother": "Weiteren Plan anlegen",
+  "@redesignPlanAddAnother": {
+    "description": "redesign.plan.addAnother"
+  },
+  "redesignPlanAddAnotherHint": "z. B. für Tag 2 oder eine zweite Probe",
+  "@redesignPlanAddAnotherHint": {
+    "description": "redesign.plan.addAnotherHint"
+  },
   "redesignPlanAddBlock": "Block",
   "@redesignPlanAddBlock": {
     "description": "redesign.plan.addBlock"
@@ -17185,6 +17521,10 @@
   "@redesignPlanHint": {
     "description": "redesign.plan.hint"
   },
+  "redesignPlanHintDismiss": "Verstanden",
+  "@redesignPlanHintDismiss": {
+    "description": "redesign.plan.hintDismiss"
+  },
   "redesignPlanHours": "{count} Std.",
   "@redesignPlanHours": {
     "description": "redesign.plan.hours",
@@ -17320,6 +17660,10 @@
       "name": {}
     }
   },
+  "redesignPlanPlansSection": "Pläne dieses Termins",
+  "@redesignPlanPlansSection": {
+    "description": "redesign.plan.plansSection"
+  },
   "redesignPlanPrev": "Vorheriger Termin",
   "@redesignPlanPrev": {
     "description": "redesign.plan.prev"
@@ -17354,6 +17698,10 @@
   "redesignPlanSettings": "Für diesen Plan",
   "@redesignPlanSettings": {
     "description": "redesign.plan.settings"
+  },
+  "redesignPlanShare": "Teilen",
+  "@redesignPlanShare": {
+    "description": "redesign.plan.share"
   },
   "redesignPlanShareExport": "Teilen & Export",
   "@redesignPlanShareExport": {
@@ -17645,6 +17993,18 @@
   "redesignSignoutCannot": "Ich kann nicht",
   "@redesignSignoutCannot": {
     "description": "redesign.signout.cannot"
+  },
+  "redesignSignoutChildCannot": "Absagen",
+  "@redesignSignoutChildCannot": {
+    "description": "redesign.signout.childCannot"
+  },
+  "redesignSignoutChildLater": "Später kommen",
+  "@redesignSignoutChildLater": {
+    "description": "redesign.signout.childLater"
+  },
+  "redesignSignoutChildPrivacy": "Den Grund sieht nur die Leitung.",
+  "@redesignSignoutChildPrivacy": {
+    "description": "redesign.signout.childPrivacy"
   },
   "redesignSignoutLater": "Ich komme später",
   "@redesignSignoutLater": {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -1288,6 +1289,21 @@ class RdTextLink extends StatelessWidget {
   }
 }
 
+/// Back from a sub page whose parent route is not where it is opened from
+/// (Werkhistorie under Ich › Verwaltung, opened from the Werke tab): pops
+/// when the page was pushed, otherwise goes to [fallback]. Opened by its
+/// URL (reload, link), the router builds the parent routes beneath it, so
+/// `canPop` alone would land there instead of on [fallback].
+void rdBack(BuildContext context, String fallback) {
+  final router = GoRouter.of(context);
+  final pushed = router.routerDelegate.currentConfiguration.lastOrNull is ImperativeRouteMatch;
+  if (pushed && router.canPop()) {
+    router.pop();
+  } else {
+    router.go(fallback);
+  }
+}
+
 /// Back link of a sub page ("‹ Ich").
 class RdBackLink extends StatelessWidget {
   const RdBackLink({super.key, required this.label, required this.onTap});
@@ -1405,6 +1421,23 @@ class RdHintBox extends StatelessWidget {
   }
 }
 
+/// Height cap of the new design's sheets: 85 % of the screen, so the drag
+/// handle and a strip of the page above (tap closes the sheet) always stay
+/// visible, however long the content is. Measured on every build, so it
+/// follows rotation and window resizes. The cap includes the Material drag
+/// handle (48 px, drawn above [child] by `showDragHandle`).
+class RdSheetCap extends StatelessWidget {
+  const RdSheetCap({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final max = MediaQuery.sizeOf(context).height * 0.85 - kMinInteractiveDimension;
+    return ConstrainedBox(constraints: BoxConstraints(maxHeight: max < 0 ? 0 : max), child: child);
+  }
+}
+
 /// Bottom sheet of the new design (page background, drag handle, at most
 /// 85 % high). [child] usually starts with an [RdSheetTitle].
 Future<T?> showRdSheet<T>(BuildContext context, Widget child) {
@@ -1414,13 +1447,7 @@ Future<T?> showRdSheet<T>(BuildContext context, Widget child) {
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
-    builder: (_) => SafeArea(
-      top: false,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.85),
-        child: child,
-      ),
-    ),
+    builder: (_) => RdSheetCap(child: SafeArea(top: false, child: child)),
   );
 }
 
@@ -1447,4 +1474,89 @@ class RdSheetCheck extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       selected ? Icon(Icons.check, size: 22, color: context.rd.primary) : const SizedBox(width: 22);
+}
+
+/// An active filter or sort order above a list: tap removes it.
+class RdRemovableChip extends StatelessWidget {
+  const RdRemovableChip({super.key, required this.label, required this.onRemove, this.semanticLabel});
+
+  final String label;
+  final VoidCallback onRemove;
+
+  /// Read out instead of [label] (e.g. "Sortierung „Titel“ entfernen").
+  final String? semanticLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return Semantics(
+      button: true,
+      label: semanticLabel ?? label,
+      excludeSemantics: true,
+      child: Material(
+        color: p.soft,
+        shape: const StadiumBorder(),
+        child: InkWell(
+          customBorder: const StadiumBorder(),
+          onTap: onRemove,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 36),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: p.softText),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Icon(Icons.close, size: 16, color: p.softText),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// "Filter" (with the number of active filters) above a list; opens the
+/// "Sortieren & Filtern" sheet.
+class RdFilterLink extends StatelessWidget {
+  const RdFilterLink({super.key, required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return Semantics(
+      button: true,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 44),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.tune, size: 18, color: p.link),
+                const SizedBox(width: 6),
+                Text(label, style: TextStyle(fontSize: 15, color: p.link)),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

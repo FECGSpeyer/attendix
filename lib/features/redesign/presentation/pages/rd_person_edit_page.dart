@@ -1160,10 +1160,13 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
             : RdInfoCard(
                 text: async.hasError ? l10n.redesignTodayLoadFailed : l10n.redesignPersonNotFound,
                 icon: Icons.person_off_outlined,
-                action: RdOutlineButton(
-                  label: l10n.redesignCommonRetry,
-                  onPressed: () => ref.invalidate(personProvider(_personId)),
-                ),
+                // Retry only helps after an error, not when it is gone.
+                action: async.hasError
+                    ? RdOutlineButton(
+                      label: l10n.redesignCommonRetry,
+                      onPressed: () => ref.invalidate(personProvider(_personId)),
+                    )
+                    : null,
               ),
       ]);
     } else if (!isAdmin) {
@@ -1210,12 +1213,16 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
                 duration: const Duration(milliseconds: 200),
                 child: Padding(
                   padding: const EdgeInsets.only(left: 8),
-                  child: Text(
-                    l10n.redesignPersonFormSaved,
-                    key: const Key('rd-person-edit-saved'),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: RdType.meta(p, size: 13).copyWith(color: p.present),
+                  // Shrinks instead of cutting "Gespeichert ✓" in the 88 wide slot.
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      l10n.redesignPersonFormSaved,
+                      key: const Key('rd-person-edit-saved'),
+                      maxLines: 1,
+                      style: RdType.meta(p, size: 13).copyWith(color: p.present),
+                    ),
                   ),
                 ),
               ),
@@ -1318,7 +1325,11 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
         if (namesEmpty) hint(l10n.personEnterNames, color: p.absent),
         const SizedBox(height: 20),
         RdGroupLabel(groupLabel(tenant?.type)),
-        RdPersonGroupChips(selected: person.instrument, onSelected: _setGroup),
+        RdPersonGroupChips(
+          selected: person.instrument,
+          onSelected: _setGroup,
+          onManage: _canEdit ? () => context.push(RedesignRoutes.groups) : null,
+        ),
         const SizedBox(height: 20),
         RdGroupLabel(l10n.redesignPersonFormContact),
         RdGroupedList(
@@ -1509,10 +1520,8 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
           ]),
         ],
 
-        const SizedBox(height: 24),
-        RdPrimaryButton(label: l10n.redesignCommonDone, onPressed: _done),
         if (!isSelf) ...[
-          const SizedBox(height: 28),
+          const SizedBox(height: 32),
           RdGroupedList(children: [
             row(l10n.attendanceRemovePerson, () => _delete(person),
                 icon: Icons.delete_outline, color: p.absent, key: const Key('rd-person-delete')),

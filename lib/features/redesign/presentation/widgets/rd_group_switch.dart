@@ -11,8 +11,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/route_leave_guard.dart';
-import '../../../profile/presentation/widgets/profile_helpers.dart'
-    show profileRoleName;
+import '../../../profile/presentation/widgets/profile_helpers.dart' show profileRoleName;
 import 'join/rd_join_sheet.dart';
 import 'rd_widgets.dart';
 
@@ -25,9 +24,7 @@ class RdGroupChip extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final p = context.rd;
     final tenant = ref.watch(currentTenantProvider);
-    final name = tenant?.longName.isNotEmpty == true
-        ? tenant!.longName
-        : (tenant?.shortName ?? '');
+    final name = tenant?.longName.isNotEmpty == true ? tenant!.longName : (tenant?.shortName ?? '');
     final logo = tenant?.shortName.isNotEmpty == true ? tenant!.shortName : name;
     return Semantics(
       button: true,
@@ -52,11 +49,7 @@ class RdGroupChip extends ConsumerWidget {
                     child: Text(
                       name,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: p.text,
-                      ),
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: p.text),
                     ),
                   ),
                   const SizedBox(width: 2),
@@ -80,7 +73,7 @@ Future<void> showRdGroupSwitchSheet(BuildContext context) {
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
-    builder: (_) => const _RdGroupSwitchSheet(),
+    builder: (_) => RdSheetCap(child: const _RdGroupSwitchSheet()),
   );
 }
 
@@ -194,10 +187,7 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
               Row(
                 children: [
                   Expanded(
-                    child: Semantics(
-                      header: true,
-                      child: Text(l10n.redesignGroupsTitle, style: RdType.section(p)),
-                    ),
+                    child: Semantics(header: true, child: Text(l10n.redesignGroupsTitle, style: RdType.section(p))),
                   ),
                   TextButton(
                     onPressed: _switchingTo == null ? () => Navigator.of(context).pop() : null,
@@ -210,78 +200,90 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
                 ],
               ),
               const SizedBox(height: 8),
+              // List and actions scroll together, so nothing overflows in
+              // a short (landscape) sheet.
               Flexible(
-                child: tenants.when(
-                  loading: () => const Padding(
-                    padding: EdgeInsets.all(24),
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
-                  error: (_, __) => Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Text(l10n.redesignGroupsLoadFailed, style: RdType.meta(p)),
-                  ),
-                  data: (list) => SingleChildScrollView(
-                    child: RdGroupedList(
-                      children: [
-                        for (final t in list)
-                          RdListRow(
-                            leading: RdInitials(
-                              rdInitialsOf(t.shortName.isNotEmpty ? t.shortName : t.longName),
-                              size: 40,
-                              square: true,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      tenants.when(
+                        loading:
+                            () => const Padding(
+                              padding: EdgeInsets.all(24),
+                              child: Center(child: CircularProgressIndicator()),
                             ),
-                            title: t.longName.isNotEmpty ? t.longName : t.shortName,
-                            subtitle: profileRoleName(Role.fromValue(t.role ?? 99)),
-                            selected: t.id == current?.id,
+                        error:
+                            (_, __) => Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Text(l10n.redesignGroupsLoadFailed, style: RdType.meta(p)),
+                            ),
+                        data:
+                            (list) => RdGroupedList(
+                              children: [
+                                for (final t in list)
+                                  RdListRow(
+                                    leading: RdInitials(
+                                      rdInitialsOf(t.shortName.isNotEmpty ? t.shortName : t.longName),
+                                      size: 40,
+                                      square: true,
+                                    ),
+                                    title: t.longName.isNotEmpty ? t.longName : t.shortName,
+                                    subtitle: profileRoleName(Role.fromValue(t.role ?? 99)),
+                                    selected: t.id == current?.id,
+                                    showChevron: false,
+                                    trailing:
+                                        _switchingTo == t.id
+                                            ? const SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: CircularProgressIndicator(strokeWidth: 2),
+                                            )
+                                            : t.id == current?.id
+                                            ? Icon(Icons.check_circle, color: p.primary)
+                                            : null,
+                                    onTap: _switchingTo == null ? () => _switch(t) : null,
+                                  ),
+                              ],
+                            ),
+                      ),
+                      const SizedBox(height: 12),
+                      // REDESIGN (E1): join and found right here, not only via the
+                      // group list.
+                      RdGroupedList(
+                        children: [
+                          RdListRow(
+                            leading: RdRowIcon(Icons.group_add_outlined, color: p.primary, background: p.soft),
+                            title: l10n.redesignTenantsJoin,
+                            titleColor: p.link,
                             showChevron: false,
-                            trailing: _switchingTo == t.id
-                                ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
-                                  )
-                                : t.id == current?.id
-                                    ? Icon(Icons.check_circle, color: p.primary)
-                                    : null,
-                            onTap: _switchingTo == null ? () => _switch(t) : null,
+                            onTap: _switchingTo == null ? _join : null,
                           ),
-                      ],
-                    ),
+                          RdListRow(
+                            leading: RdRowIcon(Icons.add_business_outlined, color: p.primary, background: p.soft),
+                            title: l10n.redesignTenantsCreate,
+                            titleColor: p.link,
+                            showChevron: false,
+                            onTap: _switchingTo == null ? _create : null,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: RdOutlineButton(
+                              label: l10n.redesignGroupsManage,
+                              icon: Icons.apps,
+                              onPressed: _switchingTo != null ? null : _manage,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              // REDESIGN (E1): join and found right here, not only via the
-              // group list.
-              RdGroupedList(
-                children: [
-                  RdListRow(
-                    leading: RdRowIcon(Icons.group_add_outlined, color: p.primary, background: p.soft),
-                    title: l10n.redesignTenantsJoin,
-                    titleColor: p.link,
-                    showChevron: false,
-                    onTap: _switchingTo == null ? _join : null,
-                  ),
-                  RdListRow(
-                    leading: RdRowIcon(Icons.add_business_outlined, color: p.primary, background: p.soft),
-                    title: l10n.redesignTenantsCreate,
-                    titleColor: p.link,
-                    showChevron: false,
-                    onTap: _switchingTo == null ? _create : null,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: RdOutlineButton(
-                      label: l10n.redesignGroupsManage,
-                      icon: Icons.apps,
-                      onPressed: _switchingTo != null ? null : _manage,
-                    ),
-                  ),
-                ],
               ),
             ],
           ),

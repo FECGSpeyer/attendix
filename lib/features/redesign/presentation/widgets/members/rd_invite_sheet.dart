@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../../../core/providers/tenant_providers.dart';
+import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../data/models/tenant/tenant.dart';
 import '../../../../../l10n/l10n.dart';
@@ -31,7 +32,7 @@ Future<void> showRdInviteSheet(BuildContext context) {
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
-    builder: (_) => const _InviteSheet(),
+    builder: (_) => RdSheetCap(child: const _InviteSheet()),
   );
 }
 
@@ -60,7 +61,7 @@ class _InviteSheet extends ConsumerWidget {
           onPressed: () {
             final router = GoRouter.of(context);
             Navigator.of(context).pop();
-            router.push('/settings/general');
+            router.push(RedesignRoutes.registration);
           },
         ),
       ]);

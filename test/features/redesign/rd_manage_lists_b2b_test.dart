@@ -60,14 +60,14 @@ void main() {
       ]) {
         expect(RedesignRoutes.roleRedirect(route, Role.admin), isNull, reason: route);
         expect(RedesignRoutes.roleRedirect(route, Role.responsible), isNull, reason: route);
-        expect(RedesignRoutes.roleRedirect(route, Role.helper), RedesignRoutes.manage, reason: route);
-        expect(RedesignRoutes.roleRedirect(route, Role.player), RedesignRoutes.manage, reason: route);
-        expect(RedesignRoutes.roleRedirect('$route/x', Role.viewer), RedesignRoutes.manage, reason: route);
+        expect(RedesignRoutes.roleRedirect(route, Role.helper), RedesignRoutes.me, reason: route);
+        expect(RedesignRoutes.roleRedirect(route, Role.player), RedesignRoutes.me, reason: route);
+        expect(RedesignRoutes.roleRedirect('$route/x', Role.viewer), RedesignRoutes.me, reason: route);
         expect(RedesignRoutes.roleRedirect(route, Role.parent), RedesignRoutes.me, reason: route);
       }
       expect(RedesignRoutes.roleRedirect(RedesignRoutes.admins, Role.admin), isNull);
       expect(RedesignRoutes.roleRedirect(RedesignRoutes.admins, Role.responsible), RedesignRoutes.manage);
-      expect(RedesignRoutes.roleRedirect(RedesignRoutes.admins, Role.helper), RedesignRoutes.manage);
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.admins, Role.helper), RedesignRoutes.me);
       expect(RedesignRoutes.admins, '/ich/verwaltung/admins');
       expect(RedesignRoutes.parents, '/ich/verwaltung/eltern');
       expect(RedesignRoutes.viewers, '/ich/verwaltung/beobachter');
@@ -91,7 +91,7 @@ void main() {
     );
     await _settle(tester);
 
-    expect(find.text('Administratoren'), findsOneWidget);
+    expect(find.text('Admins'), findsOneWidget);
     expect(find.text('ich@test.de'), findsOneWidget);
     expect(find.textContaining('Das bist du'), findsOneWidget);
     expect(find.text('anna@test.de'), findsOneWidget);
@@ -130,7 +130,8 @@ void main() {
     await _settle(tester);
     expect(find.text('Beobachter'), findsWidgets);
     expect(find.text('Noch keine Beobachter eingeladen.'), findsOneWidget);
-    expect(find.text('Beobachter einladen'), findsOneWidget);
+    // Only the "+" adds (no second button in the empty card).
+    expect(find.byKey(const Key('rd-manage-list-add')), findsOneWidget);
   });
 
   testWidgets('Archiv: group, leave date and the restore button', (tester) async {

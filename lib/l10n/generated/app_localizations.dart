@@ -15827,6 +15827,462 @@ abstract class AppLocalizations {
   /// **'Ohne Ergebnis: {count}'**
   String protocolWithoutOutcome(Object count);
 
+  /// rdAdmin.adHoc
+  ///
+  /// In de, this message translates to:
+  /// **'Ablaufplan ohne Termin'**
+  String get rdAdminAdHoc;
+
+  /// rdAdmin.adHocHint
+  ///
+  /// In de, this message translates to:
+  /// **'Für Anlässe außerhalb der Terminliste, per Link teilbar'**
+  String get rdAdminAdHocHint;
+
+  /// rdAdmin.admins
+  ///
+  /// In de, this message translates to:
+  /// **'Admins'**
+  String get rdAdminAdmins;
+
+  /// rdAdmin.adminsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Dürfen alles in dieser Gruppe'**
+  String get rdAdminAdminsHint;
+
+  /// rdAdmin.archiveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ausgetretene, jederzeit wiederherstellbar'**
+  String get rdAdminArchiveHint;
+
+  /// rdAdmin.areaAccess
+  ///
+  /// In de, this message translates to:
+  /// **'Zugänge und Rechte'**
+  String get rdAdminAreaAccess;
+
+  /// rdAdmin.areaData
+  ///
+  /// In de, this message translates to:
+  /// **'Auswertung und Mitteilungen'**
+  String get rdAdminAreaData;
+
+  /// rdAdmin.areaEvents
+  ///
+  /// In de, this message translates to:
+  /// **'Termine'**
+  String get rdAdminAreaEvents;
+
+  /// rdAdmin.areaGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe und Organisation'**
+  String get rdAdminAreaGroup;
+
+  /// rdAdmin.areaMembers
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder'**
+  String get rdAdminAreaMembers;
+
+  /// rdAdmin.bulkHint
+  ///
+  /// In de, this message translates to:
+  /// **'Register, Status und mehr für viele auf einmal'**
+  String get rdAdminBulkHint;
+
+  /// rdAdmin.certificates
+  ///
+  /// In de, this message translates to:
+  /// **'Urkunden'**
+  String get rdAdminCertificates;
+
+  /// rdAdmin.certificatesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Teilnahme-Urkunden als PDF'**
+  String get rdAdminCertificatesHint;
+
+  /// rdAdmin.counting
+  ///
+  /// In de, this message translates to:
+  /// **'So wird gezählt'**
+  String get rdAdminCounting;
+
+  /// rdAdmin.critical
+  ///
+  /// In de, this message translates to:
+  /// **'Problemfälle'**
+  String get rdAdminCritical;
+
+  /// rdAdmin.criticalCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Regel} other {{count} Regeln}}'**
+  String rdAdminCriticalCount(num count);
+
+  /// rdAdmin.criticalHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wann jemand als Problemfall gilt'**
+  String get rdAdminCriticalHint;
+
+  /// rdAdmin.criticalIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Wer nach diesen Regeln zu oft fehlt, gilt als Problemfall und fällt unter Heute und im Mitglieder-Tab auf.'**
+  String get rdAdminCriticalIntro;
+
+  /// rdAdmin.data
+  ///
+  /// In de, this message translates to:
+  /// **'Daten'**
+  String get rdAdminData;
+
+  /// rdAdmin.exportHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mitgliederliste oder Anwesenheit als Datei'**
+  String get rdAdminExportHint;
+
+  /// rdAdmin.extraFields
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Felder'**
+  String get rdAdminExtraFields;
+
+  /// rdAdmin.extraFieldsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Zusätzliche Angaben zu Personen und Werken'**
+  String get rdAdminExtraFieldsHint;
+
+  /// rdAdmin.files
+  ///
+  /// In de, this message translates to:
+  /// **'Dateien'**
+  String get rdAdminFiles;
+
+  /// rdAdmin.formerly
+  ///
+  /// In de, this message translates to:
+  /// **'früher „{name}“'**
+  String rdAdminFormerly(Object name);
+
+  /// rdAdmin.groups
+  ///
+  /// In de, this message translates to:
+  /// **'Register'**
+  String get rdAdminGroups;
+
+  /// rdAdmin.groupsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Instrumente und Stimmen, nach denen sortiert wird'**
+  String get rdAdminGroupsHint;
+
+  /// rdAdmin.heroMembers
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Mitglied} other {{count} Mitglieder}}'**
+  String rdAdminHeroMembers(num count);
+
+  /// rdAdmin.holidays
+  ///
+  /// In de, this message translates to:
+  /// **'Ferien und Feiertage'**
+  String get rdAdminHolidays;
+
+  /// rdAdmin.holidaysHint
+  ///
+  /// In de, this message translates to:
+  /// **'Beim Planen von Terminen hervorgehoben'**
+  String get rdAdminHolidaysHint;
+
+  /// rdAdmin.holidaysIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Ferien und Feiertage eures Bundeslands werden beim Anlegen von Terminen hervorgehoben.'**
+  String get rdAdminHolidaysIntro;
+
+  /// rdAdmin.homeEvent
+  ///
+  /// In de, this message translates to:
+  /// **'Im Termin unter „Programm“'**
+  String get rdAdminHomeEvent;
+
+  /// rdAdmin.homeMe
+  ///
+  /// In de, this message translates to:
+  /// **'Unter Ich'**
+  String get rdAdminHomeMe;
+
+  /// rdAdmin.homeMembers
+  ///
+  /// In de, this message translates to:
+  /// **'Im Mitglieder-Tab'**
+  String get rdAdminHomeMembers;
+
+  /// rdAdmin.homeOrganisation
+  ///
+  /// In de, this message translates to:
+  /// **'In Organisation'**
+  String get rdAdminHomeOrganisation;
+
+  /// rdAdmin.homeStats
+  ///
+  /// In de, this message translates to:
+  /// **'In der Auswertung'**
+  String get rdAdminHomeStats;
+
+  /// rdAdmin.homeWorks
+  ///
+  /// In de, this message translates to:
+  /// **'Im Werke-Tab unter •••'**
+  String get rdAdminHomeWorks;
+
+  /// rdAdmin.manageGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Register verwalten'**
+  String get rdAdminManageGroups;
+
+  /// rdAdmin.manageTypes
+  ///
+  /// In de, this message translates to:
+  /// **'Terminarten verwalten'**
+  String get rdAdminManageTypes;
+
+  /// rdAdmin.missing
+  ///
+  /// In de, this message translates to:
+  /// **'Zugänge anlegen'**
+  String get rdAdminMissing;
+
+  /// rdAdmin.missingBanner
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Mitglied hat eine E-Mail, aber noch keinen Zugang zur App.} other {{count} Mitglieder haben eine E-Mail, aber noch keinen Zugang zur App.}}'**
+  String rdAdminMissingBanner(num count);
+
+  /// rdAdmin.name
+  ///
+  /// In de, this message translates to:
+  /// **'Name und Kürzel'**
+  String get rdAdminName;
+
+  /// rdAdmin.nameHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wie die Gruppe heißt, Kürzel für Dateinamen'**
+  String get rdAdminNameHint;
+
+  /// rdAdmin.off
+  ///
+  /// In de, this message translates to:
+  /// **'Aus'**
+  String get rdAdminOff;
+
+  /// rdAdmin.on
+  ///
+  /// In de, this message translates to:
+  /// **'An'**
+  String get rdAdminOn;
+
+  /// rdAdmin.organisationHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppenübergreifend: Personen, Branding, Vorlagen, Org-Pläne'**
+  String get rdAdminOrganisationHint;
+
+  /// rdAdmin.parentsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Sehen ihre Kinder und melden sie ab'**
+  String get rdAdminParentsHint;
+
+  /// rdAdmin.pendingBadge
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Anfrage wartet auf Freigabe} other {{count} Anfragen warten auf Freigabe}}'**
+  String rdAdminPendingBadge(num count);
+
+  /// rdAdmin.reasons
+  ///
+  /// In de, this message translates to:
+  /// **'Abmeldegründe'**
+  String get rdAdminReasons;
+
+  /// rdAdmin.reasonsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl beim Abmelden und Verspäten'**
+  String get rdAdminReasonsHint;
+
+  /// rdAdmin.reasonsIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Gründe stehen zur Auswahl, wenn sich jemand abmeldet oder verspätet.'**
+  String get rdAdminReasonsIntro;
+
+  /// rdAdmin.registration
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldung per Link'**
+  String get rdAdminRegistration;
+
+  /// rdAdmin.registrationHint
+  ///
+  /// In de, this message translates to:
+  /// **'Neue melden sich selbst an'**
+  String get rdAdminRegistrationHint;
+
+  /// rdAdmin.registrationIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Wer den Link öffnet, meldet sich bei euch an. Teilen kannst du ihn auch im Mitglieder-Tab beim Einladen.'**
+  String get rdAdminRegistrationIntro;
+
+  /// rdAdmin.roles
+  ///
+  /// In de, this message translates to:
+  /// **'Rollen und Rechte'**
+  String get rdAdminRoles;
+
+  /// rdAdmin.rolesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Was Helfer und Mitglieder dürfen und sehen'**
+  String get rdAdminRolesHint;
+
+  /// rdAdmin.search
+  ///
+  /// In de, this message translates to:
+  /// **'Suchen, z. B. Saison, Eltern, Register'**
+  String get rdAdminSearch;
+
+  /// rdAdmin.sharing
+  ///
+  /// In de, this message translates to:
+  /// **'Werke öffentlich teilen'**
+  String get rdAdminSharing;
+
+  /// rdAdmin.sharingHint
+  ///
+  /// In de, this message translates to:
+  /// **'Werkliste per Link, ohne Anmeldung'**
+  String get rdAdminSharingHint;
+
+  /// rdAdmin.shiftsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wer Schicht hat, ist automatisch entschuldigt'**
+  String get rdAdminShiftsHint;
+
+  /// rdAdmin.showHolidays
+  ///
+  /// In de, this message translates to:
+  /// **'Ferien und Feiertage einblenden'**
+  String get rdAdminShowHolidays;
+
+  /// rdAdmin.statsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Statistik, Saison, Zählweise und Export'**
+  String get rdAdminStatsHint;
+
+  /// rdAdmin.statsHintCertificates
+  ///
+  /// In de, this message translates to:
+  /// **'Statistik, Saison, Zählweise, Export und Urkunden'**
+  String get rdAdminStatsHintCertificates;
+
+  /// rdAdmin.switchesFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Schalter aus „{name}“'**
+  String rdAdminSwitchesFrom(Object name);
+
+  /// rdAdmin.teachersHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wer welchen Spieler unterrichtet'**
+  String get rdAdminTeachersHint;
+
+  /// rdAdmin.team
+  ///
+  /// In de, this message translates to:
+  /// **'Team'**
+  String get rdAdminTeam;
+
+  /// rdAdmin.teamHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgaben, Themen, Protokolle'**
+  String get rdAdminTeamHint;
+
+  /// rdAdmin.types
+  ///
+  /// In de, this message translates to:
+  /// **'Terminarten'**
+  String get rdAdminTypes;
+
+  /// rdAdmin.typesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Vorgaben für neue Termine wie Zeit und Status'**
+  String get rdAdminTypesHint;
+
+  /// rdAdmin.unused
+  ///
+  /// In de, this message translates to:
+  /// **'Noch nicht genutzt'**
+  String get rdAdminUnused;
+
+  /// rdAdmin.unusedNote
+  ///
+  /// In de, this message translates to:
+  /// **'Was aus ist, steht hier mit einem Satz, wofür es gut ist. Einmal eingeschaltet, rückt es in seinen Abschnitt.'**
+  String get rdAdminUnusedNote;
+
+  /// rdAdmin.unusedParents
+  ///
+  /// In de, this message translates to:
+  /// **'Eltern sehen Termine und Anwesenheit ihrer Kinder und melden sie ab.'**
+  String get rdAdminUnusedParents;
+
+  /// rdAdmin.unusedSharing
+  ///
+  /// In de, this message translates to:
+  /// **'Ein Link zeigt eure Werkliste, ganz ohne Anmeldung.'**
+  String get rdAdminUnusedSharing;
+
+  /// rdAdmin.unusedTeachers
+  ///
+  /// In de, this message translates to:
+  /// **'Wer welchen Spieler unterrichtet, mit Schülerliste je Lehrer.'**
+  String get rdAdminUnusedTeachers;
+
+  /// rdAdmin.viewersHint
+  ///
+  /// In de, this message translates to:
+  /// **'Sehen alles, ändern nichts'**
+  String get rdAdminViewersHint;
+
+  /// rdAdmin.visibility
+  ///
+  /// In de, this message translates to:
+  /// **'Was Mitglieder sehen'**
+  String get rdAdminVisibility;
+
+  /// rdAdmin.workHistory
+  ///
+  /// In de, this message translates to:
+  /// **'Gespielte Werke'**
+  String get rdAdminWorkHistory;
+
   /// rdData.addColumn
   ///
   /// In de, this message translates to:
@@ -16541,12 +16997,6 @@ abstract class AppLocalizations {
   /// **'Bitte gib einen Wert ein.'**
   String get rdSettingsEmptyValue;
 
-  /// rdSettings.generalTitle
-  ///
-  /// In de, this message translates to:
-  /// **'Allgemein'**
-  String get rdSettingsGeneralTitle;
-
   /// rdSettings.holidays
   ///
   /// In de, this message translates to:
@@ -16726,48 +17176,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Saisonbeginn'**
   String get rdSettingsSeasonStart;
-
-  /// rdSettings.sectionAttendance
-  ///
-  /// In de, this message translates to:
-  /// **'Anwesenheit'**
-  String get rdSettingsSectionAttendance;
-
-  /// rdSettings.sectionCritical
-  ///
-  /// In de, this message translates to:
-  /// **'Problemfälle'**
-  String get rdSettingsSectionCritical;
-
-  /// rdSettings.sectionFeatures
-  ///
-  /// In de, this message translates to:
-  /// **'Funktionen'**
-  String get rdSettingsSectionFeatures;
-
-  /// rdSettings.sectionMembers
-  ///
-  /// In de, this message translates to:
-  /// **'Für Mitglieder'**
-  String get rdSettingsSectionMembers;
-
-  /// rdSettings.sectionReasons
-  ///
-  /// In de, this message translates to:
-  /// **'Gründe'**
-  String get rdSettingsSectionReasons;
-
-  /// rdSettings.sectionRegistration
-  ///
-  /// In de, this message translates to:
-  /// **'Anmeldung'**
-  String get rdSettingsSectionRegistration;
-
-  /// rdSettings.sectionWorks
-  ///
-  /// In de, this message translates to:
-  /// **'Werke'**
-  String get rdSettingsSectionWorks;
 
   /// rdSettings.shareWorksHint
   ///
@@ -17573,6 +17981,12 @@ abstract class AppLocalizations {
   /// **'Ende'**
   String get redesignCreateEnd;
 
+  /// redesign.create.endBeforeStart
+  ///
+  /// In de, this message translates to:
+  /// **'Das Ende kann nicht vor dem Beginn liegen.'**
+  String get redesignCreateEndBeforeStart;
+
   /// redesign.create.fewer
   ///
   /// In de, this message translates to:
@@ -18173,6 +18587,30 @@ abstract class AppLocalizations {
   /// **'Termin bearbeiten'**
   String get redesignEventEditTitle;
 
+  /// redesign.eventEdit.typeStatusAdopt
+  ///
+  /// In de, this message translates to:
+  /// **'Anpassen'**
+  String get redesignEventEditTypeStatusAdopt;
+
+  /// redesign.eventEdit.typeStatusFailed
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Bei 1 Person konnte der Status nicht angepasst werden. Bitte in der Anwesenheit nachtragen.} other {Bei {count} Personen konnte der Status nicht angepasst werden. Bitte in der Anwesenheit nachtragen.}}'**
+  String redesignEventEditTypeStatusFailed(num count);
+
+  /// redesign.eventEdit.typeStatusMessage
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Person steht noch auf „{from}“, dem Standard der bisherigen Art. Soll sie auf „{to}“ wechseln?} other {{count} Personen stehen noch auf „{from}“, dem Standard der bisherigen Art. Sollen sie auf „{to}“ wechseln?}}'**
+  String redesignEventEditTypeStatusMessage(num count, Object from, Object to);
+
+  /// redesign.eventEdit.typeStatusTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Status anpassen?'**
+  String get redesignEventEditTypeStatusTitle;
+
   /// redesign.event.exportExcel
   ///
   /// In de, this message translates to:
@@ -18680,7 +19118,7 @@ abstract class AppLocalizations {
   /// redesign.events.no
   ///
   /// In de, this message translates to:
-  /// **'Abmelden'**
+  /// **'Kann nicht'**
   String get redesignEventsNo;
 
   /// redesign.events.noMatch
@@ -18758,7 +19196,7 @@ abstract class AppLocalizations {
   /// redesign.events.yes
   ///
   /// In de, this message translates to:
-  /// **'Dabei'**
+  /// **'Bin dabei'**
   String get redesignEventsYes;
 
   /// redesign.events.you
@@ -19244,19 +19682,19 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.delete
   ///
   /// In de, this message translates to:
-  /// **'Gruppe löschen'**
+  /// **'Register löschen'**
   String get redesignGroupEditDelete;
 
   /// redesign.groupEdit.deleteConfirm
   ///
   /// In de, this message translates to:
-  /// **'Gruppe „{name}“ wirklich löschen?'**
+  /// **'Register „{name}“ wirklich löschen?'**
   String redesignGroupEditDeleteConfirm(Object name);
 
   /// redesign.groupEdit.deleteFailed
   ///
   /// In de, this message translates to:
-  /// **'Die Gruppe konnte nicht gelöscht werden.'**
+  /// **'Das Register konnte nicht gelöscht werden.'**
   String get redesignGroupEditDeleteFailed;
 
   /// redesign.groupEdit.deleteMain
@@ -19268,7 +19706,7 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.deleteMembers
   ///
   /// In de, this message translates to:
-  /// **'{count, plural, one {In der Gruppe ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.} other {In der Gruppe sind oder waren noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.}}'**
+  /// **'{count, plural, one {Im Register ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in ein anderes Register.} other {Im Register sind oder waren noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in ein anderes Register.}}'**
   String redesignGroupEditDeleteMembers(num count);
 
   /// redesign.groupEdit.generate
@@ -19316,7 +19754,7 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.notFound
   ///
   /// In de, this message translates to:
-  /// **'Diese Gruppe gibt es nicht mehr.'**
+  /// **'Dieses Register gibt es nicht mehr.'**
   String get redesignGroupEditNotFound;
 
   /// redesign.groupEdit.notes
@@ -19340,7 +19778,7 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.synonymsHint
   ///
   /// In de, this message translates to:
-  /// **'Über die Synonyme ordnet die App hochgeladene Noten automatisch dieser Gruppe zu.'**
+  /// **'Über die Synonyme ordnet die App hochgeladene Noten automatisch diesem Register zu.'**
   String get redesignGroupEditSynonymsHint;
 
   /// redesign.groupEdit.synonymsLabel
@@ -19352,7 +19790,7 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.title
   ///
   /// In de, this message translates to:
-  /// **'Gruppe bearbeiten'**
+  /// **'Register bearbeiten'**
   String get redesignGroupEditTitle;
 
   /// redesign.groupEdit.tuning
@@ -19364,19 +19802,19 @@ abstract class AppLocalizations {
   /// redesign.groupsList.add
   ///
   /// In de, this message translates to:
-  /// **'Gruppe hinzufügen'**
+  /// **'Register hinzufügen'**
   String get redesignGroupsListAdd;
 
   /// redesign.groupsList.empty
   ///
   /// In de, this message translates to:
-  /// **'Noch keine Gruppen angelegt.'**
+  /// **'Noch keine Register angelegt.'**
   String get redesignGroupsListEmpty;
 
   /// redesign.groupsList.intro
   ///
   /// In de, this message translates to:
-  /// **'Gruppen ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.'**
+  /// **'Register ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.'**
   String get redesignGroupsListIntro;
 
   /// redesign.groupsList.mainGroup
@@ -20840,7 +21278,7 @@ abstract class AppLocalizations {
   /// redesign.invite.emptyMembers
   ///
   /// In de, this message translates to:
-  /// **'Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.'**
+  /// **'Noch keine Mitglieder. Über „+“ teilst du den Einladungslink oder zeigst den QR-Code in der nächsten Probe.'**
   String get redesignInviteEmptyMembers;
 
   /// redesign.invite.fullscreen
@@ -21059,66 +21497,6 @@ abstract class AppLocalizations {
   /// **'Schreiben, Gesendetes, Automatik'**
   String get redesignManageAnnouncementsHint;
 
-  /// redesign.manage.areaCommunication
-  ///
-  /// In de, this message translates to:
-  /// **'Kommunikation'**
-  String get redesignManageAreaCommunication;
-
-  /// redesign.manage.areaData
-  ///
-  /// In de, this message translates to:
-  /// **'Auswertung & Daten'**
-  String get redesignManageAreaData;
-
-  /// redesign.manage.areaEvents
-  ///
-  /// In de, this message translates to:
-  /// **'Termine & Planung'**
-  String get redesignManageAreaEvents;
-
-  /// redesign.manage.areaGroup
-  ///
-  /// In de, this message translates to:
-  /// **'Gruppe'**
-  String get redesignManageAreaGroup;
-
-  /// redesign.manage.areaMembers
-  ///
-  /// In de, this message translates to:
-  /// **'Mitglieder, Register & Rollen'**
-  String get redesignManageAreaMembers;
-
-  /// redesign.manage.areaWorks
-  ///
-  /// In de, this message translates to:
-  /// **'Werke & Dateien'**
-  String get redesignManageAreaWorks;
-
-  /// redesign.manage.classic
-  ///
-  /// In de, this message translates to:
-  /// **'Alle Einstellungen (bisherige Ansicht)'**
-  String get redesignManageClassic;
-
-  /// redesign.manage.extraFieldsHint
-  ///
-  /// In de, this message translates to:
-  /// **'Eigene Felder für Personen und Werke'**
-  String get redesignManageExtraFieldsHint;
-
-  /// redesign.manage.footer
-  ///
-  /// In de, this message translates to:
-  /// **'{count, plural, one {Der bisherige Eintrag steckt in diesen Bereichen und ist über die Suche direkt erreichbar.} other {Alle {count} bisherigen Einträge stecken in diesen Bereichen und sind über die Suche direkt erreichbar.}}'**
-  String redesignManageFooter(num count);
-
-  /// redesign.manage.generalHint
-  ///
-  /// In de, this message translates to:
-  /// **'Name, Saison, Gründe, Anmeldung'**
-  String get redesignManageGeneralHint;
-
   /// redesign.manage.generalTitle
   ///
   /// In de, this message translates to:
@@ -21179,18 +21557,6 @@ abstract class AppLocalizations {
   /// **'Zuletzt geöffnet'**
   String get redesignManageRecent;
 
-  /// redesign.manage.search
-  ///
-  /// In de, this message translates to:
-  /// **'Einstellung suchen'**
-  String get redesignManageSearch;
-
-  /// redesign.manage.searchLabel
-  ///
-  /// In de, this message translates to:
-  /// **'Verwaltung durchsuchen'**
-  String get redesignManageSearchLabel;
-
   /// redesign.me.absence
   ///
   /// In de, this message translates to:
@@ -21212,7 +21578,7 @@ abstract class AppLocalizations {
   /// redesign.me.adminHint
   ///
   /// In de, this message translates to:
-  /// **'Mitglieder, Termintypen, Rechte und mehr'**
+  /// **'Register, Rechte, Terminarten, Auswertung und mehr'**
   String get redesignMeAdminHint;
 
   /// redesign.me.allSettings
@@ -21436,6 +21802,60 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Niemand wartet auf Freigabe.'**
   String get redesignMembersEmptyPending;
+
+  /// redesign.members.filterCritical
+  ///
+  /// In de, this message translates to:
+  /// **'Fehlen oft'**
+  String get redesignMembersFilterCritical;
+
+  /// redesign.members.filterField
+  ///
+  /// In de, this message translates to:
+  /// **'{name}: {value}'**
+  String redesignMembersFilterField(Object name, Object value);
+
+  /// redesign.members.filterGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen'**
+  String get redesignMembersFilterGroups;
+
+  /// redesign.members.filterNoAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Konto'**
+  String get redesignMembersFilterNoAccount;
+
+  /// redesign.members.filterNoMatch
+  ///
+  /// In de, this message translates to:
+  /// **'Niemand passt zu den Filtern.'**
+  String get redesignMembersFilterNoMatch;
+
+  /// redesign.members.filterOtherChip
+  ///
+  /// In de, this message translates to:
+  /// **'Auch in {name}'**
+  String redesignMembersFilterOtherChip(Object name);
+
+  /// redesign.members.filterOtherInstance
+  ///
+  /// In de, this message translates to:
+  /// **'Auch Mitglied in'**
+  String get redesignMembersFilterOtherInstance;
+
+  /// redesign.members.filterRemove
+  ///
+  /// In de, this message translates to:
+  /// **'Filter „{name}“ entfernen'**
+  String redesignMembersFilterRemove(Object name);
+
+  /// redesign.members.filterShow
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Niemand passt} one {1 Person anzeigen} other {{count} Personen anzeigen}}'**
+  String redesignMembersFilterShow(num count);
 
   /// redesign.members.leader
   ///
@@ -22139,6 +22559,18 @@ abstract class AppLocalizations {
   /// **'Wird nach „{name}“ eingefügt'**
   String redesignPlanAddAfter(Object name);
 
+  /// redesign.plan.addAnother
+  ///
+  /// In de, this message translates to:
+  /// **'Weiteren Plan anlegen'**
+  String get redesignPlanAddAnother;
+
+  /// redesign.plan.addAnotherHint
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. für Tag 2 oder eine zweite Probe'**
+  String get redesignPlanAddAnotherHint;
+
   /// redesign.plan.addBlock
   ///
   /// In de, this message translates to:
@@ -22379,6 +22811,12 @@ abstract class AppLocalizations {
   /// **'Tipp auf die Dauer ändert sie direkt, Tipp auf einen Punkt öffnet alles Weitere. Am Griff halten und ziehen sortiert um.'**
   String get redesignPlanHint;
 
+  /// redesign.plan.hintDismiss
+  ///
+  /// In de, this message translates to:
+  /// **'Verstanden'**
+  String get redesignPlanHintDismiss;
+
   /// redesign.plan.hours
   ///
   /// In de, this message translates to:
@@ -22541,6 +22979,12 @@ abstract class AppLocalizations {
   /// **'Plan „{name}“'**
   String redesignPlanPlanSection(Object name);
 
+  /// redesign.plan.plansSection
+  ///
+  /// In de, this message translates to:
+  /// **'Pläne dieses Termins'**
+  String get redesignPlanPlansSection;
+
   /// redesign.plan.prev
   ///
   /// In de, this message translates to:
@@ -22588,6 +23032,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Für diesen Plan'**
   String get redesignPlanSettings;
+
+  /// redesign.plan.share
+  ///
+  /// In de, this message translates to:
+  /// **'Teilen'**
+  String get redesignPlanShare;
 
   /// redesign.plan.shareExport
   ///
@@ -22930,6 +23380,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Ich kann nicht'**
   String get redesignSignoutCannot;
+
+  /// redesign.signout.childCannot
+  ///
+  /// In de, this message translates to:
+  /// **'Absagen'**
+  String get redesignSignoutChildCannot;
+
+  /// redesign.signout.childLater
+  ///
+  /// In de, this message translates to:
+  /// **'Später kommen'**
+  String get redesignSignoutChildLater;
+
+  /// redesign.signout.childPrivacy
+  ///
+  /// In de, this message translates to:
+  /// **'Den Grund sieht nur die Leitung.'**
+  String get redesignSignoutChildPrivacy;
 
   /// redesign.signout.later
   ///

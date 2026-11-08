@@ -13,11 +13,13 @@ import '../rd_widgets.dart';
 /// REDESIGN: sheets of "Termin anlegen" (Art, Abmeldeschluss, weitere
 /// Daten).
 
-/// Picks the Art of the new Termin.
+/// Picks the Art of the new Termin. With [onManage] (leads) a last row
+/// "Terminarten verwalten" closes the sheet and calls it.
 Future<AttendanceType?> showRdTypePicker(
   BuildContext context, {
   required List<AttendanceType> types,
   AttendanceType? selected,
+  VoidCallback? onManage,
 }) {
   return showRdSheet<AttendanceType>(
     context,
@@ -42,6 +44,24 @@ Future<AttendanceType?> showRdTypePicker(
                 ),
             ]),
           ),
+          if (onManage != null) ...[
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: RdGroupedList(children: [
+                RdListRow(
+                  leading: const RdRowIcon(Icons.category_outlined),
+                  title: l10n.rdAdminManageTypes,
+                  titleColor: context.rd.primary,
+                  showChevron: false,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    onManage();
+                  },
+                ),
+              ]),
+            ),
+          ],
         ],
       );
     }),
@@ -91,7 +111,9 @@ Future<RdDeadline?> showRdDeadlinePicker(BuildContext context, RdDeadline select
 
 /// Result of the "Weitere Daten" sheet. [custom] is set when the days are
 /// picked one by one in the calendar instead.
-typedef RdRepeatChoice = ({RdRepeat repeat, DateTime until, bool skipHolidays, bool custom});
+/// [showHolidays]: "Ferien und Feiertage einblenden" was tapped; the choice
+/// still applies, then the caller opens the setting.
+typedef RdRepeatChoice = ({RdRepeat repeat, DateTime until, bool skipHolidays, bool custom, bool showHolidays});
 
 /// "Weitere Daten": once, every week or every two weeks until a day, with
 /// a preview of the dates (holidays marked, optionally left out).
@@ -102,6 +124,7 @@ Future<RdRepeatChoice?> showRdRepeatSheet(
   required DateTime until,
   required bool skipHolidays,
   required HolidayData holidays,
+  bool offerHolidays = false,
 }) {
   return showRdSheet<RdRepeatChoice>(
     context,
@@ -111,6 +134,7 @@ Future<RdRepeatChoice?> showRdRepeatSheet(
       until: until,
       skipHolidays: skipHolidays,
       holidays: holidays,
+      offerHolidays: offerHolidays,
     ),
   );
 }
@@ -122,12 +146,17 @@ class _RepeatSheet extends StatefulWidget {
     required this.until,
     required this.skipHolidays,
     required this.holidays,
+    this.offerHolidays = false,
   });
 
   final DateTime start;
   final RdRepeat repeat;
   final DateTime until;
   final bool skipHolidays;
+
+  /// Leads in groups without Ferien und Feiertage: a row to switch them on
+  /// (Verwaltung › Ferien und Feiertage), so series can leave them out.
+  final bool offerHolidays;
   final HolidayData holidays;
 
   @override
@@ -153,11 +182,12 @@ class _RepeatSheetState extends State<_RepeatSheet> {
     if (picked != null && mounted) setState(() => _until = rdDay(picked));
   }
 
-  void _done({bool custom = false}) => Navigator.of(context).pop((
+  void _done({bool custom = false, bool showHolidays = false}) => Navigator.of(context).pop((
         repeat: _repeat,
         until: _until,
         skipHolidays: _skip,
         custom: custom,
+        showHolidays: showHolidays,
       ));
 
   @override
@@ -204,6 +234,14 @@ class _RepeatSheetState extends State<_RepeatSheet> {
                   onChanged: (v) => setState(() => _skip = v),
                 ),
                 onTap: () => setState(() => _skip = !_skip),
+              )
+            else if (widget.offerHolidays)
+              // Keeps the series chosen so far.
+              RdListRow(
+                title: l10n.rdAdminShowHolidays,
+                titleColor: p.primary,
+                showChevron: false,
+                onTap: () => _done(showHolidays: true),
               ),
           ]),
           const SizedBox(height: 14),

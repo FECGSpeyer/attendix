@@ -27,6 +27,7 @@ import '../../../people/person_write.dart';
 import '../../../people/presentation/widgets/person_detail/allgemein_accordion.dart' show personExtraFields;
 import '../../../people/presentation/widgets/person_image_picker.dart';
 import '../../../people/presentation/widgets/person_match_suggestions.dart' show showEmailTakenDialog;
+import '../widgets/manage/rd_manage_entries.dart' show rdManageAccessProvider;
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/members/rd_person_form.dart';
 import '../widgets/rd_widgets.dart';
@@ -329,6 +330,24 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
     }
   }
 
+  /// "Register verwalten": the form stays below; a Register deleted there
+  /// is no longer chosen (the first one is taken again).
+  Future<void> _manageGroups() async {
+    await context.push(RedesignRoutes.groups);
+    if (!mounted) return;
+    final List<int?> ids;
+    try {
+      ids = [for (final g in await ref.read(groupsProvider.future)) g.id];
+    } catch (_) {
+      return;
+    }
+    if (!mounted || ids.contains(_draft.instrument)) return;
+    setState(() {
+      _groupPicked = false;
+      _draft = _draft.copyWith(instrument: null);
+    });
+  }
+
   void _fillDefaults() {
     // Ionic: a new person starts in the first group.
     if (!_groupPicked && _draft.instrument == null) {
@@ -375,6 +394,7 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
                 saving: _saving,
                 onCancel: _saving ? null : _cancel,
                 onSubmit: canEdit ? _save : null,
+                submitKey: const Key('rd-person-create'),
               ),
               Expanded(
                 child: canEdit
@@ -467,6 +487,7 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
         const SizedBox(height: 20),
         RdGroupLabel(groupLabel(tenant?.type)),
         RdPersonGroupChips(
+          onManage: ref.watch(rdManageAccessProvider).isAdmin ? _manageGroups : null,
           selected: _draft.instrument,
           onSelected: (id) => setState(() {
             _touched = true;
@@ -531,13 +552,6 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
           ),
         ],
         const SizedBox(height: 24),
-        RdPrimaryButton(
-          key: const Key('rd-person-create'),
-          label: l10n.redesignPersonFormCreateButton,
-          icon: Icons.person_add_alt_1_outlined,
-          loading: _saving,
-          onPressed: _save,
-        ),
       ],
     );
   }

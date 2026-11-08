@@ -23,37 +23,146 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/presentation/pages/general_settings_page.dart'
     show holidayRegions, initialRegistrationFields, normalizeReasons, normalizeShowAllInfoText;
-import '../../data/rd_manage_logic.dart' show RdManageArea;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
 import 'rd_critical_rule_page.dart';
 
-/// REDESIGN: Verwaltung › Gruppe › Allgemein (canvas "Beta: Gruppe und
-/// Daten", board "G1 Allgemeine Einstellungen"). The settings of the old
-/// page `/settings/general` as page type "Einstellungen": every change is
-/// saved right away (same `tenants` columns and rules as the old page),
-/// values change in small sheets, no "Speichern" and no "Neu laden". The
-/// links to Typen, Schichtpläne, Branding and Zusatzfelder are left out:
-/// they have their own entries in the Verwaltung.
-class RdGeneralSettingsPage extends ConsumerStatefulWidget {
-  const RdGeneralSettingsPage({super.key});
+/// The settings of the old page `/settings/general` ("Allgemein"), split by
+/// where they act (canvas "Beta: Verwaltung neu gedacht", board "Bestand:
+/// die 20 Schalter in „Allgemein“"). Same `tenants` columns, rules and
+/// saving as before; only the place changes.
+enum RdTenantSettings {
+  /// Name und Kürzel (Verwaltung › Gruppe und Organisation).
+  name,
 
-  @override
-  ConsumerState<RdGeneralSettingsPage> createState() => _RdGeneralSettingsPageState();
+  /// Saisonbeginn, schichtbedingt zählt als anwesend (Auswertung).
+  counting,
+
+  /// Alle Termine, Hinweistext, Dienstplan, Mitgliederliste (Rollen und
+  /// Rechte › Was Mitglieder sehen).
+  visibility,
+
+  /// Abwesenheits- und Verspätungsgründe (Verwaltung › Termine).
+  reasons,
+
+  /// Anmeldung per Link, automatisch freigeben, Felder (Verwaltung ›
+  /// Mitglieder).
+  registration,
+
+  /// Werke öffentlich teilen (Werke › •••).
+  sharing,
+
+  /// Problemfall-Regeln (Verwaltung › Mitglieder).
+  critical,
+
+  /// Ferien und Feiertage, Bundesland (Verwaltung › Termine).
+  holidays,
+
+  /// Lehrer pflegen (Lehrer-Seite; Orchester).
+  teachers,
+
+  /// Eltern-Zugang (Eltern-Seite).
+  parents,
 }
 
-class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
-  /// One save at a time; switches are disabled meanwhile.
-  bool _saving = false;
+/// REDESIGN: a page of group settings (canvas "Beta: Verwaltung neu
+/// gedacht"): Name und Kürzel, Anmeldung per Link, Abmeldegründe,
+/// Problemfälle, Ferien und Feiertage. Every change is saved right away,
+/// values change in small sheets ([RdTenantSettingsBlock]).
+class RdGeneralSettingsPage extends StatelessWidget {
+  const RdGeneralSettingsPage({super.key, this.section = RdTenantSettings.name});
 
-  void _back() {
+  final RdTenantSettings section;
+
+  void _back(BuildContext context) {
     if (context.canPop()) {
       context.pop();
     } else {
-      context.go(RedesignRoutes.manageArea(RdManageArea.group.key));
+      context.go(RedesignRoutes.manage);
     }
   }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final intro = rdTenantSettingsIntro(l10n, section);
+    return RdPage(
+      children: [
+        RdBackLink(label: l10n.redesignMeAdmin, onTap: () => _back(context)),
+        const SizedBox(height: 4),
+        Semantics(header: true, child: Text(rdTenantSettingsTitle(l10n, section), style: RdType.largeTitle(p))),
+        if (intro != null) ...[
+          const SizedBox(height: 6),
+          Text(intro, style: RdType.meta(p, size: 15)),
+        ],
+        const SizedBox(height: 18),
+        RdTenantSettingsBlock(sections: [section]),
+        const SizedBox(height: 32),
+      ],
+    );
+  }
+}
+
+/// Werke › ••• › "Werke öffentlich teilen" (from the old "Allgemein"): the
+/// switch and "Link kopieren"; every change is saved right away.
+Future<void> showRdSharingSheet(BuildContext context) => showRdSettingsSheet<void>(
+      context,
+      (ctx) => SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            RdSheetHead(
+              title: ctx.l10n.rdAdminSharing,
+              cancel: false,
+              onDone: () => Navigator.of(ctx).pop(),
+            ),
+            const RdTenantSettingsBlock(sections: [RdTenantSettings.sharing]),
+          ],
+        ),
+      ),
+    );
+
+/// Title of a settings page.
+String rdTenantSettingsTitle(AppLocalizations l10n, RdTenantSettings s) => switch (s) {
+      RdTenantSettings.name => l10n.rdAdminName,
+      RdTenantSettings.registration => l10n.rdAdminRegistration,
+      RdTenantSettings.reasons => l10n.rdAdminReasons,
+      RdTenantSettings.critical => l10n.rdAdminCritical,
+      RdTenantSettings.holidays => l10n.rdAdminHolidays,
+      RdTenantSettings.counting => l10n.rdAdminCounting,
+      RdTenantSettings.visibility => l10n.rdAdminVisibility,
+      RdTenantSettings.sharing => l10n.rdAdminSharing,
+      RdTenantSettings.teachers => l10n.generalSettingsMaintainTeachers,
+      RdTenantSettings.parents => l10n.generalSettingsParentsFeature,
+    };
+
+String? rdTenantSettingsIntro(AppLocalizations l10n, RdTenantSettings s) => switch (s) {
+      RdTenantSettings.registration => l10n.rdAdminRegistrationIntro,
+      RdTenantSettings.critical => l10n.rdAdminCriticalIntro,
+      RdTenantSettings.holidays => l10n.rdAdminHolidaysIntro,
+      RdTenantSettings.reasons => l10n.rdAdminReasonsIntro,
+      _ => null,
+    };
+
+/// The rows of [sections], to sit on any Beta page (Rollen und Rechte,
+/// Auswertung, Eltern, Lehrer, the Werke "•••"). With [label] a group label
+/// comes first.
+class RdTenantSettingsBlock extends ConsumerStatefulWidget {
+  const RdTenantSettingsBlock({super.key, required this.sections, this.label});
+
+  final List<RdTenantSettings> sections;
+  final String? label;
+
+  @override
+  ConsumerState<RdTenantSettingsBlock> createState() => _RdTenantSettingsBlockState();
+}
+
+class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
+  /// One save at a time; switches are disabled meanwhile.
+  bool _saving = false;
 
   /// Saves [values] for the group [tenantId] (the group shown when the
   /// change started) and applies them locally with [apply]. Aborts when the
@@ -382,220 +491,247 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final t = ref.watch(currentTenantProvider);
+    if (t == null) return RdInfoCard(text: context.l10n.redesignTodayLoading, loading: true);
+    final out = <Widget>[];
+    for (final s in widget.sections) {
+      final rows = _section(s, t);
+      if (rows.isEmpty) continue;
+      if (out.isNotEmpty) out.add(const SizedBox(height: 24));
+      out.addAll(rows);
+    }
+    if (out.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (widget.label != null) RdGroupLabel(widget.label!),
+        ...out,
+      ],
+    );
+  }
+
+  List<Widget> _section(RdTenantSettings s, Tenant t) {
     final p = context.rd;
     final l10n = context.l10n;
-    final t = ref.watch(currentTenantProvider);
-    final header = <Widget>[
-      RdBackLink(label: l10n.rdSettingsBack, onTap: _back),
-      const SizedBox(height: 4),
-      Semantics(header: true, child: Text(l10n.rdSettingsGeneralTitle, style: RdType.largeTitle(p))),
-      const SizedBox(height: 18),
-    ];
-    if (t == null) {
-      return RdPage(
-        children: [
-          ...header,
-          RdInfoCard(text: l10n.redesignTodayLoading, loading: true),
-        ],
-      );
-    }
     final enabled = !_saving;
     void Function(bool)? on(Future<void> Function(bool v) f) => enabled ? (v) => f(v) : null;
-    final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const [];
-    final registration = (t.registerId ?? '').isNotEmpty;
-    final sharing = (t.songSharingId ?? '').isNotEmpty;
-    final noGroups = registration && ref.watch(groupsProvider).hasValue && !_hasSelectableGroups();
-    final rules = _rules(t);
-    const gap = SizedBox(height: 24);
-
-    return RdPage(
-      children: [
-        ...header,
-        RdGroupedList(
-          children: [
-            RdListRow(
-              title: l10n.rdSettingsName,
-              value: t.longName,
-              onTap: enabled ? () => _editName(t, short: false) : null,
-            ),
-            RdListRow(
-              title: l10n.rdSettingsShortName,
-              subtitle: l10n.rdSettingsShortNameHint,
-              value: t.shortName,
-              onTap: enabled ? () => _editName(t, short: true) : null,
-            ),
-          ],
-        ),
-        gap,
-        RdGroupLabel(l10n.rdSettingsSectionAttendance),
-        RdGroupedList(
-          children: [
-            RdListRow(
-              title: l10n.rdSettingsSeasonStart,
-              value: DateFormat(dateFmt()).format(_seasonOf(t)),
-              onTap: enabled ? () => _editSeason(t) : null,
-            ),
-            RdSwitchRow(
-              title: l10n.rdSettingsShiftPresent,
-              subtitle: l10n.rdSettingsShiftPresentHint,
-              value: t.shiftExcusedAsPresent,
-              onChanged: on(
-                (v) => _save(t.id, {'shift_excused_as_present': v}, (c) => c.copyWith(shiftExcusedAsPresent: v)),
-              ),
-            ),
-          ],
-        ),
-        RdListNote(l10n.generalSettingsSeasonHelper),
-        gap,
-        RdGroupLabel(l10n.rdSettingsSectionMembers),
-        RdGroupedList(
-          children: [
-            RdSwitchRow(
-              title: l10n.rdSettingsAllEvents,
-              subtitle: l10n.rdSettingsAllEventsHint,
-              value: t.showAllAttendances,
-              onChanged: on((v) => _toggleAllEvents(t, v)),
-            ),
-            if (t.showAllAttendances)
+    switch (s) {
+      case RdTenantSettings.name:
+        return [
+          RdGroupedList(
+            children: [
               RdListRow(
-                title: l10n.rdSettingsInfoText,
-                subtitle:
-                    (t.showAllAttendancesInfoText ?? '').isNotEmpty
-                        ? t.showAllAttendancesInfoText
-                        : l10n.defaultsShowAllInfoText,
-                onTap: enabled ? () => _editInfoText(t) : null,
-              ),
-            if (ref.watch(hasDutyTypesProvider))
-              RdSwitchRow(
-                title: l10n.rdSettingsDutyView,
-                subtitle: l10n.rdSettingsDutyViewHint,
-                value: t.dutyView,
-                onChanged: on((v) => _save(t.id, {'duty_view': v}, (c) => c.copyWith(dutyView: v))),
-              ),
-            RdSwitchRow(
-              title: l10n.rdSettingsMembersList,
-              subtitle: l10n.rdSettingsMembersListHint,
-              value: t.showMembersList,
-              onChanged: on((v) => _save(t.id, {'showMembersList': v}, (c) => c.copyWith(showMembersList: v))),
-            ),
-          ],
-        ),
-        gap,
-        RdGroupLabel(l10n.rdSettingsSectionReasons),
-        RdGroupedList(
-          children: [
-            RdListRow(
-              title: l10n.generalSettingsAbsenceReasons,
-              value: '${EventListUtils.absenceReasonsOf(t.absenceReasons).length}',
-              onTap: enabled ? () => _editReasons(t, late: false) : null,
-            ),
-            RdListRow(
-              title: l10n.generalSettingsLateReasons,
-              value: '${EventListUtils.lateReasonsOf(t.lateReasons).length}',
-              onTap: enabled ? () => _editReasons(t, late: true) : null,
-            ),
-          ],
-        ),
-        gap,
-        RdGroupLabel(l10n.rdSettingsSectionRegistration),
-        RdGroupedList(
-          children: [
-            RdSwitchRow(
-              title: l10n.rdSettingsAllowRegister,
-              subtitle: l10n.rdSettingsAllowRegisterHint,
-              value: registration,
-              onChanged: on((v) => _toggleRegistration(t, v)),
-            ),
-            if (registration) ...[
-              RdListRow(
-                title: l10n.rdSettingsCopyRegisterLink,
-                titleColor: p.primary,
-                showChevron: false,
-                onTap: () => _copyLink('https://attendix.de/register/${t.registerId}'),
-              ),
-              RdSwitchRow(
-                title: l10n.rdSettingsAutoApprove,
-                value: t.autoApproveRegistrations,
-                onChanged: on(
-                  (v) => _save(t.id, {'auto_approve_registrations': v}, (c) => c.copyWith(autoApproveRegistrations: v)),
-                ),
+                title: l10n.rdSettingsName,
+                value: t.longName,
+                onTap: enabled ? () => _editName(t, short: false) : null,
               ),
               RdListRow(
-                title: l10n.rdSettingsRegisterFields,
-                subtitle: _registrationFieldsLabel(t),
-                onTap: enabled ? () => _editRegistrationFields(t) : null,
+                title: l10n.rdSettingsShortName,
+                subtitle: l10n.rdSettingsShortNameHint,
+                value: t.shortName,
+                onTap: enabled ? () => _editName(t, short: true) : null,
               ),
             ],
-          ],
-        ),
-        if (noGroups) RdListNote(l10n.generalSettingsNoGroupsYet),
-        gap,
-        RdGroupLabel(l10n.rdSettingsSectionWorks),
-        RdGroupedList(
-          children: [
-            RdSwitchRow(
-              title: l10n.generalSettingsShareSongs,
-              subtitle: l10n.rdSettingsShareWorksHint,
-              value: sharing,
-              onChanged: on((v) => _toggleSharing(t, v)),
-            ),
-            if (sharing)
+          ),
+        ];
+      case RdTenantSettings.counting:
+        return [
+          RdGroupedList(
+            children: [
               RdListRow(
-                title: l10n.rdSettingsCopyWorksLink,
-                titleColor: p.primary,
-                showChevron: false,
-                onTap: () => _copyLink('https://attendix.de/${t.songSharingId}'),
+                title: l10n.rdSettingsSeasonStart,
+                value: DateFormat(dateFmt()).format(_seasonOf(t)),
+                onTap: enabled ? () => _editSeason(t) : null,
               ),
-          ],
-        ),
-        gap,
-        RdGroupLabel(l10n.rdSettingsSectionFeatures),
-        RdGroupedList(
-          children: [
-            if (t.type == 'orchestra')
+              RdSwitchRow(
+                title: l10n.rdSettingsShiftPresent,
+                subtitle: l10n.rdSettingsShiftPresentHint,
+                value: t.shiftExcusedAsPresent,
+                onChanged: on(
+                  (v) => _save(t.id, {'shift_excused_as_present': v}, (c) => c.copyWith(shiftExcusedAsPresent: v)),
+                ),
+              ),
+            ],
+          ),
+          RdListNote(l10n.generalSettingsSeasonHelper),
+        ];
+      case RdTenantSettings.visibility:
+        return [
+          RdGroupedList(
+            children: [
+              RdSwitchRow(
+                title: l10n.rdSettingsAllEvents,
+                subtitle: l10n.rdSettingsAllEventsHint,
+                value: t.showAllAttendances,
+                onChanged: on((v) => _toggleAllEvents(t, v)),
+              ),
+              if (t.showAllAttendances)
+                RdListRow(
+                  title: l10n.rdSettingsInfoText,
+                  subtitle: (t.showAllAttendancesInfoText ?? '').isNotEmpty
+                      ? t.showAllAttendancesInfoText
+                      : l10n.defaultsShowAllInfoText,
+                  onTap: enabled ? () => _editInfoText(t) : null,
+                ),
+              if (ref.watch(hasDutyTypesProvider))
+                RdSwitchRow(
+                  title: l10n.rdSettingsDutyView,
+                  subtitle: l10n.rdSettingsDutyViewHint,
+                  value: t.dutyView,
+                  onChanged: on((v) => _save(t.id, {'duty_view': v}, (c) => c.copyWith(dutyView: v))),
+                ),
+              RdSwitchRow(
+                title: l10n.rdSettingsMembersList,
+                subtitle: l10n.rdSettingsMembersListHint,
+                value: t.showMembersList,
+                onChanged: on((v) => _save(t.id, {'showMembersList': v}, (c) => c.copyWith(showMembersList: v))),
+              ),
+            ],
+          ),
+        ];
+      case RdTenantSettings.reasons:
+        return [
+          RdGroupedList(
+            children: [
+              RdListRow(
+                title: l10n.generalSettingsAbsenceReasons,
+                value: '${EventListUtils.absenceReasonsOf(t.absenceReasons).length}',
+                onTap: enabled ? () => _editReasons(t, late: false) : null,
+              ),
+              RdListRow(
+                title: l10n.generalSettingsLateReasons,
+                value: '${EventListUtils.lateReasonsOf(t.lateReasons).length}',
+                onTap: enabled ? () => _editReasons(t, late: true) : null,
+              ),
+            ],
+          ),
+        ];
+      case RdTenantSettings.registration:
+        final registration = (t.registerId ?? '').isNotEmpty;
+        final noGroups = registration && ref.watch(groupsProvider).hasValue && !_hasSelectableGroups();
+        return [
+          RdGroupedList(
+            children: [
+              RdSwitchRow(
+                title: l10n.rdSettingsAllowRegister,
+                subtitle: l10n.rdSettingsAllowRegisterHint,
+                value: registration,
+                onChanged: on((v) => _toggleRegistration(t, v)),
+              ),
+              if (registration) ...[
+                RdListRow(
+                  title: l10n.rdSettingsCopyRegisterLink,
+                  titleColor: p.primary,
+                  showChevron: false,
+                  onTap: () => _copyLink('https://attendix.de/register/${t.registerId}'),
+                ),
+                RdSwitchRow(
+                  title: l10n.rdSettingsAutoApprove,
+                  value: t.autoApproveRegistrations,
+                  onChanged: on(
+                    (v) => _save(
+                      t.id,
+                      {'auto_approve_registrations': v},
+                      (c) => c.copyWith(autoApproveRegistrations: v),
+                    ),
+                  ),
+                ),
+                RdListRow(
+                  title: l10n.rdSettingsRegisterFields,
+                  subtitle: _registrationFieldsLabel(t),
+                  onTap: enabled ? () => _editRegistrationFields(t) : null,
+                ),
+              ],
+            ],
+          ),
+          if (noGroups) RdListNote(l10n.generalSettingsNoGroupsYet),
+        ];
+      case RdTenantSettings.sharing:
+        final sharing = (t.songSharingId ?? '').isNotEmpty;
+        return [
+          RdGroupedList(
+            children: [
+              RdSwitchRow(
+                title: l10n.generalSettingsShareSongs,
+                subtitle: l10n.rdSettingsShareWorksHint,
+                value: sharing,
+                onChanged: on((v) => _toggleSharing(t, v)),
+              ),
+              if (sharing)
+                RdListRow(
+                  title: l10n.rdSettingsCopyWorksLink,
+                  titleColor: p.primary,
+                  showChevron: false,
+                  onTap: () => _copyLink('https://attendix.de/${t.songSharingId}'),
+                ),
+            ],
+          ),
+        ];
+      case RdTenantSettings.teachers:
+        // Like the old page: only orchestras keep teachers.
+        if (t.type != 'orchestra') return const [];
+        return [
+          RdGroupedList(
+            children: [
               RdSwitchRow(
                 title: l10n.generalSettingsMaintainTeachers,
                 subtitle: l10n.rdSettingsTeachersHint,
                 value: t.maintainTeachers,
                 onChanged: on((v) => _save(t.id, {'maintainTeachers': v}, (c) => c.copyWith(maintainTeachers: v))),
               ),
-            RdSwitchRow(
-              title: l10n.generalSettingsParentsFeature,
-              subtitle: l10n.rdSettingsParentsHint,
-              value: t.parents ?? false,
-              onChanged: on((v) => _save(t.id, {'parents': v}, (c) => c.copyWith(parents: v))),
-            ),
-            RdSwitchRow(
-              title: l10n.rdSettingsHolidays,
-              subtitle: l10n.rdSettingsHolidaysHint,
-              value: t.showHolidays,
-              onChanged: on((v) => _save(t.id, {'showHolidays': v}, (c) => c.copyWith(showHolidays: v))),
-            ),
-            if (t.showHolidays)
-              RdListRow(
-                title: l10n.rdSettingsRegion,
-                value: _regionLabel(t),
-                onTap: enabled ? () => _pickRegion(t) : null,
+            ],
+          ),
+        ];
+      case RdTenantSettings.parents:
+        return [
+          RdGroupedList(
+            children: [
+              RdSwitchRow(
+                title: l10n.generalSettingsParentsFeature,
+                subtitle: l10n.rdSettingsParentsHint,
+                value: t.parents ?? false,
+                onChanged: on((v) => _save(t.id, {'parents': v}, (c) => c.copyWith(parents: v))),
               ),
-          ],
-        ),
-        gap,
-        RdGroupLabel(l10n.rdSettingsSectionCritical),
-        RdGroupedList(
-          children: [
-            for (var i = 0; i < rules.length; i++)
-              RdListRow(title: rules[i].describe(types), onTap: enabled ? () => _ruleActions(t, i) : null),
-            RdListRow(
-              title: l10n.rdSettingsAddRule,
-              titleColor: p.primary,
-              showChevron: false,
-              onTap: enabled ? () => _ruleSheet(t) : null,
-            ),
-          ],
-        ),
-        if (rules.isEmpty) RdListNote(l10n.rdSettingsCriticalHint),
-        const SizedBox(height: 32),
-      ],
-    );
+            ],
+          ),
+        ];
+      case RdTenantSettings.holidays:
+        return [
+          RdGroupedList(
+            children: [
+              RdSwitchRow(
+                title: l10n.rdSettingsHolidays,
+                subtitle: l10n.rdSettingsHolidaysHint,
+                value: t.showHolidays,
+                onChanged: on((v) => _save(t.id, {'showHolidays': v}, (c) => c.copyWith(showHolidays: v))),
+              ),
+              if (t.showHolidays)
+                RdListRow(
+                  title: l10n.rdSettingsRegion,
+                  value: _regionLabel(t),
+                  onTap: enabled ? () => _pickRegion(t) : null,
+                ),
+            ],
+          ),
+        ];
+      case RdTenantSettings.critical:
+        final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const [];
+        final rules = _rules(t);
+        return [
+          RdGroupedList(
+            children: [
+              for (var i = 0; i < rules.length; i++)
+                RdListRow(title: rules[i].describe(types), onTap: enabled ? () => _ruleActions(t, i) : null),
+              RdListRow(
+                title: l10n.rdSettingsAddRule,
+                titleColor: p.primary,
+                showChevron: false,
+                onTap: enabled ? () => _ruleSheet(t) : null,
+              ),
+            ],
+          ),
+          if (rules.isEmpty) RdListNote(l10n.rdSettingsCriticalHint),
+        ];
+    }
   }
 }

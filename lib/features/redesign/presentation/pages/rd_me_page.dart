@@ -14,7 +14,6 @@ import '../../../../core/providers/locale_provider.dart';
 import '../../../../core/providers/parent_providers.dart' show ownParentProvider;
 import '../../../../data/models/parent/parent_model.dart' show ParentModelExtension;
 import '../../../../core/providers/player_absence_providers.dart';
-import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
@@ -22,6 +21,7 @@ import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/shorebird_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/router/route_access.dart' show canOpenSongsTab;
 import '../../../../core/services/app_update_service.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
@@ -69,8 +69,15 @@ class RdMePage extends ConsumerWidget {
     final player = ref.watch(currentSelfServicePlayerProvider).valueOrNull;
     final settings = ref.watch(redesignSettingsProvider);
     final isLead = role.isAdmin || role.isResponsible;
-    final showManage = rdShowsManage(ref.watch(rdManageAccessProvider));
-    final pending = isLead ? (ref.watch(pendingPlayersProvider).valueOrNull?.length ?? 0) : 0;
+    final access = ref.watch(rdManageAccessProvider);
+    final showManage = rdShowsManage(access);
+    // What other roles had in the Verwaltung sits here now (canvas
+    // "Nachher · Ich"): Meine Stimme, Team and, without a Werke tab, Dateien.
+    final showVoice = role.canSeeVoiceLeaderSettings && tenant?.type != 'general';
+    final showFiles = rdMeShowsFiles(
+      canAccessFiles: ref.watch(canAccessFilesProvider),
+      hasWorksTab: canOpenSongsTab(role) && tenant?.type != 'general',
+    );
     final canReportAbsence = player != null && ref.watch(canSelfReportAbsenceProvider);
     final canPause = player != null && ref.watch(canSelfPauseProvider);
     final language = ref.watch(localeProvider).languageCode;
@@ -95,8 +102,7 @@ class RdMePage extends ConsumerWidget {
               RdListRow(
                 leading: const RdRowIcon(Icons.admin_panel_settings_outlined),
                 title: l10n.redesignMeAdmin,
-                subtitle: isLead ? l10n.redesignMeAdminHint : null,
-                trailing: pending > 0 ? RdCountBadge(pending) : null,
+                subtitle: l10n.redesignMeAdminHint,
                 onTap: () => context.push(RedesignRoutes.manage),
               ),
             ],
@@ -124,6 +130,25 @@ class RdMePage extends ConsumerWidget {
                 onTap: () => player.paused
                     ? selfServiceUnpause(context, ref, player)
                     : selfServicePause(context, ref, player),
+              ),
+            if (showVoice)
+              RdListRow(
+                leading: const RdRowIcon(Icons.people_outline),
+                title: l10n.settingsMyVoice,
+                onTap: () => context.push('/settings/voice-leader'),
+              ),
+            if (access.showTeam)
+              RdListRow(
+                leading: const RdRowIcon(Icons.supervised_user_circle_outlined),
+                title: l10n.rdAdminTeam,
+                subtitle: l10n.rdAdminTeamHint,
+                onTap: () => context.push(rdTeamRoute),
+              ),
+            if (showFiles)
+              RdListRow(
+                leading: const RdRowIcon(Icons.folder_outlined),
+                title: l10n.rdAdminFiles,
+                onTap: () => context.push('/settings/files'),
               ),
             RdListRow(
               leading: const RdRowIcon(Icons.apps),
