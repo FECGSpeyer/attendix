@@ -145,7 +145,6 @@ void main() {
         RdManageEntry.registration,
         RdManageEntry.critical,
         RdManageEntry.teachers,
-        RdManageEntry.bulkMembers,
         RdManageEntry.missingAccounts,
         RdManageEntry.archive,
       ]);

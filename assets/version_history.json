@@ -1,11 +1,36 @@
 {
   "versions": [
     {
-      "version": "0.96.0",
+      "version": "0.98.0",
       "date": "8.11.2026",
       "changes": [
         "✨ Noten-Import: Ein Tipp auf eine Stimm-Frage zeigt die erste Seite von bis zu drei ihrer Dateien, die Antworten direkt darunter",
         "✨ Noten-Import: Neue Antwort „Von Seite 1 lesen“: Die KI liest bei Namen wie „Solo“ die Stimme jeder Datei von ihrer ersten Seite; statt „Ohne Zuordnung“ schlägt die KI das vor, wenn es PDFs gibt"
+      ]
+    },
+    {
+      "version": "0.97.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta-Werke: oben „Aktuell“ als Kartenreihe für Mitglieder – die Werke der kommenden Termine und was ihr in den letzten 4 Wochen gespielt habt. Ein Tipp öffnet direkt deine Stimme, „Alle als PDF“ legt alle zusammen in ein PDF",
+        "💄 Beta-Werke: der Knopf „Meine Noten“/„Nach Stimme“ oben ist weg, „Noten nach Stimme“ liegt jetzt im •••. Der große Block „Als Nächstes“ entfällt, die Werkliste beginnt gleich darunter",
+        "💄 Beta-Werke am Desktop: Mitglieder sehen rechts ihre aktuellen Noten nach Termin statt der Werk-Zahlen; ‹ › blättern durch die Karten"
+      ]
+    },
+    {
+      "version": "0.96.1",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta-Mitglied: „Meinen Benutzer zuweisen“ erscheint nur noch, solange du in der Gruppe mit keinem Mitglied verknüpft bist"
+      ]
+    },
+    {
+      "version": "0.96.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta Mitglieder: „Mehrere auswählen“ (unter •••) direkt in der Mitgliederliste – Personen oder ganze Register antippen, dann unten Register, Pausieren, Feld oder Archivieren",
+        "✨ Neu „Feld“: Notizen oder ein Zusatzfeld für alle Ausgewählten auf einmal setzen (wie Ionic „Mehrfach bearbeiten“)",
+        "♻️ Die eigene Seite „Mitglieder bearbeiten“ in der Verwaltung entfällt; die Suche dort führt in die Mitgliederliste"
       ]
     },
     {

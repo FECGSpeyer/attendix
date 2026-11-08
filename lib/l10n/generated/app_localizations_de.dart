@@ -10854,10 +10854,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignBulkActionArchive => 'Archivieren';
 
   @override
+  String get redesignBulkActionField => 'Feld';
+
+  @override
   String get redesignBulkActionGroup => 'Register';
 
   @override
   String get redesignBulkActionPause => 'Pausieren';
+
+  @override
+  String get redesignBulkAllPaused => 'Die Ausgewählten sind schon pausiert.';
 
   @override
   String redesignBulkArchiveConfirm(num count) {
@@ -10900,6 +10906,28 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignBulkFieldApply => 'Setzen';
+
+  @override
+  String redesignBulkFieldConfirm(Object name, num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen',
+      one: '1 Person',
+    );
+    return '$name für $_temp0 setzen?';
+  }
+
+  @override
+  String redesignBulkFieldConfirmHint(Object value) {
+    return 'Neuer Wert: $value. Der bisherige Wert wird überschrieben.';
+  }
+
+  @override
+  String get redesignBulkFieldEmpty => 'leer';
+
+  @override
   String get redesignBulkHint =>
       'Mitglieder antippen, dann unten eine Aktion wählen.';
 
@@ -10910,10 +10938,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignBulkPauseReason => 'Grund der Pause';
 
   @override
+  String get redesignBulkPickField => 'Feld setzen';
+
+  @override
   String get redesignBulkPickGroup => 'Neues Register';
 
   @override
   String get redesignBulkSearch => 'Mitglied suchen';
+
+  @override
+  String get redesignBulkSelect => 'Auswählen';
+
+  @override
+  String get redesignBulkSelectAll => 'Alle auswählen';
 
   @override
   String redesignBulkSelectGroup(Object group) {
@@ -10933,7 +10970,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignBulkTitle => 'Mitglieder bearbeiten';
+  String get redesignBulkTitle => 'Mehrere auswählen';
 
   @override
   String get redesignCommonAll => 'Alle';
@@ -14712,6 +14749,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignSplitWorksCount => 'Werke';
 
   @override
+  String get redesignSplitWorksCurrentHint =>
+      'Deine Noten für die nächsten Termine. Links findest du alle Werke.';
+
+  @override
   String get redesignSplitWorksEmpty => 'Wähle links ein Werk aus.';
 
   @override
@@ -15853,6 +15894,31 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorksAllEvents => 'Alle Termine';
 
   @override
+  String get redesignWorksCurrent => 'Aktuell';
+
+  @override
+  String get redesignWorksCurrentAllPdf => 'Alle als PDF';
+
+  @override
+  String get redesignWorksCurrentBack => 'Zurück blättern';
+
+  @override
+  String get redesignWorksCurrentForward => 'Weiter blättern';
+
+  @override
+  String redesignWorksCurrentLast(Object date) {
+    return 'zuletzt $date';
+  }
+
+  @override
+  String get redesignWorksCurrentNoPart => 'Keine Stimme';
+
+  @override
+  String redesignWorksCurrentPart(Object name) {
+    return 'Deine Stimme: $name';
+  }
+
+  @override
   String get redesignWorksEmpty => 'Noch keine Werke.';
 
   @override
@@ -15880,6 +15946,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignWorksFolders => 'Nach Stimme';
+
+  @override
+  String get redesignWorksFoldersMenu => 'Noten nach Stimme';
 
   @override
   String get redesignWorksForGroup => 'Für Gruppe';

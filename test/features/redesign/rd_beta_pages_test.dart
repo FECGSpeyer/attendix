@@ -18,7 +18,7 @@ import 'package:attendix/core/utils/tiptap_converter.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/features/redesign/data/rd_manage_logic.dart';
 import 'package:attendix/features/redesign/data/rd_stats_logic.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_bulk_members_page.dart';
+import 'package:attendix/features/redesign/presentation/widgets/members/rd_member_bulk.dart' show rdApplyToAll;
 import 'package:attendix/features/redesign/presentation/pages/rd_message_compose_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -159,7 +159,8 @@ void main() {
       expect(done, [1, 3]);
     });
 
-    test('Verwaltung lists it for leads only', () {
+    test('the Verwaltung search finds it for leads only (now in the Mitglieder tab)', () {
+      expect(RdManageEntry.bulkMembers.home, RdManageHome.members);
       expect(rdManageVisible(RdManageEntry.bulkMembers, const RdManageAccess(isAdmin: true)), isTrue);
       expect(rdManageVisible(RdManageEntry.bulkMembers, const RdManageAccess()), isFalse);
       expect(rdManageVisible(RdManageEntry.announcements, const RdManageAccess(isAdmin: true)), isTrue);
@@ -169,7 +170,7 @@ void main() {
 
   group('routes', () {
     test('lead pages send everyone else back to Ich', () {
-      for (final route in [RedesignRoutes.stats, RedesignRoutes.compose, RedesignRoutes.bulkMembers]) {
+      for (final route in [RedesignRoutes.stats, RedesignRoutes.compose]) {
         expect(RedesignRoutes.roleRedirect(route, Role.admin), isNull, reason: route);
         expect(RedesignRoutes.roleRedirect(route, Role.responsible), isNull, reason: route);
         expect(RedesignRoutes.roleRedirect(route, Role.helper), RedesignRoutes.me, reason: route);
@@ -193,20 +194,6 @@ void main() {
       expect(find.text('Holz'), findsOneWidget);
       await tester.scrollUntilVisible(find.text('Ben Bach'), 200);
       expect(find.text('1 Person unter 50 %'), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
-
-    testWidgets('Mitglieder bearbeiten: selection shows the action bar', (tester) async {
-      await _pump(tester, const RdBulkMembersPage());
-      expect(find.text('Mitglieder bearbeiten'), findsOneWidget);
-      expect(find.text('Archivieren'), findsNothing);
-      await tester.tap(find.text('Anna Alt'));
-      await tester.pump();
-      expect(find.text('1 ausgewählt'), findsOneWidget);
-      expect(find.text('Archivieren'), findsOneWidget);
-      await tester.tap(find.text('Alle in Holz'));
-      await tester.pump();
-      expect(find.text('2 ausgewählt'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   });
