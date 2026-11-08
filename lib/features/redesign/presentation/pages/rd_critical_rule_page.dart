@@ -353,10 +353,9 @@ class _RdCriticalRulePageState extends ConsumerState<RdCriticalRulePage> {
       mouseCursor: SystemMouseCursors.click,
       style: TextStyle(
         fontWeight: FontWeight.w700,
-        color: p.softText,
-        backgroundColor: p.soft,
+        color: p.link,
         decoration: TextDecoration.underline,
-        decorationColor: p.primary,
+        decorationColor: p.link.withValues(alpha: 0.45),
         decorationThickness: 2,
       ),
     );
@@ -432,9 +431,13 @@ class _Preview extends ConsumerWidget {
                 RdListRow(
                   leading: RdInitials(rdInitialsOf('${x.firstName} ${x.lastName}'), size: 34),
                   title: '${x.firstName} ${x.lastName}'.trim(),
+                  // The sentence above says what counts; here only the numbers.
                   subtitle: [
-                    rdCriticalHitText(rule, r, l10n),
-                    if (percent) l10n.rdCriticalPreviewOf(r.matching, r.total),
+                    if (percent) ...[
+                      '${r.percent.round()} %',
+                      l10n.rdCriticalPreviewOf(r.matching, r.total),
+                    ] else
+                      l10n.rdCriticalPreviewTimes(r.matching),
                     if (!percent && r.last != null) l10n.rdCriticalPreviewLast(date.format(r.last!.toLocal())),
                   ].join(' · '),
                   showChevron: false,
@@ -477,7 +480,7 @@ class _ThresholdSheetState extends State<_ThresholdSheet> {
     final p = context.rd;
     final l10n = context.l10n;
     final step = _percent ? 5 : 1;
-    final label = _percent ? l10n.rdCriticalPercent : l10n.rdCriticalTimes;
+    final label = l10n.rdCriticalAtLeast;
     final text = _percent ? '${rdCriticalNum(_value)} %' : '${rdCriticalNum(_value)}×';
     return ListView(
       shrinkWrap: true,

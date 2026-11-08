@@ -16295,6 +16295,12 @@ abstract class AppLocalizations {
   /// **'Nur zusammen mit anderen Regeln'**
   String get rdCriticalAndTitle;
 
+  /// rdCritical.atLeast
+  ///
+  /// In de, this message translates to:
+  /// **'Mindestens'**
+  String get rdCriticalAtLeast;
+
   /// rdCritical.change
   ///
   /// In de, this message translates to:
@@ -16385,11 +16391,11 @@ abstract class AppLocalizations {
   /// **' oder '**
   String get rdCriticalOr;
 
-  /// rdCritical.percent
+  /// rdCritical.ownRule
   ///
   /// In de, this message translates to:
-  /// **'Prozent'**
-  String get rdCriticalPercent;
+  /// **'Eigene Regel'**
+  String get rdCriticalOwnRule;
 
   /// rdCritical.periodAll
   ///
@@ -16481,6 +16487,12 @@ abstract class AppLocalizations {
   /// **'Nach einem Gespräch zählt eine Person erst ab dem Gesprächstag.'**
   String get rdCriticalPreviewSolveHint;
 
+  /// rdCritical.previewTimes
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {einmal} other {{count}-mal}}'**
+  String rdCriticalPreviewTimes(num count);
+
   /// rdCritical.previewTitle
   ///
   /// In de, this message translates to:
@@ -16558,12 +16570,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'bei mindestens {percent} % der Termine'**
   String rdCriticalThresholdPercent(Object percent);
-
-  /// rdCritical.times
-  ///
-  /// In de, this message translates to:
-  /// **'Mal'**
-  String get rdCriticalTimes;
 
   /// rdCritical.typesAll
   ///

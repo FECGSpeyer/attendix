@@ -44,8 +44,6 @@
       "sheetThreshold": "Wie oft?",
       "modeCount": "Anzahl",
       "modePercent": "Anteil",
-      "times": "Mal",
-      "percent": "Prozent",
       "sheetWhat": "Was zählt?",
       "whatPick": "Eigene Auswahl …",
       "whatPickHint": "Diese Status zählen. Mindestens einer muss gewählt sein.",
@@ -57,7 +55,10 @@
       "listAnd": "Nur zusammen mit anderen Regeln",
       "names": "{names} und {count} weitere",
       "reasonDetail": "{period} · Regel „{rule}“",
-      "solveHint": "Nach dem Speichern zählt {name} wieder von vorn."
+      "solveHint": "Nach dem Speichern zählt {name} wieder von vorn.",
+      "previewTimes": "{count, plural, one {einmal} other {{count}-mal}}",
+      "atLeast": "Mindestens",
+      "ownRule": "Eigene Regel"
     }
   },
   "en": {
@@ -105,8 +106,6 @@
       "sheetThreshold": "How often?",
       "modeCount": "Count",
       "modePercent": "Share",
-      "times": "Times",
-      "percent": "Percent",
       "sheetWhat": "What counts?",
       "whatPick": "Own selection …",
       "whatPickHint": "These statuses count. Choose at least one.",
@@ -118,7 +117,10 @@
       "listAnd": "Only together with other rules",
       "names": "{names} and {count} more",
       "reasonDetail": "{period} · rule “{rule}”",
-      "solveHint": "After saving, {name} starts counting again from zero."
+      "solveHint": "After saving, {name} starts counting again from zero.",
+      "previewTimes": "{count, plural, one {once} other {{count} times}}",
+      "atLeast": "At least",
+      "ownRule": "Own rule"
     }
   }
 }

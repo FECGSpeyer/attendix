@@ -465,10 +465,10 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
     );
   }
 
-  /// The rule's name, or its sentence when it has none.
+  /// The rule's name, or a short one by what it counts ("Fehlt oft").
   String _ruleTitle(CriticalRule rule, List<AttendanceType> types) {
     final name = rule.name?.trim() ?? '';
-    return name.isNotEmpty ? name : rdCriticalSummary(rule, types, context.l10n);
+    return name.isNotEmpty ? name : rdCriticalDefaultName(rule, context.l10n);
   }
 
   Future<void> _ruleActions(Tenant t, int index) async {
@@ -839,9 +839,9 @@ class _CriticalRuleList extends ConsumerWidget {
               return RdListRow(
                 title: title,
                 subtitle: [
-                  if (summary != title) summary,
+                  summary,
                   if (rule.operator == CriticalRuleOperator.and) l10n.rdCriticalListAnd,
-                ].join(' · ').ifEmptyNull,
+                ].join(' · '),
                 trailing: hits == null ? null : RdCountBadge(hits, tone: hits > 0 ? RdTone.absent : RdTone.primary),
                 onTap: onTap == null ? null : () => onTap!(i),
               );
@@ -856,8 +856,4 @@ class _CriticalRuleList extends ConsumerWidget {
       ],
     );
   }
-}
-
-extension on String {
-  String? get ifEmptyNull => isEmpty ? null : this;
 }

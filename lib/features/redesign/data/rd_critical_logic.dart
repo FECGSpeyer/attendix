@@ -114,6 +114,18 @@ RdCriticalPreset? rdCriticalPresetOf(CriticalRule rule) {
   return null;
 }
 
+/// Name for a rule without one: the preset word for what it counts
+/// ("Fehlt oft", "Oft zu spät", "Selten da"), else "Eigene Regel".
+String rdCriticalDefaultName(CriticalRule rule, AppLocalizations l10n) {
+  final percent = rule.thresholdType == CriticalRuleThresholdType.percentage;
+  return switch (rdCriticalWhatOf(rule.statuses)) {
+    RdCriticalWhat.late => l10n.rdCriticalPresetLate,
+    RdCriticalWhat.absent || RdCriticalWhat.absentAll when percent => l10n.rdCriticalPresetRarely,
+    RdCriticalWhat.absent || RdCriticalWhat.absentAll => l10n.rdCriticalPresetAbsent,
+    RdCriticalWhat.custom => l10n.rdCriticalOwnRule,
+  };
+}
+
 /// A rule value as typed in German ("33,5"), without ".0".
 String rdCriticalNum(num v) => v == v.roundToDouble() ? '${v.toInt()}' : '$v'.replaceAll('.', ',');
 

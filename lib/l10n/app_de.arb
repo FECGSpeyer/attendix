@@ -12393,6 +12393,10 @@
   "@rdCriticalAndTitle": {
     "description": "rdCritical.andTitle"
   },
+  "rdCriticalAtLeast": "Mindestens",
+  "@rdCriticalAtLeast": {
+    "description": "rdCritical.atLeast"
+  },
   "rdCriticalChange": "Ändern",
   "@rdCriticalChange": {
     "description": "rdCritical.change"
@@ -12472,9 +12476,9 @@
   "@rdCriticalOr": {
     "description": "rdCritical.or"
   },
-  "rdCriticalPercent": "Prozent",
-  "@rdCriticalPercent": {
-    "description": "rdCritical.percent"
+  "rdCriticalOwnRule": "Eigene Regel",
+  "@rdCriticalOwnRule": {
+    "description": "rdCritical.ownRule"
   },
   "rdCriticalPeriodAll": "insgesamt",
   "@rdCriticalPeriodAll": {
@@ -12552,6 +12556,15 @@
   "rdCriticalPreviewSolveHint": "Nach einem Gespräch zählt eine Person erst ab dem Gesprächstag.",
   "@rdCriticalPreviewSolveHint": {
     "description": "rdCritical.previewSolveHint"
+  },
+  "rdCriticalPreviewTimes": "{count, plural, one {einmal} other {{count}-mal}}",
+  "@rdCriticalPreviewTimes": {
+    "description": "rdCritical.previewTimes",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "rdCriticalPreviewTitle": "{count, plural, =0 {Trifft gerade auf niemanden zu} one {Trifft gerade auf 1 Person zu} other {Trifft gerade auf {count} Personen zu}}",
   "@rdCriticalPreviewTitle": {
@@ -12632,10 +12645,6 @@
     "placeholders": {
       "percent": {}
     }
-  },
-  "rdCriticalTimes": "Mal",
-  "@rdCriticalTimes": {
-    "description": "rdCritical.times"
   },
   "rdCriticalTypesAll": "allen Terminen",
   "@rdCriticalTypesAll": {

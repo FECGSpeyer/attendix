@@ -9857,6 +9857,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdCriticalAndTitle => 'Only together with other rules';
 
   @override
+  String get rdCriticalAtLeast => 'At least';
+
+  @override
   String get rdCriticalChange => 'Change';
 
   @override
@@ -9924,7 +9927,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdCriticalOr => ' or ';
 
   @override
-  String get rdCriticalPercent => 'Percent';
+  String get rdCriticalOwnRule => 'Own rule';
 
   @override
   String get rdCriticalPeriodAll => 'overall';
@@ -9996,6 +9999,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'After a conversation, a person only counts from that day on.';
 
   @override
+  String rdCriticalPreviewTimes(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count times',
+      one: 'once',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String rdCriticalPreviewTitle(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -10060,9 +10074,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String rdCriticalThresholdPercent(Object percent) {
     return 'at $percent % of Termine or more';
   }
-
-  @override
-  String get rdCriticalTimes => 'Times';
 
   @override
   String get rdCriticalTypesAll => 'all Termine';
