@@ -10507,6 +10507,209 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdSettingsUndo => 'Rückgängig';
 
   @override
+  String get rdStatsAllThere => 'Alle da';
+
+  @override
+  String rdStatsBar(Object day, Object title, Object percent) {
+    return '$day · $title: $percent %';
+  }
+
+  @override
+  String rdStatsBarsHint(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Die letzten $count Termine, antippen zeigt, wer fehlte',
+      one: '1 Termin, antippen zeigt, wer fehlte',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdStatsByType => 'Termine je Art';
+
+  @override
+  String get rdStatsByTypeHint => 'Antippen zeigt nur diese Art.';
+
+  @override
+  String rdStatsCountAbsent(Object count) {
+    return '$count abwesend';
+  }
+
+  @override
+  String rdStatsCountExcused(Object count) {
+    return '$count entschuldigt';
+  }
+
+  @override
+  String rdStatsCountLate(Object count) {
+    return '$count verspätet';
+  }
+
+  @override
+  String rdStatsCountOpen(Object count) {
+    return '$count neutral';
+  }
+
+  @override
+  String get rdStatsCountedTypes => 'Zählt zur Anwesenheitsquote';
+
+  @override
+  String get rdStatsCountedTypesHint =>
+      'Termine dieser Arten zählen bei den Mitgliedern, unter „Heute“ und in der Auswertung. Aus z. B. für Feiern oder freiwillige Termine.';
+
+  @override
+  String get rdStatsCountedTypesNone => 'Keine Terminart';
+
+  @override
+  String rdStatsDeltaDown(Object points) {
+    return '−$points ggü. davor';
+  }
+
+  @override
+  String rdStatsDeltaDownLong(Object points) {
+    return '$points Prozentpunkte weniger als im Zeitraum davor';
+  }
+
+  @override
+  String get rdStatsDeltaSame => 'wie davor';
+
+  @override
+  String get rdStatsDeltaSameLong => 'Gleich wie im Zeitraum davor';
+
+  @override
+  String rdStatsDeltaUp(Object points) {
+    return '+$points ggü. davor';
+  }
+
+  @override
+  String rdStatsDeltaUpLong(Object points) {
+    return '$points Prozentpunkte mehr als im Zeitraum davor';
+  }
+
+  @override
+  String get rdStatsEventAllThere => 'Alle waren da.';
+
+  @override
+  String get rdStatsEventEmpty => 'Für diesen Termin gibt es keine Einträge.';
+
+  @override
+  String rdStatsEventGroup(Object label, Object count) {
+    return '$label ($count)';
+  }
+
+  @override
+  String get rdStatsEventOpen => 'Termin öffnen';
+
+  @override
+  String rdStatsEvents(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Termine',
+      one: '1 Termin',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdStatsFilterGroups => 'Register';
+
+  @override
+  String rdStatsFilterRemove(Object label) {
+    return 'Filter „$label“ entfernen';
+  }
+
+  @override
+  String rdStatsFilterShow(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Termine zeigen',
+      one: '1 Termin zeigen',
+      zero: 'Keine Termine',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdStatsFilterTypes => 'Terminarten';
+
+  @override
+  String get rdStatsFilterTypesHint =>
+      'Gilt nur für diese Ansicht. Vorausgewählt sind die Arten, die zur Anwesenheitsquote zählen.';
+
+  @override
+  String get rdStatsGroupsHint => 'Antippen zeigt nur dieses Register.';
+
+  @override
+  String get rdStatsLowHint =>
+      'Mit mindestens 3 Terminen im Zeitraum. Antippen öffnet die Person.';
+
+  @override
+  String get rdStatsNotable => 'Fällt auf';
+
+  @override
+  String get rdStatsNotableBest => 'Bester Termin';
+
+  @override
+  String rdStatsNotableDrop(Object name) {
+    return '$name lässt nach';
+  }
+
+  @override
+  String rdStatsNotableDropDetail(Object now, Object before) {
+    return '$now statt $before im Zeitraum davor';
+  }
+
+  @override
+  String rdStatsNotableWeakGroup(Object name) {
+    return 'Schwächstes Register: $name';
+  }
+
+  @override
+  String get rdStatsNotableWeakest => 'Schwächster Termin';
+
+  @override
+  String get rdStatsRangeCustom => 'Eigener …';
+
+  @override
+  String get rdStatsRangeFrom => 'Von';
+
+  @override
+  String get rdStatsRangeShow => 'Zeigen';
+
+  @override
+  String get rdStatsRangeTitle => 'Eigener Zeitraum';
+
+  @override
+  String get rdStatsRangeTo => 'Bis';
+
+  @override
+  String get rdStatsSortBest => 'Beste zuerst';
+
+  @override
+  String get rdStatsSortNewest => 'Neueste zuerst';
+
+  @override
+  String get rdStatsSortOldest => 'Älteste zuerst';
+
+  @override
+  String get rdStatsSortWeakest => 'Schwächste zuerst';
+
+  @override
+  String get rdStatsSplit => 'Statusverteilung';
+
+  @override
+  String get rdStatsTabEvents => 'Termine';
+
+  @override
+  String get rdStatsTabOverview => 'Überblick';
+
+  @override
+  String get rdStatsTabsLabel => 'Ansicht der Auswertung';
+
+  @override
   String get rdWmCategoriesIntro =>
       'Kategorien ordnen die Werke, etwa nach Anlass oder Kirchenjahr.';
 

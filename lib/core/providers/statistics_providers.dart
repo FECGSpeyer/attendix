@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show SupabaseClient;
 
 import '../../core/config/supabase_config.dart';
 import '../../core/constants/enums.dart';
@@ -116,38 +117,7 @@ final allPersonAttendancesForStatsProvider =
   if (attendanceIds.isEmpty) return [];
 
   try {
-    // SEC-003: Defense-in-Depth - add tenant filter via inner join
-    // SOL_FIX1: paged (PostgREST max-rows 1000), stable order by id.
-    // Chunked: a long date range has hundreds of Termine, and all their ids
-    // in one URL exceed the request size limit.
-    final response = await fetchInChunks<dynamic, int>(
-        attendanceIds,
-        (chunk) => fetchAllPages<dynamic>((from, to) async =>
-            await supabase
-                .from('person_attendances')
-                .select(
-                    '*, person:person_id(id, firstName, lastName, birthday, instrument, left, paused), attendance:attendance_id!inner(tenantId)')
-                .inFilter('attendance_id', chunk)
-                .eq('attendance.tenantId', tenantId)
-                .order('id', ascending: true)
-                .range(from, to) as List));
-
-    return response.map((e) {
-      final personData = e['person'] as Map<String, dynamic>?;
-      return PersonAttendance(
-        id: e['id']?.toString(),
-        attendanceId: e['attendance_id'],
-        personId: e['person_id'],
-        status: parseAttendanceStatus(e['status']),
-        notes: e['notes'],
-        firstName: personData?['firstName'],
-        lastName: personData?['lastName'],
-        instrument: personData?['instrument'],
-        groupName: null, // We'll get group name from players
-        // LOGIC_SETTINGS: needed for Ionic averagePersons (duty Termine)
-        dutyState: e['duty_state']?.toString(),
-      );
-    }).toList();
+    return await loadStatsPersonAttendances(supabase, tenantId, attendanceIds);
   } catch (e, stack) {
     debugPrint('Error loading person attendances for stats: $e');
     // SEC-008: Only log stack trace in debug mode
@@ -157,6 +127,48 @@ final allPersonAttendancesForStatsProvider =
     return [];
   }
 });
+
+/// The person attendances of [attendanceIds] (tenant [tenantId]) with name,
+/// group and duty state, for the statistics. Throws on failure.
+Future<List<PersonAttendance>> loadStatsPersonAttendances(
+  SupabaseClient supabase,
+  int tenantId,
+  List<int> attendanceIds,
+) async {
+  if (attendanceIds.isEmpty) return [];
+  // SEC-003: Defense-in-Depth - add tenant filter via inner join
+  // SOL_FIX1: paged (PostgREST max-rows 1000), stable order by id.
+  // Chunked: a long date range has hundreds of Termine, and all their ids
+  // in one URL exceed the request size limit.
+  final response = await fetchInChunks<dynamic, int>(
+      attendanceIds,
+      (chunk) => fetchAllPages<dynamic>((from, to) async =>
+          await supabase
+              .from('person_attendances')
+              .select(
+                  '*, person:person_id(id, firstName, lastName, birthday, instrument, left, paused), attendance:attendance_id!inner(tenantId)')
+              .inFilter('attendance_id', chunk)
+              .eq('attendance.tenantId', tenantId)
+              .order('id', ascending: true)
+              .range(from, to) as List));
+
+  return response.map((e) {
+    final personData = e['person'] as Map<String, dynamic>?;
+    return PersonAttendance(
+      id: e['id']?.toString(),
+      attendanceId: e['attendance_id'],
+      personId: e['person_id'],
+      status: parseAttendanceStatus(e['status']),
+      notes: e['notes'],
+      firstName: personData?['firstName'],
+      lastName: personData?['lastName'],
+      instrument: personData?['instrument'],
+      groupName: null, // We'll get group name from players
+      // LOGIC_SETTINGS: needed for Ionic averagePersons (duty Termine)
+      dutyState: e['duty_state']?.toString(),
+    );
+  }).toList();
+}
 
 // BL-010: Removed local _parseStatus - now using central parseAttendanceStatus from status_utils.dart
 

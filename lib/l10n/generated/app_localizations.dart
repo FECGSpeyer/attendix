@@ -17231,6 +17231,300 @@ abstract class AppLocalizations {
   /// **'Rückgängig'**
   String get rdSettingsUndo;
 
+  /// rdStats.allThere
+  ///
+  /// In de, this message translates to:
+  /// **'Alle da'**
+  String get rdStatsAllThere;
+
+  /// rdStats.bar
+  ///
+  /// In de, this message translates to:
+  /// **'{day} · {title}: {percent} %'**
+  String rdStatsBar(Object day, Object title, Object percent);
+
+  /// rdStats.barsHint
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin, antippen zeigt, wer fehlte} other {Die letzten {count} Termine, antippen zeigt, wer fehlte}}'**
+  String rdStatsBarsHint(num count);
+
+  /// rdStats.byType
+  ///
+  /// In de, this message translates to:
+  /// **'Termine je Art'**
+  String get rdStatsByType;
+
+  /// rdStats.byTypeHint
+  ///
+  /// In de, this message translates to:
+  /// **'Antippen zeigt nur diese Art.'**
+  String get rdStatsByTypeHint;
+
+  /// rdStats.countAbsent
+  ///
+  /// In de, this message translates to:
+  /// **'{count} abwesend'**
+  String rdStatsCountAbsent(Object count);
+
+  /// rdStats.countExcused
+  ///
+  /// In de, this message translates to:
+  /// **'{count} entschuldigt'**
+  String rdStatsCountExcused(Object count);
+
+  /// rdStats.countLate
+  ///
+  /// In de, this message translates to:
+  /// **'{count} verspätet'**
+  String rdStatsCountLate(Object count);
+
+  /// rdStats.countOpen
+  ///
+  /// In de, this message translates to:
+  /// **'{count} neutral'**
+  String rdStatsCountOpen(Object count);
+
+  /// rdStats.countedTypes
+  ///
+  /// In de, this message translates to:
+  /// **'Zählt zur Anwesenheitsquote'**
+  String get rdStatsCountedTypes;
+
+  /// rdStats.countedTypesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Termine dieser Arten zählen bei den Mitgliedern, unter „Heute“ und in der Auswertung. Aus z. B. für Feiern oder freiwillige Termine.'**
+  String get rdStatsCountedTypesHint;
+
+  /// rdStats.countedTypesNone
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Terminart'**
+  String get rdStatsCountedTypesNone;
+
+  /// rdStats.deltaDown
+  ///
+  /// In de, this message translates to:
+  /// **'−{points} ggü. davor'**
+  String rdStatsDeltaDown(Object points);
+
+  /// rdStats.deltaDownLong
+  ///
+  /// In de, this message translates to:
+  /// **'{points} Prozentpunkte weniger als im Zeitraum davor'**
+  String rdStatsDeltaDownLong(Object points);
+
+  /// rdStats.deltaSame
+  ///
+  /// In de, this message translates to:
+  /// **'wie davor'**
+  String get rdStatsDeltaSame;
+
+  /// rdStats.deltaSameLong
+  ///
+  /// In de, this message translates to:
+  /// **'Gleich wie im Zeitraum davor'**
+  String get rdStatsDeltaSameLong;
+
+  /// rdStats.deltaUp
+  ///
+  /// In de, this message translates to:
+  /// **'+{points} ggü. davor'**
+  String rdStatsDeltaUp(Object points);
+
+  /// rdStats.deltaUpLong
+  ///
+  /// In de, this message translates to:
+  /// **'{points} Prozentpunkte mehr als im Zeitraum davor'**
+  String rdStatsDeltaUpLong(Object points);
+
+  /// rdStats.eventAllThere
+  ///
+  /// In de, this message translates to:
+  /// **'Alle waren da.'**
+  String get rdStatsEventAllThere;
+
+  /// rdStats.eventEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Für diesen Termin gibt es keine Einträge.'**
+  String get rdStatsEventEmpty;
+
+  /// rdStats.eventGroup
+  ///
+  /// In de, this message translates to:
+  /// **'{label} ({count})'**
+  String rdStatsEventGroup(Object label, Object count);
+
+  /// rdStats.eventOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Termin öffnen'**
+  String get rdStatsEventOpen;
+
+  /// rdStats.events
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin} other {{count} Termine}}'**
+  String rdStatsEvents(num count);
+
+  /// rdStats.filterGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Register'**
+  String get rdStatsFilterGroups;
+
+  /// rdStats.filterRemove
+  ///
+  /// In de, this message translates to:
+  /// **'Filter „{label}“ entfernen'**
+  String rdStatsFilterRemove(Object label);
+
+  /// rdStats.filterShow
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Keine Termine} one {1 Termin zeigen} other {{count} Termine zeigen}}'**
+  String rdStatsFilterShow(num count);
+
+  /// rdStats.filterTypes
+  ///
+  /// In de, this message translates to:
+  /// **'Terminarten'**
+  String get rdStatsFilterTypes;
+
+  /// rdStats.filterTypesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gilt nur für diese Ansicht. Vorausgewählt sind die Arten, die zur Anwesenheitsquote zählen.'**
+  String get rdStatsFilterTypesHint;
+
+  /// rdStats.groupsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Antippen zeigt nur dieses Register.'**
+  String get rdStatsGroupsHint;
+
+  /// rdStats.lowHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mit mindestens 3 Terminen im Zeitraum. Antippen öffnet die Person.'**
+  String get rdStatsLowHint;
+
+  /// rdStats.notable
+  ///
+  /// In de, this message translates to:
+  /// **'Fällt auf'**
+  String get rdStatsNotable;
+
+  /// rdStats.notableBest
+  ///
+  /// In de, this message translates to:
+  /// **'Bester Termin'**
+  String get rdStatsNotableBest;
+
+  /// rdStats.notableDrop
+  ///
+  /// In de, this message translates to:
+  /// **'{name} lässt nach'**
+  String rdStatsNotableDrop(Object name);
+
+  /// rdStats.notableDropDetail
+  ///
+  /// In de, this message translates to:
+  /// **'{now} statt {before} im Zeitraum davor'**
+  String rdStatsNotableDropDetail(Object now, Object before);
+
+  /// rdStats.notableWeakGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Schwächstes Register: {name}'**
+  String rdStatsNotableWeakGroup(Object name);
+
+  /// rdStats.notableWeakest
+  ///
+  /// In de, this message translates to:
+  /// **'Schwächster Termin'**
+  String get rdStatsNotableWeakest;
+
+  /// rdStats.rangeCustom
+  ///
+  /// In de, this message translates to:
+  /// **'Eigener …'**
+  String get rdStatsRangeCustom;
+
+  /// rdStats.rangeFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Von'**
+  String get rdStatsRangeFrom;
+
+  /// rdStats.rangeShow
+  ///
+  /// In de, this message translates to:
+  /// **'Zeigen'**
+  String get rdStatsRangeShow;
+
+  /// rdStats.rangeTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Eigener Zeitraum'**
+  String get rdStatsRangeTitle;
+
+  /// rdStats.rangeTo
+  ///
+  /// In de, this message translates to:
+  /// **'Bis'**
+  String get rdStatsRangeTo;
+
+  /// rdStats.sortBest
+  ///
+  /// In de, this message translates to:
+  /// **'Beste zuerst'**
+  String get rdStatsSortBest;
+
+  /// rdStats.sortNewest
+  ///
+  /// In de, this message translates to:
+  /// **'Neueste zuerst'**
+  String get rdStatsSortNewest;
+
+  /// rdStats.sortOldest
+  ///
+  /// In de, this message translates to:
+  /// **'Älteste zuerst'**
+  String get rdStatsSortOldest;
+
+  /// rdStats.sortWeakest
+  ///
+  /// In de, this message translates to:
+  /// **'Schwächste zuerst'**
+  String get rdStatsSortWeakest;
+
+  /// rdStats.split
+  ///
+  /// In de, this message translates to:
+  /// **'Statusverteilung'**
+  String get rdStatsSplit;
+
+  /// rdStats.tabEvents
+  ///
+  /// In de, this message translates to:
+  /// **'Termine'**
+  String get rdStatsTabEvents;
+
+  /// rdStats.tabOverview
+  ///
+  /// In de, this message translates to:
+  /// **'Überblick'**
+  String get rdStatsTabOverview;
+
+  /// rdStats.tabsLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Ansicht der Auswertung'**
+  String get rdStatsTabsLabel;
+
   /// rdWm.categoriesIntro
   ///
   /// In de, this message translates to:
