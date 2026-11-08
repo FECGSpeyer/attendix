@@ -14857,6 +14857,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignSplitWorksCount => 'Works';
 
   @override
+  String get redesignSplitWorksCurrentHint =>
+      'Your sheet music for the coming events. All works are on the left.';
+
+  @override
   String get redesignSplitWorksEmpty => 'Choose a work on the left.';
 
   @override
@@ -15988,6 +15992,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignWorksAllEvents => 'All events';
 
   @override
+  String get redesignWorksCurrent => 'Current';
+
+  @override
+  String get redesignWorksCurrentAllPdf => 'All as PDF';
+
+  @override
+  String get redesignWorksCurrentBack => 'Scroll back';
+
+  @override
+  String get redesignWorksCurrentForward => 'Scroll forward';
+
+  @override
+  String redesignWorksCurrentLast(Object date) {
+    return 'last $date';
+  }
+
+  @override
+  String get redesignWorksCurrentNoPart => 'No part';
+
+  @override
+  String redesignWorksCurrentPart(Object name) {
+    return 'Your part: $name';
+  }
+
+  @override
   String get redesignWorksEmpty => 'No works yet.';
 
   @override
@@ -16015,6 +16044,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignWorksFolders => 'By part';
+
+  @override
+  String get redesignWorksFoldersMenu => 'Sheet music by part';
 
   @override
   String get redesignWorksForGroup => 'For group';
