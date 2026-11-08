@@ -23,7 +23,9 @@ import '../../../../data/models/player_absence/player_absence.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/shared_person_fields.dart' show mergeSharedPersonFieldValues;
 import '../../../../l10n/l10n.dart';
+import '../../data/providers/rd_critical_providers.dart';
 import '../../data/providers/rd_members_providers.dart';
+import '../../data/rd_critical_logic.dart';
 import '../../data/rd_members_list_filter.dart';
 import '../../data/rd_members_logic.dart';
 import '../../../members/data/providers/members_providers.dart' show membersEinteilungOptionsProvider;
@@ -457,6 +459,8 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
           child: Text(l10n.redesignMembersPendingHint, style: RdType.meta(p, size: 13)),
         ));
       }
+      // Why each one is a Problemfall, while only those are shown.
+      final critical = criticalOnly ? rdCriticalContextOf(ref) : null;
       for (final s in filtered) {
         if (s.title.isNotEmpty || selecting) {
           body.add(_SectionHeader(
@@ -472,6 +476,10 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulk
               sortHint: _sortHint(person, listFilter.sort),
               percent: filter == RdMembersFilter.pending || person.id == null ? null : percentages[person.id],
               absence: person.id == null ? null : rdCurrentAbsence(absences, person.id!),
+              reason: switch (critical?.reasonOf(person)) {
+                final r? => rdCriticalHitText(r.rule, r.result, l10n),
+                null => null,
+              },
               selected: !selecting && person.id != null && RdSplitScope.of(context)?.selectedId == person.id,
               checked: selecting ? bulkSelected.contains(person.id) : null,
               onTap: person.id == null
@@ -876,7 +884,11 @@ class _MemberRow extends StatelessWidget {
     this.readOnly = false,
     this.einteilung,
     this.sortHint,
+    this.reason,
   });
+
+  /// Why the person is a Problemfall ("4-mal unentschuldigt gefehlt").
+  final String? reason;
 
   /// Date of the chosen sort order (birthday, joined).
   final String? sortHint;
@@ -998,6 +1010,16 @@ class _MemberRow extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: RdType.meta(p, size: 13),
+                            ),
+                          ),
+                        if (reason != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: Text(
+                              reason!,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(fontSize: 13, color: p.absent),
                             ),
                           ),
                       ],

@@ -4901,7 +4901,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get generalSettingsFlutterAndHint =>
-      'Person is critical if ALL rules apply';
+      'Person is critical if all AND rules apply together';
 
   @override
   String get generalSettingsFlutterAndShort => 'AND';
@@ -9631,7 +9631,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdAdminCriticalIntro =>
-      'Whoever misses too often by these rules counts as a problem case and shows up under Today and in the Members tab.';
+      'Whoever stands out by one of these rules is a problem case and shows up under Today and in Members.';
 
   @override
   String get rdAdminData => 'Data';
@@ -9848,6 +9848,265 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdAdminWorkHistory => 'Played works';
+
+  @override
+  String get rdCriticalAndHint =>
+      'Then someone is only a problem case when all rules marked like this apply at the same time.';
+
+  @override
+  String get rdCriticalAndTitle => 'Only together with other rules';
+
+  @override
+  String get rdCriticalAtLeast => 'At least';
+
+  @override
+  String get rdCriticalChange => 'Change';
+
+  @override
+  String get rdCriticalDays => 'Days';
+
+  @override
+  String rdCriticalHitCount(num count, Object what) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$what $count times',
+      one: '$what once',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdCriticalHitPercent(Object percent, Object what) {
+    return '$what at $percent % of Termine';
+  }
+
+  @override
+  String get rdCriticalListAnd => 'Only together with other rules';
+
+  @override
+  String get rdCriticalListFoot =>
+      'Checked every morning and after every change. After “Talked to person” a person starts counting again from zero.';
+
+  @override
+  String rdCriticalListNow(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count problem cases right now',
+      one: '1 problem case right now',
+      zero: 'No problem case right now',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdCriticalListShow => 'Show in Members';
+
+  @override
+  String get rdCriticalModeCount => 'Count';
+
+  @override
+  String get rdCriticalModePercent => 'Share';
+
+  @override
+  String get rdCriticalMore => 'More settings';
+
+  @override
+  String get rdCriticalName => 'Name';
+
+  @override
+  String get rdCriticalNamePh => 'e.g. Often absent';
+
+  @override
+  String rdCriticalNames(Object names, Object count) {
+    return '$names and $count more';
+  }
+
+  @override
+  String get rdCriticalOr => ' or ';
+
+  @override
+  String get rdCriticalOwnRule => 'Own rule';
+
+  @override
+  String get rdCriticalPeriodAll => 'overall';
+
+  @override
+  String rdCriticalPeriodDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'in the last $count days',
+      one: 'in the last day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdCriticalPeriodOther => 'Other number of days …';
+
+  @override
+  String get rdCriticalPeriodSeason => 'since the season started';
+
+  @override
+  String get rdCriticalPresentWarning =>
+      '“Present” counts as a problem here too. Is that intended?';
+
+  @override
+  String get rdCriticalPresetAbsent => 'Often absent';
+
+  @override
+  String get rdCriticalPresetLate => 'Often late';
+
+  @override
+  String get rdCriticalPresetRarely => 'Rarely there';
+
+  @override
+  String get rdCriticalPreviewAndHint =>
+      'This rule only counts together with the other rules marked like this. The preview shows it on its own.';
+
+  @override
+  String get rdCriticalPreviewError =>
+      'The preview is not available right now.';
+
+  @override
+  String rdCriticalPreviewLast(Object date) {
+    return 'last $date';
+  }
+
+  @override
+  String get rdCriticalPreviewLoading => 'Calculating preview …';
+
+  @override
+  String rdCriticalPreviewMore(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'and $count more people',
+      one: 'and 1 more person',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdCriticalPreviewOf(Object matching, Object total) {
+    return '$matching of $total Termine';
+  }
+
+  @override
+  String get rdCriticalPreviewSolveHint =>
+      'After a conversation, a person only counts from that day on.';
+
+  @override
+  String rdCriticalPreviewTimes(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count times',
+      one: 'once',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdCriticalPreviewTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Hits $count people right now',
+      one: 'Hits 1 person right now',
+      zero: 'Hits nobody right now',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdCriticalReasonDetail(Object period, Object rule) {
+    return '$period · rule “$rule”';
+  }
+
+  @override
+  String get rdCriticalSentenceLead => 'A problem case is anyone who';
+
+  @override
+  String get rdCriticalSentenceTypes => ', at';
+
+  @override
+  String get rdCriticalSheetPeriod => 'Period';
+
+  @override
+  String get rdCriticalSheetThreshold => 'How often?';
+
+  @override
+  String get rdCriticalSheetTypes => 'Which Termine?';
+
+  @override
+  String get rdCriticalSheetWhat => 'What counts?';
+
+  @override
+  String rdCriticalSolveHint(Object name) {
+    return 'After saving, $name starts counting again from zero.';
+  }
+
+  @override
+  String rdCriticalSummary(Object threshold, Object what, Object period) {
+    return '$what $threshold $period';
+  }
+
+  @override
+  String rdCriticalThresholdCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'at least $count times',
+      one: 'at least once',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdCriticalThresholdCountText(Object count) {
+    return 'at least $count times';
+  }
+
+  @override
+  String rdCriticalThresholdPercent(Object percent) {
+    return 'at $percent % of Termine or more';
+  }
+
+  @override
+  String get rdCriticalTypesAll => 'all Termine';
+
+  @override
+  String get rdCriticalVerbHad => '';
+
+  @override
+  String get rdCriticalVerbHas => '';
+
+  @override
+  String get rdCriticalVerbIs => '';
+
+  @override
+  String get rdCriticalWhatAbsent => 'missed without excuse';
+
+  @override
+  String get rdCriticalWhatAbsentAll => 'missed (excused too)';
+
+  @override
+  String rdCriticalWhatCustom(Object statuses) {
+    return 'status $statuses';
+  }
+
+  @override
+  String get rdCriticalWhatLate => 'came late';
+
+  @override
+  String get rdCriticalWhatPick => 'Own selection …';
+
+  @override
+  String get rdCriticalWhatPickHint =>
+      'These statuses count. Choose at least one.';
 
   @override
   String get rdDataAddColumn => 'Add column';
@@ -13784,7 +14043,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String redesignMembersCritical(Object count) {
-    return 'Often missing · $count';
+    return 'Problem cases · $count';
   }
 
   @override
@@ -13797,7 +14056,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignMembersEmptyPending => 'Nobody is waiting for approval.';
 
   @override
-  String get redesignMembersFilterCritical => 'Often absent';
+  String get redesignMembersFilterCritical => 'Problem cases';
 
   @override
   String redesignMembersFilterField(Object name, Object value) {
@@ -14813,7 +15072,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignSplitMembersBirthdays => 'Upcoming birthdays';
 
   @override
-  String get redesignSplitMembersCritical => 'Attendance to watch';
+  String get redesignSplitMembersCritical => 'Problem cases';
 
   @override
   String get redesignSplitMembersEmpty => 'Choose a person on the left.';
@@ -15229,14 +15488,14 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count members often missing',
-      one: '$count member often missing',
+      other: '$count problem cases',
+      one: '1 problem case',
     );
     return '$_temp0';
   }
 
   @override
-  String get redesignTodayCriticalHint => 'Below the attendance limit';
+  String get redesignTodayCriticalHint => 'By your problem case rules';
 
   @override
   String get redesignTodayDayToday => 'Today';
