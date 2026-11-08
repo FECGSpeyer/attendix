@@ -176,10 +176,21 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     });
   }
 
+  bool get _isLead => ref.read(rdManageAccessProvider).isAdmin;
+
   /// Leads open a Verwaltung page from a picker ("Terminarten verwalten");
-  /// the form stays below.
-  VoidCallback? _manage(String route) =>
-      ref.read(rdManageAccessProvider).isAdmin ? () => context.push(route) : null;
+  /// the form stays below. Back on the form, the chosen Art is read anew
+  /// (filters or default status may have changed), the inputs stay.
+  Future<void> _manage(String route) async {
+    await context.push(route);
+    final id = _type?.id;
+    if (!mounted || id == null) return;
+    final types = await ref.read(visibleAttendanceTypesProvider.future).catchError((Object _) => const <AttendanceType>[]);
+    if (!mounted || _type?.id != id) return;
+    final fresh = types.where((t) => t.id == id).firstOrNull;
+    // Deleted or hidden: the Art has to be chosen again.
+    if (fresh != _type) setState(() => _type = fresh);
+  }
 
   Future<void> _pickRepeat(HolidayData holidays) async {
     final holidaysOff = ref.read(currentTenantProvider)?.showHolidays != true;
@@ -190,7 +201,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
       until: _until.isAfter(_date) ? _until : rdAddDays(_date, 42),
       skipHolidays: _skipHolidays,
       holidays: holidays,
-      onShowHolidays: holidaysOff ? _manage(RedesignRoutes.holidays) : null,
+      offerHolidays: holidaysOff && _isLead,
     );
     if (choice == null || !mounted) return;
     if (choice.custom) return _pickCustomDates();
@@ -200,6 +211,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
       _skipHolidays = choice.skipHolidays;
       _customDates = const [];
     });
+    if (choice.showHolidays) await _manage(RedesignRoutes.holidays);
   }
 
   Future<void> _pickTime({required bool start}) async {
@@ -238,7 +250,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
       context,
       types: types,
       selected: _type,
-      onManage: _manage(RedesignRoutes.attendanceTypes),
+      onManage: _isLead ? () => _manage(RedesignRoutes.attendanceTypes) : null,
     );
     if (picked == null || !mounted || picked.id == _type?.id) return;
     _touch(() {

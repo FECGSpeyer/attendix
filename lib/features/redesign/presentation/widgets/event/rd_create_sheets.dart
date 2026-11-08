@@ -111,7 +111,9 @@ Future<RdDeadline?> showRdDeadlinePicker(BuildContext context, RdDeadline select
 
 /// Result of the "Weitere Daten" sheet. [custom] is set when the days are
 /// picked one by one in the calendar instead.
-typedef RdRepeatChoice = ({RdRepeat repeat, DateTime until, bool skipHolidays, bool custom});
+/// [showHolidays]: "Ferien und Feiertage einblenden" was tapped; the choice
+/// still applies, then the caller opens the setting.
+typedef RdRepeatChoice = ({RdRepeat repeat, DateTime until, bool skipHolidays, bool custom, bool showHolidays});
 
 /// "Weitere Daten": once, every week or every two weeks until a day, with
 /// a preview of the dates (holidays marked, optionally left out).
@@ -122,7 +124,7 @@ Future<RdRepeatChoice?> showRdRepeatSheet(
   required DateTime until,
   required bool skipHolidays,
   required HolidayData holidays,
-  VoidCallback? onShowHolidays,
+  bool offerHolidays = false,
 }) {
   return showRdSheet<RdRepeatChoice>(
     context,
@@ -132,7 +134,7 @@ Future<RdRepeatChoice?> showRdRepeatSheet(
       until: until,
       skipHolidays: skipHolidays,
       holidays: holidays,
-      onShowHolidays: onShowHolidays,
+      offerHolidays: offerHolidays,
     ),
   );
 }
@@ -144,7 +146,7 @@ class _RepeatSheet extends StatefulWidget {
     required this.until,
     required this.skipHolidays,
     required this.holidays,
-    this.onShowHolidays,
+    this.offerHolidays = false,
   });
 
   final DateTime start;
@@ -154,7 +156,7 @@ class _RepeatSheet extends StatefulWidget {
 
   /// Leads in groups without Ferien und Feiertage: a row to switch them on
   /// (Verwaltung › Ferien und Feiertage), so series can leave them out.
-  final VoidCallback? onShowHolidays;
+  final bool offerHolidays;
   final HolidayData holidays;
 
   @override
@@ -180,11 +182,12 @@ class _RepeatSheetState extends State<_RepeatSheet> {
     if (picked != null && mounted) setState(() => _until = rdDay(picked));
   }
 
-  void _done({bool custom = false}) => Navigator.of(context).pop((
+  void _done({bool custom = false, bool showHolidays = false}) => Navigator.of(context).pop((
         repeat: _repeat,
         until: _until,
         skipHolidays: _skip,
         custom: custom,
+        showHolidays: showHolidays,
       ));
 
   @override
@@ -232,15 +235,13 @@ class _RepeatSheetState extends State<_RepeatSheet> {
                 ),
                 onTap: () => setState(() => _skip = !_skip),
               )
-            else if (widget.onShowHolidays != null)
+            else if (widget.offerHolidays)
+              // Keeps the series chosen so far.
               RdListRow(
                 title: l10n.rdAdminShowHolidays,
                 titleColor: p.primary,
                 showChevron: false,
-                onTap: () {
-                  Navigator.of(context).pop();
-                  widget.onShowHolidays!();
-                },
+                onTap: () => _done(showHolidays: true),
               ),
           ]),
           const SizedBox(height: 14),
