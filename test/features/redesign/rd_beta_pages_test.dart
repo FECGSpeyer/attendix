@@ -1,6 +1,7 @@
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/attendance_type_providers.dart';
 import 'package:attendix/core/providers/group_providers.dart';
+import 'package:attendix/core/providers/player_providers.dart';
 import 'package:attendix/core/providers/realtime_providers.dart';
 import 'package:attendix/core/providers/statistics_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
@@ -58,6 +59,8 @@ Widget _app(Widget home) => ProviderScope(
             ]),
         activePlayersForStatsProvider.overrideWith((ref) async => _people),
         rdStatsPreviousResultProvider.overrideWith((ref) => null),
+        playersProvider.overrideWith((ref) async => _people),
+        archivedPlayersProvider.overrideWith((ref) async => const <Person>[]),
         realtimePlayersProvider.overrideWith((ref) => Stream.value(_people)),
         rdManagePendingProvider.overrideWith((ref) => const <Person>[]),
       ],
@@ -168,6 +171,11 @@ void main() {
       final before = run(const RdStatsFilter(), shift: true);
       expect(rdStatsBiggestDrop(all, before)?.$1.group.name, 'Cello');
       expect(rdStatsBiggestDrop(before, all), isNull);
+      // Personen level: most often absent first; Register curve per month.
+      expect(rdSortStatsPeople(all.people, RdStatsPersonSort.absent).first.person.firstName, 'Ben');
+      expect(all.groups.first.months, [(DateTime(2026, 10), 63)]);
+      expect(rdStatsAgeDecades([anna.copyWith(birthday: '2000-12-31'), ben.copyWith(birthday: '1979-01-01')], DateTime(2026, 11, 8)),
+          [(20, 1), (30, 0), (40, 1)]);
     });
   });
 
@@ -225,17 +233,27 @@ void main() {
   });
 
   group('pages render', () {
-    testWidgets('Auswertung: Überblick with "Fällt auf", then the Termine', (tester) async {
+    testWidgets('Auswertung: Überblick, Termine, Personen and Register', (tester) async {
       await _pump(tester, const RdStatsPage());
       expect(find.text('Auswertung'), findsOneWidget);
       expect(find.text('Saison'), findsOneWidget);
-      expect(find.text('Holz'), findsOneWidget);
       await tester.scrollUntilVisible(find.text('Ben Bach'), 200, scrollable: find.byType(Scrollable).first);
       expect(find.text('1 Person unter 50 %'), findsOneWidget);
       await tester.scrollUntilVisible(find.text('Alle Termine'), -200, scrollable: find.byType(Scrollable).first);
       await tester.tap(find.text('Alle Termine'));
       await tester.pumpAndSettle();
       expect(find.textContaining('Neueste zuerst'), findsOneWidget);
+      // "Fällt auf" leads to the Personen, weakest first, with Mitglieder.
+      await tester.tap(find.text('Überblick'));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(find.text('1 Person unter 50 %'), 200, scrollable: find.byType(Scrollable).first);
+      await tester.tap(find.text('1 Person unter 50 %'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Wenigste zuerst'), findsOneWidget);
+      expect(find.text('Holz · 6 abwesend'), findsOneWidget);
+      await tester.tap(find.text('Register'));
+      await tester.pumpAndSettle();
+      expect(find.text('Holz'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
 

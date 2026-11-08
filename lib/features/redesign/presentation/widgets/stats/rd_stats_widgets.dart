@@ -251,12 +251,15 @@ class RdStatsSplitCard extends StatelessWidget {
 /// and percentage (the percentage keeps one line, also "100 %"). [onTap]
 /// narrows the Auswertung to it.
 class RdStatsGroupRow extends StatelessWidget {
-  const RdStatsGroupRow({super.key, required this.name, required this.percent, this.meta, this.onTap});
+  const RdStatsGroupRow({super.key, required this.name, required this.percent, this.meta, this.onTap, this.valueText});
 
   final String name;
   final int percent;
   final String? meta;
   final VoidCallback? onTap;
+
+  /// Shown instead of the percentage (bar length stays [percent]).
+  final String? valueText;
 
   @override
   Widget build(BuildContext context) {
@@ -297,7 +300,7 @@ class RdStatsGroupRow extends StatelessWidget {
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerRight,
                 child: Text(
-                  rdPercent(percent),
+                  valueText ?? rdPercent(percent),
                   maxLines: 1,
                   softWrap: false,
                   style: RdType.body(p).copyWith(fontFeatures: const [FontFeature.tabularFigures()]),
@@ -310,7 +313,7 @@ class RdStatsGroupRow extends StatelessWidget {
       ),
     );
     return Semantics(
-      label: [name, if (meta != null) meta!, rdPercent(percent)].join(', '),
+      label: [name, if (meta != null) meta!, valueText ?? rdPercent(percent)].join(', '),
       button: onTap != null,
       excludeSemantics: true,
       child: onTap == null
@@ -328,6 +331,15 @@ String rdStatsSortLabel(AppLocalizations l10n, RdStatsEventSort sort) => switch 
       RdStatsEventSort.best => l10n.rdStatsSortBest,
     };
 
+/// Label of an order of the Personen level.
+String rdStatsPersonSortLabel(AppLocalizations l10n, RdStatsPersonSort sort) => switch (sort) {
+      RdStatsPersonSort.fewest => l10n.rdStatsPersonSortFewest,
+      RdStatsPersonSort.most => l10n.rdStatsPersonSortMost,
+      RdStatsPersonSort.absent => l10n.rdStatsPersonSortAbsent,
+      RdStatsPersonSort.late => l10n.rdStatsPersonSortLate,
+      RdStatsPersonSort.name => l10n.rdStatsPersonSortName,
+    };
+
 /// "Fällt auf": the people below 50 %, the Register that lost most
 /// against the period before (else the weakest one), the weakest and the
 /// best Termin. Each row leads on: the people, the Register as filter, the
@@ -339,6 +351,7 @@ class RdStatsNotable extends StatelessWidget {
     required this.previous,
     required this.groups,
     required this.onGroup,
+    required this.onLow,
   });
 
   final RdStatsResult result;
@@ -347,6 +360,9 @@ class RdStatsNotable extends StatelessWidget {
 
   /// Narrows the Auswertung to one Register.
   final ValueChanged<Group> onGroup;
+
+  /// Shows the people below 50 % (Personen level, weakest first).
+  final VoidCallback onLow;
 
   @override
   Widget build(BuildContext context) {
@@ -369,7 +385,7 @@ class RdStatsNotable extends StatelessWidget {
           leading: RdRowIcon(Icons.person_outline, color: p.absent, background: p.absentSoft),
           title: l10n.redesignStatsLow(low.length),
           subtitle: [for (final e in low.take(3)) rdPersonName(e.person)].join(', ') + (low.length > 3 ? ' …' : ''),
-          onTap: () => showRdStatsLowSheet(context, low),
+          onTap: onLow,
         ),
       if (drop != null)
         RdListRow(
@@ -411,44 +427,6 @@ class RdStatsNotable extends StatelessWidget {
       ],
     );
   }
-}
-
-/// The people below 50 %, lowest first; each opens the person.
-Future<void> showRdStatsLowSheet(BuildContext context, List<RdStatsPerson> low) {
-  final router = GoRouter.of(context);
-  return showRdSheet<void>(context, Builder(builder: (context) {
-    final p = context.rd;
-    final l10n = context.l10n;
-    return ListView(
-      shrinkWrap: true,
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      children: [
-        Semantics(header: true, child: Text(l10n.redesignStatsLow(low.length), style: RdType.cardTitle(p))),
-        const SizedBox(height: 2),
-        Text(l10n.rdStatsLowHint, style: RdType.meta(p, size: 14)),
-        const SizedBox(height: 12),
-        RdGroupedList(
-          children: [
-            for (final entry in low)
-              RdListRow(
-                title: rdPersonName(entry.person),
-                subtitle: l10n.rdStatsEvents(entry.counts.total),
-                trailing: Text(
-                  rdPercent(entry.percent),
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: rdPercentColor(p, entry.percent)),
-                ),
-                onTap: entry.person.id == null
-                    ? null
-                    : () {
-                        Navigator.of(context).pop();
-                        router.push(RedesignRoutes.person(entry.person.id!));
-                      },
-              ),
-          ],
-        ),
-      ],
-    );
-  }));
 }
 
 /// One Termin of the Termine level: day, title, who was missing, split
@@ -588,14 +566,17 @@ class _EventSheet extends StatelessWidget {
   }
 }
 
+/// Which list the "Sortieren" row of the filter sheet orders.
+enum RdStatsSortFor { events, people }
+
 /// "Filter" of the Auswertung: Terminarten and Register, with [sort] also
-/// the order of the Termine ("Sortieren & Filtern"). Changes apply at
-/// once; the button shows how many Termine are left.
+/// the order of the Termine or the Personen ("Sortieren & Filtern").
+/// Changes apply at once; the button shows how many Termine are left.
 Future<void> showRdStatsFilterSheet(
   BuildContext context, {
   required List<AttendanceType> types,
   required List<Group> groups,
-  bool sort = false,
+  RdStatsSortFor? sort,
 }) {
   return showModalBottomSheet<void>(
     context: context,
@@ -619,7 +600,26 @@ class _FilterSheet extends ConsumerWidget {
   final ScrollController controller;
   final List<AttendanceType> types;
   final List<Group> groups;
-  final bool sort;
+  final RdStatsSortFor? sort;
+
+  Future<void> _pickSort<T>(
+    BuildContext context,
+    WidgetRef ref,
+    StateProvider<T> provider,
+    List<T> values,
+    String Function(T) label,
+  ) async {
+    final current = ref.read(provider);
+    final choice = await showAppActionSheet<T>(
+      context,
+      title: context.l10n.redesignWorksSort,
+      actions: [
+        for (final s in values)
+          AppActionSheetAction(value: s, icon: s == current ? Icons.check : null, label: label(s)),
+      ],
+    );
+    if (choice != null) ref.read(provider.notifier).state = choice;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -649,42 +649,39 @@ class _FilterSheet extends ConsumerWidget {
             Expanded(
               child: Semantics(
                 header: true,
-                child: Text(sort ? l10n.redesignWorksFilterTitle : l10n.redesignWorksFilter, style: RdType.section(p)),
+                child: Text(sort != null ? l10n.redesignWorksFilterTitle : l10n.redesignWorksFilter, style: RdType.section(p)),
               ),
             ),
             RdTextLink(
               label: l10n.redesignWorksFilterReset,
               onTap: () {
                 set(const RdStatsFilter());
-                if (sort) ref.read(rdStatsEventSortProvider.notifier).state = RdStatsEventSort.newest;
+                switch (sort) {
+                  case RdStatsSortFor.events:
+                    ref.read(rdStatsEventSortProvider.notifier).state = RdStatsEventSort.newest;
+                  case RdStatsSortFor.people:
+                    ref.read(rdStatsPersonSortProvider.notifier).state = RdStatsPersonSort.fewest;
+                  case null:
+                }
               },
             ),
           ],
         ),
         const SizedBox(height: 12),
-        if (sort) ...[
+        if (sort != null) ...[
           RdGroupedList(
             children: [
               RdListRow(
                 key: const Key('rd-stats-sort'),
                 title: l10n.redesignWorksSort,
-                value: rdStatsSortLabel(l10n, ref.watch(rdStatsEventSortProvider)),
-                onTap: () async {
-                  final current = ref.read(rdStatsEventSortProvider);
-                  final choice = await showAppActionSheet<RdStatsEventSort>(
-                    context,
-                    title: l10n.redesignWorksSort,
-                    actions: [
-                      for (final s in RdStatsEventSort.values)
-                        AppActionSheetAction(
-                          value: s,
-                          icon: s == current ? Icons.check : null,
-                          label: rdStatsSortLabel(l10n, s),
-                        ),
-                    ],
-                  );
-                  if (choice != null) ref.read(rdStatsEventSortProvider.notifier).state = choice;
-                },
+                value: sort == RdStatsSortFor.events
+                    ? rdStatsSortLabel(l10n, ref.watch(rdStatsEventSortProvider))
+                    : rdStatsPersonSortLabel(l10n, ref.watch(rdStatsPersonSortProvider)),
+                onTap: () => sort == RdStatsSortFor.events
+                    ? _pickSort(context, ref, rdStatsEventSortProvider, RdStatsEventSort.values,
+                        (s) => rdStatsSortLabel(l10n, s))
+                    : _pickSort(context, ref, rdStatsPersonSortProvider, RdStatsPersonSort.values,
+                        (s) => rdStatsPersonSortLabel(l10n, s)),
               ),
             ],
           ),

@@ -17,6 +17,7 @@ import '../../../export/presentation/pages/export_page.dart' show showExportModa
 import '../../data/providers/rd_stats_providers.dart';
 import '../../data/rd_stats_logic.dart';
 import '../widgets/manage/rd_data_sheets.dart' show rdGenerateCertificates;
+import '../widgets/stats/rd_stats_levels.dart';
 import '../widgets/stats/rd_stats_widgets.dart';
 import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
@@ -36,7 +37,7 @@ class RdStatsPage extends ConsumerStatefulWidget {
   ConsumerState<RdStatsPage> createState() => _RdStatsPageState();
 }
 
-enum _Level { overview, events }
+enum _Level { overview, events, register, people }
 
 class _RdStatsPageState extends ConsumerState<RdStatsPage> {
   /// At most this many bars; older Termine are left out of the chart.
@@ -153,7 +154,16 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
             RdFilterLink(
               key: const Key('rd-stats-filter'),
               label: filter.count > 0 ? '${l10n.redesignWorksFilter} · ${filter.count}' : l10n.redesignWorksFilter,
-              onTap: () => showRdStatsFilterSheet(context, types: types, groups: groups, sort: _level == _Level.events),
+              onTap: () => showRdStatsFilterSheet(
+                context,
+                types: types,
+                groups: groups,
+                sort: switch (_level) {
+                  _Level.events => RdStatsSortFor.events,
+                  _Level.people => RdStatsSortFor.people,
+                  _ => null,
+                },
+              ),
             ),
           ],
         ),
@@ -174,6 +184,8 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
                     (level) => switch (level) {
                       _Level.overview => l10n.rdStatsTabOverview,
                       _Level.events => l10n.rdStatsTabEvents,
+                      _Level.register => l10n.rdStatsTabRegister,
+                      _Level.people => l10n.rdStatsTabPeople,
                     },
                 onChanged: _setLevel,
               ),
@@ -200,10 +212,20 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
                 )
               else if (result.events.isEmpty)
                 RdCard(child: Text(l10n.redesignStatsEmpty, style: RdType.body(p)))
-              else if (_level == _Level.overview)
-                ..._overview(context, result, filter, types, groups)
               else
-                ..._events(context, result, groups),
+                ...switch (_level) {
+                  _Level.overview => _overview(context, result, filter, types, groups),
+                  _Level.events => _events(context, result, groups),
+                  _Level.register => _register(context, result, filter),
+                  _Level.people => _people(context, result, groups),
+                },
+              if (_level == _Level.people && !loading && !attendancesAsync.hasError) ...[
+                // Ionic stats: Mitglieder and Alter (all Register).
+                const SizedBox(height: 24),
+                const RdStatsMembersCard(),
+                const SizedBox(height: 12),
+                const RdStatsAgeCard(),
+              ],
               if (_level == _Level.overview) ...[
                 // Saison and Zählweise (from the old "Allgemein"), which
                 // Terminarten count, Export and Urkunden (Vorkurs).
@@ -258,7 +280,17 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
     final bars =
         result.events.length > _maxBars ? result.events.sublist(result.events.length - _maxBars) : result.events;
     final byType = rdStatsByType(result.events);
-    void onGroup(Group g) => _setFilter(filter.withGroups({g.id!}));
+    // "Fällt auf": a Register shows its people, the people below 50 % the
+    // Personen level, weakest first.
+    void onGroup(Group g) {
+      _setFilter(filter.withGroups({g.id!}));
+      _setLevel(_Level.people);
+    }
+
+    void onLow() {
+      ref.read(rdStatsPersonSortProvider.notifier).state = RdStatsPersonSort.fewest;
+      _setLevel(_Level.people);
+    }
     return [
       // Same height for all three, also with "ggü. davor" under the Ø.
       IntrinsicHeight(
@@ -298,28 +330,8 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
         ),
       ),
       const SizedBox(height: 20),
-      RdStatsNotable(result: result, previous: previous, groups: groups, onGroup: onGroup),
+      RdStatsNotable(result: result, previous: previous, groups: groups, onGroup: onGroup, onLow: onLow),
       if (result.counts.total > 0) ...[const SizedBox(height: 12), RdStatsSplitCard(counts: result.counts)],
-      if (result.groups.isNotEmpty) ...[
-        const SizedBox(height: 12),
-        RdCard(
-          padding: const EdgeInsets.all(14),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(l10n.redesignStatsPerGroup, style: RdType.section(p)),
-              if (result.groups.length > 1) Text(l10n.rdStatsGroupsHint, style: RdType.meta(p, size: 13)),
-              const SizedBox(height: 10),
-              for (final g in result.groups)
-                RdStatsGroupRow(
-                  name: g.group.name,
-                  percent: g.percent,
-                  onTap: result.groups.length > 1 ? () => onGroup(g.group) : null,
-                ),
-            ],
-          ),
-        ),
-      ],
       if (byType.length > 1) ...[
         const SizedBox(height: 12),
         RdCard(
@@ -367,6 +379,15 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
         ),
       ),
     ];
+    if (_wide) {
+      children.add(RdStatsEventsTable(
+        events: events,
+        groups: groups,
+        sort: sort,
+        onSort: (s) => ref.read(rdStatsEventSortProvider.notifier).state = s,
+      ));
+      return children;
+    }
     if (!byDate) {
       children.add(RdGroupedList(children: [for (final e in events) row(e)]));
       return children;
@@ -390,6 +411,75 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
     }
     return children;
   }
+
+  /// Register: each Register with people, curve per month and quote; a
+  /// tap shows its people.
+  List<Widget> _register(BuildContext context, RdStatsResult result, RdStatsFilter filter) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    if (result.groups.isEmpty) return [RdCard(child: Text(l10n.redesignStatsEmpty, style: RdType.body(p)))];
+    return [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
+        child: Text(l10n.rdStatsRegisterHint, style: RdType.meta(p, size: 13)),
+      ),
+      RdGroupedList(
+        children: [
+          for (final g in result.groups)
+            RdStatsRegisterRow(
+              key: ValueKey('rd-stats-register-${g.group.id}'),
+              group: g,
+              onTap: () {
+                _setFilter(filter.withGroups({g.group.id!}));
+                _setLevel(_Level.people);
+              },
+            ),
+        ],
+      ),
+    ];
+  }
+
+  /// Personen: every active person with counted Termine in the chosen
+  /// order; a tap opens the person sheet.
+  List<Widget> _people(BuildContext context, RdStatsResult result, List<Group> groups) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final sort = ref.watch(rdStatsPersonSortProvider);
+    final people = rdSortStatsPeople(result.people, sort);
+    final groupName = {for (final g in groups) if (g.id != null) g.id!: g.name};
+    return [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
+        child: Text(
+          '${l10n.commonPersons(people.length)} · ${rdStatsPersonSortLabel(l10n, sort)}',
+          style: RdType.meta(p, size: 13),
+        ),
+      ),
+      if (_wide)
+        RdStatsPeopleTable(
+          result: result,
+          people: people,
+          groups: groups,
+          sort: sort,
+          onSort: (s) => ref.read(rdStatsPersonSortProvider.notifier).state = s,
+        )
+      else
+        RdGroupedList(
+          children: [
+            for (final person in people)
+              RdStatsPersonRow(
+                key: ValueKey('rd-stats-person-${person.person.id}'),
+                person: person,
+                groupName: groupName,
+                onTap: () => showRdStatsPersonSheet(context, result, person, groups),
+              ),
+          ],
+        ),
+    ];
+  }
+
+  /// Wide enough for the tables (content width of [RdPage]).
+  bool get _wide => MediaQuery.sizeOf(context).width - 40 >= rdStatsTableWidth;
 }
 
 /// Active filters as removable chips.

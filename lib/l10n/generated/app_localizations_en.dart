@@ -10394,6 +10394,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdSettingsUndo => 'Undo';
 
   @override
+  String get rdStatsAge => 'Age';
+
+  @override
+  String get rdStatsAgeAvgGroup => 'Average age per section';
+
+  @override
+  String rdStatsAgeBucket(Object from, Object to) {
+    return '$from–$to years';
+  }
+
+  @override
+  String get rdStatsAgeHint => 'Active members with a birthday';
+
+  @override
+  String get rdStatsAgeNone =>
+      'None of the active members has a birthday entered.';
+
+  @override
+  String rdStatsAgeYears(Object years) {
+    return '$years y';
+  }
+
+  @override
   String get rdStatsAllThere => 'All there';
 
   @override
@@ -10417,6 +10440,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdStatsByTypeHint => 'Tap to show only this type.';
+
+  @override
+  String get rdStatsColAbsent => 'Abs.';
+
+  @override
+  String get rdStatsColDate => 'Date';
+
+  @override
+  String get rdStatsColEvent => 'Event';
+
+  @override
+  String get rdStatsColEvents => 'Events';
+
+  @override
+  String get rdStatsColExcused => 'Exc.';
+
+  @override
+  String get rdStatsColLate => 'Late';
+
+  @override
+  String get rdStatsColName => 'Name';
+
+  @override
+  String get rdStatsColPresent => 'Pres.';
+
+  @override
+  String get rdStatsColQuote => 'Rate';
+
+  @override
+  String get rdStatsColRegister => 'Section';
 
   @override
   String rdStatsCountAbsent(Object count) {
@@ -10527,11 +10580,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'Only for this view. Preselected are the types that count towards the attendance rate.';
 
   @override
-  String get rdStatsGroupsHint => 'Tap to show only this section.';
+  String get rdStatsMembers => 'Members';
 
   @override
-  String get rdStatsLowHint =>
-      'With at least 3 events in the period. Tap to open the person.';
+  String get rdStatsMembersActive => 'Active';
+
+  @override
+  String get rdStatsMembersLeft => 'Left';
+
+  @override
+  String get rdStatsMembersPaused => 'Paused';
+
+  @override
+  String get rdStatsMembersTotal => 'Total';
 
   @override
   String get rdStatsNotable => 'Worth a look';
@@ -10558,6 +10619,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdStatsNotableWeakest => 'Weakest event';
 
   @override
+  String get rdStatsPersonAllThere => 'Was at every event.';
+
+  @override
+  String rdStatsPersonDots(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events, oldest left',
+      one: '1 event, oldest left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdStatsPersonLate(Object count) {
+    return 'Late ($count)';
+  }
+
+  @override
+  String rdStatsPersonMissed(Object count) {
+    return 'Missed ($count)';
+  }
+
+  @override
+  String get rdStatsPersonOpen => 'Open person';
+
+  @override
+  String get rdStatsPersonSortAbsent => 'Often absent';
+
+  @override
+  String get rdStatsPersonSortFewest => 'Fewest first';
+
+  @override
+  String get rdStatsPersonSortLate => 'Often late';
+
+  @override
+  String get rdStatsPersonSortMost => 'Most first';
+
+  @override
+  String get rdStatsPersonSortName => 'Name';
+
+  @override
+  String rdStatsPersonSub(
+    Object group,
+    Object percent,
+    Object attended,
+    Object total,
+  ) {
+    return '$group · $percent ($attended of $total)';
+  }
+
+  @override
   String get rdStatsRangeCustom => 'Custom …';
 
   @override
@@ -10573,7 +10686,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdStatsRangeTo => 'To';
 
   @override
+  String get rdStatsRegisterHint =>
+      'Curve: rate per month. Tap to see the people of the section.';
+
+  @override
   String get rdStatsSortBest => 'Best first';
+
+  @override
+  String rdStatsSortBy(Object column) {
+    return 'Sort by $column';
+  }
 
   @override
   String get rdStatsSortNewest => 'Newest first';
@@ -10592,6 +10714,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdStatsTabOverview => 'Overview';
+
+  @override
+  String get rdStatsTabPeople => 'People';
+
+  @override
+  String get rdStatsTabRegister => 'Sections';
 
   @override
   String get rdStatsTabsLabel => 'Statistics view';

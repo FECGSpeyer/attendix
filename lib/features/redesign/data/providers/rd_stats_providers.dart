@@ -52,6 +52,13 @@ final rdStatsEventSortProvider = StateProvider<RdStatsEventSort>((ref) {
   return RdStatsEventSort.newest;
 });
 
+/// REDESIGN: order of the Personen level of the Auswertung.
+final rdStatsPersonSortProvider = StateProvider<RdStatsPersonSort>((ref) {
+  ref.watch(currentTenantIdProvider);
+  ref.watch(currentAuthUserIdProvider);
+  return RdStatsPersonSort.fewest;
+});
+
 /// REDESIGN: Termine and entries of the period of the same length before
 /// the chosen one ([rdStatsPreviousPeriod]), for "ggü. davor". Null when
 /// there is no sensible comparison or loading failed (the comparison is

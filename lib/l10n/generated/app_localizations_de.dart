@@ -10507,6 +10507,29 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdSettingsUndo => 'Rückgängig';
 
   @override
+  String get rdStatsAge => 'Alter';
+
+  @override
+  String get rdStatsAgeAvgGroup => 'Ø Alter je Register';
+
+  @override
+  String rdStatsAgeBucket(Object from, Object to) {
+    return '$from–$to Jahre';
+  }
+
+  @override
+  String get rdStatsAgeHint => 'Aktive Mitglieder mit Geburtsdatum';
+
+  @override
+  String get rdStatsAgeNone =>
+      'Bei den aktiven Mitgliedern ist kein Geburtsdatum eingetragen.';
+
+  @override
+  String rdStatsAgeYears(Object years) {
+    return '$years J.';
+  }
+
+  @override
   String get rdStatsAllThere => 'Alle da';
 
   @override
@@ -10530,6 +10553,36 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdStatsByTypeHint => 'Antippen zeigt nur diese Art.';
+
+  @override
+  String get rdStatsColAbsent => 'Abw.';
+
+  @override
+  String get rdStatsColDate => 'Datum';
+
+  @override
+  String get rdStatsColEvent => 'Termin';
+
+  @override
+  String get rdStatsColEvents => 'Termine';
+
+  @override
+  String get rdStatsColExcused => 'Entsch.';
+
+  @override
+  String get rdStatsColLate => 'Versp.';
+
+  @override
+  String get rdStatsColName => 'Name';
+
+  @override
+  String get rdStatsColPresent => 'Anw.';
+
+  @override
+  String get rdStatsColQuote => 'Quote';
+
+  @override
+  String get rdStatsColRegister => 'Register';
 
   @override
   String rdStatsCountAbsent(Object count) {
@@ -10640,11 +10693,19 @@ class AppLocalizationsDe extends AppLocalizations {
       'Gilt nur für diese Ansicht. Vorausgewählt sind die Arten, die zur Anwesenheitsquote zählen.';
 
   @override
-  String get rdStatsGroupsHint => 'Antippen zeigt nur dieses Register.';
+  String get rdStatsMembers => 'Mitglieder';
 
   @override
-  String get rdStatsLowHint =>
-      'Mit mindestens 3 Terminen im Zeitraum. Antippen öffnet die Person.';
+  String get rdStatsMembersActive => 'Aktiv';
+
+  @override
+  String get rdStatsMembersLeft => 'Ausgetreten';
+
+  @override
+  String get rdStatsMembersPaused => 'Pausiert';
+
+  @override
+  String get rdStatsMembersTotal => 'Gesamt';
 
   @override
   String get rdStatsNotable => 'Fällt auf';
@@ -10671,6 +10732,58 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdStatsNotableWeakest => 'Schwächster Termin';
 
   @override
+  String get rdStatsPersonAllThere => 'War bei allen Terminen da.';
+
+  @override
+  String rdStatsPersonDots(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Termine, ältester links',
+      one: '1 Termin, ältester links',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdStatsPersonLate(Object count) {
+    return 'Verspätet ($count)';
+  }
+
+  @override
+  String rdStatsPersonMissed(Object count) {
+    return 'Gefehlt ($count)';
+  }
+
+  @override
+  String get rdStatsPersonOpen => 'Person öffnen';
+
+  @override
+  String get rdStatsPersonSortAbsent => 'Oft abwesend';
+
+  @override
+  String get rdStatsPersonSortFewest => 'Wenigste zuerst';
+
+  @override
+  String get rdStatsPersonSortLate => 'Oft verspätet';
+
+  @override
+  String get rdStatsPersonSortMost => 'Meiste zuerst';
+
+  @override
+  String get rdStatsPersonSortName => 'Name';
+
+  @override
+  String rdStatsPersonSub(
+    Object group,
+    Object percent,
+    Object attended,
+    Object total,
+  ) {
+    return '$group · $percent ($attended von $total)';
+  }
+
+  @override
   String get rdStatsRangeCustom => 'Eigener …';
 
   @override
@@ -10686,7 +10799,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdStatsRangeTo => 'Bis';
 
   @override
+  String get rdStatsRegisterHint =>
+      'Kurve: Quote je Monat. Antippen zeigt die Personen des Registers.';
+
+  @override
   String get rdStatsSortBest => 'Beste zuerst';
+
+  @override
+  String rdStatsSortBy(Object column) {
+    return 'Sortieren nach $column';
+  }
 
   @override
   String get rdStatsSortNewest => 'Neueste zuerst';
@@ -10705,6 +10827,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdStatsTabOverview => 'Überblick';
+
+  @override
+  String get rdStatsTabPeople => 'Personen';
+
+  @override
+  String get rdStatsTabRegister => 'Register';
 
   @override
   String get rdStatsTabsLabel => 'Ansicht der Auswertung';

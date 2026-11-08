@@ -146,13 +146,17 @@ class RdStatsEvent {
 /// One Register of the period.
 @immutable
 class RdStatsGroup {
-  const RdStatsGroup({required this.group, required this.people, required this.counts});
+  const RdStatsGroup({required this.group, required this.people, required this.counts, this.months = const []});
 
   final Group group;
 
   /// Active persons of the Register with counted entries.
   final int people;
   final RdStatsCounts counts;
+
+  /// Quote per month with entries, oldest first (the curve of the
+  /// Register level).
+  final List<(DateTime, int)> months;
 
   int get percent => counts.percent;
 }
@@ -238,6 +242,7 @@ RdStatsResult rdComputeStats({
   final events = <RdStatsEvent>[];
   var total = const RdStatsCounts();
   final perGroup = <int, RdStatsCounts>{};
+  final perGroupMonth = <int, Map<DateTime, RdStatsCounts>>{};
   final peopleOfGroup = <int, Set<int>>{};
   final perPerson = <int, RdStatsCounts>{};
 
@@ -263,6 +268,9 @@ RdStatsResult rdComputeStats({
       perPerson[person.id!] = (perPerson[person.id!] ?? const RdStatsCounts()).add(pa.status, attended: attended);
       if (groupId != null && register.containsKey(groupId)) {
         perGroup[groupId] = (perGroup[groupId] ?? const RdStatsCounts()).add(pa.status, attended: attended);
+        final months = perGroupMonth.putIfAbsent(groupId, () => {});
+        final month = DateTime(date.year, date.month);
+        months[month] = (months[month] ?? const RdStatsCounts()).add(pa.status, attended: attended);
         peopleOfGroup.putIfAbsent(groupId, () => {}).add(person.id!);
       }
     }
@@ -283,7 +291,14 @@ RdStatsResult rdComputeStats({
   final average = events.isEmpty ? 0 : (events.fold<int>(0, (s, e) => s + e.percent) / events.length).round();
   final groupStats = [
     for (final entry in perGroup.entries)
-      RdStatsGroup(group: register[entry.key]!, people: peopleOfGroup[entry.key]?.length ?? 0, counts: entry.value),
+      RdStatsGroup(
+        group: register[entry.key]!,
+        people: peopleOfGroup[entry.key]?.length ?? 0,
+        counts: entry.value,
+        months: [
+          for (final m in (perGroupMonth[entry.key]!.keys.toList()..sort())) (m, perGroupMonth[entry.key]![m]!.percent),
+        ],
+      ),
   ]..sort((a, b) => b.percent != a.percent ? b.percent.compareTo(a.percent) : a.group.name.compareTo(b.group.name));
   final people = [
     for (final entry in perPerson.entries) RdStatsPerson(person: active[entry.key]!, counts: entry.value),
@@ -368,4 +383,47 @@ const rdStatsMinCompareEvents = 3;
     if (drop >= minDrop && (worst == null || drop > worst.$2)) worst = (g, drop);
   }
   return worst;
+}
+
+/// Orders of the Personen level ("Oft abwesend" and "Oft verspätet" replace
+/// Ionic's "Unentschuldigt" chart and the Top 20).
+enum RdStatsPersonSort { fewest, most, absent, late, name }
+
+/// [people] in the order [sort]; ties by name.
+List<RdStatsPerson> rdSortStatsPeople(List<RdStatsPerson> people, RdStatsPersonSort sort) {
+  int byName(RdStatsPerson a, RdStatsPerson b) =>
+      rdPersonName(a.person).toLowerCase().compareTo(rdPersonName(b.person).toLowerCase());
+  int then(int c, RdStatsPerson a, RdStatsPerson b) => c != 0 ? c : byName(a, b);
+  return [...people]..sort(switch (sort) {
+      RdStatsPersonSort.fewest => (a, b) => then(a.percent.compareTo(b.percent), a, b),
+      RdStatsPersonSort.most => (a, b) => then(b.percent.compareTo(a.percent), a, b),
+      RdStatsPersonSort.absent => (a, b) => then(b.counts.absent.compareTo(a.counts.absent), a, b),
+      RdStatsPersonSort.late => (a, b) => then(b.counts.late.compareTo(a.counts.late), a, b),
+      RdStatsPersonSort.name => byName,
+    });
+}
+
+/// The counted entries of person [personId], one per Termin, oldest first.
+List<(RdStatsEvent, PersonAttendance)> rdStatsPersonEntries(RdStatsResult result, int personId) => [
+      for (final e in result.events)
+        for (final pa in e.rows)
+          if (pa.personId == personId) (e, pa),
+    ];
+
+/// Persons with a birthday per decade of age on [today] (start of the
+/// decade, count), youngest first; empty decades between stay (like
+/// Ionic's age chart).
+List<(int, int)> rdStatsAgeDecades(List<Person> people, DateTime today) {
+  final count = <int, int>{};
+  for (final p in people) {
+    final b = p.birthday == null ? null : DateTime.tryParse(p.birthday!);
+    if (b == null) continue;
+    final age = today.year - b.year - ((today.month < b.month || (today.month == b.month && today.day < b.day)) ? 1 : 0);
+    if (age < 0) continue;
+    count.update(age ~/ 10 * 10, (n) => n + 1, ifAbsent: () => 1);
+  }
+  if (count.isEmpty) return const [];
+  final first = count.keys.reduce((a, b) => a < b ? a : b);
+  final last = count.keys.reduce((a, b) => a > b ? a : b);
+  return [for (var d = first; d <= last; d += 10) (d, count[d] ?? 0)];
 }

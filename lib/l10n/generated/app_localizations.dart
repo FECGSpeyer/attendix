@@ -17231,6 +17231,42 @@ abstract class AppLocalizations {
   /// **'Rückgängig'**
   String get rdSettingsUndo;
 
+  /// rdStats.age
+  ///
+  /// In de, this message translates to:
+  /// **'Alter'**
+  String get rdStatsAge;
+
+  /// rdStats.ageAvgGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Ø Alter je Register'**
+  String get rdStatsAgeAvgGroup;
+
+  /// rdStats.ageBucket
+  ///
+  /// In de, this message translates to:
+  /// **'{from}–{to} Jahre'**
+  String rdStatsAgeBucket(Object from, Object to);
+
+  /// rdStats.ageHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aktive Mitglieder mit Geburtsdatum'**
+  String get rdStatsAgeHint;
+
+  /// rdStats.ageNone
+  ///
+  /// In de, this message translates to:
+  /// **'Bei den aktiven Mitgliedern ist kein Geburtsdatum eingetragen.'**
+  String get rdStatsAgeNone;
+
+  /// rdStats.ageYears
+  ///
+  /// In de, this message translates to:
+  /// **'{years} J.'**
+  String rdStatsAgeYears(Object years);
+
   /// rdStats.allThere
   ///
   /// In de, this message translates to:
@@ -17260,6 +17296,66 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Antippen zeigt nur diese Art.'**
   String get rdStatsByTypeHint;
+
+  /// rdStats.colAbsent
+  ///
+  /// In de, this message translates to:
+  /// **'Abw.'**
+  String get rdStatsColAbsent;
+
+  /// rdStats.colDate
+  ///
+  /// In de, this message translates to:
+  /// **'Datum'**
+  String get rdStatsColDate;
+
+  /// rdStats.colEvent
+  ///
+  /// In de, this message translates to:
+  /// **'Termin'**
+  String get rdStatsColEvent;
+
+  /// rdStats.colEvents
+  ///
+  /// In de, this message translates to:
+  /// **'Termine'**
+  String get rdStatsColEvents;
+
+  /// rdStats.colExcused
+  ///
+  /// In de, this message translates to:
+  /// **'Entsch.'**
+  String get rdStatsColExcused;
+
+  /// rdStats.colLate
+  ///
+  /// In de, this message translates to:
+  /// **'Versp.'**
+  String get rdStatsColLate;
+
+  /// rdStats.colName
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get rdStatsColName;
+
+  /// rdStats.colPresent
+  ///
+  /// In de, this message translates to:
+  /// **'Anw.'**
+  String get rdStatsColPresent;
+
+  /// rdStats.colQuote
+  ///
+  /// In de, this message translates to:
+  /// **'Quote'**
+  String get rdStatsColQuote;
+
+  /// rdStats.colRegister
+  ///
+  /// In de, this message translates to:
+  /// **'Register'**
+  String get rdStatsColRegister;
 
   /// rdStats.countAbsent
   ///
@@ -17399,17 +17495,35 @@ abstract class AppLocalizations {
   /// **'Gilt nur für diese Ansicht. Vorausgewählt sind die Arten, die zur Anwesenheitsquote zählen.'**
   String get rdStatsFilterTypesHint;
 
-  /// rdStats.groupsHint
+  /// rdStats.members
   ///
   /// In de, this message translates to:
-  /// **'Antippen zeigt nur dieses Register.'**
-  String get rdStatsGroupsHint;
+  /// **'Mitglieder'**
+  String get rdStatsMembers;
 
-  /// rdStats.lowHint
+  /// rdStats.membersActive
   ///
   /// In de, this message translates to:
-  /// **'Mit mindestens 3 Terminen im Zeitraum. Antippen öffnet die Person.'**
-  String get rdStatsLowHint;
+  /// **'Aktiv'**
+  String get rdStatsMembersActive;
+
+  /// rdStats.membersLeft
+  ///
+  /// In de, this message translates to:
+  /// **'Ausgetreten'**
+  String get rdStatsMembersLeft;
+
+  /// rdStats.membersPaused
+  ///
+  /// In de, this message translates to:
+  /// **'Pausiert'**
+  String get rdStatsMembersPaused;
+
+  /// rdStats.membersTotal
+  ///
+  /// In de, this message translates to:
+  /// **'Gesamt'**
+  String get rdStatsMembersTotal;
 
   /// rdStats.notable
   ///
@@ -17447,6 +17561,77 @@ abstract class AppLocalizations {
   /// **'Schwächster Termin'**
   String get rdStatsNotableWeakest;
 
+  /// rdStats.personAllThere
+  ///
+  /// In de, this message translates to:
+  /// **'War bei allen Terminen da.'**
+  String get rdStatsPersonAllThere;
+
+  /// rdStats.personDots
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin, ältester links} other {{count} Termine, ältester links}}'**
+  String rdStatsPersonDots(num count);
+
+  /// rdStats.personLate
+  ///
+  /// In de, this message translates to:
+  /// **'Verspätet ({count})'**
+  String rdStatsPersonLate(Object count);
+
+  /// rdStats.personMissed
+  ///
+  /// In de, this message translates to:
+  /// **'Gefehlt ({count})'**
+  String rdStatsPersonMissed(Object count);
+
+  /// rdStats.personOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Person öffnen'**
+  String get rdStatsPersonOpen;
+
+  /// rdStats.personSortAbsent
+  ///
+  /// In de, this message translates to:
+  /// **'Oft abwesend'**
+  String get rdStatsPersonSortAbsent;
+
+  /// rdStats.personSortFewest
+  ///
+  /// In de, this message translates to:
+  /// **'Wenigste zuerst'**
+  String get rdStatsPersonSortFewest;
+
+  /// rdStats.personSortLate
+  ///
+  /// In de, this message translates to:
+  /// **'Oft verspätet'**
+  String get rdStatsPersonSortLate;
+
+  /// rdStats.personSortMost
+  ///
+  /// In de, this message translates to:
+  /// **'Meiste zuerst'**
+  String get rdStatsPersonSortMost;
+
+  /// rdStats.personSortName
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get rdStatsPersonSortName;
+
+  /// rdStats.personSub
+  ///
+  /// In de, this message translates to:
+  /// **'{group} · {percent} ({attended} von {total})'**
+  String rdStatsPersonSub(
+    Object group,
+    Object percent,
+    Object attended,
+    Object total,
+  );
+
   /// rdStats.rangeCustom
   ///
   /// In de, this message translates to:
@@ -17477,11 +17662,23 @@ abstract class AppLocalizations {
   /// **'Bis'**
   String get rdStatsRangeTo;
 
+  /// rdStats.registerHint
+  ///
+  /// In de, this message translates to:
+  /// **'Kurve: Quote je Monat. Antippen zeigt die Personen des Registers.'**
+  String get rdStatsRegisterHint;
+
   /// rdStats.sortBest
   ///
   /// In de, this message translates to:
   /// **'Beste zuerst'**
   String get rdStatsSortBest;
+
+  /// rdStats.sortBy
+  ///
+  /// In de, this message translates to:
+  /// **'Sortieren nach {column}'**
+  String rdStatsSortBy(Object column);
 
   /// rdStats.sortNewest
   ///
@@ -17518,6 +17715,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Überblick'**
   String get rdStatsTabOverview;
+
+  /// rdStats.tabPeople
+  ///
+  /// In de, this message translates to:
+  /// **'Personen'**
+  String get rdStatsTabPeople;
+
+  /// rdStats.tabRegister
+  ///
+  /// In de, this message translates to:
+  /// **'Register'**
+  String get rdStatsTabRegister;
 
   /// rdStats.tabsLabel
   ///
