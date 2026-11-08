@@ -10280,6 +10280,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdPeopleReviewTitle => 'Anfrage prüfen';
 
   @override
+  String get rdPeopleTeacherAdd => 'Neuer Lehrer';
+
+  @override
+  String get rdPeopleTeacherNone =>
+      'Für dieses Register gibt es noch keinen Lehrer.';
+
+  @override
   String get rdPeopleTransferChoose => 'Auswählen';
 
   @override
