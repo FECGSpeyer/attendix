@@ -187,14 +187,16 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     if (!mounted || id == null) return;
     final List<AttendanceType> types;
     try {
-      types = await ref.read(visibleAttendanceTypesProvider.future);
+      // getTypeRows rethrows a failed load (getTypes answers it with []), so
+      // a missing Art below is a confirmed removal. On an error the draft
+      // stays as it is.
+      final rows = await ref.read(attendanceTypeRepositoryWithTenantProvider).getTypeRows();
+      types = [for (final row in rows) AttendanceType.fromJson(row)];
     } catch (_) {
       return;
     }
-    // The repository answers a failed load with an empty list, so an empty
-    // list says nothing: the draft stays as it is.
-    if (!mounted || types.isEmpty || _type?.id != id) return;
-    final fresh = types.where((t) => t.id == id).firstOrNull;
+    if (!mounted || _type?.id != id) return;
+    final fresh = types.where((t) => t.id == id && t.visible == true).firstOrNull;
     // Deleted or hidden: the Art has to be chosen again.
     if (fresh != _type) setState(() => _type = fresh);
   }
