@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.87.1",
+      "version": "0.88.1",
       "date": "8.11.2026",
       "changes": [
         "💄 Beta: Termine-Liste antwortet mit „Bin dabei“/„Kann nicht“ wie Heute, die Status-Übersicht sagt „Offen“ statt „Neutral“",
@@ -10,6 +10,16 @@
         "💄 Beta Eltern: Absage-Fenster für ein Kind ohne „Ich“/„Deinen Grund“, nach einer Antwort stehen die Links unter dem Namen",
         "💄 Beta: Gelöschte Person oder gelöschtes Werk ohne sinnloses „Erneut versuchen“; Meine Stimme ohne Profil mit demselben Hinweis wie Heute",
         "💄 Beta: Archivieren, Telegram trennen und Konto entfernen fragen mit derselben Bestätigung wie der Rest der App"
+      ]
+    },
+    {
+      "version": "0.88.0",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Beta-Ablauf: Ein Block wird beim Ziehen mit allen Unterpunkten als eine Karte bewegt, statt dass die Unterpunkte hinterherspringen",
+        "💄 Beta-Ablauf aus einem Termin: kein Wechsel zu anderen Terminen mehr (bleibt unter Verwaltung › Ablaufpläne), Termin und „Gespeichert“ in einer Zeile",
+        "💄 Beta-Ablauf: Überschrift oben über Beginn und Ende, „Weiteren Plan anlegen“ im •••, Plan-Reiter erst ab zwei Plänen",
+        "💄 Beta-Ablauf: Teilen-Knopf mit PDF, Telegram und Link; Blöcke zeigen ihre Uhrzeit links; Tipp-Text lässt sich ausblenden"
       ]
     },
     {
