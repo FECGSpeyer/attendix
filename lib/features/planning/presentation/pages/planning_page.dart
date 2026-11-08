@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
@@ -51,7 +52,6 @@ import '../../../../core/providers/redesign_providers.dart' show redesignEnabled
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
-import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
 
 part 'planning_page_beta.dart';
 
@@ -209,9 +209,22 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   final Set<String> _rdCollapsed = {};
   int? _rdDurationIndex;
 
+  /// REDESIGN: the open block whose head is being dragged; its Unterpunkte
+  /// fold into the head meanwhile, so the block moves as one card.
+  String? _rdDragBlock;
+
+  /// REDESIGN: counts drag starts, so a delayed unfold of an earlier drag
+  /// never ends a newer one (see `_rdDragCancel`).
+  int _rdDragGen = 0;
+
+  /// REDESIGN: the "Tipp auf die Dauer …" hint was dismissed with
+  /// "Verstanden" (null while the preference loads: no flash).
+  bool? _rdHintHidden;
+
   @override
   void initState() {
     super.initState();
+    _rdLoadHint();
     _leaveGuards = ref.read(routeLeaveGuardRegistryProvider);
     _leaveGuards.add(_onLeave);
     _container = ProviderScope.containerOf(context, listen: false);

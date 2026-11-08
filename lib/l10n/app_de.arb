@@ -17040,6 +17040,14 @@
       "name": {}
     }
   },
+  "redesignPlanAddAnother": "Weiteren Plan anlegen",
+  "@redesignPlanAddAnother": {
+    "description": "redesign.plan.addAnother"
+  },
+  "redesignPlanAddAnotherHint": "z. B. für Tag 2 oder eine zweite Probe",
+  "@redesignPlanAddAnotherHint": {
+    "description": "redesign.plan.addAnotherHint"
+  },
   "redesignPlanAddBlock": "Block",
   "@redesignPlanAddBlock": {
     "description": "redesign.plan.addBlock"
@@ -17217,6 +17225,10 @@
   "@redesignPlanHint": {
     "description": "redesign.plan.hint"
   },
+  "redesignPlanHintDismiss": "Verstanden",
+  "@redesignPlanHintDismiss": {
+    "description": "redesign.plan.hintDismiss"
+  },
   "redesignPlanHours": "{count} Std.",
   "@redesignPlanHours": {
     "description": "redesign.plan.hours",
@@ -17352,6 +17364,10 @@
       "name": {}
     }
   },
+  "redesignPlanPlansSection": "Pläne dieses Termins",
+  "@redesignPlanPlansSection": {
+    "description": "redesign.plan.plansSection"
+  },
   "redesignPlanPrev": "Vorheriger Termin",
   "@redesignPlanPrev": {
     "description": "redesign.plan.prev"
@@ -17386,6 +17402,10 @@
   "redesignPlanSettings": "Für diesen Plan",
   "@redesignPlanSettings": {
     "description": "redesign.plan.settings"
+  },
+  "redesignPlanShare": "Teilen",
+  "@redesignPlanShare": {
+    "description": "redesign.plan.share"
   },
   "redesignPlanShareExport": "Teilen & Export",
   "@redesignPlanShareExport": {

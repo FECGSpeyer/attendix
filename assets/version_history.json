@@ -1,12 +1,30 @@
 {
   "versions": [
     {
-      "version": "0.88.0",
+      "version": "0.89.0",
       "date": "8.11.2026",
       "changes": [
         "🐛 Beta: Termin anlegen/bearbeiten – das Ende kann nicht mehr vor dem Beginn liegen; ein späterer Beginn verschiebt das Ende mit",
         "✨ Beta: Termin bearbeiten – Datum öffnet direkt den Kalender",
         "✨ Beta: Termin bearbeiten – die Art des Termins lässt sich ändern"
+      ]
+    },
+    {
+      "version": "0.88.1",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Beta: „Offene erinnern“ lässt sich wieder schließen (Abbrechen oben, Sheet höchstens 85 % hoch), ohne die Push senden zu müssen",
+        "🐛 Beta: Weitere lange Sheets (Konto/Gruppe wechseln, Abmelden, Antwort, Status, Einladen, Beitreten, Eltern-Termin) bleiben unter dem oberen Rand und sind per Wischen oder Tippen daneben schließbar"
+      ]
+    },
+    {
+      "version": "0.88.0",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Beta-Ablauf: Ein Block wird beim Ziehen mit allen Unterpunkten als eine Karte bewegt, statt dass die Unterpunkte hinterherspringen",
+        "💄 Beta-Ablauf aus einem Termin: kein Wechsel zu anderen Terminen mehr (bleibt unter Verwaltung › Ablaufpläne), Termin und „Gespeichert“ in einer Zeile",
+        "💄 Beta-Ablauf: Überschrift oben über Beginn und Ende, „Weiteren Plan anlegen“ im •••, Plan-Reiter erst ab zwei Plänen",
+        "💄 Beta-Ablauf: Teilen-Knopf mit PDF, Telegram und Link; Blöcke zeigen ihre Uhrzeit links; Tipp-Text lässt sich ausblenden"
       ]
     },
     {

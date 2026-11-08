@@ -125,7 +125,7 @@ Future<void> showRdParentEventSheet(BuildContext context, int attendanceId) {
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
-    builder: (_) => Consumer(
+    builder: (_) => RdSheetCap(child: Consumer(
       builder: (context, ref, _) {
         final group = ref.watch(parentAttendanceGroupsProvider).where((g) => g.attendanceId == attendanceId).firstOrNull;
         return SafeArea(
@@ -137,7 +137,7 @@ Future<void> showRdParentEventSheet(BuildContext context, int attendanceId) {
           ),
         );
       },
-    ),
+    )),
   );
 }
 

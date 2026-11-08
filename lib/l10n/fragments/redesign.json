@@ -1399,7 +1399,12 @@
         "templatesIntro": "Gelten für alle Gruppen der Organisation „{org}“.",
         "orgPlansUpcoming": "Anstehend",
         "addDefaultField": "Standardfeld hinzufügen",
-        "templateHint": "Vorlage · sofort gespeichert"
+        "templateHint": "Vorlage · sofort gespeichert",
+        "share": "Teilen",
+        "hintDismiss": "Verstanden",
+        "addAnother": "Weiteren Plan anlegen",
+        "addAnotherHint": "z. B. für Tag 2 oder eine zweite Probe",
+        "plansSection": "Pläne dieses Termins"
       },
       "messages": {
         "intro": "Alles, was an die Gruppe ging, mit Lesestatus.",
@@ -2917,7 +2922,12 @@
         "templatesIntro": "Apply to all groups of the organisation “{org}”.",
         "orgPlansUpcoming": "Upcoming",
         "addDefaultField": "Add default field",
-        "templateHint": "Template · saved right away"
+        "templateHint": "Template · saved right away",
+        "share": "Share",
+        "hintDismiss": "Got it",
+        "addAnother": "Add another plan",
+        "addAnotherHint": "e.g. for day 2 or a second rehearsal",
+        "plansSection": "Plans of this event"
       },
       "messages": {
         "intro": "Everything sent to the group, with read status.",
