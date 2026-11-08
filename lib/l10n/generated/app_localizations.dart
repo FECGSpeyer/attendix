@@ -17735,6 +17735,12 @@ abstract class AppLocalizations {
   /// **'Archivieren'**
   String get redesignBulkActionArchive;
 
+  /// redesign.bulk.actionField
+  ///
+  /// In de, this message translates to:
+  /// **'Feld'**
+  String get redesignBulkActionField;
+
   /// redesign.bulk.actionGroup
   ///
   /// In de, this message translates to:
@@ -17746,6 +17752,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Pausieren'**
   String get redesignBulkActionPause;
+
+  /// redesign.bulk.allPaused
+  ///
+  /// In de, this message translates to:
+  /// **'Die Ausgewählten sind schon pausiert.'**
+  String get redesignBulkAllPaused;
 
   /// redesign.bulk.archiveConfirm
   ///
@@ -17777,6 +17789,30 @@ abstract class AppLocalizations {
   /// **'{count, plural, one {1 Änderung fehlgeschlagen} other {{count} Änderungen fehlgeschlagen}}'**
   String redesignBulkFailed(num count);
 
+  /// redesign.bulk.fieldApply
+  ///
+  /// In de, this message translates to:
+  /// **'Setzen'**
+  String get redesignBulkFieldApply;
+
+  /// redesign.bulk.fieldConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'{name} für {count, plural, one {1 Person} other {{count} Personen}} setzen?'**
+  String redesignBulkFieldConfirm(Object name, num count);
+
+  /// redesign.bulk.fieldConfirmHint
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Wert: {value}. Der bisherige Wert wird überschrieben.'**
+  String redesignBulkFieldConfirmHint(Object value);
+
+  /// redesign.bulk.fieldEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'leer'**
+  String get redesignBulkFieldEmpty;
+
   /// redesign.bulk.hint
   ///
   /// In de, this message translates to:
@@ -17795,6 +17831,12 @@ abstract class AppLocalizations {
   /// **'Grund der Pause'**
   String get redesignBulkPauseReason;
 
+  /// redesign.bulk.pickField
+  ///
+  /// In de, this message translates to:
+  /// **'Feld setzen'**
+  String get redesignBulkPickField;
+
   /// redesign.bulk.pickGroup
   ///
   /// In de, this message translates to:
@@ -17806,6 +17848,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Mitglied suchen'**
   String get redesignBulkSearch;
+
+  /// redesign.bulk.select
+  ///
+  /// In de, this message translates to:
+  /// **'Auswählen'**
+  String get redesignBulkSelect;
+
+  /// redesign.bulk.selectAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle auswählen'**
+  String get redesignBulkSelectAll;
 
   /// redesign.bulk.selectGroup
   ///
@@ -17822,7 +17876,7 @@ abstract class AppLocalizations {
   /// redesign.bulk.title
   ///
   /// In de, this message translates to:
-  /// **'Mitglieder bearbeiten'**
+  /// **'Mehrere auswählen'**
   String get redesignBulkTitle;
 
   /// redesign.common.all

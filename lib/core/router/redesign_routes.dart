@@ -90,9 +90,6 @@ class RedesignRoutes {
   /// Verwaltung › Mitteilung schreiben.
   static const String compose = '$manage/mitteilung';
 
-  /// Verwaltung › Mitglieder bearbeiten (several members at once).
-  static const String bulkMembers = '$manage/mitglieder-bearbeiten';
-
   /// Verwaltung › Anmeldung per Link (from the old "Allgemein").
   static const String registration = '$manage/anmeldung';
 
