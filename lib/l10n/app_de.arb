@@ -12055,6 +12055,203 @@
       "count": {}
     }
   },
+  "rdAdminAdHoc": "Ablaufplan ohne Termin",
+  "@rdAdminAdHoc": {
+    "description": "rdAdmin.adHoc"
+  },
+  "rdAdminAdHocHint": "Für Anlässe außerhalb der Terminliste, per Link teilbar",
+  "@rdAdminAdHocHint": {
+    "description": "rdAdmin.adHocHint"
+  },
+  "rdAdminAdmins": "Admins",
+  "@rdAdminAdmins": {
+    "description": "rdAdmin.admins"
+  },
+  "rdAdminAdminsHint": "Dürfen alles in dieser Gruppe",
+  "@rdAdminAdminsHint": {
+    "description": "rdAdmin.adminsHint"
+  },
+  "rdAdminArchiveHint": "Ausgetretene, jederzeit wiederherstellbar",
+  "@rdAdminArchiveHint": {
+    "description": "rdAdmin.archiveHint"
+  },
+  "rdAdminAreaAccess": "Zugänge und Rechte",
+  "@rdAdminAreaAccess": {
+    "description": "rdAdmin.areaAccess"
+  },
+  "rdAdminAreaData": "Auswertung und Mitteilungen",
+  "@rdAdminAreaData": {
+    "description": "rdAdmin.areaData"
+  },
+  "rdAdminAreaEvents": "Termine",
+  "@rdAdminAreaEvents": {
+    "description": "rdAdmin.areaEvents"
+  },
+  "rdAdminAreaGroup": "Gruppe und Organisation",
+  "@rdAdminAreaGroup": {
+    "description": "rdAdmin.areaGroup"
+  },
+  "rdAdminAreaMembers": "Mitglieder",
+  "@rdAdminAreaMembers": {
+    "description": "rdAdmin.areaMembers"
+  },
+  "rdAdminBulkHint": "Register, Status und mehr für viele auf einmal",
+  "@rdAdminBulkHint": {
+    "description": "rdAdmin.bulkHint"
+  },
+  "rdAdminCertificates": "Urkunden",
+  "@rdAdminCertificates": {
+    "description": "rdAdmin.certificates"
+  },
+  "rdAdminCertificatesHint": "Teilnahme-Urkunden als PDF",
+  "@rdAdminCertificatesHint": {
+    "description": "rdAdmin.certificatesHint"
+  },
+  "rdAdminData": "Daten",
+  "@rdAdminData": {
+    "description": "rdAdmin.data"
+  },
+  "rdAdminExportHint": "Mitgliederliste oder Anwesenheit als Datei",
+  "@rdAdminExportHint": {
+    "description": "rdAdmin.exportHint"
+  },
+  "rdAdminExtraFields": "Eigene Felder",
+  "@rdAdminExtraFields": {
+    "description": "rdAdmin.extraFields"
+  },
+  "rdAdminExtraFieldsHint": "Zusätzliche Angaben zu Personen und Werken",
+  "@rdAdminExtraFieldsHint": {
+    "description": "rdAdmin.extraFieldsHint"
+  },
+  "rdAdminFiles": "Dateien",
+  "@rdAdminFiles": {
+    "description": "rdAdmin.files"
+  },
+  "rdAdminFormerly": "früher „{name}“",
+  "@rdAdminFormerly": {
+    "description": "rdAdmin.formerly",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdAdminGeneralHint": "Name, Saison, Gründe, Anmeldung, Funktionen",
+  "@rdAdminGeneralHint": {
+    "description": "rdAdmin.generalHint"
+  },
+  "rdAdminGroups": "Register",
+  "@rdAdminGroups": {
+    "description": "rdAdmin.groups"
+  },
+  "rdAdminGroupsHint": "Instrumente und Stimmen, nach denen sortiert wird",
+  "@rdAdminGroupsHint": {
+    "description": "rdAdmin.groupsHint"
+  },
+  "rdAdminHeroMembers": "{count, plural, one {1 Mitglied} other {{count} Mitglieder}}",
+  "@rdAdminHeroMembers": {
+    "description": "rdAdmin.heroMembers",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdAdminHomeEvent": "Im Termin unter „Programm“",
+  "@rdAdminHomeEvent": {
+    "description": "rdAdmin.homeEvent"
+  },
+  "rdAdminHomeMe": "Unter Ich",
+  "@rdAdminHomeMe": {
+    "description": "rdAdmin.homeMe"
+  },
+  "rdAdminHomeMembers": "Im Mitglieder-Tab",
+  "@rdAdminHomeMembers": {
+    "description": "rdAdmin.homeMembers"
+  },
+  "rdAdminHomeOrganisation": "In Organisation",
+  "@rdAdminHomeOrganisation": {
+    "description": "rdAdmin.homeOrganisation"
+  },
+  "rdAdminHomeStats": "In der Auswertung",
+  "@rdAdminHomeStats": {
+    "description": "rdAdmin.homeStats"
+  },
+  "rdAdminHomeWorks": "Im Werke-Tab unter •••",
+  "@rdAdminHomeWorks": {
+    "description": "rdAdmin.homeWorks"
+  },
+  "rdAdminMissing": "Zugänge anlegen",
+  "@rdAdminMissing": {
+    "description": "rdAdmin.missing"
+  },
+  "rdAdminOrganisationHint": "Gruppenübergreifend: Personen, Branding, Vorlagen, Org-Pläne",
+  "@rdAdminOrganisationHint": {
+    "description": "rdAdmin.organisationHint"
+  },
+  "rdAdminParentsHint": "Sehen ihre Kinder und melden sie ab",
+  "@rdAdminParentsHint": {
+    "description": "rdAdmin.parentsHint"
+  },
+  "rdAdminPendingBadge": "{count, plural, one {1 Anfrage wartet auf Freigabe} other {{count} Anfragen warten auf Freigabe}}",
+  "@rdAdminPendingBadge": {
+    "description": "rdAdmin.pendingBadge",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdAdminRoles": "Rollen und Rechte",
+  "@rdAdminRoles": {
+    "description": "rdAdmin.roles"
+  },
+  "rdAdminRolesHint": "Was Helfer und Mitglieder dürfen und sehen",
+  "@rdAdminRolesHint": {
+    "description": "rdAdmin.rolesHint"
+  },
+  "rdAdminSearch": "Suchen, z. B. Saison, Eltern, Register",
+  "@rdAdminSearch": {
+    "description": "rdAdmin.search"
+  },
+  "rdAdminShiftsHint": "Wer Schicht hat, ist automatisch entschuldigt",
+  "@rdAdminShiftsHint": {
+    "description": "rdAdmin.shiftsHint"
+  },
+  "rdAdminStatsHint": "Statistik und Export",
+  "@rdAdminStatsHint": {
+    "description": "rdAdmin.statsHint"
+  },
+  "rdAdminStatsHintCertificates": "Statistik, Export und Urkunden",
+  "@rdAdminStatsHintCertificates": {
+    "description": "rdAdmin.statsHintCertificates"
+  },
+  "rdAdminTeachersHint": "Wer welchen Spieler unterrichtet",
+  "@rdAdminTeachersHint": {
+    "description": "rdAdmin.teachersHint"
+  },
+  "rdAdminTeam": "Team",
+  "@rdAdminTeam": {
+    "description": "rdAdmin.team"
+  },
+  "rdAdminTeamHint": "Aufgaben, Themen, Protokolle",
+  "@rdAdminTeamHint": {
+    "description": "rdAdmin.teamHint"
+  },
+  "rdAdminTypes": "Terminarten",
+  "@rdAdminTypes": {
+    "description": "rdAdmin.types"
+  },
+  "rdAdminTypesHint": "Vorgaben für neue Termine wie Zeit und Status",
+  "@rdAdminTypesHint": {
+    "description": "rdAdmin.typesHint"
+  },
+  "rdAdminViewersHint": "Sehen alles, ändern nichts",
+  "@rdAdminViewersHint": {
+    "description": "rdAdmin.viewersHint"
+  },
+  "rdAdminWorkHistory": "Gespielte Werke",
+  "@rdAdminWorkHistory": {
+    "description": "rdAdmin.workHistory"
+  },
   "rdDataAddColumn": "Spalte hinzufügen",
   "@rdDataAddColumn": {
     "description": "rdData.addColumn"
@@ -14774,18 +14971,18 @@
   "@redesignGroupEditClefsHint": {
     "description": "redesign.groupEdit.clefsHint"
   },
-  "redesignGroupEditDelete": "Gruppe löschen",
+  "redesignGroupEditDelete": "Register löschen",
   "@redesignGroupEditDelete": {
     "description": "redesign.groupEdit.delete"
   },
-  "redesignGroupEditDeleteConfirm": "Gruppe „{name}“ wirklich löschen?",
+  "redesignGroupEditDeleteConfirm": "Register „{name}“ wirklich löschen?",
   "@redesignGroupEditDeleteConfirm": {
     "description": "redesign.groupEdit.deleteConfirm",
     "placeholders": {
       "name": {}
     }
   },
-  "redesignGroupEditDeleteFailed": "Die Gruppe konnte nicht gelöscht werden.",
+  "redesignGroupEditDeleteFailed": "Das Register konnte nicht gelöscht werden.",
   "@redesignGroupEditDeleteFailed": {
     "description": "redesign.groupEdit.deleteFailed"
   },
@@ -14793,7 +14990,7 @@
   "@redesignGroupEditDeleteMain": {
     "description": "redesign.groupEdit.deleteMain"
   },
-  "redesignGroupEditDeleteMembers": "{count, plural, one {In der Gruppe ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.} other {In der Gruppe sind oder waren noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.}}",
+  "redesignGroupEditDeleteMembers": "{count, plural, one {Im Register ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in ein anderes Register.} other {Im Register sind oder waren noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in ein anderes Register.}}",
   "@redesignGroupEditDeleteMembers": {
     "description": "redesign.groupEdit.deleteMembers",
     "placeholders": {
@@ -14830,7 +15027,7 @@
   "@redesignGroupEditNameEmpty": {
     "description": "redesign.groupEdit.nameEmpty"
   },
-  "redesignGroupEditNotFound": "Diese Gruppe gibt es nicht mehr.",
+  "redesignGroupEditNotFound": "Dieses Register gibt es nicht mehr.",
   "@redesignGroupEditNotFound": {
     "description": "redesign.groupEdit.notFound"
   },
@@ -14846,7 +15043,7 @@
   "@redesignGroupEditSynonyms": {
     "description": "redesign.groupEdit.synonyms"
   },
-  "redesignGroupEditSynonymsHint": "Über die Synonyme ordnet die App hochgeladene Noten automatisch dieser Gruppe zu.",
+  "redesignGroupEditSynonymsHint": "Über die Synonyme ordnet die App hochgeladene Noten automatisch diesem Register zu.",
   "@redesignGroupEditSynonymsHint": {
     "description": "redesign.groupEdit.synonymsHint"
   },
@@ -14854,7 +15051,7 @@
   "@redesignGroupEditSynonymsLabel": {
     "description": "redesign.groupEdit.synonymsLabel"
   },
-  "redesignGroupEditTitle": "Gruppe bearbeiten",
+  "redesignGroupEditTitle": "Register bearbeiten",
   "@redesignGroupEditTitle": {
     "description": "redesign.groupEdit.title"
   },
@@ -14862,15 +15059,15 @@
   "@redesignGroupEditTuning": {
     "description": "redesign.groupEdit.tuning"
   },
-  "redesignGroupsListAdd": "Gruppe hinzufügen",
+  "redesignGroupsListAdd": "Register hinzufügen",
   "@redesignGroupsListAdd": {
     "description": "redesign.groupsList.add"
   },
-  "redesignGroupsListEmpty": "Noch keine Gruppen angelegt.",
+  "redesignGroupsListEmpty": "Noch keine Register angelegt.",
   "@redesignGroupsListEmpty": {
     "description": "redesign.groupsList.empty"
   },
-  "redesignGroupsListIntro": "Gruppen ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.",
+  "redesignGroupsListIntro": "Register ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.",
   "@redesignGroupsListIntro": {
     "description": "redesign.groupsList.intro"
   },
@@ -16213,51 +16410,6 @@
   "@redesignManageAnnouncementsHint": {
     "description": "redesign.manage.announcementsHint"
   },
-  "redesignManageAreaCommunication": "Kommunikation",
-  "@redesignManageAreaCommunication": {
-    "description": "redesign.manage.areaCommunication"
-  },
-  "redesignManageAreaData": "Auswertung & Daten",
-  "@redesignManageAreaData": {
-    "description": "redesign.manage.areaData"
-  },
-  "redesignManageAreaEvents": "Termine & Planung",
-  "@redesignManageAreaEvents": {
-    "description": "redesign.manage.areaEvents"
-  },
-  "redesignManageAreaGroup": "Gruppe",
-  "@redesignManageAreaGroup": {
-    "description": "redesign.manage.areaGroup"
-  },
-  "redesignManageAreaMembers": "Mitglieder, Register & Rollen",
-  "@redesignManageAreaMembers": {
-    "description": "redesign.manage.areaMembers"
-  },
-  "redesignManageAreaWorks": "Werke & Dateien",
-  "@redesignManageAreaWorks": {
-    "description": "redesign.manage.areaWorks"
-  },
-  "redesignManageClassic": "Alle Einstellungen (bisherige Ansicht)",
-  "@redesignManageClassic": {
-    "description": "redesign.manage.classic"
-  },
-  "redesignManageExtraFieldsHint": "Eigene Felder für Personen und Werke",
-  "@redesignManageExtraFieldsHint": {
-    "description": "redesign.manage.extraFieldsHint"
-  },
-  "redesignManageFooter": "{count, plural, one {Der bisherige Eintrag steckt in diesen Bereichen und ist über die Suche direkt erreichbar.} other {Alle {count} bisherigen Einträge stecken in diesen Bereichen und sind über die Suche direkt erreichbar.}}",
-  "@redesignManageFooter": {
-    "description": "redesign.manage.footer",
-    "placeholders": {
-      "count": {
-        "type": "num"
-      }
-    }
-  },
-  "redesignManageGeneralHint": "Name, Saison, Gründe, Anmeldung",
-  "@redesignManageGeneralHint": {
-    "description": "redesign.manage.generalHint"
-  },
   "redesignManageGeneralTitle": "Allgemeine Einstellungen",
   "@redesignManageGeneralTitle": {
     "description": "redesign.manage.generalTitle"
@@ -16303,14 +16455,6 @@
   "@redesignManageRecent": {
     "description": "redesign.manage.recent"
   },
-  "redesignManageSearch": "Einstellung suchen",
-  "@redesignManageSearch": {
-    "description": "redesign.manage.search"
-  },
-  "redesignManageSearchLabel": "Verwaltung durchsuchen",
-  "@redesignManageSearchLabel": {
-    "description": "redesign.manage.searchLabel"
-  },
   "redesignMeAbsence": "Abwesenheit eintragen",
   "@redesignMeAbsence": {
     "description": "redesign.me.absence"
@@ -16323,7 +16467,7 @@
   "@redesignMeAdmin": {
     "description": "redesign.me.admin"
   },
-  "redesignMeAdminHint": "Mitglieder, Termintypen, Rechte und mehr",
+  "redesignMeAdminHint": "Register, Rechte, Terminarten, Auswertung und mehr",
   "@redesignMeAdminHint": {
     "description": "redesign.me.adminHint"
   },

@@ -4,7 +4,7 @@ part of 'files_page.dart';
 /// Daten", board "Dateiablage"). Same state, data and actions as the old
 /// page, only the look differs:
 /// * large title = the current folder, the back link goes one folder up
-///   (in the root: back to Verwaltung);
+///   (in the root: back to Werke, without a Werke tab to Ich);
 /// * storage as a thin bar under the title (only for editors, like before);
 /// * "•••" holds everything for the whole folder (Mehrere auswählen,
 ///   Sortieren, Link teilen, Mehr Speicher anfragen, Suchhilfe), "+" asks
@@ -44,7 +44,7 @@ extension _FilesPageBeta on _FilesPageState {
             child: RdBackLink(
               label:
                   segments.isEmpty
-                      ? l10n.redesignMeAdmin
+                      ? (_betaFromWorks ? l10n.redesignTabWorks : l10n.redesignTabMe)
                       : segments.length == 1
                       ? l10n.filesTitle
                       : segments[segments.length - 2],
@@ -121,7 +121,7 @@ extension _FilesPageBeta on _FilesPageState {
   }
 
   /// Back link and system back: leave the selection, else one folder up,
-  /// in the root back to Verwaltung.
+  /// in the root back to Werke (or Ich).
   void _betaBack(BuildContext context) {
     if (_selectionMode) {
       _exitSelection();
@@ -132,12 +132,13 @@ extension _FilesPageBeta on _FilesPageState {
       _navigateTo(segments.sublist(0, segments.length - 1).join('/'));
       return;
     }
-    if (context.canPop()) {
-      context.pop();
-    } else {
-      context.go(RedesignRoutes.manage);
-    }
+    rdBack(context, _betaFromWorks ? RedesignRoutes.works : RedesignRoutes.me);
   }
+
+  /// The Dateiablage opens from the Werke tab's "•••"; in groups without a
+  /// Werke tab from Ich › Dateien.
+  bool get _betaFromWorks =>
+      canOpenSongsTab(ref.read(effectiveRoleProvider)) && ref.read(currentTenantProvider)?.type != 'general';
 
   Widget _betaStorage(BuildContext context) {
     final p = context.rd;

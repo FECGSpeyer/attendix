@@ -15827,6 +15827,282 @@ abstract class AppLocalizations {
   /// **'Ohne Ergebnis: {count}'**
   String protocolWithoutOutcome(Object count);
 
+  /// rdAdmin.adHoc
+  ///
+  /// In de, this message translates to:
+  /// **'Ablaufplan ohne Termin'**
+  String get rdAdminAdHoc;
+
+  /// rdAdmin.adHocHint
+  ///
+  /// In de, this message translates to:
+  /// **'Für Anlässe außerhalb der Terminliste, per Link teilbar'**
+  String get rdAdminAdHocHint;
+
+  /// rdAdmin.admins
+  ///
+  /// In de, this message translates to:
+  /// **'Admins'**
+  String get rdAdminAdmins;
+
+  /// rdAdmin.adminsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Dürfen alles in dieser Gruppe'**
+  String get rdAdminAdminsHint;
+
+  /// rdAdmin.archiveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ausgetretene, jederzeit wiederherstellbar'**
+  String get rdAdminArchiveHint;
+
+  /// rdAdmin.areaAccess
+  ///
+  /// In de, this message translates to:
+  /// **'Zugänge und Rechte'**
+  String get rdAdminAreaAccess;
+
+  /// rdAdmin.areaData
+  ///
+  /// In de, this message translates to:
+  /// **'Auswertung und Mitteilungen'**
+  String get rdAdminAreaData;
+
+  /// rdAdmin.areaEvents
+  ///
+  /// In de, this message translates to:
+  /// **'Termine'**
+  String get rdAdminAreaEvents;
+
+  /// rdAdmin.areaGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe und Organisation'**
+  String get rdAdminAreaGroup;
+
+  /// rdAdmin.areaMembers
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder'**
+  String get rdAdminAreaMembers;
+
+  /// rdAdmin.bulkHint
+  ///
+  /// In de, this message translates to:
+  /// **'Register, Status und mehr für viele auf einmal'**
+  String get rdAdminBulkHint;
+
+  /// rdAdmin.certificates
+  ///
+  /// In de, this message translates to:
+  /// **'Urkunden'**
+  String get rdAdminCertificates;
+
+  /// rdAdmin.certificatesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Teilnahme-Urkunden als PDF'**
+  String get rdAdminCertificatesHint;
+
+  /// rdAdmin.data
+  ///
+  /// In de, this message translates to:
+  /// **'Daten'**
+  String get rdAdminData;
+
+  /// rdAdmin.exportHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mitgliederliste oder Anwesenheit als Datei'**
+  String get rdAdminExportHint;
+
+  /// rdAdmin.extraFields
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Felder'**
+  String get rdAdminExtraFields;
+
+  /// rdAdmin.extraFieldsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Zusätzliche Angaben zu Personen und Werken'**
+  String get rdAdminExtraFieldsHint;
+
+  /// rdAdmin.files
+  ///
+  /// In de, this message translates to:
+  /// **'Dateien'**
+  String get rdAdminFiles;
+
+  /// rdAdmin.formerly
+  ///
+  /// In de, this message translates to:
+  /// **'früher „{name}“'**
+  String rdAdminFormerly(Object name);
+
+  /// rdAdmin.generalHint
+  ///
+  /// In de, this message translates to:
+  /// **'Name, Saison, Gründe, Anmeldung, Funktionen'**
+  String get rdAdminGeneralHint;
+
+  /// rdAdmin.groups
+  ///
+  /// In de, this message translates to:
+  /// **'Register'**
+  String get rdAdminGroups;
+
+  /// rdAdmin.groupsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Instrumente und Stimmen, nach denen sortiert wird'**
+  String get rdAdminGroupsHint;
+
+  /// rdAdmin.heroMembers
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Mitglied} other {{count} Mitglieder}}'**
+  String rdAdminHeroMembers(num count);
+
+  /// rdAdmin.homeEvent
+  ///
+  /// In de, this message translates to:
+  /// **'Im Termin unter „Programm“'**
+  String get rdAdminHomeEvent;
+
+  /// rdAdmin.homeMe
+  ///
+  /// In de, this message translates to:
+  /// **'Unter Ich'**
+  String get rdAdminHomeMe;
+
+  /// rdAdmin.homeMembers
+  ///
+  /// In de, this message translates to:
+  /// **'Im Mitglieder-Tab'**
+  String get rdAdminHomeMembers;
+
+  /// rdAdmin.homeOrganisation
+  ///
+  /// In de, this message translates to:
+  /// **'In Organisation'**
+  String get rdAdminHomeOrganisation;
+
+  /// rdAdmin.homeStats
+  ///
+  /// In de, this message translates to:
+  /// **'In der Auswertung'**
+  String get rdAdminHomeStats;
+
+  /// rdAdmin.homeWorks
+  ///
+  /// In de, this message translates to:
+  /// **'Im Werke-Tab unter •••'**
+  String get rdAdminHomeWorks;
+
+  /// rdAdmin.missing
+  ///
+  /// In de, this message translates to:
+  /// **'Zugänge anlegen'**
+  String get rdAdminMissing;
+
+  /// rdAdmin.organisationHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppenübergreifend: Personen, Branding, Vorlagen, Org-Pläne'**
+  String get rdAdminOrganisationHint;
+
+  /// rdAdmin.parentsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Sehen ihre Kinder und melden sie ab'**
+  String get rdAdminParentsHint;
+
+  /// rdAdmin.pendingBadge
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Anfrage wartet auf Freigabe} other {{count} Anfragen warten auf Freigabe}}'**
+  String rdAdminPendingBadge(num count);
+
+  /// rdAdmin.roles
+  ///
+  /// In de, this message translates to:
+  /// **'Rollen und Rechte'**
+  String get rdAdminRoles;
+
+  /// rdAdmin.rolesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Was Helfer und Mitglieder dürfen und sehen'**
+  String get rdAdminRolesHint;
+
+  /// rdAdmin.search
+  ///
+  /// In de, this message translates to:
+  /// **'Suchen, z. B. Saison, Eltern, Register'**
+  String get rdAdminSearch;
+
+  /// rdAdmin.shiftsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wer Schicht hat, ist automatisch entschuldigt'**
+  String get rdAdminShiftsHint;
+
+  /// rdAdmin.statsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Statistik und Export'**
+  String get rdAdminStatsHint;
+
+  /// rdAdmin.statsHintCertificates
+  ///
+  /// In de, this message translates to:
+  /// **'Statistik, Export und Urkunden'**
+  String get rdAdminStatsHintCertificates;
+
+  /// rdAdmin.teachersHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wer welchen Spieler unterrichtet'**
+  String get rdAdminTeachersHint;
+
+  /// rdAdmin.team
+  ///
+  /// In de, this message translates to:
+  /// **'Team'**
+  String get rdAdminTeam;
+
+  /// rdAdmin.teamHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgaben, Themen, Protokolle'**
+  String get rdAdminTeamHint;
+
+  /// rdAdmin.types
+  ///
+  /// In de, this message translates to:
+  /// **'Terminarten'**
+  String get rdAdminTypes;
+
+  /// rdAdmin.typesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Vorgaben für neue Termine wie Zeit und Status'**
+  String get rdAdminTypesHint;
+
+  /// rdAdmin.viewersHint
+  ///
+  /// In de, this message translates to:
+  /// **'Sehen alles, ändern nichts'**
+  String get rdAdminViewersHint;
+
+  /// rdAdmin.workHistory
+  ///
+  /// In de, this message translates to:
+  /// **'Gespielte Werke'**
+  String get rdAdminWorkHistory;
+
   /// rdData.addColumn
   ///
   /// In de, this message translates to:
@@ -19274,19 +19550,19 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.delete
   ///
   /// In de, this message translates to:
-  /// **'Gruppe löschen'**
+  /// **'Register löschen'**
   String get redesignGroupEditDelete;
 
   /// redesign.groupEdit.deleteConfirm
   ///
   /// In de, this message translates to:
-  /// **'Gruppe „{name}“ wirklich löschen?'**
+  /// **'Register „{name}“ wirklich löschen?'**
   String redesignGroupEditDeleteConfirm(Object name);
 
   /// redesign.groupEdit.deleteFailed
   ///
   /// In de, this message translates to:
-  /// **'Die Gruppe konnte nicht gelöscht werden.'**
+  /// **'Das Register konnte nicht gelöscht werden.'**
   String get redesignGroupEditDeleteFailed;
 
   /// redesign.groupEdit.deleteMain
@@ -19298,7 +19574,7 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.deleteMembers
   ///
   /// In de, this message translates to:
-  /// **'{count, plural, one {In der Gruppe ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.} other {In der Gruppe sind oder waren noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.}}'**
+  /// **'{count, plural, one {Im Register ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in ein anderes Register.} other {Im Register sind oder waren noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in ein anderes Register.}}'**
   String redesignGroupEditDeleteMembers(num count);
 
   /// redesign.groupEdit.generate
@@ -19346,7 +19622,7 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.notFound
   ///
   /// In de, this message translates to:
-  /// **'Diese Gruppe gibt es nicht mehr.'**
+  /// **'Dieses Register gibt es nicht mehr.'**
   String get redesignGroupEditNotFound;
 
   /// redesign.groupEdit.notes
@@ -19370,7 +19646,7 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.synonymsHint
   ///
   /// In de, this message translates to:
-  /// **'Über die Synonyme ordnet die App hochgeladene Noten automatisch dieser Gruppe zu.'**
+  /// **'Über die Synonyme ordnet die App hochgeladene Noten automatisch diesem Register zu.'**
   String get redesignGroupEditSynonymsHint;
 
   /// redesign.groupEdit.synonymsLabel
@@ -19382,7 +19658,7 @@ abstract class AppLocalizations {
   /// redesign.groupEdit.title
   ///
   /// In de, this message translates to:
-  /// **'Gruppe bearbeiten'**
+  /// **'Register bearbeiten'**
   String get redesignGroupEditTitle;
 
   /// redesign.groupEdit.tuning
@@ -19394,19 +19670,19 @@ abstract class AppLocalizations {
   /// redesign.groupsList.add
   ///
   /// In de, this message translates to:
-  /// **'Gruppe hinzufügen'**
+  /// **'Register hinzufügen'**
   String get redesignGroupsListAdd;
 
   /// redesign.groupsList.empty
   ///
   /// In de, this message translates to:
-  /// **'Noch keine Gruppen angelegt.'**
+  /// **'Noch keine Register angelegt.'**
   String get redesignGroupsListEmpty;
 
   /// redesign.groupsList.intro
   ///
   /// In de, this message translates to:
-  /// **'Gruppen ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.'**
+  /// **'Register ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.'**
   String get redesignGroupsListIntro;
 
   /// redesign.groupsList.mainGroup
@@ -21089,66 +21365,6 @@ abstract class AppLocalizations {
   /// **'Schreiben, Gesendetes, Automatik'**
   String get redesignManageAnnouncementsHint;
 
-  /// redesign.manage.areaCommunication
-  ///
-  /// In de, this message translates to:
-  /// **'Kommunikation'**
-  String get redesignManageAreaCommunication;
-
-  /// redesign.manage.areaData
-  ///
-  /// In de, this message translates to:
-  /// **'Auswertung & Daten'**
-  String get redesignManageAreaData;
-
-  /// redesign.manage.areaEvents
-  ///
-  /// In de, this message translates to:
-  /// **'Termine & Planung'**
-  String get redesignManageAreaEvents;
-
-  /// redesign.manage.areaGroup
-  ///
-  /// In de, this message translates to:
-  /// **'Gruppe'**
-  String get redesignManageAreaGroup;
-
-  /// redesign.manage.areaMembers
-  ///
-  /// In de, this message translates to:
-  /// **'Mitglieder, Register & Rollen'**
-  String get redesignManageAreaMembers;
-
-  /// redesign.manage.areaWorks
-  ///
-  /// In de, this message translates to:
-  /// **'Werke & Dateien'**
-  String get redesignManageAreaWorks;
-
-  /// redesign.manage.classic
-  ///
-  /// In de, this message translates to:
-  /// **'Alle Einstellungen (bisherige Ansicht)'**
-  String get redesignManageClassic;
-
-  /// redesign.manage.extraFieldsHint
-  ///
-  /// In de, this message translates to:
-  /// **'Eigene Felder für Personen und Werke'**
-  String get redesignManageExtraFieldsHint;
-
-  /// redesign.manage.footer
-  ///
-  /// In de, this message translates to:
-  /// **'{count, plural, one {Der bisherige Eintrag steckt in diesen Bereichen und ist über die Suche direkt erreichbar.} other {Alle {count} bisherigen Einträge stecken in diesen Bereichen und sind über die Suche direkt erreichbar.}}'**
-  String redesignManageFooter(num count);
-
-  /// redesign.manage.generalHint
-  ///
-  /// In de, this message translates to:
-  /// **'Name, Saison, Gründe, Anmeldung'**
-  String get redesignManageGeneralHint;
-
   /// redesign.manage.generalTitle
   ///
   /// In de, this message translates to:
@@ -21209,18 +21425,6 @@ abstract class AppLocalizations {
   /// **'Zuletzt geöffnet'**
   String get redesignManageRecent;
 
-  /// redesign.manage.search
-  ///
-  /// In de, this message translates to:
-  /// **'Einstellung suchen'**
-  String get redesignManageSearch;
-
-  /// redesign.manage.searchLabel
-  ///
-  /// In de, this message translates to:
-  /// **'Verwaltung durchsuchen'**
-  String get redesignManageSearchLabel;
-
   /// redesign.me.absence
   ///
   /// In de, this message translates to:
@@ -21242,7 +21446,7 @@ abstract class AppLocalizations {
   /// redesign.me.adminHint
   ///
   /// In de, this message translates to:
-  /// **'Mitglieder, Termintypen, Rechte und mehr'**
+  /// **'Register, Rechte, Terminarten, Auswertung und mehr'**
   String get redesignMeAdminHint;
 
   /// redesign.me.allSettings

@@ -161,8 +161,8 @@ void main() {
     expect(find.text('0 Werke'), findsOneWidget);
   });
 
-  test('"Dashboard konfigurieren" is not listed in the Beta Verwaltung', () {
-    expect(rdManageVisible(RdManageEntry.dashboard, const RdManageAccess(isAdmin: true)), isFalse);
+  test('"Dashboard konfigurieren" is not in the Beta Verwaltung', () {
+    expect(RdManageEntry.values.map((e) => e.name), isNot(contains('dashboard')));
     expect(rdManageVisible(RdManageEntry.general, const RdManageAccess(isAdmin: true)), isTrue);
   });
 }

@@ -101,7 +101,7 @@ void main() {
       await tester.pumpWidget(_app((r) => repo = r));
       await _settle(tester);
 
-      expect(find.text('Gruppe bearbeiten'), findsOneWidget);
+      expect(find.text('Register bearbeiten'), findsOneWidget);
       expect(find.text('Streicher'), findsOneWidget); // Kategorie
       expect(find.text('STIMMUNG'), findsOneWidget);
       expect(find.text('Tonumfang'), findsOneWidget);
@@ -130,7 +130,7 @@ void main() {
       await _settle(tester);
       await tester.ensureVisible(find.byKey(const Key('rd-group-edit-delete')));
       await _settle(tester);
-      expect(find.textContaining('Verschiebe sie zuerst in eine andere Gruppe.'), findsOneWidget);
+      expect(find.textContaining('Verschiebe sie zuerst in ein anderes Register.'), findsOneWidget);
     });
 
     testWidgets('the main group hides the music fields and cannot be deleted', (tester) async {

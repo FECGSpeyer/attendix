@@ -235,10 +235,10 @@ void main() {
     });
 
     test('lists and the group page are for leads only', () {
-      expect(RedesignRoutes.roleRedirect(RedesignRoutes.groups, Role.helper), RedesignRoutes.manage);
-      expect(RedesignRoutes.roleRedirect(RedesignRoutes.groupEdit(3), Role.helper), RedesignRoutes.manage);
-      expect(RedesignRoutes.roleRedirect(RedesignRoutes.attendanceTypes, Role.viewer), RedesignRoutes.manage);
-      expect(RedesignRoutes.roleRedirect(RedesignRoutes.shiftPlans, Role.player), RedesignRoutes.manage);
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.groups, Role.helper), RedesignRoutes.me);
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.groupEdit(3), Role.helper), RedesignRoutes.me);
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.attendanceTypes, Role.viewer), RedesignRoutes.me);
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.shiftPlans, Role.player), RedesignRoutes.me);
       expect(RedesignRoutes.roleRedirect(RedesignRoutes.groupEdit(3), Role.responsible), isNull);
       expect(RedesignRoutes.roleRedirect(RedesignRoutes.shiftPlans, Role.admin), isNull);
     });
