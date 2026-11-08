@@ -24166,6 +24166,12 @@ abstract class AppLocalizations {
   /// **'Werke'**
   String get redesignSplitWorksCount;
 
+  /// redesign.split.worksCurrentHint
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Noten für die nächsten Termine. Links findest du alle Werke.'**
+  String get redesignSplitWorksCurrentHint;
+
   /// redesign.split.worksEmpty
   ///
   /// In de, this message translates to:
@@ -26002,6 +26008,48 @@ abstract class AppLocalizations {
   /// **'Alle Termine'**
   String get redesignWorksAllEvents;
 
+  /// redesign.works.current
+  ///
+  /// In de, this message translates to:
+  /// **'Aktuell'**
+  String get redesignWorksCurrent;
+
+  /// redesign.works.currentAllPdf
+  ///
+  /// In de, this message translates to:
+  /// **'Alle als PDF'**
+  String get redesignWorksCurrentAllPdf;
+
+  /// redesign.works.currentBack
+  ///
+  /// In de, this message translates to:
+  /// **'Zurück blättern'**
+  String get redesignWorksCurrentBack;
+
+  /// redesign.works.currentForward
+  ///
+  /// In de, this message translates to:
+  /// **'Weiter blättern'**
+  String get redesignWorksCurrentForward;
+
+  /// redesign.works.currentLast
+  ///
+  /// In de, this message translates to:
+  /// **'zuletzt {date}'**
+  String redesignWorksCurrentLast(Object date);
+
+  /// redesign.works.currentNoPart
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Stimme'**
+  String get redesignWorksCurrentNoPart;
+
+  /// redesign.works.currentPart
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Stimme: {name}'**
+  String redesignWorksCurrentPart(Object name);
+
   /// redesign.works.empty
   ///
   /// In de, this message translates to:
@@ -26043,6 +26091,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Nach Stimme'**
   String get redesignWorksFolders;
+
+  /// redesign.works.foldersMenu
+  ///
+  /// In de, this message translates to:
+  /// **'Noten nach Stimme'**
+  String get redesignWorksFoldersMenu;
 
   /// redesign.works.forGroup
   ///

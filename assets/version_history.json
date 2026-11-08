@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.97.0",
+      "version": "0.98.0",
       "date": "8.11.2026",
       "changes": [
         "✨ Beta Auswertung neu: oben Zeitraum (Saison, 3 Monate, 12 Monate oder eigener Von/Bis-Zeitraum) und Filter nach Terminart und Register, darunter die Ebenen „Überblick“ und „Termine“ (Umschalter oder Wischen)",
@@ -13,6 +13,15 @@
         "✨ Beta Auswertung: Mitglieder, Alter (je Jahrzehnt, Ø je Register), Zusatzfelder und Organisation aus Ionic im Beta-Design",
         "✨ Beta Auswertung: „Zählt zur Anwesenheitsquote“ direkt hier umschaltbar; der Terminart-Filter gilt nur für die Ansicht",
         "🐛 Beta Auswertung: alles wird gezählt wie bei den Mitgliedern (nur zählende Terminarten, Dienste nur Eingeteilte, Schichtbedingt-Einstellung, Neutral zählt als nicht da); Dirigent ist kein Register mehr; „100 %“ bricht nicht mehr um"
+      ]
+    },
+    {
+      "version": "0.97.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta-Werke: oben „Aktuell“ als Kartenreihe für Mitglieder – die Werke der kommenden Termine und was ihr in den letzten 4 Wochen gespielt habt. Ein Tipp öffnet direkt deine Stimme, „Alle als PDF“ legt alle zusammen in ein PDF",
+        "💄 Beta-Werke: der Knopf „Meine Noten“/„Nach Stimme“ oben ist weg, „Noten nach Stimme“ liegt jetzt im •••. Der große Block „Als Nächstes“ entfällt, die Werkliste beginnt gleich darunter",
+        "💄 Beta-Werke am Desktop: Mitglieder sehen rechts ihre aktuellen Noten nach Termin statt der Werk-Zahlen; ‹ › blättern durch die Karten"
       ]
     },
     {

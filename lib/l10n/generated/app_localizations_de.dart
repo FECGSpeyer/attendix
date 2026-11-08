@@ -15092,6 +15092,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignSplitWorksCount => 'Werke';
 
   @override
+  String get redesignSplitWorksCurrentHint =>
+      'Deine Noten für die nächsten Termine. Links findest du alle Werke.';
+
+  @override
   String get redesignSplitWorksEmpty => 'Wähle links ein Werk aus.';
 
   @override
@@ -16233,6 +16237,31 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorksAllEvents => 'Alle Termine';
 
   @override
+  String get redesignWorksCurrent => 'Aktuell';
+
+  @override
+  String get redesignWorksCurrentAllPdf => 'Alle als PDF';
+
+  @override
+  String get redesignWorksCurrentBack => 'Zurück blättern';
+
+  @override
+  String get redesignWorksCurrentForward => 'Weiter blättern';
+
+  @override
+  String redesignWorksCurrentLast(Object date) {
+    return 'zuletzt $date';
+  }
+
+  @override
+  String get redesignWorksCurrentNoPart => 'Keine Stimme';
+
+  @override
+  String redesignWorksCurrentPart(Object name) {
+    return 'Deine Stimme: $name';
+  }
+
+  @override
   String get redesignWorksEmpty => 'Noch keine Werke.';
 
   @override
@@ -16260,6 +16289,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignWorksFolders => 'Nach Stimme';
+
+  @override
+  String get redesignWorksFoldersMenu => 'Noten nach Stimme';
 
   @override
   String get redesignWorksForGroup => 'Für Gruppe';
