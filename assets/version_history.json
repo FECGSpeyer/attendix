@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.91.0",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Beta: Termin anlegen/bearbeiten – das Ende kann nicht mehr vor dem Beginn liegen; ein späterer Beginn verschiebt das Ende mit",
+        "✨ Beta: Termin bearbeiten – Datum öffnet direkt den Kalender",
+        "✨ Beta: Termin bearbeiten – die Art des Termins lässt sich ändern"
+      ]
+    },
+    {
       "version": "0.90.0",
       "date": "8.11.2026",
       "changes": [

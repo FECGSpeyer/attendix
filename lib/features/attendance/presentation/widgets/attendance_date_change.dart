@@ -74,12 +74,15 @@ Future<T> _readOnce<T>(ProviderContainer container, ProviderListenable<Future<T>
 ///
 /// [currentStatuses]: statuses the caller already shows (attendance detail);
 /// otherwise they are loaded fresh like Ionic `getAttendanceById`.
+/// [directPicker] (Beta "Termin bearbeiten"): opens the date picker right
+/// away instead of Ionic's "Datum ändern" alert with a date field.
 /// Returns true when the Termin was moved.
 Future<bool> promptAttendanceDateChange(
   BuildContext context,
   WidgetRef ref,
   int attendanceId, {
   Iterable<AttendanceStatus>? currentStatuses,
+  bool directPicker = false,
 }) async {
   // UI_TENANT_HOIST / SOL_FIX13: repositories, container and the session of
   // the acting user are captured before the first await.
@@ -106,15 +109,23 @@ Future<bool> promptAttendanceDateChange(
 
   final current = DateTime.tryParse(attendance.date)?.toLocal() ?? DateTime.now();
   // Ionic: alert "Datum ändern" with a date input and "Abbrechen"/"Weiter".
-  final picked = await showAppDateAlert(
-    context,
-    title: context.l10n.dateDialogChangeDate,
-    message: context.l10n.dateDialogMoveTo,
-    initialDate: current,
-    firstDate: DateTime(1900),
-    lastDate: DateTime(2200),
-    confirmText: context.l10n.commonNext,
-  );
+  final picked = directPicker
+      ? await showAppDatePicker(
+          context: context,
+          initialDate: current,
+          firstDate: DateTime(1900),
+          lastDate: DateTime(2200),
+          helpText: context.l10n.dateDialogChangeDate,
+        )
+      : await showAppDateAlert(
+          context,
+          title: context.l10n.dateDialogChangeDate,
+          message: context.l10n.dateDialogMoveTo,
+          initialDate: current,
+          firstDate: DateTime(1900),
+          lastDate: DateTime(2200),
+          confirmText: context.l10n.commonNext,
+        );
   if (picked == null || !context.mounted) return false;
   if (DateUtils.isSameDay(picked, current)) return false;
 

@@ -10909,6 +10909,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignCreateEnd => 'Ende';
 
   @override
+  String get redesignCreateEndBeforeStart =>
+      'Das Ende kann nicht vor dem Beginn liegen.';
+
+  @override
   String get redesignCreateFewer => 'Weniger';
 
   @override
@@ -11332,6 +11336,38 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignEventEditTitle => 'Termin bearbeiten';
+
+  @override
+  String get redesignEventEditTypeStatusAdopt => 'Anpassen';
+
+  @override
+  String redesignEventEditTypeStatusFailed(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Bei $count Personen konnte der Status nicht angepasst werden. Bitte in der Anwesenheit nachtragen.',
+      one:
+          'Bei 1 Person konnte der Status nicht angepasst werden. Bitte in der Anwesenheit nachtragen.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignEventEditTypeStatusMessage(num count, Object from, Object to) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count Personen stehen noch auf „$from“, dem Standard der bisherigen Art. Sollen sie auf „$to“ wechseln?',
+      one:
+          '1 Person steht noch auf „$from“, dem Standard der bisherigen Art. Soll sie auf „$to“ wechseln?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignEventEditTypeStatusTitle => 'Status anpassen?';
 
   @override
   String get redesignEventExportExcel => 'Als Excel exportieren';
