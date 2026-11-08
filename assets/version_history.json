@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.93.4",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta: Ein ausgetretenes Mitglied zeigt oben „Ausgetreten“ mit Grund und „Wiederherstellen“ als Hauptaktion, darunter Anwesenheit und alle Angaben zum Lesen"
+      ]
+    },
+    {
       "version": "0.93.2",
       "date": "8.11.2026",
       "changes": [

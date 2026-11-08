@@ -650,6 +650,24 @@ void main() {
       expect(find.text('page members'), findsOneWidget);
     });
 
+    testWidgets('archived person: Ausgetreten on top, Wiederherstellen as main action, Angaben to read', (tester) async {
+      final left = anna.copyWith(
+        left: '2026-11-08T00:00:00.000',
+        history: const [PlayerHistoryEntry(date: '2026-11-08', text: 'Umzug', type: 8)],
+      );
+      await tester.pumpWidget(_personApp(Role.admin, _repo(), person: left));
+      await _settle(tester);
+      expect(find.byKey(const Key('rd-person-left')), findsOneWidget);
+      expect(find.text('Umzug'), findsOneWidget);
+      expect(find.byKey(const Key('rd-person-restore')), findsOneWidget);
+      expect(find.text('8 von 10 Terminen'), findsOneWidget);
+      await tester.ensureVisible(find.text('Spielt auch Bratsche'));
+      expect(find.text('ANGABEN'), findsOneWidget);
+      expect(find.text('Bearbeiten'), findsNothing);
+      expect(find.text('Pausieren'), findsNothing);
+      expect(find.text('Archivieren'), findsNothing);
+    });
+
     testWidgets('pending person: review on the old page, no attendance', (tester) async {
       await tester.pumpWidget(_personApp(Role.admin, _repo(), person: _emil.copyWith(id: 1)));
       await _settle(tester);
