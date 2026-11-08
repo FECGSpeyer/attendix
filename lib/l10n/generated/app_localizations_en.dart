@@ -11091,10 +11091,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignBulkActionArchive => 'Archive';
 
   @override
+  String get redesignBulkActionField => 'Field';
+
+  @override
   String get redesignBulkActionGroup => 'Section';
 
   @override
   String get redesignBulkActionPause => 'Pause';
+
+  @override
+  String get redesignBulkAllPaused =>
+      'The selected members are already paused.';
 
   @override
   String redesignBulkArchiveConfirm(num count) {
@@ -11137,6 +11144,28 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignBulkFieldApply => 'Set';
+
+  @override
+  String redesignBulkFieldConfirm(Object name, num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people',
+      one: '1 person',
+    );
+    return 'Set $name for $_temp0?';
+  }
+
+  @override
+  String redesignBulkFieldConfirmHint(Object value) {
+    return 'New value: $value. The current value is overwritten.';
+  }
+
+  @override
+  String get redesignBulkFieldEmpty => 'empty';
+
+  @override
   String get redesignBulkHint => 'Tap members, then choose an action below.';
 
   @override
@@ -11146,10 +11175,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignBulkPauseReason => 'Reason for the pause';
 
   @override
+  String get redesignBulkPickField => 'Set field';
+
+  @override
   String get redesignBulkPickGroup => 'New section';
 
   @override
   String get redesignBulkSearch => 'Search member';
+
+  @override
+  String get redesignBulkSelect => 'Select';
+
+  @override
+  String get redesignBulkSelectAll => 'Select all';
 
   @override
   String redesignBulkSelectGroup(Object group) {
@@ -11169,7 +11207,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get redesignBulkTitle => 'Edit members';
+  String get redesignBulkTitle => 'Select several';
 
   @override
   String get redesignCommonAll => 'All';

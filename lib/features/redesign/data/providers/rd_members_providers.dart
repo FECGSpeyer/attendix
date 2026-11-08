@@ -40,3 +40,12 @@ final rdOtherInstanceUserIdsProvider = FutureProvider.autoDispose.family<Set<Str
   final linkedIds = await ref.watch(linkedTenantIdsProvider.future);
   return repo.getUserIdsInTenant(tenantId, linkedTenantIds: linkedIds);
 });
+
+/// REDESIGN: "Auswählen" mode of the Mitglieder tab (several members at
+/// once). A provider so the Verwaltung search can open the tab in it;
+/// another group or account starts without it.
+final rdMembersSelectingProvider = StateProvider<bool>((ref) {
+  ref.watch(currentTenantIdProvider);
+  ref.watch(currentAuthUserIdProvider);
+  return false;
+});
