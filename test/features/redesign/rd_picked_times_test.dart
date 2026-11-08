@@ -21,4 +21,9 @@ void main() {
     expect(rdPickedTimes(start: null, end: null, pickedStart: false, value: '08:00'), (start: null, end: '08:00'));
     expect(rdEndBeforeStart('22:00', '21:00'), isTrue);
   });
+  test('rdEndAfter keeps a valid span, else one hour, capped at 23:59', () {
+    expect(rdEndAfter('20:00', from: '17:00', to: '19:00'), '22:00');
+    expect(rdEndAfter('20:00', from: '17:00', to: null), '21:00');
+    expect(rdEndAfter('23:30', from: '10:00', to: '12:00'), '23:59');
+  });
 }

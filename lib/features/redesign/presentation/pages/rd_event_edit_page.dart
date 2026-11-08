@@ -32,7 +32,7 @@ import '../../../attendance/presentation/widgets/attendance_detail/description_a
 import '../../../attendance/presentation/widgets/attendance_detail/general_info_accordion.dart'
     show isDeadlineReadonly;
 import '../../data/providers/rd_today_providers.dart' show rdDeadlineLabel;
-import '../../data/rd_create_logic.dart' show rdEndBeforeStart, rdPickedTimes, rdRecentPlaces;
+import '../../data/rd_create_logic.dart' show rdEndAfter, rdEndBeforeStart, rdPickedTimes, rdRecentPlaces;
 import '../../data/rd_event_details_logic.dart';
 import '../../data/rd_event_phase.dart' show rdEffectiveDurationDays;
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
@@ -344,10 +344,16 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
 
     // The Ende must not end up before the Beginn with the new type's times
     // (e.g. own Beginn 20:00, no own Ende, new type ends 19:00).
+    // Effective times = own ones, else the type's (like the Termin page).
+    // The new Ende keeps the new type's duration, else the former one.
     final start = att.startTime ?? picked.startTime;
     final end = att.endTime ?? picked.endTime;
+    final oldStart = att.startTime ?? current?.startTime;
+    final oldEnd = att.endTime ?? current?.endTime;
     final fixEnd = !picked.allDay && rdEndBeforeStart(start, end)
-        ? rdPickedTimes(start: picked.startTime, end: picked.endTime, pickedStart: true, value: start!)!.end
+        ? (rdEndBeforeStart(picked.startTime, picked.endTime) || picked.startTime == null || picked.endTime == null
+            ? rdEndAfter(start!, from: oldStart, to: oldEnd)
+            : rdEndAfter(start!, from: picked.startTime, to: picked.endTime))
         : null;
     if (!await _write({'type_id': picked.id, if (fixEnd != null) 'end_time': fixEnd})) return;
     var failed = 0;
@@ -355,7 +361,15 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
       if (adopt) {
         // Read again right before writing: who changed meanwhile is left out,
         // and each update still checks the old status itself.
-        for (final r in await onDefault(oldDefault!)) {
+        List<PersonAttendance> rows;
+        try {
+          rows = await onDefault(oldDefault!);
+        } catch (_) {
+          // Nothing adjusted: the hint below asks to do it by hand.
+          failed = count;
+          rows = const [];
+        }
+        for (final r in rows) {
           writeSession.ensureCurrent();
           try {
             await _repo.updatePersonAttendance(

@@ -238,8 +238,16 @@ bool rdEndBeforeStart(String? start, String? end) {
   final s = _rdMinutes(value);
   final e = _rdMinutes(end);
   if (s == null || e == null || e >= s) return (start: value, end: end);
-  final oldStart = _rdMinutes(start);
-  final duration = oldStart != null && e >= oldStart ? e - oldStart : 60;
-  final newEnd = s + duration;
-  return (start: value, end: _rdHhmm(newEnd > 23 * 60 + 59 ? 23 * 60 + 59 : newEnd));
+  return (start: value, end: rdEndAfter(value, from: start, to: end));
+}
+
+/// The Ende for a Termin beginning at [start] ('HH:mm'), lasting as long as
+/// [from]–[to] (one hour when that is no valid span), at most until 23:59.
+String rdEndAfter(String start, {String? from, String? to}) {
+  final s = _rdMinutes(start) ?? 0;
+  final f = _rdMinutes(from);
+  final t = _rdMinutes(to);
+  final duration = f != null && t != null && t >= f ? t - f : 60;
+  final end = s + duration;
+  return _rdHhmm(end > 23 * 60 + 59 ? 23 * 60 + 59 : end);
 }
