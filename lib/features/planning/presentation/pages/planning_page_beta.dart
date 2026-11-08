@@ -684,6 +684,7 @@ extension _PlanningBeta on _PlanningPageState {
     final field = _fields[visible[row]];
     if (!PlanUtils.isGroupHead(field) || _rdCollapsed.contains(field.id)) return;
     if (PlanUtils.childrenOf(_fields, field.id).isEmpty) return;
+    _rdDragGen++;
     _rdSet(() => _rdDragBlock = field.id);
   }
 
@@ -706,9 +707,11 @@ extension _PlanningBeta on _PlanningPageState {
       _rdSet(() => _rdDragBlock = null);
       return;
     }
-    final block = _rdDragBlock;
+    // Only this drag: a new one started meanwhile (even of the same block)
+    // keeps its folded Unterpunkte.
+    final gen = _rdDragGen;
     Future<void>.delayed(const Duration(milliseconds: 400), () {
-      if (mounted && _rdDragBlock == block) _rdSet(() => _rdDragBlock = null);
+      if (mounted && _rdDragGen == gen && _rdDragBlock != null) _rdSet(() => _rdDragBlock = null);
     });
   }
 

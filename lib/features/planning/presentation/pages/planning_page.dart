@@ -213,6 +213,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// fold into the head meanwhile, so the block moves as one card.
   String? _rdDragBlock;
 
+  /// REDESIGN: counts drag starts, so a delayed unfold of an earlier drag
+  /// never ends a newer one (see `_rdDragCancel`).
+  int _rdDragGen = 0;
+
   /// REDESIGN: the "Tipp auf die Dauer …" hint was dismissed with
   /// "Verstanden" (null while the preference loads: no flash).
   bool? _rdHintHidden;
