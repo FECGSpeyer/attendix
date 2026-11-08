@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.101.0",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta Terminart einfacher: oben Name und „Aussehen“ (Farbe, hervorheben, Name verbergen), dann „Jeder Termin dieser Art“ (Uhrzeit wie bei „Termin bearbeiten“, Anwesenheit, „Zählt zur Anwesenheitsquote“, Eingeplant) und „Neue Termine dieser Art bekommen automatisch“ mit nur den eingeschalteten Funktionen, der Rest unter „Hinzufügen“; „Für neue Termine anbieten“ und Löschen unten",
+        "✨ Beta „Neue Terminart“: ein Blatt mit Name und „Startet wie“ (eine bestehende Art übernehmen oder leer) statt des alten großen Formulars",
+        "✨ Beta Ort und Werke an jedem Termin: keine Schalter mehr an der Terminart; wird ein Ort oder Werk eingetragen, schaltet die App es an der Art selbst ein (damit die alte App es auch zeigt)",
+        "✨ Beta Ablauf am Termin: „Für neue Termine dieser Art übernehmen“ (Werke werden zu Platzhaltern)"
+      ]
+    },
+    {
       "version": "0.100.0",
       "date": "8.11.2026",
       "changes": [

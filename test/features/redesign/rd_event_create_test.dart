@@ -262,11 +262,11 @@ void main() {
       // One submit only: "Anlegen" in the top bar.
       expect(find.text('Anlegen'), findsOneWidget);
 
-      // Konzert template: no place field (place not enabled), its time.
+      // Konzert template: its time; Ort is offered at every Art.
       await tester.tap(find.text('Konzert').first);
       await _settle(tester);
       expect(find.text('18:00'), findsOneWidget);
-      expect(find.text('Ort'), findsNothing);
+      expect(find.text('Ort'), findsOneWidget);
 
       // Weekly series.
       await tester.tap(find.text('Weitere Daten'));

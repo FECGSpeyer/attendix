@@ -10688,6 +10688,244 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdTeacherNewTitle => 'New teacher';
 
   @override
+  String get rdTypeAdd => 'Add';
+
+  @override
+  String get rdTypeAddHint =>
+      'What you pick is given to all new events of this type.';
+
+  @override
+  String get rdTypeAllDay => 'All day';
+
+  @override
+  String get rdTypeAttendance => 'Attendance';
+
+  @override
+  String rdTypeAttendanceValue(Object status, Object count) {
+    return 'Preset to $status · $count statuses';
+  }
+
+  @override
+  String get rdTypeAutomatic => 'New events of this type automatically get';
+
+  @override
+  String get rdTypeAutomaticHint =>
+      'Only what is switched on is listed here. Location and pieces are added right on the event.';
+
+  @override
+  String get rdTypeChecklist => 'Checklist';
+
+  @override
+  String get rdTypeChecklistHint =>
+      'Tasks before the event, e.g. set up chairs';
+
+  @override
+  String rdTypeChecklistValue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tasks',
+      one: '1 task',
+      zero: 'on',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTypeCountsForQuota => 'Counts towards the attendance rate';
+
+  @override
+  String get rdTypeCountsForQuotaHint =>
+      'Off e.g. for parties or optional events';
+
+  @override
+  String get rdTypeDefaultStatus => 'Preset to';
+
+  @override
+  String get rdTypeDuty => 'Assign duties';
+
+  @override
+  String get rdTypeDutyHint => 'Who does tech, coffee and so on';
+
+  @override
+  String get rdTypeEveryEvent => 'Every event of this type';
+
+  @override
+  String get rdTypeFlagsFailed =>
+      'Event created. The event type could not be updated, so the old app may not show the location or pieces.';
+
+  @override
+  String get rdTypeInvited => 'Planned';
+
+  @override
+  String get rdTypeInvitedAll => 'All';
+
+  @override
+  String get rdTypeInvitedHint => 'Who belongs to these events';
+
+  @override
+  String rdTypeInvitedSome(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count groups',
+      one: '1 group',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTypeLook => 'Appearance';
+
+  @override
+  String get rdTypeLookHideName => 'Hide name in the list';
+
+  @override
+  String get rdTypeLookHideNameHint =>
+      'Events without their own title then show the date instead of the type name (classic view and parents).';
+
+  @override
+  String get rdTypeLookHighlightHint =>
+      'The type is highlighted in the event list.';
+
+  @override
+  String get rdTypeLookHint => 'Colour, highlight, title in the list';
+
+  @override
+  String get rdTypeNewCreate => 'Create';
+
+  @override
+  String get rdTypeNewEmpty => 'Empty';
+
+  @override
+  String get rdTypeNewEmptyHint => 'Attendance only, nothing else';
+
+  @override
+  String get rdTypeNewName => 'Name';
+
+  @override
+  String get rdTypeNewNameHint => 'e.g. Sectional rehearsal';
+
+  @override
+  String get rdTypeNewStartsLike => 'Starts like';
+
+  @override
+  String get rdTypeNewStartsLikeHint =>
+      'Copies time, statuses, schedule and everything switched on. You can change everything afterwards.';
+
+  @override
+  String get rdTypeNewTitle => 'New event type';
+
+  @override
+  String get rdTypeOffer => 'Offer for new events';
+
+  @override
+  String get rdTypeOfferHint =>
+      'Off: no longer offered when creating, existing events stay';
+
+  @override
+  String get rdTypeOn => 'on';
+
+  @override
+  String get rdTypePlan => 'Schedule';
+
+  @override
+  String get rdTypePlanHint => 'Programme items with times';
+
+  @override
+  String rdTypePlanValue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '1 item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTypeProtocol => 'Minutes and agenda';
+
+  @override
+  String get rdTypeProtocolHint => 'Collect topics and take notes';
+
+  @override
+  String get rdTypeReminders => 'Reminders';
+
+  @override
+  String get rdTypeRemindersHint => 'Push message before the start';
+
+  @override
+  String rdTypeRemindersValue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reminders',
+      one: '1 reminder',
+      zero: 'on',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTypeSignup => 'Sign-up questions';
+
+  @override
+  String get rdTypeSignupHint => 'e.g. \"Are you bringing food?\"';
+
+  @override
+  String rdTypeSignupValue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count questions',
+      one: '1 question',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTypeStatuses => 'Possible statuses';
+
+  @override
+  String get rdTypeTakeOverPlan => 'Use for new events of this type';
+
+  @override
+  String rdTypeTakeOverPlanConfirm(Object type) {
+    return 'New \"$type\" events will then get this schedule. Existing events stay as they are.';
+  }
+
+  @override
+  String rdTypeTakeOverPlanDone(Object type) {
+    return 'New \"$type\" events now get this schedule';
+  }
+
+  @override
+  String get rdTypeTakeOverPlanFailed => 'The schedule could not be applied.';
+
+  @override
+  String rdTypeTakeOverPlanHint(Object type) {
+    return 'New \"$type\" events get this schedule';
+  }
+
+  @override
+  String get rdTypeTime => 'Time';
+
+  @override
+  String get rdTypeTimeHint => 'Suggestion, can be changed per event';
+
+  @override
+  String rdTypeUsage(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'the $count existing events',
+      one: 'the existing event',
+    );
+    return 'Changes also apply to $_temp0.';
+  }
+
+  @override
   String get rdWmCategoriesIntro =>
       'Categories sort the works, e.g. by occasion or church year.';
 

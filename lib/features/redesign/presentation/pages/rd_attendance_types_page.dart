@@ -6,10 +6,10 @@ import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../settings/presentation/pages/attendance_type_edit_page.dart' show showAttendanceTypeCreateModal;
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
+import '../widgets/manage/rd_type_create_sheet.dart';
 
 /// REDESIGN: Verwaltung › Anwesenheits-Typen in the template
 /// "Verwaltungsliste" (replaces the list of `/settings/types` while the Beta
@@ -53,6 +53,12 @@ class _RdAttendanceTypesPageState extends ConsumerState<RdAttendanceTypesPage> {
     return ok;
   }
 
+  Future<void> _add() async {
+    final id = await showRdTypeCreateSheet(context);
+    if (id == null || !mounted) return;
+    await context.push('/settings/types/$id');
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -84,9 +90,8 @@ class _RdAttendanceTypesPageState extends ConsumerState<RdAttendanceTypesPage> {
       emptyText: l10n.redesignTypesListEmpty,
       emptyIcon: Icons.category_outlined,
       addLabel: l10n.redesignTypesListAdd,
-      // Old page: the type page as modal in the "new" mode; the notifier
-      // reloads the list.
-      onAdd: () => showAttendanceTypeCreateModal(context),
+      // A name and "Startet wie" in a sheet, then the new type's page.
+      onAdd: _add,
       onReorder: types == null ? null : (sections) => _saveOrder(types, sections),
       onRefresh: _refresh,
     );
