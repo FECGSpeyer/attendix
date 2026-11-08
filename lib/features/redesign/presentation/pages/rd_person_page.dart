@@ -8,7 +8,8 @@ import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/group_providers.dart';
-import '../../../../core/providers/profile_providers.dart' show personListExtraFieldsProvider;
+import '../../../../core/providers/profile_providers.dart'
+    show personExtraFieldsProvider, personListExtraFieldsProvider, profileRepositoryWithTenantProvider;
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
@@ -25,6 +26,7 @@ import '../../../../data/models/church/church.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart' show showAppDatePicker;
+import '../../../people/person_write.dart' show organisationPersonKey;
 import '../../../people/presentation/pages/person_detail_page.dart'
     show personProvider, personAttendanceStatsProvider, personHistoryProvider;
 import '../../../people/presentation/widgets/pause_person_sheet.dart' show pausePersonFlow;
@@ -204,7 +206,9 @@ class _LeftCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final p = context.rd;
     final l10n = context.l10n;
-    final reason = rdLeftReason(person);
+    // The reason only for the leads: the Verlauf hides archive entries
+    // from everyone else too.
+    final reason = canRestore ? rdLeftReason(person) : null;
     return RdCard(
       key: const Key('rd-person-left'),
       padding: const EdgeInsets.all(14),
@@ -246,6 +250,26 @@ class _LeftCard extends ConsumerWidget {
     );
   }
 }
+
+/// Zusatzfeld values of a person who left: the person's own values, the
+/// organisation fields from `tenant_group_person_fields` (like the old
+/// person page; their copy in `additionalFields` may be stale).
+final _leftFieldValuesProvider = FutureProvider.autoDispose.family<Map<String, dynamic>, Person>((ref, person) async {
+  final values = <String, dynamic>{...?person.additionalFields};
+  final fields = await ref.watch(personExtraFieldsProvider.future);
+  final orgIds = fields.where((f) => f.isOrganisationField).map((f) => f.id).toSet();
+  if (orgIds.isEmpty) return values;
+  values.removeWhere((id, _) => orgIds.contains(id));
+  final repo = ref.watch(profileRepositoryWithTenantProvider);
+  final key = organisationPersonKey(person);
+  final orgId = await repo.getOrganisationId();
+  if (orgId == null || key == null) return values;
+  final shared = await repo.getSharedFieldValues(orgId, key);
+  for (final e in shared.entries) {
+    if (orgIds.contains(e.key)) values[e.key] = e.value;
+  }
+  return values;
+});
 
 /// "Angaben" of a person who left, to read (Bearbeiten is closed while
 /// archived): group, dates, the other filled columns, filled Zusatzfelder
@@ -291,11 +315,19 @@ class _LeftDetails extends ConsumerWidget {
         : RdListRow(title: title, value: value, showChevron: false);
 
     final group = person.groupName ?? (person.instrument == null ? null : groups[person.instrument]);
-    final additional = person.additionalFields ?? const <String, dynamic>{};
+    // Zusatzfelder with the organisation's values (shown once loaded).
+    final additional = ref.watch(_leftFieldValuesProvider(person)).valueOrNull ?? const <String, dynamic>{};
+    final pausedUntil = DateTime.tryParse(person.pausedUntil ?? '');
     // Internal note: only Admins and Verantwortliche (like _InfoList).
     final notes = role.isAdmin || role.isResponsible ? text(person.notes) : null;
     final rows = <Widget>[
       if (text(group) case final v?) info(groupLabel(tenant?.type), v),
+      // Archiving keeps a pause; restoring brings it back.
+      if (person.paused)
+        info(
+          l10n.redesignPersonPaused,
+          pausedUntil == null ? l10n.redesignPersonPausedOpen : l10n.redesignMembersPausedUntil(long.format(pausedUntil)),
+        ),
       if (date(person.birthday) case final v?) info(l10n.redesignPersonBirthday, v),
       if (date(person.joined) case final v?) info(l10n.redesignPersonJoined, v),
       if (date(person.playsSince) case final v?) info(l10n.personPlaysSince, v),

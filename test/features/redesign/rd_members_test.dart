@@ -668,6 +668,18 @@ void main() {
       expect(find.text('Archivieren'), findsNothing);
     });
 
+    testWidgets('archived person: Beobachter sees no reason and no Wiederherstellen', (tester) async {
+      final left = anna.copyWith(
+        left: '2026-11-08T00:00:00.000',
+        history: const [PlayerHistoryEntry(date: '2026-11-08', text: 'Umzug', type: 8)],
+      );
+      await tester.pumpWidget(_personApp(Role.viewer, _repo(), person: left));
+      await _settle(tester);
+      expect(find.byKey(const Key('rd-person-left')), findsOneWidget);
+      expect(find.text('Umzug'), findsNothing);
+      expect(find.byKey(const Key('rd-person-restore')), findsNothing);
+    });
+
     testWidgets('pending person: review on the old page, no attendance', (tester) async {
       await tester.pumpWidget(_personApp(Role.admin, _repo(), person: _emil.copyWith(id: 1)));
       await _settle(tester);
