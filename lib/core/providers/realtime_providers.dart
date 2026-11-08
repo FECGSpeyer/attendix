@@ -278,6 +278,11 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
   return visible;
 });
 
+/// Keeps the attendance realtime subscription alive for a provider that
+/// reloads on [attendanceRefetchCounter] without the Termine list being
+/// open (e.g. the Problemfall preview in the settings).
+final attendanceRealtimeSubscriptionProvider = _attendanceRealtimeSubscriptionProvider;
+
 /// Internal: manages Supabase realtime subscription for the attendance table.
 /// Bumps the refetch counter when attendance or person_attendances rows change,
 /// triggering a refetch of the list with fresh percentages.

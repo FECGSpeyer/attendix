@@ -8,6 +8,7 @@ import '../../../../../core/providers/attendance_type_providers.dart';
 import '../../../../../core/providers/dashboard_providers.dart';
 import '../../../../../core/providers/player_providers.dart';
 import '../../../../../core/providers/realtime_providers.dart';
+import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/event_list_utils.dart';
@@ -18,6 +19,7 @@ import '../../../data/providers/rd_events_providers.dart' show rdAttendanceDurat
 import '../../../data/providers/rd_members_providers.dart';
 import '../../../data/providers/rd_today_providers.dart';
 import '../../../data/rd_members_logic.dart' show RdMembersFilter;
+import '../manage/rd_manage_list.dart' show rdLoadedValue;
 import '../rd_desktop.dart';
 import '../rd_widgets.dart';
 import 'rd_player_today.dart';
@@ -295,8 +297,12 @@ class _AttentionSection extends ConsumerWidget {
     final p = context.rd;
     final l10n = context.l10n;
     final pending = ref.watch(pendingPlayersProvider).valueOrNull?.length ?? 0;
-    // Same set as the "Fehlen oft" filter of Mitglieder: active only.
-    final criticalPeople = ref.watch(criticalPlayersProvider).valueOrNull?.where((x) => !x.paused).toList() ?? const [];
+    // Same set as the Problemfälle filter of Mitglieder: active only. Only
+    // loaded people of this group: no names from before a group switch.
+    final tenantId = ref.watch(currentTenantProvider)?.id;
+    final criticalPeople =
+        rdLoadedValue(ref.watch(criticalPlayersProvider))?.where((x) => !x.paused && x.tenantId == tenantId).toList() ??
+        const <Person>[];
     final critical = criticalPeople.length;
     final nextId = next?.id;
     final unrecorded = ref.watch(rdUnrecordedProvider).valueOrNull ?? const <int>[];

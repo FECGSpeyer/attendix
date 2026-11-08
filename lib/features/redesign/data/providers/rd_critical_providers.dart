@@ -31,6 +31,9 @@ final rdCriticalEntriesProvider = FutureProvider.autoDispose.family<Map<int, Lis
   ref,
   key,
 ) async {
+  // Changes on other devices bump the counter via the subscription, also
+  // when the Termine list is not open.
+  ref.watch(attendanceRealtimeSubscriptionProvider);
   ref.watch(attendanceRefetchCounter);
   final repo = ref.watch(attendanceRepositoryWithTenantProvider);
   if (!repo.hasTenantId || repo.currentTenantId != key.tenantId) return const {};
