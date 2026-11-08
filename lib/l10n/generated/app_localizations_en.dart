@@ -10175,6 +10175,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdPeopleReviewTitle => 'Review request';
 
   @override
+  String get rdPeopleTeacherAdd => 'New teacher';
+
+  @override
+  String get rdPeopleTeacherNone => 'There is no teacher for this section yet.';
+
+  @override
   String get rdPeopleTransferChoose => 'Choose';
 
   @override
@@ -10389,6 +10395,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdSettingsUndo => 'Undo';
+
+  @override
+  String get rdTeacherNewCreate => 'Create';
+
+  @override
+  String rdTeacherNewDone(Object name) {
+    return '$name created';
+  }
+
+  @override
+  String get rdTeacherNewHint =>
+      'Add contact, notes and private teacher afterwards on the teacher.';
+
+  @override
+  String get rdTeacherNewInstruments => 'Teaches';
+
+  @override
+  String get rdTeacherNewName => 'Name';
+
+  @override
+  String get rdTeacherNewNameShort =>
+      'Please enter a name with at least 3 characters.';
+
+  @override
+  String get rdTeacherNewNoGroups =>
+      'There are no sections to choose from yet.';
+
+  @override
+  String get rdTeacherNewNoInstrument => 'Choose at least one instrument.';
+
+  @override
+  String get rdTeacherNewTitle => 'New teacher';
 
   @override
   String get rdWmCategoriesIntro =>

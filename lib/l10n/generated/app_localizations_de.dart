@@ -10284,6 +10284,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdPeopleReviewTitle => 'Anfrage prüfen';
 
   @override
+  String get rdPeopleTeacherAdd => 'Neuer Lehrer';
+
+  @override
+  String get rdPeopleTeacherNone =>
+      'Für dieses Register gibt es noch keinen Lehrer.';
+
+  @override
   String get rdPeopleTransferChoose => 'Auswählen';
 
   @override
@@ -10502,6 +10509,38 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdSettingsUndo => 'Rückgängig';
+
+  @override
+  String get rdTeacherNewCreate => 'Anlegen';
+
+  @override
+  String rdTeacherNewDone(Object name) {
+    return '$name angelegt';
+  }
+
+  @override
+  String get rdTeacherNewHint =>
+      'Kontakt, Notizen und Privatlehrer ergänzt du danach beim Lehrer.';
+
+  @override
+  String get rdTeacherNewInstruments => 'Unterrichtet';
+
+  @override
+  String get rdTeacherNewName => 'Name';
+
+  @override
+  String get rdTeacherNewNameShort =>
+      'Bitte gib einen Namen mit mindestens 3 Zeichen ein.';
+
+  @override
+  String get rdTeacherNewNoGroups =>
+      'Es gibt noch keine Register, die du auswählen kannst.';
+
+  @override
+  String get rdTeacherNewNoInstrument => 'Wähle mindestens ein Instrument.';
+
+  @override
+  String get rdTeacherNewTitle => 'Neuer Lehrer';
 
   @override
   String get rdWmCategoriesIntro =>

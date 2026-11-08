@@ -16829,6 +16829,18 @@ abstract class AppLocalizations {
   /// **'Anfrage prüfen'**
   String get rdPeopleReviewTitle;
 
+  /// rdPeople.teacherAdd
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Lehrer'**
+  String get rdPeopleTeacherAdd;
+
+  /// rdPeople.teacherNone
+  ///
+  /// In de, this message translates to:
+  /// **'Für dieses Register gibt es noch keinen Lehrer.'**
+  String get rdPeopleTeacherNone;
+
   /// rdPeople.transferChoose
   ///
   /// In de, this message translates to:
@@ -17224,6 +17236,60 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Rückgängig'**
   String get rdSettingsUndo;
+
+  /// rdTeacherNew.create
+  ///
+  /// In de, this message translates to:
+  /// **'Anlegen'**
+  String get rdTeacherNewCreate;
+
+  /// rdTeacherNew.done
+  ///
+  /// In de, this message translates to:
+  /// **'{name} angelegt'**
+  String rdTeacherNewDone(Object name);
+
+  /// rdTeacherNew.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Kontakt, Notizen und Privatlehrer ergänzt du danach beim Lehrer.'**
+  String get rdTeacherNewHint;
+
+  /// rdTeacherNew.instruments
+  ///
+  /// In de, this message translates to:
+  /// **'Unterrichtet'**
+  String get rdTeacherNewInstruments;
+
+  /// rdTeacherNew.name
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get rdTeacherNewName;
+
+  /// rdTeacherNew.nameShort
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib einen Namen mit mindestens 3 Zeichen ein.'**
+  String get rdTeacherNewNameShort;
+
+  /// rdTeacherNew.noGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Es gibt noch keine Register, die du auswählen kannst.'**
+  String get rdTeacherNewNoGroups;
+
+  /// rdTeacherNew.noInstrument
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle mindestens ein Instrument.'**
+  String get rdTeacherNewNoInstrument;
+
+  /// rdTeacherNew.title
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Lehrer'**
+  String get rdTeacherNewTitle;
 
   /// rdWm.categoriesIntro
   ///

@@ -24,7 +24,7 @@ import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBa
 ///   instruments.length === 0` → toast `teachers.fillAll`.
 /// - edit (teacher.page `editTeacher`): no validation at all, so existing
 ///   entries without instrument can still be saved.
-@visibleForTesting
+/// Also used by the Beta sheet "Neuer Lehrer".
 bool isTeacherFormValid({
   required bool isNew,
   required String name,
@@ -45,12 +45,18 @@ Future<List<Group>> loadTeacherGroups(WidgetRef ref) async {
 
 /// Ionic "Lehrer hinzufügen" sheet (breakpoint 0.7), also used by the Beta
 /// list (`rd_teachers_page.dart`). Returns the created teacher, null when
-/// the sheet was closed or creating failed.
+/// the sheet was closed or creating failed. [initialInstruments] are
+/// ticked when the sheet opens (Beta "Person bearbeiten": the person's
+/// register, so the new teacher fits the picker's filter).
 ///
 /// The repository (bound to tenant and account) is taken before the first
 /// await: when the group changed while the sheet was open, nothing is
 /// created (the instruments belong to the old group) and an error is shown.
-Future<Teacher?> showAddTeacherSheet(BuildContext context, WidgetRef ref) async {
+Future<Teacher?> showAddTeacherSheet(
+  BuildContext context,
+  WidgetRef ref, {
+  Iterable<int> initialInstruments = const [],
+}) async {
   final container = ProviderScope.containerOf(context, listen: false);
   final repo = container.read(teacherRepositoryWithTenantProvider);
   final saveFailed = context.l10n.extraFieldsSaveFailed;
@@ -67,7 +73,13 @@ Future<Teacher?> showAddTeacherSheet(BuildContext context, WidgetRef ref) async 
     showDragHandle: true,
     builder: (ctx) => Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-      child: _TeacherForm(availableInstruments: groups),
+      child: _TeacherForm(
+        availableInstruments: groups,
+        initialInstruments: {
+          for (final id in initialInstruments)
+            if (groups.any((g) => g.id == id)) id,
+        },
+      ),
     ),
   );
   if (result == null) return null;
@@ -243,10 +255,14 @@ class _TeacherForm extends StatefulWidget {
     this.teacher,
     required this.availableInstruments,
     this.players = const [],
+    this.initialInstruments = const {},
   });
 
   final Teacher? teacher;
   final List<Group> availableInstruments;
+
+  /// Ticked instruments of a new teacher (ignored when editing).
+  final Set<int> initialInstruments;
 
   /// Names of the players of this teacher (edit only)
   final List<String> players;
@@ -272,7 +288,7 @@ class _TeacherFormState extends State<_TeacherForm> {
         TextEditingController(text: widget.teacher?.number ?? '');
     _notesController = TextEditingController(text: widget.teacher?.notes ?? '');
     _private = widget.teacher?.isPrivate ?? false;
-    _selectedInstruments = Set<int>.from(widget.teacher?.instruments ?? []);
+    _selectedInstruments = Set<int>.from(widget.teacher?.instruments ?? widget.initialInstruments);
   }
 
   @override
