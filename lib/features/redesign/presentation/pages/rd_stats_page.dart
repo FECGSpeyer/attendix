@@ -12,6 +12,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../export/presentation/pages/export_page.dart' show showExportModal;
 import '../../data/rd_stats_logic.dart';
 import '../widgets/manage/rd_data_sheets.dart' show rdGenerateCertificates;
+import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/rd_widgets.dart';
 
@@ -55,6 +56,10 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
+    // A new Saisonbeginn (changed below) moves the range "Saison".
+    ref.listen(currentTenantProvider.select((t) => t?.seasonStart), (before, now) {
+      if (before != now && _range == RdStatsRange.season) _setRange(_range);
+    });
     final attendancesAsync = ref.watch(filteredAttendancesForStatsProvider);
     final stats = ref.watch(attendanceStatisticsProvider);
     final trend = ref.watch(trendChartDataProvider);
@@ -159,8 +164,11 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
             _LowCard(low: low),
           ],
         ],
-        // Export and Urkunden (Vorkurs) moved here from the Verwaltung
-        // (canvas "Auswertung: Saison und Zählweise").
+        // Saison and Zählweise (from the old "Allgemein"), Export and
+        // Urkunden (Vorkurs) moved here from the Verwaltung (canvas
+        // "Auswertung: Saison und Zählweise").
+        const SizedBox(height: 24),
+        RdTenantSettingsBlock(sections: const [RdTenantSettings.counting], label: l10n.rdAdminCounting),
         const SizedBox(height: 24),
         RdGroupLabel(l10n.rdAdminData),
         RdGroupedList(

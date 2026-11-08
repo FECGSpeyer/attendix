@@ -12,6 +12,7 @@ import '../../../settings/presentation/pages/viewers_page.dart' show ViewersPage
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
+import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
 
 /// REDESIGN: Verwaltung › Eltern in the template "Verwaltungsliste"
 /// (replaces the old parents sheet while the Beta is on; leads only). Name
@@ -29,6 +30,8 @@ class RdParentsPage extends ConsumerWidget {
     return RdManageListPage(
       title: rdManageTitle(l10n, RdManageEntry.parents),
       intro: l10n.redesignParentsListIntro,
+      // The switch of the old "Allgemein".
+      header: const RdTenantSettingsBlock(sections: [RdTenantSettings.parents]),
       sections: parents == null
           ? null
           : [

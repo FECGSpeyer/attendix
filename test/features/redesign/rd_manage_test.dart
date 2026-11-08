@@ -142,11 +142,24 @@ void main() {
       expect(rdManageEntries(a, area: RdManageArea.members), [
         RdManageEntry.groups,
         RdManageEntry.extraFields,
+        RdManageEntry.registration,
+        RdManageEntry.critical,
         RdManageEntry.teachers,
         RdManageEntry.bulkMembers,
         RdManageEntry.missingAccounts,
         RdManageEntry.archive,
       ]);
+      // Off: "Noch nicht genutzt" instead of a row, still found.
+      const off = RdManageAccess(isAdmin: true, isOrchestra: true);
+      expect(rdManageUnused(off), [RdManageEntry.teachers, RdManageEntry.parents, RdManageEntry.sharing]);
+      expect(rdManageEntries(off), isNot(contains(RdManageEntry.parents)));
+      expect(rdManageSearchable(off), containsAll([RdManageEntry.teachers, RdManageEntry.parents]));
+      // Groups of type "Allgemein" have no Werke tab: sharing stays a row.
+      const general = RdManageAccess(isAdmin: true, isGeneral: true);
+      expect(rdManageUnused(general), [RdManageEntry.parents, RdManageEntry.sharing]);
+      const shared = RdManageAccess(isAdmin: true, isGeneral: true, sharingEnabled: true);
+      expect(rdManageEntries(shared, area: RdManageArea.group), contains(RdManageEntry.sharing));
+      expect(rdManageEntries(const RdManageAccess(isAdmin: true, sharingEnabled: true)), isNot(contains(RdManageEntry.sharing)));
       // Admins only for super admins outside the demo.
       expect(rdManageVisible(RdManageEntry.admins, a), isFalse);
       expect(rdManageVisible(RdManageEntry.admins, const RdManageAccess(isAdmin: true, isSuperAdmin: true, isDemo: true)),
@@ -251,6 +264,7 @@ void main() {
       expect(find.text('Register'), findsOneWidget);
       expect(find.text('Archiv'), findsOneWidget);
       expect(find.text('4'), findsOneWidget);
+      expect(find.text('Anmeldung per Link'), findsOneWidget);
       // What moved is not a row any more.
       expect(find.text('Gespielte Werke'), findsNothing);
       expect(find.text('Alle Einstellungen (bisherige Ansicht)'), findsNothing);
@@ -279,6 +293,15 @@ void main() {
       await tester.enterText(find.byType(TextField), 'gruppen');
       await _settle(tester);
       expect(find.text('Register'), findsOneWidget);
+
+      // A switch of the old "Allgemein" leads to its new place.
+      await tester.enterText(find.byType(TextField), 'saisonbeginn');
+      await _settle(tester);
+      expect(find.text('Auswertung und Mitteilungen · Saisonbeginn'), findsOneWidget);
+      await tester.enterText(find.byType(TextField), 'allgemein');
+      await _settle(tester);
+      expect(find.text('Termine · früher „Allgemeine Einstellungen“'), findsNWidgets(2));
+      expect(find.text('Auswertung und Mitteilungen · Schalter aus „Allgemeine Einstellungen“'), findsOneWidget);
 
       await tester.enterText(find.byType(TextField), 'urk');
       await _settle(tester);

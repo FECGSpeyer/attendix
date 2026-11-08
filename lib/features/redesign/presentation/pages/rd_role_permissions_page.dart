@@ -14,6 +14,7 @@ import '../../../../data/models/role_permission/tenant_role_permission.dart';
 import '../../../../data/repositories/role_permission_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
+import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
@@ -252,6 +253,9 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
       const SizedBox(height: 6),
       Text(l10n.redesignRolePermIntro, style: RdType.meta(p, size: 15)),
       const SizedBox(height: 20),
+      // From the old "Allgemein": what every member sees.
+      RdTenantSettingsBlock(sections: const [RdTenantSettings.visibility], label: l10n.rdAdminVisibility),
+      const SizedBox(height: 22),
     ];
 
     if (!_initialized) {

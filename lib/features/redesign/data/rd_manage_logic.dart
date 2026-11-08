@@ -31,6 +31,8 @@ enum RdManageEntry {
   // Mitglieder
   groups(RdManageArea.members),
   extraFields(RdManageArea.members),
+  registration(RdManageArea.members),
+  critical(RdManageArea.members),
   teachers(RdManageArea.members),
   bulkMembers(RdManageArea.members),
   missingAccounts(RdManageArea.members),
@@ -42,7 +44,9 @@ enum RdManageEntry {
   viewers(RdManageArea.access),
   // Termine
   attendanceTypes(RdManageArea.events),
+  reasons(RdManageArea.events),
   shiftPlans(RdManageArea.events),
+  holidays(RdManageArea.events),
   adHocPlanning(RdManageArea.events),
   // Auswertung und Mitteilungen
   statistics(RdManageArea.data),
@@ -55,6 +59,7 @@ enum RdManageEntry {
   workHistory(null, RdManageHome.works),
   workCategories(null, RdManageHome.works),
   fileStorage(null, RdManageHome.works),
+  sharing(null, RdManageHome.works),
   runSheets(null, RdManageHome.event),
   export(null, RdManageHome.stats),
   certificates(null, RdManageHome.stats),
@@ -91,6 +96,8 @@ class RdManageAccess {
     this.hasMissingAccounts = false,
     this.isVorkurs = false,
     this.showTeam = false,
+    this.isOrchestra = false,
+    this.sharingEnabled = false,
   });
 
   /// Ionic `isAdmin`: ADMIN or RESPONSIBLE (Dirigent, Verantwortliche).
@@ -113,6 +120,12 @@ class RdManageAccess {
 
   /// Team organisation on and the user in the team (Ich › Team).
   final bool showTeam;
+
+  /// `tenants.type == 'orchestra'` (only orchestras keep teachers).
+  final bool isOrchestra;
+
+  /// Werke are shared by link (`song_sharing_id`).
+  final bool sharingEnabled;
 }
 
 /// Whether "Ich" and the sidebar offer the Verwaltung: only Dirigent and
@@ -125,10 +138,11 @@ bool rdManageVisible(RdManageEntry entry, RdManageAccess access) {
   final a = access;
   if (!a.isAdmin) return false;
   return switch (entry) {
-    RdManageEntry.teachers => a.maintainTeachers,
+    // Off: still found and shown under "Noch nicht genutzt" (the switch is
+    // on its page).
+    RdManageEntry.teachers => a.maintainTeachers || a.isOrchestra,
     RdManageEntry.missingAccounts => a.hasMissingAccounts,
     RdManageEntry.admins => a.isSuperAdmin && !a.isDemo,
-    RdManageEntry.parents => a.parentsEnabled,
     RdManageEntry.workHistory || RdManageEntry.workCategories => !a.isGeneral,
     RdManageEntry.fileStorage => a.canAccessFiles,
     RdManageEntry.certificates => a.isVorkurs,
@@ -141,11 +155,30 @@ bool rdManageVisible(RdManageEntry entry, RdManageAccess access) {
   };
 }
 
-/// The rows [access] sees, in page order (moved entries are left out).
-List<RdManageEntry> rdManageEntries(RdManageAccess access, {RdManageArea? area}) => [
-      for (final e in RdManageEntry.values)
-        if (!e.moved && (area == null || e.area == area) && rdManageVisible(e, access)) e,
+/// Features that are off: "Noch nicht genutzt" with one sentence what they
+/// are for; once on, they move into their section.
+List<RdManageEntry> rdManageUnused(RdManageAccess access) => [
+      if (access.isAdmin && access.isOrchestra && !access.maintainTeachers) RdManageEntry.teachers,
+      if (access.isAdmin && !access.parentsEnabled) RdManageEntry.parents,
+      if (access.isAdmin && !access.sharingEnabled) RdManageEntry.sharing,
     ];
+
+/// Section of [entry] for [access], null when it moved. "Werke öffentlich
+/// teilen" lives in the Werke tab; groups of type "Allgemein" have none, so
+/// there it stays a row of "Gruppe und Organisation".
+RdManageArea? rdManageAreaOf(RdManageEntry entry, RdManageAccess access) =>
+    entry == RdManageEntry.sharing && access.isGeneral ? RdManageArea.group : entry.area;
+
+/// The rows [access] sees, in page order (moved and unused entries are left
+/// out).
+List<RdManageEntry> rdManageEntries(RdManageAccess access, {RdManageArea? area}) {
+  final unused = rdManageUnused(access);
+  return [
+    for (final e in RdManageEntry.values)
+      if (rdManageAreaOf(e, access) case final a?)
+        if ((area == null || a == area) && rdManageVisible(e, access) && !unused.contains(e)) e,
+  ];
+}
 
 /// Every entry the search may find: the rows plus the moved ones.
 List<RdManageEntry> rdManageSearchable(RdManageAccess access) => [
@@ -158,17 +191,19 @@ List<RdManageArea> rdManageAreas(RdManageAccess access) {
   final entries = rdManageEntries(access);
   return [
     for (final a in RdManageArea.values)
-      if (entries.any((e) => e.area == a)) a,
+      if (entries.any((e) => rdManageAreaOf(e, access) == a)) a,
   ];
 }
 
 /// Where a moved entry lives for [access]: the Dateiablage sits in the
 /// Werke tab, in groups without one under Ich.
-RdManageHome? rdManageHome(RdManageEntry entry, RdManageAccess access) =>
-    entry == RdManageEntry.fileStorage && access.isGeneral ? RdManageHome.me : entry.home;
+RdManageHome? rdManageHome(RdManageEntry entry, RdManageAccess access) {
+  if (rdManageAreaOf(entry, access) != null) return null;
+  return entry == RdManageEntry.fileStorage && access.isGeneral ? RdManageHome.me : entry.home;
+}
 
-/// Search over title, section or new place, hint and former names (all
-/// words must match).
+/// Search over title, section or new place, hint, former names and the
+/// switches on the page (all words must match).
 bool rdManageMatches(String query, String title, String place, [String hint = '', String keywords = '']) {
   final q = query.trim().toLowerCase();
   if (q.isEmpty) return true;

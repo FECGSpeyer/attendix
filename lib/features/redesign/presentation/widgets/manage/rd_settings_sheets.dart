@@ -43,9 +43,12 @@ Future<T?> showRdSettingsSheet<T>(BuildContext context, WidgetBuilder builder) {
 
 /// Head of a sheet: "Abbrechen" · title · "Fertig".
 class RdSheetHead extends StatelessWidget {
-  const RdSheetHead({super.key, required this.title, this.onDone, this.doneLabel});
+  const RdSheetHead({super.key, required this.title, this.onDone, this.doneLabel, this.cancel = true});
 
   final String title;
+
+  /// False hides "Abbrechen" (sheets that save every change right away).
+  final bool cancel;
 
   /// Null hides "Fertig" (sheets that close on a tap).
   final VoidCallback? onDone;
@@ -63,10 +66,12 @@ class RdSheetHead extends StatelessWidget {
             width: 96,
             child: Align(
               alignment: Alignment.centerLeft,
-              child: TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text(l10n.redesignCommonCancel, style: TextStyle(color: p.link, fontSize: 16)),
-              ),
+              child: !cancel
+                  ? null
+                  : TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text(l10n.redesignCommonCancel, style: TextStyle(color: p.link, fontSize: 16)),
+                    ),
             ),
           ),
           Expanded(

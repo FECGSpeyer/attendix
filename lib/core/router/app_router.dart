@@ -888,6 +888,23 @@ final routerProvider = Provider<GoRouter>((ref) {
                     path: 'mitglieder-bearbeiten',
                     builder: (context, state) => const RdBulkMembersPage(),
                   ),
+                  // Settings of the old "Allgemein", split by where they act.
+                  GoRoute(
+                    path: 'anmeldung',
+                    builder: (context, state) => const RdGeneralSettingsPage(section: RdTenantSettings.registration),
+                  ),
+                  GoRoute(
+                    path: 'abmeldegruende',
+                    builder: (context, state) => const RdGeneralSettingsPage(section: RdTenantSettings.reasons),
+                  ),
+                  GoRoute(
+                    path: 'problemfaelle',
+                    builder: (context, state) => const RdGeneralSettingsPage(section: RdTenantSettings.critical),
+                  ),
+                  GoRoute(
+                    path: 'feiertage',
+                    builder: (context, state) => const RdGeneralSettingsPage(section: RdTenantSettings.holidays),
+                  ),
                   // Verwaltungslisten (RedesignRoutes.groups etc.).
                   GoRoute(
                     path: 'werkhistorie',

@@ -93,6 +93,18 @@ class RedesignRoutes {
   /// Verwaltung › Mitglieder bearbeiten (several members at once).
   static const String bulkMembers = '$manage/mitglieder-bearbeiten';
 
+  /// Verwaltung › Anmeldung per Link (from the old "Allgemein").
+  static const String registration = '$manage/anmeldung';
+
+  /// Verwaltung › Abmeldegründe (from the old "Allgemein").
+  static const String reasons = '$manage/abmeldegruende';
+
+  /// Verwaltung › Problemfälle (rules; from the old "Allgemein").
+  static const String critical = '$manage/problemfaelle';
+
+  /// Verwaltung › Ferien und Feiertage (from the old "Allgemein").
+  static const String holidays = '$manage/feiertage';
+
   /// Verwaltung › Register (replaces `/settings/instruments` in the Beta).
   static const String groups = '$manage/gruppen';
 

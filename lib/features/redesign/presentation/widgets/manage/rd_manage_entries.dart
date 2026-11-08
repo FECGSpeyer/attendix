@@ -19,6 +19,7 @@ import '../../../../history/presentation/pages/history_page.dart' show showHisto
 import '../../../../settings/presentation/pages/settings_page.dart'
     show createMissingAccounts, playersOfCurrentTenant;
 import '../../../../settings/presentation/widgets/calendar_subscription_dialog.dart';
+import '../../pages/rd_general_settings_page.dart' show showRdSharingSheet;
 import 'rd_data_sheets.dart';
 import '../../../../songs/presentation/widgets/song_categories_sheet.dart';
 import '../../../data/rd_manage_logic.dart';
@@ -68,6 +69,8 @@ final rdManageAccessProvider = Provider.autoDispose<RdManageAccess>((ref) {
     hasMissingAccounts: ref.watch(rdMissingAccountsProvider).isNotEmpty,
     isVorkurs: isVorkursTenantName(tenant?.shortName, tenant?.longName),
     showTeam: ref.watch(rdShowTeamProvider),
+    isOrchestra: tenant?.type == 'orchestra',
+    sharingEnabled: (tenant?.songSharingId ?? '').isNotEmpty,
   );
 });
 
@@ -150,6 +153,8 @@ String rdManageHomeName(AppLocalizations l10n, RdManageHome home) => switch (hom
 String rdManageTitle(AppLocalizations l10n, RdManageEntry entry) => switch (entry) {
       RdManageEntry.groups => l10n.rdAdminGroups,
       RdManageEntry.extraFields => l10n.rdAdminExtraFields,
+      RdManageEntry.registration => l10n.rdAdminRegistration,
+      RdManageEntry.critical => l10n.rdAdminCritical,
       RdManageEntry.teachers => l10n.settingsTeachers,
       RdManageEntry.bulkMembers => l10n.redesignBulkTitle,
       RdManageEntry.missingAccounts => l10n.rdAdminMissing,
@@ -159,16 +164,19 @@ String rdManageTitle(AppLocalizations l10n, RdManageEntry entry) => switch (entr
       RdManageEntry.parents => l10n.settingsParents,
       RdManageEntry.viewers => l10n.settingsViewers,
       RdManageEntry.attendanceTypes => l10n.rdAdminTypes,
+      RdManageEntry.reasons => l10n.rdAdminReasons,
       RdManageEntry.shiftPlans => l10n.generalSettingsShiftPlans,
+      RdManageEntry.holidays => l10n.rdAdminHolidays,
       RdManageEntry.adHocPlanning => l10n.rdAdminAdHoc,
       RdManageEntry.statistics => l10n.redesignStatsTitle,
       RdManageEntry.announcements => l10n.settingsAnnouncements,
-      RdManageEntry.general => l10n.redesignManageGeneralTitle,
+      RdManageEntry.general => l10n.rdAdminName,
       RdManageEntry.organisation => l10n.settingsOrganisation,
       RdManageEntry.approvals => l10n.redesignManagePendingTitle,
       RdManageEntry.workHistory => l10n.rdAdminWorkHistory,
       RdManageEntry.workCategories => l10n.songsSongCategories,
       RdManageEntry.fileStorage => l10n.settingsFileStorage,
+      RdManageEntry.sharing => l10n.rdAdminSharing,
       RdManageEntry.runSheets => l10n.settingsRunSheets,
       RdManageEntry.export => l10n.settingsExport,
       RdManageEntry.certificates => l10n.rdAdminCertificates,
@@ -183,6 +191,8 @@ String rdManageTitle(AppLocalizations l10n, RdManageEntry entry) => switch (entr
 String rdManageHint(AppLocalizations l10n, RdManageEntry entry, RdManageAccess access) => switch (entry) {
       RdManageEntry.groups => l10n.rdAdminGroupsHint,
       RdManageEntry.extraFields => l10n.rdAdminExtraFieldsHint,
+      RdManageEntry.registration => l10n.rdAdminRegistrationHint,
+      RdManageEntry.critical => l10n.rdAdminCriticalHint,
       RdManageEntry.teachers => l10n.rdAdminTeachersHint,
       RdManageEntry.bulkMembers => l10n.rdAdminBulkHint,
       RdManageEntry.missingAccounts => l10n.redesignManageMissingHint,
@@ -192,16 +202,58 @@ String rdManageHint(AppLocalizations l10n, RdManageEntry entry, RdManageAccess a
       RdManageEntry.parents => l10n.rdAdminParentsHint,
       RdManageEntry.viewers => l10n.rdAdminViewersHint,
       RdManageEntry.attendanceTypes => l10n.rdAdminTypesHint,
+      RdManageEntry.reasons => l10n.rdAdminReasonsHint,
       RdManageEntry.shiftPlans => l10n.rdAdminShiftsHint,
+      RdManageEntry.holidays => l10n.rdAdminHolidaysHint,
       RdManageEntry.adHocPlanning => l10n.rdAdminAdHocHint,
       RdManageEntry.statistics => access.isVorkurs ? l10n.rdAdminStatsHintCertificates : l10n.rdAdminStatsHint,
       RdManageEntry.announcements => l10n.redesignManageAnnouncementsHint,
-      RdManageEntry.general => l10n.rdAdminGeneralHint,
+      RdManageEntry.general => l10n.rdAdminNameHint,
       RdManageEntry.organisation => l10n.rdAdminOrganisationHint,
       RdManageEntry.team => l10n.rdAdminTeamHint,
       RdManageEntry.export => l10n.rdAdminExportHint,
       RdManageEntry.certificates => l10n.rdAdminCertificatesHint,
+      RdManageEntry.sharing => l10n.rdAdminSharingHint,
       _ => '',
+    };
+
+/// One sentence for "Noch nicht genutzt": what a feature that is off is for.
+String rdManageUnusedText(AppLocalizations l10n, RdManageEntry entry) => switch (entry) {
+      RdManageEntry.teachers => l10n.rdAdminUnusedTeachers,
+      RdManageEntry.parents => l10n.rdAdminUnusedParents,
+      RdManageEntry.sharing => l10n.rdAdminUnusedSharing,
+      _ => rdManageHint(l10n, entry, const RdManageAccess()),
+    };
+
+/// The switches and values on the page an entry opens: found by the search
+/// (e.g. "Saison" finds Auswertung, "Dienstplan" Rollen und Rechte) and
+/// shown there next to the place.
+List<String> rdManageKeywords(AppLocalizations l10n, RdManageEntry entry) => switch (entry) {
+      RdManageEntry.registration => [
+          l10n.rdSettingsAllowRegister,
+          l10n.rdSettingsAutoApprove,
+          l10n.rdSettingsRegisterFields,
+        ],
+      RdManageEntry.critical => [l10n.rdSettingsAddRule],
+      RdManageEntry.teachers => [l10n.generalSettingsMaintainTeachers, l10n.redesignManageGeneralTitle],
+      RdManageEntry.rolesPermissions => [
+          l10n.redesignManageGeneralTitle,
+          l10n.rdSettingsAllEvents,
+          l10n.rdSettingsInfoText,
+          l10n.rdSettingsDutyView,
+          l10n.rdSettingsMembersList,
+        ],
+      RdManageEntry.parents => [l10n.generalSettingsParentsFeature, l10n.redesignManageGeneralTitle],
+      RdManageEntry.reasons => [l10n.generalSettingsAbsenceReasons, l10n.generalSettingsLateReasons],
+      RdManageEntry.holidays => [l10n.rdSettingsRegion],
+      RdManageEntry.statistics => [
+          l10n.redesignManageGeneralTitle,
+          l10n.rdSettingsSeasonStart,
+          l10n.rdSettingsShiftPresent,
+        ],
+      RdManageEntry.general => [l10n.rdSettingsName, l10n.rdSettingsShortName],
+      RdManageEntry.sharing => [l10n.generalSettingsShareSongs, l10n.rdSettingsCopyWorksLink],
+      _ => const [],
     };
 
 /// The name the entry had on the old settings page, when it changed:
@@ -217,12 +269,20 @@ String? rdManageFormerName(AppLocalizations l10n, RdManageEntry entry) => switch
       RdManageEntry.workHistory => l10n.historyTitle,
       RdManageEntry.certificates => l10n.settingsCertificates,
       RdManageEntry.team => l10n.teamOrgTitle,
+      // Split from the old "Allgemeine Einstellungen".
+      RdManageEntry.general ||
+      RdManageEntry.registration ||
+      RdManageEntry.critical ||
+      RdManageEntry.reasons ||
+      RdManageEntry.holidays ||
+      RdManageEntry.sharing =>
+        l10n.redesignManageGeneralTitle,
       _ => null,
     };
 
 /// Section of a row or the new place of a moved entry.
 String rdManagePlace(AppLocalizations l10n, RdManageEntry entry, RdManageAccess access) {
-  final area = entry.area;
+  final area = rdManageAreaOf(entry, access);
   if (area != null) return rdManageAreaName(l10n, area);
   final home = rdManageHome(entry, access);
   return home == null ? '' : rdManageHomeName(l10n, home);
@@ -231,6 +291,8 @@ String rdManagePlace(AppLocalizations l10n, RdManageEntry entry, RdManageAccess 
 IconData rdManageIcon(RdManageEntry entry) => switch (entry) {
       RdManageEntry.groups => Icons.groups_outlined,
       RdManageEntry.extraFields => Icons.dynamic_form_outlined,
+      RdManageEntry.registration => Icons.link,
+      RdManageEntry.critical => Icons.warning_amber_rounded,
       RdManageEntry.teachers => Icons.school_outlined,
       RdManageEntry.bulkMembers => Icons.checklist,
       RdManageEntry.missingAccounts => Icons.person_add_alt_outlined,
@@ -240,16 +302,19 @@ IconData rdManageIcon(RdManageEntry entry) => switch (entry) {
       RdManageEntry.parents => Icons.favorite_border,
       RdManageEntry.viewers => Icons.visibility_outlined,
       RdManageEntry.attendanceTypes => Icons.category_outlined,
+      RdManageEntry.reasons => Icons.edit_note,
       RdManageEntry.shiftPlans => Icons.schedule,
+      RdManageEntry.holidays => Icons.beach_access_outlined,
       RdManageEntry.adHocPlanning => Icons.view_agenda_outlined,
       RdManageEntry.statistics => Icons.insert_chart_outlined,
       RdManageEntry.announcements => Icons.mail_outline,
-      RdManageEntry.general => Icons.settings_outlined,
+      RdManageEntry.general => Icons.badge_outlined,
       RdManageEntry.organisation => Icons.business_outlined,
       RdManageEntry.approvals => Icons.how_to_reg_outlined,
       RdManageEntry.workHistory => Icons.history,
       RdManageEntry.workCategories => Icons.label_outline,
       RdManageEntry.fileStorage => Icons.folder_outlined,
+      RdManageEntry.sharing => Icons.share_outlined,
       RdManageEntry.runSheets => Icons.list,
       RdManageEntry.export => Icons.download_outlined,
       RdManageEntry.certificates => Icons.workspace_premium_outlined,
@@ -270,6 +335,10 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
       push(RedesignRoutes.groups);
     case RdManageEntry.extraFields:
       push(RedesignRoutes.extraFields);
+    case RdManageEntry.registration:
+      push(RedesignRoutes.registration);
+    case RdManageEntry.critical:
+      push(RedesignRoutes.critical);
     case RdManageEntry.teachers:
       push(RedesignRoutes.teachers);
     case RdManageEntry.bulkMembers:
@@ -288,6 +357,10 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
       push(RedesignRoutes.viewers);
     case RdManageEntry.attendanceTypes:
       push(RedesignRoutes.attendanceTypes);
+    case RdManageEntry.reasons:
+      push(RedesignRoutes.reasons);
+    case RdManageEntry.holidays:
+      push(RedesignRoutes.holidays);
     case RdManageEntry.shiftPlans:
       push(RedesignRoutes.shiftPlans);
     case RdManageEntry.adHocPlanning:
@@ -308,6 +381,8 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
       showSongCategoriesSheet(context);
     case RdManageEntry.fileStorage:
       push('/settings/files');
+    case RdManageEntry.sharing:
+      showRdSharingSheet(context);
     case RdManageEntry.runSheets:
       push('/planning');
     case RdManageEntry.export:
