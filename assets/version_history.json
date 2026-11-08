@@ -9,6 +9,13 @@
       ]
     },
     {
+      "version": "0.86.1",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta: „Export“ in der Auswertung öffnet die Beta-Export-Seite statt des alten Export-Fensters"
+      ]
+    },
+    {
       "version": "0.86.0",
       "date": "8.11.2026",
       "changes": [
