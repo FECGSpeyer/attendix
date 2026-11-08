@@ -143,7 +143,6 @@ import '../../features/redesign/presentation/pages/rd_person_create_page.dart';
 import '../../features/redesign/presentation/pages/rd_person_edit_page.dart';
 import '../../features/redesign/presentation/pages/rd_person_history_page.dart';
 import '../../features/redesign/presentation/pages/rd_appearance_page.dart';
-import '../../features/redesign/presentation/pages/rd_bulk_members_page.dart';
 import '../../features/redesign/presentation/pages/rd_message_compose_page.dart';
 import '../../features/redesign/presentation/pages/rd_notifications_page.dart';
 import '../../features/redesign/presentation/pages/rd_stats_page.dart';
@@ -883,10 +882,6 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'mitteilung',
                     builder: (context, state) => const RdMessageComposePage(),
-                  ),
-                  GoRoute(
-                    path: 'mitglieder-bearbeiten',
-                    builder: (context, state) => const RdBulkMembersPage(),
                   ),
                   // Settings of the old "Allgemein", split by where they act.
                   GoRoute(

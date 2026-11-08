@@ -568,9 +568,34 @@ void main() {
       // Auswertung and the other member tools sit behind "•••".
       await tester.tap(find.byKey(const Key('rd-members-more')));
       await _settle(tester);
-      for (final label in ['Auswertung', 'Mitglieder bearbeiten', 'Register', 'Problemfälle', 'Archiv', 'Export']) {
+      for (final label in ['Auswertung', 'Mehrere auswählen', 'Register', 'Problemfälle', 'Archiv', 'Export']) {
         expect(find.text(label), findsWidgets, reason: label);
       }
+    });
+
+    testWidgets('"Mehrere auswählen": select in the list, actions at the bottom', (tester) async {
+      await tester.pumpWidget(_membersApp(Role.admin, _repo()));
+      await _settle(tester);
+      await tester.tap(find.byKey(const Key('rd-members-more')));
+      await _settle(tester);
+      await tester.tap(find.text('Mehrere auswählen'));
+      await _settle(tester);
+      // One action at a time: no "+", no Wartet while selecting.
+      expect(find.byType(FloatingActionButton), findsNothing);
+      expect(find.text('Wartet · 1'), findsNothing);
+      expect(find.byKey(const Key('rd-members-bulk-bar')), findsNothing);
+      await tester.tap(find.text('Anna Berg'));
+      await tester.pump();
+      expect(find.text('1 ausgewählt'), findsOneWidget);
+      expect(find.text('Feld'), findsOneWidget);
+      await tester.tap(find.text('Alle in Violine'));
+      await tester.pump();
+      expect(find.text('2 ausgewählt'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('rd-members-select-done')));
+      await _settle(tester);
+      expect(find.byKey(const Key('rd-members-bulk-bar')), findsNothing);
+      expect(find.byType(FloatingActionButton), findsOneWidget);
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('Beobachter reads only: no add, no Auswertung, no Wartet', (tester) async {
