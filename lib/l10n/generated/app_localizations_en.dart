@@ -11376,7 +11376,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignEventsNew => 'New event';
 
   @override
-  String get redesignEventsNo => 'Sign out';
+  String get redesignEventsNo => 'Can\'t make it';
 
   @override
   String get redesignEventsNoMatch => 'No events match your search.';
@@ -11429,7 +11429,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get redesignEventsYes => 'I\'m in';
+  String get redesignEventsYes => 'I\'m coming';
 
   @override
   String get redesignEventsYou => 'You';
@@ -14144,6 +14144,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignSignoutCannot => 'I can\'t come';
+
+  @override
+  String get redesignSignoutChildCannot => 'Can\'t come';
+
+  @override
+  String get redesignSignoutChildLater => 'Coming late';
+
+  @override
+  String get redesignSignoutChildPrivacy => 'Only the leaders see the reason.';
 
   @override
   String get redesignSignoutLater => 'I\'ll be late';

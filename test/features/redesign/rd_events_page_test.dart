@@ -376,7 +376,7 @@ void main() {
     await tester.pumpWidget(_app(Role.player, pending: 14, extraUpcoming: [duty]));
     await _settle(tester);
     expect(find.text('Offene Dienste'), findsOneWidget, reason: 'taken over via duty_take only');
-    expect(find.text('Dabei'), findsOneWidget, reason: 'no answer sheet, only the list row of Probe 11');
+    expect(find.text('Bin dabei'), findsOneWidget, reason: 'no answer sheet, only the list row of Probe 11');
     expect(find.text('page own 14'), findsNothing);
   });
 
@@ -534,8 +534,8 @@ void main() {
     expect(find.text('Abwesend …'), findsOneWidget);
     expect(find.text('1 Termin wartet auf deine Antwort'), findsOneWidget);
     expect(find.text('Probe 11'), findsOneWidget);
-    expect(find.text('Dabei'), findsOneWidget);
-    expect(find.text('Abmelden'), findsOneWidget);
+    expect(find.text('Bin dabei'), findsOneWidget);
+    expect(find.text('Kann nicht'), findsOneWidget);
     expect(find.text('Probe 12'), findsOneWidget);
     expect(find.text('Zugesagt'), findsOneWidget);
     expect(find.text('Probe 13'), findsOneWidget);
@@ -547,7 +547,7 @@ void main() {
     expect(find.text('Probe 12'), findsNothing);
     expect(find.text('Wieder alle Termine zeigen'), findsOneWidget);
 
-    await tester.tap(find.text('Abmelden'));
+    await tester.tap(find.text('Kann nicht'));
     await _settle(tester);
     expect(find.text('Ich kann nicht'), findsOneWidget);
     expect(find.text('Anderer Grund'), findsOneWidget);

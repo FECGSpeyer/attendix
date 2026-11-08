@@ -18680,7 +18680,7 @@ abstract class AppLocalizations {
   /// redesign.events.no
   ///
   /// In de, this message translates to:
-  /// **'Abmelden'**
+  /// **'Kann nicht'**
   String get redesignEventsNo;
 
   /// redesign.events.noMatch
@@ -18758,7 +18758,7 @@ abstract class AppLocalizations {
   /// redesign.events.yes
   ///
   /// In de, this message translates to:
-  /// **'Dabei'**
+  /// **'Bin dabei'**
   String get redesignEventsYes;
 
   /// redesign.events.you
@@ -22930,6 +22930,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Ich kann nicht'**
   String get redesignSignoutCannot;
+
+  /// redesign.signout.childCannot
+  ///
+  /// In de, this message translates to:
+  /// **'Absagen'**
+  String get redesignSignoutChildCannot;
+
+  /// redesign.signout.childLater
+  ///
+  /// In de, this message translates to:
+  /// **'Später kommen'**
+  String get redesignSignoutChildLater;
+
+  /// redesign.signout.childPrivacy
+  ///
+  /// In de, this message translates to:
+  /// **'Den Grund sieht nur die Leitung.'**
+  String get redesignSignoutChildPrivacy;
 
   /// redesign.signout.later
   ///
