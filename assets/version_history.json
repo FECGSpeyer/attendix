@@ -1,10 +1,19 @@
 {
   "versions": [
     {
-      "version": "0.96.2",
+      "version": "0.97.1",
       "date": "8.11.2026",
       "changes": [
         "🐛 Termine mit Filter auf ein Organisations-Zusatzfeld: Ändert man das Feld bei einer Person (Person bearbeiten oder Mehrfachauswahl „Feld“), wird sie jetzt in kommenden Terminen ergänzt bzw. entfernt. Auch beim Aufnehmen und Registerwechsel zählt der gemeinsame Wert statt des Standardwerts"
+      ]
+    },
+    {
+      "version": "0.97.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta-Werke: oben „Aktuell“ als Kartenreihe für Mitglieder – die Werke der kommenden Termine und was ihr in den letzten 4 Wochen gespielt habt. Ein Tipp öffnet direkt deine Stimme, „Alle als PDF“ legt alle zusammen in ein PDF",
+        "💄 Beta-Werke: der Knopf „Meine Noten“/„Nach Stimme“ oben ist weg, „Noten nach Stimme“ liegt jetzt im •••. Der große Block „Als Nächstes“ entfällt, die Werkliste beginnt gleich darunter",
+        "💄 Beta-Werke am Desktop: Mitglieder sehen rechts ihre aktuellen Noten nach Termin statt der Werk-Zahlen; ‹ › blättern durch die Karten"
       ]
     },
     {
