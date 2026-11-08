@@ -59,6 +59,14 @@ final rdStatsResultProvider = Provider<RdStatsResult>((ref) {
 /// without one are taken as such).
 bool rdStatsOfTenant(Iterable<int?> tenantIds, int tenantId) => tenantIds.every((id) => id == null || id == tenantId);
 
+/// The persons of [async] when they belong to [tenantId], else none (the
+/// list of the group before while it reloads after a group change).
+List<Person> rdStatsPeopleOf(AsyncValue<List<Person>> async, int? tenantId) {
+  final people = async.valueOrNull;
+  if (tenantId == null || people == null) return const [];
+  return rdStatsOfTenant(people.map((p) => p.tenantId), tenantId) ? people : const [];
+}
+
 /// REDESIGN: order of the Termine level of the Auswertung.
 final rdStatsEventSortProvider = StateProvider<RdStatsEventSort>((ref) {
   ref.watch(currentTenantIdProvider);

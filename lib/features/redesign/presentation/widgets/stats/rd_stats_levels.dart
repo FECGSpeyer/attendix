@@ -7,14 +7,15 @@ import '../../../../../core/constants/enums.dart';
 import '../../../../../core/providers/group_providers.dart';
 import '../../../../../core/providers/player_providers.dart';
 import '../../../../../core/providers/statistics_providers.dart' show activePlayersForStatsProvider;
+import '../../../../../core/providers/tenant_providers.dart' show currentTenantIdProvider;
 import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/statistics_utils.dart' show computeAverageAgePerGroup;
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/instrument/instrument.dart';
-import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../data/providers/rd_stats_providers.dart' show rdStatsPeopleOf;
 import '../../../data/rd_stats_logic.dart';
 import '../../pages/rd_members_page.dart' show rdPercentColor;
 import '../rd_widgets.dart';
@@ -602,11 +603,12 @@ class RdStatsMembersCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final p = context.rd;
+    final tenantId = ref.watch(currentTenantIdProvider);
     final current = [
-      for (final person in ref.watch(playersProvider).valueOrNull ?? const <Person>[])
+      for (final person in rdStatsPeopleOf(ref.watch(playersProvider), tenantId))
         if (person.left == null || person.left!.isEmpty) person,
     ];
-    final left = ref.watch(archivedPlayersProvider).valueOrNull ?? const <Person>[];
+    final left = rdStatsPeopleOf(ref.watch(archivedPlayersProvider), tenantId);
     final active = current.where((x) => !x.paused).length;
     final paused = current.length - active;
     Widget value(int v, Color color) => Text(
@@ -640,7 +642,7 @@ class RdStatsAgeCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final p = context.rd;
     final l10n = context.l10n;
-    final players = ref.watch(activePlayersForStatsProvider).valueOrNull ?? const <Person>[];
+    final players = rdStatsPeopleOf(ref.watch(activePlayersForStatsProvider), ref.watch(currentTenantIdProvider));
     final groups = rdStatsGroups(ref.watch(groupsProvider).valueOrNull ?? const <Group>[]);
     final decades = rdStatsAgeDecades(players, DateTime.now());
     final perGroup = computeAverageAgePerGroup(players, groups);

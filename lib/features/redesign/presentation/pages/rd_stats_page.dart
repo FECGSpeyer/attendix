@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/group_providers.dart';
+import '../../../../core/providers/player_providers.dart' show archivedPlayersProvider, playersProvider;
 import '../../../../core/providers/statistics_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
@@ -99,10 +100,17 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
     ref.invalidate(filteredAttendancesForStatsProvider);
     ref.invalidate(activePlayersForStatsProvider);
     ref.invalidate(rdStatsPreviousDataProvider);
+    // Mitglieder and Zusatzfelder (the Personen level) count these.
+    ref.invalidate(playersProvider);
+    ref.invalidate(archivedPlayersProvider);
+    Future<void> done(Future<Object?> f) => f.then((_) {}, onError: (Object _) {});
     try {
       await Future.wait([
-        ref.read(allPersonAttendancesForStatsProvider.future).then((_) {}, onError: (Object _) {}),
-        ref.read(rdStatsPreviousDataProvider.future).then((_) {}, onError: (Object _) {}),
+        done(ref.read(allPersonAttendancesForStatsProvider.future)),
+        done(ref.read(activePlayersForStatsProvider.future)),
+        done(ref.read(rdStatsPreviousDataProvider.future)),
+        done(ref.read(playersProvider.future)),
+        done(ref.read(archivedPlayersProvider.future)),
       ]);
     } finally {
       if (mounted) setState(() => _refreshing = false);

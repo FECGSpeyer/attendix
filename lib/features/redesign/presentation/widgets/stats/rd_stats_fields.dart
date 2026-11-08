@@ -7,6 +7,7 @@ import '../../../../../core/providers/group_providers.dart';
 import '../../../../../core/providers/organisation_providers.dart';
 import '../../../../../core/providers/profile_providers.dart';
 import '../../../../../core/providers/statistics_providers.dart' show fieldStatsPersonsProvider;
+import '../../../../../core/providers/tenant_providers.dart' show currentTenantIdProvider;
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/field_stats.dart';
 import '../../../../../core/utils/person_matcher.dart' show personIdentityKey;
@@ -16,6 +17,7 @@ import '../../../../../data/models/organisation/organisation.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../data/models/tenant/tenant.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../data/providers/rd_stats_providers.dart' show rdStatsPeopleOf;
 import '../../../data/rd_stats_logic.dart';
 import '../rd_widgets.dart';
 import 'rd_stats_widgets.dart' show rdPercent;
@@ -57,7 +59,7 @@ class _RdStatsFieldsCardState extends ConsumerState<RdStatsFieldsCard> {
     final stats = computeFieldStats(
       field: field,
       persons: [
-        for (final person in personsAsync.valueOrNull ?? const <Person>[])
+        for (final person in rdStatsPeopleOf(personsAsync, ref.watch(currentTenantIdProvider)))
           if (chosen.isEmpty || chosen.contains(person.instrument)) person,
       ],
       groups: groups,
@@ -186,26 +188,35 @@ class _RdStatsOrganisationCardState extends ConsumerState<RdStatsOrganisationCar
   /// Empty: all groups of the organisation.
   Set<int> _chosen = {};
 
+  /// [async]'s value, but not while it reloads (other group or account) or
+  /// after a failed load: Riverpod keeps the old value then.
+  static T? _current<T>(AsyncValue<T> async) => async.isReloading || async.hasError ? null : async.valueOrNull;
+
   @override
   Widget build(BuildContext context) {
-    final org = ref.watch(currentOrganisationProvider).valueOrNull;
-    if (org?.id == null) return const SizedBox.shrink();
-    final tenants = ref.watch(organisationTenantsProvider(org!.id!)).valueOrNull;
-    if (tenants == null || tenants.isEmpty) return const SizedBox.shrink();
+    final tenantId = ref.watch(currentTenantIdProvider);
+    final org = _current(ref.watch(currentOrganisationProvider));
+    if (tenantId == null || org?.id == null) return const SizedBox.shrink();
+    final tenants = _current(ref.watch(organisationTenantsProvider(org!.id!)));
+    // Keyed by the group: only an organisation the current group is part of.
+    if (tenants == null || !tenants.any((t) => t.id == tenantId)) return const SizedBox.shrink();
     return _content(context, org, tenants);
   }
 
   Widget _content(BuildContext context, Organisation org, List<Tenant> tenants) {
     final l10n = context.l10n;
     final personsAsync = ref.watch(organisationPersonsProvider(tenants));
+    final persons = _current(personsAsync);
+    // A choice from another organisation does not count.
+    final chosen = {for (final t in tenants) if (t.id != null && _chosen.contains(t.id)) t.id!};
     final people = rdStatsOrgPeople(
       [
-        for (final person in personsAsync.valueOrNull ?? const <Person>[])
-          if (_chosen.isEmpty || _chosen.contains(person.tenantId)) person,
+        for (final person in persons ?? const <Person>[])
+          if (chosen.isEmpty || chosen.contains(person.tenantId)) person,
       ],
       {for (final t in tenants) if (t.id != null) t.id!: t.longName},
     );
-    final chosenNames = [for (final t in tenants) if (_chosen.contains(t.id)) t.longName];
+    final chosenNames = [for (final t in tenants) if (chosen.contains(t.id)) t.longName];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -219,8 +230,8 @@ class _RdStatsOrganisationCardState extends ConsumerState<RdStatsOrganisationCar
             ),
             RdListRow(
               title: l10n.rdStatsOrgPeople,
-              value: personsAsync.hasValue ? '${people.length}' : '…',
-              onTap: personsAsync.hasValue ? () => _showPeople(people) : null,
+              value: persons != null ? '${people.length}' : '…',
+              onTap: persons != null ? () => _showPeople(people) : null,
             ),
           ],
         ),
