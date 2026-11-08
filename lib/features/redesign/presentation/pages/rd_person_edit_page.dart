@@ -581,7 +581,10 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
         await _repo!.syncPlayerWithUpcomingAttendances(
           (_person ?? person).copyWith(additionalFields: next),
           oldInstrument: (_person ?? person).instrument,
-          oldAdditionalFields: old,
+          // Every changed field with its old value, also one never stored
+          // (null = its default): an organisation field missing here would
+          // count as unchanged.
+          oldAdditionalFields: {...old, for (final k in changes.keys) k: old[k]},
         );
       } catch (e, st) {
         ErrorReporter.report(e, st, where: 'rd_person_edit_page');
