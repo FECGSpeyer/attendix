@@ -9,7 +9,7 @@ class AppConstants {
   static const String appName = 'Attendix';
   /// Internal developer version (0.x) of the Flutter app: Sentry release and
   /// internal history in `assets/version_history.json`. Not shown to users.
-  static const String appVersion = '0.96.1';
+  static const String appVersion = '0.97.0';
 
   /// Version users see (settings badge, login footer, "Was ist neu").
   ///
