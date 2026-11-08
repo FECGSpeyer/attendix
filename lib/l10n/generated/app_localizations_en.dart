@@ -10172,6 +10172,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdPeopleReviewTitle => 'Review request';
 
   @override
+  String get rdPeopleTeacherAdd => 'New teacher';
+
+  @override
+  String get rdPeopleTeacherNone => 'There is no teacher for this section yet.';
+
+  @override
   String get rdPeopleTransferChoose => 'Choose';
 
   @override

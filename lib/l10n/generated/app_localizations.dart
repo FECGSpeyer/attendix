@@ -16823,6 +16823,18 @@ abstract class AppLocalizations {
   /// **'Anfrage prüfen'**
   String get rdPeopleReviewTitle;
 
+  /// rdPeople.teacherAdd
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Lehrer'**
+  String get rdPeopleTeacherAdd;
+
+  /// rdPeople.teacherNone
+  ///
+  /// In de, this message translates to:
+  /// **'Für dieses Register gibt es noch keinen Lehrer.'**
+  String get rdPeopleTeacherNone;
+
   /// rdPeople.transferChoose
   ///
   /// In de, this message translates to:

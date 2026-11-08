@@ -12802,6 +12802,14 @@
   "@rdPeopleReviewTitle": {
     "description": "rdPeople.reviewTitle"
   },
+  "rdPeopleTeacherAdd": "Neuer Lehrer",
+  "@rdPeopleTeacherAdd": {
+    "description": "rdPeople.teacherAdd"
+  },
+  "rdPeopleTeacherNone": "Für dieses Register gibt es noch keinen Lehrer.",
+  "@rdPeopleTeacherNone": {
+    "description": "rdPeople.teacherNone"
+  },
   "rdPeopleTransferChoose": "Auswählen",
   "@rdPeopleTransferChoose": {
     "description": "rdPeople.transferChoose"

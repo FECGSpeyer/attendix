@@ -26,6 +26,18 @@ import '../widgets/rd_logo.dart';
 import '../widgets/rd_widgets.dart';
 import 'rd_destinations.dart';
 
+/// Location of the page on top, also when it was pushed from another
+/// area (Verlauf › Termin, Werk › Termin, Heute › Termin): the sidebar,
+/// rail and tab bar then select the area of the page that is shown, while
+/// back still returns to where it was opened from.
+/// `GoRouterState.of(context)` in the shell only knows the base location.
+String rdShownLocation(BuildContext context) {
+  final config = GoRouter.of(context).routerDelegate.currentConfiguration;
+  final last = config.lastOrNull;
+  if (last is ImperativeRouteMatch) return last.matches.uri.path;
+  return GoRouterState.of(context).matchedLocation;
+}
+
 /// REDESIGN: adaptive shell of the new design (Phase 1 "Fundament").
 ///
 /// * below 600 px: tab bar at the bottom (iPhone),
@@ -65,7 +77,7 @@ class RdShell extends ConsumerWidget {
       showMembersList: tenant?.showMembersList ?? false,
       tenantType: tenant?.type ?? '',
     );
-    final location = GoRouterState.of(context).matchedLocation;
+    final location = rdShownLocation(context);
     final selected = rdSelectedIndex(destinations, location);
     // Waiting approvals on the Mitglieder tab, where they are handled (the
     // "Freigaben" filter); leads only, live like the Mitglieder list (new
@@ -443,7 +455,7 @@ class _RdSidebar extends ConsumerWidget {
     final name = tenant?.longName.isNotEmpty == true
         ? tenant!.longName
         : (tenant?.shortName ?? '');
-    final location = GoRouterState.of(context).matchedLocation;
+    final location = rdShownLocation(context);
     final adminSelected = showAdmin && rdIsManageLocation(location);
 
     return Container(

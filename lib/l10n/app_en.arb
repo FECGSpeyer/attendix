@@ -2782,6 +2782,8 @@
   "rdPeopleReviewDuplicateTitle": "Possible duplicate",
   "rdPeopleReviewRequestedOn": "Request from {date}",
   "rdPeopleReviewTitle": "Review request",
+  "rdPeopleTeacherAdd": "New teacher",
+  "rdPeopleTeacherNone": "There is no teacher for this section yet.",
   "rdPeopleTransferChoose": "Choose",
   "rdPeopleTransferHint": "The person is created in the target group and archived here.",
   "rdPeopleTransferNoRegisters": "No sections",

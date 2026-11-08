@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../../../../core/utils/person_matcher.dart' show RankedMatch;
 import '../../../../../data/repositories/cross_tenant_person_repository.dart' show CrossTenantPersonCandidate;
 import '../../../../../core/providers/church_providers.dart';
+import '../../../../../core/providers/debug_providers.dart' show effectiveRoleProvider;
 import '../../../../../core/providers/group_providers.dart';
 import '../../../../../core/providers/parent_providers.dart';
 import '../../../../../core/providers/shift_providers.dart';
@@ -17,11 +18,13 @@ import '../../../../../core/utils/extra_field_utils.dart' show parseExtraFieldNu
 import '../../../../../data/models/parent/parent_model.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../data/models/shift/shift_plan.dart';
+import '../../../../../data/models/teacher/teacher.dart';
 import '../../../../../data/models/tenant/tenant.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../people/person_write.dart' show personUtcMidnightIso;
 import '../../../../people/presentation/widgets/church_picker_sheet.dart';
+import '../manage/rd_teacher_create_sheet.dart' show showRdAddTeacherSheet;
 import '../../../../people/presentation/widgets/person_detail/allgemein_accordion.dart'
     show otherOrchestraOptions, personExtraFields;
 import '../event/rd_form_widgets.dart';
@@ -283,6 +286,48 @@ class _RdPersonMoreFieldsState extends ConsumerState<RdPersonMoreFields> {
         actions: [for (final o in options) AppActionSheetAction<T>(value: o.$1, label: o.$2)],
       );
 
+  /// Teacher picker. Leads who may add teachers (old teacher page: Admin
+  /// or Verantwortliche) get a last row "Neuer Lehrer": the add sheet of
+  /// Verwaltung › Lehrer with the person's register ticked, and the new
+  /// teacher is chosen right away. An empty list says why it is empty.
+  Future<void> _pickTeacher(List<Teacher> teachers) async {
+    final l10n = context.l10n;
+    final role = ref.read(effectiveRoleProvider);
+    final canAdd = role.isAdmin || role.isResponsible;
+    const addNew = -1;
+    final options = [
+      for (final t in teachers)
+        if (t.id != null) (t.id!, t.name),
+    ];
+    final v = await showAppActionSheet<int>(
+      context,
+      title: l10n.peopleTeacher,
+      message: options.isEmpty ? l10n.rdPeopleTeacherNone : null,
+      actions: [
+        for (final o in options) AppActionSheetAction<int>(value: o.$1, label: o.$2),
+        if (canAdd)
+          AppActionSheetAction<int>(
+            value: addNew,
+            label: l10n.rdPeopleTeacherAdd,
+            icon: Icons.add,
+            color: context.rd.primary,
+          ),
+      ],
+    );
+    if (v == null || !mounted) return;
+    if (v != addNew) {
+      widget.onColumns({'teacher': v});
+      return;
+    }
+    final instrument = _p.instrument;
+    final created = await showRdAddTeacherSheet(
+      context,
+      ref,
+      initialInstruments: [if (instrument != null) instrument],
+    );
+    if (created?.id != null && mounted) widget.onColumns({'teacher': created!.id});
+  }
+
   String _date(String? iso) {
     final d = DateTime.tryParse(iso ?? '');
     return d == null ? context.l10n.redesignPersonFormNotSet : DateFormat.yMMMd(currentIntlLocale()).format(d);
@@ -378,13 +423,7 @@ class _RdPersonMoreFieldsState extends ConsumerState<RdPersonMoreFields> {
           RdListRow(
             title: l10n.peopleTeacher,
             value: allTeachers.where((t) => t.id == _p.teacher).firstOrNull?.name ?? l10n.peopleNoTeacher,
-            onTap: () async {
-              final v = await _choose<int>(l10n.peopleTeacher, [
-                for (final t in teachers)
-                  if (t.id != null) (t.id!, t.name),
-              ]);
-              if (v != null) widget.onColumns({'teacher': v});
-            },
+            onTap: () => _pickTeacher(teachers),
           ),
       ],
       if (!isGeneral && !isMain)

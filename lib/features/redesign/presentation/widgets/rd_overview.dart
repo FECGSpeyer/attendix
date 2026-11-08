@@ -13,7 +13,9 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
+import '../../data/providers/rd_members_providers.dart';
 import '../../data/rd_collections_logic.dart';
+import '../../data/rd_members_logic.dart' show RdMembersFilter;
 import '../../data/rd_overview_logic.dart';
 import 'rd_widgets.dart';
 import 'today/rd_today_common.dart' show RdInfoCard;
@@ -168,7 +170,17 @@ class RdMembersOverviewPanel extends ConsumerWidget {
             Expanded(child: _Stat(value: o.paused, label: l10n.redesignSplitMembersPaused)),
             if (canApprove) ...[
               const SizedBox(width: 12),
-              Expanded(child: _Stat(value: pending, label: l10n.redesignSplitMembersPending, warn: pending > 0)),
+              Expanded(
+                child: _Stat(
+                  value: pending,
+                  label: l10n.redesignSplitMembersPending,
+                  warn: pending > 0,
+                  // Opens "Wartet" in the list beside it.
+                  onTap: pending > 0
+                      ? () => ref.read(rdMembersTabProvider.notifier).state = RdMembersFilter.pending
+                      : null,
+                ),
+              ),
             ],
           ],
         ),
@@ -246,10 +258,11 @@ class _OverviewPage extends StatelessWidget {
 }
 
 class _Stat extends StatelessWidget {
-  const _Stat({required this.value, required this.label, this.warn = false});
+  const _Stat({required this.value, required this.label, this.warn = false, this.onTap});
 
   final int value;
   final String label;
+  final VoidCallback? onTap;
 
   /// Something to do (works without sheet music, open requests).
   final bool warn;
@@ -259,8 +272,12 @@ class _Stat extends StatelessWidget {
     final p = context.rd;
     return Semantics(
       label: '$value $label',
+      button: onTap != null,
+      // The InkWell below is excluded: the tap must sit here.
+      onTap: onTap,
       excludeSemantics: true,
       child: RdCard(
+        onTap: onTap,
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

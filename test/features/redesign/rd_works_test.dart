@@ -657,8 +657,8 @@ void main() {
 
       expect(find.text('Nach Stimme'), findsOneWidget);
       expect(find.byKey(const Key('rd-works-open-mine')), findsNothing);
-      // Both Termine still lack Noten (Ave has none).
-      expect(find.text('Noten fehlen'), findsNWidgets(2));
+      // Leads have the Termine tab: no "Als Nächstes" in the Werke list.
+      expect(find.text('Als Nächstes'), findsNothing);
       expect(find.text('ohne Noten'), findsOneWidget);
       // A single missing part is normal: no pill in the list.
       expect(find.text('Klarinette fehlt'), findsNothing);
@@ -676,7 +676,7 @@ void main() {
 
       expect(find.text('Filter · 1'), findsOneWidget);
       expect(find.text('Festliche Ouvertüre'), findsNothing); // has all its Noten
-      expect(find.text('Festliche Ouvertüre, Ave verum corpus'), findsOneWidget); // the Termin
+      expect(find.text('Festliche Ouvertüre, Ave verum corpus'), findsNothing); // no Termine for leads
       expect(find.text('Noch nie gespielt · Kirche'), findsNWidgets(2));
       // The sort can be removed above the list.
       await tester.tap(find.bySemanticsLabel('Sortierung „Am längsten nicht gespielt“ entfernen'));
