@@ -732,9 +732,20 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
       updates['changed_at'] = DateTime.now().toUtc().toIso8601String();
       updates['changed_by'] = changedBy;
 
-      var query = supabase.from('person_attendances').update(updates).eq('id', id);
-      if (onlyIfStatus != null) query = query.eq('status', onlyIfStatus.value);
-      final response = await query.select().maybeSingle();
+      final response = onlyIfStatus == null
+          ? await supabase
+              .from('person_attendances')
+              .update(updates)
+              .eq('id', id)
+              .select()
+              .maybeSingle()
+          : await supabase
+              .from('person_attendances')
+              .update(updates)
+              .eq('id', id)
+              .eq('status', onlyIfStatus.value)
+              .select()
+              .maybeSingle();
 
       if (response == null && onlyIfStatus != null) {
         throw const PersonAttendanceStatusChangedException();

@@ -279,6 +279,19 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
   /// Times that would put the Ende before the Beginn are corrected. Then
   /// the shift computation runs again (times and all-day come from the type).
   Future<void> _pickType(Attendance att, AttendanceType? current) async {
+    // One type change at a time, including its status adoption.
+    if (_typeChanging) return;
+    _typeChanging = true;
+    try {
+      await _changeType(att, current);
+    } finally {
+      _typeChanging = false;
+    }
+  }
+
+  bool _typeChanging = false;
+
+  Future<void> _changeType(Attendance att, AttendanceType? current) async {
     final l10n = context.l10n;
     if (DemoGuard.blocked()) return; // DEMO_GUARD
     final all = await ref.read(attendanceTypesProvider.future).catchError((_) => const <AttendanceType>[]);
@@ -589,6 +602,7 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     final folder = (att.filesFolder ?? '').trim();
     final canFiles = ref.watch(canAccessFilesProvider);
     final role = ref.watch(effectiveRoleProvider);
+    final typeReady = type != null || att.typeId == null;
     final days = rdEffectiveDurationDays(att.durationDays,
             typeAllDay: type?.allDay ?? false, typeDurationDays: type?.durationDays) ??
         1;
@@ -639,7 +653,8 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
                 RdValueBox(
                   att.startTime ?? type?.startTime ?? '–',
                   semantics: l10n.redesignCreateStart,
-                  onTap: () => _pickTime(att, type, start: true),
+                  // The Termin's type gives the times shown and checked.
+                  onTap: typeReady ? () => _pickTime(att, type, start: true) : null,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 6),
@@ -649,7 +664,7 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
                   att.endTime ?? type?.endTime ?? '–',
                   semantics: l10n.redesignCreateEnd,
                   error: rdEndBeforeStart(att.startTime ?? type?.startTime, att.endTime ?? type?.endTime),
-                  onTap: () => _pickTime(att, type, start: false),
+                  onTap: typeReady ? () => _pickTime(att, type, start: false) : null,
                 ),
               ],
             ),
