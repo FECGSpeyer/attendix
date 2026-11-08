@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.94.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta „Person bearbeiten“: in der Lehrer-Auswahl gibt es „Neuer Lehrer“ (für Admins und Verantwortliche); das Register der Person ist vorausgewählt und der neue Lehrer wird gleich eingetragen. Ist die Liste leer, steht dort, warum"
+      ]
+    },
+    {
       "version": "0.93.2",
       "date": "8.11.2026",
       "changes": [
