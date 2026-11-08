@@ -10443,6 +10443,9 @@ class AppLocalizationsDe extends AppLocalizations {
       'Aus: können keine neuen Termine anlegen';
 
   @override
+  String get rdSettingsPermHelperLabel => 'Was Helfer dürfen';
+
+  @override
   String get rdSettingsPermHelperNote =>
       'Gilt auch für Helfer, die Stimmführer sind. Sie sehen Notizen und Checkliste immer.';
 
@@ -10456,6 +10459,9 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get rdSettingsPermLeaderOwnOnlyHint =>
       'Helfer, die Stimmführer sind, tragen nur die Anwesenheit ihrer eigenen Stimme ein';
+
+  @override
+  String get rdSettingsPermMemberLabel => 'Was Mitglieder dürfen';
 
   @override
   String get rdSettingsPermMemberNote =>
@@ -14632,7 +14638,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignRolePermIntro =>
-      'Lege fest, was Helfer und Mitglieder in dieser Gruppe dürfen. Jeder Schalter wird sofort gespeichert.';
+      'Lege fest, was Mitglieder und Helfer in dieser Gruppe sehen und dürfen. Jeder Schalter wird sofort gespeichert.';
 
   @override
   String redesignShiftFrom(Object time) {

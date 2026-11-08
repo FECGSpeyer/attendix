@@ -239,7 +239,7 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     final leaderOwnOnly = leader != null && allGroups && !leader.attendanceAllGroups;
     final allDiffers = leader != null && !allGroups && leader.attendanceAllGroups;
     return [
-      RdGroupLabel(l10n.rolesHelper),
+      RdGroupLabel(l10n.rdSettingsPermHelperLabel),
       RdGroupedList(
         children: [
           _switch(
@@ -301,7 +301,7 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     final l10n = context.l10n;
     final player = _permissions[Role.player]!;
     return [
-      RdGroupLabel(l10n.rolesMember),
+      RdGroupLabel(l10n.rdSettingsPermMemberLabel),
       RdGroupedList(
         children: [
           _switch(
@@ -354,7 +354,8 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
       const SizedBox(height: 6),
       Text(l10n.redesignRolePermIntro, style: RdType.meta(p, size: 15)),
       const SizedBox(height: 20),
-      // From the old "Allgemein": what every member sees.
+      // Mitglieder first: what they see (from the old "Allgemein"), then what
+      // they may do; Helfer after them.
       RdTenantSettingsBlock(sections: const [RdTenantSettings.visibility], label: l10n.rdAdminVisibility),
       const SizedBox(height: 22),
     ];
@@ -381,8 +382,8 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     return RdPage(
       children: [
         ...header,
-        if (_permissions[Role.helper] != null) ..._helperSection(),
         if (_permissions[Role.player] != null) ..._memberSection(),
+        if (_permissions[Role.helper] != null) ..._helperSection(),
         RdGroupLabel(l10n.rolePermFiles),
         RdGroupedList(
           children: [

@@ -12997,6 +12997,10 @@
   "@rdSettingsPermCreateHint": {
     "description": "rdSettings.perm.createHint"
   },
+  "rdSettingsPermHelperLabel": "Was Helfer dürfen",
+  "@rdSettingsPermHelperLabel": {
+    "description": "rdSettings.perm.helperLabel"
+  },
   "rdSettingsPermHelperNote": "Gilt auch für Helfer, die Stimmführer sind. Sie sehen Notizen und Checkliste immer.",
   "@rdSettingsPermHelperNote": {
     "description": "rdSettings.perm.helperNote"
@@ -13012,6 +13016,10 @@
   "rdSettingsPermLeaderOwnOnlyHint": "Helfer, die Stimmführer sind, tragen nur die Anwesenheit ihrer eigenen Stimme ein",
   "@rdSettingsPermLeaderOwnOnlyHint": {
     "description": "rdSettings.perm.leaderOwnOnlyHint"
+  },
+  "rdSettingsPermMemberLabel": "Was Mitglieder dürfen",
+  "@rdSettingsPermMemberLabel": {
+    "description": "rdSettings.perm.memberLabel"
   },
   "rdSettingsPermMemberNote": "Gilt auch für Mitglieder, die Stimmführer sind.",
   "@rdSettingsPermMemberNote": {
@@ -18038,7 +18046,7 @@
       "count": {}
     }
   },
-  "redesignRolePermIntro": "Lege fest, was Helfer und Mitglieder in dieser Gruppe dürfen. Jeder Schalter wird sofort gespeichert.",
+  "redesignRolePermIntro": "Lege fest, was Mitglieder und Helfer in dieser Gruppe sehen und dürfen. Jeder Schalter wird sofort gespeichert.",
   "@redesignRolePermIntro": {
     "description": "redesign.rolePerm.intro"
   },

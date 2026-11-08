@@ -67,6 +67,8 @@
       "filesForAll": "Dateiablage für alle lesbar",
       "filesForAllHint": "Sonst nur Admins, Verantwortliche und Helfer. Hochladen dürfen nur Admins und Verantwortliche.",
       "perm": {
+        "memberLabel": "Was Mitglieder dürfen",
+        "helperLabel": "Was Helfer dürfen",
         "allGroups": "Alle Register eintragen",
         "allGroupsHint": "Aus: nur die Anwesenheit des eigenen Registers",
         "leaderOwnOnly": "Stimmführer nur ihre Stimme",
@@ -155,6 +157,8 @@
       "filesForAll": "File storage readable for everyone",
       "filesForAllHint": "Otherwise only admins, responsibles and helpers. Only admins and responsibles can upload.",
       "perm": {
+        "memberLabel": "What members may do",
+        "helperLabel": "What helpers may do",
         "allGroups": "Record all sections",
         "allGroupsHint": "Off: only the attendance of their own section",
         "leaderOwnOnly": "Section leaders only their section",

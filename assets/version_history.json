@@ -4,7 +4,7 @@
       "version": "0.96.0",
       "date": "8.11.2026",
       "changes": [
-        "💄 Beta Rollen und Rechte: Stimmführer haben keine eigenen Abschnitte mehr, Helfer und Mitglied gelten auch für sie. Neuer Schalter „Stimmführer nur ihre Stimme“, Abwesenheit selbst eintragen jetzt auch für Stimmführer einstellbar",
+        "💄 Beta Rollen und Rechte: nach Personen geordnet („Was Mitglieder sehen“, „Was Mitglieder dürfen“, „Was Helfer dürfen“). Stimmführer haben keine eigenen Abschnitte mehr, Mitglied und Helfer gelten auch für sie. Neuer Schalter „Stimmführer nur ihre Stimme“, Abwesenheit selbst eintragen jetzt auch für Stimmführer einstellbar",
         "💄 Beta: Schalter ohne Wirkung entfernt (Notizen und Checkliste bei Stimmführer-Helfern, die sehen sie immer) und „Dienste zuerst zeigen“ (im Beta haben Dienste immer einen eigenen Bereich)",
         "💄 Beta Person bearbeiten: Rolle nur noch Mitglied, Verantwortlicher oder Helfer; Stimmführer ist der Schalter bei der Person und gibt die passende Rolle direkt mit",
         "💄 Beta Verwaltung: Einstellungen verständlicher benannt und erklärt (z. B. „Alle Termine zeigen“, „Hinweis für nicht Eingeladene“, „Mitglieder-Tab für alle“, „Termine anlegen“, „Alle Register eintragen“, „Lehrer erfassen“, „Eltern-Zugang“)",

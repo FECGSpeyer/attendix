@@ -103,9 +103,10 @@ void main() {
 
       // Stimmführer follow Helfer and Mitglied; Beobachter and Eltern have
       // no switches.
-      expect(find.text('HELFER'), findsOneWidget);
+      expect(find.text('WAS MITGLIEDER SEHEN'), findsOneWidget);
+      expect(find.text('WAS MITGLIEDER DÜRFEN'), findsOneWidget);
+      expect(find.text('WAS HELFER DÜRFEN'), findsOneWidget);
       expect(find.text('STIMMFÜHRER-HELFER'), findsNothing);
-      expect(find.text('MITGLIED'), findsOneWidget);
       expect(find.text('BEOBACHTER'), findsNothing);
       expect(find.text('Speichern'), findsNothing);
 
@@ -124,8 +125,8 @@ void main() {
       await tester.pumpWidget(_app(saves));
       await _settle(tester);
 
-      // Mitglied's "Abwesenheit selbst eintragen" (the second one).
-      await tester.tap(find.text('Abwesenheit selbst eintragen').last);
+      // Mitglied's "Abwesenheit selbst eintragen" (the first one).
+      await tester.tap(find.text('Abwesenheit selbst eintragen').first);
       await _settle(tester);
       expect(saves.single.map((p) => p.role), [Role.player.value, Role.voiceLeader.value]);
       expect(saves.single.every((p) => p.playerPlannedAbsence), isTrue);

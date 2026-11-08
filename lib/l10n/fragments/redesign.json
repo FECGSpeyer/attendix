@@ -853,7 +853,7 @@
         "notFound": "Dieses Register gibt es nicht mehr."
       },
       "rolePerm": {
-        "intro": "Lege fest, was Helfer und Mitglieder in dieser Gruppe dürfen. Jeder Schalter wird sofort gespeichert."
+        "intro": "Lege fest, was Mitglieder und Helfer in dieser Gruppe sehen und dürfen. Jeder Schalter wird sofort gespeichert."
       },
       "typesList": {
         "intro": "Anwesenheits-Typen legen Name, Uhrzeit, Standard-Status und weitere Vorgaben für neue Termine fest.",
@@ -2376,7 +2376,7 @@
         "notFound": "This section no longer exists."
       },
       "rolePerm": {
-        "intro": "Choose what helpers and members may do in this group. Each switch is saved right away."
+        "intro": "Choose what members and helpers see and may do in this group. Each switch is saved right away."
       },
       "typesList": {
         "intro": "Attendance types set the name, time, default status and other defaults of new events.",

@@ -17111,6 +17111,12 @@ abstract class AppLocalizations {
   /// **'Aus: können keine neuen Termine anlegen'**
   String get rdSettingsPermCreateHint;
 
+  /// rdSettings.perm.helperLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Was Helfer dürfen'**
+  String get rdSettingsPermHelperLabel;
+
   /// rdSettings.perm.helperNote
   ///
   /// In de, this message translates to:
@@ -17134,6 +17140,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Helfer, die Stimmführer sind, tragen nur die Anwesenheit ihrer eigenen Stimme ein'**
   String get rdSettingsPermLeaderOwnOnlyHint;
+
+  /// rdSettings.perm.memberLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Was Mitglieder dürfen'**
+  String get rdSettingsPermMemberLabel;
 
   /// rdSettings.perm.memberNote
   ///
@@ -23474,7 +23486,7 @@ abstract class AppLocalizations {
   /// redesign.rolePerm.intro
   ///
   /// In de, this message translates to:
-  /// **'Lege fest, was Helfer und Mitglieder in dieser Gruppe dürfen. Jeder Schalter wird sofort gespeichert.'**
+  /// **'Lege fest, was Mitglieder und Helfer in dieser Gruppe sehen und dürfen. Jeder Schalter wird sofort gespeichert.'**
   String get redesignRolePermIntro;
 
   /// redesign.shift.from

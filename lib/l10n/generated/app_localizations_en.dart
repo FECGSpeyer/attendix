@@ -10332,6 +10332,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdSettingsPermCreateHint => 'Off: cannot create new events';
 
   @override
+  String get rdSettingsPermHelperLabel => 'What helpers may do';
+
+  @override
   String get rdSettingsPermHelperNote =>
       'Also applies to helpers who are section leaders. They always see notes and the checklist.';
 
@@ -10346,6 +10349,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get rdSettingsPermLeaderOwnOnlyHint =>
       'Helpers who are section leaders only record the attendance of their own section';
+
+  @override
+  String get rdSettingsPermMemberLabel => 'What members may do';
 
   @override
   String get rdSettingsPermMemberNote =>
@@ -14491,7 +14497,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignRolePermIntro =>
-      'Choose what helpers and members may do in this group. Each switch is saved right away.';
+      'Choose what members and helpers see and may do in this group. Each switch is saved right away.';
 
   @override
   String redesignShiftFrom(Object time) {
