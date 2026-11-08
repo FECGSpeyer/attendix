@@ -24,7 +24,7 @@ import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBa
 ///   instruments.length === 0` → toast `teachers.fillAll`.
 /// - edit (teacher.page `editTeacher`): no validation at all, so existing
 ///   entries without instrument can still be saved.
-@visibleForTesting
+/// Also used by the Beta sheet "Neuer Lehrer".
 bool isTeacherFormValid({
   required bool isNew,
   required String name,

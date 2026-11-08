@@ -28,6 +28,13 @@ class _FakeTeacherRepo extends TeacherRepository {
   }
 
   final updates = <Map<String, dynamic>>[];
+  final created = <Teacher>[];
+
+  @override
+  Future<Teacher?> createTeacher(Teacher teacher) async {
+    created.add(teacher);
+    return teacher.copyWith(id: 9, tenantId: 7);
+  }
 
   @override
   Future<Teacher?> updateTeacher(int id, Map<String, dynamic> updates) async {
@@ -122,6 +129,34 @@ void main() {
       await tester.tap(find.text('Anna Berg'));
       await _settle(tester);
       expect(find.text('Lehrer bearbeiten'), findsOneWidget);
+    });
+
+    testWidgets('list: "+" creates a teacher in one sheet, no second page', (tester) async {
+      _phone(tester);
+      late _FakeTeacherRepo repo;
+      await tester.pumpWidget(
+        _app(role: Role.admin, location: RedesignRoutes.teachers, onRepo: (r) => repo = r),
+      );
+      await _settle(tester);
+      await tester.tap(find.byKey(const Key('rd-manage-list-add')));
+      await _settle(tester);
+      expect(find.text('Neuer Lehrer'), findsOneWidget);
+
+      // "Anlegen" without name and instrument explains what is missing.
+      await tester.tap(find.text('Anlegen'));
+      await _settle(tester);
+      expect(find.text('Bitte gib einen Namen mit mindestens 3 Zeichen ein.'), findsOneWidget);
+      expect(find.text('Wähle mindestens ein Instrument.'), findsOneWidget);
+      expect(repo.created, isEmpty);
+
+      await tester.enterText(find.byKey(const Key('rd-teacher-new-name')), ' Ben Ott ');
+      await tester.tap(find.byKey(const Key('rd-teacher-new-instrument-6')));
+      await tester.tap(find.text('Anlegen'));
+      await _settle(tester);
+      expect(repo.created.single.name, 'Ben Ott');
+      expect(repo.created.single.instruments, [6]);
+      expect(find.text('Neuer Lehrer'), findsNothing);
+      expect(find.text('Lehrer bearbeiten'), findsNothing);
     });
 
     testWidgets('edit page: every field of the old page, saved right away', (tester) async {

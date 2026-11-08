@@ -8,16 +8,16 @@ import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/teacher_repository.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../teachers/presentation/pages/teachers_list_page.dart' show showAddTeacherSheet;
 import '../../data/rd_manage_logic.dart' show RdManageEntry;
 import '../widgets/manage/rd_manage_entries.dart' show rdManageTitle;
 import '../widgets/manage/rd_manage_list.dart';
+import '../widgets/manage/rd_teacher_create_sheet.dart';
 import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
 
 /// REDESIGN: Verwaltung › Lehrer in the template "Verwaltungsliste"
 /// (replaces `/settings/teachers` while the Beta is on). Name, instruments
 /// and "n Spieler" per teacher, like the old page. Admins and
-/// Verantwortliche add ("+", the old sheet) and open a teacher; Beobachter
+/// Verantwortliche add ("+", the "Neuer Lehrer" sheet) and open a teacher; Beobachter
 /// only see the list (old page: the route is open to them, tap and "+" not).
 /// Teachers have no order (old page: by name from the database), so there is
 /// no "Reihenfolge ändern".
@@ -31,19 +31,13 @@ class RdTeachersPage extends ConsumerWidget {
     await ref.read(enrichedTeachersProvider.future).catchError((_) => const <Teacher>[]);
   }
 
+  /// One step: the "Neuer Lehrer" sheet creates the teacher and the list
+  /// shows it right away (no second page); contact, notes and
+  /// "Privatlehrer" are added by tapping the new row.
   Future<void> _add(BuildContext context, WidgetRef ref) async {
     final l10n = context.l10n;
-    // The sheet returns null when closed or when creating failed; only a
-    // new error state of the notifier means it failed.
-    final before = ref.read(teacherNotifierProvider);
-    final created = await showAddTeacherSheet(context, ref);
-    if (!context.mounted) return;
-    final after = ref.read(teacherNotifierProvider);
-    if (created?.id != null) {
-      context.push(RedesignRoutes.teacherEdit(created!.id!));
-    } else if (!identical(after, before) && after.hasError) {
-      ToastHelper.showError(context, l10n.redesignTeachersListAddFailed);
-    }
+    final created = await showRdAddTeacherSheet(context, ref);
+    if (created != null && context.mounted) ToastHelper.showSuccess(context, l10n.rdTeacherNewDone(created.name));
   }
 
   @override
@@ -80,7 +74,8 @@ class RdTeachersPage extends ConsumerWidget {
 }
 
 /// The teachers as one list without heading, in the order of the old page.
-/// A teacher without players shows the count in red (old page: danger badge).
+/// The player count is plain grey, also at 0: a teacher without players is
+/// normal (e.g. just created), not an error.
 List<RdManageListSection> rdTeacherSections(
   AppLocalizations l10n,
   List<Teacher> teachers, {
@@ -94,7 +89,6 @@ List<RdManageListSection> rdTeacherSections(
           title: t.name,
           subtitle: (t.insNames ?? '').isEmpty ? null : t.insNames,
           count: l10n.teachersPlayerCount(t.playerCount ?? 0),
-          countWarn: (t.playerCount ?? 0) == 0,
           onTap: onTap == null || t.id == null ? null : () => onTap(t.id!),
         ),
     ],
