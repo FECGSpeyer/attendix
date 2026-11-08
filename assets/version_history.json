@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.98.0",
+      "version": "0.100.0",
       "date": "8.11.2026",
       "changes": [
         "✨ Beta Auswertung neu: oben Zeitraum (Saison, 3 Monate, 12 Monate oder eigener Von/Bis-Zeitraum) und Filter nach Terminart und Register, darunter die Ebenen „Überblick“ und „Termine“ (Umschalter oder Wischen)",
@@ -13,6 +13,30 @@
         "✨ Beta Auswertung: Mitglieder, Alter (je Jahrzehnt, Ø je Register), Zusatzfelder und Organisation aus Ionic im Beta-Design",
         "✨ Beta Auswertung: „Zählt zur Anwesenheitsquote“ direkt hier umschaltbar; der Terminart-Filter gilt nur für die Ansicht",
         "🐛 Beta Auswertung: alles wird gezählt wie bei den Mitgliedern (nur zählende Terminarten, Dienste nur Eingeteilte, Schichtbedingt-Einstellung, Neutral zählt als nicht da); Dirigent ist kein Register mehr; „100 %“ bricht nicht mehr um"
+      ]
+    },
+    {
+      "version": "0.99.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta Problemfälle neu: Regeln lesen sich als Satz („Mindestens 3-mal unentschuldigt gefehlt in den letzten 30 Tagen“), jede zeigt, wie viele sie gerade trifft. Der Regel-Editor startet mit Vorlagen (Fehlt oft, Oft zu spät, Selten da), die Satzteile sind antippbar, darunter eine Live-Vorschau, wen die Regel trifft. Er öffnet im Inhaltsbereich, die Seitenleiste bleibt",
+        "✨ Beta: Heute, Mitglieder und die Person zeigen, warum jemand Problemfall ist; einheitlich „Problemfälle“ statt „Fehlen oft“/„Auffällige Anwesenheit“",
+        "🐛 Erklärung von Oder/Und bei Problemfall-Regeln korrigiert (alle Und-Regeln zusammen, nicht alle Regeln)"
+      ]
+    },
+    {
+      "version": "0.98.1",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Termine mit Filter auf ein Organisations-Zusatzfeld: Ändert man das Feld bei einer Person (Person bearbeiten oder Mehrfachauswahl „Feld“), wird sie jetzt in kommenden Terminen ergänzt bzw. entfernt. Auch beim Aufnehmen und Registerwechsel zählt der gemeinsame Wert statt des Standardwerts"
+      ]
+    },
+    {
+      "version": "0.98.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Noten-Import: Ein Tipp auf eine Stimm-Frage zeigt die erste Seite von bis zu drei ihrer Dateien, die Antworten direkt darunter",
+        "✨ Noten-Import: Neue Antwort „Von Seite 1 lesen“: Die KI liest bei Namen wie „Solo“ die Stimme jeder Datei von ihrer ersten Seite; statt „Ohne Zuordnung“ schlägt die KI das vor, wenn es PDFs gibt"
       ]
     },
     {

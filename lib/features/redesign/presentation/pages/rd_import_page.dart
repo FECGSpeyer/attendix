@@ -1005,7 +1005,16 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
       newGroups: pendingGroups,
       ai: state.useAi ? state.ai[q.key]?.category : null,
       filled: state.aiFilled.contains(q.key),
+      readPages: state.useAi && _controller.canReadPages(q),
       onAnswer: (a) => _controller.answer(q.key, a),
+      // First pages of some of its files, to see what the name means.
+      preview: q.examples.any((e) => rdImportPreviewable(e.file))
+          ? () => RdImportQuestionPreview(
+                examples: [for (final e in q.examples) if (rdImportPreviewable(e.file)) e],
+                page: _controller.pagePreview,
+                link: _controller.viewLink,
+              )
+          : null,
     );
   }
 
@@ -1480,7 +1489,11 @@ class _QuestionGroupCard extends StatelessWidget {
           ],
           if (toTake.isNotEmpty) ...[
             const SizedBox(height: 10),
-            RdOutlineButton(label: l10n.redesignImportGroupAllAs(title), height: 40, onPressed: () => onAll(toTake)),
+            RdOutlineButton(
+              label: c?.fromPage == true ? l10n.redesignImportGroupAllFromPage : l10n.redesignImportGroupAllAs(title),
+              height: 40,
+              onPressed: () => onAll(toTake),
+            ),
           ],
         ],
       ),
@@ -1498,6 +1511,8 @@ class _QuestionCard extends StatelessWidget {
     this.filled = false,
     this.proposedOnly = false,
     this.newGroups = const [],
+    this.preview,
+    this.readPages = false,
   });
 
   final RdImportPlan plan;
@@ -1517,6 +1532,13 @@ class _QuestionCard extends StatelessWidget {
   /// Whether [answer] is only the new group a known instrument proposes
   /// (nobody answered yet): a tap takes it, the name opens only after.
   final bool proposedOnly;
+
+  /// The first pages of some of its files, shown above the choices.
+  final Widget Function()? preview;
+
+  /// "Von Seite 1 lesen" can be answered: the KI reads the first page of
+  /// each file.
+  final bool readPages;
 
   @override
   Widget build(BuildContext context) {
@@ -1545,11 +1567,14 @@ class _QuestionCard extends StatelessWidget {
         ai != suggestion &&
         ai != RdImportCategory.other &&
         (split ? !partChoices.contains(ai) : ai != newGroup);
+    const fromPage = RdImportCategory.fromPage();
+    final pageChip = readPages && !(aiChip && ai == fromPage);
     final shown = {
       if (suggestion != null) suggestion,
       if (aiChip) ai,
       ...partChoices,
       if (!split && newName.isNotEmpty) newGroup,
+      if (pageChip) fromPage,
       RdImportCategory.other,
     };
     final picked = answer != null && !shown.contains(answer) ? answer : null;
@@ -1561,6 +1586,7 @@ class _QuestionCard extends StatelessWidget {
         title: l10n.redesignImportQuestionTitle(label),
         newGroups: newGroups,
         newGroupName: newGroup.newGroup,
+        header: preview?.call(),
       );
       if (c != null) onAnswer(c);
     }
@@ -1585,9 +1611,32 @@ class _QuestionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.redesignImportQuestionTitle(label), style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: p.text)),
-          const SizedBox(height: 2),
-          Text(l10n.redesignImportQuestionWhere(question.fileCount, question.works.join(', ')), style: RdType.meta(p, size: 13)),
+          // A tap shows the first page of its files, with the choices below.
+          InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: preview == null ? null : pickOther,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.redesignImportQuestionTitle(label), style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: p.text)),
+                      const SizedBox(height: 2),
+                      Text(l10n.redesignImportQuestionWhere(question.fileCount, question.works.join(', ')), style: RdType.meta(p, size: 13)),
+                    ],
+                  ),
+                ),
+                if (preview != null) ...[
+                  const SizedBox(width: 8),
+                  Tooltip(
+                    message: l10n.redesignImportQuestionLook,
+                    child: Icon(Icons.image_search_outlined, color: p.link, size: 24, semanticLabel: l10n.redesignImportQuestionLook),
+                  ),
+                ],
+              ],
+            ),
+          ),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
@@ -1603,6 +1652,9 @@ class _QuestionCard extends StatelessWidget {
               // Taken as it is (Leon, 07.11.2026); another name under
               // "Andere …" › "Neue Gruppe anlegen …".
               if (!split && newName.isNotEmpty) chip(newGroup, l10n.redesignImportAnswerNewGroup(newGroup.newGroup!)),
+              // Each file as its first page says ("Solo": Tenor here,
+              // Sopran there).
+              if (pageChip) chip(fromPage, l10n.redesignImportAnswerFromPage),
               chip(RdImportCategory.other, l10n.redesignImportAnswerNone),
               RdChoiceChip(label: l10n.redesignImportAnswerOther, selected: false, onTap: pickOther),
             ],
