@@ -9752,6 +9752,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get rdAdminPickHint => 'Pick an entry on the left, it opens here.';
+
+  @override
   String get rdAdminReasons => 'Reasons';
 
   @override

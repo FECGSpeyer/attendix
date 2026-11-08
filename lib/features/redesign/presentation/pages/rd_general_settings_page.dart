@@ -28,6 +28,7 @@ import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
+import '../widgets/rd_split_view.dart' show RdManageBackLink;
 import 'rd_critical_rule_page.dart';
 import '../../data/providers/rd_critical_providers.dart';
 import '../../data/providers/rd_members_providers.dart';
@@ -97,7 +98,7 @@ class RdGeneralSettingsPage extends StatelessWidget {
     final intro = rdTenantSettingsIntro(l10n, section);
     return RdPage(
       children: [
-        RdBackLink(label: l10n.redesignMeAdmin, onTap: () => _back(context)),
+        RdManageBackLink(label: l10n.redesignMeAdmin, onTap: () => _back(context)),
         const SizedBox(height: 4),
         Semantics(header: true, child: Text(rdTenantSettingsTitle(l10n, section), style: RdType.largeTitle(p))),
         if (intro != null) ...[

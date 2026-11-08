@@ -15,6 +15,7 @@ import '../widgets/manage/rd_data_sheets.dart' show rdGenerateCertificates;
 import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/rd_widgets.dart';
+import '../widgets/rd_split_view.dart' show RdManageBackLink;
 
 /// REDESIGN: Verwaltung › Auswertung (canvas "Statistik"): range chips,
 /// three key figures, attendance per Termin, per Register and the people
@@ -83,7 +84,7 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
       children: [
         Align(
           alignment: Alignment.centerLeft,
-          child: RdBackLink(
+          child: RdManageBackLink(
             label: l10n.redesignAdminTitle,
             onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.manage),
           ),
