@@ -13,6 +13,7 @@ import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/utils/extra_field_utils.dart' show formatExtraFieldValue;
 import '../../../../core/utils/tenant_label_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
@@ -24,19 +25,20 @@ import '../../../../shared/widgets/adaptive/adaptive.dart' show showAppConfirm;
 import '../../../people/person_write.dart';
 import '../../../people/presentation/pages/person_detail_page.dart' show personProvider;
 import '../../../people/presentation/widgets/duplicate_candidates_card.dart' show duplicateCandidatesProvider;
-import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/manage/rd_manage_list.dart' show rdLoadedValue;
 import '../widgets/manage/rd_settings_sheets.dart';
-import '../widgets/members/rd_person_form.dart';
+import '../widgets/members/rd_person_form.dart' show applyPersonColumns;
 import '../widgets/rd_widgets.dart';
-import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../widgets/today/rd_today_common.dart' show RdInfoCard, RdLinkButton;
 
 /// REDESIGN: Verwaltung › Freigaben › "Anfrage prüfen" (replaces the old
 /// approval page `/people/:id` while the Beta is on; Admins and
 /// Verantwortliche like the old page). Head like the Beta person page,
-/// "Mögliche Doppelung" with "Zusammenführen", the details as in "Person
-/// bearbeiten" (kept as a draft, written with "Aufnehmen") and "Ablehnen"
-/// (with a reason). Approve, decline and merge run through the same code
+/// "Mögliche Doppelung" with "Zusammenführen", the registration's details
+/// to read (only the group can be changed before "Aufnehmen"; everything
+/// else is edited on the person afterwards), "Aufnehmen" as the one main
+/// action and "Ablehnen" (with a reason) below it. Ionic opens the full
+/// person form here; the Beta deliberately keeps it lean. Approve, decline and merge run through the same code
 /// as the old page ([PlayerNotifier.approvePlayer] / `declinePlayer`,
 /// [PlayerRepository.mergePendingPlayerIntoExisting]); every write is bound
 /// to the group the page was opened in.
@@ -50,27 +52,20 @@ class RdPendingReviewPage extends ConsumerStatefulWidget {
 }
 
 class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
-  final _first = TextEditingController();
-  final _last = TextEditingController();
-  final _email = TextEditingController();
-  final _phone = TextEditingController();
-  final _notes = TextEditingController();
-
   /// The person as loaded and the edited draft (null until loaded).
   Person? _person;
   Person? _draft;
 
-  /// Columns and Zusatzfelder changed here (old page: `_changedFields`).
+  /// Columns changed here (only the group; old page: `_changedFields`).
   final Set<String> _changed = {};
   Map<String, dynamic> _additional = {};
-  final Set<String> _touchedExtra = {};
 
   /// Zusatzfelder that only hold a default (no stored value yet); they get
   /// it again once the field definitions or Gemeinden are loaded.
   final Set<String> _defaulted = {};
 
   /// The organisation values were loaded (or failed): only then the
-  /// Zusatzfelder are shown, so their inputs start from the stored values.
+  /// Zusatzfelder are shown, with the stored values.
   bool _sharedDone = false;
 
   /// Organisation fields; null when they could not be loaded (then nothing
@@ -88,14 +83,6 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
     _container = ProviderScope.containerOf(context, listen: false);
   }
 
-  @override
-  void dispose() {
-    for (final c in [_first, _last, _email, _phone, _notes]) {
-      c.dispose();
-    }
-    super.dispose();
-  }
-
   /// Still in the group the page was opened in (works after dispose too).
   bool _sameTenant() => _tenantId != null && _container.read(currentTenantIdProvider) == _tenantId;
 
@@ -108,26 +95,20 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
     _tenantId = tenantId;
     _person = person;
     _draft = person;
-    _first.text = person.firstName;
-    _last.text = person.lastName;
-    _email.text = person.email ?? '';
-    _phone.text = person.phone ?? '';
-    _notes.text = person.notes ?? '';
     _additional = Map<String, dynamic>.from(person.additionalFields ?? const {});
     _shared = _loadShared(person);
   }
 
   /// Old page (_withExtraDefaults): missing Zusatzfeld values get their
   /// default and are written with the approval. Runs on every build, so
-  /// definitions and Gemeinden loaded later still count; edited and stored
-  /// values stay.
+  /// definitions and Gemeinden loaded later still count; stored values
+  /// stay.
   void _applyDefaults(List<ExtraField> fields, List<Church> churches) {
     final churchIds = <Object>[
       for (final c in churches)
         if (c.id != null) c.id!,
     ];
     for (final f in fields) {
-      if (_touchedExtra.contains(f.id)) continue;
       if (_additional[f.id] != null && !_defaulted.contains(f.id)) continue;
       _additional[f.id] =
           extraFieldDefaultValue(f.type, defaultValue: f.defaultValue, options: f.options, churchIds: churchIds);
@@ -142,7 +123,7 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
         setState(() {
           _sharedDone = true;
           for (final e in shared.values.entries) {
-            if (shared.fieldIds.contains(e.key) && !_touchedExtra.contains(e.key)) {
+            if (shared.fieldIds.contains(e.key)) {
               _additional[e.key] = e.value;
               if (e.value != null) _defaulted.remove(e.key);
             }
@@ -159,20 +140,12 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
     }
   }
 
-  void _onColumns(Map<String, dynamic> columns, {bool typing = false}) {
+  void _onColumns(Map<String, dynamic> columns) {
     final draft = _draft;
     if (draft == null) return;
     setState(() {
       _draft = applyPersonColumns(draft, columns);
       _changed.addAll(columns.keys);
-    });
-  }
-
-  void _onExtra(String id, dynamic value, {bool typing = false}) {
-    setState(() {
-      _additional[id] = value;
-      _touchedExtra.add(id);
-      _changed.add('additionalFields.$id');
     });
   }
 
@@ -221,9 +194,9 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
     _container.invalidate(realtimePlayersProvider);
   }
 
-  /// Old page `_approvePerson`: the changed details (organisation fields
-  /// shared, the rest in additional_fields) are written together with the
-  /// approval; no extra confirmation.
+  /// Old page `_approvePerson`: a changed group (with the details, the
+  /// organisation fields shared, the rest in additional_fields) is written
+  /// together with the approval; no extra confirmation.
   Future<void> _approve() async {
     final person = _person;
     final draft = _draft;
@@ -436,30 +409,21 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
         const SizedBox(height: 16),
         _duplicates(context, person),
         RdGroupLabel(l10n.rdPeopleReviewDetails),
-        _details(context, draft),
-        const SizedBox(height: 12),
-        extrasReady ? _moreFields(draft) : RdInfoCard(text: l10n.redesignTodayLoading, loading: true),
+        _details(context, draft, extrasReady),
         const SizedBox(height: 24),
-        Row(
-          children: [
-            Expanded(
-              child: RdOutlineButton(
-                key: const Key('rd-review-decline'),
-                label: l10n.personDecline,
-                color: context.rd.absent,
-                onPressed: _busy ? null : _decline,
-              ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: RdPrimaryButton(
-                key: const Key('rd-review-approve'),
-                label: l10n.rdPeopleReviewApprove,
-                loading: _busy,
-                onPressed: _approve,
-              ),
-            ),
-          ],
+        RdPrimaryButton(
+          key: const Key('rd-review-approve'),
+          label: l10n.rdPeopleReviewApprove,
+          loading: _busy,
+          onPressed: _approve,
+        ),
+        const SizedBox(height: 8),
+        Center(
+          child: RdLinkButton(
+            key: const Key('rd-review-decline'),
+            label: l10n.personDecline,
+            onPressed: _decline,
+          ),
         ),
       ],
     );
@@ -566,65 +530,89 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
     );
   }
 
-  /// Vorname, Nachname, E-Mail, Telefon, group and note as in "Person
-  /// bearbeiten".
-  Widget _details(BuildContext context, Person draft) {
+  /// What the registration holds, to read: e-mail, phone, group (the only
+  /// thing to change here), dates, the other filled columns, the filled
+  /// Zusatzfelder and the note. Empty values are left out.
+  Widget _details(BuildContext context, Person draft, bool extrasReady) {
     final p = context.rd;
     final l10n = context.l10n;
     final tenant = ref.watch(currentTenantProvider);
     final groups = ref.watch(groupsMapProvider).valueOrNull ?? const <int, String>{};
-    final textStyle = TextStyle(fontSize: 17, color: p.text);
+    final long = DateFormat.yMMMd(currentIntlLocale());
 
-    Widget field(String label, TextEditingController c, String column, Key key,
-            {TextInputType? keyboard, bool readOnly = false, int maxLines = 1, TextCapitalization caps = TextCapitalization.none}) =>
-        RdFieldRow(
-          label: label,
-          child: TextField(
-            key: key,
-            controller: c,
-            readOnly: readOnly,
-            keyboardType: keyboard,
-            minLines: 1,
-            maxLines: maxLines,
-            textCapitalization: caps,
-            style: readOnly ? textStyle.copyWith(color: p.text2) : textStyle,
-            decoration: rdInputDecoration(p, ''),
-            onChanged: (v) => _onColumns({column: column == 'firstName' || column == 'lastName' ? v : _textOrNull(v)}),
+    String? text(String? s) => _textOrNull(s);
+    String? date(String? s) {
+      final d = DateTime.tryParse(s ?? '');
+      return d == null ? null : long.format(d);
+    }
+
+    // Short values at the end of the row; long or multi-line ones (a note,
+    // a text Zusatzfeld) in full below the label, so nothing is cut off.
+    Widget block(String title, String value, {Key? key}) => Padding(
+          key: key,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: p.text)),
+              const SizedBox(height: 2),
+              Text(value, style: RdType.meta(p, size: 14)),
+            ],
           ),
         );
+    Widget info(String title, String value, {Key? key}) => value.length > 28 || value.contains('\n')
+        ? block(title, value, key: key)
+        : RdListRow(key: key, title: title, value: value, showChevron: false);
 
-    return RdGroupedList(
+    final rows = <Widget>[
+      if (text(draft.email) case final v?) info(l10n.peopleEmail, v, key: const Key('rd-review-email')),
+      if (text(draft.phone) case final v?) info(l10n.peoplePhone, v, key: const Key('rd-review-phone')),
+      RdListRow(
+        key: const Key('rd-review-group'),
+        title: groupLabel(tenant?.type),
+        value: draft.instrument == null ? l10n.redesignPersonFormNotSet : groups[draft.instrument] ?? '',
+        onTap: _busy ? null : _pickGroup,
+      ),
+      if (date(draft.birthday) case final v?) info(l10n.redesignPersonBirthday, v),
+      if (date(draft.playsSince) case final v?) info(l10n.personPlaysSince, v),
+      if (text(draft.range) case final v?) info(l10n.personVocalRange, v),
+      if (text(draft.instruments) case final v?) info(l10n.peopleInstruments, v),
+      if (text(draft.otherExercise) case final v?) info(l10n.peopleOtherDuties, v),
+      if ((draft.otherOrchestras ?? const <String>[]).isNotEmpty)
+        info(l10n.personOtherOrchestras, draft.otherOrchestras!.join(', ')),
+      if (draft.examinee) info(l10n.peopleCandidate, l10n.commonYes),
+      if (text(draft.testResult) case final v?) info(l10n.peopleTestResult, v),
+      if (extrasReady) ..._extraRows(info),
+    ];
+    final notes = text(draft.notes);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        field(l10n.peopleFirstName, _first, 'firstName', const Key('rd-review-first'), caps: TextCapitalization.words),
-        field(l10n.peopleLastName, _last, 'lastName', const Key('rd-review-last'), caps: TextCapitalization.words),
-        // Like the old approval page (no account section there): the
-        // e-mail of the registration is shown, not changed.
-        field(l10n.peopleEmail, _email, 'email', const Key('rd-review-email'),
-            keyboard: TextInputType.emailAddress, readOnly: true),
-        field(l10n.peoplePhone, _phone, 'phone', const Key('rd-review-phone'), keyboard: TextInputType.phone),
-        RdListRow(
-          key: const Key('rd-review-group'),
-          title: groupLabel(tenant?.type),
-          value: draft.instrument == null ? l10n.redesignPersonFormNotSet : groups[draft.instrument] ?? '',
-          onTap: _busy ? null : _pickGroup,
-        ),
-        field(l10n.redesignPersonNotes, _notes, 'notes', const Key('rd-review-notes'),
-            maxLines: 6, caps: TextCapitalization.sentences),
+        RdGroupedList(children: [
+          ...rows,
+          if (notes != null) block(l10n.redesignPersonNotes, notes, key: const Key('rd-review-notes')),
+        ]),
+        if (!extrasReady) ...[
+          const SizedBox(height: 12),
+          RdInfoCard(text: l10n.redesignTodayLoading, loading: true),
+        ],
       ],
     );
   }
 
-  /// Birthday, joined, Zusatzfelder … (the "Weitere Angaben" of "Person
-  /// bearbeiten", always open: they come from the registration).
-  Widget _moreFields(Person draft) {
-    final main = ref.watch(mainGroupProvider).valueOrNull;
-    return RdPersonMoreFields(
-      person: draft,
-      isMainGroup: main?.id != null && main!.id == draft.instrument,
-      additionalValues: _additional,
-      birthdayHighlight: !draft.correctBirthday,
-      onColumns: _onColumns,
-      onExtra: _onExtra,
-    );
+  /// Zusatzfelder the registration filled (defaults added for the approval
+  /// are not shown).
+  List<Widget> _extraRows(Widget Function(String title, String value, {Key? key}) info) {
+    final churches = ref.watch(churchesProvider).valueOrNull ?? const <Church>[];
+    final churchNames = {
+      for (final c in churches)
+        if (c.id != null) c.id!: c.name,
+    };
+    return [
+      for (final f in ref.watch(personListExtraFieldsProvider))
+        if (_additional[f.id] != null && !_defaulted.contains(f.id))
+          if (formatExtraFieldValue(_additional, f, churchNames: churchNames).trim() case final v when v.isNotEmpty)
+            info(f.name, v),
+    ];
   }
 }
