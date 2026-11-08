@@ -402,6 +402,30 @@ void main() {
     expect(find.text('page edit 21'), findsOneWidget);
   });
 
+  testWidgets('a swipe switches the Reiter; the left edge stays the back gesture', (tester) async {
+    _size(tester, const Size(393, 852));
+    final h = _Harness();
+    await tester.pumpWidget(h.app(tab: RdEventTab.record));
+    await _settle(tester);
+    expect(find.text('1 von 2 da'), findsOneWidget);
+
+    // From the left edge: no switch.
+    await tester.flingFrom(const Offset(4, 600), const Offset(300, 0), 1500);
+    await _settle(tester);
+    expect(find.text('1 von 2 da'), findsOneWidget);
+
+    // Wipe to the right (twice when there is a Programm): the Überblick.
+    await tester.flingFrom(const Offset(80, 600), const Offset(300, 0), 1500);
+    await _settle(tester);
+    expect(find.text('1 von 2 da'), findsNothing);
+    if (find.text('Bitte Konzertmappe mitbringen.').evaluate().isEmpty) {
+      await tester.flingFrom(const Offset(80, 600), const Offset(300, 0), 1500);
+      await _settle(tester);
+    }
+    expect(find.text('Bitte Konzertmappe mitbringen.'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Anwesenheit: tap writes the status, Rückgängig writes it back', (tester) async {
     _size(tester, const Size(393, 852));
     final h = _Harness();

@@ -106,6 +106,9 @@ class _Undo {
 class _RdEventPageState extends ConsumerState<RdEventPage> {
   late RdEventTab _tab = widget.initialTab;
 
+  /// Thumb position of the Reiter while swiping between them.
+  final _swipePos = ValueNotifier<double?>(null);
+
   /// Desktop: Überblick and Anwesenheit side by side (no tabs).
   bool _sideBySide = false;
 
@@ -186,6 +189,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     _reloadDebounce?.cancel();
     _undoTimer?.cancel();
     _search.dispose();
+    _swipePos.dispose();
     super.dispose();
   }
 
@@ -890,15 +894,19 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       _head(attendance, type),
       const SizedBox(height: 16),
       if (!wide) ...[
-        RdSegmented<RdEventTab>(
-          values: tabs,
-          selected: tab,
-          labelOf: (t) => switch (t) {
-            RdEventTab.overview => l10n.redesignEventTabOverview,
-            RdEventTab.program => l10n.redesignEventTabProgram,
-            RdEventTab.record => l10n.redesignEventTabRecord,
-          },
-          onChanged: (t) => setState(() => _tab = t),
+        ValueListenableBuilder<double?>(
+          valueListenable: _swipePos,
+          builder: (context, pos, _) => RdSegmented<RdEventTab>(
+            values: tabs,
+            selected: tab,
+            position: pos,
+            labelOf: (t) => switch (t) {
+              RdEventTab.overview => l10n.redesignEventTabOverview,
+              RdEventTab.program => l10n.redesignEventTabProgram,
+              RdEventTab.record => l10n.redesignEventTabRecord,
+            },
+            onChanged: (t) => setState(() => _tab = t),
+          ),
         ),
         const SizedBox(height: 16),
       ],
@@ -944,13 +952,14 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         onRefresh: () async => _reload(),
       );
     } else {
+      final content = <Widget>[];
       if (tab == RdEventTab.program) {
-        children.addAll(_programChildren(attendance, type));
+        content.addAll(_programChildren(attendance, type));
       } else if (members == null) {
-        children.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
+        content.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
       } else if (members.isEmpty) {
         final canMutate = canMutateAttendanceDetail(ref.watch(effectiveRoleProvider));
-        children.add(RdInfoCard(
+        content.add(RdInfoCard(
           text: l10n.redesignEventNoPersons,
           icon: Icons.group_off_outlined,
           action: canMutate
@@ -963,10 +972,23 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         // Programm and Ablauf can be prepared before anyone is invited
         // (Reiter Programm).
       } else if (tab == RdEventTab.overview) {
-        children.add(overview(members));
+        content.add(overview(members));
       } else {
-        children.addAll(_recordChildren(members, type));
+        content.addAll(_recordChildren(members, type));
       }
+      // Swipe between Überblick, Programm and Anwesenheit (the segmented
+      // control stays the main way; the left edge stays the back gesture).
+      children.add(RdSwipeSwitch<RdEventTab>(
+        key: const Key('rd-event-swipe'),
+        values: tabs,
+        selected: tab,
+        onChanged: (t) => setState(() => _tab = t),
+        onDrag: (pos) => _swipePos.value = pos,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: content,
+        ),
+      ));
       body = RdPage(
         onRefresh: () async => _reload(),
         padding: EdgeInsets.fromLTRB(20, 12, 20, bottom),
