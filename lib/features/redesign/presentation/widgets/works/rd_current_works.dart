@@ -195,13 +195,17 @@ class _CurrentCard extends ConsumerWidget {
     final when = rdCurrentWorkWhen(l10n, work);
     final part = ownGroup != null && rdMemberPartFiles(song, ownGroup!.id, choir: choir).any(rdIsNotes);
     final foot = part ? l10n.redesignWorksStatusPart : l10n.redesignWorksCurrentNoPart;
+    void open() => rdOpenCurrentWork(context, ref, song, ownGroup?.id, choir: choir);
+    // One label for the whole card; the tap stays reachable for screen
+    // readers (the excluded InkWell no longer offers it).
     return Semantics(
       button: true,
       label: [if (number.isNotEmpty) number, song.name, when, foot].join(', '),
+      onTap: open,
       excludeSemantics: true,
       child: RdCard(
         padding: const EdgeInsets.all(12),
-        onTap: () => rdOpenCurrentWork(context, ref, song, ownGroup?.id, choir: choir),
+        onTap: open,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

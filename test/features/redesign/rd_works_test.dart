@@ -467,9 +467,13 @@ void main() {
         _ave.copyWith(lastSung: '2026-11-01'), // planned anyway
         const Song(id: 20, name: 'Alt', lastSung: '2026-10-01'), // too long ago
         const Song(id: 21, name: 'Neu', lastSung: '2026-10-20'),
+        const Song(id: 21, name: 'Neu', lastSung: '2026-10-20'), // twice in the input
+        const Song(name: 'Ohne id', lastSung: '2026-11-02'), // nothing to open
+        // 28 calendar days back (across the change to winter time).
+        const Song(id: 22, name: 'Grenztag', lastSung: '2026-10-11'),
       ];
       final cards = rdCurrentWorkCards(events, songs, now: now);
-      expect(cards.map((c) => c.song.id), [6, 5, 7, 21]);
+      expect(cards.map((c) => c.song.id), [6, 5, 7, 21, 22]);
       expect(cards[0].event?.attendanceId, 1);
       expect(cards[2].lastPlayed, DateTime(2026, 11, 5));
       expect(rdCurrentWorkCards(events, songs, now: now, max: 2).length, 2);

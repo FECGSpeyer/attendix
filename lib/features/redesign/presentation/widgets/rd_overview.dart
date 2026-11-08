@@ -188,9 +188,10 @@ class RdMembersOverviewPanel extends ConsumerWidget {
                   label: l10n.redesignSplitMembersPending,
                   warn: pending > 0,
                   // Opens "Wartet" in the list beside it.
-                  onTap: pending > 0
-                      ? () => ref.read(rdMembersTabProvider.notifier).state = RdMembersFilter.pending
-                      : null,
+                  onTap:
+                      pending > 0
+                          ? () => ref.read(rdMembersTabProvider.notifier).state = RdMembersFilter.pending
+                          : null,
                 ),
               ),
             ],
@@ -254,13 +255,27 @@ abstract final class _MemberCurrentWorks {
     );
     if (works.isEmpty) return null;
     final played = data.isOrchestra ? l10n.redesignWorksSortLastPlayed : l10n.redesignWorksSortLastSung;
-    final byLabel = <String, List<RdCurrentWork>>{};
+    // One section per Termin (two of a day stay apart, then with their
+    // time), the played ones last.
+    final byEvent = <(int?, DateTime?)?, List<RdCurrentWork>>{};
     for (final w in works) {
-      (byLabel[w.event != null ? rdEventLabel(w.event!) : played] ??= []).add(w);
+      (byEvent[w.event == null ? null : (w.event!.attendanceId, w.event!.date)] ??= []).add(w);
     }
+    final labels = {
+      for (final w in works)
+        if (w.event != null) (w.event!.attendanceId, w.event!.date): rdEventLabel(w.event!),
+    };
+    String label((int?, DateTime?)? key) {
+      if (key == null) return played;
+      final text = labels[key]!;
+      final date = key.$2;
+      final twice = labels.values.where((l) => l == text).length > 1;
+      return twice && date != null ? '$text · ${DateFormat.Hm(currentIntlLocale()).format(date)}' : text;
+    }
+
     return [
-      for (final MapEntry(key: label, value: list) in byLabel.entries) ...[
-        RdGroupLabel(label),
+      for (final MapEntry(:key, value: list) in byEvent.entries) ...[
+        RdGroupLabel(label(key)),
         RdGroupedList(
           children: [
             for (final w in list)
@@ -285,12 +300,7 @@ abstract final class _MemberCurrentWorks {
 }
 
 class _OverviewPage extends StatelessWidget {
-  const _OverviewPage({
-    required this.hint,
-    required this.children,
-    this.failed = false,
-    this.onRetry,
-  });
+  const _OverviewPage({required this.hint, required this.children, this.failed = false, this.onRetry});
 
   final String hint;
 

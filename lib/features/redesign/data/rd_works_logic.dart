@@ -285,8 +285,12 @@ bool _rdEventOver(RdNextEvent event, Attendance? att, List<AttendanceType> types
   final date = event.date;
   if (date == null) return false;
   final type = att?.typeId == null ? null : types.where((t) => t.id == att!.typeId).firstOrNull;
-  final effective = rdEffectiveDurationDays(att?.durationDays,
-          typeAllDay: type?.allDay ?? false, typeDurationDays: type?.durationDays) ??
+  final effective =
+      rdEffectiveDurationDays(
+        att?.durationDays,
+        typeAllDay: type?.allDay ?? false,
+        typeDurationDays: type?.durationDays,
+      ) ??
       1;
   final days = effective < 1 ? 1 : effective;
   final lastDay = rdAddDays(date, days - 1);
@@ -360,7 +364,8 @@ class RdCurrentWork {
 
 /// What a member plays right now: the Werke of the coming [events] in
 /// their order, then the Werke of [songs] played within [recentDays] up to
-/// [now], latest first. Each Werk once, at most [max]. The played ones keep
+/// [now] (calendar days), latest first. Each Werk once, at most [max];
+/// Werke without id are left out (nothing to open). The played ones keep
 /// "Aktuell" filled while the next Probe has no program yet.
 List<RdCurrentWork> rdCurrentWorkCards(
   List<RdNextEvent> events,
@@ -373,18 +378,19 @@ List<RdCurrentWork> rdCurrentWorkCards(
   final result = <RdCurrentWork>[];
   for (final e in events) {
     for (final s in e.songs) {
-      if (s.id != null && !seen.add(s.id!)) continue;
+      if (s.id == null || !seen.add(s.id!)) continue;
       result.add(RdCurrentWork(song: s, event: e));
     }
   }
   final today = DateTime(now.year, now.month, now.day);
-  final from = today.subtract(Duration(days: recentDays));
+  // Calendar days, not 24-hour steps (daylight saving time).
+  final from = rdAddDays(today, -recentDays);
   final recent = <RdCurrentWork>[];
   for (final s in songs) {
     final played = DateTime.tryParse(s.lastSung ?? '')?.toLocal();
-    if (played == null || (s.id != null && seen.contains(s.id))) continue;
+    if (played == null || s.id == null || seen.contains(s.id)) continue;
     final day = DateTime(played.year, played.month, played.day);
-    if (day.isBefore(from) || day.isAfter(today)) continue;
+    if (day.isBefore(from) || day.isAfter(today) || !seen.add(s.id!)) continue;
     recent.add(RdCurrentWork(song: s, lastPlayed: day));
   }
   recent.sort((a, b) => b.lastPlayed!.compareTo(a.lastPlayed!));
