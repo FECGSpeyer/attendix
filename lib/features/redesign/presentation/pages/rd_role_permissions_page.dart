@@ -203,7 +203,7 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     final differs = other != null && get(other) != value;
     return _switch(
       title,
-      differs ? '$hint ${context.l10n.rdSettingsPermLeaderDiffers}' : hint,
+      differs ? '$hint\n${context.l10n.rdSettingsPermLeaderDiffers}' : hint,
       value,
       (v) => _setPermissions({
         base: set(_permissions[base]!, v),
@@ -230,7 +230,7 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
           _switch(
             l10n.rdSettingsPermAllGroups,
             allDiffers
-                ? '${l10n.rdSettingsPermAllGroupsHint} ${l10n.rdSettingsPermLeaderDiffers}'
+                ? '${l10n.rdSettingsPermAllGroupsHint}\n${l10n.rdSettingsPermLeaderDiffers}'
                 : l10n.rdSettingsPermAllGroupsHint,
             allGroups,
             (v) => _setPermissions({

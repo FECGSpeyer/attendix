@@ -10272,7 +10272,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdSettingsDutyViewHint =>
-      'Classic view only: duty teams see their duties first under “My events”. In the Beta, duties always have their own section.';
+      'Duty teams see their duties first under “My events”. In the Beta, duties always have their own section.';
 
   @override
   String get rdSettingsEmptyValue => 'Please enter a value.';
@@ -10440,7 +10440,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdSettingsSeasonHint =>
-      'The members\' percentages only count from this date.';
+      'The members\' attendance rate only counts from this date.';
 
   @override
   String rdSettingsSeasonSaved(Object date) {
@@ -10459,7 +10459,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdSettingsShiftPresentHint =>
-      'Anyone excused for work or a shift counts as present in the percentages';
+      'Anyone excused for work or a shift counts as present in the attendance rate';
 
   @override
   String get rdSettingsShortName => 'Short name';

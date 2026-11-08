@@ -12925,7 +12925,7 @@
   "@rdSettingsDutyView": {
     "description": "rdSettings.dutyView"
   },
-  "rdSettingsDutyViewHint": "Nur in der klassischen Ansicht: Dienst-Teams sehen unter „Meine Termine“ zuerst ihre Dienste. Im Beta haben Dienste immer einen eigenen Bereich.",
+  "rdSettingsDutyViewHint": "Dienst-Teams sehen unter „Meine Termine“ zuerst ihre Dienste. Im Beta haben Dienste immer einen eigenen Bereich.",
   "@rdSettingsDutyViewHint": {
     "description": "rdSettings.dutyViewHint"
   },
@@ -13125,7 +13125,7 @@
   "@rdSettingsSaveFailed": {
     "description": "rdSettings.saveFailed"
   },
-  "rdSettingsSeasonHint": "Die Prozente der Mitglieder zählen erst ab diesem Datum.",
+  "rdSettingsSeasonHint": "Die Anwesenheitsquote der Mitglieder zählt erst ab diesem Datum.",
   "@rdSettingsSeasonHint": {
     "description": "rdSettings.seasonHint"
   },
@@ -13148,7 +13148,7 @@
   "@rdSettingsShiftPresent": {
     "description": "rdSettings.shiftPresent"
   },
-  "rdSettingsShiftPresentHint": "Wer wegen Arbeit oder Schicht entschuldigt ist, zählt in den Prozenten als anwesend",
+  "rdSettingsShiftPresentHint": "Wer wegen Arbeit oder Schicht entschuldigt ist, zählt in der Anwesenheitsquote als anwesend",
   "@rdSettingsShiftPresentHint": {
     "description": "rdSettings.shiftPresentHint"
   },

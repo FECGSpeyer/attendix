@@ -10382,7 +10382,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdSettingsDutyViewHint =>
-      'Nur in der klassischen Ansicht: Dienst-Teams sehen unter „Meine Termine“ zuerst ihre Dienste. Im Beta haben Dienste immer einen eigenen Bereich.';
+      'Dienst-Teams sehen unter „Meine Termine“ zuerst ihre Dienste. Im Beta haben Dienste immer einen eigenen Bereich.';
 
   @override
   String get rdSettingsEmptyValue => 'Bitte gib einen Wert ein.';
@@ -10552,7 +10552,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdSettingsSeasonHint =>
-      'Die Prozente der Mitglieder zählen erst ab diesem Datum.';
+      'Die Anwesenheitsquote der Mitglieder zählt erst ab diesem Datum.';
 
   @override
   String rdSettingsSeasonSaved(Object date) {
@@ -10571,7 +10571,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdSettingsShiftPresentHint =>
-      'Wer wegen Arbeit oder Schicht entschuldigt ist, zählt in den Prozenten als anwesend';
+      'Wer wegen Arbeit oder Schicht entschuldigt ist, zählt in der Anwesenheitsquote als anwesend';
 
   @override
   String get rdSettingsShortName => 'Kürzel';

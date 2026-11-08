@@ -17006,7 +17006,7 @@ abstract class AppLocalizations {
   /// rdSettings.dutyViewHint
   ///
   /// In de, this message translates to:
-  /// **'Nur in der klassischen Ansicht: Dienst-Teams sehen unter „Meine Termine“ zuerst ihre Dienste. Im Beta haben Dienste immer einen eigenen Bereich.'**
+  /// **'Dienst-Teams sehen unter „Meine Termine“ zuerst ihre Dienste. Im Beta haben Dienste immer einen eigenen Bereich.'**
   String get rdSettingsDutyViewHint;
 
   /// rdSettings.emptyValue
@@ -17306,7 +17306,7 @@ abstract class AppLocalizations {
   /// rdSettings.seasonHint
   ///
   /// In de, this message translates to:
-  /// **'Die Prozente der Mitglieder zählen erst ab diesem Datum.'**
+  /// **'Die Anwesenheitsquote der Mitglieder zählt erst ab diesem Datum.'**
   String get rdSettingsSeasonHint;
 
   /// rdSettings.seasonSaved
@@ -17336,7 +17336,7 @@ abstract class AppLocalizations {
   /// rdSettings.shiftPresentHint
   ///
   /// In de, this message translates to:
-  /// **'Wer wegen Arbeit oder Schicht entschuldigt ist, zählt in den Prozenten als anwesend'**
+  /// **'Wer wegen Arbeit oder Schicht entschuldigt ist, zählt in der Anwesenheitsquote als anwesend'**
   String get rdSettingsShiftPresentHint;
 
   /// rdSettings.shortName
