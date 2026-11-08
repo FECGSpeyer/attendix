@@ -21,6 +21,7 @@ import 'package:attendix/features/people/presentation/widgets/duplicate_candidat
 import 'package:attendix/features/people/presentation/widgets/pause_person_sheet.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_pending_review_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/members/rd_pause_sheets.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart' show RdListRow;
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,9 +52,12 @@ final _pending = Person(
   lastName: 'Ling',
   email: 'neu@test.de',
   instrument: 2,
+  otherExercise: _longText,
   pending: true,
   createdAt: DateTime(2026, 11, 3, 12),
 );
+
+const _longText = 'Technik und Aufbau\nan Sonntagen gerne auch Kinderbetreuung';
 
 Future<void> _pump(WidgetTester tester, Widget home, {List<RankedMatch<Person>> duplicates = const []}) async {
   await tester.pumpWidget(ProviderScope(
@@ -124,9 +128,14 @@ void main() {
     expect(find.text('Mögliche Doppelung'), findsOneWidget);
     expect(find.byKey(const Key('rd-review-merge-3')), findsOneWidget);
     expect(find.text('ANGABEN'), findsOneWidget);
-    expect(find.byKey(const Key('rd-review-first')), findsOneWidget);
-    // Like the old approval page the e-mail is shown, not edited.
-    expect(tester.widget<TextField>(find.byKey(const Key('rd-review-email'))).readOnly, isTrue);
+    // The registration is read, not edited: no inputs, only the group can
+    // be changed; empty values (Telefon) are left out.
+    expect(find.byType(TextField), findsNothing);
+    expect(find.text('neu@test.de'), findsOneWidget);
+    expect(find.byKey(const Key('rd-review-phone')), findsNothing);
+    expect(find.byKey(const Key('rd-review-group')), findsOneWidget);
+    // Long or multi-line values are shown in full below the label.
+    expect(find.ancestor(of: find.text(_longText), matching: find.byType(RdListRow)), findsNothing);
     expect(find.text('Ablehnen'), findsOneWidget);
     expect(find.text('Aufnehmen'), findsOneWidget);
   });
