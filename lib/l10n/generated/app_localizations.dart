@@ -17465,6 +17465,18 @@ abstract class AppLocalizations {
   /// **'{count, plural, one {1 Termin} other {{count} Termine}}'**
   String rdStatsEvents(num count);
 
+  /// rdStats.fields
+  ///
+  /// In de, this message translates to:
+  /// **'Zusatzfelder'**
+  String get rdStatsFields;
+
+  /// rdStats.fieldsPaused
+  ///
+  /// In de, this message translates to:
+  /// **'Pausierte mitzählen'**
+  String get rdStatsFieldsPaused;
+
   /// rdStats.filterGroups
   ///
   /// In de, this message translates to:
@@ -17560,6 +17572,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Schwächster Termin'**
   String get rdStatsNotableWeakest;
+
+  /// rdStats.orgGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen'**
+  String get rdStatsOrgGroups;
+
+  /// rdStats.orgGroupsAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle ({count})'**
+  String rdStatsOrgGroupsAll(Object count);
+
+  /// rdStats.orgGroupsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Zählt nur die Personen der gewählten Gruppen. Dieselbe Person in mehreren Gruppen zählt einmal.'**
+  String get rdStatsOrgGroupsHint;
+
+  /// rdStats.orgPeople
+  ///
+  /// In de, this message translates to:
+  /// **'Personen in allen Gruppen'**
+  String get rdStatsOrgPeople;
 
   /// rdStats.personAllThere
   ///

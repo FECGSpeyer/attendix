@@ -83,7 +83,13 @@
       "ageBucket": "{from}–{to} Jahre",
       "ageAvgGroup": "Ø Alter je Register",
       "ageYears": "{years} J.",
-      "ageNone": "Bei den aktiven Mitgliedern ist kein Geburtsdatum eingetragen."
+      "ageNone": "Bei den aktiven Mitgliedern ist kein Geburtsdatum eingetragen.",
+      "fields": "Zusatzfelder",
+      "fieldsPaused": "Pausierte mitzählen",
+      "orgGroups": "Gruppen",
+      "orgGroupsAll": "Alle ({count})",
+      "orgGroupsHint": "Zählt nur die Personen der gewählten Gruppen. Dieselbe Person in mehreren Gruppen zählt einmal.",
+      "orgPeople": "Personen in allen Gruppen"
     }
   },
   "en": {
@@ -170,7 +176,13 @@
       "ageBucket": "{from}–{to} years",
       "ageAvgGroup": "Average age per section",
       "ageYears": "{years} y",
-      "ageNone": "None of the active members has a birthday entered."
+      "ageNone": "None of the active members has a birthday entered.",
+      "fields": "Extra fields",
+      "fieldsPaused": "Include paused",
+      "orgGroups": "Groups",
+      "orgGroupsAll": "All ({count})",
+      "orgGroupsHint": "Counts only the people of the chosen groups. The same person in several groups counts once.",
+      "orgPeople": "People in all groups"
     }
   }
 }

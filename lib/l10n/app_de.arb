@@ -13286,6 +13286,14 @@
       }
     }
   },
+  "rdStatsFields": "Zusatzfelder",
+  "@rdStatsFields": {
+    "description": "rdStats.fields"
+  },
+  "rdStatsFieldsPaused": "Pausierte mitzählen",
+  "@rdStatsFieldsPaused": {
+    "description": "rdStats.fieldsPaused"
+  },
   "rdStatsFilterGroups": "Register",
   "@rdStatsFilterGroups": {
     "description": "rdStats.filterGroups"
@@ -13367,6 +13375,25 @@
   "rdStatsNotableWeakest": "Schwächster Termin",
   "@rdStatsNotableWeakest": {
     "description": "rdStats.notableWeakest"
+  },
+  "rdStatsOrgGroups": "Gruppen",
+  "@rdStatsOrgGroups": {
+    "description": "rdStats.orgGroups"
+  },
+  "rdStatsOrgGroupsAll": "Alle ({count})",
+  "@rdStatsOrgGroupsAll": {
+    "description": "rdStats.orgGroupsAll",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdStatsOrgGroupsHint": "Zählt nur die Personen der gewählten Gruppen. Dieselbe Person in mehreren Gruppen zählt einmal.",
+  "@rdStatsOrgGroupsHint": {
+    "description": "rdStats.orgGroupsHint"
+  },
+  "rdStatsOrgPeople": "Personen in allen Gruppen",
+  "@rdStatsOrgPeople": {
+    "description": "rdStats.orgPeople"
   },
   "rdStatsPersonAllThere": "War bei allen Terminen da.",
   "@rdStatsPersonAllThere": {

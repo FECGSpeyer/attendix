@@ -17,6 +17,7 @@ import '../../../export/presentation/pages/export_page.dart' show showExportModa
 import '../../data/providers/rd_stats_providers.dart';
 import '../../data/rd_stats_logic.dart';
 import '../widgets/manage/rd_data_sheets.dart' show rdGenerateCertificates;
+import '../widgets/stats/rd_stats_fields.dart';
 import '../widgets/stats/rd_stats_levels.dart';
 import '../widgets/stats/rd_stats_widgets.dart';
 import 'rd_general_settings_page.dart' show RdTenantSettings, RdTenantSettingsBlock;
@@ -220,11 +221,16 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
                   _Level.people => _people(context, result, groups),
                 },
               if (_level == _Level.people && !loading && !attendancesAsync.hasError) ...[
-                // Ionic stats: Mitglieder and Alter (all Register).
+                // Ionic stats: Mitglieder and Alter (all Register),
+                // Zusatzfelder and the organisation.
                 const SizedBox(height: 24),
                 const RdStatsMembersCard(),
                 const SizedBox(height: 12),
                 const RdStatsAgeCard(),
+                const SizedBox(height: 24),
+                RdStatsFieldsCard(filter: filter),
+                const SizedBox(height: 24),
+                const RdStatsOrganisationCard(),
               ],
               if (_level == _Level.overview) ...[
                 // Saison and Zählweise (from the old "Allgemein"), which

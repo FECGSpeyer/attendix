@@ -10666,6 +10666,12 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get rdStatsFields => 'Zusatzfelder';
+
+  @override
+  String get rdStatsFieldsPaused => 'Pausierte mitzählen';
+
+  @override
   String get rdStatsFilterGroups => 'Register';
 
   @override
@@ -10730,6 +10736,21 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdStatsNotableWeakest => 'Schwächster Termin';
+
+  @override
+  String get rdStatsOrgGroups => 'Gruppen';
+
+  @override
+  String rdStatsOrgGroupsAll(Object count) {
+    return 'Alle ($count)';
+  }
+
+  @override
+  String get rdStatsOrgGroupsHint =>
+      'Zählt nur die Personen der gewählten Gruppen. Dieselbe Person in mehreren Gruppen zählt einmal.';
+
+  @override
+  String get rdStatsOrgPeople => 'Personen in allen Gruppen';
 
   @override
   String get rdStatsPersonAllThere => 'War bei allen Terminen da.';

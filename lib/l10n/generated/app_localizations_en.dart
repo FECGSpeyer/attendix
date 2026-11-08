@@ -10553,6 +10553,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get rdStatsFields => 'Extra fields';
+
+  @override
+  String get rdStatsFieldsPaused => 'Include paused';
+
+  @override
   String get rdStatsFilterGroups => 'Sections';
 
   @override
@@ -10617,6 +10623,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdStatsNotableWeakest => 'Weakest event';
+
+  @override
+  String get rdStatsOrgGroups => 'Groups';
+
+  @override
+  String rdStatsOrgGroupsAll(Object count) {
+    return 'All ($count)';
+  }
+
+  @override
+  String get rdStatsOrgGroupsHint =>
+      'Counts only the people of the chosen groups. The same person in several groups counts once.';
+
+  @override
+  String get rdStatsOrgPeople => 'People in all groups';
 
   @override
   String get rdStatsPersonAllThere => 'Was at every event.';
