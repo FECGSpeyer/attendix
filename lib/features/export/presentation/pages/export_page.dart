@@ -14,6 +14,7 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
+import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/services/export_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -44,7 +45,13 @@ import 'package:go_router/go_router.dart';
 /// `modalController.create({ component, presentingElement })`: on iOS a
 /// card modal ([showIosCardModal]), in md mode a regular `ion-modal`
 /// ([showIonModal]: full screen on phones, centred card on desktop).
+///
+/// Beta: opens the Beta export page (`/export` → `RdExportPage`) instead, so
+/// no Ionic-style sheet shows up inside the Beta design.
 Future<void> showExportModal(BuildContext context) {
+  if (ProviderScope.containerOf(context, listen: false).read(redesignEnabledProvider)) {
+    return context.push<void>('/export');
+  }
   if (useIosLook(context)) {
     return showIosCardModal<void>(
       context,
