@@ -21116,7 +21116,7 @@ abstract class AppLocalizations {
   /// redesign.invite.emptyMembers
   ///
   /// In de, this message translates to:
-  /// **'Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.'**
+  /// **'Noch keine Mitglieder. Über „+“ teilst du den Einladungslink oder zeigst den QR-Code in der nächsten Probe.'**
   String get redesignInviteEmptyMembers;
 
   /// redesign.invite.fullscreen
@@ -22343,6 +22343,18 @@ abstract class AppLocalizations {
   /// **'Wird nach „{name}“ eingefügt'**
   String redesignPlanAddAfter(Object name);
 
+  /// redesign.plan.addAnother
+  ///
+  /// In de, this message translates to:
+  /// **'Weiteren Plan anlegen'**
+  String get redesignPlanAddAnother;
+
+  /// redesign.plan.addAnotherHint
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. für Tag 2 oder eine zweite Probe'**
+  String get redesignPlanAddAnotherHint;
+
   /// redesign.plan.addBlock
   ///
   /// In de, this message translates to:
@@ -22583,6 +22595,12 @@ abstract class AppLocalizations {
   /// **'Tipp auf die Dauer ändert sie direkt, Tipp auf einen Punkt öffnet alles Weitere. Am Griff halten und ziehen sortiert um.'**
   String get redesignPlanHint;
 
+  /// redesign.plan.hintDismiss
+  ///
+  /// In de, this message translates to:
+  /// **'Verstanden'**
+  String get redesignPlanHintDismiss;
+
   /// redesign.plan.hours
   ///
   /// In de, this message translates to:
@@ -22745,6 +22763,12 @@ abstract class AppLocalizations {
   /// **'Plan „{name}“'**
   String redesignPlanPlanSection(Object name);
 
+  /// redesign.plan.plansSection
+  ///
+  /// In de, this message translates to:
+  /// **'Pläne dieses Termins'**
+  String get redesignPlanPlansSection;
+
   /// redesign.plan.prev
   ///
   /// In de, this message translates to:
@@ -22792,6 +22816,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Für diesen Plan'**
   String get redesignPlanSettings;
+
+  /// redesign.plan.share
+  ///
+  /// In de, this message translates to:
+  /// **'Teilen'**
+  String get redesignPlanShare;
 
   /// redesign.plan.shareExport
   ///

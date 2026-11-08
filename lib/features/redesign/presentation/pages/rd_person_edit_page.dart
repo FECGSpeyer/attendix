@@ -1509,10 +1509,8 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
           ]),
         ],
 
-        const SizedBox(height: 24),
-        RdPrimaryButton(label: l10n.redesignCommonDone, onPressed: _done),
         if (!isSelf) ...[
-          const SizedBox(height: 28),
+          const SizedBox(height: 32),
           RdGroupedList(children: [
             row(l10n.attendanceRemovePerson, () => _delete(person),
                 icon: Icons.delete_outline, color: p.absent, key: const Key('rd-person-delete')),

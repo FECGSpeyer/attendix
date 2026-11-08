@@ -13025,7 +13025,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignInviteEmptyMembers =>
-      'No members yet. Send the invitation link to your group or show the QR code at the next rehearsal.';
+      'No members yet. Use “+” to share the invitation link or show the QR code at the next rehearsal.';
 
   @override
   String get redesignInviteFullscreen => 'Show full screen';
@@ -13765,6 +13765,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignPlanAddAnother => 'Add another plan';
+
+  @override
+  String get redesignPlanAddAnotherHint =>
+      'e.g. for day 2 or a second rehearsal';
+
+  @override
   String get redesignPlanAddBlock => 'Block';
 
   @override
@@ -13896,6 +13903,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tap a duration to change it, tap an item for everything else. Hold the handle and drag to reorder.';
 
   @override
+  String get redesignPlanHintDismiss => 'Got it';
+
+  @override
   String redesignPlanHours(Object count) {
     return '$count h';
   }
@@ -14000,6 +14010,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignPlanPlansSection => 'Plans of this event';
+
+  @override
   String get redesignPlanPrev => 'Previous event';
 
   @override
@@ -14024,6 +14037,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignPlanSettings => 'For this plan';
+
+  @override
+  String get redesignPlanShare => 'Share';
 
   @override
   String get redesignPlanShareExport => 'Share & export';

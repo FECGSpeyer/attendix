@@ -434,8 +434,12 @@ void main() {
       expect(find.textContaining('Fehlen oft'), findsNothing);
     });
 
-    testWidgets('Einladen opens the invitation; off without a sign-up link (UX D1)', (tester) async {
+    testWidgets('"+" offers Einladen; off without a sign-up link (UX D1)', (tester) async {
       await tester.pumpWidget(_membersApp(Role.admin, _repo()));
+      await _settle(tester);
+      // One "+" for anlegen and einladen, no second button in the header.
+      expect(find.text('Einladen'), findsNothing);
+      await tester.tap(find.byKey(const Key('rd-members-fab')));
       await _settle(tester);
       await tester.tap(find.text('Einladen'));
       await _settle(tester);
@@ -447,7 +451,7 @@ void main() {
     testWidgets('Beobachter cannot invite', (tester) async {
       await tester.pumpWidget(_membersApp(Role.viewer, _repo()));
       await _settle(tester);
-      expect(find.text('Einladen'), findsNothing);
+      expect(find.byKey(const Key('rd-members-fab')), findsNothing);
     });
 
     testWidgets('no "Fehlen oft" chip without critical members', (tester) async {

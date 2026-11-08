@@ -13159,7 +13159,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignInviteEmptyMembers =>
-      'Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.';
+      'Noch keine Mitglieder. Über „+“ teilst du den Einladungslink oder zeigst den QR-Code in der nächsten Probe.';
 
   @override
   String get redesignInviteFullscreen => 'Vollbild zeigen';
@@ -13904,6 +13904,13 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignPlanAddAnother => 'Weiteren Plan anlegen';
+
+  @override
+  String get redesignPlanAddAnotherHint =>
+      'z. B. für Tag 2 oder eine zweite Probe';
+
+  @override
   String get redesignPlanAddBlock => 'Block';
 
   @override
@@ -14036,6 +14043,9 @@ class AppLocalizationsDe extends AppLocalizations {
       'Tipp auf die Dauer ändert sie direkt, Tipp auf einen Punkt öffnet alles Weitere. Am Griff halten und ziehen sortiert um.';
 
   @override
+  String get redesignPlanHintDismiss => 'Verstanden';
+
+  @override
   String redesignPlanHours(Object count) {
     return '$count Std.';
   }
@@ -14140,6 +14150,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignPlanPlansSection => 'Pläne dieses Termins';
+
+  @override
   String get redesignPlanPrev => 'Vorheriger Termin';
 
   @override
@@ -14166,6 +14179,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignPlanSettings => 'Für diesen Plan';
+
+  @override
+  String get redesignPlanShare => 'Teilen';
 
   @override
   String get redesignPlanShareExport => 'Teilen & Export';

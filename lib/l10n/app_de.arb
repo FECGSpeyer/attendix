@@ -16218,7 +16218,7 @@
   "@redesignInviteCopy": {
     "description": "redesign.invite.copy"
   },
-  "redesignInviteEmptyMembers": "Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.",
+  "redesignInviteEmptyMembers": "Noch keine Mitglieder. Über „+“ teilst du den Einladungslink oder zeigst den QR-Code in der nächsten Probe.",
   "@redesignInviteEmptyMembers": {
     "description": "redesign.invite.emptyMembers"
   },
@@ -17152,6 +17152,14 @@
       "name": {}
     }
   },
+  "redesignPlanAddAnother": "Weiteren Plan anlegen",
+  "@redesignPlanAddAnother": {
+    "description": "redesign.plan.addAnother"
+  },
+  "redesignPlanAddAnotherHint": "z. B. für Tag 2 oder eine zweite Probe",
+  "@redesignPlanAddAnotherHint": {
+    "description": "redesign.plan.addAnotherHint"
+  },
   "redesignPlanAddBlock": "Block",
   "@redesignPlanAddBlock": {
     "description": "redesign.plan.addBlock"
@@ -17329,6 +17337,10 @@
   "@redesignPlanHint": {
     "description": "redesign.plan.hint"
   },
+  "redesignPlanHintDismiss": "Verstanden",
+  "@redesignPlanHintDismiss": {
+    "description": "redesign.plan.hintDismiss"
+  },
   "redesignPlanHours": "{count} Std.",
   "@redesignPlanHours": {
     "description": "redesign.plan.hours",
@@ -17464,6 +17476,10 @@
       "name": {}
     }
   },
+  "redesignPlanPlansSection": "Pläne dieses Termins",
+  "@redesignPlanPlansSection": {
+    "description": "redesign.plan.plansSection"
+  },
   "redesignPlanPrev": "Vorheriger Termin",
   "@redesignPlanPrev": {
     "description": "redesign.plan.prev"
@@ -17498,6 +17514,10 @@
   "redesignPlanSettings": "Für diesen Plan",
   "@redesignPlanSettings": {
     "description": "redesign.plan.settings"
+  },
+  "redesignPlanShare": "Teilen",
+  "@redesignPlanShare": {
+    "description": "redesign.plan.share"
   },
   "redesignPlanShareExport": "Teilen & Export",
   "@redesignPlanShareExport": {

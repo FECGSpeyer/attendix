@@ -130,7 +130,8 @@ void main() {
     await _settle(tester);
     expect(find.text('Beobachter'), findsWidgets);
     expect(find.text('Noch keine Beobachter eingeladen.'), findsOneWidget);
-    expect(find.text('Beobachter einladen'), findsOneWidget);
+    // Only the "+" adds (no second button in the empty card).
+    expect(find.byKey(const Key('rd-manage-list-add')), findsOneWidget);
   });
 
   testWidgets('Archiv: group, leave date and the restore button', (tester) async {
