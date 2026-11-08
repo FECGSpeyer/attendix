@@ -185,8 +185,15 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     await context.push(route);
     final id = _type?.id;
     if (!mounted || id == null) return;
-    final types = await ref.read(visibleAttendanceTypesProvider.future).catchError((Object _) => const <AttendanceType>[]);
-    if (!mounted || _type?.id != id) return;
+    final List<AttendanceType> types;
+    try {
+      types = await ref.read(visibleAttendanceTypesProvider.future);
+    } catch (_) {
+      return;
+    }
+    // The repository answers a failed load with an empty list, so an empty
+    // list says nothing: the draft stays as it is.
+    if (!mounted || types.isEmpty || _type?.id != id) return;
     final fresh = types.where((t) => t.id == id).firstOrNull;
     // Deleted or hidden: the Art has to be chosen again.
     if (fresh != _type) setState(() => _type = fresh);
