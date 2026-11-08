@@ -13080,6 +13080,45 @@
   "@rdSettingsUndo": {
     "description": "rdSettings.undo"
   },
+  "rdTeacherNewCreate": "Anlegen",
+  "@rdTeacherNewCreate": {
+    "description": "rdTeacherNew.create"
+  },
+  "rdTeacherNewDone": "{name} angelegt",
+  "@rdTeacherNewDone": {
+    "description": "rdTeacherNew.done",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdTeacherNewHint": "Kontakt, Notizen und Privatlehrer ergänzt du danach beim Lehrer.",
+  "@rdTeacherNewHint": {
+    "description": "rdTeacherNew.hint"
+  },
+  "rdTeacherNewInstruments": "Unterrichtet",
+  "@rdTeacherNewInstruments": {
+    "description": "rdTeacherNew.instruments"
+  },
+  "rdTeacherNewName": "Name",
+  "@rdTeacherNewName": {
+    "description": "rdTeacherNew.name"
+  },
+  "rdTeacherNewNameShort": "Bitte gib einen Namen mit mindestens 3 Zeichen ein.",
+  "@rdTeacherNewNameShort": {
+    "description": "rdTeacherNew.nameShort"
+  },
+  "rdTeacherNewNoGroups": "Es gibt noch keine Register, die du auswählen kannst.",
+  "@rdTeacherNewNoGroups": {
+    "description": "rdTeacherNew.noGroups"
+  },
+  "rdTeacherNewNoInstrument": "Wähle mindestens ein Instrument.",
+  "@rdTeacherNewNoInstrument": {
+    "description": "rdTeacherNew.noInstrument"
+  },
+  "rdTeacherNewTitle": "Neuer Lehrer",
+  "@rdTeacherNewTitle": {
+    "description": "rdTeacherNew.title"
+  },
   "rdWmCategoriesIntro": "Kategorien ordnen die Werke, etwa nach Anlass oder Kirchenjahr.",
   "@rdWmCategoriesIntro": {
     "description": "rdWm.categoriesIntro"

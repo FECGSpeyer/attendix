@@ -4,6 +4,7 @@ import '../../../../core/config/supabase_config.dart' show currentAuthUserIdProv
 import '../../../../core/providers/cross_tenant_person_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../rd_members_list_filter.dart';
+import '../rd_members_logic.dart' show RdMembersFilter;
 
 /// REDESIGN (UX D3): "Fehlen oft" filter of the Mitglieder tab. A provider
 /// and not page state, so "Heute" can open the tab already filtered.
@@ -12,6 +13,15 @@ final rdMembersCriticalOnlyProvider = StateProvider<bool>((ref) {
   ref.watch(currentTenantIdProvider);
   ref.watch(currentAuthUserIdProvider);
   return false;
+});
+
+/// REDESIGN: Aktiv / Pausiert / Wartet of the Mitglieder tab. A provider
+/// and not page state, so the hint "N neue Anmeldungen" and the
+/// "Anfragen" tile of the overview can open "Wartet".
+final rdMembersTabProvider = StateProvider<RdMembersFilter>((ref) {
+  ref.watch(currentTenantIdProvider);
+  ref.watch(currentAuthUserIdProvider);
+  return RdMembersFilter.active;
 });
 
 /// REDESIGN: "Sortieren & Filtern" of the Mitglieder tab. Kept while the

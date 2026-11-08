@@ -549,6 +549,16 @@ void main() {
       expect(find.text('page review 5'), findsOneWidget);
     });
 
+    testWidgets('Aktiv names the waiting request and opens Wartet', (tester) async {
+      await tester.pumpWidget(_membersApp(Role.admin, _repo()));
+      await _settle(tester);
+      expect(find.text('1 neue Anmeldung'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('rd-members-pending-row')));
+      await _settle(tester);
+      expect(find.text('Emil Funk'), findsOneWidget);
+      expect(find.text('1 neue Anmeldung'), findsNothing);
+    });
+
     testWidgets('admin lifts expired pauses on open and may add persons', (tester) async {
       final repo = _repo();
       await tester.pumpWidget(_membersApp(Role.admin, repo));
@@ -673,6 +683,36 @@ void main() {
       final captured = verify(() => repo.archivePlayer(anna, captureAny(), 'Umzug')).captured;
       expect((captured.single as String).substring(0, 10), _day(0));
       expect(find.text('page members'), findsOneWidget);
+    });
+
+    testWidgets('archived person: Ausgetreten on top, Wiederherstellen as main action, Angaben to read', (tester) async {
+      final left = anna.copyWith(
+        left: '2026-11-08T00:00:00.000',
+        history: const [PlayerHistoryEntry(date: '2026-11-08', text: 'Umzug', type: 8)],
+      );
+      await tester.pumpWidget(_personApp(Role.admin, _repo(), person: left));
+      await _settle(tester);
+      expect(find.byKey(const Key('rd-person-left')), findsOneWidget);
+      expect(find.text('Umzug'), findsOneWidget);
+      expect(find.byKey(const Key('rd-person-restore')), findsOneWidget);
+      expect(find.text('8 von 10 Terminen'), findsOneWidget);
+      await tester.ensureVisible(find.text('Spielt auch Bratsche'));
+      expect(find.text('ANGABEN'), findsOneWidget);
+      expect(find.text('Bearbeiten'), findsNothing);
+      expect(find.text('Pausieren'), findsNothing);
+      expect(find.text('Archivieren'), findsNothing);
+    });
+
+    testWidgets('archived person: Beobachter sees no reason and no Wiederherstellen', (tester) async {
+      final left = anna.copyWith(
+        left: '2026-11-08T00:00:00.000',
+        history: const [PlayerHistoryEntry(date: '2026-11-08', text: 'Umzug', type: 8)],
+      );
+      await tester.pumpWidget(_personApp(Role.viewer, _repo(), person: left));
+      await _settle(tester);
+      expect(find.byKey(const Key('rd-person-left')), findsOneWidget);
+      expect(find.text('Umzug'), findsNothing);
+      expect(find.byKey(const Key('rd-person-restore')), findsNothing);
     });
 
     testWidgets('pending person: review on the old page, no attendance', (tester) async {

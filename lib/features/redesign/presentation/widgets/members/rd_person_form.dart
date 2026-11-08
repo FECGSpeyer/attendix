@@ -24,7 +24,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../people/person_write.dart' show personUtcMidnightIso;
 import '../../../../people/presentation/widgets/church_picker_sheet.dart';
-import '../../../../teachers/presentation/pages/teachers_list_page.dart' show showAddTeacherSheet;
+import '../manage/rd_teacher_create_sheet.dart' show showRdAddTeacherSheet;
 import '../../../../people/presentation/widgets/person_detail/allgemein_accordion.dart'
     show otherOrchestraOptions, personExtraFields;
 import '../event/rd_form_widgets.dart';
@@ -320,7 +320,7 @@ class _RdPersonMoreFieldsState extends ConsumerState<RdPersonMoreFields> {
       return;
     }
     final instrument = _p.instrument;
-    final created = await showAddTeacherSheet(
+    final created = await showRdAddTeacherSheet(
       context,
       ref,
       initialInstruments: [if (instrument != null) instrument],

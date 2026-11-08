@@ -1,12 +1,49 @@
 {
   "versions": [
     {
-      "version": "0.95.0",
+      "version": "0.96.0",
       "date": "8.11.2026",
       "changes": [
         "✨ Beta Mitglieder: „Mehrere auswählen“ (unter •••) direkt in der Mitgliederliste – Personen oder ganze Register antippen, dann unten Register, Pausieren, Feld oder Archivieren",
         "✨ Neu „Feld“: Notizen oder ein Zusatzfeld für alle Ausgewählten auf einmal setzen (wie Ionic „Mehrfach bearbeiten“)",
         "♻️ Die eigene Seite „Mitglieder bearbeiten“ in der Verwaltung entfällt; die Suche dort führt in die Mitgliederliste"
+      ]
+    },
+    {
+      "version": "0.95.1",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta: Ein ausgetretenes Mitglied zeigt oben „Ausgetreten“ (für die Leitung mit Grund) und „Wiederherstellen“ als Hauptaktion, darunter Anwesenheit und alle Angaben zum Lesen"
+      ]
+    },
+    {
+      "version": "0.95.0",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta Lehrer anlegen: ein Blatt „Neuer Lehrer“ (Name und Instrumente als Auswahl, „Anlegen“ oben rechts) – in Verwaltung › Lehrer und bei „Neuer Lehrer“ in „Person bearbeiten“; keine zweite Seite mehr, der neue Lehrer steht gleich in der Liste. Was fehlt, steht direkt im Blatt; schlägt das Speichern fehl, bleibt die Eingabe erhalten",
+        "💄 Beta Lehrer-Liste: „0 Spieler“ in ruhigem Grau statt rot"
+      ]
+    },
+    {
+      "version": "0.94.3",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta-Werke: „Als Nächstes“ mit den kommenden Terminen nur noch für Mitglieder (eigene Stimme für die nächste Probe). Die Leitung sieht oben direkt die Werke, Termine gibt es im Termine-Tab"
+      ]
+    },
+    {
+      "version": "0.94.2",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Beta-Mitglieder: Die rote Zahl am Tab erklärt sich jetzt. Oben in der Liste steht „1 neue Anmeldung“, ein Tipp öffnet „Wartet“",
+        "💄 Beta-Mitglieder am Desktop: Die Kachel „Anfragen“ im Überblick öffnet „Wartet“"
+      ]
+    },
+    {
+      "version": "0.94.1",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Beta: Springt man in einen anderen Bereich (z. B. Mitglied › Verlauf › Termin, Werk › Termin, Heute › Termin), wechselt die Seitenleiste bzw. Tab-Leiste jetzt zu „Termine“; Zurück führt weiter dorthin, wo man herkam"
       ]
     },
     {
