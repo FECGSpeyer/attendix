@@ -414,19 +414,9 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
       return [if (elsewhere != null) elsewhere, baseStatus(song)].where((t) => t.isNotEmpty).join(' · ');
     }
 
-    Widget? pill(Song song) {
-      if (!lead) return null;
-      if (!rdHasNotes(song)) return RdPill(l10n.redesignWorksNoFilesPill, tone: RdTone.late);
-      if (!data.isOrchestra) return null;
-      final missing = rdWorkMissingGroups(song, data.groups, counts);
-      if (missing.isEmpty) return null;
-      return RdPill(
-        missing.length == 1
-            ? l10n.redesignWorkMissingPillOne(missing.single.name)
-            : l10n.redesignWorkMissingPillMany(missing.length),
-        tone: RdTone.late,
-      );
-    }
+    // Only a Werk without any Noten gets a (calm) pill: not every Werk has
+    // a part for every group, so single missing parts stay on the Werk page.
+    Widget? pill(Song song) => lead && !rdHasNotes(song) ? RdPill(l10n.redesignWorksNoFilesPill) : null;
 
     return RdPage(
       onRefresh: _refresh,
@@ -454,7 +444,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
                 for (final e in events.take(3))
                   _LeadEventRow(
                     event: e,
-                    missing: e.songs.any((s) => rdWorkLacksNotes(s, data.groups, counts, orchestra: data.isOrchestra)),
+                    missing: e.songs.any((s) => !rdHasNotes(s)),
                     onTap:
                         e.attendanceId == null || !role.canAddAttendance
                             ? null
@@ -686,8 +676,9 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
   }
 }
 
-/// Leads: a coming Termin with its Werke and, below, "Noten fehlen" when a
-/// Werk still lacks Noten (a pill next to the title would squeeze it).
+/// Leads: a coming Termin with its Werke and, below, a calm "Noten fehlen"
+/// when a Werk has no Noten at all (a pill next to the title would squeeze
+/// it). A single missing part is normal and does not count here.
 class _LeadEventRow extends StatelessWidget {
   const _LeadEventRow({required this.event, required this.missing, required this.onTap});
 
@@ -731,7 +722,7 @@ class _LeadEventRow extends StatelessWidget {
                       if (missing)
                         Padding(
                           padding: const EdgeInsets.only(top: 6),
-                          child: RdPill(context.l10n.redesignWorksMissingNotes, tone: RdTone.late),
+                          child: RdPill(context.l10n.redesignWorksMissingNotes),
                         ),
                     ],
                   ),

@@ -207,22 +207,9 @@ class RdWorkPage extends ConsumerWidget {
         Semantics(header: true, child: Text(song.name, style: RdType.title(p).copyWith(fontSize: 28))),
         if ((song.composer ?? '').isNotEmpty)
           Padding(padding: const EdgeInsets.only(top: 2), child: Text(song.composer!, style: RdType.meta(p, size: 15))),
-        if (difficulty || missing.isNotEmpty) ...[
+        if (difficulty) ...[
           const SizedBox(height: 10),
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: [
-              if (difficulty) RdPill(SongUtils.difficultyLabel(song.difficulty)),
-              if (missing.isNotEmpty)
-                RdPill(
-                  missing.length == 1
-                      ? l10n.redesignWorkMissingPillOne(missing.single.name)
-                      : l10n.redesignWorkMissingPillMany(missing.length),
-                  tone: RdTone.late,
-                ),
-            ],
-          ),
+          Wrap(spacing: 6, runSpacing: 6, children: [RdPill(SongUtils.difficultyLabel(song.difficulty))]),
         ],
         if (banner != null) ...[
           const SizedBox(height: 14),
@@ -739,7 +726,8 @@ class _FileRow extends StatelessWidget {
 }
 
 /// "Horn fehlt noch": somebody plays in these groups, but there are no
-/// Noten for them yet.
+/// Noten for them yet. Calm info, not a warning: not every Werk has a part
+/// for every group.
 class _MissingRow extends StatelessWidget {
   const _MissingRow({required this.missing, required this.onUpload});
 
@@ -751,26 +739,19 @@ class _MissingRow extends StatelessWidget {
     final p = context.rd;
     final l10n = context.l10n;
     final one = missing.length == 1;
-    return ColoredBox(
-      color: p.toneSoft(RdTone.late).withValues(alpha: 0.5),
-      child: RdListRow(
-        leading: RdRowIcon(
-          Icons.warning_amber_rounded,
-          color: p.toneColor(RdTone.late),
-          background: p.toneSoft(RdTone.late),
+    return RdListRow(
+      leading: RdRowIcon(Icons.info_outline, color: p.softText, background: p.soft),
+      title: one ? l10n.redesignWorkMissingOne(missing.single.name) : l10n.redesignWorkMissingMany(missing.length),
+      subtitle: one ? l10n.redesignWorkMissingOneHint(missing.single.name) : missing.map((g) => g.name).join(', '),
+      showChevron: false,
+      trailing: TextButton(
+        style: TextButton.styleFrom(
+          foregroundColor: p.link,
+          minimumSize: const Size(0, 40),
+          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
         ),
-        title: one ? l10n.redesignWorkMissingOne(missing.single.name) : l10n.redesignWorkMissingMany(missing.length),
-        subtitle: one ? l10n.redesignWorkMissingOneHint(missing.single.name) : missing.map((g) => g.name).join(', '),
-        showChevron: false,
-        trailing: TextButton(
-          style: TextButton.styleFrom(
-            foregroundColor: p.link,
-            minimumSize: const Size(0, 40),
-            textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-          ),
-          onPressed: onUpload,
-          child: Text(l10n.redesignWorkUpload),
-        ),
+        onPressed: onUpload,
+        child: Text(l10n.redesignWorkUpload),
       ),
     );
   }
