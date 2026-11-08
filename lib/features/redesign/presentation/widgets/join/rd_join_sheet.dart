@@ -28,7 +28,7 @@ Future<void> showRdJoinSheet(BuildContext context) {
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
-    builder: (_) => const _JoinSheet(),
+    builder: (_) => RdSheetCap(child: const _JoinSheet()),
   );
 }
 

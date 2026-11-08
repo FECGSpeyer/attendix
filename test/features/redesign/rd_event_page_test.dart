@@ -656,6 +656,9 @@ void main() {
     await _settle(tester);
     await tester.tap(find.text('Abwesend').last);
     await tester.enterText(find.byType(TextField).last, 'Nicht erschienen');
+    // The sheet is capped at 85 % height: scroll down to "Fertig".
+    await tester.ensureVisible(find.text('Fertig'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Fertig'));
     await _settle(tester);
 
