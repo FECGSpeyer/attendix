@@ -151,7 +151,8 @@ void main() {
       expect(find.byType(IonAccordion), findsNothing);
       expect(find.text('KOMMENDE TERMINE'), findsOneWidget);
       expect(find.text('Zugesagt'), findsOneWidget);
-      expect(find.text('Durchschnitt'), findsOneWidget);
+      // No Termin counted yet: a hint instead of a red "0 %".
+      expect(find.text('Noch keine vergangenen Termine.'), findsOneWidget);
     });
 
     testWidgets('history: status pills, ⋯ deletes changes of the person', (tester) async {
@@ -273,7 +274,7 @@ void main() {
       handle.dispose();
     });
 
-    testWidgets('Verlauf: a missing person shows "gibt es nicht mehr" with retry', (tester) async {
+    testWidgets('Verlauf: a missing person shows "gibt es nicht mehr" without retry', (tester) async {
       await tester.pumpWidget(ProviderScope(
         overrides: [
           currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
@@ -291,7 +292,8 @@ void main() {
       ));
       await tester.pump(const Duration(seconds: 1));
       expect(find.text('Diese Person gibt es hier nicht mehr.'), findsOneWidget);
-      expect(find.text('Erneut versuchen'), findsOneWidget);
+      // Gone, not failed: nothing to retry.
+      expect(find.text('Erneut versuchen'), findsNothing);
     });
 
     testWidgets('Verlauf: a load error shows it; Erneut versuchen and pull-to-refresh reload the person',

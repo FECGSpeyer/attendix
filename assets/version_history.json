@@ -1,12 +1,31 @@
 {
   "versions": [
     {
-      "version": "0.89.0",
+      "version": "0.90.0",
       "date": "8.11.2026",
       "changes": [
         "🐛 Beta: Termin anlegen/bearbeiten – das Ende kann nicht mehr vor dem Beginn liegen; ein späterer Beginn verschiebt das Ende mit",
         "✨ Beta: Termin bearbeiten – Datum öffnet direkt den Kalender",
         "✨ Beta: Termin bearbeiten – die Art des Termins lässt sich ändern"
+      ]
+    },
+    {
+      "version": "0.89.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta: Mitglieder lassen sich filtern und sortieren (Gruppe, Stimmführung, Ohne Konto, Fehlen oft, Zusatzfelder, andere Instanz; Name, Anwesenheit, Geburtstag, Beitritt), aktive Filter stehen als Chips über der Liste"
+      ]
+    },
+    {
+      "version": "0.88.2",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta: Termine-Liste antwortet mit „Bin dabei“/„Kann nicht“ wie Heute, die Status-Übersicht sagt „Offen“ statt „Neutral“",
+        "💄 Beta: Verlauf ohne Termine zeigt „Noch keine vergangenen Termine“ statt rotem 0 %, „Gespeichert ✓“ in Person bearbeiten wird nicht mehr abgeschnitten",
+        "🐛 Beta: Termine ohne eigene Uhrzeit sortieren nach der Uhrzeit ihrer Art (Heute und Termine)",
+        "💄 Beta Eltern: Absage-Fenster für ein Kind ohne „Ich“/„Deinen Grund“, nach einer Antwort stehen die Links unter dem Namen",
+        "💄 Beta: Gelöschte Person oder gelöschtes Werk ohne sinnloses „Erneut versuchen“; Meine Stimme ohne Profil mit demselben Hinweis wie Heute",
+        "💄 Beta: Archivieren, Telegram trennen und Konto entfernen fragen mit derselben Bestätigung wie der Rest der App"
       ]
     },
     {

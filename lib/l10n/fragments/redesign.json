@@ -233,8 +233,8 @@
         "noMatch": "Keine Termine passen zur Suche.",
         "noPast": "Noch keine vergangenen Termine.",
         "percentPresent": "{percent} % anwesend",
-        "yes": "Dabei",
-        "no": "Abmelden",
+        "yes": "Bin dabei",
+        "no": "Kann nicht",
         "waiting": "{count, plural, one {1 Termin wartet auf deine Antwort} other {{count} Termine warten auf deine Antwort}}",
         "showAll": "Wieder alle Termine zeigen",
         "empty": "Noch keine Termine. Leg die erste Probe an.",
@@ -394,7 +394,10 @@
         "otherHint": "Kurz beschreiben (mindestens 5 Zeichen)",
         "privacy": "Deinen Grund sieht nur die Leitung.",
         "submit": "Abmelden",
-        "submitLate": "Verspätung melden"
+        "submitLate": "Verspätung melden",
+        "childCannot": "Absagen",
+        "childLater": "Später kommen",
+        "childPrivacy": "Den Grund sieht nur die Leitung."
       },
       "absence": {
         "title": "Abwesenheit",
@@ -535,7 +538,16 @@
         "pendingHint": "Tippe auf eine Person, um sie zu prüfen und freizugeben.",
         "critical": "Fehlen oft · {count}",
         "total": "{count, plural, one {1 Person} other {{count} Personen}}",
-        "searchRead": "Name oder Register"
+        "searchRead": "Name oder Register",
+        "filterNoAccount": "Ohne Konto",
+        "filterCritical": "Fehlen oft",
+        "filterGroups": "Gruppen",
+        "filterOtherInstance": "Auch Mitglied in",
+        "filterOtherChip": "Auch in {name}",
+        "filterField": "{name}: {value}",
+        "filterRemove": "Filter „{name}“ entfernen",
+        "filterNoMatch": "Niemand passt zu den Filtern.",
+        "filterShow": "{count, plural, =0 {Niemand passt} one {1 Person anzeigen} other {{count} Personen anzeigen}}"
       },
       "person": {
         "edit": "Bearbeiten",
@@ -1756,8 +1768,8 @@
         "noMatch": "No events match your search.",
         "noPast": "No past events yet.",
         "percentPresent": "{percent} % present",
-        "yes": "I'm in",
-        "no": "Sign out",
+        "yes": "I'm coming",
+        "no": "Can't make it",
         "waiting": "{count, plural, one {1 event is waiting for your answer} other {{count} events are waiting for your answer}}",
         "showAll": "Show all events again",
         "empty": "No events yet. Create the first rehearsal.",
@@ -1917,7 +1929,10 @@
         "otherHint": "Describe briefly (at least 5 characters)",
         "privacy": "Only the leaders see your reason.",
         "submit": "Sign out",
-        "submitLate": "Report delay"
+        "submitLate": "Report delay",
+        "childCannot": "Can't come",
+        "childLater": "Coming late",
+        "childPrivacy": "Only the leaders see the reason."
       },
       "absence": {
         "title": "Absence",
@@ -2058,7 +2073,16 @@
         "pendingHint": "Tap a person to review and approve them.",
         "critical": "Often missing · {count}",
         "total": "{count, plural, one {1 person} other {{count} people}}",
-        "searchRead": "Name or section"
+        "searchRead": "Name or section",
+        "filterNoAccount": "Without account",
+        "filterCritical": "Often absent",
+        "filterGroups": "Groups",
+        "filterOtherInstance": "Also member of",
+        "filterOtherChip": "Also in {name}",
+        "filterField": "{name}: {value}",
+        "filterRemove": "Remove filter \"{name}\"",
+        "filterNoMatch": "Nobody matches the filters.",
+        "filterShow": "{count, plural, =0 {Nobody matches} one {Show 1 person} other {Show {count} people}}"
       },
       "person": {
         "edit": "Edit",

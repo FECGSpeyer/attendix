@@ -83,10 +83,13 @@ class RdWorkPage extends ConsumerWidget {
               : RdInfoCard(
                 text: async.hasError ? l10n.redesignTodayLoadFailed : l10n.redesignWorkNotFound,
                 icon: Icons.music_off_outlined,
-                action: RdOutlineButton(
-                  label: l10n.redesignCommonRetry,
-                  onPressed: () => ref.invalidate(songDetailDataProvider(params)),
-                ),
+                // Retry only helps after an error, not when it is gone.
+                action: async.hasError
+                    ? RdOutlineButton(
+                      label: l10n.redesignCommonRetry,
+                      onPressed: () => ref.invalidate(songDetailDataProvider(params)),
+                    )
+                    : null,
               ),
         ],
       );

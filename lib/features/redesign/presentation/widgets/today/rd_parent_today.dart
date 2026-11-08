@@ -245,18 +245,31 @@ class RdChildAnswerRow extends ConsumerWidget {
         yes
             ? RdPill(l10n.redesignTodayChildIn, tone: RdTone.present, icon: Icons.check)
             : rdOwnStatusPill(l10n, status);
-    final answer =
-        links.length < 2
-            ? Wrap(
-              spacing: 4,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              alignment: WrapAlignment.end,
-              children: [pill, ...links],
-            )
-            : Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [pill, Wrap(spacing: 4, alignment: WrapAlignment.end, children: links)],
-            );
+    // Two links: name and status on one row, the links below under the
+    // name (like the open buttons), so nothing wraps into a narrow column.
+    if (links.length > 1) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(child: name),
+                const SizedBox(width: 8),
+                // Large text: the status shrinks instead of pushing the name out.
+                Flexible(child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerRight, child: pill)),
+              ],
+            ),
+            Padding(
+              // 42 under the name, minus the link's own padding of 8.
+              padding: const EdgeInsets.only(left: 34),
+              child: Wrap(spacing: 4, children: links),
+            ),
+          ],
+        ),
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -264,7 +277,18 @@ class RdChildAnswerRow extends ConsumerWidget {
         children: [
           Expanded(child: name),
           const SizedBox(width: 8),
-          Flexible(flex: 2, child: Align(alignment: Alignment.centerRight, child: answer)),
+          Flexible(
+            flex: 2,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Wrap(
+                spacing: 4,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                alignment: WrapAlignment.end,
+                children: [pill, ...links],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -318,6 +342,7 @@ Future<void> rdParentSignOut(
     lateReasons: EventListUtils.lateReasonsOf(tenant?.lateReasons),
     allowLate: lateAllowed,
     ownReasonFirst: group.isRunning,
+    forChild: true,
   );
   if (choice == null || !context.mounted) return;
   await ref.read(parentSignInOutNotifierProvider.notifier).signOut(ids, choice.reason, isLateComing: choice.isLate);

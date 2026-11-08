@@ -11530,7 +11530,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventsNew => 'Neuer Termin';
 
   @override
-  String get redesignEventsNo => 'Abmelden';
+  String get redesignEventsNo => 'Kann nicht';
 
   @override
   String get redesignEventsNoMatch => 'Keine Termine passen zur Suche.';
@@ -11583,7 +11583,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignEventsYes => 'Dabei';
+  String get redesignEventsYes => 'Bin dabei';
 
   @override
   String get redesignEventsYou => 'Du';
@@ -13398,6 +13398,48 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignMembersEmptyPending => 'Niemand wartet auf Freigabe.';
 
   @override
+  String get redesignMembersFilterCritical => 'Fehlen oft';
+
+  @override
+  String redesignMembersFilterField(Object name, Object value) {
+    return '$name: $value';
+  }
+
+  @override
+  String get redesignMembersFilterGroups => 'Gruppen';
+
+  @override
+  String get redesignMembersFilterNoAccount => 'Ohne Konto';
+
+  @override
+  String get redesignMembersFilterNoMatch => 'Niemand passt zu den Filtern.';
+
+  @override
+  String redesignMembersFilterOtherChip(Object name) {
+    return 'Auch in $name';
+  }
+
+  @override
+  String get redesignMembersFilterOtherInstance => 'Auch Mitglied in';
+
+  @override
+  String redesignMembersFilterRemove(Object name) {
+    return 'Filter „$name“ entfernen';
+  }
+
+  @override
+  String redesignMembersFilterShow(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen anzeigen',
+      one: '1 Person anzeigen',
+      zero: 'Niemand passt',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignMembersLeader => 'Stimmführung';
 
   @override
@@ -14337,6 +14379,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignSignoutCannot => 'Ich kann nicht';
+
+  @override
+  String get redesignSignoutChildCannot => 'Absagen';
+
+  @override
+  String get redesignSignoutChildLater => 'Später kommen';
+
+  @override
+  String get redesignSignoutChildPrivacy => 'Den Grund sieht nur die Leitung.';
 
   @override
   String get redesignSignoutLater => 'Ich komme später';

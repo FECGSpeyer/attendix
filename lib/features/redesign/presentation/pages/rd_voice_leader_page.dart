@@ -67,7 +67,7 @@ class RdVoiceLeaderPage extends ConsumerWidget {
             : RdInfoCard(text: l10n.redesignTodayLoading, loading: true),
       );
     } else if (noProfile) {
-      children.add(RdInfoCard(text: l10n.voiceLeaderNoProfile, icon: Icons.person_off_outlined));
+      children.add(RdInfoCard(text: l10n.redesignTodayNoMember, icon: Icons.person_off_outlined));
     } else if (members.isEmpty) {
       children.add(RdInfoCard(text: l10n.voiceLeaderNoMembers, icon: Icons.people_outline));
     } else {
