@@ -654,6 +654,14 @@ void main() {
     expect(rdImportLearnedTerms(plan, d, rdImportUploads(plan, d), instruments: _instruments), isEmpty);
     // "Ohne Zuordnung" decides: nothing is read.
     expect(rdImportPagesToRead(plan, RdImportDecisions(answers: {key: RdImportCategory.other})), isEmpty);
+
+    // Also where the name proposes a new group ("Oboe"); a PDF is always among the examples.
+    final oboe = rdBuildImportPlan(
+        [_e('Noten/Eins/Oboe.png'), _e('Noten/Zwei/Oboe.png'), _e('Noten/Drei/Oboe.png'), _e('Noten/Vier/Oboe.pdf')],
+        songs: const [], instruments: _instruments, isChoir: false);
+    final q = oboe.questions.single;
+    expect(q.examples.first.file.name, 'Oboe.pdf');
+    expect(rdImportPagesToRead(oboe, RdImportDecisions(answers: {q.key: const RdImportCategory.fromPage()})), hasLength(4));
   });
 
   group('dates', () {

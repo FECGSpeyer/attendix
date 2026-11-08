@@ -759,8 +759,8 @@ class RdImportQuestion {
   /// Names of some files it appears in ("Sax 1.pdf").
   final List<String> files;
 
-  /// Some of its files with their Werk, to look at the first page (PDFs
-  /// and images first).
+  /// Some of its files with their Werk, to look at the first page (PDFs,
+  /// then images first: a PDF among the files is always one of them).
   final List<({RdImportFile file, String work})> examples;
 
   /// Group the name might mean (unsure match).
@@ -1321,8 +1321,13 @@ RdImportPlan rdBuildImportPlan(
       fileCount: list.length,
       works: {for (final q in list) q.work}.take(2).toList(),
       files: {for (final q in list) q.file.name}.take(3).toList(),
+      // PDFs first (the KI reads them everywhere), then photos, then the rest.
       examples: [
-        for (final q in [...list.where((q) => rdImportPreviewable(q.file)), ...list.where((q) => !rdImportPreviewable(q.file))].take(3))
+        for (final q in [
+          ...list.where((q) => q.file.entry.extension == 'pdf'),
+          ...list.where((q) => q.file.entry.extension != 'pdf' && rdImportPreviewable(q.file)),
+          ...list.where((q) => !rdImportPreviewable(q.file)),
+        ].take(3))
           (file: q.file, work: q.work),
       ],
       suggestion: suggestion,
@@ -1582,6 +1587,12 @@ bool _answeredByHand(RdImportDecisions d, RdImportFile f) {
   return answer != null && !answer.fromPage;
 }
 
+/// The question of [f] is answered "Von Seite 1 lesen".
+bool _answeredFromPage(RdImportDecisions d, RdImportFile f) {
+  final key = f.questionKey;
+  return key != null && (d.answers[key]?.fromPage ?? false);
+}
+
 RdImportCategory _categoryOf(RdImportPlan plan, RdImportDecisions d, RdImportFile f, RdImportWork work) =>
     _decided(f, d.categories, d.answers, plan.instruments, work.title, plan.pageReads, plan.isChoir);
 
@@ -1679,8 +1690,13 @@ RdFileState rdFileState(RdImportPlan plan, RdImportDecisions d, RdImportWork wor
   final manual = d.take[f.path];
   final take = manual ?? reason == null;
   final pageRead = byHand ? null : plan.pageReads[f.path];
-  final unclear =
-      take && !byHand && f.guess.confidence != MatchConfidence.sure && f.newGroup == null && f.several.isEmpty && !(pageRead?.sure ?? false);
+  // "Von Seite 1 lesen": open until page 1 is read for sure, whatever the
+  // name proposes ("Oboe" as a new group).
+  final unclear = take &&
+      !byHand &&
+      !(pageRead?.sure ?? false) &&
+      (_answeredFromPage(d, f) ||
+          (f.guess.confidence != MatchConfidence.sure && f.newGroup == null && f.several.isEmpty));
   return RdFileState(
     take: take,
     category: category,

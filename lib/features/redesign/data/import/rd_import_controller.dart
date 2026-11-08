@@ -1087,7 +1087,8 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   }
 
   /// Whether the KI can read the first page of files of [q] ("Von Seite 1
-  /// lesen"): a PDF among them (photos outside the browser).
+  /// lesen"): a PDF among them (photos outside the browser). A PDF is
+  /// always among the examples when the question has one.
   bool canReadPages(RdImportQuestion q) => q.examples.any((e) => PartVisionService.supports(e.file.name));
 
   /// Where the file at [path] opens outside the app (Drive); null for ZIPs.
