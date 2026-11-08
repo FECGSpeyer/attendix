@@ -158,8 +158,12 @@ class RdPersonPage extends ConsumerWidget {
           _AttendanceCard(personId: personId),
           const SizedBox(height: 12),
         ],
-        if (left)
+        // The full data to read only for the leads (they would see it in
+        // Bearbeiten); others keep the usual info rows.
+        if (left && (role.isAdmin || role.isResponsible))
           _LeftDetails(person: person)
+        else if (left)
+          _InfoList(person: person)
         else ...[
           _InfoList(person: person),
           if (role.canEdit && !person.pending) ...[
