@@ -32,6 +32,7 @@ import '../../../members/data/providers/members_providers.dart' show membersEint
 import '../../../people/people_list_utils.dart' show withExtraFieldDefaults;
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
 import '../widgets/members/rd_invite_sheet.dart';
+import '../widgets/members/rd_member_bulk.dart';
 import '../widgets/members/rd_members_filter_sheet.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
@@ -54,7 +55,7 @@ class RdMembersPage extends ConsumerStatefulWidget {
   ConsumerState<RdMembersPage> createState() => _RdMembersPageState();
 }
 
-class _RdMembersPageState extends ConsumerState<RdMembersPage> {
+class _RdMembersPageState extends ConsumerState<RdMembersPage> with RdMemberBulkActions {
   String _query = '';
 
   /// Read-only list: selected "Einteilung" ('' = all).
@@ -75,6 +76,24 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
     // DB_REVIEW_REST (F3) like the old list: admins/responsibles lift
     // expired pauses (paused_until reached) when opening the list.
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkAndUnpause());
+    // A group switch or leaving "Auswählen" empties the selection.
+    ref.listenManual(currentTenantIdProvider, (previous, next) {
+      if (previous != next && mounted) setState(bulkSelected.clear);
+    });
+    ref.listenManual(rdMembersSelectingProvider, (previous, next) {
+      if (!next && mounted) setState(bulkSelected.clear);
+    });
+  }
+
+  void _setSelecting(bool value) => ref.read(rdMembersSelectingProvider.notifier).state = value;
+
+  void _toggle(int id) =>
+      setState(() => bulkSelected.contains(id) ? bulkSelected.remove(id) : bulkSelected.add(id));
+
+  /// Selects every person of [people], or none when all are selected.
+  void _toggleAll(List<Person> people) {
+    final ids = people.map((p) => p.id).whereType<int>().toSet();
+    setState(() => bulkSelected.containsAll(ids) ? bulkSelected.removeAll(ids) : bulkSelected.addAll(ids));
   }
 
   Future<void> _checkAndUnpause() async {
@@ -155,13 +174,17 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
 
     final active = people.where((x) => !x.paused).toList();
     final paused = people.where((x) => x.paused).toList();
+    // "Auswählen" (leads only): several members at once; Wartet has no
+    // members yet, so it is left out meanwhile.
+    final selecting = canApprove && ref.watch(rdMembersSelectingProvider);
+    final withPending = rawPending.isNotEmpty && !selecting;
     final tab = ref.watch(rdMembersTabProvider);
-    final filter = tab == RdMembersFilter.pending && rawPending.isEmpty ? RdMembersFilter.active : tab;
+    final filter = tab == RdMembersFilter.pending && !withPending ? RdMembersFilter.active : tab;
     void setTab(RdMembersFilter f) => ref.read(rdMembersTabProvider.notifier).state = f;
     final filters = [
       RdMembersFilter.active,
       RdMembersFilter.paused,
-      if (rawPending.isNotEmpty) RdMembersFilter.pending,
+      if (withPending) RdMembersFilter.pending,
     ];
     // UX D3: "Fehlen oft · N" narrows Aktiv to the critical members.
     final critical = rdCriticalMembers(active);
@@ -262,16 +285,22 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
               child: Text(l10n.redesignTabMembers, style: RdType.largeTitle(p)),
             ),
           ),
+          if (selecting)
+            RdTextLink(
+              key: const Key('rd-members-select-done'),
+              label: l10n.redesignCommonDone,
+              onTap: () => _setSelecting(false),
+            ),
           // What leads do with the members, from the Verwaltung (canvas
           // "Mitglieder-Tab: •••"): Auswertung, several at once, Register …
-          if (canApprove)
+          if (canApprove && !selecting)
             RdCircleButton(
               key: const Key('rd-members-more'),
               icon: Icons.more_horiz,
               label: l10n.redesignWorksMore,
               onPressed: _more,
             ),
-          if (inSplit && (role.canEdit || canApprove)) ...[
+          if (inSplit && (role.canEdit || canApprove) && !selecting) ...[
             const SizedBox(width: 8),
             Builder(
               builder: (button) => RdCircleButton(
@@ -285,6 +314,10 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
           ],
         ],
       ),
+      if (selecting) ...[
+        const SizedBox(height: 4),
+        Text(l10n.redesignBulkHint, style: RdType.meta(p)),
+      ],
       const SizedBox(height: 12),
       _searchField(context),
       const SizedBox(height: 12),
@@ -341,7 +374,11 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
       const SizedBox(height: 10),
       // Members with an e-mail but no account (from the Verwaltung: "Zugänge
       // anlegen"), only on the plain list.
-      if (missing.isNotEmpty && filter == RdMembersFilter.active && !filtering && _query.trim().isEmpty) ...[
+      if (missing.isNotEmpty &&
+          filter == RdMembersFilter.active &&
+          !filtering &&
+          _query.trim().isEmpty &&
+          !selecting) ...[
         RdInfoCard(
           icon: Icons.person_add_alt_outlined,
           text: l10n.rdAdminMissingBanner(missing.length),
@@ -357,7 +394,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
     final body = <Widget>[
       // The red count on the tab: say what it means where the list opens
       // (Aktiv), same row as on "Heute"; it opens "Wartet".
-      if (filter != RdMembersFilter.pending && rawPending.isNotEmpty) ...[
+      if (filter != RdMembersFilter.pending && withPending) ...[
         RdGroupedList(children: [
           RdListRow(
             key: const Key('rd-members-pending-row'),
@@ -425,7 +462,12 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
       // Why each one is a Problemfall, while only those are shown.
       final critical = criticalOnly ? rdCriticalContextOf(ref) : null;
       for (final s in filtered) {
-        if (s.title.isNotEmpty) body.add(_SectionHeader(section: s));
+        if (s.title.isNotEmpty || selecting) {
+          body.add(_SectionHeader(
+            section: s,
+            onSelectAll: selecting ? () => _toggleAll(s.people) : null,
+          ));
+        }
         body.add(RdGroupedList(children: [
           for (final person in s.people)
             _MemberRow(
@@ -438,12 +480,15 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
                 final r? => rdCriticalHitText(r.rule, r.result, l10n),
                 null => null,
               },
-              selected: person.id != null && RdSplitScope.of(context)?.selectedId == person.id,
+              selected: !selecting && person.id != null && RdSplitScope.of(context)?.selectedId == person.id,
+              checked: selecting ? bulkSelected.contains(person.id) : null,
               onTap: person.id == null
                   ? null
-                  : () => filter == RdMembersFilter.pending
-                      ? context.push(RedesignRoutes.approvalReview(person.id!))
-                      : RdSplitScope.open(context, RedesignRoutes.person(person.id!)),
+                  : selecting
+                      ? () => _toggle(person.id!)
+                      : () => filter == RdMembersFilter.pending
+                          ? context.push(RedesignRoutes.approvalReview(person.id!))
+                          : RdSplitScope.open(context, RedesignRoutes.person(person.id!)),
             ),
         ]));
         body.add(const SizedBox(height: 18));
@@ -458,16 +503,26 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: body),
     ));
 
-    return RdPage(
+    // The selection (kept across Aktiv / Pausiert and the search). The
+    // stored rows, not the list's prepared ones: those carry organisation
+    // values and defaults that must not be written into the player row.
+    final selection = selecting
+        ? rawPeople.where((x) => x.id != null && bulkSelected.contains(x.id)).toList()
+        : const <Person>[];
+
+    final page = RdPage(
       onRefresh: () async {
         ref.invalidate(realtimePlayersProvider);
         ref.invalidate(playerAttendancePercentagesProvider);
         ref.invalidate(playerAbsencesProvider);
         if (canApprove) ref.invalidate(realtimePendingPlayersProvider);
       },
+      // Room for the action bar of "Auswählen".
+      padding: selecting ? const EdgeInsets.fromLTRB(20, 12, 20, 160) : const EdgeInsets.fromLTRB(20, 12, 20, 32),
       // One "+" per screen: anlegen and einladen (UX D1) both sit behind
       // it, on the phone as the button below, on desktop in the header.
-      floatingActionButton: (role.canEdit || canApprove) && !inSplit
+      // While selecting, the action bar is the only action at the bottom.
+      floatingActionButton: (role.canEdit || canApprove) && !inSplit && !selecting
           ? Builder(
               builder: (button) => FloatingActionButton(
                 key: const Key('rd-members-fab'),
@@ -481,6 +536,36 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
             )
           : null,
       children: children,
+    );
+    // Always the same Stack, so the list keeps its scroll position when the
+    // bar comes and goes.
+    return Stack(
+      children: [
+        page,
+        if (selection.isNotEmpty)
+          Positioned(
+            left: 12,
+            right: 12,
+            bottom: 12 + MediaQuery.of(context).padding.bottom,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 560),
+                child: RdBulkActionBar(
+                  key: const Key('rd-members-bulk-bar'),
+                  label: l10n.redesignBulkSelected(selection.length),
+                  busy: bulkBusy,
+                  actions: [
+                    (Icons.swap_horiz, l10n.redesignBulkActionGroup, () => bulkMoveToGroup(selection), false),
+                    if (selection.any((x) => !x.paused))
+                      (Icons.pause_circle_outline, l10n.redesignBulkActionPause, () => bulkPause(selection), false),
+                    (Icons.edit_note, l10n.redesignBulkActionField, () => bulkSetField(selection), false),
+                    (Icons.archive_outlined, l10n.redesignBulkActionArchive, () => bulkArchive(selection), true),
+                  ],
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -561,7 +646,12 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
           AppActionSheetAction(value: e, icon: rdManageIcon(e), label: rdManageTitle(l10n, e)),
       ],
     );
-    if (entry != null && mounted) rdOpenManageEntry(context, ref, entry);
+    if (entry == null || !mounted) return;
+    if (entry == RdManageEntry.bulkMembers) {
+      _setSelecting(true);
+    } else {
+      rdOpenManageEntry(context, ref, entry);
+    }
   }
 
   Future<void> _add(BuildContext anchor, {required bool canCreate, required bool canInvite}) async {
@@ -736,9 +826,12 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
 }
 
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.section});
+  const _SectionHeader({required this.section, this.onSelectAll});
 
   final RdMemberSection section;
+
+  /// "Auswählen": selects the whole section (or none when all are).
+  final VoidCallback? onSelectAll;
 
   @override
   Widget build(BuildContext context) {
@@ -752,12 +845,21 @@ class _SectionHeader extends StatelessWidget {
             child: Semantics(
               header: true,
               child: Text(
-                l10n.redesignMembersSection(section.title, section.people.length).toUpperCase(),
+                section.title.isEmpty
+                    ? ''
+                    : l10n.redesignMembersSection(section.title, section.people.length).toUpperCase(),
                 style: RdType.eyebrow(p.text2),
               ),
             ),
           ),
-          if (section.average != null)
+          if (onSelectAll != null)
+            RdTextLink(
+              label: section.title.isEmpty
+                  ? l10n.redesignBulkSelectAll
+                  : l10n.redesignBulkSelectGroup(section.title),
+              onTap: onSelectAll!,
+            )
+          else if (section.average != null)
             Text(l10n.redesignMembersAverage(section.average!), style: RdType.meta(p, size: 13)),
         ],
       ),
@@ -778,6 +880,7 @@ class _MemberRow extends StatelessWidget {
     required this.absence,
     required this.onTap,
     this.selected = false,
+    this.checked,
     this.readOnly = false,
     this.einteilung,
     this.sortHint,
@@ -804,6 +907,10 @@ class _MemberRow extends StatelessWidget {
 
   /// Open on the right of the split view.
   final bool selected;
+
+  /// "Auswählen": whether the person is in the selection (null: not
+  /// selecting). Shows a selection circle instead of the initials.
+  final bool? checked;
 
   @override
   Widget build(BuildContext context) {
@@ -848,11 +955,13 @@ class _MemberRow extends StatelessWidget {
     final low = pct != null && pct < 50;
     final color = pct == null ? p.text2 : rdPercentColor(p, pct);
 
+    final isChecked = checked;
     return Semantics(
-      button: onTap != null,
+      button: onTap != null && isChecked == null,
       selected: selected,
+      checked: isChecked,
       child: Material(
-        color: selected ? p.soft : Colors.transparent,
+        color: selected || isChecked == true ? p.soft : Colors.transparent,
         child: InkWell(
           onTap: onTap,
           child: ConstrainedBox(
@@ -861,7 +970,16 @@ class _MemberRow extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               child: Row(
                 children: [
-                  RdInitials(rdInitialsOf(name.isEmpty ? '?' : name)),
+                  if (isChecked != null)
+                    SizedBox(
+                      width: 36,
+                      child: Icon(
+                        isChecked ? Icons.check_circle : Icons.radio_button_unchecked,
+                        color: isChecked ? p.primary : p.text2,
+                      ),
+                    )
+                  else
+                    RdInitials(rdInitialsOf(name.isEmpty ? '?' : name)),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -923,7 +1041,7 @@ class _MemberRow extends StatelessWidget {
                       ),
                     ),
                   ],
-                  if (onTap != null) ...[
+                  if (onTap != null && isChecked == null) ...[
                     const SizedBox(width: 4),
                     Icon(Icons.chevron_right, size: 20, color: p.text2),
                   ],

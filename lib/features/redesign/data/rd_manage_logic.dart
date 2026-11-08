@@ -34,7 +34,6 @@ enum RdManageEntry {
   registration(RdManageArea.members),
   critical(RdManageArea.members),
   teachers(RdManageArea.members),
-  bulkMembers(RdManageArea.members),
   missingAccounts(RdManageArea.members),
   archive(RdManageArea.members),
   // Zugänge und Rechte
@@ -56,6 +55,7 @@ enum RdManageEntry {
   organisation(RdManageArea.group),
   // Moved to where they are used.
   approvals(null, RdManageHome.members),
+  bulkMembers(null, RdManageHome.members),
   workHistory(null, RdManageHome.works),
   workCategories(null, RdManageHome.works),
   fileStorage(null, RdManageHome.works),
