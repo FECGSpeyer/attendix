@@ -1,10 +1,24 @@
 {
   "versions": [
     {
-      "version": "0.85.2",
+      "version": "0.86.2",
       "date": "8.11.2026",
       "changes": [
         "💄 Beta: „Anfrage prüfen“ zeigt die Angaben des Bewerbers nur noch zum Lesen (leere Felder ausgeblendet), nur die Gruppe ist vor dem Aufnehmen änderbar; „Aufnehmen“ ist die eine Hauptaktion, „Ablehnen“ darunter"
+      ]
+    },
+    {
+      "version": "0.86.1",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta: „Export“ in der Auswertung öffnet die Beta-Export-Seite statt des alten Export-Fensters"
+      ]
+    },
+    {
+      "version": "0.86.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta: Der Einladungs-QR-Code zeigt das Attendix-Logo in der Mitte, auch im Vollbild (hohe Fehlerkorrektur, scannt weiterhin zuverlässig)"
       ]
     },
     {
