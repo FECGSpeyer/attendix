@@ -11,7 +11,7 @@
         "🐛 Beta Abwesenheit für einen Zeitraum: betrifft alle eigenen Termine, die unter „Heute“ stehen, auch eigene Dienste (wie die Vorschau im Blatt zeigt), unabhängig von der klassischen Dienstansicht",
         "🐛 Beta Rollen und Rechte: Schlägt das Speichern eines Schalters fehl, wird er nicht mehr mit dem nächsten Schalter doch noch gespeichert; bereits gespeicherte Schalter bleiben gespeichert, auch wenn man die Seite gleich verlässt",
         "🐛 Abwesenheit löschen unter „Meine Termine“: setzt auch eigene Dienste zurück, die mit dieser Abwesenheit entschuldigt wurden (z. B. im Beta oder von der Leitung eingetragen)",
-        "🐛 Beta Person bearbeiten: „Stimmführer“ liest die gespeicherte Rolle, bevor er die Stimmführer-Rolle vergibt; Verantwortliche und Admins behalten ihre Rolle auch, wenn sie noch nicht geladen war"
+        "🐛 Beta Person bearbeiten: „Stimmführer“ liest erst die gespeicherte Rolle und speichert dann; Verantwortliche und Admins behalten ihre Rolle auch, wenn sie noch nicht geladen war. Lässt sich die Rolle nicht lesen, wird nichts gespeichert und der Schalter springt zurück"
       ]
     },
     {

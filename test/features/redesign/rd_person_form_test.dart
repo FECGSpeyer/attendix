@@ -152,6 +152,22 @@ void main() {
     await tester.pump(const Duration(seconds: 3));
   });
 
+  testWidgets('Person bearbeiten: Stimmführer is not saved when the stored role cannot be read', (tester) async {
+    // No role repository in the test: reading the role fails.
+    final repo = await _pump(tester, const RdPersonEditPage(personId: 1), person: _person.copyWith(appId: 'u1'));
+    await tester.tap(find.byKey(const Key('rd-person-more')));
+    await tester.pump();
+    final leader = find.byKey(const Key('rd-person-leader'));
+    await tester.ensureVisible(leader);
+    await tester.tap(leader);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    verifyNever(() => repo.updatePlayerFields(any(), any()));
+    expect(tester.widget<Switch>(find.descendant(of: leader, matching: find.byType(Switch))).value, isFalse);
+    await tester.pump(const Duration(seconds: 3));
+  });
+
   testWidgets('Person bearbeiten: a changed note adds to the stored history, not the one loaded with the page',
       (tester) async {
     PlayerHistoryEntry entry(String text) => PlayerHistoryEntry(date: '2026-01-01T00:00:00.000Z', text: text, type: 1);

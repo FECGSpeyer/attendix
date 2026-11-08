@@ -685,24 +685,27 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     _apply({'isLeader': value});
     final after = _person!;
     _enqueue(() async {
-      if (!await _store({'isLeader': value})) return;
       final appId = before.appId;
-      // The stored role, read right before the change (not the shown one,
-      // which may still load or be a fallback): unknown means no new role.
-      final assign = value && appId != null && !_general && rdLeaderRoleFor(await _storedRole(appId)) != null;
+      var assign = false;
+      if (value && appId != null && !_general) {
+        // The stored role, read before anything is written (not the shown
+        // one, which may still load or be a fallback). Unreadable: nothing
+        // is saved and the switch goes back.
+        final Role? role;
+        try {
+          final repo = _registrations;
+          if (repo == null || !repo.hasTenantId) throw StateError('no group');
+          role = await repo.getTenantUserRole(appId);
+        } catch (e) {
+          if (_person?.isLeader == value) _apply({'isLeader': before.isLeader});
+          if (mounted) ToastHelper.showError(context, context.l10n.personFlutterRoleUpdateFailed(friendlyErrorMessage(e)));
+          return;
+        }
+        assign = rdLeaderRoleFor(role) != null;
+      }
+      if (!await _store({'isLeader': value})) return;
       await _syncRoles(before: before, after: after, assignVoiceLeaderRole: assign);
     });
-  }
-
-  /// The account's role in this group, or null when it cannot be read.
-  Future<Role?> _storedRole(String appId) async {
-    final repo = _registrations;
-    if (repo == null || !repo.hasTenantId) return null;
-    try {
-      return await repo.getTenantUserRole(appId);
-    } catch (_) {
-      return null;
-    }
   }
 
   /// The typed e-mail differs from the stored one (only without an account).
