@@ -10472,6 +10472,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdSettingsUndo => 'Undo';
 
   @override
+  String get rdTeacherNewCreate => 'Create';
+
+  @override
+  String rdTeacherNewDone(Object name) {
+    return '$name created';
+  }
+
+  @override
+  String get rdTeacherNewHint =>
+      'Add contact, notes and private teacher afterwards on the teacher.';
+
+  @override
+  String get rdTeacherNewInstruments => 'Teaches';
+
+  @override
+  String get rdTeacherNewName => 'Name';
+
+  @override
+  String get rdTeacherNewNameShort =>
+      'Please enter a name with at least 3 characters.';
+
+  @override
+  String get rdTeacherNewNoGroups =>
+      'There are no sections to choose from yet.';
+
+  @override
+  String get rdTeacherNewNoInstrument => 'Choose at least one instrument.';
+
+  @override
+  String get rdTeacherNewTitle => 'New teacher';
+
+  @override
   String get rdWmCategoriesIntro =>
       'Categories sort the works, e.g. by occasion or church year.';
 

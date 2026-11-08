@@ -1,13 +1,24 @@
 {
   "versions": [
     {
-      "version": "0.95.0",
+      "version": "0.96.0",
       "date": "8.11.2026",
       "changes": [
         "💄 Beta Rollen und Rechte: Stimmführer haben keine eigenen Abschnitte mehr, Helfer und Mitglied gelten auch für sie. Neuer Schalter „Stimmführer nur ihre Stimme“, Abwesenheit selbst eintragen jetzt auch für Stimmführer einstellbar",
-        "💄 Beta: Schalter ohne Wirkung entfernt (Notizen und Checkliste bei Stimmführer-Helfern, die sehen sie immer; „Dienste zuerst zeigen“, das nur in der klassischen Ansicht wirkt)",
+        "💄 Beta: Schalter ohne Wirkung entfernt (Notizen und Checkliste bei Stimmführer-Helfern, die sehen sie immer) und „Dienste zuerst zeigen“ (im Beta haben Dienste immer einen eigenen Bereich)",
         "💄 Beta Person bearbeiten: Rolle nur noch Mitglied, Verantwortlicher oder Helfer; Stimmführer ist der Schalter bei der Person und gibt die passende Rolle direkt mit",
-        "💄 Beta Verwaltung: Einstellungen verständlicher benannt und erklärt (z. B. „Alle Termine zeigen“, „Hinweis für nicht Eingeladene“, „Mitglieder-Tab für alle“, „Termine anlegen“, „Alle Register eintragen“, „Lehrer erfassen“, „Eltern-Zugang“)"
+        "💄 Beta Verwaltung: Einstellungen verständlicher benannt und erklärt (z. B. „Alle Termine zeigen“, „Hinweis für nicht Eingeladene“, „Mitglieder-Tab für alle“, „Termine anlegen“, „Alle Register eintragen“, „Lehrer erfassen“, „Eltern-Zugang“)",
+        "🐛 Beta Abwesenheit für einen Zeitraum: betrifft alle eigenen Termine, die unter „Heute“ stehen, auch eigene Dienste (wie die Vorschau im Blatt zeigt), unabhängig von der klassischen Dienstansicht",
+        "🐛 Beta Rollen und Rechte: Schlägt das Speichern eines Schalters fehl, wird er nicht mehr mit dem nächsten Schalter doch noch gespeichert",
+        "🐛 Beta Person bearbeiten: „Stimmführer“ liest die gespeicherte Rolle, bevor er die Stimmführer-Rolle vergibt; Verantwortliche und Admins behalten ihre Rolle auch, wenn sie noch nicht geladen war"
+      ]
+    },
+    {
+      "version": "0.95.0",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta Lehrer anlegen: ein Blatt „Neuer Lehrer“ (Name und Instrumente als Auswahl, „Anlegen“ oben rechts) – in Verwaltung › Lehrer und bei „Neuer Lehrer“ in „Person bearbeiten“; keine zweite Seite mehr, der neue Lehrer steht gleich in der Liste. Was fehlt, steht direkt im Blatt; schlägt das Speichern fehl, bleibt die Eingabe erhalten",
+        "💄 Beta Lehrer-Liste: „0 Spieler“ in ruhigem Grau statt rot"
       ]
     },
     {
