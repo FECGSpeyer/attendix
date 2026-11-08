@@ -10770,6 +10770,358 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdSettingsUndo => 'Rückgängig';
 
   @override
+  String get rdStatsAge => 'Alter';
+
+  @override
+  String get rdStatsAgeAvgGroup => 'Ø Alter je Register';
+
+  @override
+  String rdStatsAgeBucket(Object from, Object to) {
+    return '$from–$to Jahre';
+  }
+
+  @override
+  String get rdStatsAgeHint => 'Aktive Mitglieder mit Geburtsdatum';
+
+  @override
+  String get rdStatsAgeNone =>
+      'Bei den aktiven Mitgliedern ist kein Geburtsdatum eingetragen.';
+
+  @override
+  String rdStatsAgeYears(Object years) {
+    return '$years J.';
+  }
+
+  @override
+  String get rdStatsAllThere => 'Alle da';
+
+  @override
+  String rdStatsBar(Object day, Object title, Object percent) {
+    return '$day · $title: $percent %';
+  }
+
+  @override
+  String rdStatsBarsHint(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Die letzten $count Termine, antippen zeigt, wer fehlte',
+      one: '1 Termin, antippen zeigt, wer fehlte',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdStatsByType => 'Termine je Art';
+
+  @override
+  String get rdStatsByTypeHint => 'Antippen zeigt nur diese Art.';
+
+  @override
+  String get rdStatsColAbsent => 'Abw.';
+
+  @override
+  String get rdStatsColDate => 'Datum';
+
+  @override
+  String get rdStatsColEvent => 'Termin';
+
+  @override
+  String get rdStatsColEvents => 'Termine';
+
+  @override
+  String get rdStatsColExcused => 'Entsch.';
+
+  @override
+  String get rdStatsColLate => 'Versp.';
+
+  @override
+  String get rdStatsColName => 'Name';
+
+  @override
+  String get rdStatsColPresent => 'Anw.';
+
+  @override
+  String get rdStatsColQuote => 'Quote';
+
+  @override
+  String get rdStatsColRegister => 'Register';
+
+  @override
+  String rdStatsCountAbsent(Object count) {
+    return '$count abwesend';
+  }
+
+  @override
+  String rdStatsCountExcused(Object count) {
+    return '$count entschuldigt';
+  }
+
+  @override
+  String rdStatsCountLate(Object count) {
+    return '$count verspätet';
+  }
+
+  @override
+  String rdStatsCountOpen(Object count) {
+    return '$count neutral';
+  }
+
+  @override
+  String get rdStatsCountedTypes => 'Zählt zur Anwesenheitsquote';
+
+  @override
+  String get rdStatsCountedTypesHint =>
+      'Termine dieser Arten zählen bei den Mitgliedern, unter „Heute“ und in der Auswertung. Aus z. B. für Feiern oder freiwillige Termine.';
+
+  @override
+  String get rdStatsCountedTypesNone => 'Keine Terminart';
+
+  @override
+  String rdStatsDeltaDown(Object points) {
+    return '−$points ggü. davor';
+  }
+
+  @override
+  String rdStatsDeltaDownLong(Object points) {
+    return '$points Prozentpunkte weniger als im Zeitraum davor';
+  }
+
+  @override
+  String get rdStatsDeltaSame => 'wie davor';
+
+  @override
+  String get rdStatsDeltaSameLong => 'Gleich wie im Zeitraum davor';
+
+  @override
+  String rdStatsDeltaUp(Object points) {
+    return '+$points ggü. davor';
+  }
+
+  @override
+  String rdStatsDeltaUpLong(Object points) {
+    return '$points Prozentpunkte mehr als im Zeitraum davor';
+  }
+
+  @override
+  String get rdStatsEventAllThere => 'Alle waren da.';
+
+  @override
+  String get rdStatsEventEmpty => 'Für diesen Termin gibt es keine Einträge.';
+
+  @override
+  String rdStatsEventGroup(Object label, Object count) {
+    return '$label ($count)';
+  }
+
+  @override
+  String get rdStatsEventOpen => 'Termin öffnen';
+
+  @override
+  String rdStatsEvents(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Termine',
+      one: '1 Termin',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdStatsFields => 'Zusatzfelder';
+
+  @override
+  String get rdStatsFieldsPaused => 'Pausierte mitzählen';
+
+  @override
+  String get rdStatsFilterGroups => 'Register';
+
+  @override
+  String rdStatsFilterRemove(Object label) {
+    return 'Filter „$label“ entfernen';
+  }
+
+  @override
+  String rdStatsFilterShow(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Termine zeigen',
+      one: '1 Termin zeigen',
+      zero: 'Keine Termine',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdStatsFilterTypes => 'Terminarten';
+
+  @override
+  String get rdStatsFilterTypesHint =>
+      'Gilt nur für diese Ansicht. Vorausgewählt sind die Arten, die zur Anwesenheitsquote zählen.';
+
+  @override
+  String get rdStatsMembers => 'Mitglieder';
+
+  @override
+  String get rdStatsMembersActive => 'Aktiv';
+
+  @override
+  String get rdStatsMembersLeft => 'Ausgetreten';
+
+  @override
+  String get rdStatsMembersPaused => 'Pausiert';
+
+  @override
+  String get rdStatsMembersTotal => 'Gesamt';
+
+  @override
+  String get rdStatsNotable => 'Fällt auf';
+
+  @override
+  String get rdStatsNotableBest => 'Bester Termin';
+
+  @override
+  String rdStatsNotableDrop(Object name) {
+    return '$name lässt nach';
+  }
+
+  @override
+  String rdStatsNotableDropDetail(Object now, Object before) {
+    return '$now statt $before im Zeitraum davor';
+  }
+
+  @override
+  String rdStatsNotableWeakGroup(Object name) {
+    return 'Schwächstes Register: $name';
+  }
+
+  @override
+  String get rdStatsNotableWeakest => 'Schwächster Termin';
+
+  @override
+  String get rdStatsOrgGroups => 'Gruppen';
+
+  @override
+  String rdStatsOrgGroupsAll(Object count) {
+    return 'Alle ($count)';
+  }
+
+  @override
+  String get rdStatsOrgGroupsHint =>
+      'Zählt nur die Personen der gewählten Gruppen. Dieselbe Person in mehreren Gruppen zählt einmal.';
+
+  @override
+  String get rdStatsOrgPeople => 'Personen in allen Gruppen';
+
+  @override
+  String get rdStatsPersonAllThere => 'War bei allen Terminen da.';
+
+  @override
+  String rdStatsPersonDots(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Termine, ältester links',
+      one: '1 Termin, ältester links',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdStatsPersonLate(Object count) {
+    return 'Verspätet ($count)';
+  }
+
+  @override
+  String rdStatsPersonMissed(Object count) {
+    return 'Gefehlt ($count)';
+  }
+
+  @override
+  String get rdStatsPersonOpen => 'Person öffnen';
+
+  @override
+  String get rdStatsPersonSortAbsent => 'Oft abwesend';
+
+  @override
+  String get rdStatsPersonSortFewest => 'Wenigste zuerst';
+
+  @override
+  String get rdStatsPersonSortLate => 'Oft verspätet';
+
+  @override
+  String get rdStatsPersonSortMost => 'Meiste zuerst';
+
+  @override
+  String get rdStatsPersonSortName => 'Name';
+
+  @override
+  String rdStatsPersonSub(
+    Object group,
+    Object percent,
+    Object attended,
+    Object total,
+  ) {
+    return '$group · $percent ($attended von $total)';
+  }
+
+  @override
+  String get rdStatsRangeCustom => 'Eigener …';
+
+  @override
+  String get rdStatsRangeFrom => 'Von';
+
+  @override
+  String get rdStatsRangeShow => 'Zeigen';
+
+  @override
+  String get rdStatsRangeTitle => 'Eigener Zeitraum';
+
+  @override
+  String get rdStatsRangeTo => 'Bis';
+
+  @override
+  String get rdStatsRegisterHint =>
+      'Kurve: Quote je Monat. Antippen zeigt die Personen des Registers.';
+
+  @override
+  String get rdStatsSortBest => 'Beste zuerst';
+
+  @override
+  String rdStatsSortBy(Object column) {
+    return 'Sortieren nach $column';
+  }
+
+  @override
+  String get rdStatsSortNewest => 'Neueste zuerst';
+
+  @override
+  String get rdStatsSortOldest => 'Älteste zuerst';
+
+  @override
+  String get rdStatsSortWeakest => 'Schwächste zuerst';
+
+  @override
+  String get rdStatsSplit => 'Statusverteilung';
+
+  @override
+  String get rdStatsTabEvents => 'Termine';
+
+  @override
+  String get rdStatsTabOverview => 'Überblick';
+
+  @override
+  String get rdStatsTabPeople => 'Personen';
+
+  @override
+  String get rdStatsTabRegister => 'Register';
+
+  @override
+  String get rdStatsTabsLabel => 'Ansicht der Auswertung';
+
+  @override
   String get rdTeacherNewCreate => 'Anlegen';
 
   @override

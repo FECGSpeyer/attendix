@@ -13388,6 +13388,453 @@
   "@rdSettingsUndo": {
     "description": "rdSettings.undo"
   },
+  "rdStatsAge": "Alter",
+  "@rdStatsAge": {
+    "description": "rdStats.age"
+  },
+  "rdStatsAgeAvgGroup": "Ø Alter je Register",
+  "@rdStatsAgeAvgGroup": {
+    "description": "rdStats.ageAvgGroup"
+  },
+  "rdStatsAgeBucket": "{from}–{to} Jahre",
+  "@rdStatsAgeBucket": {
+    "description": "rdStats.ageBucket",
+    "placeholders": {
+      "from": {},
+      "to": {}
+    }
+  },
+  "rdStatsAgeHint": "Aktive Mitglieder mit Geburtsdatum",
+  "@rdStatsAgeHint": {
+    "description": "rdStats.ageHint"
+  },
+  "rdStatsAgeNone": "Bei den aktiven Mitgliedern ist kein Geburtsdatum eingetragen.",
+  "@rdStatsAgeNone": {
+    "description": "rdStats.ageNone"
+  },
+  "rdStatsAgeYears": "{years} J.",
+  "@rdStatsAgeYears": {
+    "description": "rdStats.ageYears",
+    "placeholders": {
+      "years": {}
+    }
+  },
+  "rdStatsAllThere": "Alle da",
+  "@rdStatsAllThere": {
+    "description": "rdStats.allThere"
+  },
+  "rdStatsBar": "{day} · {title}: {percent} %",
+  "@rdStatsBar": {
+    "description": "rdStats.bar",
+    "placeholders": {
+      "day": {},
+      "title": {},
+      "percent": {}
+    }
+  },
+  "rdStatsBarsHint": "{count, plural, one {1 Termin, antippen zeigt, wer fehlte} other {Die letzten {count} Termine, antippen zeigt, wer fehlte}}",
+  "@rdStatsBarsHint": {
+    "description": "rdStats.barsHint",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdStatsByType": "Termine je Art",
+  "@rdStatsByType": {
+    "description": "rdStats.byType"
+  },
+  "rdStatsByTypeHint": "Antippen zeigt nur diese Art.",
+  "@rdStatsByTypeHint": {
+    "description": "rdStats.byTypeHint"
+  },
+  "rdStatsColAbsent": "Abw.",
+  "@rdStatsColAbsent": {
+    "description": "rdStats.colAbsent"
+  },
+  "rdStatsColDate": "Datum",
+  "@rdStatsColDate": {
+    "description": "rdStats.colDate"
+  },
+  "rdStatsColEvent": "Termin",
+  "@rdStatsColEvent": {
+    "description": "rdStats.colEvent"
+  },
+  "rdStatsColEvents": "Termine",
+  "@rdStatsColEvents": {
+    "description": "rdStats.colEvents"
+  },
+  "rdStatsColExcused": "Entsch.",
+  "@rdStatsColExcused": {
+    "description": "rdStats.colExcused"
+  },
+  "rdStatsColLate": "Versp.",
+  "@rdStatsColLate": {
+    "description": "rdStats.colLate"
+  },
+  "rdStatsColName": "Name",
+  "@rdStatsColName": {
+    "description": "rdStats.colName"
+  },
+  "rdStatsColPresent": "Anw.",
+  "@rdStatsColPresent": {
+    "description": "rdStats.colPresent"
+  },
+  "rdStatsColQuote": "Quote",
+  "@rdStatsColQuote": {
+    "description": "rdStats.colQuote"
+  },
+  "rdStatsColRegister": "Register",
+  "@rdStatsColRegister": {
+    "description": "rdStats.colRegister"
+  },
+  "rdStatsCountAbsent": "{count} abwesend",
+  "@rdStatsCountAbsent": {
+    "description": "rdStats.countAbsent",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdStatsCountExcused": "{count} entschuldigt",
+  "@rdStatsCountExcused": {
+    "description": "rdStats.countExcused",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdStatsCountLate": "{count} verspätet",
+  "@rdStatsCountLate": {
+    "description": "rdStats.countLate",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdStatsCountOpen": "{count} neutral",
+  "@rdStatsCountOpen": {
+    "description": "rdStats.countOpen",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdStatsCountedTypes": "Zählt zur Anwesenheitsquote",
+  "@rdStatsCountedTypes": {
+    "description": "rdStats.countedTypes"
+  },
+  "rdStatsCountedTypesHint": "Termine dieser Arten zählen bei den Mitgliedern, unter „Heute“ und in der Auswertung. Aus z. B. für Feiern oder freiwillige Termine.",
+  "@rdStatsCountedTypesHint": {
+    "description": "rdStats.countedTypesHint"
+  },
+  "rdStatsCountedTypesNone": "Keine Terminart",
+  "@rdStatsCountedTypesNone": {
+    "description": "rdStats.countedTypesNone"
+  },
+  "rdStatsDeltaDown": "−{points} ggü. davor",
+  "@rdStatsDeltaDown": {
+    "description": "rdStats.deltaDown",
+    "placeholders": {
+      "points": {}
+    }
+  },
+  "rdStatsDeltaDownLong": "{points} Prozentpunkte weniger als im Zeitraum davor",
+  "@rdStatsDeltaDownLong": {
+    "description": "rdStats.deltaDownLong",
+    "placeholders": {
+      "points": {}
+    }
+  },
+  "rdStatsDeltaSame": "wie davor",
+  "@rdStatsDeltaSame": {
+    "description": "rdStats.deltaSame"
+  },
+  "rdStatsDeltaSameLong": "Gleich wie im Zeitraum davor",
+  "@rdStatsDeltaSameLong": {
+    "description": "rdStats.deltaSameLong"
+  },
+  "rdStatsDeltaUp": "+{points} ggü. davor",
+  "@rdStatsDeltaUp": {
+    "description": "rdStats.deltaUp",
+    "placeholders": {
+      "points": {}
+    }
+  },
+  "rdStatsDeltaUpLong": "{points} Prozentpunkte mehr als im Zeitraum davor",
+  "@rdStatsDeltaUpLong": {
+    "description": "rdStats.deltaUpLong",
+    "placeholders": {
+      "points": {}
+    }
+  },
+  "rdStatsEventAllThere": "Alle waren da.",
+  "@rdStatsEventAllThere": {
+    "description": "rdStats.eventAllThere"
+  },
+  "rdStatsEventEmpty": "Für diesen Termin gibt es keine Einträge.",
+  "@rdStatsEventEmpty": {
+    "description": "rdStats.eventEmpty"
+  },
+  "rdStatsEventGroup": "{label} ({count})",
+  "@rdStatsEventGroup": {
+    "description": "rdStats.eventGroup",
+    "placeholders": {
+      "label": {},
+      "count": {}
+    }
+  },
+  "rdStatsEventOpen": "Termin öffnen",
+  "@rdStatsEventOpen": {
+    "description": "rdStats.eventOpen"
+  },
+  "rdStatsEvents": "{count, plural, one {1 Termin} other {{count} Termine}}",
+  "@rdStatsEvents": {
+    "description": "rdStats.events",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdStatsFields": "Zusatzfelder",
+  "@rdStatsFields": {
+    "description": "rdStats.fields"
+  },
+  "rdStatsFieldsPaused": "Pausierte mitzählen",
+  "@rdStatsFieldsPaused": {
+    "description": "rdStats.fieldsPaused"
+  },
+  "rdStatsFilterGroups": "Register",
+  "@rdStatsFilterGroups": {
+    "description": "rdStats.filterGroups"
+  },
+  "rdStatsFilterRemove": "Filter „{label}“ entfernen",
+  "@rdStatsFilterRemove": {
+    "description": "rdStats.filterRemove",
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "rdStatsFilterShow": "{count, plural, =0 {Keine Termine} one {1 Termin zeigen} other {{count} Termine zeigen}}",
+  "@rdStatsFilterShow": {
+    "description": "rdStats.filterShow",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdStatsFilterTypes": "Terminarten",
+  "@rdStatsFilterTypes": {
+    "description": "rdStats.filterTypes"
+  },
+  "rdStatsFilterTypesHint": "Gilt nur für diese Ansicht. Vorausgewählt sind die Arten, die zur Anwesenheitsquote zählen.",
+  "@rdStatsFilterTypesHint": {
+    "description": "rdStats.filterTypesHint"
+  },
+  "rdStatsMembers": "Mitglieder",
+  "@rdStatsMembers": {
+    "description": "rdStats.members"
+  },
+  "rdStatsMembersActive": "Aktiv",
+  "@rdStatsMembersActive": {
+    "description": "rdStats.membersActive"
+  },
+  "rdStatsMembersLeft": "Ausgetreten",
+  "@rdStatsMembersLeft": {
+    "description": "rdStats.membersLeft"
+  },
+  "rdStatsMembersPaused": "Pausiert",
+  "@rdStatsMembersPaused": {
+    "description": "rdStats.membersPaused"
+  },
+  "rdStatsMembersTotal": "Gesamt",
+  "@rdStatsMembersTotal": {
+    "description": "rdStats.membersTotal"
+  },
+  "rdStatsNotable": "Fällt auf",
+  "@rdStatsNotable": {
+    "description": "rdStats.notable"
+  },
+  "rdStatsNotableBest": "Bester Termin",
+  "@rdStatsNotableBest": {
+    "description": "rdStats.notableBest"
+  },
+  "rdStatsNotableDrop": "{name} lässt nach",
+  "@rdStatsNotableDrop": {
+    "description": "rdStats.notableDrop",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdStatsNotableDropDetail": "{now} statt {before} im Zeitraum davor",
+  "@rdStatsNotableDropDetail": {
+    "description": "rdStats.notableDropDetail",
+    "placeholders": {
+      "now": {},
+      "before": {}
+    }
+  },
+  "rdStatsNotableWeakGroup": "Schwächstes Register: {name}",
+  "@rdStatsNotableWeakGroup": {
+    "description": "rdStats.notableWeakGroup",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdStatsNotableWeakest": "Schwächster Termin",
+  "@rdStatsNotableWeakest": {
+    "description": "rdStats.notableWeakest"
+  },
+  "rdStatsOrgGroups": "Gruppen",
+  "@rdStatsOrgGroups": {
+    "description": "rdStats.orgGroups"
+  },
+  "rdStatsOrgGroupsAll": "Alle ({count})",
+  "@rdStatsOrgGroupsAll": {
+    "description": "rdStats.orgGroupsAll",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdStatsOrgGroupsHint": "Zählt nur die Personen der gewählten Gruppen. Dieselbe Person in mehreren Gruppen zählt einmal.",
+  "@rdStatsOrgGroupsHint": {
+    "description": "rdStats.orgGroupsHint"
+  },
+  "rdStatsOrgPeople": "Personen in allen Gruppen",
+  "@rdStatsOrgPeople": {
+    "description": "rdStats.orgPeople"
+  },
+  "rdStatsPersonAllThere": "War bei allen Terminen da.",
+  "@rdStatsPersonAllThere": {
+    "description": "rdStats.personAllThere"
+  },
+  "rdStatsPersonDots": "{count, plural, one {1 Termin, ältester links} other {{count} Termine, ältester links}}",
+  "@rdStatsPersonDots": {
+    "description": "rdStats.personDots",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdStatsPersonLate": "Verspätet ({count})",
+  "@rdStatsPersonLate": {
+    "description": "rdStats.personLate",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdStatsPersonMissed": "Gefehlt ({count})",
+  "@rdStatsPersonMissed": {
+    "description": "rdStats.personMissed",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdStatsPersonOpen": "Person öffnen",
+  "@rdStatsPersonOpen": {
+    "description": "rdStats.personOpen"
+  },
+  "rdStatsPersonSortAbsent": "Oft abwesend",
+  "@rdStatsPersonSortAbsent": {
+    "description": "rdStats.personSortAbsent"
+  },
+  "rdStatsPersonSortFewest": "Wenigste zuerst",
+  "@rdStatsPersonSortFewest": {
+    "description": "rdStats.personSortFewest"
+  },
+  "rdStatsPersonSortLate": "Oft verspätet",
+  "@rdStatsPersonSortLate": {
+    "description": "rdStats.personSortLate"
+  },
+  "rdStatsPersonSortMost": "Meiste zuerst",
+  "@rdStatsPersonSortMost": {
+    "description": "rdStats.personSortMost"
+  },
+  "rdStatsPersonSortName": "Name",
+  "@rdStatsPersonSortName": {
+    "description": "rdStats.personSortName"
+  },
+  "rdStatsPersonSub": "{group} · {percent} ({attended} von {total})",
+  "@rdStatsPersonSub": {
+    "description": "rdStats.personSub",
+    "placeholders": {
+      "group": {},
+      "percent": {},
+      "attended": {},
+      "total": {}
+    }
+  },
+  "rdStatsRangeCustom": "Eigener …",
+  "@rdStatsRangeCustom": {
+    "description": "rdStats.rangeCustom"
+  },
+  "rdStatsRangeFrom": "Von",
+  "@rdStatsRangeFrom": {
+    "description": "rdStats.rangeFrom"
+  },
+  "rdStatsRangeShow": "Zeigen",
+  "@rdStatsRangeShow": {
+    "description": "rdStats.rangeShow"
+  },
+  "rdStatsRangeTitle": "Eigener Zeitraum",
+  "@rdStatsRangeTitle": {
+    "description": "rdStats.rangeTitle"
+  },
+  "rdStatsRangeTo": "Bis",
+  "@rdStatsRangeTo": {
+    "description": "rdStats.rangeTo"
+  },
+  "rdStatsRegisterHint": "Kurve: Quote je Monat. Antippen zeigt die Personen des Registers.",
+  "@rdStatsRegisterHint": {
+    "description": "rdStats.registerHint"
+  },
+  "rdStatsSortBest": "Beste zuerst",
+  "@rdStatsSortBest": {
+    "description": "rdStats.sortBest"
+  },
+  "rdStatsSortBy": "Sortieren nach {column}",
+  "@rdStatsSortBy": {
+    "description": "rdStats.sortBy",
+    "placeholders": {
+      "column": {}
+    }
+  },
+  "rdStatsSortNewest": "Neueste zuerst",
+  "@rdStatsSortNewest": {
+    "description": "rdStats.sortNewest"
+  },
+  "rdStatsSortOldest": "Älteste zuerst",
+  "@rdStatsSortOldest": {
+    "description": "rdStats.sortOldest"
+  },
+  "rdStatsSortWeakest": "Schwächste zuerst",
+  "@rdStatsSortWeakest": {
+    "description": "rdStats.sortWeakest"
+  },
+  "rdStatsSplit": "Statusverteilung",
+  "@rdStatsSplit": {
+    "description": "rdStats.split"
+  },
+  "rdStatsTabEvents": "Termine",
+  "@rdStatsTabEvents": {
+    "description": "rdStats.tabEvents"
+  },
+  "rdStatsTabOverview": "Überblick",
+  "@rdStatsTabOverview": {
+    "description": "rdStats.tabOverview"
+  },
+  "rdStatsTabPeople": "Personen",
+  "@rdStatsTabPeople": {
+    "description": "rdStats.tabPeople"
+  },
+  "rdStatsTabRegister": "Register",
+  "@rdStatsTabRegister": {
+    "description": "rdStats.tabRegister"
+  },
+  "rdStatsTabsLabel": "Ansicht der Auswertung",
+  "@rdStatsTabsLabel": {
+    "description": "rdStats.tabsLabel"
+  },
   "rdTeacherNewCreate": "Anlegen",
   "@rdTeacherNewCreate": {
     "description": "rdTeacherNew.create"

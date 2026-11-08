@@ -10656,6 +10656,358 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdSettingsUndo => 'Undo';
 
   @override
+  String get rdStatsAge => 'Age';
+
+  @override
+  String get rdStatsAgeAvgGroup => 'Average age per section';
+
+  @override
+  String rdStatsAgeBucket(Object from, Object to) {
+    return '$from–$to years';
+  }
+
+  @override
+  String get rdStatsAgeHint => 'Active members with a birthday';
+
+  @override
+  String get rdStatsAgeNone =>
+      'None of the active members has a birthday entered.';
+
+  @override
+  String rdStatsAgeYears(Object years) {
+    return '$years y';
+  }
+
+  @override
+  String get rdStatsAllThere => 'All there';
+
+  @override
+  String rdStatsBar(Object day, Object title, Object percent) {
+    return '$day · $title: $percent %';
+  }
+
+  @override
+  String rdStatsBarsHint(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'The last $count events, tap to see who was missing',
+      one: '1 event, tap to see who was missing',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdStatsByType => 'Events by type';
+
+  @override
+  String get rdStatsByTypeHint => 'Tap to show only this type.';
+
+  @override
+  String get rdStatsColAbsent => 'Abs.';
+
+  @override
+  String get rdStatsColDate => 'Date';
+
+  @override
+  String get rdStatsColEvent => 'Event';
+
+  @override
+  String get rdStatsColEvents => 'Events';
+
+  @override
+  String get rdStatsColExcused => 'Exc.';
+
+  @override
+  String get rdStatsColLate => 'Late';
+
+  @override
+  String get rdStatsColName => 'Name';
+
+  @override
+  String get rdStatsColPresent => 'Pres.';
+
+  @override
+  String get rdStatsColQuote => 'Rate';
+
+  @override
+  String get rdStatsColRegister => 'Section';
+
+  @override
+  String rdStatsCountAbsent(Object count) {
+    return '$count absent';
+  }
+
+  @override
+  String rdStatsCountExcused(Object count) {
+    return '$count excused';
+  }
+
+  @override
+  String rdStatsCountLate(Object count) {
+    return '$count late';
+  }
+
+  @override
+  String rdStatsCountOpen(Object count) {
+    return '$count neutral';
+  }
+
+  @override
+  String get rdStatsCountedTypes => 'Counts towards the attendance rate';
+
+  @override
+  String get rdStatsCountedTypesHint =>
+      'Events of these types count for the members, on “Today” and in the statistics. Turn off e.g. for parties or optional events.';
+
+  @override
+  String get rdStatsCountedTypesNone => 'No event type';
+
+  @override
+  String rdStatsDeltaDown(Object points) {
+    return '−$points vs. before';
+  }
+
+  @override
+  String rdStatsDeltaDownLong(Object points) {
+    return '$points percentage points less than the period before';
+  }
+
+  @override
+  String get rdStatsDeltaSame => 'same as before';
+
+  @override
+  String get rdStatsDeltaSameLong => 'Same as the period before';
+
+  @override
+  String rdStatsDeltaUp(Object points) {
+    return '+$points vs. before';
+  }
+
+  @override
+  String rdStatsDeltaUpLong(Object points) {
+    return '$points percentage points more than the period before';
+  }
+
+  @override
+  String get rdStatsEventAllThere => 'Everybody was there.';
+
+  @override
+  String get rdStatsEventEmpty => 'There are no entries for this event.';
+
+  @override
+  String rdStatsEventGroup(Object label, Object count) {
+    return '$label ($count)';
+  }
+
+  @override
+  String get rdStatsEventOpen => 'Open event';
+
+  @override
+  String rdStatsEvents(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events',
+      one: '1 event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdStatsFields => 'Extra fields';
+
+  @override
+  String get rdStatsFieldsPaused => 'Include paused';
+
+  @override
+  String get rdStatsFilterGroups => 'Sections';
+
+  @override
+  String rdStatsFilterRemove(Object label) {
+    return 'Remove filter “$label”';
+  }
+
+  @override
+  String rdStatsFilterShow(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Show $count events',
+      one: 'Show 1 event',
+      zero: 'No events',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdStatsFilterTypes => 'Event types';
+
+  @override
+  String get rdStatsFilterTypesHint =>
+      'Only for this view. Preselected are the types that count towards the attendance rate.';
+
+  @override
+  String get rdStatsMembers => 'Members';
+
+  @override
+  String get rdStatsMembersActive => 'Active';
+
+  @override
+  String get rdStatsMembersLeft => 'Left';
+
+  @override
+  String get rdStatsMembersPaused => 'Paused';
+
+  @override
+  String get rdStatsMembersTotal => 'Total';
+
+  @override
+  String get rdStatsNotable => 'Worth a look';
+
+  @override
+  String get rdStatsNotableBest => 'Best event';
+
+  @override
+  String rdStatsNotableDrop(Object name) {
+    return '$name is slipping';
+  }
+
+  @override
+  String rdStatsNotableDropDetail(Object now, Object before) {
+    return '$now instead of $before in the period before';
+  }
+
+  @override
+  String rdStatsNotableWeakGroup(Object name) {
+    return 'Weakest section: $name';
+  }
+
+  @override
+  String get rdStatsNotableWeakest => 'Weakest event';
+
+  @override
+  String get rdStatsOrgGroups => 'Groups';
+
+  @override
+  String rdStatsOrgGroupsAll(Object count) {
+    return 'All ($count)';
+  }
+
+  @override
+  String get rdStatsOrgGroupsHint =>
+      'Counts only the people of the chosen groups. The same person in several groups counts once.';
+
+  @override
+  String get rdStatsOrgPeople => 'People in all groups';
+
+  @override
+  String get rdStatsPersonAllThere => 'Was at every event.';
+
+  @override
+  String rdStatsPersonDots(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events, oldest left',
+      one: '1 event, oldest left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdStatsPersonLate(Object count) {
+    return 'Late ($count)';
+  }
+
+  @override
+  String rdStatsPersonMissed(Object count) {
+    return 'Missed ($count)';
+  }
+
+  @override
+  String get rdStatsPersonOpen => 'Open person';
+
+  @override
+  String get rdStatsPersonSortAbsent => 'Often absent';
+
+  @override
+  String get rdStatsPersonSortFewest => 'Fewest first';
+
+  @override
+  String get rdStatsPersonSortLate => 'Often late';
+
+  @override
+  String get rdStatsPersonSortMost => 'Most first';
+
+  @override
+  String get rdStatsPersonSortName => 'Name';
+
+  @override
+  String rdStatsPersonSub(
+    Object group,
+    Object percent,
+    Object attended,
+    Object total,
+  ) {
+    return '$group · $percent ($attended of $total)';
+  }
+
+  @override
+  String get rdStatsRangeCustom => 'Custom …';
+
+  @override
+  String get rdStatsRangeFrom => 'From';
+
+  @override
+  String get rdStatsRangeShow => 'Show';
+
+  @override
+  String get rdStatsRangeTitle => 'Custom period';
+
+  @override
+  String get rdStatsRangeTo => 'To';
+
+  @override
+  String get rdStatsRegisterHint =>
+      'Curve: rate per month. Tap to see the people of the section.';
+
+  @override
+  String get rdStatsSortBest => 'Best first';
+
+  @override
+  String rdStatsSortBy(Object column) {
+    return 'Sort by $column';
+  }
+
+  @override
+  String get rdStatsSortNewest => 'Newest first';
+
+  @override
+  String get rdStatsSortOldest => 'Oldest first';
+
+  @override
+  String get rdStatsSortWeakest => 'Weakest first';
+
+  @override
+  String get rdStatsSplit => 'Status split';
+
+  @override
+  String get rdStatsTabEvents => 'Events';
+
+  @override
+  String get rdStatsTabOverview => 'Overview';
+
+  @override
+  String get rdStatsTabPeople => 'People';
+
+  @override
+  String get rdStatsTabRegister => 'Sections';
+
+  @override
+  String get rdStatsTabsLabel => 'Statistics view';
+
+  @override
   String get rdTeacherNewCreate => 'Create';
 
   @override
