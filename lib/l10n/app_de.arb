@@ -6137,7 +6137,7 @@
   "@generalSettingsDutyViewHelper": {
     "description": "generalSettings.dutyViewHelper"
   },
-  "generalSettingsFlutterAndHint": "Person ist kritisch, wenn ALLE Regeln zutreffen",
+  "generalSettingsFlutterAndHint": "Person ist kritisch, wenn alle Und-Regeln zusammen zutreffen",
   "@generalSettingsFlutterAndHint": {
     "description": "generalSettings.flutter.andHint"
   },
@@ -12128,7 +12128,7 @@
   "@rdAdminCriticalHint": {
     "description": "rdAdmin.criticalHint"
   },
-  "rdAdminCriticalIntro": "Wer nach diesen Regeln zu oft fehlt, gilt als Problemfall und fällt unter Heute und im Mitglieder-Tab auf.",
+  "rdAdminCriticalIntro": "Wer nach einer dieser Regeln auffällt, ist Problemfall und erscheint unter Heute und in Mitglieder.",
   "@rdAdminCriticalIntro": {
     "description": "rdAdmin.criticalIntro"
   },
@@ -12388,6 +12388,310 @@
   "rdAdminWorkHistory": "Gespielte Werke",
   "@rdAdminWorkHistory": {
     "description": "rdAdmin.workHistory"
+  },
+  "rdCriticalAndHint": "Dann ist jemand nur Problemfall, wenn alle so markierten Regeln gleichzeitig zutreffen.",
+  "@rdCriticalAndHint": {
+    "description": "rdCritical.andHint"
+  },
+  "rdCriticalAndTitle": "Nur zusammen mit anderen Regeln",
+  "@rdCriticalAndTitle": {
+    "description": "rdCritical.andTitle"
+  },
+  "rdCriticalAtLeast": "Mindestens",
+  "@rdCriticalAtLeast": {
+    "description": "rdCritical.atLeast"
+  },
+  "rdCriticalChange": "Ändern",
+  "@rdCriticalChange": {
+    "description": "rdCritical.change"
+  },
+  "rdCriticalDays": "Tage",
+  "@rdCriticalDays": {
+    "description": "rdCritical.days"
+  },
+  "rdCriticalHitCount": "{count, plural, one {einmal {what}} other {{count}-mal {what}}}",
+  "@rdCriticalHitCount": {
+    "description": "rdCritical.hitCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "what": {}
+    }
+  },
+  "rdCriticalHitPercent": "bei {percent} % der Termine {what}",
+  "@rdCriticalHitPercent": {
+    "description": "rdCritical.hitPercent",
+    "placeholders": {
+      "percent": {},
+      "what": {}
+    }
+  },
+  "rdCriticalListAnd": "Nur zusammen mit anderen Regeln",
+  "@rdCriticalListAnd": {
+    "description": "rdCritical.listAnd"
+  },
+  "rdCriticalListFoot": "Geprüft jeden Morgen und nach jeder Änderung. Nach „Mit Person gesprochen“ zählt eine Person wieder von vorn.",
+  "@rdCriticalListFoot": {
+    "description": "rdCritical.listFoot"
+  },
+  "rdCriticalListNow": "{count, plural, =0 {Gerade kein Problemfall} one {Gerade 1 Problemfall} other {Gerade {count} Problemfälle}}",
+  "@rdCriticalListNow": {
+    "description": "rdCritical.listNow",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdCriticalListShow": "In Mitglieder ansehen",
+  "@rdCriticalListShow": {
+    "description": "rdCritical.listShow"
+  },
+  "rdCriticalModeCount": "Anzahl",
+  "@rdCriticalModeCount": {
+    "description": "rdCritical.modeCount"
+  },
+  "rdCriticalModePercent": "Anteil",
+  "@rdCriticalModePercent": {
+    "description": "rdCritical.modePercent"
+  },
+  "rdCriticalMore": "Weitere Einstellungen",
+  "@rdCriticalMore": {
+    "description": "rdCritical.more"
+  },
+  "rdCriticalName": "Name",
+  "@rdCriticalName": {
+    "description": "rdCritical.name"
+  },
+  "rdCriticalNamePh": "z. B. Fehlt oft",
+  "@rdCriticalNamePh": {
+    "description": "rdCritical.namePh"
+  },
+  "rdCriticalNames": "{names} und {count} weitere",
+  "@rdCriticalNames": {
+    "description": "rdCritical.names",
+    "placeholders": {
+      "names": {},
+      "count": {}
+    }
+  },
+  "rdCriticalOr": " oder ",
+  "@rdCriticalOr": {
+    "description": "rdCritical.or"
+  },
+  "rdCriticalOwnRule": "Eigene Regel",
+  "@rdCriticalOwnRule": {
+    "description": "rdCritical.ownRule"
+  },
+  "rdCriticalPeriodAll": "insgesamt",
+  "@rdCriticalPeriodAll": {
+    "description": "rdCritical.periodAll"
+  },
+  "rdCriticalPeriodDays": "{count, plural, one {am letzten Tag} other {in den letzten {count} Tagen}}",
+  "@rdCriticalPeriodDays": {
+    "description": "rdCritical.periodDays",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdCriticalPeriodOther": "Andere Anzahl Tage …",
+  "@rdCriticalPeriodOther": {
+    "description": "rdCritical.periodOther"
+  },
+  "rdCriticalPeriodSeason": "seit Saisonbeginn",
+  "@rdCriticalPeriodSeason": {
+    "description": "rdCritical.periodSeason"
+  },
+  "rdCriticalPresentWarning": "Auch „Anwesend“ zählt hier als Problem. Ist das so gewollt?",
+  "@rdCriticalPresentWarning": {
+    "description": "rdCritical.presentWarning"
+  },
+  "rdCriticalPresetAbsent": "Fehlt oft",
+  "@rdCriticalPresetAbsent": {
+    "description": "rdCritical.presetAbsent"
+  },
+  "rdCriticalPresetLate": "Oft zu spät",
+  "@rdCriticalPresetLate": {
+    "description": "rdCritical.presetLate"
+  },
+  "rdCriticalPresetRarely": "Selten da",
+  "@rdCriticalPresetRarely": {
+    "description": "rdCritical.presetRarely"
+  },
+  "rdCriticalPreviewAndHint": "Diese Regel zählt nur zusammen mit den anderen Regeln, die so markiert sind. Die Vorschau zeigt sie für sich allein.",
+  "@rdCriticalPreviewAndHint": {
+    "description": "rdCritical.previewAndHint"
+  },
+  "rdCriticalPreviewError": "Die Vorschau ist gerade nicht verfügbar.",
+  "@rdCriticalPreviewError": {
+    "description": "rdCritical.previewError"
+  },
+  "rdCriticalPreviewLast": "zuletzt {date}",
+  "@rdCriticalPreviewLast": {
+    "description": "rdCritical.previewLast",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "rdCriticalPreviewLoading": "Vorschau wird berechnet …",
+  "@rdCriticalPreviewLoading": {
+    "description": "rdCritical.previewLoading"
+  },
+  "rdCriticalPreviewMore": "{count, plural, one {und 1 weitere Person} other {und {count} weitere Personen}}",
+  "@rdCriticalPreviewMore": {
+    "description": "rdCritical.previewMore",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdCriticalPreviewOf": "{matching} von {total} Terminen",
+  "@rdCriticalPreviewOf": {
+    "description": "rdCritical.previewOf",
+    "placeholders": {
+      "matching": {},
+      "total": {}
+    }
+  },
+  "rdCriticalPreviewSolveHint": "Nach einem Gespräch zählt eine Person erst ab dem Gesprächstag.",
+  "@rdCriticalPreviewSolveHint": {
+    "description": "rdCritical.previewSolveHint"
+  },
+  "rdCriticalPreviewTimes": "{count, plural, one {einmal} other {{count}-mal}}",
+  "@rdCriticalPreviewTimes": {
+    "description": "rdCritical.previewTimes",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdCriticalPreviewTitle": "{count, plural, =0 {Trifft gerade auf niemanden zu} one {Trifft gerade auf 1 Person zu} other {Trifft gerade auf {count} Personen zu}}",
+  "@rdCriticalPreviewTitle": {
+    "description": "rdCritical.previewTitle",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdCriticalReasonDetail": "{period} · Regel „{rule}“",
+  "@rdCriticalReasonDetail": {
+    "description": "rdCritical.reasonDetail",
+    "placeholders": {
+      "period": {},
+      "rule": {}
+    }
+  },
+  "rdCriticalSentenceLead": "Problemfall ist, wer",
+  "@rdCriticalSentenceLead": {
+    "description": "rdCritical.sentenceLead"
+  },
+  "rdCriticalSentenceTypes": ", bei",
+  "@rdCriticalSentenceTypes": {
+    "description": "rdCritical.sentenceTypes"
+  },
+  "rdCriticalSheetPeriod": "Zeitraum",
+  "@rdCriticalSheetPeriod": {
+    "description": "rdCritical.sheetPeriod"
+  },
+  "rdCriticalSheetThreshold": "Wie oft?",
+  "@rdCriticalSheetThreshold": {
+    "description": "rdCritical.sheetThreshold"
+  },
+  "rdCriticalSheetTypes": "Welche Termine?",
+  "@rdCriticalSheetTypes": {
+    "description": "rdCritical.sheetTypes"
+  },
+  "rdCriticalSheetWhat": "Was zählt?",
+  "@rdCriticalSheetWhat": {
+    "description": "rdCritical.sheetWhat"
+  },
+  "rdCriticalSolveHint": "Nach dem Speichern zählt {name} wieder von vorn.",
+  "@rdCriticalSolveHint": {
+    "description": "rdCritical.solveHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdCriticalSummary": "{threshold} {what} {period}",
+  "@rdCriticalSummary": {
+    "description": "rdCritical.summary",
+    "placeholders": {
+      "threshold": {},
+      "what": {},
+      "period": {}
+    }
+  },
+  "rdCriticalThresholdCount": "{count, plural, one {mindestens einmal} other {mindestens {count}-mal}}",
+  "@rdCriticalThresholdCount": {
+    "description": "rdCritical.thresholdCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdCriticalThresholdCountText": "mindestens {count}-mal",
+  "@rdCriticalThresholdCountText": {
+    "description": "rdCritical.thresholdCountText",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdCriticalThresholdPercent": "bei mindestens {percent} % der Termine",
+  "@rdCriticalThresholdPercent": {
+    "description": "rdCritical.thresholdPercent",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "rdCriticalTypesAll": "allen Terminen",
+  "@rdCriticalTypesAll": {
+    "description": "rdCritical.typesAll"
+  },
+  "rdCriticalVerbHad": "hatte",
+  "@rdCriticalVerbHad": {
+    "description": "rdCritical.verbHad"
+  },
+  "rdCriticalVerbHas": "hat",
+  "@rdCriticalVerbHas": {
+    "description": "rdCritical.verbHas"
+  },
+  "rdCriticalVerbIs": "ist",
+  "@rdCriticalVerbIs": {
+    "description": "rdCritical.verbIs"
+  },
+  "rdCriticalWhatAbsent": "unentschuldigt gefehlt",
+  "@rdCriticalWhatAbsent": {
+    "description": "rdCritical.whatAbsent"
+  },
+  "rdCriticalWhatAbsentAll": "gefehlt (auch entschuldigt)",
+  "@rdCriticalWhatAbsentAll": {
+    "description": "rdCritical.whatAbsentAll"
+  },
+  "rdCriticalWhatCustom": "Status {statuses}",
+  "@rdCriticalWhatCustom": {
+    "description": "rdCritical.whatCustom",
+    "placeholders": {
+      "statuses": {}
+    }
+  },
+  "rdCriticalWhatLate": "zu spät gekommen",
+  "@rdCriticalWhatLate": {
+    "description": "rdCritical.whatLate"
+  },
+  "rdCriticalWhatPick": "Eigene Auswahl …",
+  "@rdCriticalWhatPick": {
+    "description": "rdCritical.whatPick"
+  },
+  "rdCriticalWhatPickHint": "Diese Status zählen. Mindestens einer muss gewählt sein.",
+  "@rdCriticalWhatPickHint": {
+    "description": "rdCritical.whatPickHint"
   },
   "rdDataAddColumn": "Spalte hinzufügen",
   "@rdDataAddColumn": {
@@ -16835,7 +17139,7 @@
   "@redesignMembersBirthdayTomorrow": {
     "description": "redesign.members.birthdayTomorrow"
   },
-  "redesignMembersCritical": "Fehlen oft · {count}",
+  "redesignMembersCritical": "Problemfälle · {count}",
   "@redesignMembersCritical": {
     "description": "redesign.members.critical",
     "placeholders": {
@@ -16854,7 +17158,7 @@
   "@redesignMembersEmptyPending": {
     "description": "redesign.members.emptyPending"
   },
-  "redesignMembersFilterCritical": "Fehlen oft",
+  "redesignMembersFilterCritical": "Problemfälle",
   "@redesignMembersFilterCritical": {
     "description": "redesign.members.filterCritical"
   },
@@ -18154,7 +18458,7 @@
   "@redesignSplitMembersBirthdays": {
     "description": "redesign.split.membersBirthdays"
   },
-  "redesignSplitMembersCritical": "Auffällige Anwesenheit",
+  "redesignSplitMembersCritical": "Problemfälle",
   "@redesignSplitMembersCritical": {
     "description": "redesign.split.membersCritical"
   },
@@ -18689,7 +18993,7 @@
       "count": {}
     }
   },
-  "redesignTodayCritical": "{count, plural, one {{count} Mitglied fehlt oft} other {{count} Mitglieder fehlen oft}}",
+  "redesignTodayCritical": "{count, plural, one {1 Problemfall} other {{count} Problemfälle}}",
   "@redesignTodayCritical": {
     "description": "redesign.today.critical",
     "placeholders": {
@@ -18698,7 +19002,7 @@
       }
     }
   },
-  "redesignTodayCriticalHint": "Unter der Anwesenheitsgrenze",
+  "redesignTodayCriticalHint": "Nach euren Problemfall-Regeln",
   "@redesignTodayCriticalHint": {
     "description": "redesign.today.criticalHint"
   },
