@@ -14,6 +14,13 @@
       ]
     },
     {
+      "version": "0.95.1",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta: Ein ausgetretenes Mitglied zeigt oben „Ausgetreten“ (für die Leitung mit Grund) und „Wiederherstellen“ als Hauptaktion, darunter Anwesenheit und alle Angaben zum Lesen"
+      ]
+    },
+    {
       "version": "0.95.0",
       "date": "8.11.2026",
       "changes": [
