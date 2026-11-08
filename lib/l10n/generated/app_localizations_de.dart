@@ -12465,6 +12465,9 @@ class AppLocalizationsDe extends AppLocalizations {
       'Unbekannte Stimmnamen, einige Dateinamen, die Namen unsicherer Werk-Ordner und bei unklaren Stimmen ein Bild der ersten Seite gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.';
 
   @override
+  String get redesignImportAnswerFromPage => 'Von Seite 1 lesen';
+
+  @override
   String redesignImportAnswerNewGroup(Object name) {
     return 'Neue Gruppe „$name“';
   }
@@ -12918,6 +12921,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignImportGroupAllFromPage => 'Alle von Seite 1 lesen';
+
+  @override
   String get redesignImportGroupAnswered => 'Beantwortet';
 
   @override
@@ -13060,6 +13066,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportPreviewZoom => 'Tippen zum Vergrößern';
+
+  @override
+  String get redesignImportQuestionLook => 'Erste Seite ansehen';
 
   @override
   String redesignImportQuestionTitle(Object name) {

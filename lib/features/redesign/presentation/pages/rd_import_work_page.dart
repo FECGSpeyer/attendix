@@ -79,7 +79,7 @@ class RdImportWorkPage extends ConsumerWidget {
                             title: f.name,
                             newGroups: rdImportPendingGroups(plan, d),
                             several: _several(plan, f, work.title),
-                            header: _previewable(f)
+                            header: rdImportPreviewable(f)
                                 ? RdImportPagePreview(
                                     name: f.name,
                                     page: () => controller.pagePreview(f.path),
@@ -272,8 +272,6 @@ class RdImportWorkPage extends ConsumerWidget {
   }
 
   /// A file whose first page can be shown (PDF, photo).
-  static bool _previewable(RdImportFile f) => const {'pdf', 'png', 'jpg', 'jpeg'}.contains(f.entry.extension);
-
   /// Sub-folder of [f] inside the Werk ("Alt", "Dirigenten › Stimmen").
   static String _folderOf(RdImportWork work, RdImportFile f) =>
       work.fassungen.where((x) => x.key == f.fassungKey).firstOrNull?.label ?? f.fassungKey.split('|').last;

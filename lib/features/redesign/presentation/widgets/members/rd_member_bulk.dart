@@ -281,12 +281,22 @@ mixin RdMemberBulkActions<T extends ConsumerStatefulWidget> on ConsumerState<T> 
       final before = p.additionalFields ?? const <String, dynamic>{};
       final merged = <String, dynamic>{...before, field.id: value};
       final personKey = organisationPersonKey(p);
-      if (field.isOrganisationField && orgId != null && personKey != null) {
-        await profileRepo.updateSharedFieldValues(orgId, personKey, {field.id: value});
+      // The old value always passed explicitly (missing = default), so the
+      // Termin sync sees what changed.
+      var old = p.copyWith(additionalFields: {...before, field.id: before[field.id]});
+      final org = orgId;
+      if (field.isOrganisationField && org != null && personKey != null) {
+        // A stored shared value wins over the own one (like the filter);
+        // without a shared entry the own value stays the old one.
+        final shared = await profileRepo.getSharedFieldValues(org, personKey);
+        if (shared.containsKey(field.id)) {
+          old = p.copyWith(additionalFields: {...before, field.id: shared[field.id]});
+        }
+        await profileRepo.updateSharedFieldValues(org, personKey, {field.id: value});
       } else {
         await repo.updatePlayerFields(p.id!, {'additional_fields': merged});
       }
-      await _sync(repo, p, p.copyWith(additionalFields: merged));
+      await _sync(repo, old, p.copyWith(additionalFields: merged));
     });
   }
 

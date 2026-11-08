@@ -20,6 +20,8 @@ import '../../core/config/supabase_config.dart'
     show AccountScopeKey, currentAuthUserIdProvider;
 import 'base_repository.dart';
 import 'profile_repository.dart' show syncOwnPlayerImage;
+import 'shared_person_fields.dart'
+    show fetchSharedFieldValuesForPeople, organisationFieldDefaults, organisationPersonKeyOfRow;
 import 'user_registration_repository.dart';
 import '../../l10n/l10n.dart';
 import '../../core/services/error_reporter.dart';
@@ -1007,7 +1009,9 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       if (upcomingAttendances.isEmpty) return;
 
       final types = await _loadTypeFilters();
-      final defaults = await _loadExtraFieldDefaults();
+      final fields = await _loadFilterFields(player);
+      final defaults = fields.defaults;
+      player = fields.player;
       final existing = await _existingAttendanceIds(playerId);
       final shift = await _loadShiftPlan(player.shiftId);
 
@@ -2168,6 +2172,51 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     };
   }
 
+  /// Field definitions and values the type filters see, like Termin
+  /// creation (Ionic getPersonExtraFields + hydrated shared values): the
+  /// defaults of the tenant fields, overridden by the organisation's fields,
+  /// and [player] with its shared organisation values over its own.
+  Future<({Map<String, dynamic> defaults, Person player, Set<String> orgKeys})> _loadFilterFields(
+    Person player, {
+    int? tenantId,
+  }) async {
+    final tenant = tenantId ?? currentTenantId;
+    final defaults = await _loadExtraFieldDefaults(tenantId: tenant);
+    final link = await supabase
+        .from('tenant_group_tenants')
+        .select('tenant_group')
+        .eq('tenant_id', tenant)
+        .maybeSingle();
+    final orgId = (link?['tenant_group'] as num?)?.toInt();
+    if (orgId == null) return (defaults: defaults, player: player, orgKeys: const <String>{});
+    // tenant_groups has no tenantId column: scoped via the organisation id
+    // of the tenant (tenant_group_tenants above).
+    final org = await supabase
+        .from('tenant_groups')
+        .select('additional_fields')
+        .eq('id', orgId)
+        .maybeSingle();
+    final orgDefaults = organisationFieldDefaults(org?['additional_fields'] as List?);
+    if (orgDefaults.isEmpty) return (defaults: defaults, player: player, orgKeys: const <String>{});
+    final key = organisationPersonKeyOfRow({
+      'global_person_id': player.globalPersonId,
+      'appId': player.appId,
+    });
+    final shared = key == null
+        ? const <String, dynamic>{}
+        : (await fetchSharedFieldValuesForPeople(supabase, orgId, [key]))[key] ?? const <String, dynamic>{};
+    final values = {
+      ...?player.additionalFields,
+      for (final e in shared.entries)
+        if (orgDefaults.containsKey(e.key)) e.key: e.value,
+    };
+    return (
+      defaults: {...defaults, ...orgDefaults},
+      player: player.copyWith(additionalFields: values),
+      orgKeys: orgDefaults.keys.toSet(),
+    );
+  }
+
   bool _matchesType(
     Person player,
     _TypeFilter type,
@@ -2218,7 +2267,9 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       if (attendances.isEmpty) return;
 
       final types = await _loadTypeFilters(tenantId: targetTenantId);
-      final defaults = await _loadExtraFieldDefaults(tenantId: targetTenantId);
+      final fields = await _loadFilterFields(player, tenantId: targetTenantId);
+      final defaults = fields.defaults;
+      player = fields.player;
       final existing =
           await _existingAttendanceIds(playerId, tenantId: targetTenantId);
 
@@ -2265,14 +2316,22 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .toList();
       if (types.isEmpty) return;
 
-      final defaults = await _loadExtraFieldDefaults();
+      // Organisation fields too (Termin creation filters on them as well),
+      // with the person's shared values as stored now (callers write first).
+      final fields = await _loadFilterFields(player);
+      final defaults = fields.defaults;
+      player = fields.player;
       final groupChanged = oldInstrument != player.instrument;
       final changedFields = <String>{};
       for (final t in types) {
         final key = t.filterKey;
         if (key == null || !defaults.containsKey(key)) continue;
-        final oldValue = oldAdditionalFields?[key] ?? defaults[key];
         final newValue = player.additionalFields?[key] ?? defaults[key];
+        // An organisation value the caller did not pass is unknown, not the
+        // default: counted as unchanged (no reconciling on a guess).
+        final oldValue = fields.orgKeys.contains(key) && !(oldAdditionalFields?.containsKey(key) ?? false)
+            ? newValue
+            : oldAdditionalFields?[key] ?? defaults[key];
         if (oldValue != newValue) changedFields.add(key);
       }
       if (!groupChanged && changedFields.isEmpty) return;

@@ -1,11 +1,26 @@
 {
   "versions": [
     {
-      "version": "0.98.0",
+      "version": "0.99.0",
       "date": "8.11.2026",
       "changes": [
         "💄 Beta Desktop: Die Verwaltung zeigt links alle Einträge kompakt (Titel und Anzahl), rechts öffnet sich direkt die gewählte Seite statt einer Zwischenliste; ohne Auswahl rechts eine Übersicht mit Gruppe, zuletzt geöffnet und noch nicht genutzt",
         "💄 Beta: Name und Kürzel, Mitteilungen und Organisation öffnen sich innerhalb der Verwaltung"
+      ]
+    },
+    {
+      "version": "0.98.1",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Termine mit Filter auf ein Organisations-Zusatzfeld: Ändert man das Feld bei einer Person (Person bearbeiten oder Mehrfachauswahl „Feld“), wird sie jetzt in kommenden Terminen ergänzt bzw. entfernt. Auch beim Aufnehmen und Registerwechsel zählt der gemeinsame Wert statt des Standardwerts"
+      ]
+    },
+    {
+      "version": "0.98.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Noten-Import: Ein Tipp auf eine Stimm-Frage zeigt die erste Seite von bis zu drei ihrer Dateien, die Antworten direkt darunter",
+        "✨ Noten-Import: Neue Antwort „Von Seite 1 lesen“: Die KI liest bei Namen wie „Solo“ die Stimme jeder Datei von ihrer ersten Seite; statt „Ohne Zuordnung“ schlägt die KI das vor, wenn es PDFs gibt"
       ]
     },
     {
