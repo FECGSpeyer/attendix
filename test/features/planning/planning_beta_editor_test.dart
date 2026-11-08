@@ -30,7 +30,7 @@ class _MockPlanRepository extends Mock implements PlanRepository {}
 void main() {
   setUpAll(() => SharedPreferences.setMockInitialValues({}));
 
-  final att = PlanAttendance(
+  final _att = PlanAttendance(
     id: 7,
     tenantId: 1,
     date: DateTime.now().add(const Duration(days: 2)).toIso8601String().substring(0, 10),
@@ -48,7 +48,8 @@ void main() {
 
   late List<Map<String, dynamic>> calls;
 
-  Future<void> pump(WidgetTester tester) async {
+  Future<void> pump(WidgetTester tester, {PlanAttendance? attendance}) async {
+    final att = attendance ?? _att;
     tester.view.physicalSize = const Size(390, 1600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -137,6 +138,45 @@ void main() {
     await tester.pumpAndSettle();
     expect(storedMinutes(), ['5', '20', '5']);
     expect(find.text('Predigt'), findsOneWidget);
+    await close(tester);
+  });
+
+  testWidgets('a dragged block takes its Unterpunkte along as one card', (tester) async {
+    final withBlock = _att.copyWith(
+      plan: const Plan(
+        time: '16:00',
+        end: '2026-01-01T17:00',
+        title: 'Konzert',
+        fields: [
+          PlanField(id: 'a', name: 'Begrüßung', time: '5'),
+          PlanField(id: 'g', name: 'Programm', time: '0', isGroup: true),
+          PlanField(id: 'g1', name: 'Lied', time: '10', groupId: 'g'),
+          PlanField(id: 'c', name: 'Schlusslied', time: '5'),
+        ],
+      ),
+    );
+    await pump(tester, attendance: withBlock);
+    final grip = find.byType(ReorderableDragStartListener).at(1); // Programm
+    final gesture = await tester.startGesture(tester.getCenter(grip));
+    await tester.pump();
+    await gesture.moveBy(const Offset(0, 20));
+    await tester.pumpAndSettle();
+    // The Unterpunkt folded into the head while it moves.
+    expect(find.text('Lied'), findsNothing);
+    for (var i = 0; i < 6; i++) {
+      await gesture.moveBy(const Offset(0, 20));
+      await tester.pump();
+    }
+    await gesture.up();
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pumpAndSettle();
+    final stored = [
+      for (final f in ((calls.last['plan'] as Map<String, dynamic>)['fields'] as List))
+        (f as Map<String, dynamic>)['id'] as String,
+    ];
+    expect(stored, ['a', 'c', 'g', 'g1']);
+    expect(find.text('Lied'), findsOneWidget);
     await close(tester);
   });
 }
