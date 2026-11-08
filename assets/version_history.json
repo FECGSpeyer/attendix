@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.93.1",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta-Werke: kein oranger Hinweis mehr, wenn einzelne Stimmen fehlen (ist normal). Nur Werke ganz ohne Noten zeigen ein ruhiges „ohne Noten“",
+        "💄 Beta-Werk: fehlende Stimmen als ruhige Info-Zeile statt Warnung, kein Hinweis mehr unter dem Titel",
+        "💄 Beta-Werke „Als Nächstes“: „Noten fehlen“ nur noch, wenn ein Werk gar keine Noten hat, und in ruhigem Grau"
+      ]
+    },
+    {
       "version": "0.93.0",
       "date": "8.11.2026",
       "changes": [

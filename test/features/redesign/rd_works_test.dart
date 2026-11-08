@@ -660,7 +660,8 @@ void main() {
       // Both Termine still lack Noten (Ave has none).
       expect(find.text('Noten fehlen'), findsNWidgets(2));
       expect(find.text('ohne Noten'), findsOneWidget);
-      expect(find.text('Klarinette fehlt'), findsOneWidget);
+      // A single missing part is normal: no pill in the list.
+      expect(find.text('Klarinette fehlt'), findsNothing);
 
       await tester.tap(find.text('Filter'));
       await _settle(tester);
@@ -1159,7 +1160,8 @@ void main() {
         overrides: [missingGroupsPlayerCountsProvider.overrideWithValue({11: 2, 12: 1})],
       ));
       await _settle(tester);
-      expect(find.text('Klarinette fehlt'), findsOneWidget);
+      // Calm info row only, no warning pill under the title.
+      expect(find.text('Klarinette fehlt'), findsNothing);
       expect(find.text('Klarinette fehlt noch'), findsOneWidget);
       expect(find.text('Hochladen'), findsOneWidget);
       await tester.scrollUntilVisible(find.text('Besetzung'), 200);
