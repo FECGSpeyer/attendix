@@ -781,6 +781,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
   void _setAppId(String appId) {
     final p = _person;
     if (p == null) return;
+    _container.invalidate(currentSelfServicePlayerProvider);
     if (_disposing || !mounted) {
       _person = p.copyWith(appId: appId);
       return;
@@ -921,6 +922,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     try {
       await ref.read(playerNotifierProvider.notifier).unlinkAccount(person);
       _container.invalidate(personProvider(_personId));
+      _container.invalidate(currentSelfServicePlayerProvider);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.personUserRemoved);
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.personUserRemoveFailed);
@@ -1253,7 +1255,9 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     final tenant = ref.watch(currentTenantProvider);
     final main = ref.watch(mainGroupProvider).valueOrNull;
     final ownMember = ref.watch(currentSelfServicePlayerProvider);
-    final ownMemberMissing = ownMember.hasValue && ownMember.value == null;
+    // Settled only: hasValue stays true while reloading / after an error.
+    final ownMemberMissing =
+        !ownMember.isLoading && !ownMember.hasError && ownMember.hasValue && ownMember.value == null;
     final isMainGroup = main?.id != null && main!.id == person.instrument;
     final textStyle = TextStyle(fontSize: 17, color: p.text);
     final userId = ref.watch(currentAuthUserIdProvider);
