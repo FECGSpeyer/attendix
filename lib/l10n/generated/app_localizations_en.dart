@@ -12897,7 +12897,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignInviteEmptyMembers =>
-      'No members yet. Send the invitation link to your group or show the QR code at the next rehearsal.';
+      'No members yet. Use “+” to share the invitation link or show the QR code at the next rehearsal.';
 
   @override
   String get redesignInviteFullscreen => 'Show full screen';

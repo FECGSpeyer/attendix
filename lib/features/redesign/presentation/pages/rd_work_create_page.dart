@@ -157,6 +157,7 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
               saving: _saving,
               onCancel: _cancel,
               onSubmit: canCreate ? () => _create(songs, categoryIds) : null,
+              submitKey: const Key('rd-work-create-submit'),
             ),
             Expanded(
               child: RdFormBody(
@@ -304,20 +305,7 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
                     ],
                   ),
                   hint(l10n.redesignWorkCreateInstrumentationHint),
-                  const SizedBox(height: 24),
-                  RdPrimaryButton(
-                    key: const Key('rd-work-create-submit'),
-                    label: l10n.redesignWorkCreateCreateAndAdd,
-                    onPressed: canCreate ? () => _create(songs, categoryIds) : null,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
-                    child: Text(
-                      l10n.redesignWorkCreateLater,
-                      textAlign: TextAlign.center,
-                      style: RdType.meta(p, size: 13),
-                    ),
-                  ),
+                  hint(l10n.redesignWorkCreateLater),
                 ],
               ),
             ),

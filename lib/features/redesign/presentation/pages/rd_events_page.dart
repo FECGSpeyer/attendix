@@ -292,15 +292,8 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
                       : _query.isNotEmpty || _type != null
                           ? l10n.redesignEventsNoMatch
                           : (_past ? l10n.redesignEventsNoPast : l10n.redesignTodayNoUpcoming),
+                  // The one "+" of the page creates the first Termin.
                   icon: Icons.event_available_outlined,
-                  // Canvas "Leere Termine": straight to the first Termin.
-                  action: all.isEmpty && ref.watch(canCreateAttendanceProvider)
-                      ? RdPrimaryButton(
-                          label: l10n.redesignEventsCreateFirst,
-                          icon: Icons.add,
-                          onPressed: () => context.push(RedesignRoutes.newEvent),
-                        )
-                      : null,
                 ),
               ),
             for (final section in sections) ...[

@@ -734,9 +734,8 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
         padding: const EdgeInsets.fromLTRB(4, 12, 4, 20),
         child: Text(l10n.redesignEventEditHint, style: RdType.meta(p, size: 13)),
       ),
-      RdPrimaryButton(label: l10n.redesignCommonDone, onPressed: _done),
       if (role.isAdmin || role.isResponsible) ...[
-        const SizedBox(height: 28),
+        const SizedBox(height: 8),
         RdGroupedList(children: [
           RdListRow(
             key: const Key('rd-event-delete'),

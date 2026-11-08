@@ -3456,7 +3456,7 @@
   "redesignInviteButton": "Invite",
   "redesignInviteCopied": "Link copied",
   "redesignInviteCopy": "Copy",
-  "redesignInviteEmptyMembers": "No members yet. Send the invitation link to your group or show the QR code at the next rehearsal.",
+  "redesignInviteEmptyMembers": "No members yet. Use “+” to share the invitation link or show the QR code at the next rehearsal.",
   "redesignInviteFullscreen": "Show full screen",
   "redesignInviteIntro": "Whoever opens the link signs up. You approve each sign-up afterwards.",
   "redesignInviteIntroAuto": "Whoever opens the link signs up and is in right away.",
