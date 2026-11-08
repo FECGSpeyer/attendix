@@ -537,7 +537,16 @@
         "pendingHint": "Tippe auf eine Person, um sie zu prüfen und freizugeben.",
         "critical": "Fehlen oft · {count}",
         "total": "{count, plural, one {1 Person} other {{count} Personen}}",
-        "searchRead": "Name oder Register"
+        "searchRead": "Name oder Register",
+        "filterNoAccount": "Ohne Konto",
+        "filterCritical": "Fehlen oft",
+        "filterGroups": "Gruppen",
+        "filterOtherInstance": "Auch Mitglied in",
+        "filterOtherChip": "Auch in {name}",
+        "filterField": "{name}: {value}",
+        "filterRemove": "Filter „{name}“ entfernen",
+        "filterNoMatch": "Niemand passt zu den Filtern.",
+        "filterShow": "{count, plural, =0 {Niemand passt} one {1 Person anzeigen} other {{count} Personen anzeigen}}"
       },
       "person": {
         "edit": "Bearbeiten",
@@ -2058,7 +2067,16 @@
         "pendingHint": "Tap a person to review and approve them.",
         "critical": "Often missing · {count}",
         "total": "{count, plural, one {1 person} other {{count} people}}",
-        "searchRead": "Name or section"
+        "searchRead": "Name or section",
+        "filterNoAccount": "Without account",
+        "filterCritical": "Often absent",
+        "filterGroups": "Groups",
+        "filterOtherInstance": "Also member of",
+        "filterOtherChip": "Also in {name}",
+        "filterField": "{name}: {value}",
+        "filterRemove": "Remove filter \"{name}\"",
+        "filterNoMatch": "Nobody matches the filters.",
+        "filterShow": "{count, plural, =0 {Nobody matches} one {Show 1 person} other {Show {count} people}}"
       },
       "person": {
         "edit": "Edit",

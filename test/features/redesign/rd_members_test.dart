@@ -18,10 +18,12 @@ import 'package:attendix/features/redesign/data/providers/rd_members_providers.d
 import 'package:attendix/data/models/player_absence/player_absence.dart';
 import 'package:attendix/features/people/presentation/pages/person_detail_page.dart'
     show personProvider, personAttendanceStatsProvider, personHistoryProvider;
+import 'package:attendix/features/redesign/data/rd_members_list_filter.dart';
 import 'package:attendix/features/redesign/data/rd_members_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_members_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_person_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/rd_split_view.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -417,8 +419,10 @@ void main() {
       expect(find.text('Ben Clas'), findsOneWidget);
       expect(find.text('Anna Berg'), findsNothing);
       expect(find.text('Clara Dorn'), findsNothing);
+      expect(find.text('Filter · 1'), findsOneWidget);
 
-      await tester.tap(find.text('Fehlen oft · 1'));
+      // The active filter chip removes it again.
+      await tester.tap(find.text('Fehlen oft'));
       await _settle(tester);
       expect(find.text('Anna Berg'), findsOneWidget);
     });
@@ -426,12 +430,43 @@ void main() {
     testWidgets('"Fehlen oft" from Heute stays on even when nobody active is critical', (tester) async {
       await tester.pumpWidget(_membersApp(Role.admin, _repo(), criticalOnly: true));
       await _settle(tester);
-      expect(find.text('Fehlen oft · 0'), findsOneWidget);
+      expect(find.text('Fehlen oft'), findsOneWidget);
       expect(find.text('Anna Berg'), findsNothing);
-      await tester.tap(find.text('Fehlen oft · 0'));
+      await tester.tap(find.text('Fehlen oft'));
       await _settle(tester);
       expect(find.text('Anna Berg'), findsOneWidget);
       expect(find.textContaining('Fehlen oft'), findsNothing);
+    });
+
+    testWidgets('Filter: by group and sorted by first name, chips remove them', (tester) async {
+      await tester.pumpWidget(_membersApp(Role.admin, _repo()));
+      await _settle(tester);
+      await tester.tap(find.byKey(const Key('rd-members-filter')));
+      await _settle(tester);
+      expect(find.text('Sortieren & Filtern'), findsOneWidget);
+      await tester.tap(find.widgetWithText(RdChoiceChip, 'Violine'));
+      await _settle(tester);
+      expect(find.text('2 Personen anzeigen'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('rd-members-filter-show')));
+      await _settle(tester);
+
+      expect(find.text('Filter · 1'), findsOneWidget);
+      expect(find.text('Clara Dorn'), findsNothing);
+      expect(find.text('Anna Berg'), findsOneWidget);
+      expect(find.text('Aktiv · 2'), findsOneWidget);
+
+      // Sorted by first name: one list without register headers.
+      final container = ProviderScope.containerOf(tester.element(find.byType(RdMembersPage)));
+      container.read(rdMembersListFilterProvider.notifier).state =
+          const RdMembersListFilter(sort: RdMembersSort.firstName);
+      await _settle(tester);
+      expect(find.text('VIOLINE · 2'), findsNothing);
+      expect(find.text('Clara Dorn'), findsOneWidget);
+      expect(tester.getTopLeft(find.text('Ben Clas')).dy, lessThan(tester.getTopLeft(find.text('Clara Dorn')).dy));
+
+      await tester.tap(find.text('Vorname'));
+      await _settle(tester);
+      expect(find.text('VIOLINE · 2'), findsOneWidget);
     });
 
     testWidgets('"+" offers Einladen; off without a sign-up link (UX D1)', (tester) async {
