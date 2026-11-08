@@ -16,6 +16,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_events_providers.dart' show rdAttendanceDurationDays, rdSortStartOf, rdUnrecordedProvider;
 import '../../../data/providers/rd_members_providers.dart';
 import '../../../data/providers/rd_today_providers.dart';
+import '../../../data/rd_members_logic.dart' show RdMembersFilter;
 import '../rd_desktop.dart';
 import '../rd_widgets.dart';
 import 'rd_player_today.dart';
@@ -319,6 +320,8 @@ class _AttentionSection extends ConsumerWidget {
           onTap: () {
             // UX D3: open Mitglieder already filtered to "Fehlen oft".
             ref.read(rdMembersCriticalOnlyProvider.notifier).state = true;
+            // The filter works on Aktiv only: leave Pausiert / Wartet.
+            ref.read(rdMembersTabProvider.notifier).state = RdMembersFilter.active;
             context.go(RedesignRoutes.members);
           },
         ),

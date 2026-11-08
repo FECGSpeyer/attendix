@@ -369,7 +369,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     final ownGroup = _ownGroup(data);
     final counts = lead ? ref.watch(missingGroupsPlayerCountsProvider) : null;
     final shown = _shown(data);
-    final events = _query.trim().isEmpty ? _nextEvents(data) : const <RdNextEvent>[];
+    // Members only: their part for the next Termine. Leads have the Termine tab.
+    final events = !lead && _query.trim().isEmpty ? _nextEvents(data) : const <RdNextEvent>[];
     final categories = [...data.categories.where((c) => c.id != null)]..sort((a, b) => a.index.compareTo(b.index));
     final sort = filter.sortOption;
     final byLast = sort == SongSortOption.lastSungAsc || sort == SongSortOption.lastSungDesc;
@@ -438,22 +439,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
             l10n.redesignWorksNext,
             action: RdTextLink(label: l10n.redesignWorksAllEvents, onTap: () => context.go(RedesignRoutes.events)),
           ),
-          if (lead)
-            RdGroupedList(
-              children: [
-                for (final e in events.take(3))
-                  _LeadEventRow(
-                    event: e,
-                    missing: e.songs.any((s) => !rdHasNotes(s)),
-                    onTap:
-                        e.attendanceId == null || !role.canAddAttendance
-                            ? null
-                            : () => context.push(RedesignRoutes.event(e.attendanceId!)),
-                  ),
-              ],
-            )
-          else
-            ..._memberNext(context, events, ownGroup, data.isChoir, status),
+          ..._memberNext(context, events, ownGroup, data.isChoir, status),
           const SizedBox(height: 18),
         ],
         if (withCollections) ...[
@@ -672,67 +658,6 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
       query: _query,
       groupId: _ownGroup(data)?.id,
       playerCounts: lead ? ref.read(missingGroupsPlayerCountsProvider) : null,
-    );
-  }
-}
-
-/// Leads: a coming Termin with its Werke and, below, a calm "Noten fehlen"
-/// when a Werk has no Noten at all (a pill next to the title would squeeze
-/// it). A single missing part is normal and does not count here.
-class _LeadEventRow extends StatelessWidget {
-  const _LeadEventRow({required this.event, required this.missing, required this.onTap});
-
-  final RdNextEvent event;
-  final bool missing;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 52),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            child: Row(
-              children: [
-                RdRowIcon(Icons.event_outlined, color: p.softText, background: p.soft),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        rdEventLabel(event),
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: p.text),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2),
-                        child: Text(
-                          event.songs.map((s) => s.name).join(', '),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: RdType.meta(p, size: 13),
-                        ),
-                      ),
-                      if (missing)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 6),
-                          child: RdPill(context.l10n.redesignWorksMissingNotes),
-                        ),
-                    ],
-                  ),
-                ),
-                if (onTap != null) ...[const SizedBox(width: 4), Icon(Icons.chevron_right, size: 20, color: p.text2)],
-              ],
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
