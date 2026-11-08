@@ -143,7 +143,7 @@ bool rdManageVisible(RdManageEntry entry, RdManageAccess access) {
     RdManageEntry.teachers => a.maintainTeachers || a.isOrchestra,
     RdManageEntry.missingAccounts => a.hasMissingAccounts,
     RdManageEntry.admins => a.isSuperAdmin && !a.isDemo,
-    RdManageEntry.workHistory || RdManageEntry.workCategories || RdManageEntry.sharing => !a.isGeneral,
+    RdManageEntry.workHistory || RdManageEntry.workCategories => !a.isGeneral,
     RdManageEntry.fileStorage => a.canAccessFiles,
     RdManageEntry.certificates => a.isVorkurs,
     RdManageEntry.branding ||
@@ -160,8 +160,14 @@ bool rdManageVisible(RdManageEntry entry, RdManageAccess access) {
 List<RdManageEntry> rdManageUnused(RdManageAccess access) => [
       if (access.isAdmin && access.isOrchestra && !access.maintainTeachers) RdManageEntry.teachers,
       if (access.isAdmin && !access.parentsEnabled) RdManageEntry.parents,
-      if (access.isAdmin && !access.isGeneral && !access.sharingEnabled) RdManageEntry.sharing,
+      if (access.isAdmin && !access.sharingEnabled) RdManageEntry.sharing,
     ];
+
+/// Section of [entry] for [access], null when it moved. "Werke öffentlich
+/// teilen" lives in the Werke tab; groups of type "Allgemein" have none, so
+/// there it stays a row of "Gruppe und Organisation".
+RdManageArea? rdManageAreaOf(RdManageEntry entry, RdManageAccess access) =>
+    entry == RdManageEntry.sharing && access.isGeneral ? RdManageArea.group : entry.area;
 
 /// The rows [access] sees, in page order (moved and unused entries are left
 /// out).
@@ -169,7 +175,8 @@ List<RdManageEntry> rdManageEntries(RdManageAccess access, {RdManageArea? area})
   final unused = rdManageUnused(access);
   return [
     for (final e in RdManageEntry.values)
-      if (!e.moved && (area == null || e.area == area) && rdManageVisible(e, access) && !unused.contains(e)) e,
+      if (rdManageAreaOf(e, access) case final a?)
+        if ((area == null || a == area) && rdManageVisible(e, access) && !unused.contains(e)) e,
   ];
 }
 
@@ -184,14 +191,16 @@ List<RdManageArea> rdManageAreas(RdManageAccess access) {
   final entries = rdManageEntries(access);
   return [
     for (final a in RdManageArea.values)
-      if (entries.any((e) => e.area == a)) a,
+      if (entries.any((e) => rdManageAreaOf(e, access) == a)) a,
   ];
 }
 
 /// Where a moved entry lives for [access]: the Dateiablage sits in the
 /// Werke tab, in groups without one under Ich.
-RdManageHome? rdManageHome(RdManageEntry entry, RdManageAccess access) =>
-    entry == RdManageEntry.fileStorage && access.isGeneral ? RdManageHome.me : entry.home;
+RdManageHome? rdManageHome(RdManageEntry entry, RdManageAccess access) {
+  if (rdManageAreaOf(entry, access) != null) return null;
+  return entry == RdManageEntry.fileStorage && access.isGeneral ? RdManageHome.me : entry.home;
+}
 
 /// Search over title, section or new place, hint, former names and the
 /// switches on the page (all words must match).

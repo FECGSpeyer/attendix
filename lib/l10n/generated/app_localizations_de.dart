@@ -9888,6 +9888,11 @@ class AppLocalizationsDe extends AppLocalizations {
       'Statistik, Saison, Zählweise, Export und Urkunden';
 
   @override
+  String rdAdminSwitchesFrom(Object name) {
+    return 'Schalter aus „$name“';
+  }
+
+  @override
   String get rdAdminTeachersHint => 'Wer welchen Spieler unterrichtet';
 
   @override

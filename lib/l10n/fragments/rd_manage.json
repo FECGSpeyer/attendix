@@ -71,7 +71,8 @@
       "unusedNote": "Was aus ist, steht hier mit einem Satz, wofür es gut ist. Einmal eingeschaltet, rückt es in seinen Abschnitt.",
       "unusedTeachers": "Wer welchen Spieler unterrichtet, mit Schülerliste je Lehrer.",
       "unusedParents": "Eltern sehen Termine und Anwesenheit ihrer Kinder und melden sie ab.",
-      "unusedSharing": "Ein Link zeigt eure Werkliste, ganz ohne Anmeldung."
+      "unusedSharing": "Ein Link zeigt eure Werkliste, ganz ohne Anmeldung.",
+      "switchesFrom": "Schalter aus „{name}“"
     }
   },
   "en": {
@@ -146,7 +147,8 @@
       "unusedNote": "What is off is listed here with one sentence on what it is good for. Once switched on, it moves to its section.",
       "unusedTeachers": "Who teaches which player, with a list of students per teacher.",
       "unusedParents": "Parents see their children's events and attendance and excuse them.",
-      "unusedSharing": "A link shows your list of works, no sign-in needed."
+      "unusedSharing": "A link shows your list of works, no sign-in needed.",
+      "switchesFrom": "Switches from “{name}”"
     }
   }
 }

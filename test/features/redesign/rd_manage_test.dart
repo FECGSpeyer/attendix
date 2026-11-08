@@ -154,7 +154,12 @@ void main() {
       expect(rdManageUnused(off), [RdManageEntry.teachers, RdManageEntry.parents, RdManageEntry.sharing]);
       expect(rdManageEntries(off), isNot(contains(RdManageEntry.parents)));
       expect(rdManageSearchable(off), containsAll([RdManageEntry.teachers, RdManageEntry.parents]));
-      expect(rdManageUnused(const RdManageAccess(isAdmin: true, isGeneral: true)), [RdManageEntry.parents]);
+      // Groups of type "Allgemein" have no Werke tab: sharing stays a row.
+      const general = RdManageAccess(isAdmin: true, isGeneral: true);
+      expect(rdManageUnused(general), [RdManageEntry.parents, RdManageEntry.sharing]);
+      const shared = RdManageAccess(isAdmin: true, isGeneral: true, sharingEnabled: true);
+      expect(rdManageEntries(shared, area: RdManageArea.group), contains(RdManageEntry.sharing));
+      expect(rdManageEntries(const RdManageAccess(isAdmin: true, sharingEnabled: true)), isNot(contains(RdManageEntry.sharing)));
       // Admins only for super admins outside the demo.
       expect(rdManageVisible(RdManageEntry.admins, a), isFalse);
       expect(rdManageVisible(RdManageEntry.admins, const RdManageAccess(isAdmin: true, isSuperAdmin: true, isDemo: true)),
@@ -296,6 +301,7 @@ void main() {
       await tester.enterText(find.byType(TextField), 'allgemein');
       await _settle(tester);
       expect(find.text('Termine · früher „Allgemeine Einstellungen“'), findsNWidgets(2));
+      expect(find.text('Auswertung und Mitteilungen · Schalter aus „Allgemeine Einstellungen“'), findsOneWidget);
 
       await tester.enterText(find.byType(TextField), 'urk');
       await _settle(tester);

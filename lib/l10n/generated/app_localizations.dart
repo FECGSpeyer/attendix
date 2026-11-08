@@ -16175,6 +16175,12 @@ abstract class AppLocalizations {
   /// **'Statistik, Saison, Zählweise, Export und Urkunden'**
   String get rdAdminStatsHintCertificates;
 
+  /// rdAdmin.switchesFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Schalter aus „{name}“'**
+  String rdAdminSwitchesFrom(Object name);
+
   /// rdAdmin.teachersHint
   ///
   /// In de, this message translates to:

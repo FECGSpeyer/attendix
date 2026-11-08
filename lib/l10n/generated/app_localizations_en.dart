@@ -9781,6 +9781,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Statistics, season, counting, export and certificates';
 
   @override
+  String rdAdminSwitchesFrom(Object name) {
+    return 'Switches from “$name”';
+  }
+
+  @override
   String get rdAdminTeachersHint => 'Who teaches which player';
 
   @override

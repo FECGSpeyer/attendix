@@ -235,17 +235,22 @@ List<String> rdManageKeywords(AppLocalizations l10n, RdManageEntry entry) => swi
           l10n.rdSettingsRegisterFields,
         ],
       RdManageEntry.critical => [l10n.rdSettingsAddRule],
-      RdManageEntry.teachers => [l10n.generalSettingsMaintainTeachers],
+      RdManageEntry.teachers => [l10n.generalSettingsMaintainTeachers, l10n.redesignManageGeneralTitle],
       RdManageEntry.rolesPermissions => [
+          l10n.redesignManageGeneralTitle,
           l10n.rdSettingsAllEvents,
           l10n.rdSettingsInfoText,
           l10n.rdSettingsDutyView,
           l10n.rdSettingsMembersList,
         ],
-      RdManageEntry.parents => [l10n.generalSettingsParentsFeature],
+      RdManageEntry.parents => [l10n.generalSettingsParentsFeature, l10n.redesignManageGeneralTitle],
       RdManageEntry.reasons => [l10n.generalSettingsAbsenceReasons, l10n.generalSettingsLateReasons],
       RdManageEntry.holidays => [l10n.rdSettingsRegion],
-      RdManageEntry.statistics => [l10n.rdSettingsSeasonStart, l10n.rdSettingsShiftPresent],
+      RdManageEntry.statistics => [
+          l10n.redesignManageGeneralTitle,
+          l10n.rdSettingsSeasonStart,
+          l10n.rdSettingsShiftPresent,
+        ],
       RdManageEntry.general => [l10n.rdSettingsName, l10n.rdSettingsShortName],
       RdManageEntry.sharing => [l10n.generalSettingsShareSongs, l10n.rdSettingsCopyWorksLink],
       _ => const [],
@@ -277,7 +282,7 @@ String? rdManageFormerName(AppLocalizations l10n, RdManageEntry entry) => switch
 
 /// Section of a row or the new place of a moved entry.
 String rdManagePlace(AppLocalizations l10n, RdManageEntry entry, RdManageAccess access) {
-  final area = entry.area;
+  final area = rdManageAreaOf(entry, access);
   if (area != null) return rdManageAreaName(l10n, area);
   final home = rdManageHome(entry, access);
   return home == null ? '' : rdManageHomeName(l10n, home);

@@ -12305,6 +12305,13 @@
   "@rdAdminStatsHintCertificates": {
     "description": "rdAdmin.statsHintCertificates"
   },
+  "rdAdminSwitchesFrom": "Schalter aus „{name}“",
+  "@rdAdminSwitchesFrom": {
+    "description": "rdAdmin.switchesFrom",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "rdAdminTeachersHint": "Wer welchen Spieler unterrichtet",
   "@rdAdminTeachersHint": {
     "description": "rdAdmin.teachersHint"

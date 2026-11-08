@@ -2674,6 +2674,7 @@
   "rdAdminShiftsHint": "Whoever has a shift is excused automatically",
   "rdAdminStatsHint": "Statistics, season, counting and export",
   "rdAdminStatsHintCertificates": "Statistics, season, counting, export and certificates",
+  "rdAdminSwitchesFrom": "Switches from “{name}”",
   "rdAdminTeachersHint": "Who teaches which player",
   "rdAdminTeam": "Team",
   "rdAdminTeamHint": "Tasks, topics, minutes",

@@ -190,7 +190,10 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
       return '$place · ${l10n.rdAdminFormerly(former)}';
     }
     final keyword = rdManageKeywords(l10n, e).where((k) => rdManageMatches(_query, title, place, k)).firstOrNull;
-    return keyword == null ? place : '$place · $keyword';
+    if (keyword == null) return place;
+    // Switches that came from the old page: "Auswertung · Schalter aus …".
+    if (keyword == l10n.redesignManageGeneralTitle) return '$place · ${l10n.rdAdminSwitchesFrom(keyword)}';
+    return '$place · $keyword';
   }
 
   /// "Register, Eigene Felder, Archiv …" (the section's rows).
@@ -356,6 +359,7 @@ class _EntryRow extends ConsumerWidget {
             _ => null,
           };
     final shown = count != null && count > 0;
+    final moved = rdManageAreaOf(entry, ref.watch(rdManageAccessProvider)) == null;
     return RdListRow(
       leading: RdRowIcon(rdManageIcon(entry)),
       title: rdManageTitle(l10n, entry),
@@ -363,10 +367,10 @@ class _EntryRow extends ConsumerWidget {
       value: shown && !warn ? '$count' : (counts ? _setting(ref, l10n) : null),
       trailing: shown && warn
           ? RdPill('$count', tone: RdTone.late)
-          : entry.moved
+          : moved
               ? Icon(Icons.north_east, size: 18, color: p.text2)
               : null,
-      showChevron: !entry.moved,
+      showChevron: !moved,
       onTap: () => rdOpenManageEntry(context, ref, entry),
     );
   }
