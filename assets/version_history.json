@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.95.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta Problemfälle neu: Regeln lesen sich als Satz („Mindestens 3-mal unentschuldigt gefehlt in den letzten 30 Tagen“), jede zeigt, wie viele sie gerade trifft. Der Regel-Editor startet mit Vorlagen (Fehlt oft, Oft zu spät, Selten da), die Satzteile sind antippbar, darunter eine Live-Vorschau, wen die Regel trifft. Er öffnet im Inhaltsbereich, die Seitenleiste bleibt",
+        "✨ Beta: Heute, Mitglieder und die Person zeigen, warum jemand Problemfall ist; einheitlich „Problemfälle“ statt „Fehlen oft“/„Auffällige Anwesenheit“",
+        "🐛 Erklärung von Oder/Und bei Problemfall-Regeln korrigiert (alle Und-Regeln zusammen, nicht alle Regeln)"
+      ]
+    },
+    {
       "version": "0.94.0",
       "date": "8.11.2026",
       "changes": [

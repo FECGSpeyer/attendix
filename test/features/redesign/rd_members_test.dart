@@ -404,17 +404,17 @@ void main() {
       expect(tester.getTopLeft(find.text('Anna Berg')).dy, lessThan(tester.getTopLeft(find.text('Ben Clas')).dy));
     });
 
-    testWidgets('"Fehlen oft" narrows Aktiv to the critical members (UX D3)', (tester) async {
+    testWidgets('"Problemfälle" narrows Aktiv to the critical members (UX D3)', (tester) async {
       await tester.pumpWidget(_membersApp(
         Role.admin,
         _repo(),
         people: [_anna, _ben.copyWith(isCritical: true), _clara, _dora],
       ));
       await _settle(tester);
-      expect(find.text('Fehlen oft · 1'), findsOneWidget);
+      expect(find.text('Problemfälle · 1'), findsOneWidget);
       expect(find.text('Anna Berg'), findsOneWidget);
 
-      await tester.tap(find.text('Fehlen oft · 1'));
+      await tester.tap(find.text('Problemfälle · 1'));
       await _settle(tester);
       expect(find.text('Ben Clas'), findsOneWidget);
       expect(find.text('Anna Berg'), findsNothing);
@@ -422,20 +422,20 @@ void main() {
       expect(find.text('Filter · 1'), findsOneWidget);
 
       // The active filter chip removes it again.
-      await tester.tap(find.text('Fehlen oft'));
+      await tester.tap(find.text('Problemfälle'));
       await _settle(tester);
       expect(find.text('Anna Berg'), findsOneWidget);
     });
 
-    testWidgets('"Fehlen oft" from Heute stays on even when nobody active is critical', (tester) async {
+    testWidgets('"Problemfälle" from Heute stays on even when nobody active is critical', (tester) async {
       await tester.pumpWidget(_membersApp(Role.admin, _repo(), criticalOnly: true));
       await _settle(tester);
-      expect(find.text('Fehlen oft'), findsOneWidget);
+      expect(find.text('Problemfälle'), findsOneWidget);
       expect(find.text('Anna Berg'), findsNothing);
-      await tester.tap(find.text('Fehlen oft'));
+      await tester.tap(find.text('Problemfälle'));
       await _settle(tester);
       expect(find.text('Anna Berg'), findsOneWidget);
-      expect(find.textContaining('Fehlen oft'), findsNothing);
+      expect(find.textContaining('Problemfälle'), findsNothing);
     });
 
     testWidgets('Filter: by group and sorted by first name, chips remove them', (tester) async {
@@ -489,10 +489,10 @@ void main() {
       expect(find.byKey(const Key('rd-members-fab')), findsNothing);
     });
 
-    testWidgets('no "Fehlen oft" chip without critical members', (tester) async {
+    testWidgets('no "Problemfälle" chip without critical members', (tester) async {
       await tester.pumpWidget(_membersApp(Role.admin, _repo()));
       await _settle(tester);
-      expect(find.textContaining('Fehlen oft'), findsNothing);
+      expect(find.textContaining('Problemfälle'), findsNothing);
     });
 
     testWidgets('Pausiert lists paused persons with their end date', (tester) async {

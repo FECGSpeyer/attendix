@@ -27,6 +27,11 @@ import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
 import 'rd_critical_rule_page.dart';
+import '../../data/providers/rd_critical_providers.dart';
+import '../../data/providers/rd_members_providers.dart';
+import '../../data/rd_critical_logic.dart';
+import '../../../../data/models/attendance/attendance.dart';
+import '../../../../data/models/person/person.dart';
 
 /// The settings of the old page `/settings/general` ("Allgemein"), split by
 /// where they act (canvas "Beta: Verwaltung neu gedacht", board "Bestand:
@@ -442,6 +447,7 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
       context,
       rule: index == null ? null : _rules(t)[index],
       attendanceTypes: types,
+      otherRules: _rules(t).length > (index == null ? 0 : 1),
     );
     if (rule == null || !mounted) return;
     final current = ref.read(currentTenantProvider);
@@ -459,11 +465,17 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
     );
   }
 
+  /// The rule's name, or its sentence when it has none.
+  String _ruleTitle(CriticalRule rule, List<AttendanceType> types) {
+    final name = rule.name?.trim() ?? '';
+    return name.isNotEmpty ? name : rdCriticalSummary(rule, types, context.l10n);
+  }
+
   Future<void> _ruleActions(Tenant t, int index) async {
     final l10n = context.l10n;
     final action = await showAppActionSheet<String>(
       context,
-      title: _rules(t)[index].describe(ref.read(attendanceTypesProvider).valueOrNull ?? const []),
+      title: _ruleTitle(_rules(t)[index], ref.read(attendanceTypesProvider).valueOrNull ?? const []),
       actions: [
         AppActionSheetAction(value: 'edit', label: l10n.commonEdit, icon: Icons.edit_outlined),
         AppActionSheetAction(value: 'delete', label: l10n.commonDelete, icon: Icons.delete_outline, destructive: true),
@@ -718,20 +730,134 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
         final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const [];
         final rules = _rules(t);
         return [
-          RdGroupedList(
-            children: [
-              for (var i = 0; i < rules.length; i++)
-                RdListRow(title: rules[i].describe(types), onTap: enabled ? () => _ruleActions(t, i) : null),
-              RdListRow(
-                title: l10n.rdSettingsAddRule,
-                titleColor: p.primary,
-                showChevron: false,
-                onTap: enabled ? () => _ruleSheet(t) : null,
-              ),
-            ],
+          if (rules.isNotEmpty) ...[
+            const _CriticalNow(),
+            const SizedBox(height: 18),
+          ],
+          _CriticalRuleList(
+            rules: rules,
+            types: types,
+            titleOf: _ruleTitle,
+            onTap: enabled ? (i) => _ruleActions(t, i) : null,
+            onAdd: enabled ? () => _ruleSheet(t) : null,
           ),
-          if (rules.isEmpty) RdListNote(l10n.rdSettingsCriticalHint),
+          RdListNote(rules.isEmpty ? l10n.rdSettingsCriticalHint : l10n.rdCriticalListFoot),
         ];
     }
   }
+}
+
+/// "Gerade 2 Problemfälle · In Mitglieder ansehen": what the server decided
+/// (the same set as Heute and the Mitglieder filter).
+class _CriticalNow extends ConsumerWidget {
+  const _CriticalNow();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final count = ref.watch(criticalPlayersProvider).valueOrNull?.where((x) => !x.paused).length;
+    if (count == null) return const SizedBox.shrink();
+    return RdGroupedList(
+      children: [
+        RdListRow(
+          leading: RdRowIcon(
+            Icons.warning_amber_rounded,
+            color: count > 0 ? p.absent : p.text2,
+            background: count > 0 ? p.absentSoft : p.line,
+          ),
+          title: l10n.rdCriticalListNow(count),
+          subtitle: count > 0 ? l10n.rdCriticalListShow : null,
+          showChevron: count > 0,
+          onTap: count == 0
+              ? null
+              : () {
+                  ref.read(rdMembersCriticalOnlyProvider.notifier).state = true;
+                  context.go(RedesignRoutes.members);
+                },
+        ),
+      ],
+    );
+  }
+}
+
+/// The rules as name + sentence, each with how many active members it hits
+/// on its own right now, and "Regel hinzufügen".
+class _CriticalRuleList extends ConsumerWidget {
+  const _CriticalRuleList({
+    required this.rules,
+    required this.types,
+    required this.titleOf,
+    required this.onTap,
+    required this.onAdd,
+  });
+
+  final List<CriticalRule> rules;
+  final List<AttendanceType> types;
+  final String Function(CriticalRule rule, List<AttendanceType> types) titleOf;
+  final void Function(int index)? onTap;
+  final VoidCallback? onAdd;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final tenant = ref.watch(currentTenantProvider);
+    final season = rdSeasonStartOf(tenant?.seasonStart);
+    final now = DateTime.now();
+    final entries = rules.isEmpty
+        ? null
+        : ref.watch(rdCriticalEntriesProvider(rdCriticalLoadStart(rules, seasonStart: season, today: now))).valueOrNull;
+    final people = rules.isEmpty ? null : ref.watch(playersProvider).valueOrNull;
+
+    int? hitsOf(CriticalRule rule) {
+      if (entries == null || people == null) return null;
+      var n = 0;
+      for (final Person x in people) {
+        if (x.id == null || x.paused || x.pending || x.left != null) continue;
+        final r = rdEvaluateCriticalRule(
+          rule,
+          entries[x.id] ?? const [],
+          lastSolve: x.lastSolve == null ? null : DateTime.tryParse(x.lastSolve!),
+          seasonStart: season,
+          now: now,
+        );
+        if (r.matches) n++;
+      }
+      return n;
+    }
+
+    return RdGroupedList(
+      children: [
+        for (var i = 0; i < rules.length; i++)
+          Builder(
+            builder: (context) {
+              final rule = rules[i];
+              final title = titleOf(rule, types);
+              final summary = rdCriticalSummary(rule, types, l10n);
+              final hits = hitsOf(rule);
+              return RdListRow(
+                title: title,
+                subtitle: [
+                  if (summary != title) summary,
+                  if (rule.operator == CriticalRuleOperator.and) l10n.rdCriticalListAnd,
+                ].join(' · ').ifEmptyNull,
+                trailing: hits == null ? null : RdCountBadge(hits, tone: hits > 0 ? RdTone.absent : RdTone.primary),
+                onTap: onTap == null ? null : () => onTap!(i),
+              );
+            },
+          ),
+        RdListRow(
+          title: l10n.rdSettingsAddRule,
+          titleColor: p.primary,
+          showChevron: false,
+          onTap: onAdd,
+        ),
+      ],
+    );
+  }
+}
+
+extension on String {
+  String? get ifEmptyNull => isEmpty ? null : this;
 }

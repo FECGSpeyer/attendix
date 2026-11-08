@@ -12,6 +12,7 @@ import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
+import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_events_providers.dart' show rdAttendanceDurationDays, rdSortStartOf, rdUnrecordedProvider;
 import '../../../data/providers/rd_members_providers.dart';
@@ -294,7 +295,8 @@ class _AttentionSection extends ConsumerWidget {
     final l10n = context.l10n;
     final pending = ref.watch(pendingPlayersProvider).valueOrNull?.length ?? 0;
     // Same set as the "Fehlen oft" filter of Mitglieder: active only.
-    final critical = ref.watch(criticalPlayersProvider).valueOrNull?.where((x) => !x.paused).length ?? 0;
+    final criticalPeople = ref.watch(criticalPlayersProvider).valueOrNull?.where((x) => !x.paused).toList() ?? const [];
+    final critical = criticalPeople.length;
     final nextId = next?.id;
     final unrecorded = ref.watch(rdUnrecordedProvider).valueOrNull ?? const <int>[];
     final excused = nextId == null
@@ -314,7 +316,7 @@ class _AttentionSection extends ConsumerWidget {
         RdListRow(
           leading: RdRowIcon(Icons.warning_amber_rounded, color: p.absent, background: p.absentSoft),
           title: l10n.redesignTodayCritical(critical),
-          subtitle: l10n.redesignTodayCriticalHint,
+          subtitle: _criticalNames(l10n, criticalPeople),
           trailing: RdCountBadge(critical, tone: RdTone.absent),
           onTap: () {
             // UX D3: open Mitglieder already filtered to "Fehlen oft".
@@ -388,4 +390,11 @@ class _WeekRow extends ConsumerWidget {
       onTap: id != null && canOpen ? () => context.push(RedesignRoutes.event(id)) : null,
     );
   }
+}
+
+/// "Anna Becker, Jonas Klein und 2 weitere" (the Problemfälle on Heute).
+String _criticalNames(AppLocalizations l10n, List<Person> people) {
+  const shown = 2;
+  final names = [for (final x in people.take(shown)) '${x.firstName} ${x.lastName}'.trim()].join(', ');
+  return people.length > shown ? l10n.rdCriticalNames(names, people.length - shown) : names;
 }
