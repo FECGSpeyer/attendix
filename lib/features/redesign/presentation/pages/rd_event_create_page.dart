@@ -283,6 +283,11 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
       return;
     }
 
+    // Times from the type or a template can be broken too (e.g. 20–19).
+    if (!type.allDay && rdEndBeforeStart(_start ?? type.startTime, _end ?? type.endTime)) {
+      ToastHelper.showError(context, l10n.redesignCreateEndBeforeStart);
+      return;
+    }
     final deadline = _deadline;
     final start = _start ?? type.startTime;
     final title = _title.text.trim();

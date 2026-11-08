@@ -602,7 +602,9 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     final folder = (att.filesFolder ?? '').trim();
     final canFiles = ref.watch(canAccessFilesProvider);
     final role = ref.watch(effectiveRoleProvider);
-    final typeReady = type != null || att.typeId == null;
+    // The loaded type must be this Termin's current one (not the previous
+    // value while it reloads after an Art change).
+    final typeReady = att.typeId == null || type?.id == att.typeId;
     final days = rdEffectiveDurationDays(att.durationDays,
             typeAllDay: type?.allDay ?? false, typeDurationDays: type?.durationDays) ??
         1;
