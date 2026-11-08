@@ -254,16 +254,6 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
               child: Text(l10n.redesignTabMembers, style: RdType.largeTitle(p)),
             ),
           ),
-          // UX D1: invite right here (Dirigent, Verantwortlich). On desktop
-          // it is part of the one "+" in the header.
-          if (canApprove && !inSplit) ...[
-            RdPillButton(
-              icon: Icons.person_add_alt_outlined,
-              label: l10n.redesignInviteButton,
-              onPressed: () => showRdInviteSheet(context),
-            ),
-            const SizedBox(width: 8),
-          ],
           if (canApprove)
             RdCircleButton(
               icon: Icons.bar_chart_rounded,
@@ -368,23 +358,6 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
       body.add(RdInfoCard(
         icon: Icons.people_outline,
         text: l10n.redesignInviteEmptyMembers,
-        action: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            RdPrimaryButton(
-              label: l10n.redesignInviteButton,
-              icon: Icons.person_add_alt_outlined,
-              onPressed: () => showRdInviteSheet(context),
-            ),
-            if (role.canEdit) ...[
-              const SizedBox(height: 8),
-              RdOutlineButton(
-                label: l10n.redesignInviteAddPerson,
-                onPressed: () => context.push(RedesignRoutes.personNew),
-              ),
-            ],
-          ],
-        ),
       ));
     } else if (filtered.isEmpty) {
       body.add(RdInfoCard(
@@ -446,14 +419,19 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
         ref.invalidate(playerAbsencesProvider);
         if (canApprove) ref.invalidate(realtimePendingPlayersProvider);
       },
-      floatingActionButton: role.canEdit && !inSplit
-          ? FloatingActionButton(
-              tooltip: l10n.redesignMembersAdd,
-              backgroundColor: p.primary,
-              foregroundColor: p.onPrimary,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-              onPressed: () => context.push(RedesignRoutes.personNew),
-              child: const Icon(Icons.person_add_alt_1_outlined, size: 26),
+      // One "+" per screen: anlegen and einladen (UX D1) both sit behind
+      // it, on the phone as the button below, on desktop in the header.
+      floatingActionButton: (role.canEdit || canApprove) && !inSplit
+          ? Builder(
+              builder: (button) => FloatingActionButton(
+                key: const Key('rd-members-fab'),
+                tooltip: l10n.redesignMembersAdd,
+                backgroundColor: p.primary,
+                foregroundColor: p.onPrimary,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                onPressed: () => _add(button, canCreate: role.canEdit, canInvite: canApprove),
+                child: const Icon(Icons.add, size: 28),
+              ),
             )
           : null,
       children: children,

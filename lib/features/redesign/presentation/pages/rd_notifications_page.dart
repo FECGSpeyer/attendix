@@ -15,6 +15,7 @@ import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../core/utils/dialog_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/rd_widgets.dart';
@@ -144,18 +145,14 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> {
 
   Future<void> _disconnectTelegram(NotificationConfig config) async {
     final l10n = context.l10n;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.notifDisconnectConfirm),
-        content: Text(l10n.notifDisconnectHint),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.commonCancel)),
-          TextButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l10n.redesignNotifTelegramDisconnect)),
-        ],
-      ),
+    final confirmed = await DialogHelper.showConfirmation(
+      context,
+      title: l10n.notifDisconnectConfirm,
+      message: l10n.notifDisconnectHint,
+      confirmText: l10n.redesignNotifTelegramDisconnect,
+      isDestructive: true,
     );
-    if (confirmed == true) await _update(config.copyWith(telegramChatId: ''));
+    if (confirmed) await _update(config.copyWith(telegramChatId: ''));
   }
 
   Widget _switch(String title, bool value, ValueChanged<bool> onChanged, {String? subtitle}) {

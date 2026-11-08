@@ -31,7 +31,7 @@ Future<void> showRdInviteSheet(BuildContext context) {
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
-    builder: (_) => const _InviteSheet(),
+    builder: (_) => RdSheetCap(child: const _InviteSheet()),
   );
 }
 
@@ -191,11 +191,31 @@ class _InviteQr extends StatelessWidget {
       child: Container(
         color: Colors.white,
         padding: const EdgeInsets.all(8),
-        child: QrImageView(
-          data: link,
-          size: size,
-          backgroundColor: Colors.white,
-          padding: EdgeInsets.zero,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Level H restores up to 30 % of the code, so the logo in the
+            // middle (about 7 % with its white frame) still scans reliably.
+            QrImageView(
+              data: link,
+              size: size,
+              backgroundColor: Colors.white,
+              padding: EdgeInsets.zero,
+              errorCorrectionLevel: QrErrorCorrectLevel.H,
+            ),
+            ExcludeSemantics(
+              child: Container(
+                width: size * 0.26,
+                height: size * 0.26,
+                padding: EdgeInsets.all(size * 0.02),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(size * 0.05),
+                ),
+                child: Image.asset('assets/images/logo.png', filterQuality: FilterQuality.medium),
+              ),
+            ),
+          ],
         ),
       ),
     );

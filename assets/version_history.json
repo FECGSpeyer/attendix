@@ -1,10 +1,69 @@
 {
   "versions": [
     {
-      "version": "0.86.0",
+      "version": "0.89.0",
       "date": "8.11.2026",
       "changes": [
         "✨ Beta: Mitglieder lassen sich filtern und sortieren (Gruppe, Stimmführung, Ohne Konto, Fehlen oft, Zusatzfelder, andere Instanz; Name, Anwesenheit, Geburtstag, Beitritt), aktive Filter stehen als Chips über der Liste"
+      ]
+    },
+    {
+      "version": "0.88.2",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta: Termine-Liste antwortet mit „Bin dabei“/„Kann nicht“ wie Heute, die Status-Übersicht sagt „Offen“ statt „Neutral“",
+        "💄 Beta: Verlauf ohne Termine zeigt „Noch keine vergangenen Termine“ statt rotem 0 %, „Gespeichert ✓“ in Person bearbeiten wird nicht mehr abgeschnitten",
+        "🐛 Beta: Termine ohne eigene Uhrzeit sortieren nach der Uhrzeit ihrer Art (Heute und Termine)",
+        "💄 Beta Eltern: Absage-Fenster für ein Kind ohne „Ich“/„Deinen Grund“, nach einer Antwort stehen die Links unter dem Namen",
+        "💄 Beta: Gelöschte Person oder gelöschtes Werk ohne sinnloses „Erneut versuchen“; Meine Stimme ohne Profil mit demselben Hinweis wie Heute",
+        "💄 Beta: Archivieren, Telegram trennen und Konto entfernen fragen mit derselben Bestätigung wie der Rest der App"
+      ]
+    },
+    {
+      "version": "0.88.1",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Beta: „Offene erinnern“ lässt sich wieder schließen (Abbrechen oben, Sheet höchstens 85 % hoch), ohne die Push senden zu müssen",
+        "🐛 Beta: Weitere lange Sheets (Konto/Gruppe wechseln, Abmelden, Antwort, Status, Einladen, Beitreten, Eltern-Termin) bleiben unter dem oberen Rand und sind per Wischen oder Tippen daneben schließbar"
+      ]
+    },
+    {
+      "version": "0.88.0",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Beta-Ablauf: Ein Block wird beim Ziehen mit allen Unterpunkten als eine Karte bewegt, statt dass die Unterpunkte hinterherspringen",
+        "💄 Beta-Ablauf aus einem Termin: kein Wechsel zu anderen Terminen mehr (bleibt unter Verwaltung › Ablaufpläne), Termin und „Gespeichert“ in einer Zeile",
+        "💄 Beta-Ablauf: Überschrift oben über Beginn und Ende, „Weiteren Plan anlegen“ im •••, Plan-Reiter erst ab zwei Plänen",
+        "💄 Beta-Ablauf: Teilen-Knopf mit PDF, Telegram und Link; Blöcke zeigen ihre Uhrzeit links; Tipp-Text lässt sich ausblenden"
+      ]
+    },
+    {
+      "version": "0.87.0",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta: Jede Seite hat nur noch eine Hauptaktion – „Anlegen“/„Fertig“ oben in der Leiste statt zusätzlich unten (Termin, Person, Werk, Gruppe, Zusatzfeld, Lehrer, Sammlung); bei sehr großer Schrift wird sie kleiner statt abgeschnitten",
+        "💄 Beta: Mitglieder hinzufügen und einladen über das eine „+“, leere Listen ohne zweiten Anlegen-Button, Werk ohne Noten ohne doppeltes „Hinzufügen“"
+      ]
+    },
+    {
+      "version": "0.86.1",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta: „Export“ in der Auswertung öffnet die Beta-Export-Seite statt des alten Export-Fensters"
+      ]
+    },
+    {
+      "version": "0.86.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta: Der Einladungs-QR-Code zeigt das Attendix-Logo in der Mitte, auch im Vollbild (hohe Fehlerkorrektur, scannt weiterhin zuverlässig)"
+      ]
+    },
+    {
+      "version": "0.85.1",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Beta: In „Person bearbeiten“ öffnet „Eltern“ wieder die Elternliste, die Auswahl wird gespeichert"
       ]
     },
     {

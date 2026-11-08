@@ -27,9 +27,20 @@ extension _PlanningBeta on _PlanningPageState {
     final children = <Widget>[
       Row(
         children: [
-          Expanded(child: RdBackLink(label: l10n.redesignPlanBack, onTap: () => Navigator.of(context).maybePop())),
+          Expanded(
+            child: RdBackLink(
+              // From a Termin back to it; otherwise from Verwaltung › Ablaufpläne.
+              label: _rdFromTermin ? l10n.redesignPlanBack : l10n.redesignAdminTitle,
+              onTap: () => Navigator.of(context).maybePop(),
+            ),
+          ),
           if (att != null) ...[
-            RdCircleButton(icon: Icons.link, label: l10n.planningShareLink, onPressed: _shareLink),
+            RdCircleButton(
+              key: const Key('rd-plan-share'),
+              icon: Icons.ios_share,
+              label: l10n.redesignPlanShare,
+              onPressed: _rdShare,
+            ),
             const SizedBox(width: 8),
             RdCircleButton(
               key: const Key('rd-plan-more'),
@@ -104,43 +115,15 @@ extension _PlanningBeta on _PlanningPageState {
     final start = PlanUtils.parseTimeToMinutes(_time);
     final total = PlanUtils.totalMinutes(_fields);
     return [
-      // Termin with ‹ › (Ionic "Vorheriger" / "Nächster"); tap: choose.
-      Row(
-        children: [
-          _rdArrow(Icons.chevron_left, l10n.redesignPlanPrev, () => _navigate(-1)),
-          Expanded(
-            child: Semantics(
-              button: true,
-              label: '${l10n.redesignPlanPlanPick}: ${_rdAttLabel(att)}',
-              excludeSemantics: true,
-              child: InkWell(
-                key: const Key('rd-plan-termin'),
-                borderRadius: BorderRadius.circular(10),
-                onTap: _rdPickAttendance,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text(
-                    _rdAttLabel(att),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: RdType.meta(p, size: 15),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          _rdArrow(Icons.chevron_right, l10n.redesignPlanNext, () => _navigate(1)),
-        ],
-      ),
-      _rdStatus(),
-      const SizedBox(height: 12),
-      // Plans of the Termin + "+ Plan".
-      Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: [
-          if (plans.length > 1)
+      ..._rdTerminLine(att),
+      // Plans of the Termin as tabs, only with several plans; a second plan
+      // is created in •••.
+      if (plans.length > 1) ...[
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
             for (var i = 0; i < plans.length; i++)
               RdChoiceChip(
                 key: ValueKey('rd-plan-chip-$i'),
@@ -148,16 +131,18 @@ extension _PlanningBeta on _PlanningPageState {
                 selected: i == _planIndex,
                 onTap: () => _selectPlan(i),
               ),
-          RdChoiceChip(
-            key: const Key('rd-plan-add-plan'),
-            label: '+ ${l10n.redesignPlanAddPlan}',
-            selected: false,
-            onTap: _addPlan,
-          ),
-        ],
-      ),
-      const SizedBox(height: 12),
-      _rdSummary(start, total),
+            RdChoiceChip(
+              key: const Key('rd-plan-add-plan'),
+              label: '+',
+              semanticLabel: l10n.redesignPlanAddAnother,
+              selected: false,
+              onTap: _addPlan,
+            ),
+          ],
+        ),
+      ],
+      const SizedBox(height: 16),
+      _rdSummary(att, start, total),
       const SizedBox(height: 12),
       if (_fields.isEmpty) ..._rdEmpty(att, blockTemplates) else _rdTimeline(start, showBeamer: showBeamer),
       const SizedBox(height: 12),
@@ -167,11 +152,17 @@ extension _PlanningBeta on _PlanningPageState {
         label: l10n.redesignPlanAdd,
         onPressed: () => _rdAdd(),
       ),
-      if (_fields.isNotEmpty) ...[
+      if (_fields.isNotEmpty && _rdHintHidden == false) ...[
         const SizedBox(height: 8),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Text(l10n.redesignPlanHint, style: RdType.meta(p, size: 13)),
+        RdCard(
+          key: const Key('rd-plan-hint'),
+          padding: const EdgeInsets.fromLTRB(14, 4, 4, 4),
+          child: Row(
+            children: [
+              Expanded(child: Text(l10n.redesignPlanHint, style: RdType.meta(p, size: 13))),
+              TextButton(onPressed: _rdHideHint, child: Text(l10n.redesignPlanHintDismiss)),
+            ],
+          ),
         ),
       ],
       const SizedBox(height: 24),
@@ -195,30 +186,6 @@ extension _PlanningBeta on _PlanningPageState {
               onTap: () => _rdSetOrgPlan(!_isOrgPlan),
               trailing: Switch.adaptive(value: _isOrgPlan, onChanged: _rdSetOrgPlan),
             ),
-          RdFieldRow(
-            label: l10n.redesignPlanHeading,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Focus(
-                  onFocusChange: (focused) {
-                    if (!focused) _onTitleFocusLost();
-                  },
-                  child: TextField(
-                    key: const Key('rd-plan-heading'),
-                    controller: _titleController,
-                    textCapitalization: TextCapitalization.sentences,
-                    textInputAction: TextInputAction.done,
-                    onSubmitted: (_) => FocusManager.instance.primaryFocus?.unfocus(),
-                    style: TextStyle(fontSize: 17, color: p.text),
-                    decoration: rdInputDecoration(p, l10n.planningDefaultTitle),
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(l10n.redesignPlanTitleHint, style: RdType.meta(p, size: 12)),
-              ],
-            ),
-          ),
           if ((att.notes ?? '').isNotEmpty)
             RdListRow(
               leading: const RdRowIcon(Icons.notes_outlined),
@@ -228,6 +195,80 @@ extension _PlanningBeta on _PlanningPageState {
             ),
         ],
       ),
+    ];
+  }
+
+  /// Opened from a Termin: the Ablauf belongs to that Termin, so there is
+  /// no ‹ › and no Termin choice. From Verwaltung › Ablaufpläne the Termin
+  /// can be switched like in Ionic ("Vorheriger" / "Nächster").
+  bool get _rdFromTermin => widget.attendanceId != null;
+
+  List<Widget> _rdTerminLine(PlanAttendance att) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    if (_rdFromTermin) {
+      return [
+        const SizedBox(height: 2),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                _rdAttLabel(att),
+                key: const Key('rd-plan-termin-fixed'),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: RdType.meta(p, size: 15),
+              ),
+            ),
+            const SizedBox(width: 8),
+            _rdStatus(),
+          ],
+        ),
+      ];
+    }
+    return [
+      const SizedBox(height: 8),
+      RdCard(
+        padding: const EdgeInsets.all(2),
+        child: Row(
+          children: [
+            _rdArrow(Icons.chevron_left, l10n.redesignPlanPrev, () => _navigate(-1)),
+            Expanded(
+              child: Semantics(
+                button: true,
+                label: '${l10n.redesignPlanPlanPick}: ${_rdAttLabel(att)}',
+                excludeSemantics: true,
+                child: InkWell(
+                  key: const Key('rd-plan-termin'),
+                  borderRadius: BorderRadius.circular(10),
+                  onTap: _rdPickAttendance,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            _rdAttLabel(att),
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(fontSize: 15, color: p.text),
+                          ),
+                        ),
+                        Icon(Icons.arrow_drop_down, color: p.text2),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            _rdArrow(Icons.chevron_right, l10n.redesignPlanNext, () => _navigate(1)),
+          ],
+        ),
+      ),
+      const SizedBox(height: 4),
+      Align(alignment: Alignment.centerRight, child: _rdStatus()),
     ];
   }
 
@@ -246,7 +287,7 @@ extension _PlanningBeta on _PlanningPageState {
     final Widget content;
     if (!_hasPendingChanges) {
       content = Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.check, size: 16, color: p.present),
           const SizedBox(width: 4),
@@ -256,19 +297,16 @@ extension _PlanningBeta on _PlanningPageState {
     } else if (!_hasUserEdits) {
       return const SizedBox(height: 18);
     } else if (!_validate()) {
-      content = Text(
-        l10n.redesignPlanInvalid,
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 13, color: p.late),
-      );
+      content = Text(l10n.redesignPlanInvalid, style: TextStyle(fontSize: 13, color: p.late));
     } else {
-      content = Text(l10n.redesignPlanSaving, textAlign: TextAlign.center, style: RdType.meta(p, size: 13));
+      content = Text(l10n.redesignPlanSaving, style: RdType.meta(p, size: 13));
     }
-    return Semantics(liveRegion: true, child: SizedBox(width: double.infinity, child: content));
+    return Semantics(liveRegion: true, child: content);
   }
 
+  /// Überschrift (in the PDF and for the members above the Ablauf), then
   /// Beginn ✎ · Gesamtdauer · Ende.
-  Widget _rdSummary(int? start, int total) {
+  Widget _rdSummary(PlanAttendance att, int? start, int total) {
     final p = context.rd;
     final l10n = context.l10n;
     final end = start == null ? '' : PlanUtils.formatMinutes(start + total);
@@ -283,33 +321,84 @@ extension _PlanningBeta on _PlanningPageState {
     );
     return RdCard(
       padding: EdgeInsets.zero,
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: Semantics(
-              button: true,
-              child: InkWell(
-                key: const Key('rd-plan-start'),
-                onTap: _pickTime,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(14, 12, 8, 12),
-                  child: Row(
-                    children: [
-                      Flexible(child: part(l10n.redesignPlanStart, _time)),
-                      const SizedBox(width: 4),
-                      Icon(Icons.edit_outlined, size: 16, color: p.link),
-                    ],
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.redesignPlanHeading, style: RdType.meta(p, size: 12)),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Focus(
+                        onFocusChange: (focused) {
+                          if (!focused) _onTitleFocusLost();
+                        },
+                        child: Semantics(
+                          label: l10n.redesignPlanHeading,
+                          child: TextField(
+                            key: const Key('rd-plan-heading'),
+                            controller: _titleController,
+                            textCapitalization: TextCapitalization.sentences,
+                            textInputAction: TextInputAction.done,
+                            onSubmitted: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: p.text),
+                            // Empty: the default title (Ionic "Standardtitel verwenden").
+                            decoration: InputDecoration(
+                              isDense: true,
+                              filled: false,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(vertical: 4),
+                              hintText: _defaultTitle(att),
+                              hintStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: p.text2),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(Icons.edit_outlined, size: 16, color: p.link),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Divider(height: 1, thickness: 1, color: p.line),
+          Row(
+            children: [
+              Expanded(
+                child: Semantics(
+                  button: true,
+                  child: InkWell(
+                    key: const Key('rd-plan-start'),
+                    onTap: _pickTime,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(14, 12, 8, 12),
+                      child: Row(
+                        children: [
+                          Flexible(child: part(l10n.redesignPlanStart, _time)),
+                          const SizedBox(width: 4),
+                          Icon(Icons.edit_outlined, size: 16, color: p.link),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          Text(_rdDuration(total), style: RdType.meta(p, size: 15)),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 12, 14, 12),
-              child: Align(alignment: Alignment.centerRight, child: part(l10n.redesignPlanEnd, end)),
-            ),
+              Text(_rdDuration(total), style: RdType.meta(p, size: 15)),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 12, 14, 12),
+                  child: Align(alignment: Alignment.centerRight, child: part(l10n.redesignPlanEnd, end)),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -346,36 +435,48 @@ extension _PlanningBeta on _PlanningPageState {
 
     final numbers = PlanUtils.topNumbers(_fields);
     final keys = [for (final i in visible) rowKey(_fields[i].id)];
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: p.surface,
-        borderRadius: BorderRadius.circular(p.listRadius),
-        boxShadow: p.cardShadow,
-      ),
-      child: Material(
-        type: MaterialType.transparency,
-        borderRadius: BorderRadius.circular(p.listRadius),
-        clipBehavior: Clip.antiAlias,
-        child: ReorderableListView.builder(
-          key: const Key('rd-plan-timeline'),
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          buildDefaultDragHandles: false,
-          itemCount: visible.length,
-          onReorderItem: (o, n) => _rdReorder(visible, o, n),
-          proxyDecorator: (child, _, __) => Material(color: p.surface, elevation: 6, child: child),
-          itemBuilder:
-              (context, row) => KeyedSubtree(
+    return Listener(
+      onPointerUp: (_) => _rdDragCancel(later: true),
+      onPointerCancel: (_) => _rdDragCancel(),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: p.surface,
+          borderRadius: BorderRadius.circular(p.listRadius),
+          boxShadow: p.cardShadow,
+        ),
+        child: Material(
+          type: MaterialType.transparency,
+          borderRadius: BorderRadius.circular(p.listRadius),
+          clipBehavior: Clip.antiAlias,
+          child: ReorderableListView.builder(
+            key: const Key('rd-plan-timeline'),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            buildDefaultDragHandles: false,
+            itemCount: visible.length,
+            onReorderStart: (row) => _rdDragStart(visible, row),
+            onReorderEnd: (row) => _rdDragEnd(visible, row),
+            onReorderItem: (o, n) => _rdReorder(visible, o, n),
+            proxyDecorator: (child, row, _) => _rdDragProxy(visible, row, child),
+            itemBuilder: (context, row) {
+              final index = visible[row];
+              // Unterpunkte of the dragged block fold into its head (the row
+              // count stays the same: a changed count cancels the drag).
+              final folded = _rdDragBlock != null && _fields[index].groupId == _rdDragBlock;
+              return KeyedSubtree(
                 key: ValueKey(keys[row]),
-                child: _rdRow(
-                  visible[row],
-                  row,
-                  start,
-                  numbers,
-                  last: row == visible.length - 1,
-                  showBeamer: showBeamer,
+                child: AnimatedSize(
+                  duration: const Duration(milliseconds: 180),
+                  curve: Curves.easeOut,
+                  alignment: Alignment.topCenter,
+                  child:
+                      folded
+                          ? const SizedBox(width: double.infinity)
+                          : _rdRow(index, row, start, numbers, last: row == visible.length - 1, showBeamer: showBeamer),
                 ),
-              ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -412,7 +513,8 @@ extension _PlanningBeta on _PlanningPageState {
     if (isHead) {
       final count = PlanUtils.childrenOf(_fields, field.id).length;
       metaLine = [
-        if (start != null) PlanUtils.groupRange(start, _fields, index),
+        if (at != null)
+          l10n.redesignPlanUntil(PlanUtils.formatMinutes(at + PlanUtils.groupDuration(_fields, field.id))),
         if ((field.conductor ?? '').isNotEmpty) field.conductor!,
         l10n.redesignPlanItemCount(count),
         if (collapsed) l10n.redesignPlanCollapsed,
@@ -466,7 +568,28 @@ extension _PlanningBeta on _PlanningPageState {
       );
     }
     if (isHead) {
-      trailing = _RdDurationPill(label: l10n.redesignPlanMinutes(minutes), selected: false);
+      // The block's length (sum of its Unterpunkte) and, next to it, open /
+      // close: the time column on the left stays the same for every row.
+      trailing = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            l10n.redesignPlanMinutes(minutes),
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: p.softText),
+          ),
+          IconButton(
+            key: ValueKey('rd-plan-toggle-$index'),
+            tooltip: collapsed ? l10n.redesignPlanExpand : l10n.redesignPlanCollapse,
+            constraints: const BoxConstraints(minWidth: 40, minHeight: 44),
+            padding: EdgeInsets.zero,
+            icon: Icon(collapsed ? Icons.expand_more : Icons.expand_less, color: p.link),
+            onPressed:
+                () => _rdSet(() {
+                  if (!_rdCollapsed.remove(field.id)) _rdCollapsed.add(field.id);
+                }),
+          ),
+        ],
+      );
     } else if (!isNote && !isAgenda) {
       trailing = Semantics(
         button: true,
@@ -488,24 +611,13 @@ extension _PlanningBeta on _PlanningPageState {
     final rowBody = Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        if (isHead)
-          IconButton(
-            tooltip: collapsed ? l10n.redesignPlanExpand : l10n.redesignPlanCollapse,
-            constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-            icon: Icon(collapsed ? Icons.chevron_right : Icons.expand_more, color: p.link),
-            onPressed:
-                () => _rdSet(() {
-                  if (!_rdCollapsed.remove(field.id)) _rdCollapsed.add(field.id);
-                }),
-          )
-        else
-          SizedBox(
-            width: 50,
-            child: Text(
-              isNote || isAgenda || at == null ? '' : PlanUtils.formatMinutes(at),
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: p.softText),
-            ),
+        SizedBox(
+          width: 50,
+          child: Text(
+            isNote || isAgenda || at == null ? '' : PlanUtils.formatMinutes(at),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: p.softText),
           ),
+        ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
@@ -531,7 +643,7 @@ extension _PlanningBeta on _PlanningPageState {
       ],
     );
 
-    Widget content = Padding(padding: EdgeInsets.only(left: isHead ? 2 : (isChild ? 30 : 14)), child: rowBody);
+    Widget content = Padding(padding: EdgeInsets.only(left: isChild ? 30 : 14), child: rowBody);
     if (isChild) {
       content = Stack(
         children: [content, Positioned(left: 20, top: 0, bottom: 0, child: Container(width: 2, color: p.line))],
@@ -562,6 +674,75 @@ extension _PlanningBeta on _PlanningPageState {
   }
 
   // ---------------------------------------------------------------------------
+  // Dragging a block
+  // ---------------------------------------------------------------------------
+
+  /// An open block with Unterpunkte is dragged as one card: they fold into
+  /// the head while the finger moves and unfold at the new place.
+  void _rdDragStart(List<int> visible, int row) {
+    if (row >= visible.length) return;
+    final field = _fields[visible[row]];
+    if (!PlanUtils.isGroupHead(field) || _rdCollapsed.contains(field.id)) return;
+    if (PlanUtils.childrenOf(_fields, field.id).isEmpty) return;
+    _rdDragGen++;
+    _rdSet(() => _rdDragBlock = field.id);
+  }
+
+  /// Dropped where it was: no reorder follows, so unfold here. A real move
+  /// unfolds in [_rdReorder], together with the new order, so the
+  /// Unterpunkte never show up at the old place during the drop.
+  void _rdDragEnd(List<int> visible, int row) {
+    if (_rdDragBlock == null) return;
+    final from = visible.indexWhere((i) => _fields[i].id == _rdDragBlock);
+    if (from < 0 || row == from || row == from + 1) _rdSet(() => _rdDragBlock = null);
+  }
+
+  /// A cancelled drag (no end, no reorder) unfolds too. [later]: after the
+  /// finger lifted, once the drop animation (250 ms) is over; normally the
+  /// end or the reorder unfolded already, this only catches a drag the list
+  /// cancelled itself (e.g. the plan changed meanwhile).
+  void _rdDragCancel({bool later = false}) {
+    if (_rdDragBlock == null) return;
+    if (!later) {
+      _rdSet(() => _rdDragBlock = null);
+      return;
+    }
+    // Only this drag: a new one started meanwhile (even of the same block)
+    // keeps its folded Unterpunkte.
+    final gen = _rdDragGen;
+    Future<void>.delayed(const Duration(milliseconds: 400), () {
+      if (mounted && _rdDragGen == gen && _rdDragBlock != null) _rdSet(() => _rdDragBlock = null);
+    });
+  }
+
+  Widget _rdDragProxy(List<int> visible, int row, Widget child) {
+    final p = context.rd;
+    final card = Material(color: p.surface, elevation: 6, child: child);
+    final isBlock = _rdDragBlock != null && row < visible.length && _fields[visible[row]].id == _rdDragBlock;
+    if (!isBlock) return card;
+    // Folded cards along the bottom edge: the Unterpunkte travel with it
+    // (inside the head's size, the proxy keeps the dragged row's extent).
+    return Stack(
+      children: [
+        card,
+        for (final (inset, height) in [(16.0, 6.0), (28.0, 3.0)])
+          Positioned(
+            left: inset,
+            right: inset,
+            bottom: 0,
+            height: height,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: p.line,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  // ---------------------------------------------------------------------------
   // Changes
   // ---------------------------------------------------------------------------
 
@@ -584,6 +765,7 @@ extension _PlanningBeta on _PlanningPageState {
 
   /// [newIndex] as `onReorderItem` reports it (already without the moved row).
   void _rdReorder(List<int> visible, int oldIndex, int newIndex) {
+    _rdDragBlock = null; // unfolds with the new order (same frame)
     final reordered = [...visible]..removeAt(oldIndex);
     final from = visible[oldIndex];
     reordered.insert(newIndex, from);
@@ -1131,23 +1313,20 @@ extension _PlanningBeta on _PlanningPageState {
   // "•••": Teilen & Export, the open plan, Registerprobenplan, zurücksetzen
   // ---------------------------------------------------------------------------
 
-  Future<void> _rdMore() async {
+  /// "Teilen" at the top: PDF, Telegram and the public link of the open plan.
+  Future<void> _rdShare() async {
     final l10n = context.l10n;
     final att = _att;
     if (att == null) return;
     final plans = PlanUtils.allPlans(att);
-    final tenant = ref.read(currentTenantProvider);
-    final showSectional = tenant?.type == 'choir' || tenant?.type == 'orchestra';
     final chatId = planTelegramChatId(ref);
     final hasExports = _fields.isNotEmpty;
     final multi = plans.length > 1;
-    final planName = multi ? PlanUtils.planLabel(att, _planIndex, plans) : '';
     final loadGen = _loadGen;
     final action = await _rdSheet<String>(
-      title: l10n.redesignPlanTitle,
+      title: l10n.redesignPlanShareExport,
       builder:
           (ctx, pop) => [
-            RdGroupLabel(l10n.redesignPlanShareExport),
             RdGroupedList(
               children: [
                 if (hasExports) ...[
@@ -1171,6 +1350,7 @@ extension _PlanningBeta on _PlanningPageState {
                   l10n.redesignPlanPublicLink,
                   att.shareKey != null ? l10n.redesignPlanPublicLinkShared : l10n.redesignPlanPublicLinkHint,
                   () => pop('link'),
+                  key: const Key('rd-plan-link'),
                 ),
                 if (ref.read(hasBrandingProvider))
                   Consumer(
@@ -1186,6 +1366,46 @@ extension _PlanningBeta on _PlanningPageState {
                       );
                     },
                   ),
+              ],
+            ),
+          ],
+    );
+    // Another plan or Termin was loaded meanwhile: the sheet was for the old one.
+    if (action == null || !mounted || loadGen != _loadGen) return;
+    if (action == 'link') {
+      await _shareLink();
+    } else {
+      await _rdExport(action);
+    }
+  }
+
+  /// ••• at the top: the plans of the Termin and the open plan.
+  Future<void> _rdMore() async {
+    final l10n = context.l10n;
+    final att = _att;
+    if (att == null) return;
+    final plans = PlanUtils.allPlans(att);
+    final tenant = ref.read(currentTenantProvider);
+    final showSectional = tenant?.type == 'choir' || tenant?.type == 'orchestra';
+    final multi = plans.length > 1;
+    final planName = multi ? PlanUtils.planLabel(att, _planIndex, plans) : '';
+    final loadGen = _loadGen;
+    final action = await _rdSheet<String>(
+      title: l10n.redesignPlanTitle,
+      builder:
+          (ctx, pop) => [
+            RdGroupLabel(l10n.redesignPlanPlansSection),
+            RdGroupedList(
+              children: [
+                _rdSheetRow(
+                  Icons.add,
+                  l10n.redesignPlanAddAnother,
+                  l10n.redesignPlanAddAnotherHint,
+                  () => pop('addPlan'),
+                  key: const Key('rd-plan-add-plan-more'),
+                ),
+                if (showSectional)
+                  _rdSheetRow(Icons.groups_outlined, l10n.planningCreateSectionalPlan, null, () => pop('sectional')),
               ],
             ),
             if (multi) ...[
@@ -1211,28 +1431,20 @@ extension _PlanningBeta on _PlanningPageState {
             ],
             const SizedBox(height: 20),
             RdGroupLabel(l10n.redesignPlanOther),
-            RdGroupedList(
-              children: [
-                if (showSectional)
-                  _rdSheetRow(Icons.groups_outlined, l10n.planningCreateSectionalPlan, null, () => pop('sectional')),
-                _rdSheetRow(Icons.restart_alt, l10n.planningResetPlan, null, () => pop('reset')),
-              ],
-            ),
+            RdGroupedList(children: [_rdSheetRow(Icons.restart_alt, l10n.planningResetPlan, null, () => pop('reset'))]),
           ],
     );
     // Another plan or Termin was loaded meanwhile: the sheet was for the old one.
     if (action == null || !mounted || loadGen != _loadGen) return;
     switch (action) {
-      case 'link':
-        await _shareLink();
+      case 'addPlan':
+        await _addPlan();
       case 'rename' || 'day' || 'left' || 'right' || 'delete':
         await _showPlanOptions(preset: action);
       case 'sectional':
         await showRegisterPlanSheet(context, attendanceDate: DateTime.tryParse(_att?.date ?? ''));
       case 'reset':
         await _resetPlan();
-      default:
-        await _rdExport(action);
     }
   }
 
@@ -1400,6 +1612,24 @@ extension _PlanningBeta on _PlanningPageState {
           ),
     );
     if (id != null && mounted) await _selectAttendance(id);
+  }
+
+  static const _rdHintKey = 'rd_plan_hint_hidden';
+
+  /// Called from initState: whether "Verstanden" was tapped before.
+  Future<void> _rdLoadHint() async {
+    var hidden = false;
+    try {
+      hidden = (await SharedPreferences.getInstance()).getBool(_rdHintKey) ?? false;
+    } catch (_) {}
+    if (mounted) _rdSet(() => _rdHintHidden = hidden);
+  }
+
+  Future<void> _rdHideHint() async {
+    _rdSet(() => _rdHintHidden = true);
+    try {
+      await (await SharedPreferences.getInstance()).setBool(_rdHintKey, true);
+    } catch (_) {}
   }
 
   Future<void> _rdSetShare(bool value) async {

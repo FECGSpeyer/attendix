@@ -12,6 +12,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/account_switch/account_switch_service.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
+import '../../../../core/utils/dialog_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/route_leave_guard.dart';
 import '../../../auth/data/auth_flow_service.dart';
@@ -150,7 +151,7 @@ Future<void> showRdAccountSwitchSheet(BuildContext context) {
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
-    builder: (_) => const _RdAccountSwitchSheet(),
+    builder: (_) => RdSheetCap(child: const _RdAccountSwitchSheet()),
   );
 }
 
@@ -199,25 +200,14 @@ class _RdAccountSwitchSheetState extends ConsumerState<_RdAccountSwitchSheet> {
 
   Future<void> _remove(SavedAccount account) async {
     final l10n = context.l10n;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.redesignAccountsRemoveTitle),
-        content: Text(l10n.redesignAccountsRemoveBody(account.email)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n.redesignCommonCancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: ctx.rd.absent),
-            child: Text(l10n.redesignAccountsRemoveConfirm),
-          ),
-        ],
-      ),
+    final confirmed = await DialogHelper.showConfirmation(
+      context,
+      title: l10n.redesignAccountsRemoveTitle,
+      message: l10n.redesignAccountsRemoveBody(account.email),
+      confirmText: l10n.redesignAccountsRemoveConfirm,
+      isDestructive: true,
     );
-    if (confirmed != true || !mounted) return;
+    if (!confirmed || !mounted) return;
     try {
       await ref.read(accountSwitchServiceProvider).remove(account.userId);
     } catch (_) {
@@ -362,7 +352,7 @@ Future<bool?> showRdAccountLoginSheet(BuildContext context, {String? email}) {
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
-    builder: (_) => _RdAccountLoginSheet(email: email),
+    builder: (_) => RdSheetCap(child: _RdAccountLoginSheet(email: email)),
   );
 }
 

@@ -56,6 +56,7 @@ Future<RdSignoutChoice?> showRdReasonSheet(
   bool allowLate = true,
   bool late = false,
   bool ownReasonFirst = false,
+  bool forChild = false,
 }) {
   return showModalBottomSheet<RdSignoutChoice>(
     context: context,
@@ -63,7 +64,7 @@ Future<RdSignoutChoice?> showRdReasonSheet(
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
-    builder: (_) => _SignoutSheet(
+    builder: (_) => RdSheetCap(child: _SignoutSheet(
       title: title,
       meta: meta,
       absenceReasons: absenceReasons,
@@ -72,7 +73,8 @@ Future<RdSignoutChoice?> showRdReasonSheet(
       allowLate: allowLate,
       late: late,
       ownReasonFirst: ownReasonFirst,
-    ),
+      forChild: forChild,
+    )),
   );
 }
 
@@ -86,6 +88,7 @@ class _SignoutSheet extends StatefulWidget {
     required this.allowLate,
     required this.late,
     required this.ownReasonFirst,
+    required this.forChild,
   });
 
   final String title;
@@ -98,6 +101,9 @@ class _SignoutSheet extends StatefulWidget {
 
   /// Today: an own reason is more likely than a prepared one.
   final bool ownReasonFirst;
+
+  /// Eltern answer for a child: no "Ich …" / "Deinen Grund".
+  final bool forChild;
 
   @override
   State<_SignoutSheet> createState() => _SignoutSheetState();
@@ -143,7 +149,9 @@ class _SignoutSheetState extends State<_SignoutSheet> {
                 RdSegmented<bool>(
                   values: const [false, true],
                   selected: _late,
-                  labelOf: (late) => late ? l10n.redesignSignoutLater : l10n.redesignSignoutCannot,
+                  labelOf: (late) => widget.forChild
+                      ? (late ? l10n.redesignSignoutChildLater : l10n.redesignSignoutChildCannot)
+                      : (late ? l10n.redesignSignoutLater : l10n.redesignSignoutCannot),
                   onChanged: (v) => setState(() {
                     _late = v;
                     _reason = null;
@@ -197,7 +205,12 @@ class _SignoutSheetState extends State<_SignoutSheet> {
                 children: [
                   Icon(Icons.lock_outline, size: 16, color: p.text2),
                   const SizedBox(width: 6),
-                  Expanded(child: Text(l10n.redesignSignoutPrivacy, style: RdType.meta(p, size: 13))),
+                  Expanded(
+                    child: Text(
+                      widget.forChild ? l10n.redesignSignoutChildPrivacy : l10n.redesignSignoutPrivacy,
+                      style: RdType.meta(p, size: 13),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 18),

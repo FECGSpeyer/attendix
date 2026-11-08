@@ -83,10 +83,13 @@ class RdWorkPage extends ConsumerWidget {
               : RdInfoCard(
                 text: async.hasError ? l10n.redesignTodayLoadFailed : l10n.redesignWorkNotFound,
                 icon: Icons.music_off_outlined,
-                action: RdOutlineButton(
-                  label: l10n.redesignCommonRetry,
-                  onPressed: () => ref.invalidate(songDetailDataProvider(params)),
-                ),
+                // Retry only helps after an error, not when it is gone.
+                action: async.hasError
+                    ? RdOutlineButton(
+                      label: l10n.redesignCommonRetry,
+                      onPressed: () => ref.invalidate(songDetailDataProvider(params)),
+                    )
+                    : null,
               ),
         ],
       );
@@ -389,7 +392,8 @@ class RdWorkPage extends ConsumerWidget {
     return [
       RdSectionHeader(
         files.isEmpty ? l10n.redesignWorkFiles : '${l10n.redesignWorkFiles} · ${files.length}',
-        action: canEdit ? _AddLink(label: l10n.redesignWorkAdd, onTap: pick) : null,
+        // Without files the card below is the one way to add them.
+        action: canEdit && files.isNotEmpty ? _AddLink(label: l10n.redesignWorkAdd, onTap: pick) : null,
       ),
       if (filesState != null && filesState.uploads.isNotEmpty) ...[
         RdUploadQueue(

@@ -329,10 +329,13 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
               : RdInfoCard(
                 text: async.hasError ? l10n.redesignTodayLoadFailed : l10n.redesignWorkNotFound,
                 icon: Icons.error_outline,
-                action: RdOutlineButton(
-                  label: l10n.redesignCommonRetry,
-                  onPressed: () => ref.invalidate(songDetailDataProvider(_params)),
-                ),
+                // Retry only helps after an error, not when it is gone.
+                action: async.hasError
+                    ? RdOutlineButton(
+                      label: l10n.redesignCommonRetry,
+                      onPressed: () => ref.invalidate(songDetailDataProvider(_params)),
+                    )
+                    : null,
               ),
         ],
       );
@@ -549,8 +552,7 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
           padding: const EdgeInsets.fromLTRB(4, 16, 4, 20),
           child: Text(l10n.redesignWorkEditHint, style: RdType.meta(p, size: 13)),
         ),
-        RdPrimaryButton(label: l10n.redesignCommonDone, onPressed: _done),
-        const SizedBox(height: 28),
+        const SizedBox(height: 8),
         RdGroupedList(
           children: [
             RdListRow(

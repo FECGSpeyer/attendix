@@ -375,6 +375,7 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
                 saving: _saving,
                 onCancel: _saving ? null : _cancel,
                 onSubmit: canEdit ? _save : null,
+                submitKey: const Key('rd-person-create'),
               ),
               Expanded(
                 child: canEdit
@@ -531,13 +532,6 @@ class _RdPersonCreatePageState extends ConsumerState<RdPersonCreatePage> {
           ),
         ],
         const SizedBox(height: 24),
-        RdPrimaryButton(
-          key: const Key('rd-person-create'),
-          label: l10n.redesignPersonFormCreateButton,
-          icon: Icons.person_add_alt_1_outlined,
-          loading: _saving,
-          onPressed: _save,
-        ),
       ],
     );
   }
