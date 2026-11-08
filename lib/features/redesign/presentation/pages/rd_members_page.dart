@@ -53,7 +53,6 @@ class RdMembersPage extends ConsumerStatefulWidget {
 }
 
 class _RdMembersPageState extends ConsumerState<RdMembersPage> {
-  RdMembersFilter _filter = RdMembersFilter.active;
   String _query = '';
 
   /// Read-only list: selected "Einteilung" ('' = all).
@@ -154,7 +153,9 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
 
     final active = people.where((x) => !x.paused).toList();
     final paused = people.where((x) => x.paused).toList();
-    final filter = _filter == RdMembersFilter.pending && rawPending.isEmpty ? RdMembersFilter.active : _filter;
+    final tab = ref.watch(rdMembersTabProvider);
+    final filter = tab == RdMembersFilter.pending && rawPending.isEmpty ? RdMembersFilter.active : tab;
+    void setTab(RdMembersFilter f) => ref.read(rdMembersTabProvider.notifier).state = f;
     final filters = [
       RdMembersFilter.active,
       RdMembersFilter.paused,
@@ -296,7 +297,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
             RdMembersFilter.paused => l10n.redesignMembersPaused(paused.length),
             RdMembersFilter.pending => l10n.redesignMembersPending(pending.length),
           },
-          onChanged: (f) => setState(() => _filter = f),
+          onChanged: setTab,
         ),
       ),
       const SizedBox(height: 6),
@@ -351,7 +352,23 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
       ],
     ];
 
-    final body = <Widget>[];
+    final body = <Widget>[
+      // The red count on the tab: say what it means where the list opens
+      // (Aktiv), same row as on "Heute"; it opens "Wartet".
+      if (filter != RdMembersFilter.pending && rawPending.isNotEmpty) ...[
+        RdGroupedList(children: [
+          RdListRow(
+            key: const Key('rd-members-pending-row'),
+            leading: RdRowIcon(Icons.person_add_alt_1_outlined, color: p.primary, background: p.soft),
+            title: l10n.redesignTodayPending(rawPending.length),
+            subtitle: l10n.redesignTodayPendingHint,
+            trailing: RdCountBadge(rawPending.length),
+            onTap: () => setTab(RdMembersFilter.pending),
+          ),
+        ]),
+        const SizedBox(height: 18),
+      ],
+    ];
     if (peopleAsync.isLoading && people.isEmpty) {
       body.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
     } else if (peopleAsync.hasError && people.isEmpty) {
@@ -428,7 +445,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
     children.add(RdSwipeSwitch<RdMembersFilter>(
       values: filters,
       selected: filter,
-      onChanged: (f) => setState(() => _filter = f),
+      onChanged: setTab,
       onDrag: (pos) => _swipePos.value = pos,
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: body),
     ));

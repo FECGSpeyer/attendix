@@ -50,6 +50,13 @@ class _ParentsTenant extends StateNotifier<Tenant?> implements CurrentTenantNoti
   dynamic noSuchMethod(Invocation i) => null;
 }
 
+class _TeachersTenant extends StateNotifier<Tenant?> implements CurrentTenantNotifier {
+  _TeachersTenant()
+      : super(const Tenant(id: 42, shortName: 'X', longName: 'X', maintainTeachers: true, type: 'orchestra'));
+  @override
+  dynamic noSuchMethod(Invocation i) => null;
+}
+
 class _MockCrossTenantRepository extends Mock implements CrossTenantPersonRepository {}
 
 Future<MockPlayerRepository> _pump(WidgetTester tester, Widget home, {Person? person, Person? stored}) async {
@@ -302,5 +309,46 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(written, {'parent_id': 7});
+  });
+
+  testWidgets('Weitere Angaben: without a teacher the picker says so and offers "Neuer Lehrer"', (tester) async {
+    tester.view.physicalSize = const Size(430, 3000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        currentTenantProvider.overrideWith((ref) => _TeachersTenant()),
+        effectiveRoleProvider.overrideWithValue(Role.admin),
+        groupsProvider.overrideWith((ref) async => const []),
+        churchesProvider.overrideWith((ref) async => const []),
+        teachersProvider.overrideWith((ref) async => const []),
+        parentsProvider.overrideWith((ref) async => const []),
+        shiftsProvider.overrideWith((ref) async => const []),
+      ],
+      child: MaterialApp(
+        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: RdPersonMoreFields(
+              person: const Person(id: 1, firstName: 'A', lastName: 'B', hasTeacher: true),
+              isMainGroup: false,
+              additionalValues: const {},
+              onColumns: (c, {typing = false}) {},
+              onExtra: (a, b, {typing = false}) {},
+            ),
+          ),
+        ),
+      ),
+    ));
+    await tester.pump(const Duration(seconds: 1));
+
+    await tester.tap(find.text('Lehrer'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Für dieses Register gibt es noch keinen Lehrer.'), findsOneWidget);
+    expect(find.text('Neuer Lehrer'), findsOneWidget);
   });
 }
