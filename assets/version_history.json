@@ -5,7 +5,7 @@
       "date": "8.11.2026",
       "changes": [
         "✨ Beta Auswertung neu: oben Zeitraum (Saison, 3 Monate, 12 Monate oder eigener Von/Bis-Zeitraum) und Filter nach Terminart und Register, darunter die Ebenen „Überblick“ und „Termine“ (Umschalter oder Wischen)",
-        "✨ Beta Auswertung Überblick: Ø mit Veränderung gegenüber dem gleich langen Zeitraum davor, Anwesenheit je Termin (antippen zeigt, wer fehlte, mit Grund), „Fällt auf“ (Personen unter 50 %, nachlassendes Register, schwächster und bester Termin), Statusverteilung, Je Register und Termine je Art (antippen filtert)",
+        "✨ Beta Auswertung Überblick: Ø mit Veränderung gegenüber dem gleich langen Zeitraum davor, Anwesenheit je Termin (antippen zeigt, wer fehlte, mit Grund), „Fällt auf“ (Personen unter 50 %, nachlassendes Register, schwächster und bester Termin), Statusverteilung und Termine je Art (antippen filtert)",
         "✨ Beta Auswertung Termine: alle Termine des Zeitraums mit Statusbalken und fehlenden Personen, nach Monat gruppiert, sortierbar (Neueste, Älteste, Schwächste, Beste zuerst)",
         "✨ Beta Auswertung Register: jedes Register mit Personen, Monatskurve und Quote; antippen zeigt seine Personen",
         "✨ Beta Auswertung Personen: alle mit Quote und Fehlzeiten, sortierbar (Wenigste, Meiste, Oft abwesend, Oft verspätet, Name); das Personen-Blatt zeigt jeden Termin als Punkt, die Zahlen und wann die Person mit welchem Grund fehlte",
@@ -13,6 +13,13 @@
         "✨ Beta Auswertung: Mitglieder, Alter (je Jahrzehnt, Ø je Register), Zusatzfelder und Organisation aus Ionic im Beta-Design",
         "✨ Beta Auswertung: „Zählt zur Anwesenheitsquote“ direkt hier umschaltbar; der Terminart-Filter gilt nur für die Ansicht",
         "🐛 Beta Auswertung: alles wird gezählt wie bei den Mitgliedern (nur zählende Terminarten, Dienste nur Eingeteilte, Schichtbedingt-Einstellung, Neutral zählt als nicht da); Dirigent ist kein Register mehr; „100 %“ bricht nicht mehr um"
+      ]
+    },
+    {
+      "version": "0.95.1",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta: Ein ausgetretenes Mitglied zeigt oben „Ausgetreten“ (für die Leitung mit Grund) und „Wiederherstellen“ als Hauptaktion, darunter Anwesenheit und alle Angaben zum Lesen"
       ]
     },
     {
