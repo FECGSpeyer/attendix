@@ -14295,7 +14295,7 @@
   "@redesignEventsNew": {
     "description": "redesign.events.new"
   },
-  "redesignEventsNo": "Abmelden",
+  "redesignEventsNo": "Kann nicht",
   "@redesignEventsNo": {
     "description": "redesign.events.no"
   },
@@ -14361,7 +14361,7 @@
       }
     }
   },
-  "redesignEventsYes": "Dabei",
+  "redesignEventsYes": "Bin dabei",
   "@redesignEventsYes": {
     "description": "redesign.events.yes"
   },
@@ -17665,6 +17665,18 @@
   "redesignSignoutCannot": "Ich kann nicht",
   "@redesignSignoutCannot": {
     "description": "redesign.signout.cannot"
+  },
+  "redesignSignoutChildCannot": "Absagen",
+  "@redesignSignoutChildCannot": {
+    "description": "redesign.signout.childCannot"
+  },
+  "redesignSignoutChildLater": "Später kommen",
+  "@redesignSignoutChildLater": {
+    "description": "redesign.signout.childLater"
+  },
+  "redesignSignoutChildPrivacy": "Den Grund sieht nur die Leitung.",
+  "@redesignSignoutChildPrivacy": {
+    "description": "redesign.signout.childPrivacy"
   },
   "redesignSignoutLater": "Ich komme später",
   "@redesignSignoutLater": {

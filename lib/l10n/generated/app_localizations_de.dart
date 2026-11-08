@@ -11494,7 +11494,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventsNew => 'Neuer Termin';
 
   @override
-  String get redesignEventsNo => 'Abmelden';
+  String get redesignEventsNo => 'Kann nicht';
 
   @override
   String get redesignEventsNoMatch => 'Keine Termine passen zur Suche.';
@@ -11547,7 +11547,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignEventsYes => 'Dabei';
+  String get redesignEventsYes => 'Bin dabei';
 
   @override
   String get redesignEventsYou => 'Du';
@@ -14301,6 +14301,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignSignoutCannot => 'Ich kann nicht';
+
+  @override
+  String get redesignSignoutChildCannot => 'Absagen';
+
+  @override
+  String get redesignSignoutChildLater => 'Später kommen';
+
+  @override
+  String get redesignSignoutChildPrivacy => 'Den Grund sieht nur die Leitung.';
 
   @override
   String get redesignSignoutLater => 'Ich komme später';

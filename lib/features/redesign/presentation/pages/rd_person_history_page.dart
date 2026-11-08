@@ -97,10 +97,13 @@ class _RdPersonHistoryPageState extends ConsumerState<RdPersonHistoryPage> {
               : RdInfoCard(
                   text: async.hasError ? l10n.redesignTodayLoadFailed : l10n.redesignPersonNotFound,
                   icon: Icons.person_off_outlined,
-                  action: RdOutlineButton(
-                    label: l10n.redesignCommonRetry,
-                    onPressed: () => ref.invalidate(personProvider(id)),
-                  ),
+                  // Retry only helps after an error, not when it is gone.
+                  action: async.hasError
+                      ? RdOutlineButton(
+                        label: l10n.redesignCommonRetry,
+                        onPressed: () => ref.invalidate(personProvider(id)),
+                      )
+                      : null,
                 )
         else ...[
           ..._averageCard(hasLeft: hasLeft),
@@ -122,13 +125,17 @@ class _RdPersonHistoryPageState extends ConsumerState<RdPersonHistoryPage> {
     if (stats == null && !showFilter) return const [];
     final percent = _intOf(stats?['percentage']);
     final late = _intOf(stats?['lateCount']);
+    // No Termin counted yet: no red "0 %" (same as the person page).
+    final total = _intOf(stats?['total']);
     return [
       RdCard(
         padding: const EdgeInsets.all(14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (stats != null)
+            if (stats != null && total == 0)
+              Text(l10n.redesignPersonNoTermine, style: RdType.meta(p, size: 14))
+            else if (stats != null)
               Wrap(
                 crossAxisAlignment: WrapCrossAlignment.end,
                 spacing: 8,

@@ -233,8 +233,8 @@
         "noMatch": "Keine Termine passen zur Suche.",
         "noPast": "Noch keine vergangenen Termine.",
         "percentPresent": "{percent} % anwesend",
-        "yes": "Dabei",
-        "no": "Abmelden",
+        "yes": "Bin dabei",
+        "no": "Kann nicht",
         "waiting": "{count, plural, one {1 Termin wartet auf deine Antwort} other {{count} Termine warten auf deine Antwort}}",
         "showAll": "Wieder alle Termine zeigen",
         "empty": "Noch keine Termine. Leg die erste Probe an.",
@@ -394,7 +394,10 @@
         "otherHint": "Kurz beschreiben (mindestens 5 Zeichen)",
         "privacy": "Deinen Grund sieht nur die Leitung.",
         "submit": "Abmelden",
-        "submitLate": "Verspätung melden"
+        "submitLate": "Verspätung melden",
+        "childCannot": "Absagen",
+        "childLater": "Später kommen",
+        "childPrivacy": "Den Grund sieht nur die Leitung."
       },
       "absence": {
         "title": "Abwesenheit",
@@ -1751,8 +1754,8 @@
         "noMatch": "No events match your search.",
         "noPast": "No past events yet.",
         "percentPresent": "{percent} % present",
-        "yes": "I'm in",
-        "no": "Sign out",
+        "yes": "I'm coming",
+        "no": "Can't make it",
         "waiting": "{count, plural, one {1 event is waiting for your answer} other {{count} events are waiting for your answer}}",
         "showAll": "Show all events again",
         "empty": "No events yet. Create the first rehearsal.",
@@ -1912,7 +1915,10 @@
         "otherHint": "Describe briefly (at least 5 characters)",
         "privacy": "Only the leaders see your reason.",
         "submit": "Sign out",
-        "submitLate": "Report delay"
+        "submitLate": "Report delay",
+        "childCannot": "Can't come",
+        "childLater": "Coming late",
+        "childPrivacy": "Only the leaders see the reason."
       },
       "absence": {
         "title": "Absence",

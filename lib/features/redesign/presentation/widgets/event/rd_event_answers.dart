@@ -322,6 +322,8 @@ Future<void> showRdStatusOverviewSheet(BuildContext context, {required List<RdMe
     AttendanceStatus.neutral,
   ];
   final counts = {for (final s in order) s: members.where((m) => m.status == s).length};
+  // Same word as the filter chips of the Anwesenheit: "Offen", not "Neutral".
+  String label(AttendanceStatus s) => s == AttendanceStatus.neutral ? l10n.redesignStatusOpen : ionicStatusLabel(s);
   final groups = <int?, List<RdMember>>{};
   for (final m in members) {
     groups.putIfAbsent(m.person.instrument, () => []).add(m);
@@ -363,7 +365,7 @@ Future<void> showRdStatusOverviewSheet(BuildContext context, {required List<RdMe
                                     color: rdStatusLook(p, s).color,
                                     background: rdStatusLook(p, s).soft,
                                   ),
-                                  title: ionicStatusLabel(s),
+                                  title: label(s),
                                   value: '${counts[s]}',
                                   showChevron: false,
                                 ),
@@ -380,7 +382,7 @@ Future<void> showRdStatusOverviewSheet(BuildContext context, {required List<RdMe
                                   subtitle: [
                                     for (final s in order.skip(1))
                                       if (list.any((m) => m.status == s))
-                                        '${ionicStatusLabel(s)} ${list.where((m) => m.status == s).length}',
+                                        '${label(s)} ${list.where((m) => m.status == s).length}',
                                   ].join(' · '),
                                   value: l10n.redesignEventRegisterPresent(
                                     list.where((m) => m.status.countsAsPresent).length,

@@ -51,11 +51,19 @@ int? rdAttendanceDurationDays(Attendance a, List<AttendanceType> types) {
       typeAllDay: type?.allDay ?? false, typeDurationDays: type?.durationDays);
 }
 
+/// Start of [a] for sorting: its own time, else the time of its type from
+/// [types] (like the cards show it), so "Probe" at the type's 19:30 does
+/// not sort before "Konzert 18:00" on the same day.
+DateTime? rdSortStartOf(Attendance a, List<AttendanceType> types) {
+  final type = a.typeId == null ? null : types.where((t) => t.id == a.typeId).firstOrNull;
+  return rdStartOf(a.date, a.startTime ?? type?.startTime);
+}
+
 /// Upcoming (not ended) Termine, soonest first. [types] give all-day
 /// Termine without own `duration_days` the length of their type.
 List<Attendance> rdUpcoming(List<Attendance> all, {DateTime? now, List<AttendanceType> types = const []}) {
   final current = now ?? DateTime.now();
-  DateTime keyOf(Attendance a) => rdStartOf(a.date, a.startTime) ?? DateTime(9999);
+  DateTime keyOf(Attendance a) => rdSortStartOf(a, types) ?? DateTime(9999);
   return all
       .where((a) => !EventListUtils.hasEnded(a.date, rdAttendanceDurationDays(a, types), now: current))
       .toList()
@@ -67,7 +75,7 @@ List<Attendance> rdRecentPast(List<Attendance> all,
     {DateTime? now, int days = 14, List<AttendanceType> types = const []}) {
   final current = now ?? DateTime.now();
   final from = DateTime(current.year, current.month, current.day).subtract(Duration(days: days));
-  DateTime keyOf(Attendance a) => rdStartOf(a.date, a.startTime) ?? DateTime(1970);
+  DateTime keyOf(Attendance a) => rdSortStartOf(a, types) ?? DateTime(1970);
   return all
       .where((a) => EventListUtils.hasEnded(a.date, rdAttendanceDurationDays(a, types), now: current) && !keyOf(a).isBefore(from))
       .toList()
@@ -115,7 +123,7 @@ final rdUnrecordedProvider = FutureProvider.autoDispose<List<int>>((ref) async {
 /// Ended Termine, newest first.
 List<Attendance> rdPast(List<Attendance> all, {DateTime? now, List<AttendanceType> types = const []}) {
   final current = now ?? DateTime.now();
-  DateTime keyOf(Attendance a) => rdStartOf(a.date, a.startTime) ?? DateTime(1970);
+  DateTime keyOf(Attendance a) => rdSortStartOf(a, types) ?? DateTime(1970);
   return all
       .where((a) => EventListUtils.hasEnded(a.date, rdAttendanceDurationDays(a, types), now: current))
       .toList()
