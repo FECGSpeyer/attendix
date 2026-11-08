@@ -65,8 +65,13 @@ const _admin = RdManageAccess(
   isVorkurs: true,
 );
 
-Widget _app(RdManageAccess access, {String initial = RedesignRoutes.manage, List<Person> left = const []}) {
-  final router = GoRouter(
+Widget _app(
+  RdManageAccess access, {
+  String initial = RedesignRoutes.manage,
+  List<Person> left = const [],
+  GoRouter? router,
+}) {
+  router ??= GoRouter(
     initialLocation: initial,
     routes: [
       GoRoute(
@@ -319,7 +324,58 @@ void main() {
       expect(prefs.getStringList(rdManageRecentStorageKey), ['approvals']);
     });
 
-    testWidgets('a section page (desktop detail or old link)', (tester) async {
+    testWidgets('wide screens: every entry on the left, its page on the right', (tester) async {
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      Page<void> split(RdManageEntry entry, String text) => NoTransitionPage<void>(
+            key: const ValueKey('rd-manage-split'),
+            child: RdManageSplit(entry: entry, detail: Text(text)),
+          );
+      final router = GoRouter(
+        initialLocation: RedesignRoutes.manage,
+        routes: [
+          GoRoute(
+            path: '/ich',
+            builder: (_, __) => const Scaffold(body: Text('page me')),
+            routes: [
+              GoRoute(
+                path: 'verwaltung',
+                builder: (_, __) => const RdManageSplit(),
+                routes: [
+                  GoRoute(path: 'gruppen', pageBuilder: (_, __) => split(RdManageEntry.groups, 'page groups')),
+                  GoRoute(path: 'terminarten', pageBuilder: (_, __) => split(RdManageEntry.attendanceTypes, 'page types')),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+      await tester.pumpWidget(_app(_admin, router: router));
+      await _settle(tester);
+      // Nothing chosen: the group on the right, all entries on the left.
+      expect(find.text('Attendix Test'), findsOneWidget);
+      expect(find.text('Wähle links einen Eintrag, er öffnet sich hier.'), findsOneWidget);
+      expect(find.text('Terminarten'), findsOneWidget);
+      expect(find.text('Rollen und Rechte'), findsOneWidget);
+
+      await tester.tap(find.text('Register'));
+      await _settle(tester);
+      expect(find.text('page groups'), findsOneWidget);
+      expect(find.text('Attendix Test'), findsNothing);
+
+      // The list stays; the next entry replaces the page on the right.
+      await tester.enterText(find.byType(TextField), 'termin');
+      await _settle(tester);
+      await tester.tap(find.text('Terminarten'));
+      await _settle(tester);
+      expect(find.text('page types'), findsOneWidget);
+      expect(find.text('page groups'), findsNothing);
+      expect(find.widgetWithText(TextField, 'termin'), findsOneWidget);
+      expect(router.routerDelegate.currentConfiguration.uri.path, RedesignRoutes.attendanceTypes);
+    });
+
+    testWidgets('a section page (old link)', (tester) async {
       _phone(tester);
       await tester.pumpWidget(_app(_admin, initial: '/ich/verwaltung/zugaenge'));
       await _settle(tester);

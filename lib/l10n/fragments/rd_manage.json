@@ -77,7 +77,8 @@
       "manageGroups": "Register verwalten",
       "showHolidays": "Ferien und Feiertage einblenden",
       "missingBanner": "{count, plural, one {1 Mitglied hat eine E-Mail, aber noch keinen Zugang zur App.} other {{count} Mitglieder haben eine E-Mail, aber noch keinen Zugang zur App.}}"
-    }
+    },
+    "rdAdminPickHint": "Wähle links einen Eintrag, er öffnet sich hier."
   },
   "en": {
     "rdAdmin": {
@@ -157,6 +158,7 @@
       "manageGroups": "Manage sections",
       "showHolidays": "Show holidays",
       "missingBanner": "{count, plural, one {1 member has an e-mail address but no app account yet.} other {{count} members have an e-mail address but no app account yet.}}"
-    }
+    },
+    "rdAdminPickHint": "Pick an entry on the left, it opens here."
   }
 }

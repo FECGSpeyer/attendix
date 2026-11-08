@@ -23,6 +23,7 @@ import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_manage_entries.dart' show rdManagePendingProvider;
 import '../widgets/manage/rd_settings_sheets.dart' show showRdChoiceSheet, showRdTextSheet;
 import '../widgets/rd_widgets.dart';
+import '../widgets/rd_split_view.dart' show RdManageBackLink;
 
 /// Runs [change] for every person and counts successes and failures, so
 /// one failing row does not stop the rest.
@@ -256,7 +257,7 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
             Expanded(
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: RdBackLink(
+                child: RdManageBackLink(
                   label: l10n.redesignAdminTitle,
                   onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.manage),
                 ),

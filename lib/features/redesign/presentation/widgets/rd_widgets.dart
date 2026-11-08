@@ -1289,6 +1289,11 @@ class RdTextLink extends StatelessWidget {
   }
 }
 
+/// Whether the page on top was pushed (`context.push`) rather than reached
+/// by its URL or `context.go`.
+bool rdIsPushed(BuildContext context) =>
+    GoRouter.of(context).routerDelegate.currentConfiguration.lastOrNull is ImperativeRouteMatch;
+
 /// Back from a sub page whose parent route is not where it is opened from
 /// (Werkhistorie under Ich › Verwaltung, opened from the Werke tab): pops
 /// when the page was pushed, otherwise goes to [fallback]. Opened by its
@@ -1296,8 +1301,7 @@ class RdTextLink extends StatelessWidget {
 /// `canPop` alone would land there instead of on [fallback].
 void rdBack(BuildContext context, String fallback) {
   final router = GoRouter.of(context);
-  final pushed = router.routerDelegate.currentConfiguration.lastOrNull is ImperativeRouteMatch;
-  if (pushed && router.canPop()) {
+  if (rdIsPushed(context) && router.canPop()) {
     router.pop();
   } else {
     router.go(fallback);

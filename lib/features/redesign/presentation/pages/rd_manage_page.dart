@@ -25,8 +25,9 @@ import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 /// REDESIGN: Ich › Verwaltung (canvas "Beta: Verwaltung neu gedacht"): only
 /// for Dirigent and Verantwortliche. The group on top, a search that also
 /// finds what moved into the tabs, then five sections on one page. On wide
-/// screens the sections stay on the left and the chosen one opens on the
-/// right ([RdManageSplit]).
+/// screens this is the list on the left: every entry, the chosen page opens
+/// on the right ([RdManageSplit]); the group and the unused features move
+/// to the overview there.
 class RdManagePage extends ConsumerStatefulWidget {
   const RdManagePage({super.key});
 
@@ -94,8 +95,10 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
           child: Text(l10n.redesignMeAdmin, style: RdType.largeTitle(p)),
         ),
         const SizedBox(height: 14),
-        const _GroupHero(),
-        const SizedBox(height: 14),
+        if (split == null) ...[
+          const _GroupHero(),
+          const SizedBox(height: 14),
+        ],
         TextField(
           controller: _search,
           focusNode: _focus,
@@ -130,7 +133,8 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
           else
             RdGroupedList(
               children: [
-                for (final e in results) _EntryRow(entry: e, subtitle: _searchSubtitle(l10n, access, e)),
+                for (final e in results)
+                  _EntryRow(entry: e, subtitle: _searchSubtitle(l10n, access, e), inSplit: split != null),
               ],
             ),
         ] else ...[
@@ -138,32 +142,18 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
             RdGroupLabel(l10n.redesignManageRecent),
             RdGroupedList(
               children: [
-                for (final e in recent) _EntryRow(entry: e, subtitle: rdManagePlace(l10n, e, access)),
+                for (final e in recent) _EntryRow(entry: e, subtitle: rdManagePlace(l10n, e, access), inSplit: split != null),
               ],
             ),
             const SizedBox(height: 20),
           ],
-          if (split != null)
-            // Desktop: the sections on the left, the chosen one on the right.
-            RdGroupedList(
-              children: [
-                for (final area in areas)
-                  RdListRow(
-                    leading: RdRowIcon(rdManageAreaIcon(area)),
-                    title: rdManageAreaName(l10n, area),
-                    subtitle: _areaSummary(l10n, access, area),
-                    selected: split.selectedId == area.index,
-                    onTap: () => RdSplitScope.open(context, RedesignRoutes.manageArea(area.key)),
-                  ),
-              ],
-            )
-          else
-            for (final (i, area) in areas.indexed) ...[
-              if (i > 0) const SizedBox(height: 20),
-              RdGroupLabel(rdManageAreaName(l10n, area)),
-              _AreaList(area: area, access: access),
-            ],
-          if (unused.isNotEmpty) ...[
+          for (final (i, area) in areas.indexed) ...[
+            if (i > 0) const SizedBox(height: 20),
+            RdGroupLabel(rdManageAreaName(l10n, area)),
+            _AreaList(area: area, access: access, inSplit: split != null),
+          ],
+          // On wide screens in the overview on the right.
+          if (split == null && unused.isNotEmpty) ...[
             const SizedBox(height: 28),
             RdGroupLabel(l10n.rdAdminUnused),
             RdGroupedList(
@@ -196,12 +186,6 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
     return '$place · $keyword';
   }
 
-  /// "Register, Eigene Felder, Archiv …" (the section's rows).
-  String _areaSummary(AppLocalizations l10n, RdManageAccess access, RdManageArea area) {
-    final titles = [for (final e in rdManageEntries(access, area: area)) rdManageTitle(l10n, e)];
-    if (titles.length <= 4) return titles.join(', ');
-    return '${titles.take(4).join(', ')} …';
-  }
 }
 
 /// The group on top of the Verwaltung: logo letters, name, type, members
@@ -249,10 +233,11 @@ class _GroupHero extends ConsumerWidget {
 
 /// The rows of one section with their hint and counts.
 class _AreaList extends StatelessWidget {
-  const _AreaList({required this.area, required this.access});
+  const _AreaList({required this.area, required this.access, this.inSplit = false});
 
   final RdManageArea area;
   final RdManageAccess access;
+  final bool inSplit;
 
   @override
   Widget build(BuildContext context) {
@@ -260,36 +245,89 @@ class _AreaList extends StatelessWidget {
     return RdGroupedList(
       children: [
         for (final e in rdManageEntries(access, area: area))
-          _EntryRow(entry: e, subtitle: rdManageHint(l10n, e, access), counts: true),
+          _EntryRow(
+            entry: e,
+            // Next to a page the list is a compact sidebar: title, count or
+            // setting; the page itself explains what it is for.
+            subtitle: inSplit ? null : rdManageHint(l10n, e, access),
+            counts: true,
+            inSplit: inSplit,
+          ),
       ],
     );
   }
 }
 
 /// REDESIGN: the Verwaltung on wide screens, like the system settings of a
-/// Mac: the sections stay on the left, the chosen one (first: the first
-/// section) is open on the right (canvas "Beta: Desktop-UX").
-class RdManageSplit extends ConsumerWidget {
-  const RdManageSplit({super.key, this.area});
+/// Mac: every entry in the list on the left, the chosen page on the right
+/// (canvas "Beta: Desktop-UX"). Nothing chosen: an overview with the group,
+/// the last opened entries and the features not used yet.
+class RdManageSplit extends StatelessWidget {
+  const RdManageSplit({super.key, this.entry, this.detail});
 
-  /// null: nothing chosen yet (the first section).
-  final RdManageArea? area;
+  /// The entry whose page is [detail] (highlighted in the list).
+  final RdManageEntry? entry;
+
+  /// null: nothing chosen yet (the overview).
+  final Widget? detail;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final areas = rdManageAreas(ref.watch(rdManageAccessProvider));
-    final shown = area != null && areas.contains(area) ? area : areas.firstOrNull;
+  Widget build(BuildContext context) {
+    final detail = this.detail;
     return RdSplitView(
       list: const RdManagePage(),
-      detail: shown == null ? null : RdManageAreaPage(key: ValueKey('rd-manage-${shown.key}'), area: shown),
-      selectedId: shown?.index,
-      emptyText: context.l10n.redesignManageNoMatch,
+      // Own state per page (the Allgemein sections share one widget type).
+      detail: detail == null ? null : KeyedSubtree(key: ValueKey('rd-manage-${entry?.name}'), child: detail),
+      selectedId: detail == null ? null : entry?.index,
+      emptyText: context.l10n.rdAdminPickHint,
+      empty: const _ManageOverview(),
     );
   }
 }
 
-/// One section of the Verwaltung with its rows (desktop detail; on phones
-/// only reached by an old link).
+/// The right side of the Verwaltung on wide screens while no page is open.
+class _ManageOverview extends ConsumerWidget {
+  const _ManageOverview();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final access = ref.watch(rdManageAccessProvider);
+    final searchable = rdManageSearchable(access);
+    final recent = ref.watch(rdManageRecentProvider).where(searchable.contains).take(5).toList();
+    final unused = rdManageUnused(access);
+    return RdPage(
+      children: [
+        const SizedBox(height: 44),
+        const _GroupHero(),
+        const SizedBox(height: 24),
+        if (recent.isEmpty)
+          RdInfoCard(icon: Icons.touch_app_outlined, text: l10n.rdAdminPickHint)
+        else ...[
+          RdGroupLabel(l10n.redesignManageRecent),
+          RdGroupedList(
+            children: [
+              for (final e in recent) _EntryRow(entry: e, subtitle: rdManagePlace(l10n, e, access), inSplit: true),
+            ],
+          ),
+        ],
+        if (unused.isNotEmpty) ...[
+          const SizedBox(height: 28),
+          RdGroupLabel(l10n.rdAdminUnused),
+          RdGroupedList(
+            children: [
+              for (final e in unused) _EntryRow(entry: e, subtitle: rdManageUnusedText(l10n, e), inSplit: true),
+            ],
+          ),
+          RdListNote(l10n.rdAdminUnusedNote),
+        ],
+      ],
+    );
+  }
+}
+
+/// One section of the Verwaltung with its rows (only reached by an old
+/// link; on wide screens such a link shows the overview).
 class RdManageAreaPage extends ConsumerWidget {
   const RdManageAreaPage({super.key, required this.area});
 
@@ -306,13 +344,10 @@ class RdManageAreaPage extends ConsumerWidget {
 
     return RdPage(
       children: [
-        if (RdSplitScope.of(context)?.isDetail ?? false)
-          const SizedBox(height: 20)
-        else
-          RdBackLink(
-            label: l10n.redesignMeAdmin,
-            onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.manage),
-          ),
+        RdBackLink(
+          label: l10n.redesignMeAdmin,
+          onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.manage),
+        ),
         const SizedBox(height: 4),
         if (area != null)
           Semantics(
@@ -334,11 +369,14 @@ class RdManageAreaPage extends ConsumerWidget {
 /// Feiertage Bundesland). Moved entries show ↗: they open in another tab or
 /// page.
 class _EntryRow extends ConsumerWidget {
-  const _EntryRow({required this.entry, this.subtitle, this.counts = false});
+  const _EntryRow({required this.entry, this.subtitle, this.counts = false, this.inSplit = false});
 
   final RdManageEntry entry;
   final String? subtitle;
   final bool counts;
+
+  /// In the Verwaltung on wide screens: its pages open on the right.
+  final bool inSplit;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -360,6 +398,7 @@ class _EntryRow extends ConsumerWidget {
           };
     final shown = count != null && count > 0;
     final moved = rdManageAreaOf(entry, ref.watch(rdManageAccessProvider)) == null;
+    final split = RdSplitScope.of(context);
     return RdListRow(
       leading: RdRowIcon(rdManageIcon(entry)),
       title: rdManageTitle(l10n, entry),
@@ -371,7 +410,9 @@ class _EntryRow extends ConsumerWidget {
               ? Icon(Icons.north_east, size: 18, color: p.text2)
               : null,
       showChevron: !moved,
-      onTap: () => rdOpenManageEntry(context, ref, entry),
+      // The page open on the right (list side of the split only).
+      selected: split != null && !split.isDetail && split.selectedId == entry.index,
+      onTap: () => rdOpenManageEntry(context, ref, entry, inSplit: inSplit),
     );
   }
 

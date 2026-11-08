@@ -2663,6 +2663,7 @@
   "rdAdminOrganisationHint": "Across groups: people, branding, templates, org plans",
   "rdAdminParentsHint": "See their children and excuse them",
   "rdAdminPendingBadge": "{count, plural, one {1 request waiting for approval} other {{count} requests waiting for approval}}",
+  "rdAdminPickHint": "Pick an entry on the left, it opens here.",
   "rdAdminReasons": "Reasons",
   "rdAdminReasonsHint": "Choices when someone is absent or late",
   "rdAdminReasonsIntro": "These reasons can be picked when someone signs off or is late.",

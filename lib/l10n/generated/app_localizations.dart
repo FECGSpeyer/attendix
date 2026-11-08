@@ -16109,6 +16109,12 @@ abstract class AppLocalizations {
   /// **'{count, plural, one {1 Anfrage wartet auf Freigabe} other {{count} Anfragen warten auf Freigabe}}'**
   String rdAdminPendingBadge(num count);
 
+  /// rdAdminPickHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle links einen Eintrag, er öffnet sich hier.'**
+  String get rdAdminPickHint;
+
   /// rdAdmin.reasons
   ///
   /// In de, this message translates to:

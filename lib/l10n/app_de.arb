@@ -12266,6 +12266,10 @@
       }
     }
   },
+  "rdAdminPickHint": "Wähle links einen Eintrag, er öffnet sich hier.",
+  "@rdAdminPickHint": {
+    "description": "rdAdminPickHint"
+  },
   "rdAdminReasons": "Abmeldegründe",
   "@rdAdminReasons": {
     "description": "rdAdmin.reasons"

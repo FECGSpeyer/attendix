@@ -26,6 +26,7 @@ import '../../../settings/presentation/pages/general_settings_page.dart'
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
+import '../widgets/rd_split_view.dart' show RdManageBackLink;
 import 'rd_critical_rule_page.dart';
 
 /// The settings of the old page `/settings/general` ("Allgemein"), split by
@@ -90,7 +91,7 @@ class RdGeneralSettingsPage extends StatelessWidget {
     final intro = rdTenantSettingsIntro(l10n, section);
     return RdPage(
       children: [
-        RdBackLink(label: l10n.redesignMeAdmin, onTap: () => _back(context)),
+        RdManageBackLink(label: l10n.redesignMeAdmin, onTap: () => _back(context)),
         const SizedBox(height: 4),
         Semantics(header: true, child: Text(rdTenantSettingsTitle(l10n, section), style: RdType.largeTitle(p))),
         if (intro != null) ...[

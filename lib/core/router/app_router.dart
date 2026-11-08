@@ -162,7 +162,7 @@ import '../../features/redesign/presentation/pages/rd_archive_page.dart';
 import '../../features/redesign/presentation/pages/rd_parents_page.dart';
 import '../../features/redesign/presentation/pages/rd_pending_page.dart';
 import '../../features/redesign/presentation/pages/rd_pending_review_page.dart';
-import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea;
+import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea, RdManageEntry;
 import '../../features/redesign/presentation/pages/rd_manage_page.dart';
 import '../../features/redesign/presentation/widgets/rd_split_view.dart';
 import '../../features/redesign/presentation/widgets/rd_overview.dart';
@@ -237,6 +237,23 @@ const Map<String, RoleCheck> _protectedRoutes = {
   // SETTINGS2: optional "Org" tab (Ionic: Admin/Responsible)
   '/org-plans-tab': _isAdminOrResponsible,
 };
+
+/// REDESIGN: a page of the Verwaltung. On wide screens it opens on the
+/// right of the Verwaltung list; one page key for all of them, so switching
+/// pages keeps the list (its scroll position and search) as it is.
+Page<void> _rdManagePage(BuildContext context, GoRouterState state, RdManageEntry entry, Widget page) {
+  if (rdUseSplit(context)) {
+    // Reached by `go` the page key is the matched path ("/ich/…"); a pushed
+    // page (from a picker, Auswertung › person …) keeps its own unique key,
+    // so it never meets a Verwaltung page with the same key in the stack.
+    final reached = state.pageKey.value.startsWith('/');
+    return NoTransitionPage<void>(
+      key: reached ? const ValueKey('rd-manage-split') : state.pageKey,
+      child: RdManageSplit(entry: entry, detail: page),
+    );
+  }
+  return MaterialPage<void>(key: state.pageKey, child: page);
+}
 
 bool _isAdmin(Role role) => role.isAdmin;
 bool _isAdminOrResponsible(Role role) => role.isAdmin || role.isResponsible;
@@ -878,7 +895,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                   // Fixed pages before the `:area` pattern.
                   GoRoute(
                     path: 'auswertung',
-                    builder: (context, state) => const RdStatsPage(),
+                    pageBuilder: (context, state) => _rdManagePage(context, state, RdManageEntry.statistics, const RdStatsPage()),
                   ),
                   GoRoute(
                     path: 'mitteilung',
@@ -886,24 +903,41 @@ final routerProvider = Provider<GoRouter>((ref) {
                   ),
                   GoRoute(
                     path: 'mitglieder-bearbeiten',
-                    builder: (context, state) => const RdBulkMembersPage(),
+                    pageBuilder: (context, state) => _rdManagePage(context, state, RdManageEntry.bulkMembers, const RdBulkMembersPage()),
                   ),
                   // Settings of the old "Allgemein", split by where they act.
                   GoRoute(
                     path: 'anmeldung',
-                    builder: (context, state) => const RdGeneralSettingsPage(section: RdTenantSettings.registration),
+                    pageBuilder: (context, state) => _rdManagePage(context, state, RdManageEntry.registration, const RdGeneralSettingsPage(section: RdTenantSettings.registration)),
                   ),
                   GoRoute(
                     path: 'abmeldegruende',
-                    builder: (context, state) => const RdGeneralSettingsPage(section: RdTenantSettings.reasons),
+                    pageBuilder: (context, state) => _rdManagePage(context, state, RdManageEntry.reasons, const RdGeneralSettingsPage(section: RdTenantSettings.reasons)),
                   ),
                   GoRoute(
                     path: 'problemfaelle',
-                    builder: (context, state) => const RdGeneralSettingsPage(section: RdTenantSettings.critical),
+                    pageBuilder: (context, state) => _rdManagePage(context, state, RdManageEntry.critical, const RdGeneralSettingsPage(section: RdTenantSettings.critical)),
                   ),
                   GoRoute(
                     path: 'feiertage',
-                    builder: (context, state) => const RdGeneralSettingsPage(section: RdTenantSettings.holidays),
+                    pageBuilder: (context, state) => _rdManagePage(context, state, RdManageEntry.holidays, const RdGeneralSettingsPage(section: RdTenantSettings.holidays)),
+                  ),
+                  // Pages that live under /settings too, here so they open next
+                  // to the list on wide screens.
+                  GoRoute(
+                    path: 'name',
+                    pageBuilder: (context, state) =>
+                        _rdManagePage(context, state, RdManageEntry.general, const RdGeneralSettingsPage()),
+                  ),
+                  GoRoute(
+                    path: 'mitteilungen',
+                    pageBuilder: (context, state) =>
+                        _rdManagePage(context, state, RdManageEntry.announcements, const RdMessagesPage()),
+                  ),
+                  GoRoute(
+                    path: 'organisation',
+                    pageBuilder: (context, state) =>
+                        _rdManagePage(context, state, RdManageEntry.organisation, const RdOrgSettingsPage()),
                   ),
                   // Verwaltungslisten (RedesignRoutes.groups etc.).
                   GoRoute(
@@ -920,7 +954,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                   ),
                   GoRoute(
                     path: 'gruppen',
-                    builder: (context, state) => const RdGroupsPage(),
+                    pageBuilder: (context, state) => _rdManagePage(context, state, RdManageEntry.groups, const RdGroupsPage()),
                     routes: [
                       GoRoute(
                         path: ':id',
@@ -935,7 +969,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                   ),
                   GoRoute(
                     path: 'lehrer',
-                    builder: (context, state) => const RdTeachersPage(),
+                    pageBuilder: (context, state) => _rdManagePage(context, state, RdManageEntry.teachers, const RdTeachersPage()),
                     routes: [
                       GoRoute(
                         path: ':id',
@@ -950,7 +984,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                   ),
                   GoRoute(
                     path: 'zusatzfelder',
-                    builder: (context, state) => const RdExtraFieldsPage(),
+                    pageBuilder: (context, state) => _rdManagePage(context, state, RdManageEntry.extraFields, const RdExtraFieldsPage()),
                     routes: [
                       GoRoute(
                         path: ':list/:id',
@@ -971,31 +1005,31 @@ final routerProvider = Provider<GoRouter>((ref) {
                   ),
                   GoRoute(
                     path: 'terminarten',
-                    builder: (context, state) => const RdAttendanceTypesPage(),
+                    pageBuilder: (context, state) => _rdManagePage(context, state, RdManageEntry.attendanceTypes, const RdAttendanceTypesPage()),
                   ),
                   GoRoute(
                     path: 'schichtplaene',
-                    builder: (context, state) => const RdShiftPlansPage(),
+                    pageBuilder: (context, state) => _rdManagePage(context, state, RdManageEntry.shiftPlans, const RdShiftPlansPage()),
                   ),
                   GoRoute(
                     path: 'rollen',
-                    builder: (context, state) => const RdRolePermissionsPage(),
+                    pageBuilder: (context, state) => _rdManagePage(context, state, RdManageEntry.rolesPermissions, const RdRolePermissionsPage()),
                   ),
                   GoRoute(
                     path: 'admins',
-                    builder: (context, state) => const RdAdminsPage(),
+                    pageBuilder: (context, state) => _rdManagePage(context, state, RdManageEntry.admins, const RdAdminsPage()),
                   ),
                   GoRoute(
                     path: 'eltern',
-                    builder: (context, state) => const RdParentsPage(),
+                    pageBuilder: (context, state) => _rdManagePage(context, state, RdManageEntry.parents, const RdParentsPage()),
                   ),
                   GoRoute(
                     path: 'beobachter',
-                    builder: (context, state) => const RdViewersPage(),
+                    pageBuilder: (context, state) => _rdManagePage(context, state, RdManageEntry.viewers, const RdViewersPage()),
                   ),
                   GoRoute(
                     path: 'archiv',
-                    builder: (context, state) => const RdArchivePage(),
+                    pageBuilder: (context, state) => _rdManagePage(context, state, RdManageEntry.archive, const RdArchivePage()),
                   ),
                   GoRoute(
                     path: 'freigaben',
@@ -1015,11 +1049,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                     path: ':area',
                     pageBuilder: (context, state) {
                       final area = RdManageArea.fromKey(state.pathParameters['area']);
-                      // One page for every area, so the list keeps its state.
+                      // Old links to a section: the overview next to the list.
                       if (rdUseSplit(context)) {
-                        return NoTransitionPage<void>(
-                          key: const ValueKey('rd-manage-split'),
-                          child: RdManageSplit(area: area),
+                        return const NoTransitionPage<void>(
+                          key: ValueKey('rd-manage-split'),
+                          child: RdManageSplit(),
                         );
                       }
                       return MaterialPage<void>(key: state.pageKey, child: RdManageAreaPage(area: area));
