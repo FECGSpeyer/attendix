@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.90.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta: Verwaltung neu – nur noch für Dirigent und Verantwortliche, eine Seite mit der Gruppe oben und fünf Abschnitten (Mitglieder, Zugänge und Rechte, Termine, Auswertung und Mitteilungen, Gruppe und Organisation), jede Zeile mit einem Satz, wofür sie ist, und Anzahlen",
+        "✨ Beta: Die Suche der Verwaltung findet auch, was umgezogen ist (mit dem neuen Ort) und alte Namen („Gruppen“ → Register, „Anwesenheits-Typen“ → Terminarten, „Werkhistorie“ → Gespielte Werke …)",
+        "💄 Beta: Umzüge an den Ort der Nutzung – Gespielte Werke und Dateiablage im Werke-Tab unter •••, Meine Stimme, Team und (ohne Werke-Tab) Dateien unter Ich, Export und Urkunden in der Auswertung, Branding/Planvorlagen/Org-Pläne nur noch in Organisation",
+        "💄 Beta: Wartende Freigaben als Zahl am Mitglieder-Tab statt an der Verwaltung; „Alle Einstellungen (bisherige Ansicht)“ entfällt",
+        "💄 Beta: Neue Namen – Register, Eigene Felder, Rollen und Rechte, Admins, Terminarten, Ablaufplan ohne Termin, Zugänge anlegen"
+      ]
+    },
+    {
       "version": "0.89.0",
       "date": "8.11.2026",
       "changes": [

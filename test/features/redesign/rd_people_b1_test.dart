@@ -107,8 +107,8 @@ void main() {
 
   test('Anfrage prüfen lives below Freigaben and is for leads only', () {
     expect(RedesignRoutes.approvalReview(7), '/ich/verwaltung/freigaben/7');
-    expect(RedesignRoutes.roleRedirect(RedesignRoutes.approvalReview(7), Role.player), RedesignRoutes.manage);
-    expect(RedesignRoutes.roleRedirect(RedesignRoutes.approvalReview(7), Role.helper), RedesignRoutes.manage);
+    expect(RedesignRoutes.roleRedirect(RedesignRoutes.approvalReview(7), Role.player), RedesignRoutes.me);
+    expect(RedesignRoutes.roleRedirect(RedesignRoutes.approvalReview(7), Role.helper), RedesignRoutes.me);
     expect(RedesignRoutes.roleRedirect(RedesignRoutes.approvalReview(7), Role.responsible), isNull);
   });
 

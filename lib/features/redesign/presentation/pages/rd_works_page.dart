@@ -9,6 +9,7 @@ import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
+import '../../../../core/providers/role_permission_providers.dart' show canAccessFilesProvider;
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/song_filter_providers.dart';
 import '../../../../core/providers/song_providers.dart';
@@ -22,6 +23,7 @@ import '../../../../data/models/song/song.dart';
 import '../../../../data/models/song/song_filter.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_action_sheet.dart';
+import '../../../history/presentation/pages/history_page.dart' show showHistoryModal;
 import '../../../songs/data/song_print_service.dart';
 import '../../../songs/presentation/pages/song_import_page.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
@@ -90,6 +92,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
   /// folders have their own places now).
   Future<void> _more(SongsListData data, List<Song> shown, bool isAdmin) async {
     final l10n = context.l10n;
+    final role = ref.read(effectiveRoleProvider);
     final sharingId = data.songSharingId;
     // Sammlungen once the database has them (null before the migration).
     final collections = ref.read(songCollectionsProvider).valueOrNull != null;
@@ -108,6 +111,12 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
             icon: Icons.local_library_outlined,
             label: l10n.redesignWorkEditManageCategories,
           ),
+        // From the old Verwaltung (canvas "Werke-Tab: •••"): Werkhistorie
+        // for leads and helpers, the Dateiablage for everyone with access.
+        if (isAdmin || role.isHelperRole)
+          AppActionSheetAction(value: 'history', icon: Icons.history, label: l10n.rdAdminWorkHistory),
+        if (ref.read(canAccessFilesProvider))
+          AppActionSheetAction(value: 'files', icon: Icons.folder_outlined, label: l10n.settingsFileStorage),
         if (sharingId != null && sharingId.isNotEmpty)
           AppActionSheetAction(value: 'share', icon: Icons.link, label: l10n.songsCopyLink),
         AppActionSheetAction(value: 'pdf', icon: Icons.description_outlined, label: l10n.songsCatalogPdf),
@@ -119,6 +128,10 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         await context.push(RedesignRoutes.collections);
       case 'categories':
         await showSongCategoriesSheet(context);
+      case 'history':
+        await showHistoryModal(context);
+      case 'files':
+        await context.push('/settings/files');
       case 'share':
         await Clipboard.setData(ClipboardData(text: SongUtils.shareLink(sharingId!)));
         if (mounted) ToastHelper.showSuccess(context, l10n.songsLinkCopied);

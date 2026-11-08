@@ -164,7 +164,7 @@
       },
       "me": {
         "admin": "Verwaltung",
-        "adminHint": "Mitglieder, Termintypen, Rechte und mehr",
+        "adminHint": "Register, Rechte, Terminarten, Auswertung und mehr",
         "forMe": "Für mich",
         "absence": "Abwesenheit eintragen",
         "groups": "Meine Gruppen",
@@ -776,25 +776,13 @@
         "notAllowed": "Werke bearbeiten kann nur die Leitung."
       },
       "manage": {
-        "search": "Einstellung suchen",
-        "searchLabel": "Verwaltung durchsuchen",
         "pending": "{count, plural, one {1 Person wartet auf Freigabe} other {{count} Personen warten auf Freigabe}}",
-        "areaMembers": "Mitglieder, Register & Rollen",
-        "areaEvents": "Termine & Planung",
-        "areaWorks": "Werke & Dateien",
-        "areaData": "Auswertung & Daten",
-        "areaCommunication": "Kommunikation",
-        "areaGroup": "Gruppe",
-        "footer": "{count, plural, one {Der bisherige Eintrag steckt in diesen Bereichen und ist über die Suche direkt erreichbar.} other {Alle {count} bisherigen Einträge stecken in diesen Bereichen und sind über die Suche direkt erreichbar.}}",
         "noMatch": "Keine Einstellung passt zur Suche.",
-        "classic": "Alle Einstellungen (bisherige Ansicht)",
         "pendingTitle": "Freigaben",
         "generalTitle": "Allgemeine Einstellungen",
-        "generalHint": "Name, Saison, Gründe, Anmeldung",
         "recent": "Zuletzt geöffnet",
         "missingHint": "Mitglieder mit E-Mail, aber ohne Zugang",
-        "announcementsHint": "Schreiben, Gesendetes, Automatik",
-        "extraFieldsHint": "Eigene Felder für Personen und Werke"
+        "announcementsHint": "Schreiben, Gesendetes, Automatik"
       },
       "manageList": {
         "more": "Weitere Aktionen",
@@ -803,10 +791,10 @@
         "orderFailed": "Die Reihenfolge konnte nicht gespeichert werden. Bitte versuche es erneut."
       },
       "groupsList": {
-        "intro": "Gruppen ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.",
-        "empty": "Noch keine Gruppen angelegt.",
+        "intro": "Register ordnen die Mitglieder, zum Beispiel nach Instrument oder Stimme. Ihre Reihenfolge gilt auch für Listen und Noten.",
+        "empty": "Noch keine Register angelegt.",
         "mainGroup": "Hauptgruppe",
-        "add": "Gruppe hinzufügen",
+        "add": "Register hinzufügen",
         "manageCategories": "Kategorien verwalten"
       },
       "adminsList": {
@@ -838,7 +826,7 @@
         "empty": "Gerade wartet niemand auf Freigabe."
       },
       "groupEdit": {
-        "title": "Gruppe bearbeiten",
+        "title": "Register bearbeiten",
         "name": "Name",
         "nameEmpty": "Ein leerer Name wird nicht gespeichert.",
         "category": "Kategorie",
@@ -852,16 +840,16 @@
         "clefsHint": "Mindestens ein Notenschlüssel bleibt ausgewählt.",
         "synonyms": "Synonyme",
         "synonymsLabel": "Andere Namen, mit Komma getrennt",
-        "synonymsHint": "Über die Synonyme ordnet die App hochgeladene Noten automatisch dieser Gruppe zu.",
+        "synonymsHint": "Über die Synonyme ordnet die App hochgeladene Noten automatisch diesem Register zu.",
         "generate": "Synonyme generieren",
         "notes": "Notizen",
         "hint": "Änderungen werden sofort gespeichert.",
-        "delete": "Gruppe löschen",
+        "delete": "Register löschen",
         "deleteMain": "Die Hauptgruppe lässt sich nicht löschen.",
-        "deleteMembers": "{count, plural, one {In der Gruppe ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.} other {In der Gruppe sind oder waren noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in eine andere Gruppe.}}",
-        "deleteConfirm": "Gruppe „{name}“ wirklich löschen?",
-        "deleteFailed": "Die Gruppe konnte nicht gelöscht werden.",
-        "notFound": "Diese Gruppe gibt es nicht mehr."
+        "deleteMembers": "{count, plural, one {Im Register ist oder war noch 1 Person (archivierte zählen mit). Verschiebe sie zuerst in ein anderes Register.} other {Im Register sind oder waren noch {count} Personen (archivierte zählen mit). Verschiebe sie zuerst in ein anderes Register.}}",
+        "deleteConfirm": "Register „{name}“ wirklich löschen?",
+        "deleteFailed": "Das Register konnte nicht gelöscht werden.",
+        "notFound": "Dieses Register gibt es nicht mehr."
       },
       "rolePerm": {
         "intro": "Lege fest, was Helfer und Mitglieder in dieser Gruppe dürfen. Jeder Schalter wird sofort gespeichert."
@@ -1694,7 +1682,7 @@
       },
       "me": {
         "admin": "Administration",
-        "adminHint": "Members, event types, permissions and more",
+        "adminHint": "Sections, permissions, event types, statistics and more",
         "forMe": "For me",
         "absence": "Report absence",
         "groups": "My groups",
@@ -2306,25 +2294,13 @@
         "notAllowed": "Only leaders can edit works."
       },
       "manage": {
-        "search": "Search settings",
-        "searchLabel": "Search administration",
         "pending": "{count, plural, one {1 person is waiting for approval} other {{count} people are waiting for approval}}",
-        "areaMembers": "Members, sections & roles",
-        "areaEvents": "Events & planning",
-        "areaWorks": "Works & files",
-        "areaData": "Statistics & data",
-        "areaCommunication": "Communication",
-        "areaGroup": "Group",
-        "footer": "{count, plural, one {The previous entry sits in these areas and can be reached directly via the search.} other {All {count} previous entries sit in these areas and can be reached directly via the search.}}",
         "noMatch": "No setting matches the search.",
-        "classic": "All settings (previous view)",
         "pendingTitle": "Approvals",
         "generalTitle": "General settings",
-        "generalHint": "Name, season, reasons, registration",
         "recent": "Recently opened",
         "missingHint": "Members with an e-mail but no access",
-        "announcementsHint": "Write, sent messages, automation",
-        "extraFieldsHint": "Custom fields for people and works"
+        "announcementsHint": "Write, sent messages, automation"
       },
       "manageList": {
         "more": "More actions",
@@ -2333,10 +2309,10 @@
         "orderFailed": "The order could not be saved. Please try again."
       },
       "groupsList": {
-        "intro": "Groups sort the members, for example by instrument or voice. Their order also applies to lists and parts.",
-        "empty": "No groups yet.",
+        "intro": "Sections sort the members, for example by instrument or voice. Their order also applies to lists and parts.",
+        "empty": "No sections yet.",
         "mainGroup": "Main group",
-        "add": "Add group",
+        "add": "Add section",
         "manageCategories": "Manage categories"
       },
       "adminsList": {
@@ -2368,7 +2344,7 @@
         "empty": "Nobody is waiting for approval right now."
       },
       "groupEdit": {
-        "title": "Edit group",
+        "title": "Edit section",
         "name": "Name",
         "nameEmpty": "An empty name is not saved.",
         "category": "Category",
@@ -2382,16 +2358,16 @@
         "clefsHint": "At least one clef stays selected.",
         "synonyms": "Synonyms",
         "synonymsLabel": "Other names, separated by commas",
-        "synonymsHint": "With synonyms the app assigns uploaded parts to this group automatically.",
+        "synonymsHint": "With synonyms the app assigns uploaded parts to this section automatically.",
         "generate": "Generate synonyms",
         "notes": "Notes",
         "hint": "Changes are saved right away.",
-        "delete": "Delete group",
+        "delete": "Delete section",
         "deleteMain": "The main group cannot be deleted.",
-        "deleteMembers": "{count, plural, one {1 person is (or was) in this group, archived ones included. Move them to another group first.} other {{count} people are (or were) in this group, archived ones included. Move them to another group first.}}",
-        "deleteConfirm": "Really delete the group “{name}”?",
-        "deleteFailed": "The group could not be deleted.",
-        "notFound": "This group no longer exists."
+        "deleteMembers": "{count, plural, one {1 person is (or was) in this section, archived ones included. Move them to another section first.} other {{count} people are (or were) in this section, archived ones included. Move them to another section first.}}",
+        "deleteConfirm": "Really delete the section “{name}”?",
+        "deleteFailed": "The section could not be deleted.",
+        "notFound": "This section no longer exists."
       },
       "rolePerm": {
         "intro": "Choose what helpers and members may do in this group. Each switch is saved right away."

@@ -9570,6 +9570,169 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get rdAdminAdHoc => 'Run sheet without event';
+
+  @override
+  String get rdAdminAdHocHint =>
+      'For occasions outside the event list, shareable by link';
+
+  @override
+  String get rdAdminAdmins => 'Admins';
+
+  @override
+  String get rdAdminAdminsHint => 'May do everything in this group';
+
+  @override
+  String get rdAdminArchiveHint => 'Former members, can be restored any time';
+
+  @override
+  String get rdAdminAreaAccess => 'Access and permissions';
+
+  @override
+  String get rdAdminAreaData => 'Statistics and messages';
+
+  @override
+  String get rdAdminAreaEvents => 'Events';
+
+  @override
+  String get rdAdminAreaGroup => 'Group and organisation';
+
+  @override
+  String get rdAdminAreaMembers => 'Members';
+
+  @override
+  String get rdAdminBulkHint => 'Section, status and more for many at once';
+
+  @override
+  String get rdAdminCertificates => 'Certificates';
+
+  @override
+  String get rdAdminCertificatesHint => 'Participation certificates as PDF';
+
+  @override
+  String get rdAdminData => 'Data';
+
+  @override
+  String get rdAdminExportHint => 'Member list or attendance as a file';
+
+  @override
+  String get rdAdminExtraFields => 'Custom fields';
+
+  @override
+  String get rdAdminExtraFieldsHint =>
+      'Additional details for people and works';
+
+  @override
+  String get rdAdminFiles => 'Files';
+
+  @override
+  String rdAdminFormerly(Object name) {
+    return 'formerly “$name”';
+  }
+
+  @override
+  String get rdAdminGeneralHint => 'Name, season, reasons, sign-up, features';
+
+  @override
+  String get rdAdminGroups => 'Sections';
+
+  @override
+  String get rdAdminGroupsHint =>
+      'Instruments and voices members are sorted by';
+
+  @override
+  String rdAdminHeroMembers(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count members',
+      one: '1 member',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdAdminHomeEvent => 'In the event under “Program”';
+
+  @override
+  String get rdAdminHomeMe => 'Under Me';
+
+  @override
+  String get rdAdminHomeMembers => 'In the Members tab';
+
+  @override
+  String get rdAdminHomeOrganisation => 'In Organisation';
+
+  @override
+  String get rdAdminHomeStats => 'In Statistics';
+
+  @override
+  String get rdAdminHomeWorks => 'In the Works tab under •••';
+
+  @override
+  String get rdAdminMissing => 'Create accounts';
+
+  @override
+  String get rdAdminOrganisationHint =>
+      'Across groups: people, branding, templates, org plans';
+
+  @override
+  String get rdAdminParentsHint => 'See their children and excuse them';
+
+  @override
+  String rdAdminPendingBadge(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count requests waiting for approval',
+      one: '1 request waiting for approval',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdAdminRoles => 'Roles and permissions';
+
+  @override
+  String get rdAdminRolesHint => 'What helpers and members may do and see';
+
+  @override
+  String get rdAdminSearch => 'Search, e.g. season, parents, sections';
+
+  @override
+  String get rdAdminShiftsHint =>
+      'Whoever has a shift is excused automatically';
+
+  @override
+  String get rdAdminStatsHint => 'Statistics and export';
+
+  @override
+  String get rdAdminStatsHintCertificates =>
+      'Statistics, export and certificates';
+
+  @override
+  String get rdAdminTeachersHint => 'Who teaches which player';
+
+  @override
+  String get rdAdminTeam => 'Team';
+
+  @override
+  String get rdAdminTeamHint => 'Tasks, topics, minutes';
+
+  @override
+  String get rdAdminTypes => 'Event types';
+
+  @override
+  String get rdAdminTypesHint =>
+      'Defaults for new events such as time and status';
+
+  @override
+  String get rdAdminViewersHint => 'See everything, change nothing';
+
+  @override
+  String get rdAdminWorkHistory => 'Played works';
+
+  @override
   String get rdDataAddColumn => 'Add column';
 
   @override
@@ -11740,15 +11903,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignGroupEditClefsHint => 'At least one clef stays selected.';
 
   @override
-  String get redesignGroupEditDelete => 'Delete group';
+  String get redesignGroupEditDelete => 'Delete section';
 
   @override
   String redesignGroupEditDeleteConfirm(Object name) {
-    return 'Really delete the group “$name”?';
+    return 'Really delete the section “$name”?';
   }
 
   @override
-  String get redesignGroupEditDeleteFailed => 'The group could not be deleted.';
+  String get redesignGroupEditDeleteFailed =>
+      'The section could not be deleted.';
 
   @override
   String get redesignGroupEditDeleteMain => 'The main group cannot be deleted.';
@@ -11759,9 +11923,9 @@ class AppLocalizationsEn extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          '$count people are (or were) in this group, archived ones included. Move them to another group first.',
+          '$count people are (or were) in this section, archived ones included. Move them to another section first.',
       one:
-          '1 person is (or was) in this group, archived ones included. Move them to another group first.',
+          '1 person is (or was) in this section, archived ones included. Move them to another section first.',
     );
     return '$_temp0';
   }
@@ -11789,7 +11953,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignGroupEditNameEmpty => 'An empty name is not saved.';
 
   @override
-  String get redesignGroupEditNotFound => 'This group no longer exists.';
+  String get redesignGroupEditNotFound => 'This section no longer exists.';
 
   @override
   String get redesignGroupEditNotes => 'Notes';
@@ -11802,27 +11966,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignGroupEditSynonymsHint =>
-      'With synonyms the app assigns uploaded parts to this group automatically.';
+      'With synonyms the app assigns uploaded parts to this section automatically.';
 
   @override
   String get redesignGroupEditSynonymsLabel =>
       'Other names, separated by commas';
 
   @override
-  String get redesignGroupEditTitle => 'Edit group';
+  String get redesignGroupEditTitle => 'Edit section';
 
   @override
   String get redesignGroupEditTuning => 'Tuning';
 
   @override
-  String get redesignGroupsListAdd => 'Add group';
+  String get redesignGroupsListAdd => 'Add section';
 
   @override
-  String get redesignGroupsListEmpty => 'No groups yet.';
+  String get redesignGroupsListEmpty => 'No sections yet.';
 
   @override
   String get redesignGroupsListIntro =>
-      'Groups sort the members, for example by instrument or voice. Their order also applies to lists and parts.';
+      'Sections sort the members, for example by instrument or voice. Their order also applies to lists and parts.';
 
   @override
   String get redesignGroupsListMainGroup => 'Main group';
@@ -12992,47 +13156,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Write, sent messages, automation';
 
   @override
-  String get redesignManageAreaCommunication => 'Communication';
-
-  @override
-  String get redesignManageAreaData => 'Statistics & data';
-
-  @override
-  String get redesignManageAreaEvents => 'Events & planning';
-
-  @override
-  String get redesignManageAreaGroup => 'Group';
-
-  @override
-  String get redesignManageAreaMembers => 'Members, sections & roles';
-
-  @override
-  String get redesignManageAreaWorks => 'Works & files';
-
-  @override
-  String get redesignManageClassic => 'All settings (previous view)';
-
-  @override
-  String get redesignManageExtraFieldsHint =>
-      'Custom fields for people and works';
-
-  @override
-  String redesignManageFooter(num count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other:
-          'All $count previous entries sit in these areas and can be reached directly via the search.',
-      one:
-          'The previous entry sits in these areas and can be reached directly via the search.',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get redesignManageGeneralHint => 'Name, season, reasons, registration';
-
-  @override
   String get redesignManageGeneralTitle => 'General settings';
 
   @override
@@ -13074,12 +13197,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignManageRecent => 'Recently opened';
 
   @override
-  String get redesignManageSearch => 'Search settings';
-
-  @override
-  String get redesignManageSearchLabel => 'Search administration';
-
-  @override
   String get redesignMeAbsence => 'Report absence';
 
   @override
@@ -13090,7 +13207,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignMeAdminHint =>
-      'Members, event types, permissions and more';
+      'Sections, permissions, event types, statistics and more';
 
   @override
   String get redesignMeAllSettings => 'All settings';

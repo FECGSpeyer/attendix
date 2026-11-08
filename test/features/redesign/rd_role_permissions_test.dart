@@ -161,8 +161,8 @@ void main() {
   });
 
   test('only Admins and Verantwortliche reach the page', () {
-    expect(RedesignRoutes.roleRedirect(RedesignRoutes.rolePermissions, Role.helper), RedesignRoutes.manage);
-    expect(RedesignRoutes.roleRedirect(RedesignRoutes.rolePermissions, Role.viewer), RedesignRoutes.manage);
+    expect(RedesignRoutes.roleRedirect(RedesignRoutes.rolePermissions, Role.helper), RedesignRoutes.me);
+    expect(RedesignRoutes.roleRedirect(RedesignRoutes.rolePermissions, Role.viewer), RedesignRoutes.me);
     expect(RedesignRoutes.roleRedirect(RedesignRoutes.rolePermissions, Role.responsible), isNull);
   });
 }

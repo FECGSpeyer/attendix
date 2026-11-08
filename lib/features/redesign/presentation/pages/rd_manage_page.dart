@@ -3,7 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/admin_providers.dart';
+import '../../../../core/providers/attendance_type_providers.dart';
+import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/parent_providers.dart';
+import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/shift_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/viewer_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -15,9 +20,11 @@ import '../widgets/manage/rd_manage_entries.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
-/// REDESIGN: Ich › Verwaltung (canvas "Verwaltung", "VerwSuche"): the old
-/// settings in six areas, a search over all entries and the waiting
-/// approvals on top. Every entry opens the existing page or sheet.
+/// REDESIGN: Ich › Verwaltung (canvas "Beta: Verwaltung neu gedacht"): only
+/// for Dirigent and Verantwortliche. The group on top, a search that also
+/// finds what moved into the tabs, then five sections on one page. On wide
+/// screens the sections stay on the left and the chosen one opens on the
+/// right ([RdManageSplit]).
 class RdManagePage extends ConsumerStatefulWidget {
   const RdManagePage({super.key});
 
@@ -53,18 +60,19 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
     final p = context.rd;
     final l10n = context.l10n;
     final access = ref.watch(rdManageAccessProvider);
-    final entries = rdManageEntries(access);
+    final searchable = rdManageSearchable(access);
     final areas = rdManageAreas(access);
-    final pending = ref.watch(rdManagePendingProvider).length;
-    final recent = ref.watch(rdManageRecentProvider).where(entries.contains).toList();
+    final split = RdSplitScope.of(context);
+    final recent = ref.watch(rdManageRecentProvider).where(searchable.contains).toList();
     final searching = _query.trim().isNotEmpty;
     final results = [
-      for (final e in entries)
+      for (final e in searchable)
         if (rdManageMatches(
           _query,
           rdManageTitle(l10n, e),
-          rdManageAreaName(l10n, e.area),
-          rdManageHint(l10n, e),
+          rdManagePlace(l10n, e, access),
+          rdManageHint(l10n, e, access),
+          rdManageFormerName(l10n, e) ?? '',
         ))
           e,
     ];
@@ -73,25 +81,25 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
       children: [
         RdBackLink(
           label: l10n.redesignTabMe,
-          // In the split, an area route sits on top of /verwaltung: popping
-          // would land on the Verwaltung again instead of "Ich".
-          onTap: () => RdSplitScope.of(context) == null && context.canPop()
-              ? context.pop()
-              : context.go(RedesignRoutes.me),
+          // In the split, a section route sits on top of /verwaltung:
+          // popping would land on the Verwaltung again instead of "Ich".
+          onTap: () => split == null && context.canPop() ? context.pop() : context.go(RedesignRoutes.me),
         ),
         const SizedBox(height: 4),
         Semantics(
           header: true,
           child: Text(l10n.redesignMeAdmin, style: RdType.largeTitle(p)),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 14),
+        const _GroupHero(),
+        const SizedBox(height: 14),
         TextField(
           controller: _search,
           focusNode: _focus,
           onChanged: (v) => setState(() => _query = v),
           textInputAction: TextInputAction.search,
           decoration: InputDecoration(
-            hintText: l10n.redesignManageSearch,
+            hintText: l10n.rdAdminSearch,
             prefixIcon: Icon(Icons.search, color: p.text2),
             suffixIcon: _query.isEmpty
                 ? null
@@ -119,8 +127,7 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
           else
             RdGroupedList(
               children: [
-                for (final e in results)
-                  _EntryRow(entry: e, subtitle: rdManageAreaName(l10n, e.area)),
+                for (final e in results) _EntryRow(entry: e, subtitle: _searchSubtitle(l10n, access, e)),
               ],
             ),
         ] else ...[
@@ -128,83 +135,123 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
             RdGroupLabel(l10n.redesignManageRecent),
             RdGroupedList(
               children: [
-                for (final e in recent)
-                  _EntryRow(entry: e, subtitle: rdManageAreaName(l10n, e.area)),
+                for (final e in recent) _EntryRow(entry: e, subtitle: rdManagePlace(l10n, e, access)),
               ],
             ),
             const SizedBox(height: 20),
           ],
-          if (pending > 0) ...[
-            RdCard(
-              onTap: () => context.push(RedesignRoutes.approvals),
-              child: Row(
-                children: [
-                  RdCountBadge(pending, tone: RdTone.late),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      l10n.redesignManagePending(pending),
-                      style: RdType.body(p).copyWith(fontWeight: FontWeight.w600),
-                    ),
+          if (split != null)
+            // Desktop: the sections on the left, the chosen one on the right.
+            RdGroupedList(
+              children: [
+                for (final area in areas)
+                  RdListRow(
+                    leading: RdRowIcon(rdManageAreaIcon(area)),
+                    title: rdManageAreaName(l10n, area),
+                    subtitle: _areaSummary(l10n, access, area),
+                    selected: split.selectedId == area.index,
+                    onTap: () => RdSplitScope.open(context, RedesignRoutes.manageArea(area.key)),
                   ),
-                  Icon(Icons.chevron_right, color: p.text2),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
-          RdGroupedList(
-            children: [
-              for (final area in areas)
-                RdListRow(
-                  leading: RdRowIcon(rdManageAreaIcon(area)),
-                  title: rdManageAreaName(l10n, area),
-                  subtitle: _areaSummary(l10n, access, area),
-                  // Desktop: the area opens on the right, the list stays.
-                  selected: RdSplitScope.of(context)?.selectedId == area.index,
-                  onTap: () => RdSplitScope.open(context, RedesignRoutes.manageArea(area.key)),
-                ),
+              ],
+            )
+          else
+            for (final (i, area) in areas.indexed) ...[
+              if (i > 0) const SizedBox(height: 20),
+              RdGroupLabel(rdManageAreaName(l10n, area)),
+              _AreaList(area: area, access: access),
             ],
-          ),
-          const SizedBox(height: 14),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              l10n.redesignManageFooter(entries.length),
-              textAlign: TextAlign.center,
-              style: RdType.meta(p, size: 13),
-            ),
-          ),
         ],
-        const SizedBox(height: 8),
-        Center(
-          child: RdTextLink(
-            label: l10n.redesignManageClassic,
-            onTap: () => context.push('/settings'),
-          ),
-        ),
       ],
     );
   }
 
-  /// "Rollen & Berechtigungen, Eltern, Lehrer …" (the area's entries).
+  /// Where the result is ("Mitglieder", "Im Werke-Tab unter •••"), plus the
+  /// old name when only that matched ("früher „Gruppen“").
+  String _searchSubtitle(AppLocalizations l10n, RdManageAccess access, RdManageEntry e) {
+    final place = rdManagePlace(l10n, e, access);
+    final former = rdManageFormerName(l10n, e);
+    if (former == null) return place;
+    final matchesNow = rdManageMatches(_query, rdManageTitle(l10n, e), place, rdManageHint(l10n, e, access));
+    return matchesNow ? place : '$place · ${l10n.rdAdminFormerly(former)}';
+  }
+
+  /// "Register, Eigene Felder, Archiv …" (the section's rows).
   String _areaSummary(AppLocalizations l10n, RdManageAccess access, RdManageArea area) {
-    final titles = [
-      for (final e in rdManageEntries(access, area: area))
-        if (e != RdManageEntry.approvals) rdManageTitle(l10n, e),
-    ];
+    final titles = [for (final e in rdManageEntries(access, area: area)) rdManageTitle(l10n, e)];
     if (titles.length <= 4) return titles.join(', ');
     return '${titles.take(4).join(', ')} …';
   }
 }
 
+/// The group on top of the Verwaltung: logo letters, name, type, members
+/// and short name.
+class _GroupHero extends ConsumerWidget {
+  const _GroupHero();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final tenant = ref.watch(currentTenantProvider);
+    if (tenant == null) return const SizedBox.shrink();
+    final name = tenant.longName.isNotEmpty ? tenant.longName : tenant.shortName;
+    final members = ref.watch(playersProvider).valueOrNull?.length;
+    final meta = [
+      switch (tenant.type) {
+        'choir' => l10n.registerTypeChoir,
+        'general' => l10n.registerTypeGeneral,
+        _ => l10n.registerTypeOrchestra,
+      },
+      if (members != null) l10n.rdAdminHeroMembers(members),
+      if (tenant.shortName.isNotEmpty && tenant.shortName != name) tenant.shortName,
+    ].join(' · ');
+    return RdCard(
+      child: Row(
+        children: [
+          RdInitials(rdInitialsOf(tenant.shortName.isNotEmpty ? tenant.shortName : name), size: 48, square: true),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(name, style: RdType.section(p), maxLines: 2, overflow: TextOverflow.ellipsis),
+                const SizedBox(height: 2),
+                Text(meta, style: RdType.meta(p, size: 13)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The rows of one section with their hint and counts.
+class _AreaList extends StatelessWidget {
+  const _AreaList({required this.area, required this.access});
+
+  final RdManageArea area;
+  final RdManageAccess access;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return RdGroupedList(
+      children: [
+        for (final e in rdManageEntries(access, area: area))
+          _EntryRow(entry: e, subtitle: rdManageHint(l10n, e, access), counts: true),
+      ],
+    );
+  }
+}
+
 /// REDESIGN: the Verwaltung on wide screens, like the system settings of a
-/// Mac: the areas stay on the left, the chosen one (first: the first area)
-/// is open on the right (canvas "Beta: Desktop-UX").
+/// Mac: the sections stay on the left, the chosen one (first: the first
+/// section) is open on the right (canvas "Beta: Desktop-UX").
 class RdManageSplit extends ConsumerWidget {
   const RdManageSplit({super.key, this.area});
 
-  /// null: nothing chosen yet (the first area).
+  /// null: nothing chosen yet (the first section).
   final RdManageArea? area;
 
   @override
@@ -220,7 +267,8 @@ class RdManageSplit extends ConsumerWidget {
   }
 }
 
-/// One area of the Verwaltung with its entries.
+/// One section of the Verwaltung with its rows (desktop detail; on phones
+/// only reached by an old link).
 class RdManageAreaPage extends ConsumerWidget {
   const RdManageAreaPage({super.key, required this.area});
 
@@ -233,7 +281,7 @@ class RdManageAreaPage extends ConsumerWidget {
     final l10n = context.l10n;
     final area = this.area;
     final access = ref.watch(rdManageAccessProvider);
-    final entries = area == null ? const <RdManageEntry>[] : rdManageEntries(access, area: area);
+    final empty = area == null || rdManageEntries(access, area: area).isEmpty;
 
     return RdPage(
       children: [
@@ -251,22 +299,18 @@ class RdManageAreaPage extends ConsumerWidget {
             child: Text(rdManageAreaName(l10n, area), style: RdType.title(p)),
           ),
         const SizedBox(height: 18),
-        if (entries.isEmpty)
+        if (empty)
           RdInfoCard(icon: Icons.info_outline, text: l10n.redesignManageNoMatch)
         else
-          RdGroupedList(
-            children: [
-              for (final e in entries)
-                _EntryRow(entry: e, subtitle: rdManageHint(l10n, e), counts: true),
-            ],
-          ),
+          _AreaList(area: area, access: access),
       ],
     );
   }
 }
 
-/// A row that opens [entry]; with [counts] it shows how many persons the
-/// entry holds (Freigaben, Administratoren, Eltern …).
+/// A row that opens [entry]; with [counts] it shows how many the entry
+/// holds (Register, Admins, Archiv …). Moved entries show ↗: they open in
+/// another tab or page.
 class _EntryRow extends ConsumerWidget {
   const _EntryRow({required this.entry, this.subtitle, this.counts = false});
 
@@ -276,25 +320,34 @@ class _EntryRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final p = context.rd;
     final l10n = context.l10n;
-    final warn = entry == RdManageEntry.approvals || entry == RdManageEntry.missingAccounts;
+    final warn = entry == RdManageEntry.missingAccounts;
     final count = !counts
         ? null
         : switch (entry) {
-            RdManageEntry.approvals => ref.watch(rdManagePendingProvider).length,
+            RdManageEntry.groups => ref.watch(groupsProvider).valueOrNull?.length,
             RdManageEntry.missingAccounts => ref.watch(rdMissingAccountsProvider).length,
+            RdManageEntry.archive => ref.watch(leftPlayersProvider).valueOrNull?.length,
             RdManageEntry.admins => ref.watch(adminsProvider).valueOrNull?.length,
             RdManageEntry.parents => ref.watch(parentsProvider).valueOrNull?.length,
             RdManageEntry.viewers => ref.watch(viewersProvider).valueOrNull?.length,
-            RdManageEntry.archive => ref.watch(leftPlayersProvider).valueOrNull?.length,
+            RdManageEntry.attendanceTypes => ref.watch(attendanceTypesProvider).valueOrNull?.length,
+            RdManageEntry.shiftPlans => ref.watch(shiftsProvider).valueOrNull?.length,
             _ => null,
           };
+    final shown = count != null && count > 0;
     return RdListRow(
       leading: RdRowIcon(rdManageIcon(entry)),
       title: rdManageTitle(l10n, entry),
-      subtitle: subtitle,
-      value: count != null && count > 0 && !warn ? '$count' : null,
-      trailing: count != null && count > 0 && warn ? RdPill('$count', tone: RdTone.late) : null,
+      subtitle: subtitle == null || subtitle!.isEmpty ? null : subtitle,
+      value: shown && !warn ? '$count' : null,
+      trailing: shown && warn
+          ? RdPill('$count', tone: RdTone.late)
+          : entry.moved
+              ? Icon(Icons.north_east, size: 18, color: p.text2)
+              : null,
+      showChevron: !entry.moved,
       onTap: () => rdOpenManageEntry(context, ref, entry),
     );
   }
