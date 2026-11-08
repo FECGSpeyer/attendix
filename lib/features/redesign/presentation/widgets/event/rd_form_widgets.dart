@@ -212,11 +212,14 @@ class RdFieldRow extends StatelessWidget {
 
 /// Grey value box (date, time) like the canvas.
 class RdValueBox extends StatelessWidget {
-  const RdValueBox(this.text, {super.key, this.onTap, this.semantics});
+  const RdValueBox(this.text, {super.key, this.onTap, this.semantics, this.error = false});
 
   final String text;
   final VoidCallback? onTap;
   final String? semantics;
+
+  /// Shown in the absent colour (e.g. an Ende before the Beginn).
+  final bool error;
 
   @override
   Widget build(BuildContext context) {
@@ -230,7 +233,11 @@ class RdValueBox extends StatelessWidget {
         text,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: TextStyle(fontSize: 15, color: p.text, fontFeatures: const [FontFeature.tabularFigures()]),
+        style: TextStyle(
+          fontSize: 15,
+          color: error ? p.absent : p.text,
+          fontFeatures: const [FontFeature.tabularFigures()],
+        ),
       ),
     );
     if (onTap == null) return Flexible(child: box);

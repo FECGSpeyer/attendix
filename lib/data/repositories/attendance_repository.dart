@@ -50,6 +50,16 @@ class OfflineSessionChangedException implements Exception {
   String toString() => 'OfflineSessionChangedException: auth session changed';
 }
 
+/// Thrown by [AttendanceRepository.updatePersonAttendance] with
+/// `onlyIfStatus` when the row no longer has that status: nothing was
+/// written (somebody changed it meanwhile).
+class PersonAttendanceStatusChangedException implements Exception {
+  const PersonAttendanceStatusChangedException();
+
+  @override
+  String toString() => 'PersonAttendanceStatusChangedException';
+}
+
 /// Repository for attendance operations
 class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   AttendanceRepository(super.ref);
@@ -650,11 +660,16 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   /// written and [OfflineSessionChangedException] is thrown so the queue
   /// keeps the entry. `changed_by` / duty `assigned_by` then use
   /// [actingUserId] (the author of the queued write), never a re-read user.
+  ///
+  /// [onlyIfStatus]: the row is written only while it still has this status
+  /// (checked in the same UPDATE); otherwise nothing is written and
+  /// [PersonAttendanceStatusChangedException] is thrown.
   Future<PersonAttendance> updatePersonAttendance(
     String id,
     Map<String, dynamic> updates, {
     bool Function()? isSessionCurrent,
     String? actingUserId,
+    AttendanceStatus? onlyIfStatus,
   }) async {
     try {
       // Validate that personAttendance belongs to current tenant
@@ -717,13 +732,24 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
       updates['changed_at'] = DateTime.now().toUtc().toIso8601String();
       updates['changed_by'] = changedBy;
 
-      final response = await supabase
-          .from('person_attendances')
-          .update(updates)
-          .eq('id', id)
-          .select()
-          .maybeSingle();
+      final response = onlyIfStatus == null
+          ? await supabase
+              .from('person_attendances')
+              .update(updates)
+              .eq('id', id)
+              .select()
+              .maybeSingle()
+          : await supabase
+              .from('person_attendances')
+              .update(updates)
+              .eq('id', id)
+              .eq('status', onlyIfStatus.value)
+              .select()
+              .maybeSingle();
 
+      if (response == null && onlyIfStatus != null) {
+        throw const PersonAttendanceStatusChangedException();
+      }
       // RT-008: Handle case where personAttendance was not found
       if (response == null) {
         throw RepositoryException(
@@ -735,6 +761,8 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
       return PersonAttendance.fromJson(response);
     } on OfflineSessionChangedException {
       rethrow; // SOL_FIX11: not an error – the queue keeps the write.
+    } on PersonAttendanceStatusChangedException {
+      rethrow; // expected: the row changed meanwhile.
     } catch (e, stack) {
       handleError(e, stack, 'updatePersonAttendance');
       rethrow;

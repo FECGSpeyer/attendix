@@ -1,13 +1,22 @@
 {
   "versions": [
     {
-      "version": "0.91.0",
+      "version": "0.92.0",
       "date": "8.11.2026",
       "changes": [
         "✨ Beta: „Allgemeine Einstellungen“ aufgeteilt nach dem Ort, an dem sie wirken – Anmeldung per Link und Problemfälle unter Mitglieder, Abmeldegründe und Ferien/Feiertage unter Termine, Name und Kürzel unter Gruppe, jeweils mit eigenem Satz und Wert (An/Aus, Anzahl Regeln, Bundesland)",
         "💄 Beta: „Was Mitglieder sehen“ (alle Termine, Hinweistext, Dienstplan, Mitgliederliste) steht jetzt in Rollen und Rechte, Saisonbeginn und Zählweise in der Auswertung, „Werke öffentlich teilen“ im Werke-Tab unter •••, die Schalter für Eltern und Lehrer auf deren Seiten",
         "✨ Beta: „Noch nicht genutzt“ unten in der Verwaltung zeigt ausgeschaltete Funktionen (Lehrer, Eltern, Werke teilen) mit einem Satz, wofür sie gut sind",
         "💄 Beta: Die Suche der Verwaltung findet auch einzelne Schalter („Saisonbeginn“, „Dienstplan“ …) und alles aus „Allgemeine Einstellungen“; „Einladen“ ohne Link führt direkt zu Anmeldung per Link"
+      ]
+    },
+    {
+      "version": "0.91.0",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Beta: Termin anlegen/bearbeiten – das Ende kann nicht mehr vor dem Beginn liegen; ein späterer Beginn verschiebt das Ende mit",
+        "✨ Beta: Termin bearbeiten – Datum öffnet direkt den Kalender",
+        "✨ Beta: Termin bearbeiten – die Art des Termins lässt sich ändern"
       ]
     },
     {
