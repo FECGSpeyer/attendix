@@ -15424,6 +15424,10 @@
   "@redesignImportAiOptionDetail": {
     "description": "redesign.import.aiOptionDetail"
   },
+  "redesignImportAnswerFromPage": "Von Seite 1 lesen",
+  "@redesignImportAnswerFromPage": {
+    "description": "redesign.import.answerFromPage"
+  },
   "redesignImportAnswerNewGroup": "Neue Gruppe „{name}“",
   "@redesignImportAnswerNewGroup": {
     "description": "redesign.import.answerNewGroup",
@@ -15924,6 +15928,10 @@
       "name": {}
     }
   },
+  "redesignImportGroupAllFromPage": "Alle von Seite 1 lesen",
+  "@redesignImportGroupAllFromPage": {
+    "description": "redesign.import.groupAllFromPage"
+  },
   "redesignImportGroupAnswered": "Beantwortet",
   "@redesignImportGroupAnswered": {
     "description": "redesign.import.groupAnswered"
@@ -16085,6 +16093,10 @@
   "redesignImportPreviewZoom": "Tippen zum Vergrößern",
   "@redesignImportPreviewZoom": {
     "description": "redesign.import.previewZoom"
+  },
+  "redesignImportQuestionLook": "Erste Seite ansehen",
+  "@redesignImportQuestionLook": {
+    "description": "redesign.import.questionLook"
   },
   "redesignImportQuestionTitle": "„{name}“ gehört zu …",
   "@redesignImportQuestionTitle": {

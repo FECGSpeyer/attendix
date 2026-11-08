@@ -762,7 +762,17 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       result = (answers: const {}, status: RdImportAiStatus.failed);
     }
     if (_disposed || run != _aiRun || !state.useAi) return;
-    state = state.copyWith(ai: result.answers, aiStatus: result.status);
+    // A name alone ("Solo", "Parts") often says nothing where page 1 names
+    // the part: the KI's "Ohne Zuordnung" becomes "Von Seite 1 lesen" when
+    // there is a page to read (Leon, 08.11.2026).
+    final readable = {for (final q in questions) if (canReadPages(q)) q.key};
+    final ai = {
+      for (final e in result.answers.entries)
+        e.key: e.value.category == RdImportCategory.other && readable.contains(e.key)
+            ? RdImportAiAnswer(const RdImportCategory.fromPage(), sure: e.value.sure)
+            : e.value,
+    };
+    state = state.copyWith(ai: ai, aiStatus: result.status);
     // Filled in only while the questions are shown: after them the plan is
     // made and checked with the answers given.
     if (state.step == RdImportStep.questions) _applyAi();
@@ -1075,6 +1085,11 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     if (lower.endsWith('.png') || lower.endsWith('.jpg') || lower.endsWith('.jpeg')) return source.content(path);
     return null;
   }
+
+  /// Whether the KI can read the first page of files of [q] ("Von Seite 1
+  /// lesen"): a PDF among them (photos outside the browser). A PDF is
+  /// always among the examples when the question has one.
+  bool canReadPages(RdImportQuestion q) => q.examples.any((e) => PartVisionService.supports(e.file.name));
 
   /// Where the file at [path] opens outside the app (Drive); null for ZIPs.
   Uri? viewLink(String path) => _source?.viewLink(path);

@@ -450,14 +450,27 @@ Map<String, String?> rdFindWorkFolders(
 /// What a file becomes in Attendix: a group (part), a type (Partitur …),
 /// a group still to be created, or "Sonstige" (all null).
 class RdImportCategory {
-  const RdImportCategory({this.instrumentId, this.note, this.newGroup}) : groups = const [];
+  const RdImportCategory({this.instrumentId, this.note, this.newGroup})
+      : groups = const [],
+        fromPage = false;
 
   /// A part for several groups ("Posaune und Tuba"): the file is stored once
   /// for each of [groups] (Leon, 07.11.2026).
   const RdImportCategory.several(this.groups)
       : instrumentId = null,
         note = null,
-        newGroup = null;
+        newGroup = null,
+        fromPage = false;
+
+  /// Only as the answer to a question ("Solo", "Parts"): each file gets
+  /// the part the KI reads on its first page, as if nobody had answered
+  /// (Leon, 08.11.2026). Never the category of a file.
+  const RdImportCategory.fromPage()
+      : instrumentId = null,
+        note = null,
+        newGroup = null,
+        groups = const [],
+        fromPage = true;
 
   static const RdImportCategory other = RdImportCategory();
 
@@ -470,6 +483,9 @@ class RdImportCategory {
   /// The groups of a part for several groups (each a group or a new group);
   /// empty for any other category.
   final List<RdImportCategory> groups;
+
+  /// [RdImportCategory.fromPage].
+  final bool fromPage;
 
   bool get isSeveral => groups.isNotEmpty;
 
@@ -485,11 +501,12 @@ class RdImportCategory {
       other.instrumentId == instrumentId &&
       other.note == note &&
       other.newGroup == newGroup &&
+      other.fromPage == fromPage &&
       other.groups.length == groups.length &&
       Iterable.generate(groups.length).every((i) => other.groups[i] == groups[i]);
 
   @override
-  int get hashCode => Object.hash(instrumentId, note, newGroup, Object.hashAll(groups));
+  int get hashCode => Object.hash(instrumentId, note, newGroup, fromPage, Object.hashAll(groups));
 }
 
 /// Types that clash with the same type already at the Werk.
@@ -724,6 +741,7 @@ class RdImportQuestion {
     required this.fileCount,
     required this.works,
     this.files = const [],
+    this.examples = const [],
     this.suggestion,
     this.newGroup,
     this.several = const [],
@@ -740,6 +758,10 @@ class RdImportQuestion {
 
   /// Names of some files it appears in ("Sax 1.pdf").
   final List<String> files;
+
+  /// Some of its files with their Werk, to look at the first page (PDFs,
+  /// then images first: a PDF among the files is always one of them).
+  final List<({RdImportFile file, String work})> examples;
 
   /// Group the name might mean (unsure match).
   final int? suggestion;
@@ -1299,6 +1321,15 @@ RdImportPlan rdBuildImportPlan(
       fileCount: list.length,
       works: {for (final q in list) q.work}.take(2).toList(),
       files: {for (final q in list) q.file.name}.take(3).toList(),
+      // PDFs first (the KI reads them everywhere), then photos, then the rest.
+      examples: [
+        for (final q in [
+          ...list.where((q) => q.file.entry.extension == 'pdf'),
+          ...list.where((q) => q.file.entry.extension != 'pdf' && rdImportPreviewable(q.file)),
+          ...list.where((q) => !rdImportPreviewable(q.file)),
+        ].take(3))
+          (file: q.file, work: q.work),
+      ],
       suggestion: suggestion,
       newGroup: newGroups.isEmpty ? null : top(newGroups),
       several: several == null || severalFiles * 2 < list.length ? const [] : several.key.groups,
@@ -1318,6 +1349,9 @@ RdImportPlan rdBuildImportPlan(
     pageReads: pageReads,
   );
 }
+
+/// Whether the first page of [file] can be shown (PDF or image).
+bool rdImportPreviewable(RdImportFile file) => const {'pdf', 'png', 'jpg', 'jpeg'}.contains(file.entry.extension);
 
 /// Key of a Werk number for [RdImportPlan.takenNumbers] ("S|12").
 String rdImportNumberKey(String? prefix, int number) => '${(prefix ?? '').trim().toUpperCase()}|$number';
@@ -1545,12 +1579,26 @@ class RdFileState {
   bool get proposedByAi => unclear && pageRead != null;
 }
 
+/// The question of [f] has an answer that decides its part ("Von Seite 1
+/// lesen" leaves it open).
+bool _answeredByHand(RdImportDecisions d, RdImportFile f) {
+  final key = f.questionKey;
+  final answer = key == null ? null : d.answers[key];
+  return answer != null && !answer.fromPage;
+}
+
+/// The question of [f] is answered "Von Seite 1 lesen".
+bool _answeredFromPage(RdImportDecisions d, RdImportFile f) {
+  final key = f.questionKey;
+  return key != null && (d.answers[key]?.fromPage ?? false);
+}
+
 RdImportCategory _categoryOf(RdImportPlan plan, RdImportDecisions d, RdImportFile f, RdImportWork work) =>
     _decided(f, d.categories, d.answers, plan.instruments, work.title, plan.pageReads, plan.isChoir);
 
 /// The part of [f]: chosen by hand, else the answer to its question (with
 /// the file's own part number), else what the KI read on page 1, else the
-/// guess.
+/// guess. "Von Seite 1 lesen" as the answer leaves it to page 1.
 RdImportCategory _decided(
   RdImportFile f,
   Map<String, RdImportCategory> categories,
@@ -1563,7 +1611,7 @@ RdImportCategory _decided(
   final own = categories[f.path];
   if (own != null) return own;
   final answer = f.questionKey == null ? null : answers[f.questionKey];
-  if (answer != null) {
+  if (answer != null && !answer.fromPage) {
     final id = answer.instrumentId;
     if (id != null && id > InstrumentMatcher.lyricsId) {
       return RdImportCategory(instrumentId: rdImportSiblingGroup(id, f.name, instruments, workName: workTitle));
@@ -1612,7 +1660,7 @@ RdImportCategory _severalOf(
 
 RdFileState rdFileState(RdImportPlan plan, RdImportDecisions d, RdImportWork work, RdImportFile f) {
   final category = _categoryOf(plan, d, f, work);
-  final byHand = d.categories.containsKey(f.path) || (f.questionKey != null && d.answers.containsKey(f.questionKey));
+  final byHand = d.categories.containsKey(f.path) || _answeredByHand(d, f);
   if (f.hardSkip != null) return RdFileState(take: false, category: category, reason: f.hardSkip, canToggle: false);
   final target = rdTargetOf(plan, d, work);
   if (target.skip) return RdFileState(take: false, category: category, reason: RdSkipReason.workSkipped, canToggle: false);
@@ -1642,8 +1690,13 @@ RdFileState rdFileState(RdImportPlan plan, RdImportDecisions d, RdImportWork wor
   final manual = d.take[f.path];
   final take = manual ?? reason == null;
   final pageRead = byHand ? null : plan.pageReads[f.path];
-  final unclear =
-      take && !byHand && f.guess.confidence != MatchConfidence.sure && f.newGroup == null && f.several.isEmpty && !(pageRead?.sure ?? false);
+  // "Von Seite 1 lesen": open until page 1 is read for sure, whatever the
+  // name proposes ("Oboe" as a new group).
+  final unclear = take &&
+      !byHand &&
+      !(pageRead?.sure ?? false) &&
+      (_answeredFromPage(d, f) ||
+          (f.guess.confidence != MatchConfidence.sure && f.newGroup == null && f.several.isEmpty));
   return RdFileState(
     take: take,
     category: category,
@@ -1922,7 +1975,7 @@ Map<int, List<String>> rdImportLearnedTerms(
 }) {
   final terms = <int, Set<String>>{};
   for (final i in items) {
-    final byHand = d.categories.containsKey(i.file.path) || (i.file.questionKey != null && d.answers.containsKey(i.file.questionKey));
+    final byHand = d.categories.containsKey(i.file.path) || _answeredByHand(d, i.file);
     if (!byHand) continue;
     // "Posaune und Tuba" is never a term of one group.
     if (InstrumentMatcher.knownGroups(i.file.name, isChoir: plan.isChoir).length > 1) continue;
