@@ -546,12 +546,23 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
       return d == null ? null : long.format(d);
     }
 
-    Widget info(String title, String value, {Key? key}) => RdListRow(
+    // Short values at the end of the row; long or multi-line ones (a note,
+    // a text Zusatzfeld) in full below the label, so nothing is cut off.
+    Widget block(String title, String value, {Key? key}) => Padding(
           key: key,
-          title: title,
-          value: value,
-          showChevron: false,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: p.text)),
+              const SizedBox(height: 2),
+              Text(value, style: RdType.meta(p, size: 14)),
+            ],
+          ),
         );
+    Widget info(String title, String value, {Key? key}) => value.length > 28 || value.contains('\n')
+        ? block(title, value, key: key)
+        : RdListRow(key: key, title: title, value: value, showChevron: false);
 
     final rows = <Widget>[
       if (text(draft.email) case final v?) info(l10n.peopleEmail, v, key: const Key('rd-review-email')),
@@ -579,20 +590,7 @@ class _RdPendingReviewPageState extends ConsumerState<RdPendingReviewPage> {
       children: [
         RdGroupedList(children: [
           ...rows,
-          if (notes != null)
-            Padding(
-              key: const Key('rd-review-notes'),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.redesignPersonNotes,
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: p.text)),
-                  const SizedBox(height: 2),
-                  Text(notes, style: RdType.meta(p, size: 14)),
-                ],
-              ),
-            ),
+          if (notes != null) block(l10n.redesignPersonNotes, notes, key: const Key('rd-review-notes')),
         ]),
         if (!extrasReady) ...[
           const SizedBox(height: 12),
