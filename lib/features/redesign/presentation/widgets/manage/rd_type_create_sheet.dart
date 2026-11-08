@@ -49,6 +49,7 @@ class _RdTypeCreateFormState extends ConsumerState<_RdTypeCreateForm> {
   }
 
   Future<void> _create() async {
+    if (_busy) return;
     final l10n = context.l10n;
     final name = _name.text.trim();
     if (name.isEmpty) {
@@ -127,6 +128,7 @@ class _RdTypeCreateFormState extends ConsumerState<_RdTypeCreateForm> {
               child: TextField(
                 key: const Key('rd-type-new-name'),
                 controller: _name,
+                enabled: !_busy,
                 autofocus: true,
                 textCapitalization: TextCapitalization.sentences,
                 textInputAction: TextInputAction.done,

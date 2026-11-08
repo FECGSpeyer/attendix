@@ -180,7 +180,11 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
       if (await _write({'place': value.isEmpty ? null : value})) {
         _storedPlace = value;
         final type = _type;
-        if (value.isNotEmpty && type != null) _type = await rdEnsureTypeFlags(_typeNotifier, type, place: true);
+        if (value.isNotEmpty && type != null) {
+          _type = await rdEnsureTypeFlags(_typeNotifier, type, place: true, onFailed: () {
+            if (mounted) ToastHelper.showError(context, context.l10n.typeSettingsUpdateFailed);
+          });
+        }
       }
     });
   }

@@ -9,7 +9,9 @@ import '../../../../../core/providers/conductor_providers.dart';
 import '../../../../../core/constants/enums.dart';
 import '../../../../../core/providers/debug_providers.dart';
 import '../../../../../core/providers/role_permission_providers.dart';
+import '../../../../../core/providers/plan_providers.dart' show planAttendanceTypesProvider;
 import '../../../../../core/providers/song_providers.dart';
+import '../../../../../core/providers/team_org_providers.dart' show protocolTypesProvider;
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/router/route_access.dart' show canOpenSongsTab;
@@ -169,7 +171,11 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
       if (!session.isCurrent()) return false;
       await syncAttendanceSongHistory(repo, _id, widget.attendance.date, entries);
       final type = widget.type;
-      if (entries.isNotEmpty && type != null) await rdEnsureTypeFlags(typeNotifier, type, songs: true);
+      if (entries.isNotEmpty && type != null) {
+        await rdEnsureTypeFlags(typeNotifier, type, songs: true, onFailed: () {
+          if (mounted) ToastHelper.showError(context, context.l10n.typeSettingsUpdateFailed);
+        });
+      }
       return true;
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
@@ -470,6 +476,7 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
   Future<void> _takeOver(AttendanceType type) async {
     final l10n = context.l10n;
     final notifier = ref.read(attendanceTypeNotifierProvider.notifier);
+    final container = ProviderScope.containerOf(context, listen: false);
     final id = type.id;
     final plan = widget.attendance.plan;
     if (_takingOver || id == null || plan == null) return;
@@ -495,6 +502,12 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
     AttendanceType? updated;
     try {
       updated = await notifier.updateType(id, {'default_plan': buildDefaultPlanUpdate(type.defaultPlan, fields)});
+      if (updated != null) {
+        // An open Ablauf editor takes the new template too.
+        container
+          ..invalidate(planAttendanceTypesProvider)
+          ..invalidate(protocolTypesProvider);
+      }
     } on DemoModeException {
       return;
     } finally {
