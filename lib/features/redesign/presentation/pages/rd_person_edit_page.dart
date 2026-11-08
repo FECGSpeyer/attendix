@@ -681,13 +681,27 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
   Future<void> _setLeader(bool value) async {
     final before = _person;
     if (before == null || !_editable || before.isLeader == value) return;
-    final assign = value && before.appId != null && !_general && rdLeaderRoleFor(_userRole) != null;
     _apply({'isLeader': value});
     final after = _person!;
     _enqueue(() async {
       if (!await _store({'isLeader': value})) return;
+      final appId = before.appId;
+      // The stored role, read right before the change (not the shown one,
+      // which may still load or be a fallback): unknown means no new role.
+      final assign = value && appId != null && !_general && rdLeaderRoleFor(await _storedRole(appId)) != null;
       await _syncRoles(before: before, after: after, assignVoiceLeaderRole: assign);
     });
+  }
+
+  /// The account's role in this group, or null when it cannot be read.
+  Future<Role?> _storedRole(String appId) async {
+    final repo = _registrations;
+    if (repo == null || !repo.hasTenantId) return null;
+    try {
+      return await repo.getTenantUserRole(appId);
+    } catch (_) {
+      return null;
+    }
   }
 
   /// The typed e-mail differs from the stored one (only without an account).

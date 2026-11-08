@@ -64,9 +64,13 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
   bool _savedFilesShared = false;
   bool _initialized = false;
 
-  /// Counts the changes per role (and of the Dateiablage): a failed save
-  /// only jumps back while no newer change of the same switch follows.
-  final Map<Role, int> _changes = {};
+  /// Switch changes not confirmed yet, oldest first, each as edits per
+  /// role. The page shows [_saved] with these applied, so a failed save
+  /// takes back only its own switch, never a newer one of the same role.
+  final List<Map<Role, _PermEdit>> _edits = [];
+
+  /// Counts the changes of the Dateiablage: a failed save only jumps back
+  /// while no newer change follows.
   int _filesChanges = 0;
 
   /// Saves still queued or running; while there are none, a freshly loaded
@@ -89,6 +93,7 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     _initialized = true;
     _repo = repo;
     _loadedFrom = permissions;
+    _edits.clear();
     for (final (role, _) in rdConfigurableRoles(context.l10n)) {
       final p = permissions.where((p) => p.role == role.value).firstOrNull;
       if (p != null) _permissions[role] = _saved[role] = p;
@@ -104,6 +109,7 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     _generation++;
     _permissions.clear();
     _saved.clear();
+    _edits.clear();
   }
 
   void _failed() {
@@ -132,31 +138,40 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     });
   }
 
+  /// Shows the confirmed rights with the changes still waiting.
+  void _showEdits() {
+    for (final MapEntry(key: role, value: saved) in _saved.entries) {
+      var shown = saved;
+      for (final edit in _edits) {
+        shown = edit[role]?.call(shown) ?? shown;
+      }
+      _permissions[role] = shown;
+    }
+  }
+
   /// Changes the rights of one or more roles (a base role and its
-  /// Stimmführer role) with one save.
-  void _setPermissions(Map<Role, TenantRolePermission> next) {
+  /// Stimmführer role) with one save. The rows are built when the save runs,
+  /// on what is confirmed then: a failed earlier save never rides along.
+  void _setPermissions(Map<Role, _PermEdit> edit) {
     final repo = _repo;
     if (repo == null) return;
-    final changed = {
-      for (final e in next.entries)
-        if (_permissions[e.key] != null && _permissions[e.key] != e.value) e.key: e.value,
+    final change = {
+      for (final e in edit.entries)
+        if (_saved[e.key] != null) e.key: e.value,
     };
-    if (changed.isEmpty) return;
-    final stamps = {for (final r in changed.keys) r: _changes[r] = (_changes[r] ?? 0) + 1};
-    setState(() => _permissions.addAll(changed));
+    if (change.isEmpty) return;
+    _edits.add(change);
+    setState(_showEdits);
     final notifier = ref.read(rolePermissionNotifierProvider.notifier);
-    _enqueue(() => notifier.save(changed.values.toList(), repo: repo), (ok) {
-      if (ok) {
-        _saved.addAll(changed);
-        return;
-      }
-      // A newer change of a switch still follows: it decides the end state.
-      setState(() {
-        for (final r in changed.keys) {
-          if (_changes[r] == stamps[r]) _permissions[r] = _saved[r]!;
-        }
-      });
-      _failed();
+    var rows = const <Role, TenantRolePermission>{};
+    _enqueue(() {
+      rows = {for (final e in change.entries) e.key: e.value(_saved[e.key]!)};
+      return notifier.save(rows.values.toList(), repo: repo);
+    }, (ok) {
+      _edits.remove(change);
+      if (ok) _saved.addAll(rows);
+      setState(_showEdits);
+      if (!ok) _failed();
     });
   }
 
@@ -206,8 +221,8 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
       differs ? '$hint\n${context.l10n.rdSettingsPermLeaderDiffers}' : hint,
       value,
       (v) => _setPermissions({
-        base: set(_permissions[base]!, v),
-        if (other != null) leader!: set(_permissions[leader]!, v),
+        base: (p) => set(p, v),
+        if (other != null) leader!: (p) => set(p, v),
       }),
     );
   }
@@ -234,9 +249,9 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
                 : l10n.rdSettingsPermAllGroupsHint,
             allGroups,
             (v) => _setPermissions({
-              Role.helper: helper.copyWith(attendanceAllGroups: v),
+              Role.helper: (p) => p.copyWith(attendanceAllGroups: v),
               // Turned off: Stimmführer-Helfer neither; turned on: all Register.
-              if (leader != null) Role.voiceLeaderHelper: leader.copyWith(attendanceAllGroups: v),
+              if (leader != null) Role.voiceLeaderHelper: (p) => p.copyWith(attendanceAllGroups: v),
             }),
           ),
           if (allGroups && leader != null)
@@ -244,7 +259,7 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
               l10n.rdSettingsPermLeaderOwnOnly,
               l10n.rdSettingsPermLeaderOwnOnlyHint,
               leaderOwnOnly,
-              (v) => _setPermissions({Role.voiceLeaderHelper: leader.copyWith(attendanceAllGroups: !v)}),
+              (v) => _setPermissions({Role.voiceLeaderHelper: (p) => p.copyWith(attendanceAllGroups: !v)}),
             ),
           _merged(
             Role.helper,
@@ -257,13 +272,13 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
             l10n.rdSettingsPermNotes,
             l10n.rdSettingsPermNotesHint,
             helper.playerNotesView,
-            (v) => _setPermissions({Role.helper: _permissions[Role.helper]!.copyWith(playerNotesView: v)}),
+            (v) => _setPermissions({Role.helper: (p) => p.copyWith(playerNotesView: v)}),
           ),
           _switch(
             l10n.rdSettingsPermChecklist,
             l10n.rdSettingsPermChecklistHint,
             helper.checklistView,
-            (v) => _setPermissions({Role.helper: _permissions[Role.helper]!.copyWith(checklistView: v)}),
+            (v) => _setPermissions({Role.helper: (p) => p.copyWith(checklistView: v)}),
           ),
           _merged(
             Role.helper,
@@ -293,7 +308,7 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
             l10n.rdSettingsPermPause,
             l10n.rdSettingsPermPauseHint,
             player.playerSelfPause,
-            (v) => _setPermissions({Role.player: _permissions[Role.player]!.copyWith(playerSelfPause: v)}),
+            (v) => _setPermissions({Role.player: (p) => p.copyWith(playerSelfPause: v)}),
           ),
           _merged(
             Role.player,
@@ -383,3 +398,6 @@ class _RdRolePermissionsPageState extends ConsumerState<RdRolePermissionsPage> {
     );
   }
 }
+
+/// One switch change of a role's rights.
+typedef _PermEdit = TenantRolePermission Function(TenantRolePermission p);

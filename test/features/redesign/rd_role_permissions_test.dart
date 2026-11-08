@@ -174,6 +174,29 @@ void main() {
       await tester.pump(const Duration(seconds: 5));
     });
 
+    testWidgets('a failed Helfer+Stimmführer save does not ride along a later one', (tester) async {
+      tester.view.physicalSize = const Size(393, 4000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final saves = <List<TenantRolePermission>>[];
+      await tester.pumpWidget(_app(saves, results: [false, true]));
+      await _settle(tester);
+
+      // "Termine anlegen" (Helfer + Stimmführer-Helfer) fails, "Notizen"
+      // (Helfer only) queued right after is saved without it.
+      final create = _switchOf(tester, 'Termine anlegen').value;
+      await tester.tap(find.text('Termine anlegen'));
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.tap(find.text('Notizen zu Personen sehen'));
+      await _settle(tester);
+      expect(saves, hasLength(2));
+      expect(saves.last.single.role, Role.helper.value);
+      expect(saves.last.single.attendanceCreate, create);
+      expect(saves.last.single.playerNotesView, isTrue);
+      expect(_switchOf(tester, 'Termine anlegen').value, create);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
     testWidgets('only admins change the Dateiablage', (tester) async {
       tester.view.physicalSize = const Size(393, 4000);
       tester.view.devicePixelRatio = 1;
