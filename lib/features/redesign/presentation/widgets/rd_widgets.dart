@@ -1405,6 +1405,12 @@ class RdHintBox extends StatelessWidget {
   }
 }
 
+/// Height cap of the new design's sheets: 85 % of the screen, so the drag
+/// handle and a strip of the page above (tap closes the sheet) always stay
+/// visible, however long the content is.
+BoxConstraints rdSheetConstraints(BuildContext context) =>
+    BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.85);
+
 /// Bottom sheet of the new design (page background, drag handle, at most
 /// 85 % high). [child] usually starts with an [RdSheetTitle].
 Future<T?> showRdSheet<T>(BuildContext context, Widget child) {

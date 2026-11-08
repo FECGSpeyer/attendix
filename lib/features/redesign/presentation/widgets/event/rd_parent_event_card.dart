@@ -124,6 +124,7 @@ Future<void> showRdParentEventSheet(BuildContext context, int attendanceId) {
     useRootNavigator: true,
     isScrollControlled: true,
     showDragHandle: true,
+    constraints: rdSheetConstraints(context),
     backgroundColor: context.rd.bg,
     builder: (_) => Consumer(
       builder: (context, ref, _) {

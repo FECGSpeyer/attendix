@@ -62,6 +62,7 @@ Future<RdSignoutChoice?> showRdReasonSheet(
     useRootNavigator: true,
     isScrollControlled: true,
     showDragHandle: true,
+    constraints: rdSheetConstraints(context),
     backgroundColor: context.rd.bg,
     builder: (_) => _SignoutSheet(
       title: title,

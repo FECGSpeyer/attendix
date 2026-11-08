@@ -22,6 +22,7 @@ Future<void> showRdOwnAnswerSheet(BuildContext context, String personAttendanceI
     useRootNavigator: true,
     isScrollControlled: true,
     showDragHandle: true,
+    constraints: rdSheetConstraints(context),
     backgroundColor: context.rd.bg,
     builder: (_) => _OwnAnswerSheet(personAttendanceId: personAttendanceId),
   );

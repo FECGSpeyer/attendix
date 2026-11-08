@@ -9,6 +9,7 @@ import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_today_providers.dart';
 import '../../rd_actions.dart' show rdShareLink;
+import '../manage/rd_settings_sheets.dart' show RdSheetHead;
 import '../rd_widgets.dart';
 import 'rd_today_common.dart';
 
@@ -55,6 +56,9 @@ Future<void> showRdRemindOpenSheet(
     useRootNavigator: true,
     isScrollControlled: true,
     showDragHandle: true,
+    // Capped so the handle and the page above stay reachable with a long
+    // list (closing used to need the push to be sent).
+    constraints: rdSheetConstraints(context),
     backgroundColor: context.rd.bg,
     builder: (_) => _RemindSheet(attendanceId: attendanceId, title: title, when: when),
   );
@@ -130,10 +134,6 @@ class _RemindSheetState extends ConsumerState<_RemindSheet> {
     final open = async.valueOrNull;
 
     final children = <Widget>[
-      Text(
-        open == null ? widget.title : l10n.redesignRemindTitle(open.length),
-        style: RdType.cardTitle(p),
-      ),
       Text([widget.title, widget.when].where((s) => s.isNotEmpty).join(' · '), style: RdType.meta(p, size: 14)),
       const SizedBox(height: 12),
     ];
@@ -214,9 +214,19 @@ class _RemindSheetState extends ConsumerState<_RemindSheet> {
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
       child: SafeArea(
         top: false,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Fixed head with "Abbrechen", like the other sheets.
+            RdSheetHead(title: open == null ? widget.title : l10n.redesignRemindTitle(open.length)),
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+              ),
+            ),
+          ],
         ),
       ),
     );

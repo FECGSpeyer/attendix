@@ -79,6 +79,7 @@ Future<void> showRdGroupSwitchSheet(BuildContext context) {
     useRootNavigator: true,
     isScrollControlled: true,
     showDragHandle: true,
+    constraints: rdSheetConstraints(context),
     backgroundColor: context.rd.bg,
     builder: (_) => const _RdGroupSwitchSheet(),
   );
