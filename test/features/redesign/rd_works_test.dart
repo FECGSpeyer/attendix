@@ -676,7 +676,7 @@ void main() {
 
       expect(find.text('Filter · 1'), findsOneWidget);
       expect(find.text('Festliche Ouvertüre'), findsNothing); // has all its Noten
-      expect(find.text('Festliche Ouvertüre, Ave verum corpus'), findsOneWidget); // the Termin
+      expect(find.text('Festliche Ouvertüre, Ave verum corpus'), findsNothing); // no Termine for leads
       expect(find.text('Noch nie gespielt · Kirche'), findsNWidgets(2));
       // The sort can be removed above the list.
       await tester.tap(find.bySemanticsLabel('Sortierung „Am längsten nicht gespielt“ entfernen'));
