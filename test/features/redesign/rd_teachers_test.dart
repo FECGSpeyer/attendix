@@ -29,9 +29,11 @@ class _FakeTeacherRepo extends TeacherRepository {
 
   final updates = <Map<String, dynamic>>[];
   final created = <Teacher>[];
+  bool failCreate = false;
 
   @override
   Future<Teacher?> createTeacher(Teacher teacher) async {
+    if (failCreate) throw Exception('offline');
     created.add(teacher);
     return teacher.copyWith(id: 9, tenantId: 7);
   }
@@ -151,6 +153,15 @@ void main() {
 
       await tester.enterText(find.byKey(const Key('rd-teacher-new-name')), ' Ben Ott ');
       await tester.tap(find.byKey(const Key('rd-teacher-new-instrument-6')));
+
+      // A failed save keeps the sheet and the input; "Anlegen" again works.
+      repo.failCreate = true;
+      await tester.tap(find.text('Anlegen'));
+      await _settle(tester);
+      expect(find.text('Der Lehrer konnte nicht angelegt werden.'), findsOneWidget);
+      expect(find.text(' Ben Ott '), findsOneWidget);
+
+      repo.failCreate = false;
       await tester.tap(find.text('Anlegen'));
       await _settle(tester);
       expect(repo.created.single.name, 'Ben Ott');
