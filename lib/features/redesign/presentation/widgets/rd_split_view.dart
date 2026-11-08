@@ -100,8 +100,8 @@ class RdSplitView extends StatelessWidget {
 
 /// REDESIGN: "‹ Verwaltung" on a page of the Verwaltung. On the right of
 /// the Verwaltung list (wide screens) it is left out, like on a person or a
-/// Werk next to its list. A page pushed from elsewhere (a picker, the
-/// Mitglieder •••) keeps it: it leads back there.
+/// Werk next to its list: the list's own back link leads on (a pushed
+/// Verwaltung there says "‹ Zurück" and pops back to where it came from).
 class RdManageBackLink extends StatelessWidget {
   const RdManageBackLink({super.key, required this.label, required this.onTap});
 
@@ -110,8 +110,7 @@ class RdManageBackLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final inSplit = RdSplitScope.of(context)?.isDetail ?? false;
-    if (inSplit && !rdIsPushed(context)) return const SizedBox(height: 44);
+    if (RdSplitScope.of(context)?.isDetail ?? false) return const SizedBox(height: 44);
     return RdBackLink(label: label, onTap: onTap);
   }
 }

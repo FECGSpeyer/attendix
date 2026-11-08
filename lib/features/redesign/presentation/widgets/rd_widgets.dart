@@ -1165,11 +1165,15 @@ class RdPage extends StatelessWidget {
     this.maxWidth = 720,
     this.floatingActionButton,
     this.floatingActionButtonLocation,
+    this.controller,
   });
 
   final List<Widget> children;
   final Future<void> Function()? onRefresh;
   final EdgeInsets padding;
+
+  /// Scroll position kept elsewhere (the Verwaltung list on wide screens).
+  final ScrollController? controller;
 
   /// "Neuer Termin" etc.
   final Widget? floatingActionButton;
@@ -1184,6 +1188,7 @@ class RdPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.rd;
     Widget list = ListView(
+      controller: controller,
       physics: const AlwaysScrollableScrollPhysics(),
       padding: padding,
       children: [

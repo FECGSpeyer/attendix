@@ -328,10 +328,6 @@ void main() {
       tester.view.physicalSize = const Size(1440, 900);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
-      Page<void> split(RdManageEntry entry, String text) => NoTransitionPage<void>(
-            key: const ValueKey('rd-manage-split'),
-            child: RdManageSplit(entry: entry, detail: Text(text)),
-          );
       final router = GoRouter(
         initialLocation: RedesignRoutes.manage,
         routes: [
@@ -343,8 +339,15 @@ void main() {
                 path: 'verwaltung',
                 builder: (_, __) => const RdManageSplit(),
                 routes: [
-                  GoRoute(path: 'gruppen', pageBuilder: (_, __) => split(RdManageEntry.groups, 'page groups')),
-                  GoRoute(path: 'terminarten', pageBuilder: (_, __) => split(RdManageEntry.attendanceTypes, 'page types')),
+                  GoRoute(
+                    path: 'gruppen',
+                    pageBuilder: (c, s) => rdManageRoutePage(c, s, RdManageEntry.groups, const Text('page groups')),
+                  ),
+                  GoRoute(
+                    path: 'terminarten',
+                    pageBuilder: (c, s) =>
+                        rdManageRoutePage(c, s, RdManageEntry.attendanceTypes, const Text('page types')),
+                  ),
                 ],
               ),
             ],
@@ -359,12 +362,16 @@ void main() {
       expect(find.text('Terminarten'), findsOneWidget);
       expect(find.text('Rollen und Rechte'), findsOneWidget);
 
+      // The first page keeps the search of the overview's list.
+      await tester.enterText(find.byType(TextField), 'regist');
+      await _settle(tester);
       await tester.tap(find.text('Register'));
       await _settle(tester);
       expect(find.text('page groups'), findsOneWidget);
       expect(find.text('Attendix Test'), findsNothing);
+      expect(find.widgetWithText(TextField, 'regist'), findsOneWidget);
 
-      // The list stays; the next entry replaces the page on the right.
+      // The next entry replaces the page on the right.
       await tester.enterText(find.byType(TextField), 'termin');
       await _settle(tester);
       await tester.tap(find.text('Terminarten'));
@@ -373,6 +380,19 @@ void main() {
       expect(find.text('page groups'), findsNothing);
       expect(find.widgetWithText(TextField, 'termin'), findsOneWidget);
       expect(router.routerDelegate.currentConfiguration.uri.path, RedesignRoutes.attendanceTypes);
+
+      // Pushed from elsewhere (a picker): "‹ Zurück" pops back there
+      // instead of leaving it for "Ich".
+      router.go('/ich');
+      await _settle(tester);
+      router.push(RedesignRoutes.groups);
+      await _settle(tester);
+      expect(find.text('page groups'), findsOneWidget);
+      expect(find.text('Ich'), findsNothing);
+      await tester.tap(find.text('Zurück'));
+      await _settle(tester);
+      expect(find.text('page me'), findsOneWidget);
+      expect(find.text('page groups'), findsNothing);
     });
 
     testWidgets('a section page (old link)', (tester) async {

@@ -29,7 +29,12 @@ import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 /// on the right ([RdManageSplit]); the group and the unused features move
 /// to the overview there.
 class RdManagePage extends ConsumerStatefulWidget {
-  const RdManagePage({super.key});
+  const RdManagePage({super.key, this.pushed = false});
+
+  /// Wide screens: the Verwaltung was pushed from elsewhere (a picker, the
+  /// Mitglieder •••, a person): the back link pops back there instead of
+  /// leaving everything for "Ich" (an open form below would be lost).
+  final bool pushed;
 
   @override
   ConsumerState<RdManagePage> createState() => _RdManagePageState();
@@ -40,6 +45,11 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
   final _focus = FocusNode();
   String _query = '';
 
+  /// Wide screens: search and scroll position shared with the other
+  /// Verwaltung routes (each builds its own list).
+  RdManageListMemory? _memory;
+  ScrollController? _scroll;
+
   @override
   void initState() {
     super.initState();
@@ -47,16 +57,35 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_memory != null || RdSplitScope.of(context) == null) return;
+    final memory = ref.read(rdManageListMemoryProvider);
+    final scroll = ScrollController(initialScrollOffset: memory.offset);
+    scroll.addListener(() => memory.offset = scroll.offset);
+    _memory = memory;
+    _scroll = scroll;
+    _query = memory.query;
+    _search.text = memory.query;
+  }
+
+  @override
   void dispose() {
     _search.dispose();
     _focus.dispose();
+    _scroll?.dispose();
     super.dispose();
   }
 
-  void _clear() => setState(() {
-        _search.clear();
-        _query = '';
+  void _setQuery(String value) => setState(() {
+        _query = value;
+        _memory?.query = value;
       });
+
+  void _clear() {
+    _search.clear();
+    _setQuery('');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +95,8 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
     final searchable = rdManageSearchable(access);
     final areas = rdManageAreas(access);
     final split = RdSplitScope.of(context);
+    // Kept while any Verwaltung list is open.
+    if (split != null) ref.watch(rdManageListMemoryProvider);
     final recent = ref.watch(rdManageRecentProvider).where(searchable.contains).toList();
     final searching = _query.trim().isNotEmpty;
     final results = [
@@ -82,13 +113,17 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
     final unused = rdManageUnused(access);
 
     return RdPage(
+      controller: _scroll,
       children: [
-        RdBackLink(
-          label: l10n.redesignTabMe,
-          // In the split, a section route sits on top of /verwaltung:
-          // popping would land on the Verwaltung again instead of "Ich".
-          onTap: () => split == null && context.canPop() ? context.pop() : context.go(RedesignRoutes.me),
-        ),
+        if (widget.pushed)
+          RdBackLink(label: l10n.commonBack, onTap: () => context.pop())
+        else
+          RdBackLink(
+            label: l10n.redesignTabMe,
+            // In the split, a section route sits on top of /verwaltung:
+            // popping would land on the Verwaltung again instead of "Ich".
+            onTap: () => split == null && context.canPop() ? context.pop() : context.go(RedesignRoutes.me),
+          ),
         const SizedBox(height: 4),
         Semantics(
           header: true,
@@ -102,7 +137,7 @@ class _RdManagePageState extends ConsumerState<RdManagePage> {
         TextField(
           controller: _search,
           focusNode: _focus,
-          onChanged: (v) => setState(() => _query = v),
+          onChanged: _setQuery,
           textInputAction: TextInputAction.search,
           decoration: InputDecoration(
             hintText: l10n.rdAdminSearch,
@@ -258,12 +293,29 @@ class _AreaList extends StatelessWidget {
   }
 }
 
+/// REDESIGN: a page of the Verwaltung. On wide screens it opens on the
+/// right of the Verwaltung list; one page key for all of them, so switching
+/// pages keeps the list (its scroll position and search) as it is.
+Page<void> rdManageRoutePage(BuildContext context, GoRouterState state, RdManageEntry entry, Widget page) {
+  if (rdUseSplit(context)) {
+    // Reached by `go` the page key is the matched path ("/ich/…"); a pushed
+    // page (from a picker, Auswertung › person …) keeps its own unique key,
+    // so it never meets a Verwaltung page with the same key in the stack.
+    final reached = state.pageKey.value.startsWith('/');
+    return NoTransitionPage<void>(
+      key: reached ? const ValueKey('rd-manage-split') : state.pageKey,
+      child: RdManageSplit(entry: entry, detail: page, pushed: !reached),
+    );
+  }
+  return MaterialPage<void>(key: state.pageKey, child: page);
+}
+
 /// REDESIGN: the Verwaltung on wide screens, like the system settings of a
 /// Mac: every entry in the list on the left, the chosen page on the right
 /// (canvas "Beta: Desktop-UX"). Nothing chosen: an overview with the group,
 /// the last opened entries and the features not used yet.
 class RdManageSplit extends StatelessWidget {
-  const RdManageSplit({super.key, this.entry, this.detail});
+  const RdManageSplit({super.key, this.entry, this.detail, this.pushed = false});
 
   /// The entry whose page is [detail] (highlighted in the list).
   final RdManageEntry? entry;
@@ -271,11 +323,14 @@ class RdManageSplit extends StatelessWidget {
   /// null: nothing chosen yet (the overview).
   final Widget? detail;
 
+  /// Pushed from elsewhere (see [RdManagePage.pushed]).
+  final bool pushed;
+
   @override
   Widget build(BuildContext context) {
     final detail = this.detail;
     return RdSplitView(
-      list: const RdManagePage(),
+      list: RdManagePage(pushed: pushed),
       // Own state per page (the Allgemein sections share one widget type).
       detail: detail == null ? null : KeyedSubtree(key: ValueKey('rd-manage-${entry?.name}'), child: detail),
       selectedId: detail == null ? null : entry?.index,
@@ -284,6 +339,16 @@ class RdManageSplit extends StatelessWidget {
     );
   }
 }
+
+/// Search and scroll position of the Verwaltung list on wide screens. The
+/// overview and every page are routes of their own, each with its own list;
+/// they share this, so opening the first page keeps the list as it was.
+class RdManageListMemory {
+  String query = '';
+  double offset = 0;
+}
+
+final rdManageListMemoryProvider = Provider.autoDispose<RdManageListMemory>((ref) => RdManageListMemory());
 
 /// The right side of the Verwaltung on wide screens while no page is open.
 class _ManageOverview extends ConsumerWidget {
