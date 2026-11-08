@@ -129,10 +129,10 @@ class _RdWorkCategoriesPageState extends ConsumerState<RdWorkCategoriesPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    // Like the old entry: not in general groups (open by URL → Verwaltung).
+    // Like the old entry: not in general groups (open by URL → Ich).
     if (ref.watch(currentTenantProvider.select((t) => t?.type == 'general'))) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) context.go(RedesignRoutes.manage);
+        if (mounted) context.go(RedesignRoutes.me);
       });
       return const SizedBox.shrink();
     }
@@ -150,6 +150,9 @@ class _RdWorkCategoriesPageState extends ConsumerState<RdWorkCategoriesPage> {
     return RdManageListPage(
       key: ValueKey(tenantId),
       title: rdManageTitle(l10n, RdManageEntry.workCategories),
+      // Opened from the Werke tab's "•••" (and Werk bearbeiten).
+      backLabel: l10n.redesignTabWorks,
+      onBack: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.works),
       intro: l10n.rdWmCategoriesIntro,
       sections:
           categories == null

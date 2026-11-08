@@ -386,7 +386,7 @@ class _RdGeneralSettingsPageState extends ConsumerState<RdGeneralSettingsPage> {
     final l10n = context.l10n;
     final t = ref.watch(currentTenantProvider);
     final header = <Widget>[
-      RdBackLink(label: l10n.rdSettingsBack, onTap: _back),
+      RdBackLink(label: l10n.redesignMeAdmin, onTap: _back),
       const SizedBox(height: 4),
       Semantics(header: true, child: Text(l10n.rdSettingsGeneralTitle, style: RdType.largeTitle(p))),
       const SizedBox(height: 18),

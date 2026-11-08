@@ -68,6 +68,12 @@ class RdShell extends ConsumerWidget {
     );
     final location = GoRouterState.of(context).matchedLocation;
     final selected = rdSelectedIndex(destinations, location);
+    // Waiting approvals on the Mitglieder tab, where they are handled (the
+    // "Freigaben" filter); leads only.
+    final pending = role.isAdmin || role.isResponsible
+        ? (ref.watch(pendingPlayersProvider).valueOrNull?.length ?? 0)
+        : 0;
+    final badges = {RdTab.members: pending};
     final width = MediaQuery.sizeOf(context).width;
     final page = NativeAppAdGate(child: child);
     final p = context.rd;
@@ -85,6 +91,7 @@ class RdShell extends ConsumerWidget {
             selectedIndex: selected,
             onSelected: onSelect,
             showAdmin: rdShowsManage(ref.watch(rdManageAccessProvider)),
+            badges: badges,
           ),
           Expanded(child: _withPlayer(page)),
         ],
@@ -96,6 +103,7 @@ class RdShell extends ConsumerWidget {
             destinations: destinations,
             selectedIndex: selected,
             onSelected: onSelect,
+            badges: badges,
           ),
           VerticalDivider(width: 1, thickness: 1, color: p.line),
           Expanded(child: _withPlayer(page)),
@@ -109,6 +117,7 @@ class RdShell extends ConsumerWidget {
           destinations: destinations,
           selectedIndex: selected,
           onSelected: onSelect,
+          badges: badges,
         );
       }
     }
@@ -295,11 +304,15 @@ class _RdBottomBar extends StatelessWidget {
     required this.destinations,
     required this.selectedIndex,
     required this.onSelected,
+    this.badges = const {},
   });
 
   final List<RdDestination> destinations;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
+
+  /// Count shown on a tab (waiting approvals on Mitglieder).
+  final Map<RdTab, int> badges;
 
   @override
   Widget build(BuildContext context) {
@@ -322,8 +335,8 @@ class _RdBottomBar extends StatelessWidget {
             destinations: [
               for (final d in destinations)
                 NavigationDestination(
-                  icon: Icon(d.icon),
-                  selectedIcon: Icon(d.selectedIcon),
+                  icon: _RdTabIcon(d.icon, badge: badges[d.tab] ?? 0),
+                  selectedIcon: _RdTabIcon(d.selectedIcon, badge: badges[d.tab] ?? 0),
                   label: RdShell.labelOf(l10n, d.tab),
                   tooltip: '',
                 ),
@@ -362,11 +375,13 @@ class _RdRail extends StatelessWidget {
     required this.destinations,
     required this.selectedIndex,
     required this.onSelected,
+    this.badges = const {},
   });
 
   final List<RdDestination> destinations;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
+  final Map<RdTab, int> badges;
 
   @override
   Widget build(BuildContext context) {
@@ -395,8 +410,8 @@ class _RdRail extends StatelessWidget {
       destinations: [
         for (final d in destinations)
           NavigationRailDestination(
-            icon: Icon(d.icon),
-            selectedIcon: Icon(d.selectedIcon),
+            icon: _RdTabIcon(d.icon, badge: badges[d.tab] ?? 0),
+            selectedIcon: _RdTabIcon(d.selectedIcon, badge: badges[d.tab] ?? 0),
             label: Text(RdShell.labelOf(l10n, d.tab)),
           ),
       ],
@@ -411,14 +426,16 @@ class _RdSidebar extends ConsumerWidget {
     required this.selectedIndex,
     required this.onSelected,
     required this.showAdmin,
+    this.badges = const {},
   });
 
   final List<RdDestination> destinations;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
 
-  /// "Verwaltung" for everyone with something to manage (`rdShowsManage`).
+  /// "Verwaltung" for Dirigent and Verantwortliche (`rdShowsManage`).
   final bool showAdmin;
+  final Map<RdTab, int> badges;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -428,18 +445,8 @@ class _RdSidebar extends ConsumerWidget {
     final name = tenant?.longName.isNotEmpty == true
         ? tenant!.longName
         : (tenant?.shortName ?? '');
-    final role = ref.watch(effectiveRoleProvider);
-    final pending = showAdmin && (role.isAdmin || role.isResponsible)
-        ? (ref.watch(pendingPlayersProvider).valueOrNull?.length ?? 0)
-        : 0;
     final location = GoRouterState.of(context).matchedLocation;
-    final adminSelected = location == RedesignRoutes.manage ||
-        location.startsWith('${RedesignRoutes.manage}/') ||
-        location == '/settings' ||
-        (location.startsWith('/settings/') &&
-            rdTabForLocation(location) == RdTab.me &&
-            !location.startsWith('/settings/notifications') &&
-            !location.startsWith('/settings/help'));
+    final adminSelected = showAdmin && rdIsManageLocation(location);
 
     return Container(
       width: rdSidebarWidth,
@@ -499,6 +506,7 @@ class _RdSidebar extends ConsumerWidget {
                       : destinations[i].icon,
                   label: RdShell.labelOf(l10n, destinations[i].tab),
                   selected: i == selectedIndex && !adminSelected,
+                  badge: badges[destinations[i].tab] ?? 0,
                   onTap: () => onSelected(i),
                 ),
               if (showAdmin) ...[
@@ -510,7 +518,6 @@ class _RdSidebar extends ConsumerWidget {
                   icon: Icons.tune,
                   label: l10n.redesignAdminTitle,
                   selected: adminSelected,
-                  badge: pending,
                   onTap: () => RdShell.navigate(context, ref, RedesignRoutes.manage),
                 ),
               ],
@@ -606,6 +613,26 @@ class _SidebarItem extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// A tab icon with a count (waiting approvals on Mitglieder).
+class _RdTabIcon extends StatelessWidget {
+  const _RdTabIcon(this.icon, {this.badge = 0});
+
+  final IconData icon;
+  final int badge;
+
+  @override
+  Widget build(BuildContext context) {
+    if (badge <= 0) return Icon(icon);
+    final p = context.rd;
+    return Badge(
+      label: Text('$badge', semanticsLabel: context.l10n.rdAdminPendingBadge(badge)),
+      backgroundColor: p.absent,
+      textColor: p.onStatus,
+      child: Icon(icon),
     );
   }
 }

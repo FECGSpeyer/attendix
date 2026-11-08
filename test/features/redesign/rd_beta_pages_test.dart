@@ -159,25 +159,21 @@ void main() {
       expect(done, [1, 3]);
     });
 
-    test('Verwaltung lists it for leads, never for applicants', () {
+    test('Verwaltung lists it for leads only', () {
       expect(rdManageVisible(RdManageEntry.bulkMembers, const RdManageAccess(isAdmin: true)), isTrue);
       expect(rdManageVisible(RdManageEntry.bulkMembers, const RdManageAccess()), isFalse);
-      expect(
-        rdManageVisible(RdManageEntry.bulkMembers, const RdManageAccess(isAdmin: true, isApplicant: true)),
-        isFalse,
-      );
       expect(rdManageVisible(RdManageEntry.announcements, const RdManageAccess(isAdmin: true)), isTrue);
-      expect(rdManageVisible(RdManageEntry.announcements, const RdManageAccess(isHelper: true)), isFalse);
+      expect(rdManageVisible(RdManageEntry.announcements, const RdManageAccess()), isFalse);
     });
   });
 
   group('routes', () {
-    test('lead pages redirect everyone else to the Verwaltung', () {
+    test('lead pages send everyone else back to Ich', () {
       for (final route in [RedesignRoutes.stats, RedesignRoutes.compose, RedesignRoutes.bulkMembers]) {
         expect(RedesignRoutes.roleRedirect(route, Role.admin), isNull, reason: route);
         expect(RedesignRoutes.roleRedirect(route, Role.responsible), isNull, reason: route);
-        expect(RedesignRoutes.roleRedirect(route, Role.helper), RedesignRoutes.manage, reason: route);
-        expect(RedesignRoutes.roleRedirect(route, Role.player), RedesignRoutes.manage, reason: route);
+        expect(RedesignRoutes.roleRedirect(route, Role.helper), RedesignRoutes.me, reason: route);
+        expect(RedesignRoutes.roleRedirect(route, Role.player), RedesignRoutes.me, reason: route);
         expect(RedesignRoutes.roleRedirect(route, Role.parent), RedesignRoutes.me, reason: route);
       }
     });

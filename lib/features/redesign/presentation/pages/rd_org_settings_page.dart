@@ -136,7 +136,7 @@ class _RdOrgSettingsPageState extends ConsumerState<RdOrgSettingsPage> {
     final p = context.rd;
     final l10n = context.l10n;
     return [
-      RdBackLink(label: l10n.rdSettingsBack, onTap: _back),
+      RdBackLink(label: l10n.redesignMeAdmin, onTap: _back),
       const SizedBox(height: 4),
       Semantics(header: true, child: Text(l10n.orgTitle, style: RdType.largeTitle(p))),
       const SizedBox(height: 18),

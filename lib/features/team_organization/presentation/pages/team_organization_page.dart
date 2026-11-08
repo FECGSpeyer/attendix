@@ -108,8 +108,8 @@ class _TeamOrganizationPageState extends ConsumerState<TeamOrganizationPage>
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   RdBackLink(
-                    label: l10n.redesignManageAreaCommunication,
-                    onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.manage),
+                    label: l10n.redesignTabMe,
+                    onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.me),
                   ),
                   const SizedBox(height: 8),
                   Text(l10n.teamOrgTitle, style: RdType.largeTitle(p)),

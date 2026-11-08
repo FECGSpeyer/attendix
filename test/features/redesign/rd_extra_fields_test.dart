@@ -106,8 +106,8 @@ void main() {
     test('lists and the field page are for leads only', () {
       final edit = RedesignRoutes.extraFieldEdit(song: false, id: 'groesse');
       expect(edit, '/ich/verwaltung/zusatzfelder/personen/groesse');
-      expect(RedesignRoutes.roleRedirect(RedesignRoutes.extraFields, Role.viewer), RedesignRoutes.manage);
-      expect(RedesignRoutes.roleRedirect(edit, Role.helper), RedesignRoutes.manage);
+      expect(RedesignRoutes.roleRedirect(RedesignRoutes.extraFields, Role.viewer), RedesignRoutes.me);
+      expect(RedesignRoutes.roleRedirect(edit, Role.helper), RedesignRoutes.me);
       expect(RedesignRoutes.roleRedirect(edit, Role.responsible), isNull);
       expect(RedesignRoutes.roleRedirect(RedesignRoutes.extraFields, Role.admin), isNull);
     });

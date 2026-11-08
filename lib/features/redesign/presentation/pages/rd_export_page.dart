@@ -10,7 +10,6 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../export/export_fields.dart';
 import '../../../export/presentation/pages/export_page.dart';
-import '../../data/rd_manage_logic.dart' show RdManageArea;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
 import 'rd_handover_page.dart' show RdStepButton;
@@ -32,7 +31,7 @@ class _RdExportPageState extends ConsumerState<RdExportPage> with ExportLogic {
     if (context.canPop()) {
       context.pop();
     } else {
-      context.go(RedesignRoutes.manageArea(RdManageArea.data.key));
+      context.go(RedesignRoutes.stats);
     }
   }
 
@@ -101,7 +100,7 @@ class _RdExportPageState extends ConsumerState<RdExportPage> with ExportLogic {
         onPressed: isExporting ? null : runExport,
       ),
       children: [
-        RdBackLink(label: l10n.rdDataBack, onTap: _back),
+        RdBackLink(label: l10n.redesignStatsTitle, onTap: _back),
         const SizedBox(height: 4),
         Semantics(header: true, child: Text(l10n.rdDataExportTitle, style: RdType.largeTitle(p))),
         const SizedBox(height: 18),

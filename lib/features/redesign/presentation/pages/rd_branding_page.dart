@@ -7,7 +7,6 @@ import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/providers/files_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
-import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/error_message.dart';
@@ -17,7 +16,6 @@ import '../../../../data/repositories/organisation_settings_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/presentation/pages/branding_page.dart' show kMaxLogoBytes;
-import '../../data/rd_manage_logic.dart' show RdManageArea;
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
@@ -41,7 +39,7 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
     if (context.canPop()) {
       context.pop();
     } else {
-      context.go(RedesignRoutes.manageArea(RdManageArea.group.key));
+      context.go('/settings/org-settings');
     }
   }
 
@@ -165,7 +163,7 @@ class _RdBrandingPageState extends ConsumerState<RdBrandingPage> {
     final l10n = context.l10n;
     final orgAsync = ref.watch(brandingOrganisationProvider);
     final header = <Widget>[
-      RdBackLink(label: l10n.rdSettingsBack, onTap: _back),
+      RdBackLink(label: l10n.rdOrgBack, onTap: _back),
       const SizedBox(height: 4),
       Semantics(header: true, child: Text(l10n.rdSettingsBrandingTitle, style: RdType.largeTitle(p))),
       const SizedBox(height: 8),
