@@ -8036,7 +8036,7 @@ abstract class AppLocalizations {
   /// generalSettings.flutter.andHint
   ///
   /// In de, this message translates to:
-  /// **'Person ist kritisch, wenn ALLE Regeln zutreffen'**
+  /// **'Person ist kritisch, wenn alle Und-Regeln zusammen zutreffen'**
   String get generalSettingsFlutterAndHint;
 
   /// generalSettings.flutter.andShort
@@ -15932,7 +15932,7 @@ abstract class AppLocalizations {
   /// rdAdmin.criticalIntro
   ///
   /// In de, this message translates to:
-  /// **'Wer nach diesen Regeln zu oft fehlt, gilt als Problemfall und fällt unter Heute und im Mitglieder-Tab auf.'**
+  /// **'Wer nach einer dieser Regeln auffällt, ist Problemfall und erscheint unter Heute und in Mitglieder.'**
   String get rdAdminCriticalIntro;
 
   /// rdAdmin.data
@@ -16282,6 +16282,354 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Gespielte Werke'**
   String get rdAdminWorkHistory;
+
+  /// rdCritical.andHint
+  ///
+  /// In de, this message translates to:
+  /// **'Dann ist jemand nur Problemfall, wenn alle so markierten Regeln gleichzeitig zutreffen.'**
+  String get rdCriticalAndHint;
+
+  /// rdCritical.andTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Nur zusammen mit anderen Regeln'**
+  String get rdCriticalAndTitle;
+
+  /// rdCritical.atLeast
+  ///
+  /// In de, this message translates to:
+  /// **'Mindestens'**
+  String get rdCriticalAtLeast;
+
+  /// rdCritical.change
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern'**
+  String get rdCriticalChange;
+
+  /// rdCritical.days
+  ///
+  /// In de, this message translates to:
+  /// **'Tage'**
+  String get rdCriticalDays;
+
+  /// rdCritical.hitCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {einmal {what}} other {{count}-mal {what}}}'**
+  String rdCriticalHitCount(num count, Object what);
+
+  /// rdCritical.hitPercent
+  ///
+  /// In de, this message translates to:
+  /// **'bei {percent} % der Termine {what}'**
+  String rdCriticalHitPercent(Object percent, Object what);
+
+  /// rdCritical.listAnd
+  ///
+  /// In de, this message translates to:
+  /// **'Nur zusammen mit anderen Regeln'**
+  String get rdCriticalListAnd;
+
+  /// rdCritical.listFoot
+  ///
+  /// In de, this message translates to:
+  /// **'Geprüft jeden Morgen und nach jeder Änderung. Nach „Mit Person gesprochen“ zählt eine Person wieder von vorn.'**
+  String get rdCriticalListFoot;
+
+  /// rdCritical.listNow
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Gerade kein Problemfall} one {Gerade 1 Problemfall} other {Gerade {count} Problemfälle}}'**
+  String rdCriticalListNow(num count);
+
+  /// rdCritical.listShow
+  ///
+  /// In de, this message translates to:
+  /// **'In Mitglieder ansehen'**
+  String get rdCriticalListShow;
+
+  /// rdCritical.modeCount
+  ///
+  /// In de, this message translates to:
+  /// **'Anzahl'**
+  String get rdCriticalModeCount;
+
+  /// rdCritical.modePercent
+  ///
+  /// In de, this message translates to:
+  /// **'Anteil'**
+  String get rdCriticalModePercent;
+
+  /// rdCritical.more
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Einstellungen'**
+  String get rdCriticalMore;
+
+  /// rdCritical.name
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get rdCriticalName;
+
+  /// rdCritical.namePh
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. Fehlt oft'**
+  String get rdCriticalNamePh;
+
+  /// rdCritical.names
+  ///
+  /// In de, this message translates to:
+  /// **'{names} und {count} weitere'**
+  String rdCriticalNames(Object names, Object count);
+
+  /// rdCritical.or
+  ///
+  /// In de, this message translates to:
+  /// **' oder '**
+  String get rdCriticalOr;
+
+  /// rdCritical.ownRule
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Regel'**
+  String get rdCriticalOwnRule;
+
+  /// rdCritical.periodAll
+  ///
+  /// In de, this message translates to:
+  /// **'insgesamt'**
+  String get rdCriticalPeriodAll;
+
+  /// rdCritical.periodDays
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {am letzten Tag} other {in den letzten {count} Tagen}}'**
+  String rdCriticalPeriodDays(num count);
+
+  /// rdCritical.periodOther
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Anzahl Tage …'**
+  String get rdCriticalPeriodOther;
+
+  /// rdCritical.periodSeason
+  ///
+  /// In de, this message translates to:
+  /// **'seit Saisonbeginn'**
+  String get rdCriticalPeriodSeason;
+
+  /// rdCritical.presentWarning
+  ///
+  /// In de, this message translates to:
+  /// **'Auch „Anwesend“ zählt hier als Problem. Ist das so gewollt?'**
+  String get rdCriticalPresentWarning;
+
+  /// rdCritical.presetAbsent
+  ///
+  /// In de, this message translates to:
+  /// **'Fehlt oft'**
+  String get rdCriticalPresetAbsent;
+
+  /// rdCritical.presetLate
+  ///
+  /// In de, this message translates to:
+  /// **'Oft zu spät'**
+  String get rdCriticalPresetLate;
+
+  /// rdCritical.presetRarely
+  ///
+  /// In de, this message translates to:
+  /// **'Selten da'**
+  String get rdCriticalPresetRarely;
+
+  /// rdCritical.previewAndHint
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Regel zählt nur zusammen mit den anderen Regeln, die so markiert sind. Die Vorschau zeigt sie für sich allein.'**
+  String get rdCriticalPreviewAndHint;
+
+  /// rdCritical.previewError
+  ///
+  /// In de, this message translates to:
+  /// **'Die Vorschau ist gerade nicht verfügbar.'**
+  String get rdCriticalPreviewError;
+
+  /// rdCritical.previewLast
+  ///
+  /// In de, this message translates to:
+  /// **'zuletzt {date}'**
+  String rdCriticalPreviewLast(Object date);
+
+  /// rdCritical.previewLoading
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschau wird berechnet …'**
+  String get rdCriticalPreviewLoading;
+
+  /// rdCritical.previewMore
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {und 1 weitere Person} other {und {count} weitere Personen}}'**
+  String rdCriticalPreviewMore(num count);
+
+  /// rdCritical.previewOf
+  ///
+  /// In de, this message translates to:
+  /// **'{matching} von {total} Terminen'**
+  String rdCriticalPreviewOf(Object matching, Object total);
+
+  /// rdCritical.previewSolveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nach einem Gespräch zählt eine Person erst ab dem Gesprächstag.'**
+  String get rdCriticalPreviewSolveHint;
+
+  /// rdCritical.previewTimes
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {einmal} other {{count}-mal}}'**
+  String rdCriticalPreviewTimes(num count);
+
+  /// rdCritical.previewTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Trifft gerade auf niemanden zu} one {Trifft gerade auf 1 Person zu} other {Trifft gerade auf {count} Personen zu}}'**
+  String rdCriticalPreviewTitle(num count);
+
+  /// rdCritical.reasonDetail
+  ///
+  /// In de, this message translates to:
+  /// **'{period} · Regel „{rule}“'**
+  String rdCriticalReasonDetail(Object period, Object rule);
+
+  /// rdCritical.sentenceLead
+  ///
+  /// In de, this message translates to:
+  /// **'Problemfall ist, wer'**
+  String get rdCriticalSentenceLead;
+
+  /// rdCritical.sentenceTypes
+  ///
+  /// In de, this message translates to:
+  /// **', bei'**
+  String get rdCriticalSentenceTypes;
+
+  /// rdCritical.sheetPeriod
+  ///
+  /// In de, this message translates to:
+  /// **'Zeitraum'**
+  String get rdCriticalSheetPeriod;
+
+  /// rdCritical.sheetThreshold
+  ///
+  /// In de, this message translates to:
+  /// **'Wie oft?'**
+  String get rdCriticalSheetThreshold;
+
+  /// rdCritical.sheetTypes
+  ///
+  /// In de, this message translates to:
+  /// **'Welche Termine?'**
+  String get rdCriticalSheetTypes;
+
+  /// rdCritical.sheetWhat
+  ///
+  /// In de, this message translates to:
+  /// **'Was zählt?'**
+  String get rdCriticalSheetWhat;
+
+  /// rdCritical.solveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nach dem Speichern zählt {name} wieder von vorn.'**
+  String rdCriticalSolveHint(Object name);
+
+  /// rdCritical.summary
+  ///
+  /// In de, this message translates to:
+  /// **'{threshold} {what} {period}'**
+  String rdCriticalSummary(Object threshold, Object what, Object period);
+
+  /// rdCritical.thresholdCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {mindestens einmal} other {mindestens {count}-mal}}'**
+  String rdCriticalThresholdCount(num count);
+
+  /// rdCritical.thresholdCountText
+  ///
+  /// In de, this message translates to:
+  /// **'mindestens {count}-mal'**
+  String rdCriticalThresholdCountText(Object count);
+
+  /// rdCritical.thresholdPercent
+  ///
+  /// In de, this message translates to:
+  /// **'bei mindestens {percent} % der Termine'**
+  String rdCriticalThresholdPercent(Object percent);
+
+  /// rdCritical.typesAll
+  ///
+  /// In de, this message translates to:
+  /// **'allen Terminen'**
+  String get rdCriticalTypesAll;
+
+  /// rdCritical.verbHad
+  ///
+  /// In de, this message translates to:
+  /// **'hatte'**
+  String get rdCriticalVerbHad;
+
+  /// rdCritical.verbHas
+  ///
+  /// In de, this message translates to:
+  /// **'hat'**
+  String get rdCriticalVerbHas;
+
+  /// rdCritical.verbIs
+  ///
+  /// In de, this message translates to:
+  /// **'ist'**
+  String get rdCriticalVerbIs;
+
+  /// rdCritical.whatAbsent
+  ///
+  /// In de, this message translates to:
+  /// **'unentschuldigt gefehlt'**
+  String get rdCriticalWhatAbsent;
+
+  /// rdCritical.whatAbsentAll
+  ///
+  /// In de, this message translates to:
+  /// **'gefehlt (auch entschuldigt)'**
+  String get rdCriticalWhatAbsentAll;
+
+  /// rdCritical.whatCustom
+  ///
+  /// In de, this message translates to:
+  /// **'Status {statuses}'**
+  String rdCriticalWhatCustom(Object statuses);
+
+  /// rdCritical.whatLate
+  ///
+  /// In de, this message translates to:
+  /// **'zu spät gekommen'**
+  String get rdCriticalWhatLate;
+
+  /// rdCritical.whatPick
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Auswahl …'**
+  String get rdCriticalWhatPick;
+
+  /// rdCritical.whatPickHint
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Status zählen. Mindestens einer muss gewählt sein.'**
+  String get rdCriticalWhatPickHint;
 
   /// rdData.addColumn
   ///
@@ -21920,7 +22268,7 @@ abstract class AppLocalizations {
   /// redesign.members.critical
   ///
   /// In de, this message translates to:
-  /// **'Fehlen oft · {count}'**
+  /// **'Problemfälle · {count}'**
   String redesignMembersCritical(Object count);
 
   /// redesign.members.empty
@@ -21944,7 +22292,7 @@ abstract class AppLocalizations {
   /// redesign.members.filterCritical
   ///
   /// In de, this message translates to:
-  /// **'Fehlen oft'**
+  /// **'Problemfälle'**
   String get redesignMembersFilterCritical;
 
   /// redesign.members.filterField
@@ -23600,7 +23948,7 @@ abstract class AppLocalizations {
   /// redesign.split.membersCritical
   ///
   /// In de, this message translates to:
-  /// **'Auffällige Anwesenheit'**
+  /// **'Problemfälle'**
   String get redesignSplitMembersCritical;
 
   /// redesign.split.membersEmpty
@@ -24314,13 +24662,13 @@ abstract class AppLocalizations {
   /// redesign.today.critical
   ///
   /// In de, this message translates to:
-  /// **'{count, plural, one {{count} Mitglied fehlt oft} other {{count} Mitglieder fehlen oft}}'**
+  /// **'{count, plural, one {1 Problemfall} other {{count} Problemfälle}}'**
   String redesignTodayCritical(num count);
 
   /// redesign.today.criticalHint
   ///
   /// In de, this message translates to:
-  /// **'Unter der Anwesenheitsgrenze'**
+  /// **'Nach euren Problemfall-Regeln'**
   String get redesignTodayCriticalHint;
 
   /// redesign.today.dayToday

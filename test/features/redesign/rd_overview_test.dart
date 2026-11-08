@@ -126,7 +126,7 @@ void main() {
       expect(stat('1 pausiert'), findsOneWidget);
       expect(stat('1 Anfragen'), findsOneWidget);
       expect(find.text('NÄCHSTE GEBURTSTAGE'), findsOneWidget);
-      expect(find.text('AUFFÄLLIGE ANWESENHEIT'), findsOneWidget);
+      expect(find.text('PROBLEMFÄLLE'), findsOneWidget);
       await tester.tap(find.text('Anna Zeller').first);
       await settle(tester);
       expect(find.text('person 1'), findsOneWidget);
