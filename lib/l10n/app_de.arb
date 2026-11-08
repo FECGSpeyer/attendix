@@ -18130,6 +18130,10 @@
   "@redesignSplitWorksCount": {
     "description": "redesign.split.worksCount"
   },
+  "redesignSplitWorksCurrentHint": "Deine Noten für die nächsten Termine. Links findest du alle Werke.",
+  "@redesignSplitWorksCurrentHint": {
+    "description": "redesign.split.worksCurrentHint"
+  },
   "redesignSplitWorksEmpty": "Wähle links ein Werk aus.",
   "@redesignSplitWorksEmpty": {
     "description": "redesign.split.worksEmpty"
@@ -19537,6 +19541,40 @@
   "@redesignWorksAllEvents": {
     "description": "redesign.works.allEvents"
   },
+  "redesignWorksCurrent": "Aktuell",
+  "@redesignWorksCurrent": {
+    "description": "redesign.works.current"
+  },
+  "redesignWorksCurrentAllPdf": "Alle als PDF",
+  "@redesignWorksCurrentAllPdf": {
+    "description": "redesign.works.currentAllPdf"
+  },
+  "redesignWorksCurrentBack": "Zurück blättern",
+  "@redesignWorksCurrentBack": {
+    "description": "redesign.works.currentBack"
+  },
+  "redesignWorksCurrentForward": "Weiter blättern",
+  "@redesignWorksCurrentForward": {
+    "description": "redesign.works.currentForward"
+  },
+  "redesignWorksCurrentLast": "zuletzt {date}",
+  "@redesignWorksCurrentLast": {
+    "description": "redesign.works.currentLast",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignWorksCurrentNoPart": "Keine Stimme",
+  "@redesignWorksCurrentNoPart": {
+    "description": "redesign.works.currentNoPart"
+  },
+  "redesignWorksCurrentPart": "Deine Stimme: {name}",
+  "@redesignWorksCurrentPart": {
+    "description": "redesign.works.currentPart",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "redesignWorksEmpty": "Noch keine Werke.",
   "@redesignWorksEmpty": {
     "description": "redesign.works.empty"
@@ -19569,6 +19607,10 @@
   "redesignWorksFolders": "Nach Stimme",
   "@redesignWorksFolders": {
     "description": "redesign.works.folders"
+  },
+  "redesignWorksFoldersMenu": "Noten nach Stimme",
+  "@redesignWorksFoldersMenu": {
+    "description": "redesign.works.foldersMenu"
   },
   "redesignWorksForGroup": "Für Gruppe",
   "@redesignWorksForGroup": {

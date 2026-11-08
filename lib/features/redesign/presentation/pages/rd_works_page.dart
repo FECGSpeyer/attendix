@@ -36,8 +36,8 @@ import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/works/rd_collections_ui.dart';
+import '../widgets/works/rd_current_works.dart';
 import '../widgets/works/rd_works_filter_sheet.dart';
-import 'rd_folder_page.dart' show rdEventLabel;
 import 'rd_general_settings_page.dart' show showRdSharingSheet;
 
 /// Search text of the Werke list, shared by every copy of the list (the
@@ -49,11 +49,11 @@ final rdWorksQueryProvider = StateProvider<String>((ref) {
 });
 
 /// REDESIGN: tab "Werke" (canvas "Werke neu gedacht", board "Liste"):
-/// search, "Als Nächstes" (members: the own Noten for the next Termin,
-/// leads: where Noten are missing), categories as chips, sort and filter,
-/// every Werk with one status line. "Meine Noten" / "Nach Stimme" opens the
-/// Noten of one part, "+" adds, imports or takes over Werke; categories, the
-/// share link and the PDF list sit behind "•••". With Sammlungen (canvas
+/// search, "Aktuell" (members only, canvas "Aktuelle Noten im Werke-Tab":
+/// one row of cards with the Werke they play right now, a tap opens the own
+/// part), categories as chips, sort and filter, every Werk with one status
+/// line. "+" adds, imports or takes over Werke; "Noten nach Stimme",
+/// categories, the share link and the PDF list sit behind "•••". With Sammlungen (canvas
 /// "Noten-Bereich neu gedacht") their chips replace the category chips (the
 /// categories move into the filter sheet), the list shows the chosen
 /// Sammlung and a search looks through every Sammlung the viewer sees.
@@ -66,9 +66,6 @@ class RdWorksPage extends ConsumerStatefulWidget {
 
 class _RdWorksPageState extends ConsumerState<RdWorksPage> {
   late final _search = TextEditingController(text: ref.read(rdWorksQueryProvider));
-
-  /// "Meine Noten öffnen" is building its PDF.
-  bool _printing = false;
 
   String get _query => ref.read(rdWorksQueryProvider);
 
@@ -100,6 +97,13 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     final action = await showAppActionSheet<String>(
       context,
       actions: [
+        // The Noten of one part, for the coming Termine or all Werke, also
+        // as one PDF (was a button in the header).
+        AppActionSheetAction(
+          value: 'folders',
+          icon: Icons.queue_music_outlined,
+          label: l10n.redesignWorksFoldersMenu,
+        ),
         if (isAdmin && collections)
           AppActionSheetAction(
             value: 'collections',
@@ -129,6 +133,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     );
     if (!mounted || action == null) return;
     switch (action) {
+      case 'folders':
+        await context.push(RedesignRoutes.folder);
       case 'collections':
         await context.push(RedesignRoutes.collections);
       case 'categories':
@@ -241,26 +247,6 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     }
   }
 
-  /// "Meine Noten öffnen": the own parts of the next Termin as one PDF.
-  /// Locked while the PDF is built (no second PDF on a double tap).
-  Future<void> _openMine(List<SongPrintEntry> entries, String name) async {
-    if (_printing) return;
-    final l10n = context.l10n;
-    setState(() => _printing = true);
-    try {
-      final date = DateTime.now().toIso8601String().substring(0, 10);
-      final result = await ref.read(songPrintServiceProvider).printEntries(entries, 'Noten_${name}_$date.pdf');
-      if (!mounted || result == null) return;
-      if (result.pageCount == 0) {
-        ToastHelper.showWarning(context, l10n.svcNoPrintableScores);
-      } else if (result.skipped > 0) {
-        ToastHelper.showWarning(context, l10n.songsFlutterFilesSkipped(result.skipped));
-      }
-    } finally {
-      if (mounted) setState(() => _printing = false);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
@@ -288,12 +274,6 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         children: [
           Expanded(child: Semantics(header: true, child: Text(l10n.redesignTabWorks, style: RdType.largeTitle(p)))),
           if (data != null) ...[
-            RdPillButton(
-              icon: Icons.queue_music_outlined,
-              label: lead ? l10n.redesignWorksFolders : l10n.redesignWorksFolder,
-              onPressed: () => context.push(RedesignRoutes.folder),
-            ),
-            const SizedBox(width: 8),
             RdCircleButton(
               icon: Icons.more_horiz,
               label: l10n.redesignWorksMore,
@@ -369,8 +349,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     final ownGroup = _ownGroup(data);
     final counts = lead ? ref.watch(missingGroupsPlayerCountsProvider) : null;
     final shown = _shown(data);
-    // Members only: their part for the next Termine. Leads have the Termine tab.
-    final events = !lead && _query.trim().isEmpty ? _nextEvents(data) : const <RdNextEvent>[];
+    // Members only: what they play right now. Leads have the Termine tab.
+    final current = !lead && _query.trim().isEmpty ? _currentWorks(data) : const <RdCurrentWork>[];
     final categories = [...data.categories.where((c) => c.id != null)]..sort((a, b) => a.index.compareTo(b.index));
     final sort = filter.sortOption;
     final byLast = sort == SongSortOption.lastSungAsc || sort == SongSortOption.lastSungDesc;
@@ -434,12 +414,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
               : null,
       children: [
         ...header,
-        if (events.isNotEmpty) ...[
-          RdSectionHeader(
-            l10n.redesignWorksNext,
-            action: RdTextLink(label: l10n.redesignWorksAllEvents, onTap: () => context.go(RedesignRoutes.events)),
-          ),
-          ..._memberNext(context, events, ownGroup, data.isChoir, status),
+        if (current.isNotEmpty) ...[
+          RdCurrentWorksStrip(works: current, ownGroup: ownGroup, choir: data.isChoir),
           const SizedBox(height: 18),
         ],
         if (withCollections) ...[
@@ -544,78 +520,6 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     );
   }
 
-  /// Members: the next Termin with its Werke and "Meine Noten öffnen", the
-  /// one after it as a single line.
-  List<Widget> _memberNext(
-    BuildContext context,
-    List<RdNextEvent> events,
-    Group? ownGroup,
-    bool choir,
-    String Function(Song) status,
-  ) {
-    final l10n = context.l10n;
-    final p = context.rd;
-    final first = events.first;
-    final mine = [
-      if (ownGroup != null)
-        for (final song in first.songs)
-          for (final f in rdMemberPartFiles(song, ownGroup.id, choir: choir))
-            if (SongUtils.isPdf(f) || SongUtils.isImage(f)) SongPrintEntry(song: song, file: f),
-    ];
-    return [
-      RdGroupedList(
-        children: [
-          RdListRow(
-            leading: RdRowIcon(Icons.event_outlined, color: p.softText, background: p.soft),
-            title: rdEventLabel(first),
-            subtitle: l10n.redesignWorksEventWorks(first.songs.length),
-            showChevron: false,
-          ),
-          for (final song in first.songs)
-            _WorkRow(song: song, subtitle: status(song), onTap: song.id == null ? null : () => _openWork(song.id!)),
-          if (mine.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  RdPrimaryButton(
-                    key: const Key('rd-works-open-mine'),
-                    icon: Icons.picture_as_pdf_outlined,
-                    label: l10n.redesignWorksOpenMine,
-                    loading: _printing,
-                    onPressed: () => _openMine(mine, ownGroup!.name),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: Text(
-                      l10n.redesignWorksOpenMineHint(mine.length),
-                      textAlign: TextAlign.center,
-                      style: RdType.meta(p, size: 13),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-        ],
-      ),
-      for (final e in events.skip(1).take(1)) ...[
-        const SizedBox(height: 10),
-        RdGroupedList(
-          children: [
-            RdListRow(
-              leading: RdRowIcon(Icons.event_outlined, color: p.text2, background: p.track),
-              title: rdEventLabel(e),
-              subtitle: '${l10n.redesignWorksEventWorks(e.songs.length)} · ${e.songs.map((s) => s.name).join(', ')}',
-              onTap: e.songs.length == 1 && e.songs.single.id != null ? () => _openWork(e.songs.single.id!) : null,
-              showChevron: e.songs.length == 1,
-            ),
-          ],
-        ),
-      ],
-    ];
-  }
-
   /// The coming Termine with Werke, without those already over today (the
   /// times come from the loaded Termine, see [rdWithoutEndedEvents]).
   List<RdNextEvent> _nextEvents(SongsListData data) => rdWithoutEndedEvents(
@@ -623,6 +527,14 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     now: DateTime.now(),
     attendances: ref.watch(realtimeAttendanceListProvider).valueOrNull ?? const [],
     types: ref.watch(attendanceTypesProvider).valueOrNull ?? const [],
+  );
+
+  /// "Aktuell": the Werke of the coming Termine and those played lately,
+  /// the latter only from the Sammlungen the member sees.
+  List<RdCurrentWork> _currentWorks(SongsListData data) => rdCurrentWorkCards(
+    _nextEvents(data),
+    rdVisibleWorks(data.songs, ref.read(rdVisibleCollectionsProvider) ?? const []),
+    now: DateTime.now(),
   );
 
   /// The own group of a member (never the main group of the conductor), the

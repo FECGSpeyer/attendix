@@ -346,3 +346,55 @@ List<Song> rdApplyOnly(
         s,
   ];
 }
+
+/// One card of "Aktuell" in the Werke tab (canvas "Aktuelle Noten im
+/// Werke-Tab"): a Werk of a coming Termin ([event]) or one played lately
+/// ([lastPlayed]).
+class RdCurrentWork {
+  const RdCurrentWork({required this.song, this.event, this.lastPlayed});
+
+  final Song song;
+  final RdNextEvent? event;
+  final DateTime? lastPlayed;
+}
+
+/// What a member plays right now: the Werke of the coming [events] in
+/// their order, then the Werke of [songs] played within [recentDays] up to
+/// [now], latest first. Each Werk once, at most [max]. The played ones keep
+/// "Aktuell" filled while the next Probe has no program yet.
+List<RdCurrentWork> rdCurrentWorkCards(
+  List<RdNextEvent> events,
+  List<Song> songs, {
+  required DateTime now,
+  int recentDays = 28,
+  int max = 12,
+}) {
+  final seen = <int>{};
+  final result = <RdCurrentWork>[];
+  for (final e in events) {
+    for (final s in e.songs) {
+      if (s.id != null && !seen.add(s.id!)) continue;
+      result.add(RdCurrentWork(song: s, event: e));
+    }
+  }
+  final today = DateTime(now.year, now.month, now.day);
+  final from = today.subtract(Duration(days: recentDays));
+  final recent = <RdCurrentWork>[];
+  for (final s in songs) {
+    final played = DateTime.tryParse(s.lastSung ?? '')?.toLocal();
+    if (played == null || (s.id != null && seen.contains(s.id))) continue;
+    final day = DateTime(played.year, played.month, played.day);
+    if (day.isBefore(from) || day.isAfter(today)) continue;
+    recent.add(RdCurrentWork(song: s, lastPlayed: day));
+  }
+  recent.sort((a, b) => b.lastPlayed!.compareTo(a.lastPlayed!));
+  return [...result, ...recent].take(max).toList();
+}
+
+/// The one Noten file of the viewer's part that a tap on an "Aktuell" card
+/// opens directly; null without a part or with several files (then the
+/// Werk page lets the viewer pick).
+SongFile? rdSingleOwnNotes(Song song, int? groupId, {required bool choir}) {
+  final notes = rdMemberPartFiles(song, groupId, choir: choir).where(rdIsNotes).toList();
+  return notes.length == 1 ? notes.single : null;
+}

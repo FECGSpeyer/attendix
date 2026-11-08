@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
+import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -17,9 +19,12 @@ import '../../data/providers/rd_members_providers.dart';
 import '../../data/rd_collections_logic.dart';
 import '../../data/rd_members_logic.dart' show RdMembersFilter;
 import '../../data/rd_overview_logic.dart';
+import '../../data/rd_works_logic.dart';
+import '../pages/rd_folder_page.dart' show rdEventLabel;
 import 'rd_widgets.dart';
 import 'today/rd_today_common.dart' show RdInfoCard;
 import 'works/rd_collections_ui.dart';
+import 'works/rd_current_works.dart' show rdOpenCurrentWork;
 
 /// REDESIGN: what the empty detail column of the split view shows while
 /// nothing is chosen on the left (Werke, Mitglieder): a short overview with
@@ -71,6 +76,13 @@ class RdWorksOverviewPanel extends ConsumerWidget {
           ),
     );
     final dateFmt = DateFormat.yMMMEd(Localizations.localeOf(context).toLanguageTag());
+
+    // Members: their current Noten by Termin instead of the counts, which
+    // only matter to whoever looks after the Werke.
+    if (!role.isConductor) {
+      final current = _MemberCurrentWorks.sections(context, ref, data, collections);
+      if (current != null) return _OverviewPage(hint: l10n.redesignSplitWorksCurrentHint, children: current);
+    }
 
     void open(Song s) {
       if (s.id != null) context.go(RedesignRoutes.work(s.id!));
@@ -212,6 +224,63 @@ class RdMembersOverviewPanel extends ConsumerWidget {
         ],
       ],
     );
+  }
+}
+
+/// The members' overview of the Werke: "Aktuell" ([rdCurrentWorkCards])
+/// grouped by Termin, then the Werke played lately; a tap opens the own
+/// part like the cards of the list.
+abstract final class _MemberCurrentWorks {
+  /// The sections, null when nothing is current.
+  static List<Widget>? sections(
+    BuildContext context,
+    WidgetRef ref,
+    SongsListData data,
+    List<SongCollection>? collections,
+  ) {
+    final l10n = context.l10n;
+    final own = ref.watch(currentSelfServicePlayerProvider).valueOrNull?.instrument;
+    final ownGroup = data.groups.where((g) => g.id == own && g.maingroup != true).firstOrNull;
+    final now = DateTime.now();
+    final works = rdCurrentWorkCards(
+      rdWithoutEndedEvents(
+        rdNextEvents(data.currentSongs, data.songs),
+        now: now,
+        attendances: ref.watch(realtimeAttendanceListProvider).valueOrNull ?? const [],
+        types: ref.watch(attendanceTypesProvider).valueOrNull ?? const [],
+      ),
+      rdVisibleWorks(data.songs, collections ?? const []),
+      now: now,
+    );
+    if (works.isEmpty) return null;
+    final played = data.isOrchestra ? l10n.redesignWorksSortLastPlayed : l10n.redesignWorksSortLastSung;
+    final byLabel = <String, List<RdCurrentWork>>{};
+    for (final w in works) {
+      (byLabel[w.event != null ? rdEventLabel(w.event!) : played] ??= []).add(w);
+    }
+    return [
+      for (final MapEntry(key: label, value: list) in byLabel.entries) ...[
+        RdGroupLabel(label),
+        RdGroupedList(
+          children: [
+            for (final w in list)
+              RdListRow(
+                key: ValueKey('rd-overview-current-${w.song.id}'),
+                title: w.song.fullNumber.isEmpty ? w.song.name : '${w.song.fullNumber}  ${w.song.name}',
+                subtitle:
+                    ownGroup == null
+                        ? null
+                        : rdMemberPartFiles(w.song, ownGroup.id, choir: data.isChoir).any(rdIsNotes)
+                        ? l10n.redesignWorksStatusPart
+                        : l10n.redesignWorksStatusNoPart(ownGroup.name),
+                value: w.lastPlayed == null ? null : SongUtils.formatDate(w.song.lastSung),
+                onTap: () => rdOpenCurrentWork(context, ref, w.song, ownGroup?.id, choir: data.isChoir),
+              ),
+          ],
+        ),
+        const SizedBox(height: 24),
+      ],
+    ];
   }
 }
 

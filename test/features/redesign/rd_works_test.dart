@@ -8,6 +8,7 @@ import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/organisation_providers.dart';
 import 'package:attendix/core/providers/player_providers.dart';
 import 'package:attendix/core/providers/realtime_providers.dart';
+import 'package:attendix/core/providers/role_permission_providers.dart' show canAccessFilesProvider;
 import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/self_service_providers.dart';
 import 'package:attendix/core/providers/song_providers.dart';
@@ -220,8 +221,6 @@ final _later = rdAddDays(DateTime.now(), 8);
 /// "2026-11-05T19:00:00" for [day].
 String _evening(DateTime day) => '${DateFormat('yyyy-MM-dd').format(day)}T19:00:00';
 
-/// "Do., 5. Nov. · Probe" for [day].
-String _eventLabel(DateTime day) => '${DateFormat.MMMEd('de').format(day)} · Probe';
 
 Widget _worksApp(
   Role role, {
@@ -457,6 +456,25 @@ void main() {
       );
     });
 
+    test('Aktuell: Werke of the coming Termine first, then played in the last 4 weeks', () {
+      final now = DateTime(2026, 11, 8, 12);
+      final events = [
+        RdNextEvent(date: DateTime(2026, 11, 12), type: 'Probe', attendanceId: 1, songs: [_ave, _ouverture]),
+        RdNextEvent(date: DateTime(2026, 11, 15), type: 'Probe', attendanceId: 2, songs: [_ave]),
+      ];
+      final songs = [
+        _abend.copyWith(lastSung: '2026-11-05'),
+        _ave.copyWith(lastSung: '2026-11-01'), // planned anyway
+        const Song(id: 20, name: 'Alt', lastSung: '2026-10-01'), // too long ago
+        const Song(id: 21, name: 'Neu', lastSung: '2026-10-20'),
+      ];
+      final cards = rdCurrentWorkCards(events, songs, now: now);
+      expect(cards.map((c) => c.song.id), [6, 5, 7, 21]);
+      expect(cards[0].event?.attendanceId, 1);
+      expect(cards[2].lastPlayed, DateTime(2026, 11, 5));
+      expect(rdCurrentWorkCards(events, songs, now: now, max: 2).length, 2);
+    });
+
     test('Als Nächstes leaves out Termine over today (end, else start; date only until midnight)', () {
       final now = DateTime(2026, 11, 4, 20);
       RdNextEvent event(int id, {int day = 4}) =>
@@ -536,24 +554,24 @@ void main() {
   });
 
   group('RdWorksPage', () {
-    testWidgets('member: Als Nächstes with the own Noten, one status line per Werk', (tester) async {
+    testWidgets('member: Aktuell cards, one status line per Werk, Noten nach Stimme in •••', (tester) async {
       _phone(tester);
-      await tester.pumpWidget(_worksApp(Role.player));
+      await tester.pumpWidget(_worksApp(Role.player, overrides: [canAccessFilesProvider.overrideWithValue(false)]));
       await _settle(tester);
 
       expect(find.text('Werke'), findsOneWidget);
-      expect(find.text('Meine Noten'), findsOneWidget);
+      // No button in the header any more: "Noten nach Stimme" sits in "•••".
+      expect(find.text('Meine Noten'), findsNothing);
       expect(find.text('Titel oder Nummer'), findsOneWidget);
-      // The next Termin with its Werke and the own part as one PDF.
-      expect(find.text('Als Nächstes'), findsOneWidget);
-      expect(find.text(_eventLabel(_soon)), findsOneWidget);
-      expect(find.byKey(const Key('rd-works-open-mine')), findsOneWidget);
-      expect(find.text('Deine Stimme als PDF, auch zum Drucken'), findsOneWidget);
-      // The one after it as a single line.
-      expect(find.text(_eventLabel(_later)), findsOneWidget);
-      // Status instead of PDF / Audio badges (in "Als Nächstes" and the list).
-      expect(find.text('Deine Stimme · Aufnahme · Konzert'), findsNWidgets(2));
-      expect(find.text('noch keine Noten · Kirche'), findsNWidgets(2));
+      // The Werke of the coming Termine as cards, each once.
+      expect(find.text('Aktuell'), findsOneWidget);
+      expect(find.text('Deine Stimme: Klarinette'), findsOneWidget);
+      final cards = find.byKey(const Key('rd-works-current'));
+      expect(find.descendant(of: cards, matching: find.byType(RdCard)), findsNWidgets(2));
+      expect(find.descendant(of: cards, matching: find.text('Keine Stimme')), findsOneWidget);
+      expect(find.byKey(const Key('rd-works-current-pdf')), findsOneWidget);
+      // Status instead of PDF / Audio badges.
+      expect(find.text('Deine Stimme · Aufnahme · Konzert'), findsOneWidget);
       expect(find.text('keine Noten für Klarinette · Kirche'), findsOneWidget);
       expect(find.text('PDF'), findsNothing);
       expect(find.text('Alle · 3'), findsOneWidget);
@@ -565,31 +583,39 @@ void main() {
         lessThan(tester.getTopLeft(find.text('Ave verum corpus').last).dy),
       );
 
-      await tester.tap(find.text('Meine Noten'));
+      await tester.tap(find.byIcon(Icons.more_horiz));
+      await _settle(tester);
+      await tester.tap(find.text('Noten nach Stimme'));
       await _settle(tester);
       expect(find.text('page folder'), findsOneWidget);
     });
 
-    testWidgets('Meine Noten öffnen is locked and loading while the PDF is built', (tester) async {
+    testWidgets('Aktuell: a card without own part opens the Werk', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_worksApp(Role.player));
+      await _settle(tester);
+
+      await tester.tap(find.descendant(of: find.byKey(const Key('rd-works-current')), matching: find.text('Ave verum corpus')));
+      await _settle(tester);
+      expect(find.text('page work 6'), findsOneWidget);
+    });
+
+    testWidgets('Alle als PDF is locked and loading while the PDF is built', (tester) async {
       _phone(tester);
       final printer = _FakePrintService();
       await tester.pumpWidget(_worksApp(Role.player, overrides: [songPrintServiceProvider.overrideWithValue(printer)]));
       await _settle(tester);
 
-      final button = find.byKey(const Key('rd-works-open-mine'));
-      final spinner = find.descendant(of: button, matching: find.byType(CircularProgressIndicator));
-      await tester.tap(button);
-      await tester.pump();
-      await tester.tap(button, warnIfMissed: false);
+      final link = find.byKey(const Key('rd-works-current-pdf'));
+      await tester.tap(link);
       await tester.pump();
       expect(printer.calls, 1);
-      expect(spinner, findsOneWidget);
-      expect(tester.widget<FilledButton>(find.descendant(of: button, matching: find.byType(FilledButton))).onPressed, isNull);
+      expect(link, findsNothing);
+      expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
       printer.done.complete(const SongPrintResult(pageCount: 1, skipped: 0));
       await _settle(tester);
-      expect(spinner, findsNothing);
-      await tester.tap(button);
+      await tester.tap(link);
       await tester.pump();
       expect(printer.calls, 2);
     });
@@ -602,13 +628,13 @@ void main() {
       await tester.tap(find.widgetWithText(RdChoiceChip, 'Kirche'));
       await _settle(tester);
       expect(find.text('Abendlied'), findsOneWidget);
-      expect(find.text('Festliche Ouvertüre'), findsOneWidget); // only in "Als Nächstes"
+      expect(find.text('Festliche Ouvertüre'), findsOneWidget); // only in "Aktuell"
 
       await tester.tap(find.text('Alle · 3'));
       await _settle(tester);
       await tester.enterText(find.byType(TextField), 'mozart');
       await _settle(tester);
-      expect(find.text('Als Nächstes'), findsNothing);
+      expect(find.text('Aktuell'), findsNothing);
       expect(find.text('Ave verum corpus'), findsOneWidget);
       expect(find.text('Abendlied'), findsNothing);
 
@@ -655,10 +681,9 @@ void main() {
       await tester.pumpWidget(_worksApp(Role.admin, instrument: null, counts: const {11: 2, 12: 1}));
       await _settle(tester);
 
-      expect(find.text('Nach Stimme'), findsOneWidget);
-      expect(find.byKey(const Key('rd-works-open-mine')), findsNothing);
-      // Leads have the Termine tab: no "Als Nächstes" in the Werke list.
-      expect(find.text('Als Nächstes'), findsNothing);
+      expect(find.text('Nach Stimme'), findsNothing);
+      // Leads have the Termine tab: no "Aktuell" in the Werke list.
+      expect(find.text('Aktuell'), findsNothing);
       expect(find.text('ohne Noten'), findsOneWidget);
       // A single missing part is normal: no pill in the list.
       expect(find.text('Klarinette fehlt'), findsNothing);
