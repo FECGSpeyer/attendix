@@ -56,11 +56,10 @@ Future<void> showRdRemindOpenSheet(
     useRootNavigator: true,
     isScrollControlled: true,
     showDragHandle: true,
+    backgroundColor: context.rd.bg,
     // Capped so the handle and the page above stay reachable with a long
     // list (closing used to need the push to be sent).
-    constraints: rdSheetConstraints(context),
-    backgroundColor: context.rd.bg,
-    builder: (_) => _RemindSheet(attendanceId: attendanceId, title: title, when: when),
+    builder: (_) => RdSheetCap(child: _RemindSheet(attendanceId: attendanceId, title: title, when: when)),
   );
 }
 
@@ -95,6 +94,9 @@ class _RemindSheetState extends ConsumerState<_RemindSheet> {
     final l10n = context.l10n;
     final repo = ref.read(attendanceRepositoryWithTenantProvider);
     final title = l10n.attendanceReminderTitle('${widget.title} · ${widget.when}');
+    // The sheet can be closed while sending ("Abbrechen", swipe): only
+    // pop it when it is still on top, never the page below.
+    final sheet = ModalRoute.of(context);
     setState(() => _sending = true);
     var sent = 0;
     var failed = 0;
@@ -117,7 +119,7 @@ class _RemindSheetState extends ConsumerState<_RemindSheet> {
     // Toast on the root overlay: stays visible after the sheet closes.
     if (failed == 0) {
       ToastHelper.showSuccess(context, l10n.redesignRemindSent(sent));
-      Navigator.of(context).pop();
+      if (sheet != null && sheet.isCurrent) Navigator.of(context).pop();
     } else {
       ToastHelper.showError(
         context,
@@ -214,19 +216,30 @@ class _RemindSheetState extends ConsumerState<_RemindSheet> {
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
       child: SafeArea(
         top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Fixed head with "Abbrechen", like the other sheets.
-            RdSheetHead(title: open == null ? widget.title : l10n.redesignRemindTitle(open.length)),
-            Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
-              ),
-            ),
-          ],
+        child: LayoutBuilder(
+          builder: (context, box) {
+            // Head with "Abbrechen", like the other sheets. Fixed above the
+            // list; scrolls along when there is hardly any room (small
+            // screen in landscape with the keyboard open).
+            final head = RdSheetHead(title: open == null ? widget.title : l10n.redesignRemindTitle(open.length));
+            final fixedHead = box.maxHeight >= 200;
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (fixedHead) head,
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [if (!fixedHead) head, ...children],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

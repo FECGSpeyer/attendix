@@ -124,9 +124,8 @@ Future<void> showRdParentEventSheet(BuildContext context, int attendanceId) {
     useRootNavigator: true,
     isScrollControlled: true,
     showDragHandle: true,
-    constraints: rdSheetConstraints(context),
     backgroundColor: context.rd.bg,
-    builder: (_) => Consumer(
+    builder: (_) => RdSheetCap(child: Consumer(
       builder: (context, ref, _) {
         final group = ref.watch(parentAttendanceGroupsProvider).where((g) => g.attendanceId == attendanceId).firstOrNull;
         return SafeArea(
@@ -138,7 +137,7 @@ Future<void> showRdParentEventSheet(BuildContext context, int attendanceId) {
           ),
         );
       },
-    ),
+    )),
   );
 }
 

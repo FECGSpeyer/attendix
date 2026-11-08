@@ -30,9 +30,8 @@ Future<void> showRdInviteSheet(BuildContext context) {
     useRootNavigator: true,
     isScrollControlled: true,
     showDragHandle: true,
-    constraints: rdSheetConstraints(context),
     backgroundColor: context.rd.bg,
-    builder: (_) => const _InviteSheet(),
+    builder: (_) => RdSheetCap(child: const _InviteSheet()),
   );
 }
 

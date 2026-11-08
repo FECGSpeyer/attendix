@@ -296,9 +296,8 @@ Future<RdStatusSheetResult?> showRdStatusSheet(
     useRootNavigator: true,
     isScrollControlled: true,
     showDragHandle: true,
-    constraints: rdSheetConstraints(context),
     backgroundColor: context.rd.bg,
-    builder: (_) => _StatusSheet(
+    builder: (_) => RdSheetCap(child: _StatusSheet(
       member: member,
       subtitle: subtitle,
       available: available,
@@ -307,7 +306,7 @@ Future<RdStatusSheetResult?> showRdStatusSheet(
       changedInfo: changedInfo,
       canOpenPerson: canOpenPerson,
       canRemove: canRemove,
-    ),
+    )),
   );
 }
 

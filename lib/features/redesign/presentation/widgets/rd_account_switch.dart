@@ -149,9 +149,8 @@ Future<void> showRdAccountSwitchSheet(BuildContext context) {
     useRootNavigator: true,
     isScrollControlled: true,
     showDragHandle: true,
-    constraints: rdSheetConstraints(context),
     backgroundColor: context.rd.bg,
-    builder: (_) => const _RdAccountSwitchSheet(),
+    builder: (_) => RdSheetCap(child: const _RdAccountSwitchSheet()),
   );
 }
 
@@ -362,9 +361,8 @@ Future<bool?> showRdAccountLoginSheet(BuildContext context, {String? email}) {
     useRootNavigator: true,
     isScrollControlled: true,
     showDragHandle: true,
-    constraints: rdSheetConstraints(context),
     backgroundColor: context.rd.bg,
-    builder: (_) => _RdAccountLoginSheet(email: email),
+    builder: (_) => RdSheetCap(child: _RdAccountLoginSheet(email: email)),
   );
 }
 
