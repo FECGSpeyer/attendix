@@ -16886,13 +16886,13 @@ abstract class AppLocalizations {
   /// rdSettings.allEvents
   ///
   /// In de, this message translates to:
-  /// **'Alle Termine sichtbar'**
+  /// **'Alle Termine zeigen'**
   String get rdSettingsAllEvents;
 
   /// rdSettings.allEventsHint
   ///
   /// In de, this message translates to:
-  /// **'Auch Termine, bei denen sie nicht dabei sind'**
+  /// **'Mitglieder sehen auch Termine, zu denen sie nicht eingeladen sind'**
   String get rdSettingsAllEventsHint;
 
   /// rdSettings.allowRegister
@@ -16912,6 +16912,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Neue automatisch freigeben'**
   String get rdSettingsAutoApprove;
+
+  /// rdSettings.autoApproveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Sonst prüfst du jede Anmeldung, bevor die Person dazukommt'**
+  String get rdSettingsAutoApproveHint;
 
   /// rdSettings.back
   ///
@@ -16994,13 +17000,13 @@ abstract class AppLocalizations {
   /// rdSettings.dutyView
   ///
   /// In de, this message translates to:
-  /// **'Dienstplan in „Meine Termine“'**
+  /// **'Dienste zuerst zeigen (klassische Ansicht)'**
   String get rdSettingsDutyView;
 
   /// rdSettings.dutyViewHint
   ///
   /// In de, this message translates to:
-  /// **'Dienst-Teams sehen zuerst ihre Dienste'**
+  /// **'Nur in der klassischen Ansicht: Dienst-Teams sehen unter „Meine Termine“ zuerst ihre Dienste. Im Beta haben Dienste immer einen eigenen Bereich.'**
   String get rdSettingsDutyViewHint;
 
   /// rdSettings.emptyValue
@@ -17008,6 +17014,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Bitte gib einen Wert ein.'**
   String get rdSettingsEmptyValue;
+
+  /// rdSettings.filesForAll
+  ///
+  /// In de, this message translates to:
+  /// **'Dateiablage für alle lesbar'**
+  String get rdSettingsFilesForAll;
+
+  /// rdSettings.filesForAllHint
+  ///
+  /// In de, this message translates to:
+  /// **'Sonst nur Admins, Verantwortliche und Helfer. Hochladen dürfen nur Admins und Verantwortliche.'**
+  String get rdSettingsFilesForAllHint;
 
   /// rdSettings.holidays
   ///
@@ -17024,19 +17042,19 @@ abstract class AppLocalizations {
   /// rdSettings.infoText
   ///
   /// In de, this message translates to:
-  /// **'Hinweis bei fremden Terminen'**
+  /// **'Hinweis für nicht Eingeladene'**
   String get rdSettingsInfoText;
 
   /// rdSettings.membersList
   ///
   /// In de, this message translates to:
-  /// **'Mitgliederliste für alle'**
+  /// **'Mitglieder-Tab für alle'**
   String get rdSettingsMembersList;
 
   /// rdSettings.membersListHint
   ///
   /// In de, this message translates to:
-  /// **'Spieler, Helfer und Stimmführer sehen alle Personen'**
+  /// **'Auch Mitglieder, Helfer und Stimmführer sehen, wer in welchem Register ist'**
   String get rdSettingsMembersListHint;
 
   /// rdSettings.name
@@ -17045,11 +17063,119 @@ abstract class AppLocalizations {
   /// **'Name'**
   String get rdSettingsName;
 
+  /// rdSettings.parents
+  ///
+  /// In de, this message translates to:
+  /// **'Eltern-Zugang'**
+  String get rdSettingsParents;
+
   /// rdSettings.parentsHint
   ///
   /// In de, this message translates to:
   /// **'Eltern sehen die Anwesenheit ihrer Kinder und melden sie ab'**
   String get rdSettingsParentsHint;
+
+  /// rdSettings.perm.absence
+  ///
+  /// In de, this message translates to:
+  /// **'Abwesenheit selbst eintragen'**
+  String get rdSettingsPermAbsence;
+
+  /// rdSettings.perm.absenceHint
+  ///
+  /// In de, this message translates to:
+  /// **'Sich für einen Zeitraum abmelden, z. B. für den Urlaub'**
+  String get rdSettingsPermAbsenceHint;
+
+  /// rdSettings.perm.allGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Register eintragen'**
+  String get rdSettingsPermAllGroups;
+
+  /// rdSettings.perm.allGroupsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aus: nur die Anwesenheit des eigenen Registers'**
+  String get rdSettingsPermAllGroupsHint;
+
+  /// rdSettings.perm.checklist
+  ///
+  /// In de, this message translates to:
+  /// **'Checkliste im Termin sehen'**
+  String get rdSettingsPermChecklist;
+
+  /// rdSettings.perm.checklistHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Aufgaben, die vor einem Termin zu erledigen sind'**
+  String get rdSettingsPermChecklistHint;
+
+  /// rdSettings.perm.create
+  ///
+  /// In de, this message translates to:
+  /// **'Termine anlegen'**
+  String get rdSettingsPermCreate;
+
+  /// rdSettings.perm.createHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aus: können keine neuen Termine anlegen'**
+  String get rdSettingsPermCreateHint;
+
+  /// rdSettings.perm.helperNote
+  ///
+  /// In de, this message translates to:
+  /// **'Gilt auch für Helfer, die Stimmführer sind. Sie sehen Notizen und Checkliste immer.'**
+  String get rdSettingsPermHelperNote;
+
+  /// rdSettings.perm.leaderDiffers
+  ///
+  /// In de, this message translates to:
+  /// **'Bei Stimmführern ist es noch anders eingestellt, einmal umschalten gleicht es an.'**
+  String get rdSettingsPermLeaderDiffers;
+
+  /// rdSettings.perm.leaderOwnOnly
+  ///
+  /// In de, this message translates to:
+  /// **'Stimmführer nur ihre Stimme'**
+  String get rdSettingsPermLeaderOwnOnly;
+
+  /// rdSettings.perm.leaderOwnOnlyHint
+  ///
+  /// In de, this message translates to:
+  /// **'Helfer, die Stimmführer sind, tragen nur die Anwesenheit ihrer eigenen Stimme ein'**
+  String get rdSettingsPermLeaderOwnOnlyHint;
+
+  /// rdSettings.perm.memberNote
+  ///
+  /// In de, this message translates to:
+  /// **'Gilt auch für Mitglieder, die Stimmführer sind.'**
+  String get rdSettingsPermMemberNote;
+
+  /// rdSettings.perm.notes
+  ///
+  /// In de, this message translates to:
+  /// **'Notizen zu Personen sehen'**
+  String get rdSettingsPermNotes;
+
+  /// rdSettings.perm.notesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Im Termin bei der Anwesenheit'**
+  String get rdSettingsPermNotesHint;
+
+  /// rdSettings.perm.pause
+  ///
+  /// In de, this message translates to:
+  /// **'Sich selbst pausieren'**
+  String get rdSettingsPermPause;
+
+  /// rdSettings.perm.pauseHint
+  ///
+  /// In de, this message translates to:
+  /// **'Unter „Ich“ pausieren und wieder zurückkommen. Gilt für alle mit eigenem Profil, auch für Helfer.'**
+  String get rdSettingsPermPauseHint;
 
   /// rdSettings.region
   ///
@@ -17177,6 +17303,12 @@ abstract class AppLocalizations {
   /// **'Konnte nicht gespeichert werden. Bitte versuche es noch einmal.'**
   String get rdSettingsSaveFailed;
 
+  /// rdSettings.seasonHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Prozente der Mitglieder zählen erst ab diesem Datum.'**
+  String get rdSettingsSeasonHint;
+
   /// rdSettings.seasonSaved
   ///
   /// In de, this message translates to:
@@ -17198,13 +17330,13 @@ abstract class AppLocalizations {
   /// rdSettings.shiftPresent
   ///
   /// In de, this message translates to:
-  /// **'Schichtbedingt zählt als anwesend'**
+  /// **'Arbeit und Schicht zählen als da'**
   String get rdSettingsShiftPresent;
 
   /// rdSettings.shiftPresentHint
   ///
   /// In de, this message translates to:
-  /// **'Schicht- oder arbeitsbedingt Entschuldigte zählen in den Prozenten als da'**
+  /// **'Wer wegen Arbeit oder Schicht entschuldigt ist, zählt in den Prozenten als anwesend'**
   String get rdSettingsShiftPresentHint;
 
   /// rdSettings.shortName
@@ -17216,13 +17348,19 @@ abstract class AppLocalizations {
   /// rdSettings.shortNameHint
   ///
   /// In de, this message translates to:
-  /// **'Steht vor Dateinamen beim Export'**
+  /// **'Kurzform für enge Stellen und Dateinamen beim Export'**
   String get rdSettingsShortNameHint;
+
+  /// rdSettings.teachers
+  ///
+  /// In de, this message translates to:
+  /// **'Lehrer erfassen'**
+  String get rdSettingsTeachers;
 
   /// rdSettings.teachersHint
   ///
   /// In de, this message translates to:
-  /// **'Lehrer der Spieler verwalten'**
+  /// **'Bei jeder Person festhalten, wer sie unterrichtet'**
   String get rdSettingsTeachersHint;
 
   /// rdSettings.undo

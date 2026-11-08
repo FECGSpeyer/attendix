@@ -10315,11 +10315,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdSettingsAddRule => 'Regel hinzufügen';
 
   @override
-  String get rdSettingsAllEvents => 'Alle Termine sichtbar';
+  String get rdSettingsAllEvents => 'Alle Termine zeigen';
 
   @override
   String get rdSettingsAllEventsHint =>
-      'Auch Termine, bei denen sie nicht dabei sind';
+      'Mitglieder sehen auch Termine, zu denen sie nicht eingeladen sind';
 
   @override
   String get rdSettingsAllowRegister => 'Selbst anmelden erlauben';
@@ -10330,6 +10330,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get rdSettingsAutoApprove => 'Neue automatisch freigeben';
+
+  @override
+  String get rdSettingsAutoApproveHint =>
+      'Sonst prüfst du jede Anmeldung, bevor die Person dazukommt';
 
   @override
   String get rdSettingsBack => 'Gruppe';
@@ -10374,13 +10378,21 @@ class AppLocalizationsDe extends AppLocalizations {
       'Regeln bestimmen, wann eine Person als Problemfall gilt.';
 
   @override
-  String get rdSettingsDutyView => 'Dienstplan in „Meine Termine“';
+  String get rdSettingsDutyView => 'Dienste zuerst zeigen (klassische Ansicht)';
 
   @override
-  String get rdSettingsDutyViewHint => 'Dienst-Teams sehen zuerst ihre Dienste';
+  String get rdSettingsDutyViewHint =>
+      'Nur in der klassischen Ansicht: Dienst-Teams sehen unter „Meine Termine“ zuerst ihre Dienste. Im Beta haben Dienste immer einen eigenen Bereich.';
 
   @override
   String get rdSettingsEmptyValue => 'Bitte gib einen Wert ein.';
+
+  @override
+  String get rdSettingsFilesForAll => 'Dateiablage für alle lesbar';
+
+  @override
+  String get rdSettingsFilesForAllHint =>
+      'Sonst nur Admins, Verantwortliche und Helfer. Hochladen dürfen nur Admins und Verantwortliche.';
 
   @override
   String get rdSettingsHolidays => 'Ferien und Feiertage zeigen';
@@ -10390,21 +10402,84 @@ class AppLocalizationsDe extends AppLocalizations {
       'Beim Anlegen von Terminen hervorgehoben (nur Deutschland)';
 
   @override
-  String get rdSettingsInfoText => 'Hinweis bei fremden Terminen';
+  String get rdSettingsInfoText => 'Hinweis für nicht Eingeladene';
 
   @override
-  String get rdSettingsMembersList => 'Mitgliederliste für alle';
+  String get rdSettingsMembersList => 'Mitglieder-Tab für alle';
 
   @override
   String get rdSettingsMembersListHint =>
-      'Spieler, Helfer und Stimmführer sehen alle Personen';
+      'Auch Mitglieder, Helfer und Stimmführer sehen, wer in welchem Register ist';
 
   @override
   String get rdSettingsName => 'Name';
 
   @override
+  String get rdSettingsParents => 'Eltern-Zugang';
+
+  @override
   String get rdSettingsParentsHint =>
       'Eltern sehen die Anwesenheit ihrer Kinder und melden sie ab';
+
+  @override
+  String get rdSettingsPermAbsence => 'Abwesenheit selbst eintragen';
+
+  @override
+  String get rdSettingsPermAbsenceHint =>
+      'Sich für einen Zeitraum abmelden, z. B. für den Urlaub';
+
+  @override
+  String get rdSettingsPermAllGroups => 'Alle Register eintragen';
+
+  @override
+  String get rdSettingsPermAllGroupsHint =>
+      'Aus: nur die Anwesenheit des eigenen Registers';
+
+  @override
+  String get rdSettingsPermChecklist => 'Checkliste im Termin sehen';
+
+  @override
+  String get rdSettingsPermChecklistHint =>
+      'Die Aufgaben, die vor einem Termin zu erledigen sind';
+
+  @override
+  String get rdSettingsPermCreate => 'Termine anlegen';
+
+  @override
+  String get rdSettingsPermCreateHint =>
+      'Aus: können keine neuen Termine anlegen';
+
+  @override
+  String get rdSettingsPermHelperNote =>
+      'Gilt auch für Helfer, die Stimmführer sind. Sie sehen Notizen und Checkliste immer.';
+
+  @override
+  String get rdSettingsPermLeaderDiffers =>
+      'Bei Stimmführern ist es noch anders eingestellt, einmal umschalten gleicht es an.';
+
+  @override
+  String get rdSettingsPermLeaderOwnOnly => 'Stimmführer nur ihre Stimme';
+
+  @override
+  String get rdSettingsPermLeaderOwnOnlyHint =>
+      'Helfer, die Stimmführer sind, tragen nur die Anwesenheit ihrer eigenen Stimme ein';
+
+  @override
+  String get rdSettingsPermMemberNote =>
+      'Gilt auch für Mitglieder, die Stimmführer sind.';
+
+  @override
+  String get rdSettingsPermNotes => 'Notizen zu Personen sehen';
+
+  @override
+  String get rdSettingsPermNotesHint => 'Im Termin bei der Anwesenheit';
+
+  @override
+  String get rdSettingsPermPause => 'Sich selbst pausieren';
+
+  @override
+  String get rdSettingsPermPauseHint =>
+      'Unter „Ich“ pausieren und wieder zurückkommen. Gilt für alle mit eigenem Profil, auch für Helfer.';
 
   @override
   String get rdSettingsRegion => 'Bundesland';
@@ -10476,6 +10551,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Konnte nicht gespeichert werden. Bitte versuche es noch einmal.';
 
   @override
+  String get rdSettingsSeasonHint =>
+      'Die Prozente der Mitglieder zählen erst ab diesem Datum.';
+
+  @override
   String rdSettingsSeasonSaved(Object date) {
     return 'Saisonbeginn: $date';
   }
@@ -10488,20 +10567,25 @@ class AppLocalizationsDe extends AppLocalizations {
       'Jeder mit dem Link kann die Werke ansehen';
 
   @override
-  String get rdSettingsShiftPresent => 'Schichtbedingt zählt als anwesend';
+  String get rdSettingsShiftPresent => 'Arbeit und Schicht zählen als da';
 
   @override
   String get rdSettingsShiftPresentHint =>
-      'Schicht- oder arbeitsbedingt Entschuldigte zählen in den Prozenten als da';
+      'Wer wegen Arbeit oder Schicht entschuldigt ist, zählt in den Prozenten als anwesend';
 
   @override
   String get rdSettingsShortName => 'Kürzel';
 
   @override
-  String get rdSettingsShortNameHint => 'Steht vor Dateinamen beim Export';
+  String get rdSettingsShortNameHint =>
+      'Kurzform für enge Stellen und Dateinamen beim Export';
 
   @override
-  String get rdSettingsTeachersHint => 'Lehrer der Spieler verwalten';
+  String get rdSettingsTeachers => 'Lehrer erfassen';
+
+  @override
+  String get rdSettingsTeachersHint =>
+      'Bei jeder Person festhalten, wer sie unterrichtet';
 
   @override
   String get rdSettingsUndo => 'Rückgängig';

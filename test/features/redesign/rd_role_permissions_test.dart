@@ -101,18 +101,40 @@ void main() {
       await tester.pumpWidget(_app(saves));
       await _settle(tester);
 
-      // Roles without switches (Stimmführer, Beobachter, Eltern) are left out.
+      // Stimmführer follow Helfer and Mitglied; Beobachter and Eltern have
+      // no switches.
       expect(find.text('HELFER'), findsOneWidget);
-      expect(find.text('STIMMFÜHRER-HELFER'), findsOneWidget);
+      expect(find.text('STIMMFÜHRER-HELFER'), findsNothing);
       expect(find.text('MITGLIED'), findsOneWidget);
       expect(find.text('BEOBACHTER'), findsNothing);
       expect(find.text('Speichern'), findsNothing);
 
-      await tester.tap(find.text('Eigene Pausierung erlauben'));
+      await tester.tap(find.text('Sich selbst pausieren'));
       await _settle(tester);
       expect(saves.single.single.role, Role.player.value);
       expect(saves.single.single.playerSelfPause, isTrue);
-      expect(_switchOf(tester, 'Eigene Pausierung erlauben').value, isTrue);
+      expect(_switchOf(tester, 'Sich selbst pausieren').value, isTrue);
+    });
+
+    testWidgets('Mitglied and Helfer switches also set their Stimmführer role', (tester) async {
+      tester.view.physicalSize = const Size(393, 4000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final saves = <List<TenantRolePermission>>[];
+      await tester.pumpWidget(_app(saves));
+      await _settle(tester);
+
+      // Mitglied's "Abwesenheit selbst eintragen" (the second one).
+      await tester.tap(find.text('Abwesenheit selbst eintragen').last);
+      await _settle(tester);
+      expect(saves.single.map((p) => p.role), [Role.player.value, Role.voiceLeader.value]);
+      expect(saves.single.every((p) => p.playerPlannedAbsence), isTrue);
+
+      // Only Stimmführer-Helfer are limited to their own Stimme.
+      await tester.tap(find.text('Stimmführer nur ihre Stimme'));
+      await _settle(tester);
+      expect(saves.last.single.role, Role.voiceLeaderHelper.value);
+      expect(saves.last.single.attendanceAllGroups, isFalse);
     });
 
     testWidgets('failed saves put the switch back to the saved value', (tester) async {
@@ -124,12 +146,12 @@ void main() {
       await _settle(tester);
 
       // On, off again while the first save still runs; both saves fail.
-      await tester.tap(find.text('Eigene Pausierung erlauben'));
+      await tester.tap(find.text('Sich selbst pausieren'));
       await tester.pump(const Duration(milliseconds: 50));
-      await tester.tap(find.text('Eigene Pausierung erlauben'));
+      await tester.tap(find.text('Sich selbst pausieren'));
       await _settle(tester);
       expect(saves, hasLength(2));
-      expect(_switchOf(tester, 'Eigene Pausierung erlauben').value, isFalse);
+      expect(_switchOf(tester, 'Sich selbst pausieren').value, isFalse);
       await tester.pump(const Duration(seconds: 5));
     });
 
@@ -143,12 +165,12 @@ void main() {
 
       // On, off, on again; only the first save fails.
       for (var i = 0; i < 3; i++) {
-        await tester.tap(find.text('Eigene Pausierung erlauben'));
+        await tester.tap(find.text('Sich selbst pausieren'));
         await tester.pump(const Duration(milliseconds: 50));
       }
       await _settle(tester);
       expect(saves, hasLength(3));
-      expect(_switchOf(tester, 'Eigene Pausierung erlauben').value, isTrue);
+      expect(_switchOf(tester, 'Sich selbst pausieren').value, isTrue);
       await tester.pump(const Duration(seconds: 5));
     });
 
@@ -158,7 +180,7 @@ void main() {
       addTearDown(tester.view.reset);
       await tester.pumpWidget(_app([], role: Role.responsible));
       await _settle(tester);
-      expect(_switchOf(tester, 'Dateiablage für alle Mitglieder').onChanged, isNull);
+      expect(_switchOf(tester, 'Dateiablage für alle lesbar').onChanged, isNull);
     });
   });
 
