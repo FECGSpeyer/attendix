@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.93.3",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Beta: Springt man in einen anderen Bereich (z. B. Mitglied › Verlauf › Termin, Werk › Termin, Heute › Termin), wechselt die Seitenleiste bzw. Tab-Leiste jetzt zu „Termine“; Zurück führt weiter dorthin, wo man herkam"
+      ]
+    },
+    {
       "version": "0.93.2",
       "date": "8.11.2026",
       "changes": [
