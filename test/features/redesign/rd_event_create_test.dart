@@ -259,7 +259,8 @@ void main() {
       expect(find.text('19:30'), findsOneWidget);
       // Invited: everyone active (the paused person is left out).
       expect(find.text('Alle · 2'), findsOneWidget);
-      expect(find.text('Termin anlegen'), findsOneWidget);
+      // One submit only: "Anlegen" in the top bar.
+      expect(find.text('Anlegen'), findsOneWidget);
 
       // Konzert template: no place field (place not enabled), its time.
       await tester.tap(find.text('Konzert').first);
@@ -277,7 +278,6 @@ void main() {
       await _settle(tester);
       expect(find.textContaining('Es werden 7 Termine angelegt'), findsOneWidget);
       expect(find.textContaining('jeden '), findsOneWidget);
-      expect(find.text('7 Termine anlegen'), findsOneWidget);
     });
 
     testWidgets('without permission only a hint, Anlegen disabled', (tester) async {

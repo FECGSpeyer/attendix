@@ -403,8 +403,7 @@ class _RdCollectionEditPageState extends ConsumerState<RdCollectionEditPage> {
           padding: const EdgeInsets.fromLTRB(4, 16, 4, 20),
           child: Text(l10n.collectionsEditHint, style: RdType.meta(p, size: 13)),
         ),
-        RdPrimaryButton(label: l10n.redesignCommonDone, onPressed: _done),
-        const SizedBox(height: 28),
+        const SizedBox(height: 8),
         RdGroupedList(
           children: [
             RdListRow(

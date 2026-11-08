@@ -389,7 +389,8 @@ class RdWorkPage extends ConsumerWidget {
     return [
       RdSectionHeader(
         files.isEmpty ? l10n.redesignWorkFiles : '${l10n.redesignWorkFiles} · ${files.length}',
-        action: canEdit ? _AddLink(label: l10n.redesignWorkAdd, onTap: pick) : null,
+        // Without files the card below is the one way to add them.
+        action: canEdit && files.isNotEmpty ? _AddLink(label: l10n.redesignWorkAdd, onTap: pick) : null,
       ),
       if (filesState != null && filesState.uploads.isNotEmpty) ...[
         RdUploadQueue(
