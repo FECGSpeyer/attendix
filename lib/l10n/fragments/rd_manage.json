@@ -77,6 +77,17 @@
       "manageGroups": "Register verwalten",
       "showHolidays": "Ferien und Feiertage einblenden",
       "missingBanner": "{count, plural, one {1 Mitglied hat eine E-Mail, aber noch keinen Zugang zur App.} other {{count} Mitglieder haben eine E-Mail, aber noch keinen Zugang zur App.}}"
+    },
+    "rdTeacherNew": {
+      "title": "Neuer Lehrer",
+      "create": "Anlegen",
+      "name": "Name",
+      "nameShort": "Bitte gib einen Namen mit mindestens 3 Zeichen ein.",
+      "instruments": "Unterrichtet",
+      "noInstrument": "Wähle mindestens ein Instrument.",
+      "noGroups": "Es gibt noch keine Register, die du auswählen kannst.",
+      "hint": "Kontakt, Notizen und Privatlehrer ergänzt du danach beim Lehrer.",
+      "done": "{name} angelegt"
     }
   },
   "en": {
@@ -157,6 +168,17 @@
       "manageGroups": "Manage sections",
       "showHolidays": "Show holidays",
       "missingBanner": "{count, plural, one {1 member has an e-mail address but no app account yet.} other {{count} members have an e-mail address but no app account yet.}}"
+    },
+    "rdTeacherNew": {
+      "title": "New teacher",
+      "create": "Create",
+      "name": "Name",
+      "nameShort": "Please enter a name with at least 3 characters.",
+      "instruments": "Teaches",
+      "noInstrument": "Choose at least one instrument.",
+      "noGroups": "There are no sections to choose from yet.",
+      "hint": "Add contact, notes and private teacher afterwards on the teacher.",
+      "done": "{name} created"
     }
   }
 }

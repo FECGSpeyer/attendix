@@ -549,6 +549,16 @@ void main() {
       expect(find.text('page review 5'), findsOneWidget);
     });
 
+    testWidgets('Aktiv names the waiting request and opens Wartet', (tester) async {
+      await tester.pumpWidget(_membersApp(Role.admin, _repo()));
+      await _settle(tester);
+      expect(find.text('1 neue Anmeldung'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('rd-members-pending-row')));
+      await _settle(tester);
+      expect(find.text('Emil Funk'), findsOneWidget);
+      expect(find.text('1 neue Anmeldung'), findsNothing);
+    });
+
     testWidgets('admin lifts expired pauses on open and may add persons', (tester) async {
       final repo = _repo();
       await tester.pumpWidget(_membersApp(Role.admin, repo));
