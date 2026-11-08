@@ -77,7 +77,12 @@ class RdEditTopBar extends StatelessWidget {
             width: 88,
             child: Align(
               alignment: Alignment.centerRight,
-              child: RdTextLink(key: doneKey, label: context.l10n.redesignCommonDone, onTap: onDone),
+              // Large text: shrinks to one line instead of breaking "Fertig".
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerRight,
+                child: RdTextLink(key: doneKey, label: context.l10n.redesignCommonDone, onTap: onDone),
+              ),
             ),
           ),
         ],
@@ -124,14 +129,18 @@ class RdFormTopBar extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Center(
                   widthFactor: 1,
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: bold ? FontWeight.w600 : FontWeight.w400,
-                      color: onTap == null ? p.text2 : p.link,
+                  // Large text on a narrow phone: the action shrinks to fit
+                  // instead of being cut (it is the only submit of the page).
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: bold ? FontWeight.w600 : FontWeight.w400,
+                        color: onTap == null ? p.text2 : p.link,
+                      ),
                     ),
                   ),
                 ),
@@ -141,33 +150,41 @@ class RdFormTopBar extends StatelessWidget {
         );
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 4, 8, 6),
-      child: Row(
-        children: [
-          link(cancel, onCancel),
-          Expanded(
-            child: Semantics(
-              header: true,
-              child: Text(
-                title,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: p.text),
+      child: LayoutBuilder(
+        builder: (context, constraints) => Row(
+          children: [
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: constraints.maxWidth * 0.3),
+              child: link(cancel, onCancel),
+            ),
+            Expanded(
+              child: Semantics(
+                header: true,
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: p.text),
+                ),
               ),
             ),
-          ),
-          if (saving)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SizedBox(
-                width: 18,
-                height: 18,
-                child: CircularProgressIndicator(strokeWidth: 2, color: p.primary),
+            if (saving)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(strokeWidth: 2, color: p.primary),
+                ),
+              )
+            else
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: constraints.maxWidth * 0.35),
+                child: KeyedSubtree(key: submitKey, child: link(submit, onSubmit, bold: true)),
               ),
-            )
-          else
-            KeyedSubtree(key: submitKey, child: link(submit, onSubmit, bold: true)),
-        ],
+          ],
+        ),
       ),
     );
   }
