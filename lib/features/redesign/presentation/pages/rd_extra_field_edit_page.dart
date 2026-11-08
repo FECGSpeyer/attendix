@@ -684,8 +684,7 @@ class _RdExtraFieldEditPageState extends ConsumerState<RdExtraFieldEditPage> {
           padding: const EdgeInsets.fromLTRB(4, 16, 4, 20),
           child: Text(l10n.redesignGroupEditHint, style: RdType.meta(p, size: 13)),
         ),
-        RdPrimaryButton(label: l10n.redesignCommonDone, onPressed: _done),
-        const SizedBox(height: 28),
+        const SizedBox(height: 8),
         RdGroupedList(
           children: [
             RdListRow(

@@ -20840,7 +20840,7 @@ abstract class AppLocalizations {
   /// redesign.invite.emptyMembers
   ///
   /// In de, this message translates to:
-  /// **'Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.'**
+  /// **'Noch keine Mitglieder. Über „+“ teilst du den Einladungslink oder zeigst den QR-Code in der nächsten Probe.'**
   String get redesignInviteEmptyMembers;
 
   /// redesign.invite.fullscreen

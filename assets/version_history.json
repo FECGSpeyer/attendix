@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.86.0",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta: Jede Seite hat nur noch eine Hauptaktion – „Anlegen“/„Fertig“ oben in der Leiste statt zusätzlich unten (Termin, Person, Werk, Gruppe, Zusatzfeld, Lehrer, Sammlung)",
+        "💄 Beta: Mitglieder hinzufügen und einladen über das eine „+“, leere Listen ohne zweiten Anlegen-Button, Werk ohne Noten ohne doppeltes „Hinzufügen“"
+      ]
+    },
+    {
       "version": "0.84.1",
       "date": "7.11.2026",
       "changes": [

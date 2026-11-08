@@ -68,7 +68,7 @@
         "qrLabel": "QR-Code für die Anmeldung bei {group}",
         "off": "Die Anmeldung per Link ist für diese Gruppe aus.",
         "turnOn": "In den Einstellungen einschalten",
-        "emptyMembers": "Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.",
+        "emptyMembers": "Noch keine Mitglieder. Über „+“ teilst du den Einladungslink oder zeigst den QR-Code in der nächsten Probe.",
         "addPerson": "Person anlegen"
       },
       "remind": {
@@ -1581,7 +1581,7 @@
         "qrLabel": "QR code to sign up for {group}",
         "off": "Signing up by link is turned off for this group.",
         "turnOn": "Turn it on in the settings",
-        "emptyMembers": "No members yet. Send the invitation link to your group or show the QR code at the next rehearsal.",
+        "emptyMembers": "No members yet. Use “+” to share the invitation link or show the QR code at the next rehearsal.",
         "addPerson": "Add person"
       },
       "remind": {

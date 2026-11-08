@@ -96,11 +96,15 @@ class RdFormTopBar extends StatelessWidget {
     required this.saving,
     required this.onCancel,
     required this.onSubmit,
+    this.submitKey,
   });
 
   final String title;
   final String cancel;
   final String submit;
+
+  /// Key of the submit link (the only submit of the page).
+  final Key? submitKey;
   final bool saving;
   final VoidCallback? onCancel;
   final VoidCallback? onSubmit;
@@ -162,7 +166,7 @@ class RdFormTopBar extends StatelessWidget {
               ),
             )
           else
-            link(submit, onSubmit, bold: true),
+            KeyedSubtree(key: submitKey, child: link(submit, onSubmit, bold: true)),
         ],
       ),
     );
