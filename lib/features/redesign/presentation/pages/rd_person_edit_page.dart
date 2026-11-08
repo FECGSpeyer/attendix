@@ -129,6 +129,10 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
   /// Writes run one after another, so the last change always wins.
   Future<void> _queue = Future.value();
 
+  /// Counts the Stimmführer switch changes: a failed one only jumps back
+  /// while no newer change follows.
+  int _leaderChanges = 0;
+
   /// Queued writes that have not finished yet.
   int _running = 0;
 
@@ -682,6 +686,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
   Future<void> _setLeader(bool value) async {
     final before = _person;
     if (before == null || !_editable || before.isLeader == value) return;
+    final change = ++_leaderChanges;
     _apply({'isLeader': value});
     final after = _person!;
     _enqueue(() async {
@@ -697,7 +702,8 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
           if (repo == null || !repo.hasTenantId) throw StateError('no group');
           role = await repo.getTenantUserRole(appId);
         } catch (e) {
-          if (_person?.isLeader == value) _apply({'isLeader': before.isLeader});
+          // Only while no newer switch change follows (that one decides).
+          if (_leaderChanges == change) _apply({'isLeader': before.isLeader});
           if (mounted) ToastHelper.showError(context, context.l10n.personFlutterRoleUpdateFailed(friendlyErrorMessage(e)));
           return;
         }
