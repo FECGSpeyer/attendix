@@ -273,6 +273,8 @@ class _Stat extends StatelessWidget {
     return Semantics(
       label: '$value $label',
       button: onTap != null,
+      // The InkWell below is excluded: the tap must sit here.
+      onTap: onTap,
       excludeSemantics: true,
       child: RdCard(
         onTap: onTap,
