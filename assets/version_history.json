@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.96.0",
+      "version": "0.97.0",
       "date": "8.11.2026",
       "changes": [
         "💄 Beta Rollen und Rechte: nach Personen geordnet („Was Mitglieder sehen“, „Was Mitglieder dürfen“, „Was Helfer dürfen“). Stimmführer haben keine eigenen Abschnitte mehr, Mitglied und Helfer gelten auch für sie. Neuer Schalter „Stimmführer nur ihre Stimme“, Abwesenheit selbst eintragen jetzt auch für Stimmführer einstellbar",
@@ -12,6 +12,22 @@
         "🐛 Beta Rollen und Rechte: Schlägt das Speichern eines Schalters fehl, wird er nicht mehr mit dem nächsten Schalter doch noch gespeichert; bereits gespeicherte Schalter bleiben gespeichert, auch wenn man die Seite gleich verlässt",
         "🐛 Abwesenheit löschen unter „Meine Termine“: setzt auch eigene Dienste zurück, die mit dieser Abwesenheit entschuldigt wurden (z. B. im Beta oder von der Leitung eingetragen)",
         "🐛 Beta Person bearbeiten: „Stimmführer“ liest die gespeicherte Rolle, bevor er die Stimmführer-Rolle vergibt; Verantwortliche und Admins behalten ihre Rolle auch, wenn sie noch nicht geladen war"
+      ]
+    },
+    {
+      "version": "0.96.1",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta-Mitglied: „Meinen Benutzer zuweisen“ erscheint nur noch, solange du in der Gruppe mit keinem Mitglied verknüpft bist"
+      ]
+    },
+    {
+      "version": "0.96.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta Mitglieder: „Mehrere auswählen“ (unter •••) direkt in der Mitgliederliste – Personen oder ganze Register antippen, dann unten Register, Pausieren, Feld oder Archivieren",
+        "✨ Neu „Feld“: Notizen oder ein Zusatzfeld für alle Ausgewählten auf einmal setzen (wie Ionic „Mehrfach bearbeiten“)",
+        "♻️ Die eigene Seite „Mitglieder bearbeiten“ in der Verwaltung entfällt; die Suche dort führt in die Mitgliederliste"
       ]
     },
     {
