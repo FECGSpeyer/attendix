@@ -27,7 +27,9 @@
       "transferNoRegisters": "Keine Register",
       "transferNoTargets": "Es gibt keine anderen Gruppen in deiner Organisation.",
       "transferHint": "Die Person wird in der Zielgruppe angelegt und hier archiviert.",
-      "copyHint": "Die Person wird in der Zielgruppe angelegt und bleibt hier aktiv."
+      "copyHint": "Die Person wird in der Zielgruppe angelegt und bleibt hier aktiv.",
+      "teacherAdd": "Neuer Lehrer",
+      "teacherNone": "Für dieses Register gibt es noch keinen Lehrer."
     }
   },
   "en": {
@@ -58,7 +60,9 @@
       "transferNoRegisters": "No sections",
       "transferNoTargets": "There are no other groups in your organisation.",
       "transferHint": "The person is created in the target group and archived here.",
-      "copyHint": "The person is created in the target group and stays active here."
+      "copyHint": "The person is created in the target group and stays active here.",
+      "teacherAdd": "New teacher",
+      "teacherNone": "There is no teacher for this section yet."
     }
   }
 }
