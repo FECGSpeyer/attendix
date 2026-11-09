@@ -45,7 +45,9 @@ class DeviceTokenRepository extends BaseRepository implements DeviceTokenStore {
   @override
   String? get currentUserId => _userId;
 
-  /// Ionic saveToken: one token per user, one user per token, then upsert.
+  /// Ionic saveToken: one user per token, then upsert. Unlike Ionic a user
+  /// keeps the tokens of their other devices (iPhone and Mac both get the
+  /// push; `send-push` sends to every row of the user).
   @override
   Future<void> saveToken(
     String token,
@@ -64,14 +66,6 @@ class DeviceTokenRepository extends BaseRepository implements DeviceTokenStore {
           .delete()
           .eq('token', token)
           .neq('user_id', userId);
-
-      if (stale()) return;
-      // Remove other tokens of this user (one token per user)
-      await supabase
-          .from('device_tokens')
-          .delete()
-          .eq('user_id', userId)
-          .neq('token', token);
 
       // SOL_FIX17: last check right before the upsert.
       if (stale()) return;

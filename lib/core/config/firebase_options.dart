@@ -69,6 +69,7 @@ class DefaultFirebaseOptions {
           storageBucket: _storageBucket.isEmpty ? null : _storageBucket,
         );
       case TargetPlatform.iOS:
+      case TargetPlatform.macOS: // Mac app = iOS bundle ID and Firebase app
         if (iosAppId.isEmpty) return null;
         return FirebaseOptions(
           apiKey: apiKey,

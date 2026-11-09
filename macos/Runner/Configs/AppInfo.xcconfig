@@ -5,10 +5,11 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = attendix
+PRODUCT_NAME = Attendix
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = de.attendix.attendix
+// Same ID as the iOS/Android store app (Universal Purchase in App Store Connect).
+PRODUCT_BUNDLE_IDENTIFIER = io.stephanus.attendix
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2026 de.attendix. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2026 Attendix. All rights reserved.

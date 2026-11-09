@@ -53,6 +53,45 @@ scripts/store_build.sh ipa <Dart-Defines …>
 scripts/store_build.sh apk <Dart-Defines …>
 ```
 
+### macOS (Mac App Store / TestFlight)
+
+Die Mac-App hat dieselbe ID `io.stephanus.attendix` wie iOS (Plattform macOS
+im App-Store-Connect-Eintrag „Attendix“, Universal Purchase). Ohne eigene
+Mac-Version starten Apple-Silicon-Macs die iPad-App.
+
+```bash
+scripts/store_build.sh macos-release <Dart-Defines …>
+#   = shorebird release macos --flutter-version=3.47.9 -- --build-name 5.0.0 --build-number 330 …
+#   → build/macos/Build/Products/Release/Attendix.app
+```
+
+Shorebird liefert nur die `.app`, und zwar unsigniert (`CODE_SIGNING_ALLOWED=NO`).
+Die Store-Rechte stehen in `macos/Runner/AppStore.entitlements`, nicht in
+`Release.entitlements`: Schlüsselbund-Gruppe und Push (`aps-environment`)
+verlangen ein Profil, mit ihnen scheitert jeder lokale `flutter build macos`
+(ad hoc signiert, Mac nicht als Gerät im Team registriert).
+Signiert wird wie bei iOS über Xcodes Cloud-Signierung (Stephanus-Konto in
+Xcode angemeldet, kein lokales Distribution-Zertifikat nötig):
+
+1. Entitlements auflösen und ad hoc signieren:
+   `sed 's/$(AppIdentifierPrefix)/MXM3YWAKPL./' macos/Runner/AppStore.entitlements > ent.plist`,
+   `codesign --force --deep --sign - Attendix.app`, dann
+   `codesign --force --sign - --entitlements ent.plist Attendix.app`.
+2. Ein `Attendix.xcarchive` von Hand anlegen: `Products/Applications/Attendix.app`,
+   die `*.dSYM` unter `dSYMs/` und eine `Info.plist` mit `ApplicationProperties`
+   (ApplicationPath, CFBundleIdentifier, CFBundleShortVersionString,
+   CFBundleVersion, SigningIdentity, Team, Architectures) und `ArchiveVersion` 2.
+3. `xcodebuild -exportArchive -allowProvisioningUpdates` mit method
+   `app-store-connect`, teamID `MXM3YWAKPL`, signingStyle automatic. Mit
+   destination `export` entsteht das `.pkg` zum Prüfen (`pkgutil
+   --check-signature`, `codesign -dvv`), mit `upload` geht es direkt zu App
+   Store Connect. Xcode signiert dabei mit „Apple Distribution“, holt das
+   Mac-Store-Profil und das Installer-Zertifikat.
+
+**Build-Nummer nicht ändern**, sonst greifen keine Patches. Patches für den
+Mac App Store gehen erst ab Shorebird 1.6.128 mit Flutter 3.47.7 (wir nutzen
+3.47.9). Push und Live Activity sind auf dem Mac aus (`hostIsNativeMobile`).
+
 Danach AAB bzw. IPA wie gewohnt in Play Console / App Store Connect hochladen.
 **Kein Xcode-Archiv** für den Store: Das wäre kein Shorebird-Release.
 `scripts/store_build.sh ios|macos` baut weiter mit `flutter build` (z. B.

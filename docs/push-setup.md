@@ -70,6 +70,16 @@ App Links to attendix.de are not verified.
   exists, which is the same conditional as Ionic's `build.gradle`.
 - **iOS:** placing the file is enough. The Runner build phase
   *Copy GoogleService-Info.plist* copies it into the app bundle when it exists.
+- **macOS:** nothing extra. The Mac app has the iOS bundle ID
+  `io.stephanus.attendix`, so it uses the same Firebase iOS app and file: its
+  build phase *Copy GoogleService-Info.plist* takes
+  `macos/Runner/GoogleService-Info.plist` if present, otherwise
+  `ios/Runner/GoogleService-Info.plist`. The Mac registers its token as
+  platform `ios` (`device_tokens` only allows android/ios/web; `send-push`
+  then sends the APNs payload). Push needs `aps-environment`, which is only
+  in `macos/Runner/AppStore.entitlements` (production, store signing): local
+  ad hoc builds have no profile and therefore no push. Live Activities stay
+  iOS/Android only.
 
 **Alternative without files (CI):** pass the options with `--dart-define`.
 They are read by `lib/core/config/firebase_options.dart`:

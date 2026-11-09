@@ -37,8 +37,8 @@ Voraussetzungen: Mac mit Xcode und CocoaPods.
 
 ```bash
 flutter build macos --release
-cp -r build/macos/Build/Products/Release/attendix.app /Applications/
-open /Applications/attendix.app
+cp -r build/macos/Build/Products/Release/Attendix.app /Applications/
+open /Applications/Attendix.app
 ```
 
 Bekannte Eigenheiten:

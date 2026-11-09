@@ -32,11 +32,13 @@ import 'tenant_providers.dart';
 import '../../shared/widgets/adaptive/adaptive.dart';
 
 /// Whether native push exists on this platform (Ionic
-/// `Capacitor.isNativePlatform()`): iOS / Android apps, never the PWA.
+/// `Capacitor.isNativePlatform()`): iOS / Android apps and the Mac app,
+/// never the PWA.
 bool get isNativePushPlatform =>
     !kIsWeb &&
     (defaultTargetPlatform == TargetPlatform.iOS ||
-        defaultTargetPlatform == TargetPlatform.android);
+        defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.macOS);
 
 /// The push service (no-op on the web).
 final pushServiceProvider = Provider<PushService>((ref) {
@@ -46,7 +48,10 @@ final pushServiceProvider = Provider<PushService>((ref) {
     promptStore: SharedPrefsPushPromptStore(),
     host: RiverpodPushHost(ref),
     isNativePlatform: isNativePushPlatform,
-    platform: defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android',
+    // The Mac registers as 'ios': device_tokens only allows android/ios/web,
+    // and send-push builds the APNs payload for 'ios' (same bundle ID).
+    platform:
+        defaultTargetPlatform == TargetPlatform.android ? 'android' : 'ios',
   );
   ref.onDispose(service.dispose);
   return service;

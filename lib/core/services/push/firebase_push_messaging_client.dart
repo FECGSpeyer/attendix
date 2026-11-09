@@ -17,7 +17,10 @@ import 'push_messaging_client.dart';
 class FirebasePushMessagingClient implements PushMessagingClient {
   bool _ready = false;
 
-  bool get _isIos => defaultTargetPlatform == TargetPlatform.iOS;
+  /// APNs platforms: iOS and the Mac app.
+  bool get _isIos =>
+      defaultTargetPlatform == TargetPlatform.iOS ||
+      defaultTargetPlatform == TargetPlatform.macOS;
 
   void _log(String message, [Object? error]) {
     if (kDebugMode) debugPrint('[push] $message${error != null ? ': $error' : ''}');
