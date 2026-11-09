@@ -624,8 +624,9 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
 final rdSibeliusSyncProvider = NotifierProvider<RdSibeliusSync, RdSibeliusState>(RdSibeliusSync.new);
 
 /// Whether the Werk page shows the hint "Stimmen direkt aus Sibelius" (Mac
-/// app): until the plug-in was installed from here or the hint was closed.
-class RdSibeliusPluginHint extends AsyncNotifier<bool> {
+/// app): while the plug-in is not in Sibelius' plug-ins folder, unless the
+/// hint was closed. Checked again each time the page shows it.
+class RdSibeliusPluginHint extends AutoDisposeAsyncNotifier<bool> {
   static const _installedKey = 'rd_sibelius_plugin_installed';
   static const _dismissedKey = 'rd_sibelius_plugin_hint_dismissed';
 
@@ -634,10 +635,28 @@ class RdSibeliusPluginHint extends AsyncNotifier<bool> {
     if (!rdSibeliusSupported) return false;
     try {
       final prefs = await SharedPreferences.getInstance();
-      return !(prefs.getBool(_installedKey) ?? false) && !(prefs.getBool(_dismissedKey) ?? false);
+      if (prefs.getBool(_dismissedKey) ?? false) return false;
+      return !await _installed(prefs);
     } catch (_) {
       return false;
     }
+  }
+
+  /// Whether the plug-in file is there; where the app may not look into the
+  /// plug-ins folder (older build), whether it was installed from here.
+  Future<bool> _installed(SharedPreferences prefs) async {
+    final home = await ref.read(rdSibeliusSyncProvider.notifier).home();
+    if (home != null) {
+      final plugins = Directory(rdSibeliusPluginsFolder(home));
+      try {
+        if (await plugins.exists()) {
+          return await File('${plugins.path}/$rdSibeliusPluginCategory/$rdSibeliusPluginFileName').exists();
+        }
+      } catch (_) {
+        // Not visible to the app.
+      }
+    }
+    return prefs.getBool(_installedKey) ?? false;
   }
 
   Future<void> markInstalled() => _set(_installedKey);
@@ -654,4 +673,6 @@ class RdSibeliusPluginHint extends AsyncNotifier<bool> {
   }
 }
 
-final rdSibeliusPluginHintProvider = AsyncNotifierProvider<RdSibeliusPluginHint, bool>(RdSibeliusPluginHint.new);
+final rdSibeliusPluginHintProvider = AsyncNotifierProvider.autoDispose<RdSibeliusPluginHint, bool>(
+  RdSibeliusPluginHint.new,
+);

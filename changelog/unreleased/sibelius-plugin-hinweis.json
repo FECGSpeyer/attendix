@@ -1,0 +1,1 @@
+{"bump": "patch", "changes": ["🐛 Mac-App: Der Hinweis „Stimmen direkt aus Sibelius“ erscheint wieder, wenn das Sibelius-Plugin fehlt (die App prüft jetzt den Plug-ins-Ordner statt sich nur die Installation zu merken)"]}
