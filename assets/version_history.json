@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.104.3",
+      "date": "9.11.2026",
+      "changes": [
+        "🔔 Push auch in der Mac-App: Mac und iPhone bekommen Benachrichtigungen gleichzeitig (ein Konto behält die Tokens aller Geräte)"
+      ]
+    },
+    {
       "version": "0.104.2",
       "date": "9.11.2026",
       "changes": [

@@ -26,15 +26,16 @@ void main() {
     test('device_tokens deletes are scoped by token or user like Ionic', () {
       final deletes =
           queries('device_tokens').where((q) => q.contains('.delete()')).toList();
-      expect(deletes, hasLength(3));
+      expect(deletes, hasLength(2));
       for (final q in deletes) {
         final scoped = q.contains(".eq('token', token)") ||
             q.contains(".eq('user_id', userId)");
         expect(scoped, isTrue, reason: q);
       }
-      // saveToken: token of other users + other tokens of this user
+      // saveToken: only the token of other users; the user's other devices
+      // (iPhone + Mac) keep theirs.
       expect(source, contains(".eq('token', token)\n          .neq('user_id', userId)"));
-      expect(source, contains(".eq('user_id', userId)\n          .neq('token', token)"));
+      expect(source, isNot(contains(".neq('token', token)")));
     });
 
     test('SOL_FIX18/19: logout delete is scoped by token AND the captured user', () {
@@ -70,7 +71,7 @@ void main() {
       final lastCheck = save.lastIndexOf('if (stale()) return;', upsertAt);
       expect(lastCheck, greaterThan(0));
       expect(save.substring(lastCheck, upsertAt), isNot(contains('await')));
-      expect('if (stale()) return;'.allMatches(save).length, 3);
+      expect('if (stale()) return;'.allMatches(save).length, 2);
     });
 
     test('push_enabled is only updated on the own notifications row', () {
