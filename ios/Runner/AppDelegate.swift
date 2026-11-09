@@ -115,7 +115,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
       let appDelegate = UIApplication.shared.delegate as? AppDelegate
     else { return }
     let window = UIWindow(windowScene: windowScene)
-    window.rootViewController = FlutterViewController(
+    window.rootViewController = AttendixViewController(
       engine: appDelegate.flutterEngine, nibName: nil, bundle: nil)
     self.window = window
     appDelegate.window = window
@@ -399,3 +399,39 @@ let ionicOfflineQueueReadFunction = """
   }
   """
 // IONIC_QUEUE end
+
+// KEYBOARD_TAB: on an Apple silicon Mac (and an iPad with a keyboard) UIKit's
+// keyboard focus navigation takes Tab before Flutter sees the key, so Tab did
+// not move from one text field to the next. These key commands claim Tab and
+// Shift-Tab with priority over the system and hand them to Dart
+// (de.attendix/keyboard_focus, lib/core/services/native/keyboard_focus_bridge.dart),
+// which moves the Flutter focus.
+class AttendixViewController: FlutterViewController {
+  private lazy var keyboardFocusChannel = FlutterMethodChannel(
+    name: "de.attendix/keyboard_focus", binaryMessenger: binaryMessenger)
+
+  private lazy var tabCommands: [UIKeyCommand] = {
+    let next = UIKeyCommand(input: "\t", modifierFlags: [], action: #selector(focusNext))
+    let previous = UIKeyCommand(
+      input: "\t", modifierFlags: .shift, action: #selector(focusPrevious))
+    for command in [next, previous] {
+      command.wantsPriorityOverSystemBehavior = true
+    }
+    return [next, previous]
+  }()
+
+  override var keyCommands: [UIKeyCommand]? {
+    // A native sheet on top (share sheet, file preview) keeps its own Tab.
+    guard presentedViewController == nil else { return super.keyCommands }
+    return (super.keyCommands ?? []) + tabCommands
+  }
+
+  @objc private func focusNext() {
+    keyboardFocusChannel.invokeMethod("next", arguments: nil)
+  }
+
+  @objc private func focusPrevious() {
+    keyboardFocusChannel.invokeMethod("previous", arguments: nil)
+  }
+}
+// KEYBOARD_TAB end

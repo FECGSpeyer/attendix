@@ -47,6 +47,7 @@ import 'core/services/error_reporter.dart';
 import 'core/constants/app_constants.dart';
 import 'features/public_links/presentation/pages/open_file_page.dart' show PendingFileLink;
 import 'core/utils/global_toast.dart';
+import 'core/services/native/keyboard_focus_bridge.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -132,6 +133,8 @@ void main() async {
   // Not awaited (REVIEW_FIX2): a non-Teams iframe would otherwise keep the
   // app blank until the SDK timeouts; SSO/theme react once it completes.
   unawaited(TeamsService.instance.init());
+  // KEYBOARD_TAB: Tab / Shift-Tab from the native iOS app (Mac, iPad keyboard)
+  initKeyboardFocusBridge();
 
   runApp(
     ProviderScope(
