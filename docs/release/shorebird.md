@@ -53,6 +53,28 @@ scripts/store_build.sh ipa <Dart-Defines …>
 scripts/store_build.sh apk <Dart-Defines …>
 ```
 
+### macOS (Mac App Store / TestFlight)
+
+Die Mac-App hat dieselbe ID `io.stephanus.attendix` wie iOS (Plattform macOS
+im App-Store-Connect-Eintrag „Attendix“, Universal Purchase). Ohne eigene
+Mac-Version starten Apple-Silicon-Macs die iPad-App.
+
+```bash
+scripts/store_build.sh macos-release <Dart-Defines …>
+#   = shorebird release macos --flutter-version=3.47.9 -- --build-name 5.0.0 --build-number 330 …
+#   → build/macos/Build/Products/Release/Attendix.app
+```
+
+Shorebird liefert nur die `.app`. Für den Upload muss sie mit dem
+„Apple Distribution“-Zertifikat und einem Mac-App-Store-Profil signiert und
+mit dem „Mac Installer Distribution“-Zertifikat als `.pkg` verpackt werden
+(`productbuild --component Attendix.app /Applications --sign "3rd Party Mac
+Developer Installer: …" Attendix.pkg`), dann Upload per Transporter oder
+`xcrun altool --upload-package`. **Build-Nummer nicht ändern**, sonst greifen
+keine Patches. Patches für den Mac App Store gehen erst ab Shorebird 1.6.128
+mit Flutter 3.47.7 (wir nutzen 3.47.9). Push und Live Activity sind auf dem
+Mac aus (`hostIsNativeMobile`).
+
 Danach AAB bzw. IPA wie gewohnt in Play Console / App Store Connect hochladen.
 **Kein Xcode-Archiv** für den Store: Das wäre kein Shorebird-Release.
 `scripts/store_build.sh ios|macos` baut weiter mit `flutter build` (z. B.

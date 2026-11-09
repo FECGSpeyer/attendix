@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.104.1",
+      "date": "9.11.2026",
+      "changes": [
+        "🍎 Mac-App für den App Store vorbereitet: gleiche App-ID wie iOS, Sandbox-Rechte, Store-Build über Shorebird (scripts/store_build.sh macos-release)"
+      ]
+    },
+    {
       "version": "0.104.0",
       "date": "9.11.2026",
       "changes": [

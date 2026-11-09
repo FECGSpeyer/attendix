@@ -223,8 +223,8 @@ flutter devices
 flutter build macos --release
 
 # 2. In Applications installieren und starten
-cp -r build/macos/Build/Products/Release/attendix.app /Applications/
-open /Applications/attendix.app
+cp -r build/macos/Build/Products/Release/Attendix.app /Applications/
+open /Applications/Attendix.app
 ```
 
 **Wichtig:** Die Datei `macos/Runner/Release.entitlements` muss `com.apple.security.network.client` enthalten für Netzwerkzugriff:

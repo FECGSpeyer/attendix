@@ -1,5 +1,5 @@
-# PUSH: FlutterFire (firebase_core) needs macOS 10.15
-platform :osx, '10.15'
+# Xcode 27 builds need macOS 12.0 as minimum (FlutterFire alone needs 10.15).
+platform :osx, '12.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -39,5 +39,9 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_macos_build_settings(target)
+    # Xcode 27 rejects pods below macOS 12.0 (some plugins still declare 10.11).
+    target.build_configurations.each do |config|
+      config.build_settings['MACOSX_DEPLOYMENT_TARGET'] = '12.0'
+    end
   end
 end

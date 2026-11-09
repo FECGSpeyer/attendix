@@ -17,14 +17,17 @@
 #   ipa            shorebird release ios
 #   appbundle      shorebird release android
 #   apk            shorebird release android --artifact apk
+#   macos-release  shorebird release macos (Mac App Store / TestFlight, then
+#                  sign + package as .pkg, see docs/release/shorebird.md)
 #   patch-ios      shorebird patch ios     --release-version=<name>+<number>
+#   patch-macos    shorebird patch macos   --release-version=<name>+<number>
 #   patch-android  shorebird patch android --release-version=<name>+<number>
 #                  (RELEASE_VERSION=<name>+<number> patches an earlier release)
 #   ios, macos     plain flutter build (e.g. --config-only), NO Shorebird release
 # The Flutter version for releases is read from .github/workflows/ci.yml and
 # can be overridden with SHOREBIRD_FLUTTER_VERSION.
 #
-# Usage: scripts/store_build.sh <ipa|appbundle|apk|patch-ios|patch-android|ios|macos> [flutter build args…]
+# Usage: scripts/store_build.sh <ipa|appbundle|apk|macos-release|patch-ios|patch-android|patch-macos|ios|macos> [flutter build args…]
 #        scripts/store_build.sh --print   (only print name and number)
 set -euo pipefail
 
@@ -60,7 +63,7 @@ if [[ "${1:-}" == "--print" ]]; then
   exit 0
 fi
 
-usage="usage: scripts/store_build.sh <ipa|appbundle|apk|patch-ios|patch-android|ios|macos> [flutter build args…]"
+usage="usage: scripts/store_build.sh <ipa|appbundle|apk|macos-release|patch-ios|patch-android|patch-macos|ios|macos> [flutter build args…]"
 target=${1:?$usage}
 shift
 for arg in "$@"; do
@@ -112,7 +115,11 @@ case "$target" in
     find_shorebird; flutter_version
     run "$shorebird" release ios "--flutter-version=$fv" -- "${build_args[@]}" "$@"
     ;;
-  patch-android|patch-ios)
+  macos-release)
+    find_shorebird; flutter_version
+    run "$shorebird" release macos "--flutter-version=$fv" -- "${build_args[@]}" "$@"
+    ;;
+  patch-android|patch-ios|patch-macos)
     # A patch only applies to the exact release build (name + number); the
     # Flutter version is taken from that release by shorebird itself. After an
     # internal version bump the current numbers no longer match the store
@@ -128,7 +135,7 @@ case "$target" in
     ;;
   ios|macos)
     echo "store_build: WARNING: plain 'flutter build $target' is NOT a Shorebird release," >&2
-    echo "store_build: WARNING: an upload from it gets no OTA patches. Use 'ipa' for the App Store." >&2
+    echo "store_build: WARNING: an upload from it gets no OTA patches. Use 'ipa' / 'macos-release' for the App Store." >&2
     run flutter build "$target" --release "${build_args[@]}" "$@"
     ;;
   *)
