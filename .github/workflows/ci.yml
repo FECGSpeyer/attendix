@@ -42,7 +42,7 @@ jobs:
 
   test-shard:
     # The suite (~365 files) is split over 4 runners; most of the time is
-    # compiling each test file, so 4 shards take ~1/4 of the time.
+    # compiling each test file, so 4 shards take about a quarter of it.
     name: Test (${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
     strategy:
@@ -66,8 +66,15 @@ jobs:
         run: cp .env.example .env && cp .env.example .env.app
 
       - name: Run tests
-        # Coverage stays off (Flutter segfault with --coverage on Ubuntu).
-        run: flutter test --total-shards 4 --shard-index $(( ${{ matrix.shard }} - 1 ))
+        # Whole files per shard (every 4th file). flutter test's own
+        # --total-shards splits test cases instead, so every shard would
+        # still compile all files and tests within a file could land on
+        # different shards. Coverage stays off (Flutter segfault on Ubuntu).
+        run: |
+          find test -name '*_test.dart' | sort \
+            | awk -v n=4 -v i=${{ matrix.shard }} 'NR % n == i % n' > shard.txt
+          echo "$(wc -l < shard.txt) test files in this shard"
+          xargs flutter test < shard.txt
 
   test:
     # One "Test" check that is green only when every shard passed.
