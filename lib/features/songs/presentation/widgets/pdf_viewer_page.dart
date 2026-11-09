@@ -160,19 +160,21 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
     await launchUrl(Uri.parse(widget.url), mode: LaunchMode.externalApplication);
   }
 
-  /// iPhone/iPad and Android: the system share sheet (print, AirDrop, mail,
-  /// save in Dateien …). Web keeps "open externally" (the browser prints).
+  /// iPhone/iPad and Android: the system share sheet (on iOS also print,
+  /// AirDrop, mail, save in Dateien …). Web keeps "open externally" (the
+  /// browser prints).
   static bool get _canShareFile =>
       !kIsWeb &&
       (defaultTargetPlatform == TargetPlatform.iOS ||
           defaultTargetPlatform == TargetPlatform.android);
 
-  /// Mac (and other desktops): print straight from the app (the macOS share
-  /// menu has no print). "Open externally" stays only as the fallback when
-  /// loading failed.
+  /// Mac, Android (and other desktops): print straight from the app, their
+  /// share menus have no print. "Open externally" stays only on the web and
+  /// as the fallback when loading failed.
   static bool get _canPrintDirectly =>
       !kIsWeb &&
       (defaultTargetPlatform == TargetPlatform.macOS ||
+          defaultTargetPlatform == TargetPlatform.android ||
           defaultTargetPlatform == TargetPlatform.windows ||
           defaultTargetPlatform == TargetPlatform.linux);
 
@@ -243,18 +245,18 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
           if (_canShareFile && _error == null)
             Builder(
               builder: (button) => IconButton(
-                icon: const Icon(Icons.ios_share),
+                icon: Icon(Icons.adaptive.share),
                 tooltip: context.l10n.redesignWorkFileShare,
                 onPressed: _bytes == null ? null : () => _share(button),
               ),
-            )
-          else if (_canPrintDirectly && _error == null)
+            ),
+          if (_canPrintDirectly && _error == null)
             IconButton(
               icon: const Icon(Icons.print_outlined),
               tooltip: context.l10n.redesignWorkFilePrint,
               onPressed: _bytes == null ? null : _print,
-            )
-          else
+            ),
+          if (!(_canShareFile || _canPrintDirectly) || _error != null)
             IconButton(
               icon: const Icon(Icons.open_in_new),
               tooltip: context.l10n.coreFlutterOpenExternally,
