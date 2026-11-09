@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pdfx/pdfx.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -45,6 +47,7 @@ class PdfViewerPage extends StatefulWidget {
 
 class _PdfViewerPageState extends State<PdfViewerPage> {
   PdfDocument? _document;
+  Uint8List? _bytes;
   PdfControllerPinch? _scrollController;
   PdfController? _pagesController;
   PdfViewMode _mode = PdfViewMode.scroll;
@@ -129,6 +132,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
           (MediaQuery.sizeOf(context).shortestSide >= 600 ? PdfViewMode.pages : PdfViewMode.scroll);
       setState(() {
         _document = document;
+        _bytes = bytes;
         _totalPages = document.pagesCount;
         _mode = mode;
         _createController();
@@ -151,10 +155,40 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
     _pagesController?.animateToPage(page, duration: duration, curve: Curves.easeInOut);
   }
 
-  void _openExternally() => launchUrl(
-        Uri.parse(widget.url),
-        mode: LaunchMode.externalApplication,
+  Future<void> _openExternally() async {
+    await launchUrl(Uri.parse(widget.url), mode: LaunchMode.externalApplication);
+  }
+
+  /// iPhone/iPad and Android: the system share sheet (print, AirDrop, mail,
+  /// save in Dateien …). Web and desktop keep "open externally", where the
+  /// browser / Vorschau prints.
+  static bool get _canShareFile =>
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.iOS ||
+          defaultTargetPlatform == TargetPlatform.android);
+
+  Future<void> _share(BuildContext button) async {
+    final bytes = _bytes;
+    if (bytes == null) return _openExternally();
+    // Measured on tap: the iPad popover points at the button.
+    final box = button.findRenderObject() as RenderBox?;
+    final origin = box == null || !box.hasSize ? null : box.localToGlobal(Offset.zero) & box.size;
+    final name = widget.fileName.toLowerCase().endsWith('.pdf')
+        ? widget.fileName
+        : '${widget.fileName.isEmpty ? 'datei' : widget.fileName}.pdf';
+    try {
+      final result = await Share.shareXFiles(
+        [XFile.fromData(bytes, name: name, mimeType: 'application/pdf')],
+        subject: widget.fileName,
+        fileNameOverrides: [name],
+        sharePositionOrigin: origin,
       );
+      if (result.status != ShareResultStatus.unavailable) return;
+    } catch (_) {
+      // No file sharing here: fall back to the external viewer.
+    }
+    await _openExternally();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -186,11 +220,20 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                   : context.l10n.songsFlutterPdfScrollMode,
               onPressed: _toggleMode,
             ),
-          IconButton(
-            icon: const Icon(Icons.open_in_new),
-            tooltip: context.l10n.coreFlutterOpenExternally,
-            onPressed: _openExternally,
-          ),
+          if (_canShareFile && _error == null)
+            Builder(
+              builder: (button) => IconButton(
+                icon: const Icon(Icons.ios_share),
+                tooltip: context.l10n.redesignWorkFileShare,
+                onPressed: _bytes == null ? null : () => _share(button),
+              ),
+            )
+          else
+            IconButton(
+              icon: const Icon(Icons.open_in_new),
+              tooltip: context.l10n.coreFlutterOpenExternally,
+              onPressed: _openExternally,
+            ),
         ],
       ),
       body: Stack(
