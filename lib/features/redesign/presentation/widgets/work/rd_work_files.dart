@@ -17,6 +17,7 @@ import '../../../../../core/services/zip_service_stub.dart'
 import '../../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/error_message.dart';
+import '../../../../../core/utils/choir_file_utils.dart' show kChoirAllNote;
 import '../../../../../core/utils/instrument_matcher.dart';
 import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/instrument/instrument.dart';
@@ -58,8 +59,9 @@ List<SongFile> rdVisibleFiles(SongDetailData data, Set<String> hidden) =>
 /// Sorts [files] into parts (as the old upload sheet), asks once what to do
 /// with files that are already there and puts them into the upload queue.
 ///
-/// [fromSibelius]: part PDFs exported by the Attendix plug-in. They replace
-/// the PDFs of their part; one list shows what each one replaces or adds.
+/// [fromSibelius]: part PDFs exported by the Attendix plug-in. One list
+/// shows each with its part and the PDF it replaces; both can be changed
+/// and parts left out.
 ///
 /// Returns false when it stopped without an answer (the page was left).
 Future<bool> rdAddWorkFiles(
@@ -88,6 +90,28 @@ Future<bool> rdAddWorkFiles(
     guesses.add((file: file, guess: guessFileCategory(file.name, instruments: instruments, isChoir: data.isChoir)));
   }
   if (guesses.isEmpty) return true;
+
+  // Sibelius parts carry the part's own name: one list to check them.
+  if (fromSibelius) {
+    final parts = await showAppDialog<List<_SibeliusPart>>(
+      context: context,
+      builder:
+          (_) => _SibeliusPartsDialog(
+            items: [for (final g in guesses) (file: g.file, instrumentId: g.guess.instrumentId, note: g.guess.note)],
+            existing: existing,
+            groups: data.instruments,
+            workName: data.song.name,
+            isChoir: data.isChoir,
+          ),
+    );
+    if (parts == null) return context.mounted;
+    if (parts.isNotEmpty) {
+      controller.enqueue([
+        for (final i in parts) (file: i.file, instrumentId: i.instrumentId, note: i.note, replace: i.replace),
+      ], mainGroupId: data.mainGroupId);
+    }
+    return true;
+  }
 
   // Unclear names: the part printed on page 1 (`part-detect`), one at a time.
   final unclear = [
@@ -149,26 +173,13 @@ Future<bool> rdAddWorkFiles(
         file: g.file,
         instrumentId: chosen[g.file]!.instrumentId,
         note: chosen[g.file]!.note,
-        conflicts: [
-          for (final c in rdUploadConflicts(g.file.name, chosen[g.file]!.instrumentId, existing))
-            // A new part PDF replaces only the PDFs of its part (not e.g. a
-            // recording for it).
-            if (!fromSibelius || SongUtils.isPdf(c)) c,
-        ],
+        conflicts: rdUploadConflicts(g.file.name, chosen[g.file]!.instrumentId, existing),
       ),
   ];
 
   var replace = false;
   final clashing = items.where((i) => i.conflicts.isNotEmpty).toList();
-  if (fromSibelius) {
-    final ok = await showAppDialog<bool>(
-      context: context,
-      builder: (ctx) => _SibeliusPartsDialog(items: items, groups: data.instruments, workName: data.song.name),
-    );
-    if (ok == null && !context.mounted) return false;
-    if (ok != true) return true;
-    replace = true;
-  } else if (clashing.isNotEmpty) {
+  if (clashing.isNotEmpty) {
     final choice = await showAppDialog<bool>(
       context: context,
       builder: (ctx) => _ConflictDialog(items: clashing, groups: data.instruments),
@@ -338,7 +349,11 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
       // Leaving the page before answering keeps them for the next visit.
       final answered =
           taken.files.isEmpty || await rdAddWorkFiles(context, ref, widget.data, taken.files, fromSibelius: true);
-      if (answered) await sync.partsAnswered(taken.parts);
+      if (answered) {
+        await sync.partsAnswered(taken.parts);
+      } else {
+        sync.partsKept(taken.parts);
+      }
     } catch (e) {
       if (mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
     } finally {
@@ -1406,69 +1421,208 @@ class _ConflictDialog extends StatelessWidget {
   }
 }
 
-/// "Neue Stimmen aus Sibelius": each exported part PDF with the part it
-/// was given and what it replaces ("ersetzt …") or that it is new;
-/// "Übernehmen" (true) uploads them all and replaces those files.
-class _SibeliusPartsDialog extends StatelessWidget {
-  const _SibeliusPartsDialog({required this.items, required this.groups, required this.workName});
+/// One part of [_SibeliusPartsDialog] as it is taken over.
+typedef _SibeliusPart = ({PlatformFile file, int? instrumentId, String? note, List<SongFile> replace});
 
-  final List<({PlatformFile file, int? instrumentId, String? note, List<SongFile> conflicts})> items;
+/// "Neue Stimmen aus Sibelius": one row per exported part PDF with a
+/// checkbox, its part and the PDF it replaces (or "neu"); both can be
+/// changed. "Übernehmen" returns the checked parts.
+class _SibeliusPartsDialog extends StatefulWidget {
+  const _SibeliusPartsDialog({
+    required this.items,
+    required this.existing,
+    required this.groups,
+    required this.workName,
+    required this.isChoir,
+  });
+
+  final List<({PlatformFile file, int? instrumentId, String? note})> items;
+  final List<SongFile> existing;
   final List<Group> groups;
   final String workName;
+  final bool isChoir;
 
-  String _part(BuildContext context, int? id, String? note) {
-    if (id != null) {
-      for (final g in groups) {
-        if (g.id == id) return g.name;
+  @override
+  State<_SibeliusPartsDialog> createState() => _SibeliusPartsDialogState();
+}
+
+class _SibeliusPartsDialogState extends State<_SibeliusPartsDialog> {
+  late final List<_Category> _parts = [for (final i in widget.items) (id: i.instrumentId, note: i.note)];
+  late final List<SongFile?> _replace = rdPartReplacements([
+    for (final i in widget.items) (name: i.file.name, instrumentId: i.instrumentId, note: i.note),
+  ], widget.existing);
+  late final List<bool> _take = List.filled(widget.items.length, true);
+
+  RdPartPdf _pdf(int i) => (name: widget.items[i].file.name, instrumentId: _parts[i].id, note: _parts[i].note);
+
+  void _choosePart(int i, _Category part) {
+    setState(() {
+      _parts[i] = part;
+      // The file it replaces follows the part (unless taken by another).
+      final others = {
+        for (var j = 0; j < _replace.length; j++)
+          if (j != i && _replace[j] != null) _replace[j]!,
+      };
+      _replace[i] = rdPartReplacements([_pdf(i)], widget.existing.where((f) => !others.contains(f)).toList()).single;
+    });
+  }
+
+  void _chooseReplace(int i, SongFile? file) {
+    setState(() {
+      // A file is replaced by one part only.
+      if (file != null) {
+        for (var j = 0; j < _replace.length; j++) {
+          if (_replace[j] == file) _replace[j] = null;
+        }
       }
-    }
-    if ((note ?? '').isNotEmpty) return note!;
-    return context.l10n.redesignFilesSibeliusPartNone;
+      _replace[i] = file;
+    });
+  }
+
+  String _partName(PlatformFile file) {
+    final dot = file.name.lastIndexOf('.');
+    return dot > 0 ? file.name.substring(0, dot) : file.name;
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final p = context.rd;
+    final count = _take.where((t) => t).length;
+    final head = TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: p.text2, letterSpacing: 0.3);
+    final options = <(_Category, String)>[
+      for (final g in widget.groups)
+        if (g.id != null) ((id: g.id, note: null), g.name),
+      ((id: null, note: 'Partitur'), 'Partitur'),
+      ((id: null, note: 'Klavierauszug'), 'Klavierauszug'),
+      if (widget.isChoir) ((id: null, note: kChoirAllNote), kChoirAllNote),
+    ];
     return AppAlertDialog(
       title: Text(l10n.redesignFilesSibeliusPartsTitle),
       content: SizedBox(
-        width: 520,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(l10n.redesignFilesSibeliusPartsMessage(items.length, workName)),
-              const SizedBox(height: 12),
-              for (final i in items)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: _part(context, i.instrumentId, i.note),
-                          style: const TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        TextSpan(
-                          text:
-                              ' · ${i.conflicts.isEmpty ? l10n.redesignFilesSibeliusPartNew : l10n.redesignFilesSibeliusPartReplaces(i.conflicts.map((c) => c.fileName).join(', '))}',
-                        ),
-                        TextSpan(text: '\n${i.file.name}', style: TextStyle(fontSize: 13, color: p.text2)),
-                      ],
-                    ),
-                    style: const TextStyle(fontSize: 14),
+        width: 640,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.redesignFilesSibeliusPartsMessage(widget.items.length, widget.workName)),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                SizedBox(
+                  width: 40,
+                  child: Checkbox(
+                    tristate: true,
+                    value: count == _take.length ? true : (count == 0 ? false : null),
+                    activeColor: p.primary,
+                    semanticLabel: l10n.redesignFilesSelectAll,
+                    onChanged: (_) => setState(() => _take.fillRange(0, _take.length, count != _take.length)),
                   ),
                 ),
-            ],
-          ),
+                Expanded(child: Text(l10n.redesignFilesSibeliusColFile.toUpperCase(), style: head)),
+                SizedBox(width: 168, child: Text(l10n.redesignFilesColPart.toUpperCase(), style: head)),
+                const SizedBox(width: 12),
+                SizedBox(width: 200, child: Text(l10n.redesignFilesSibeliusColReplaces.toUpperCase(), style: head)),
+              ],
+            ),
+            Divider(height: 1, color: p.line),
+            Flexible(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [for (var i = 0; i < widget.items.length; i++) _row(context, i, options)],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.commonCancel)),
-        TextButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.redesignFilesSibeliusPartsApply)),
+        TextButton(onPressed: () => Navigator.pop(context, const <_SibeliusPart>[]), child: Text(l10n.commonCancel)),
+        TextButton(
+          onPressed:
+              count == 0
+                  ? null
+                  : () => Navigator.pop<List<_SibeliusPart>>(context, [
+                    for (var i = 0; i < widget.items.length; i++)
+                      if (_take[i])
+                        (
+                          file: widget.items[i].file,
+                          instrumentId: _parts[i].id,
+                          note: _parts[i].id == null ? _parts[i].note : null,
+                          replace: [if (_replace[i] case final f?) f],
+                        ),
+                  ]),
+          child: Text(l10n.redesignFilesSibeliusPartsApplyCount(count)),
+        ),
       ],
+    );
+  }
+
+  Widget _row(BuildContext context, int i, List<(_Category, String)> options) {
+    final l10n = context.l10n;
+    final p = context.rd;
+    final on = _take[i];
+    final part = _parts[i];
+    final partOptions = [
+      ...options,
+      if (part != (id: null, note: null) && !options.any((o) => o.$1 == part))
+        (part, part.note ?? l10n.redesignFilesSibeliusPartNone),
+      ((id: null, note: null) as _Category, l10n.redesignFilesSibeliusPartNone),
+    ];
+    final replaceOptions = rdPartReplaceOptions(_pdf(i), widget.existing);
+    final dense = TextStyle(fontSize: 14, color: on ? p.text : p.text2);
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 40,
+            child: Checkbox(value: on, activeColor: p.primary, onChanged: (v) => setState(() => _take[i] = v ?? false)),
+          ),
+          Expanded(
+            child: Text(
+              _partName(widget.items[i].file),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: dense.copyWith(fontWeight: FontWeight.w500),
+            ),
+          ),
+          SizedBox(
+            width: 168,
+            child: AppDropdownButton<_Category>(
+              value: part,
+              isExpanded: true,
+              isDense: true,
+              style: dense,
+              items: [
+                for (final o in partOptions)
+                  DropdownMenuItem(value: o.$1, child: Text(o.$2, overflow: TextOverflow.ellipsis)),
+              ],
+              onChanged: on ? (v) => _choosePart(i, v ?? (id: null, note: null)) : null,
+            ),
+          ),
+          const SizedBox(width: 12),
+          SizedBox(
+            width: 200,
+            child: AppDropdownButton<SongFile?>(
+              value: _replace[i],
+              isExpanded: true,
+              isDense: true,
+              style: dense,
+              items: [
+                DropdownMenuItem(
+                  value: null,
+                  child: Text(l10n.redesignFilesSibeliusPartNew, style: TextStyle(color: p.present)),
+                ),
+                for (final f in replaceOptions)
+                  DropdownMenuItem(value: f, child: Text(f.fileName, overflow: TextOverflow.ellipsis)),
+              ],
+              onChanged: on ? (f) => _chooseReplace(i, f) : null,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1678,6 +1832,16 @@ class _ShortcutsDialog extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 6),
                   child: Text(line, style: const TextStyle(fontSize: 14)),
                 ),
+              // Mac app: how to give the Attendix plug-in a shortcut.
+              if (rdSibeliusSupported) ...[
+                const SizedBox(height: 10),
+                Text(
+                  l10n.redesignFilesSibeliusShortcutTitle,
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 4),
+                Text(l10n.redesignFilesSibeliusShortcutTip, style: const TextStyle(fontSize: 14)),
+              ],
             ],
           ),
         ),

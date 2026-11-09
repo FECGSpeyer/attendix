@@ -1,5 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 
+import 'package:flutter/foundation.dart' show setEquals;
+
+import '../../../core/utils/instrument_matcher.dart';
 import '../../../data/models/song/song.dart';
 
 /// REDESIGN: rules of the desktop file workspace of a Werk (table, upload
@@ -86,6 +89,111 @@ class RdWorkFilesState {
 List<SongFile> rdUploadConflicts(String name, int? instrumentId, List<SongFile> existing) => existing
     .where((f) => f.fileName == name || (instrumentId != null && f.instrumentId == instrumentId))
     .toList();
+
+/// One part PDF exported from Sibelius with the part it was given.
+typedef RdPartPdf = ({String name, int? instrumentId, String? note});
+
+/// Which existing PDF each of [parts] replaces (null: added as new). Each
+/// file is replaced by at most one part:
+/// 1. a PDF of the same name,
+/// 2. a PDF of the same part whose part numbers are the same ("Violine II"
+///    replaces "05 Violine II.pdf", not "05 Violine I.pdf"; a leading
+///    number of the file is the Werk's, not the part's),
+/// 3. the only PDF of a part left, when only one part of it was exported.
+List<SongFile?> rdPartReplacements(List<RdPartPdf> parts, List<SongFile> existing) {
+  final pdfs = existing.where(_isPdfFile).toList();
+  final result = List<SongFile?>.filled(parts.length, null);
+  final used = <SongFile>{};
+
+  void take(int part, SongFile file) {
+    result[part] = file;
+    used.add(file);
+  }
+
+  // 1. Same name.
+  for (var i = 0; i < parts.length; i++) {
+    final name = _stem(parts[i].name);
+    final same = pdfs.where((f) => !used.contains(f) && _stem(f.fileName) == name).firstOrNull;
+    if (same != null) take(i, same);
+  }
+
+  // 2. Same part and part numbers; the closer name first.
+  final pairs = <({int part, SongFile file, int score})>[];
+  for (var i = 0; i < parts.length; i++) {
+    if (result[i] != null) continue;
+    final words = _partWords(parts[i].name);
+    for (final f in pdfs) {
+      if (used.contains(f) || !_samePart(parts[i], f)) continue;
+      final other = _partWords(f.fileName);
+      if (!setEquals(words.numbers, other.numbers)) continue;
+      pairs.add((part: i, file: f, score: words.words.intersection(other.words).length));
+    }
+  }
+  pairs.sort((a, b) => b.score.compareTo(a.score));
+  for (final p in pairs) {
+    if (result[p.part] == null && !used.contains(p.file)) take(p.part, p.file);
+  }
+
+  // 3. One part exported, one PDF of it left.
+  for (var i = 0; i < parts.length; i++) {
+    if (result[i] != null) continue;
+    final same = [
+      for (var j = 0; j < parts.length; j++)
+        if (_samePartOf(parts[i], parts[j])) j,
+    ];
+    final left = pdfs.where((f) => !used.contains(f) && _samePart(parts[i], f)).toList();
+    if (same.length == 1 && left.length == 1) take(i, left.single);
+  }
+  return result;
+}
+
+/// The PDFs [part] may replace, those of its own part first.
+List<SongFile> rdPartReplaceOptions(RdPartPdf part, List<SongFile> existing) {
+  final pdfs =
+      existing.where(_isPdfFile).toList()..sort((a, b) => a.fileName.toLowerCase().compareTo(b.fileName.toLowerCase()));
+  return [...pdfs.where((f) => _samePart(part, f)), ...pdfs.where((f) => !_samePart(part, f))];
+}
+
+bool _isPdfFile(SongFile f) {
+  final type = f.fileType.toLowerCase();
+  return type == 'application/pdf' || type == 'pdf' || f.fileName.toLowerCase().endsWith('.pdf');
+}
+
+bool _samePart(RdPartPdf part, SongFile f) {
+  if (part.instrumentId != null) return f.instrumentId == part.instrumentId;
+  final note = part.note ?? '';
+  return note.isNotEmpty && f.instrumentId == null && f.note == note;
+}
+
+bool _samePartOf(RdPartPdf a, RdPartPdf b) =>
+    a.instrumentId != null
+        ? a.instrumentId == b.instrumentId
+        : (a.note ?? '').isNotEmpty && a.note == b.note && b.instrumentId == null;
+
+String _stem(String name) {
+  final dot = name.lastIndexOf('.');
+  return (dot > 0 ? name.substring(0, dot) : name).trim().toLowerCase();
+}
+
+const Map<String, int> _romans = {'i': 1, 'ii': 2, 'iii': 3, 'iv': 4, 'v': 5, 'vi': 6};
+
+/// The words and part numbers (1–9, I–VI) of a file name, without its
+/// extension and a leading number ("05 Violine II" → {violine}, {2}).
+({Set<String> words, Set<int> numbers}) _partWords(String name) {
+  final tokens = InstrumentMatcher.tokenize(_stem(name));
+  final start = tokens.isNotEmpty && RegExp(r'^\d+$').hasMatch(tokens.first) && tokens.length > 1 ? 1 : 0;
+  final words = <String>{};
+  final numbers = <int>{};
+  for (final t in tokens.skip(start)) {
+    final n = int.tryParse(t) ?? _romans[t];
+    if (n != null && n >= 1 && n <= 9) {
+      numbers.add(n);
+    } else {
+      words.add(t);
+    }
+  }
+  return (words: words, numbers: numbers);
+}
 
 /// The new file name of a rename, or null when nothing changes. Without an
 /// extension the old one is kept ("Stimme 2" → "Stimme 2.pdf").
