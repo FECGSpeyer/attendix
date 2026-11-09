@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.109.0",
+      "date": "9.11.2026",
+      "changes": [
+        "🔧 CI schneller: Version wird erst beim Merge vergeben (Changelog-Fragmente), alte PR-Läufe werden abgebrochen, Tests laufen auf 4 Rechnern parallel und nur noch einmal, Doku-Änderungen ohne CI"
+      ]
+    },
+    {
       "version": "0.108.1",
       "date": "9.11.2026",
       "changes": [
