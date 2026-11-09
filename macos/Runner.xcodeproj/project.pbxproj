@@ -358,7 +358,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# PUSH: GoogleService-Info.plist is gitignored (docs/push-setup.md).\n# The Mac app has the iOS bundle ID, so the iOS file fits; a file in\n# macos/Runner wins. Without one push stays off.\nsrc=\"${SRCROOT}/Runner/GoogleService-Info.plist\"\n[ -f \"$src\" ] || src=\"${SRCROOT}/../ios/Runner/GoogleService-Info.plist\"\nif [ -f \"$src\" ]; then\n  cp \"$src\" \"${BUILT_PRODUCTS_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist\"\nfi\n";
+			shellScript = "# PUSH: GoogleService-Info.plist is gitignored (docs/push-setup.md).\n# The Mac app has the iOS bundle ID, so the iOS file fits; a file in\n# macos/Runner wins. Without one push stays off.\nsrc=\"${SRCROOT}/Runner/GoogleService-Info.plist\"\n[ -f \"$src\" ] || src=\"${SRCROOT}/../ios/Runner/GoogleService-Info.plist\"\n# -X and xattr -c: a downloaded file carries com.apple.quarantine, which\n# App Store Connect rejects in Mac apps (ITMS 91109).\nif [ -f \"$src\" ]; then\n  dst=\"${BUILT_PRODUCTS_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleService-Info.plist\"\n  cp -X \"$src\" \"$dst\"\n  xattr -c \"$dst\" 2>/dev/null || true\nfi\n";
 		};
 		3399D490228B24CF009A79C7 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
