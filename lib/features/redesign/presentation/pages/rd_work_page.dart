@@ -164,6 +164,9 @@ class RdWorkPage extends ConsumerWidget {
     final difficulty = (song.difficulty ?? 0) >= 1 && (song.difficulty ?? 0) <= 3;
 
     void more(BuildContext button, SongFile file) => rdShowWorkFileActions(button, ref, data, file, groups);
+    // Cards above the file list: no "Stimme ändern" (only in Noten & Dateien).
+    void cardMore(BuildContext button, SongFile file) =>
+        rdShowWorkFileActions(button, ref, data, file, groups, withPart: false);
     Future<void> pick() => _pickFiles(context, ref, data);
 
     final header = Row(
@@ -250,7 +253,7 @@ class RdWorkPage extends ConsumerWidget {
               ].join(' · '),
               moreLabel: l10n.redesignWorkFileMore(SongUtils.fileLabel(part.first, groups, isChoir: data.isChoir)),
               onOpen: () => rdOpenWorkFile(context, ref, song, part.first),
-              onMore: (button) => more(button, part.first),
+              onMore: (button) => cardMore(button, part.first),
             ),
             const SizedBox(height: 12),
           ],
@@ -261,7 +264,7 @@ class RdWorkPage extends ConsumerWidget {
               detail: rdFileKind(score!),
               moreLabel: l10n.redesignWorkFileMore(l10n.redesignWorkScore),
               onOpen: () => rdOpenWorkFile(context, ref, song, score),
-              onMore: (button) => more(button, score),
+              onMore: (button) => cardMore(button, score),
             ),
             const SizedBox(height: 12),
           ],
@@ -285,12 +288,12 @@ class RdWorkPage extends ConsumerWidget {
             song: song,
             file: practice,
             title: l10n.redesignWorkPractice(ownGroup?.name ?? SongUtils.fileLabel(practice, groups)),
-            onMore: (button) => more(button, practice),
+            onMore: (button) => cardMore(button, practice),
           ),
           const SizedBox(height: 12),
         ],
         if (recording != null) ...[
-          _RecordingCard(song: song, file: recording, onMore: (button) => more(button, recording)),
+          _RecordingCard(song: song, file: recording, onMore: (button) => cardMore(button, recording)),
           const SizedBox(height: 12),
         ],
         const SizedBox(height: 12),
