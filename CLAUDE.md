@@ -153,31 +153,19 @@ Mehr Details: `test/README.md`
 
 ## Vor dem Commit/Push
 
-**WICHTIG:** Bei Feature-Änderungen immer Version und History aktualisieren!
+**WICHTIG:** PRs erhöhen die Version **nicht** selbst (kein Ändern von `version:` in `pubspec.yaml`, `AppConstants.appVersion` oder `assets/version_history.json`). Sonst kollidiert jeder parallele PR nach jedem Merge.
 
-1. **Version erhöhen** in `pubspec.yaml`:
-   ```yaml
-   version: 1.0.0+1  # Format: major.minor.patch+build
-   ```
+Stattdessen legt jeder PR **eine** Changelog-Datei an:
 
-2. **History aktualisieren** in `assets/version_history.json`:
-   ```json
-   {
-     "version": "1.0.0",
-     "date": "23.2.2026",
-     "changes": [
-       "✨ Neue Feature-Beschreibung",
-       "🐛 Bug-Fix Beschreibung"
-     ]
-   }
-   ```
+```json
+// changelog/unreleased/<kurzer-name>.json
+{"bump": "minor", "changes": ["✨ Neue Feature-Beschreibung", "🐛 Bug-Fix Beschreibung"]}
+```
 
-3. **App-Version Badge aktualisieren** in `lib/core/constants/app_constants.dart`:
-   ```dart
-   static const String appVersion = '1.0.0';
-   ```
-
-Dies sorgt dafür, dass Benutzer in der App sehen, dass es eine neue Version gibt.
+- `bump`: `minor` für Features, `patch` für Fixes (Standard).
+- Nach dem Merge auf master macht der Deploy-Workflow daraus automatisch eine Version (`tool/release/release_version.py`): `pubspec.yaml` (inkl. Build-Nummer), `appVersion` und `version_history.json` werden erhöht, die Fragmente gelöscht.
+- In PR-Titel und -Beschreibung keine Versionsnummer nennen.
+- Ein master-Merge in den PR-Branch ohne Konflikt im eigenen Code braucht kein neues Review, nur grüne CI. Ohne Konflikt muss master vor dem Merge gar nicht reingeholt werden.
 
 **Interne vs. Nutzer-Version:** `appVersion` und `assets/version_history.json` sind die interne Entwicklerhistorie (0.x, Sentry-Release) und werden Nutzern nicht gezeigt. Nutzer sehen `AppConstants.displayVersion` und `assets/version_history_user.json` (weitergeführte Ionic-Historie). Diese beiden nur bei Store-Releases pflegen: `displayVersion` erhöhen und einen Eintrag obendrauf in `assets/version_history_user.json` setzen (oberster Eintrag = `displayVersion`).
 

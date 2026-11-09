@@ -1,11 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.109.0",
+      "date": "9.11.2026",
+      "changes": [
+        "🔧 CI schneller: Version wird erst beim Merge vergeben (Changelog-Fragmente), alte PR-Läufe werden abgebrochen, Tests laufen auf 4 Rechnern parallel und nur noch einmal, Doku-Änderungen ohne CI"
+      ]
+    },
+    {
       "version": "0.108.1",
       "date": "9.11.2026",
       "changes": [
-        "🍎 Mac-App für den App Store vorbereitet: gleiche App-ID wie iOS, Sandbox-Rechte, Store-Build über Shorebird (scripts/store_build.sh macos-release)",
-        "🔔 Push auch in der Mac-App: Mac und iPhone bekommen Benachrichtigungen gleichzeitig (ein Konto behält die Tokens aller Geräte)"
+        "🐛 Beta: Auswahlfelder (z. B. Stimme in „Zuordnung prüfen“) und Popover-Menüs öffnen das Beta-Menü statt des alten Ionic-Glas-Popovers, auf allen Geräten gleich und per Tastatur bedienbar"
       ]
     },
     {

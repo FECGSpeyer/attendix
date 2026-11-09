@@ -566,23 +566,10 @@ flutter run -d chrome
 
 ## Before Commit/Push
 
-**IMPORTANT:** Always update version and history for feature changes!
+**IMPORTANT:** PRs do **not** bump the version (`pubspec.yaml`, `AppConstants.appVersion`, `assets/version_history.json`). Each PR adds one file `changelog/unreleased/<name>.json`:
 
-1. **Bump version** in `pubspec.yaml`:
-   ```yaml
-   version: 1.0.0+1  # Format: major.minor.patch+build
-   ```
+```json
+{"bump": "minor", "changes": ["✨ New feature description"]}
+```
 
-2. **Update history** in `assets/version_history.json`:
-   ```json
-   {
-     "version": "1.0.0",
-     "date": "23.2.2026",
-     "changes": [
-       "✨ New feature description",
-       "🐛 Bug fix description"
-     ]
-   }
-   ```
-
-This ensures users see a new version notification in the app.
+`bump` is `minor` (feature) or `patch` (fix, default). After the merge to master the deploy workflow turns all fragments into one version (`tool/release/release_version.py`).

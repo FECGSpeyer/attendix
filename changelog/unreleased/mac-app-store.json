@@ -1,0 +1,1 @@
+{"bump": "minor", "changes": ["🍎 Mac-App für den App Store / TestFlight: gleiche App-ID wie iOS, Sandbox-Rechte, Store-Build über Shorebird (scripts/store_build.sh macos-release)", "🔔 Push auch in der Mac-App: Mac und iPhone bekommen Benachrichtigungen gleichzeitig (ein Konto behält die Tokens aller Geräte)"]}
