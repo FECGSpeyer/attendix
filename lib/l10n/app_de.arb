@@ -16102,6 +16102,10 @@
   "@redesignFilesKeepBoth": {
     "description": "redesign.files.keepBoth"
   },
+  "redesignFilesMore": "Weitere Aktionen",
+  "@redesignFilesMore": {
+    "description": "redesign.files.more"
+  },
   "redesignFilesOpen": "Öffnen",
   "@redesignFilesOpen": {
     "description": "redesign.files.open"
@@ -16154,6 +16158,18 @@
   "@redesignFilesSelectAll": {
     "description": "redesign.files.selectAll"
   },
+  "redesignFilesSelectHint": "Dateien zum Auswählen anklicken",
+  "@redesignFilesSelectHint": {
+    "description": "redesign.files.selectHint"
+  },
+  "redesignFilesSelectMany": "Mehrere auswählen",
+  "@redesignFilesSelectMany": {
+    "description": "redesign.files.selectMany"
+  },
+  "redesignFilesSelectOne": "Auswählen",
+  "@redesignFilesSelectOne": {
+    "description": "redesign.files.selectOne"
+  },
   "redesignFilesSelected": "{count} ausgewählt",
   "@redesignFilesSelected": {
     "description": "redesign.files.selected",
@@ -16165,7 +16181,7 @@
   "@redesignFilesShortcuts": {
     "description": "redesign.files.shortcuts"
   },
-  "redesignFilesShortcutsHelp": "↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen · ? diese Übersicht",
+  "redesignFilesShortcutsHelp": "↑ ↓ Zeile wechseln · Umschalt+↑↓ mehrere auswählen · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen · ? diese Übersicht",
   "@redesignFilesShortcutsHelp": {
     "description": "redesign.files.shortcutsHelp",
     "placeholders": {
