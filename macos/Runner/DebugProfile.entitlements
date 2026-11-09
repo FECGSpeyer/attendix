@@ -13,6 +13,12 @@
 	<true/>
 	<key>com.apple.security.files.downloads.read-write</key>
 	<true/>
+	<!-- Sibelius-Plugin von Attendix direkt in den Plug-ins-Ordner von Sibelius legen
+	     (ohne Ordnerauswahl; ohne das Recht fragt die App nach dem Ordner). -->
+	<key>com.apple.security.temporary-exception.files.home-relative-path.read-write</key>
+	<array>
+		<string>/Library/Application Support/Avid/Sibelius/Plugins/</string>
+	</array>
 	<key>com.apple.security.device.camera</key>
 	<true/>
 	<key>com.apple.security.print</key>

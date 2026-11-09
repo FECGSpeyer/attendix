@@ -13126,7 +13126,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String redesignFilesSibeliusIntro(Object name) {
-    return 'Attendix legt „$name“ in „Downloads › Attendix“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.';
+    return 'Attendix legt „$name“ in „Downloads › Attendix Noten“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.';
   }
 
   @override
@@ -13134,11 +13134,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignFilesSibeliusNoFolder =>
-      'Attendix kann nicht in „Downloads“ speichern. Bitte die Mac-App aktualisieren.';
+      'Attendix konnte den Ordner „Downloads › Attendix Noten“ nicht anlegen.';
 
   @override
   String get redesignFilesSibeliusNotOpened =>
-      'Die Datei ließ sich nicht öffnen. Ist Sibelius installiert? Sie liegt in „Downloads › Attendix“.';
+      'Die Datei ließ sich nicht öffnen. Ist Sibelius installiert? Sie liegt in „Downloads › Attendix Noten“.';
 
   @override
   String get redesignFilesSibeliusOpen => 'In Sibelius öffnen';
@@ -13222,7 +13222,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String redesignFilesSibeliusWorkGone(Object name) {
-    return 'Das Werk zu „$name“ gibt es in Attendix nicht mehr. Deine Fassung bleibt auf dem Mac unter „Downloads › Attendix“.';
+    return 'Das Werk zu „$name“ gibt es in Attendix nicht mehr. Deine Fassung bleibt auf dem Mac unter „Downloads › Attendix Noten“.';
   }
 
   @override

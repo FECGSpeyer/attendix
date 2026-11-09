@@ -101,11 +101,25 @@ Future<void> rdEditInSibelius(BuildContext context, WidgetRef ref, SongDetailDat
   }
 }
 
-/// Saves the Attendix plug-in into the Sibelius plug-ins folder the user
-/// picks (the sandbox may write only there): `<Plugins>/Attendix/…`.
+/// Saves the Attendix plug-in into the Sibelius plug-ins folder
+/// (`~/Library/Application Support/Avid/Sibelius/Plugins/Attendix/…`). The
+/// Mac app may write there directly; without that right (older build) the
+/// user picks the folder.
 Future<void> rdInstallSibeliusPlugin(BuildContext context, WidgetRef ref) async {
   final l10n = context.l10n;
   final home = await ref.read(rdSibeliusSyncProvider.notifier).home();
+  if (home != null) {
+    try {
+      await _writePlugin(rdSibeliusPluginsFolder(home));
+      if (!context.mounted) return;
+      unawaited(ref.read(rdSibeliusPluginHintProvider.notifier).markInstalled());
+      ToastHelper.showSuccess(context, l10n.redesignFilesSibeliusPluginInstalled);
+      return;
+    } catch (e) {
+      debugPrint('[Sibelius] plug-in not written directly: $e');
+    }
+  }
+  if (!context.mounted) return;
   final String? picked;
   try {
     picked = await FilePicker.platform.getDirectoryPath(
@@ -120,9 +134,7 @@ Future<void> rdInstallSibeliusPlugin(BuildContext context, WidgetRef ref) async 
   }
   if (picked == null || !context.mounted) return;
   try {
-    final dir = Directory('$picked/$rdSibeliusPluginCategory');
-    await dir.create(recursive: true);
-    await File('${dir.path}/$rdSibeliusPluginFileName').writeAsBytes(rdSibeliusPluginBytes(), flush: true);
+    await _writePlugin(picked);
     if (!context.mounted) return;
     final inPlugins = picked.replaceAll(RegExp(r'/+$'), '').endsWith('/Avid/Sibelius/Plugins');
     if (inPlugins) {
@@ -136,6 +148,12 @@ Future<void> rdInstallSibeliusPlugin(BuildContext context, WidgetRef ref) async 
       ToastHelper.showError(context, l10n.redesignFilesSibeliusPluginFailed(friendlyErrorMessage(e)));
     }
   }
+}
+
+Future<void> _writePlugin(String pluginsFolder) async {
+  final dir = Directory('$pluginsFolder/$rdSibeliusPluginCategory');
+  await dir.create(recursive: true);
+  await File('${dir.path}/$rdSibeliusPluginFileName').writeAsBytes(rdSibeliusPluginBytes(), flush: true);
 }
 
 /// Starts keeping open Sibelius copies in step (Mac app) and shows what

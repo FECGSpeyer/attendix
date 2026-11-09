@@ -16,7 +16,7 @@ import '../../../../data/models/song/song.dart';
 const String rdSibeliusPartsFolder = 'Stimmen';
 
 /// Folder (in Downloads) that holds the work folders.
-const String rdSibeliusRootFolder = 'Attendix';
+const String rdSibeliusRootFolder = 'Attendix Noten';
 
 /// Category folder and file name of the installed plug-in (Sibelius shows
 /// the category as "Plug-ins › Attendix").
