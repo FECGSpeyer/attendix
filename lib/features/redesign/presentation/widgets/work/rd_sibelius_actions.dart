@@ -111,8 +111,9 @@ Future<void> rdInstallSibeliusPlugin(BuildContext context, WidgetRef ref) async 
   if (home != null) {
     try {
       await _writePlugin(rdSibeliusPluginsFolder(home));
+      await rdRememberSibeliusPluginInstalled();
       if (!context.mounted) return;
-      unawaited(ref.read(rdSibeliusPluginHintProvider.notifier).markInstalled());
+      ref.invalidate(rdSibeliusPluginInstalledProvider);
       ToastHelper.showSuccess(context, l10n.redesignFilesSibeliusPluginInstalled);
       return;
     } catch (e) {
@@ -138,7 +139,9 @@ Future<void> rdInstallSibeliusPlugin(BuildContext context, WidgetRef ref) async 
     if (!context.mounted) return;
     final inPlugins = picked.replaceAll(RegExp(r'/+$'), '').endsWith('/Avid/Sibelius/Plugins');
     if (inPlugins) {
-      unawaited(ref.read(rdSibeliusPluginHintProvider.notifier).markInstalled());
+      await rdRememberSibeliusPluginInstalled();
+      if (!context.mounted) return;
+      ref.invalidate(rdSibeliusPluginInstalledProvider);
       ToastHelper.showSuccess(context, l10n.redesignFilesSibeliusPluginInstalled);
     } else {
       ToastHelper.showWarning(context, l10n.redesignFilesSibeliusPluginWrongFolder);

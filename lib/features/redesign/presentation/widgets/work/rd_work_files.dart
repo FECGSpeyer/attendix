@@ -32,7 +32,7 @@ import '../../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../../data/rd_work_files_controller.dart';
 import '../../../data/rd_work_files_logic.dart';
 import '../../../data/rd_works_logic.dart';
-import '../../../data/sibelius/rd_sibelius_logic.dart' show RdSibeliusCheckout;
+import '../../../data/sibelius/rd_sibelius_logic.dart' show RdSibeliusCheckout, rdIsSibeliusFile;
 import '../../../data/sibelius/rd_sibelius_sync.dart';
 import '../../rd_actions.dart';
 import 'rd_file_category_sheet.dart';
@@ -650,7 +650,11 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
     final state = ref.watch(rdWorkFilesProvider(_songId));
     final files = _files(state.hidden);
     var waiting = const <RdSibeliusCheckout>[];
+    var pluginInstalled = true;
     if (rdSibeliusSupported) {
+      if (files.any(rdIsSibeliusFile)) {
+        pluginInstalled = ref.watch(rdSibeliusPluginInstalledProvider).valueOrNull ?? true;
+      }
       final tenantId = rdSongTenantId(ref);
       waiting = [
         if (tenantId != null)
@@ -802,6 +806,7 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
                           groups: widget.groups,
                           instruments: widget.data.instruments,
                           onlyOnMac: waiting.any((c) => c.matches(c.tenantId, _songId, file)),
+                          offerPlugin: !pluginInstalled,
                           selected: selected.contains(file.url),
                           cursor: _cursor == file.url,
                           renaming: _renaming == file.url,
@@ -990,6 +995,7 @@ class _FileRow extends StatelessWidget {
     required this.groups,
     required this.instruments,
     this.onlyOnMac = false,
+    this.offerPlugin = false,
     required this.selected,
     required this.cursor,
     required this.renaming,
@@ -1011,6 +1017,9 @@ class _FileRow extends StatelessWidget {
   /// A save from Sibelius is only on the Mac so far (offline): it goes up by
   /// itself once online again.
   final bool onlyOnMac;
+
+  /// "Sibelius-Plugin installieren" in the menu of a .sib (not installed yet).
+  final bool offerPlugin;
   final bool selected;
   final bool cursor;
   final bool compact;
@@ -1117,11 +1126,12 @@ class _FileRow extends StatelessWidget {
                             _menuItem(_RowAction.select, Icons.check_circle_outline, l10n.redesignFilesSelectOne),
                           if (rdOpensInSibelius(file)) ...[
                             _menuItem(_RowAction.sibelius, Icons.edit_note, l10n.redesignFilesSibeliusEdit),
-                            _menuItem(
-                              _RowAction.sibeliusPlugin,
-                              Icons.extension_outlined,
-                              l10n.redesignFilesSibeliusPlugin,
-                            ),
+                            if (offerPlugin)
+                              _menuItem(
+                                _RowAction.sibeliusPlugin,
+                                Icons.extension_outlined,
+                                l10n.redesignFilesSibeliusPlugin,
+                              ),
                           ],
                           _menuItem(_RowAction.share, Icons.ios_share, l10n.redesignWorkShare),
                           _menuItem(_RowAction.download, Icons.download_outlined, l10n.redesignFilesDownload),
