@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -177,7 +178,7 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
+            Icon(AppIcons.errorOutline, size: 48, color: AppColors.danger),
             const SizedBox(height: AppDimensions.paddingM),
             Text(context.l10n.coreFlutterErrorWith('$_error')),
           ],
@@ -192,7 +193,7 @@ class _VersionHistorySheetState extends State<VersionHistorySheet> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.history, size: 48, color: AppColors.medium),
+            Icon(AppIcons.history, size: 48, color: AppColors.medium),
             const SizedBox(height: AppDimensions.paddingM),
             Text(context.l10n.coreFlutterNoVersionHistory),
           ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -412,7 +413,7 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
               children: [
                 IconButton(
                   tooltip: context.l10n.commonCancel,
-                  icon: const Icon(Icons.close),
+                  icon: Icon(AppIcons.close),
                   onPressed: () => Navigator.pop(context),
                 ),
                 Expanded(
@@ -424,7 +425,7 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
                 ),
                 IconButton(
                   tooltip: context.l10n.folderPickerChooseThis,
-                  icon: const Icon(Icons.check),
+                  icon: Icon(AppIcons.check),
                   onPressed: _path.isEmpty || _loading ? null : () => Navigator.pop(context, _path),
                 ),
               ],
@@ -434,9 +435,9 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Row(
                 children: [
-                  TextButton(onPressed: () => _navigate(''), child: const Icon(Icons.home_outlined)),
+                  TextButton(onPressed: () => _navigate(''), child: Icon(AppIcons.homeOutlined)),
                   for (var i = 0; i < segments.length; i++) ...[
-                    const Icon(Icons.chevron_right, size: 16, color: AppColors.medium),
+                    Icon(AppIcons.chevronRight, size: 16, color: AppColors.medium),
                     TextButton(
                       onPressed: () => _navigate(segments.sublist(0, i + 1).join('/')),
                       child: Text(segments[i]),
@@ -458,12 +459,12 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
                       tileColor: AppColors.primary,
                       iconColor: Colors.white,
                       textColor: Colors.white,
-                      leading: const Icon(Icons.check_circle_outline),
+                      leading: Icon(AppIcons.checkCircleOutline),
                       title: Text('${context.l10n.folderPickerChooseThis}: ${segments.last}'),
                       onTap: () => Navigator.pop(context, _path),
                     ),
                     ListTile(
-                      leading: const Icon(Icons.arrow_upward),
+                      leading: Icon(AppIcons.arrowUpward),
                       title: Text(context.l10n.folderPickerParent),
                       onTap: () => _navigate(segments.sublist(0, segments.length - 1).join('/')),
                     ),
@@ -481,7 +482,7 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
                       ),
                     for (final folder in _folders)
                       ListTile(
-                        leading: const Icon(Icons.folder_outlined, color: AppColors.primary),
+                        leading: Icon(AppIcons.folderOutlined, color: AppColors.primary),
                         title: Text(folder),
                         trailing: TextButton(
                           onPressed: () => Navigator.pop(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -226,7 +227,7 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close, semanticLabel: l10n.commonClose),
+                  icon: Icon(AppIcons.close, semanticLabel: l10n.commonClose),
                   onPressed: () => Navigator.pop(context, false),
                 ),
               ],

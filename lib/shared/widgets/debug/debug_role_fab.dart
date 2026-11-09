@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -25,7 +26,7 @@ class DebugRoleFab extends ConsumerWidget {
       backgroundColor: hasOverride ? Colors.orange : Colors.grey.shade600,
       onPressed: () => _showRolePicker(context, ref, realRole, currentOverride),
       child: Icon(
-        hasOverride ? Icons.bug_report : Icons.bug_report_outlined,
+        hasOverride ? AppIcons.bugReport : AppIcons.bugReportOutlined,
         color: Colors.white,
         size: 20,
       ),
@@ -92,8 +93,8 @@ class _RolePickerSheet extends StatelessWidget {
                       color: Colors.orange.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Icon(
-                      Icons.bug_report,
+                    child: Icon(
+                      AppIcons.bugReport,
                       color: Colors.orange,
                     ),
                   ),
@@ -167,7 +168,7 @@ class _RolePickerSheet extends StatelessWidget {
                   width: double.infinity,
                   child: OutlinedButton.icon(
                     onPressed: onReset,
-                    icon: const Icon(Icons.refresh),
+                    icon: Icon(AppIcons.refresh),
                     label: const Text('Zurücksetzen zur echten Rolle'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.orange,
@@ -226,16 +227,16 @@ class _RolePickerSheet extends StatelessWidget {
 
   IconData _getRoleIcon(Role role) {
     return switch (role) {
-      Role.admin => Icons.admin_panel_settings,
-      Role.player => Icons.person,
-      Role.viewer => Icons.visibility,
-      Role.helper => Icons.handshake,
-      Role.responsible => Icons.supervisor_account,
-      Role.parent => Icons.family_restroom,
-      Role.applicant => Icons.hourglass_empty,
-      Role.voiceLeader => Icons.record_voice_over,
-      Role.voiceLeaderHelper => Icons.support_agent,
-      Role.none => Icons.block,
+      Role.admin => AppIcons.adminPanelSettings,
+      Role.player => AppIcons.person,
+      Role.viewer => AppIcons.visibility,
+      Role.helper => AppIcons.handshake,
+      Role.responsible => AppIcons.supervisorAccount,
+      Role.parent => AppIcons.familyRestroom,
+      Role.applicant => AppIcons.hourglassEmpty,
+      Role.voiceLeader => AppIcons.recordVoiceOver,
+      Role.voiceLeaderHelper => AppIcons.supportAgent,
+      Role.none => AppIcons.block,
     };
   }
 }

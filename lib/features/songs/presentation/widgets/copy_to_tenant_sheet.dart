@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/config/supabase_config.dart';
@@ -202,7 +203,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
               automaticallyImplyLeading: false,
               actions: [
                 IconButton(
-                  icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                  icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
                   onPressed: _isCopying ? null : () => Navigator.pop(context),
                 ),
               ],
@@ -231,8 +232,8 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                           const SizedBox(height: 8),
                           DropdownButtonFormField<int>(
                             value: _targetTenantId,
-                            decoration: const InputDecoration(
-                              prefixIcon: Icon(Icons.business),
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(AppIcons.business),
                             ),
                             items: widget.availableTenants
                                 .map((t) => DropdownMenuItem(
@@ -264,7 +265,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                         children: [
                           Row(
                             children: [
-                              const Icon(Icons.info_outline, color: AppColors.info),
+                              Icon(AppIcons.infoOutline, color: AppColors.info),
                               const SizedBox(width: 8),
                               Text(
                                 context.l10n.shiftsFlutterNote,
@@ -306,7 +307,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                                   padding: const EdgeInsets.symmetric(vertical: 2),
                                   child: Row(
                                     children: [
-                                      const Icon(Icons.insert_drive_file,
+                                      Icon(AppIcons.insertDriveFile,
                                           size: 16, color: AppColors.medium),
                                       const SizedBox(width: 8),
                                       Expanded(
@@ -355,7 +356,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
                             height: 20,
                             child: AppSpinner(strokeWidth: 2),
                           )
-                        : const Icon(Icons.copy),
+                        : Icon(AppIcons.copy),
                     label: IonButtonLabel(_isCopying ? context.l10n.shiftsFlutterCopyingShort : context.l10n.songsCopy),
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 48),

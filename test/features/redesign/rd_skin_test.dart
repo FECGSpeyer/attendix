@@ -1,5 +1,6 @@
 // Beta-Skin: the old (Ionic) building blocks draw the new design while the
 // Beta theme is active and keep the Ionic look without it.
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
@@ -32,6 +33,10 @@ Widget _dialog() => AppAlertDialog(
     );
 
 void main() {
+  // ICONS: the Beta keeps the Material icons.
+  setUpAll(() => AppIcons.ionic = false);
+  tearDownAll(() => AppIcons.ionic = true);
+
   test('rdSkin is set only by the Beta theme', () {
     expect(_beta().extension<RdTokens>(), isNotNull);
     expect(_ionic().extension<RdTokens>(), isNull);

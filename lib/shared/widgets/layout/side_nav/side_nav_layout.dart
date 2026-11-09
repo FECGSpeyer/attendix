@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -118,7 +119,7 @@ class SideNavMenuButton extends StatelessWidget {
     final scope = SideNavScope.maybeOf(context);
     if (scope?.mode != SideNavMode.overlay) return const SizedBox.shrink();
     return IconButton(
-      icon: const Icon(Icons.menu),
+      icon: Icon(AppIcons.menu),
       tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
       onPressed: scope!.openOverlay,
     );

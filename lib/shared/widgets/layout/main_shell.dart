@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart' show CupertinoButton;
 import 'package:flutter/foundation.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -691,7 +692,7 @@ class _IosUpdateToast extends StatelessWidget {
           padding: const EdgeInsets.only(left: 16, right: 4),
           child: Row(
             children: [
-              Icon(Icons.cloud_download_outlined,
+              Icon(AppIcons.cloudDownloadOutlined,
                   size: 20, color: theme.colorScheme.primary),
               const SizedBox(width: 10),
               Expanded(
@@ -723,7 +724,7 @@ class _IosUpdateToast extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   minSize: 36,
                   onPressed: onClose,
-                  child: Icon(Icons.close,
+                  child: Icon(AppIcons.close,
                       size: 18, color: text.withValues(alpha: 0.6)),
                 ),
               ),

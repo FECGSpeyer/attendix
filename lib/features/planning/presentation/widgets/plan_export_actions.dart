@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -76,17 +77,17 @@ Future<void> showPlanExportSheet(
     actions: [
       ...extraActions,
       if (showExports) ...[
-        PlanSheetAction('pdf', pdfLabel ?? l10n.planningFlutterPdfA4, icon: Icons.picture_as_pdf_outlined),
+        PlanSheetAction('pdf', pdfLabel ?? l10n.planningFlutterPdfA4, icon: AppIcons.pictureAsPdfOutlined),
         ...afterPdfActions,
-        PlanSheetAction('pdf2x', pdf2xLabel ?? l10n.planningFlutterPdf2xA5, icon: Icons.content_copy_outlined),
-        if (withImage) PlanSheetAction('image', l10n.plansImageA4, icon: Icons.image_outlined),
+        PlanSheetAction('pdf2x', pdf2xLabel ?? l10n.planningFlutterPdf2xA5, icon: AppIcons.contentCopyOutlined),
+        if (withImage) PlanSheetAction('image', l10n.plansImageA4, icon: AppIcons.imageOutlined),
       ],
       // [alwaysTelegram]: Ionic Termin page lists the Telegram entries even
       // without a linked chat (the export then reports the missing chat).
       if (showExports && withTelegram && (chatId != null || alwaysTelegram)) ...[
-        PlanSheetAction('telegram', l10n.attendanceTelegramPdf, icon: Icons.send_outlined),
-        PlanSheetAction('telegram2x', l10n.planningFlutterTelegramPdf2x, icon: Icons.send_outlined),
-        PlanSheetAction('telegramImage', l10n.attendanceTelegramImage, icon: Icons.send_outlined),
+        PlanSheetAction('telegram', l10n.attendanceTelegramPdf, icon: AppIcons.sendOutlined),
+        PlanSheetAction('telegram2x', l10n.planningFlutterTelegramPdf2x, icon: AppIcons.sendOutlined),
+        PlanSheetAction('telegramImage', l10n.attendanceTelegramImage, icon: AppIcons.sendOutlined),
       ],
       ...trailingActions,
     ],
@@ -290,7 +291,7 @@ class _PlanShareSheetState extends State<_PlanShareSheet> {
           actions: [
             IconButton(
               tooltip: l10n.commonClose,
-              icon: const Icon(Icons.close),
+              icon: Icon(AppIcons.close),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -313,12 +314,12 @@ class _PlanShareSheetState extends State<_PlanShareSheet> {
               IonInsetList(
                 dividerIndent: 56,
                 children: [
-                  option(Icons.description_outlined, l10n.attendanceExportPdf, PlanExportAction.pdf),
-                  option(Icons.file_copy_outlined, l10n.attendanceExportPdfA5, PlanExportAction.pdf2x),
+                  option(AppIcons.descriptionOutlined, l10n.attendanceExportPdf, PlanExportAction.pdf),
+                  option(AppIcons.fileCopyOutlined, l10n.attendanceExportPdfA5, PlanExportAction.pdf2x),
                   if (widget.hasChatId) ...[
-                    option(Icons.send_outlined, l10n.attendanceTelegramPdf, PlanExportAction.telegram),
-                    option(Icons.send_outlined, l10n.attendanceTelegramPdfA5, PlanExportAction.telegram2x),
-                    if (!_all) option(Icons.image_outlined, l10n.attendanceTelegramImage, PlanExportAction.telegramImage),
+                    option(AppIcons.sendOutlined, l10n.attendanceTelegramPdf, PlanExportAction.telegram),
+                    option(AppIcons.sendOutlined, l10n.attendanceTelegramPdfA5, PlanExportAction.telegram2x),
+                    if (!_all) option(AppIcons.imageOutlined, l10n.attendanceTelegramImage, PlanExportAction.telegramImage),
                   ],
                 ],
               ),

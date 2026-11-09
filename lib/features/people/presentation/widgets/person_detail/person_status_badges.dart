@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/constants/app_constants.dart';
@@ -40,7 +41,7 @@ class PersonStatusBadges extends StatelessWidget {
       badges.add(_StatusBadge(
         label: context.l10n.commonHistoryArchived,
         color: AppColors.medium,
-        icon: Icons.archive,
+        icon: AppIcons.archive,
       ));
     }
     if (person.paused) {
@@ -50,28 +51,28 @@ class PersonStatusBadges extends StatelessWidget {
       badges.add(_StatusBadge(
         label: label,
         color: AppColors.warning,
-        icon: Icons.pause_circle,
+        icon: AppIcons.pauseCircle,
       ));
     }
     if (person.isCritical) {
       badges.add(_StatusBadge(
         label: context.l10n.personFlutterCritical,
         color: AppColors.danger,
-        icon: Icons.warning,
+        icon: AppIcons.warning,
       ));
     }
     if (person.pending) {
       badges.add(_StatusBadge(
         label: context.l10n.personFlutterPending,
         color: AppColors.info,
-        icon: Icons.hourglass_empty,
+        icon: AppIcons.hourglassEmpty,
       ));
     }
     if (person.isLeader) {
       badges.add(_StatusBadge(
         label: context.l10n.peopleVoiceLeader,
         color: AppColors.success,
-        icon: Icons.star,
+        icon: AppIcons.star,
       ));
     }
     return badges;

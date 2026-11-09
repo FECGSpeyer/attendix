@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -219,7 +220,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
                   child: IonButtonLabel(context.l10n.commonBack),
                 )
               : IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(AppIcons.close),
                   tooltip: context.l10n.commonClose,
                   onPressed: () => Navigator.of(context).pop(),
                 ),
@@ -272,7 +273,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+                          icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
                           tooltip: context.l10n.dutyDeleteRule,
                           onPressed: () => _remove(rule),
                         ),
@@ -286,7 +287,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
             padding: const EdgeInsets.all(AppDimensions.paddingM),
             child: FilledButton.icon(
               onPressed: _add,
-              icon: const Icon(Icons.add),
+              icon: Icon(AppIcons.add),
               label: IonButtonLabel(context.l10n.dutyAddRule),
             ),
           ),
@@ -365,10 +366,10 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
               onTap: _pickValidUntil,
               trailing: editing.validUntil != null
                   ? IconButton(
-                      icon: Icon(Icons.clear, color: AppColors.medium, semanticLabel: context.l10n.a11yClearInput),
+                      icon: Icon(AppIcons.clear, color: AppColors.medium, semanticLabel: context.l10n.a11yClearInput),
                       onPressed: () => setState(() => _editing = editing.copyWith(validUntil: null)),
                     )
-                  : const Icon(Icons.calendar_today, color: AppColors.medium),
+                  : Icon(AppIcons.calendarToday, color: AppColors.medium),
             ),
           ],
         ),

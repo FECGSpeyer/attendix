@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -200,8 +201,8 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       context,
       title: tpl.title,
       actions: [
-        PlanSheetAction('rename', context.l10n.orgTemplatesRenameTemplate, icon: Icons.edit_outlined),
-        PlanSheetAction('delete', context.l10n.commonDelete, icon: Icons.delete_outline, destructive: true),
+        PlanSheetAction('rename', context.l10n.orgTemplatesRenameTemplate, icon: AppIcons.editOutlined),
+        PlanSheetAction('delete', context.l10n.commonDelete, icon: AppIcons.deleteOutline, destructive: true),
       ],
     );
     if (action == null || !mounted) return;
@@ -258,15 +259,15 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
         context,
         title: context.l10n.redesignPlanAddTitle,
         actions: [
-          PlanSheetAction('field', context.l10n.typeSettingsAddField, icon: Icons.add),
-          PlanSheetAction('note', context.l10n.typeSettingsAddNoteField, icon: Icons.sticky_note_2_outlined),
+          PlanSheetAction('field', context.l10n.typeSettingsAddField, icon: AppIcons.add),
+          PlanSheetAction('note', context.l10n.typeSettingsAddNoteField, icon: AppIcons.stickyNote2Outlined),
           if (!isGeneral)
-            PlanSheetAction('song', context.l10n.orgTemplatesSongPlaceholder, icon: Icons.music_note_outlined),
+            PlanSheetAction('song', context.l10n.orgTemplatesSongPlaceholder, icon: AppIcons.musicNoteOutlined),
           for (var i = 0; i < _defaultFields.length; i++)
             PlanSheetAction(
               'default:$i',
               '${_defaultFields[i].name} · ${context.l10n.planningMinShort(_defaultFields[i].time)}',
-              icon: Icons.short_text,
+              icon: AppIcons.shortText,
             ),
         ],
       );
@@ -369,7 +370,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
           child: IonListHeader(
             title: text,
             action: IconButton(
-              icon: Icon(Icons.add, color: AppColors.primary, semanticLabel: context.l10n.a11yAdd),
+              icon: Icon(AppIcons.add, color: AppColors.primary, semanticLabel: context.l10n.a11yAdd),
               onPressed: onAdd,
             ),
           ),
@@ -382,14 +383,14 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
               child: Text(text.toUpperCase(),
                   style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium)),
             ),
-            IconButton(icon: Icon(Icons.add, semanticLabel: context.l10n.a11yAdd), onPressed: onAdd),
+            IconButton(icon: Icon(AppIcons.add, semanticLabel: context.l10n.a11yAdd), onPressed: onAdd),
           ],
         ),
       );
 
   Widget _hint(String text) {
     final tile = ListTile(
-      leading: const Icon(Icons.info_outline, color: AppColors.medium),
+      leading: Icon(AppIcons.infoOutline, color: AppColors.medium),
       title: Text(
         text,
         style: TextStyle(
@@ -457,7 +458,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
                                       onPressed: (_) => _removeDefaultField(i),
                                       backgroundColor: AppColors.danger,
                                       foregroundColor: Colors.white,
-                                      icon: Icons.delete,
+                                      icon: AppIcons.delete,
                                     ),
                                   ],
                                 ),
@@ -478,7 +479,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
                                         onSubmitted: _setDefaultMinutes,
                                       ),
                                       const SizedBox(width: 8),
-                                      ReorderableDragStartListener(index: i, child: const Icon(Icons.drag_handle)),
+                                      ReorderableDragStartListener(index: i, child: Icon(AppIcons.dragHandle)),
                                     ],
                                   ),
                                 ),
@@ -524,13 +525,13 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
               onPressed: (_) => _renameTemplate(i),
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
-              icon: Icons.edit_outlined,
+              icon: AppIcons.editOutlined,
             ),
             SlidableAction(
               onPressed: (_) => _removeTemplate(i),
               backgroundColor: AppColors.danger,
               foregroundColor: Colors.white,
-              icon: Icons.delete_outline,
+              icon: AppIcons.deleteOutline,
             ),
           ],
         ),
@@ -540,7 +541,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
           onTap: () => setState(() => _selected = expanded ? null : i),
           // Desktop/mouse fallback for the swipe options.
           onLongPress: () => _templateOptions(i),
-          trailing: Icon(expanded ? Icons.expand_less : Icons.expand_more, color: AppColors.medium),
+          trailing: Icon(expanded ? AppIcons.expandLess : AppIcons.expandMore, color: AppColors.medium),
         ),
       ),
       if (expanded) ...[
@@ -560,14 +561,14 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
         ),
         Builder(
           builder: (buttonContext) => ListTile(
-            leading: const Icon(Icons.add, color: AppColors.primary),
+            leading: Icon(AppIcons.add, color: AppColors.primary),
             title: Text(context.l10n.typeSettingsAddField, style: const TextStyle(color: AppColors.primary)),
             onTap: () => _addToTemplate(i, buttonContext),
           ),
         ),
         if (end.isNotEmpty)
           ListTile(
-            leading: const Icon(Icons.schedule, color: AppColors.medium),
+            leading: Icon(AppIcons.schedule, color: AppColors.medium),
             title: Text(context.l10n.orgTemplatesEndApprox(end), style: const TextStyle(color: AppColors.medium)),
           ),
         const Divider(height: 1),

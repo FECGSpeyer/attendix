@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -76,7 +77,7 @@ class _GroupFilesSheetState extends ConsumerState<GroupFilesSheet> {
               start: [
                 if (selected != null)
                   IconButton(
-                    icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
+                    icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
                     onPressed: () => setState(() => _selectedGroup = null),
                   ),
               ],
@@ -84,7 +85,7 @@ class _GroupFilesSheetState extends ConsumerState<GroupFilesSheet> {
                 if (selected != null && files.isNotEmpty)
                   IconButton(
                     tooltip: context.l10n.songsPrint,
-                    icon: const Icon(Icons.print_outlined),
+                    icon: Icon(AppIcons.printOutlined),
                     onPressed: _printFolder,
                   ),
               ],

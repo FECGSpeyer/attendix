@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../core/theme/redesign/rd_palette.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
@@ -113,7 +113,7 @@ class IonSelectIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Icon(
-    CupertinoIcons.chevron_up_chevron_down,
+    AppIcons.cupertinoChevronUpChevronDown,
     size: size,
     color: color ?? colorOf(context),
   );
@@ -340,7 +340,7 @@ Widget _selectToggleIcon(BuildContext context, {required bool enabled}) {
   return Opacity(
     opacity: enabled ? 1 : 0.4,
     child: rd != null
-        ? Icon(Icons.keyboard_arrow_down, size: 20, color: rd.text2)
+        ? Icon(AppIcons.keyboardArrowDown, size: 20, color: rd.text2)
         : const IonSelectIcon(),
   );
 }
@@ -547,7 +547,7 @@ class _IosSelectRow<T> extends StatelessWidget {
                   SizedBox(
                     width: 20,
                     child: checked
-                        ? Icon(Icons.check, size: 20, color: primary)
+                        ? Icon(AppIcons.check, size: 20, color: primary)
                         : null,
                   ),
                 ],

@@ -1,1 +1,1 @@
-{"bump": "patch", "changes": ["💄 Startseite (normales Design): Tab-Leiste, Kopfzeile und Dashboard-Karten nutzen wieder die Ionicons der alten App"]}
+{"bump": "minor", "changes": ["💄 Normales Design: alle Icons wieder als Ionicons wie in der alten App (Beta bleibt bei Material)"]}

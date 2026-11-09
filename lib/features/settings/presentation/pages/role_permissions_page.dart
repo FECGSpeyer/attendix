@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -157,7 +158,7 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
         // IOS_R6: `ion-header translucent` (blur once condensed)
         appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
+            icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
             onPressed: () => Navigator.of(context).maybePop(),
           ),
           title: IonCondenseTitle(context.l10n.rolePermTitle, collapsed: collapsed),
@@ -166,7 +167,7 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
           onPressed: saving ? null : _save,
           child: saving
               ? const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2, color: Colors.white))
-              : const Icon(Icons.save_outlined),
+              : Icon(AppIcons.saveOutlined),
         ),
         body: permissionsAsync.when(
           loading: () => const Center(child: AppSpinner()),

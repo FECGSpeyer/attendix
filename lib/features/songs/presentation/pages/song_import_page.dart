@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -196,7 +197,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
         actions: [
           ToolbarButtonGroup(children: [
             IconButton(
-              icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+              icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
               onPressed: _busy ? null : () => Navigator.of(context).pop(),
             ),
           ]),

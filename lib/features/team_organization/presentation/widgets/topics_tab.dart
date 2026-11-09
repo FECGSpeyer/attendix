@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -33,7 +34,7 @@ class TopicsTab extends ConsumerWidget {
     // Ionic `.topic-empty` (chatbubbles icon, grey text).
     return ListView(children: [
       IonEmptyState(
-        icon: Icons.forum_outlined,
+        icon: AppIcons.forumOutlined,
         iconSize: 48,
         padding: const EdgeInsets.fromLTRB(32, 48, 32, 16),
         text: context.l10n.teamOrgLeadersPlan,
@@ -76,18 +77,18 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
         for (final att in upcoming.take(8))
           AppActionSheetAction(
             value: att.id,
-            icon: att.id == current?.id ? Icons.check : null,
+            icon: att.id == current?.id ? AppIcons.check : null,
             label: _attendanceTitle(att, types),
           ),
         if (current != null)
           AppActionSheetAction(
             value: 'date',
-            icon: Icons.calendar_today_outlined,
+            icon: AppIcons.calendarTodayOutlined,
             label: context.l10n.teamOrgChangeDate,
           ),
         AppActionSheetAction(
           value: 'new',
-          icon: Icons.add_circle_outline,
+          icon: AppIcons.addCircleOutline,
           label: context.l10n.agendaNewEvent,
         ),
       ],
@@ -256,7 +257,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                 toolbarHeight: ionModalToolbarHeight(context),
                 automaticallyImplyLeading: false,
                 leading: IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(AppIcons.close),
                   tooltip: ctx.l10n.commonClose,
                   onPressed: () => Navigator.of(ctx).pop(),
                 ),
@@ -384,7 +385,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                 if (buckets.pending.isNotEmpty)
                   IonInsetList(children: [
                     ListTile(
-                      leading: const Icon(Icons.lightbulb_outline, color: AppColors.warning),
+                      leading: Icon(AppIcons.lightbulbOutline, color: AppColors.warning),
                       title: Text(l10n.teamOrgFlutterNewSuggestions(buckets.pending.length)),
                       subtitle: Text(l10n.teamOrgSubmittedByMembers, style: const TextStyle(color: AppColors.medium)),
                       trailing: FilledButton(
@@ -409,7 +410,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                     ),
                     children: [
                       ListTile(
-                        leading: const Icon(Icons.calendar_today_outlined, color: AppColors.primary),
+                        leading: Icon(AppIcons.calendarTodayOutlined, color: AppColors.primary),
                         title: Text(_attendanceTitle(next, types)),
                         trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                           if (tops.minutes > 0) IonNote(l10n.teamOrgMinutes(tops.minutes)),
@@ -433,7 +434,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                           title: Text(l10n.teamOrgNoTopsYet, style: const TextStyle(color: AppColors.medium)),
                         ),
                       ListTile(
-                        leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+                        leading: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
                         title: Text(l10n.teamOrgAddTopics, style: const TextStyle(color: AppColors.primary)),
                         onTap: () async {
                           await showAgendaPickerSheet(context, attendance: next!, type: nextType);
@@ -449,7 +450,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                         title: Text(l10n.teamOrgNoProtocolEvent, style: const TextStyle(color: AppColors.medium)),
                       ),
                       ListTile(
-                        leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+                        leading: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
                         title: Text(l10n.teamOrgCreateEvent, style: const TextStyle(color: AppColors.primary)),
                         enabled: !_creatingAttendance,
                         onTap: _createAttendance,
@@ -538,7 +539,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
         heroTag: 'team-org-add-topic',
         tooltip: l10n.teamOrgCreateTopic,
         onPressed: () => context.push('/settings/agenda-items/new'),
-        child: const Icon(Icons.add),
+        child: Icon(AppIcons.add),
       )),
       // Ionic reload(): after a failed load the content stays (none →
       // empty), a red toast reports it, pull-to-refresh keeps working.
@@ -634,7 +635,7 @@ class _MemberTopics extends ConsumerWidget {
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                 child: FilledButton.icon(
                   onPressed: () => _suggest(context, ref),
-                  icon: const Icon(Icons.lightbulb_outline),
+                  icon: Icon(AppIcons.lightbulbOutline),
                   label: IonButtonLabel(l10n.teamOrgSuggestTopic),
                 ),
               ),

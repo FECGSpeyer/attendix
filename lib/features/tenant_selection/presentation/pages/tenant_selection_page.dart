@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
@@ -488,12 +489,12 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
         : context.l10n.settingsTenantsCount(count);
     final addButton = IconButton(
       tooltip: context.l10n.tenantSelectFlutterNewTenant,
-      icon: const Icon(Icons.add),
+      icon: Icon(AppIcons.add),
       onPressed: createInstance,
     );
     final settingsButton = IconButton(
       tooltip: context.l10n.tenantSelectFlutterTenantSelection,
-      icon: const Icon(Icons.settings_outlined),
+      icon: Icon(AppIcons.settingsOutlined),
       onPressed: _openInstanceSettings,
     );
 
@@ -513,13 +514,13 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
                 if (currentTenant == null)
                   IconButton(
                     tooltip: context.l10n.registerLogout,
-                    icon: const Icon(Icons.logout),
+                    icon: Icon(AppIcons.logout),
                     onPressed: _logout,
                   )
                 else
                   IconButton(
                     tooltip: context.l10n.commonClose,
-                    icon: const Icon(Icons.close),
+                    icon: Icon(AppIcons.close),
                     onPressed: () => context.go('/settings'),
                   ),
               ],
@@ -531,8 +532,8 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.error_outline,
+                  Icon(
+                    AppIcons.errorOutline,
                     size: 64,
                     color: AppColors.danger,
                   ),
@@ -622,13 +623,13 @@ class _TenantTile extends StatelessWidget {
             onPressed: (_) => onDelete(),
             backgroundColor: AppColors.danger,
             foregroundColor: Colors.white,
-            icon: Icons.delete_outline,
+            icon: AppIcons.deleteOutline,
           ),
           SlidableAction(
             onPressed: (_) => onFavorite(),
             backgroundColor: AppColors.warning,
             foregroundColor: Colors.black,
-            icon: isFavorite ? Icons.star_border : Icons.star,
+            icon: isFavorite ? AppIcons.starBorder : AppIcons.star,
           ),
         ],
       ),
@@ -664,12 +665,12 @@ class _TenantTile extends StatelessWidget {
                 ),
               ),
             if (isFavorite)
-              const Icon(Icons.star, size: 18, color: AppColors.warning),
+              Icon(AppIcons.star, size: 18, color: AppColors.warning),
             // Flutter-only: instance details (members, delete) page
             IconButton(
               tooltip: context.l10n.tasksDetails,
               visualDensity: VisualDensity.compact,
-              icon: const Icon(Icons.info_outline, color: AppColors.medium),
+              icon: Icon(AppIcons.infoOutline, color: AppColors.medium),
               onPressed: () {
                 if (tenant.id != null) {
                   context.pushNamed(

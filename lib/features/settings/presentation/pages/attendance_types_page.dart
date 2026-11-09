@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -43,7 +44,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
       // IOS_R6: `ion-header translucent` (blur once condensed)
       appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
+          icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
           onPressed: () => context.pop(),
         ),
         title: IonCondenseTitle(title, collapsed: collapsed),
@@ -51,13 +52,13 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
           if (_isReordering)
             IconButton(
               // UX_SETTINGS: Ionic checkmark to save the order
-              icon: const Icon(Icons.check),
+              icon: Icon(AppIcons.check),
               tooltip: context.l10n.commonSave,
               onPressed: _saveOrder,
             )
           else
             IconButton(
-              icon: const Icon(Icons.repeat),
+              icon: Icon(AppIcons.repeat),
               tooltip: context.l10n.typeSettingsFlutterReorder,
               onPressed: () {
                 setState(() {
@@ -79,7 +80,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
               const IonContentTopInset(),
               IonLargeTitle(title, padding: const EdgeInsets.only(bottom: 4)),
               SizedBox(height: ios ? 24 : 0),
-              SettingsHintCard(icon: Icons.list, text: context.l10n.typeSettingsTypesIntro),
+              SettingsHintCard(icon: AppIcons.list, text: context.l10n.typeSettingsTypesIntro),
               SettingsListSection(
                 title: context.l10n.typeSettingsAttendanceTypes,
                 icons: false,
@@ -105,7 +106,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
                         trailing: ReorderableDragStartListener(
                           index: index,
                           child: Icon(
-                            Icons.drag_handle,
+                            AppIcons.dragHandle,
                             color: ios ? IonIos.note(context) : AppColors.medium,
                           ),
                         ),
@@ -128,7 +129,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
               // Ionic openTypeModal(): the type page as modal in the "new"
               // mode (all settings); the notifier reloads the list.
               onPressed: () => showAttendanceTypeCreateModal(context),
-              child: const Icon(Icons.add),
+              child: Icon(AppIcons.add),
             )
           : FloatingActionButton(
               onPressed: () {
@@ -138,7 +139,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
                 });
               },
               backgroundColor: AppColors.medium,
-              child: const Icon(Icons.close),
+              child: Icon(AppIcons.close),
             ),
     ));
   }

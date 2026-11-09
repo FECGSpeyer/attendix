@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -118,10 +119,10 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
                 ),
               if (rows.isEmpty)
                 isLeader
-                    ? state(Icons.description_outlined, l10n.teamOrgNoProtocols, l10n.teamOrgNoProtocolsHint)
-                    : state(Icons.description_outlined, l10n.teamOrgNoPublished, l10n.teamOrgNoPublishedHint)
+                    ? state(AppIcons.descriptionOutlined, l10n.teamOrgNoProtocols, l10n.teamOrgNoProtocolsHint)
+                    : state(AppIcons.descriptionOutlined, l10n.teamOrgNoPublished, l10n.teamOrgNoPublishedHint)
               else if (groups.isEmpty)
-                state(Icons.search, l10n.teamOrgNoHits, l10n.teamOrgNoProtocolMatch(_search))
+                state(AppIcons.search, l10n.teamOrgNoHits, l10n.teamOrgNoProtocolMatch(_search))
               else
                 // Ionic: one ion-list [inset] per month with an ion-list-header.
                 for (final group in groups)

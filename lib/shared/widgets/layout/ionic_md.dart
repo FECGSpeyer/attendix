@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 /// MD_SWEEP: Ionic **md mode** metrics as the desktop / Android web build
 /// renders them: @ionic/core 9.0.10 `*.md.css`, the app's
@@ -375,7 +376,7 @@ class IonMdSearchbar extends StatelessWidget {
           builder: (context, value, _) => Row(
             children: [
               const SizedBox(width: IonMd.searchIconStart),
-              Icon(Icons.search, size: IonMd.searchIconSize, color: icon),
+              Icon(AppIcons.search, size: IonMd.searchIconSize, color: icon),
               const SizedBox(
                   width: IonMd.searchTextInset -
                       IonMd.searchIconStart -
@@ -415,7 +416,7 @@ class IonMdSearchbar extends StatelessWidget {
                           8, 0, IonMd.clearIconEnd, 0),
                       child: SizedBox(
                         height: IonMd.searchbarHeight,
-                        child: Icon(Icons.close,
+                        child: Icon(AppIcons.close,
                             size: IonMd.clearIconSize, color: icon),
                       ),
                     ),

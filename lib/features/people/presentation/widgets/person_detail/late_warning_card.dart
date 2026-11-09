@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/providers/tenant_providers.dart';
@@ -74,7 +75,7 @@ class LateWarningCard extends ConsumerWidget {
                 visualDensity: VisualDensity.compact,
               ),
               onPressed: onResetLateCount,
-              icon: const Icon(Icons.check_circle_outline, size: 18),
+              icon: Icon(AppIcons.checkCircleOutline, size: 18),
               label: IonButtonLabel(context.l10n.personResetTalked),
             ),
           ],

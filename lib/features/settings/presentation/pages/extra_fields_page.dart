@@ -2,6 +2,7 @@ import 'dart:async' show unawaited;
 
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -246,7 +247,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
         // IOS_R6: `ion-header translucent` (blur once condensed)
         appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
+            icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
             onPressed: () => Navigator.of(context).maybePop(),
           ),
           title: IonCondenseTitle(context.l10n.extraFieldsTitle, collapsed: collapsed),
@@ -254,7 +255,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
             IconButton(
               icon: _saving
                   ? const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2))
-                  : Icon(Icons.check, semanticLabel: context.l10n.commonSave),
+                  : Icon(AppIcons.check, semanticLabel: context.l10n.commonSave),
               onPressed: _saving ? null : _save,
             ),
           ],
@@ -335,19 +336,19 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.edit_outlined, color: AppColors.primary, semanticLabel: context.l10n.commonEdit),
+                            icon: Icon(AppIcons.editOutlined, color: AppColors.primary, semanticLabel: context.l10n.commonEdit),
                             onPressed: () => _editField(target, i),
                           ),
                           IconButton(
-                            icon: Icon(Icons.delete_outline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
+                            icon: Icon(AppIcons.deleteOutline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
                             onPressed: () => _removeField(target, i),
                           ),
                           if (fields.length > 1)
                             ReorderableDragStartListener(
                               index: i,
-                              child: const Padding(
+                              child: Padding(
                                 padding: EdgeInsets.all(8),
-                                child: Icon(Icons.drag_handle),
+                                child: Icon(AppIcons.dragHandle),
                               ),
                             ),
                         ],
@@ -360,7 +361,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
         title: title,
         icons: false,
         headerAction: IconButton(
-          icon: const Icon(Icons.add, color: AppColors.primary),
+          icon: Icon(AppIcons.add, color: AppColors.primary),
           tooltip: context.l10n.extraFieldsAddNew,
           onPressed: () => _addField(target),
         ),
@@ -382,7 +383,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.add),
+              icon: Icon(AppIcons.add),
               tooltip: context.l10n.extraFieldsAddNew,
               onPressed: () => _addField(target),
             ),
@@ -666,7 +667,7 @@ Future<ExtraField?> showExtraFieldSheet(
                               style: Theme.of(ctx).textTheme.titleLarge,
                             ),
                           ),
-                          IconButton(icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose), onPressed: () => Navigator.pop(sheetContext)),
+                          IconButton(icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose), onPressed: () => Navigator.pop(sheetContext)),
                         ],
                       ),
                       const SizedBox(height: AppDimensions.paddingS),
@@ -733,7 +734,7 @@ Future<ExtraField?> showExtraFieldSheet(
                           children: [
                             Expanded(child: Text(context.l10n.typeSettingsOptions, style: Theme.of(ctx).textTheme.titleSmall)),
                             IconButton(
-                              icon: Icon(Icons.add, semanticLabel: context.l10n.a11yAdd),
+                              icon: Icon(AppIcons.add, semanticLabel: context.l10n.a11yAdd),
                               onPressed: () => setSheet(() => options.add(TextEditingController())),
                             ),
                           ],
@@ -755,7 +756,7 @@ Future<ExtraField?> showExtraFieldSheet(
                                 ),
                               ),
                               IconButton(
-                                icon: Icon(Icons.delete_outline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
+                                icon: Icon(AppIcons.deleteOutline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
                                 onPressed: () => removeOption(i),
                               ),
                             ],

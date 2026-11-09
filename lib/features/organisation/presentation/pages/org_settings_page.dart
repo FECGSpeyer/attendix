@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -99,7 +100,7 @@ class OrgSettingsPage extends ConsumerWidget {
                   ),
                   if (isSuperAdmin)
                     ListTile(
-                      leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
+                      leading: Icon(AppIcons.addCircleOutline, color: AppColors.primary),
                       title: Text(context.l10n.orgCreateOrLink,
                           style: const TextStyle(color: AppColors.primary)),
                       onTap: () => showOrganisationLinkDialog(context, ref),
@@ -116,7 +117,7 @@ class OrgSettingsPage extends ConsumerWidget {
               if (ionIsIos(context)) const SizedBox(height: 16),
               _Section(title: context.l10n.orgTitle, children: [
                 ListTile(
-                  leading: const Icon(Icons.business_outlined),
+                  leading: Icon(AppIcons.businessOutlined),
                   title: Text(org.name),
                   subtitle: isSuperAdmin ? Text(context.l10n.orgTapRename) : null,
                   trailing: isSuperAdmin ? const _Chevron() : null,
@@ -124,7 +125,7 @@ class OrgSettingsPage extends ConsumerWidget {
                 ),
                 if (isSuperAdmin)
                   ListTile(
-                    leading: const Icon(Icons.link_off, color: AppColors.danger),
+                    leading: Icon(AppIcons.linkOff, color: AppColors.danger),
                     title: Text(context.l10n.orgUnlinkTenant, style: const TextStyle(color: AppColors.danger)),
                     onTap: () => _unlink(context, ref, org),
                   ),
@@ -132,19 +133,19 @@ class OrgSettingsPage extends ConsumerWidget {
               _Section(title: context.l10n.orgAppearancePlans, children: [
                 // UX_SETTINGS: Ionic org-settings → Branding
                 ListTile(
-                  leading: const Icon(Icons.palette_outlined),
+                  leading: Icon(AppIcons.paletteOutlined),
                   title: Text(context.l10n.generalSettingsBranding),
                   trailing: const _Chevron(),
                   onTap: () => context.push('/settings/general/branding'),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.description_outlined),
+                  leading: Icon(AppIcons.descriptionOutlined),
                   title: Text(context.l10n.orgTemplatesTitle),
                   trailing: const _Chevron(),
                   onTap: () => context.push('/settings/org-settings/planning-templates'),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.calendar_month_outlined),
+                  leading: Icon(AppIcons.calendarMonthOutlined),
                   title: Text(context.l10n.orgOrgPlans),
                   trailing: const _Chevron(),
                   onTap: () => context.push('/settings/org-plans'),
@@ -155,7 +156,7 @@ class OrgSettingsPage extends ConsumerWidget {
                 _Section(title: context.l10n.orgGemeindeApp, children: [
                   SwitchListTile.adaptive(
                     key: const ValueKey('org-beamer-files-toggle'),
-                    secondary: const Icon(Icons.tv_outlined),
+                    secondary: Icon(AppIcons.tvOutlined),
                     title: Text(context.l10n.orgGaBeamerFiles),
                     subtitle: Text(context.l10n.orgGaBeamerFilesHint),
                     value: org.beamerFilesEnabled,
@@ -163,7 +164,7 @@ class OrgSettingsPage extends ConsumerWidget {
                   ),
                   ListTile(
                     key: const ValueKey('org-gemeinde-app-key'),
-                    leading: const Icon(Icons.key_outlined),
+                    leading: Icon(AppIcons.keyOutlined),
                     title: Text(org.gemeindeAppKeyHash != null
                         ? context.l10n.orgGaRenewKey
                         : context.l10n.orgGaCreateKey),
@@ -183,14 +184,14 @@ class OrgSettingsPage extends ConsumerWidget {
                 _Section(title: context.l10n.orgPersons, children: [
                   // UX_SETTINGS: Ionic org-settings → Personen verknüpfen
                   ListTile(
-                    leading: const Icon(Icons.merge_type),
+                    leading: Icon(AppIcons.mergeType),
                     title: Text(context.l10n.linkPersonsTitle),
                     subtitle: Text(context.l10n.orgLinkPersonsHint),
                     trailing: const _Chevron(),
                     onTap: () => context.push('/settings/general/link-persons'),
                   ),
                   ListTile(
-                    leading: const Icon(Icons.list_alt),
+                    leading: Icon(AppIcons.listAlt),
                     title: Text(context.l10n.orgPersonFields),
                     subtitle: Text(context.l10n.orgPersonFieldsHint),
                     trailing: const _Chevron(),
@@ -201,7 +202,7 @@ class OrgSettingsPage extends ConsumerWidget {
               if (role.isAdmin || role.isResponsible)
                 _Section(title: context.l10n.orgHandover, children: [
                   ListTile(
-                    leading: const Icon(Icons.swap_horiz),
+                    leading: Icon(AppIcons.swapHoriz),
                     title: Text(context.l10n.handoverTitle),
                     trailing: const _Chevron(),
                     onTap: () => context.push('/settings/handover'),
@@ -211,7 +212,7 @@ class OrgSettingsPage extends ConsumerWidget {
               if ((role.isAdmin || role.isResponsible) && others.isNotEmpty)
                 _Section(title: context.l10n.orgSongsSection, children: [
                   ListTile(
-                    leading: const Icon(Icons.search),
+                    leading: Icon(AppIcons.search),
                     title: Text(context.l10n.orgSongsTitle),
                     subtitle: Text(context.l10n.orgSongsEntryHint),
                     trailing: const _Chevron(),
@@ -224,13 +225,13 @@ class OrgSettingsPage extends ConsumerWidget {
               if (others.isNotEmpty)
                 _Section(title: context.l10n.orgTenants, children: [
                   ListTile(
-                    leading: const Icon(Icons.layers_outlined),
+                    leading: Icon(AppIcons.layersOutlined),
                     title: Text(tenant?.shortName ?? ''),
                     subtitle: Text(context.l10n.orgThisTenant),
                   ),
                   for (final t in others)
                     ListTile(
-                      leading: const Icon(Icons.layers_outlined, color: AppColors.medium),
+                      leading: Icon(AppIcons.layersOutlined, color: AppColors.medium),
                       title: Text(t.shortName),
                       subtitle: Text(t.longName),
                     ),
@@ -249,7 +250,7 @@ class _Chevron extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      ionIsIos(context) ? const IonDetailChevron() : const Icon(Icons.chevron_right);
+      ionIsIos(context) ? const IonDetailChevron() : Icon(AppIcons.chevronRight);
 }
 
 class _Section extends StatelessWidget {

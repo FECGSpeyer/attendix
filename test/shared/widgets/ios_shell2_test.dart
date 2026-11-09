@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
@@ -147,7 +148,7 @@ void main() {
     expect(bar.bottom, 852);
     expect(_pagePadding, IosTabBar.contentPadding + 22 + 50 + 8);
 
-    await tester.tap(find.byIcon(Icons.close));
+    await tester.tap(find.byIcon(AppIcons.close));
     await tester.pumpAndSettle();
     expect(find.text('Neue Version verfügbar'), findsNothing);
     expect(_pagePadding, IosTabBar.contentPadding + 22);

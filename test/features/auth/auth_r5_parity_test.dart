@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:attendix/core/services/teams/teams_service.dart';
 import 'package:attendix/core/theme/app_colors.dart';
 import 'package:attendix/core/theme/app_theme.dart';
@@ -146,7 +147,7 @@ void main() {
       expect(
           find.descendant(
               of: find.byType(ToolbarButtonGroup),
-              matching: find.byIcon(Icons.close)),
+              matching: find.byIcon(AppIcons.close)),
           findsOneWidget);
       expect(find.byType(IosGlassSurface), findsWidgets);
     }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));

@@ -1,3 +1,4 @@
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:attendix/core/providers/message_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/theme/app_colors.dart';
@@ -157,7 +158,7 @@ void main() {
       expect(
         find.descendant(
             of: find.byType(ToolbarButtonGroup),
-            matching: find.byIcon(Icons.delete_outline)),
+            matching: find.byIcon(AppIcons.deleteOutline)),
         findsOneWidget,
       );
       // HTML-like whitespace: one line "Allgemein Treffen am …".

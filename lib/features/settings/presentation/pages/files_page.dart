@@ -1,6 +1,6 @@
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -1047,7 +1047,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       items: [
         AppPopoverMenuItem(
           value: () => _openEntry(entry),
-          icon: isAudio ? Icons.play_circle_outline : Icons.open_in_new,
+          icon: isAudio ? AppIcons.playCircleOutline : AppIcons.openInNew,
           label: entry.isFolder
               ? context.l10n.filesFlutterOpenFolder
               : isAudio
@@ -1057,42 +1057,42 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         if (!entry.isFolder)
           AppPopoverMenuItem(
             value: () => _downloadEntry(entry),
-            icon: Icons.download_outlined,
+            icon: AppIcons.downloadOutlined,
             label: context.l10n.filesDownload,
           ),
         AppPopoverMenuItem(
           value: () => _shareEntry(entry),
-          icon: Icons.link,
+          icon: AppIcons.link,
           label: context.l10n.filesShareLink,
         ),
         // INTEGRATION: Ionic files "Per Telegram senden"
         if (!entry.isFolder && (_telegramChatId?.isNotEmpty ?? false))
           AppPopoverMenuItem(
             value: () => _sendEntryPerTelegram(entry),
-            icon: Icons.send_outlined,
+            icon: AppIcons.sendOutlined,
             label: context.l10n.filesSendTelegram,
           ),
         if (canEdit) ...[
           AppPopoverMenuItem(
             value: () => _renameEntry(entry),
-            icon: Icons.edit_outlined,
+            icon: AppIcons.editOutlined,
             label: context.l10n.filesRename,
           ),
           AppPopoverMenuItem(
             value: () => _moveEntry(entry),
-            icon: Icons.swap_horiz,
+            icon: AppIcons.swapHoriz,
             label: context.l10n.filesMove,
           ),
           // Ionic 4.19.1: "Mehrere auswählen" (starts with this entry)
           AppPopoverMenuItem(
             value: () => _startSelection(entry),
-            icon: Icons.check_circle_outline,
+            icon: AppIcons.checkCircleOutline,
             label: context.l10n.filesSelectMultiple,
           ),
           // Ionic: plain item (not red) like the others
           AppPopoverMenuItem(
             value: () => _deleteEntry(entry),
-            icon: Icons.delete_outline,
+            icon: AppIcons.deleteOutline,
             label: context.l10n.commonDelete,
           ),
         ],
@@ -1158,7 +1158,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
           ? AppBar(
               automaticallyImplyLeading: false,
               leading: IconButton(
-                icon: const Icon(Icons.close),
+                icon: Icon(AppIcons.close),
                 tooltip: context.l10n.filesSelectionDone,
                 onPressed: _exitSelection,
               ),
@@ -1186,12 +1186,12 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                     // PARITY_R7: Ionic `ion-buttons` glass around a clear
                     // icon-only `ion-button` (28px ionicon, 25px radius) is
                     // larger than the 44pt back circle.
-                    child: const IosCircleIcon(icon: Icons.arrow_back, size: 48, iconSize: 24),
+                    child: IosCircleIcon(icon: AppIcons.arrowBack, size: 48, iconSize: 24),
                   ),
                 ),
               )
             : IconButton(
-                icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
+                icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
                 onPressed: () => context.canPop() ? context.pop() : context.go('/settings'),
               ),
         leadingWidth: ionIsIos(context) ? 72 : null, // PARITY_R7: 12 + 48 + 12
@@ -1201,34 +1201,34 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             // Ionic 4.19.1: "Auswählen" (checkmark-circle-outline)
             if (canEdit && _entries.isNotEmpty)
               IconButton(
-                icon: const Icon(Icons.check_circle_outline),
+                icon: Icon(AppIcons.checkCircleOutline),
                 tooltip: context.l10n.filesSelect,
                 onPressed: () => _startSelection(),
               ),
             PopupMenuButton<String>(
-              icon: const Icon(Icons.more_vert),
+              icon: Icon(AppIcons.moreVert),
               onSelected: _onMenuSelected,
               itemBuilder: (_) => [
                 if (canEdit) ...[
                   PopupMenuItem(
                     value: 'upload',
-                    child: ListTile(leading: const Icon(Icons.cloud_upload_outlined), title: Text(context.l10n.filesUpload), contentPadding: EdgeInsets.zero),
+                    child: ListTile(leading: Icon(AppIcons.cloudUploadOutlined), title: Text(context.l10n.filesUpload), contentPadding: EdgeInsets.zero),
                   ),
                   PopupMenuItem(
                     value: 'folder',
-                    child: ListTile(leading: const Icon(Icons.create_new_folder_outlined), title: Text(context.l10n.filesCreateFolder), contentPadding: EdgeInsets.zero),
+                    child: ListTile(leading: Icon(AppIcons.createNewFolderOutlined), title: Text(context.l10n.filesCreateFolder), contentPadding: EdgeInsets.zero),
                   ),
                   // Ionic 4.19.1: "Mehrere auswählen"
                   if (_entries.isNotEmpty)
                     PopupMenuItem(
                       value: 'select',
-                      child: ListTile(leading: const Icon(Icons.check_circle_outline), title: Text(context.l10n.filesSelectMultiple), contentPadding: EdgeInsets.zero),
+                      child: ListTile(leading: Icon(AppIcons.checkCircleOutline), title: Text(context.l10n.filesSelectMultiple), contentPadding: EdgeInsets.zero),
                     ),
                 ],
                 PopupMenuItem(
                   value: 'share',
                   child: ListTile(
-                    leading: const Icon(Icons.share_outlined),
+                    leading: Icon(AppIcons.shareOutlined),
                     title: Text(_currentPath.isNotEmpty ? context.l10n.filesFlutterShareFolderLink : context.l10n.filesFlutterShareRootLink),
                     contentPadding: EdgeInsets.zero,
                   ),
@@ -1240,20 +1240,20 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                 ),
                 PopupMenuItem(
                   value: 'sort_name',
-                  child: ListTile(leading: const Icon(Icons.text_fields), title: Text(context.l10n.filesName), contentPadding: EdgeInsets.zero),
+                  child: ListTile(leading: Icon(AppIcons.textFields), title: Text(context.l10n.filesName), contentPadding: EdgeInsets.zero),
                 ),
                 PopupMenuItem(
                   value: 'sort_date',
-                  child: ListTile(leading: const Icon(Icons.calendar_today_outlined), title: Text(context.l10n.filesModified), contentPadding: EdgeInsets.zero),
+                  child: ListTile(leading: Icon(AppIcons.calendarTodayOutlined), title: Text(context.l10n.filesModified), contentPadding: EdgeInsets.zero),
                 ),
                 PopupMenuItem(
                   value: 'sort_size',
-                  child: ListTile(leading: const Icon(Icons.straighten), title: Text(context.l10n.filesSize), contentPadding: EdgeInsets.zero),
+                  child: ListTile(leading: Icon(AppIcons.straighten), title: Text(context.l10n.filesSize), contentPadding: EdgeInsets.zero),
                 ),
                 PopupMenuItem(
                   value: 'sort_dir',
                   child: ListTile(
-                    leading: Icon(_ascending ? Icons.arrow_upward : Icons.arrow_downward),
+                    leading: Icon(_ascending ? AppIcons.arrowUpward : AppIcons.arrowDownward),
                     title: Text(_ascending ? context.l10n.filesFlutterAscending : context.l10n.filesFlutterDescending),
                     contentPadding: EdgeInsets.zero,
                   ),
@@ -1274,13 +1274,13 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                   children: [
                     TextButton.icon(
                       onPressed: _selectedPaths.isEmpty ? null : _moveSelected,
-                      icon: const Icon(Icons.swap_horiz),
+                      icon: Icon(AppIcons.swapHoriz),
                       label: IonButtonLabel(context.l10n.filesMove),
                     ),
                     TextButton.icon(
                       style: TextButton.styleFrom(foregroundColor: AppColors.danger),
                       onPressed: _selectedPaths.isEmpty ? null : _deleteSelected,
-                      icon: const Icon(Icons.delete_outline),
+                      icon: Icon(AppIcons.deleteOutline),
                       label: IonButtonLabel(context.l10n.commonDelete),
                     ),
                   ],
@@ -1337,7 +1337,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     final crumbs = <Widget>[crumb(context.l10n.filesRoot, '', segments.isEmpty)];
     for (var i = 0; i < segments.length; i++) {
       crumbs.add(Icon(
-          ionIsIos(context) ? CupertinoIcons.chevron_forward : Icons.chevron_right,
+          ionIsIos(context) ? AppIcons.cupertinoChevronForward : AppIcons.chevronRight,
           size: ionIsIos(context) ? 14 : 18,
           color: AppColors.medium));
       crumbs.add(crumb(
@@ -1376,7 +1376,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
           if (_isStorageAlmostFull)
             TextButton.icon(
               onPressed: _requestMoreStorage,
-              icon: const Icon(Icons.add_circle_outline),
+              icon: Icon(AppIcons.addCircleOutline),
               label: IonButtonLabel(context.l10n.filesRequestMore),
             ),
         ],
@@ -1406,7 +1406,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
               padding: EdgeInsets.only(right: ios ? 8 : 4),
               child: Builder(
                 builder: (button) => IconButton(
-                  icon: Icon(ios ? CupertinoIcons.question_circle : Icons.help_outline,
+                  icon: Icon(ios ? AppIcons.cupertinoQuestionCircle : AppIcons.helpOutline,
                       color: AppColors.medium, semanticLabel: context.l10n.a11yHelp),
                   onPressed: () => _showSearchHelp(button),
                 ),
@@ -1428,11 +1428,11 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       return const [Padding(padding: EdgeInsets.all(32), child: Center(child: AppSpinner()))];
     }
     if (_entries.isEmpty) {
-      return [_EmptyCard(icon: Icons.folder_open_outlined, text: context.l10n.filesFolderEmpty)];
+      return [_EmptyCard(icon: AppIcons.folderOpenOutlined, text: context.l10n.filesFolderEmpty)];
     }
     final filtered = _filteredEntries;
     if (filtered.isEmpty) {
-      return [_EmptyCard(icon: Icons.search, text: context.l10n.filesNoHits(_searchController.text))];
+      return [_EmptyCard(icon: AppIcons.search, text: context.l10n.filesNoHits(_searchController.text))];
     }
     if (ionIsIos(context)) {
       return [
@@ -1473,14 +1473,14 @@ class _FilesPageState extends ConsumerState<FilesPage> {
           width: ios ? 38 : 40,
           height: ios ? 38 : 40,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => const Icon(Icons.image_outlined),
+          errorBuilder: (_, __, ___) => Icon(AppIcons.imageOutlined),
         ),
       );
     } else {
       // IOS_PAGES3: Ionic folder-outline / document-outline for every
       // entry; md start icons in the 54 % text colour, no primary tint.
       leading = Icon(
-        entry.isFolder ? Icons.folder_outlined : Icons.insert_drive_file_outlined,
+        entry.isFolder ? AppIcons.folderOutlined : AppIcons.insertDriveFileOutlined,
         color: ios
             ? null
             : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54),
@@ -1521,7 +1521,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
           ? null
           : Builder(
               builder: (button) => IconButton(
-                icon: Icon(Icons.more_horiz, color: AppColors.medium, semanticLabel: context.l10n.a11yMoreActions),
+                icon: Icon(AppIcons.moreHoriz, color: AppColors.medium, semanticLabel: context.l10n.a11yMoreActions),
                 onPressed: () => _showEntryActions(button, entry),
               ),
             ),
@@ -1557,7 +1557,7 @@ class _EmptyCard extends StatelessWidget {
             // PARITY_R7: Ionic `folder-open-outline` at 48px draws a ≈36pt
             // outline folder; the Material glyph fills more of its box.
             Icon(
-              icon == Icons.folder_open_outlined ? CupertinoIcons.folder_open : icon,
+              icon == AppIcons.folderOpenOutlined ? AppIcons.cupertinoFolderOpen : icon,
               size: 44,
               color: IonIos.text(context).withValues(alpha: 0.6),
             ),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -758,11 +759,11 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
               tooltip: context.l10n.planningFlutterLive,
               // Ionic: radio / radio-outline, danger while live.
               color: _live ? AppColors.danger : AppColors.primary,
-              icon: Icon(_live ? Icons.sensors : Icons.sensors_outlined),
+              icon: Icon(_live ? AppIcons.sensors : AppIcons.sensorsOutlined),
               onPressed: () => setState(() => _live = !_live),
             ),
           if (!_loading && !_notFound)
-            IconButton(tooltip: context.l10n.planningExport, icon: const Icon(Icons.ios_share), onPressed: _export),
+            IconButton(tooltip: context.l10n.planningExport, icon: Icon(AppIcons.iosShare), onPressed: _export),
           ]),
         ],
       ),
@@ -797,7 +798,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
                     builder: (anchor) => IconButton(
                       color: AppColors.primary,
                       tooltip: context.l10n.attendanceAdd,
-                      icon: const Icon(Icons.add),
+                      icon: Icon(AppIcons.add),
                       onPressed: () => _showAddMenu(anchor),
                     ),
                   )
@@ -807,11 +808,11 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
               child: Text.rich(TextSpan(children: [
                 TextSpan(text: _title),
                 if (_editMode)
-                  const WidgetSpan(
+                  WidgetSpan(
                     alignment: PlaceholderAlignment.middle,
                     child: Padding(
                       padding: EdgeInsets.only(left: 4),
-                      child: Icon(Icons.edit_outlined, size: 15, color: AppColors.medium),
+                      child: Icon(AppIcons.editOutlined, size: 15, color: AppColors.medium),
                     ),
                   ),
               ])),

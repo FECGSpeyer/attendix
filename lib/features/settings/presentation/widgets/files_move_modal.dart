@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -207,7 +208,7 @@ class _FilesMoveModalState extends State<FilesMoveModal> {
         actions: [
           IconButton(
             tooltip: l10n.filesCreateFolder,
-            icon: const Icon(Icons.create_new_folder_outlined),
+            icon: Icon(AppIcons.createNewFolderOutlined),
             onPressed: _createFolder,
           ),
         ],
@@ -260,7 +261,7 @@ class _FilesMoveModalState extends State<FilesMoveModal> {
                 onPressed: _canConfirm
                     ? () => Navigator.of(context).pop(_selectedPath)
                     : null,
-                icon: const Icon(Icons.swap_horiz),
+                icon: Icon(AppIcons.swapHoriz),
                 label: Text(l10n.filesMoveMoveHere(count)),
               ),
             ],
@@ -280,10 +281,10 @@ class _FilesMoveModalState extends State<FilesMoveModal> {
     if (node.loading) {
       toggle = const SizedBox(width: 18, height: 18, child: AppSpinner(strokeWidth: 2));
     } else if (node.loaded && node.children.isEmpty) {
-      toggle = const Icon(Icons.circle, size: 6, color: AppColors.medium);
+      toggle = Icon(AppIcons.circle, size: 6, color: AppColors.medium);
     } else {
       toggle = Icon(
-        node.expanded ? Icons.expand_more : Icons.chevron_right,
+        node.expanded ? AppIcons.expandMore : AppIcons.chevronRight,
         color: AppColors.medium,
       );
     }
@@ -316,8 +317,8 @@ class _FilesMoveModalState extends State<FilesMoveModal> {
               ),
               Icon(
                 isRoot
-                    ? Icons.home_outlined
-                    : (node.expanded ? Icons.folder_open_outlined : Icons.folder_outlined),
+                    ? AppIcons.homeOutlined
+                    : (node.expanded ? AppIcons.folderOpenOutlined : AppIcons.folderOutlined),
                 color: selected ? AppColors.primary : AppColors.medium,
               ),
               const SizedBox(width: 12),
@@ -338,9 +339,9 @@ class _FilesMoveModalState extends State<FilesMoveModal> {
                 ),
               ),
               if (selected)
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(right: 16),
-                  child: Icon(Icons.check_circle, color: AppColors.primary),
+                  child: Icon(AppIcons.checkCircle, color: AppColors.primary),
                 ),
             ]),
           ),

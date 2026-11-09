@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
@@ -142,12 +143,12 @@ class ChurchOverviewView extends StatelessWidget {
         ),
         header(l10n.churchOverviewTotal),
         ListTile(
-          leading: const Icon(Icons.people_outline),
+          leading: Icon(AppIcons.peopleOutline),
           title: Text(subtitle),
           trailing: badge(data.total),
         ),
         ListTile(
-          leading: const Icon(Icons.business_outlined),
+          leading: Icon(AppIcons.businessOutlined),
           title: Text(l10n.churchOverviewChurches),
           trailing: badge(data.churchCounts.length),
         ),

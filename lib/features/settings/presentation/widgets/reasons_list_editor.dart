@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
@@ -130,7 +131,7 @@ class _ReasonsListEditorState extends State<ReasonsListEditor> {
                 contentPadding: pad,
                 leading: ReorderableDragStartListener(
                   index: i,
-                  child: Icon(Icons.drag_handle, color: ios ? IonIos.note(context) : null),
+                  child: Icon(AppIcons.dragHandle, color: ios ? IonIos.note(context) : null),
                 ),
                 // Ionic ion-input (no label) in an inset ion-item.
                 title: TextField(
@@ -149,7 +150,7 @@ class _ReasonsListEditorState extends State<ReasonsListEditor> {
                   onChanged: (_) => _emit(),
                 ),
                 trailing: IconButton(
-                  icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+                  icon: Icon(AppIcons.deleteOutline, color: AppColors.danger),
                   tooltip: context.l10n.commonRemove,
                   onPressed: () => _remove(i),
                 ),
@@ -161,9 +162,9 @@ class _ReasonsListEditorState extends State<ReasonsListEditor> {
           onTap: _add,
           title: Text.rich(
             TextSpan(children: [
-              const WidgetSpan(
+              WidgetSpan(
                 alignment: PlaceholderAlignment.middle,
-                child: Icon(Icons.add_circle_outline, size: 18, color: AppColors.primary),
+                child: Icon(AppIcons.addCircleOutline, size: 18, color: AppColors.primary),
               ),
               TextSpan(text: ' ${context.l10n.generalSettingsAddReason}'),
             ]),

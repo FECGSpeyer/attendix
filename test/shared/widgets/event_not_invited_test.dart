@@ -1,6 +1,7 @@
 // Ionic 4.17.14: Termine the person is not invited to ("Alle Termine für
 // Mitglieder sichtbar") are grey, dashed and carry a "Nicht eingeladen" pill
 // on the current card and in the upcoming list of the self-service overview.
+import 'package:attendix/core/theme/app_icons.dart';
 import 'dart:io';
 
 import 'package:attendix/shared/widgets/event_list/event_list_widgets.dart';
@@ -21,7 +22,7 @@ void main() {
   testWidgets('pill shows eye icon and "Nicht eingeladen"', (tester) async {
     await tester.pumpWidget(_wrap(const EventNotInvitedPill()));
     expect(find.text('Nicht eingeladen'), findsOneWidget);
-    expect(find.byIcon(Icons.visibility_outlined), findsOneWidget);
+    expect(find.byIcon(AppIcons.visibilityOutlined), findsOneWidget);
   });
 
   testWidgets('EventRow notInvited: grey background, dashed tile, grey title', (tester) async {

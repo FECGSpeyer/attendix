@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -87,19 +88,19 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
               children: [
                 // INTEGRATION: queue controls (Ionic audio player: previous/next)
                 if (queue.hasQueue) ...[
-                  iconButton(Icons.skip_previous, 22, primary, () => _skip(context, svc.previous),
+                  iconButton(AppIcons.skipPrevious, 22, primary, () => _skip(context, svc.previous),
                       tooltip: context.l10n.commonBack),
                   const SizedBox(width: 4),
                 ],
                 iconButton(
-                  state.isPlaying ? Icons.pause_circle_filled : Icons.play_circle_fill,
+                  state.isPlaying ? AppIcons.pauseCircleFilled : AppIcons.playCircleFill,
                   36,
                   primary,
                   svc.togglePlayPause,
                 ),
                 if (queue.hasQueue) ...[
                   const SizedBox(width: 4),
-                  iconButton(Icons.skip_next, 22, primary, queue.hasNext ? () => _skip(context, svc.next) : null,
+                  iconButton(AppIcons.skipNext, 22, primary, queue.hasNext ? () => _skip(context, svc.next) : null,
                       tooltip: context.l10n.commonNext),
                 ],
                 const SizedBox(width: 10),
@@ -134,7 +135,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
                               ),
                             ],
                             const SizedBox(width: 8),
-                            iconButton(Icons.cancel, 18, medium, svc.stop,
+                            iconButton(AppIcons.cancel, 18, medium, svc.stop,
                                 tooltip: context.l10n.commonClose),
                           ],
                         ),

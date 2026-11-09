@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -269,7 +270,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
             title: context.l10n.adminEvaluation,
             children: [
               SettingsListTile(
-                icon: Icons.analytics_outlined,
+                icon: AppIcons.analyticsOutlined,
                 title: context.l10n.usageTitle,
                 onTap: () => context.push('/dashboard'),
               ),
@@ -303,7 +304,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
           ),
           SettingsListSection(
             title: context.l10n.adminChurchesCount(churches.length),
-            icon: Icons.home_outlined,
+            icon: AppIcons.homeOutlined,
             children: churchesAsync.isLoading && churches.isEmpty
                 ? const [
                     Padding(
@@ -319,7 +320,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                             ? AppColors.warning
                             : AppColors.warning.withAlpha((0.25 * 255).round()),
                         child: ListTile(
-                          leading: const Icon(Icons.warning_amber_outlined, color: Colors.black),
+                          leading: Icon(AppIcons.warningAmberOutlined, color: Colors.black),
                           title: Text(
                             context.l10n.adminDuplicateGroups(duplicates.length),
                             style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
@@ -343,7 +344,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                                     foregroundColor: AppColors.warningDark,
                                     side: const BorderSide(color: AppColors.warning),
                                   ),
-                                  icon: const Icon(Icons.merge_type, size: 16),
+                                  icon: Icon(AppIcons.mergeType, size: 16),
                                   label: IonButtonLabel(context.l10n.adminMerge),
                                   onPressed: saving
                                       ? null
@@ -359,7 +360,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                           ),
                         ),
                       SettingsListTile(
-                        icon: Icons.merge_type,
+                        icon: AppIcons.mergeType,
                         color: AppColors.warningDark,
                         detail: false,
                         title: context.l10n.adminMergeAllDuplicates,
@@ -374,7 +375,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                           ListTile(
                             title: Text(context.l10n.adminShowAllChurches),
                             trailing: Icon(
-                              _showAllChurches ? Icons.expand_less : Icons.expand_more,
+                              _showAllChurches ? AppIcons.expandLess : AppIcons.expandMore,
                               color: ios ? IonIos.text(context).withValues(alpha: 0.5) : null,
                             ),
                             onTap: () => setState(() => _showAllChurches = !_showAllChurches),
@@ -384,19 +385,19 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                               Material(
                                 color: ios ? IonIos.itemBackground(context) : Colors.transparent,
                                 child: ListTile(
-                                  leading: const Icon(Icons.home_outlined, color: AppColors.medium),
+                                  leading: Icon(AppIcons.homeOutlined, color: AppColors.medium),
                                   title: Text(c.name),
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       IconButton(
                                         tooltip: context.l10n.adminRenameChurch,
-                                        icon: const Icon(Icons.edit_outlined, color: AppColors.medium),
+                                        icon: Icon(AppIcons.editOutlined, color: AppColors.medium),
                                         onPressed: saving ? null : () => _rename(c),
                                       ),
                                       IconButton(
                                         tooltip: context.l10n.adminMerge,
-                                        icon: const Icon(Icons.merge_type, color: AppColors.medium),
+                                        icon: Icon(AppIcons.mergeType, color: AppColors.medium),
                                         onPressed: saving ? null : () => _mergeManual(c, churches),
                                       ),
                                     ],
@@ -407,7 +408,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
                       ),
                     ),
                     SettingsListTile(
-                      icon: Icons.add,
+                      icon: AppIcons.add,
                       color: AppColors.primary,
                       detail: false,
                       title: context.l10n.adminAddChurch,
@@ -479,8 +480,8 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
       context,
       title: c.name,
       actions: [
-        AppActionSheetAction(value: 0, icon: Icons.edit_outlined, label: l10n.adminRenameChurch),
-        AppActionSheetAction(value: 1, icon: Icons.merge_type, label: l10n.adminMerge),
+        AppActionSheetAction(value: 0, icon: AppIcons.editOutlined, label: l10n.adminRenameChurch),
+        AppActionSheetAction(value: 1, icon: AppIcons.mergeType, label: l10n.adminMerge),
       ],
     );
     if (!mounted) return;

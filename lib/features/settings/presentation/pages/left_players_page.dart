@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -72,7 +73,7 @@ class LeftPlayersPage extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: AppColors.danger),
+              Icon(AppIcons.errorOutline, size: 64, color: AppColors.danger),
               const SizedBox(height: AppDimensions.paddingM),
               Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e))),
               const SizedBox(height: AppDimensions.paddingM),
@@ -211,7 +212,7 @@ class _LeftPlayerItem extends StatelessWidget {
           ? null
           : Text(context.l10n.settingsLeftOn(_formatDate(player.left!))),
       trailing: IconButton(
-        icon: const Icon(Icons.restore, color: AppColors.success),
+        icon: Icon(AppIcons.restore, color: AppColors.success),
         tooltip: context.l10n.signoutReactivate,
         onPressed: onReactivate,
       ),

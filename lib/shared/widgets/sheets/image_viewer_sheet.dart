@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import '../../../l10n/l10n.dart';
 import '../adaptive/adaptive.dart';
@@ -249,7 +250,7 @@ class _ImageViewerSheetState extends State<ImageViewerSheet>
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.broken_image_outlined,
+                                  Icon(AppIcons.brokenImageOutlined,
                                       size: 64, color: Colors.white70),
                                   const SizedBox(height: 12),
                                   Text(
@@ -302,7 +303,7 @@ class _ImageViewerSheetState extends State<ImageViewerSheet>
                         ),
                         IconButton(
                           tooltip: context.l10n.commonClose,
-                          icon: const Icon(Icons.close, color: Colors.white),
+                          icon: Icon(AppIcons.close, color: Colors.white),
                           onPressed: () => Navigator.of(context).maybePop(),
                         ),
                       ],
@@ -330,7 +331,7 @@ class _ImageViewerSheetState extends State<ImageViewerSheet>
                     children: [
                       IconButton(
                         tooltip: context.l10n.imageViewerZoomOut,
-                        icon: const Icon(Icons.remove, color: Colors.white),
+                        icon: Icon(AppIcons.remove, color: Colors.white),
                         onPressed: _scale > _minScale + 0.01 ? () => _zoomBy(1 / 1.5) : null,
                       ),
                       // MEDIA_REALTIME: Ionic zoom-value button
@@ -356,7 +357,7 @@ class _ImageViewerSheetState extends State<ImageViewerSheet>
                       ),
                       IconButton(
                         tooltip: context.l10n.imageViewerZoomIn,
-                        icon: const Icon(Icons.add, color: Colors.white),
+                        icon: Icon(AppIcons.add, color: Colors.white),
                         onPressed: _scale < _maxScale - 0.01 ? () => _zoomBy(1.5) : null,
                       ),
                     ],

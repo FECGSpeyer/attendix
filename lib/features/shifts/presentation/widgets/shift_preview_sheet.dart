@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../data/models/shift/shift_instance.dart';
@@ -113,7 +114,7 @@ class ShiftPreviewSheet extends StatelessWidget {
           primary: false,
           actions: [
             IconButton(
-              icon: const Icon(Icons.close),
+              icon: Icon(AppIcons.close),
               tooltip: context.l10n.commonClose,
               onPressed: () => Navigator.pop(context),
             ),

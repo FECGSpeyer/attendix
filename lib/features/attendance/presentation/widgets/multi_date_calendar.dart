@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -377,7 +378,7 @@ class MultiDateCalendarDialog extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                    icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],

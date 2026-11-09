@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -92,7 +93,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
     if (count == 0) return null;
     return EventChip(
       label: context.l10n.attendanceSongsChip(count),
-      icon: Icons.music_note_outlined,
+      icon: AppIcons.musicNoteOutlined,
       onTap: () => _openSongs(g),
     );
   }
@@ -115,19 +116,19 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
         if (g.hasPlan)
           EventChip(
             label: context.l10n.signoutRunSheet,
-            icon: Icons.description_outlined,
+            icon: AppIcons.descriptionOutlined,
             onTap: () => _showPlanViewer(g),
           ),
         if (g.description != null && g.description!.isNotEmpty)
           EventChip(
             label: context.l10n.signoutInfos,
-            icon: Icons.info_outline,
+            icon: AppIcons.infoOutline,
             onTap: () => showEventDescriptionSheet(context, g.description!),
           ),
         if (g.attachmentUrl != null && g.attachmentUrl!.isNotEmpty)
           EventChip(
             label: context.l10n.selfServiceAttachment,
-            icon: Icons.attach_file,
+            icon: AppIcons.attachFile,
             onTap: () => openEventAttachment(g.attachmentUrl!),
           ),
       ];
@@ -204,7 +205,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.family_restroom, size: 64, color: AppColors.medium),
+                    Icon(AppIcons.familyRestroom, size: 64, color: AppColors.medium),
                     const SizedBox(height: 12),
                     Text(context.l10n.selfServiceFlutterNoKids),
                     const SizedBox(height: 4),
@@ -429,13 +430,13 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
       message: _meta(group, withDate: true),
       cancelDestructive: true,
       actions: [
-        if (showSignIn) AppActionSheetAction(value: 'signin', icon: Icons.check_circle_outline, label: context.l10n.signoutSignIn),
-        if (showSignOut) AppActionSheetAction(value: 'signout', icon: Icons.cancel_outlined, label: context.l10n.signoutSignOut),
-        if (showLate) AppActionSheetAction(value: 'late', icon: Icons.schedule, label: context.l10n.signoutEnterLate),
-        if (group.sharePlan && group.plan != null) AppActionSheetAction(value: 'plan', icon: Icons.description_outlined, label: context.l10n.signoutShowRunSheet),
-        if (group.description?.isNotEmpty ?? false) AppActionSheetAction(value: 'description', icon: Icons.info_outline, label: context.l10n.signoutShowDescription),
-        if (group.attachmentUrl?.isNotEmpty ?? false) AppActionSheetAction(value: 'attachment', icon: Icons.attach_file, label: context.l10n.signoutOpenAttachment),
-        if (group.place?.isNotEmpty ?? false) AppActionSheetAction(value: 'navigation', icon: Icons.navigation_outlined, label: context.l10n.signoutOpenNavigation),
+        if (showSignIn) AppActionSheetAction(value: 'signin', icon: AppIcons.checkCircleOutline, label: context.l10n.signoutSignIn),
+        if (showSignOut) AppActionSheetAction(value: 'signout', icon: AppIcons.cancelOutlined, label: context.l10n.signoutSignOut),
+        if (showLate) AppActionSheetAction(value: 'late', icon: AppIcons.schedule, label: context.l10n.signoutEnterLate),
+        if (group.sharePlan && group.plan != null) AppActionSheetAction(value: 'plan', icon: AppIcons.descriptionOutlined, label: context.l10n.signoutShowRunSheet),
+        if (group.description?.isNotEmpty ?? false) AppActionSheetAction(value: 'description', icon: AppIcons.infoOutline, label: context.l10n.signoutShowDescription),
+        if (group.attachmentUrl?.isNotEmpty ?? false) AppActionSheetAction(value: 'attachment', icon: AppIcons.attachFile, label: context.l10n.signoutOpenAttachment),
+        if (group.place?.isNotEmpty ?? false) AppActionSheetAction(value: 'navigation', icon: AppIcons.navigationOutlined, label: context.l10n.signoutOpenNavigation),
       ],
     );
     if (action == null || !mounted) return;
@@ -541,7 +542,7 @@ class _ErrorView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.error_outline, size: 48, color: AppColors.danger),
+          Icon(AppIcons.errorOutline, size: 48, color: AppColors.danger),
           const SizedBox(height: 8),
           Text(context.l10n.signoutFlutterError(friendlyErrorMessage(error)), textAlign: TextAlign.center),
           TextButton(onPressed: onRetry, child: IonButtonLabel(context.l10n.messagesRetry)),

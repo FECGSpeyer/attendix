@@ -1,7 +1,7 @@
 
-import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/redesign/rd_palette.dart';
@@ -183,12 +183,12 @@ class IonDetailChevron extends StatelessWidget {
   Widget build(BuildContext context) {
     // Beta-Skin: the chevron of the new design's list rows.
     final rd = context.rdSkin;
-    if (rd != null) return Icon(Icons.chevron_right, size: 20, color: rd.text2);
+    if (rd != null) return Icon(AppIcons.chevronRight, size: 20, color: rd.text2);
     return _ionChevron(context);
   }
 
   Widget _ionChevron(BuildContext context) => Icon(
-        CupertinoIcons.chevron_forward,
+        AppIcons.cupertinoChevronForward,
         size: IonIos.detailIconSize,
         color: IonIos.detailIconColor(Theme.of(context).brightness),
       );
@@ -431,9 +431,9 @@ class IonSearchIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rd = context.rdSkin;
-    if (rd != null) return Icon(Icons.search, size: 20, color: rd.text2);
+    if (rd != null) return Icon(AppIcons.search, size: 20, color: rd.text2);
     return Icon(
-      CupertinoIcons.search,
+      AppIcons.cupertinoSearch,
       size: size,
       color: Theme.of(context).colorScheme.onSurface,
     );
@@ -627,7 +627,7 @@ class IonSearchbar extends StatelessWidget {
                     onTap: _clear,
                     child: IonSearchbarGlass(
                       width: height,
-                      child: Icon(Icons.close, size: 22, color: text),
+                      child: Icon(AppIcons.close, size: 22, color: text),
                     ),
                   ),
                 ),

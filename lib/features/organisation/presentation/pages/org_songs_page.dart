@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/debug_providers.dart';
@@ -317,7 +318,7 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> with OrgSongsLogic 
             runSpacing: 4,
             children: [
               FilterChip(
-                avatar: const Icon(Icons.attach_file, size: 16),
+                avatar: Icon(AppIcons.attachFile, size: 16),
                 label: Text(context.l10n.orgSongsOnlyWithFiles),
                 selected: onlyWithFiles,
                 onSelected: (_) => toggleOnlyWithFiles(),
@@ -365,7 +366,7 @@ class _OrgSongsPageState extends ConsumerState<OrgSongsPage> with OrgSongsLogic 
                             style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
                           ),
                         ),
-                      const Icon(Icons.copy_outlined, color: AppColors.medium, size: 20),
+                      Icon(AppIcons.copyOutlined, color: AppColors.medium, size: 20),
                     ],
                   ),
                   onTap: () => openCopy(song),

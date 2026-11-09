@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -334,7 +335,7 @@ class _IosAlertCheckbox extends StatelessWidget {
                     ),
                   ),
                   child: value
-                      ? const Icon(Icons.check, size: 14, color: Colors.white)
+                      ? Icon(AppIcons.check, size: 14, color: Colors.white)
                       : null,
                 ),
                 const SizedBox(width: 6),

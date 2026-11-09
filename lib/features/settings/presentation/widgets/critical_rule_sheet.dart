@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -146,7 +147,7 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 IconButton(
-                  icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                  icon: Icon(AppIcons.close, semanticLabel: context.l10n.commonClose),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],

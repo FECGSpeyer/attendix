@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -281,7 +282,7 @@ class IonDetailIcon extends StatelessWidget {
   Widget build(BuildContext context) => isIonIos(context)
       ? const ios27.IonDetailChevron()
       // MD_SWEEP: md detail icon – 20px, text colour at .25.
-      : Icon(Icons.chevron_right,
+      : Icon(AppIcons.chevronRight,
           size: 20,
           color: IonMd.text(Theme.of(context).brightness)
               .withValues(alpha: 0.25));

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/attendance/attendance.dart';
@@ -142,7 +143,7 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
           ),
         ],
       ),
-      trailing: expanded == null ? null : Icon(expanded ? Icons.expand_less : Icons.expand_more),
+      trailing: expanded == null ? null : Icon(expanded ? AppIcons.expandLess : AppIcons.expandMore),
     );
   }
 
@@ -201,7 +202,7 @@ class _AddPersonsViewState extends State<_AddPersonsView> {
                 width: double.infinity,
                 child: FilledButton.icon(
                   onPressed: count == 0 ? null : () => Navigator.of(context).pop(_selected.toList()),
-                  icon: const Icon(Icons.person_add_alt_1),
+                  icon: Icon(AppIcons.personAddAlt1),
                   label: IonButtonLabel(count == 0
                       ? context.l10n.attendanceChoosePeople
                       : context.l10n.attendanceAddPersonsCount(count)),

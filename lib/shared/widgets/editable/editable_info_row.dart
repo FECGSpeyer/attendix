@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
@@ -92,10 +93,10 @@ class EditableInfoRow extends StatelessWidget {
               ),
             ),
             if (onTap != null && !editable)
-              const Icon(Icons.chevron_right, color: AppColors.medium),
+              Icon(AppIcons.chevronRight, color: AppColors.medium),
             if (editable)
               Icon(
-                Icons.edit,
+                AppIcons.edit,
                 size: 18,
                 color: AppColors.primary.withValues(alpha: 0.6),
               ),

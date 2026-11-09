@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../l10n/l10n.dart';
 import '../../shared/widgets/adaptive/adaptive_platform.dart' show useIosLook;
@@ -20,7 +21,7 @@ class ToastHelper {
       context,
       message,
       backgroundColor: Colors.green,
-      icon: Icons.check_circle,
+      icon: AppIcons.checkCircle,
     );
   }
 
@@ -37,7 +38,7 @@ class ToastHelper {
       context,
       message,
       backgroundColor: Colors.red,
-      icon: Icons.error,
+      icon: AppIcons.error,
     );
   }
 
@@ -46,7 +47,7 @@ class ToastHelper {
     _showToast(
       context,
       message,
-      icon: Icons.info,
+      icon: AppIcons.info,
     );
   }
 
@@ -56,7 +57,7 @@ class ToastHelper {
       context,
       message,
       backgroundColor: Colors.orange,
-      icon: Icons.warning,
+      icon: AppIcons.warning,
     );
   }
 
@@ -81,7 +82,7 @@ class ToastHelper {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.system_update, color: Colors.white),
+            Icon(AppIcons.systemUpdate, color: Colors.white),
             const SizedBox(width: 12),
             Expanded(
               child: Text(

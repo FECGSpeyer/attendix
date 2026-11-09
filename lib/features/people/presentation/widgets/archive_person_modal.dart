@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -71,14 +72,14 @@ class _ArchivePersonModalState extends State<_ArchivePersonModal> {
         actions: [
           IconButton(
             tooltip: l10n.commonClose,
-            icon: const Icon(Icons.close),
+            icon: Icon(AppIcons.close),
             onPressed: () => Navigator.pop(context),
           ),
         ],
       ),
       floatingActionButton: IonFabButton(
         tooltip: l10n.peopleArchive,
-        icon: Icons.archive_outlined,
+        icon: AppIcons.archiveOutlined,
         onPressed: () => Navigator.pop<ArchiveInput>(context, (
           date: _date.toUtc().toIso8601String(),
           note: _noteController.text,
@@ -92,7 +93,7 @@ class _ArchivePersonModalState extends State<_ArchivePersonModal> {
               contentPadding: EdgeInsets.zero,
               title: Text(l10n.peopleLeaveDate),
               subtitle: Text(DateFormat(dateFmt()).format(_date)),
-              trailing: const Icon(Icons.calendar_today),
+              trailing: Icon(AppIcons.calendarToday),
               onTap: _pickDate,
             ),
             TextField(

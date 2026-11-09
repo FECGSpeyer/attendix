@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -137,7 +138,7 @@ class TeachersListPage extends ConsumerWidget {
             SliverFillRemaining(
               hasScrollBody: false,
               child: IonNoData(
-                icon: Icons.error_outline,
+                icon: AppIcons.errorOutline,
                 label: context.l10n.teachersFlutterLoadFailed,
                 actions: [
                   (
@@ -392,7 +393,7 @@ class _TeacherFormState extends State<_TeacherForm> {
             contentPadding: EdgeInsets.zero,
             title: Text(context.l10n.teachersInstruments),
             subtitle: names.isEmpty ? null : Text(names),
-            trailing: const Icon(Icons.arrow_drop_down),
+            trailing: Icon(AppIcons.arrowDropDown),
             onTap: _pickInstruments,
           ),
           SwitchListTile.adaptive(
@@ -461,7 +462,7 @@ class _TeacherEditPage extends ConsumerWidget {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(AppIcons.close),
             tooltip: context.l10n.commonClose,
             onPressed: () => Navigator.pop(context),
           ),

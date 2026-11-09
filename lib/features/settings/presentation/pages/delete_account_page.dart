@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -209,7 +210,7 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
+          icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: Text(context.l10n.deleteAccountTitle),
@@ -229,7 +230,7 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.warning_amber_rounded,
+                  Icon(AppIcons.warningAmberRounded,
                       color: Colors.white, size: 32),
                   const SizedBox(height: 8),
                   Text(
@@ -318,7 +319,7 @@ class _DeleteAccountPageState extends ConsumerState<DeleteAccountPage> {
                     child: AppSpinner(
                         strokeWidth: 2, color: Colors.white),
                   )
-                : const Icon(Icons.delete_outline),
+                : Icon(AppIcons.deleteOutline),
             label: IonButtonLabel(
                 isDeleting ? context.l10n.deleteAccountDeleting : context.l10n.deleteAccountDeleteForever),
           ),

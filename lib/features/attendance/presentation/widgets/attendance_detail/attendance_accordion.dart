@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
@@ -97,7 +98,7 @@ class _AttendanceAccordionState extends State<AttendanceAccordion> {
             trailing: AnimatedRotation(
               turns: _expanded ? 0.5 : 0,
               duration: const Duration(milliseconds: 200),
-              child: Icon(Icons.expand_more, size: 22, color: rd.text2),
+              child: Icon(AppIcons.expandMore, size: 22, color: rd.text2),
             ),
             title: DefaultTextStyle.merge(
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),

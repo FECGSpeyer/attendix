@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/profile_providers.dart';
@@ -141,7 +142,7 @@ class _NoData extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.people_outline, size: 48, color: AppColors.medium.withValues(alpha: 0.5)),
+          Icon(AppIcons.peopleOutline, size: 48, color: AppColors.medium.withValues(alpha: 0.5)),
           const SizedBox(height: AppDimensions.paddingM),
           Text(text, textAlign: TextAlign.center, style: const TextStyle(color: AppColors.medium, fontSize: 15.2)),
         ],

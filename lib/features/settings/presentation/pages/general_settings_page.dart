@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -426,7 +427,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
         title: IonCondenseTitle(context.l10n.settingsSettings, collapsed: collapsed),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
+          icon: Icon(AppIcons.arrowBack, semanticLabel: context.l10n.commonBack),
           onPressed: () {
             if (_hasChanges) {
               _showUnsavedChangesDialog();
@@ -448,7 +449,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                       height: 22,
                       child: AppSpinner(strokeWidth: 2, color: Colors.white),
                     )
-                  : const Icon(Icons.save_outlined),
+                  : Icon(AppIcons.saveOutlined),
             ),
       body: _isLoading
           ? const Center(child: AppSpinner())
@@ -504,7 +505,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                             ? DateFormat(dateFmt()).format(_seasonStart!)
                             : context.l10n.personNotSet,
                         helper: context.l10n.generalSettingsSeasonHelper,
-                        trailing: ionIsIos(context) ? null : const Icon(Icons.calendar_today_outlined),
+                        trailing: ionIsIos(context) ? null : Icon(AppIcons.calendarTodayOutlined),
                         onTap: _selectSeasonStart,
                       ),
                       SettingsListTile(
@@ -599,7 +600,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                         Container(
                           color: AppColors.warning,
                           child: ListTile(
-                            leading: const Icon(Icons.warning_amber_outlined, color: Colors.black87),
+                            leading: Icon(AppIcons.warningAmberOutlined, color: Colors.black87),
                             title: Text(
                               context.l10n.generalSettingsNoGroupsYet,
                               style: TextStyle(color: Colors.black87),
@@ -735,7 +736,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                     title: context.l10n.generalSettingsCriticalRules,
                     icons: false,
                     headerAction: IconButton(
-                      icon: const Icon(Icons.add, color: AppColors.primary),
+                      icon: Icon(AppIcons.add, color: AppColors.primary),
                       tooltip: context.l10n.generalSettingsNewRule,
                       onPressed: _showAddCriticalRuleSheet,
                     ),

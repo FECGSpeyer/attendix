@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
@@ -60,7 +61,7 @@ class ErrorStateView extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                icon ?? (offline ? Icons.cloud_off_outlined : Icons.error_outline),
+                icon ?? (offline ? AppIcons.cloudOffOutlined : AppIcons.errorOutline),
                 size: 56,
                 color: offline ? AppColors.medium : AppColors.danger,
               ),
@@ -86,7 +87,7 @@ class ErrorStateView extends StatelessWidget {
                 const SizedBox(height: AppDimensions.paddingL),
                 FilledButton.icon(
                   onPressed: onRetry,
-                  icon: const Icon(Icons.refresh),
+                  icon: Icon(AppIcons.refresh),
                   label: IonButtonLabel(l10n.messagesRetry),
                 ),
               ],

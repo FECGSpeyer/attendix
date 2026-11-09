@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/redesign_providers.dart';
@@ -214,7 +215,7 @@ class _DutyAssignSheetState extends State<_DutyAssignSheet> {
           automaticallyImplyLeading: false,
           primary: false,
           leading: IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(AppIcons.close),
             tooltip: context.l10n.commonCancel,
             onPressed: () => Navigator.of(context).pop(),
           ),

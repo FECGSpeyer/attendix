@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:attendix/core/theme/app_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -187,7 +188,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
               ),
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.info_outline),
+              icon: Icon(AppIcons.infoOutline),
               color: AppColors.primary,
               tooltip: context.l10n.attListEventTypes,
               onPressed: _showHolidayInfo,
@@ -217,9 +218,9 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                         child: AppSpinner(strokeWidth: 2),
                       ),
                     ),
-                    error: (e, _) => const Align(
+                    error: (e, _) => Align(
                       alignment: Alignment.centerRight,
-                      child: Icon(Icons.error_outline, color: AppColors.danger),
+                      child: Icon(AppIcons.errorOutline, color: AppColors.danger),
                     ),
                     data: (types) => DropdownButtonHideUnderline(
                       child: DropdownButton<AttendanceType>(
@@ -319,7 +320,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.remove),
+                      icon: Icon(AppIcons.remove),
                       tooltip: context.l10n.attListLess,
                       onPressed: wd.required <= 1
                           ? null
@@ -328,7 +329,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                     ),
                     Text('${wd.required}'),
                     IconButton(
-                      icon: const Icon(Icons.add),
+                      icon: Icon(AppIcons.add),
                       tooltip: context.l10n.attListMore,
                       onPressed: () => setState(
                           () => _dutyRequiredByWeekday[wd.weekday] = wd.required + 1),
@@ -375,7 +376,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
               context.l10n.attListSongs,
               trailing: [
                 IconButton(
-                  icon: const Icon(Icons.add, size: 24),
+                  icon: Icon(AppIcons.add, size: 24),
                   tooltip: context.l10n.attListAddSongs,
                   visualDensity: VisualDensity.compact,
                   onPressed: _addSongs,
@@ -397,7 +398,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                 ),
                 child: Tooltip(
                   message: context.l10n.attListAddSongs,
-                  child: const Icon(Icons.add, size: 18),
+                  child: Icon(AppIcons.add, size: 18),
                 ),
               ),
             ),
@@ -567,9 +568,9 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
         alignment: Alignment.centerRight,
         child: SizedBox(width: 16, height: 16, child: AppSpinner(strokeWidth: 2)),
       ),
-      error: (e, _) => const Align(
+      error: (e, _) => Align(
         alignment: Alignment.centerRight,
-        child: Icon(Icons.error_outline, color: AppColors.danger),
+        child: Icon(AppIcons.errorOutline, color: AppColors.danger),
       ),
       data: (_) => Text(
         selected?.name ?? context.l10n.attendanceFlutterNoEventTypes,
@@ -637,7 +638,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                           ),
                         ),
                         if (type == picked)
-                          const Icon(Icons.check, size: 20, color: AppColors.primary),
+                          Icon(AppIcons.check, size: 20, color: AppColors.primary),
                       ],
                     ),
                   ),
@@ -725,7 +726,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   // then Ferien and Feiertage.
   void _showHolidayInfo() {
     final types = ref.read(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
-    Widget dot(Color color) => Icon(Icons.circle, size: 18, color: color);
+    Widget dot(Color color) => Icon(AppIcons.circle, size: 18, color: color);
     Widget header(String text) => Padding(
           padding: const EdgeInsets.fromLTRB(4, 16, 4, 4),
           child: Text(text, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
