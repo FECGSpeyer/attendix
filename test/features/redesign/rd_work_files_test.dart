@@ -482,6 +482,22 @@ void main() {
       expect(find.text('klar.pdf'), findsOneWidget);
     });
 
+    testWidgets('Umschalt- and Strg-click select without "Mehrere auswählen"', (tester) async {
+      _desktop(tester);
+      await tester.pumpWidget(_app(Role.admin, _FakeFiles()));
+      await _settle(tester);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+      await tester.tap(find.text('klar.pdf'));
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+      await _settle(tester);
+      expect(find.text('1 ausgewählt'), findsOneWidget);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.tap(find.text('floete.pdf'));
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await _settle(tester);
+      expect(find.text('2 ausgewählt'), findsOneWidget);
+    });
+
     testWidgets('keys: select all, delete with Rückgängig, ↓ and Entf', (tester) async {
       _desktop(tester);
       final files = _FakeFiles();

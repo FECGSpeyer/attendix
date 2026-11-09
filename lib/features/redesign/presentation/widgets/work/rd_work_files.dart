@@ -428,7 +428,7 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
   void _tapRow(SongFile file) {
     final order = _current.map((f) => f.url).toList();
     final shift = HardwareKeyboard.instance.isShiftPressed;
-    if (!_selecting && !_modPressed && !(shift && _anchor != null)) {
+    if (!_selecting && !_modPressed && !shift) {
       setState(() {
         _cursor = file.url;
         _anchor = file.url;
