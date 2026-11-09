@@ -10,7 +10,8 @@ Konten mit (Aufbau, Einrichtung und Sicherheit in werkbank unter `docs/sol-postb
 
 1. Einen PR-Kommentar schreiben, der mit `Sol-Auftrag` beginnt (erste Zeile genau so). Danach Umfang,
    Schwerpunkte und was Sol besonders prüfen soll. Optionale Zeilen:
-   - `Effort: high` für Delta-Reviews, Doku und kleine Mechanik (Standard ist `xhigh`).
+   - Standard-Effort ist `high`. `Effort: xhigh` nur für ein riskantes Erstreview (Rollen, Mandanten,
+     Datenbank); xhigh verbraucht das Kontingent deutlich schneller (Leon, 09.11.2026).
    - `Konto: Olli` oder `Konto: Leon` erzwingt ein Konto (sonst Olli zuerst, Leon als Ersatz).
    - `Modell: Astra` lässt GPT Astra (`gpt-6-astra`) statt Sol prüfen, `Modell: Sol` ist der Standard
      (`gpt-6.1-sol`). Astra verbraucht mehr Kontingent, also nur gezielt nutzen. Der Kommentarkopf nennt das
@@ -20,9 +21,15 @@ Konten mit (Aufbau, Einrichtung und Sicherheit in werkbank unter `docs/sol-postb
    `Sol-Review (<Modell>, <Effort>, <Konto>) zu Kopf <sha> …`, die erste Zeile des Berichts ist
    `Urteil: freigeben` oder `Urteil: nicht freigeben`, die letzte `Zahlen: <blockierend>/<wichtig>/<Hinweise>`.
    Das Label wechselt dann auf `review:sol-done`.
-4. Delta-Review nach Korrekturen: pushen, neuen `Sol-Auftrag` (mit `Effort: high`) schreiben und
-   `review:sol` wieder setzen. Ein Push oder neuer Auftrag während eines Laufs lässt das Label stehen;
-   der nächste Durchlauf prüft dann den neuen Kopf.
+4. Folgereview nach Korrekturen: pushen, neuen `Sol-Auftrag` mit der Zeile `Seit: <sha>` (der Kopf aus
+   dem letzten `Sol-Review`) schreiben und `review:sol` wieder setzen. Dann prüft Sol nur die eigenen
+   Commits seit diesem Kopf (ohne master-Merges) und liest die Leitfäden nicht erneut. Ohne `Seit:`
+   (oder nach Rebase/Force-Push) ist es ein volles Review über den ganzen PR. Ein Push oder neuer
+   Auftrag während eines Laufs lässt das Label stehen; der nächste Durchlauf prüft dann den neuen Kopf.
+5. **Höchstens zwei Sol-Runden je PR** (Leon, 09.11.2026). Eine zweite Runde nur nach Befunden
+   „blockierend“ oder „wichtig“, und nur mit `Seit:`. Danach keine dritte Sol-Runde: die Korrekturen
+   selbst (Opus) prüfen und bei grüner CI mergen. Hinweise aus Runde 2 nur umsetzen, nicht neu
+   beauftragen. Ein reiner master-Merge braucht kein neues Sol-Review.
 
 Was zählt:
 
@@ -31,7 +38,7 @@ Was zählt:
   erfüllen das.
 - Nur PRs aus Branches dieses Repositories, nie aus Forks: Das Repository ist öffentlich, fremder Code
   geht nie an Codex.
-- Sol prüft `git diff origin/master...HEAD` nur lesend und ohne Netz. Er liest `CLAUDE.md`,
+- Sol prüft `git diff origin/master...HEAD` (Folgereview: nur die Commits seit `Seit:`) nur lesend und ohne Netz. Er liest `CLAUDE.md`,
   `.claude/agents/flutter-reviewer.md`, bei Supabase, Auth und Mandanten
   `.claude/agents/security-scanner.md` und bei der Migration `MIGRATION.md`. Tests laufen dabei
   nicht.

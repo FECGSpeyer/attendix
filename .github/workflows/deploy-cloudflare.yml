@@ -4,13 +4,74 @@ on:
   push:
     branches:
       - master
+    # Docs-only changes need no build or deploy.
+    paths-ignore: ['**/*.md', 'docs/**']
   pull_request:
     branches:
       - master
+    paths-ignore: ['**/*.md', 'docs/**']
   workflow_dispatch:
 
+# PR previews (group per PR number): a new push cancels the running preview.
+# master: a running deploy is never cancelled, so the version job below never
+# races itself. GitHub keeps only the newest WAITING run of a group; that is
+# intended: the waiting run checks out the latest master, so it releases all
+# pending fragments and deploys every commit the replaced run would have.
+concurrency:
+  group: deploy-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.ref_name }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
+  version:
+    # Version at merge time: PRs only add changelog/unreleased/*.json; this
+    # job turns all pending fragments on master into one version bump commit
+    # (tool/release/release_version.py). A push with GITHUB_TOKEN starts no
+    # new workflow run, so the build below deploys that commit directly.
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.release.outputs.sha }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Release version from changelog fragments
+        id: release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            git fetch origin master
+            git reset --hard origin/master
+            version=$(python3 tool/release/release_version.py)
+            if [ -z "$version" ]; then
+              echo "No changelog fragments, version unchanged"
+              break
+            fi
+            git add -A pubspec.yaml lib/core/constants/app_constants.dart \
+              assets/version_history.json changelog/unreleased
+            git commit -m "Version $version"
+            if git push origin HEAD:master; then
+              echo "Released $version"
+              break
+            fi
+            if [ "$attempt" = 3 ]; then
+              echo "Push of version $version failed three times" >&2
+              exit 1
+            fi
+          done
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
   build-and-deploy:
+    needs: version
+    # Runs when the version job succeeded or was skipped (PRs, other branches),
+    # and also when it failed: a missing version bump must not stop the
+    # production deploy (the red version job still shows in the run).
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -19,6 +80,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # master: the commit with the new version; otherwise (and when the
+          # version job failed) the default commit.
+          ref: ${{ needs.version.outputs.sha }}
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -51,8 +116,8 @@ jobs:
           DEMO_EMAIL: ${{ secrets.DEMO_EMAIL || secrets.DEMOMAIL }}
           DEMO_PASSWORD: ${{ secrets.DEMO_PASSWORD || secrets.DEMOPASSWORD }}
 
-      - name: Run tests
-        run: flutter test
+      # No `flutter test` here: the CI workflow tests every PR and every
+      # master push in parallel, so this job only builds and deploys.
 
       - name: Build web
         # PWA_OFFLINE: CanvasKit from our own origin instead of gstatic.com,

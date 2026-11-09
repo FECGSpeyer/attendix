@@ -13483,6 +13483,27 @@
   "@rdSettingsUndo": {
     "description": "rdSettings.undo"
   },
+  "rdSidebarGroupsCount": "{count, plural, one {1 Gruppe} other {{count} Gruppen}}",
+  "@rdSidebarGroupsCount": {
+    "description": "rdSidebar.groupsCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdSidebarLead": "Leitung",
+  "@rdSidebarLead": {
+    "description": "rdSidebar.lead"
+  },
+  "rdSidebarOverview": "Übersicht",
+  "@rdSidebarOverview": {
+    "description": "rdSidebar.overview"
+  },
+  "rdSidebarPersonal": "Persönlich",
+  "@rdSidebarPersonal": {
+    "description": "rdSidebar.personal"
+  },
   "rdStatsAge": "Alter",
   "@rdStatsAge": {
     "description": "rdStats.age"
@@ -16186,6 +16207,153 @@
     "description": "redesign.files.shortcutsHelp",
     "placeholders": {
       "mod": {}
+    }
+  },
+  "redesignFilesSibeliusCopySuffix": "(aus Sibelius)",
+  "@redesignFilesSibeliusCopySuffix": {
+    "description": "redesign.files.sibeliusCopySuffix"
+  },
+  "redesignFilesSibeliusEdit": "In Sibelius bearbeiten",
+  "@redesignFilesSibeliusEdit": {
+    "description": "redesign.files.sibeliusEdit"
+  },
+  "redesignFilesSibeliusHint": "Mit dem Attendix-Plugin für Sibelius legst du alle Stimmen als PDF ab, Attendix ersetzt sie dann hier.",
+  "@redesignFilesSibeliusHint": {
+    "description": "redesign.files.sibeliusHint"
+  },
+  "redesignFilesSibeliusHintInstall": "Plugin installieren",
+  "@redesignFilesSibeliusHintInstall": {
+    "description": "redesign.files.sibeliusHintInstall"
+  },
+  "redesignFilesSibeliusHintTitle": "Stimmen direkt aus Sibelius",
+  "@redesignFilesSibeliusHintTitle": {
+    "description": "redesign.files.sibeliusHintTitle"
+  },
+  "redesignFilesSibeliusIntro": "Attendix legt „{name}“ in „Downloads › Attendix“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.",
+  "@redesignFilesSibeliusIntro": {
+    "description": "redesign.files.sibeliusIntro",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignFilesSibeliusIntroTitle": "In Sibelius bearbeiten",
+  "@redesignFilesSibeliusIntroTitle": {
+    "description": "redesign.files.sibeliusIntroTitle"
+  },
+  "redesignFilesSibeliusNoFolder": "Attendix kann nicht in „Downloads“ speichern. Bitte die Mac-App aktualisieren.",
+  "@redesignFilesSibeliusNoFolder": {
+    "description": "redesign.files.sibeliusNoFolder"
+  },
+  "redesignFilesSibeliusNotOpened": "Die Datei ließ sich nicht öffnen. Ist Sibelius installiert? Sie liegt in „Downloads › Attendix“.",
+  "@redesignFilesSibeliusNotOpened": {
+    "description": "redesign.files.sibeliusNotOpened"
+  },
+  "redesignFilesSibeliusOpen": "In Sibelius öffnen",
+  "@redesignFilesSibeliusOpen": {
+    "description": "redesign.files.sibeliusOpen"
+  },
+  "redesignFilesSibeliusOpened": "„{name}“ wird in Sibelius geöffnet. Jedes Speichern dort lädt die Datei hier hoch.",
+  "@redesignFilesSibeliusOpened": {
+    "description": "redesign.files.sibeliusOpened",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignFilesSibeliusPartNew": "neu",
+  "@redesignFilesSibeliusPartNew": {
+    "description": "redesign.files.sibeliusPartNew"
+  },
+  "redesignFilesSibeliusPartNone": "Ohne Zuordnung",
+  "@redesignFilesSibeliusPartNone": {
+    "description": "redesign.files.sibeliusPartNone"
+  },
+  "redesignFilesSibeliusPartReplaces": "ersetzt {files}",
+  "@redesignFilesSibeliusPartReplaces": {
+    "description": "redesign.files.sibeliusPartReplaces",
+    "placeholders": {
+      "files": {}
+    }
+  },
+  "redesignFilesSibeliusPartsApply": "Übernehmen",
+  "@redesignFilesSibeliusPartsApply": {
+    "description": "redesign.files.sibeliusPartsApply"
+  },
+  "redesignFilesSibeliusPartsMessage": "{count, plural, one {1 Stimme aus Sibelius für „{work}“:} other {{count} Stimmen aus Sibelius für „{work}“:}}",
+  "@redesignFilesSibeliusPartsMessage": {
+    "description": "redesign.files.sibeliusPartsMessage",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "work": {}
+    }
+  },
+  "redesignFilesSibeliusPartsTitle": "Neue Stimmen aus Sibelius",
+  "@redesignFilesSibeliusPartsTitle": {
+    "description": "redesign.files.sibeliusPartsTitle"
+  },
+  "redesignFilesSibeliusPlugin": "Sibelius-Plugin installieren",
+  "@redesignFilesSibeliusPlugin": {
+    "description": "redesign.files.sibeliusPlugin"
+  },
+  "redesignFilesSibeliusPluginFailed": "Das Plugin konnte nicht gespeichert werden: {error}",
+  "@redesignFilesSibeliusPluginFailed": {
+    "description": "redesign.files.sibeliusPluginFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "redesignFilesSibeliusPluginInstalled": "Plugin installiert. Starte Sibelius neu, dann findest du es unter „Plug-ins › Attendix“.",
+  "@redesignFilesSibeliusPluginInstalled": {
+    "description": "redesign.files.sibeliusPluginInstalled"
+  },
+  "redesignFilesSibeliusPluginPick": "Ordner „Plugins“ von Sibelius wählen",
+  "@redesignFilesSibeliusPluginPick": {
+    "description": "redesign.files.sibeliusPluginPick"
+  },
+  "redesignFilesSibeliusPluginWrongFolder": "Plugin gespeichert. Sibelius lädt Plugins aber nur aus „Library › Application Support › Avid › Sibelius › Plugins“ in deinem Benutzerordner.",
+  "@redesignFilesSibeliusPluginWrongFolder": {
+    "description": "redesign.files.sibeliusPluginWrongFolder"
+  },
+  "redesignFilesSibeliusSaveFailed": "„{name}“ ist auf dem Mac gespeichert, aber noch nicht in Attendix ({error}). Attendix lädt es von selbst hoch, sobald du wieder online bist.",
+  "@redesignFilesSibeliusSaveFailed": {
+    "description": "redesign.files.sibeliusSaveFailed",
+    "placeholders": {
+      "name": {},
+      "error": {}
+    }
+  },
+  "redesignFilesSibeliusSaved": "„{name}“ aus Sibelius in Attendix gespeichert",
+  "@redesignFilesSibeliusSaved": {
+    "description": "redesign.files.sibeliusSaved",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignFilesSibeliusSavedAsCopy": "„{name}“ wurde in Attendix inzwischen geändert oder gelöscht. Deine Fassung aus Sibelius liegt jetzt als „{copy}“ dabei.",
+  "@redesignFilesSibeliusSavedAsCopy": {
+    "description": "redesign.files.sibeliusSavedAsCopy",
+    "placeholders": {
+      "name": {},
+      "copy": {}
+    }
+  },
+  "redesignFilesSibeliusUploadedLater": "Wieder online: „{name}“ aus Sibelius ist jetzt in Attendix gespeichert",
+  "@redesignFilesSibeliusUploadedLater": {
+    "description": "redesign.files.sibeliusUploadedLater",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignFilesSibeliusWaiting": "Nur auf dem Mac gespeichert. Wird von selbst hochgeladen, sobald du wieder online bist.",
+  "@redesignFilesSibeliusWaiting": {
+    "description": "redesign.files.sibeliusWaiting"
+  },
+  "redesignFilesSibeliusWorkGone": "Das Werk zu „{name}“ gibt es in Attendix nicht mehr. Deine Fassung bleibt auf dem Mac unter „Downloads › Attendix“.",
+  "@redesignFilesSibeliusWorkGone": {
+    "description": "redesign.files.sibeliusWorkGone",
+    "placeholders": {
+      "name": {}
     }
   },
   "redesignFilesTitle": "Noten & Dateien",
@@ -20623,6 +20791,14 @@
   "@redesignWorkPause": {
     "description": "redesign.work.pause"
   },
+  "redesignWorkPausedAt": "Angehalten · {position} von {duration}",
+  "@redesignWorkPausedAt": {
+    "description": "redesign.work.pausedAt",
+    "placeholders": {
+      "position": {},
+      "duration": {}
+    }
+  },
   "redesignWorkPlanned": "Geplant",
   "@redesignWorkPlanned": {
     "description": "redesign.work.planned"
@@ -20630,6 +20806,14 @@
   "redesignWorkPlay": "Abspielen",
   "@redesignWorkPlay": {
     "description": "redesign.work.play"
+  },
+  "redesignWorkPlayingAt": "Läuft · {position} von {duration}",
+  "@redesignWorkPlayingAt": {
+    "description": "redesign.work.playingAt",
+    "placeholders": {
+      "position": {},
+      "duration": {}
+    }
   },
   "redesignWorkPractice": "Übe-Aufnahme · {name}",
   "@redesignWorkPractice": {
