@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.115.1",
+      "date": "9.11.2026",
+      "changes": [
+        "🐛 Beta: Tempo- und Schließen-Knopf im Audio-Player größer und nebeneinander, leichter zu treffen",
+        "✨ Beta: Abspieltempo im Audio-Player von 0,5× bis 1,5× wählbar"
+      ]
+    },
+    {
       "version": "0.115.0",
       "date": "9.11.2026",
       "changes": [
