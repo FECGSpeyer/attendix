@@ -15,6 +15,7 @@ import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosL
 import '../../../../shared/widgets/adaptive/app_toolbar.dart' show ToolbarButtonGroup;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../../shared/widgets/common/escape_to_close.dart';
 
 /// Read-only Ablaufplan with chips for several plans, live mode and export
 /// (Ionic `PlanViewerComponent`). Opened as full screen dialog.
@@ -349,14 +350,16 @@ Future<void> showPlanViewer(
 }) {
   return Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
     fullscreenDialog: true,
-    builder: (_) => PlanViewerPage(
-      attendance: attendance,
-      plan: plan,
-      title: title,
-      defaultLive: defaultLive,
-      onEdit: onEdit,
-      fieldWarning: fieldWarning,
-      songAction: songAction,
+    builder: (_) => EscapeToClose(
+      child: PlanViewerPage(
+        attendance: attendance,
+        plan: plan,
+        title: title,
+        defaultLive: defaultLive,
+        onEdit: onEdit,
+        fieldWarning: fieldWarning,
+        songAction: songAction,
+      ),
     ),
   ));
 }

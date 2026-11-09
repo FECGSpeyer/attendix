@@ -9,6 +9,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/services/pdf_bytes_loader.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/common/escape_to_close.dart';
 
 /// How the PDF viewer shows the pages (remembered on the device; until
 /// switched, tablets start page by page and phones scroll).
@@ -399,9 +400,11 @@ Future<void> showPdfViewer(
   return Navigator.of(context, rootNavigator: true).push(
     MaterialPageRoute<void>(
       fullscreenDialog: true,
-      builder: (context) => PdfViewerPage(
-        url: url,
-        fileName: fileName,
+      builder: (context) => EscapeToClose(
+        child: PdfViewerPage(
+          url: url,
+          fileName: fileName,
+        ),
       ),
     ),
   );

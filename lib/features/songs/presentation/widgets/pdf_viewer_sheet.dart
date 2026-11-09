@@ -8,6 +8,7 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../core/services/native/native_file_service.dart';
 import '../../../../core/services/pdf_bytes_loader.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/common/escape_to_close.dart';
 
 /// Bottom sheet for viewing PDF files in-app
 class PdfViewerSheet extends StatefulWidget {
@@ -81,16 +82,18 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
   void _openFullscreen() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => _FullscreenPdfViewer(
-          pdfController: _pdfController!,
-          fileName: widget.fileName,
-          totalPages: _totalPages,
-          currentPage: _currentPage,
-          onPageChanged: (page) {
-            if (mounted) {
-              setState(() => _currentPage = page);
-            }
-          },
+        builder: (context) => EscapeToClose(
+          child: _FullscreenPdfViewer(
+            pdfController: _pdfController!,
+            fileName: widget.fileName,
+            totalPages: _totalPages,
+            currentPage: _currentPage,
+            onPageChanged: (page) {
+              if (mounted) {
+                setState(() => _currentPage = page);
+              }
+            },
+          ),
         ),
       ),
     );
@@ -499,9 +502,11 @@ Future<void> showPdfViewerSheet(
     useRootNavigator: true, // IOS_SHELL2: above the tab bar
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (context) => PdfViewerSheet(
-      url: url,
-      fileName: fileName,
+    builder: (context) => EscapeToClose(
+      child: PdfViewerSheet(
+        url: url,
+        fileName: fileName,
+      ),
     ),
   );
 }
