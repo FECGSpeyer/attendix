@@ -37,6 +37,12 @@ class RedesignRoutes {
   /// A person of the new design.
   static String person(int id) => '$members/$id';
 
+  /// The current Problemfälle as a list of their own, pushed from "Heute"
+  /// or Verwaltung › Problemfälle so back returns there. [from] names the
+  /// page below for the back link ('heute' / 'verwaltung').
+  static String criticalMembers({String? from}) =>
+      from == null ? '$members/problemfaelle' : '$members/problemfaelle?von=$from';
+
   /// "Neue Person" of the new design (replaces `/people/new` in the Beta).
   static const String personNew = '$members/neu';
 

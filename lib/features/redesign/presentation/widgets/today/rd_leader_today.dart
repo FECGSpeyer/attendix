@@ -16,9 +16,7 @@ import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../data/providers/rd_events_providers.dart' show rdAttendanceDurationDays, rdSortStartOf, rdUnrecordedProvider;
-import '../../../data/providers/rd_members_providers.dart';
 import '../../../data/providers/rd_today_providers.dart';
-import '../../../data/rd_members_logic.dart' show RdMembersFilter;
 import '../manage/rd_manage_list.dart' show rdLoadedValue;
 import '../rd_desktop.dart';
 import '../rd_widgets.dart';
@@ -325,13 +323,8 @@ class _AttentionSection extends ConsumerWidget {
           title: l10n.redesignTodayCritical(critical),
           subtitle: _criticalNames(l10n, criticalPeople),
           trailing: RdCountBadge(critical, tone: RdTone.absent),
-          onTap: () {
-            // UX D3: open Mitglieder already filtered to "Fehlen oft".
-            ref.read(rdMembersCriticalOnlyProvider.notifier).state = true;
-            // The filter works on Aktiv only: leave Pausiert / Wartet.
-            ref.read(rdMembersTabProvider.notifier).state = RdMembersFilter.active;
-            context.go(RedesignRoutes.members);
-          },
+          // The Problemfälle as a pushed list: back returns to "Heute".
+          onTap: () => context.push(RedesignRoutes.criticalMembers(from: 'heute')),
         ),
       if (unrecorded.isNotEmpty)
         RdListRow(

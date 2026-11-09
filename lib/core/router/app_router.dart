@@ -158,6 +158,7 @@ import '../../features/redesign/presentation/pages/rd_role_permissions_page.dart
 import '../../features/redesign/presentation/pages/rd_messages_page.dart';
 import '../../features/redesign/presentation/pages/rd_admins_page.dart';
 import '../../features/redesign/presentation/pages/rd_archive_page.dart';
+import '../../features/redesign/presentation/pages/rd_critical_members_page.dart';
 import '../../features/redesign/presentation/pages/rd_parents_page.dart';
 import '../../features/redesign/presentation/pages/rd_pending_page.dart';
 import '../../features/redesign/presentation/pages/rd_pending_review_page.dart';
@@ -713,6 +714,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: 'neu',
                 name: 'redesignPersonCreate',
                 builder: (context, state) => const RdPersonCreatePage(),
+              ),
+              GoRoute(
+                path: 'problemfaelle',
+                name: 'redesignCriticalMembers',
+                builder: (context, state) => RdCriticalMembersPage(from: state.uri.queryParameters['von']),
               ),
               GoRoute(
                 path: ':id/bearbeiten',
