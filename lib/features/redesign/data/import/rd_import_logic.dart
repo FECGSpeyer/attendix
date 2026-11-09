@@ -1500,7 +1500,7 @@ RdWorkTarget rdNewWorkTarget(RdImportPlan plan, RdImportWork work, [RdImportDeci
 Set<String> rdImportUsedNumbers(RdImportPlan plan, RdImportDecisions d, {String? exceptKey}) => {
       ..._groupNumbers(plan),
       for (final w in plan.works)
-        if (w.key != exceptKey && w.key != 'loose')
+        if (w.key != exceptKey)
           if (rdTargetOf(plan, d, w) case RdWorkTarget(isNew: true, :final int number, :final prefix))
             rdImportNumberKey(prefix ?? plan.newPrefix, number),
     };
@@ -1549,8 +1549,9 @@ enum RdImportNumberProblem { required, invalid, taken }
 /// from its highest number, in the order of the Werke (folder numbers only
 /// sort them). Otherwise the folder numbers still free (the first keeps a
 /// number twice in the folders); the others stay without. Werke found in
-/// Attendix come after all new ones (a number for when one is made new by
-/// hand). Cached per plan and chosen numbers.
+/// Attendix and the files without a Werk folder come after all new ones (a
+/// number for when one is made new by hand). Cached per plan and chosen
+/// numbers.
 final _numbers = Expando<Map<String, Map<String, int?>>>();
 
 /// The last numbers per targets map: every Werk of one build asks with the same.
@@ -1562,7 +1563,7 @@ Map<String, int?> _numbersOf(RdImportPlan plan, RdImportDecisions d) {
   final chosen = <String, String>{
     for (final e in d.targets.entries)
       if (e.value case RdWorkTarget(isNew: true, :final int number, :final prefix))
-        if (e.key != 'loose' && plan.work(e.key) != null) e.key: rdImportNumberKey(prefix ?? plan.newPrefix, number),
+        if (plan.work(e.key) != null) e.key: rdImportNumberKey(prefix ?? plan.newPrefix, number),
   };
   final cache = _numbers[plan] ??= {};
   final signature = (chosen.entries.map((e) => '${e.key}=${e.value}').toList()..sort()).join('\n');
@@ -1582,6 +1583,9 @@ Map<String, int?> _numbersOf(RdImportPlan plan, RdImportDecisions d) {
       if (w.key != 'loose' && !chosen.containsKey(w.key) && w.match.songId == null) w,
     for (final w in plan.works)
       if (w.key != 'loose' && !chosen.containsKey(w.key) && w.match.songId != null) w,
+    // Files without a Werk folder, when made a new Werk by hand.
+    for (final w in plan.works)
+      if (w.key == 'loose' && !chosen.containsKey(w.key)) w,
   ];
   for (final w in works) {
     final n = prefix.isEmpty ? w.number : null;

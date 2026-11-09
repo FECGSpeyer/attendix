@@ -485,6 +485,15 @@ void main() {
       expect([rdTargetOf(plan, byHand, work('Mehr')).number, rdNewWorkTarget(plan, ohneGott, byHand).number], [2, 3]);
       expect(rdImportNumberProblem(plan, byHand, work('Mehr'), '4', prefix: 'T'), RdImportNumberProblem.taken);
       expect(rdImportNumberProblem(plan, byHand, work('Neu'), '4', prefix: 'T'), isNull);
+
+      // Sol: files without a Werk folder made a new Werk count as well.
+      final withLoose = rdBuildImportPlan([_e('Noten/02 Neu/Viola.pdf'), _e('Noten/Viola.pdf')],
+          songs: const [], instruments: _instruments, isChoir: false, newPrefix: 'T');
+      final loose = withLoose.works.firstWhere((w) => w.key == 'loose');
+      final neu = withLoose.works.firstWhere((w) => w.title == 'Neu');
+      expect(rdNewWorkTarget(withLoose, loose).number, 2); // Neu 1
+      final looseNew = RdImportDecisions(targets: {loose.key: RdWorkTarget.create(name: 'Lose', number: 5, prefix: 'T')});
+      expect(rdImportNumberProblem(withLoose, looseNew, neu, '5', prefix: 'T'), RdImportNumberProblem.taken);
     });
 
     test('a number kept while the plan changes (KI off) stays its own', () {
