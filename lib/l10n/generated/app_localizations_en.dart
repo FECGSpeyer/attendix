@@ -12898,6 +12898,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignFilesKeepBoth => 'Keep both';
 
   @override
+  String get redesignFilesMore => 'More actions';
+
+  @override
   String get redesignFilesOpen => 'Open';
 
   @override
@@ -12940,6 +12943,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignFilesSelectAll => 'Select all';
 
   @override
+  String get redesignFilesSelectHint => 'Click files to select them';
+
+  @override
+  String get redesignFilesSelectMany => 'Select multiple';
+
+  @override
+  String get redesignFilesSelectOne => 'Select';
+
+  @override
   String redesignFilesSelected(Object count) {
     return '$count selected';
   }
@@ -12949,7 +12961,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String redesignFilesShortcutsHelp(Object mod) {
-    return '↑ ↓ select · Shift+↑↓ several · Enter open · Space preview/play · Del delete · $mod+U upload · $mod+A all · $mod+D download · $mod+Z undo · F2 rename · ? this overview';
+    return '↑ ↓ move · Shift+↑↓ select several · Enter open · Space preview/play · Del delete · $mod+U upload · $mod+A all · $mod+D download · $mod+Z undo · F2 rename · ? this overview';
   }
 
   @override
@@ -16709,10 +16721,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignWorkPause => 'Pause';
 
   @override
+  String redesignWorkPausedAt(Object position, Object duration) {
+    return 'Paused · $position of $duration';
+  }
+
+  @override
   String get redesignWorkPlanned => 'Planned';
 
   @override
   String get redesignWorkPlay => 'Play';
+
+  @override
+  String redesignWorkPlayingAt(Object position, Object duration) {
+    return 'Playing · $position of $duration';
+  }
 
   @override
   String redesignWorkPractice(Object name) {

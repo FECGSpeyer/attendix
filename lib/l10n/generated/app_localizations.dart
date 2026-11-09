@@ -20950,6 +20950,12 @@ abstract class AppLocalizations {
   /// **'Beide behalten'**
   String get redesignFilesKeepBoth;
 
+  /// redesign.files.more
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Aktionen'**
+  String get redesignFilesMore;
+
   /// redesign.files.open
   ///
   /// In de, this message translates to:
@@ -21010,6 +21016,24 @@ abstract class AppLocalizations {
   /// **'Alle auswählen'**
   String get redesignFilesSelectAll;
 
+  /// redesign.files.selectHint
+  ///
+  /// In de, this message translates to:
+  /// **'Dateien zum Auswählen anklicken'**
+  String get redesignFilesSelectHint;
+
+  /// redesign.files.selectMany
+  ///
+  /// In de, this message translates to:
+  /// **'Mehrere auswählen'**
+  String get redesignFilesSelectMany;
+
+  /// redesign.files.selectOne
+  ///
+  /// In de, this message translates to:
+  /// **'Auswählen'**
+  String get redesignFilesSelectOne;
+
   /// redesign.files.selected
   ///
   /// In de, this message translates to:
@@ -21025,7 +21049,7 @@ abstract class AppLocalizations {
   /// redesign.files.shortcutsHelp
   ///
   /// In de, this message translates to:
-  /// **'↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen · ? diese Übersicht'**
+  /// **'↑ ↓ Zeile wechseln · Umschalt+↑↓ mehrere auswählen · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen · ? diese Übersicht'**
   String redesignFilesShortcutsHelp(Object mod);
 
   /// redesign.files.sibeliusCopySuffix
@@ -26878,6 +26902,12 @@ abstract class AppLocalizations {
   /// **'Anhalten'**
   String get redesignWorkPause;
 
+  /// redesign.work.pausedAt
+  ///
+  /// In de, this message translates to:
+  /// **'Angehalten · {position} von {duration}'**
+  String redesignWorkPausedAt(Object position, Object duration);
+
   /// redesign.work.planned
   ///
   /// In de, this message translates to:
@@ -26889,6 +26919,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Abspielen'**
   String get redesignWorkPlay;
+
+  /// redesign.work.playingAt
+  ///
+  /// In de, this message translates to:
+  /// **'Läuft · {position} von {duration}'**
+  String redesignWorkPlayingAt(Object position, Object duration);
 
   /// redesign.work.practice
   ///

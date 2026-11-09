@@ -67,6 +67,7 @@ Future<void> rdShowWorkFileActions(
   SongFile file,
   List<Group> groups, {
   VoidCallback? beforeDelete,
+  bool withPart = true,
 }) async {
   final l10n = button.l10n;
   final song = data.song;
@@ -99,7 +100,10 @@ Future<void> rdShowWorkFileActions(
           label: l10n.redesignWorkFileTelegram,
         ),
       if (canEdit) ...[
-        AppActionSheetAction(value: _FileAction.part, icon: Icons.swap_horiz, label: l10n.redesignWorkFilePart),
+        // The cards at the top only open/share; the Stimme is changed in
+        // "Noten & Dateien".
+        if (withPart)
+          AppActionSheetAction(value: _FileAction.part, icon: Icons.swap_horiz, label: l10n.redesignWorkFilePart),
         if (rdCanRename(file))
           AppActionSheetAction(
             value: _FileAction.rename,

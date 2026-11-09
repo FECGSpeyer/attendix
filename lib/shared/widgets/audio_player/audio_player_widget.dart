@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import 'package:attendix/core/services/audio_player/audio_player_service.dart';
 import '../../../l10n/l10n.dart';
@@ -12,7 +13,11 @@ import '../../../core/utils/error_message.dart';
 /// `[play/pause] [title]   [close]
 ///                [time]   [slider]   [time]`
 class AudioPlayerWidget extends ConsumerStatefulWidget {
-  const AudioPlayerWidget({super.key});
+  const AudioPlayerWidget({super.key, this.showSpeed = false});
+
+  /// REDESIGN: "0,8×" in the bar (Beta: the only player, the Werk page
+  /// shows the recordings as rows without own controls).
+  final bool showSpeed;
 
   @override
   ConsumerState<AudioPlayerWidget> createState() => _AudioPlayerWidgetState();
@@ -188,6 +193,10 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
                               style: const TextStyle(fontSize: 10, color: medium),
                             ),
                           ),
+                          if (widget.showSpeed) ...[
+                            const SizedBox(width: 8),
+                            _SpeedButton(primary: primary),
+                          ],
                         ],
                       ),
                     ],
@@ -195,6 +204,43 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// REDESIGN: toggles 0,8× / 1× (the same speed for every track).
+class _SpeedButton extends ConsumerWidget {
+  const _SpeedButton({required this.primary});
+
+  final Color primary;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final slow = ref.watch(audioPlaybackSpeedProvider) < 1;
+    final speed = NumberFormat.decimalPattern(currentIntlLocale()).format(slow ? 0.8 : 1);
+    return Semantics(
+      button: true,
+      label: slow ? l10n.redesignWorkNormalSpeed : l10n.redesignWorkSlower,
+      excludeSemantics: true,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => ref.read(audioPlayerServiceProvider.notifier).setSpeed(slow ? 1.0 : 0.8),
+        child: Container(
+          height: 24,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: slow ? primary.withValues(alpha: 0.15) : null,
+            border: Border.all(color: slow ? primary : const Color(0x8092949C)),
+          ),
+          child: Text(
+            '$speed×',
+            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: slow ? primary : null),
           ),
         ),
       ),

@@ -707,6 +707,8 @@
         "pause": "Anhalten",
         "slower": "Langsamer abspielen",
         "normalSpeed": "Normal abspielen",
+        "playingAt": "Läuft · {position} von {duration}",
+        "pausedAt": "Angehalten · {position} von {duration}",
         "lastPlayed": "Zuletzt gespielt",
         "lastSung": "Zuletzt gesungen",
         "planned": "Geplant",
@@ -967,6 +969,10 @@
         "colType": "Typ",
         "selected": "{count} ausgewählt",
         "selectAll": "Alle auswählen",
+        "selectMany": "Mehrere auswählen",
+        "selectOne": "Auswählen",
+        "selectHint": "Dateien zum Auswählen anklicken",
+        "more": "Weitere Aktionen",
         "downloadZip": "Als ZIP laden",
         "downloadAll": "Alle als ZIP",
         "zipPreparing": "ZIP wird erstellt …",
@@ -1020,7 +1026,8 @@
         "sibeliusOpened": "„{name}“ wird in Sibelius geöffnet. Jedes Speichern dort lädt die Datei hier hoch.",
         "sibeliusHintTitle": "Stimmen direkt aus Sibelius",
         "sibeliusHint": "Mit dem Attendix-Plugin für Sibelius legst du alle Stimmen als PDF ab, Attendix ersetzt sie dann hier.",
-        "sibeliusHintInstall": "Plugin installieren"
+        "sibeliusHintInstall": "Plugin installieren",
+        "shortcutsHelp": "↑ ↓ Zeile wechseln · Umschalt+↑↓ mehrere auswählen · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen · ? diese Übersicht"
       },
       "stats": {
         "title": "Auswertung",
@@ -2279,6 +2286,8 @@
         "pause": "Pause",
         "slower": "Play slower",
         "normalSpeed": "Play at normal speed",
+        "playingAt": "Playing · {position} of {duration}",
+        "pausedAt": "Paused · {position} of {duration}",
         "lastPlayed": "Last played",
         "lastSung": "Last sung",
         "planned": "Planned",
@@ -2539,6 +2548,10 @@
         "colType": "Type",
         "selected": "{count} selected",
         "selectAll": "Select all",
+        "selectMany": "Select multiple",
+        "selectOne": "Select",
+        "selectHint": "Click files to select them",
+        "more": "More actions",
         "downloadZip": "Download as ZIP",
         "downloadAll": "All as ZIP",
         "zipPreparing": "Creating ZIP …",
@@ -2592,7 +2605,8 @@
         "sibeliusOpened": "“{name}” is opening in Sibelius. Every save there uploads it here.",
         "sibeliusHintTitle": "Parts straight from Sibelius",
         "sibeliusHint": "With the Attendix plug-in for Sibelius you export all parts as PDF, and Attendix replaces them here.",
-        "sibeliusHintInstall": "Install plug-in"
+        "sibeliusHintInstall": "Install plug-in",
+        "shortcutsHelp": "↑ ↓ move · Shift+↑↓ select several · Enter open · Space preview/play · Del delete · {mod}+U upload · {mod}+A all · {mod}+D download · {mod}+Z undo · F2 rename · ? this overview"
       },
       "stats": {
         "title": "Insights",

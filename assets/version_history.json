@@ -1,11 +1,34 @@
 {
   "versions": [
     {
-      "version": "0.106.0",
+      "version": "0.107.0",
       "date": "9.11.2026",
       "changes": [
         "✨ Beta-Werke in der Mac-App: Sibelius-Partituren öffnen sich per Klick (oder ••• › „In Sibelius bearbeiten“) in Sibelius, jedes Speichern dort lädt die Datei automatisch in Attendix hoch",
-        "✨ Attendix-Plugin für Sibelius (Hinweis „Stimmen direkt aus Sibelius“ über den Dateien oder ••• › „Sibelius-Plugin installieren“): speichert die Partitur und legt alle Stimmen als PDF ab; Attendix zeigt, welche Stimmen es ersetzt oder neu hinzufügt, und übernimmt sie"
+        "✨ Attendix-Plugin für Sibelius (Hinweis „Stimmen direkt aus Sibelius“ über den Dateien oder ••• › „Sibelius-Plugin installieren“): speichert die Partitur und legt alle Stimmen als PDF ab; Attendix zeigt, welche Stimmen es ersetzt oder neu hinzufügt, und übernimmt sie",
+        "✨ Sibelius ohne Internet: Ein Speichern bleibt auf dem Mac, Attendix zeigt einmal einen Hinweis und eine Wolke an der Datei und lädt sie von selbst hoch, sobald du wieder online bist (auch nach einem Neustart)"
+      ]
+    },
+    {
+      "version": "0.106.0",
+      "date": "9.11.2026",
+      "changes": [
+        "💄 Beta-Werk: Nur noch ein Audio-Player. Aufnahmen stehen als Zeile mit ▶ in der Karte oben („Läuft · 1:12 von 3:48“), Fortschritt, Spulen und 0,8× sind in der Leiste unten"
+      ]
+    },
+    {
+      "version": "0.105.0",
+      "date": "9.11.2026",
+      "changes": [
+        "✨ Beta-Werk am Rechner: Ein Klick auf eine Datei öffnet sie. Auswählen, „Alle als ZIP“ und Mehrfachaktionen sitzen jetzt unter „•••“ (Mehrere auswählen); ⌘/Strg- und Umschalt-Klick wählen weiter aus"
+      ]
+    },
+    {
+      "version": "0.104.2",
+      "date": "9.11.2026",
+      "changes": [
+        "💄 Beta-Werk: Im •••-Menü der Karten oben (Partitur, eigene Stimme, Aufnahme) gibt es kein „Stimme ändern“ mehr, nur noch unten bei Noten & Dateien",
+        "🐛 iPhone-App auf dem Mac: Bei Aufnahmen läuft der Fortschritt wieder mit und die Länge wird angezeigt (statt 0:00)"
       ]
     },
     {

@@ -13,7 +13,6 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/services/audio_player/audio_player_service.dart';
 import '../../../../core/services/song_file_service.dart';
-import '../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/plan_beamer.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -165,6 +164,22 @@ class RdWorkPage extends ConsumerWidget {
     final difficulty = (song.difficulty ?? 0) >= 1 && (song.difficulty ?? 0) <= 3;
 
     void more(BuildContext button, SongFile file) => rdShowWorkFileActions(button, ref, data, file, groups);
+    // Cards above the file list: no "Stimme ändern" (only in Noten & Dateien).
+    void cardMore(BuildContext button, SongFile file) =>
+        rdShowWorkFileActions(button, ref, data, file, groups, withPart: false);
+    // The recordings as rows under the card on top; the player itself is the
+    // bar at the bottom of the app (one player only).
+    final recordingRows = [
+      if (practice != null && practice.url != part.first.url)
+        _RecordingRow(
+          song: song,
+          file: practice,
+          title: l10n.redesignWorkPractice(ownGroup?.name ?? SongUtils.fileLabel(practice, groups)),
+          onMore: (button) => cardMore(button, practice),
+        ),
+      if (recording != null)
+        _RecordingRow(song: song, file: recording, onMore: (button) => cardMore(button, recording)),
+    ];
     Future<void> pick() => _pickFiles(context, ref, data);
 
     final header = Row(
@@ -251,7 +266,8 @@ class RdWorkPage extends ConsumerWidget {
               ].join(' · '),
               moreLabel: l10n.redesignWorkFileMore(SongUtils.fileLabel(part.first, groups, isChoir: data.isChoir)),
               onOpen: () => rdOpenWorkFile(context, ref, song, part.first),
-              onMore: (button) => more(button, part.first),
+              onMore: (button) => cardMore(button, part.first),
+              recordings: recordingRows,
             ),
             const SizedBox(height: 12),
           ],
@@ -262,7 +278,8 @@ class RdWorkPage extends ConsumerWidget {
               detail: rdFileKind(score!),
               moreLabel: l10n.redesignWorkFileMore(l10n.redesignWorkScore),
               onOpen: () => rdOpenWorkFile(context, ref, song, score),
-              onMore: (button) => more(button, score),
+              onMore: (button) => cardMore(button, score),
+              recordings: recordingRows,
             ),
             const SizedBox(height: 12),
           ],
@@ -272,28 +289,19 @@ class RdWorkPage extends ConsumerWidget {
               title: l10n.redesignWorkFileCount(files.where(rdIsGroupPart).length),
               detail: song.name,
               onOpen: () => _showParts(context, ref, song, groups, groupId),
+              recordings: recordingRows,
             ),
             const SizedBox(height: 12),
           ],
           RdWorkLead.noPart => [
             RdInfoCard(text: l10n.redesignWorkNoPart, icon: Icons.description_outlined),
             const SizedBox(height: 12),
+            if (recordingRows.isNotEmpty) ...[_RecordingsCard(rows: recordingRows), const SizedBox(height: 12)],
           ],
-          RdWorkLead.none => const <Widget>[],
+          RdWorkLead.none => [
+            if (recordingRows.isNotEmpty) ...[_RecordingsCard(rows: recordingRows), const SizedBox(height: 12)],
+          ],
         },
-        if (practice != null && practice.url != part.first.url) ...[
-          _RecordingCard(
-            song: song,
-            file: practice,
-            title: l10n.redesignWorkPractice(ownGroup?.name ?? SongUtils.fileLabel(practice, groups)),
-            onMore: (button) => more(button, practice),
-          ),
-          const SizedBox(height: 12),
-        ],
-        if (recording != null) ...[
-          _RecordingCard(song: song, file: recording, onMore: (button) => more(button, recording)),
-          const SizedBox(height: 12),
-        ],
         const SizedBox(height: 12),
         if (workspace) ...[
           if (missing.isNotEmpty) ...[
@@ -832,6 +840,7 @@ class _PartCard extends StatelessWidget {
     required this.onOpen,
     this.onMore,
     this.moreLabel,
+    this.recordings = const [],
   });
 
   final String eyebrow;
@@ -842,6 +851,9 @@ class _PartCard extends StatelessWidget {
   /// "•••" of the file; gets the button as anchor for the sheets.
   final void Function(BuildContext button)? onMore;
   final String? moreLabel;
+
+  /// Recording rows in the same card, below the file.
+  final List<Widget> recordings;
 
   @override
   Widget build(BuildContext context) {
@@ -907,35 +919,68 @@ class _PartCard extends StatelessWidget {
         ),
       ],
     );
+    final file = LayoutBuilder(
+      builder: (context, constraints) {
+        // Small phones and large text: the buttons move below the text,
+        // next to it they would squeeze the title into one letter a line.
+        final compact = constraints.maxWidth < MediaQuery.textScalerOf(context).scale(300);
+        if (compact) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              info,
+              const SizedBox(height: 10),
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: actions),
+            ],
+          );
+        }
+        return Row(children: [Expanded(child: info), const SizedBox(width: 8), ...actions]);
+      },
+    );
+    if (recordings.isEmpty) return RdCard(padding: const EdgeInsets.all(14), onTap: onOpen, child: file);
     return RdCard(
-      padding: const EdgeInsets.all(14),
-      onTap: onOpen,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // Small phones and large text: the buttons move below the text,
-          // next to it they would squeeze the title into one letter a line.
-          final compact = constraints.maxWidth < MediaQuery.textScalerOf(context).scale(300);
-          if (compact) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                info,
-                const SizedBox(height: 10),
-                Row(mainAxisAlignment: MainAxisAlignment.end, children: actions),
-              ],
-            );
-          }
-          return Row(children: [Expanded(child: info), const SizedBox(width: 8), ...actions]);
-        },
+      padding: EdgeInsets.zero,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          InkWell(onTap: onOpen, child: Padding(padding: const EdgeInsets.all(14), child: file)),
+          for (final row in recordings) ...[Divider(height: 1, thickness: 1, color: p.line), row],
+        ],
       ),
     );
   }
 }
 
-/// The recording inline: play / pause, progress (tap to seek), 0,8×, and
-/// "•••" for sharing and the rest.
-class _RecordingCard extends ConsumerStatefulWidget {
-  const _RecordingCard({required this.song, required this.file, this.title, this.onMore});
+/// The recordings without a card on top (no own part / nothing on top).
+class _RecordingsCard extends StatelessWidget {
+  const _RecordingsCard({required this.rows});
+
+  final List<Widget> rows;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return RdCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 0; i < rows.length; i++) ...[
+            if (i > 0) Divider(height: 1, thickness: 1, color: p.line),
+            rows[i],
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// A recording as one row: play / pause, title, "Läuft · 1:12 von 3:48"
+/// while it is the loaded track, and "•••". Progress, seeking and 0,8× are
+/// in the player bar at the bottom of the app.
+class _RecordingRow extends ConsumerWidget {
+  const _RecordingRow({required this.song, required this.file, this.title, this.onMore});
 
   final Song song;
   final SongFile file;
@@ -945,155 +990,98 @@ class _RecordingCard extends ConsumerStatefulWidget {
   final void Function(BuildContext button)? onMore;
 
   @override
-  ConsumerState<_RecordingCard> createState() => _RecordingCardState();
-}
-
-class _RecordingCardState extends ConsumerState<_RecordingCard> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final p = context.rd;
     final l10n = context.l10n;
     final audio = ref.watch(audioPlayerServiceProvider);
     final service = ref.read(audioPlayerServiceProvider.notifier);
-    final mine = audio.currentUrl == widget.file.url;
+    final mine = audio.currentUrl == file.url;
     final playing = mine && audio.isPlaying;
-    final position = mine ? audio.currentTime : Duration.zero;
-    final duration = mine ? audio.duration : Duration.zero;
-    final progress =
-        duration.inMilliseconds <= 0 ? 0.0 : (position.inMilliseconds / duration.inMilliseconds).clamp(0.0, 1.0);
-    final created = DateTime.tryParse(widget.file.createdAt ?? '');
-    final title =
-        widget.title ??
+    final created = DateTime.tryParse(file.createdAt ?? '');
+    final name =
+        title ??
         (created == null
             ? l10n.redesignWorkRecording
             : l10n.redesignWorkRecordingFrom(DateFormat.Md(currentIntlLocale()).format(created.toLocal())));
-    // One speed for every card: they all drive the same player.
-    final slow = ref.watch(audioPlaybackSpeedProvider) < 1;
+    final position = AudioPlayerService.formatTime(audio.currentTime);
+    final length = audio.duration > Duration.zero ? AudioPlayerService.formatTime(audio.duration) : '–:––';
+    final detail =
+        !mine
+            ? rdFileKind(file)
+            : playing
+            ? l10n.redesignWorkPlayingAt(position, length)
+            : l10n.redesignWorkPausedAt(position, length);
 
-    return RdCard(
-      padding: const EdgeInsets.all(14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(child: Text(title, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: p.text))),
-              if (widget.onMore != null)
-                SizedBox(
-                  height: 32,
-                  child: Builder(
-                    builder:
-                        (button) => IconButton(
-                          padding: EdgeInsets.zero,
-                          tooltip: l10n.redesignWorkFileMore(title),
-                          icon: Icon(Icons.more_horiz, color: p.link),
-                          onPressed: () => widget.onMore!(button),
-                        ),
-                  ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Semantics(
-                button: true,
-                label: playing ? l10n.redesignWorkPause : l10n.redesignWorkPlay,
-                excludeSemantics: true,
-                child: Material(
-                  color: p.primary,
-                  shape: const CircleBorder(),
-                  child: InkWell(
-                    customBorder: const CircleBorder(),
-                    onTap: () {
-                      if (mine) {
-                        service.togglePlayPause();
-                      } else {
-                        service.playFromUrl(widget.file.url, widget.file.fileName, widget.song.name);
-                      }
-                    },
-                    child: SizedBox(
-                      width: 44,
-                      height: 44,
-                      child: Icon(playing ? Icons.pause : Icons.play_arrow, color: p.onPrimary),
-                    ),
+    void toggle() {
+      if (mine) {
+        service.togglePlayPause();
+      } else {
+        service.playFromUrl(file.url, file.fileName, song.name);
+      }
+    }
+
+    return InkWell(
+      onTap: toggle,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 10, 6, 10),
+        child: Row(
+          children: [
+            Semantics(
+              container: true,
+              button: true,
+              label: playing ? l10n.redesignWorkPause : l10n.redesignWorkPlay,
+              excludeSemantics: true,
+              child: Material(
+                color: playing ? p.primary : p.soft,
+                shape: const CircleBorder(),
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: toggle,
+                  child: SizedBox(
+                    width: 44,
+                    height: 44,
+                    child: Icon(playing ? Icons.pause : Icons.play_arrow, color: playing ? p.onPrimary : p.softText),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    LayoutBuilder(
-                      builder:
-                          (context, c) => GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTapDown:
-                                !mine || duration == Duration.zero
-                                    ? null
-                                    : (d) => service.seek(duration * (d.localPosition.dx / c.maxWidth).clamp(0.0, 1.0)),
-                            child: SizedBox(
-                              height: 20,
-                              child: Center(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(999),
-                                  child: SizedBox(
-                                    height: 4,
-                                    child: Stack(
-                                      children: [
-                                        Positioned.fill(child: ColoredBox(color: p.track)),
-                                        Positioned(
-                                          left: 0,
-                                          top: 0,
-                                          bottom: 0,
-                                          width: c.maxWidth * progress,
-                                          child: ColoredBox(color: p.primary),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(AudioPlayerService.formatTime(position), style: _time(p)),
-                        Text(mine ? AudioPlayerService.formatTime(duration) : '–:––', style: _time(p)),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Semantics(
-                button: true,
-                label: slow ? l10n.redesignWorkNormalSpeed : l10n.redesignWorkSlower,
-                excludeSemantics: true,
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(0, 36),
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    shape: const StadiumBorder(),
-                    side: BorderSide(color: slow ? p.primary : p.offBorder),
-                    backgroundColor: slow ? p.soft : p.surface,
-                    foregroundColor: slow ? p.softText : p.text,
-                    textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: p.text),
                   ),
-                  onPressed: () => service.setSpeed(slow ? 1.0 : 0.8),
-                  child: Text('${NumberFormat.decimalPattern(currentIntlLocale()).format(slow ? 0.8 : 1)}×'),
-                ),
+                  Text(
+                    detail,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: mine ? FontWeight.w600 : FontWeight.w400,
+                      color: mine ? p.link : p.text2,
+                      fontFeatures: const [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ],
+            ),
+            if (onMore != null)
+              Builder(
+                builder:
+                    (button) => IconButton(
+                      tooltip: l10n.redesignWorkFileMore(name),
+                      icon: Icon(Icons.more_horiz, color: p.link),
+                      onPressed: () => onMore!(button),
+                    ),
+              ),
+          ],
+        ),
       ),
     );
   }
-
-  TextStyle _time(RdPalette p) =>
-      TextStyle(fontSize: 12, color: p.text2, fontFeatures: const [FontFeature.tabularFigures()]);
 }

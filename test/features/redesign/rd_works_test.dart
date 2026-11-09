@@ -928,7 +928,7 @@ void main() {
       );
     });
 
-    testWidgets('recording plays inline and 0,8× slows it down', (tester) async {
+    testWidgets('recording is a row in the card on top, the bar at the bottom is the player', (tester) async {
       _phone(tester);
       final player = _FakePlayer();
       await tester.pumpWidget(_workApp(Role.player, song: _ouverture, player: player));
@@ -938,13 +938,9 @@ void main() {
       await _settle(tester);
       expect(player.url, 'https://x/probe.mp3');
       expect(find.bySemanticsLabel('Anhalten'), findsOneWidget);
-      expect(find.text('3:28'), findsOneWidget);
-
-      await tester.tap(find.bySemanticsLabel('Langsamer abspielen'));
-      await _settle(tester);
-      expect(player.speeds, [0.8]);
-      expect(find.text('0,8×'), findsOneWidget);
-      expect(find.bySemanticsLabel('Normal abspielen'), findsOneWidget);
+      expect(find.text('Läuft · 0:00 von 3:28'), findsOneWidget);
+      // No second player on the page: progress and 0,8× are in the bar.
+      expect(find.bySemanticsLabel('Langsamer abspielen'), findsNothing);
     });
 
     testWidgets('no part for my instrument: hint instead of the card', (tester) async {
@@ -1183,7 +1179,7 @@ void main() {
       await tester.pump(const Duration(seconds: 7));
     });
 
-    testWidgets('member: two files of the same part keep their names, one speed for both recordings', (
+    testWidgets('member: two files of the same part keep their names, both recordings as rows', (
       tester,
     ) async {
       _phone(tester);
@@ -1201,10 +1197,7 @@ void main() {
       expect(find.text('klar.pdf · deine Stimme'), findsOneWidget);
       expect(find.text('klar_2.pdf · deine Stimme'), findsOneWidget);
 
-      expect(find.bySemanticsLabel('Langsamer abspielen'), findsNWidgets(2));
-      await tester.tap(find.bySemanticsLabel('Langsamer abspielen').first);
-      await _settle(tester);
-      expect(find.bySemanticsLabel('Normal abspielen'), findsNWidgets(2));
+      expect(find.bySemanticsLabel('Abspielen'), findsNWidgets(2));
     });
 
     testWidgets('admin: missing parts and the Besetzung from the Noten', (tester) async {
