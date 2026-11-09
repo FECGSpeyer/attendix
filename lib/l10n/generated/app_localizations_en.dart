@@ -12985,6 +12985,123 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignFilesSibeliusCopySuffix => '(from Sibelius)';
+
+  @override
+  String get redesignFilesSibeliusEdit => 'Edit in Sibelius';
+
+  @override
+  String get redesignFilesSibeliusHint =>
+      'With the Attendix plug-in for Sibelius you export all parts as PDF, and Attendix replaces them here.';
+
+  @override
+  String get redesignFilesSibeliusHintInstall => 'Install plug-in';
+
+  @override
+  String get redesignFilesSibeliusHintTitle => 'Parts straight from Sibelius';
+
+  @override
+  String redesignFilesSibeliusIntro(Object name) {
+    return 'Attendix puts “$name” into “Downloads › Attendix” and opens it in Sibelius. Every save in Sibelius uploads it here automatically.\n\nNew parts: in Sibelius choose “Plug-ins › Attendix › Stimmen für Attendix exportieren”. It saves the score and exports all parts as PDF. Attendix then shows you which parts it replaces. Install the plug-in once per Mac.';
+  }
+
+  @override
+  String get redesignFilesSibeliusIntroTitle => 'Edit in Sibelius';
+
+  @override
+  String get redesignFilesSibeliusNoFolder =>
+      'Attendix cannot save to “Downloads”. Please update the Mac app.';
+
+  @override
+  String get redesignFilesSibeliusNotOpened =>
+      'The file could not be opened. Is Sibelius installed? It is in “Downloads › Attendix”.';
+
+  @override
+  String get redesignFilesSibeliusOpen => 'Open in Sibelius';
+
+  @override
+  String redesignFilesSibeliusOpened(Object name) {
+    return '“$name” is opening in Sibelius. Every save there uploads it here.';
+  }
+
+  @override
+  String get redesignFilesSibeliusPartNew => 'new';
+
+  @override
+  String get redesignFilesSibeliusPartNone => 'Not assigned';
+
+  @override
+  String redesignFilesSibeliusPartReplaces(Object files) {
+    return 'replaces $files';
+  }
+
+  @override
+  String get redesignFilesSibeliusPartsApply => 'Apply';
+
+  @override
+  String redesignFilesSibeliusPartsMessage(num count, Object work) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count parts from Sibelius for “$work”:',
+      one: '1 part from Sibelius for “$work”:',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignFilesSibeliusPartsTitle => 'New parts from Sibelius';
+
+  @override
+  String get redesignFilesSibeliusPlugin => 'Install Sibelius plug-in';
+
+  @override
+  String redesignFilesSibeliusPluginFailed(Object error) {
+    return 'The plug-in could not be saved: $error';
+  }
+
+  @override
+  String get redesignFilesSibeliusPluginInstalled =>
+      'Plug-in installed. Restart Sibelius, then find it under “Plug-ins › Attendix”.';
+
+  @override
+  String get redesignFilesSibeliusPluginPick =>
+      'Choose the Sibelius “Plugins” folder';
+
+  @override
+  String get redesignFilesSibeliusPluginWrongFolder =>
+      'Plug-in saved. Sibelius only loads plug-ins from “Library › Application Support › Avid › Sibelius › Plugins” in your home folder.';
+
+  @override
+  String redesignFilesSibeliusSaveFailed(Object name, Object error) {
+    return '“$name” is saved on your Mac but not yet in Attendix ($error). Attendix uploads it by itself as soon as you are back online.';
+  }
+
+  @override
+  String redesignFilesSibeliusSaved(Object name) {
+    return '“$name” from Sibelius saved in Attendix';
+  }
+
+  @override
+  String redesignFilesSibeliusSavedAsCopy(Object name, Object copy) {
+    return '“$name” was changed or deleted in Attendix meanwhile. Your version from Sibelius was added as “$copy”.';
+  }
+
+  @override
+  String redesignFilesSibeliusUploadedLater(Object name) {
+    return 'Back online: “$name” from Sibelius is now saved in Attendix';
+  }
+
+  @override
+  String get redesignFilesSibeliusWaiting =>
+      'Saved only on your Mac. Uploads by itself as soon as you are back online.';
+
+  @override
+  String redesignFilesSibeliusWorkGone(Object name) {
+    return 'The work of “$name” no longer exists in Attendix. Your version stays on your Mac in “Downloads › Attendix”.';
+  }
+
+  @override
   String get redesignFilesTitle => 'Sheet music & files';
 
   @override
