@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
@@ -66,8 +65,7 @@ class _DocxViewerPageState extends State<DocxViewerPage> {
   /// iPhone/iPad and Android: the system share sheet (Word, Pages, print,
   /// AirDrop, Dateien …).
   static bool get _canShareFile =>
-      !kIsWeb &&
-      (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.android);
+      !kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.android);
 
   Future<void> _openExternally() async {
     final ok = await NativeFileService.openUrl(widget.url, fileName: widget.fileName);
@@ -79,9 +77,10 @@ class _DocxViewerPageState extends State<DocxViewerPage> {
     if (bytes == null) return _openExternally();
     final box = button.findRenderObject() as RenderBox?;
     final origin = box == null || !box.hasSize ? null : box.localToGlobal(Offset.zero) & box.size;
-    final name = widget.fileName.toLowerCase().endsWith('.docx')
-        ? widget.fileName
-        : '${widget.fileName.isEmpty ? 'dokument' : widget.fileName}.docx';
+    final name =
+        widget.fileName.toLowerCase().endsWith('.docx')
+            ? widget.fileName
+            : '${widget.fileName.isEmpty ? 'dokument' : widget.fileName}.docx';
     try {
       final result = await Share.shareXFiles(
         [XFile.fromData(bytes, name: name, mimeType: docxMimeType)],
@@ -111,11 +110,12 @@ class _DocxViewerPageState extends State<DocxViewerPage> {
         actions: [
           if (_canShareFile && _error == null)
             Builder(
-              builder: (button) => IconButton(
-                icon: Icon(Icons.adaptive.share),
-                tooltip: context.l10n.redesignWorkFileShare,
-                onPressed: _bytes == null ? null : () => _share(button),
-              ),
+              builder:
+                  (button) => IconButton(
+                    icon: Icon(Icons.adaptive.share),
+                    tooltip: context.l10n.redesignWorkFileShare,
+                    onPressed: _bytes == null ? null : () => _share(button),
+                  ),
             )
           else
             IconButton(
@@ -199,9 +199,10 @@ class _DocxViewerPageState extends State<DocxViewerPage> {
               borderRadius: BorderRadius.circular(2),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: narrow ? 20 : 64, vertical: narrow ? 24 : 56),
-                child: document.blocks.isEmpty
-                    ? Text(l10n.songsFlutterDocxEmpty, style: const TextStyle(color: Colors.black54))
-                    : SelectionArea(child: DocxView(document: document)),
+                child:
+                    document.blocks.isEmpty
+                        ? Text(l10n.songsFlutterDocxEmpty, style: const TextStyle(color: Colors.black54))
+                        : SelectionArea(child: DocxView(document: document)),
               ),
             ),
           ),
@@ -222,10 +223,7 @@ class DocxView extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTextStyle.merge(
       style: const TextStyle(color: Colors.black, fontSize: _basePx, height: 1.35),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: _blocks(document.blocks),
-      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: _blocks(document.blocks)),
     );
   }
 
@@ -234,15 +232,12 @@ class DocxView extends StatelessWidget {
   static double _px(double pt) => pt * _basePx / 11;
 
   static List<Widget> _blocks(List<DocxBlock> blocks) => [
-        for (final block in blocks)
-          switch (block) {
-            DocxParagraph() => _paragraph(block),
-            DocxTable() => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
-                child: _table(block),
-              ),
-          },
-      ];
+    for (final block in blocks)
+      switch (block) {
+        DocxParagraph() => _paragraph(block),
+        DocxTable() => Padding(padding: const EdgeInsets.symmetric(vertical: 6), child: _table(block)),
+      },
+  ];
 
   static const _headingSizes = <int, double>{0: 26, 1: 20, 2: 16, 3: 14, 4: 12, 5: 11, 6: 11};
 
@@ -280,10 +275,7 @@ class DocxView extends StatelessWidget {
           SizedBox(width: 18.0 * p.listLevel),
           ConstrainedBox(
             constraints: const BoxConstraints(minWidth: 24),
-            child: Padding(
-              padding: const EdgeInsets.only(right: 6),
-              child: Text(label),
-            ),
+            child: Padding(padding: const EdgeInsets.only(right: 6), child: Text(label)),
           ),
           Expanded(child: text),
         ],
@@ -291,23 +283,18 @@ class DocxView extends StatelessWidget {
     } else if (p.indent > 0) {
       child = Padding(padding: EdgeInsets.only(left: _px(p.indent)), child: text);
     }
-    return Padding(
-      padding: EdgeInsets.only(top: topGap, bottom: label == null ? 6 : 2),
-      child: child,
-    );
+    return Padding(padding: EdgeInsets.only(top: topGap, bottom: label == null ? 6 : 2), child: child);
   }
 
   static TextStyle _textStyle(DocxText t, int? heading) {
-    final size = t.fontSize != null
-        ? _px(t.fontSize!)
-        : heading != null
+    final size =
+        t.fontSize != null
+            ? _px(t.fontSize!)
+            : heading != null
             ? _px(_headingSizes[heading]!)
             : null;
     final script = t.superscript || t.subscript;
-    final decorations = [
-      if (t.underline) TextDecoration.underline,
-      if (t.strike) TextDecoration.lineThrough,
-    ];
+    final decorations = [if (t.underline) TextDecoration.underline, if (t.strike) TextDecoration.lineThrough];
     return TextStyle(
       fontWeight: t.bold || (heading != null && t.fontSize == null) ? FontWeight.bold : null,
       fontStyle: t.italic ? FontStyle.italic : null,
@@ -350,7 +337,10 @@ class DocxView extends StatelessWidget {
                     Expanded(
                       flex: cell.span,
                       child: Container(
-                        decoration: const BoxDecoration(border: Border(right: border, bottom: border)),
+                        decoration: BoxDecoration(
+                          color: cell.background == null ? null : Color(cell.background!),
+                          border: const Border(right: border, bottom: border),
+                        ),
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,

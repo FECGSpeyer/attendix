@@ -66,7 +66,10 @@ class DocxCell {
   /// Number of grid columns the cell spans.
   final int span;
 
-  const DocxCell(this.blocks, {this.span = 1});
+  /// ARGB of the cell shading, null = none.
+  final int? background;
+
+  const DocxCell(this.blocks, {this.span = 1, this.background});
 }
 
 sealed class DocxInline {
@@ -207,7 +210,11 @@ class _Level {
   /// higher; 0 = never. Null = after any higher level (Word's default).
   final int? restart;
 
-  const _Level(this.format, this.text, this.start, [this.restart]);
+  /// `<w:pStyle>`: paragraphs of this style get this level (e.g. numbered
+  /// headings "1." / "1.1").
+  final String? styleId;
+
+  const _Level(this.format, this.text, this.start, [this.restart, this.styleId]);
 }
 
 class _DocxParser {
@@ -361,7 +368,9 @@ class _DocxParser {
           if (redefined != null) levels[ilvl] = redefined;
         }
         final base = levels[ilvl];
-        if (start != null && base != null) levels[ilvl] = _Level(base.format, base.text, start, base.restart);
+        if (start != null && base != null) {
+          levels[ilvl] = _Level(base.format, base.text, start, base.restart, base.styleId);
+        }
       }
       _numbering[id] = levels;
     }
@@ -377,6 +386,7 @@ class _DocxParser {
         _val(lvl.getElement('lvlText', namespaceUri: _w)) ?? '',
         int.tryParse(_val(lvl.getElement('start', namespaceUri: _w)) ?? '') ?? 1,
         int.tryParse(_val(lvl.getElement('lvlRestart', namespaceUri: _w)) ?? ''),
+        _val(lvl.getElement('pStyle', namespaceUri: _w)),
       );
     }
     return levels;
@@ -430,7 +440,13 @@ class _DocxParser {
         final vMerge = tcPr?.getElement('vMerge', namespaceUri: _w);
         final continued = vMerge != null && _attr(vMerge, 'val') != 'restart';
         final span = int.tryParse(_val(tcPr?.getElement('gridSpan', namespaceUri: _w)) ?? '') ?? 1;
-        cells.add(DocxCell(continued ? const [] : _blocks(tc), span: span < 1 ? 1 : span));
+        cells.add(
+          DocxCell(
+            continued ? const [] : _blocks(tc),
+            span: span < 1 ? 1 : span,
+            background: _shownColor(_hexColor(_attr(tcPr?.getElement('shd', namespaceUri: _w), 'fill'))),
+          ),
+        );
       }
       if (cells.isNotEmpty) rows.add(cells);
     }
@@ -482,7 +498,7 @@ class _DocxParser {
     String? label;
     var level = 0;
     if (numId != null && numId != '0') {
-      level = numLevel ?? 0;
+      level = numLevel ?? _levelOfStyle(numId, styleId) ?? 0;
       label = _listLabel(numId, level);
     }
 
@@ -624,25 +640,41 @@ class _DocxParser {
   /// at every spell check / revision mark).
   static List<DocxInline> _mergeTexts(List<DocxInline> inlines) {
     final out = <DocxInline>[];
+    DocxText? first;
+    final buffer = StringBuffer();
+    void flush() {
+      final f = first;
+      if (f == null) return;
+      out.add(
+        DocxText(
+          buffer.toString(),
+          bold: f.bold,
+          italic: f.italic,
+          underline: f.underline,
+          strike: f.strike,
+          fontSize: f.fontSize,
+          color: f.color,
+          background: f.background,
+          superscript: f.superscript,
+          subscript: f.subscript,
+        ),
+      );
+      first = null;
+      buffer.clear();
+    }
+
     for (final inline in inlines) {
-      final last = out.lastOrNull;
-      if (inline is DocxText && last is DocxText && _sameFormat(inline, last)) {
-        out[out.length - 1] = DocxText(
-          last.text + inline.text,
-          bold: last.bold,
-          italic: last.italic,
-          underline: last.underline,
-          strike: last.strike,
-          fontSize: last.fontSize,
-          color: last.color,
-          background: last.background,
-          superscript: last.superscript,
-          subscript: last.subscript,
-        );
+      if (inline is DocxText) {
+        final f = first;
+        if (f != null && !_sameFormat(f, inline)) flush();
+        first ??= inline;
+        buffer.write(inline.text);
       } else {
+        flush();
         out.add(inline);
       }
     }
+    flush();
     return out;
   }
 
@@ -658,6 +690,21 @@ class _DocxParser {
       a.subscript == b.subscript;
 
   // --- lists ----------------------------------------------------------------
+
+  /// The level whose `<w:pStyle>` is [styleId] or a style it is based on.
+  int? _levelOfStyle(String numId, String? styleId) {
+    final levels = _numbering[numId];
+    if (levels == null) return null;
+    final seen = <String>{};
+    var current = styleId;
+    while (current != null && seen.add(current)) {
+      for (final entry in levels.entries) {
+        if (entry.value.styleId == current) return entry.key;
+      }
+      current = _styles[current]?.basedOn;
+    }
+    return null;
+  }
 
   String _listLabel(String numId, int level) {
     final levels = _numbering[numId];
