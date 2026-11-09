@@ -1,0 +1,18 @@
+{
+  "de": {
+    "rdSidebar": {
+      "overview": "Übersicht",
+      "lead": "Leitung",
+      "personal": "Persönlich",
+      "groupsCount": "{count, plural, one {1 Gruppe} other {{count} Gruppen}}"
+    }
+  },
+  "en": {
+    "rdSidebar": {
+      "overview": "Overview",
+      "lead": "Leadership",
+      "personal": "Personal",
+      "groupsCount": "{count, plural, one {1 group} other {{count} groups}}"
+    }
+  }
+}

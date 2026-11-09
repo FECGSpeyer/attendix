@@ -13480,6 +13480,27 @@
   "@rdSettingsUndo": {
     "description": "rdSettings.undo"
   },
+  "rdSidebarGroupsCount": "{count, plural, one {1 Gruppe} other {{count} Gruppen}}",
+  "@rdSidebarGroupsCount": {
+    "description": "rdSidebar.groupsCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdSidebarLead": "Leitung",
+  "@rdSidebarLead": {
+    "description": "rdSidebar.lead"
+  },
+  "rdSidebarOverview": "Übersicht",
+  "@rdSidebarOverview": {
+    "description": "rdSidebar.overview"
+  },
+  "rdSidebarPersonal": "Persönlich",
+  "@rdSidebarPersonal": {
+    "description": "rdSidebar.personal"
+  },
   "rdStatsAge": "Alter",
   "@rdStatsAge": {
     "description": "rdStats.age"
