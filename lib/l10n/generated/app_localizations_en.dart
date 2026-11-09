@@ -19361,6 +19361,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get songsFlutterDetectUnsure => 'Unsure – please check';
 
   @override
+  String get songsFlutterDocxEmpty => 'The document is empty.';
+
+  @override
+  String get songsFlutterDocxLoadFailed => 'Could not load document';
+
+  @override
+  String get songsFlutterDocxLoading => 'Loading document...';
+
+  @override
   String get songsFlutterDownloadFileFailed => 'File could not be downloaded';
 
   @override

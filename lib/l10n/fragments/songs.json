@@ -127,7 +127,10 @@
         "aiReading": "Die KI ordnet die Dateien zu …",
         "aiSuggested": "Vorschlag der KI – bitte prüfen",
         "severalGroups": "Geht an jede dieser Gruppen",
-        "newGroupFailed": "Die Gruppe „{name}“ konnte nicht angelegt werden"
+        "newGroupFailed": "Die Gruppe „{name}“ konnte nicht angelegt werden",
+        "docxLoading": "Dokument wird geladen...",
+        "docxLoadFailed": "Dokument konnte nicht geladen werden",
+        "docxEmpty": "Das Dokument ist leer."
       }
     }
   },
@@ -259,7 +262,10 @@
         "aiReading": "The AI is sorting the files …",
         "aiSuggested": "Suggested by the AI – please check",
         "severalGroups": "Goes to each of these groups",
-        "newGroupFailed": "The group “{name}” could not be created"
+        "newGroupFailed": "The group “{name}” could not be created",
+        "docxLoading": "Loading document...",
+        "docxLoadFailed": "Could not load document",
+        "docxEmpty": "The document is empty."
       }
     }
   }
