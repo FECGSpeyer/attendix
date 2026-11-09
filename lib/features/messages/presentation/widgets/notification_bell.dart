@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
@@ -181,7 +182,10 @@ class NotificationBell extends ConsumerWidget implements HiddenWithSidePanel {
         isLabelVisible: unread > 0,
         backgroundColor: AppColors.danger,
         label: Text(unread > 99 ? '99+' : '$unread'),
-        child: const Icon(Icons.notifications_outlined),
+        // ICONS: classic design uses the Ionic app's ionicon, Beta keeps Material.
+        child: Icon(ref.watch(redesignEnabledProvider)
+            ? Icons.notifications_outlined
+            : Ionicons.notificationsOutline),
       ),
     );
   }

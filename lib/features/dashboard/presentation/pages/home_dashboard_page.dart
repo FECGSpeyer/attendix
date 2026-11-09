@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -83,7 +84,7 @@ class HomeDashboardPage extends ConsumerWidget {
             if (!ios)
               IconButton(
                 tooltip: context.l10n.homeDashboardConfigure,
-                icon: const Icon(Icons.settings_outlined),
+                icon: const Icon(Ionicons.settingsOutline),
                 onPressed: () => context.push('/settings/dashboard'),
               ),
             const NotificationBell(),
@@ -98,7 +99,7 @@ class HomeDashboardPage extends ConsumerWidget {
                 heroTag: 'homeDashboardSettingsFab',
                 tooltip: context.l10n.homeDashboardConfigure,
                 onPressed: () => context.push('/settings/dashboard'),
-                child: const Icon(Icons.settings_outlined),
+                child: const Icon(Ionicons.settingsOutline),
               ),
             )
           : null,
@@ -113,7 +114,7 @@ class HomeDashboardPage extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 60),
                     child: Column(
                       children: [
-                        const Icon(Icons.grid_view, size: 48, color: AppColors.medium),
+                        const Icon(Ionicons.gridOutline, size: 48, color: AppColors.medium),
                         const SizedBox(height: 16),
                         Text(
                           context.l10n.homeDashboardAllHidden,

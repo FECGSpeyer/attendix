@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -61,19 +62,19 @@ class NextEventCard extends ConsumerWidget {
     }
 
     return DashboardCard(
-      icon: Icons.calendar_today_outlined,
+      icon: Ionicons.calendarOutline,
       title: context.l10n.homeDashboardEvents,
       subtitle: context.l10n.homeDashboardNextAndLast,
       strip: DashStrips.event,
       child: async.when(
         loading: () => const DashLoading(),
-        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
+        error: (e, _) => DashEmptyRow(icon: Ionicons.alertCircleOutline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
         data: (s) {
           final next = s.nextEvent;
           final last = s.lastEvent;
           if (next == null && last == null) {
             return DashEmptyRow(
-              icon: Icons.calendar_today_outlined,
+              icon: Ionicons.calendarOutline,
               text: context.l10n.homeDashboardNoEvents,
             );
           }
@@ -89,7 +90,7 @@ class NextEventCard extends ConsumerWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.description_outlined, size: 16, color: AppColors.medium),
+                        const Icon(Ionicons.documentTextOutline, size: 16, color: AppColors.medium),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -295,17 +296,17 @@ class CurrentSongsCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final async = ref.watch(dashboardCurrentSongsProvider);
     return DashboardCard(
-      icon: Icons.music_note_outlined,
+      icon: Ionicons.musicalNotesOutline,
       title: context.l10n.homeDashboardCurrentSongs,
       subtitle: context.l10n.homeDashboardPlannedSongs,
       strip: DashStrips.songs,
       child: async.when(
         loading: () => const DashLoading(),
-        error: (e, _) => DashEmptyRow(icon: Icons.error_outline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
+        error: (e, _) => DashEmptyRow(icon: Ionicons.alertCircleOutline, text: context.l10n.homeDashboardFlutterLoadFailed(friendlyErrorMessage(e))),
         data: (entries) {
           if (entries.isEmpty) {
             return DashEmptyRow(
-              icon: Icons.music_note_outlined,
+              icon: Ionicons.musicalNotesOutline,
               text: context.l10n.homeDashboardNoPlannedSongs,
             );
           }
@@ -380,7 +381,7 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
     final async = ref.watch(dashboardCurrentPlanProvider);
     return async.when(
       loading: () => DashboardCard(
-        icon: Icons.list_alt,
+        icon: Ionicons.listOutline,
         title: context.l10n.homeDashboardCurrentPlan,
         subtitle: '',
         strip: DashStrips.plan,
@@ -488,7 +489,7 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
     );
 
     return DashboardCard(
-      icon: Icons.list_alt,
+      icon: Ionicons.listOutline,
       title: context.l10n.homeDashboardCurrentPlan,
       subtitle: typeName,
       strip: DashStrips.plan,
@@ -512,7 +513,7 @@ class _CurrentPlanCardState extends ConsumerState<CurrentPlanCard> {
             leading: DashTile.date(data.planDay, tone: DashTone.teal, solid: isToday),
             title: dateLabel,
             subtitle: planTimes,
-            trailing: const Icon(Icons.chevron_right, color: AppColors.medium),
+            trailing: const Icon(Ionicons.chevronForwardOutline, color: AppColors.medium),
           ),
           for (var i = 0; i < fields.length; i++)
             _fieldRow(
