@@ -1,6 +1,74 @@
 {
   "versions": [
     {
+      "version": "0.115.0",
+      "date": "9.11.2026",
+      "changes": [
+        "✨ Beta: Word-Dateien (.docx) öffnen sich direkt in der App, wie PDFs (Überschriften, Listen, Tabellen, Bilder; Teilen/Extern öffnen oben rechts)"
+      ]
+    },
+    {
+      "version": "0.114.1",
+      "date": "9.11.2026",
+      "changes": [
+        "✨ Beta Werke: Karten unter „Aktuell“ öffnen das ganze Werk (eigene Stimme steht dort oben) und zeigen nur noch anstehende Werke",
+        "💄 Werk-Seite: „•••“ und „Öffnen“ der obersten Datei-Karte stimmig gestaltet"
+      ]
+    },
+    {
+      "version": "0.114.0",
+      "date": "9.11.2026",
+      "changes": [
+        "✨ PDF-Ansicht (Beta): Teilen-Knopf oben rechts (iPhone: von dort auch Drucken), am Mac und auf Android ein Drucken-Knopf"
+      ]
+    },
+    {
+      "version": "0.113.1",
+      "date": "9.11.2026",
+      "changes": [
+        "🐛 Ladesymbol in der Upload-Liste steht jetzt bündig mit den anderen Status-Symbolen"
+      ]
+    },
+    {
+      "version": "0.113.0",
+      "date": "9.11.2026",
+      "changes": [
+        "✨ Beta-Problemfälle: Regeln verbindet man jetzt mit „und außerdem …“ direkt im Satz statt mit dem Schalter „Nur zusammen mit anderen Regeln“; die Liste zeigt so eine Regel als eine Zeile mit gemeinsamer Zahl"
+      ]
+    },
+    {
+      "version": "0.112.1",
+      "date": "9.11.2026",
+      "changes": [
+        "🐛 Noten-Import: Neue Werke in einer Sammlung mit Kürzel werden fortlaufend ab deren höchster Nummer nummeriert, die Nummer aus dem Ordnernamen zählt dort nicht mehr („02 Ohne Gott“ in eine neue Sammlung wird T1 statt T2)",
+        "✨ Noten-Import: Die Nummer eines neuen Werks lässt sich beim Prüfen selbst festlegen (doppelte Nummern werden abgelehnt)"
+      ]
+    },
+    {
+      "version": "0.112.0",
+      "date": "9.11.2026",
+      "changes": [
+        "🐛 Stimmen aus Sibelius ersetzen nur noch ihre eigene Datei (Violine II ersetzt nicht mehr alle Violin-PDFs)",
+        "✨ Liste „Neue Stimmen aus Sibelius“: Stimmen abwählen, Gruppe und zu ersetzende Datei pro Zeile ändern",
+        "✨ Das Sibelius-Plugin holt nach dem Export Attendix nach vorne und öffnet das Werk",
+        "✨ Tipp für ein eigenes Tastenkürzel (z. B. ⌘⇧S) in Sibelius"
+      ]
+    },
+    {
+      "version": "0.111.0",
+      "date": "9.11.2026",
+      "changes": [
+        "✨ Werk-Upload ordnet Stimmen wie „Noten importieren“ zu: KI-Vorschlag aus dem Dateinamen, Seite 1 nur für den Rest, bekannte Instrumente als neue Gruppe, „Posaune und Tuba“ an beide Gruppen"
+      ]
+    },
+    {
+      "version": "0.110.5",
+      "date": "9.11.2026",
+      "changes": [
+        "⌨️ Escape schließt PDF-Ansicht und Ablaufplan und führt zurück zum Werk bzw. Termin"
+      ]
+    },
+    {
       "version": "0.110.4",
       "date": "9.11.2026",
       "changes": [

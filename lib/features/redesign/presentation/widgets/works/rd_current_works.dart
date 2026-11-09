@@ -14,13 +14,13 @@ import '../../../../songs/presentation/utils/song_utils.dart';
 import '../../../data/rd_works_logic.dart';
 import '../rd_split_view.dart';
 import '../rd_widgets.dart';
-import '../work/rd_work_file_actions.dart' show rdOpenWorkFile;
 
 /// REDESIGN: "Aktuell" of the Werke tab (canvas "Aktuelle Noten im
-/// Werke-Tab", variant A): one row of cards with the Werke played right now
-/// ([rdCurrentWorkCards]), for members and leads. A tap opens the own part
-/// directly, without a group the score ([rdOpenCurrentWork], like the top of
-/// the Werk page); "Alle als PDF" puts all of them into one PDF.
+/// Werke-Tab", variant A): one row of cards with the Werke of the coming
+/// Termine ([rdCurrentWorkCards]), for members and leads. A tap opens the
+/// Werk page ([rdOpenCurrentWork]), which shows the own part on top;
+/// "Alle als PDF" puts all own parts (without a group the scores) into one
+/// PDF.
 /// On the desktop (list next to the Werk) ‹ › page through the row.
 class RdCurrentWorksStrip extends ConsumerStatefulWidget {
   const RdCurrentWorksStrip({super.key, required this.works, required this.ownGroup, required this.choir});
@@ -178,9 +178,8 @@ class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
   }
 }
 
-/// Number, when (Termin or last played), title and whether the own part
-/// is there.
-class _CurrentCard extends ConsumerWidget {
+/// Number, Termin, title and whether the own part is there.
+class _CurrentCard extends StatelessWidget {
   const _CurrentCard({required this.work, required this.ownGroup, required this.choir});
 
   final RdCurrentWork work;
@@ -188,19 +187,19 @@ class _CurrentCard extends ConsumerWidget {
   final bool choir;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
     final song = work.song;
     final number = song.fullNumber;
-    final when = rdCurrentWorkWhen(l10n, work);
+    final when = rdCurrentWorkWhen(work);
     final part = rdCurrentWorkFiles(song, ownGroup?.id, choir: choir).isNotEmpty;
     final foot = !part
         ? l10n.redesignWorksCurrentNoPart
         : ownGroup == null
         ? l10n.redesignWorkScore
         : l10n.redesignWorksStatusPart;
-    void open() => rdOpenCurrentWork(context, ref, song, ownGroup?.id, choir: choir);
+    void open() => rdOpenCurrentWork(context, song);
     // One label for the whole card; the tap stays reachable for screen
     // readers (the excluded InkWell no longer offers it).
     return Semantics(
@@ -246,25 +245,17 @@ class _CurrentCard extends ConsumerWidget {
               style: TextStyle(fontSize: 15, height: 1.25, fontWeight: FontWeight.w600, color: p.text),
             ),
             const Spacer(),
-            Row(
-              children: [
-                if (part) ...[
-                  Icon(Icons.picture_as_pdf_outlined, size: 14, color: p.softText),
-                  const SizedBox(width: 4),
-                ],
-                Expanded(
-                  child: Text(
-                    foot,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: part ? FontWeight.w600 : FontWeight.w500,
-                      color: part ? p.softText : p.text2,
-                    ),
-                  ),
-                ),
-              ],
+            // What the Werk page holds on top (no file link: the card opens
+            // the whole Werk).
+            Text(
+              foot,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: part ? FontWeight.w600 : FontWeight.w500,
+                color: part ? p.softText : p.text2,
+              ),
             ),
           ],
         ),
@@ -273,19 +264,13 @@ class _CurrentCard extends ConsumerWidget {
   }
 }
 
-/// "Do. 12.11. · Probe" for a planned Werk, "zuletzt 5. Nov." for one
-/// played lately.
-String rdCurrentWorkWhen(AppLocalizations l10n, RdCurrentWork work) {
-  final locale = currentIntlLocale();
+/// "Do. 12.11. · Probe": the Termin a current Werk is planned for.
+String rdCurrentWorkWhen(RdCurrentWork work) {
   final event = work.event;
-  if (event != null) {
-    return [
-      if (event.date != null) DateFormat('E d.M.', locale).format(event.date!),
-      if (event.type.isNotEmpty) event.type,
-    ].join(' · ');
-  }
-  final played = work.lastPlayed;
-  return played == null ? '' : l10n.redesignWorksCurrentLast(DateFormat.MMMd(locale).format(played));
+  return [
+    if (event.date != null) DateFormat('E d.M.', currentIntlLocale()).format(event.date!),
+    if (event.type.isNotEmpty) event.type,
+  ].join(' · ');
 }
 
 /// What a card of [song] stands for: the Noten of the own part, without a
@@ -294,17 +279,8 @@ List<SongFile> rdCurrentWorkFiles(Song song, int? groupId, {required bool choir}
     ? [if (rdScore(song) case final score?) score]
     : rdMemberPartFiles(song, groupId, choir: choir).where(rdIsNotes).toList();
 
-/// A tap on a current Werk: the own part (without a group the score) when
-/// it is one file, else the Werk page (none, or several files to pick from).
-Future<void> rdOpenCurrentWork(
-  BuildContext context,
-  WidgetRef ref,
-  Song song,
-  int? groupId, {
-  required bool choir,
-}) async {
-  final files = rdCurrentWorkFiles(song, groupId, choir: choir);
-  final file = files.length == 1 ? files.single : null;
-  if (file != null) return rdOpenWorkFile(context, ref, song, file);
+/// A tap on a current Werk: its Werk page (the own part, without a group
+/// the score, is on top there).
+void rdOpenCurrentWork(BuildContext context, Song song) {
   if (song.id != null) RdSplitScope.open(context, RedesignRoutes.work(song.id!));
 }

@@ -427,7 +427,7 @@ void main() {
       expect(rdNewWorkTarget(found, sure).name, 'Wie wunderbar ist Jesus');
     });
 
-    test('into a Sammlung: new Werke get its Kürzel, numbers of the whole group count', () {
+    test('into a Sammlung: new Werke get its Kürzel and are numbered on from its highest', () {
       final entries = [
         _e('Noten/157 Jesus ruft dich/Viola.pdf'),
         _e('Noten/12 Neu/Viola.pdf'),
@@ -445,14 +445,71 @@ void main() {
         return (t.prefix, t.number);
       }
 
-      // 157 for one of the two; taken, twice in the folders or none: the
-      // next free ones after the highest.
-      expect({target('Jesus ruft dich'), target('Die wahre Liebe')}, contains(('S', 157)));
-      final all = {for (final t in ['Jesus ruft dich', 'Die wahre Liebe', 'Neu', 'O ich armer Sünder']) target(t)};
-      expect(all, {('S', 157), ('S', 158), ('S', 159), ('S', 160)});
-      // Into the Repertoire a Werk without number stays without.
+      // Folder numbers only sort: on from S12 (Leon: "02 Ohne Gott" into a
+      // new Sammlung is T1, not T2).
+      expect([for (final t in ['Neu', 'Die wahre Liebe', 'Jesus ruft dich', 'O ich armer Sünder']) target(t)],
+          [('S', 13), ('S', 14), ('S', 15), ('S', 16)]);
+      final empty = rdBuildImportPlan([_e('Noten/02 Ohne Gott/Viola.pdf')],
+          songs: const [], instruments: _instruments, isChoir: false, newPrefix: 'T', takenNumbers: {rdImportNumberKey(null, 1)});
+      final ohneGott = rdDefaultTarget(empty, empty.works.single);
+      expect((ohneGott.prefix, ohneGott.number), ('T', 1));
+      // Into the Repertoire the folder number counts; without one it stays without.
       final repertoire = rdBuildImportPlan(entries, songs: const [], instruments: _instruments, isChoir: false);
-      expect(rdDefaultTarget(repertoire, repertoire.works.firstWhere((w) => w.title == 'O ich armer Sünder')).number, isNull);
+      int? numberOf(String title) => rdDefaultTarget(repertoire, repertoire.works.firstWhere((w) => w.title == title)).number;
+      expect(numberOf('Neu'), 12);
+      expect(numberOf('O ich armer Sünder'), isNull);
+    });
+
+    test('a number typed by hand: checked against the group and the import, the others go round it', () {
+      final plan = rdBuildImportPlan([_e('Noten/01 Ohne Gott/Viola.pdf'), _e('Noten/02 Neu/Viola.pdf'), _e('Noten/03 Mehr/Viola.pdf')],
+          songs: const [RdImportSong(id: 1, name: 'Ohne Gott', number: 1, prefix: 'T')],
+          instruments: _instruments,
+          isChoir: false,
+          newPrefix: 'T');
+      RdImportWork work(String title) => plan.works.firstWhere((w) => w.title == title);
+      final ohneGott = work('Ohne Gott');
+      expect(ohneGott.match.songId, 1);
+      expect([rdDefaultTarget(plan, work('Neu')).number, rdDefaultTarget(plan, work('Mehr')).number], [2, 3]);
+
+      const d = RdImportDecisions();
+      RdImportNumberProblem? problem(String input) => rdImportNumberProblem(plan, d, work('Neu'), input, prefix: 'T');
+      expect([problem('1'), problem('3'), problem(''), problem('x'), problem('0')],
+          [RdImportNumberProblem.taken, RdImportNumberProblem.taken, RdImportNumberProblem.required, RdImportNumberProblem.invalid, RdImportNumberProblem.invalid]);
+      expect([problem('7'), problem('t 7'), problem('2')], [null, null, null]);
+      expect(rdImportParseNumber('t 7', prefix: 'T'), 7);
+
+      // "Neu" by hand on 4 (kept for "Ohne Gott" as a new Werk): the others
+      // are numbered round it.
+      expect(rdNewWorkTarget(plan, ohneGott).number, 4);
+      final byHand = RdImportDecisions(targets: {work('Neu').key: const RdWorkTarget.create(name: 'Neu', number: 4, prefix: 'T')});
+      expect([rdTargetOf(plan, byHand, work('Mehr')).number, rdNewWorkTarget(plan, ohneGott, byHand).number], [2, 3]);
+      expect(rdImportNumberProblem(plan, byHand, work('Mehr'), '4', prefix: 'T'), RdImportNumberProblem.taken);
+      expect(rdImportNumberProblem(plan, byHand, work('Neu'), '4', prefix: 'T'), isNull);
+
+      // Sol: files without a Werk folder made a new Werk count as well.
+      final withLoose = rdBuildImportPlan([_e('Noten/02 Neu/Viola.pdf'), _e('Noten/Viola.pdf')],
+          songs: const [], instruments: _instruments, isChoir: false, newPrefix: 'T');
+      final loose = withLoose.works.firstWhere((w) => w.key == 'loose');
+      final neu = withLoose.works.firstWhere((w) => w.title == 'Neu');
+      expect(rdNewWorkTarget(withLoose, loose).number, 2); // Neu 1
+      final looseNew = RdImportDecisions(targets: {loose.key: RdWorkTarget.create(name: 'Lose', number: 5, prefix: 'T')});
+      expect(rdImportNumberProblem(withLoose, looseNew, neu, '5', prefix: 'T'), RdImportNumberProblem.taken);
+    });
+
+    test('a number kept while the plan changes (KI off) stays its own', () {
+      final entries = [_e('Noten/100 Alpha/Viola.pdf'), _e('Noten/200 Beta/Viola.pdf')];
+      final found = rdBuildImportPlan(entries,
+          songs: const [RdImportSong(id: 9, name: 'Alpha', number: 100, prefix: 'S')], instruments: _instruments, isChoir: false, newPrefix: 'S');
+      final alpha = found.works.firstWhere((w) => w.title == 'Alpha');
+      expect(alpha.match.songId, 9);
+      final made = rdNewWorkTarget(found, alpha);
+      expect(made.number, 102); // Beta 101
+      // Without the match Alpha comes first: Beta still gets 101, not 102.
+      final lost = rdBuildImportPlan(entries,
+          songs: const [], instruments: _instruments, isChoir: false, newPrefix: 'S', takenNumbers: {rdImportNumberKey('S', 100)});
+      RdImportWork work(String title) => lost.works.firstWhere((w) => w.title == title);
+      final d = RdImportDecisions(targets: {work('Alpha').key: made});
+      expect([rdTargetOf(lost, d, work('Alpha')).number, rdTargetOf(lost, d, work('Beta')).number], [102, 101]);
     });
   });
 

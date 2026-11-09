@@ -20,17 +20,23 @@ import '../widgets/manage/rd_settings_sheets.dart';
 import '../widgets/rd_widgets.dart';
 
 /// Opens "Neue Regel" / "Regel" in the content area (the sidebar stays);
-/// returns the rule on "Fertig", null on "Abbrechen". [otherRules] are the
-/// group's other rules (they decide whether "Nur zusammen …" is offered).
-Future<CriticalRule?> openRdCriticalRulePage(
+/// returns the rule's parts on "Fertig" (more than one = joined by "und"),
+/// null on "Abbrechen". [combinedElsewhere] names the group's other rule
+/// with "und": the server knows only one, so this rule can't get a second.
+Future<List<CriticalRule>?> openRdCriticalRulePage(
   BuildContext context, {
-  CriticalRule? rule,
+  List<CriticalRule>? parts,
   required List<AttendanceType> attendanceTypes,
-  required bool otherRules,
+  String? combinedElsewhere,
 }) {
-  return Navigator.of(context).push<CriticalRule>(
+  return Navigator.of(context).push<List<CriticalRule>>(
     MaterialPageRoute(
-      builder: (_) => RdCriticalRulePage(rule: rule, attendanceTypes: attendanceTypes, otherRules: otherRules),
+      builder:
+          (_) => RdCriticalRulePage(
+            parts: parts,
+            attendanceTypes: attendanceTypes,
+            combinedElsewhere: combinedElsewhere,
+          ),
     ),
   );
 }
@@ -38,37 +44,47 @@ Future<CriticalRule?> openRdCriticalRulePage(
 /// REDESIGN (canvas "Problemfälle neu gedacht", variant B): a Problemfall
 /// rule as a sentence – "Problemfall ist, wer [in den letzten 30 Tagen]
 /// [mindestens 3-mal] [unentschuldigt gefehlt] hat, bei [allen Terminen]."
-/// Each marked part opens a small sheet; presets fill a new rule; below, a
-/// live preview of who the rule hits right now. Builds the same
-/// [CriticalRule] as Ionic; saving stays with the caller.
+/// Each marked part opens a small sheet; presets fill a new rule; "und
+/// außerdem …" adds a condition that must hold too (stored as Ionic's
+/// "nur zusammen" rules); below, a live preview of who the rule hits right
+/// now. Builds the same [CriticalRule]s as Ionic; saving stays with the
+/// caller.
 class RdCriticalRulePage extends ConsumerStatefulWidget {
-  const RdCriticalRulePage({super.key, this.rule, required this.attendanceTypes, this.otherRules = false});
+  const RdCriticalRulePage({super.key, this.parts, required this.attendanceTypes, this.combinedElsewhere});
 
-  final CriticalRule? rule;
+  final List<CriticalRule>? parts;
   final List<AttendanceType> attendanceTypes;
-  final bool otherRules;
+  final String? combinedElsewhere;
 
   @override
   ConsumerState<RdCriticalRulePage> createState() => _RdCriticalRulePageState();
 }
 
 class _RdCriticalRulePageState extends ConsumerState<RdCriticalRulePage> {
-  late final _id = widget.rule?.id ?? const Uuid().v4();
+  late final _id = widget.parts?.firstOrNull?.id ?? const Uuid().v4();
 
-  late CriticalRule _rule =
-      _normalised(widget.rule) ??
+  /// The conditions, joined by "und"; the first one is the rule's sentence.
+  late List<CriticalRule> _parts = [
+    for (final r in widget.parts ?? const <CriticalRule>[]) _normalised(r),
+    if (widget.parts?.isEmpty ?? true)
       rdCriticalPresetRule(
         RdCriticalPreset.oftenAbsent,
         id: _id,
         name: rdCriticalPresetLabel(RdCriticalPreset.oftenAbsent, l10nWithoutContext),
-      );
+      ),
+  ];
 
-  late final _name = TextEditingController(text: _rule.name ?? '');
+  /// The condition the sheets change (the one whose part was tapped).
+  int _at = 0;
+
+  CriticalRule get _rule => _parts[_at];
+
+  late final _name = TextEditingController(text: _parts.first.name ?? '');
 
   /// Legacy Ionic rules without period type count their days (or all
   /// time): keep that meaning explicitly, so saving never changes it.
-  static CriticalRule? _normalised(CriticalRule? rule) {
-    if (rule == null || rule.periodType != null) return rule;
+  static CriticalRule _normalised(CriticalRule rule) {
+    if (rule.periodType != null) return rule;
     final days = rule.periodDays;
     return days != null && days > 0
         ? rule.copyWith(periodType: CriticalRulePeriodType.days)
@@ -85,7 +101,7 @@ class _RdCriticalRulePageState extends ConsumerState<RdCriticalRulePage> {
     _recognizers.clear();
   }
 
-  bool get _isNew => widget.rule == null;
+  bool get _isNew => widget.parts == null;
 
   @override
   void dispose() {
@@ -94,7 +110,31 @@ class _RdCriticalRulePageState extends ConsumerState<RdCriticalRulePage> {
     super.dispose();
   }
 
-  void _set(CriticalRule rule) => setState(() => _rule = rule);
+  void _set(CriticalRule rule) => setState(() => _parts = [..._parts]..[_at] = rule);
+
+  /// "und außerdem …": a second condition, by default the other common one
+  /// (late after absent and vice versa) for the same period and Termine.
+  void _addPart() {
+    final first = _parts.first;
+    final preset =
+        rdCriticalWhatOf(first.statuses) == RdCriticalWhat.late ? RdCriticalPreset.oftenAbsent : RdCriticalPreset.oftenLate;
+    setState(() {
+      _parts = [
+        ..._parts,
+        rdCriticalPresetRule(preset, id: const Uuid().v4()).copyWith(
+          attendanceTypeIds: first.attendanceTypeIds,
+          periodType: first.periodType,
+          periodDays: first.periodDays,
+        ),
+      ];
+      _at = 0;
+    });
+  }
+
+  void _removePart(int index) => setState(() {
+    _parts = [..._parts]..removeAt(index);
+    _at = 0;
+  });
 
   void _applyPreset(RdCriticalPreset preset) {
     final l10n = context.l10n;
@@ -102,40 +142,47 @@ class _RdCriticalRulePageState extends ConsumerState<RdCriticalRulePage> {
     final name = _name.text.trim();
     final presetNames = [for (final x in RdCriticalPreset.values) rdCriticalPresetLabel(x, l10n)];
     if (name.isEmpty || presetNames.contains(name)) _name.text = rdCriticalPresetLabel(preset, l10n);
-    _set(rdCriticalPresetRule(preset, id: _id).copyWith(attendanceTypeIds: _rule.attendanceTypeIds, operator: _rule.operator));
+    _at = 0;
+    _set(rdCriticalPresetRule(preset, id: _id).copyWith(attendanceTypeIds: _parts.first.attendanceTypeIds));
   }
 
   void _done() {
     final l10n = context.l10n;
-    // Same checks as the old sheet (Ionic addCriticalRule).
-    if (_rule.statuses.isEmpty) {
-      ToastHelper.showError(context, l10n.generalSettingsSelectStatus);
-      return;
-    }
-    if (!_rule.thresholdValue.isFinite || _rule.thresholdValue <= 0) {
-      ToastHelper.showError(context, l10n.generalSettingsThresholdPositive);
-      return;
-    }
-    if (_rule.periodType == CriticalRulePeriodType.days && (_rule.periodDays ?? 0) <= 0) {
-      ToastHelper.showError(context, l10n.generalSettingsPeriodPositive);
-      return;
+    // Same checks as the old sheet (Ionic addCriticalRule), per condition.
+    for (final r in _parts) {
+      if (r.statuses.isEmpty) {
+        ToastHelper.showError(context, l10n.generalSettingsSelectStatus);
+        return;
+      }
+      if (!r.thresholdValue.isFinite || r.thresholdValue <= 0) {
+        ToastHelper.showError(context, l10n.generalSettingsThresholdPositive);
+        return;
+      }
+      if (r.periodType == CriticalRulePeriodType.days && (r.periodDays ?? 0) <= 0) {
+        ToastHelper.showError(context, l10n.generalSettingsPeriodPositive);
+        return;
+      }
     }
     final name = _name.text.trim();
-    Navigator.of(context).pop(
-      _rule.copyWith(
-        id: _id,
-        name: name.isEmpty ? null : name,
-        // Statuses in the order of the old select.
-        statuses: [
-          for (final s in criticalRuleStatuses)
-            if (_rule.statuses.contains(s.value)) s.value,
-          ..._rule.statuses.where((s) => !criticalRuleStatuses.any((x) => x.value == s)),
-        ],
-        periodDays: _rule.periodType == CriticalRulePeriodType.days ? _rule.periodDays : null,
-        // Ionic + `evaluate-critical-rules` have no `enabled` flag.
-        enabled: true,
-      ),
-    );
+    final combined = _parts.length > 1;
+    Navigator.of(context).pop([
+      for (final (i, r) in _parts.indexed)
+        r.copyWith(
+          id: i == 0 ? _id : r.id,
+          // Every part carries the name, so Ionic lists them recognisably.
+          name: name.isEmpty ? null : name,
+          // Statuses in the order of the old select.
+          statuses: [
+            for (final s in criticalRuleStatuses)
+              if (r.statuses.contains(s.value)) s.value,
+            ...r.statuses.where((s) => !criticalRuleStatuses.any((x) => x.value == s)),
+          ],
+          periodDays: r.periodType == CriticalRulePeriodType.days ? r.periodDays : null,
+          operator: combined ? CriticalRuleOperator.and : CriticalRuleOperator.or,
+          // Ionic + `evaluate-critical-rules` have no `enabled` flag.
+          enabled: true,
+        ),
+    ]);
   }
 
   // ------------------------------------------------------------- sheets
@@ -256,10 +303,7 @@ class _RdCriticalRulePageState extends ConsumerState<RdCriticalRulePage> {
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
-    final preset = rdCriticalPresetOf(_rule);
-    final showAnd = widget.otherRules || _rule.operator == CriticalRuleOperator.and;
-    final verb = rdCriticalVerb(_rule.statuses, l10n);
-    final types = rdCriticalTypesText(_rule, widget.attendanceTypes) ?? l10n.rdCriticalTypesAll;
+    final preset = _parts.length == 1 ? rdCriticalPresetOf(_parts.first) : null;
     final textStyle = TextStyle(fontSize: 18, height: 1.7, color: p.text);
     _disposeRecognizers();
 
@@ -297,30 +341,49 @@ class _RdCriticalRulePageState extends ConsumerState<RdCriticalRulePage> {
                   ],
                   const SizedBox(height: 14),
                   RdCard(
-                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-                    child: Text.rich(
-                      TextSpan(
-                        style: textStyle,
-                        children: [
-                          TextSpan(text: '${l10n.rdCriticalSentenceLead} '),
-                          _token(rdCriticalPeriodText(_rule, l10n), _pickPeriod),
-                          const TextSpan(text: ' '),
-                          _token(rdCriticalThresholdText(_rule, l10n), _pickThreshold),
-                          const TextSpan(text: ' '),
-                          _token(rdCriticalWhatText(_rule.statuses, l10n), _pickWhat),
-                          TextSpan(text: '${verb.isEmpty ? '' : ' $verb'}${l10n.rdCriticalSentenceTypes} '),
-                          _token(types, _pickTypes),
-                          const TextSpan(text: '.'),
-                        ],
-                      ),
+                    padding: const EdgeInsets.fromLTRB(16, 14, 8, 14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        for (var i = 0; i < _parts.length; i++)
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(right: i == 0 ? 8 : 0),
+                                  child: Text.rich(TextSpan(style: textStyle, children: _clause(i))),
+                                ),
+                              ),
+                              if (i > 0)
+                                IconButton(
+                                  icon: Icon(Icons.close, size: 20, color: p.text2),
+                                  tooltip: l10n.rdCriticalRemoveAnd,
+                                  onPressed: () => _removePart(i),
+                                ),
+                            ],
+                          ),
+                      ],
                     ),
                   ),
-                  if (_rule.statuses.contains(1))
+                  if (_parts.any((r) => r.statuses.contains(1)))
                     Padding(
                       padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
                       child: Text(l10n.rdCriticalPresentWarning, style: TextStyle(fontSize: 13, color: p.absent)),
                     ),
-                  _Preview(rule: _rule),
+                  if (widget.combinedElsewhere == null)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
+                        onPressed: _addPart,
+                        icon: const Icon(Icons.add, size: 18),
+                        label: Text(l10n.rdCriticalAddAnd),
+                        style: TextButton.styleFrom(foregroundColor: p.primary),
+                      ),
+                    )
+                  else
+                    RdListNote(l10n.rdCriticalAndElsewhere(widget.combinedElsewhere!)),
+                  _Preview(parts: _parts),
                   const SizedBox(height: 22),
                   RdGroupLabel(l10n.rdCriticalMore),
                   RdGroupedList(
@@ -333,14 +396,6 @@ class _RdCriticalRulePageState extends ConsumerState<RdCriticalRulePage> {
                           decoration: rdInputDecoration(p, l10n.rdCriticalNamePh),
                         ),
                       ),
-                      if (showAnd)
-                        RdSwitchRow(
-                          title: l10n.rdCriticalAndTitle,
-                          subtitle: l10n.rdCriticalAndHint,
-                          value: _rule.operator == CriticalRuleOperator.and,
-                          onChanged:
-                              (v) => _set(_rule.copyWith(operator: v ? CriticalRuleOperator.and : CriticalRuleOperator.or)),
-                        ),
                     ],
                   ),
                 ],
@@ -350,6 +405,31 @@ class _RdCriticalRulePageState extends ConsumerState<RdCriticalRulePage> {
         ),
       ),
     );
+  }
+
+  /// Condition [i] as sentence parts: "Problemfall ist, wer […] […] […]
+  /// hat, bei […]" for the first, "und […] […] […] ist, bei […]" for the
+  /// others; the last one ends with ".".
+  List<InlineSpan> _clause(int i) {
+    final l10n = context.l10n;
+    final r = _parts[i];
+    final verb = rdCriticalVerb(r.statuses, l10n);
+    final types = rdCriticalTypesText(r, widget.attendanceTypes) ?? l10n.rdCriticalTypesAll;
+    VoidCallback at(Future<void> Function() pick) => () {
+      _at = i;
+      pick();
+    };
+    return [
+      TextSpan(text: i == 0 ? '${l10n.rdCriticalSentenceLead} ' : '${l10n.rdCriticalAnd} '),
+      _token(rdCriticalPeriodText(r, l10n), at(_pickPeriod)),
+      const TextSpan(text: ' '),
+      _token(rdCriticalThresholdText(r, l10n), at(_pickThreshold)),
+      const TextSpan(text: ' '),
+      _token(rdCriticalWhatText(r.statuses, l10n), at(_pickWhat)),
+      TextSpan(text: '${verb.isEmpty ? '' : ' $verb'}${l10n.rdCriticalSentenceTypes} '),
+      _token(types, at(_pickTypes)),
+      if (i == _parts.length - 1) const TextSpan(text: '.'),
+    ];
   }
 
   /// A tappable part of the sentence: marked text that wraps with it.
@@ -373,12 +453,13 @@ class _RdCriticalRulePageState extends ConsumerState<RdCriticalRulePage> {
   }
 }
 
-/// "Trifft gerade auf 2 Personen zu" and who: the rule on its own, for the
-/// active members (paused ones are not shown as Problemfall either).
+/// "Trifft gerade auf 2 Personen zu" and who: the rule (all its conditions
+/// together) on its own, for the active members (paused ones are not shown
+/// as Problemfall either).
 class _Preview extends ConsumerWidget {
-  const _Preview({required this.rule});
+  const _Preview({required this.parts});
 
-  final CriticalRule rule;
+  final List<CriticalRule> parts;
 
   static const _rows = 8;
 
@@ -389,7 +470,7 @@ class _Preview extends ConsumerWidget {
     final tenant = ref.watch(currentTenantProvider);
     final season = rdSeasonStartOf(tenant?.seasonStart);
     final now = DateTime.now();
-    final key = rdCriticalKeyFor(tenant, [...?tenant?.criticalRules, rule]);
+    final key = rdCriticalKeyFor(tenant, [...?tenant?.criticalRules, ...parts]);
     if (key == null) return const SizedBox.shrink();
     final entries = ref.watch(rdCriticalEntriesProvider(key));
     // Live people: a talk („Mit Person gesprochen“) or a pause counts at once.
@@ -414,24 +495,39 @@ class _Preview extends ConsumerWidget {
     final people = rdLoadedValue(players);
     if (data == null || people == null) return note(l10n.rdCriticalPreviewLoading, spinner: true);
 
-    final hits = <(Person, RdRuleResult)>[];
+    final hits = <(Person, List<RdRuleResult>)>[];
     for (final x in people) {
       if (x.id == null || x.paused || x.pending || x.left != null) continue;
-      final result = rdEvaluateCriticalRule(
-        rule,
-        data[x.id] ?? const [],
-        lastSolve: x.lastSolve == null ? null : DateTime.tryParse(x.lastSolve!),
-        seasonStart: season,
-        now: now,
-      );
-      if (result.matches) hits.add((x, result));
+      final results = [
+        for (final r in parts)
+          rdEvaluateCriticalRule(
+            r,
+            data[x.id] ?? const [],
+            lastSolve: x.lastSolve == null ? null : DateTime.tryParse(x.lastSolve!),
+            seasonStart: season,
+            now: now,
+          ),
+      ];
+      if (results.every((r) => r.matches)) hits.add((x, results));
     }
     hits.sort((a, b) {
-      final byCount = b.$2.matching.compareTo(a.$2.matching);
+      final byCount = b.$2.first.matching.compareTo(a.$2.first.matching);
       return byCount != 0 ? byCount : a.$1.lastName.compareTo(b.$1.lastName);
     });
-    final percent = rule.thresholdType == CriticalRuleThresholdType.percentage;
     final date = DateFormat.MMMd(currentIntlLocale());
+
+    // The sentence above says what counts; here only the numbers.
+    String numbers(CriticalRule rule, RdRuleResult r) {
+      final percent = rule.thresholdType == CriticalRuleThresholdType.percentage;
+      return [
+        if (percent) ...[
+          '${r.percent.round()} %',
+          l10n.rdCriticalPreviewOf(r.matching, r.total),
+        ] else
+          l10n.rdCriticalPreviewTimes(r.matching),
+        if (!percent && r.last != null) l10n.rdCriticalPreviewLast(date.format(r.last!.toLocal())),
+      ].join(' · ');
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -441,28 +537,20 @@ class _Preview extends ConsumerWidget {
         if (hits.isNotEmpty)
           RdGroupedList(
             children: [
-              for (final (x, r) in hits.take(_rows))
+              for (final (x, results) in hits.take(_rows))
                 RdListRow(
                   leading: RdInitials(rdInitialsOf('${x.firstName} ${x.lastName}'), size: 34),
                   title: '${x.firstName} ${x.lastName}'.trim(),
-                  // The sentence above says what counts; here only the numbers.
                   subtitle: [
-                    if (percent) ...[
-                      '${r.percent.round()} %',
-                      l10n.rdCriticalPreviewOf(r.matching, r.total),
-                    ] else
-                      l10n.rdCriticalPreviewTimes(r.matching),
-                    if (!percent && r.last != null) l10n.rdCriticalPreviewLast(date.format(r.last!.toLocal())),
-                  ].join(' · '),
+                    for (final (i, r) in results.indexed) numbers(parts[i], r),
+                  ].join(' ${l10n.rdCriticalAnd} '),
                   showChevron: false,
                 ),
               if (hits.length > _rows)
                 RdListRow(title: l10n.rdCriticalPreviewMore(hits.length - _rows), showChevron: false),
             ],
           ),
-        RdListNote(
-          rule.operator == CriticalRuleOperator.and ? l10n.rdCriticalPreviewAndHint : l10n.rdCriticalPreviewSolveHint,
-        ),
+        RdListNote(l10n.rdCriticalPreviewSolveHint),
       ],
     );
   }

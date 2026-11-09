@@ -588,6 +588,8 @@ String? rdImportQuestionKey(String fileName, {String? workName}) {
 }
 
 /// [rdImportQuestionKey] as written in the file name ("Sax", "фл").
+String? rdImportQuestionLabel(String fileName, {String? workName}) => _questionLabel(fileName, workName: workName);
+
 String? _questionLabel(String fileName, {String? workName}) {
   final term = InstrumentMatcher.partTerm(fileName, workName: workName);
   if (term == null) return null;
@@ -870,6 +872,23 @@ class RdImportPlanCache {
   final Map<String, RdWorkMatch> _matches = {};
   final Map<String, ({FileCategoryGuess guess, String? newGroup, List<RdImportCategory> several})> _files = {};
 }
+
+/// The part of a single file [fileName] (no folders) read as the import
+/// reads it ([_readName]): used by the upload on the Werk page.
+({FileCategoryGuess guess, String? newGroup, List<RdImportCategory> several}) rdImportReadName(
+  String fileName, {
+  required List<InstrumentInfo> instruments,
+  required bool isChoir,
+  required String workName,
+}) =>
+    _readName(
+      RdImportEntry(path: fileName, size: 0),
+      '',
+      instruments,
+      isChoir,
+      {for (final g in instruments) g.name.trim().toLowerCase()},
+      workName,
+    );
 
 /// The part of [e] read from its name (or its folder's), and the new group
 /// a known instrument without a group in Attendix becomes ("Oboe").
@@ -1469,72 +1488,148 @@ class RdImportDecisions {
       );
 }
 
-/// Proposed target of [work]: the Werk found, or a new Werk with the folder's
-/// number when that number is still free. Into a Sammlung with a Kürzel a
-/// new Werk without a free number gets the next one after the highest
-/// (Leon, 07.11.2026): no Werk there stays without a number.
-RdWorkTarget rdDefaultTarget(RdImportPlan plan, RdImportWork work) {
+/// Proposed target of [work] with the decisions [d]: the Werk found, or a
+/// new Werk. Into the Repertoire (or a Sammlung without Kürzel) it keeps the
+/// folder's number when that is still free. Into a Sammlung with a Kürzel
+/// new Werke are numbered on from its highest number, whatever the folders
+/// say (Leon, 09.11.2026: "02 Ohne Gott" into a new Sammlung is T1, not T2).
+RdWorkTarget rdDefaultTarget(RdImportPlan plan, RdImportWork work, [RdImportDecisions d = const RdImportDecisions()]) {
   final id = work.match.songId;
   if (id != null) return RdWorkTarget.song(id);
   if (work.key == 'loose') return const RdWorkTarget.skip();
-  return rdNewWorkTarget(plan, work);
+  return rdNewWorkTarget(plan, work, d);
 }
 
 /// [work] as a new Werk (also one found in Attendix but chosen "Als neues
 /// Werk anlegen"): its number from [_numbersOf]; in a Sammlung its Kürzel.
-RdWorkTarget rdNewWorkTarget(RdImportPlan plan, RdImportWork work) {
+RdWorkTarget rdNewWorkTarget(RdImportPlan plan, RdImportWork work, [RdImportDecisions d = const RdImportDecisions()]) {
   // A Werk found in Attendix has its name as title: a new one is named after the folder.
   final parsed = rdParseWorkName(work.folderName).title;
   final name = work.match.songId == null && work.title.isNotEmpty
       ? work.title
       : (parsed.isEmpty ? work.folderName : parsed);
-  final number = _numbersOf(plan)[work.key];
+  // Its own number typed by hand is not in the way of its proposal.
+  final own = d.targets[work.key];
+  final number = _numbersOf(plan, own != null && own.isNew ? d.copyWith(targets: {...d.targets}..remove(work.key)) : d)[work.key];
   return RdWorkTarget.create(name: name, number: number, prefix: number == null ? plan.newPrefix : plan.newPrefix ?? work.prefix);
 }
 
-/// Folder numbers of new Werke still free (in the order of the Werke: the
-/// first keeps a number twice in the folders), then in a Sammlung with a
-/// Kürzel the next free numbers for the others. Werke found in Attendix
-/// come after all new ones (a number for when one is made new by hand).
-/// Once per plan.
-final _numbers = Expando<Map<String, int?>>();
+/// Numbers in use in the group and those the other Werke of the import take
+/// as new Werke with [d] ([rdImportNumberKey]); [exceptKey]'s own left out.
+Set<String> rdImportUsedNumbers(RdImportPlan plan, RdImportDecisions d, {String? exceptKey}) => {
+      ..._groupNumbers(plan),
+      for (final w in plan.works)
+        if (w.key != exceptKey)
+          if (rdTargetOf(plan, d, w) case RdWorkTarget(isNew: true, :final int number, :final prefix))
+            rdImportNumberKey(prefix ?? plan.newPrefix, number),
+    };
 
-Map<String, int?> _numbersOf(RdImportPlan plan) => _numbers[plan] ??= () {
-      final used = {
-        ...plan.takenNumbers,
-        for (final s in plan.songs.values)
-          if (s.number != null) rdImportNumberKey(s.prefix, s.number!),
-      };
-      final numbers = <String, int?>{};
-      final without = <RdImportWork>[];
-      final works = [
-        for (final w in plan.works)
-          if (w.key != 'loose' && w.match.songId == null) w,
-        for (final w in plan.works)
-          if (w.key != 'loose' && w.match.songId != null) w,
-      ];
-      for (final w in works) {
-        final n = w.number;
-        if (n != null && used.add(rdImportNumberKey(plan.newPrefix ?? w.prefix, n))) {
-          numbers[w.key] = n;
-        } else {
-          numbers[w.key] = null;
-          without.add(w);
-        }
+/// Numbers in use anywhere in the group.
+Set<String> _groupNumbers(RdImportPlan plan) => {
+      ...plan.takenNumbers,
+      for (final s in plan.songs.values)
+        if (s.number != null) rdImportNumberKey(s.prefix, s.number!),
+    };
+
+/// The number after the highest one with [prefix] in [used].
+int rdImportNextNumber(Set<String> used, String prefix) {
+  final head = '${prefix.trim().toUpperCase()}|';
+  return used.where((k) => k.startsWith(head)).fold<int>(0, (m, k) => math.max(m, int.tryParse(k.substring(head.length)) ?? 0)) + 1;
+}
+
+/// Why [input] cannot be the number of [work] as a new Werk with Kürzel
+/// [prefix] and the decisions [d], or null when it can (also empty: no
+/// number, except in a Sammlung with a Kürzel). A number another Werk of
+/// the import has now is taken too: it would lose it without notice.
+RdImportNumberProblem? rdImportNumberProblem(RdImportPlan plan, RdImportDecisions d, RdImportWork work, String input, {String? prefix}) {
+  final text = _withoutKuerzel(input, prefix);
+  if (text.isEmpty) return (plan.newPrefix?.trim() ?? '').isEmpty ? null : RdImportNumberProblem.required;
+  final n = int.tryParse(text);
+  if (n == null || n < 1) return RdImportNumberProblem.invalid;
+  final used = rdImportUsedNumbers(plan, d, exceptKey: work.key);
+  return used.contains(rdImportNumberKey(prefix, n)) ? RdImportNumberProblem.taken : null;
+}
+
+/// The number in [input] once [rdImportNumberProblem] found none; null = none.
+int? rdImportParseNumber(String input, {String? prefix}) => int.tryParse(_withoutKuerzel(input, prefix));
+
+/// [input] without the Kürzel typed with it ("T3" → "3").
+String _withoutKuerzel(String input, String? prefix) {
+  final text = input.trim();
+  final kuerzel = (prefix ?? '').trim();
+  return kuerzel.isNotEmpty && text.toUpperCase().startsWith(kuerzel.toUpperCase()) ? text.substring(kuerzel.length).trim() : text;
+}
+
+enum RdImportNumberProblem { required, invalid, taken }
+
+/// Numbers of new Werke with the decisions [d]. Numbers chosen for a new
+/// Werk (by hand, or kept when the plan changed with the KI) are kept free;
+/// those Werke are not numbered again. Into a Sammlung with a Kürzel: on
+/// from its highest number, in the order of the Werke (folder numbers only
+/// sort them). Otherwise the folder numbers still free (the first keeps a
+/// number twice in the folders); the others stay without. Werke found in
+/// Attendix and the files without a Werk folder come after all new ones (a
+/// number for when one is made new by hand). Cached per plan and chosen
+/// numbers.
+final _numbers = Expando<Map<String, Map<String, int?>>>();
+
+/// The last numbers per targets map: every Werk of one build asks with the same.
+final _numbersByTargets = Expando<(RdImportPlan, Map<String, int?>)>();
+
+Map<String, int?> _numbersOf(RdImportPlan plan, RdImportDecisions d) {
+  final last = _numbersByTargets[d.targets];
+  if (last != null && identical(last.$1, plan)) return last.$2;
+  final chosen = <String, String>{
+    for (final e in d.targets.entries)
+      if (e.value case RdWorkTarget(isNew: true, :final int number, :final prefix))
+        if (plan.work(e.key) != null) e.key: rdImportNumberKey(prefix ?? plan.newPrefix, number),
+  };
+  final cache = _numbers[plan] ??= {};
+  final signature = (chosen.entries.map((e) => '${e.key}=${e.value}').toList()..sort()).join('\n');
+  final hit = cache[signature];
+  if (hit != null) {
+    _numbersByTargets[d.targets] = (plan, hit);
+    return hit;
+  }
+
+  final group = _groupNumbers(plan);
+  final used = {...group, ...chosen.values};
+  final numbers = <String, int?>{};
+  final without = <RdImportWork>[];
+  final prefix = plan.newPrefix?.trim() ?? '';
+  final works = [
+    for (final w in plan.works)
+      if (w.key != 'loose' && !chosen.containsKey(w.key) && w.match.songId == null) w,
+    for (final w in plan.works)
+      if (w.key != 'loose' && !chosen.containsKey(w.key) && w.match.songId != null) w,
+    // Files without a Werk folder, when made a new Werk by hand.
+    for (final w in plan.works)
+      if (w.key == 'loose' && !chosen.containsKey(w.key)) w,
+  ];
+  for (final w in works) {
+    final n = prefix.isEmpty ? w.number : null;
+    if (n != null && used.add(rdImportNumberKey(plan.newPrefix ?? w.prefix, n))) {
+      numbers[w.key] = n;
+    } else {
+      without.add(w);
+    }
+  }
+  if (prefix.isNotEmpty) {
+    var next = rdImportNextNumber(group, prefix);
+    for (final w in without) {
+      while (!used.add(rdImportNumberKey(prefix, next))) {
+        next++;
       }
-      final prefix = plan.newPrefix?.trim() ?? '';
-      if (prefix.isNotEmpty && without.isNotEmpty) {
-        final head = '${prefix.toUpperCase()}|';
-        var next = used.where((k) => k.startsWith(head)).fold<int>(0, (m, k) => math.max(m, int.tryParse(k.substring(head.length)) ?? 0));
-        for (final w in without) {
-          numbers[w.key] = ++next;
-        }
-      }
-      return numbers;
-    }();
+      numbers[w.key] = next++;
+    }
+  }
+  if (cache.length >= 32) cache.clear();
+  _numbersByTargets[d.targets] = (plan, numbers);
+  return cache[signature] = numbers;
+}
 
 RdWorkTarget rdTargetOf(RdImportPlan plan, RdImportDecisions d, RdImportWork work) =>
-    d.targets[work.key] ?? rdDefaultTarget(plan, work);
+    d.targets[work.key] ?? rdDefaultTarget(plan, work, d);
 
 /// Chosen Fassung of [work]; null = all files.
 String? rdFassungOf(RdImportDecisions d, RdImportWork work) {
@@ -1612,14 +1707,27 @@ RdImportCategory _decided(
   if (own != null) return own;
   final answer = f.questionKey == null ? null : answers[f.questionKey];
   if (answer != null && !answer.fromPage) {
-    final id = answer.instrumentId;
-    if (id != null && id > InstrumentMatcher.lyricsId) {
-      return RdImportCategory(instrumentId: rdImportSiblingGroup(id, f.name, instruments, workName: workTitle));
-    }
-    if (answer.isSeveral) return _severalOf(answer, f, instruments, isChoir, workTitle);
-    return answer;
+    return rdImportAnswerFor(answer, f, instruments: instruments, isChoir: isChoir, workTitle: workTitle);
   }
   return pageReads[f.path]?.category ?? f.guessed;
+}
+
+/// The part [answer] (to the question of [f]) gives [f]: a group with the
+/// file's own part number ("фл → Flöte 1" puts "фл2.pdf" to Flöte 2), a
+/// part for several groups with the file's own groups.
+RdImportCategory rdImportAnswerFor(
+  RdImportCategory answer,
+  RdImportFile f, {
+  required List<InstrumentInfo> instruments,
+  required bool isChoir,
+  required String workTitle,
+}) {
+  final id = answer.instrumentId;
+  if (id != null && id > InstrumentMatcher.lyricsId) {
+    return RdImportCategory(instrumentId: rdImportSiblingGroup(id, f.name, instruments, workName: workTitle));
+  }
+  if (answer.isSeveral) return _severalOf(answer, f, instruments, isChoir, workTitle);
+  return answer;
 }
 
 /// An answer for several groups as file [f] has it: one answer is given for

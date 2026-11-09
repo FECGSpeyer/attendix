@@ -12389,13 +12389,20 @@
   "@rdAdminWorkHistory": {
     "description": "rdAdmin.workHistory"
   },
-  "rdCriticalAndHint": "Dann ist jemand nur Problemfall, wenn alle so markierten Regeln gleichzeitig zutreffen.",
-  "@rdCriticalAndHint": {
-    "description": "rdCritical.andHint"
+  "rdCriticalAddAnd": "und außerdem …",
+  "@rdCriticalAddAnd": {
+    "description": "rdCritical.addAnd"
   },
-  "rdCriticalAndTitle": "Nur zusammen mit anderen Regeln",
-  "@rdCriticalAndTitle": {
-    "description": "rdCritical.andTitle"
+  "rdCriticalAnd": "und",
+  "@rdCriticalAnd": {
+    "description": "rdCritical.and"
+  },
+  "rdCriticalAndElsewhere": "Mit „und“ kombinieren geht in der Regel „{name}“.",
+  "@rdCriticalAndElsewhere": {
+    "description": "rdCritical.andElsewhere",
+    "placeholders": {
+      "name": {}
+    }
   },
   "rdCriticalAtLeast": "Mindestens",
   "@rdCriticalAtLeast": {
@@ -12426,10 +12433,6 @@
       "percent": {},
       "what": {}
     }
-  },
-  "rdCriticalListAnd": "Nur zusammen mit anderen Regeln",
-  "@rdCriticalListAnd": {
-    "description": "rdCritical.listAnd"
   },
   "rdCriticalListFoot": "Geprüft jeden Morgen und nach jeder Änderung. Nach „Mit Person gesprochen“ zählt eine Person wieder von vorn.",
   "@rdCriticalListFoot": {
@@ -12521,10 +12524,6 @@
   "@rdCriticalPresetRarely": {
     "description": "rdCritical.presetRarely"
   },
-  "rdCriticalPreviewAndHint": "Diese Regel zählt nur zusammen mit den anderen Regeln, die so markiert sind. Die Vorschau zeigt sie für sich allein.",
-  "@rdCriticalPreviewAndHint": {
-    "description": "rdCritical.previewAndHint"
-  },
   "rdCriticalPreviewError": "Die Vorschau ist gerade nicht verfügbar.",
   "@rdCriticalPreviewError": {
     "description": "rdCritical.previewError"
@@ -12586,6 +12585,10 @@
       "period": {},
       "rule": {}
     }
+  },
+  "rdCriticalRemoveAnd": "Bedingung entfernen",
+  "@rdCriticalRemoveAnd": {
+    "description": "rdCritical.removeAnd"
   },
   "rdCriticalSentenceLead": "Problemfall ist, wer",
   "@rdCriticalSentenceLead": {
@@ -16206,6 +16209,14 @@
       "mod": {}
     }
   },
+  "redesignFilesSibeliusColFile": "Datei",
+  "@redesignFilesSibeliusColFile": {
+    "description": "redesign.files.sibeliusColFile"
+  },
+  "redesignFilesSibeliusColReplaces": "Ersetzt",
+  "@redesignFilesSibeliusColReplaces": {
+    "description": "redesign.files.sibeliusColReplaces"
+  },
   "redesignFilesSibeliusCopySuffix": "(aus Sibelius)",
   "@redesignFilesSibeliusCopySuffix": {
     "description": "redesign.files.sibeliusCopySuffix"
@@ -16226,7 +16237,7 @@
   "@redesignFilesSibeliusHintTitle": {
     "description": "redesign.files.sibeliusHintTitle"
   },
-  "redesignFilesSibeliusIntro": "Attendix legt „{name}“ in „Downloads › Attendix Noten“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.",
+  "redesignFilesSibeliusIntro": "Attendix legt „{name}“ in „Downloads › Attendix Noten“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.\n\nTipp: In Sibelius unter Einstellungen (⌘,) › „Keyboard Shortcuts“ kannst du dem Plugin ein Tastenkürzel geben, z. B. ⌘⇧S: bei „Tab or category“ „Plug-ins“ wählen, bei „Feature“ „Stimmen für Attendix exportieren“, dann „Add“. Sibelius fragt, ob es „Speichern unter“ dafür abgeben soll.",
   "@redesignFilesSibeliusIntro": {
     "description": "redesign.files.sibeliusIntro",
     "placeholders": {
@@ -16256,7 +16267,7 @@
       "name": {}
     }
   },
-  "redesignFilesSibeliusPartNew": "neu",
+  "redesignFilesSibeliusPartNew": "Nichts, neu dazu",
   "@redesignFilesSibeliusPartNew": {
     "description": "redesign.files.sibeliusPartNew"
   },
@@ -16264,16 +16275,14 @@
   "@redesignFilesSibeliusPartNone": {
     "description": "redesign.files.sibeliusPartNone"
   },
-  "redesignFilesSibeliusPartReplaces": "ersetzt {files}",
-  "@redesignFilesSibeliusPartReplaces": {
-    "description": "redesign.files.sibeliusPartReplaces",
+  "redesignFilesSibeliusPartsApplyCount": "{count, plural, =0 {Übernehmen} one {1 Stimme übernehmen} other {{count} Stimmen übernehmen}}",
+  "@redesignFilesSibeliusPartsApplyCount": {
+    "description": "redesign.files.sibeliusPartsApplyCount",
     "placeholders": {
-      "files": {}
+      "count": {
+        "type": "num"
+      }
     }
-  },
-  "redesignFilesSibeliusPartsApply": "Übernehmen",
-  "@redesignFilesSibeliusPartsApply": {
-    "description": "redesign.files.sibeliusPartsApply"
   },
   "redesignFilesSibeliusPartsMessage": "{count, plural, one {1 Stimme aus Sibelius für „{work}“:} other {{count} Stimmen aus Sibelius für „{work}“:}}",
   "@redesignFilesSibeliusPartsMessage": {
@@ -16334,6 +16343,14 @@
       "name": {},
       "copy": {}
     }
+  },
+  "redesignFilesSibeliusShortcutTip": "Eigenes Tastenkürzel für das Attendix-Plugin, z. B. ⌘⇧S: Einstellungen (⌘,) › „Keyboard Shortcuts“, bei „Tab or category“ „Plug-ins“ wählen, bei „Feature“ „Stimmen für Attendix exportieren“, dann „Add“.",
+  "@redesignFilesSibeliusShortcutTip": {
+    "description": "redesign.files.sibeliusShortcutTip"
+  },
+  "redesignFilesSibeliusShortcutTitle": "In Sibelius",
+  "@redesignFilesSibeliusShortcutTitle": {
+    "description": "redesign.files.sibeliusShortcutTitle"
   },
   "redesignFilesSibeliusUploadedLater": "Wieder online: „{name}“ aus Sibelius ist jetzt in Attendix gespeichert",
   "@redesignFilesSibeliusUploadedLater": {
@@ -17302,15 +17319,54 @@
   "@redesignImportNewGroupTitle": {
     "description": "redesign.import.newGroupTitle"
   },
+  "redesignImportNumberCollection": "In der Sammlung werden neue Werke fortlaufend nummeriert, die Nummer aus dem Ordner zählt hier nicht.",
+  "@redesignImportNumberCollection": {
+    "description": "redesign.import.numberCollection"
+  },
+  "redesignImportNumberEmpty": "Ohne",
+  "@redesignImportNumberEmpty": {
+    "description": "redesign.import.numberEmpty"
+  },
+  "redesignImportNumberHint": "z. B. 3",
+  "@redesignImportNumberHint": {
+    "description": "redesign.import.numberHint"
+  },
+  "redesignImportNumberInUse": "Diese Nummer ist schon vergeben.",
+  "@redesignImportNumberInUse": {
+    "description": "redesign.import.numberInUse"
+  },
+  "redesignImportNumberInvalid": "Bitte nur eine Zahl eingeben.",
+  "@redesignImportNumberInvalid": {
+    "description": "redesign.import.numberInvalid"
+  },
+  "redesignImportNumberLabel": "Nummer",
+  "@redesignImportNumberLabel": {
+    "description": "redesign.import.numberLabel"
+  },
   "redesignImportNumberNone": "Der Ordner hat keine Nummer, deshalb bekommt das Werk die nächste freie.",
   "@redesignImportNumberNone": {
     "description": "redesign.import.numberNone"
+  },
+  "redesignImportNumberRequired": "In der Sammlung braucht jedes Werk eine Nummer.",
+  "@redesignImportNumberRequired": {
+    "description": "redesign.import.numberRequired"
   },
   "redesignImportNumberTaken": "{number} ist schon vergeben, deshalb bekommt das Werk die nächste freie Nummer.",
   "@redesignImportNumberTaken": {
     "description": "redesign.import.numberTaken",
     "placeholders": {
       "number": {}
+    }
+  },
+  "redesignImportNumberTitle": "Nummer des Werks",
+  "@redesignImportNumberTitle": {
+    "description": "redesign.import.numberTitle"
+  },
+  "redesignImportNumberTitlePrefix": "Nummer des Werks (Kürzel {prefix})",
+  "@redesignImportNumberTitlePrefix": {
+    "description": "redesign.import.numberTitlePrefix",
+    "placeholders": {
+      "prefix": {}
     }
   },
   "redesignImportOpenHint": "{count, plural, one {1 Werk ist noch nicht geprüft und wird nicht hochgeladen.} other {{count} Werke sind noch nicht geprüft und werden nicht hochgeladen.}}",
@@ -24022,6 +24078,14 @@
   "@songsFiles": {
     "description": "songs.files"
   },
+  "songsFlutterAiReading": "Die KI ordnet die Dateien zu …",
+  "@songsFlutterAiReading": {
+    "description": "songs.flutter.aiReading"
+  },
+  "songsFlutterAiSuggested": "Vorschlag der KI – bitte prüfen",
+  "@songsFlutterAiSuggested": {
+    "description": "songs.flutter.aiSuggested"
+  },
   "songsFlutterCopiesCount": "{count} Kopien",
   "@songsFlutterCopiesCount": {
     "description": "songs.flutter.copiesCount",
@@ -24052,6 +24116,18 @@
   "songsFlutterDetectUnsure": "Unsicher erkannt – bitte prüfen",
   "@songsFlutterDetectUnsure": {
     "description": "songs.flutter.detectUnsure"
+  },
+  "songsFlutterDocxEmpty": "Das Dokument ist leer.",
+  "@songsFlutterDocxEmpty": {
+    "description": "songs.flutter.docxEmpty"
+  },
+  "songsFlutterDocxLoadFailed": "Dokument konnte nicht geladen werden",
+  "@songsFlutterDocxLoadFailed": {
+    "description": "songs.flutter.docxLoadFailed"
+  },
+  "songsFlutterDocxLoading": "Dokument wird geladen...",
+  "@songsFlutterDocxLoading": {
+    "description": "songs.flutter.docxLoading"
   },
   "songsFlutterDownloadFileFailed": "Datei konnte nicht heruntergeladen werden",
   "@songsFlutterDownloadFileFailed": {
@@ -24136,6 +24212,13 @@
   "songsFlutterMenu": "Menü",
   "@songsFlutterMenu": {
     "description": "songs.flutter.menu"
+  },
+  "songsFlutterNewGroupFailed": "Die Gruppe „{name}“ konnte nicht angelegt werden",
+  "@songsFlutterNewGroupFailed": {
+    "description": "songs.flutter.newGroupFailed",
+    "placeholders": {
+      "name": {}
+    }
   },
   "songsFlutterNextPage": "Nächste Seite",
   "@songsFlutterNextPage": {
@@ -24222,6 +24305,10 @@
   "songsFlutterReviewUpload": "Hochladen",
   "@songsFlutterReviewUpload": {
     "description": "songs.flutter.reviewUpload"
+  },
+  "songsFlutterSeveralGroups": "Geht an jede dieser Gruppen",
+  "@songsFlutterSeveralGroups": {
+    "description": "songs.flutter.severalGroups"
   },
   "songsFlutterShowAsTab": "Als Tab anzeigen",
   "@songsFlutterShowAsTab": {

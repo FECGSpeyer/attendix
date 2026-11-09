@@ -16289,17 +16289,23 @@ abstract class AppLocalizations {
   /// **'Gespielte Werke'**
   String get rdAdminWorkHistory;
 
-  /// rdCritical.andHint
+  /// rdCritical.addAnd
   ///
   /// In de, this message translates to:
-  /// **'Dann ist jemand nur Problemfall, wenn alle so markierten Regeln gleichzeitig zutreffen.'**
-  String get rdCriticalAndHint;
+  /// **'und außerdem …'**
+  String get rdCriticalAddAnd;
 
-  /// rdCritical.andTitle
+  /// rdCritical.and
   ///
   /// In de, this message translates to:
-  /// **'Nur zusammen mit anderen Regeln'**
-  String get rdCriticalAndTitle;
+  /// **'und'**
+  String get rdCriticalAnd;
+
+  /// rdCritical.andElsewhere
+  ///
+  /// In de, this message translates to:
+  /// **'Mit „und“ kombinieren geht in der Regel „{name}“.'**
+  String rdCriticalAndElsewhere(Object name);
 
   /// rdCritical.atLeast
   ///
@@ -16330,12 +16336,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'bei {percent} % der Termine {what}'**
   String rdCriticalHitPercent(Object percent, Object what);
-
-  /// rdCritical.listAnd
-  ///
-  /// In de, this message translates to:
-  /// **'Nur zusammen mit anderen Regeln'**
-  String get rdCriticalListAnd;
 
   /// rdCritical.listFoot
   ///
@@ -16451,12 +16451,6 @@ abstract class AppLocalizations {
   /// **'Selten da'**
   String get rdCriticalPresetRarely;
 
-  /// rdCritical.previewAndHint
-  ///
-  /// In de, this message translates to:
-  /// **'Diese Regel zählt nur zusammen mit den anderen Regeln, die so markiert sind. Die Vorschau zeigt sie für sich allein.'**
-  String get rdCriticalPreviewAndHint;
-
   /// rdCritical.previewError
   ///
   /// In de, this message translates to:
@@ -16510,6 +16504,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{period} · Regel „{rule}“'**
   String rdCriticalReasonDetail(Object period, Object rule);
+
+  /// rdCritical.removeAnd
+  ///
+  /// In de, this message translates to:
+  /// **'Bedingung entfernen'**
+  String get rdCriticalRemoveAnd;
 
   /// rdCritical.sentenceLead
   ///
@@ -21076,6 +21076,18 @@ abstract class AppLocalizations {
   /// **'↑ ↓ Zeile wechseln · Umschalt+↑↓ mehrere auswählen · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen · ? diese Übersicht'**
   String redesignFilesShortcutsHelp(Object mod);
 
+  /// redesign.files.sibeliusColFile
+  ///
+  /// In de, this message translates to:
+  /// **'Datei'**
+  String get redesignFilesSibeliusColFile;
+
+  /// redesign.files.sibeliusColReplaces
+  ///
+  /// In de, this message translates to:
+  /// **'Ersetzt'**
+  String get redesignFilesSibeliusColReplaces;
+
   /// redesign.files.sibeliusCopySuffix
   ///
   /// In de, this message translates to:
@@ -21109,7 +21121,7 @@ abstract class AppLocalizations {
   /// redesign.files.sibeliusIntro
   ///
   /// In de, this message translates to:
-  /// **'Attendix legt „{name}“ in „Downloads › Attendix Noten“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.'**
+  /// **'Attendix legt „{name}“ in „Downloads › Attendix Noten“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.\n\nTipp: In Sibelius unter Einstellungen (⌘,) › „Keyboard Shortcuts“ kannst du dem Plugin ein Tastenkürzel geben, z. B. ⌘⇧S: bei „Tab or category“ „Plug-ins“ wählen, bei „Feature“ „Stimmen für Attendix exportieren“, dann „Add“. Sibelius fragt, ob es „Speichern unter“ dafür abgeben soll.'**
   String redesignFilesSibeliusIntro(Object name);
 
   /// redesign.files.sibeliusIntroTitle
@@ -21145,7 +21157,7 @@ abstract class AppLocalizations {
   /// redesign.files.sibeliusPartNew
   ///
   /// In de, this message translates to:
-  /// **'neu'**
+  /// **'Nichts, neu dazu'**
   String get redesignFilesSibeliusPartNew;
 
   /// redesign.files.sibeliusPartNone
@@ -21154,17 +21166,11 @@ abstract class AppLocalizations {
   /// **'Ohne Zuordnung'**
   String get redesignFilesSibeliusPartNone;
 
-  /// redesign.files.sibeliusPartReplaces
+  /// redesign.files.sibeliusPartsApplyCount
   ///
   /// In de, this message translates to:
-  /// **'ersetzt {files}'**
-  String redesignFilesSibeliusPartReplaces(Object files);
-
-  /// redesign.files.sibeliusPartsApply
-  ///
-  /// In de, this message translates to:
-  /// **'Übernehmen'**
-  String get redesignFilesSibeliusPartsApply;
+  /// **'{count, plural, =0 {Übernehmen} one {1 Stimme übernehmen} other {{count} Stimmen übernehmen}}'**
+  String redesignFilesSibeliusPartsApplyCount(num count);
 
   /// redesign.files.sibeliusPartsMessage
   ///
@@ -21225,6 +21231,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'„{name}“ wurde in Attendix inzwischen geändert oder gelöscht. Deine Fassung aus Sibelius liegt jetzt als „{copy}“ dabei.'**
   String redesignFilesSibeliusSavedAsCopy(Object name, Object copy);
+
+  /// redesign.files.sibeliusShortcutTip
+  ///
+  /// In de, this message translates to:
+  /// **'Eigenes Tastenkürzel für das Attendix-Plugin, z. B. ⌘⇧S: Einstellungen (⌘,) › „Keyboard Shortcuts“, bei „Tab or category“ „Plug-ins“ wählen, bei „Feature“ „Stimmen für Attendix exportieren“, dann „Add“.'**
+  String get redesignFilesSibeliusShortcutTip;
+
+  /// redesign.files.sibeliusShortcutTitle
+  ///
+  /// In de, this message translates to:
+  /// **'In Sibelius'**
+  String get redesignFilesSibeliusShortcutTitle;
 
   /// redesign.files.sibeliusUploadedLater
   ///
@@ -22456,17 +22474,71 @@ abstract class AppLocalizations {
   /// **'Neue Gruppe anlegen'**
   String get redesignImportNewGroupTitle;
 
+  /// redesign.import.numberCollection
+  ///
+  /// In de, this message translates to:
+  /// **'In der Sammlung werden neue Werke fortlaufend nummeriert, die Nummer aus dem Ordner zählt hier nicht.'**
+  String get redesignImportNumberCollection;
+
+  /// redesign.import.numberEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne'**
+  String get redesignImportNumberEmpty;
+
+  /// redesign.import.numberHint
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. 3'**
+  String get redesignImportNumberHint;
+
+  /// redesign.import.numberInUse
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Nummer ist schon vergeben.'**
+  String get redesignImportNumberInUse;
+
+  /// redesign.import.numberInvalid
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte nur eine Zahl eingeben.'**
+  String get redesignImportNumberInvalid;
+
+  /// redesign.import.numberLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Nummer'**
+  String get redesignImportNumberLabel;
+
   /// redesign.import.numberNone
   ///
   /// In de, this message translates to:
   /// **'Der Ordner hat keine Nummer, deshalb bekommt das Werk die nächste freie.'**
   String get redesignImportNumberNone;
 
+  /// redesign.import.numberRequired
+  ///
+  /// In de, this message translates to:
+  /// **'In der Sammlung braucht jedes Werk eine Nummer.'**
+  String get redesignImportNumberRequired;
+
   /// redesign.import.numberTaken
   ///
   /// In de, this message translates to:
   /// **'{number} ist schon vergeben, deshalb bekommt das Werk die nächste freie Nummer.'**
   String redesignImportNumberTaken(Object number);
+
+  /// redesign.import.numberTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Nummer des Werks'**
+  String get redesignImportNumberTitle;
+
+  /// redesign.import.numberTitlePrefix
+  ///
+  /// In de, this message translates to:
+  /// **'Nummer des Werks (Kürzel {prefix})'**
+  String redesignImportNumberTitlePrefix(Object prefix);
 
   /// redesign.import.openHint
   ///
@@ -31264,6 +31336,18 @@ abstract class AppLocalizations {
   /// **'Dateien'**
   String get songsFiles;
 
+  /// songs.flutter.aiReading
+  ///
+  /// In de, this message translates to:
+  /// **'Die KI ordnet die Dateien zu …'**
+  String get songsFlutterAiReading;
+
+  /// songs.flutter.aiSuggested
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschlag der KI – bitte prüfen'**
+  String get songsFlutterAiSuggested;
+
   /// songs.flutter.copiesCount
   ///
   /// In de, this message translates to:
@@ -31305,6 +31389,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Unsicher erkannt – bitte prüfen'**
   String get songsFlutterDetectUnsure;
+
+  /// songs.flutter.docxEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Das Dokument ist leer.'**
+  String get songsFlutterDocxEmpty;
+
+  /// songs.flutter.docxLoadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Dokument konnte nicht geladen werden'**
+  String get songsFlutterDocxLoadFailed;
+
+  /// songs.flutter.docxLoading
+  ///
+  /// In de, this message translates to:
+  /// **'Dokument wird geladen...'**
+  String get songsFlutterDocxLoading;
 
   /// songs.flutter.downloadFileFailed
   ///
@@ -31401,6 +31503,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Menü'**
   String get songsFlutterMenu;
+
+  /// songs.flutter.newGroupFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Gruppe „{name}“ konnte nicht angelegt werden'**
+  String songsFlutterNewGroupFailed(Object name);
 
   /// songs.flutter.nextPage
   ///
@@ -31521,6 +31629,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Hochladen'**
   String get songsFlutterReviewUpload;
+
+  /// songs.flutter.severalGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Geht an jede dieser Gruppen'**
+  String get songsFlutterSeveralGroups;
 
   /// songs.flutter.showAsTab
   ///

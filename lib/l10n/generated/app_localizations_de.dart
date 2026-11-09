@@ -9962,11 +9962,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdAdminWorkHistory => 'Gespielte Werke';
 
   @override
-  String get rdCriticalAndHint =>
-      'Dann ist jemand nur Problemfall, wenn alle so markierten Regeln gleichzeitig zutreffen.';
+  String get rdCriticalAddAnd => 'und außerdem …';
 
   @override
-  String get rdCriticalAndTitle => 'Nur zusammen mit anderen Regeln';
+  String get rdCriticalAnd => 'und';
+
+  @override
+  String rdCriticalAndElsewhere(Object name) {
+    return 'Mit „und“ kombinieren geht in der Regel „$name“.';
+  }
 
   @override
   String get rdCriticalAtLeast => 'Mindestens';
@@ -9992,9 +9996,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String rdCriticalHitPercent(Object percent, Object what) {
     return 'bei $percent % der Termine $what';
   }
-
-  @override
-  String get rdCriticalListAnd => 'Nur zusammen mit anderen Regeln';
 
   @override
   String get rdCriticalListFoot =>
@@ -10075,10 +10076,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdCriticalPresetRarely => 'Selten da';
 
   @override
-  String get rdCriticalPreviewAndHint =>
-      'Diese Regel zählt nur zusammen mit den anderen Regeln, die so markiert sind. Die Vorschau zeigt sie für sich allein.';
-
-  @override
   String get rdCriticalPreviewError =>
       'Die Vorschau ist gerade nicht verfügbar.';
 
@@ -10137,6 +10134,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String rdCriticalReasonDetail(Object period, Object rule) {
     return '$period · Regel „$rule“';
   }
+
+  @override
+  String get rdCriticalRemoveAnd => 'Bedingung entfernen';
 
   @override
   String get rdCriticalSentenceLead => 'Problemfall ist, wer';
@@ -13109,6 +13109,12 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignFilesSibeliusColFile => 'Datei';
+
+  @override
+  String get redesignFilesSibeliusColReplaces => 'Ersetzt';
+
+  @override
   String get redesignFilesSibeliusCopySuffix => '(aus Sibelius)';
 
   @override
@@ -13126,7 +13132,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String redesignFilesSibeliusIntro(Object name) {
-    return 'Attendix legt „$name“ in „Downloads › Attendix Noten“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.';
+    return 'Attendix legt „$name“ in „Downloads › Attendix Noten“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.\n\nTipp: In Sibelius unter Einstellungen (⌘,) › „Keyboard Shortcuts“ kannst du dem Plugin ein Tastenkürzel geben, z. B. ⌘⇧S: bei „Tab or category“ „Plug-ins“ wählen, bei „Feature“ „Stimmen für Attendix exportieren“, dann „Add“. Sibelius fragt, ob es „Speichern unter“ dafür abgeben soll.';
   }
 
   @override
@@ -13149,18 +13155,22 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignFilesSibeliusPartNew => 'neu';
+  String get redesignFilesSibeliusPartNew => 'Nichts, neu dazu';
 
   @override
   String get redesignFilesSibeliusPartNone => 'Ohne Zuordnung';
 
   @override
-  String redesignFilesSibeliusPartReplaces(Object files) {
-    return 'ersetzt $files';
+  String redesignFilesSibeliusPartsApplyCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Stimmen übernehmen',
+      one: '1 Stimme übernehmen',
+      zero: 'Übernehmen',
+    );
+    return '$_temp0';
   }
-
-  @override
-  String get redesignFilesSibeliusPartsApply => 'Übernehmen';
 
   @override
   String redesignFilesSibeliusPartsMessage(num count, Object work) {
@@ -13210,6 +13220,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignFilesSibeliusSavedAsCopy(Object name, Object copy) {
     return '„$name“ wurde in Attendix inzwischen geändert oder gelöscht. Deine Fassung aus Sibelius liegt jetzt als „$copy“ dabei.';
   }
+
+  @override
+  String get redesignFilesSibeliusShortcutTip =>
+      'Eigenes Tastenkürzel für das Attendix-Plugin, z. B. ⌘⇧S: Einstellungen (⌘,) › „Keyboard Shortcuts“, bei „Tab or category“ „Plug-ins“ wählen, bei „Feature“ „Stimmen für Attendix exportieren“, dann „Add“.';
+
+  @override
+  String get redesignFilesSibeliusShortcutTitle => 'In Sibelius';
 
   @override
   String redesignFilesSibeliusUploadedLater(Object name) {
@@ -14070,12 +14087,43 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportNewGroupTitle => 'Neue Gruppe anlegen';
 
   @override
+  String get redesignImportNumberCollection =>
+      'In der Sammlung werden neue Werke fortlaufend nummeriert, die Nummer aus dem Ordner zählt hier nicht.';
+
+  @override
+  String get redesignImportNumberEmpty => 'Ohne';
+
+  @override
+  String get redesignImportNumberHint => 'z. B. 3';
+
+  @override
+  String get redesignImportNumberInUse => 'Diese Nummer ist schon vergeben.';
+
+  @override
+  String get redesignImportNumberInvalid => 'Bitte nur eine Zahl eingeben.';
+
+  @override
+  String get redesignImportNumberLabel => 'Nummer';
+
+  @override
   String get redesignImportNumberNone =>
       'Der Ordner hat keine Nummer, deshalb bekommt das Werk die nächste freie.';
 
   @override
+  String get redesignImportNumberRequired =>
+      'In der Sammlung braucht jedes Werk eine Nummer.';
+
+  @override
   String redesignImportNumberTaken(Object number) {
     return '$number ist schon vergeben, deshalb bekommt das Werk die nächste freie Nummer.';
+  }
+
+  @override
+  String get redesignImportNumberTitle => 'Nummer des Werks';
+
+  @override
+  String redesignImportNumberTitlePrefix(Object prefix) {
+    return 'Nummer des Werks (Kürzel $prefix)';
   }
 
   @override
@@ -19475,6 +19523,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsFiles => 'Dateien';
 
   @override
+  String get songsFlutterAiReading => 'Die KI ordnet die Dateien zu …';
+
+  @override
+  String get songsFlutterAiSuggested => 'Vorschlag der KI – bitte prüfen';
+
+  @override
   String songsFlutterCopiesCount(Object count) {
     return '$count Kopien';
   }
@@ -19496,6 +19550,16 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get songsFlutterDetectUnsure => 'Unsicher erkannt – bitte prüfen';
+
+  @override
+  String get songsFlutterDocxEmpty => 'Das Dokument ist leer.';
+
+  @override
+  String get songsFlutterDocxLoadFailed =>
+      'Dokument konnte nicht geladen werden';
+
+  @override
+  String get songsFlutterDocxLoading => 'Dokument wird geladen...';
 
   @override
   String get songsFlutterDownloadFileFailed =>
@@ -19558,6 +19622,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get songsFlutterMenu => 'Menü';
+
+  @override
+  String songsFlutterNewGroupFailed(Object name) {
+    return 'Die Gruppe „$name“ konnte nicht angelegt werden';
+  }
 
   @override
   String get songsFlutterNextPage => 'Nächste Seite';
@@ -19625,6 +19694,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get songsFlutterReviewUpload => 'Hochladen';
+
+  @override
+  String get songsFlutterSeveralGroups => 'Geht an jede dieser Gruppen';
 
   @override
   String get songsFlutterShowAsTab => 'Als Tab anzeigen';

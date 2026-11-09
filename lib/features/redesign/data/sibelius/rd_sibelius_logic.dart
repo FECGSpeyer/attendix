@@ -280,9 +280,31 @@ List<String> rdNewPartPdfs(Map<String, int> entries, int since) => [
     if (e.value > since && e.key.toLowerCase().endsWith('.pdf')) e.key,
 ]..sort();
 
-/// The Sibelius plug-in (ManuScript): saves the active score and exports all
+/// Where the Mac app is installed when it cannot tell (TestFlight / App
+/// Store install there).
+const String rdAttendixAppDefaultPath = '/Applications/Attendix.app';
+
+/// The app bundle of [executable] (`…/Attendix.app/Contents/MacOS/Attendix`);
+/// [rdAttendixAppDefaultPath] when it is none or cannot stand in a plug-in
+/// string.
+String rdAttendixAppPath(String executable) {
+  final i = executable.indexOf('.app/Contents/MacOS/');
+  if (i <= 0) return rdAttendixAppDefaultPath;
+  final path = executable.substring(0, i + 4);
+  final unsafe = ['"', "'", '\\', '\n'].any(path.contains);
+  return unsafe ? rdAttendixAppDefaultPath : path;
+}
+
+/// [rdSibeliusPluginSource] for the app at [appPath] (see [rdAttendixAppPath]).
+String rdSibeliusPluginFor(String appPath) => rdSibeliusPluginSource.replaceFirst(_appPlaceholder, appPath);
+
+const String _appPlaceholder = '{{ATTENDIX_APP}}';
+
+/// The Sibelius plug-in (ManuScript): saves the active score, exports all
 /// its parts (not the full score) as separate PDFs named after the part
-/// into the folder [rdSibeliusPartsFolder] next to the score.
+/// into the folder [rdSibeliusPartsFolder] next to the score and brings
+/// Attendix to the front, which then offers them (a Sibelius message box
+/// cannot show the Attendix logo). Without the app it says so itself.
 ///
 /// Inside a method body strings use single quotes (the body itself is a
 /// double-quoted string), as in the plug-ins shipped with Sibelius.
@@ -330,21 +352,28 @@ if (Sibelius.FolderExists(folder) = False)
 	}
 }
 score.ExportPartsAsPDF(folder & Sibelius.PathSeparator & '%p.pdf', False, 0, False);
+if (Sibelius.FolderExists(_App))
+{
+	Sibelius.LaunchApplication(_App);
+	return True;
+}
 Sibelius.MessageBox(_msgDone1 & count & _msgDone2);
 return True; }"
 	_MenuName "Stimmen für Attendix exportieren"
 	_Subfolder "Stimmen"
+	_App "{{ATTENDIX_APP}}"
 	_msgNoScore "Bitte öffne zuerst eine Partitur."
 	_msgNotSaved "Bitte speichere die Partitur zuerst einmal (Datei › Speichern unter)."
 	_msgNoParts "Diese Partitur hat keine Stimmen."
 	_msgNoFolder "Der Ordner für die Stimmen konnte nicht angelegt werden: "
 	_msgDone1 "Gespeichert und "
-	_msgDone2 " Stimmen als PDF in den Ordner „Stimmen“ gelegt. Attendix zeigt dir gleich, welche Stimmen es ersetzt."
+	_msgDone2 " Stimmen als PDF in den Ordner „Stimmen“ gelegt. Öffne Attendix, um sie zu übernehmen."
 }
 ''';
 
-/// [source] as Sibelius stores plug-ins: UTF-16 big endian with BOM.
-Uint8List rdSibeliusPluginBytes([String source = rdSibeliusPluginSource]) {
+/// [source] (see [rdSibeliusPluginFor]) as Sibelius stores plug-ins: UTF-16
+/// big endian with BOM.
+Uint8List rdSibeliusPluginBytes(String source) {
   final units = source.codeUnits;
   final bytes = Uint8List(2 + units.length * 2);
   bytes[0] = 0xFE;

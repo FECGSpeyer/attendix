@@ -348,54 +348,27 @@ List<Song> rdApplyOnly(
 }
 
 /// One card of "Aktuell" in the Werke tab (canvas "Aktuelle Noten im
-/// Werke-Tab"): a Werk of a coming Termin ([event]) or one played lately
-/// ([lastPlayed]).
+/// Werke-Tab"): a Werk of a coming Termin ([event]).
 class RdCurrentWork {
-  const RdCurrentWork({required this.song, this.event, this.lastPlayed});
+  const RdCurrentWork({required this.song, required this.event});
 
   final Song song;
-  final RdNextEvent? event;
-  final DateTime? lastPlayed;
+  final RdNextEvent event;
 }
 
-/// What a member plays right now: the Werke of the coming [events] in
-/// their order, then the Werke of [songs] played within [recentDays] up to
-/// [now] (calendar days), latest first. Each Werk once, at most [max];
-/// Werke without id are left out (nothing to open), so are Werke of a
-/// Sammlung outside [visible] (planned ones too: a card opens the file
-/// directly, past the Werk page's check). The played ones keep "Aktuell"
-/// filled while the next Probe has no program yet.
-List<RdCurrentWork> rdCurrentWorkCards(
-  List<RdNextEvent> events,
-  List<Song> songs, {
-  required DateTime now,
-  required List<SongCollection> visible,
-  int recentDays = 28,
-  int max = 12,
-}) {
+/// What a member plays next: the Werke of the coming [events] in their
+/// order, only coming ones (Werke played lately are no longer "Aktuell").
+/// Each Werk once, at most [max]; Werke without id are left out (nothing
+/// to open), so are Werke of a Sammlung outside [visible].
+List<RdCurrentWork> rdCurrentWorkCards(List<RdNextEvent> events, {required List<SongCollection> visible, int max = 12}) {
   final collections = {for (final c in visible) c.id};
   bool shown(Song s) => s.id != null && (s.collectionId == null || collections.contains(s.collectionId));
   final seen = <int>{};
-  final result = <RdCurrentWork>[];
-  for (final e in events) {
-    for (final s in e.songs) {
-      if (!shown(s) || !seen.add(s.id!)) continue;
-      result.add(RdCurrentWork(song: s, event: e));
-    }
-  }
-  final today = DateTime(now.year, now.month, now.day);
-  // Calendar days, not 24-hour steps (daylight saving time).
-  final from = rdAddDays(today, -recentDays);
-  final recent = <RdCurrentWork>[];
-  for (final s in songs) {
-    final played = DateTime.tryParse(s.lastSung ?? '')?.toLocal();
-    if (played == null || !shown(s) || seen.contains(s.id)) continue;
-    final day = DateTime(played.year, played.month, played.day);
-    if (day.isBefore(from) || day.isAfter(today) || !seen.add(s.id!)) continue;
-    recent.add(RdCurrentWork(song: s, lastPlayed: day));
-  }
-  recent.sort((a, b) => b.lastPlayed!.compareTo(a.lastPlayed!));
-  return [...result, ...recent].take(max).toList();
+  return [
+    for (final e in events)
+      for (final s in e.songs)
+        if (shown(s) && seen.add(s.id!)) RdCurrentWork(song: s, event: e),
+  ].take(max).toList();
 }
 
 /// "19:30": when the Termin [attendanceId] starts, from its own time, else

@@ -859,24 +859,48 @@ class _PartCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
+    // "•••" and "Öffnen" as one calm pair: both 44 px high, the "•••" a
+    // round neutral button (like the page header's), "Öffnen" with the
+    // app's button radius and font.
     final actions = [
-      if (onMore != null)
+      if (onMore != null) ...[
         Builder(
           builder:
-              (button) => IconButton(
-                tooltip: moreLabel,
-                icon: Icon(Icons.more_horiz, color: p.link),
-                onPressed: () => onMore!(button),
+              (button) => Tooltip(
+                message: moreLabel ?? '',
+                child: Semantics(
+                  button: true,
+                  label: moreLabel,
+                  // The excluded InkWell no longer offers the tap.
+                  onTap: () => onMore!(button),
+                  excludeSemantics: true,
+                  child: Material(
+                    color: p.bg,
+                    shape: const CircleBorder(),
+                    child: InkWell(
+                      key: const Key('rd-work-part-more'),
+                      customBorder: const CircleBorder(),
+                      onTap: () => onMore!(button),
+                      child: SizedBox.square(dimension: 44, child: Icon(Icons.more_horiz, size: 22, color: p.text)),
+                    ),
+                  ),
+                ),
               ),
         ),
+        const SizedBox(width: 8),
+      ],
       FilledButton(
         style: FilledButton.styleFrom(
           backgroundColor: p.primary,
           foregroundColor: p.onPrimary,
           minimumSize: const Size(0, 44),
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          padding: const EdgeInsets.symmetric(horizontal: 18),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(p.buttonRadius)),
+          // Theme font (web font on the PWA), like RdPrimaryButton.
+          textStyle: (Theme.of(context).textTheme.labelLarge ?? const TextStyle()).copyWith(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         onPressed: onOpen,
         child: Text(l10n.redesignWorkOpen),

@@ -156,7 +156,7 @@ Future<void> rdInstallSibeliusPlugin(BuildContext context, WidgetRef ref) async 
 Future<void> _writePlugin(String pluginsFolder) async {
   final dir = Directory('$pluginsFolder/$rdSibeliusPluginCategory');
   await dir.create(recursive: true);
-  await File('${dir.path}/$rdSibeliusPluginFileName').writeAsBytes(rdSibeliusPluginBytes(), flush: true);
+  await File('${dir.path}/$rdSibeliusPluginFileName').writeAsBytes(rdSibeliusPluginOfThisApp(), flush: true);
 }
 
 /// Starts keeping open Sibelius copies in step (Mac app) and shows what
@@ -180,6 +180,13 @@ void rdStartSibeliusSync(WidgetRef ref, GoRouter router) {
         ToastHelper.showWarning(context, l10n.redesignFilesSibeliusSavedAsCopy(event.fileName, event.copyName));
       case RdSibeliusWorkGone():
         ToastHelper.showWarning(context, l10n.redesignFilesSibeliusWorkGone(event.fileName));
+      case RdSibeliusPartsReady(:final parts):
+        // A Werk page showing them takes them at once; else open the Werk.
+        Future<void>.delayed(const Duration(seconds: 1), () {
+          if (sync.isOffered(parts.folder) || ref.read(rdSibeliusSyncProvider).parts[parts.folder] == null) return;
+          if (ref.read(songFileServiceProvider).tenantId != parts.tenantId) return;
+          router.goNamed('redesignWork', pathParameters: {'id': '${parts.songId}'});
+        });
       case RdSibeliusSaveFailed():
         ToastHelper.showError(
           context,
