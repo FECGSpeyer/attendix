@@ -3534,7 +3534,7 @@
   "redesignFilesWordCopySuffix": "(from Word)",
   "redesignFilesWordEdit": "Edit in Word",
   "redesignFilesWordNotOpened": "The file could not be opened. Is Microsoft Word installed? It is in “Downloads › Attendix Noten”.",
-  "redesignFilesWordOpened": "“{name}” is opening in Word. Every save there uploads the file here.",
+  "redesignFilesWordOpened": "“{name}” is opening in Word (or your default app for .docx). Every save as .docx uploads the file here.",
   "redesignFilesWordSaved": "“{name}” from Word saved in Attendix",
   "redesignFilesWordSavedAsCopy": "“{name}” was changed or deleted in Attendix meanwhile. Your version from Word is now there as “{copy}”.",
   "redesignFilesWordUploadedLater": "Back online: “{name}” from Word is now saved in Attendix",

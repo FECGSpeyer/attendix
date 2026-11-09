@@ -13168,7 +13168,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String redesignFilesWordOpened(Object name) {
-    return '“$name” is opening in Word. Every save there uploads the file here.';
+    return '“$name” is opening in Word (or your default app for .docx). Every save as .docx uploads the file here.';
   }
 
   @override

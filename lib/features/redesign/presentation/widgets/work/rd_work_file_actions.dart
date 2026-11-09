@@ -218,8 +218,7 @@ Future<void> rdShowWorkFileActions(
 /// Word file in Word on the phone.
 Future<void> rdReplaceWorkFile(BuildContext context, WidgetRef ref, int songId, SongFile file) async {
   final l10n = context.l10n;
-  final dot = file.fileName.lastIndexOf('.');
-  final ext = dot > 0 ? file.fileName.substring(dot + 1).toLowerCase() : '';
+  final ext = rdStoredExtension(file);
   final FilePickerResult? result;
   try {
     result = await FilePicker.platform.pickFiles(type: FileType.any, withData: true);
@@ -230,8 +229,17 @@ Future<void> rdReplaceWorkFile(BuildContext context, WidgetRef ref, int songId, 
   final picked = result?.files.firstOrNull;
   final bytes = picked?.bytes;
   if (picked == null || bytes == null || !context.mounted) return;
-  if (ext.isNotEmpty && (picked.extension ?? '').toLowerCase() != ext) {
-    ToastHelper.showError(context, l10n.redesignFilesReplaceWrongType(ext));
+  if (bytes.length > rdMaxUploadBytes) {
+    ToastHelper.showError(context, l10n.songsFileTooLarge(picked.name));
+    return;
+  }
+  // Same type as the stored file (the display name may have lost its
+  // extension by renaming); a file of unknown type is not replaced.
+  if (ext.isEmpty || (picked.extension ?? '').toLowerCase() != ext) {
+    ToastHelper.showError(
+      context,
+      ext.isEmpty ? l10n.songsFlutterOpenFileFailed : l10n.redesignFilesReplaceWrongType(ext),
+    );
     return;
   }
   final ok = await showAppConfirm(

@@ -16435,7 +16435,7 @@
   "@redesignFilesWordNotOpened": {
     "description": "redesign.files.wordNotOpened"
   },
-  "redesignFilesWordOpened": "„{name}“ wird in Word geöffnet. Jedes Speichern dort lädt die Datei hier hoch.",
+  "redesignFilesWordOpened": "„{name}“ wird in Word geöffnet (bzw. deinem Standardprogramm für .docx). Jedes Speichern als .docx lädt die Datei hier hoch.",
   "@redesignFilesWordOpened": {
     "description": "redesign.files.wordOpened",
     "placeholders": {

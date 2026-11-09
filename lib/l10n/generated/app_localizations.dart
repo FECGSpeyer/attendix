@@ -21343,7 +21343,7 @@ abstract class AppLocalizations {
   /// redesign.files.wordOpened
   ///
   /// In de, this message translates to:
-  /// **'„{name}“ wird in Word geöffnet. Jedes Speichern dort lädt die Datei hier hoch.'**
+  /// **'„{name}“ wird in Word geöffnet (bzw. deinem Standardprogramm für .docx). Jedes Speichern als .docx lädt die Datei hier hoch.'**
   String redesignFilesWordOpened(Object name);
 
   /// redesign.files.wordSaved

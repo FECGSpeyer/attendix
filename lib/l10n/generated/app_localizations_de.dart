@@ -13292,7 +13292,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String redesignFilesWordOpened(Object name) {
-    return '„$name“ wird in Word geöffnet. Jedes Speichern dort lädt die Datei hier hoch.';
+    return '„$name“ wird in Word geöffnet (bzw. deinem Standardprogramm für .docx). Jedes Speichern als .docx lädt die Datei hier hoch.';
   }
 
   @override
