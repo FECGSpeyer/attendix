@@ -21163,7 +21163,7 @@ abstract class AppLocalizations {
   /// redesign.files.sibeliusSaveFailed
   ///
   /// In de, this message translates to:
-  /// **'„{name}“ aus Sibelius konnte nicht hochgeladen werden: {error}'**
+  /// **'„{name}“ ist auf dem Mac gespeichert, aber noch nicht in Attendix ({error}). Attendix lädt es von selbst hoch, sobald du wieder online bist.'**
   String redesignFilesSibeliusSaveFailed(Object name, Object error);
 
   /// redesign.files.sibeliusSaved
@@ -21177,6 +21177,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'„{name}“ wurde in Attendix inzwischen geändert oder gelöscht. Deine Fassung aus Sibelius liegt jetzt als „{copy}“ dabei.'**
   String redesignFilesSibeliusSavedAsCopy(Object name, Object copy);
+
+  /// redesign.files.sibeliusUploadedLater
+  ///
+  /// In de, this message translates to:
+  /// **'Wieder online: „{name}“ aus Sibelius ist jetzt in Attendix gespeichert'**
+  String redesignFilesSibeliusUploadedLater(Object name);
+
+  /// redesign.files.sibeliusWaiting
+  ///
+  /// In de, this message translates to:
+  /// **'Nur auf dem Mac gespeichert. Wird von selbst hochgeladen, sobald du wieder online bist.'**
+  String get redesignFilesSibeliusWaiting;
+
+  /// redesign.files.sibeliusWorkGone
+  ///
+  /// In de, this message translates to:
+  /// **'Das Werk zu „{name}“ gibt es in Attendix nicht mehr. Deine Fassung bleibt auf dem Mac unter „Downloads › Attendix“.'**
+  String redesignFilesSibeliusWorkGone(Object name);
 
   /// redesign.files.title
   ///

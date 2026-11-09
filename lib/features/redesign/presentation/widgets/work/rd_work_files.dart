@@ -32,6 +32,7 @@ import '../../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../../data/rd_work_files_controller.dart';
 import '../../../data/rd_work_files_logic.dart';
 import '../../../data/rd_works_logic.dart';
+import '../../../data/sibelius/rd_sibelius_logic.dart' show RdSibeliusCheckout;
 import '../../../data/sibelius/rd_sibelius_sync.dart';
 import '../../rd_actions.dart';
 import 'rd_file_category_sheet.dart';
@@ -59,7 +60,9 @@ List<SongFile> rdVisibleFiles(SongDetailData data, Set<String> hidden) =>
 ///
 /// [fromSibelius]: part PDFs exported by the Attendix plug-in. They replace
 /// the PDFs of their part; one list shows what each one replaces or adds.
-Future<void> rdAddWorkFiles(
+///
+/// Returns false when it stopped without an answer (the page was left).
+Future<bool> rdAddWorkFiles(
   BuildContext context,
   WidgetRef ref,
   SongDetailData data,
@@ -68,7 +71,7 @@ Future<void> rdAddWorkFiles(
 }) async {
   final l10n = context.l10n;
   final songId = data.song.id;
-  if (songId == null || files.isEmpty) return;
+  if (songId == null || files.isEmpty) return true;
   final controller = ref.read(rdWorkFilesProvider(songId).notifier);
   final existing = rdVisibleFiles(data, ref.read(rdWorkFilesProvider(songId)).hidden);
   final instruments = [
@@ -84,7 +87,7 @@ Future<void> rdAddWorkFiles(
     }
     guesses.add((file: file, guess: guessFileCategory(file.name, instruments: instruments, isChoir: data.isChoir)));
   }
-  if (guesses.isEmpty) return;
+  if (guesses.isEmpty) return true;
 
   // Unclear names: the part printed on page 1 (`part-detect`), one at a time.
   final unclear = [
@@ -113,7 +116,7 @@ Future<void> rdAddWorkFiles(
       );
       if (match != null) guesses[i] = (file: guesses[i].file, guess: FileCategoryGuess.vision(match));
     }
-    if (!context.mounted) return;
+    if (!context.mounted) return false;
   }
 
   // Files whose part is not clear are checked first; terms assigned by hand
@@ -134,7 +137,8 @@ Future<void> rdAddWorkFiles(
             workName: data.song.name,
           ),
     );
-    if (result == null || !context.mounted) return;
+    if (!context.mounted) return false;
+    if (result == null) return true;
     chosen.addAll(result.categories);
     terms = result.terms;
   }
@@ -161,14 +165,15 @@ Future<void> rdAddWorkFiles(
       context: context,
       builder: (ctx) => _SibeliusPartsDialog(items: items, groups: data.instruments, workName: data.song.name),
     );
-    if (ok != true) return;
+    if (ok == null && !context.mounted) return false;
+    if (ok != true) return true;
     replace = true;
   } else if (clashing.isNotEmpty) {
     final choice = await showAppDialog<bool>(
       context: context,
       builder: (ctx) => _ConflictDialog(items: clashing, groups: data.instruments),
     );
-    if (choice == null) return;
+    if (choice == null) return true;
     replace = choice;
   }
   controller.enqueue([
@@ -183,6 +188,7 @@ Future<void> rdAddWorkFiles(
     final ok = await notifier.addSynonyms(terms);
     if (!ok && context.mounted) ToastHelper.showError(context, l10n.songsFlutterLearnFailed);
   }
+  return true;
 }
 
 /// The whole Werk page as drop target: while files are dragged over it, a
@@ -322,9 +328,13 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
   Future<void> _takeSibeliusParts(String folder) async {
     try {
       if (!mounted) return;
-      final files = await ref.read(rdSibeliusSyncProvider.notifier).takeParts(folder);
-      if (files == null || files.isEmpty || !mounted) return;
-      await rdAddWorkFiles(context, ref, widget.data, files, fromSibelius: true);
+      final sync = ref.read(rdSibeliusSyncProvider.notifier);
+      final taken = await sync.takeParts(folder);
+      if (taken == null || !mounted) return;
+      // Leaving the page before answering keeps them for the next visit.
+      final answered =
+          taken.files.isEmpty || await rdAddWorkFiles(context, ref, widget.data, taken.files, fromSibelius: true);
+      if (answered) await sync.partsAnswered(taken.parts);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
     } finally {
@@ -594,8 +604,14 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
     final l10n = context.l10n;
     final state = ref.watch(rdWorkFilesProvider(_songId));
     final files = _files(state.hidden);
+    var waiting = const <RdSibeliusCheckout>[];
     if (rdSibeliusSupported) {
       final tenantId = rdSongTenantId(ref);
+      waiting = [
+        if (tenantId != null)
+          for (final c in ref.watch(rdSibeliusSyncProvider.select((s) => s.waiting)))
+            if (c.tenantId == tenantId && c.songId == _songId) c,
+      ];
       final parts = tenantId == null
           ? null
           : ref.watch(rdSibeliusSyncProvider.select((s) => s.partsFor(tenantId, _songId)));
@@ -712,6 +728,7 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
                           file: file,
                           groups: widget.groups,
                           instruments: widget.data.instruments,
+                          onlyOnMac: waiting.any((c) => c.matches(c.tenantId, _songId, file)),
                           selected: selected.contains(file.url),
                           cursor: _cursor == file.url,
                           renaming: _renaming == file.url,
@@ -876,6 +893,7 @@ class _FileRow extends StatelessWidget {
     required this.file,
     required this.groups,
     required this.instruments,
+    this.onlyOnMac = false,
     required this.selected,
     required this.cursor,
     required this.renaming,
@@ -894,6 +912,10 @@ class _FileRow extends StatelessWidget {
 
   /// Groups a file can be moved to (as the old category dialog).
   final List<Group> instruments;
+
+  /// A save from Sibelius is only on the Mac so far (offline): it goes up by
+  /// itself once online again.
+  final bool onlyOnMac;
   final bool selected;
   final bool cursor;
   final bool compact;
@@ -964,6 +986,19 @@ class _FileRow extends StatelessWidget {
                 ),
                 SizedBox(width: 36, child: Icon(icon, size: 22, color: p.text2)),
                 Expanded(child: name),
+                if (onlyOnMac && !renaming)
+                  Tooltip(
+                    message: l10n.redesignFilesSibeliusWaiting,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: Icon(
+                        Icons.cloud_off_outlined,
+                        size: 20,
+                        color: p.late,
+                        semanticLabel: l10n.redesignFilesSibeliusWaiting,
+                      ),
+                    ),
+                  ),
                 const SizedBox(width: 8),
                 SizedBox(
                   width: compact ? _partWidthCompact : _partWidth,

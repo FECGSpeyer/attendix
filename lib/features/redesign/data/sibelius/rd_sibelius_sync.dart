@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/providers/connectivity_provider.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/services/song_file_service.dart';
 import '../../../../data/models/song/song.dart';
@@ -24,6 +25,12 @@ bool get rdSibeliusSupported => !kIsWeb && defaultTargetPlatform == TargetPlatfo
 /// How often the copies are compared while any is open.
 const Duration rdSibeliusPollInterval = Duration(seconds: 3);
 
+/// How long a save must stay unchanged before it is uploaded (Sibelius
+/// writes it in several steps), and how long no part may be added before the
+/// parts are offered (Sibelius exports one part after the other).
+const Duration rdSibeliusSaveSettle = Duration(seconds: 3);
+const Duration rdSibeliusPartsSettle = Duration(seconds: 6);
+
 const String _prefsKey = 'rd_sibelius_state_v1';
 
 /// What happened with a save in Sibelius (shown as a toast).
@@ -32,9 +39,11 @@ sealed class RdSibeliusEvent {
   final String fileName;
 }
 
-/// The new content replaced the file in Attendix.
+/// The new content replaced the file in Attendix; [afterRetry]: only now, after
+/// tries that failed (offline).
 class RdSibeliusSaved extends RdSibeliusEvent {
-  const RdSibeliusSaved(super.fileName);
+  const RdSibeliusSaved(super.fileName, {this.afterRetry = false});
+  final bool afterRetry;
 }
 
 /// The file changed in Attendix meanwhile: the save was added as [copyName].
@@ -43,17 +52,33 @@ class RdSibeliusSavedAsCopy extends RdSibeliusEvent {
   final String copyName;
 }
 
-/// The upload failed (retried after the next save or when the app returns).
+/// The upload failed: the save is on the Mac only and is uploaded by itself
+/// later (shown once, not for every further try).
 class RdSibeliusSaveFailed extends RdSibeliusEvent {
   const RdSibeliusSaveFailed(super.fileName, this.error);
   final Object error;
 }
 
+/// The Werk was deleted in Attendix: the copy is not kept in step any more
+/// (it stays in Downloads › Attendix).
+class RdSibeliusWorkGone extends RdSibeliusEvent {
+  const RdSibeliusWorkGone(super.fileName);
+}
+
 class RdSibeliusState {
-  const RdSibeliusState({this.parts = const {}});
+  const RdSibeliusState({this.parts = const {}, this.waiting = const []});
 
   /// Exported parts per parts folder, waiting for their Werk page.
   final Map<String, RdSibeliusParts> parts;
+
+  /// Copies whose last save is only on the Mac so far (upload failed, tried
+  /// again by itself).
+  final List<RdSibeliusCheckout> waiting;
+
+  bool isWaiting(int tenantId, int songId, SongFile file) => waiting.any((c) => c.matches(tenantId, songId, file));
+
+  RdSibeliusState copyWith({Map<String, RdSibeliusParts>? parts, List<RdSibeliusCheckout>? waiting}) =>
+      RdSibeliusState(parts: parts ?? this.parts, waiting: waiting ?? this.waiting);
 
   RdSibeliusParts? partsFor(int tenantId, int songId) {
     for (final p in parts.values) {
@@ -92,12 +117,13 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
   Timer? _timer;
   AppLifecycleListener? _lifecycle;
   Future<void> _scanning = Future<void>.value();
+  bool _busy = false;
 
-  /// Seen on the last tick and not yet stable: path → (modified, size).
-  final Map<String, (int, int)> _pending = {};
+  /// Saves not yet settled: path → (modified, size, first seen).
+  final Map<String, (int, int, int)> _pending = {};
 
-  /// Parts folders seen on the last tick: folder → (count, newest).
-  final Map<String, (int, int)> _pendingParts = {};
+  /// Parts folders not yet settled: folder → (count, newest, first seen).
+  final Map<String, (int, int, int)> _pendingParts = {};
 
   @override
   RdSibeliusState build() {
@@ -106,6 +132,12 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
       _lifecycle?.dispose();
       _events.close();
     });
+    if (rdSibeliusSupported) {
+      // Back online: saves that are only on the Mac go up right away.
+      ref.listen<AsyncValue<bool>>(connectivityProvider, (previous, next) {
+        if (next.valueOrNull == true && previous?.valueOrNull != true) _retryNow();
+      });
+    }
     return const RdSibeliusState();
   }
 
@@ -113,12 +145,20 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
   Future<void> start() async {
     if (!rdSibeliusSupported) return;
     await _load();
-    _lifecycle ??= AppLifecycleListener(onResume: () {
-      // Failed uploads get another try when the app comes back.
-      _checkouts = [for (final c in _checkouts) c.copyWith(clearFailed: true)];
-      unawaited(_scan());
-    });
+    if (_lifecycle == null) {
+      // Back in the app: failed uploads get another try right away.
+      _lifecycle = AppLifecycleListener(onResume: _retryNow);
+      _retryNow();
+      return;
+    }
     _schedule();
+  }
+
+  /// Tries failed uploads again now instead of after their pause.
+  void _retryNow() {
+    _checkouts = [for (final c in _checkouts) c.failedModified == null ? c : c.copyWith(failedAt: 0)];
+    _schedule();
+    unawaited(_scan());
   }
 
   /// Reads the stored copies once (every caller waits for the same read).
@@ -150,7 +190,10 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
       _timer = null;
       return;
     }
-    _timer ??= Timer.periodic(rdSibeliusPollInterval, (_) => unawaited(_scan()));
+    // A tick is skipped while a comparison (e.g. a slow upload) still runs.
+    _timer ??= Timer.periodic(rdSibeliusPollInterval, (_) {
+      if (!_busy) unawaited(_scan());
+    });
   }
 
   /// Real path of Downloads › Attendix (the sandbox reaches Downloads
@@ -192,14 +235,16 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
     final root = await _root();
     if (root == null) return RdSibeliusOpen.noFolder;
 
-    var checkout = _checkouts.where((c) => c.matches(tenantId, songId, file)).firstOrNull;
+    // Only an own copy is reused: saves of a copy of another account (switched
+    // accounts) are uploaded only when that account is back.
+    var checkout = _checkouts.where((c) => c.userId == userId && c.matches(tenantId, songId, file)).firstOrNull;
     final local = checkout == null ? null : File(checkout.path);
     var localChanged = false;
     if (checkout != null && local != null && await local.exists()) {
       final hash = sha256.convert(await local.readAsBytes()).toString();
       localChanged = hash != checkout.hash;
-      // A save whose upload failed gets another try.
-      if (localChanged) _replace(checkout = checkout.copyWith(clearFailed: true));
+      // A save whose upload failed gets another try now.
+      if (localChanged && checkout.failedModified != null) _replace(checkout = checkout.copyWith(failedAt: 0));
     } else {
       checkout = null;
     }
@@ -212,10 +257,17 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
       if (checkout != null) {
         path = checkout.path;
       } else {
-        final dir = Directory(
-          '${root.path}/${rdSafePathSegment(groupName, fallback: 'Gruppe')}/'
-          '${rdSibeliusWorkFolder(number: songNumber, name: songName)}',
-        );
+        var folder =
+            '${root.path}/${rdSafePathSegment(groupName, fallback: 'Gruppe')}/'
+            '${rdSibeliusWorkFolder(number: songNumber, name: songName)}';
+        // Another Werk with the same name and number has its own folder (its
+        // Stimmen folder must not be offered here).
+        if (_checkouts.any(
+          (c) => File(c.path).parent.path == folder && (c.tenantId != tenantId || c.songId != songId),
+        )) {
+          folder = '$folder ($songId)';
+        }
+        final dir = Directory(folder);
         try {
           await dir.create(recursive: true);
         } catch (e) {
@@ -246,7 +298,11 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
         hash: sha256.convert(bytes).toString(),
         modified: stat.modified.millisecondsSinceEpoch,
       );
-      _checkouts = [for (final c in _checkouts) if (c.path != path) c, next];
+      _checkouts = [
+        for (final c in _checkouts)
+          if (c.path != path) c,
+        next,
+      ];
       final parts = '${target.parent.path}/$rdSibeliusPartsFolder';
       // Parts exported before (an earlier copy) are not offered again.
       _partsSince.putIfAbsent(parts, () => DateTime.now().millisecondsSinceEpoch);
@@ -259,93 +315,153 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
     return opened ? RdSibeliusOpen.opened : RdSibeliusOpen.notOpened;
   }
 
-  /// [name] in [dir], with " (2)" … when another open copy has that path.
+  /// [name] in [dir], with " (2)" … when another copy or file has that path.
   String _freePath(String dir, String name) {
     final taken = {for (final c in _checkouts) c.path};
+    bool used(String path) => taken.contains(path) || File(path).existsSync();
     var path = '$dir/$name';
     final dot = name.lastIndexOf('.');
-    for (var n = 2; taken.contains(path); n++) {
-      path = dot > 0
-          ? '$dir/${name.substring(0, dot)} ($n)${name.substring(dot)}'
-          : '$dir/$name ($n)';
+    for (var n = 2; used(path); n++) {
+      path = dot > 0 ? '$dir/${name.substring(0, dot)} ($n)${name.substring(dot)}' : '$dir/$name ($n)';
     }
     return path;
   }
 
   /// One comparison at a time.
-  Future<void> _scan() => _scanning = _scanning.then((_) => _scanOnce()).catchError((Object e) {
-        debugPrint('[RdSibeliusSync] scan failed: $e');
-      });
+  Future<void> _scan() =>
+      _scanning = _scanning
+          .then((_) async {
+            _busy = true;
+            try {
+              await _scanOnce();
+            } finally {
+              _busy = false;
+            }
+          })
+          .catchError((Object e) {
+            debugPrint('[RdSibeliusSync] scan failed: $e');
+          });
 
   @visibleForTesting
   Future<void> scanNow() => _scan();
 
   Future<void> _scanOnce() async {
     final userId = ref.read(supabaseClientProvider).auth.currentUser?.id;
+    final now = DateTime.now().millisecondsSinceEpoch;
     var changed = false;
     final gone = <String>{};
     for (final checkout in List.of(_checkouts)) {
-      final file = File(checkout.path);
-      if (!await file.exists()) {
-        // Moved or deleted in the Finder: nothing to keep in step any more.
-        if (!await file.parent.exists()) gone.add(checkout.path);
-        continue;
+      try {
+        final result = await _scanCheckout(checkout, userId, now);
+        if (result == null) {
+          gone.add(checkout.path);
+        } else if (result) {
+          changed = true;
+        }
+      } catch (e) {
+        // One unreadable copy does not stop the others.
+        debugPrint('[RdSibeliusSync] ${checkout.path}: $e');
       }
-      final stat = await file.stat();
-      final modified = stat.modified.millisecondsSinceEpoch;
-      if (modified == checkout.modified || modified == checkout.failedModified) {
-        _pending.remove(checkout.path);
-        continue;
-      }
-      // Wait until the save is complete (same time and size twice).
-      final seen = (modified, stat.size);
-      if (_pending[checkout.path] != seen) {
-        _pending[checkout.path] = seen;
-        continue;
-      }
-      _pending.remove(checkout.path);
-      if (checkout.userId != userId) continue;
-      final bytes = await file.readAsBytes();
-      final hash = sha256.convert(bytes).toString();
-      if (hash == checkout.hash) {
-        _replace(checkout.copyWith(modified: modified, clearFailed: true));
-        changed = true;
-        continue;
-      }
-      await _upload(checkout, bytes, hash, modified);
-      changed = true;
     }
     if (gone.isNotEmpty) {
-      _checkouts = [for (final c in _checkouts) if (!gone.contains(c.path)) c];
+      _checkouts = [
+        for (final c in _checkouts)
+          if (!gone.contains(c.path)) c,
+      ];
       changed = true;
     }
-    await _scanParts();
+    await _scanParts(now);
     if (changed) await _save();
+    _publishWaiting();
     _schedule();
+  }
+
+  /// Compares one copy: whether its record changed, null when it is not
+  /// kept in step any more.
+  Future<bool?> _scanCheckout(RdSibeliusCheckout checkout, String? userId, int now) async {
+    final file = File(checkout.path);
+    if (!await file.exists()) {
+      // Moved or deleted in the Finder: nothing to keep in step any more.
+      return await file.parent.exists() ? false : null;
+    }
+    final stat = await file.stat();
+    final modified = stat.modified.millisecondsSinceEpoch;
+    if (modified == checkout.modified) {
+      _pending.remove(checkout.path);
+      return false;
+    }
+    if (modified == checkout.failedModified) {
+      // Its upload failed (offline?): tried again after a pause.
+      _pending.remove(checkout.path);
+      final due = (checkout.failedAt ?? 0) + rdSibeliusRetryDelay(checkout.failCount).inMilliseconds;
+      if (now < due) return false;
+    } else {
+      // Wait until the save is complete: unchanged for a while.
+      final seen = _pending[checkout.path];
+      if (seen == null || seen.$1 != modified || seen.$2 != stat.size) {
+        _pending[checkout.path] = (modified, stat.size, now);
+        return false;
+      }
+      if (now - seen.$3 < rdSibeliusSaveSettle.inMilliseconds) return false;
+      _pending.remove(checkout.path);
+    }
+    if (checkout.userId != userId) return false;
+    final bytes = await file.readAsBytes();
+    final hash = sha256.convert(bytes).toString();
+    if (hash == checkout.hash) {
+      _replace(checkout.copyWith(modified: modified, clearFailed: true));
+      return true;
+    }
+    return await _upload(checkout, bytes, hash, modified) ? true : null;
+  }
+
+  void _publishWaiting() {
+    final waiting = [
+      for (final c in _checkouts)
+        if (c.failedModified != null) c,
+    ];
+    String key(List<RdSibeliusCheckout> list) => [for (final c in list) '${c.path}|${c.url}'].join('\n');
+    if (key(waiting) != key(state.waiting)) state = state.copyWith(waiting: waiting);
   }
 
   void _replace(RdSibeliusCheckout next) {
     _checkouts = [for (final c in _checkouts) c.path == next.path ? next : c];
   }
 
-  Future<void> _upload(RdSibeliusCheckout checkout, Uint8List bytes, String hash, int modified) async {
+  /// Uploads a save; false when the Werk is gone (the copy is let go).
+  Future<bool> _upload(RdSibeliusCheckout checkout, Uint8List bytes, String hash, int modified) async {
     final service = SongFileService(ref.read(supabaseClientProvider), checkout.tenantId);
+    // The name of this try is kept before it starts: if the connection drops
+    // after Attendix took it but before the answer came, the next try finds
+    // the file under it (instead of thinking it was deleted).
+    final attempt = rdSibeliusAttemptName(
+      checkout.storageName ?? checkout.fileName,
+      DateTime.now().millisecondsSinceEpoch,
+    );
+    final attempts = [...checkout.attempts, attempt];
+    _replace(checkout = checkout.copyWith(attempts: attempts.sublist(attempts.length > 20 ? attempts.length - 20 : 0)));
+    await _save();
     try {
       final replaced = await service.replaceFileContent(
         songId: checkout.songId,
         url: checkout.url,
         storageName: checkout.storageName,
+        earlierNames: checkout.attempts.toSet(),
+        newStorageName: attempt,
         bytes: bytes,
       );
       if (replaced != null) {
-        _replace(checkout.copyWith(
-          url: replaced.url,
-          storageName: replaced.storageName,
-          hash: hash,
-          modified: modified,
-          clearFailed: true,
-        ));
-        _events.add(RdSibeliusSaved(checkout.fileName));
+        _replace(
+          checkout.copyWith(
+            url: replaced.url,
+            storageName: replaced.storageName,
+            hash: hash,
+            modified: modified,
+            attempts: const [],
+            clearFailed: true,
+          ),
+        );
+        _events.add(RdSibeliusSaved(checkout.fileName, afterRetry: checkout.failCount > 0));
       } else {
         // Replaced or deleted in Attendix meanwhile: keep both versions.
         final copyName = rdSibeliusCopyName(checkout.fileName, l10nWithoutContext.redesignFilesSibeliusCopySuffix);
@@ -357,22 +473,37 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
           mainGroupId: checkout.mainGroupId,
         );
         final segments = Uri.tryParse(url)?.pathSegments ?? const <String>[];
-        _replace(checkout.copyWith(
-          url: url,
-          storageName: segments.isEmpty ? null : Uri.decodeComponent(segments.last),
-          fileName: copyName,
-          hash: hash,
-          modified: modified,
-          clearFailed: true,
-        ));
+        _replace(
+          checkout.copyWith(
+            url: url,
+            storageName: segments.isEmpty ? null : Uri.decodeComponent(segments.last),
+            fileName: copyName,
+            hash: hash,
+            modified: modified,
+            attempts: const [],
+            clearFailed: true,
+          ),
+        );
         _events.add(RdSibeliusSavedAsCopy(checkout.fileName, copyName));
       }
       _refresh(checkout.songId);
+    } on SongNotFoundException {
+      _events.add(RdSibeliusWorkGone(checkout.fileName));
+      return false;
     } catch (e) {
       debugPrint('[RdSibeliusSync] upload failed: $e');
-      _replace(checkout.copyWith(failedModified: modified));
-      _events.add(RdSibeliusSaveFailed(checkout.fileName, e));
+      // The save stays on the Mac and goes up by itself later; the hint is
+      // shown once, not for every further try.
+      _replace(
+        checkout.copyWith(
+          failedModified: modified,
+          failedAt: DateTime.now().millisecondsSinceEpoch,
+          failCount: checkout.failCount + 1,
+        ),
+      );
+      if (checkout.failCount == 0) _events.add(RdSibeliusSaveFailed(checkout.fileName, e));
     }
+    return true;
   }
 
   void _refresh(int songId) {
@@ -382,17 +513,18 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
   }
 
   /// New PDFs in the parts folders (kept in [state] until taken).
-  Future<void> _scanParts() async {
+  Future<void> _scanParts(int now) async {
     final next = <String, RdSibeliusParts>{};
     final folders = <String, RdSibeliusCheckout>{
       for (final c in _checkouts) '${File(c.path).parent.path}/$rdSibeliusPartsFolder': c,
     };
     for (final entry in folders.entries) {
       final dir = Directory(entry.key);
-      if (!await dir.exists()) continue;
       final pdfs = <String, int>{};
       try {
-        await for (final f in dir.list(followLinks: false)) {
+        if (!await dir.exists()) continue;
+        // Also below: a "/" in a part name may become a subfolder.
+        await for (final f in dir.list(recursive: true, followLinks: false)) {
           if (f is! File) continue;
           pdfs[f.path] = (await f.stat()).modified.millisecondsSinceEpoch;
         }
@@ -406,11 +538,19 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
         _pendingParts.remove(entry.key);
         continue;
       }
-      // Sibelius writes one part after the other: wait until none is added.
+      // Sibelius writes one part after the other: offered once none was
+      // added for a while.
       final newest = paths.map((p) => pdfs[p]!).reduce((a, b) => a > b ? a : b);
-      final seen = (paths.length, newest);
-      if (_pendingParts[entry.key] != seen) {
-        _pendingParts[entry.key] = seen;
+      final seen = _pendingParts[entry.key];
+      final settled =
+          seen != null &&
+          seen.$1 == paths.length &&
+          seen.$2 == newest &&
+          now - seen.$3 >= rdSibeliusPartsSettle.inMilliseconds;
+      if (seen == null || seen.$1 != paths.length || seen.$2 != newest) {
+        _pendingParts[entry.key] = (paths.length, newest, now);
+      }
+      if (!settled) {
         final waiting = state.parts[entry.key];
         if (waiting != null) next[entry.key] = waiting;
         continue;
@@ -422,19 +562,18 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
         paths: paths,
       );
     }
-    if (!mapEquals(_partsKeys(next), _partsKeys(state.parts))) state = RdSibeliusState(parts: next);
+    if (!mapEquals(_partsKeys(next), _partsKeys(state.parts))) state = state.copyWith(parts: next);
   }
 
   static Map<String, String> _partsKeys(Map<String, RdSibeliusParts> parts) => {
     for (final e in parts.entries) e.key: e.value.paths.join('\n'),
   };
 
-  /// Reads the waiting parts of [folder] (as upload files) and marks them
-  /// as taken; null when there are none any more.
-  Future<List<PlatformFile>?> takeParts(String folder) async {
+  /// Reads the waiting parts of [folder] as upload files; null when there
+  /// are none any more. They stay waiting until [partsAnswered].
+  Future<({RdSibeliusParts parts, List<PlatformFile> files})?> takeParts(String folder) async {
     final parts = state.parts[folder];
     if (parts == null) return null;
-    await _markPartsTaken(parts);
     final files = <PlatformFile>[];
     for (final path in parts.paths) {
       try {
@@ -444,10 +583,12 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
         debugPrint('[RdSibeliusSync] part not readable: $e');
       }
     }
-    return files;
+    return (parts: parts, files: files);
   }
 
-  Future<void> _markPartsTaken(RdSibeliusParts parts) async {
+  /// The user took over or turned down [parts]: not offered again (only
+  /// parts exported later are).
+  Future<void> partsAnswered(RdSibeliusParts parts) async {
     var newest = _partsSince[parts.folder] ?? 0;
     for (final path in parts.paths) {
       try {
@@ -459,7 +600,7 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
     }
     _partsSince[parts.folder] = newest;
     _pendingParts.remove(parts.folder);
-    state = RdSibeliusState(parts: {...state.parts}..remove(parts.folder));
+    state = state.copyWith(parts: {...state.parts}..remove(parts.folder));
     await _save();
   }
 }

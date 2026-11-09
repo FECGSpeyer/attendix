@@ -34,14 +34,20 @@ bool rdIsSibeliusFile(SongFile file) {
 /// [name] as one segment of a macOS path: no "/" or ":" (Finder shows ":" as
 /// "/"), no control characters, no leading dots, at most 80 characters.
 String rdSafePathSegment(String name, {String fallback = 'Werk'}) {
-  var s = name
-      .replaceAll(RegExp(r'[/:\\]'), '-')
-      .replaceAll(RegExp(r'[\x00-\x1f\x7f]'), '')
-      .replaceAll(RegExp(r'\s+'), ' ')
-      .trim()
-      .replaceFirst(RegExp(r'^\.+'), '')
-      .trim();
-  if (s.length > 80) s = s.substring(0, 80).trim();
+  var s =
+      name
+          .replaceAll(RegExp(r'[/:\\]'), '-')
+          .replaceAll(RegExp(r'[\x00-\x1f\x7f]'), '')
+          .replaceAll(RegExp(r'\s+'), ' ')
+          .trim()
+          .replaceFirst(RegExp(r'^\.+'), '')
+          .trim();
+  if (s.length > 80) {
+    // Shortened before the extension (".sib" decides which app opens it).
+    final dot = s.lastIndexOf('.');
+    final ext = dot > 0 && s.length - dot <= 6 ? s.substring(dot) : '';
+    s = s.substring(0, 80 - ext.length).trim() + ext;
+  }
   return s.isEmpty ? fallback : s;
 }
 
@@ -90,6 +96,9 @@ class RdSibeliusCheckout {
     this.note,
     this.mainGroupId,
     this.failedModified,
+    this.failedAt,
+    this.failCount = 0,
+    this.attempts = const [],
   });
 
   /// Real path of the copy (its key).
@@ -115,15 +124,25 @@ class RdSibeliusCheckout {
   final String hash;
   final int modified;
 
-  /// Modification time of a save whose upload failed: not retried until the
-  /// file changes again or the app comes back.
+  /// Modification time of a save whose upload failed, when (ms) it failed
+  /// last and how often in a row: it is tried again after
+  /// [rdSibeliusRetryDelay], also after a restart.
   final int? failedModified;
+  final int? failedAt;
+  final int failCount;
+
+  /// Storage names of tries since the last confirmed upload: one of them may
+  /// have gone through although its answer got lost.
+  final List<String> attempts;
 
   /// Whether [file] (of [songId] in [tenantId]) is the one this copy edits.
   bool matches(int tenantId, int songId, SongFile file) =>
       this.tenantId == tenantId &&
       this.songId == songId &&
-      (url == file.url || ((storageName ?? '').isNotEmpty && storageName == file.storageName));
+      (url == file.url ||
+          ((storageName ?? '').isNotEmpty && storageName == file.storageName) ||
+          // A try whose answer got lost may already be the file in Attendix.
+          attempts.contains(file.storageName));
 
   RdSibeliusCheckout copyWith({
     String? url,
@@ -132,23 +151,28 @@ class RdSibeliusCheckout {
     String? hash,
     int? modified,
     int? failedModified,
+    int? failedAt,
+    int? failCount,
+    List<String>? attempts,
     bool clearFailed = false,
-  }) =>
-      RdSibeliusCheckout(
-        path: path,
-        tenantId: tenantId,
-        songId: songId,
-        userId: userId,
-        url: url ?? this.url,
-        storageName: storageName ?? this.storageName,
-        fileName: fileName ?? this.fileName,
-        instrumentId: instrumentId,
-        note: note,
-        mainGroupId: mainGroupId,
-        hash: hash ?? this.hash,
-        modified: modified ?? this.modified,
-        failedModified: clearFailed ? null : (failedModified ?? this.failedModified),
-      );
+  }) => RdSibeliusCheckout(
+    path: path,
+    tenantId: tenantId,
+    songId: songId,
+    userId: userId,
+    url: url ?? this.url,
+    storageName: storageName ?? this.storageName,
+    fileName: fileName ?? this.fileName,
+    instrumentId: instrumentId,
+    note: note,
+    mainGroupId: mainGroupId,
+    hash: hash ?? this.hash,
+    modified: modified ?? this.modified,
+    failedModified: clearFailed ? null : (failedModified ?? this.failedModified),
+    failedAt: clearFailed ? null : (failedAt ?? this.failedAt),
+    failCount: clearFailed ? 0 : (failCount ?? this.failCount),
+    attempts: attempts ?? this.attempts,
+  );
 
   Map<String, dynamic> toJson() => {
     'path': path,
@@ -164,6 +188,9 @@ class RdSibeliusCheckout {
     'hash': hash,
     'modified': modified,
     'failedModified': failedModified,
+    'failedAt': failedAt,
+    'failCount': failCount,
+    'attempts': attempts,
   };
 
   static RdSibeliusCheckout? fromJson(Object? json) {
@@ -200,8 +227,38 @@ class RdSibeliusCheckout {
       hash: hash,
       modified: modified,
       failedModified: json['failedModified'] as int?,
+      failedAt: json['failedAt'] as int?,
+      failCount: (json['failCount'] as int?) ?? 0,
+      attempts: [
+        for (final a in (json['attempts'] as List?) ?? const [])
+          if (a is String) a,
+      ],
     );
   }
+}
+
+/// Pause before a failed upload is tried again: 15 s, 30 s, then every
+/// minute (a try without connection fails at once; coming back online or to
+/// the app tries right away).
+Duration rdSibeliusRetryDelay(int failCount) {
+  if (failCount <= 0) return Duration.zero;
+  return Duration(seconds: failCount == 1 ? 15 : (failCount == 2 ? 30 : 60));
+}
+
+/// Storage name of one upload try of [fileName]: unique per try, so a try
+/// whose answer got lost can be recognised by it.
+String rdSibeliusAttemptName(String fileName, int stamp) {
+  final dot = fileName.lastIndexOf('.');
+  final base = dot > 0 ? fileName.substring(0, dot) : fileName;
+  final ext = dot > 0 && dot < fileName.length - 1 ? fileName.substring(dot + 1) : 'sib';
+  // Same cleaning as the other storage names.
+  final safe = base
+      .replaceAll(RegExp(r'[\u0300-\u036f]'), '')
+      .replaceAll(RegExp(r'[^\w\s-]'), '-')
+      .replaceAll(RegExp(r'\s+'), '-')
+      .replaceAll(RegExp(r'-+'), '-')
+      .replaceAll(RegExp(r'^-+|-+$'), '');
+  return '${safe}_$stamp.$ext';
 }
 
 /// Exported parts waiting to be taken over: the PDFs in a work folder's
@@ -218,11 +275,10 @@ class RdSibeliusParts {
 
 /// The PDFs of a parts folder ([entries]: path, modification time in ms)
 /// that are newer than [since], sorted by name.
-List<String> rdNewPartPdfs(Map<String, int> entries, int since) =>
-    [
-      for (final e in entries.entries)
-        if (e.value > since && e.key.toLowerCase().endsWith('.pdf')) e.key,
-    ]..sort();
+List<String> rdNewPartPdfs(Map<String, int> entries, int since) => [
+  for (final e in entries.entries)
+    if (e.value > since && e.key.toLowerCase().endsWith('.pdf')) e.key,
+]..sort();
 
 /// The Sibelius plug-in (ManuScript): saves the active score and exports all
 /// its parts (not the full score) as separate PDFs named after the part
@@ -302,8 +358,10 @@ Uint8List rdSibeliusPluginBytes([String source = rdSibeliusPluginSource]) {
 
 /// JSON of the stored state: the open copies and, per parts folder, the
 /// modification time (ms) up to which parts were taken.
-String rdSibeliusStateJson(List<RdSibeliusCheckout> checkouts, Map<String, int> partsSince) =>
-    jsonEncode({'checkouts': [for (final c in checkouts) c.toJson()], 'partsSince': partsSince});
+String rdSibeliusStateJson(List<RdSibeliusCheckout> checkouts, Map<String, int> partsSince) => jsonEncode({
+  'checkouts': [for (final c in checkouts) c.toJson()],
+  'partsSince': partsSince,
+});
 
 ({List<RdSibeliusCheckout> checkouts, Map<String, int> partsSince}) rdSibeliusStateFromJson(String? raw) {
   if (raw == null || raw.isEmpty) return (checkouts: const [], partsSince: const {});

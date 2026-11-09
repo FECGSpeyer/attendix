@@ -20,6 +20,13 @@ void main() {
     expect(rdSafePathSegment('..  '), 'Werk');
     expect(rdSafePathSegment('a' * 120).length, 80);
     expect(rdSibeliusCopyName('Lied.sib', '(aus Sibelius)'), 'Lied (aus Sibelius).sib');
+    expect(rdSafePathSegment('${'a' * 100}.sib'), endsWith('.sib'));
+    expect(rdSibeliusAttemptName('Ich weiß.sib', 5), 'Ich-wei_5.sib');
+    expect(rdSibeliusAttemptName('Partitur', 5), 'Partitur_5.sib');
+  });
+
+  test('failed uploads are tried again soon, then every minute', () {
+    expect([for (var n = 0; n <= 4; n++) rdSibeliusRetryDelay(n).inSeconds], [0, 15, 30, 60, 60]);
   });
 
   test('the real home is found from the sandbox container', () {
@@ -48,6 +55,10 @@ void main() {
       note: 'Sibelius',
       hash: 'abc',
       modified: 1000,
+      failedModified: 2000,
+      failedAt: 3000,
+      failCount: 2,
+      attempts: ['Lied_9.sib'],
     );
     final restored = rdSibeliusStateFromJson(rdSibeliusStateJson([checkout], {'/f/Stimmen': 5}));
     expect(restored.checkouts.single.toJson(), checkout.toJson());
@@ -55,6 +66,8 @@ void main() {
     expect(rdSibeliusStateFromJson('kaputt').checkouts, isEmpty);
     expect(checkout.matches(42, 7, _file('Lied.sib', storageName: 'Lied_123.sib', url: 'https://other')), isTrue);
     expect(checkout.matches(43, 7, _file('Lied.sib', storageName: 'Lied_123.sib')), isFalse);
+    // A try whose answer got lost is still the same file.
+    expect(checkout.matches(42, 7, _file('Lied.sib', storageName: 'Lied_9.sib', url: 'https://new')), isTrue);
   });
 
   test('the plug-in is stored as UTF-16 BE and exports the parts separately', () {
@@ -74,7 +87,9 @@ void main() {
     final source = File('lib/core/services/song_file_service.dart').readAsStringSync();
     final start = source.indexOf('Future<SongFile?> _replaceFileContent(');
     final body = source.substring(start, source.indexOf('/// Rename a file', start));
-    expect(RegExp(r"\.eq\('tenantId', tenantId\)").allMatches(body).length, 2);
+    final queries = ".from('songs')".allMatches(body).length;
+    expect(queries, 3);
+    expect(RegExp(r"\.eq\('tenantId', tenantId\)").allMatches(body).length, queries);
     expect(body, contains("'songs/\$tenantId/\$songId/"));
   });
 }

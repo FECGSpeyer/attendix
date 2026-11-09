@@ -29,6 +29,14 @@ Map<String, dynamic> songFileJson(dynamic f) {
   };
 }
 
+/// The song is not there any more (deleted meanwhile).
+class SongNotFoundException implements Exception {
+  const SongNotFoundException();
+
+  @override
+  String toString() => l10nWithoutContext.coreFlutterSongNotFound;
+}
+
 /// Service for managing song file uploads to Supabase Storage
 class SongFileService {
   final SupabaseClient _supabase;
@@ -247,12 +255,16 @@ class SongFileService {
     required int songId,
     required String url,
     String? storageName,
+    Set<String> earlierNames = const {},
+    String? newStorageName,
     required Uint8List bytes,
   }) =>
       _locked(_tenantId, songId, () => _replaceFileContent(
             songId: songId,
             url: url,
             storageName: storageName,
+            earlierNames: earlierNames,
+            newStorageName: newStorageName,
             bytes: bytes,
           ));
 
@@ -580,10 +592,17 @@ class SongFileService {
   /// place, name, part and note; the old object is removed afterwards.
   /// Returns the new entry, or null when the song has no such file any more
   /// (it was replaced or deleted meanwhile, nothing is written then).
+  ///
+  /// A try whose answer got lost (connection gone) may have gone through:
+  /// [earlierNames] are the storage names such tries used, so the file is
+  /// found under them too; [newStorageName] is the name for this try (a
+  /// free one is taken when it is in use).
   Future<SongFile?> _replaceFileContent({
     required int songId,
     required String url,
     String? storageName,
+    Set<String> earlierNames = const {},
+    String? newStorageName,
     required Uint8List bytes,
   }) async {
     DemoGuard.checkCurrent('uploadSongFile'); // DEMO_GUARD
@@ -598,14 +617,14 @@ class SongFileService {
         .eq('id', songId)
         .eq('tenantId', tenantId)
         .maybeSingle();
-    if (songResponse == null) {
-      throw Exception(l10nWithoutContext.coreFlutterSongNotFound);
-    }
+    if (songResponse == null) throw const SongNotFoundException();
 
     final files = [
       for (final f in (songResponse['files'] as List?) ?? const []) songFileJson(f),
     ];
-    final index = files.indexWhere((f) => _sameFile(f, url, storageName));
+    final index = files.indexWhere(
+      (f) => _sameFile(f, url, storageName) || earlierNames.contains(f['storageName']),
+    );
     if (index < 0) return null;
     final old = files[index];
     final fileName = (old['fileName'] as String?) ?? '';
@@ -616,7 +635,9 @@ class SongFileService {
     final taken = <Object?>{
       for (final f in files) ...[f['storageName'], f['fileName']],
     };
-    final fileId = freeStorageName(fileName, taken);
+    final fileId = newStorageName != null && newStorageName.isNotEmpty && !taken.contains(newStorageName)
+        ? newStorageName
+        : freeStorageName(fileName, taken);
     final storagePath = 'songs/$tenantId/$songId/$fileId';
     final extension = PlatformFile(name: fileName, size: 0).extension ?? '';
 
@@ -637,10 +658,20 @@ class SongFileService {
         'files': files,
       }).eq('id', songId).eq('tenantId', tenantId);
     } catch (_) {
+      // The answer may have got lost although the list was written: the new
+      // object is removed only when no entry points to it (when that cannot
+      // be checked, e.g. offline, it stays; an unused object is harmless).
       try {
-        await _supabase.storage.from(_bucketName).remove([storagePath]);
-      } catch (e, st) {
-        ErrorReporter.report(e, st, where: 'song_file_service');
+        final check = await _supabase
+            .from('songs')
+            .select('files')
+            .eq('id', songId)
+            .eq('tenantId', tenantId)
+            .maybeSingle();
+        final used = ((check?['files'] as List?) ?? const []).any((f) => f is Map && f['storageName'] == fileId);
+        if (!used) await _supabase.storage.from(_bucketName).remove([storagePath]);
+      } catch (e) {
+        debugPrint('[SongFileService] new object kept: $e');
       }
       rethrow;
     }

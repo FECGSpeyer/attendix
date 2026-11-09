@@ -113,7 +113,9 @@ Future<void> rdInstallSibeliusPlugin(BuildContext context, WidgetRef ref) async 
       initialDirectory: home == null ? null : rdSibeliusPluginsFolder(home),
     );
   } catch (e) {
-    if (context.mounted) ToastHelper.showError(context, l10n.redesignFilesSibeliusPluginFailed(friendlyErrorMessage(e)));
+    if (context.mounted) {
+      ToastHelper.showError(context, l10n.redesignFilesSibeliusPluginFailed(friendlyErrorMessage(e)));
+    }
     return;
   }
   if (picked == null || !context.mounted) return;
@@ -130,7 +132,9 @@ Future<void> rdInstallSibeliusPlugin(BuildContext context, WidgetRef ref) async 
       ToastHelper.showWarning(context, l10n.redesignFilesSibeliusPluginWrongFolder);
     }
   } catch (e) {
-    if (context.mounted) ToastHelper.showError(context, l10n.redesignFilesSibeliusPluginFailed(friendlyErrorMessage(e)));
+    if (context.mounted) {
+      ToastHelper.showError(context, l10n.redesignFilesSibeliusPluginFailed(friendlyErrorMessage(e)));
+    }
   }
 }
 
@@ -145,9 +149,16 @@ void rdStartSibeliusSync(WidgetRef ref, GoRouter router) {
     final l10n = context.l10n;
     switch (event) {
       case RdSibeliusSaved():
-        ToastHelper.showSuccess(context, l10n.redesignFilesSibeliusSaved(event.fileName));
+        ToastHelper.showSuccess(
+          context,
+          event.afterRetry
+              ? l10n.redesignFilesSibeliusUploadedLater(event.fileName)
+              : l10n.redesignFilesSibeliusSaved(event.fileName),
+        );
       case RdSibeliusSavedAsCopy():
         ToastHelper.showWarning(context, l10n.redesignFilesSibeliusSavedAsCopy(event.fileName, event.copyName));
+      case RdSibeliusWorkGone():
+        ToastHelper.showWarning(context, l10n.redesignFilesSibeliusWorkGone(event.fileName));
       case RdSibeliusSaveFailed():
         ToastHelper.showError(
           context,
@@ -162,8 +173,9 @@ void rdStartSibeliusSync(WidgetRef ref, GoRouter router) {
 bool rdOpensInSibelius(SongFile file) => rdSibeliusSupported && rdIsSibeliusFile(file);
 
 /// The service the parts of a Werk are written with (its tenant decides
-/// whether waiting parts belong to the Werk page shown).
-int? rdSongTenantId(WidgetRef ref) => ref.read(songFileServiceProvider).tenantId;
+/// whether waiting parts belong to the Werk page shown). Watches it: call in
+/// build.
+int? rdSongTenantId(WidgetRef ref) => ref.watch(songFileServiceProvider).tenantId;
 
 /// "Stimmen direkt aus Sibelius" above the files of a Werk with a Sibelius
 /// score (Mac app), until the plug-in is installed or the hint is closed:

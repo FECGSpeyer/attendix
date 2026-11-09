@@ -13166,7 +13166,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String redesignFilesSibeliusSaveFailed(Object name, Object error) {
-    return '„$name“ aus Sibelius konnte nicht hochgeladen werden: $error';
+    return '„$name“ ist auf dem Mac gespeichert, aber noch nicht in Attendix ($error). Attendix lädt es von selbst hoch, sobald du wieder online bist.';
   }
 
   @override
@@ -13177,6 +13177,20 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String redesignFilesSibeliusSavedAsCopy(Object name, Object copy) {
     return '„$name“ wurde in Attendix inzwischen geändert oder gelöscht. Deine Fassung aus Sibelius liegt jetzt als „$copy“ dabei.';
+  }
+
+  @override
+  String redesignFilesSibeliusUploadedLater(Object name) {
+    return 'Wieder online: „$name“ aus Sibelius ist jetzt in Attendix gespeichert';
+  }
+
+  @override
+  String get redesignFilesSibeliusWaiting =>
+      'Nur auf dem Mac gespeichert. Wird von selbst hochgeladen, sobald du wieder online bist.';
+
+  @override
+  String redesignFilesSibeliusWorkGone(Object name) {
+    return 'Das Werk zu „$name“ gibt es in Attendix nicht mehr. Deine Fassung bleibt auf dem Mac unter „Downloads › Attendix“.';
   }
 
   @override

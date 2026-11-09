@@ -16275,7 +16275,7 @@
   "@redesignFilesSibeliusPluginWrongFolder": {
     "description": "redesign.files.sibeliusPluginWrongFolder"
   },
-  "redesignFilesSibeliusSaveFailed": "„{name}“ aus Sibelius konnte nicht hochgeladen werden: {error}",
+  "redesignFilesSibeliusSaveFailed": "„{name}“ ist auf dem Mac gespeichert, aber noch nicht in Attendix ({error}). Attendix lädt es von selbst hoch, sobald du wieder online bist.",
   "@redesignFilesSibeliusSaveFailed": {
     "description": "redesign.files.sibeliusSaveFailed",
     "placeholders": {
@@ -16296,6 +16296,24 @@
     "placeholders": {
       "name": {},
       "copy": {}
+    }
+  },
+  "redesignFilesSibeliusUploadedLater": "Wieder online: „{name}“ aus Sibelius ist jetzt in Attendix gespeichert",
+  "@redesignFilesSibeliusUploadedLater": {
+    "description": "redesign.files.sibeliusUploadedLater",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignFilesSibeliusWaiting": "Nur auf dem Mac gespeichert. Wird von selbst hochgeladen, sobald du wieder online bist.",
+  "@redesignFilesSibeliusWaiting": {
+    "description": "redesign.files.sibeliusWaiting"
+  },
+  "redesignFilesSibeliusWorkGone": "Das Werk zu „{name}“ gibt es in Attendix nicht mehr. Deine Fassung bleibt auf dem Mac unter „Downloads › Attendix“.",
+  "@redesignFilesSibeliusWorkGone": {
+    "description": "redesign.files.sibeliusWorkGone",
+    "placeholders": {
+      "name": {}
     }
   },
   "redesignFilesTitle": "Noten & Dateien",
