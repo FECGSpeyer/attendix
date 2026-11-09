@@ -398,14 +398,6 @@ List<RdCurrentWork> rdCurrentWorkCards(
   return [...result, ...recent].take(max).toList();
 }
 
-/// The one Noten file of the viewer's part that a tap on an "Aktuell" card
-/// opens directly; null without a part or with several files (then the
-/// Werk page lets the viewer pick).
-SongFile? rdSingleOwnNotes(Song song, int? groupId, {required bool choir}) {
-  final notes = rdMemberPartFiles(song, groupId, choir: choir).where(rdIsNotes).toList();
-  return notes.length == 1 ? notes.single : null;
-}
-
 /// "19:30": when the Termin [attendanceId] starts, from its own time, else
 /// from its type (the date of a Termin carries no start time). Null when
 /// neither is known.

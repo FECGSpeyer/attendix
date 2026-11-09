@@ -49,9 +49,9 @@ final rdWorksQueryProvider = StateProvider<String>((ref) {
 });
 
 /// REDESIGN: tab "Werke" (canvas "Werke neu gedacht", board "Liste"):
-/// search, "Aktuell" (members only, canvas "Aktuelle Noten im Werke-Tab":
-/// one row of cards with the Werke they play right now, a tap opens the own
-/// part), categories as chips, sort and filter, every Werk with one status
+/// search, "Aktuell" (canvas "Aktuelle Noten im Werke-Tab": one row of
+/// cards with the Werke played right now, a tap opens the own part or, for
+/// the conductor, the score), categories as chips, sort and filter, every Werk with one status
 /// line. "+" adds, imports or takes over Werke; "Noten nach Stimme",
 /// categories, the share link and the PDF list sit behind "•••". With Sammlungen (canvas
 /// "Noten-Bereich neu gedacht") their chips replace the category chips (the
@@ -349,8 +349,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     final ownGroup = _ownGroup(data);
     final counts = lead ? ref.watch(missingGroupsPlayerCountsProvider) : null;
     final shown = _shown(data);
-    // Members only: what they play right now. Leads have the Termine tab.
-    final current = !lead && _query.trim().isEmpty ? _currentWorks(data) : const <RdCurrentWork>[];
+    // What is played right now (members and leads), not during a search.
+    final current = _query.trim().isEmpty ? _currentWorks(data) : const <RdCurrentWork>[];
     final categories = [...data.categories.where((c) => c.id != null)]..sort((a, b) => a.index.compareTo(b.index));
     final sort = filter.sortOption;
     final byLast = sort == SongSortOption.lastSungAsc || sort == SongSortOption.lastSungDesc;
