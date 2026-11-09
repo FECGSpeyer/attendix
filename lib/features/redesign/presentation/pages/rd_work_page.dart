@@ -871,6 +871,8 @@ class _PartCard extends StatelessWidget {
                 child: Semantics(
                   button: true,
                   label: moreLabel,
+                  // The excluded InkWell no longer offers the tap.
+                  onTap: () => onMore!(button),
                   excludeSemantics: true,
                   child: Material(
                     color: p.bg,
