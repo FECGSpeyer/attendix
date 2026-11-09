@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.104.2",
+      "date": "9.11.2026",
+      "changes": [
+        "💄 Beta-Werk: Im •••-Menü der Karten oben (Partitur, eigene Stimme, Aufnahme) gibt es kein „Stimme ändern“ mehr, nur noch unten bei Noten & Dateien"
+      ]
+    },
+    {
       "version": "0.104.1",
       "date": "9.11.2026",
       "changes": [
