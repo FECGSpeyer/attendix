@@ -246,6 +246,12 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
       // A save whose upload failed gets another try now.
       if (localChanged && checkout.failedModified != null) _replace(checkout = checkout.copyWith(failedAt: 0));
     } else {
+      // Its file was deleted in the Finder: a fresh copy takes its place.
+      final stale = checkout?.path;
+      _checkouts = [
+        for (final c in _checkouts)
+          if (c.path != stale) c,
+      ];
       checkout = null;
     }
 
