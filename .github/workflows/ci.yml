@@ -3,8 +3,11 @@ name: CI
 on:
   push:
     branches: [master, develop]
+    # Docs-only changes need no build or tests.
+    paths-ignore: ['**/*.md', 'docs/**']
   pull_request:
     branches: [master]
+    paths-ignore: ['**/*.md', 'docs/**']
 
 # A new push to a PR cancels its still-running CI. Pushes (master, develop)
 # get a group of their own (run_id), so they are never cancelled or replaced.
@@ -37,9 +40,15 @@ jobs:
         # the deploy workflow turns them into a version after the merge.
         run: python3 tool/release/release_version.py --check
 
-  test:
-    name: Test
+  test-shard:
+    # The suite (~365 files) is split over 4 runners; most of the time is
+    # compiling each test file, so 4 shards take ~1/4 of the time.
+    name: Test (${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v4
 
@@ -57,15 +66,15 @@ jobs:
         run: cp .env.example .env && cp .env.example .env.app
 
       - name: Run tests
-        run: flutter test
-        # Note: Coverage disabled due to Flutter 3.29.0 segmentation fault bug
-        # when running `flutter test --coverage` on Ubuntu runners.
-        # Re-enable when Flutter fixes this issue.
+        # Coverage stays off (Flutter segfault with --coverage on Ubuntu).
+        run: flutter test --total-shards 4 --shard-index $(( ${{ matrix.shard }} - 1 ))
 
-      # Coverage temporarily disabled - see above
-      # - name: Upload coverage
-      #   uses: codecov/codecov-action@v4
-      #   with:
-      #     file: coverage/lcov.info
-      #     fail_ci_if_error: false
-      #   continue-on-error: true
+  test:
+    # One "Test" check that is green only when every shard passed.
+    name: Test
+    needs: test-shard
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: All shards passed
+        run: test "${{ needs.test-shard.result }}" = success

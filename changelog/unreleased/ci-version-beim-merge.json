@@ -1,1 +1,1 @@
-{"bump": "minor", "changes": ["🔧 CI: Version wird erst beim Merge vergeben (Changelog-Fragmente), alte PR-Runs werden abgebrochen, Deploy-Previews ohne doppelten Testlauf"]}
+{"bump": "minor", "changes": ["🔧 CI schneller: Version wird erst beim Merge vergeben (Changelog-Fragmente), alte PR-Läufe werden abgebrochen, Tests laufen auf 4 Rechnern parallel und nur noch einmal, Doku-Änderungen ohne CI"]}

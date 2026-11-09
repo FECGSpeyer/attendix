@@ -4,9 +4,12 @@ on:
   push:
     branches:
       - master
+    # Docs-only changes need no build or deploy.
+    paths-ignore: ['**/*.md', 'docs/**']
   pull_request:
     branches:
       - master
+    paths-ignore: ['**/*.md', 'docs/**']
   workflow_dispatch:
 
 # PR previews (group per PR number): a new push cancels the running preview.
@@ -110,10 +113,8 @@ jobs:
           DEMO_EMAIL: ${{ secrets.DEMO_EMAIL || secrets.DEMOMAIL }}
           DEMO_PASSWORD: ${{ secrets.DEMO_PASSWORD || secrets.DEMOPASSWORD }}
 
-      - name: Run tests
-        # PRs: the CI workflow already runs the tests; the preview only builds.
-        if: github.event_name != 'pull_request'
-        run: flutter test
+      # No `flutter test` here: the CI workflow tests every PR and every
+      # master push in parallel, so this job only builds and deploys.
 
       - name: Build web
         # PWA_OFFLINE: CanvasKit from our own origin instead of gstatic.com,
