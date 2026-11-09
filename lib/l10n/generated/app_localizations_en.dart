@@ -792,6 +792,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attendanceConnectionRestored => 'Connection restored';
 
   @override
+  String get attendanceCreateNewPerson => 'Create new person';
+
+  @override
+  String get attendanceCreateNewPersonHint =>
+      'Is created and added to this event right away.';
+
+  @override
   String get attendanceCreateRunSheet => 'Create run sheet';
 
   @override
@@ -1232,6 +1239,42 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return 'Needed: $_temp0';
   }
+
+  @override
+  String attendanceNewPersonAddFailed(Object name) {
+    return '$name was created but could not be added to the event.';
+  }
+
+  @override
+  String attendanceNewPersonAdded(Object name) {
+    return '$name created and added';
+  }
+
+  @override
+  String get attendanceNewPersonCreate => 'Create';
+
+  @override
+  String get attendanceNewPersonFailed => 'The person could not be created.';
+
+  @override
+  String get attendanceNewPersonFirstName => 'First name';
+
+  @override
+  String get attendanceNewPersonGroup => 'Section';
+
+  @override
+  String get attendanceNewPersonHint =>
+      'The person becomes a member of the group and is added to this event right away. Add more details later on the person.';
+
+  @override
+  String get attendanceNewPersonLastName => 'Last name';
+
+  @override
+  String get attendanceNewPersonNameMissing =>
+      'Please enter first and last name.';
+
+  @override
+  String get attendanceNewPersonTitle => 'New person';
 
   @override
   String get attendanceNoConnection => 'No internet connection';

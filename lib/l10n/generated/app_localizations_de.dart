@@ -794,6 +794,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceConnectionRestored => 'Verbindung wiederhergestellt';
 
   @override
+  String get attendanceCreateNewPerson => 'Neue Person anlegen';
+
+  @override
+  String get attendanceCreateNewPersonHint =>
+      'Wird angelegt und gleich zu diesem Termin hinzugefügt.';
+
+  @override
   String get attendanceCreateRunSheet => 'Ablaufplan erstellen';
 
   @override
@@ -1238,6 +1245,43 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return 'Benötigt: $_temp0';
   }
+
+  @override
+  String attendanceNewPersonAddFailed(Object name) {
+    return '$name wurde angelegt, konnte aber nicht zum Termin hinzugefügt werden.';
+  }
+
+  @override
+  String attendanceNewPersonAdded(Object name) {
+    return '$name angelegt und hinzugefügt';
+  }
+
+  @override
+  String get attendanceNewPersonCreate => 'Anlegen';
+
+  @override
+  String get attendanceNewPersonFailed =>
+      'Die Person konnte nicht angelegt werden.';
+
+  @override
+  String get attendanceNewPersonFirstName => 'Vorname';
+
+  @override
+  String get attendanceNewPersonGroup => 'Register';
+
+  @override
+  String get attendanceNewPersonHint =>
+      'Die Person wird Mitglied der Gruppe und gleich zu diesem Termin hinzugefügt. Weitere Angaben ergänzt du später bei der Person.';
+
+  @override
+  String get attendanceNewPersonLastName => 'Nachname';
+
+  @override
+  String get attendanceNewPersonNameMissing =>
+      'Bitte gib Vor- und Nachnamen ein.';
+
+  @override
+  String get attendanceNewPersonTitle => 'Neue Person';
 
   @override
   String get attendanceNoConnection => 'Keine Internetverbindung vorhanden';

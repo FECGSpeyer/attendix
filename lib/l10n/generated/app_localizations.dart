@@ -1382,6 +1382,18 @@ abstract class AppLocalizations {
   /// **'Verbindung wiederhergestellt'**
   String get attendanceConnectionRestored;
 
+  /// attendance.createNewPerson
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Person anlegen'**
+  String get attendanceCreateNewPerson;
+
+  /// attendance.createNewPersonHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wird angelegt und gleich zu diesem Termin hinzugefügt.'**
+  String get attendanceCreateNewPersonHint;
+
   /// attendance.createRunSheet
   ///
   /// In de, this message translates to:
@@ -2119,6 +2131,66 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Benötigt: {count, plural, one {{count} Person} other {{count} Personen}}'**
   String attendanceNeeded(num count);
+
+  /// attendance.newPerson.addFailed
+  ///
+  /// In de, this message translates to:
+  /// **'{name} wurde angelegt, konnte aber nicht zum Termin hinzugefügt werden.'**
+  String attendanceNewPersonAddFailed(Object name);
+
+  /// attendance.newPerson.added
+  ///
+  /// In de, this message translates to:
+  /// **'{name} angelegt und hinzugefügt'**
+  String attendanceNewPersonAdded(Object name);
+
+  /// attendance.newPerson.create
+  ///
+  /// In de, this message translates to:
+  /// **'Anlegen'**
+  String get attendanceNewPersonCreate;
+
+  /// attendance.newPerson.failed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Person konnte nicht angelegt werden.'**
+  String get attendanceNewPersonFailed;
+
+  /// attendance.newPerson.firstName
+  ///
+  /// In de, this message translates to:
+  /// **'Vorname'**
+  String get attendanceNewPersonFirstName;
+
+  /// attendance.newPerson.group
+  ///
+  /// In de, this message translates to:
+  /// **'Register'**
+  String get attendanceNewPersonGroup;
+
+  /// attendance.newPerson.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Person wird Mitglied der Gruppe und gleich zu diesem Termin hinzugefügt. Weitere Angaben ergänzt du später bei der Person.'**
+  String get attendanceNewPersonHint;
+
+  /// attendance.newPerson.lastName
+  ///
+  /// In de, this message translates to:
+  /// **'Nachname'**
+  String get attendanceNewPersonLastName;
+
+  /// attendance.newPerson.nameMissing
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib Vor- und Nachnamen ein.'**
+  String get attendanceNewPersonNameMissing;
+
+  /// attendance.newPerson.title
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Person'**
+  String get attendanceNewPersonTitle;
 
   /// attendance.noConnection
   ///
