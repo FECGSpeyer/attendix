@@ -235,6 +235,10 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
   /// Selected files (by URL).
   Set<String> _selected = {};
 
+  /// Selection mode ("••• › Mehrere auswählen"): a click toggles a row
+  /// instead of opening it. Without it a click opens the file.
+  bool _selecting = false;
+
   /// Keyboard row (by URL) and start of a Umschalt range.
   String? _cursor;
   String? _anchor;
@@ -338,6 +342,7 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
     }
     setState(() {
       _selected = {};
+      _selecting = false;
       _cursor = next;
       _anchor = next;
     });
@@ -418,10 +423,22 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
     return keys.isMetaPressed || keys.isControlPressed;
   }
 
+  /// A plain click opens the file; in selection mode it toggles the row.
+  /// ⌘/Strg- and Umschalt-clicks still select (and start selection mode).
   void _tapRow(SongFile file) {
     final order = _current.map((f) => f.url).toList();
     final shift = HardwareKeyboard.instance.isShiftPressed;
+    if (!_selecting && !_modPressed && !shift) {
+      setState(() {
+        _cursor = file.url;
+        _anchor = file.url;
+      });
+      _focus.requestFocus();
+      _open(file);
+      return;
+    }
     setState(() {
+      _selecting = true;
       if (shift && _anchor != null) {
         _selected = rdRangeSelection(order, _anchor!, file.url);
       } else if (_modPressed) {
@@ -429,7 +446,8 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
         if (!_selected.remove(file.url)) _selected.add(file.url);
         _anchor = file.url;
       } else {
-        _selected = {file.url};
+        _selected = {..._selected};
+        if (!_selected.remove(file.url)) _selected.add(file.url);
         _anchor = file.url;
       }
       _cursor = file.url;
@@ -437,8 +455,29 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
     _focus.requestFocus();
   }
 
+  void _startSelecting([SongFile? file]) {
+    setState(() {
+      _selecting = true;
+      if (file != null) {
+        _selected = {..._selected, file.url};
+        _anchor = file.url;
+        _cursor = file.url;
+      }
+    });
+    _focus.requestFocus();
+  }
+
+  void _stopSelecting() {
+    setState(() {
+      _selecting = false;
+      _selected = {};
+    });
+    _focus.requestFocus();
+  }
+
   void _toggle(SongFile file, bool? value) {
     setState(() {
+      _selecting = true;
       _selected = {..._selected};
       value == true ? _selected.add(file.url) : _selected.remove(file.url);
       _anchor = file.url;
@@ -448,7 +487,10 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
   }
 
   void _selectAll(List<SongFile> files, bool all) {
-    setState(() => _selected = all ? {for (final f in files) f.url} : {});
+    setState(() {
+      if (all) _selecting = true;
+      _selected = all ? {for (final f in files) f.url} : {};
+    });
     _focus.requestFocus();
   }
 
@@ -504,8 +546,11 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
         if (HardwareKeyboard.instance.isShiftPressed) {
           _anchor ??= _cursor ?? next;
           _selected = rdRangeSelection(order, _anchor!, next);
+          _selecting = true;
         } else {
-          _selected = {next};
+          // Outside selection mode ↑ ↓ only move the row marker (Enter
+          // opens it, Entf deletes it); in selection mode they select.
+          if (_selecting) _selected = {next};
           _anchor = next;
         }
         _cursor = next;
@@ -534,8 +579,8 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
         if (cursorFile == null) return KeyEventResult.ignored;
         _startRename(cursorFile);
       case LogicalKeyboardKey.escape:
-        if (_selected.isEmpty) return KeyEventResult.ignored;
-        setState(() => _selected = {});
+        if (_selected.isEmpty && !_selecting) return KeyEventResult.ignored;
+        _stopSelecting();
       default:
         return KeyEventResult.ignored;
     }
@@ -554,50 +599,76 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
     // Rows that disappeared (deleted elsewhere) leave the selection.
     final selected = _selected.where(urls.contains).toSet();
     final allSelected = files.isNotEmpty && selected.length == files.length;
+    // Checkboxes show only while selecting (also when keys or ⌘-clicks
+    // picked rows), so a plain click reads as "open".
+    final selecting = _selecting || selected.isNotEmpty;
     final toolbar = Row(
       children: [
         Expanded(
           child: Semantics(
             header: true,
             child: Text(
-              selected.isEmpty
+              !selecting
                   ? '${l10n.redesignFilesTitle} · ${files.length}'
-                  : l10n.redesignFilesSelected(selected.length),
+                  : (selected.isEmpty ? l10n.redesignFilesSelectHint : l10n.redesignFilesSelected(selected.length)),
               style: RdType.section(p),
             ),
           ),
         ),
-        if (selected.isNotEmpty) ...[
+        if (selecting) ...[
           _ToolButton(
             icon: Icons.download_outlined,
-            label: selected.length == 1 ? l10n.redesignFilesDownload : l10n.redesignFilesDownloadZip,
-            onPressed: _busy ? null : () => _download(files.where((f) => selected.contains(f.url)).toList()),
+            label: selected.length > 1 ? l10n.redesignFilesDownloadZip : l10n.redesignFilesDownload,
+            onPressed:
+                _busy || selected.isEmpty
+                    ? null
+                    : () => _download(files.where((f) => selected.contains(f.url)).toList()),
           ),
           _ToolButton(
             icon: Icons.delete_outline,
             label: l10n.redesignFilesDelete,
             color: p.absent,
-            onPressed: () => _delete(files.where((f) => selected.contains(f.url)).toList()),
+            onPressed: selected.isEmpty ? null : () => _delete(files.where((f) => selected.contains(f.url)).toList()),
           ),
           IconButton(
             tooltip: l10n.redesignCommonCancel,
             icon: Icon(Icons.close, color: p.text2),
-            onPressed: () => _selectAll(files, false),
+            onPressed: _stopSelecting,
           ),
         ] else ...[
-          if (files.length > 1)
-            _ToolButton(
-              icon: Icons.folder_zip_outlined,
-              label: l10n.redesignFilesDownloadAll,
-              onPressed: _busy ? null : () => _download(files),
-            ),
-          const SizedBox(width: 4),
           RdPrimaryButton(
             label: l10n.redesignFilesUpload,
             icon: Icons.upload_outlined,
             height: 40,
             onPressed: _pickAndUpload,
           ),
+          if (files.isNotEmpty) ...[
+            const SizedBox(width: 4),
+            PopupMenuButton<_ListAction>(
+              tooltip: l10n.redesignFilesMore,
+              icon: Icon(Icons.more_horiz, color: p.text2),
+              position: PopupMenuPosition.under,
+              onSelected: (action) {
+                switch (action) {
+                  case _ListAction.select:
+                    _startSelecting();
+                  case _ListAction.downloadAll:
+                    _download(files);
+                }
+              },
+              itemBuilder:
+                  (_) => [
+                    _menuItem(_ListAction.select, Icons.check_circle_outline, l10n.redesignFilesSelectMany),
+                    if (files.length > 1)
+                      _menuItem(
+                        _ListAction.downloadAll,
+                        Icons.folder_zip_outlined,
+                        l10n.redesignFilesDownloadAll,
+                        enabled: !_busy,
+                      ),
+                  ],
+            ),
+          ],
         ],
       ],
     );
@@ -646,6 +717,7 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
                     children: [
                       _HeaderRow(
                         compact: compact,
+                        selecting: selecting,
                         allSelected: allSelected,
                         someSelected: selected.isNotEmpty,
                         onSelectAll: (v) => _selectAll(files, v ?? false),
@@ -655,6 +727,7 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
                         _FileRow(
                           key: ValueKey('rd-file-${file.url}'),
                           compact: compact,
+                          selecting: selecting,
                           file: file,
                           groups: widget.groups,
                           instruments: widget.data.instruments,
@@ -664,14 +737,13 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
                           renameController: _rename,
                           renameFocus: _renameFocus,
                           onTap: () => _tapRow(file),
-                          onDoubleTap: () => _open(file),
                           onToggle: (v) => _toggle(file, v),
                           onCategory: (c) => _setCategory(file, c),
                           onRenameDone: (save) => _endRename(save: save),
                           onAction: (action, row) {
                             switch (action) {
-                              case _RowAction.open:
-                                _open(file);
+                              case _RowAction.select:
+                                _startSelecting(file);
                               case _RowAction.share:
                                 rdShareSongFile(
                                   row,
@@ -758,6 +830,9 @@ class _DropHint extends StatelessWidget {
 }
 
 const double _checkWidth = 44;
+
+/// Left gap of the rows outside selection mode (no checkbox column).
+const double _checkGap = 8;
 const double _partWidth = 200;
 const double _partWidthCompact = 140;
 const double _typeWidth = 64;
@@ -766,12 +841,14 @@ const double _menuWidth = 44;
 class _HeaderRow extends StatelessWidget {
   const _HeaderRow({
     required this.compact,
+    required this.selecting,
     required this.allSelected,
     required this.someSelected,
     required this.onSelectAll,
   });
 
   final bool compact;
+  final bool selecting;
   final bool allSelected;
   final bool someSelected;
   final ValueChanged<bool?> onSelectAll;
@@ -786,14 +863,17 @@ class _HeaderRow extends StatelessWidget {
       child: Row(
         children: [
           SizedBox(
-            width: _checkWidth,
-            child: Checkbox(
-              tristate: true,
-              value: allSelected ? true : (someSelected ? null : false),
-              activeColor: p.primary,
-              semanticLabel: l10n.redesignFilesSelectAll,
-              onChanged: (_) => onSelectAll(!allSelected),
-            ),
+            width: selecting ? _checkWidth : _checkGap,
+            child:
+                !selecting
+                    ? null
+                    : Checkbox(
+                      tristate: true,
+                      value: allSelected ? true : (someSelected ? null : false),
+                      activeColor: p.primary,
+                      semanticLabel: l10n.redesignFilesSelectAll,
+                      onChanged: (_) => onSelectAll(!allSelected),
+                    ),
           ),
           const SizedBox(width: 36),
           Expanded(child: Text(l10n.redesignFilesColName.toUpperCase(), style: style)),
@@ -809,12 +889,28 @@ class _HeaderRow extends StatelessWidget {
   }
 }
 
-enum _RowAction { open, share, download, rename, delete }
+enum _RowAction { select, share, download, rename, delete }
+
+enum _ListAction { select, downloadAll }
+
+PopupMenuItem<T> _menuItem<T>(T value, IconData icon, String label, {Color? color, bool enabled = true}) =>
+    PopupMenuItem(
+      value: value,
+      enabled: enabled,
+      child: Row(
+        children: [
+          Icon(icon, size: 20, color: color),
+          const SizedBox(width: 12),
+          Flexible(child: Text(label, style: TextStyle(color: color), overflow: TextOverflow.ellipsis)),
+        ],
+      ),
+    );
 
 class _FileRow extends StatelessWidget {
   const _FileRow({
     super.key,
     required this.compact,
+    required this.selecting,
     required this.file,
     required this.groups,
     required this.instruments,
@@ -824,7 +920,6 @@ class _FileRow extends StatelessWidget {
     required this.renameController,
     required this.renameFocus,
     required this.onTap,
-    required this.onDoubleTap,
     required this.onToggle,
     required this.onCategory,
     required this.onRenameDone,
@@ -839,11 +934,13 @@ class _FileRow extends StatelessWidget {
   final bool selected;
   final bool cursor;
   final bool compact;
+
+  /// Selection mode: the checkbox column shows.
+  final bool selecting;
   final bool renaming;
   final TextEditingController renameController;
   final FocusNode renameFocus;
   final VoidCallback onTap;
-  final VoidCallback onDoubleTap;
   final ValueChanged<bool?> onToggle;
 
   /// null: "Sonstige …" (free text).
@@ -890,19 +987,21 @@ class _FileRow extends StatelessWidget {
         color: selected ? p.soft : (cursor ? p.track.withValues(alpha: 0.5) : Colors.transparent),
         child: InkWell(
           onTap: onTap,
-          onDoubleTap: onDoubleTap,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
             child: Row(
               children: [
                 SizedBox(
-                  width: _checkWidth,
-                  child: Checkbox(
-                    value: selected,
-                    activeColor: p.primary,
-                    semanticLabel: file.fileName,
-                    onChanged: onToggle,
-                  ),
+                  width: selecting ? _checkWidth : _checkGap,
+                  child:
+                      !selecting
+                          ? null
+                          : Checkbox(
+                            value: selected,
+                            activeColor: p.primary,
+                            semanticLabel: file.fileName,
+                            onChanged: onToggle,
+                          ),
                 ),
                 SizedBox(width: 36, child: Icon(icon, size: 22, color: p.text2)),
                 Expanded(child: name),
@@ -921,7 +1020,8 @@ class _FileRow extends StatelessWidget {
                     onSelected: (action) => onAction(action, context),
                     itemBuilder:
                         (_) => [
-                          _menuItem(_RowAction.open, Icons.open_in_new, l10n.redesignFilesOpen),
+                          if (!selecting)
+                            _menuItem(_RowAction.select, Icons.check_circle_outline, l10n.redesignFilesSelectOne),
                           _menuItem(_RowAction.share, Icons.ios_share, l10n.redesignWorkShare),
                           _menuItem(_RowAction.download, Icons.download_outlined, l10n.redesignFilesDownload),
                           if (rdCanRename(file))
@@ -937,17 +1037,6 @@ class _FileRow extends StatelessWidget {
       ),
     );
   }
-
-  PopupMenuItem<_RowAction> _menuItem(_RowAction value, IconData icon, String label, {Color? color}) => PopupMenuItem(
-    value: value,
-    child: Row(
-      children: [
-        Icon(icon, size: 20, color: color),
-        const SizedBox(width: 12),
-        Text(label, style: TextStyle(color: color)),
-      ],
-    ),
-  );
 }
 
 /// "Stimme" cell: the current part; a click opens the parts to move to.
