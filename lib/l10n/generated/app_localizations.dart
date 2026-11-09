@@ -17723,6 +17723,30 @@ abstract class AppLocalizations {
   /// **'Rückgängig'**
   String get rdSettingsUndo;
 
+  /// rdSidebar.groupsCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Gruppe} other {{count} Gruppen}}'**
+  String rdSidebarGroupsCount(num count);
+
+  /// rdSidebar.lead
+  ///
+  /// In de, this message translates to:
+  /// **'Leitung'**
+  String get rdSidebarLead;
+
+  /// rdSidebar.overview
+  ///
+  /// In de, this message translates to:
+  /// **'Übersicht'**
+  String get rdSidebarOverview;
+
+  /// rdSidebar.personal
+  ///
+  /// In de, this message translates to:
+  /// **'Persönlich'**
+  String get rdSidebarPersonal;
+
   /// rdStats.age
   ///
   /// In de, this message translates to:

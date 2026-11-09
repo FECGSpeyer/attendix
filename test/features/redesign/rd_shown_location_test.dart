@@ -1,4 +1,5 @@
 import 'package:attendix/features/redesign/presentation/shell/rd_shell.dart';
+import 'package:attendix/features/redesign/presentation/shell/rd_sidebar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -34,5 +35,20 @@ void main() {
     router.pop();
     await tester.pumpAndSettle();
     expect(find.text('tab /mitglieder/1/verlauf'), findsOneWidget);
+  });
+
+  test('sidebar marks Auswertung, Mitteilungen, Verwaltung, Hilfe, else the tab', () {
+    RdSideExtra? at(String l, {bool manage = true, bool team = true}) =>
+        rdSideExtraFor(l, manage: manage, team: team);
+    expect(at('/ich/verwaltung/auswertung'), RdSideExtra.stats);
+    expect(at('/ich/verwaltung/mitteilungen'), RdSideExtra.messages);
+    expect(at('/ich/verwaltung/mitteilung'), RdSideExtra.messages);
+    expect(at('/ich/verwaltung/rollen'), RdSideExtra.manage);
+    expect(at('/settings/help/article/x'), RdSideExtra.help);
+    expect(at('/settings/team-organization'), RdSideExtra.team);
+    expect(at('/settings/team-organization', team: false), isNull);
+    expect(at('/ich/verwaltung/auswertung', manage: false), isNull);
+    expect(at('/termine/3'), isNull);
+    expect(at('/ich'), isNull);
   });
 }

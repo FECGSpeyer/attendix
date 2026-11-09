@@ -10853,6 +10853,26 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rdSettingsUndo => 'Rückgängig';
 
   @override
+  String rdSidebarGroupsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Gruppen',
+      one: '1 Gruppe',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdSidebarLead => 'Leitung';
+
+  @override
+  String get rdSidebarOverview => 'Übersicht';
+
+  @override
+  String get rdSidebarPersonal => 'Persönlich';
+
+  @override
   String get rdStatsAge => 'Alter';
 
   @override
