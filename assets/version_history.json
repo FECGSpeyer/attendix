@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.110.5",
+      "date": "9.11.2026",
+      "changes": [
+        "⌨️ Escape schließt PDF-Ansicht und Ablaufplan und führt zurück zum Werk bzw. Termin"
+      ]
+    },
+    {
       "version": "0.110.4",
       "date": "9.11.2026",
       "changes": [
