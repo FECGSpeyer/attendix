@@ -12949,7 +12949,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignFilesRename => 'Rename';
 
   @override
-  String get redesignFilesReplace => 'Replace';
+  String get redesignFilesReplace => 'Replace with new version …';
+
+  @override
+  String get redesignFilesReplaceConfirm => 'Replace';
+
+  @override
+  String redesignFilesReplaceGone(Object name) {
+    return '“$name” no longer exists on this work.';
+  }
+
+  @override
+  String redesignFilesReplaceMessage(Object old, Object picked) {
+    return '“$old” is replaced by “$picked”. Name and part stay, the previous version is deleted.';
+  }
+
+  @override
+  String get redesignFilesReplaceTitle => 'Replace file?';
+
+  @override
+  String redesignFilesReplaceWrongType(Object ext) {
+    return 'Please pick a file of the same type (.$ext).';
+  }
+
+  @override
+  String redesignFilesReplaced(Object name) {
+    return '“$name” replaced';
+  }
 
   @override
   String get redesignFilesRestored => 'Restored';
@@ -13129,6 +13155,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignFilesWaiting => 'Waiting';
+
+  @override
+  String get redesignFilesWordCopySuffix => '(from Word)';
+
+  @override
+  String get redesignFilesWordEdit => 'Edit in Word';
+
+  @override
+  String get redesignFilesWordNotOpened =>
+      'The file could not be opened. Is Microsoft Word installed? It is in “Downloads › Attendix Noten”.';
+
+  @override
+  String redesignFilesWordOpened(Object name) {
+    return '“$name” is opening in Word. Every save there uploads the file here.';
+  }
+
+  @override
+  String redesignFilesWordSaved(Object name) {
+    return '“$name” from Word saved in Attendix';
+  }
+
+  @override
+  String redesignFilesWordSavedAsCopy(Object name, Object copy) {
+    return '“$name” was changed or deleted in Attendix meanwhile. Your version from Word is now there as “$copy”.';
+  }
+
+  @override
+  String redesignFilesWordUploadedLater(Object name) {
+    return 'Back online: “$name” from Word is now saved in Attendix';
+  }
 
   @override
   String get redesignFilesZipPreparing => 'Creating ZIP …';

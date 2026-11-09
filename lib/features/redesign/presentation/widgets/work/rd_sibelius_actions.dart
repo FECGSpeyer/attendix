@@ -74,6 +74,19 @@ Future<void> rdEditInSibelius(BuildContext context, WidgetRef ref, SongDetailDat
     }
   }
 
+  await _editOnMac(context, ref, data, file);
+}
+
+/// Opens the Word document [file] of the Werk in Word (Mac app, the same
+/// flow as Sibelius without plug-in): every save there replaces the file.
+Future<void> rdEditInWord(BuildContext context, WidgetRef ref, SongDetailData data, SongFile file) =>
+    _editOnMac(context, ref, data, file);
+
+Future<void> _editOnMac(BuildContext context, WidgetRef ref, SongDetailData data, SongFile file) async {
+  final l10n = context.l10n;
+  final songId = data.song.id;
+  if (songId == null) return;
+  final word = rdIsWordFile(file);
   try {
     final service = await ref.read(readySongFileServiceProvider.future);
     final result = await ref
@@ -90,11 +103,14 @@ Future<void> rdEditInSibelius(BuildContext context, WidgetRef ref, SongDetailDat
     if (!context.mounted) return;
     switch (result) {
       case RdSibeliusOpen.opened:
-        ToastHelper.showInfo(context, l10n.redesignFilesSibeliusOpened(file.fileName));
+        ToastHelper.showInfo(
+          context,
+          word ? l10n.redesignFilesWordOpened(file.fileName) : l10n.redesignFilesSibeliusOpened(file.fileName),
+        );
       case RdSibeliusOpen.noFolder:
         ToastHelper.showError(context, l10n.redesignFilesSibeliusNoFolder);
       case RdSibeliusOpen.notOpened:
-        ToastHelper.showError(context, l10n.redesignFilesSibeliusNotOpened);
+        ToastHelper.showError(context, word ? l10n.redesignFilesWordNotOpened : l10n.redesignFilesSibeliusNotOpened);
     }
   } catch (e) {
     if (context.mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
@@ -168,16 +184,25 @@ void rdStartSibeliusSync(WidgetRef ref, GoRouter router) {
     final context = router.routerDelegate.navigatorKey.currentContext;
     if (context == null || !context.mounted) return;
     final l10n = context.l10n;
+    final word = rdIsWordName(event.fileName);
     switch (event) {
       case RdSibeliusSaved():
         ToastHelper.showSuccess(
           context,
-          event.afterRetry
-              ? l10n.redesignFilesSibeliusUploadedLater(event.fileName)
-              : l10n.redesignFilesSibeliusSaved(event.fileName),
+          switch ((event.afterRetry, word)) {
+            (true, true) => l10n.redesignFilesWordUploadedLater(event.fileName),
+            (true, false) => l10n.redesignFilesSibeliusUploadedLater(event.fileName),
+            (false, true) => l10n.redesignFilesWordSaved(event.fileName),
+            (false, false) => l10n.redesignFilesSibeliusSaved(event.fileName),
+          },
         );
       case RdSibeliusSavedAsCopy():
-        ToastHelper.showWarning(context, l10n.redesignFilesSibeliusSavedAsCopy(event.fileName, event.copyName));
+        ToastHelper.showWarning(
+          context,
+          word
+              ? l10n.redesignFilesWordSavedAsCopy(event.fileName, event.copyName)
+              : l10n.redesignFilesSibeliusSavedAsCopy(event.fileName, event.copyName),
+        );
       case RdSibeliusWorkGone():
         ToastHelper.showWarning(context, l10n.redesignFilesSibeliusWorkGone(event.fileName));
       case RdSibeliusPartsReady(:final parts):
@@ -199,6 +224,10 @@ void rdStartSibeliusSync(WidgetRef ref, GoRouter router) {
 
 /// Whether [file] opens in Sibelius here (Mac app, .sib).
 bool rdOpensInSibelius(SongFile file) => rdSibeliusSupported && rdIsSibeliusFile(file);
+
+/// Whether "In Word bearbeiten" is offered for [file] (Mac app, .docx; a
+/// click still opens the in-app viewer).
+bool rdEditsInWord(SongFile file) => rdSibeliusSupported && rdIsWordFile(file);
 
 /// The service the parts of a Werk are written with (its tenant decides
 /// whether waiting parts belong to the Werk page shown). Watches it: call in

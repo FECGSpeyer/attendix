@@ -18,8 +18,8 @@ import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import 'rd_sibelius_logic.dart';
 
-/// "In Sibelius bearbeiten" exists only in the Mac app (Sibelius runs on the
-/// Mac, the app may open files in other apps and see their saves).
+/// "In Sibelius bearbeiten" (and "In Word bearbeiten") exist only in the
+/// Mac app (the app may open files in other apps and see their saves).
 bool get rdSibeliusSupported => !kIsWeb && defaultTargetPlatform == TargetPlatform.macOS;
 
 /// How often the copies are compared while any is open.
@@ -503,7 +503,12 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
         _events.add(RdSibeliusSaved(checkout.fileName, afterRetry: checkout.failCount > 0));
       } else {
         // Replaced or deleted in Attendix meanwhile: keep both versions.
-        final copyName = rdSibeliusCopyName(checkout.fileName, l10nWithoutContext.redesignFilesSibeliusCopySuffix);
+        final copyName = rdSibeliusCopyName(
+          checkout.fileName,
+          rdIsWordName(checkout.fileName)
+              ? l10nWithoutContext.redesignFilesWordCopySuffix
+              : l10nWithoutContext.redesignFilesSibeliusCopySuffix,
+        );
         final url = await service.uploadFile(
           songId: checkout.songId,
           file: PlatformFile(name: copyName, size: bytes.length, bytes: bytes),

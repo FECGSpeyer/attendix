@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,6 +29,7 @@ import '../../../../songs/presentation/widgets/group_pdf_print.dart';
 import '../../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../../data/rd_work_files_controller.dart';
 import '../../../data/rd_work_files_logic.dart';
+import 'rd_sibelius_actions.dart';
 import '../../rd_actions.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import 'rd_file_category_sheet.dart';
@@ -54,7 +56,7 @@ Future<void> rdOpenWorkFile(BuildContext context, WidgetRef ref, Song song, Song
   await openSongFile(context, file);
 }
 
-enum _FileAction { share, download, print, telegram, part, rename, delete }
+enum _FileAction { share, download, print, telegram, word, replace, part, rename, delete }
 
 /// "•••" of one file, anchored at [button]: Teilen, Herunterladen, Drucken
 /// and Telegram for everybody; people who may edit the Werk also change the
@@ -102,6 +104,14 @@ Future<void> rdShowWorkFileActions(
       if (canEdit) ...[
         // The cards at the top only open/share; the Stimme is changed in
         // "Noten & Dateien".
+        if (rdEditsInWord(file))
+          AppActionSheetAction(value: _FileAction.word, icon: Icons.edit_note, label: l10n.redesignFilesWordEdit),
+        if (!audio)
+          AppActionSheetAction(
+            value: _FileAction.replace,
+            icon: Icons.upload_file_outlined,
+            label: l10n.redesignFilesReplace,
+          ),
         if (withPart)
           AppActionSheetAction(value: _FileAction.part, icon: Icons.swap_horiz, label: l10n.redesignWorkFilePart),
         if (rdCanRename(file))
@@ -155,6 +165,10 @@ Future<void> rdShowWorkFileActions(
         await ref.read(telegramServiceProvider).sendDocumentPerTelegram(url: file.url, chatId: chatId!);
         if (button.mounted) ToastHelper.showSuccess(button, l10n.songsFlutterTelegramSent);
       });
+    case _FileAction.word:
+      await rdEditInWord(button, ref, data, file);
+    case _FileAction.replace:
+      await rdReplaceWorkFile(button, ref, songId!, file);
     case _FileAction.part:
       // Ionic category modal: Chor (alle) (choirs) / Sonstige (Freitext) /
       // Aufnahme / Liedtext / groups.
@@ -195,6 +209,48 @@ Future<void> rdShowWorkFileActions(
       ref
           .read(rdWorkFilesProvider(songId!).notifier)
           .delete([file], mainGroupId: data.mainGroupId, notice: l10n.redesignFilesDeletedOne(file.fileName));
+  }
+}
+
+/// "Durch neue Version ersetzen …": the person picks the edited file (same
+/// type), which takes the place of [file] (name, part and place stay; the
+/// old content is deleted). Works on every device, e.g. after editing a
+/// Word file in Word on the phone.
+Future<void> rdReplaceWorkFile(BuildContext context, WidgetRef ref, int songId, SongFile file) async {
+  final l10n = context.l10n;
+  final dot = file.fileName.lastIndexOf('.');
+  final ext = dot > 0 ? file.fileName.substring(dot + 1).toLowerCase() : '';
+  final FilePickerResult? result;
+  try {
+    result = await FilePicker.platform.pickFiles(type: FileType.any, withData: true);
+  } catch (e) {
+    if (context.mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
+    return;
+  }
+  final picked = result?.files.firstOrNull;
+  final bytes = picked?.bytes;
+  if (picked == null || bytes == null || !context.mounted) return;
+  if (ext.isNotEmpty && (picked.extension ?? '').toLowerCase() != ext) {
+    ToastHelper.showError(context, l10n.redesignFilesReplaceWrongType(ext));
+    return;
+  }
+  final ok = await showAppConfirm(
+    context,
+    title: l10n.redesignFilesReplaceTitle,
+    message: l10n.redesignFilesReplaceMessage(file.fileName, picked.name),
+    confirmText: l10n.redesignFilesReplaceConfirm,
+  );
+  if (!ok || !context.mounted) return;
+  try {
+    final replaced = await ref.read(rdWorkFilesProvider(songId).notifier).replaceContent(file, bytes);
+    if (!context.mounted) return;
+    if (replaced == null) {
+      ToastHelper.showError(context, l10n.redesignFilesReplaceGone(file.fileName));
+    } else {
+      ToastHelper.showSuccess(context, l10n.redesignFilesReplaced(file.fileName));
+    }
+  } catch (e) {
+    if (context.mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
   }
 }
 

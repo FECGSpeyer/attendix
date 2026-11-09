@@ -13073,7 +13073,33 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignFilesRename => 'Umbenennen';
 
   @override
-  String get redesignFilesReplace => 'Ersetzen';
+  String get redesignFilesReplace => 'Durch neue Version ersetzen …';
+
+  @override
+  String get redesignFilesReplaceConfirm => 'Ersetzen';
+
+  @override
+  String redesignFilesReplaceGone(Object name) {
+    return '„$name“ gibt es an diesem Werk nicht mehr.';
+  }
+
+  @override
+  String redesignFilesReplaceMessage(Object old, Object picked) {
+    return '„$old“ wird durch „$picked“ ersetzt. Name und Stimme bleiben, die bisherige Fassung wird gelöscht.';
+  }
+
+  @override
+  String get redesignFilesReplaceTitle => 'Datei ersetzen?';
+
+  @override
+  String redesignFilesReplaceWrongType(Object ext) {
+    return 'Bitte eine Datei vom gleichen Typ wählen (.$ext).';
+  }
+
+  @override
+  String redesignFilesReplaced(Object name) {
+    return '„$name“ ersetzt';
+  }
 
   @override
   String get redesignFilesRestored => 'Wiederhergestellt';
@@ -13253,6 +13279,36 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignFilesWaiting => 'Wartet';
+
+  @override
+  String get redesignFilesWordCopySuffix => '(aus Word)';
+
+  @override
+  String get redesignFilesWordEdit => 'In Word bearbeiten';
+
+  @override
+  String get redesignFilesWordNotOpened =>
+      'Die Datei ließ sich nicht öffnen. Ist Microsoft Word installiert? Sie liegt in „Downloads › Attendix Noten“.';
+
+  @override
+  String redesignFilesWordOpened(Object name) {
+    return '„$name“ wird in Word geöffnet. Jedes Speichern dort lädt die Datei hier hoch.';
+  }
+
+  @override
+  String redesignFilesWordSaved(Object name) {
+    return '„$name“ aus Word in Attendix gespeichert';
+  }
+
+  @override
+  String redesignFilesWordSavedAsCopy(Object name, Object copy) {
+    return '„$name“ wurde in Attendix inzwischen geändert oder gelöscht. Deine Fassung aus Word liegt jetzt als „$copy“ dabei.';
+  }
+
+  @override
+  String redesignFilesWordUploadedLater(Object name) {
+    return 'Wieder online: „$name“ aus Word ist jetzt in Attendix gespeichert';
+  }
 
   @override
   String get redesignFilesZipPreparing => 'ZIP wird erstellt …';
