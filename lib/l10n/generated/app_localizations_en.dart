@@ -9853,11 +9853,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdAdminWorkHistory => 'Played works';
 
   @override
-  String get rdCriticalAndHint =>
-      'Then someone is only a problem case when all rules marked like this apply at the same time.';
+  String get rdCriticalAddAnd => 'and also …';
 
   @override
-  String get rdCriticalAndTitle => 'Only together with other rules';
+  String get rdCriticalAnd => 'and';
+
+  @override
+  String rdCriticalAndElsewhere(Object name) {
+    return 'Combining with “and” works in the rule “$name”.';
+  }
 
   @override
   String get rdCriticalAtLeast => 'At least';
@@ -9883,9 +9887,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String rdCriticalHitPercent(Object percent, Object what) {
     return '$what at $percent % of Termine';
   }
-
-  @override
-  String get rdCriticalListAnd => 'Only together with other rules';
 
   @override
   String get rdCriticalListFoot =>
@@ -9966,10 +9967,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdCriticalPresetRarely => 'Rarely there';
 
   @override
-  String get rdCriticalPreviewAndHint =>
-      'This rule only counts together with the other rules marked like this. The preview shows it on its own.';
-
-  @override
   String get rdCriticalPreviewError =>
       'The preview is not available right now.';
 
@@ -10028,6 +10025,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String rdCriticalReasonDetail(Object period, Object rule) {
     return '$period · rule “$rule”';
   }
+
+  @override
+  String get rdCriticalRemoveAnd => 'Remove condition';
 
   @override
   String get rdCriticalSentenceLead => 'A problem case is anyone who';

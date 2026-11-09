@@ -1,0 +1,6 @@
+{
+  "bump": "minor",
+  "changes": [
+    "✨ Beta-Problemfälle: Regeln verbindet man jetzt mit „und außerdem …“ direkt im Satz statt mit dem Schalter „Nur zusammen mit anderen Regeln“; die Liste zeigt so eine Regel als eine Zeile mit gemeinsamer Zahl"
+  ]
+}

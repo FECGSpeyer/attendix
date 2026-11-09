@@ -16289,17 +16289,23 @@ abstract class AppLocalizations {
   /// **'Gespielte Werke'**
   String get rdAdminWorkHistory;
 
-  /// rdCritical.andHint
+  /// rdCritical.addAnd
   ///
   /// In de, this message translates to:
-  /// **'Dann ist jemand nur Problemfall, wenn alle so markierten Regeln gleichzeitig zutreffen.'**
-  String get rdCriticalAndHint;
+  /// **'und außerdem …'**
+  String get rdCriticalAddAnd;
 
-  /// rdCritical.andTitle
+  /// rdCritical.and
   ///
   /// In de, this message translates to:
-  /// **'Nur zusammen mit anderen Regeln'**
-  String get rdCriticalAndTitle;
+  /// **'und'**
+  String get rdCriticalAnd;
+
+  /// rdCritical.andElsewhere
+  ///
+  /// In de, this message translates to:
+  /// **'Mit „und“ kombinieren geht in der Regel „{name}“.'**
+  String rdCriticalAndElsewhere(Object name);
 
   /// rdCritical.atLeast
   ///
@@ -16330,12 +16336,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'bei {percent} % der Termine {what}'**
   String rdCriticalHitPercent(Object percent, Object what);
-
-  /// rdCritical.listAnd
-  ///
-  /// In de, this message translates to:
-  /// **'Nur zusammen mit anderen Regeln'**
-  String get rdCriticalListAnd;
 
   /// rdCritical.listFoot
   ///
@@ -16451,12 +16451,6 @@ abstract class AppLocalizations {
   /// **'Selten da'**
   String get rdCriticalPresetRarely;
 
-  /// rdCritical.previewAndHint
-  ///
-  /// In de, this message translates to:
-  /// **'Diese Regel zählt nur zusammen mit den anderen Regeln, die so markiert sind. Die Vorschau zeigt sie für sich allein.'**
-  String get rdCriticalPreviewAndHint;
-
   /// rdCritical.previewError
   ///
   /// In de, this message translates to:
@@ -16510,6 +16504,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{period} · Regel „{rule}“'**
   String rdCriticalReasonDetail(Object period, Object rule);
+
+  /// rdCritical.removeAnd
+  ///
+  /// In de, this message translates to:
+  /// **'Bedingung entfernen'**
+  String get rdCriticalRemoveAnd;
 
   /// rdCritical.sentenceLead
   ///

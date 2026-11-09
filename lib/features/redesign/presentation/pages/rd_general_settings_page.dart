@@ -437,6 +437,10 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
     if (ok && mounted) ToastHelper.showSuccess(context, toast);
   }
 
+  /// The rules as the list shows them: the "und" parts as one rule.
+  List<List<CriticalRule>> _groups(Tenant t) => rdCriticalRuleGroups(_rules(t));
+
+  /// [index] is a rule of the list ([_groups]), null for a new one.
   Future<void> _ruleSheet(Tenant t, {int? index}) async {
     final l10n = context.l10n;
     final types = await _load(attendanceTypesProvider);
@@ -445,21 +449,20 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
       ToastHelper.showError(context, l10n.generalSettingsFlutterNoTypes);
       return;
     }
-    final rule = await openRdCriticalRulePage(
+    final groups = _groups(t);
+    final old = index == null || index >= groups.length ? const <CriticalRule>[] : groups[index];
+    // The server knows one "und" rule per group: another rule can't get one.
+    final combined = groups.where((g) => rdCriticalIsAndGroup(g) && !identical(g, old)).firstOrNull;
+    final parts = await openRdCriticalRulePage(
       context,
-      rule: index == null ? null : _rules(t)[index],
+      parts: old.isEmpty ? null : old,
       attendanceTypes: types,
-      otherRules: _rules(t).length > (index == null ? 0 : 1),
+      combinedElsewhere: combined == null ? null : _ruleTitle(combined.first, types),
     );
-    if (rule == null || !mounted) return;
+    if (parts == null || parts.isEmpty || !mounted) return;
     final current = ref.read(currentTenantProvider);
     if (current == null) return;
-    final rules = _rules(current);
-    if (index == null) {
-      rules.add(rule);
-    } else if (index < rules.length) {
-      rules[index] = rule;
-    }
+    final rules = rdCriticalReplaceGroup(_rules(current), old, parts);
     await _saveRules(
       t,
       rules,
@@ -475,9 +478,12 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
 
   Future<void> _ruleActions(Tenant t, int index) async {
     final l10n = context.l10n;
+    final groups = _groups(t);
+    if (index >= groups.length) return;
+    final group = groups[index];
     final action = await showAppActionSheet<String>(
       context,
-      title: _ruleTitle(_rules(t)[index], ref.read(attendanceTypesProvider).valueOrNull ?? const []),
+      title: _ruleTitle(group.first, ref.read(attendanceTypesProvider).valueOrNull ?? const []),
       actions: [
         AppActionSheetAction(value: 'edit', label: l10n.commonEdit, icon: Icons.edit_outlined),
         AppActionSheetAction(value: 'delete', label: l10n.commonDelete, icon: Icons.delete_outline, destructive: true),
@@ -486,7 +492,7 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
     if (!mounted) return;
     if (action == 'edit') return _ruleSheet(t, index: index);
     if (action != 'delete') return;
-    final rule = _rules(t)[index];
+    final rule = group.first;
     final confirmed = await showAppConfirm(
       context,
       title: l10n.generalSettingsDeleteRule,
@@ -497,7 +503,8 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
     if (!confirmed || !mounted) return;
     final current = ref.read(currentTenantProvider);
     if (current == null) return;
-    final rules = _rules(current)..removeWhere((r) => r.id == rule.id);
+    final ids = {for (final r in group) r.id};
+    final rules = _rules(current)..removeWhere((r) => ids.contains(r.id));
     await _saveRules(t, rules, l10n.generalSettingsFlutterRuleDeleted);
   }
 
@@ -778,7 +785,8 @@ class _CriticalNow extends ConsumerWidget {
 }
 
 /// The rules as name + sentence, each with how many active members it hits
-/// on its own right now, and "Regel hinzufügen".
+/// on its own right now, and "Regel hinzufügen". The "nur zusammen" parts
+/// are one rule, joined by "und".
 class _CriticalRuleList extends ConsumerWidget {
   const _CriticalRuleList({
     required this.rules,
@@ -806,38 +814,41 @@ class _CriticalRuleList extends ConsumerWidget {
     final entries = key == null ? null : ref.watch(rdCriticalEntriesProvider(key)).valueOrNull;
     final people = key == null ? null : rdLoadedValue(ref.watch(realtimePlayersProvider));
 
-    int? hitsOf(CriticalRule rule) {
+    int? hitsOf(List<CriticalRule> group) {
       if (entries == null || people == null) return null;
       var n = 0;
       for (final Person x in people) {
         if (x.id == null || x.paused || x.pending || x.left != null) continue;
-        final r = rdEvaluateCriticalRule(
-          rule,
-          entries[x.id] ?? const [],
-          lastSolve: x.lastSolve == null ? null : DateTime.tryParse(x.lastSolve!),
-          seasonStart: season,
-          now: now,
+        final all = group.every(
+          (rule) =>
+              rdEvaluateCriticalRule(
+                rule,
+                entries[x.id] ?? const [],
+                lastSolve: x.lastSolve == null ? null : DateTime.tryParse(x.lastSolve!),
+                seasonStart: season,
+                now: now,
+              ).matches,
         );
-        if (r.matches) n++;
+        if (all) n++;
       }
       return n;
     }
 
+    final groups = rdCriticalRuleGroups(rules);
     return RdGroupedList(
       children: [
-        for (var i = 0; i < rules.length; i++)
+        for (var i = 0; i < groups.length; i++)
           Builder(
             builder: (context) {
-              final rule = rules[i];
-              final title = titleOf(rule, types);
-              final summary = rdCriticalSummary(rule, types, l10n);
-              final hits = hitsOf(rule);
+              final group = groups[i];
+              final title = titleOf(group.first, types);
+              final hits = hitsOf(group);
               return RdListRow(
                 title: title,
                 subtitle: [
-                  summary,
-                  if (rule.operator == CriticalRuleOperator.and) l10n.rdCriticalListAnd,
-                ].join(' · '),
+                  for (final (j, rule) in group.indexed)
+                    j == 0 ? rdCriticalSummary(rule, types, l10n) : _lowerFirst(rdCriticalSummary(rule, types, l10n)),
+                ].join(' ${l10n.rdCriticalAnd} '),
                 trailing: hits == null ? null : RdCountBadge(hits, tone: hits > 0 ? RdTone.absent : RdTone.primary),
                 onTap: onTap == null ? null : () => onTap!(i),
               );
@@ -853,3 +864,5 @@ class _CriticalRuleList extends ConsumerWidget {
     );
   }
 }
+
+String _lowerFirst(String s) => s.isEmpty ? s : s[0].toLowerCase() + s.substring(1);

@@ -12389,13 +12389,20 @@
   "@rdAdminWorkHistory": {
     "description": "rdAdmin.workHistory"
   },
-  "rdCriticalAndHint": "Dann ist jemand nur Problemfall, wenn alle so markierten Regeln gleichzeitig zutreffen.",
-  "@rdCriticalAndHint": {
-    "description": "rdCritical.andHint"
+  "rdCriticalAddAnd": "und außerdem …",
+  "@rdCriticalAddAnd": {
+    "description": "rdCritical.addAnd"
   },
-  "rdCriticalAndTitle": "Nur zusammen mit anderen Regeln",
-  "@rdCriticalAndTitle": {
-    "description": "rdCritical.andTitle"
+  "rdCriticalAnd": "und",
+  "@rdCriticalAnd": {
+    "description": "rdCritical.and"
+  },
+  "rdCriticalAndElsewhere": "Mit „und“ kombinieren geht in der Regel „{name}“.",
+  "@rdCriticalAndElsewhere": {
+    "description": "rdCritical.andElsewhere",
+    "placeholders": {
+      "name": {}
+    }
   },
   "rdCriticalAtLeast": "Mindestens",
   "@rdCriticalAtLeast": {
@@ -12426,10 +12433,6 @@
       "percent": {},
       "what": {}
     }
-  },
-  "rdCriticalListAnd": "Nur zusammen mit anderen Regeln",
-  "@rdCriticalListAnd": {
-    "description": "rdCritical.listAnd"
   },
   "rdCriticalListFoot": "Geprüft jeden Morgen und nach jeder Änderung. Nach „Mit Person gesprochen“ zählt eine Person wieder von vorn.",
   "@rdCriticalListFoot": {
@@ -12521,10 +12524,6 @@
   "@rdCriticalPresetRarely": {
     "description": "rdCritical.presetRarely"
   },
-  "rdCriticalPreviewAndHint": "Diese Regel zählt nur zusammen mit den anderen Regeln, die so markiert sind. Die Vorschau zeigt sie für sich allein.",
-  "@rdCriticalPreviewAndHint": {
-    "description": "rdCritical.previewAndHint"
-  },
   "rdCriticalPreviewError": "Die Vorschau ist gerade nicht verfügbar.",
   "@rdCriticalPreviewError": {
     "description": "rdCritical.previewError"
@@ -12586,6 +12585,10 @@
       "period": {},
       "rule": {}
     }
+  },
+  "rdCriticalRemoveAnd": "Bedingung entfernen",
+  "@rdCriticalRemoveAnd": {
+    "description": "rdCritical.removeAnd"
   },
   "rdCriticalSentenceLead": "Problemfall ist, wer",
   "@rdCriticalSentenceLead": {
