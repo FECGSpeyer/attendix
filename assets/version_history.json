@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.106.0",
+      "date": "9.11.2026",
+      "changes": [
+        "💄 Beta-Werk: Nur noch ein Audio-Player. Aufnahmen stehen als Zeile mit ▶ in der Karte oben („Läuft · 1:12 von 3:48“), Fortschritt, Spulen und 0,8× sind in der Leiste unten"
+      ]
+    },
+    {
       "version": "0.104.2",
       "date": "9.11.2026",
       "changes": [

@@ -26710,6 +26710,12 @@ abstract class AppLocalizations {
   /// **'Anhalten'**
   String get redesignWorkPause;
 
+  /// redesign.work.pausedAt
+  ///
+  /// In de, this message translates to:
+  /// **'Angehalten · {position} von {duration}'**
+  String redesignWorkPausedAt(Object position, Object duration);
+
   /// redesign.work.planned
   ///
   /// In de, this message translates to:
@@ -26721,6 +26727,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Abspielen'**
   String get redesignWorkPlay;
+
+  /// redesign.work.playingAt
+  ///
+  /// In de, this message translates to:
+  /// **'Läuft · {position} von {duration}'**
+  String redesignWorkPlayingAt(Object position, Object duration);
 
   /// redesign.work.practice
   ///

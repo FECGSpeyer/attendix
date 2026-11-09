@@ -20604,6 +20604,14 @@
   "@redesignWorkPause": {
     "description": "redesign.work.pause"
   },
+  "redesignWorkPausedAt": "Angehalten · {position} von {duration}",
+  "@redesignWorkPausedAt": {
+    "description": "redesign.work.pausedAt",
+    "placeholders": {
+      "position": {},
+      "duration": {}
+    }
+  },
   "redesignWorkPlanned": "Geplant",
   "@redesignWorkPlanned": {
     "description": "redesign.work.planned"
@@ -20611,6 +20619,14 @@
   "redesignWorkPlay": "Abspielen",
   "@redesignWorkPlay": {
     "description": "redesign.work.play"
+  },
+  "redesignWorkPlayingAt": "Läuft · {position} von {duration}",
+  "@redesignWorkPlayingAt": {
+    "description": "redesign.work.playingAt",
+    "placeholders": {
+      "position": {},
+      "duration": {}
+    }
   },
   "redesignWorkPractice": "Übe-Aufnahme · {name}",
   "@redesignWorkPractice": {
