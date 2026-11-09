@@ -1,10 +1,17 @@
 {
   "versions": [
     {
-      "version": "0.104.1",
+      "version": "0.104.2",
       "date": "9.11.2026",
       "changes": [
         "🍎 Mac-App für den App Store vorbereitet: gleiche App-ID wie iOS, Sandbox-Rechte, Store-Build über Shorebird (scripts/store_build.sh macos-release)"
+      ]
+    },
+    {
+      "version": "0.104.1",
+      "date": "9.11.2026",
+      "changes": [
+        "🐛 iPhone/iPad-App auf dem Mac (und iPad mit Tastatur): Tab und Shift-Tab springen wieder von Feld zu Feld, z. B. im Login von E-Mail zu Passwort"
       ]
     },
     {
