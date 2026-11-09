@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.114.0",
+      "date": "9.11.2026",
+      "changes": [
+        "✨ PDF-Ansicht (Beta): Teilen-Knopf oben rechts (iPhone: von dort auch Drucken), am Mac und auf Android ein Drucken-Knopf"
+      ]
+    },
+    {
       "version": "0.113.1",
       "date": "9.11.2026",
       "changes": [
