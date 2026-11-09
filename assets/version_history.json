@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.113.0",
+      "date": "9.11.2026",
+      "changes": [
+        "✨ Beta-Problemfälle: Regeln verbindet man jetzt mit „und außerdem …“ direkt im Satz statt mit dem Schalter „Nur zusammen mit anderen Regeln“; die Liste zeigt so eine Regel als eine Zeile mit gemeinsamer Zahl"
+      ]
+    },
+    {
       "version": "0.112.1",
       "date": "9.11.2026",
       "changes": [
