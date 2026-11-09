@@ -165,6 +165,7 @@ Stattdessen legt jeder PR **eine** Changelog-Datei an:
 - `bump`: `minor` für Features, `patch` für Fixes (Standard).
 - Nach dem Merge auf master macht der Deploy-Workflow daraus automatisch eine Version (`tool/release/release_version.py`): `pubspec.yaml` (inkl. Build-Nummer), `appVersion` und `version_history.json` werden erhöht, die Fragmente gelöscht.
 - In PR-Titel und -Beschreibung keine Versionsnummer nennen.
+- PRs bauen keine Cloudflare-Vorschau mehr. Wer eine braucht: Label `preview` an den PR hängen (oder „Run workflow“ auf dem Branch); die URL steht dann im Deploy-Run.
 - Ein master-Merge in den PR-Branch ohne Konflikt im eigenen Code braucht kein neues Review, nur grüne CI. Ohne Konflikt muss master vor dem Merge gar nicht reingeholt werden.
 
 **Interne vs. Nutzer-Version:** `appVersion` und `assets/version_history.json` sind die interne Entwicklerhistorie (0.x, Sentry-Release) und werden Nutzern nicht gezeigt. Nutzer sehen `AppConstants.displayVersion` und `assets/version_history_user.json` (weitergeführte Ionic-Historie). Diese beiden nur bei Store-Releases pflegen: `displayVersion` erhöhen und einen Eintrag obendrauf in `assets/version_history_user.json` setzen (oberster Eintrag = `displayVersion`).
