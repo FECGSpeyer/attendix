@@ -47,7 +47,17 @@ class _RdCriticalMembersPageState extends ConsumerState<RdCriticalMembersPage> {
     final selected = _selected;
     return RdSplitView(
       list: list,
-      detail: selected == null ? null : RdPersonPage(key: ValueKey('rd-critical-person-$selected'), personId: selected),
+      detail:
+          selected == null
+              ? null
+              : RdPersonPage(
+                key: ValueKey('rd-critical-person-$selected'),
+                personId: selected,
+                // Archived: only the right side closes, the list stays.
+                onClose: () {
+                  if (mounted) setState(() => _selected = null);
+                },
+              ),
       selectedId: selected,
       emptyText: context.l10n.redesignSplitMembersEmpty,
     );
