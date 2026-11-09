@@ -14070,6 +14070,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportNewGroupTitle => 'Neue Gruppe anlegen';
 
   @override
+  String get redesignImportNumberCollection =>
+      'In der Sammlung werden neue Werke fortlaufend nummeriert, die Nummer aus dem Ordner zählt hier nicht.';
+
+  @override
   String get redesignImportNumberNone =>
       'Der Ordner hat keine Nummer, deshalb bekommt das Werk die nächste freie.';
 

@@ -13939,6 +13939,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportNewGroupTitle => 'Create new group';
 
   @override
+  String get redesignImportNumberCollection =>
+      'New pieces in the collection are numbered in sequence; the folder\'s number does not count here.';
+
+  @override
   String get redesignImportNumberNone =>
       'The folder has no number, so the piece gets the next free one.';
 

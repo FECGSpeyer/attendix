@@ -427,7 +427,7 @@ void main() {
       expect(rdNewWorkTarget(found, sure).name, 'Wie wunderbar ist Jesus');
     });
 
-    test('into a Sammlung: new Werke get its Kürzel, numbers of the whole group count', () {
+    test('into a Sammlung: new Werke get its Kürzel and are numbered on from its highest', () {
       final entries = [
         _e('Noten/157 Jesus ruft dich/Viola.pdf'),
         _e('Noten/12 Neu/Viola.pdf'),
@@ -445,14 +445,19 @@ void main() {
         return (t.prefix, t.number);
       }
 
-      // 157 for one of the two; taken, twice in the folders or none: the
-      // next free ones after the highest.
-      expect({target('Jesus ruft dich'), target('Die wahre Liebe')}, contains(('S', 157)));
-      final all = {for (final t in ['Jesus ruft dich', 'Die wahre Liebe', 'Neu', 'O ich armer Sünder']) target(t)};
-      expect(all, {('S', 157), ('S', 158), ('S', 159), ('S', 160)});
-      // Into the Repertoire a Werk without number stays without.
+      // Folder numbers only sort: on from S12 (Leon: "02 Ohne Gott" into a
+      // new Sammlung is T1, not T2).
+      expect([for (final t in ['Neu', 'Die wahre Liebe', 'Jesus ruft dich', 'O ich armer Sünder']) target(t)],
+          [('S', 13), ('S', 14), ('S', 15), ('S', 16)]);
+      final empty = rdBuildImportPlan([_e('Noten/02 Ohne Gott/Viola.pdf')],
+          songs: const [], instruments: _instruments, isChoir: false, newPrefix: 'T', takenNumbers: {rdImportNumberKey(null, 1)});
+      final ohneGott = rdDefaultTarget(empty, empty.works.single);
+      expect((ohneGott.prefix, ohneGott.number), ('T', 1));
+      // Into the Repertoire the folder number counts; without one it stays without.
       final repertoire = rdBuildImportPlan(entries, songs: const [], instruments: _instruments, isChoir: false);
-      expect(rdDefaultTarget(repertoire, repertoire.works.firstWhere((w) => w.title == 'O ich armer Sünder')).number, isNull);
+      int? numberOf(String title) => rdDefaultTarget(repertoire, repertoire.works.firstWhere((w) => w.title == title)).number;
+      expect(numberOf('Neu'), 12);
+      expect(numberOf('O ich armer Sünder'), isNull);
     });
   });
 

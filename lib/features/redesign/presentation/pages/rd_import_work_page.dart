@@ -149,9 +149,11 @@ class RdImportWorkPage extends ConsumerWidget {
     final target = ws.target;
     final numberHint = !target.isNew || target.number == null || target.number == work.number
         ? null
-        : work.number == null
-            ? l10n.redesignImportNumberNone
-            : l10n.redesignImportNumberTaken('${plan.newPrefix ?? work.prefix ?? ''}${work.number}');
+        : (plan.newPrefix ?? '').trim().isNotEmpty
+            ? l10n.redesignImportNumberCollection
+            : work.number == null
+                ? l10n.redesignImportNumberNone
+                : l10n.redesignImportNumberTaken('${plan.newPrefix ?? work.prefix ?? ''}${work.number}');
 
     return RdImportFrame(
       backLabel: l10n.redesignImportStepReview,

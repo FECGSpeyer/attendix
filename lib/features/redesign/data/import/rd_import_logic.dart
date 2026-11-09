@@ -1469,10 +1469,11 @@ class RdImportDecisions {
       );
 }
 
-/// Proposed target of [work]: the Werk found, or a new Werk with the folder's
-/// number when that number is still free. Into a Sammlung with a Kürzel a
-/// new Werk without a free number gets the next one after the highest
-/// (Leon, 07.11.2026): no Werk there stays without a number.
+/// Proposed target of [work]: the Werk found, or a new Werk. Into the
+/// Repertoire (or a Sammlung without Kürzel) it keeps the folder's number
+/// when that is still free. Into a Sammlung with a Kürzel new Werke are
+/// numbered on from its highest number, whatever the folders say (Leon,
+/// 09.11.2026: "02 Ohne Gott" into a new Sammlung is T1, not T2).
 RdWorkTarget rdDefaultTarget(RdImportPlan plan, RdImportWork work) {
   final id = work.match.songId;
   if (id != null) return RdWorkTarget.song(id);
@@ -1492,11 +1493,12 @@ RdWorkTarget rdNewWorkTarget(RdImportPlan plan, RdImportWork work) {
   return RdWorkTarget.create(name: name, number: number, prefix: number == null ? plan.newPrefix : plan.newPrefix ?? work.prefix);
 }
 
-/// Folder numbers of new Werke still free (in the order of the Werke: the
-/// first keeps a number twice in the folders), then in a Sammlung with a
-/// Kürzel the next free numbers for the others. Werke found in Attendix
-/// come after all new ones (a number for when one is made new by hand).
-/// Once per plan.
+/// Numbers of new Werke. Into a Sammlung with a Kürzel: on from its highest
+/// number, in the order of the Werke (folder numbers only sort them).
+/// Otherwise the folder numbers still free (the first keeps a number twice
+/// in the folders); the others stay without. Werke found in Attendix come
+/// after all new ones (a number for when one is made new by hand). Once per
+/// plan.
 final _numbers = Expando<Map<String, int?>>();
 
 Map<String, int?> _numbersOf(RdImportPlan plan) => _numbers[plan] ??= () {
@@ -1507,6 +1509,7 @@ Map<String, int?> _numbersOf(RdImportPlan plan) => _numbers[plan] ??= () {
       };
       final numbers = <String, int?>{};
       final without = <RdImportWork>[];
+      final prefix = plan.newPrefix?.trim() ?? '';
       final works = [
         for (final w in plan.works)
           if (w.key != 'loose' && w.match.songId == null) w,
@@ -1514,7 +1517,7 @@ Map<String, int?> _numbersOf(RdImportPlan plan) => _numbers[plan] ??= () {
           if (w.key != 'loose' && w.match.songId != null) w,
       ];
       for (final w in works) {
-        final n = w.number;
+        final n = prefix.isEmpty ? w.number : null;
         if (n != null && used.add(rdImportNumberKey(plan.newPrefix ?? w.prefix, n))) {
           numbers[w.key] = n;
         } else {
@@ -1522,7 +1525,6 @@ Map<String, int?> _numbersOf(RdImportPlan plan) => _numbers[plan] ??= () {
           without.add(w);
         }
       }
-      final prefix = plan.newPrefix?.trim() ?? '';
       if (prefix.isNotEmpty && without.isNotEmpty) {
         final head = '${prefix.toUpperCase()}|';
         var next = used.where((k) => k.startsWith(head)).fold<int>(0, (m, k) => math.max(m, int.tryParse(k.substring(head.length)) ?? 0));

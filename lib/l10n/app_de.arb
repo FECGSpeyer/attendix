@@ -17302,6 +17302,10 @@
   "@redesignImportNewGroupTitle": {
     "description": "redesign.import.newGroupTitle"
   },
+  "redesignImportNumberCollection": "In der Sammlung werden neue Werke fortlaufend nummeriert, die Nummer aus dem Ordner zählt hier nicht.",
+  "@redesignImportNumberCollection": {
+    "description": "redesign.import.numberCollection"
+  },
   "redesignImportNumberNone": "Der Ordner hat keine Nummer, deshalb bekommt das Werk die nächste freie.",
   "@redesignImportNumberNone": {
     "description": "redesign.import.numberNone"

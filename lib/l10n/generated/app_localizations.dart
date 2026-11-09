@@ -22456,6 +22456,12 @@ abstract class AppLocalizations {
   /// **'Neue Gruppe anlegen'**
   String get redesignImportNewGroupTitle;
 
+  /// redesign.import.numberCollection
+  ///
+  /// In de, this message translates to:
+  /// **'In der Sammlung werden neue Werke fortlaufend nummeriert, die Nummer aus dem Ordner zählt hier nicht.'**
+  String get redesignImportNumberCollection;
+
   /// redesign.import.numberNone
   ///
   /// In de, this message translates to:
