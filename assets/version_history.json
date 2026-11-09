@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.105.0",
+      "date": "9.11.2026",
+      "changes": [
+        "✨ Beta-Werk am Rechner: Ein Klick auf eine Datei öffnet sie. Auswählen, „Alle als ZIP“ und Mehrfachaktionen sitzen jetzt unter „•••“ (Mehrere auswählen); ⌘/Strg- und Umschalt-Klick wählen weiter aus"
+      ]
+    },
+    {
       "version": "0.104.2",
       "date": "9.11.2026",
       "changes": [
