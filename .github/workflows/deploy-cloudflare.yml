@@ -6,9 +6,14 @@ on:
       - master
     # Docs-only changes need no build or deploy.
     paths-ignore: ['**/*.md', 'docs/**']
+  # PRs get no preview by default (it took ~5 min per push and is not needed
+  # for merging: CI's Analyze and Test cover the code, and a failing master
+  # build keeps the last production deploy online). A preview is built only
+  # for PRs with the label "preview", or by hand via "Run workflow" on a branch.
   pull_request:
     branches:
       - master
+    types: [opened, synchronize, reopened, labeled]
     paths-ignore: ['**/*.md', 'docs/**']
   workflow_dispatch:
 
@@ -17,8 +22,10 @@ on:
 # races itself. GitHub keeps only the newest WAITING run of a group; that is
 # intended: the waiting run checks out the latest master, so it releases all
 # pending fragments and deploys every commit the replaced run would have.
+# Adding any other label to a PR gets a group of its own (run_id), so it does
+# not cancel a running preview; its run skips the build anyway.
 concurrency:
-  group: deploy-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.ref_name }}
+  group: deploy-${{ github.event_name == 'pull_request' && (github.event.action == 'labeled' && github.event.label.name != 'preview' && github.run_id || format('pr-{0}', github.event.pull_request.number)) || github.ref_name }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
@@ -68,10 +75,14 @@ jobs:
 
   build-and-deploy:
     needs: version
+    # PRs: only with the label "preview" (adding the label starts it).
     # Runs when the version job succeeded or was skipped (PRs, other branches),
     # and also when it failed: a missing version bump must not stop the
     # production deploy (the red version job still shows in the run).
-    if: ${{ !cancelled() }}
+    if: >-
+      ${{ !cancelled() && (github.event_name != 'pull_request'
+      || (contains(github.event.pull_request.labels.*.name, 'preview')
+      && (github.event.action != 'labeled' || github.event.label.name == 'preview'))) }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -100,9 +111,10 @@ jobs:
           echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
           echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> .env
           # Error monitoring: optional repo secret SENTRY_DSN (no DSN = off).
-          # Previews report as "preview", master as "production".
+          # Previews (PRs, hand-started branch runs) report as "preview",
+          # master as "production".
           echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
-          echo "SENTRY_ENVIRONMENT=${{ github.event_name == 'pull_request' && 'preview' || 'production' }}" >> .env
+          echo "SENTRY_ENVIRONMENT=${{ github.ref == 'refs/heads/master' && 'production' || 'preview' }}" >> .env
           # DEMO_GUARD: optional demo account ("Demo starten", write-protected)
           # Repo secrets may be named DEMO_EMAIL/DEMO_PASSWORD or DEMOMAIL/DEMOPASSWORD.
           # Passed via env and single-quoted: flutter_dotenv treats an unquoted '#' as a
