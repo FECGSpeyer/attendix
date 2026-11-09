@@ -186,6 +186,9 @@ void main() {
 
     expect(find.byType(NavigationBar), findsNothing);
     expect(find.text('Verwaltung'), findsOneWidget);
+    expect(find.text('LEITUNG'), findsOneWidget);
+    expect(find.text('Auswertung'), findsOneWidget);
+    expect(find.text('Hilfe'), findsOneWidget);
     expect(find.text('Stadtorchester'), findsWidgets);
     expect(find.text('Gesamtprobe'), findsOneWidget);
     expect(find.text('Anwesenheit erfassen'), findsOneWidget);

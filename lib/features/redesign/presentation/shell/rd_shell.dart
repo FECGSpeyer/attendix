@@ -17,14 +17,12 @@ import '../../../../shared/widgets/dialogs/native_app_ad.dart';
 import '../../../../shared/widgets/layout/root_back_button_scope.dart';
 import '../../../../shared/widgets/layout/route_leave_guard.dart';
 import '../../data/import/rd_import_controller.dart';
-import '../../data/rd_manage_logic.dart';
 import '../widgets/import/rd_import_widgets.dart' show rdImportTimeLeftText;
 import '../widgets/manage/rd_manage_entries.dart';
-import '../widgets/rd_group_switch.dart';
 import '../widgets/rd_desktop.dart';
 import '../widgets/rd_logo.dart';
-import '../widgets/rd_widgets.dart';
 import 'rd_destinations.dart';
+import 'rd_sidebar.dart';
 
 /// Location of the page on top, also when it was pushed from another
 /// area (Verlauf › Termin, Werk › Termin, Heute › Termin): the sidebar,
@@ -96,11 +94,11 @@ class RdShell extends ConsumerWidget {
     if (width >= sidebarBreakpoint) {
       body = Row(
         children: [
-          _RdSidebar(
+          RdSidebar(
             destinations: destinations,
             selectedIndex: selected,
             onSelected: onSelect,
-            showAdmin: rdShowsManage(ref.watch(rdManageAccessProvider)),
+            onOpen: (route) => navigate(context, ref, route),
             badges: badges,
           ),
           Expanded(child: _withPlayer(page)),
@@ -425,204 +423,6 @@ class _RdRail extends StatelessWidget {
             label: Text(RdShell.labelOf(l10n, d.tab)),
           ),
       ],
-    );
-  }
-}
-
-/// Sidebar of the desktop layout (canvas T2/T3).
-class _RdSidebar extends ConsumerWidget {
-  const _RdSidebar({
-    required this.destinations,
-    required this.selectedIndex,
-    required this.onSelected,
-    required this.showAdmin,
-    this.badges = const {},
-  });
-
-  final List<RdDestination> destinations;
-  final int selectedIndex;
-  final ValueChanged<int> onSelected;
-
-  /// "Verwaltung" for Dirigent and Verantwortliche (`rdShowsManage`).
-  final bool showAdmin;
-  final Map<RdTab, int> badges;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final p = context.rd;
-    final l10n = context.l10n;
-    final tenant = ref.watch(currentTenantProvider);
-    final name = tenant?.longName.isNotEmpty == true
-        ? tenant!.longName
-        : (tenant?.shortName ?? '');
-    final location = rdShownLocation(context);
-    final adminSelected = showAdmin && rdIsManageLocation(location);
-
-    return Container(
-      width: rdSidebarWidth,
-      decoration: BoxDecoration(
-        color: p.surface,
-        border: Border(right: BorderSide(color: p.line)),
-      ),
-      child: SafeArea(
-        right: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 20, 12, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Semantics(
-                button: true,
-                label: l10n.redesignGroupsSwitchHint(name),
-                excludeSemantics: true,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: () => showRdGroupSwitchSheet(context),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Row(
-                      children: [
-                        RdInitials(
-                          rdInitialsOf(tenant?.shortName.isNotEmpty == true
-                              ? tenant!.shortName
-                              : name),
-                          size: 36,
-                          square: true,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            name,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: p.text,
-                            ),
-                          ),
-                        ),
-                        Icon(Icons.unfold_more, size: 18, color: p.text2),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              for (var i = 0; i < destinations.length; i++)
-                _SidebarItem(
-                  icon: i == selectedIndex && !adminSelected
-                      ? destinations[i].selectedIcon
-                      : destinations[i].icon,
-                  label: RdShell.labelOf(l10n, destinations[i].tab),
-                  selected: i == selectedIndex && !adminSelected,
-                  badge: badges[destinations[i].tab] ?? 0,
-                  onTap: () => onSelected(i),
-                ),
-              if (showAdmin) ...[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
-                  child: Divider(height: 1, thickness: 1, color: p.line),
-                ),
-                _SidebarItem(
-                  icon: Icons.tune,
-                  label: l10n.redesignAdminTitle,
-                  selected: adminSelected,
-                  onTap: () => RdShell.navigate(context, ref, RedesignRoutes.manage),
-                ),
-              ],
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: Row(
-                  children: [
-                    const RdLogo(size: 28),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Attendix',
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: p.text2),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SidebarItem extends StatelessWidget {
-  const _SidebarItem({
-    required this.icon,
-    required this.label,
-    required this.selected,
-    required this.onTap,
-    this.badge = 0,
-  });
-
-  final IconData icon;
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-  final int badge;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: Semantics(
-        selected: selected,
-        button: true,
-        child: Material(
-          color: selected ? p.soft : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(12),
-            onTap: onTap,
-            child: SizedBox(
-              height: 44,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Row(
-                  children: [
-                    Icon(icon, size: 20, color: selected ? p.softText : p.text2),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        label,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                          color: selected ? p.softText : p.text,
-                        ),
-                      ),
-                    ),
-                    if (badge > 0)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 1),
-                        decoration: BoxDecoration(
-                          color: p.absent,
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          '$badge',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            color: p.onStatus,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

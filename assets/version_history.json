@@ -1,11 +1,18 @@
 {
   "versions": [
     {
-      "version": "0.106.1",
+      "version": "0.107.1",
       "date": "9.11.2026",
       "changes": [
         "🍎 Mac-App für den App Store vorbereitet: gleiche App-ID wie iOS, Sandbox-Rechte, Store-Build über Shorebird (scripts/store_build.sh macos-release)",
         "🔔 Push auch in der Mac-App: Mac und iPhone bekommen Benachrichtigungen gleichzeitig (ein Konto behält die Tokens aller Geräte)"
+      ]
+    },
+    {
+      "version": "0.107.0",
+      "date": "9.11.2026",
+      "changes": [
+        "💄 Beta am Desktop: Seitenleiste wie früher in Ionic. Oben die Gruppe als Karte mit Anzahl der Gruppen, darunter Abschnitte „Übersicht“ (Heute, Termine, Mitglieder, Werke), „Leitung“ (Auswertung, Mitteilungen, Verwaltung) und „Persönlich“ (Ich, Team, Hilfe)"
       ]
     },
     {
