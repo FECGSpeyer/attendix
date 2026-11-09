@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/redesign/rd_theme.dart';
 import '../../../l10n/l10n.dart';
 import '../layout/ionic_ios.dart' show IonIos, IonDetailChevron;
 import 'adaptive_platform.dart';
@@ -115,6 +116,12 @@ class AppPopoverSubItem {
 /// [itemsBuilder] (optional) rebuilds the entries while a nested popover
 /// changes state (e.g. the "Filter aktiv" subtitle). Returns the tapped
 /// entry's value, or null when dismissed.
+/// BETA_SELECT: the Ionic iOS glass popover only outside the Beta design;
+/// the Beta design gets its own menu card (see [_PopoverCard]) with the md
+/// placement below the trigger.
+bool _iosPopover(BuildContext context) =>
+    useIosLook(context) && context.rdSkin == null;
+
 Future<T?> showAppPopoverMenu<T>({
   required BuildContext context,
   required List<AppPopoverMenuItem<T>> items,
@@ -125,11 +132,12 @@ Future<T?> showAppPopoverMenu<T>({
   final navigator = Navigator.of(context, rootNavigator: true);
   final overlay = navigator.overlay!.context.findRenderObject()! as RenderBox;
   final anchor = _anchorOf(context, overlay);
-  final ios = useIosLook(context);
+  final ios = _iosPopover(context);
 
   return navigator.push<T>(
     _PopoverRoute<T>(
       ios: ios,
+      beta: context.rdSkin != null,
       anchor: anchor,
       // Opened from the keyboard (the focused trigger): the first entry
       // gets the focus, like the former action sheet. A mouse/touch open
@@ -181,7 +189,7 @@ Future<void> showAppContentPopover({
 }) {
   return showAppPopover<void>(
     context: context,
-    width: useIosLook(context) ? iosWidth : 250,
+    width: _iosPopover(context) ? iosWidth : 250,
     builder: (_) => Padding(padding: const EdgeInsets.all(16), child: child),
   );
 }
@@ -221,10 +229,11 @@ Future<T?> showAppPopover<T>({
 }) {
   final navigator = Navigator.of(context, rootNavigator: true);
   final overlay = navigator.overlay!.context.findRenderObject()! as RenderBox;
-  final ios = useIosLook(context);
+  final ios = _iosPopover(context);
   return navigator.push<T>(
     _ContentPopoverRoute<T>(
       ios: ios,
+      beta: context.rdSkin != null,
       anchor: anchor == null
           ? _anchorOf(context, overlay)
           : Rect.fromPoints(
@@ -247,6 +256,7 @@ Future<T?> showAppPopover<T>({
 class _ContentPopoverRoute<T> extends PopupRoute<T> {
   _ContentPopoverRoute({
     required this.ios,
+    required this.beta,
     required this.anchor,
     required this.coverAnchor,
     required this.width,
@@ -257,6 +267,9 @@ class _ContentPopoverRoute<T> extends PopupRoute<T> {
   });
 
   final bool ios;
+
+  /// The Beta design: no dimmed page behind its menu card.
+  final bool beta;
   final Rect anchor;
   final bool coverAnchor;
   final double width;
@@ -270,7 +283,7 @@ class _ContentPopoverRoute<T> extends PopupRoute<T> {
   // Same backdrop as [_PopoverRoute].
   @override
   Color? get barrierColor =>
-      ios ? Colors.transparent : Colors.black.withValues(alpha: 0.32);
+      ios || beta ? Colors.transparent : Colors.black.withValues(alpha: 0.32);
 
   @override
   bool get barrierDismissible => true;
@@ -512,12 +525,12 @@ class AppPopoverText {
   const AppPopoverText._();
 
   static TextStyle heading(BuildContext context) => TextStyle(
-        fontSize: useIosLook(context) ? 17 : 16,
+        fontSize: _iosPopover(context) ? 17 : 16,
         color: Theme.of(context).colorScheme.onSurface,
       );
 
   static TextStyle paragraph(BuildContext context) {
-    final ios = useIosLook(context);
+    final ios = _iosPopover(context);
     final brightness = Theme.of(context).brightness;
     return TextStyle(
       fontSize: ios ? IonIos.pFontSize : 14,
@@ -537,6 +550,7 @@ Color? _itemColor(AppPopoverMenuItem<dynamic> item) =>
 class _PopoverRoute<T> extends PopupRoute<T> {
   _PopoverRoute({
     required this.ios,
+    required this.beta,
     required this.anchor,
     required this.autofocusFirst,
     required this.overlaySize,
@@ -548,6 +562,9 @@ class _PopoverRoute<T> extends PopupRoute<T> {
   });
 
   final bool ios;
+
+  /// The Beta design: no dimmed page behind its menu card.
+  final bool beta;
   final Rect anchor;
   final bool autofocusFirst;
   final Size overlaySize;
@@ -564,7 +581,7 @@ class _PopoverRoute<T> extends PopupRoute<T> {
   /// theme sets `--backdrop-opacity: 0`.
   @override
   Color? get barrierColor =>
-      ios ? Colors.transparent : Colors.black.withValues(alpha: 0.32);
+      ios || beta ? Colors.transparent : Colors.black.withValues(alpha: 0.32);
 
   @override
   bool get barrierDismissible => true;
@@ -978,6 +995,21 @@ class _PopoverCard extends StatelessWidget {
         // ios27 popovers don't dim the page ([barrierColor])
         scrim: Colors.transparent,
         child: Material(type: MaterialType.transparency, child: list),
+      );
+    }
+    // BETA_SELECT: the Beta menu card (as its row menus and selects).
+    final rd = context.rdSkin;
+    if (rd != null) {
+      return Material(
+        color: rd.surface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 8,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: rd.line),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: list,
       );
     }
     // Ionic md popover: --background (item colour), radius 4, md shadow

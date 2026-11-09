@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/redesign/rd_palette.dart';
+import '../../../core/theme/redesign/rd_theme.dart';
 import '../../../l10n/l10n.dart';
 import 'adaptive_platform.dart';
 import 'app_action_sheet.dart';
@@ -146,6 +148,22 @@ Future<AppSelection<T>?> showAppSelect<T>({
           height: 0,
         );
 
+  // BETA_SELECT: the Beta design has its own select menu (surface card
+  // below the value, ✓ at the current option) on every platform instead of
+  // the Ionic glass popover / iOS alert. The action-sheet interface is
+  // already Beta-styled by [showAppActionSheet].
+  final rd = context.rdSkin;
+  if (rd != null && interface != AppSelectInterface.actionSheet) {
+    return _showRdSelectMenu<T>(
+      context: context,
+      palette: rd,
+      anchor: anchor,
+      overlaySize: overlay.size,
+      options: options,
+      value: value,
+    );
+  }
+
   if (!useIosLook(context)) {
     final picked = await showMenu<AppSelection<T>>(
       context: context,
@@ -219,6 +237,100 @@ Future<AppSelection<T>?> showAppSelect<T>({
         ],
       );
   }
+}
+
+// ---------------------------------------------------------------------------
+// Beta select menu
+// ---------------------------------------------------------------------------
+
+/// BETA_SELECT: the Beta select – the same menu card as the Beta row menus
+/// (surface, radius 16, hairline border, see `_showRdAnchoredMenu`), placed
+/// right below the value and at least as wide as it, the current option
+/// tinted with a ✓ in the primary colour.
+Future<AppSelection<T>?> _showRdSelectMenu<T>({
+  required BuildContext context,
+  required RdPalette palette,
+  required Rect anchor,
+  required Size overlaySize,
+  required List<AppSelectOption<T>> options,
+  required T? value,
+}) {
+  const margin = 8.0;
+  final maxW = math.max(0.0, overlaySize.width - 2 * margin);
+  final width = math.min(math.max(anchor.width, 220.0), math.min(360.0, maxW));
+  final p = palette;
+  return showMenu<AppSelection<T>>(
+    context: context,
+    useRootNavigator: true,
+    position: RelativeRect.fromRect(
+      Rect.fromLTWH(anchor.left, anchor.bottom + 6, anchor.width, 0),
+      Offset.zero & overlaySize,
+    ),
+    color: p.surface,
+    surfaceTintColor: Colors.transparent,
+    elevation: 8,
+    constraints: BoxConstraints.tightFor(width: width).copyWith(maxHeight: 368),
+    menuPadding: const EdgeInsets.symmetric(vertical: 6),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+      side: BorderSide(color: p.line),
+    ),
+    items: [
+      for (final o in options)
+        PopupMenuItem<AppSelection<T>>(
+          value: AppSelection<T>(o.value),
+          enabled: o.enabled,
+          padding: EdgeInsets.zero,
+          height: 44,
+          child: Semantics(
+            selected: o.value == value,
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 44),
+              width: double.infinity,
+              margin: const EdgeInsets.symmetric(horizontal: 6),
+              padding: const EdgeInsets.fromLTRB(12, 8, 10, 8),
+              decoration: BoxDecoration(
+                color: o.value == value ? p.soft : null,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: DefaultTextStyle.merge(
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: o.value == value ? p.softText : p.text,
+                        fontWeight: o.value == value ? FontWeight.w600 : FontWeight.w400,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      child: o.child ?? Text(o.label!),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    width: 20,
+                    child: o.value == value ? Icon(Icons.check, size: 18, color: p.primary) : null,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+    ],
+  );
+}
+
+/// The toggle icon after a select's value: the Ionic `chevron-expand`, in
+/// the Beta design its own ▾ (like the "Stimme" cells of the file table).
+Widget _selectToggleIcon(BuildContext context, {required bool enabled}) {
+  final rd = context.rdSkin;
+  return Opacity(
+    opacity: enabled ? 1 : 0.4,
+    child: rd != null
+        ? Icon(Icons.keyboard_arrow_down, size: 20, color: rd.text2)
+        : const IonSelectIcon(),
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -586,7 +698,8 @@ class AppDropdownFormField<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!useIosLook(context)) {
+    // BETA_SELECT: the Beta design opens its own select on every platform.
+    if (!useIosLook(context) && context.rdSkin == null) {
       return DropdownButtonFormField<T>(
         items: items,
         selectedItemBuilder: selectedItemBuilder,
@@ -706,10 +819,7 @@ class _IosSelectFormField<T> extends FormField<T> {
                          ),
                        ),
                        const SizedBox(width: 6),
-                       Opacity(
-                         opacity: enabled ? 1 : 0.4,
-                         child: const IonSelectIcon(),
-                       ),
+                       _selectToggleIcon(context, enabled: enabled),
                      ],
                    ),
                  ),
@@ -801,7 +911,8 @@ class AppDropdownButton<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!useIosLook(context)) {
+    // BETA_SELECT: the Beta design opens its own select on every platform.
+    if (!useIosLook(context) && context.rdSkin == null) {
       return DropdownButton<T>(
         items: items,
         selectedItemBuilder: selectedItemBuilder,
@@ -871,10 +982,7 @@ class AppDropdownButton<T> extends StatelessWidget {
               children: [
                 if (isExpanded) Expanded(child: label) else Flexible(child: label),
                 const SizedBox(width: 6),
-                Opacity(
-                  opacity: enabled ? 1 : 0.4,
-                  child: const IonSelectIcon(),
-                ),
+                _selectToggleIcon(context, enabled: enabled),
               ],
             ),
           ),
