@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.112.1",
+      "date": "9.11.2026",
+      "changes": [
+        "🐛 Noten-Import: Neue Werke in einer Sammlung mit Kürzel werden fortlaufend ab deren höchster Nummer nummeriert, die Nummer aus dem Ordnernamen zählt dort nicht mehr („02 Ohne Gott“ in eine neue Sammlung wird T1 statt T2)",
+        "✨ Noten-Import: Die Nummer eines neuen Werks lässt sich beim Prüfen selbst festlegen (doppelte Nummern werden abgelehnt)"
+      ]
+    },
+    {
       "version": "0.112.0",
       "date": "9.11.2026",
       "changes": [
