@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.116.0",
+      "date": "9.11.2026",
+      "changes": [
+        "✨ Beta: Werk-Dateien „Durch neue Version ersetzen …“ (Name und Stimme bleiben)",
+        "✨ Mac-App: Word-Dateien „In Word bearbeiten“, jedes Speichern lädt sie automatisch hoch"
+      ]
+    },
+    {
       "version": "0.115.1",
       "date": "9.11.2026",
       "changes": [
