@@ -65,15 +65,30 @@ scripts/store_build.sh macos-release <Dart-Defines …>
 #   → build/macos/Build/Products/Release/Attendix.app
 ```
 
-Shorebird liefert nur die `.app`. Für den Upload muss sie mit dem
-„Apple Distribution“-Zertifikat und einem Mac-App-Store-Profil signiert und
-mit dem „Mac Installer Distribution“-Zertifikat als `.pkg` verpackt werden
-(`productbuild --component Attendix.app /Applications --sign "3rd Party Mac
-Developer Installer: …" Attendix.pkg`), dann Upload per Transporter oder
-`xcrun altool --upload-package`. **Build-Nummer nicht ändern**, sonst greifen
-keine Patches. Patches für den Mac App Store gehen erst ab Shorebird 1.6.128
-mit Flutter 3.47.7 (wir nutzen 3.47.9). Push und Live Activity sind auf dem
-Mac aus (`hostIsNativeMobile`).
+Shorebird liefert nur die `.app`, und zwar unsigniert: Das Skript baut mit
+`CODE_SIGNING_ALLOWED=NO`, weil `keychain-access-groups` sonst ein
+Mac-Entwicklungsprofil (Mac als Gerät im Team registriert) verlangt.
+Signiert wird wie bei iOS über Xcodes Cloud-Signierung (Stephanus-Konto in
+Xcode angemeldet, kein lokales Distribution-Zertifikat nötig):
+
+1. Entitlements auflösen und ad hoc signieren:
+   `sed 's/$(AppIdentifierPrefix)/MXM3YWAKPL./' macos/Runner/Release.entitlements > ent.plist`,
+   `codesign --force --deep --sign - Attendix.app`, dann
+   `codesign --force --sign - --entitlements ent.plist Attendix.app`.
+2. Ein `Attendix.xcarchive` von Hand anlegen: `Products/Applications/Attendix.app`,
+   die `*.dSYM` unter `dSYMs/` und eine `Info.plist` mit `ApplicationProperties`
+   (ApplicationPath, CFBundleIdentifier, CFBundleShortVersionString,
+   CFBundleVersion, SigningIdentity, Team, Architectures) und `ArchiveVersion` 2.
+3. `xcodebuild -exportArchive -allowProvisioningUpdates` mit method
+   `app-store-connect`, teamID `MXM3YWAKPL`, signingStyle automatic. Mit
+   destination `export` entsteht das `.pkg` zum Prüfen (`pkgutil
+   --check-signature`, `codesign -dvv`), mit `upload` geht es direkt zu App
+   Store Connect. Xcode signiert dabei mit „Apple Distribution“, holt das
+   Mac-Store-Profil und das Installer-Zertifikat.
+
+**Build-Nummer nicht ändern**, sonst greifen keine Patches. Patches für den
+Mac App Store gehen erst ab Shorebird 1.6.128 mit Flutter 3.47.7 (wir nutzen
+3.47.9). Push und Live Activity sind auf dem Mac aus (`hostIsNativeMobile`).
 
 Danach AAB bzw. IPA wie gewohnt in Play Console / App Store Connect hochladen.
 **Kein Xcode-Archiv** für den Store: Das wäre kein Shorebird-Release.
