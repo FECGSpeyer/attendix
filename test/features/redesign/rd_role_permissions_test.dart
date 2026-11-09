@@ -1,3 +1,4 @@
+import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
 import 'package:attendix/core/providers/duty_providers.dart';
@@ -47,6 +48,9 @@ class _FakeNotifier extends RolePermissionNotifier {
   }
 }
 
+/// The signed-in account; a test switches it while a save runs.
+final _account = StateProvider<String?>((ref) => 'a');
+
 final _permissions = [
   for (final role in [Role.helper, Role.voiceLeaderHelper, Role.voiceLeader, Role.player, Role.viewer, Role.parent])
     TenantRolePermission(id: role.value, tenantId: 7, role: role.value),
@@ -65,6 +69,7 @@ Widget _app(
   return ProviderScope(
     overrides: [
       effectiveRoleProvider.overrideWithValue(role),
+      currentAuthUserIdProvider.overrideWith((ref) => ref.watch(_account)),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
       rolePermissionsProvider.overrideWith((ref) async => _permissions),
       hasDutyTypesProvider.overrideWithValue(false),
@@ -101,18 +106,41 @@ void main() {
       await tester.pumpWidget(_app(saves));
       await _settle(tester);
 
-      // Roles without switches (Stimmführer, Beobachter, Eltern) are left out.
-      expect(find.text('HELFER'), findsOneWidget);
-      expect(find.text('STIMMFÜHRER-HELFER'), findsOneWidget);
-      expect(find.text('MITGLIED'), findsOneWidget);
+      // Stimmführer follow Helfer and Mitglied; Beobachter and Eltern have
+      // no switches.
+      expect(find.text('WAS MITGLIEDER SEHEN'), findsOneWidget);
+      expect(find.text('WAS MITGLIEDER DÜRFEN'), findsOneWidget);
+      expect(find.text('WAS HELFER DÜRFEN'), findsOneWidget);
+      expect(find.text('STIMMFÜHRER-HELFER'), findsNothing);
       expect(find.text('BEOBACHTER'), findsNothing);
       expect(find.text('Speichern'), findsNothing);
 
-      await tester.tap(find.text('Eigene Pausierung erlauben'));
+      await tester.tap(find.text('Sich selbst pausieren'));
       await _settle(tester);
       expect(saves.single.single.role, Role.player.value);
       expect(saves.single.single.playerSelfPause, isTrue);
-      expect(_switchOf(tester, 'Eigene Pausierung erlauben').value, isTrue);
+      expect(_switchOf(tester, 'Sich selbst pausieren').value, isTrue);
+    });
+
+    testWidgets('Mitglied and Helfer switches also set their Stimmführer role', (tester) async {
+      tester.view.physicalSize = const Size(393, 4000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final saves = <List<TenantRolePermission>>[];
+      await tester.pumpWidget(_app(saves));
+      await _settle(tester);
+
+      // Mitglied's "Abwesenheit selbst eintragen" (the first one).
+      await tester.tap(find.text('Abwesenheit selbst eintragen').first);
+      await _settle(tester);
+      expect(saves.map((s) => s.single.role), [Role.player.value, Role.voiceLeader.value]);
+      expect(saves.every((s) => s.single.playerPlannedAbsence), isTrue);
+
+      // Only Stimmführer-Helfer are limited to their own Stimme.
+      await tester.tap(find.text('Stimmführer nur ihre Stimme'));
+      await _settle(tester);
+      expect(saves.last.single.role, Role.voiceLeaderHelper.value);
+      expect(saves.last.single.attendanceAllGroups, isFalse);
     });
 
     testWidgets('failed saves put the switch back to the saved value', (tester) async {
@@ -124,12 +152,12 @@ void main() {
       await _settle(tester);
 
       // On, off again while the first save still runs; both saves fail.
-      await tester.tap(find.text('Eigene Pausierung erlauben'));
+      await tester.tap(find.text('Sich selbst pausieren'));
       await tester.pump(const Duration(milliseconds: 50));
-      await tester.tap(find.text('Eigene Pausierung erlauben'));
+      await tester.tap(find.text('Sich selbst pausieren'));
       await _settle(tester);
       expect(saves, hasLength(2));
-      expect(_switchOf(tester, 'Eigene Pausierung erlauben').value, isFalse);
+      expect(_switchOf(tester, 'Sich selbst pausieren').value, isFalse);
       await tester.pump(const Duration(seconds: 5));
     });
 
@@ -143,12 +171,74 @@ void main() {
 
       // On, off, on again; only the first save fails.
       for (var i = 0; i < 3; i++) {
-        await tester.tap(find.text('Eigene Pausierung erlauben'));
+        await tester.tap(find.text('Sich selbst pausieren'));
         await tester.pump(const Duration(milliseconds: 50));
       }
       await _settle(tester);
       expect(saves, hasLength(3));
-      expect(_switchOf(tester, 'Eigene Pausierung erlauben').value, isTrue);
+      expect(_switchOf(tester, 'Sich selbst pausieren').value, isTrue);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('a failed Helfer+Stimmführer save does not ride along a later one', (tester) async {
+      tester.view.physicalSize = const Size(393, 4000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final saves = <List<TenantRolePermission>>[];
+      await tester.pumpWidget(_app(saves, results: [false, true]));
+      await _settle(tester);
+
+      // "Termine anlegen" (Helfer + Stimmführer-Helfer) fails, "Notizen"
+      // (Helfer only) queued right after is saved without it.
+      final create = _switchOf(tester, 'Termine anlegen').value;
+      await tester.tap(find.text('Termine anlegen'));
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.tap(find.text('Notizen zu Personen sehen'));
+      await _settle(tester);
+      expect(saves, hasLength(2));
+      expect(saves.last.single.role, Role.helper.value);
+      expect(saves.last.single.attendanceCreate, create);
+      expect(saves.last.single.playerNotesView, isTrue);
+      expect(_switchOf(tester, 'Termine anlegen').value, create);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('a partly saved Helfer+Stimmführer change shows as such', (tester) async {
+      tester.view.physicalSize = const Size(393, 4000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final saves = <List<TenantRolePermission>>[];
+      await tester.pumpWidget(_app(saves, results: [true, false, true]));
+      await _settle(tester);
+
+      // Helfer row lands, Stimmführer-Helfer row fails; "Notizen" right
+      // after builds on the landed Helfer row.
+      final create = _switchOf(tester, 'Termine anlegen').value;
+      await tester.tap(find.text('Termine anlegen'));
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.tap(find.text('Notizen zu Personen sehen'));
+      await _settle(tester);
+      expect(saves.map((s) => s.single.role), [Role.helper.value, Role.voiceLeaderHelper.value, Role.helper.value]);
+      expect(saves.last.single.attendanceCreate, !create);
+      expect(_switchOf(tester, 'Termine anlegen').value, !create);
+      expect(find.textContaining('Bei Stimmführern ist es noch anders'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('after an account switch the Stimmführer row is not written any more', (tester) async {
+      tester.view.physicalSize = const Size(393, 4000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final saves = <List<TenantRolePermission>>[];
+      await tester.pumpWidget(_app(saves));
+      await _settle(tester);
+
+      // Switched to another account while the Helfer row is written.
+      await tester.tap(find.text('Termine anlegen'));
+      await tester.pump(const Duration(milliseconds: 50));
+      ProviderScope.containerOf(tester.element(find.byType(RdRolePermissionsPage))).read(_account.notifier).state = 'b';
+      await _settle(tester);
+      expect(saves.map((s) => s.single.role), [Role.helper.value]);
       await tester.pump(const Duration(seconds: 5));
     });
 
@@ -158,7 +248,7 @@ void main() {
       addTearDown(tester.view.reset);
       await tester.pumpWidget(_app([], role: Role.responsible));
       await _settle(tester);
-      expect(_switchOf(tester, 'Dateiablage für alle Mitglieder').onChanged, isNull);
+      expect(_switchOf(tester, 'Dateiablage für alle lesbar').onChanged, isNull);
     });
   });
 

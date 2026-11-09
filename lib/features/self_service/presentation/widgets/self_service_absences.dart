@@ -48,10 +48,12 @@ void _refreshAfterAbsenceChange(WidgetRef ref) {
 /// tenant without an own row ("alle Termine" mode) have no id and are
 /// skipped. Waits for the duty overview (whether the Dienstplan view is
 /// active) and throws when it fails, so the callers write nothing.
-Future<Set<String>> selfServiceAbsenceCandidateIds(WidgetRef ref) async {
+/// [useDutyView] overrides the Dienstplan view: the Beta passes false, it
+/// lists own duties with the other Termine, so an absence covers them too.
+Future<Set<String>> selfServiceAbsenceCandidateIds(WidgetRef ref, {bool? useDutyView}) async {
   final raw = await ref.read(signoutDataProvider.future);
-  final duty = await ref.read(myDutyOverviewProvider.future);
-  return absenceCandidates(raw, useDutyView: duty.useDutyView)
+  final dutyView = useDutyView ?? (await ref.read(myDutyOverviewProvider.future)).useDutyView;
+  return absenceCandidates(raw, useDutyView: dutyView)
       .map((a) => a.id)
       .whereType<String>()
       .toSet();
@@ -81,15 +83,16 @@ Future<void> saveSelfServiceAbsence(
   BuildContext context,
   WidgetRef ref,
   Person player,
-  AbsenceInput input,
-) async {
+  AbsenceInput input, {
+  bool? useDutyView,
+}) async {
   if (player.id == null) return;
   // The write goes through the current group's repository: if the group
   // changes while the candidates load, the ids belong to the old group.
   final tenantId = ref.read(currentTenantIdProvider);
   final Set<String> onlyIds;
   try {
-    onlyIds = await selfServiceAbsenceCandidateIds(ref);
+    onlyIds = await selfServiceAbsenceCandidateIds(ref, useDutyView: useDutyView);
     if (ref.read(currentTenantIdProvider) != tenantId) {
       throw StateError('Instanz während des Speicherns gewechselt');
     }
@@ -247,7 +250,11 @@ class _SelfServicePlannedAbsencesState extends ConsumerState<SelfServicePlannedA
                   ref,
                   absence,
                   selfService: true,
-                  onlyIds: () => selfServiceAbsenceCandidateIds(ref),
+                  // Own duties too, whatever the view: the reset only takes
+                  // back Termine excused with this absence's reason, and an
+                  // absence entered in the Beta or by the leadership also
+                  // excused own duties.
+                  onlyIds: () => selfServiceAbsenceCandidateIds(ref, useDutyView: false),
                 );
                 if (ok) _refreshAfterAbsenceChange(ref);
               },

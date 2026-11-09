@@ -289,8 +289,9 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
                 // Saison and Zählweise (from the old "Allgemein"), which
                 // Terminarten count, Export and Urkunden (Vorkurs).
                 const SizedBox(height: 24),
+                // One section: since when, Arbeit/Schicht and which Terminarten.
                 RdTenantSettingsBlock(sections: const [RdTenantSettings.counting], label: l10n.rdAdminCounting),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 const RdStatsCountedTypes(),
                 const SizedBox(height: 24),
                 RdGroupLabel(l10n.rdAdminData),

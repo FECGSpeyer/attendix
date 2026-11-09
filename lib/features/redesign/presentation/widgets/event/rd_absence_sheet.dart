@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../../core/providers/duty_providers.dart';
 import '../../../../../core/providers/signout_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
@@ -66,7 +65,8 @@ Future<void> showRdAbsenceSheet(
   );
   if (!context.mounted) return;
   if (result is AbsenceInput) {
-    await saveSelfServiceAbsence(context, ref, player, result);
+    // Own duties are Termine like the others here (rdSignoutDataProvider).
+    await saveSelfServiceAbsence(context, ref, player, result, useDutyView: false);
   } else if (result == _pause) {
     await selfServicePause(context, ref, player);
   }
@@ -214,15 +214,14 @@ class _AbsenceSheetState extends ConsumerState<_AbsenceSheet> {
               : ref.watch(rdOtherAbsenceTermineProvider((other, fmt.format(from), fmt.format(until)))).valueOrNull;
     } else {
       // Same Termine the save changes (selfServiceAbsenceCandidateIds): no
-      // unassigned duties, no own duties in the Dienstplan view.
+      // unassigned duties; own duties count like in "Heute".
       final data = ref.watch(signoutDataProvider).valueOrNull;
-      final duty = ref.watch(myDutyOverviewProvider).valueOrNull;
       affected =
-          from == null || until == null || data == null || duty == null
+          from == null || until == null || data == null
               ? null
               : [
                 for (final a in rdTermineInRange(
-                  absenceCandidates(data, useDutyView: duty.useDutyView),
+                  absenceCandidates(data, useDutyView: false),
                   from,
                   until,
                   tenantId: ref.watch(currentTenantIdProvider),

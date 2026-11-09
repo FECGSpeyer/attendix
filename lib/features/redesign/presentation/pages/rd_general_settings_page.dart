@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/providers/attendance_type_providers.dart';
-import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/files_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
@@ -143,8 +142,8 @@ String rdTenantSettingsTitle(AppLocalizations l10n, RdTenantSettings s) => switc
       RdTenantSettings.counting => l10n.rdAdminCounting,
       RdTenantSettings.visibility => l10n.rdAdminVisibility,
       RdTenantSettings.sharing => l10n.rdAdminSharing,
-      RdTenantSettings.teachers => l10n.generalSettingsMaintainTeachers,
-      RdTenantSettings.parents => l10n.generalSettingsParentsFeature,
+      RdTenantSettings.teachers => l10n.rdSettingsTeachers,
+      RdTenantSettings.parents => l10n.rdSettingsParents,
     };
 
 String? rdTenantSettingsIntro(AppLocalizations l10n, RdTenantSettings s) => switch (s) {
@@ -555,6 +554,7 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
             children: [
               RdListRow(
                 title: l10n.rdSettingsSeasonStart,
+                subtitle: l10n.rdSettingsSeasonHint,
                 value: DateFormat(dateFmt()).format(_seasonOf(t)),
                 onTap: enabled ? () => _editSeason(t) : null,
               ),
@@ -568,7 +568,6 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
               ),
             ],
           ),
-          RdListNote(l10n.generalSettingsSeasonHelper),
         ];
       case RdTenantSettings.visibility:
         return [
@@ -587,13 +586,6 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
                       ? t.showAllAttendancesInfoText
                       : l10n.defaultsShowAllInfoText,
                   onTap: enabled ? () => _editInfoText(t) : null,
-                ),
-              if (ref.watch(hasDutyTypesProvider))
-                RdSwitchRow(
-                  title: l10n.rdSettingsDutyView,
-                  subtitle: l10n.rdSettingsDutyViewHint,
-                  value: t.dutyView,
-                  onChanged: on((v) => _save(t.id, {'duty_view': v}, (c) => c.copyWith(dutyView: v))),
                 ),
               RdSwitchRow(
                 title: l10n.rdSettingsMembersList,
@@ -642,6 +634,7 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
                 ),
                 RdSwitchRow(
                   title: l10n.rdSettingsAutoApprove,
+                  subtitle: l10n.rdSettingsAutoApproveHint,
                   value: t.autoApproveRegistrations,
                   onChanged: on(
                     (v) => _save(
@@ -689,7 +682,7 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
           RdGroupedList(
             children: [
               RdSwitchRow(
-                title: l10n.generalSettingsMaintainTeachers,
+                title: l10n.rdSettingsTeachers,
                 subtitle: l10n.rdSettingsTeachersHint,
                 value: t.maintainTeachers,
                 onChanged: on((v) => _save(t.id, {'maintainTeachers': v}, (c) => c.copyWith(maintainTeachers: v))),
@@ -702,7 +695,7 @@ class _RdTenantSettingsBlockState extends ConsumerState<RdTenantSettingsBlock> {
           RdGroupedList(
             children: [
               RdSwitchRow(
-                title: l10n.generalSettingsParentsFeature,
+                title: l10n.rdSettingsParents,
                 subtitle: l10n.rdSettingsParentsHint,
                 value: t.parents ?? false,
                 onChanged: on((v) => _save(t.id, {'parents': v}, (c) => c.copyWith(parents: v))),

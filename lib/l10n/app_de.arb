@@ -12107,7 +12107,7 @@
   "@rdAdminCertificatesHint": {
     "description": "rdAdmin.certificatesHint"
   },
-  "rdAdminCounting": "So wird gezählt",
+  "rdAdminCounting": "Was zur Anwesenheitsquote zählt",
   "@rdAdminCounting": {
     "description": "rdAdmin.counting"
   },
@@ -13153,11 +13153,11 @@
   "@rdSettingsAddRule": {
     "description": "rdSettings.addRule"
   },
-  "rdSettingsAllEvents": "Alle Termine sichtbar",
+  "rdSettingsAllEvents": "Alle Termine zeigen",
   "@rdSettingsAllEvents": {
     "description": "rdSettings.allEvents"
   },
-  "rdSettingsAllEventsHint": "Auch Termine, bei denen sie nicht dabei sind",
+  "rdSettingsAllEventsHint": "Mitglieder sehen auch Termine, zu denen sie nicht eingeladen sind",
   "@rdSettingsAllEventsHint": {
     "description": "rdSettings.allEventsHint"
   },
@@ -13172,6 +13172,10 @@
   "rdSettingsAutoApprove": "Neue automatisch freigeben",
   "@rdSettingsAutoApprove": {
     "description": "rdSettings.autoApprove"
+  },
+  "rdSettingsAutoApproveHint": "Sonst prüfst du jede Anmeldung, bevor die Person dazukommt",
+  "@rdSettingsAutoApproveHint": {
+    "description": "rdSettings.autoApproveHint"
   },
   "rdSettingsBack": "Gruppe",
   "@rdSettingsBack": {
@@ -13225,17 +13229,17 @@
   "@rdSettingsCriticalHint": {
     "description": "rdSettings.criticalHint"
   },
-  "rdSettingsDutyView": "Dienstplan in „Meine Termine“",
-  "@rdSettingsDutyView": {
-    "description": "rdSettings.dutyView"
-  },
-  "rdSettingsDutyViewHint": "Dienst-Teams sehen zuerst ihre Dienste",
-  "@rdSettingsDutyViewHint": {
-    "description": "rdSettings.dutyViewHint"
-  },
   "rdSettingsEmptyValue": "Bitte gib einen Wert ein.",
   "@rdSettingsEmptyValue": {
     "description": "rdSettings.emptyValue"
+  },
+  "rdSettingsFilesForAll": "Dateiablage für alle lesbar",
+  "@rdSettingsFilesForAll": {
+    "description": "rdSettings.filesForAll"
+  },
+  "rdSettingsFilesForAllHint": "Sonst nur Admins, Verantwortliche und Helfer. Hochladen dürfen nur Admins und Verantwortliche.",
+  "@rdSettingsFilesForAllHint": {
+    "description": "rdSettings.filesForAllHint"
   },
   "rdSettingsHolidays": "Ferien und Feiertage zeigen",
   "@rdSettingsHolidays": {
@@ -13245,15 +13249,15 @@
   "@rdSettingsHolidaysHint": {
     "description": "rdSettings.holidaysHint"
   },
-  "rdSettingsInfoText": "Hinweis bei fremden Terminen",
+  "rdSettingsInfoText": "Hinweis für nicht Eingeladene",
   "@rdSettingsInfoText": {
     "description": "rdSettings.infoText"
   },
-  "rdSettingsMembersList": "Mitgliederliste für alle",
+  "rdSettingsMembersList": "Mitglieder-Tab für alle",
   "@rdSettingsMembersList": {
     "description": "rdSettings.membersList"
   },
-  "rdSettingsMembersListHint": "Spieler, Helfer und Stimmführer sehen alle Personen",
+  "rdSettingsMembersListHint": "Auch Mitglieder, Helfer und Stimmführer sehen, wer in welchem Register ist",
   "@rdSettingsMembersListHint": {
     "description": "rdSettings.membersListHint"
   },
@@ -13261,9 +13265,89 @@
   "@rdSettingsName": {
     "description": "rdSettings.name"
   },
+  "rdSettingsParents": "Eltern-Zugang",
+  "@rdSettingsParents": {
+    "description": "rdSettings.parents"
+  },
   "rdSettingsParentsHint": "Eltern sehen die Anwesenheit ihrer Kinder und melden sie ab",
   "@rdSettingsParentsHint": {
     "description": "rdSettings.parentsHint"
+  },
+  "rdSettingsPermAbsence": "Abwesenheit selbst eintragen",
+  "@rdSettingsPermAbsence": {
+    "description": "rdSettings.perm.absence"
+  },
+  "rdSettingsPermAbsenceHint": "Sich für einen Zeitraum abmelden, z. B. für den Urlaub",
+  "@rdSettingsPermAbsenceHint": {
+    "description": "rdSettings.perm.absenceHint"
+  },
+  "rdSettingsPermAllGroups": "Alle Register eintragen",
+  "@rdSettingsPermAllGroups": {
+    "description": "rdSettings.perm.allGroups"
+  },
+  "rdSettingsPermAllGroupsHint": "Aus: nur die Anwesenheit des eigenen Registers",
+  "@rdSettingsPermAllGroupsHint": {
+    "description": "rdSettings.perm.allGroupsHint"
+  },
+  "rdSettingsPermChecklist": "Checkliste im Termin sehen",
+  "@rdSettingsPermChecklist": {
+    "description": "rdSettings.perm.checklist"
+  },
+  "rdSettingsPermChecklistHint": "Die Aufgaben, die vor einem Termin zu erledigen sind",
+  "@rdSettingsPermChecklistHint": {
+    "description": "rdSettings.perm.checklistHint"
+  },
+  "rdSettingsPermCreate": "Termine anlegen",
+  "@rdSettingsPermCreate": {
+    "description": "rdSettings.perm.create"
+  },
+  "rdSettingsPermCreateHint": "Aus: können keine neuen Termine anlegen",
+  "@rdSettingsPermCreateHint": {
+    "description": "rdSettings.perm.createHint"
+  },
+  "rdSettingsPermHelperLabel": "Was Helfer dürfen",
+  "@rdSettingsPermHelperLabel": {
+    "description": "rdSettings.perm.helperLabel"
+  },
+  "rdSettingsPermHelperNote": "Gilt auch für Helfer, die Stimmführer sind. Sie sehen Notizen und Checkliste immer.",
+  "@rdSettingsPermHelperNote": {
+    "description": "rdSettings.perm.helperNote"
+  },
+  "rdSettingsPermLeaderDiffers": "Bei Stimmführern ist es noch anders eingestellt, einmal umschalten gleicht es an.",
+  "@rdSettingsPermLeaderDiffers": {
+    "description": "rdSettings.perm.leaderDiffers"
+  },
+  "rdSettingsPermLeaderOwnOnly": "Stimmführer nur ihre Stimme",
+  "@rdSettingsPermLeaderOwnOnly": {
+    "description": "rdSettings.perm.leaderOwnOnly"
+  },
+  "rdSettingsPermLeaderOwnOnlyHint": "Helfer, die Stimmführer sind, tragen nur die Anwesenheit ihrer eigenen Stimme ein",
+  "@rdSettingsPermLeaderOwnOnlyHint": {
+    "description": "rdSettings.perm.leaderOwnOnlyHint"
+  },
+  "rdSettingsPermMemberLabel": "Was Mitglieder dürfen",
+  "@rdSettingsPermMemberLabel": {
+    "description": "rdSettings.perm.memberLabel"
+  },
+  "rdSettingsPermMemberNote": "Gilt auch für Mitglieder, die Stimmführer sind.",
+  "@rdSettingsPermMemberNote": {
+    "description": "rdSettings.perm.memberNote"
+  },
+  "rdSettingsPermNotes": "Notizen zu Personen sehen",
+  "@rdSettingsPermNotes": {
+    "description": "rdSettings.perm.notes"
+  },
+  "rdSettingsPermNotesHint": "Im Termin bei der Anwesenheit",
+  "@rdSettingsPermNotesHint": {
+    "description": "rdSettings.perm.notesHint"
+  },
+  "rdSettingsPermPause": "Sich selbst pausieren",
+  "@rdSettingsPermPause": {
+    "description": "rdSettings.perm.pause"
+  },
+  "rdSettingsPermPauseHint": "Unter „Ich“ pausieren und wieder zurückkommen. Gilt für alle mit eigenem Profil, auch für Helfer.",
+  "@rdSettingsPermPauseHint": {
+    "description": "rdSettings.perm.pauseHint"
   },
   "rdSettingsRegion": "Bundesland",
   "@rdSettingsRegion": {
@@ -13349,6 +13433,10 @@
   "@rdSettingsSaveFailed": {
     "description": "rdSettings.saveFailed"
   },
+  "rdSettingsSeasonHint": "Ab diesem Datum zählt die Anwesenheitsquote",
+  "@rdSettingsSeasonHint": {
+    "description": "rdSettings.seasonHint"
+  },
   "rdSettingsSeasonSaved": "Saisonbeginn: {date}",
   "@rdSettingsSeasonSaved": {
     "description": "rdSettings.seasonSaved",
@@ -13364,11 +13452,11 @@
   "@rdSettingsShareWorksHint": {
     "description": "rdSettings.shareWorksHint"
   },
-  "rdSettingsShiftPresent": "Schichtbedingt zählt als anwesend",
+  "rdSettingsShiftPresent": "Arbeit und Schicht zählen als anwesend",
   "@rdSettingsShiftPresent": {
     "description": "rdSettings.shiftPresent"
   },
-  "rdSettingsShiftPresentHint": "Schicht- oder arbeitsbedingt Entschuldigte zählen in den Prozenten als da",
+  "rdSettingsShiftPresentHint": "Gilt, wenn jemand wegen Arbeit oder Schicht entschuldigt ist",
   "@rdSettingsShiftPresentHint": {
     "description": "rdSettings.shiftPresentHint"
   },
@@ -13376,11 +13464,15 @@
   "@rdSettingsShortName": {
     "description": "rdSettings.shortName"
   },
-  "rdSettingsShortNameHint": "Steht vor Dateinamen beim Export",
+  "rdSettingsShortNameHint": "Kurzform für enge Stellen und Dateinamen beim Export",
   "@rdSettingsShortNameHint": {
     "description": "rdSettings.shortNameHint"
   },
-  "rdSettingsTeachersHint": "Lehrer der Spieler verwalten",
+  "rdSettingsTeachers": "Lehrer erfassen",
+  "@rdSettingsTeachers": {
+    "description": "rdSettings.teachers"
+  },
+  "rdSettingsTeachersHint": "Bei jeder Person festhalten, wer sie unterrichtet",
   "@rdSettingsTeachersHint": {
     "description": "rdSettings.teachersHint"
   },
@@ -13528,6 +13620,10 @@
   "rdStatsCountedTypesNone": "Keine Terminart",
   "@rdStatsCountedTypesNone": {
     "description": "rdStats.countedTypesNone"
+  },
+  "rdStatsCountedTypesRow": "Terminarten",
+  "@rdStatsCountedTypesRow": {
+    "description": "rdStats.countedTypesRow"
   },
   "rdStatsDeltaDown": "−{points} ggü. davor",
   "@rdStatsDeltaDown": {
@@ -19037,7 +19133,7 @@
       "count": {}
     }
   },
-  "redesignRolePermIntro": "Lege fest, was Helfer und Mitglieder in dieser Gruppe dürfen. Jeder Schalter wird sofort gespeichert.",
+  "redesignRolePermIntro": "Lege fest, was Mitglieder und Helfer in dieser Gruppe sehen und dürfen. Jeder Schalter wird sofort gespeichert.",
   "@redesignRolePermIntro": {
     "description": "redesign.rolePerm.intro"
   },

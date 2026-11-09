@@ -132,6 +132,10 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
   /// Writes run one after another, so the last change always wins.
   Future<void> _queue = Future.value();
 
+  /// Counts the Stimmführer switch changes: a failed one only jumps back
+  /// while no newer change follows.
+  int _leaderChanges = 0;
+
   /// Queued writes that have not finished yet.
   int _running = 0;
 
@@ -681,20 +685,36 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     });
   }
 
-  /// Ionic: switching Stimmführer on for a person with an account asks
-  /// whether the role comes with it.
+  /// Stimmführer is a Zusatz of the role (Beta): switching it on for a
+  /// Mitglied or Helfer with an account gives the matching Stimmführer role
+  /// right away (Ionic asked first). Other roles (Verantwortlicher, Admin)
+  /// stay as they are; switching off takes the Stimmführer role back.
   Future<void> _setLeader(bool value) async {
     final before = _person;
     if (before == null || !_editable || before.isLeader == value) return;
-    var assign = false;
-    if (value && before.appId != null && !_general) {
-      final choice = await showVoiceLeaderRoleDialog(context, _name(before));
-      if (choice == null || !mounted) return;
-      assign = choice;
-    }
+    final change = ++_leaderChanges;
     _apply({'isLeader': value});
     final after = _person!;
     _enqueue(() async {
+      final appId = before.appId;
+      var assign = false;
+      if (value && appId != null && !_general) {
+        // The stored role, read before anything is written (not the shown
+        // one, which may still load or be a fallback). Unreadable: nothing
+        // is saved and the switch goes back.
+        final Role? role;
+        try {
+          final repo = _registrations;
+          if (repo == null || !repo.hasTenantId) throw StateError('no group');
+          role = await repo.getTenantUserRole(appId);
+        } catch (e) {
+          // Only while no newer switch change follows (that one decides).
+          if (_leaderChanges == change) _apply({'isLeader': before.isLeader});
+          if (mounted) ToastHelper.showError(context, context.l10n.personFlutterRoleUpdateFailed(friendlyErrorMessage(e)));
+          return;
+        }
+        assign = rdLeaderRoleFor(role) != null;
+      }
       if (!await _store({'isLeader': value})) return;
       await _syncRoles(before: before, after: after, assignVoiceLeaderRole: assign);
     });
@@ -884,22 +904,21 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     // Bind the tenant repository before the first await (tenant switch).
     final repo = ref.read(userRegistrationRepositoryWithTenantProvider);
     final current = _userRole ?? Role.player;
-    // Ionic: Mitglied, Verantwortlicher, Helfer and – for Stimmführer – the
-    // Stimmführer roles; another current role stays visible.
-    final roles = <Role>[
-      Role.player,
-      Role.responsible,
-      Role.helper,
-      if (person.isLeader) Role.voiceLeaderHelper,
-      if (person.isLeader) Role.voiceLeader,
-    ];
-    if (!roles.contains(current)) roles.add(current);
-    final role = await showAppActionSheet<Role>(
+    // Mitglied, Verantwortlicher, Helfer; Stimmführer is the switch at the
+    // person (a Zusatz): for them Mitglied and Helfer become the Stimmführer
+    // roles. Another current role stays visible.
+    final leader = person.isLeader && !_general;
+    final roles = <Role>[Role.player, Role.responsible, Role.helper];
+    final shown = rdBaseRole(current);
+    if (!roles.contains(shown)) roles.add(shown);
+    final picked = await showAppActionSheet<Role>(
       context,
       title: context.l10n.personRole,
       actions: [for (final r in roles) AppActionSheetAction(value: r, label: UserRegistrationRepository.roleText(r))],
     );
-    if (role == null || role == current || !mounted) return;
+    if (picked == null || !mounted) return;
+    final role = leader ? (rdLeaderRoleFor(picked) ?? picked) : picked;
+    if (role == current) return;
     if (person.appId == null || !repo.hasTenantId) return;
     try {
       await repo.updateTenantUserRole(person.appId!, role);
@@ -1468,7 +1487,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
               RdListRow(
                 key: const Key('rd-person-role'),
                 title: l10n.personRole,
-                value: _loadingRole ? '…' : UserRegistrationRepository.roleText(_userRole ?? Role.player),
+                value: _loadingRole ? '…' : rdRoleLabel(_userRole ?? Role.player, isLeader: person.isLeader),
                 // Main group: the role follows the group (Ionic).
                 onTap: isMainGroup || _loadingRole ? null : () => _changeRole(person),
               ),
@@ -1563,3 +1582,25 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
     return d == null ? iso : '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}.${d.year}';
   }
 }
+
+/// The Stimmführer role that goes with [role] (Mitglied → Stimmführer,
+/// Helfer → Stimmführer-Helfer); null for every other role.
+Role? rdLeaderRoleFor(Role? role) => switch (role) {
+      Role.player => Role.voiceLeader,
+      Role.helper => Role.voiceLeaderHelper,
+      _ => null,
+    };
+
+/// [role] without its Stimmführer part (Stimmführer → Mitglied,
+/// Stimmführer-Helfer → Helfer).
+Role rdBaseRole(Role role) => switch (role) {
+      Role.voiceLeader => Role.player,
+      Role.voiceLeaderHelper => Role.helper,
+      _ => role,
+    };
+
+/// Role shown at a person: for Stimmführer the base role (the switch
+/// "Stimmführer" shows the rest); a Stimmführer role without the switch keeps
+/// its full name.
+String rdRoleLabel(Role role, {required bool isLeader}) =>
+    UserRegistrationRepository.roleText(isLeader ? rdBaseRole(role) : role);

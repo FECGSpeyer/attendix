@@ -9610,7 +9610,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdAdminCertificatesHint => 'Participation certificates as PDF';
 
   @override
-  String get rdAdminCounting => 'How it is counted';
+  String get rdAdminCounting => 'What counts towards the attendance rate';
 
   @override
   String get rdAdminCritical => 'Problem cases';
@@ -10468,10 +10468,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdSettingsAddRule => 'Add rule';
 
   @override
-  String get rdSettingsAllEvents => 'All events visible';
+  String get rdSettingsAllEvents => 'Show all events';
 
   @override
-  String get rdSettingsAllEventsHint => 'Also events they are not part of';
+  String get rdSettingsAllEventsHint =>
+      'Members also see events they are not invited to';
 
   @override
   String get rdSettingsAllowRegister => 'Allow self sign-up';
@@ -10481,6 +10482,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdSettingsAutoApprove => 'Approve new ones automatically';
+
+  @override
+  String get rdSettingsAutoApproveHint =>
+      'Otherwise you review every sign-up before the person joins';
 
   @override
   String get rdSettingsBack => 'Group';
@@ -10525,13 +10530,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Rules decide when a person counts as a problem case.';
 
   @override
-  String get rdSettingsDutyView => 'Duty roster in “My events”';
-
-  @override
-  String get rdSettingsDutyViewHint => 'Duty teams see their duties first';
-
-  @override
   String get rdSettingsEmptyValue => 'Please enter a value.';
+
+  @override
+  String get rdSettingsFilesForAll => 'File storage readable for everyone';
+
+  @override
+  String get rdSettingsFilesForAllHint =>
+      'Otherwise only admins, responsibles and helpers. Only admins and responsibles can upload.';
 
   @override
   String get rdSettingsHolidays => 'Show holidays';
@@ -10541,21 +10547,90 @@ class AppLocalizationsEn extends AppLocalizations {
       'Highlighted when creating events (Germany only)';
 
   @override
-  String get rdSettingsInfoText => 'Note on other events';
+  String get rdSettingsInfoText => 'Note for those not invited';
 
   @override
-  String get rdSettingsMembersList => 'Member list for everyone';
+  String get rdSettingsMembersList => 'Members tab for everyone';
 
   @override
   String get rdSettingsMembersListHint =>
-      'Players, helpers and section leaders see all persons';
+      'Members, helpers and section leaders also see who is in which section';
 
   @override
   String get rdSettingsName => 'Name';
 
   @override
+  String get rdSettingsParents => 'Parent access';
+
+  @override
   String get rdSettingsParentsHint =>
       'Parents see their children\'s attendance and excuse them';
+
+  @override
+  String get rdSettingsPermAbsence => 'Enter own absence';
+
+  @override
+  String get rdSettingsPermAbsenceHint =>
+      'Excuse themselves for a period, e.g. for holidays';
+
+  @override
+  String get rdSettingsPermAllGroups => 'Record all sections';
+
+  @override
+  String get rdSettingsPermAllGroupsHint =>
+      'Off: only the attendance of their own section';
+
+  @override
+  String get rdSettingsPermChecklist => 'See the event checklist';
+
+  @override
+  String get rdSettingsPermChecklistHint =>
+      'The tasks to be done before an event';
+
+  @override
+  String get rdSettingsPermCreate => 'Create events';
+
+  @override
+  String get rdSettingsPermCreateHint => 'Off: cannot create new events';
+
+  @override
+  String get rdSettingsPermHelperLabel => 'What helpers may do';
+
+  @override
+  String get rdSettingsPermHelperNote =>
+      'Also applies to helpers who are section leaders. They always see notes and the checklist.';
+
+  @override
+  String get rdSettingsPermLeaderDiffers =>
+      'Still set differently for section leaders, toggle once to align.';
+
+  @override
+  String get rdSettingsPermLeaderOwnOnly =>
+      'Section leaders only their section';
+
+  @override
+  String get rdSettingsPermLeaderOwnOnlyHint =>
+      'Helpers who are section leaders only record the attendance of their own section';
+
+  @override
+  String get rdSettingsPermMemberLabel => 'What members may do';
+
+  @override
+  String get rdSettingsPermMemberNote =>
+      'Also applies to members who are section leaders.';
+
+  @override
+  String get rdSettingsPermNotes => 'See notes on persons';
+
+  @override
+  String get rdSettingsPermNotesHint => 'In an event\'s attendance';
+
+  @override
+  String get rdSettingsPermPause => 'Pause themselves';
+
+  @override
+  String get rdSettingsPermPauseHint =>
+      'Pause and come back under “Me”. Applies to everyone with an own profile, helpers too.';
 
   @override
   String get rdSettingsRegion => 'State';
@@ -10625,6 +10700,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdSettingsSaveFailed => 'Could not be saved. Please try again.';
 
   @override
+  String get rdSettingsSeasonHint =>
+      'The attendance rate counts from this date';
+
+  @override
   String rdSettingsSeasonSaved(Object date) {
     return 'Season start: $date';
   }
@@ -10637,20 +10716,25 @@ class AppLocalizationsEn extends AppLocalizations {
       'Anyone with the link can view the works';
 
   @override
-  String get rdSettingsShiftPresent => 'Shift-related counts as present';
+  String get rdSettingsShiftPresent => 'Work and shifts count as present';
 
   @override
   String get rdSettingsShiftPresentHint =>
-      'Excused for shift or work counts as present in the percentages';
+      'Applies when someone is excused for work or a shift';
 
   @override
   String get rdSettingsShortName => 'Short name';
 
   @override
-  String get rdSettingsShortNameHint => 'Used in front of export file names';
+  String get rdSettingsShortNameHint =>
+      'Short form for tight spots and export file names';
 
   @override
-  String get rdSettingsTeachersHint => 'Manage the players\' teachers';
+  String get rdSettingsTeachers => 'Track teachers';
+
+  @override
+  String get rdSettingsTeachersHint =>
+      'Record for each person who teaches them';
 
   @override
   String get rdSettingsUndo => 'Undo';
@@ -10762,6 +10846,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdStatsCountedTypesNone => 'No event type';
+
+  @override
+  String get rdStatsCountedTypesRow => 'Event types';
 
   @override
   String rdStatsDeltaDown(Object points) {
@@ -15312,7 +15399,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignRolePermIntro =>
-      'Choose what helpers and members may do in this group. Each switch is saved right away.';
+      'Choose what members and helpers see and may do in this group. Each switch is saved right away.';
 
   @override
   String redesignShiftFrom(Object time) {

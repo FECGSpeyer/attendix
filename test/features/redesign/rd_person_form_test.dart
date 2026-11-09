@@ -13,12 +13,14 @@ import 'package:attendix/core/providers/player_providers.dart';
 import 'package:attendix/core/providers/shift_providers.dart';
 import 'package:attendix/core/providers/teacher_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
+import 'package:attendix/core/providers/user_registration_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/parent/parent_model.dart';
 import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/data/repositories/cross_tenant_person_repository.dart';
+import 'package:attendix/data/repositories/user_registration_repository.dart';
 import 'package:attendix/features/people/presentation/pages/person_detail_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_person_create_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_person_edit_page.dart';
@@ -59,7 +61,15 @@ class _TeachersTenant extends StateNotifier<Tenant?> implements CurrentTenantNot
 
 class _MockCrossTenantRepository extends Mock implements CrossTenantPersonRepository {}
 
-Future<MockPlayerRepository> _pump(WidgetTester tester, Widget home, {Person? person, Person? stored}) async {
+class _MockRegistrations extends Mock implements UserRegistrationRepository {}
+
+Future<MockPlayerRepository> _pump(
+  WidgetTester tester,
+  Widget home, {
+  Person? person,
+  Person? stored,
+  UserRegistrationRepository? registrations,
+}) async {
   tester.view.physicalSize = const Size(430, 3000);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
@@ -99,6 +109,7 @@ Future<MockPlayerRepository> _pump(WidgetTester tester, Widget home, {Person? pe
       personProvider(1).overrideWith((ref) async => loaded),
       crossTenantPersonRepositoryWithTenantProvider.overrideWithValue(crossTenant),
       linkedTenantIdsProvider.overrideWith((ref) async => const <int>[]),
+      if (registrations != null) userRegistrationRepositoryWithTenantProvider.overrideWithValue(registrations),
       personAttendanceStatsProvider(1).overrideWith(
           (ref) async => {'total': 0, 'attended': 0, 'percentage': 0, 'lateCount': 0, 'lateCountExcused': 0}),
     ],
@@ -149,6 +160,56 @@ void main() {
 
     verify(() => repo.updatePlayerFields(1, {'phone': '0176 999'})).called(1);
     expect(find.text('Gespeichert ✓'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 3));
+  });
+
+  testWidgets('Person bearbeiten: Stimmführer is not saved when the stored role cannot be read', (tester) async {
+    // No role repository in the test: reading the role fails.
+    final repo = await _pump(tester, const RdPersonEditPage(personId: 1), person: _person.copyWith(appId: 'u1'));
+    await tester.tap(find.byKey(const Key('rd-person-more')));
+    await tester.pump();
+    final leader = find.byKey(const Key('rd-person-leader'));
+    await tester.ensureVisible(leader);
+    await tester.tap(leader);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    verifyNever(() => repo.updatePlayerFields(any(), any()));
+    expect(tester.widget<Switch>(find.descendant(of: leader, matching: find.byType(Switch))).value, isFalse);
+    await tester.pump(const Duration(seconds: 3));
+  });
+
+  testWidgets('Person bearbeiten: a failed Stimmführer role read does not undo a newer switch change', (tester) async {
+    final registrations = _MockRegistrations();
+    var failNext = false;
+    when(() => registrations.hasTenantId).thenReturn(true);
+    when(() => registrations.getTenantUserRole(any())).thenAnswer((_) async {
+      if (!failNext) return Role.player;
+      failNext = false;
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+      throw StateError('offline');
+    });
+    final repo = await _pump(
+      tester,
+      const RdPersonEditPage(personId: 1),
+      person: _person.copyWith(appId: 'u1'),
+      registrations: registrations,
+    );
+    await tester.tap(find.byKey(const Key('rd-person-more')));
+    await tester.pump();
+    final leader = find.byKey(const Key('rd-person-leader'));
+    await tester.ensureVisible(leader);
+
+    // On (its role read fails late), off, on again.
+    failNext = true;
+    for (var i = 0; i < 3; i++) {
+      await tester.tap(leader);
+      await tester.pump(const Duration(milliseconds: 20));
+    }
+    await tester.pump(const Duration(seconds: 1));
+
+    verify(() => repo.updatePlayerFields(1, {'isLeader': true})).called(1);
+    expect(tester.widget<Switch>(find.descendant(of: leader, matching: find.byType(Switch))).value, isTrue);
     await tester.pump(const Duration(seconds: 3));
   });
 

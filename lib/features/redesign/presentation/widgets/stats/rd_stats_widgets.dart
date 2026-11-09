@@ -800,7 +800,8 @@ class RdStatsCountedTypes extends ConsumerWidget {
           children: [
             RdListRow(
               key: const Key('rd-stats-counted-types'),
-              title: l10n.rdStatsCountedTypes,
+              // Under "Was zur Anwesenheitsquote zählt": just the Terminarten.
+              title: l10n.rdStatsCountedTypesRow,
               subtitle: names.isEmpty ? l10n.rdStatsCountedTypesNone : names.join(', '),
               onTap: types.isEmpty ? null : () => showRdSheet<void>(context, const _CountedTypesSheet()),
             ),
