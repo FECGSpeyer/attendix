@@ -13109,6 +13109,123 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignFilesSibeliusCopySuffix => '(aus Sibelius)';
+
+  @override
+  String get redesignFilesSibeliusEdit => 'In Sibelius bearbeiten';
+
+  @override
+  String get redesignFilesSibeliusHint =>
+      'Mit dem Attendix-Plugin für Sibelius legst du alle Stimmen als PDF ab, Attendix ersetzt sie dann hier.';
+
+  @override
+  String get redesignFilesSibeliusHintInstall => 'Plugin installieren';
+
+  @override
+  String get redesignFilesSibeliusHintTitle => 'Stimmen direkt aus Sibelius';
+
+  @override
+  String redesignFilesSibeliusIntro(Object name) {
+    return 'Attendix legt „$name“ in „Downloads › Attendix“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.';
+  }
+
+  @override
+  String get redesignFilesSibeliusIntroTitle => 'In Sibelius bearbeiten';
+
+  @override
+  String get redesignFilesSibeliusNoFolder =>
+      'Attendix kann nicht in „Downloads“ speichern. Bitte die Mac-App aktualisieren.';
+
+  @override
+  String get redesignFilesSibeliusNotOpened =>
+      'Die Datei ließ sich nicht öffnen. Ist Sibelius installiert? Sie liegt in „Downloads › Attendix“.';
+
+  @override
+  String get redesignFilesSibeliusOpen => 'In Sibelius öffnen';
+
+  @override
+  String redesignFilesSibeliusOpened(Object name) {
+    return '„$name“ wird in Sibelius geöffnet. Jedes Speichern dort lädt die Datei hier hoch.';
+  }
+
+  @override
+  String get redesignFilesSibeliusPartNew => 'neu';
+
+  @override
+  String get redesignFilesSibeliusPartNone => 'Ohne Zuordnung';
+
+  @override
+  String redesignFilesSibeliusPartReplaces(Object files) {
+    return 'ersetzt $files';
+  }
+
+  @override
+  String get redesignFilesSibeliusPartsApply => 'Übernehmen';
+
+  @override
+  String redesignFilesSibeliusPartsMessage(num count, Object work) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Stimmen aus Sibelius für „$work“:',
+      one: '1 Stimme aus Sibelius für „$work“:',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignFilesSibeliusPartsTitle => 'Neue Stimmen aus Sibelius';
+
+  @override
+  String get redesignFilesSibeliusPlugin => 'Sibelius-Plugin installieren';
+
+  @override
+  String redesignFilesSibeliusPluginFailed(Object error) {
+    return 'Das Plugin konnte nicht gespeichert werden: $error';
+  }
+
+  @override
+  String get redesignFilesSibeliusPluginInstalled =>
+      'Plugin installiert. Starte Sibelius neu, dann findest du es unter „Plug-ins › Attendix“.';
+
+  @override
+  String get redesignFilesSibeliusPluginPick =>
+      'Ordner „Plugins“ von Sibelius wählen';
+
+  @override
+  String get redesignFilesSibeliusPluginWrongFolder =>
+      'Plugin gespeichert. Sibelius lädt Plugins aber nur aus „Library › Application Support › Avid › Sibelius › Plugins“ in deinem Benutzerordner.';
+
+  @override
+  String redesignFilesSibeliusSaveFailed(Object name, Object error) {
+    return '„$name“ ist auf dem Mac gespeichert, aber noch nicht in Attendix ($error). Attendix lädt es von selbst hoch, sobald du wieder online bist.';
+  }
+
+  @override
+  String redesignFilesSibeliusSaved(Object name) {
+    return '„$name“ aus Sibelius in Attendix gespeichert';
+  }
+
+  @override
+  String redesignFilesSibeliusSavedAsCopy(Object name, Object copy) {
+    return '„$name“ wurde in Attendix inzwischen geändert oder gelöscht. Deine Fassung aus Sibelius liegt jetzt als „$copy“ dabei.';
+  }
+
+  @override
+  String redesignFilesSibeliusUploadedLater(Object name) {
+    return 'Wieder online: „$name“ aus Sibelius ist jetzt in Attendix gespeichert';
+  }
+
+  @override
+  String get redesignFilesSibeliusWaiting =>
+      'Nur auf dem Mac gespeichert. Wird von selbst hochgeladen, sobald du wieder online bist.';
+
+  @override
+  String redesignFilesSibeliusWorkGone(Object name) {
+    return 'Das Werk zu „$name“ gibt es in Attendix nicht mehr. Deine Fassung bleibt auf dem Mac unter „Downloads › Attendix“.';
+  }
+
+  @override
   String get redesignFilesTitle => 'Noten & Dateien';
 
   @override

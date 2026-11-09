@@ -48,6 +48,7 @@ import 'core/constants/app_constants.dart';
 import 'features/public_links/presentation/pages/open_file_page.dart' show PendingFileLink;
 import 'core/utils/global_toast.dart';
 import 'core/services/native/keyboard_focus_bridge.dart';
+import 'features/redesign/presentation/widgets/work/rd_sibelius_actions.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -187,6 +188,8 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       if (mounted) initAuthLinkHandling(ref, ref.read(routerProvider));
       // LIVE_ACTIVITY: iOS Live Activity for running Ablaufpläne (no-op elsewhere)
       if (mounted) ref.read(liveActivityBootstrapProvider);
+      // REDESIGN: scores open in Sibelius keep in step (Mac app only)
+      if (mounted) rdStartSibeliusSync(ref, ref.read(routerProvider));
       // REDESIGN: home screen icon of the Farbwelt (iOS; native skips a no-op)
       if (mounted) {
         unawaited(AppIconService.setIcon(ref.read(redesignSettingsProvider).appIconName));

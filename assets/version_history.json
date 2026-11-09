@@ -1,11 +1,20 @@
 {
   "versions": [
     {
-      "version": "0.107.1",
+      "version": "0.108.1",
       "date": "9.11.2026",
       "changes": [
         "🍎 Mac-App für den App Store vorbereitet: gleiche App-ID wie iOS, Sandbox-Rechte, Store-Build über Shorebird (scripts/store_build.sh macos-release)",
         "🔔 Push auch in der Mac-App: Mac und iPhone bekommen Benachrichtigungen gleichzeitig (ein Konto behält die Tokens aller Geräte)"
+      ]
+    },
+    {
+      "version": "0.108.0",
+      "date": "9.11.2026",
+      "changes": [
+        "✨ Beta-Werke in der Mac-App: Sibelius-Partituren öffnen sich per Klick (oder ••• › „In Sibelius bearbeiten“) in Sibelius, jedes Speichern dort lädt die Datei automatisch in Attendix hoch",
+        "✨ Attendix-Plugin für Sibelius (Hinweis „Stimmen direkt aus Sibelius“ über den Dateien oder ••• › „Sibelius-Plugin installieren“): speichert die Partitur und legt alle Stimmen als PDF ab; Attendix zeigt, welche Stimmen es ersetzt oder neu hinzufügt, und übernimmt sie",
+        "✨ Sibelius ohne Internet: Ein Speichern bleibt auf dem Mac, Attendix zeigt einmal einen Hinweis und eine Wolke an der Datei und lädt sie von selbst hoch, sobald du wieder online bist (auch nach einem Neustart)"
       ]
     },
     {
