@@ -478,13 +478,29 @@ void main() {
       expect([problem('7'), problem('t 7'), problem('2')], [null, null, null]);
       expect(rdImportParseNumber('t 7', prefix: 'T'), 7);
 
-      // "Neu" by hand on 4, the number kept for "Ohne Gott" made new by hand:
-      // that one gets the next free one instead.
-      final byHand = RdImportDecisions(targets: {work('Neu').key: const RdWorkTarget.create(name: 'Neu', number: 4, prefix: 'T')});
+      // "Neu" by hand on 4 (kept for "Ohne Gott" as a new Werk): the others
+      // are numbered round it.
       expect(rdNewWorkTarget(plan, ohneGott).number, 4);
-      final made = rdNewWorkTargetWith(plan, byHand, ohneGott);
-      expect((made.prefix, made.number), ('T', 5));
+      final byHand = RdImportDecisions(targets: {work('Neu').key: const RdWorkTarget.create(name: 'Neu', number: 4, prefix: 'T')});
+      expect([rdTargetOf(plan, byHand, work('Mehr')).number, rdNewWorkTarget(plan, ohneGott, byHand).number], [2, 3]);
       expect(rdImportNumberProblem(plan, byHand, work('Mehr'), '4', prefix: 'T'), RdImportNumberProblem.taken);
+      expect(rdImportNumberProblem(plan, byHand, work('Neu'), '4', prefix: 'T'), isNull);
+    });
+
+    test('a number kept while the plan changes (KI off) stays its own', () {
+      final entries = [_e('Noten/100 Alpha/Viola.pdf'), _e('Noten/200 Beta/Viola.pdf')];
+      final found = rdBuildImportPlan(entries,
+          songs: const [RdImportSong(id: 9, name: 'Alpha', number: 100, prefix: 'S')], instruments: _instruments, isChoir: false, newPrefix: 'S');
+      final alpha = found.works.firstWhere((w) => w.title == 'Alpha');
+      expect(alpha.match.songId, 9);
+      final made = rdNewWorkTarget(found, alpha);
+      expect(made.number, 102); // Beta 101
+      // Without the match Alpha comes first: Beta still gets 101, not 102.
+      final lost = rdBuildImportPlan(entries,
+          songs: const [], instruments: _instruments, isChoir: false, newPrefix: 'S', takenNumbers: {rdImportNumberKey('S', 100)});
+      RdImportWork work(String title) => lost.works.firstWhere((w) => w.title == title);
+      final d = RdImportDecisions(targets: {work('Alpha').key: made});
+      expect([rdTargetOf(lost, d, work('Alpha')).number, rdTargetOf(lost, d, work('Beta')).number], [102, 101]);
     });
   });
 

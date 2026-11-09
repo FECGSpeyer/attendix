@@ -146,12 +146,9 @@ class RdImportWorkPage extends ConsumerWidget {
             RdMatchKind.byAi => l10n.redesignImportMatchByAi,
             _ => null,
           };
-    // A number the import gave, not the folder's own (none when typed by hand).
+    // A number the import gave, not the folder's own (none once chosen).
     final target = ws.target;
-    final numberHint = !target.isNew ||
-            target.number == null ||
-            target.number == work.number ||
-            target.number != rdNewWorkTargetWith(plan, d, work).number
+    final numberHint = !target.isNew || d.targets.containsKey(work.key) || target.number == null || target.number == work.number
         ? null
         : (plan.newPrefix ?? '').trim().isNotEmpty
             ? l10n.redesignImportNumberCollection
@@ -440,7 +437,7 @@ class _TargetSheetState extends State<_TargetSheet> {
                       // With a free number too (in a Sammlung the next one), also
                       // after numbers typed by hand for other Werke.
                       onTap: () => Navigator.of(context).pop(
-                        current.isNew ? current : rdNewWorkTargetWith(widget.plan, widget.decisions, widget.work),
+                        current.isNew ? current : rdNewWorkTarget(widget.plan, widget.work, widget.decisions),
                       ),
                     ),
                     RdListRow(

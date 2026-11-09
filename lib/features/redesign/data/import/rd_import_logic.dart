@@ -1469,54 +1469,47 @@ class RdImportDecisions {
       );
 }
 
-/// Proposed target of [work]: the Werk found, or a new Werk. Into the
-/// Repertoire (or a Sammlung without Kürzel) it keeps the folder's number
-/// when that is still free. Into a Sammlung with a Kürzel new Werke are
-/// numbered on from its highest number, whatever the folders say (Leon,
-/// 09.11.2026: "02 Ohne Gott" into a new Sammlung is T1, not T2).
-RdWorkTarget rdDefaultTarget(RdImportPlan plan, RdImportWork work) {
+/// Proposed target of [work] with the decisions [d]: the Werk found, or a
+/// new Werk. Into the Repertoire (or a Sammlung without Kürzel) it keeps the
+/// folder's number when that is still free. Into a Sammlung with a Kürzel
+/// new Werke are numbered on from its highest number, whatever the folders
+/// say (Leon, 09.11.2026: "02 Ohne Gott" into a new Sammlung is T1, not T2).
+RdWorkTarget rdDefaultTarget(RdImportPlan plan, RdImportWork work, [RdImportDecisions d = const RdImportDecisions()]) {
   final id = work.match.songId;
   if (id != null) return RdWorkTarget.song(id);
   if (work.key == 'loose') return const RdWorkTarget.skip();
-  return rdNewWorkTarget(plan, work);
+  return rdNewWorkTarget(plan, work, d);
 }
 
 /// [work] as a new Werk (also one found in Attendix but chosen "Als neues
 /// Werk anlegen"): its number from [_numbersOf]; in a Sammlung its Kürzel.
-RdWorkTarget rdNewWorkTarget(RdImportPlan plan, RdImportWork work) {
+RdWorkTarget rdNewWorkTarget(RdImportPlan plan, RdImportWork work, [RdImportDecisions d = const RdImportDecisions()]) {
   // A Werk found in Attendix has its name as title: a new one is named after the folder.
   final parsed = rdParseWorkName(work.folderName).title;
   final name = work.match.songId == null && work.title.isNotEmpty
       ? work.title
       : (parsed.isEmpty ? work.folderName : parsed);
-  final number = _numbersOf(plan)[work.key];
+  // Its own number typed by hand is not in the way of its proposal.
+  final own = d.targets[work.key];
+  final number = _numbersOf(plan, own != null && own.isNew ? d.copyWith(targets: {...d.targets}..remove(work.key)) : d)[work.key];
   return RdWorkTarget.create(name: name, number: number, prefix: number == null ? plan.newPrefix : plan.newPrefix ?? work.prefix);
 }
 
-/// [rdNewWorkTarget] with the decisions [d]: when another new Werk of the
-/// import took its number (by hand), the next free one after the highest in
-/// a Sammlung with a Kürzel, otherwise none.
-RdWorkTarget rdNewWorkTargetWith(RdImportPlan plan, RdImportDecisions d, RdImportWork work) {
-  final t = rdNewWorkTarget(plan, work);
-  final n = t.number;
-  if (n == null) return t;
-  final used = rdImportUsedNumbers(plan, d, exceptKey: work.key);
-  final prefix = t.prefix ?? plan.newPrefix;
-  if (!used.contains(rdImportNumberKey(prefix, n))) return t;
-  final kuerzel = plan.newPrefix?.trim() ?? '';
-  return RdWorkTarget.create(name: t.name!, number: kuerzel.isEmpty ? null : rdImportNextNumber(used, kuerzel), prefix: t.prefix);
-}
-
-/// Numbers in use in the group and those the other new Werke of the import
-/// take with [d] ([rdImportNumberKey]); [exceptKey]'s own left out.
+/// Numbers in use in the group and those the other Werke of the import take
+/// as new Werke with [d] ([rdImportNumberKey]); [exceptKey]'s own left out.
 Set<String> rdImportUsedNumbers(RdImportPlan plan, RdImportDecisions d, {String? exceptKey}) => {
-      ...plan.takenNumbers,
-      for (final s in plan.songs.values)
-        if (s.number != null) rdImportNumberKey(s.prefix, s.number!),
+      ..._groupNumbers(plan),
       for (final w in plan.works)
         if (w.key != exceptKey && w.key != 'loose')
           if (rdTargetOf(plan, d, w) case RdWorkTarget(isNew: true, :final int number, :final prefix))
             rdImportNumberKey(prefix ?? plan.newPrefix, number),
+    };
+
+/// Numbers in use anywhere in the group.
+Set<String> _groupNumbers(RdImportPlan plan) => {
+      ...plan.takenNumbers,
+      for (final s in plan.songs.values)
+        if (s.number != null) rdImportNumberKey(s.prefix, s.number!),
     };
 
 /// The number after the highest one with [prefix] in [used].
@@ -1527,7 +1520,8 @@ int rdImportNextNumber(Set<String> used, String prefix) {
 
 /// Why [input] cannot be the number of [work] as a new Werk with Kürzel
 /// [prefix] and the decisions [d], or null when it can (also empty: no
-/// number, except in a Sammlung with a Kürzel).
+/// number, except in a Sammlung with a Kürzel). A number another Werk of
+/// the import has now is taken too: it would lose it without notice.
 RdImportNumberProblem? rdImportNumberProblem(RdImportPlan plan, RdImportDecisions d, RdImportWork work, String input, {String? prefix}) {
   final text = _withoutKuerzel(input, prefix);
   if (text.isEmpty) return (plan.newPrefix?.trim() ?? '').isEmpty ? null : RdImportNumberProblem.required;
@@ -1549,49 +1543,70 @@ String _withoutKuerzel(String input, String? prefix) {
 
 enum RdImportNumberProblem { required, invalid, taken }
 
-/// Numbers of new Werke. Into a Sammlung with a Kürzel: on from its highest
-/// number, in the order of the Werke (folder numbers only sort them).
-/// Otherwise the folder numbers still free (the first keeps a number twice
-/// in the folders); the others stay without. Werke found in Attendix come
-/// after all new ones (a number for when one is made new by hand). Once per
-/// plan.
-final _numbers = Expando<Map<String, int?>>();
+/// Numbers of new Werke with the decisions [d]. Numbers chosen for a new
+/// Werk (by hand, or kept when the plan changed with the KI) are kept free;
+/// those Werke are not numbered again. Into a Sammlung with a Kürzel: on
+/// from its highest number, in the order of the Werke (folder numbers only
+/// sort them). Otherwise the folder numbers still free (the first keeps a
+/// number twice in the folders); the others stay without. Werke found in
+/// Attendix come after all new ones (a number for when one is made new by
+/// hand). Cached per plan and chosen numbers.
+final _numbers = Expando<Map<String, Map<String, int?>>>();
 
-Map<String, int?> _numbersOf(RdImportPlan plan) => _numbers[plan] ??= () {
-      final used = {
-        ...plan.takenNumbers,
-        for (final s in plan.songs.values)
-          if (s.number != null) rdImportNumberKey(s.prefix, s.number!),
-      };
-      final numbers = <String, int?>{};
-      final without = <RdImportWork>[];
-      final prefix = plan.newPrefix?.trim() ?? '';
-      final works = [
-        for (final w in plan.works)
-          if (w.key != 'loose' && w.match.songId == null) w,
-        for (final w in plan.works)
-          if (w.key != 'loose' && w.match.songId != null) w,
-      ];
-      for (final w in works) {
-        final n = prefix.isEmpty ? w.number : null;
-        if (n != null && used.add(rdImportNumberKey(plan.newPrefix ?? w.prefix, n))) {
-          numbers[w.key] = n;
-        } else {
-          numbers[w.key] = null;
-          without.add(w);
-        }
+/// The last numbers per targets map: every Werk of one build asks with the same.
+final _numbersByTargets = Expando<(RdImportPlan, Map<String, int?>)>();
+
+Map<String, int?> _numbersOf(RdImportPlan plan, RdImportDecisions d) {
+  final last = _numbersByTargets[d.targets];
+  if (last != null && identical(last.$1, plan)) return last.$2;
+  final chosen = <String, String>{
+    for (final e in d.targets.entries)
+      if (e.value case RdWorkTarget(isNew: true, :final int number, :final prefix))
+        if (e.key != 'loose' && plan.work(e.key) != null) e.key: rdImportNumberKey(prefix ?? plan.newPrefix, number),
+  };
+  final cache = _numbers[plan] ??= {};
+  final signature = (chosen.entries.map((e) => '${e.key}=${e.value}').toList()..sort()).join('\n');
+  final hit = cache[signature];
+  if (hit != null) {
+    _numbersByTargets[d.targets] = (plan, hit);
+    return hit;
+  }
+
+  final group = _groupNumbers(plan);
+  final used = {...group, ...chosen.values};
+  final numbers = <String, int?>{};
+  final without = <RdImportWork>[];
+  final prefix = plan.newPrefix?.trim() ?? '';
+  final works = [
+    for (final w in plan.works)
+      if (w.key != 'loose' && !chosen.containsKey(w.key) && w.match.songId == null) w,
+    for (final w in plan.works)
+      if (w.key != 'loose' && !chosen.containsKey(w.key) && w.match.songId != null) w,
+  ];
+  for (final w in works) {
+    final n = prefix.isEmpty ? w.number : null;
+    if (n != null && used.add(rdImportNumberKey(plan.newPrefix ?? w.prefix, n))) {
+      numbers[w.key] = n;
+    } else {
+      without.add(w);
+    }
+  }
+  if (prefix.isNotEmpty) {
+    var next = rdImportNextNumber(group, prefix);
+    for (final w in without) {
+      while (!used.add(rdImportNumberKey(prefix, next))) {
+        next++;
       }
-      if (prefix.isNotEmpty && without.isNotEmpty) {
-        var next = rdImportNextNumber(used, prefix);
-        for (final w in without) {
-          numbers[w.key] = next++;
-        }
-      }
-      return numbers;
-    }();
+      numbers[w.key] = next++;
+    }
+  }
+  if (cache.length >= 32) cache.clear();
+  _numbersByTargets[d.targets] = (plan, numbers);
+  return cache[signature] = numbers;
+}
 
 RdWorkTarget rdTargetOf(RdImportPlan plan, RdImportDecisions d, RdImportWork work) =>
-    d.targets[work.key] ?? rdDefaultTarget(plan, work);
+    d.targets[work.key] ?? rdDefaultTarget(plan, work, d);
 
 /// Chosen Fassung of [work]; null = all files.
 String? rdFassungOf(RdImportDecisions d, RdImportWork work) {
