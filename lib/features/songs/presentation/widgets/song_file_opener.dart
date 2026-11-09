@@ -7,11 +7,13 @@ import '../../../../data/models/song/song.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/sheets/image_viewer_sheet.dart';
 import '../utils/song_utils.dart';
+import 'docx_viewer_page.dart';
 import 'pdf_viewer_page.dart';
 import 'pdf_viewer_sheet.dart';
 import '../../../../l10n/l10n.dart';
 
-/// Open a song file: PDFs and images in the in-app viewers, everything else
+/// Open a song file: PDFs, images (and in Beta Word files) in the in-app
+/// viewers, everything else
 /// externally (Ionic `Utils.openFileNative`).
 ///
 /// REDESIGN: the full-screen PDF viewer (scrolling, page mode) belongs to
@@ -24,6 +26,9 @@ Future<void> openSongFile(BuildContext context, SongFile file) async {
     } else {
       await showPdfViewerSheet(context, url: file.url, fileName: file.fileName);
     }
+  } else if (RedesignRoutes.active && SongUtils.isDocx(file)) {
+    // DOCX_VIEWER: Word files in the app (Beta).
+    await showDocxViewer(context, url: file.url, fileName: file.fileName);
   } else if (SongUtils.isImage(file)) {
     await showImageViewerSheet(context, url: file.url, fileName: file.fileName);
   } else {
@@ -45,7 +50,9 @@ Future<void> openSongFileExternally(
 }) async {
   if (Uri.tryParse(file.url) == null) return;
   if (NativeFileService.isInstalledWebApp) {
-    if (SongUtils.isPdf(file) || SongUtils.isImage(file)) {
+    if (SongUtils.isPdf(file) ||
+        SongUtils.isImage(file) ||
+        (RedesignRoutes.active && SongUtils.isDocx(file))) {
       await openSongFile(context, file);
     } else {
       await showFileNoPreviewDialog(context,

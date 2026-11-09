@@ -37,6 +37,14 @@ class SongUtils {
         ['png', 'jpg', 'jpeg', 'gif', 'webp'].contains(_extension(file.fileName));
   }
 
+  /// Word files (.docx; not the old binary .doc).
+  static bool isDocx(SongFile file) {
+    final type = file.fileType.toLowerCase();
+    return type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+        type == 'docx' ||
+        _extension(file.fileName) == 'docx';
+  }
+
   static bool isAudio(SongFile file) {
     final type = file.fileType.toLowerCase();
     return type.startsWith('audio/') ||

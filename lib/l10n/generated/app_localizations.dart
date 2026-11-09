@@ -31390,6 +31390,24 @@ abstract class AppLocalizations {
   /// **'Unsicher erkannt – bitte prüfen'**
   String get songsFlutterDetectUnsure;
 
+  /// songs.flutter.docxEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Das Dokument ist leer.'**
+  String get songsFlutterDocxEmpty;
+
+  /// songs.flutter.docxLoadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Dokument konnte nicht geladen werden'**
+  String get songsFlutterDocxLoadFailed;
+
+  /// songs.flutter.docxLoading
+  ///
+  /// In de, this message translates to:
+  /// **'Dokument wird geladen...'**
+  String get songsFlutterDocxLoading;
+
   /// songs.flutter.downloadFileFailed
   ///
   /// In de, this message translates to:

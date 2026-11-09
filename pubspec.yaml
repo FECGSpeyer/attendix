@@ -46,6 +46,8 @@ dependencies:
 
   # ZIP
   archive: ^4.0.9
+  # DOCX_VIEWER: reads Word files in the app (already used transitively)
+  xml: ^7.1.0
 
   # SHA-256 of the Gemeinde App connection key (already used transitively)
   crypto: ^3.0.6
