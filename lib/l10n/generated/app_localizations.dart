@@ -31282,6 +31282,18 @@ abstract class AppLocalizations {
   /// **'Dateien'**
   String get songsFiles;
 
+  /// songs.flutter.aiReading
+  ///
+  /// In de, this message translates to:
+  /// **'Die KI ordnet die Dateien zu …'**
+  String get songsFlutterAiReading;
+
+  /// songs.flutter.aiSuggested
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschlag der KI – bitte prüfen'**
+  String get songsFlutterAiSuggested;
+
   /// songs.flutter.copiesCount
   ///
   /// In de, this message translates to:
@@ -31420,6 +31432,12 @@ abstract class AppLocalizations {
   /// **'Menü'**
   String get songsFlutterMenu;
 
+  /// songs.flutter.newGroupFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Gruppe „{name}“ konnte nicht angelegt werden'**
+  String songsFlutterNewGroupFailed(Object name);
+
   /// songs.flutter.nextPage
   ///
   /// In de, this message translates to:
@@ -31539,6 +31557,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Hochladen'**
   String get songsFlutterReviewUpload;
+
+  /// songs.flutter.severalGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Geht an jede dieser Gruppen'**
+  String get songsFlutterSeveralGroups;
 
   /// songs.flutter.showAsTab
   ///

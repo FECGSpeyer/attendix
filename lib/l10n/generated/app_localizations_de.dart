@@ -19492,6 +19492,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsFiles => 'Dateien';
 
   @override
+  String get songsFlutterAiReading => 'Die KI ordnet die Dateien zu …';
+
+  @override
+  String get songsFlutterAiSuggested => 'Vorschlag der KI – bitte prüfen';
+
+  @override
   String songsFlutterCopiesCount(Object count) {
     return '$count Kopien';
   }
@@ -19577,6 +19583,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsFlutterMenu => 'Menü';
 
   @override
+  String songsFlutterNewGroupFailed(Object name) {
+    return 'Die Gruppe „$name“ konnte nicht angelegt werden';
+  }
+
+  @override
   String get songsFlutterNextPage => 'Nächste Seite';
 
   @override
@@ -19642,6 +19653,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get songsFlutterReviewUpload => 'Hochladen';
+
+  @override
+  String get songsFlutterSeveralGroups => 'Geht an jede dieser Gruppen';
 
   @override
   String get songsFlutterShowAsTab => 'Als Tab anzeigen';

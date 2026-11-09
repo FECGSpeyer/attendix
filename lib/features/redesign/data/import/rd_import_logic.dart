@@ -588,6 +588,8 @@ String? rdImportQuestionKey(String fileName, {String? workName}) {
 }
 
 /// [rdImportQuestionKey] as written in the file name ("Sax", "фл").
+String? rdImportQuestionLabel(String fileName, {String? workName}) => _questionLabel(fileName, workName: workName);
+
 String? _questionLabel(String fileName, {String? workName}) {
   final term = InstrumentMatcher.partTerm(fileName, workName: workName);
   if (term == null) return null;
@@ -870,6 +872,23 @@ class RdImportPlanCache {
   final Map<String, RdWorkMatch> _matches = {};
   final Map<String, ({FileCategoryGuess guess, String? newGroup, List<RdImportCategory> several})> _files = {};
 }
+
+/// The part of a single file [fileName] (no folders) read as the import
+/// reads it ([_readName]): used by the upload on the Werk page.
+({FileCategoryGuess guess, String? newGroup, List<RdImportCategory> several}) rdImportReadName(
+  String fileName, {
+  required List<InstrumentInfo> instruments,
+  required bool isChoir,
+  required String workName,
+}) =>
+    _readName(
+      RdImportEntry(path: fileName, size: 0),
+      '',
+      instruments,
+      isChoir,
+      {for (final g in instruments) g.name.trim().toLowerCase()},
+      workName,
+    );
 
 /// The part of [e] read from its name (or its folder's), and the new group
 /// a known instrument without a group in Attendix becomes ("Oboe").
@@ -1612,14 +1631,27 @@ RdImportCategory _decided(
   if (own != null) return own;
   final answer = f.questionKey == null ? null : answers[f.questionKey];
   if (answer != null && !answer.fromPage) {
-    final id = answer.instrumentId;
-    if (id != null && id > InstrumentMatcher.lyricsId) {
-      return RdImportCategory(instrumentId: rdImportSiblingGroup(id, f.name, instruments, workName: workTitle));
-    }
-    if (answer.isSeveral) return _severalOf(answer, f, instruments, isChoir, workTitle);
-    return answer;
+    return rdImportAnswerFor(answer, f, instruments: instruments, isChoir: isChoir, workTitle: workTitle);
   }
   return pageReads[f.path]?.category ?? f.guessed;
+}
+
+/// The part [answer] (to the question of [f]) gives [f]: a group with the
+/// file's own part number ("фл → Flöte 1" puts "фл2.pdf" to Flöte 2), a
+/// part for several groups with the file's own groups.
+RdImportCategory rdImportAnswerFor(
+  RdImportCategory answer,
+  RdImportFile f, {
+  required List<InstrumentInfo> instruments,
+  required bool isChoir,
+  required String workTitle,
+}) {
+  final id = answer.instrumentId;
+  if (id != null && id > InstrumentMatcher.lyricsId) {
+    return RdImportCategory(instrumentId: rdImportSiblingGroup(id, f.name, instruments, workName: workTitle));
+  }
+  if (answer.isSeveral) return _severalOf(answer, f, instruments, isChoir, workTitle);
+  return answer;
 }
 
 /// An answer for several groups as file [f] has it: one answer is given for

@@ -24036,6 +24036,14 @@
   "@songsFiles": {
     "description": "songs.files"
   },
+  "songsFlutterAiReading": "Die KI ordnet die Dateien zu …",
+  "@songsFlutterAiReading": {
+    "description": "songs.flutter.aiReading"
+  },
+  "songsFlutterAiSuggested": "Vorschlag der KI – bitte prüfen",
+  "@songsFlutterAiSuggested": {
+    "description": "songs.flutter.aiSuggested"
+  },
   "songsFlutterCopiesCount": "{count} Kopien",
   "@songsFlutterCopiesCount": {
     "description": "songs.flutter.copiesCount",
@@ -24151,6 +24159,13 @@
   "@songsFlutterMenu": {
     "description": "songs.flutter.menu"
   },
+  "songsFlutterNewGroupFailed": "Die Gruppe „{name}“ konnte nicht angelegt werden",
+  "@songsFlutterNewGroupFailed": {
+    "description": "songs.flutter.newGroupFailed",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "songsFlutterNextPage": "Nächste Seite",
   "@songsFlutterNextPage": {
     "description": "songs.flutter.nextPage"
@@ -24236,6 +24251,10 @@
   "songsFlutterReviewUpload": "Hochladen",
   "@songsFlutterReviewUpload": {
     "description": "songs.flutter.reviewUpload"
+  },
+  "songsFlutterSeveralGroups": "Geht an jede dieser Gruppen",
+  "@songsFlutterSeveralGroups": {
+    "description": "songs.flutter.severalGroups"
   },
   "songsFlutterShowAsTab": "Als Tab anzeigen",
   "@songsFlutterShowAsTab": {
