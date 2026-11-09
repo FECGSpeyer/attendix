@@ -298,6 +298,8 @@ void main() {
     test('stored extension survives a rename without one', () {
       expect(rdStoredExtension(_klar.copyWith(fileName: 'Klarinette neu')), 'pdf');
       expect(rdStoredExtension(const SongFile(fileName: 'Ablauf', fileType: '', url: 'https://x/a')), '');
+      expect(SongFileService.withStoredExtension('Ablauf v1.2', 'Ablauf_123.docx'), 'Ablauf v1.2.docx');
+      expect(SongFileService.withStoredExtension('Ablauf.DOCX', 'Ablauf_123.docx'), 'Ablauf.DOCX');
     });
 
     test('conflicts: same name always, same part for parts, free text only by name', () {

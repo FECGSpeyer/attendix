@@ -313,7 +313,9 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
           debugPrint('[RdSibeliusSync] no work folder: $e');
           return RdSibeliusOpen.noFolder;
         }
-        path = _freePath(dir.path, rdSafePathSegment(file.fileName, fallback: 'Partitur.sib'));
+        // With the stored extension (the app that opens it is picked by it).
+        final name = SongFileService.withStoredExtension(file.fileName, file.storageName ?? Uri.parse(file.url).path);
+        path = _freePath(dir.path, rdSafePathSegment(name, fallback: 'Partitur.sib'));
       }
       final target = File(path);
       try {
@@ -505,7 +507,7 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
         // Replaced or deleted in Attendix meanwhile: keep both versions.
         final copyName = rdSibeliusCopyName(
           checkout.fileName,
-          rdIsWordName(checkout.fileName)
+          rdIsWordName(checkout.path)
               ? l10nWithoutContext.redesignFilesWordCopySuffix
               : l10nWithoutContext.redesignFilesSibeliusCopySuffix,
         );
