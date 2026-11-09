@@ -31,6 +31,10 @@ const Duration rdSibeliusPollInterval = Duration(seconds: 3);
 const Duration rdSibeliusSaveSettle = Duration(seconds: 3);
 const Duration rdSibeliusPartsSettle = Duration(seconds: 6);
 
+/// The plug-in brings Attendix to the front (or starts it) once all parts are
+/// written: parts written shortly before that moment are offered at once.
+const Duration rdSibeliusBroughtToFront = Duration(seconds: 30);
+
 const String _prefsKey = 'rd_sibelius_state_v1';
 
 /// What happened with a save in Sibelius (shown as a toast).
@@ -63,6 +67,13 @@ class RdSibeliusSaveFailed extends RdSibeliusEvent {
 /// (it stays in Downloads › Attendix).
 class RdSibeliusWorkGone extends RdSibeliusEvent {
   const RdSibeliusWorkGone(super.fileName);
+}
+
+/// The plug-in brought Attendix to the front with new [parts]; [fileName] is
+/// their folder. Shown on the Werk page (opened if another page is shown).
+class RdSibeliusPartsReady extends RdSibeliusEvent {
+  RdSibeliusPartsReady(this.parts) : super(parts.folder);
+  final RdSibeliusParts parts;
 }
 
 class RdSibeliusState {
@@ -116,6 +127,12 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
   Future<void>? _loading;
   Timer? _timer;
   AppLifecycleListener? _lifecycle;
+
+  /// When the app came to the front last (ms).
+  int? _resumedAt;
+
+  /// Parts folders a Werk page is showing right now (see [takeParts]).
+  final Set<String> _offered = {};
   Future<void> _scanning = Future<void>.value();
   bool _busy = false;
 
@@ -146,12 +163,18 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
     if (!rdSibeliusSupported) return;
     await _load();
     if (_lifecycle == null) {
-      // Back in the app: failed uploads get another try right away.
-      _lifecycle = AppLifecycleListener(onResume: _retryNow);
-      _retryNow();
+      // Back in the app: failed uploads get another try right away. The
+      // start counts as coming to the front (the plug-in may start the app).
+      _lifecycle = AppLifecycleListener(onResume: _onResume);
+      _onResume();
       return;
     }
     _schedule();
+  }
+
+  void _onResume() {
+    _resumedAt = DateTime.now().millisecondsSinceEpoch;
+    _retryNow();
   }
 
   /// Tries failed uploads again now instead of after their pause.
@@ -531,6 +554,7 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
   /// New PDFs in the parts folders (kept in [state] until taken).
   Future<void> _scanParts(int now) async {
     final next = <String, RdSibeliusParts>{};
+    final ready = <RdSibeliusParts>[];
     final folders = <String, RdSibeliusCheckout>{
       for (final c in _checkouts) '${File(c.path).parent.path}/$rdSibeliusPartsFolder': c,
     };
@@ -558,11 +582,17 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
       // added for a while.
       final newest = paths.map((p) => pdfs[p]!).reduce((a, b) => a > b ? a : b);
       final seen = _pendingParts[entry.key];
+      // The plug-in brings Attendix to the front only after the last part.
+      final resumed = _resumedAt;
+      final window = rdSibeliusBroughtToFront.inMilliseconds;
+      final brought =
+          resumed != null && now - resumed < window && newest <= resumed && resumed - newest < window;
       final settled =
-          seen != null &&
-          seen.$1 == paths.length &&
-          seen.$2 == newest &&
-          now - seen.$3 >= rdSibeliusPartsSettle.inMilliseconds;
+          brought ||
+          (seen != null &&
+              seen.$1 == paths.length &&
+              seen.$2 == newest &&
+              now - seen.$3 >= rdSibeliusPartsSettle.inMilliseconds);
       if (seen == null || seen.$1 != paths.length || seen.$2 != newest) {
         _pendingParts[entry.key] = (paths.length, newest, now);
       }
@@ -577,8 +607,12 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
         songId: entry.value.songId,
         paths: paths,
       );
+      if (brought && state.parts[entry.key] == null) ready.add(next[entry.key]!);
     }
     if (!mapEquals(_partsKeys(next), _partsKeys(state.parts))) state = state.copyWith(parts: next);
+    for (final parts in ready) {
+      _events.add(RdSibeliusPartsReady(parts));
+    }
   }
 
   static Map<String, String> _partsKeys(Map<String, RdSibeliusParts> parts) => {
@@ -590,6 +624,7 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
   Future<({RdSibeliusParts parts, List<PlatformFile> files})?> takeParts(String folder) async {
     final parts = state.parts[folder];
     if (parts == null) return null;
+    _offered.add(folder);
     final files = <PlatformFile>[];
     for (final path in parts.paths) {
       try {
@@ -601,6 +636,13 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
     }
     return (parts: parts, files: files);
   }
+
+  /// Whether a Werk page shows the parts of [folder] (or has them open).
+  bool isOffered(String folder) => _offered.contains(folder);
+
+  /// The Werk page was left before [parts] were answered: offered again
+  /// there.
+  void partsKept(RdSibeliusParts parts) => _offered.remove(parts.folder);
 
   /// The user took over or turned down [parts]: not offered again (only
   /// parts exported later are).
@@ -616,12 +658,17 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
     }
     _partsSince[parts.folder] = newest;
     _pendingParts.remove(parts.folder);
+    _offered.remove(parts.folder);
     state = state.copyWith(parts: {...state.parts}..remove(parts.folder));
     await _save();
   }
 }
 
 final rdSibeliusSyncProvider = NotifierProvider<RdSibeliusSync, RdSibeliusState>(RdSibeliusSync.new);
+
+/// The plug-in as this app installs it: it brings this app to the front.
+Uint8List rdSibeliusPluginOfThisApp() =>
+    rdSibeliusPluginBytes(rdSibeliusPluginFor(rdAttendixAppPath(Platform.resolvedExecutable)));
 
 const String _pluginInstalledKey = 'rd_sibelius_plugin_installed';
 const String _pluginHintDismissedKey = 'rd_sibelius_plugin_hint_dismissed';
@@ -639,7 +686,7 @@ final rdSibeliusPluginInstalledProvider = FutureProvider.autoDispose<bool>((ref)
       if (await plugins.exists()) {
         final file = File('${plugins.path}/$rdSibeliusPluginCategory/$rdSibeliusPluginFileName');
         if (!await file.exists()) return false;
-        final bytes = rdSibeliusPluginBytes();
+        final bytes = rdSibeliusPluginOfThisApp();
         if (!listEquals(await file.readAsBytes(), bytes)) await file.writeAsBytes(bytes, flush: true);
         return true;
       }

@@ -21076,6 +21076,18 @@ abstract class AppLocalizations {
   /// **'↑ ↓ Zeile wechseln · Umschalt+↑↓ mehrere auswählen · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen · ? diese Übersicht'**
   String redesignFilesShortcutsHelp(Object mod);
 
+  /// redesign.files.sibeliusColFile
+  ///
+  /// In de, this message translates to:
+  /// **'Datei'**
+  String get redesignFilesSibeliusColFile;
+
+  /// redesign.files.sibeliusColReplaces
+  ///
+  /// In de, this message translates to:
+  /// **'Ersetzt'**
+  String get redesignFilesSibeliusColReplaces;
+
   /// redesign.files.sibeliusCopySuffix
   ///
   /// In de, this message translates to:
@@ -21109,7 +21121,7 @@ abstract class AppLocalizations {
   /// redesign.files.sibeliusIntro
   ///
   /// In de, this message translates to:
-  /// **'Attendix legt „{name}“ in „Downloads › Attendix Noten“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.'**
+  /// **'Attendix legt „{name}“ in „Downloads › Attendix Noten“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.\n\nTipp: In Sibelius unter Einstellungen (⌘,) › „Keyboard Shortcuts“ kannst du dem Plugin ein Tastenkürzel geben, z. B. ⌘⇧S: bei „Tab or category“ „Plug-ins“ wählen, bei „Feature“ „Stimmen für Attendix exportieren“, dann „Add“. Sibelius fragt, ob es „Speichern unter“ dafür abgeben soll.'**
   String redesignFilesSibeliusIntro(Object name);
 
   /// redesign.files.sibeliusIntroTitle
@@ -21145,7 +21157,7 @@ abstract class AppLocalizations {
   /// redesign.files.sibeliusPartNew
   ///
   /// In de, this message translates to:
-  /// **'neu'**
+  /// **'Nichts, neu dazu'**
   String get redesignFilesSibeliusPartNew;
 
   /// redesign.files.sibeliusPartNone
@@ -21154,17 +21166,11 @@ abstract class AppLocalizations {
   /// **'Ohne Zuordnung'**
   String get redesignFilesSibeliusPartNone;
 
-  /// redesign.files.sibeliusPartReplaces
+  /// redesign.files.sibeliusPartsApplyCount
   ///
   /// In de, this message translates to:
-  /// **'ersetzt {files}'**
-  String redesignFilesSibeliusPartReplaces(Object files);
-
-  /// redesign.files.sibeliusPartsApply
-  ///
-  /// In de, this message translates to:
-  /// **'Übernehmen'**
-  String get redesignFilesSibeliusPartsApply;
+  /// **'{count, plural, =0 {Übernehmen} one {1 Stimme übernehmen} other {{count} Stimmen übernehmen}}'**
+  String redesignFilesSibeliusPartsApplyCount(num count);
 
   /// redesign.files.sibeliusPartsMessage
   ///
@@ -21225,6 +21231,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'„{name}“ wurde in Attendix inzwischen geändert oder gelöscht. Deine Fassung aus Sibelius liegt jetzt als „{copy}“ dabei.'**
   String redesignFilesSibeliusSavedAsCopy(Object name, Object copy);
+
+  /// redesign.files.sibeliusShortcutTip
+  ///
+  /// In de, this message translates to:
+  /// **'Eigenes Tastenkürzel für das Attendix-Plugin, z. B. ⌘⇧S: Einstellungen (⌘,) › „Keyboard Shortcuts“, bei „Tab or category“ „Plug-ins“ wählen, bei „Feature“ „Stimmen für Attendix exportieren“, dann „Add“.'**
+  String get redesignFilesSibeliusShortcutTip;
+
+  /// redesign.files.sibeliusShortcutTitle
+  ///
+  /// In de, this message translates to:
+  /// **'In Sibelius'**
+  String get redesignFilesSibeliusShortcutTitle;
 
   /// redesign.files.sibeliusUploadedLater
   ///

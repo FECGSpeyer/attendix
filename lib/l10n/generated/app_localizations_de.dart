@@ -13109,6 +13109,12 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignFilesSibeliusColFile => 'Datei';
+
+  @override
+  String get redesignFilesSibeliusColReplaces => 'Ersetzt';
+
+  @override
   String get redesignFilesSibeliusCopySuffix => '(aus Sibelius)';
 
   @override
@@ -13126,7 +13132,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String redesignFilesSibeliusIntro(Object name) {
-    return 'Attendix legt „$name“ in „Downloads › Attendix Noten“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.';
+    return 'Attendix legt „$name“ in „Downloads › Attendix Noten“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.\n\nTipp: In Sibelius unter Einstellungen (⌘,) › „Keyboard Shortcuts“ kannst du dem Plugin ein Tastenkürzel geben, z. B. ⌘⇧S: bei „Tab or category“ „Plug-ins“ wählen, bei „Feature“ „Stimmen für Attendix exportieren“, dann „Add“. Sibelius fragt, ob es „Speichern unter“ dafür abgeben soll.';
   }
 
   @override
@@ -13149,18 +13155,22 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignFilesSibeliusPartNew => 'neu';
+  String get redesignFilesSibeliusPartNew => 'Nichts, neu dazu';
 
   @override
   String get redesignFilesSibeliusPartNone => 'Ohne Zuordnung';
 
   @override
-  String redesignFilesSibeliusPartReplaces(Object files) {
-    return 'ersetzt $files';
+  String redesignFilesSibeliusPartsApplyCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Stimmen übernehmen',
+      one: '1 Stimme übernehmen',
+      zero: 'Übernehmen',
+    );
+    return '$_temp0';
   }
-
-  @override
-  String get redesignFilesSibeliusPartsApply => 'Übernehmen';
 
   @override
   String redesignFilesSibeliusPartsMessage(num count, Object work) {
@@ -13210,6 +13220,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String redesignFilesSibeliusSavedAsCopy(Object name, Object copy) {
     return '„$name“ wurde in Attendix inzwischen geändert oder gelöscht. Deine Fassung aus Sibelius liegt jetzt als „$copy“ dabei.';
   }
+
+  @override
+  String get redesignFilesSibeliusShortcutTip =>
+      'Eigenes Tastenkürzel für das Attendix-Plugin, z. B. ⌘⇧S: Einstellungen (⌘,) › „Keyboard Shortcuts“, bei „Tab or category“ „Plug-ins“ wählen, bei „Feature“ „Stimmen für Attendix exportieren“, dann „Add“.';
+
+  @override
+  String get redesignFilesSibeliusShortcutTitle => 'In Sibelius';
 
   @override
   String redesignFilesSibeliusUploadedLater(Object name) {
