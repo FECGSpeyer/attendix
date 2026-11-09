@@ -168,7 +168,8 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
           defaultTargetPlatform == TargetPlatform.android);
 
   /// Mac (and other desktops): print straight from the app (the macOS share
-  /// menu has no print), next to "open externally".
+  /// menu has no print). "Open externally" stays only as the fallback when
+  /// loading failed.
   static bool get _canPrintDirectly =>
       !kIsWeb &&
       (defaultTargetPlatform == TargetPlatform.macOS ||
@@ -247,19 +248,18 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                 onPressed: _bytes == null ? null : () => _share(button),
               ),
             )
-          else ...[
-            if (_canPrintDirectly && _error == null)
-              IconButton(
-                icon: const Icon(Icons.print_outlined),
-                tooltip: context.l10n.redesignWorkFilePrint,
-                onPressed: _bytes == null ? null : _print,
-              ),
+          else if (_canPrintDirectly && _error == null)
+            IconButton(
+              icon: const Icon(Icons.print_outlined),
+              tooltip: context.l10n.redesignWorkFilePrint,
+              onPressed: _bytes == null ? null : _print,
+            )
+          else
             IconButton(
               icon: const Icon(Icons.open_in_new),
               tooltip: context.l10n.coreFlutterOpenExternally,
               onPressed: _openExternally,
             ),
-          ],
         ],
       ),
       body: Stack(
