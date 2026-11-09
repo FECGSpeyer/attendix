@@ -17,16 +17,18 @@ import '../rd_widgets.dart';
 import '../work/rd_work_file_actions.dart' show rdOpenWorkFile;
 
 /// REDESIGN: "Aktuell" of the Werke tab (canvas "Aktuelle Noten im
-/// Werke-Tab", variant A): one row of cards with the Werke a member plays
-/// right now ([rdCurrentWorkCards]). A tap opens the own part directly
-/// ([rdOpenCurrentWork]); "Alle als PDF" puts every own part into one PDF.
+/// Werke-Tab", variant A): one row of cards with the Werke played right now
+/// ([rdCurrentWorkCards]), for members and leads. A tap opens the own part
+/// directly, without a group the score ([rdOpenCurrentWork], like the top of
+/// the Werk page); "Alle als PDF" puts all of them into one PDF.
 /// On the desktop (list next to the Werk) ‹ › page through the row.
 class RdCurrentWorksStrip extends ConsumerStatefulWidget {
   const RdCurrentWorksStrip({super.key, required this.works, required this.ownGroup, required this.choir});
 
   final List<RdCurrentWork> works;
 
-  /// The member's own group (null: none yet, every card opens the Werk).
+  /// The viewer's own group (null: none, e.g. the conductor; the cards open
+  /// the score then).
   final Group? ownGroup;
   final bool choir;
 
@@ -50,10 +52,9 @@ class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
   }
 
   List<SongPrintEntry> _printable() => [
-    if (widget.ownGroup?.id case final groupId?)
-      for (final w in widget.works)
-        for (final f in rdMemberPartFiles(w.song, groupId, choir: widget.choir))
-          if (rdIsNotes(f) && (SongUtils.isPdf(f) || SongUtils.isImage(f))) SongPrintEntry(song: w.song, file: f),
+    for (final w in widget.works)
+      for (final f in rdCurrentWorkFiles(w.song, widget.ownGroup?.id, choir: widget.choir))
+        if (SongUtils.isPdf(f) || SongUtils.isImage(f)) SongPrintEntry(song: w.song, file: f),
   ];
 
   Future<void> _openAll(List<SongPrintEntry> entries) async {
@@ -62,7 +63,7 @@ class _RdCurrentWorksStripState extends ConsumerState<RdCurrentWorksStrip> {
     setState(() => _printing = true);
     try {
       final date = DateTime.now().toIso8601String().substring(0, 10);
-      final name = widget.ownGroup?.name ?? '';
+      final name = widget.ownGroup?.name ?? l10n.redesignWorkScore;
       final result = await ref.read(songPrintServiceProvider).printEntries(entries, 'Noten_${name}_$date.pdf');
       if (!mounted || result == null) return;
       if (result.pageCount == 0) {
@@ -193,8 +194,12 @@ class _CurrentCard extends ConsumerWidget {
     final song = work.song;
     final number = song.fullNumber;
     final when = rdCurrentWorkWhen(l10n, work);
-    final part = ownGroup != null && rdMemberPartFiles(song, ownGroup!.id, choir: choir).any(rdIsNotes);
-    final foot = part ? l10n.redesignWorksStatusPart : l10n.redesignWorksCurrentNoPart;
+    final part = rdCurrentWorkFiles(song, ownGroup?.id, choir: choir).isNotEmpty;
+    final foot = !part
+        ? l10n.redesignWorksCurrentNoPart
+        : ownGroup == null
+        ? l10n.redesignWorkScore
+        : l10n.redesignWorksStatusPart;
     void open() => rdOpenCurrentWork(context, ref, song, ownGroup?.id, choir: choir);
     // One label for the whole card; the tap stays reachable for screen
     // readers (the excluded InkWell no longer offers it).
@@ -283,8 +288,14 @@ String rdCurrentWorkWhen(AppLocalizations l10n, RdCurrentWork work) {
   return played == null ? '' : l10n.redesignWorksCurrentLast(DateFormat.MMMd(locale).format(played));
 }
 
-/// A tap on a current Werk: the own part when it is one file, else the
-/// Werk page (no part, or several files to pick from).
+/// What a card of [song] stands for: the Noten of the own part, without a
+/// group ([groupId] null, e.g. the conductor) the score.
+List<SongFile> rdCurrentWorkFiles(Song song, int? groupId, {required bool choir}) => groupId == null
+    ? [if (rdScore(song) case final score?) score]
+    : rdMemberPartFiles(song, groupId, choir: choir).where(rdIsNotes).toList();
+
+/// A tap on a current Werk: the own part (without a group the score) when
+/// it is one file, else the Werk page (none, or several files to pick from).
 Future<void> rdOpenCurrentWork(
   BuildContext context,
   WidgetRef ref,
@@ -292,7 +303,8 @@ Future<void> rdOpenCurrentWork(
   int? groupId, {
   required bool choir,
 }) async {
-  final file = rdSingleOwnNotes(song, groupId, choir: choir);
+  final files = rdCurrentWorkFiles(song, groupId, choir: choir);
+  final file = files.length == 1 ? files.single : null;
   if (file != null) return rdOpenWorkFile(context, ref, song, file);
   if (song.id != null) RdSplitScope.open(context, RedesignRoutes.work(song.id!));
 }

@@ -709,8 +709,11 @@ void main() {
       await _settle(tester);
 
       expect(find.text('Nach Stimme'), findsNothing);
-      // Leads have the Termine tab: no "Aktuell" in the Werke list.
-      expect(find.text('Aktuell'), findsNothing);
+      // "Aktuell" for leads too: without a group of their own the score.
+      expect(find.text('Aktuell'), findsOneWidget);
+      final cards = find.byKey(const Key('rd-works-current'));
+      expect(find.descendant(of: cards, matching: find.text('Partitur')), findsOneWidget);
+      expect(find.descendant(of: cards, matching: find.text('Keine Stimme')), findsOneWidget);
       expect(find.text('ohne Noten'), findsOneWidget);
       // A single missing part is normal: no pill in the list.
       expect(find.text('Klarinette fehlt'), findsNothing);
@@ -727,8 +730,8 @@ void main() {
       await _settle(tester);
 
       expect(find.text('Filter · 1'), findsOneWidget);
-      expect(find.text('Festliche Ouvertüre'), findsNothing); // has all its Noten
-      expect(find.text('Festliche Ouvertüre, Ave verum corpus'), findsNothing); // no Termine for leads
+      // Has all its Noten: only its card in "Aktuell" is left.
+      expect(find.byKey(const ValueKey('rd-work-5')), findsNothing);
       expect(find.text('Noch nie gespielt · Kirche'), findsNWidgets(2));
       // The sort can be removed above the list.
       await tester.tap(find.bySemanticsLabel('Sortierung „Am längsten nicht gespielt“ entfernen'));
