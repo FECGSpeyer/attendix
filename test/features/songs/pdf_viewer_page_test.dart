@@ -84,6 +84,15 @@ void main() {
     expect(opener, contains('showPdfViewer(context'));
   });
 
+  test('phones and tablets share the PDF (print from the share sheet)', () {
+    final source = File('lib/features/songs/presentation/widgets/pdf_viewer_page.dart').readAsStringSync();
+    expect(source, contains('Share.shareXFiles('));
+    expect(source, contains("mimeType: 'application/pdf'"));
+    expect(source, contains('Icons.adaptive.share'));
+    // Mac: print directly (its share menu has no print).
+    expect(source, contains('Printing.layoutPdf('));
+  });
+
   test('the normal app keeps its PDF viewer, the new design opens the page', () {
     final opener = File('lib/features/songs/presentation/widgets/song_file_opener.dart').readAsStringSync();
     expect(opener, contains('if (RedesignRoutes.active) {'));
