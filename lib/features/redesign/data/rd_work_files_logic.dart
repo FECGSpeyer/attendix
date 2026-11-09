@@ -227,3 +227,14 @@ Set<String> rdRangeSelection(List<String> order, String anchor, String target) {
   final to = a < b ? b : a;
   return order.sublist(from, to + 1).toSet();
 }
+
+/// Extension of the file as stored (storage name, URL, then display name;
+/// the display name may be renamed without one), lower case, '' if none.
+String rdStoredExtension(SongFile file) {
+  for (final name in [file.storageName ?? '', Uri.tryParse(file.url)?.path ?? '', file.fileName]) {
+    final last = name.split('/').last;
+    final dot = last.lastIndexOf('.');
+    if (dot > 0 && dot < last.length - 1) return last.substring(dot + 1).toLowerCase();
+  }
+  return '';
+}

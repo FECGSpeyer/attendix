@@ -635,11 +635,15 @@ class SongFileService {
     final taken = <Object?>{
       for (final f in files) ...[f['storageName'], f['fileName']],
     };
+    // Type of the stored object: the display name may have been renamed
+    // without its extension ("Ablauf v1.2").
+    final typedName = withStoredExtension(fileName, oldObject);
     final fileId = newStorageName != null && newStorageName.isNotEmpty && !taken.contains(newStorageName)
         ? newStorageName
-        : freeStorageName(fileName, taken);
+        : freeStorageName(typedName, taken);
     final storagePath = 'songs/$tenantId/$songId/$fileId';
-    final extension = PlatformFile(name: fileName, size: 0).extension ?? '';
+    final dot = typedName.lastIndexOf('.');
+    final extension = dot > 0 ? typedName.substring(dot + 1).toLowerCase() : '';
 
     await _supabase.storage.from(_bucketName).uploadBinary(
           storagePath,
@@ -692,6 +696,15 @@ class SongFileService {
       instrumentId: (old['instrumentId'] as num?)?.toInt(),
       note: old['note'] as String?,
     );
+  }
+
+  /// [fileName] ending in the extension of the stored object [storedName]
+  /// (unchanged when it already does or the object has none).
+  static String withStoredExtension(String fileName, String storedName) {
+    final dot = storedName.lastIndexOf('.');
+    if (dot <= 0 || dot == storedName.length - 1) return fileName;
+    final ext = storedName.substring(dot);
+    return fileName.toLowerCase().endsWith(ext.toLowerCase()) ? fileName : '$fileName$ext';
   }
 
   /// Rename a file: only its display name (`fileName`) changes; the storage

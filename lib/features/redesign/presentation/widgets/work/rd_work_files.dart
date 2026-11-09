@@ -41,6 +41,7 @@ import '../../rd_actions.dart';
 import '../import/rd_import_widgets.dart' show rdImportCategoryLabel, rdImportCategoryOptions;
 import 'rd_file_category_sheet.dart';
 import 'rd_sibelius_actions.dart';
+import 'rd_work_file_actions.dart' show rdReplaceWorkFile, rdIsAudioFile;
 import '../rd_widgets.dart';
 
 /// REDESIGN: desktop file workspace of a Werk (shown on wide screens to
@@ -973,6 +974,10 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
                                 rdEditInSibelius(context, ref, widget.data, file);
                               case _RowAction.sibeliusPlugin:
                                 rdInstallSibeliusPlugin(context, ref);
+                              case _RowAction.word:
+                                rdEditInWord(context, ref, widget.data, file);
+                              case _RowAction.replace:
+                                rdReplaceWorkFile(context, ref, _songId, file);
                             }
                           },
                         ),
@@ -1104,7 +1109,7 @@ class _HeaderRow extends StatelessWidget {
   }
 }
 
-enum _RowAction { select, sibelius, sibeliusPlugin, share, download, rename, delete }
+enum _RowAction { select, sibelius, sibeliusPlugin, word, share, download, replace, rename, delete }
 
 enum _ListAction { select, downloadAll }
 
@@ -1268,8 +1273,11 @@ class _FileRow extends StatelessWidget {
                                 l10n.redesignFilesSibeliusPlugin,
                               ),
                           ],
+                          if (rdEditsInWord(file)) _menuItem(_RowAction.word, Icons.edit_note, l10n.redesignFilesWordEdit),
                           _menuItem(_RowAction.share, Icons.ios_share, l10n.redesignWorkShare),
                           _menuItem(_RowAction.download, Icons.download_outlined, l10n.redesignFilesDownload),
+                          if (!rdIsAudioFile(file))
+                            _menuItem(_RowAction.replace, Icons.upload_file_outlined, l10n.redesignFilesReplace),
                           if (rdCanRename(file))
                             _menuItem(_RowAction.rename, Icons.drive_file_rename_outline, l10n.redesignFilesRename),
                           _menuItem(_RowAction.delete, Icons.delete_outline, l10n.redesignFilesDelete, color: p.absent),

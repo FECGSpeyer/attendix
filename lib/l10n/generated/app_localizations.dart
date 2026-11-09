@@ -21019,8 +21019,44 @@ abstract class AppLocalizations {
   /// redesign.files.replace
   ///
   /// In de, this message translates to:
-  /// **'Ersetzen'**
+  /// **'Durch neue Version ersetzen …'**
   String get redesignFilesReplace;
+
+  /// redesign.files.replaceConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Ersetzen'**
+  String get redesignFilesReplaceConfirm;
+
+  /// redesign.files.replaceGone
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ gibt es an diesem Werk nicht mehr.'**
+  String redesignFilesReplaceGone(Object name);
+
+  /// redesign.files.replaceMessage
+  ///
+  /// In de, this message translates to:
+  /// **'„{old}“ wird durch „{picked}“ ersetzt. Name und Stimme bleiben, die bisherige Fassung wird gelöscht.'**
+  String redesignFilesReplaceMessage(Object old, Object picked);
+
+  /// redesign.files.replaceTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Datei ersetzen?'**
+  String get redesignFilesReplaceTitle;
+
+  /// redesign.files.replaceWrongType
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte eine Datei vom gleichen Typ wählen (.{ext}).'**
+  String redesignFilesReplaceWrongType(Object ext);
+
+  /// redesign.files.replaced
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ ersetzt'**
+  String redesignFilesReplaced(Object name);
 
   /// redesign.files.restored
   ///
@@ -21285,6 +21321,48 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Wartet'**
   String get redesignFilesWaiting;
+
+  /// redesign.files.wordCopySuffix
+  ///
+  /// In de, this message translates to:
+  /// **'(aus Word)'**
+  String get redesignFilesWordCopySuffix;
+
+  /// redesign.files.wordEdit
+  ///
+  /// In de, this message translates to:
+  /// **'In Word bearbeiten'**
+  String get redesignFilesWordEdit;
+
+  /// redesign.files.wordNotOpened
+  ///
+  /// In de, this message translates to:
+  /// **'Die Datei ließ sich nicht öffnen. Ist Microsoft Word installiert? Sie liegt in „Downloads › Attendix Noten“.'**
+  String get redesignFilesWordNotOpened;
+
+  /// redesign.files.wordOpened
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ wird in Word geöffnet (bzw. deinem Standardprogramm für .docx). Jedes Speichern als .docx lädt die Datei hier hoch.'**
+  String redesignFilesWordOpened(Object name);
+
+  /// redesign.files.wordSaved
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ aus Word in Attendix gespeichert'**
+  String redesignFilesWordSaved(Object name);
+
+  /// redesign.files.wordSavedAsCopy
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ wurde in Attendix inzwischen geändert oder gelöscht. Deine Fassung aus Word liegt jetzt als „{copy}“ dabei.'**
+  String redesignFilesWordSavedAsCopy(Object name, Object copy);
+
+  /// redesign.files.wordUploadedLater
+  ///
+  /// In de, this message translates to:
+  /// **'Wieder online: „{name}“ aus Word ist jetzt in Attendix gespeichert'**
+  String redesignFilesWordUploadedLater(Object name);
 
   /// redesign.files.zipPreparing
   ///

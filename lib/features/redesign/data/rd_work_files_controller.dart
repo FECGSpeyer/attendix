@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -264,6 +265,17 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
       ),
     );
     _refresh();
+  }
+
+  /// Replaces the content of [file] with [bytes]: name, part and place stay
+  /// ("Durch neue Version ersetzen"). Null when the file is gone meanwhile.
+  Future<SongFile?> replaceContent(SongFile file, Uint8List bytes) async {
+    final replaced = await _serial(
+      _service(),
+      (s) => s.replaceFileContent(songId: _songId, url: file.url, storageName: file.storageName, bytes: bytes),
+    );
+    _refresh();
+    return replaced;
   }
 
   /// Renames a file (see [rdRenamedFileName], [rdCanRename]).
