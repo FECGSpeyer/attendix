@@ -68,8 +68,10 @@ jobs:
 
   build-and-deploy:
     needs: version
-    # Runs when the version job succeeded or was skipped (PRs, other branches).
-    if: ${{ !cancelled() && needs.version.result != 'failure' }}
+    # Runs when the version job succeeded or was skipped (PRs, other branches),
+    # and also when it failed: a missing version bump must not stop the
+    # production deploy (the red version job still shows in the run).
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -79,7 +81,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          # master: the commit with the new version; otherwise the default.
+          # master: the commit with the new version; otherwise (and when the
+          # version job failed) the default commit.
           ref: ${{ needs.version.outputs.sha }}
 
       - name: Setup Flutter
