@@ -6,6 +6,7 @@ import 'package:attendix/core/services/audio_player/audio_player_service.dart';
 import '../../../l10n/l10n.dart';
 import '../../../core/utils/toast_helper.dart';
 import '../../../core/utils/error_message.dart';
+import '../adaptive/app_select.dart';
 
 /// Mini audio player bar. Hidden when no file is loaded.
 ///
@@ -218,39 +219,63 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
   }
 }
 
-/// REDESIGN: toggles 0,8× / 1× (the same speed for every track).
+/// REDESIGN: playback speeds offered by [_SpeedButton] (same for every
+/// track; 0,5×–0,9× to practise along, 1,25× / 1,5× to skim).
+const _kSpeeds = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.25, 1.5];
+
+/// REDESIGN: shows the current speed; a tap opens the speed menu.
 class _SpeedButton extends ConsumerWidget {
   const _SpeedButton({required this.primary});
 
   final Color primary;
 
+  static String _format(double speed) =>
+      '${NumberFormat.decimalPattern(currentIntlLocale()).format(speed)}×';
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n;
-    final slow = ref.watch(audioPlaybackSpeedProvider) < 1;
-    final speed = NumberFormat.decimalPattern(currentIntlLocale()).format(slow ? 0.8 : 1);
+    final current = ref.watch(audioPlaybackSpeedProvider);
+    final changed = current != 1.0;
+    final label = _format(current);
     return Semantics(
       button: true,
-      label: slow ? l10n.redesignWorkNormalSpeed : l10n.redesignWorkSlower,
+      label: label,
       excludeSemantics: true,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(22),
-        onTap: () => ref.read(audioPlayerServiceProvider.notifier).setSpeed(slow ? 1.0 : 0.8),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 48, minHeight: 44),
-          child: Center(
-            child: Container(
-              height: 28,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
-                color: slow ? primary.withValues(alpha: 0.15) : null,
-                border: Border.all(color: slow ? primary : const Color(0x8092949C)),
-              ),
-              child: Text(
-                '$speed×',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: slow ? primary : null),
+      child: Builder(
+        builder: (buttonContext) => InkWell(
+          borderRadius: BorderRadius.circular(22),
+          onTap: () async {
+            final picked = await showAppSelect<double>(
+              context: buttonContext,
+              value: current,
+              options: [
+                for (final speed in _kSpeeds)
+                  AppSelectOption<double>(value: speed, label: _format(speed)),
+              ],
+            );
+            if (picked == null || picked.value == current) return;
+            await ref.read(audioPlayerServiceProvider.notifier).setSpeed(picked.value);
+          },
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minWidth: 48, minHeight: 44),
+            child: Center(
+              child: Container(
+                height: 28,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                  color: changed ? primary.withValues(alpha: 0.15) : null,
+                  border: Border.all(color: changed ? primary : const Color(0x8092949C)),
+                ),
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: changed ? primary : null,
+                  ),
+                ),
               ),
             ),
           ),
