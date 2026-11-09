@@ -76,8 +76,9 @@ App Links to attendix.de are not verified.
   `macos/Runner/GoogleService-Info.plist` if present, otherwise
   `ios/Runner/GoogleService-Info.plist`. The Mac registers its token as
   platform `ios` (`device_tokens` only allows android/ios/web; `send-push`
-  then sends the APNs payload). Push needs `aps-environment` in
-  `macos/Runner/*.entitlements` (Release: production). Live Activities stay
+  then sends the APNs payload). Push needs `aps-environment`, which is only
+  in `macos/Runner/AppStore.entitlements` (production, store signing): local
+  ad hoc builds have no profile and therefore no push. Live Activities stay
   iOS/Android only.
 
 **Alternative without files (CI):** pass the options with `--dart-define`.

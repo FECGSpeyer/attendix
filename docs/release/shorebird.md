@@ -65,14 +65,16 @@ scripts/store_build.sh macos-release <Dart-Defines …>
 #   → build/macos/Build/Products/Release/Attendix.app
 ```
 
-Shorebird liefert nur die `.app`, und zwar unsigniert: Das Skript baut mit
-`CODE_SIGNING_ALLOWED=NO`, weil `keychain-access-groups` sonst ein
-Mac-Entwicklungsprofil (Mac als Gerät im Team registriert) verlangt.
+Shorebird liefert nur die `.app`, und zwar unsigniert (`CODE_SIGNING_ALLOWED=NO`).
+Die Store-Rechte stehen in `macos/Runner/AppStore.entitlements`, nicht in
+`Release.entitlements`: Schlüsselbund-Gruppe und Push (`aps-environment`)
+verlangen ein Profil, mit ihnen scheitert jeder lokale `flutter build macos`
+(ad hoc signiert, Mac nicht als Gerät im Team registriert).
 Signiert wird wie bei iOS über Xcodes Cloud-Signierung (Stephanus-Konto in
 Xcode angemeldet, kein lokales Distribution-Zertifikat nötig):
 
 1. Entitlements auflösen und ad hoc signieren:
-   `sed 's/$(AppIdentifierPrefix)/MXM3YWAKPL./' macos/Runner/Release.entitlements > ent.plist`,
+   `sed 's/$(AppIdentifierPrefix)/MXM3YWAKPL./' macos/Runner/AppStore.entitlements > ent.plist`,
    `codesign --force --deep --sign - Attendix.app`, dann
    `codesign --force --sign - --entitlements ent.plist Attendix.app`.
 2. Ein `Attendix.xcarchive` von Hand anlegen: `Products/Applications/Attendix.app`,

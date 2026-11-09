@@ -117,10 +117,9 @@ case "$target" in
     ;;
   macos-release)
     find_shorebird; flutter_version
-    # Unsigned build: keychain-access-groups would need a Mac development
-    # profile (this Mac registered as a device in the team). The App Store
-    # signature comes later from `xcodebuild -exportArchive`, see
-    # docs/release/shorebird.md.
+    # Unsigned build: the .app is signed afterwards with
+    # macos/Runner/AppStore.entitlements and re-signed for the store by
+    # `xcodebuild -exportArchive`, see docs/release/shorebird.md.
     export FLUTTER_XCODE_CODE_SIGNING_ALLOWED=NO FLUTTER_XCODE_CODE_SIGNING_REQUIRED=NO
     run "$shorebird" release macos "--flutter-version=$fv" -- "${build_args[@]}" "$@"
     ;;
