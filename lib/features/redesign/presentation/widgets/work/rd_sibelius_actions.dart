@@ -15,9 +15,11 @@ import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/song/song.dart';
 import '../../../../../data/models/tenant/tenant.dart';
 import '../../../../../l10n/l10n.dart';
+import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../shared/widgets/adaptive/app_dialog.dart';
 import '../../../data/sibelius/rd_sibelius_logic.dart';
 import '../../../data/sibelius/rd_sibelius_sync.dart';
+import '../rd_widgets.dart';
 
 /// REDESIGN (Mac app): the actions of "In Sibelius bearbeiten" (see
 /// rd_sibelius_logic.dart).
@@ -88,7 +90,7 @@ Future<void> rdEditInSibelius(BuildContext context, WidgetRef ref, SongDetailDat
     if (!context.mounted) return;
     switch (result) {
       case RdSibeliusOpen.opened:
-        break;
+        ToastHelper.showInfo(context, l10n.redesignFilesSibeliusOpened(file.fileName));
       case RdSibeliusOpen.noFolder:
         ToastHelper.showError(context, l10n.redesignFilesSibeliusNoFolder);
       case RdSibeliusOpen.notOpened:
@@ -122,6 +124,7 @@ Future<void> rdInstallSibeliusPlugin(BuildContext context, WidgetRef ref) async 
     if (!context.mounted) return;
     final inPlugins = picked.replaceAll(RegExp(r'/+$'), '').endsWith('/Avid/Sibelius/Plugins');
     if (inPlugins) {
+      unawaited(ref.read(rdSibeliusPluginHintProvider.notifier).markInstalled());
       ToastHelper.showSuccess(context, l10n.redesignFilesSibeliusPluginInstalled);
     } else {
       ToastHelper.showWarning(context, l10n.redesignFilesSibeliusPluginWrongFolder);
@@ -161,3 +164,52 @@ bool rdOpensInSibelius(SongFile file) => rdSibeliusSupported && rdIsSibeliusFile
 /// The service the parts of a Werk are written with (its tenant decides
 /// whether waiting parts belong to the Werk page shown).
 int? rdSongTenantId(WidgetRef ref) => ref.read(songFileServiceProvider).tenantId;
+
+/// "Stimmen direkt aus Sibelius" above the files of a Werk with a Sibelius
+/// score (Mac app), until the plug-in is installed or the hint is closed:
+/// the plug-in is easy to miss otherwise.
+class RdSibeliusPluginHintRow extends ConsumerWidget {
+  const RdSibeliusPluginHintRow({super.key, required this.files});
+
+  final List<SongFile> files;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!rdSibeliusSupported || !files.any(rdIsSibeliusFile)) return const SizedBox.shrink();
+    if (!(ref.watch(rdSibeliusPluginHintProvider).valueOrNull ?? false)) return const SizedBox.shrink();
+    final p = context.rd;
+    final l10n = context.l10n;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: RdGroupedList(
+        children: [
+          RdListRow(
+            leading: RdRowIcon(Icons.extension_outlined, color: p.softText, background: p.soft),
+            title: l10n.redesignFilesSibeliusHintTitle,
+            subtitle: l10n.redesignFilesSibeliusHint,
+            showChevron: false,
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: p.link,
+                    minimumSize: const Size(0, 40),
+                    textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                  onPressed: () => rdInstallSibeliusPlugin(context, ref),
+                  child: Text(l10n.redesignFilesSibeliusHintInstall),
+                ),
+                IconButton(
+                  tooltip: l10n.redesignFilesDismiss,
+                  icon: Icon(Icons.close, size: 20, color: p.text2),
+                  onPressed: () => ref.read(rdSibeliusPluginHintProvider.notifier).dismiss(),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

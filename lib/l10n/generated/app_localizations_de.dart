@@ -13083,6 +13083,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignFilesSibeliusEdit => 'In Sibelius bearbeiten';
 
   @override
+  String get redesignFilesSibeliusHint =>
+      'Mit dem Attendix-Plugin für Sibelius legst du alle Stimmen als PDF ab, Attendix ersetzt sie dann hier.';
+
+  @override
+  String get redesignFilesSibeliusHintInstall => 'Plugin installieren';
+
+  @override
+  String get redesignFilesSibeliusHintTitle => 'Stimmen direkt aus Sibelius';
+
+  @override
   String redesignFilesSibeliusIntro(Object name) {
     return 'Attendix legt „$name“ in „Downloads › Attendix“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.';
   }
@@ -13100,6 +13110,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignFilesSibeliusOpen => 'In Sibelius öffnen';
+
+  @override
+  String redesignFilesSibeliusOpened(Object name) {
+    return '„$name“ wird in Sibelius geöffnet. Jedes Speichern dort lädt die Datei hier hoch.';
+  }
 
   @override
   String get redesignFilesSibeliusPartNew => 'neu';

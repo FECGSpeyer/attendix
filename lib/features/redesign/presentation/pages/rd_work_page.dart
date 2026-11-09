@@ -34,6 +34,7 @@ import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/work/rd_work_file_actions.dart';
 import '../widgets/work/rd_work_files.dart';
+import '../widgets/work/rd_sibelius_actions.dart' show RdSibeliusPluginHintRow;
 import '../../../../core/providers/debug_providers.dart' show effectiveRoleProvider;
 import '../widgets/works/rd_collections_ui.dart';
 
@@ -299,6 +300,7 @@ class RdWorkPage extends ConsumerWidget {
             RdGroupedList(children: [_MissingRow(missing: missing, onUpload: pick)]),
             const SizedBox(height: 16),
           ],
+          RdSibeliusPluginHintRow(files: files),
           RdWorkFiles(data: data, groups: groups),
         ] else
           ..._fileSection(context, ref, data, song, files, groups, recording, groupId, missing, filesState, more, pick),

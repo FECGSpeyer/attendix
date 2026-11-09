@@ -465,3 +465,36 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
 }
 
 final rdSibeliusSyncProvider = NotifierProvider<RdSibeliusSync, RdSibeliusState>(RdSibeliusSync.new);
+
+/// Whether the Werk page shows the hint "Stimmen direkt aus Sibelius" (Mac
+/// app): until the plug-in was installed from here or the hint was closed.
+class RdSibeliusPluginHint extends AsyncNotifier<bool> {
+  static const _installedKey = 'rd_sibelius_plugin_installed';
+  static const _dismissedKey = 'rd_sibelius_plugin_hint_dismissed';
+
+  @override
+  Future<bool> build() async {
+    if (!rdSibeliusSupported) return false;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return !(prefs.getBool(_installedKey) ?? false) && !(prefs.getBool(_dismissedKey) ?? false);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<void> markInstalled() => _set(_installedKey);
+
+  Future<void> dismiss() => _set(_dismissedKey);
+
+  Future<void> _set(String key) async {
+    state = const AsyncData(false);
+    try {
+      await (await SharedPreferences.getInstance()).setBool(key, true);
+    } catch (_) {
+      // Shown again after the next start.
+    }
+  }
+}
+
+final rdSibeliusPluginHintProvider = AsyncNotifierProvider<RdSibeliusPluginHint, bool>(RdSibeliusPluginHint.new);

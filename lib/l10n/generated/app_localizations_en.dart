@@ -12959,6 +12959,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignFilesSibeliusEdit => 'Edit in Sibelius';
 
   @override
+  String get redesignFilesSibeliusHint =>
+      'With the Attendix plug-in for Sibelius you export all parts as PDF, and Attendix replaces them here.';
+
+  @override
+  String get redesignFilesSibeliusHintInstall => 'Install plug-in';
+
+  @override
+  String get redesignFilesSibeliusHintTitle => 'Parts straight from Sibelius';
+
+  @override
   String redesignFilesSibeliusIntro(Object name) {
     return 'Attendix puts “$name” into “Downloads › Attendix” and opens it in Sibelius. Every save in Sibelius uploads it here automatically.\n\nNew parts: in Sibelius choose “Plug-ins › Attendix › Stimmen für Attendix exportieren”. It saves the score and exports all parts as PDF. Attendix then shows you which parts it replaces. Install the plug-in once per Mac.';
   }
@@ -12976,6 +12986,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignFilesSibeliusOpen => 'Open in Sibelius';
+
+  @override
+  String redesignFilesSibeliusOpened(Object name) {
+    return '“$name” is opening in Sibelius. Every save there uploads it here.';
+  }
 
   @override
   String get redesignFilesSibeliusPartNew => 'new';

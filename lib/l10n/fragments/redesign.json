@@ -1013,7 +1013,11 @@
         "sibeliusPluginPick": "Ordner „Plugins“ von Sibelius wählen",
         "sibeliusPluginInstalled": "Plugin installiert. Starte Sibelius neu, dann findest du es unter „Plug-ins › Attendix“.",
         "sibeliusPluginWrongFolder": "Plugin gespeichert. Sibelius lädt Plugins aber nur aus „Library › Application Support › Avid › Sibelius › Plugins“ in deinem Benutzerordner.",
-        "sibeliusPluginFailed": "Das Plugin konnte nicht gespeichert werden: {error}"
+        "sibeliusPluginFailed": "Das Plugin konnte nicht gespeichert werden: {error}",
+        "sibeliusOpened": "„{name}“ wird in Sibelius geöffnet. Jedes Speichern dort lädt die Datei hier hoch.",
+        "sibeliusHintTitle": "Stimmen direkt aus Sibelius",
+        "sibeliusHint": "Mit dem Attendix-Plugin für Sibelius legst du alle Stimmen als PDF ab, Attendix ersetzt sie dann hier.",
+        "sibeliusHintInstall": "Plugin installieren"
       },
       "stats": {
         "title": "Auswertung",
@@ -2578,7 +2582,11 @@
         "sibeliusPluginPick": "Choose the Sibelius “Plugins” folder",
         "sibeliusPluginInstalled": "Plug-in installed. Restart Sibelius, then find it under “Plug-ins › Attendix”.",
         "sibeliusPluginWrongFolder": "Plug-in saved. Sibelius only loads plug-ins from “Library › Application Support › Avid › Sibelius › Plugins” in your home folder.",
-        "sibeliusPluginFailed": "The plug-in could not be saved: {error}"
+        "sibeliusPluginFailed": "The plug-in could not be saved: {error}",
+        "sibeliusOpened": "“{name}” is opening in Sibelius. Every save there uploads it here.",
+        "sibeliusHintTitle": "Parts straight from Sibelius",
+        "sibeliusHint": "With the Attendix plug-in for Sibelius you export all parts as PDF, and Attendix replaces them here.",
+        "sibeliusHintInstall": "Install plug-in"
       },
       "stats": {
         "title": "Insights",

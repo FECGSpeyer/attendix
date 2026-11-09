@@ -21040,6 +21040,24 @@ abstract class AppLocalizations {
   /// **'In Sibelius bearbeiten'**
   String get redesignFilesSibeliusEdit;
 
+  /// redesign.files.sibeliusHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mit dem Attendix-Plugin für Sibelius legst du alle Stimmen als PDF ab, Attendix ersetzt sie dann hier.'**
+  String get redesignFilesSibeliusHint;
+
+  /// redesign.files.sibeliusHintInstall
+  ///
+  /// In de, this message translates to:
+  /// **'Plugin installieren'**
+  String get redesignFilesSibeliusHintInstall;
+
+  /// redesign.files.sibeliusHintTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Stimmen direkt aus Sibelius'**
+  String get redesignFilesSibeliusHintTitle;
+
   /// redesign.files.sibeliusIntro
   ///
   /// In de, this message translates to:
@@ -21069,6 +21087,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'In Sibelius öffnen'**
   String get redesignFilesSibeliusOpen;
+
+  /// redesign.files.sibeliusOpened
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ wird in Sibelius geöffnet. Jedes Speichern dort lädt die Datei hier hoch.'**
+  String redesignFilesSibeliusOpened(Object name);
 
   /// redesign.files.sibeliusPartNew
   ///
