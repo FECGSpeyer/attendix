@@ -19283,6 +19283,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get songsFiles => 'Files';
 
   @override
+  String get songsFlutterAiReading => 'The AI is sorting the files …';
+
+  @override
+  String get songsFlutterAiSuggested => 'Suggested by the AI – please check';
+
+  @override
   String songsFlutterCopiesCount(Object count) {
     return '$count copies';
   }
@@ -19367,6 +19373,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get songsFlutterMenu => 'Menu';
 
   @override
+  String songsFlutterNewGroupFailed(Object name) {
+    return 'The group “$name” could not be created';
+  }
+
+  @override
   String get songsFlutterNextPage => 'Next page';
 
   @override
@@ -19431,6 +19442,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get songsFlutterReviewUpload => 'Upload';
+
+  @override
+  String get songsFlutterSeveralGroups => 'Goes to each of these groups';
 
   @override
   String get songsFlutterShowAsTab => 'Show as tab';

@@ -16,6 +16,8 @@ import 'package:attendix/core/services/zip_service.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/song/song.dart';
+import 'package:attendix/data/models/instrument/instrument.dart';
+import 'package:attendix/features/redesign/data/import/rd_import_ai.dart';
 import 'package:attendix/features/redesign/data/rd_work_files_controller.dart';
 import 'package:attendix/features/redesign/data/rd_work_files_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_work_page.dart';
@@ -140,6 +142,13 @@ class _FakeVision extends PartVisionService {
 /// Records the terms the upload wants to remember.
 class _FakeGroupNotifier extends GroupNotifier {
   final learned = <Map<int, List<String>>>[];
+  final created = <String>[];
+
+  @override
+  Future<Group?> createGroup(Map<String, dynamic> data) async {
+    created.add(data['name'] as String);
+    return TestFactories.createGroup(id: 20 + created.length, name: data['name'] as String);
+  }
 
   @override
   Future<bool> addSynonyms(Map<int, List<String>> terms) async {
@@ -187,7 +196,26 @@ void _desktop(WidgetTester tester) {
   addTearDown(tester.view.reset);
 }
 
-Widget _app(Role role, _FakeFiles files, {Song song = _song, _FakeGroupNotifier? groupNotifier, _FakeVision? vision}) {
+/// `part-suggest`: answers by question key, records the questions asked.
+RdImportAi _fakeAi(Map<String, Map<String, dynamic>> answers, [List<String>? asked]) => RdImportAi((body) async {
+      final questions = [for (final q in body['questions'] as List) (q as Map)['key'] as String];
+      asked?.addAll(questions);
+      return {
+        'answers': [
+          for (final k in questions)
+            if (answers[k] case final a?) {'key': k, ...a},
+        ],
+      };
+    });
+
+Widget _app(
+  Role role,
+  _FakeFiles files, {
+  Song song = _song,
+  _FakeGroupNotifier? groupNotifier,
+  _FakeVision? vision,
+  RdImportAi? ai,
+}) {
   final router = GoRouter(
     initialLocation: '/werke/5',
     routes: [
@@ -222,6 +250,7 @@ Widget _app(Role role, _FakeFiles files, {Song song = _song, _FakeGroupNotifier?
       groupsProvider.overrideWith((ref) async => _groups),
       if (groupNotifier != null) groupNotifierProvider.overrideWith(() => groupNotifier),
       partVisionServiceProvider.overrideWithValue(vision ?? _FakeVision(const {})),
+      rdImportAiProvider.overrideWithValue(ai ?? _fakeAi(const {})),
       currentSelfServicePlayerProvider.overrideWith(
         (ref) async => TestFactories.createPerson(id: 3, tenantId: 7, instrument: 11),
       ),
@@ -667,6 +696,46 @@ void main() {
         'upload Scan_0815.pdf 12 -',
         'upload Scan_0816.pdf 11 -',
         'upload Klarinette 1.pdf 11 -',
+      ]);
+    });
+
+    testWidgets('as in the import: the KI guesses unclear names first, page 1 only the rest, new groups on upload', (
+      tester,
+    ) async {
+      _desktop(tester);
+      final service = _FakeFiles()..picked = [_file('Bfl 1.pdf'), _file('Scan_0815.pdf'), _file('Oboe.pdf')];
+      final vision = _FakeVision({
+        'Scan_0815.pdf': const PartMatch(instrumentId: 11, confidence: MatchConfidence.unsure, byVision: true),
+      });
+      final asked = <String>[];
+      final ai = _fakeAi({
+        'bfl': {'kind': 'group', 'groupId': 12, 'confidence': 'high'},
+        // "Ohne Zuordnung" for a PDF: page 1 decides.
+        'scan': {'kind': 'other', 'confidence': 'high'},
+      }, asked);
+      final groups = _FakeGroupNotifier();
+      await tester.pumpWidget(
+        _app(Role.admin, service, song: const Song(id: 5, name: 'Leer'), vision: vision, ai: ai, groupNotifier: groups),
+      );
+      await _settle(tester);
+      await tester.tap(find.text('Hochladen'));
+      await _settle(tester);
+      // One request for all unclear names, the known instrument last.
+      expect(asked, ['bfl', 'scan', 'oboe']);
+      // Page 1 only where the KI had no sure part.
+      expect(vision.asked, ['Scan_0815.pdf']);
+      expect(find.text('Vorschlag der KI – bitte prüfen'), findsOneWidget);
+      expect(find.text('Auf Seite 1 vermutet – bitte prüfen'), findsOneWidget);
+      expect(find.text('Attendix legt die Gruppe erst beim Hochladen an.'), findsOneWidget);
+      expect(groups.created, isEmpty);
+      await tester.tap(find.text('Hochladen').last);
+      await _settle(tester);
+      expect(groups.created, ['Oboe']);
+      expect(service.calls, [
+        'pick',
+        'upload Bfl 1.pdf 12 -',
+        'upload Scan_0815.pdf 11 -',
+        'upload Oboe.pdf 21 -',
       ]);
     });
 

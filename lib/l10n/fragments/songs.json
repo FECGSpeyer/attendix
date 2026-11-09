@@ -123,7 +123,11 @@
         "reviewUpload": "Hochladen",
         "visionReading": "Erste Seite wird gelesen …",
         "visionSure": "Auf Seite 1 erkannt: {label}",
-        "visionUnsure": "Auf Seite 1 vermutet – bitte prüfen"
+        "visionUnsure": "Auf Seite 1 vermutet – bitte prüfen",
+        "aiReading": "Die KI ordnet die Dateien zu …",
+        "aiSuggested": "Vorschlag der KI – bitte prüfen",
+        "severalGroups": "Geht an jede dieser Gruppen",
+        "newGroupFailed": "Die Gruppe „{name}“ konnte nicht angelegt werden"
       }
     }
   },
@@ -251,7 +255,11 @@
         "reviewUpload": "Upload",
         "visionReading": "Reading the first page …",
         "visionSure": "Recognised on page 1: {label}",
-        "visionUnsure": "Guessed from page 1 – please check"
+        "visionUnsure": "Guessed from page 1 – please check",
+        "aiReading": "The AI is sorting the files …",
+        "aiSuggested": "Suggested by the AI – please check",
+        "severalGroups": "Goes to each of these groups",
+        "newGroupFailed": "The group “{name}” could not be created"
       }
     }
   }
