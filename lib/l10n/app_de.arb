@@ -17316,15 +17316,54 @@
   "@redesignImportNewGroupTitle": {
     "description": "redesign.import.newGroupTitle"
   },
+  "redesignImportNumberCollection": "In der Sammlung werden neue Werke fortlaufend nummeriert, die Nummer aus dem Ordner zählt hier nicht.",
+  "@redesignImportNumberCollection": {
+    "description": "redesign.import.numberCollection"
+  },
+  "redesignImportNumberEmpty": "Ohne",
+  "@redesignImportNumberEmpty": {
+    "description": "redesign.import.numberEmpty"
+  },
+  "redesignImportNumberHint": "z. B. 3",
+  "@redesignImportNumberHint": {
+    "description": "redesign.import.numberHint"
+  },
+  "redesignImportNumberInUse": "Diese Nummer ist schon vergeben.",
+  "@redesignImportNumberInUse": {
+    "description": "redesign.import.numberInUse"
+  },
+  "redesignImportNumberInvalid": "Bitte nur eine Zahl eingeben.",
+  "@redesignImportNumberInvalid": {
+    "description": "redesign.import.numberInvalid"
+  },
+  "redesignImportNumberLabel": "Nummer",
+  "@redesignImportNumberLabel": {
+    "description": "redesign.import.numberLabel"
+  },
   "redesignImportNumberNone": "Der Ordner hat keine Nummer, deshalb bekommt das Werk die nächste freie.",
   "@redesignImportNumberNone": {
     "description": "redesign.import.numberNone"
+  },
+  "redesignImportNumberRequired": "In der Sammlung braucht jedes Werk eine Nummer.",
+  "@redesignImportNumberRequired": {
+    "description": "redesign.import.numberRequired"
   },
   "redesignImportNumberTaken": "{number} ist schon vergeben, deshalb bekommt das Werk die nächste freie Nummer.",
   "@redesignImportNumberTaken": {
     "description": "redesign.import.numberTaken",
     "placeholders": {
       "number": {}
+    }
+  },
+  "redesignImportNumberTitle": "Nummer des Werks",
+  "@redesignImportNumberTitle": {
+    "description": "redesign.import.numberTitle"
+  },
+  "redesignImportNumberTitlePrefix": "Nummer des Werks (Kürzel {prefix})",
+  "@redesignImportNumberTitlePrefix": {
+    "description": "redesign.import.numberTitlePrefix",
+    "placeholders": {
+      "prefix": {}
     }
   },
   "redesignImportOpenHint": "{count, plural, one {1 Werk ist noch nicht geprüft und wird nicht hochgeladen.} other {{count} Werke sind noch nicht geprüft und werden nicht hochgeladen.}}",

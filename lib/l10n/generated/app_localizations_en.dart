@@ -13956,12 +13956,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportNewGroupTitle => 'Create new group';
 
   @override
+  String get redesignImportNumberCollection =>
+      'New pieces in the collection are numbered in sequence; the folder\'s number does not count here.';
+
+  @override
+  String get redesignImportNumberEmpty => 'None';
+
+  @override
+  String get redesignImportNumberHint => 'e.g. 3';
+
+  @override
+  String get redesignImportNumberInUse => 'This number is already taken.';
+
+  @override
+  String get redesignImportNumberInvalid => 'Please enter a number only.';
+
+  @override
+  String get redesignImportNumberLabel => 'Number';
+
+  @override
   String get redesignImportNumberNone =>
       'The folder has no number, so the piece gets the next free one.';
 
   @override
+  String get redesignImportNumberRequired =>
+      'Every piece in the collection needs a number.';
+
+  @override
   String redesignImportNumberTaken(Object number) {
     return '$number is already taken, so the piece gets the next free number.';
+  }
+
+  @override
+  String get redesignImportNumberTitle => 'Number of the piece';
+
+  @override
+  String redesignImportNumberTitlePrefix(Object prefix) {
+    return 'Number of the piece (prefix $prefix)';
   }
 
   @override
