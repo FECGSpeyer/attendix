@@ -88,8 +88,7 @@ class _FakeFiles implements SongFileService {
     int? instrumentId,
     String? note,
     int? mainGroupId,
-  }) =>
-      _step('category $url $instrumentId ${note ?? '-'}');
+  }) => _step('category $url $instrumentId ${note ?? '-'}');
 
   @override
   Future<void> renameFile({
@@ -97,8 +96,7 @@ class _FakeFiles implements SongFileService {
     required String url,
     required String storageName,
     required String fileName,
-  }) =>
-      _step('rename $url $fileName');
+  }) => _step('rename $url $fileName');
 
   @override
   Future<List<PlatformFile>?> pickMultipleFiles() async {
@@ -124,7 +122,13 @@ class _FakeVision extends PartVisionService {
   final stillWanted = <bool>[];
 
   @override
-  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments, {Duration? limit, bool Function()? cancelled, int? tenantId}) async {
+  Future<PartMatch?> detect(
+    PlatformFile file,
+    List<InstrumentInfo> instruments, {
+    Duration? limit,
+    bool Function()? cancelled,
+    int? tenantId,
+  }) async {
     asked.add(file.name);
     limits.add(limit);
     tenants.add(tenantId);
@@ -196,20 +200,24 @@ Widget _app(Role role, _FakeFiles files, {Song song = _song, _FakeGroupNotifier?
   );
   return ProviderScope(
     overrides: [
-      initialRedesignSettingsProvider.overrideWithValue(const RedesignSettings(enabled: true, world: RdFarbwelt.petrol)),
+      initialRedesignSettingsProvider.overrideWithValue(
+        const RedesignSettings(enabled: true, world: RdFarbwelt.petrol),
+      ),
       effectiveRoleProvider.overrideWithValue(role),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
       readySongFileServiceProvider.overrideWith((ref) async => files),
       songFileServiceProvider.overrideWithValue(files),
-      songDetailDataProvider((songId: 5, sharingId: null)).overrideWith((ref) async => SongDetailData(
-            song: song,
-            tenantType: 'orchestra',
-            instruments: _groups,
-            categories: const [],
-            additionalFields: const [],
-            history: const [],
-            readOnly: !(role.isAdmin || role.isResponsible),
-          )),
+      songDetailDataProvider((songId: 5, sharingId: null)).overrideWith(
+        (ref) async => SongDetailData(
+          song: song,
+          tenantType: 'orchestra',
+          instruments: _groups,
+          categories: const [],
+          additionalFields: const [],
+          history: const [],
+          readOnly: !(role.isAdmin || role.isResponsible),
+        ),
+      ),
       songsProvider.overrideWith((ref) async => [song]),
       groupsProvider.overrideWith((ref) async => _groups),
       if (groupNotifier != null) groupNotifierProvider.overrideWith(() => groupNotifier),
@@ -231,6 +239,14 @@ Widget _app(Role role, _FakeFiles files, {Song song = _song, _FakeGroupNotifier?
       routerConfig: router,
     ),
   );
+}
+
+/// "••• › Mehrere auswählen" in the files toolbar.
+Future<void> _startSelecting(WidgetTester tester) async {
+  await tester.tap(find.byTooltip('Weitere Aktionen'));
+  await _settle(tester);
+  await tester.tap(find.text('Mehrere auswählen'));
+  await _settle(tester);
 }
 
 Future<void> _withCtrl(WidgetTester tester, LogicalKeyboardKey key) async {
@@ -282,9 +298,7 @@ void main() {
 
     setUp(() {
       files = _FakeFiles();
-      container = ProviderContainer(overrides: [
-        readySongFileServiceProvider.overrideWith((ref) async => files),
-      ]);
+      container = ProviderContainer(overrides: [readySongFileServiceProvider.overrideWith((ref) async => files)]);
       addTearDown(container.dispose);
       container.listen(rdWorkFilesProvider(5), (_, __) {});
     });
@@ -342,7 +356,9 @@ void main() {
 
     test('"Ersetzen": a failed upload keeps the old file; a retry does not upload twice', () async {
       files.failing.add('a.pdf');
-      controller().enqueue([(file: _file('a.pdf'), instrumentId: 11, note: null, replace: const [_klar])]);
+      controller().enqueue([
+        (file: _file('a.pdf'), instrumentId: 11, note: null, replace: const [_klar]),
+      ]);
       await Future<void>.delayed(const Duration(milliseconds: 100));
       expect(files.calls, ['upload a.pdf 11 -']);
       expect(state().failedCount, 1);
@@ -355,7 +371,9 @@ void main() {
 
     test('"Ersetzen": a failed delete after the upload is retried without uploading again', () async {
       files.failingDeletes.add('klar.pdf');
-      controller().enqueue([(file: _file('a.pdf'), instrumentId: 11, note: null, replace: const [_klar])]);
+      controller().enqueue([
+        (file: _file('a.pdf'), instrumentId: 11, note: null, replace: const [_klar]),
+      ]);
       await Future<void>.delayed(const Duration(milliseconds: 100));
       expect(state().failedCount, 1);
       controller().retry(state().uploads.single.id);
@@ -366,7 +384,9 @@ void main() {
 
     test('"Ersetzen" never deletes the file it just stored', () async {
       const same = SongFile(fileName: 'a.pdf', fileType: _pdf, url: 'https://x/a.pdf', instrumentId: 11);
-      controller().enqueue([(file: _file('a.pdf'), instrumentId: 11, note: null, replace: const [same, _klar])]);
+      controller().enqueue([
+        (file: _file('a.pdf'), instrumentId: 11, note: null, replace: const [same, _klar]),
+      ]);
       await Future<void>.delayed(const Duration(milliseconds: 100));
       expect(files.calls, ['upload a.pdf 11 -', 'delete klar.pdf']);
     });
@@ -374,9 +394,7 @@ void main() {
     test('the tenant (service) is taken when a write is queued', () async {
       final other = _FakeFiles();
       var current = files;
-      final c = ProviderContainer(overrides: [
-        readySongFileServiceProvider.overrideWith((ref) async => current),
-      ]);
+      final c = ProviderContainer(overrides: [readySongFileServiceProvider.overrideWith((ref) async => current)]);
       addTearDown(c.dispose);
       c.listen(rdWorkFilesProvider(5), (_, __) {});
       final ctl = c.read(rdWorkFilesProvider(5).notifier);
@@ -427,10 +445,24 @@ void main() {
       await _settle(tester);
       expect(find.text('Noten & Dateien · 3'), findsOneWidget);
       expect(find.text('Hochladen'), findsOneWidget);
-      expect(find.text('Alle als ZIP'), findsOneWidget);
       expect(find.text('klar.pdf'), findsOneWidget);
       expect(find.text('Flöte'), findsWidgets);
       expect(find.text('Alle Stimmen'), findsNothing);
+      // A click opens a file: no checkboxes until "••• › Mehrere auswählen".
+      expect(find.byType(Checkbox), findsNothing);
+      await tester.tap(find.byTooltip('Weitere Aktionen'));
+      await _settle(tester);
+      expect(find.text('Alle als ZIP'), findsOneWidget);
+      await tester.tap(find.text('Mehrere auswählen'));
+      await _settle(tester);
+      expect(find.text('Dateien zum Auswählen anklicken'), findsOneWidget);
+      await tester.tap(find.text('klar.pdf'));
+      await _settle(tester);
+      expect(find.text('1 ausgewählt'), findsOneWidget);
+      await tester.tap(find.byTooltip('Abbrechen'));
+      await _settle(tester);
+      expect(find.byType(Checkbox), findsNothing);
+      expect(find.text('Noten & Dateien · 3'), findsOneWidget);
     });
 
     testWidgets('players and phones get the list instead of the table', (tester) async {
@@ -456,6 +488,7 @@ void main() {
       await tester.pumpWidget(_app(Role.admin, files));
       await _settle(tester);
 
+      await _startSelecting(tester);
       await tester.tap(find.text('klar.pdf'));
       await _settle(tester);
       await _withCtrl(tester, LogicalKeyboardKey.keyA);
@@ -471,11 +504,11 @@ void main() {
       expect(find.text('Wiederhergestellt'), findsOneWidget);
       expect(find.text('klar.pdf'), findsOneWidget);
 
-      // Escape clears, ↓ picks the first row, Entf deletes only that one.
+      // Escape ends selecting, ↓ marks the first row, Entf deletes only that one.
       await tester.sendKeyEvent(LogicalKeyboardKey.escape);
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
       await tester.pump();
-      expect(find.text('1 ausgewählt'), findsOneWidget);
+      expect(find.text('Noten & Dateien · 3'), findsOneWidget);
       await tester.sendKeyEvent(LogicalKeyboardKey.delete);
       await tester.pump();
       expect(find.text('Noten & Dateien · 2'), findsOneWidget);
@@ -490,6 +523,7 @@ void main() {
       _desktop(tester);
       await tester.pumpWidget(_app(Role.admin, _FakeFiles()));
       await _settle(tester);
+      await _startSelecting(tester);
       await tester.tap(find.text('klar.pdf'));
       await _settle(tester);
       await tester.sendKeyDownEvent(LogicalKeyboardKey.delete);
@@ -563,22 +597,33 @@ void main() {
       final learn = find.text('„Kl 1“ künftig als Klarinette erkennen');
       expect(learn, findsOneWidget);
       // Unchecked until confirmed.
-      expect(tester.widget<CheckboxListTile>(find.ancestor(of: learn, matching: find.byType(CheckboxListTile))).value, isFalse);
+      expect(
+        tester.widget<CheckboxListTile>(find.ancestor(of: learn, matching: find.byType(CheckboxListTile))).value,
+        isFalse,
+      );
       await tester.tap(learn);
       await _settle(tester);
       await tester.tap(find.text('Hochladen').last);
       await _settle(tester);
       expect(service.calls, ['pick', 'upload Kl 1.pdf 11 -']);
       expect(groups.learned, [
-        {11: ['Kl 1']},
+        {
+          11: ['Kl 1'],
+        },
       ]);
     });
 
     testWidgets('page 1 decides when the name does not, and is always confirmed by hand', (tester) async {
       _desktop(tester);
-      final service = _FakeFiles()..picked = [_file('Scan_0815.pdf'), _file('Scan_0816.pdf'), _file('Klarinette 1.pdf')];
+      final service =
+          _FakeFiles()..picked = [_file('Scan_0815.pdf'), _file('Scan_0816.pdf'), _file('Klarinette 1.pdf')];
       final vision = _FakeVision({
-        'Scan_0815.pdf': const PartMatch(instrumentId: 12, confidence: MatchConfidence.sure, term: 'Flute', byVision: true),
+        'Scan_0815.pdf': const PartMatch(
+          instrumentId: 12,
+          confidence: MatchConfidence.sure,
+          term: 'Flute',
+          byVision: true,
+        ),
         'Scan_0816.pdf': const PartMatch(instrumentId: 11, confidence: MatchConfidence.unsure, byVision: true),
       });
       await tester.pumpWidget(_app(Role.admin, service, song: const Song(id: 5, name: 'Leer'), vision: vision));
@@ -616,6 +661,7 @@ void main() {
       // The hint lives under Ich › Hilfe now, not on the main UI.
       expect(find.byIcon(Icons.keyboard_outlined), findsNothing);
 
+      await _startSelecting(tester);
       await tester.tap(find.text('klar.pdf'));
       await _settle(tester);
       // "?" is typed with Umschalt (no own key in the test key maps): the
@@ -671,7 +717,14 @@ void main() {
 
     test('every write of songs.files goes through the per-song lock', () {
       final src = File('lib/core/services/song_file_service.dart').readAsStringSync();
-      for (final name in ['uploadFile', 'deleteFile', 'deleteAllFiles', 'updateFileCategory', 'renameFile', 'uploadFileBytes']) {
+      for (final name in [
+        'uploadFile',
+        'deleteFile',
+        'deleteAllFiles',
+        'updateFileCategory',
+        'renameFile',
+        'uploadFileBytes',
+      ]) {
         final start = src.indexOf(RegExp('Future<\\w+> $name\\('));
         expect(start, greaterThan(0), reason: name);
         final body = src.substring(start, src.indexOf(';', src.indexOf('=>', start)));
@@ -694,11 +747,17 @@ void main() {
 
     test('a copy from Drive is added under the lock; the Besetzung is kept in the same write', () {
       final src = File('lib/core/services/song_file_service.dart').readAsStringSync();
-      final via = src.substring(src.indexOf('Future<String> uploadFileVia('), src.indexOf('/// Delete a file from storage'));
+      final via = src.substring(
+        src.indexOf('Future<String> uploadFileVia('),
+        src.indexOf('/// Delete a file from storage'),
+      );
       expect(via, contains('_locked(_tenantId, songId'));
       expect(via, contains('_addToSong('));
       expect(via, contains('stored != storagePath'));
-      final add = src.substring(src.indexOf('Future<String> _addToSong('), src.indexOf('static List<int> instrumentIdsFromFiles('));
+      final add = src.substring(
+        src.indexOf('Future<String> _addToSong('),
+        src.indexOf('static List<int> instrumentIdsFromFiles('),
+      );
       expect(add, contains("keepBesetzung ? 'files, instrument_ids' : 'files'"));
       expect(".eq('tenantId', tenantId)".allMatches(add).length, 2);
       expect(".eq('id', songId)".allMatches(add).length, 2);
