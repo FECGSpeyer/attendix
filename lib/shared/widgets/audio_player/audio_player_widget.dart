@@ -133,9 +133,13 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
                                 style: const TextStyle(fontSize: 10, color: medium),
                               ),
                             ],
-                            const SizedBox(width: 8),
-                            iconButton(Icons.cancel, 18, medium, svc.stop,
-                                tooltip: context.l10n.commonClose),
+                            // REDESIGN: close sits next to the speed button
+                            // with a full 44px tap target (see below).
+                            if (!widget.showSpeed) ...[
+                              const SizedBox(width: 8),
+                              iconButton(Icons.cancel, 18, medium, svc.stop,
+                                  tooltip: context.l10n.commonClose),
+                            ],
                           ],
                         ),
                       ),
@@ -193,15 +197,18 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
                               style: const TextStyle(fontSize: 10, color: medium),
                             ),
                           ),
-                          if (widget.showSpeed) ...[
-                            const SizedBox(width: 8),
-                            _SpeedButton(primary: primary),
-                          ],
                         ],
                       ),
                     ],
                   ),
                 ),
+                // REDESIGN: speed and close side by side, vertically centred,
+                // each with a 44px tap target (old: 18px ✕ above a 24px pill).
+                if (widget.showSpeed) ...[
+                  const SizedBox(width: 4),
+                  _SpeedButton(primary: primary),
+                  _CloseButton(onTap: svc.stop),
+                ],
               ],
             ),
           ),
@@ -227,23 +234,46 @@ class _SpeedButton extends ConsumerWidget {
       label: slow ? l10n.redesignWorkNormalSpeed : l10n.redesignWorkSlower,
       excludeSemantics: true,
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(22),
         onTap: () => ref.read(audioPlayerServiceProvider.notifier).setSpeed(slow ? 1.0 : 0.8),
-        child: Container(
-          height: 24,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: slow ? primary.withValues(alpha: 0.15) : null,
-            border: Border.all(color: slow ? primary : const Color(0x8092949C)),
-          ),
-          child: Text(
-            '$speed×',
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: slow ? primary : null),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: 48, minHeight: 44),
+          child: Center(
+            child: Container(
+              height: 28,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14),
+                color: slow ? primary.withValues(alpha: 0.15) : null,
+                border: Border.all(color: slow ? primary : const Color(0x8092949C)),
+              ),
+              child: Text(
+                '$speed×',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: slow ? primary : null),
+              ),
+            ),
           ),
         ),
       ),
+    );
+  }
+}
+
+/// REDESIGN: close button with a full 44px tap target.
+class _CloseButton extends StatelessWidget {
+  const _CloseButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: onTap,
+      tooltip: context.l10n.commonClose,
+      constraints: const BoxConstraints.tightFor(width: 44, height: 44),
+      padding: EdgeInsets.zero,
+      icon: const Icon(Icons.close, size: 22, color: Color(0xFF92949C)),
     );
   }
 }
