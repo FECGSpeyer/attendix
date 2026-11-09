@@ -47,6 +47,11 @@ void main() {
     expect(at('/settings/help/article/x'), RdSideExtra.help);
     expect(at('/settings/team-organization'), RdSideExtra.team);
     expect(at('/settings/team-organization', team: false), isNull);
+    expect(at('/settings/tasks/4'), RdSideExtra.team);
+    expect(at('/settings/protocol/9'), RdSideExtra.team);
+    expect(at('/messages/5'), RdSideExtra.messages);
+    expect(at('/settings/auto-messages/2'), RdSideExtra.messages);
+    expect(at('/messages/5', manage: false), isNull);
     expect(at('/ich/verwaltung/auswertung', manage: false), isNull);
     expect(at('/termine/3'), isNull);
     expect(at('/ich'), isNull);

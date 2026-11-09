@@ -18,12 +18,23 @@ import 'rd_shell.dart';
 enum RdSideExtra { stats, messages, manage, team, help }
 
 const _helpRoute = '/settings/help';
-const _teamRoot = '/settings/team-organization';
+/// Team pages: the team organisation and its tasks, topics and protocols.
+const _teamRoots = [
+  '/settings/team-organization',
+  '/settings/tasks',
+  '/settings/agenda-items',
+  '/settings/protocol',
+];
+
+/// Pages opened from Mitteilungen (a sent Mitteilung, automatic ones).
+const _messageRoots = ['/messages', '/settings/auto-messages'];
 
 /// The extra entry [location] belongs to, null when a tab is selected.
 /// [manage]/[team]: whether the sidebar shows those entries.
 RdSideExtra? rdSideExtraFor(String location, {required bool manage, required bool team}) {
   bool under(String root) => location == root || location.startsWith('$root/');
+  if (team && _teamRoots.any(under)) return RdSideExtra.team;
+  if (manage && _messageRoots.any(under)) return RdSideExtra.messages;
   if (manage && rdIsManageLocation(location)) {
     if (under(RedesignRoutes.stats)) return RdSideExtra.stats;
     if (under(RedesignRoutes.messages) || under(RedesignRoutes.compose)) {
@@ -32,7 +43,6 @@ RdSideExtra? rdSideExtraFor(String location, {required bool manage, required boo
     return RdSideExtra.manage;
   }
   if (under(_helpRoute)) return RdSideExtra.help;
-  if (team && under(_teamRoot)) return RdSideExtra.team;
   return null;
 }
 
@@ -171,7 +181,9 @@ class _GroupCard extends ConsumerWidget {
 
     return Semantics(
       button: true,
-      label: l10n.redesignGroupsSwitchHint(name),
+      label: count > 1
+          ? '${l10n.redesignGroupsSwitchHint(name)}. ${l10n.rdSidebarGroupsCount(count)}'
+          : l10n.redesignGroupsSwitchHint(name),
       excludeSemantics: true,
       child: Material(
         color: p.bg,
