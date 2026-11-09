@@ -1,0 +1,80 @@
+import 'dart:io';
+
+import 'package:attendix/data/models/song/song.dart';
+import 'package:attendix/features/redesign/data/sibelius/rd_sibelius_logic.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+SongFile _file(String name, {String? storageName, String url = 'https://x/songs/1/2/a.pdf'}) =>
+    SongFile(fileName: name, fileType: '', url: url, storageName: storageName);
+
+void main() {
+  test('Sibelius scores are recognised by name, storage name or URL', () {
+    expect(rdIsSibeliusFile(_file('06 Ich weiß.SIB')), isTrue);
+    expect(rdIsSibeliusFile(_file('Partitur', storageName: 'Partitur_123.sib')), isTrue);
+    expect(rdIsSibeliusFile(_file('Partitur', url: 'https://x/songs/1/2/p_1.sib?t=1')), isTrue);
+    expect(rdIsSibeliusFile(_file('06 Viola.pdf')), isFalse);
+  });
+
+  test('work folders are safe path segments', () {
+    expect(rdSibeliusWorkFolder(number: 1, name: 'Ich weiß / an wen: ich glaube'), '1 Ich weiß - an wen- ich glaube');
+    expect(rdSafePathSegment('..  '), 'Werk');
+    expect(rdSafePathSegment('a' * 120).length, 80);
+    expect(rdSibeliusCopyName('Lied.sib', '(aus Sibelius)'), 'Lied (aus Sibelius).sib');
+  });
+
+  test('the real home is found from the sandbox container', () {
+    expect(rdRealHome('/Users/leon/Library/Containers/io.stephanus.attendix/Data/Downloads'), '/Users/leon');
+    expect(rdRealHome('/Users/leon/Downloads/Attendix'), '/Users/leon');
+    expect(
+      rdSibeliusPluginsFolder('/Users/leon'),
+      '/Users/leon/Library/Application Support/Avid/Sibelius/Plugins',
+    );
+  });
+
+  test('only part PDFs newer than the last ones taken are offered', () {
+    final entries = {'/w/Stimmen/Viola.pdf': 200, '/w/Stimmen/Harfe.pdf': 300, '/w/Stimmen/alt.pdf': 100, '/w/Stimmen/x.txt': 400};
+    expect(rdNewPartPdfs(entries, 150), ['/w/Stimmen/Harfe.pdf', '/w/Stimmen/Viola.pdf']);
+  });
+
+  test('stored copies survive a restart', () {
+    const checkout = RdSibeliusCheckout(
+      path: '/Users/leon/Downloads/Attendix/Sinfo/1 Lied/Lied.sib',
+      tenantId: 42,
+      songId: 7,
+      userId: 'u1',
+      url: 'https://x/songs/42/7/Lied_123.sib',
+      storageName: 'Lied_123.sib',
+      fileName: 'Lied.sib',
+      note: 'Sibelius',
+      hash: 'abc',
+      modified: 1000,
+    );
+    final restored = rdSibeliusStateFromJson(rdSibeliusStateJson([checkout], {'/f/Stimmen': 5}));
+    expect(restored.checkouts.single.toJson(), checkout.toJson());
+    expect(restored.partsSince, {'/f/Stimmen': 5});
+    expect(rdSibeliusStateFromJson('kaputt').checkouts, isEmpty);
+    expect(checkout.matches(42, 7, _file('Lied.sib', storageName: 'Lied_123.sib', url: 'https://other')), isTrue);
+    expect(checkout.matches(43, 7, _file('Lied.sib', storageName: 'Lied_123.sib')), isFalse);
+  });
+
+  test('the plug-in is stored as UTF-16 BE and exports the parts separately', () {
+    final bytes = rdSibeliusPluginBytes();
+    expect(bytes.sublist(0, 2), [0xFE, 0xFF]);
+    final units = [for (var i = 2; i < bytes.length; i += 2) (bytes[i] << 8) | bytes[i + 1]];
+    expect(String.fromCharCodes(units), rdSibeliusPluginSource);
+    // Parts only, one PDF per part, into the folder Attendix watches.
+    expect(rdSibeliusPluginSource, contains("ExportPartsAsPDF(folder & Sibelius.PathSeparator & '%p.pdf', False, 0, False)"));
+    expect(rdSibeliusPluginSource, contains('_Subfolder "$rdSibeliusPartsFolder"'));
+    // Method bodies are double-quoted strings: no plain double quote inside.
+    final run = RegExp(r'Run "\(\) \{(.*?)\}"\n', dotAll: true).firstMatch(rdSibeliusPluginSource)!.group(1)!;
+    expect(run.contains('"'), isFalse);
+  });
+
+  test('replacing a file keeps the tenant filter on every query', () {
+    final source = File('lib/core/services/song_file_service.dart').readAsStringSync();
+    final start = source.indexOf('Future<SongFile?> _replaceFileContent(');
+    final body = source.substring(start, source.indexOf('/// Rename a file', start));
+    expect(RegExp(r"\.eq\('tenantId', tenantId\)").allMatches(body).length, 2);
+    expect(body, contains("'songs/\$tenantId/\$songId/"));
+  });
+}

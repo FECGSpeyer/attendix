@@ -21028,6 +21028,132 @@ abstract class AppLocalizations {
   /// **'↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen · ? diese Übersicht'**
   String redesignFilesShortcutsHelp(Object mod);
 
+  /// redesign.files.sibeliusCopySuffix
+  ///
+  /// In de, this message translates to:
+  /// **'(aus Sibelius)'**
+  String get redesignFilesSibeliusCopySuffix;
+
+  /// redesign.files.sibeliusEdit
+  ///
+  /// In de, this message translates to:
+  /// **'In Sibelius bearbeiten'**
+  String get redesignFilesSibeliusEdit;
+
+  /// redesign.files.sibeliusIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Attendix legt „{name}“ in „Downloads › Attendix“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.'**
+  String redesignFilesSibeliusIntro(Object name);
+
+  /// redesign.files.sibeliusIntroTitle
+  ///
+  /// In de, this message translates to:
+  /// **'In Sibelius bearbeiten'**
+  String get redesignFilesSibeliusIntroTitle;
+
+  /// redesign.files.sibeliusNoFolder
+  ///
+  /// In de, this message translates to:
+  /// **'Attendix kann nicht in „Downloads“ speichern. Bitte die Mac-App aktualisieren.'**
+  String get redesignFilesSibeliusNoFolder;
+
+  /// redesign.files.sibeliusNotOpened
+  ///
+  /// In de, this message translates to:
+  /// **'Die Datei ließ sich nicht öffnen. Ist Sibelius installiert? Sie liegt in „Downloads › Attendix“.'**
+  String get redesignFilesSibeliusNotOpened;
+
+  /// redesign.files.sibeliusOpen
+  ///
+  /// In de, this message translates to:
+  /// **'In Sibelius öffnen'**
+  String get redesignFilesSibeliusOpen;
+
+  /// redesign.files.sibeliusPartNew
+  ///
+  /// In de, this message translates to:
+  /// **'neu'**
+  String get redesignFilesSibeliusPartNew;
+
+  /// redesign.files.sibeliusPartNone
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Zuordnung'**
+  String get redesignFilesSibeliusPartNone;
+
+  /// redesign.files.sibeliusPartReplaces
+  ///
+  /// In de, this message translates to:
+  /// **'ersetzt {files}'**
+  String redesignFilesSibeliusPartReplaces(Object files);
+
+  /// redesign.files.sibeliusPartsApply
+  ///
+  /// In de, this message translates to:
+  /// **'Übernehmen'**
+  String get redesignFilesSibeliusPartsApply;
+
+  /// redesign.files.sibeliusPartsMessage
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Stimme aus Sibelius für „{work}“:} other {{count} Stimmen aus Sibelius für „{work}“:}}'**
+  String redesignFilesSibeliusPartsMessage(num count, Object work);
+
+  /// redesign.files.sibeliusPartsTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Stimmen aus Sibelius'**
+  String get redesignFilesSibeliusPartsTitle;
+
+  /// redesign.files.sibeliusPlugin
+  ///
+  /// In de, this message translates to:
+  /// **'Sibelius-Plugin installieren'**
+  String get redesignFilesSibeliusPlugin;
+
+  /// redesign.files.sibeliusPluginFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Das Plugin konnte nicht gespeichert werden: {error}'**
+  String redesignFilesSibeliusPluginFailed(Object error);
+
+  /// redesign.files.sibeliusPluginInstalled
+  ///
+  /// In de, this message translates to:
+  /// **'Plugin installiert. Starte Sibelius neu, dann findest du es unter „Plug-ins › Attendix“.'**
+  String get redesignFilesSibeliusPluginInstalled;
+
+  /// redesign.files.sibeliusPluginPick
+  ///
+  /// In de, this message translates to:
+  /// **'Ordner „Plugins“ von Sibelius wählen'**
+  String get redesignFilesSibeliusPluginPick;
+
+  /// redesign.files.sibeliusPluginWrongFolder
+  ///
+  /// In de, this message translates to:
+  /// **'Plugin gespeichert. Sibelius lädt Plugins aber nur aus „Library › Application Support › Avid › Sibelius › Plugins“ in deinem Benutzerordner.'**
+  String get redesignFilesSibeliusPluginWrongFolder;
+
+  /// redesign.files.sibeliusSaveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ aus Sibelius konnte nicht hochgeladen werden: {error}'**
+  String redesignFilesSibeliusSaveFailed(Object name, Object error);
+
+  /// redesign.files.sibeliusSaved
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ aus Sibelius in Attendix gespeichert'**
+  String redesignFilesSibeliusSaved(Object name);
+
+  /// redesign.files.sibeliusSavedAsCopy
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ wurde in Attendix inzwischen geändert oder gelöscht. Deine Fassung aus Sibelius liegt jetzt als „{copy}“ dabei.'**
+  String redesignFilesSibeliusSavedAsCopy(Object name, Object copy);
+
   /// redesign.files.title
   ///
   /// In de, this message translates to:

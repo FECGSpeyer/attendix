@@ -13077,6 +13077,94 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignFilesSibeliusCopySuffix => '(aus Sibelius)';
+
+  @override
+  String get redesignFilesSibeliusEdit => 'In Sibelius bearbeiten';
+
+  @override
+  String redesignFilesSibeliusIntro(Object name) {
+    return 'Attendix legt „$name“ in „Downloads › Attendix“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.';
+  }
+
+  @override
+  String get redesignFilesSibeliusIntroTitle => 'In Sibelius bearbeiten';
+
+  @override
+  String get redesignFilesSibeliusNoFolder =>
+      'Attendix kann nicht in „Downloads“ speichern. Bitte die Mac-App aktualisieren.';
+
+  @override
+  String get redesignFilesSibeliusNotOpened =>
+      'Die Datei ließ sich nicht öffnen. Ist Sibelius installiert? Sie liegt in „Downloads › Attendix“.';
+
+  @override
+  String get redesignFilesSibeliusOpen => 'In Sibelius öffnen';
+
+  @override
+  String get redesignFilesSibeliusPartNew => 'neu';
+
+  @override
+  String get redesignFilesSibeliusPartNone => 'Ohne Zuordnung';
+
+  @override
+  String redesignFilesSibeliusPartReplaces(Object files) {
+    return 'ersetzt $files';
+  }
+
+  @override
+  String get redesignFilesSibeliusPartsApply => 'Übernehmen';
+
+  @override
+  String redesignFilesSibeliusPartsMessage(num count, Object work) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Stimmen aus Sibelius für „$work“:',
+      one: '1 Stimme aus Sibelius für „$work“:',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignFilesSibeliusPartsTitle => 'Neue Stimmen aus Sibelius';
+
+  @override
+  String get redesignFilesSibeliusPlugin => 'Sibelius-Plugin installieren';
+
+  @override
+  String redesignFilesSibeliusPluginFailed(Object error) {
+    return 'Das Plugin konnte nicht gespeichert werden: $error';
+  }
+
+  @override
+  String get redesignFilesSibeliusPluginInstalled =>
+      'Plugin installiert. Starte Sibelius neu, dann findest du es unter „Plug-ins › Attendix“.';
+
+  @override
+  String get redesignFilesSibeliusPluginPick =>
+      'Ordner „Plugins“ von Sibelius wählen';
+
+  @override
+  String get redesignFilesSibeliusPluginWrongFolder =>
+      'Plugin gespeichert. Sibelius lädt Plugins aber nur aus „Library › Application Support › Avid › Sibelius › Plugins“ in deinem Benutzerordner.';
+
+  @override
+  String redesignFilesSibeliusSaveFailed(Object name, Object error) {
+    return '„$name“ aus Sibelius konnte nicht hochgeladen werden: $error';
+  }
+
+  @override
+  String redesignFilesSibeliusSaved(Object name) {
+    return '„$name“ aus Sibelius in Attendix gespeichert';
+  }
+
+  @override
+  String redesignFilesSibeliusSavedAsCopy(Object name, Object copy) {
+    return '„$name“ wurde in Attendix inzwischen geändert oder gelöscht. Deine Fassung aus Sibelius liegt jetzt als „$copy“ dabei.';
+  }
+
+  @override
   String get redesignFilesTitle => 'Noten & Dateien';
 
   @override

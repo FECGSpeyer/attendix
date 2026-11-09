@@ -11,6 +11,7 @@ import '../providers/tenant_providers.dart';
 import '../utils/demo_guard.dart'; // DEMO_GUARD
 import '../../l10n/l10n.dart';
 import '../utils/file_mime.dart';
+import '../../data/models/song/song.dart';
 import 'error_reporter.dart';
 
 /// PARITY_B (D14): Ionic `filesJson` mapping of a `songs.files[]` entry —
@@ -34,6 +35,9 @@ class SongFileService {
   final int? _tenantId;
 
   SongFileService(this._supabase, this._tenantId);
+
+  /// Tenant whose songs this service writes (the song source tenant).
+  int? get tenantId => _tenantId;
 
   static const String _bucketName = 'songs';
 
@@ -235,6 +239,21 @@ class SongFileService {
             url: url,
             storageName: storageName,
             fileName: fileName,
+          ));
+
+  /// Replace the content of a file (REDESIGN: a score saved in Sibelius).
+  /// See [_replaceFileContent].
+  Future<SongFile?> replaceFileContent({
+    required int songId,
+    required String url,
+    String? storageName,
+    required Uint8List bytes,
+  }) =>
+      _locked(_tenantId, songId, () => _replaceFileContent(
+            songId: songId,
+            url: url,
+            storageName: storageName,
+            bytes: bytes,
           ));
 
   /// Upload file from bytes (for copying between tenants)
@@ -554,6 +573,94 @@ class SongFileService {
         excludeLyrics: true,
       ),
     }).eq('id', songId).eq('tenantId', _tenantId);
+  }
+
+  /// The new content gets a storage name no file of the song uses (a new
+  /// URL, so no cached copy of the old content is shown); the entry keeps its
+  /// place, name, part and note; the old object is removed afterwards.
+  /// Returns the new entry, or null when the song has no such file any more
+  /// (it was replaced or deleted meanwhile, nothing is written then).
+  Future<SongFile?> _replaceFileContent({
+    required int songId,
+    required String url,
+    String? storageName,
+    required Uint8List bytes,
+  }) async {
+    DemoGuard.checkCurrent('uploadSongFile'); // DEMO_GUARD
+    final tenantId = _tenantId;
+    if (tenantId == null) {
+      throw Exception(l10nWithoutContext.coreFlutterNoTenantSelected);
+    }
+
+    final songResponse = await _supabase
+        .from('songs')
+        .select('files')
+        .eq('id', songId)
+        .eq('tenantId', tenantId)
+        .maybeSingle();
+    if (songResponse == null) {
+      throw Exception(l10nWithoutContext.coreFlutterSongNotFound);
+    }
+
+    final files = [
+      for (final f in (songResponse['files'] as List?) ?? const []) songFileJson(f),
+    ];
+    final index = files.indexWhere((f) => _sameFile(f, url, storageName));
+    if (index < 0) return null;
+    final old = files[index];
+    final fileName = (old['fileName'] as String?) ?? '';
+    final oldObject = ((old['storageName'] as String?)?.isNotEmpty ?? false)
+        ? old['storageName'] as String
+        : fileName;
+
+    final taken = <Object?>{
+      for (final f in files) ...[f['storageName'], f['fileName']],
+    };
+    final fileId = freeStorageName(fileName, taken);
+    final storagePath = 'songs/$tenantId/$songId/$fileId';
+    final extension = PlatformFile(name: fileName, size: 0).extension ?? '';
+
+    await _supabase.storage.from(_bucketName).uploadBinary(
+          storagePath,
+          bytes,
+          fileOptions: FileOptions(
+            contentType: _getContentType(extension),
+            upsert: true,
+          ),
+        );
+
+    final newUrl = _supabase.storage.from(_bucketName).getPublicUrl(storagePath);
+    files[index] = {...old, 'storageName': fileId, 'url': newUrl};
+    try {
+      // Same parts as before, so instrument_ids stay as they are.
+      await _supabase.from('songs').update({
+        'files': files,
+      }).eq('id', songId).eq('tenantId', tenantId);
+    } catch (_) {
+      try {
+        await _supabase.storage.from(_bucketName).remove([storagePath]);
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'song_file_service');
+      }
+      rethrow;
+    }
+
+    if (oldObject.isNotEmpty) {
+      try {
+        await _supabase.storage.from(_bucketName).remove(['songs/$tenantId/$songId/$oldObject']);
+      } catch (e) {
+        // The entry already points to the new content; a leftover object
+        // is harmless.
+      }
+    }
+    return SongFile(
+      storageName: fileId,
+      fileName: fileName,
+      fileType: (old['fileType'] as String?) ?? '',
+      url: newUrl,
+      instrumentId: (old['instrumentId'] as num?)?.toInt(),
+      note: old['note'] as String?,
+    );
   }
 
   /// Rename a file: only its display name (`fileName`) changes; the storage
