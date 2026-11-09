@@ -1,10 +1,17 @@
 {
   "versions": [
     {
-      "version": "0.106.1",
+      "version": "0.107.1",
       "date": "9.11.2026",
       "changes": [
         "🐛 Beta: Auswahlfelder (z. B. Stimme in „Zuordnung prüfen“) und Popover-Menüs öffnen das Beta-Menü statt des alten Ionic-Glas-Popovers, auf allen Geräten gleich und per Tastatur bedienbar"
+      ]
+    },
+    {
+      "version": "0.107.0",
+      "date": "9.11.2026",
+      "changes": [
+        "💄 Beta am Desktop: Seitenleiste wie früher in Ionic. Oben die Gruppe als Karte mit Anzahl der Gruppen, darunter Abschnitte „Übersicht“ (Heute, Termine, Mitglieder, Werke), „Leitung“ (Auswertung, Mitteilungen, Verwaltung) und „Persönlich“ (Ich, Team, Hilfe)"
       ]
     },
     {
