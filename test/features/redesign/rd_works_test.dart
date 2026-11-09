@@ -456,35 +456,29 @@ void main() {
       );
     });
 
-    test('Aktuell: Werke of the coming Termine first, then played in the last 4 weeks', () {
-      final now = DateTime(2026, 11, 8, 12);
+    test('Aktuell: only the Werke of the coming Termine, each once', () {
       final events = [
         RdNextEvent(date: DateTime(2026, 11, 12), type: 'Probe', attendanceId: 1, songs: [_ave, _ouverture]),
-        RdNextEvent(date: DateTime(2026, 11, 15), type: 'Probe', attendanceId: 2, songs: [_ave]),
+        RdNextEvent(
+          date: DateTime(2026, 11, 15),
+          type: 'Probe',
+          attendanceId: 2,
+          songs: [_ave, const Song(name: 'Ohne id'), _abend],
+        ),
       ];
-      final songs = [
-        _abend.copyWith(lastSung: '2026-11-05'),
-        _ave.copyWith(lastSung: '2026-11-01'), // planned anyway
-        const Song(id: 20, name: 'Alt', lastSung: '2026-10-01'), // too long ago
-        const Song(id: 21, name: 'Neu', lastSung: '2026-10-20'),
-        const Song(id: 21, name: 'Neu', lastSung: '2026-10-20'), // twice in the input
-        const Song(name: 'Ohne id', lastSung: '2026-11-02'), // nothing to open
-        // 28 calendar days back (across the change to winter time).
-        const Song(id: 22, name: 'Grenztag', lastSung: '2026-10-11'),
-        const Song(id: 23, name: 'Versteckt', lastSung: '2026-11-02', collectionId: 9), // hidden Sammlung
-      ];
-      final cards = rdCurrentWorkCards(events, songs, now: now, visible: const []);
-      expect(cards.map((c) => c.song.id), [6, 5, 7, 21, 22]);
-      expect(cards[0].event?.attendanceId, 1);
-      expect(cards[2].lastPlayed, DateTime(2026, 11, 5));
-      expect(rdCurrentWorkCards(events, songs, now: now, visible: const [], max: 2).length, 2);
+      final cards = rdCurrentWorkCards(events, visible: const []);
+      // Played lately but not planned: no card (only coming Werke).
+      expect(cards.map((c) => c.song.id), [6, 5, 7]);
+      expect(cards[0].event.attendanceId, 1);
+      expect(cards[2].event.attendanceId, 2);
+      expect(rdCurrentWorkCards(events, visible: const [], max: 2).length, 2);
       // Planned Werke of a hidden Sammlung stay out too (a card opens the file).
       final hidden = [
         RdNextEvent(date: DateTime(2026, 11, 12), type: 'Probe', attendanceId: 3, songs: [_ave.copyWith(collectionId: 9)]),
       ];
-      expect(rdCurrentWorkCards(hidden, const [], now: now, visible: const []), isEmpty);
+      expect(rdCurrentWorkCards(hidden, visible: const []), isEmpty);
       expect(
-        rdCurrentWorkCards(hidden, const [], now: now, visible: const [SongCollection(id: 9, name: 'Einspielen')]).length,
+        rdCurrentWorkCards(hidden, visible: const [SongCollection(id: 9, name: 'Einspielen')]).length,
         1,
       );
     });
@@ -617,14 +611,14 @@ void main() {
       expect(find.text('page folder'), findsOneWidget);
     });
 
-    testWidgets('Aktuell: a card without own part opens the Werk', (tester) async {
+    testWidgets('Aktuell: a card opens the whole Werk, also with own part', (tester) async {
       _phone(tester);
       await tester.pumpWidget(_worksApp(Role.player));
       await _settle(tester);
 
-      await tester.tap(find.descendant(of: find.byKey(const Key('rd-works-current')), matching: find.text('Ave verum corpus')));
+      await tester.tap(find.descendant(of: find.byKey(const Key('rd-works-current')), matching: find.text('Festliche Ouvertüre')));
       await _settle(tester);
-      expect(find.text('page work 6'), findsOneWidget);
+      expect(find.text('page work 5'), findsOneWidget);
     });
 
     testWidgets('Alle als PDF is locked and loading while the PDF is built', (tester) async {

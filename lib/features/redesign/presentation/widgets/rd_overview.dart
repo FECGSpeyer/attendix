@@ -242,35 +242,27 @@ abstract final class _MemberCurrentWorks {
     final l10n = context.l10n;
     final own = ref.watch(currentSelfServicePlayerProvider).valueOrNull?.instrument;
     final ownGroup = data.groups.where((g) => g.id == own && g.maingroup != true).firstOrNull;
-    final now = DateTime.now();
     final attendances = ref.watch(realtimeAttendanceListProvider).valueOrNull ?? const <Attendance>[];
     final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
     final works = rdCurrentWorkCards(
       rdWithoutEndedEvents(
         rdNextEvents(data.currentSongs, data.songs),
-        now: now,
+        now: DateTime.now(),
         attendances: attendances,
         types: types,
       ),
-      data.songs,
-      now: now,
       // Unknown visibility: the Werke outside every Sammlung only.
       visible: collections ?? const [],
     );
     if (works.isEmpty) return null;
-    final played = data.isOrchestra ? l10n.redesignWorksSortLastPlayed : l10n.redesignWorksSortLastSung;
     // One section per Termin (two of a day stay apart, then with their
-    // time), the played ones last.
-    final byEvent = <(int?, DateTime?)?, List<RdCurrentWork>>{};
+    // time).
+    final byEvent = <(int?, DateTime?), List<RdCurrentWork>>{};
     for (final w in works) {
-      (byEvent[w.event == null ? null : (w.event!.attendanceId, w.event!.date)] ??= []).add(w);
+      (byEvent[(w.event.attendanceId, w.event.date)] ??= []).add(w);
     }
-    final labels = {
-      for (final w in works)
-        if (w.event != null) (w.event!.attendanceId, w.event!.date): rdEventLabel(w.event!),
-    };
-    String label((int?, DateTime?)? key) {
-      if (key == null) return played;
+    final labels = {for (final w in works) (w.event.attendanceId, w.event.date): rdEventLabel(w.event)};
+    String label((int?, DateTime?) key) {
       final text = labels[key]!;
       final twice = labels.values.where((l) => l == text).length > 1;
       // The date of a Termin holds no start time: its own, else its type's.
@@ -293,8 +285,7 @@ abstract final class _MemberCurrentWorks {
                         : rdMemberPartFiles(w.song, ownGroup.id, choir: data.isChoir).any(rdIsNotes)
                         ? l10n.redesignWorksStatusPart
                         : l10n.redesignWorksStatusNoPart(ownGroup.name),
-                value: w.lastPlayed == null ? null : SongUtils.formatDate(w.song.lastSung),
-                onTap: () => rdOpenCurrentWork(context, ref, w.song, ownGroup?.id, choir: data.isChoir),
+                onTap: () => rdOpenCurrentWork(context, w.song),
               ),
           ],
         ),

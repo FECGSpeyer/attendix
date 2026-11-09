@@ -529,14 +529,10 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     types: ref.watch(attendanceTypesProvider).valueOrNull ?? const [],
   );
 
-  /// "Aktuell": the Werke of the coming Termine and those played lately,
-  /// only from the Sammlungen the member sees (unknown: Repertoire only).
-  List<RdCurrentWork> _currentWorks(SongsListData data) => rdCurrentWorkCards(
-    _nextEvents(data),
-    data.songs,
-    now: DateTime.now(),
-    visible: ref.read(rdVisibleCollectionsProvider) ?? const [],
-  );
+  /// "Aktuell": the Werke of the coming Termine, only from the Sammlungen
+  /// the member sees (unknown: Repertoire only).
+  List<RdCurrentWork> _currentWorks(SongsListData data) =>
+      rdCurrentWorkCards(_nextEvents(data), visible: ref.read(rdVisibleCollectionsProvider) ?? const []);
 
   /// The own group of a member (never the main group of the conductor), the
   /// same for the list, the status lines and the filter sheet.
