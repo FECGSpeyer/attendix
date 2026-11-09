@@ -18271,6 +18271,10 @@
   "@redesignMembersBirthdayTomorrow": {
     "description": "redesign.members.birthdayTomorrow"
   },
+  "redesignMembersByRegisterChip": "Nach Register",
+  "@redesignMembersByRegisterChip": {
+    "description": "redesign.members.byRegisterChip"
+  },
   "redesignMembersCritical": "Problemfälle · {count}",
   "@redesignMembersCritical": {
     "description": "redesign.members.critical",
@@ -18404,6 +18408,18 @@
       "title": {},
       "count": {}
     }
+  },
+  "redesignMembersSplitBy": "Gliedern nach",
+  "@redesignMembersSplitBy": {
+    "description": "redesign.members.splitBy"
+  },
+  "redesignMembersSplitCategory": "Kategorie",
+  "@redesignMembersSplitCategory": {
+    "description": "redesign.members.splitCategory"
+  },
+  "redesignMembersSplitRegister": "Register",
+  "@redesignMembersSplitRegister": {
+    "description": "redesign.members.splitRegister"
   },
   "redesignMembersStats": "Auswertung",
   "@redesignMembersStats": {

@@ -23662,6 +23662,12 @@ abstract class AppLocalizations {
   /// **'Geburtstag morgen'**
   String get redesignMembersBirthdayTomorrow;
 
+  /// redesign.members.byRegisterChip
+  ///
+  /// In de, this message translates to:
+  /// **'Nach Register'**
+  String get redesignMembersByRegisterChip;
+
   /// redesign.members.critical
   ///
   /// In de, this message translates to:
@@ -23811,6 +23817,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{title} · {count}'**
   String redesignMembersSection(Object title, Object count);
+
+  /// redesign.members.splitBy
+  ///
+  /// In de, this message translates to:
+  /// **'Gliedern nach'**
+  String get redesignMembersSplitBy;
+
+  /// redesign.members.splitCategory
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorie'**
+  String get redesignMembersSplitCategory;
+
+  /// redesign.members.splitRegister
+  ///
+  /// In de, this message translates to:
+  /// **'Register'**
+  String get redesignMembersSplitRegister;
 
   /// redesign.members.stats
   ///

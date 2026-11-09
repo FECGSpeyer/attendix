@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/config/supabase_config.dart' show currentAuthUserIdProvider;
 import '../../../../core/providers/cross_tenant_person_providers.dart';
@@ -32,6 +33,59 @@ final rdMembersListFilterProvider = StateProvider<RdMembersListFilter>((ref) {
   ref.watch(currentAuthUserIdProvider);
   return const RdMembersListFilter();
 });
+
+/// REDESIGN: "Gliedern nach" of the Mitglieder tab: true = by category
+/// (Holzbläser, Sonstiges …), false = by register (Akkordeon, Violine 1 …).
+/// Remembered per group on this device, unlike the filters: it is how the
+/// group wants to read its list, e.g. a mixed orchestra with many registers
+/// under one category.
+final rdMembersByCategoryProvider = NotifierProvider<RdMembersByCategoryNotifier, bool>(
+  RdMembersByCategoryNotifier.new,
+);
+
+class RdMembersByCategoryNotifier extends Notifier<bool> {
+  int? _tenantId;
+  bool _chosen = false;
+
+  static String _key(int tenantId) => 'rdMembersByCategory_$tenantId';
+
+  @override
+  bool build() {
+    _tenantId = ref.watch(currentTenantIdProvider);
+    _chosen = false;
+    _load(_tenantId);
+    return true;
+  }
+
+  Future<void> _load(int? tenantId) async {
+    if (tenantId == null) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final value = prefs.getBool(_key(tenantId));
+      // A choice made meanwhile, or another group, wins.
+      if (value != null && !_chosen && tenantId == _tenantId) state = value;
+    } catch (_) {
+      // Not stored: by category.
+    }
+  }
+
+  Future<void> set(bool byCategory) async {
+    _chosen = true;
+    state = byCategory;
+    final tenantId = _tenantId;
+    if (tenantId == null) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (byCategory) {
+        await prefs.remove(_key(tenantId));
+      } else {
+        await prefs.setBool(_key(tenantId), false);
+      }
+    } catch (_) {
+      // Only for this session then.
+    }
+  }
+}
 
 /// Accounts that are also members of the linked tenant [tenantId] (filter
 /// "Auch Mitglied in").
