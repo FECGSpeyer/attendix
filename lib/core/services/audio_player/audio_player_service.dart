@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:crypto/crypto.dart' show sha1;
 import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:just_audio/just_audio.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../providers/branding_providers.dart';
 import 'audio_player_state.dart';
@@ -14,6 +18,33 @@ import 'media_session.dart';
 final audioPlayerFactoryProvider = Provider<AudioPlayer Function()>(
   (_) => AudioPlayer.new,
 );
+
+/// Downloads a recording to a local file and returns its path (null if that
+/// fails). Used when the native player reports no length for a streamed
+/// file, see [AudioPlayerService].
+final audioLocalCopyProvider = Provider<Future<String?> Function(String url, String fileName)>(
+  (_) => _downloadAudio,
+);
+
+Future<String?> _downloadAudio(String url, String fileName) async {
+  try {
+    final dir = Directory('${(await getTemporaryDirectory()).path}/audio');
+    final dot = fileName.lastIndexOf('.');
+    final ext = dot < 0 ? '.mp3' : fileName.substring(dot).toLowerCase();
+    // Signed URLs carry a token: the path without the query names the file.
+    final key = sha1.convert(Uri.parse(url).replace(query: '').toString().codeUnits).toString();
+    final file = File('${dir.path}/$key$ext');
+    if (await file.exists() && await file.length() > 0) return file.path;
+    final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 60));
+    if (response.statusCode != 200 || response.bodyBytes.isEmpty) return null;
+    await dir.create(recursive: true);
+    await file.writeAsBytes(response.bodyBytes, flush: true);
+    return file.path;
+  } catch (e) {
+    debugPrint('Audio download failed: $e');
+    return null;
+  }
+}
 
 /// INTEGRATION: an entry of a playback queue (Ionic `AudioQueueItem`).
 /// The URL is resolved lazily (e.g. signed storage URLs).
@@ -235,7 +266,16 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
       // (crossorigin="anonymous") it is allowed: Storage answers with
       // Access-Control-Allow-Origin.
       if (kIsWeb) await player.setWebCrossOrigin(WebCrossOrigin.anonymous);
-      final loadedDuration = await player.setUrl(url);
+      var loadedDuration = await player.setUrl(url);
+      // The iPhone app on a Mac (AVPlayer) can report no length for a
+      // streamed MP3; just_audio then clamps the position to 0:00 and the
+      // progress never moves. A local copy always has its length.
+      if (!kIsWeb && (loadedDuration == null || loadedDuration <= Duration.zero) && _player == player) {
+        final local = await ref.read(audioLocalCopyProvider)(url, fileName);
+        if (local != null && _player == player) {
+          loadedDuration = await player.setFilePath(local);
+        }
+      }
       if (_speed != 1.0) await player.setSpeed(_speed);
 
       // Race guard: a newer playFromUrl call may have superseded us
