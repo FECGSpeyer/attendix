@@ -8,6 +8,13 @@
       ]
     },
     {
+      "version": "0.104.1",
+      "date": "9.11.2026",
+      "changes": [
+        "🐛 iPhone/iPad-App auf dem Mac (und iPad mit Tastatur): Tab und Shift-Tab springen wieder von Feld zu Feld, z. B. im Login von E-Mail zu Passwort"
+      ]
+    },
+    {
       "version": "0.104.0",
       "date": "9.11.2026",
       "changes": [
