@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.110.2",
+      "date": "9.11.2026",
+      "changes": [
+        "🔧 PR-Vorschau (Cloudflare) nur noch mit Label \"preview\" statt bei jedem Push"
+      ]
+    },
+    {
       "version": "0.110.1",
       "date": "9.11.2026",
       "changes": [
