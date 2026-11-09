@@ -305,6 +305,45 @@ List<(CriticalRule, RdRuleResult)> rdCriticalHits(
   return const [];
 }
 
+/// The rules as the editor shows them: every "eine reicht" rule on its own
+/// and all "nur zusammen" rules as one rule with "und" (the server knows only
+/// one such group), placed where its first part stands.
+List<List<CriticalRule>> rdCriticalRuleGroups(List<CriticalRule> rules) {
+  final groups = <List<CriticalRule>>[];
+  List<CriticalRule>? and;
+  for (final r in rules) {
+    if (r.operator != CriticalRuleOperator.and) {
+      groups.add([r]);
+    } else if (and == null) {
+      and = [r];
+      groups.add(and);
+    } else {
+      and.add(r);
+    }
+  }
+  return groups;
+}
+
+/// Whether [group] is the "und" rule (its parts only count together).
+bool rdCriticalIsAndGroup(List<CriticalRule> group) => group.any((r) => r.operator == CriticalRuleOperator.and);
+
+/// [rules] with the parts of [old] replaced by [parts], at the place of the
+/// first old part (appended for a new rule). Two or more parts are saved
+/// as "nur zusammen" rules with one name, a single part as "eine reicht".
+List<CriticalRule> rdCriticalReplaceGroup(List<CriticalRule> rules, List<CriticalRule> old, List<CriticalRule> parts) {
+  final ids = {for (final r in old) r.id};
+  final operator = parts.length > 1 ? CriticalRuleOperator.and : CriticalRuleOperator.or;
+  final next = [for (final r in parts) r.copyWith(operator: operator)];
+  final at = rules.indexWhere((r) => ids.contains(r.id));
+  final kept = [
+    for (final r in rules)
+      if (!ids.contains(r.id)) r,
+  ];
+  if (at < 0) return [...kept, ...next];
+  final before = rules.take(at).where((r) => !ids.contains(r.id)).length;
+  return [...kept.take(before), ...next, ...kept.skip(before)];
+}
+
 /// Earliest date the app must load to evaluate [rules]: whole days, at
 /// least a year back for day rules (so changing the days in the editor
 /// needs no new load), the season start, or 2000 for "insgesamt".

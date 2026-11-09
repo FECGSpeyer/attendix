@@ -72,4 +72,25 @@ void main() {
     expect(rdCriticalHits([late, rule(value: 9, op: CriticalRuleOperator.and)], entries, now: now), isEmpty);
     expect(rdCriticalHits([rule(), late], entries, now: now).single.$1.operator, CriticalRuleOperator.or);
   });
+
+  test('"und" parts are one rule in the list and are replaced together', () {
+    CriticalRule r(String id, CriticalRuleOperator op) => rule(op: op).copyWith(id: id);
+    final rules = [
+      r('a', CriticalRuleOperator.or),
+      r('x', CriticalRuleOperator.and),
+      r('b', CriticalRuleOperator.or),
+      r('y', CriticalRuleOperator.and),
+    ];
+    final groups = rdCriticalRuleGroups(rules);
+    expect([for (final g in groups) g.map((x) => x.id).join()], ['a', 'xy', 'b']);
+
+    // Editing the "und" rule down to one condition: an "eine reicht" rule
+    // at the place of the first part.
+    final one = rdCriticalReplaceGroup(rules, groups[1], [r('x', CriticalRuleOperator.and)]);
+    expect([for (final x in one) '${x.id}${x.operator.name}'], ['aor', 'xor', 'bor']);
+
+    // A rule gets a second condition: both parts are "nur zusammen".
+    final two = rdCriticalReplaceGroup(one, [one.first], [one.first, r('z', CriticalRuleOperator.or)]);
+    expect([for (final x in two) '${x.id}${x.operator.name}'], ['aand', 'zand', 'xor', 'bor']);
+  });
 }
