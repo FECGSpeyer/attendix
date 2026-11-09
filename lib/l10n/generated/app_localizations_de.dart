@@ -14074,12 +14074,39 @@ class AppLocalizationsDe extends AppLocalizations {
       'In der Sammlung werden neue Werke fortlaufend nummeriert, die Nummer aus dem Ordner zählt hier nicht.';
 
   @override
+  String get redesignImportNumberEmpty => 'Ohne';
+
+  @override
+  String get redesignImportNumberHint => 'z. B. 3';
+
+  @override
+  String get redesignImportNumberInUse => 'Diese Nummer ist schon vergeben.';
+
+  @override
+  String get redesignImportNumberInvalid => 'Bitte nur eine Zahl eingeben.';
+
+  @override
+  String get redesignImportNumberLabel => 'Nummer';
+
+  @override
   String get redesignImportNumberNone =>
       'Der Ordner hat keine Nummer, deshalb bekommt das Werk die nächste freie.';
 
   @override
+  String get redesignImportNumberRequired =>
+      'In der Sammlung braucht jedes Werk eine Nummer.';
+
+  @override
   String redesignImportNumberTaken(Object number) {
     return '$number ist schon vergeben, deshalb bekommt das Werk die nächste freie Nummer.';
+  }
+
+  @override
+  String get redesignImportNumberTitle => 'Nummer des Werks';
+
+  @override
+  String redesignImportNumberTitlePrefix(Object prefix) {
+    return 'Nummer des Werks (Kürzel $prefix)';
   }
 
   @override

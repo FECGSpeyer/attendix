@@ -1493,6 +1493,62 @@ RdWorkTarget rdNewWorkTarget(RdImportPlan plan, RdImportWork work) {
   return RdWorkTarget.create(name: name, number: number, prefix: number == null ? plan.newPrefix : plan.newPrefix ?? work.prefix);
 }
 
+/// [rdNewWorkTarget] with the decisions [d]: when another new Werk of the
+/// import took its number (by hand), the next free one after the highest in
+/// a Sammlung with a Kürzel, otherwise none.
+RdWorkTarget rdNewWorkTargetWith(RdImportPlan plan, RdImportDecisions d, RdImportWork work) {
+  final t = rdNewWorkTarget(plan, work);
+  final n = t.number;
+  if (n == null) return t;
+  final used = rdImportUsedNumbers(plan, d, exceptKey: work.key);
+  final prefix = t.prefix ?? plan.newPrefix;
+  if (!used.contains(rdImportNumberKey(prefix, n))) return t;
+  final kuerzel = plan.newPrefix?.trim() ?? '';
+  return RdWorkTarget.create(name: t.name!, number: kuerzel.isEmpty ? null : rdImportNextNumber(used, kuerzel), prefix: t.prefix);
+}
+
+/// Numbers in use in the group and those the other new Werke of the import
+/// take with [d] ([rdImportNumberKey]); [exceptKey]'s own left out.
+Set<String> rdImportUsedNumbers(RdImportPlan plan, RdImportDecisions d, {String? exceptKey}) => {
+      ...plan.takenNumbers,
+      for (final s in plan.songs.values)
+        if (s.number != null) rdImportNumberKey(s.prefix, s.number!),
+      for (final w in plan.works)
+        if (w.key != exceptKey && w.key != 'loose')
+          if (rdTargetOf(plan, d, w) case RdWorkTarget(isNew: true, :final int number, :final prefix))
+            rdImportNumberKey(prefix ?? plan.newPrefix, number),
+    };
+
+/// The number after the highest one with [prefix] in [used].
+int rdImportNextNumber(Set<String> used, String prefix) {
+  final head = '${prefix.trim().toUpperCase()}|';
+  return used.where((k) => k.startsWith(head)).fold<int>(0, (m, k) => math.max(m, int.tryParse(k.substring(head.length)) ?? 0)) + 1;
+}
+
+/// Why [input] cannot be the number of [work] as a new Werk with Kürzel
+/// [prefix] and the decisions [d], or null when it can (also empty: no
+/// number, except in a Sammlung with a Kürzel).
+RdImportNumberProblem? rdImportNumberProblem(RdImportPlan plan, RdImportDecisions d, RdImportWork work, String input, {String? prefix}) {
+  final text = _withoutKuerzel(input, prefix);
+  if (text.isEmpty) return (plan.newPrefix?.trim() ?? '').isEmpty ? null : RdImportNumberProblem.required;
+  final n = int.tryParse(text);
+  if (n == null || n < 1) return RdImportNumberProblem.invalid;
+  final used = rdImportUsedNumbers(plan, d, exceptKey: work.key);
+  return used.contains(rdImportNumberKey(prefix, n)) ? RdImportNumberProblem.taken : null;
+}
+
+/// The number in [input] once [rdImportNumberProblem] found none; null = none.
+int? rdImportParseNumber(String input, {String? prefix}) => int.tryParse(_withoutKuerzel(input, prefix));
+
+/// [input] without the Kürzel typed with it ("T3" → "3").
+String _withoutKuerzel(String input, String? prefix) {
+  final text = input.trim();
+  final kuerzel = (prefix ?? '').trim();
+  return kuerzel.isNotEmpty && text.toUpperCase().startsWith(kuerzel.toUpperCase()) ? text.substring(kuerzel.length).trim() : text;
+}
+
+enum RdImportNumberProblem { required, invalid, taken }
+
 /// Numbers of new Werke. Into a Sammlung with a Kürzel: on from its highest
 /// number, in the order of the Werke (folder numbers only sort them).
 /// Otherwise the folder numbers still free (the first keeps a number twice
@@ -1526,10 +1582,9 @@ Map<String, int?> _numbersOf(RdImportPlan plan) => _numbers[plan] ??= () {
         }
       }
       if (prefix.isNotEmpty && without.isNotEmpty) {
-        final head = '${prefix.toUpperCase()}|';
-        var next = used.where((k) => k.startsWith(head)).fold<int>(0, (m, k) => math.max(m, int.tryParse(k.substring(head.length)) ?? 0));
+        var next = rdImportNextNumber(used, prefix);
         for (final w in without) {
-          numbers[w.key] = ++next;
+          numbers[w.key] = next++;
         }
       }
       return numbers;

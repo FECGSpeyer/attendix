@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/utils/dialog_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../data/import/rd_import_controller.dart';
 import '../../data/import/rd_import_logic.dart';
@@ -145,9 +146,12 @@ class RdImportWorkPage extends ConsumerWidget {
             RdMatchKind.byAi => l10n.redesignImportMatchByAi,
             _ => null,
           };
-    // A number the import gave, not the folder's own.
+    // A number the import gave, not the folder's own (none when typed by hand).
     final target = ws.target;
-    final numberHint = !target.isNew || target.number == null || target.number == work.number
+    final numberHint = !target.isNew ||
+            target.number == null ||
+            target.number == work.number ||
+            target.number != rdNewWorkTargetWith(plan, d, work).number
         ? null
         : (plan.newPrefix ?? '').trim().isNotEmpty
             ? l10n.redesignImportNumberCollection
@@ -176,10 +180,6 @@ class RdImportWorkPage extends ConsumerWidget {
                       const SizedBox(height: 4),
                       Text(matchHint, style: RdType.meta(p, size: 13).copyWith(color: p.late)),
                     ],
-                    if (numberHint != null) ...[
-                      const SizedBox(height: 4),
-                      Text(numberHint, style: RdType.meta(p, size: 13)),
-                    ],
                   ],
                 ),
               ),
@@ -187,13 +187,26 @@ class RdImportWorkPage extends ConsumerWidget {
               RdTextLink(
                 label: l10n.redesignImportTargetChange,
                 onTap: () async {
-                  final target = await showRdSheet<RdWorkTarget>(context, _TargetSheet(plan: plan, work: work, current: ws.target));
+                  final target = await showRdSheet<RdWorkTarget>(context, _TargetSheet(plan: plan, decisions: d, work: work, current: ws.target));
                   if (target != null) controller.setTarget(work.key, target);
                 },
               ),
             ],
           ),
         ),
+        if (target.isNew) ...[
+          const SizedBox(height: 8),
+          RdGroupedList(
+            children: [
+              RdListRow(
+                title: l10n.redesignImportNumberLabel,
+                subtitle: numberHint,
+                value: target.number == null ? l10n.redesignImportNumberEmpty : '${target.prefix ?? plan.newPrefix ?? ''}${target.number}',
+                onTap: () => _editNumber(context, ref, work, target),
+              ),
+            ],
+          ),
+        ],
         if (work.fassungen.length > 1 && !ws.target.skip) ...[
           const SizedBox(height: 20),
           RdSectionHeader(l10n.redesignImportFassungenTitle),
@@ -308,10 +321,42 @@ class _RadioRow extends StatelessWidget {
 
 /// "Werk wählen": a new Werk, "Nicht übernehmen" or an existing Werk
 /// (search like the Werke list); the current target is checked.
+/// The number of [work] as a new Werk, typed by hand (Leon, 09.11.2026);
+/// the Kürzel stays the Sammlung's (or the folder's in the Repertoire).
+Future<void> _editNumber(BuildContext context, WidgetRef ref, RdImportWork work, RdWorkTarget target) async {
+  final l10n = context.l10n;
+  final state = ref.read(rdImportProvider);
+  final plan = state.plan;
+  if (plan == null) return;
+  final prefix = target.prefix ?? plan.newPrefix;
+  final input = await DialogHelper.showTextInput(
+    context,
+    title: (prefix ?? '').trim().isEmpty ? l10n.redesignImportNumberTitle : l10n.redesignImportNumberTitlePrefix(prefix!.trim()),
+    initialValue: target.number?.toString() ?? '',
+    hint: l10n.redesignImportNumberHint,
+    keyboardType: TextInputType.number,
+    validator: (value) => switch (rdImportNumberProblem(plan, ref.read(rdImportProvider).decisions, work, value, prefix: prefix)) {
+      null => null,
+      RdImportNumberProblem.required => l10n.redesignImportNumberRequired,
+      RdImportNumberProblem.invalid => l10n.redesignImportNumberInvalid,
+      RdImportNumberProblem.taken => l10n.redesignImportNumberInUse,
+    },
+  );
+  if (input == null || !context.mounted) return;
+  // The plan may have changed meanwhile (KI on/off): only for the same Werk.
+  final now = ref.read(rdImportProvider);
+  if (now.plan?.work(work.key) == null || rdTargetOf(now.plan!, now.decisions, now.plan!.work(work.key)!) != target) return;
+  ref.read(rdImportProvider.notifier).setTarget(
+        work.key,
+        RdWorkTarget.create(name: target.name!, number: rdImportParseNumber(input, prefix: prefix), prefix: target.prefix),
+      );
+}
+
 class _TargetSheet extends StatefulWidget {
-  const _TargetSheet({required this.plan, required this.work, required this.current});
+  const _TargetSheet({required this.plan, required this.decisions, required this.work, required this.current});
 
   final RdImportPlan plan;
+  final RdImportDecisions decisions;
   final RdImportWork work;
   final RdWorkTarget current;
 
@@ -343,7 +388,6 @@ class _TargetSheetState extends State<_TargetSheet> {
         final nb = b.number ?? 1 << 30;
         return na != nb ? na.compareTo(nb) : a.name.compareTo(b.name);
       });
-    final fallback = rdDefaultTarget(widget.plan, widget.work);
     final current = widget.current;
     final border = OutlineInputBorder(borderRadius: BorderRadius.circular(p.buttonRadius), borderSide: BorderSide.none);
     return Padding(
@@ -393,13 +437,10 @@ class _TargetSheetState extends State<_TargetSheet> {
                       selected: current.isNew,
                       showChevron: false,
                       trailing: RdSheetCheck(current.isNew),
+                      // With a free number too (in a Sammlung the next one), also
+                      // after numbers typed by hand for other Werke.
                       onTap: () => Navigator.of(context).pop(
-                        current.isNew
-                            ? current
-                            : fallback.isNew
-                                ? fallback
-                                // With a free number too (in a Sammlung the next one).
-                                : rdNewWorkTarget(widget.plan, widget.work),
+                        current.isNew ? current : rdNewWorkTargetWith(widget.plan, widget.decisions, widget.work),
                       ),
                     ),
                     RdListRow(

@@ -22462,17 +22462,65 @@ abstract class AppLocalizations {
   /// **'In der Sammlung werden neue Werke fortlaufend nummeriert, die Nummer aus dem Ordner zählt hier nicht.'**
   String get redesignImportNumberCollection;
 
+  /// redesign.import.numberEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne'**
+  String get redesignImportNumberEmpty;
+
+  /// redesign.import.numberHint
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. 3'**
+  String get redesignImportNumberHint;
+
+  /// redesign.import.numberInUse
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Nummer ist schon vergeben.'**
+  String get redesignImportNumberInUse;
+
+  /// redesign.import.numberInvalid
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte nur eine Zahl eingeben.'**
+  String get redesignImportNumberInvalid;
+
+  /// redesign.import.numberLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Nummer'**
+  String get redesignImportNumberLabel;
+
   /// redesign.import.numberNone
   ///
   /// In de, this message translates to:
   /// **'Der Ordner hat keine Nummer, deshalb bekommt das Werk die nächste freie.'**
   String get redesignImportNumberNone;
 
+  /// redesign.import.numberRequired
+  ///
+  /// In de, this message translates to:
+  /// **'In der Sammlung braucht jedes Werk eine Nummer.'**
+  String get redesignImportNumberRequired;
+
   /// redesign.import.numberTaken
   ///
   /// In de, this message translates to:
   /// **'{number} ist schon vergeben, deshalb bekommt das Werk die nächste freie Nummer.'**
   String redesignImportNumberTaken(Object number);
+
+  /// redesign.import.numberTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Nummer des Werks'**
+  String get redesignImportNumberTitle;
+
+  /// redesign.import.numberTitlePrefix
+  ///
+  /// In de, this message translates to:
+  /// **'Nummer des Werks (Kürzel {prefix})'**
+  String redesignImportNumberTitlePrefix(Object prefix);
 
   /// redesign.import.openHint
   ///

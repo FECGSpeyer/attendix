@@ -459,6 +459,33 @@ void main() {
       expect(numberOf('Neu'), 12);
       expect(numberOf('O ich armer Sünder'), isNull);
     });
+
+    test('a number typed by hand: checked against the group and the import, the others go round it', () {
+      final plan = rdBuildImportPlan([_e('Noten/01 Ohne Gott/Viola.pdf'), _e('Noten/02 Neu/Viola.pdf'), _e('Noten/03 Mehr/Viola.pdf')],
+          songs: const [RdImportSong(id: 1, name: 'Ohne Gott', number: 1, prefix: 'T')],
+          instruments: _instruments,
+          isChoir: false,
+          newPrefix: 'T');
+      RdImportWork work(String title) => plan.works.firstWhere((w) => w.title == title);
+      final ohneGott = work('Ohne Gott');
+      expect(ohneGott.match.songId, 1);
+      expect([rdDefaultTarget(plan, work('Neu')).number, rdDefaultTarget(plan, work('Mehr')).number], [2, 3]);
+
+      const d = RdImportDecisions();
+      RdImportNumberProblem? problem(String input) => rdImportNumberProblem(plan, d, work('Neu'), input, prefix: 'T');
+      expect([problem('1'), problem('3'), problem(''), problem('x'), problem('0')],
+          [RdImportNumberProblem.taken, RdImportNumberProblem.taken, RdImportNumberProblem.required, RdImportNumberProblem.invalid, RdImportNumberProblem.invalid]);
+      expect([problem('7'), problem('t 7'), problem('2')], [null, null, null]);
+      expect(rdImportParseNumber('t 7', prefix: 'T'), 7);
+
+      // "Neu" by hand on 4, the number kept for "Ohne Gott" made new by hand:
+      // that one gets the next free one instead.
+      final byHand = RdImportDecisions(targets: {work('Neu').key: const RdWorkTarget.create(name: 'Neu', number: 4, prefix: 'T')});
+      expect(rdNewWorkTarget(plan, ohneGott).number, 4);
+      final made = rdNewWorkTargetWith(plan, byHand, ohneGott);
+      expect((made.prefix, made.number), ('T', 5));
+      expect(rdImportNumberProblem(plan, byHand, work('Mehr'), '4', prefix: 'T'), RdImportNumberProblem.taken);
+    });
   });
 
   test('questions by what they most likely mean: unclear first, then by files', () {
