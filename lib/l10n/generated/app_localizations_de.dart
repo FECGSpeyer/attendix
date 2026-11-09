@@ -12515,6 +12515,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventForMembers => 'Für Mitglieder';
 
   @override
+  String get redesignEventHereAfterAll => 'Doch da';
+
+  @override
+  String redesignEventHereAfterAllHint(Object name) {
+    return '$name doch anwesend';
+  }
+
+  @override
   String get redesignEventHide => 'Weniger';
 
   @override

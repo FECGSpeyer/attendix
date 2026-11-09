@@ -125,6 +125,9 @@ class _FilterChip extends StatelessWidget {
 
 /// One person of the recording list: name, note, three status buttons
 /// (only the ones the Termin type allows) and "more".
+///
+/// Excused persons are settled: nothing is left to do, so the row is
+/// muted and only offers "Doch da"; every other status sits behind "more".
 class RdRecordRow extends StatelessWidget {
   const RdRecordRow({
     super.key,
@@ -157,6 +160,7 @@ class RdRecordRow extends StatelessWidget {
       _ => null,
     };
     final look = rdStatusLook(p, status);
+    final settled = status == AttendanceStatus.excused;
     final info = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -164,14 +168,25 @@ class RdRecordRow extends StatelessWidget {
           member.name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: p.text),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: settled ? p.text2 : p.text),
         ),
         if (badge != null)
-          Text(
-            badge,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: look.color),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (settled) ...[
+                Icon(look.icon, size: 15, color: look.color),
+                const SizedBox(width: 4),
+              ],
+              Flexible(
+                child: Text(
+                  badge,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: look.color),
+                ),
+              ),
+            ],
           ),
         if (note.isNotEmpty)
           Text(
@@ -185,11 +200,17 @@ class RdRecordRow extends StatelessWidget {
     final buttons = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        for (final s in _buttons)
-          if (available.contains(s)) ...[
-            _StatusButton(status: s, active: status == s, onTap: () => onTap(s)),
+        if (settled) ...[
+          if (available.contains(AttendanceStatus.present)) ...[
+            _HereAfterAllButton(name: member.name, onTap: () => onTap(AttendanceStatus.present)),
             const SizedBox(width: 6),
           ],
+        ] else
+          for (final s in _buttons)
+            if (available.contains(s)) ...[
+              _StatusButton(status: s, active: status == s, onTap: () => onTap(s)),
+              const SizedBox(width: 6),
+            ],
         Semantics(
           button: true,
           label: l10n.redesignEventMoreStatus(member.name),
@@ -229,6 +250,52 @@ class RdRecordRow extends StatelessWidget {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+/// "Doch da" on a settled (excused) row: small and quiet, because the
+/// row needs nothing more.
+class _HereAfterAllButton extends StatelessWidget {
+  const _HereAfterAllButton({required this.name, required this.onTap});
+
+  final String name;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    return Semantics(
+      button: true,
+      label: l10n.redesignEventHereAfterAllHint(name),
+      excludeSemantics: true,
+      child: Material(
+        color: p.surface,
+        shape: StadiumBorder(side: BorderSide(color: p.offBorder, width: 1.5)),
+        child: InkWell(
+          key: const Key('rd-record-here-after-all'),
+          customBorder: const StadiumBorder(),
+          onTap: onTap,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 36, minWidth: 44),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.check_rounded, size: 18, color: p.present),
+                  const SizedBox(width: 4),
+                  Text(
+                    l10n.redesignEventHereAfterAll,
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: p.text),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

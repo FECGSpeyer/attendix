@@ -15460,6 +15460,17 @@
   "@redesignEventForMembers": {
     "description": "redesign.event.forMembers"
   },
+  "redesignEventHereAfterAll": "Doch da",
+  "@redesignEventHereAfterAll": {
+    "description": "redesign.event.hereAfterAll"
+  },
+  "redesignEventHereAfterAllHint": "{name} doch anwesend",
+  "@redesignEventHereAfterAllHint": {
+    "description": "redesign.event.hereAfterAllHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "redesignEventHide": "Weniger",
   "@redesignEventHide": {
     "description": "redesign.event.hide"
