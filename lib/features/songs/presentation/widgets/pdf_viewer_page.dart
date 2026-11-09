@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pdfx/pdfx.dart';
+import 'package:printing/printing.dart' show Printing;
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -160,12 +161,30 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
   }
 
   /// iPhone/iPad and Android: the system share sheet (print, AirDrop, mail,
-  /// save in Dateien …). Web and desktop keep "open externally", where the
-  /// browser / Vorschau prints.
+  /// save in Dateien …). Web keeps "open externally" (the browser prints).
   static bool get _canShareFile =>
       !kIsWeb &&
       (defaultTargetPlatform == TargetPlatform.iOS ||
           defaultTargetPlatform == TargetPlatform.android);
+
+  /// Mac (and other desktops): print straight from the app (the macOS share
+  /// menu has no print), next to "open externally".
+  static bool get _canPrintDirectly =>
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.macOS ||
+          defaultTargetPlatform == TargetPlatform.windows ||
+          defaultTargetPlatform == TargetPlatform.linux);
+
+  Future<void> _print() async {
+    final bytes = _bytes;
+    if (bytes == null) return;
+    try {
+      await Printing.layoutPdf(onLayout: (_) async => bytes, name: widget.fileName);
+    } catch (_) {
+      // No printer dialog here: fall back to the external viewer.
+      await _openExternally();
+    }
+  }
 
   Future<void> _share(BuildContext button) async {
     final bytes = _bytes;
@@ -228,12 +247,19 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                 onPressed: _bytes == null ? null : () => _share(button),
               ),
             )
-          else
+          else ...[
+            if (_canPrintDirectly && _error == null)
+              IconButton(
+                icon: const Icon(Icons.print_outlined),
+                tooltip: context.l10n.redesignWorkFilePrint,
+                onPressed: _bytes == null ? null : _print,
+              ),
             IconButton(
               icon: const Icon(Icons.open_in_new),
               tooltip: context.l10n.coreFlutterOpenExternally,
               onPressed: _openExternally,
             ),
+          ],
         ],
       ),
       body: Stack(

@@ -89,6 +89,8 @@ void main() {
     expect(source, contains('Share.shareXFiles('));
     expect(source, contains("mimeType: 'application/pdf'"));
     expect(source, contains('Icons.ios_share'));
+    // Mac: print directly (its share menu has no print).
+    expect(source, contains('Printing.layoutPdf('));
   });
 
   test('the normal app keeps its PDF viewer, the new design opens the page', () {
