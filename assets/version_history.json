@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.111.0",
+      "date": "9.11.2026",
+      "changes": [
+        "✨ Werk-Upload ordnet Stimmen wie „Noten importieren“ zu: KI-Vorschlag aus dem Dateinamen, Seite 1 nur für den Rest, bekannte Instrumente als neue Gruppe, „Posaune und Tuba“ an beide Gruppen"
+      ]
+    },
+    {
       "version": "0.110.5",
       "date": "9.11.2026",
       "changes": [
