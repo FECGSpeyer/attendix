@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.110.3",
+      "date": "9.11.2026",
+      "changes": [
+        "🐛 Mac-Store-Build: Firebase-Datei ohne Quarantäne-Attribut ins Bundle kopieren (App Store Connect lehnte 332 und 338 mit Fehler 91109 ab)"
+      ]
+    },
+    {
       "version": "0.110.2",
       "date": "9.11.2026",
       "changes": [
