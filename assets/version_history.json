@@ -1,17 +1,75 @@
 {
   "versions": [
     {
-      "version": "0.98.0",
-      "date": "8.11.2026",
+      "version": "0.103.0",
+      "date": "9.11.2026",
       "changes": [
         "💄 Beta Rollen und Rechte: nach Personen geordnet („Was Mitglieder sehen“, „Was Mitglieder dürfen“, „Was Helfer dürfen“). Stimmführer haben keine eigenen Abschnitte mehr, Mitglied und Helfer gelten auch für sie. Neuer Schalter „Stimmführer nur ihre Stimme“, Abwesenheit selbst eintragen jetzt auch für Stimmführer einstellbar",
         "💄 Beta: Schalter ohne Wirkung entfernt (Notizen und Checkliste bei Stimmführer-Helfern, die sehen sie immer) und „Dienste zuerst zeigen“ (im Beta haben Dienste immer einen eigenen Bereich)",
         "💄 Beta Person bearbeiten: Rolle nur noch Mitglied, Verantwortlicher oder Helfer; Stimmführer ist der Schalter bei der Person und gibt die passende Rolle direkt mit",
         "💄 Beta Verwaltung: Einstellungen verständlicher benannt und erklärt (z. B. „Alle Termine zeigen“, „Hinweis für nicht Eingeladene“, „Mitglieder-Tab für alle“, „Termine anlegen“, „Alle Register eintragen“, „Lehrer erfassen“, „Eltern-Zugang“)",
+        "💄 Beta Auswertung: „So wird gezählt“ heißt jetzt „Was zur Anwesenheitsquote zählt“ (Saisonbeginn, „Arbeit und Schicht zählen als anwesend“, Terminarten)",
         "🐛 Beta Abwesenheit für einen Zeitraum: betrifft alle eigenen Termine, die unter „Heute“ stehen, auch eigene Dienste (wie die Vorschau im Blatt zeigt), unabhängig von der klassischen Dienstansicht",
         "🐛 Beta Rollen und Rechte: Schlägt das Speichern eines Schalters fehl, wird er nicht mehr mit dem nächsten Schalter doch noch gespeichert; bereits gespeicherte Schalter bleiben gespeichert, auch wenn man die Seite gleich verlässt",
         "🐛 Abwesenheit löschen unter „Meine Termine“: setzt auch eigene Dienste zurück, die mit dieser Abwesenheit entschuldigt wurden (z. B. im Beta oder von der Leitung eingetragen)",
         "🐛 Beta Person bearbeiten: „Stimmführer“ liest erst die gespeicherte Rolle und speichert dann; Verantwortliche und Admins behalten ihre Rolle auch, wenn sie noch nicht geladen war. Lässt sich die Rolle nicht lesen, wird nichts gespeichert und der Schalter springt zurück"
+      ]
+    },
+    {
+      "version": "0.102.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta Auswertung neu: oben Zeitraum (Saison, 3 Monate, 12 Monate oder eigener Von/Bis-Zeitraum) und Filter nach Terminart und Register, darunter die Ebenen „Überblick“ und „Termine“ (Umschalter oder Wischen)",
+        "✨ Beta Auswertung Überblick: Ø mit Veränderung gegenüber dem gleich langen Zeitraum davor, Anwesenheit je Termin (antippen zeigt, wer fehlte, mit Grund), „Fällt auf“ (Personen unter 50 %, nachlassendes Register, schwächster und bester Termin), Statusverteilung und Termine je Art (antippen filtert)",
+        "✨ Beta Auswertung Termine: alle Termine des Zeitraums mit Statusbalken und fehlenden Personen, nach Monat gruppiert, sortierbar (Neueste, Älteste, Schwächste, Beste zuerst)",
+        "✨ Beta Auswertung Register: jedes Register mit Personen, Monatskurve und Quote; antippen zeigt seine Personen",
+        "✨ Beta Auswertung Personen: alle mit Quote und Fehlzeiten, sortierbar (Wenigste, Meiste, Oft abwesend, Oft verspätet, Name); das Personen-Blatt zeigt jeden Termin als Punkt, die Zahlen und wann die Person mit welchem Grund fehlte",
+        "✨ Beta Auswertung am Mac und Tablet: Termine und Personen als Tabelle mit sortierbaren Spalten",
+        "✨ Beta Auswertung: Mitglieder, Alter (je Jahrzehnt, Ø je Register), Zusatzfelder und Organisation aus Ionic im Beta-Design",
+        "✨ Beta Auswertung: „Zählt zur Anwesenheitsquote“ direkt hier umschaltbar; der Terminart-Filter gilt nur für die Ansicht",
+        "🐛 Beta Auswertung: alles wird gezählt wie bei den Mitgliedern (nur zählende Terminarten, Dienste nur Eingeteilte, Schichtbedingt-Einstellung, Neutral zählt als nicht da); Dirigent ist kein Register mehr; „100 %“ bricht nicht mehr um"
+      ]
+    },
+    {
+      "version": "0.101.0",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta Terminart einfacher: oben Name und „Aussehen“ (Farbe, hervorheben, Name verbergen), dann „Jeder Termin dieser Art“ (Uhrzeit wie bei „Termin bearbeiten“, Anwesenheit, „Zählt zur Anwesenheitsquote“, Eingeplant) und „Neue Termine dieser Art bekommen automatisch“ mit nur den eingeschalteten Funktionen, der Rest unter „Hinzufügen“; „Für neue Termine anbieten“ und Löschen unten",
+        "✨ Beta „Neue Terminart“: ein Blatt mit Name und „Startet wie“ (eine bestehende Art übernehmen oder leer) statt des alten großen Formulars",
+        "✨ Beta Ort und Werke an jedem Termin: keine Schalter mehr an der Terminart; wird ein Ort oder Werk eingetragen, schaltet die App es an der Art selbst ein (damit die alte App es auch zeigt)",
+        "✨ Beta Ablauf am Termin: „Für neue Termine dieser Art übernehmen“ (Werke werden zu Platzhaltern)"
+      ]
+    },
+    {
+      "version": "0.100.0",
+      "date": "8.11.2026",
+      "changes": [
+        "💄 Beta Desktop: Die Verwaltung zeigt links alle Einträge kompakt (Titel und Anzahl), rechts öffnet sich direkt die gewählte Seite statt einer Zwischenliste; ohne Auswahl rechts eine Übersicht mit Gruppe, zuletzt geöffnet und noch nicht genutzt",
+        "💄 Beta: Name und Kürzel, Mitteilungen und Organisation öffnen sich innerhalb der Verwaltung"
+      ]
+    },
+    {
+      "version": "0.99.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Beta Problemfälle neu: Regeln lesen sich als Satz („Mindestens 3-mal unentschuldigt gefehlt in den letzten 30 Tagen“), jede zeigt, wie viele sie gerade trifft. Der Regel-Editor startet mit Vorlagen (Fehlt oft, Oft zu spät, Selten da), die Satzteile sind antippbar, darunter eine Live-Vorschau, wen die Regel trifft. Er öffnet im Inhaltsbereich, die Seitenleiste bleibt",
+        "✨ Beta: Heute, Mitglieder und die Person zeigen, warum jemand Problemfall ist; einheitlich „Problemfälle“ statt „Fehlen oft“/„Auffällige Anwesenheit“",
+        "🐛 Erklärung von Oder/Und bei Problemfall-Regeln korrigiert (alle Und-Regeln zusammen, nicht alle Regeln)"
+      ]
+    },
+    {
+      "version": "0.98.1",
+      "date": "8.11.2026",
+      "changes": [
+        "🐛 Termine mit Filter auf ein Organisations-Zusatzfeld: Ändert man das Feld bei einer Person (Person bearbeiten oder Mehrfachauswahl „Feld“), wird sie jetzt in kommenden Terminen ergänzt bzw. entfernt. Auch beim Aufnehmen und Registerwechsel zählt der gemeinsame Wert statt des Standardwerts"
+      ]
+    },
+    {
+      "version": "0.98.0",
+      "date": "8.11.2026",
+      "changes": [
+        "✨ Noten-Import: Ein Tipp auf eine Stimm-Frage zeigt die erste Seite von bis zu drei ihrer Dateien, die Antworten direkt darunter",
+        "✨ Noten-Import: Neue Antwort „Von Seite 1 lesen“: Die KI liest bei Namen wie „Solo“ die Stimme jeder Datei von ihrer ersten Seite; statt „Ohne Zuordnung“ schlägt die KI das vor, wenn es PDFs gibt"
       ]
     },
     {

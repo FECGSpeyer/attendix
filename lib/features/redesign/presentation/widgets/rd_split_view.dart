@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/redesign/rd_theme.dart';
-import 'rd_widgets.dart' show RdPage;
+import 'rd_widgets.dart' show RdBackLink, RdPage, rdIsPushed;
 import 'today/rd_today_common.dart' show RdInfoCard;
 
 /// REDESIGN: list and detail side by side on wide screens (canvas
@@ -95,5 +95,35 @@ class RdSplitView extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// REDESIGN: "‹ Verwaltung" on a page of the Verwaltung. On the right of
+/// the Verwaltung list (wide screens) it is left out, like on a person or a
+/// Werk next to its list: the list's own back link leads on (a pushed
+/// Verwaltung there says "‹ Zurück" and pops back to where it came from).
+class RdManageBackLink extends StatelessWidget {
+  const RdManageBackLink({super.key, required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    if (RdSplitScope.of(context)?.isDetail ?? false) return const SizedBox(height: 44);
+    return RdBackLink(label: label, onTap: onTap);
+  }
+}
+
+/// Opens a page of the Verwaltung from its list on wide screens: it takes
+/// the place on the right, the list keeps its state. When the Verwaltung was
+/// pushed from elsewhere (a picker, the Mitglieder •••), the next page is
+/// pushed too: the page below stays and its `await push` still returns
+/// when the user goes back.
+void rdManageSplitOpen(BuildContext context, String location) {
+  if (rdIsPushed(context)) {
+    context.push(location);
+  } else {
+    context.go(location);
   }
 }

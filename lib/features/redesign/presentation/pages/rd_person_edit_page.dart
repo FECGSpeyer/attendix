@@ -55,6 +55,9 @@ import '../../../people/presentation/widgets/planned_absences.dart'
     show addPlannedAbsenceFlow, deletePlannedAbsenceFlow;
 import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/members/rd_person_form.dart';
+import '../../data/providers/rd_critical_providers.dart';
+import '../../data/rd_critical_logic.dart';
+import '../widgets/manage/rd_settings_sheets.dart' show RdListNote;
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
@@ -585,7 +588,10 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
         await _repo!.syncPlayerWithUpcomingAttendances(
           (_person ?? person).copyWith(additionalFields: next),
           oldInstrument: (_person ?? person).instrument,
-          oldAdditionalFields: old,
+          // Every changed field with its old value, also one never stored
+          // (null = its default): an organisation field missing here would
+          // count as unchanged.
+          oldAdditionalFields: {...old, for (final k in changes.keys) k: old[k]},
         );
       } catch (e, st) {
         ErrorReporter.report(e, st, where: 'rd_person_edit_page');
@@ -1408,6 +1414,16 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
           const SizedBox(height: 20),
           RdGroupLabel(l10n.peopleProblemCase),
           RdGroupedList(children: [
+            // Why (the rule that hits); none while it cannot be worked out.
+            if (rdCriticalContextOf(ref)?.reasonOf(person) case final reason?)
+              RdListRow(
+                title: rdCriticalHitText(reason.rule, reason.result, l10n),
+                titleColor: p.absent,
+                subtitle: (reason.rule.name ?? '').trim().isEmpty
+                    ? rdCriticalPeriodText(reason.rule, l10n)
+                    : l10n.rdCriticalReasonDetail(rdCriticalPeriodText(reason.rule, l10n), reason.rule.name!.trim()),
+                showChevron: false,
+              ),
             RdListRow(
               title: l10n.personTalkedTo,
               showChevron: false,
@@ -1432,6 +1448,7 @@ class _RdPersonEditPageState extends ConsumerState<RdPersonEditPage> {
               ),
           ]),
           if (_problemSolved) ...[
+            RdListNote(l10n.rdCriticalSolveHint(person.firstName.isEmpty ? _name(person) : person.firstName)),
             const SizedBox(height: 12),
             RdPrimaryButton(label: l10n.redesignPersonFormProblemSave, onPressed: _solveProblem),
           ],

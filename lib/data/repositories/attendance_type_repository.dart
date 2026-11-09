@@ -134,6 +134,43 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
     }
   }
 
+  /// Beta "Neue Terminart › Startet wie": a new type named [name] with all
+  /// columns of [templateId] (plan, checklist, reminders, duty, protocol,
+  /// sign-up questions …), offered for new Termine and at the end of the
+  /// list. Ort and Werke are on: the Beta offers them at every Termin.
+  Future<AttendanceType> copyType(String templateId, String name) async {
+    ensureNotDemo('createType'); // DEMO_GUARD
+    try {
+      final row = await supabase
+          .from('attendance_types')
+          .select('*')
+          .eq('id', templateId)
+          .eq('tenant_id', currentTenantId)
+          .single();
+      final data = Map<String, dynamic>.from(row)
+        ..remove('id')
+        ..remove('created_at')
+        ..remove('is_default_org_plan');
+      final response = await supabase
+          .from('attendance_types')
+          .insert({
+            ...data,
+            'name': name.trim(),
+            'visible': true,
+            'index': 999,
+            'place_enabled': true,
+            'manage_songs': true,
+            'tenant_id': currentTenantId,
+          })
+          .select()
+          .single();
+      return AttendanceType.fromJson(response);
+    } catch (e, stack) {
+      handleError(e, stack, 'copyType');
+      rethrow;
+    }
+  }
+
   /// Update an attendance type
   Future<AttendanceType?> updateType(String id, Map<String, dynamic> updates) async {
     ensureNotDemo('updateType'); // DEMO_GUARD

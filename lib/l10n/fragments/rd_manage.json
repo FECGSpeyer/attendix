@@ -56,12 +56,12 @@
       "reasonsIntro": "Diese Gründe stehen zur Auswahl, wenn sich jemand abmeldet oder verspätet.",
       "critical": "Problemfälle",
       "criticalHint": "Wann jemand als Problemfall gilt",
-      "criticalIntro": "Wer nach diesen Regeln zu oft fehlt, gilt als Problemfall und fällt unter Heute und im Mitglieder-Tab auf.",
+      "criticalIntro": "Wer nach einer dieser Regeln auffällt, ist Problemfall und erscheint unter Heute und in Mitglieder.",
       "criticalCount": "{count, plural, one {1 Regel} other {{count} Regeln}}",
       "holidays": "Ferien und Feiertage",
       "holidaysHint": "Beim Planen von Terminen hervorgehoben",
       "holidaysIntro": "Ferien und Feiertage eures Bundeslands werden beim Anlegen von Terminen hervorgehoben.",
-      "counting": "So wird gezählt",
+      "counting": "Was zur Anwesenheitsquote zählt",
       "visibility": "Was Mitglieder sehen",
       "sharing": "Werke öffentlich teilen",
       "sharingHint": "Werkliste per Link, ohne Anmeldung",
@@ -88,7 +88,8 @@
       "noGroups": "Es gibt noch keine Register, die du auswählen kannst.",
       "hint": "Kontakt, Notizen und Privatlehrer ergänzt du danach beim Lehrer.",
       "done": "{name} angelegt"
-    }
+    },
+    "rdAdminPickHint": "Wähle links einen Eintrag, er öffnet sich hier."
   },
   "en": {
     "rdAdmin": {
@@ -147,12 +148,12 @@
       "reasonsIntro": "These reasons can be picked when someone signs off or is late.",
       "critical": "Problem cases",
       "criticalHint": "When someone counts as a problem case",
-      "criticalIntro": "Whoever misses too often by these rules counts as a problem case and shows up under Today and in the Members tab.",
+      "criticalIntro": "Whoever stands out by one of these rules is a problem case and shows up under Today and in Members.",
       "criticalCount": "{count, plural, one {1 rule} other {{count} rules}}",
       "holidays": "Holidays",
       "holidaysHint": "Highlighted when planning events",
       "holidaysIntro": "School and public holidays of your state are highlighted when creating events.",
-      "counting": "How it is counted",
+      "counting": "What counts towards the attendance rate",
       "visibility": "What members see",
       "sharing": "Share works publicly",
       "sharingHint": "Work list by link, without signing in",
@@ -179,6 +180,7 @@
       "noGroups": "There are no sections to choose from yet.",
       "hint": "Add contact, notes and private teacher afterwards on the teacher.",
       "done": "{name} created"
-    }
+    },
+    "rdAdminPickHint": "Pick an entry on the left, it opens here."
   }
 }

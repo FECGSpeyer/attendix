@@ -20,6 +20,7 @@ import '../../../../settings/presentation/pages/settings_page.dart'
     show createMissingAccounts, playersOfCurrentTenant;
 import '../../../../settings/presentation/widgets/calendar_subscription_dialog.dart';
 import '../../pages/rd_general_settings_page.dart' show showRdSharingSheet;
+import '../rd_split_view.dart' show rdManageSplitOpen;
 import 'rd_data_sheets.dart';
 import '../../../../songs/presentation/widgets/song_categories_sheet.dart';
 import '../../../data/providers/rd_members_providers.dart' show rdMembersSelectingProvider;
@@ -338,21 +339,24 @@ IconData rdManageIcon(RdManageEntry entry) => switch (entry) {
     };
 
 /// Opens [entry] (same pages, sheets and guards as the old settings page)
-/// and remembers it for "Zuletzt geöffnet".
-void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry) {
+/// and remembers it for "Zuletzt geöffnet". [inSplit]: from the Verwaltung
+/// on wide screens, where its own pages open on the right of the list.
+void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry, {bool inSplit = false}) {
   ref.read(rdManageRecentProvider.notifier).push(entry);
   void push(String location) => context.push(location);
+  // A page of the Verwaltung (the router shows it next to the list there).
+  void open(String location) => inSplit ? rdManageSplitOpen(context, location) : context.push(location);
   switch (entry) {
     case RdManageEntry.groups:
-      push(RedesignRoutes.groups);
+      open(RedesignRoutes.groups);
     case RdManageEntry.extraFields:
-      push(RedesignRoutes.extraFields);
+      open(RedesignRoutes.extraFields);
     case RdManageEntry.registration:
-      push(RedesignRoutes.registration);
+      open(RedesignRoutes.registration);
     case RdManageEntry.critical:
-      push(RedesignRoutes.critical);
+      open(RedesignRoutes.critical);
     case RdManageEntry.teachers:
-      push(RedesignRoutes.teachers);
+      open(RedesignRoutes.teachers);
     case RdManageEntry.bulkMembers:
       // Now "Auswählen" in the Mitglieder tab.
       ref.read(rdMembersSelectingProvider.notifier).state = true;
@@ -360,33 +364,33 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
     case RdManageEntry.missingAccounts:
       createMissingAccounts(context, ref, ref.read(rdMissingAccountsProvider));
     case RdManageEntry.archive:
-      push(RedesignRoutes.archive);
+      open(RedesignRoutes.archive);
     case RdManageEntry.rolesPermissions:
-      push(RedesignRoutes.rolePermissions);
+      open(RedesignRoutes.rolePermissions);
     case RdManageEntry.admins:
-      push(RedesignRoutes.admins);
+      open(RedesignRoutes.admins);
     case RdManageEntry.parents:
-      push(RedesignRoutes.parents);
+      open(RedesignRoutes.parents);
     case RdManageEntry.viewers:
-      push(RedesignRoutes.viewers);
+      open(RedesignRoutes.viewers);
     case RdManageEntry.attendanceTypes:
-      push(RedesignRoutes.attendanceTypes);
+      open(RedesignRoutes.attendanceTypes);
     case RdManageEntry.reasons:
-      push(RedesignRoutes.reasons);
+      open(RedesignRoutes.reasons);
     case RdManageEntry.holidays:
-      push(RedesignRoutes.holidays);
+      open(RedesignRoutes.holidays);
     case RdManageEntry.shiftPlans:
-      push(RedesignRoutes.shiftPlans);
+      open(RedesignRoutes.shiftPlans);
     case RdManageEntry.adHocPlanning:
       push('/settings/planung');
     case RdManageEntry.statistics:
-      push(RedesignRoutes.stats);
+      open(RedesignRoutes.stats);
     case RdManageEntry.announcements:
-      push('/settings/messages');
+      open(RedesignRoutes.messages);
     case RdManageEntry.general:
-      push('/settings/general');
+      open(RedesignRoutes.groupName);
     case RdManageEntry.organisation:
-      push('/settings/org-settings');
+      open(RedesignRoutes.organisation);
     case RdManageEntry.approvals:
       push(RedesignRoutes.approvals);
     case RdManageEntry.workHistory:

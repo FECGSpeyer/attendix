@@ -4,17 +4,21 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../../core/providers/attendance_providers.dart';
+import '../../../../../core/providers/attendance_type_providers.dart';
 import '../../../../../core/providers/conductor_providers.dart';
 import '../../../../../core/constants/enums.dart';
 import '../../../../../core/providers/debug_providers.dart';
 import '../../../../../core/providers/role_permission_providers.dart';
+import '../../../../../core/providers/plan_providers.dart' show planAttendanceTypesProvider;
 import '../../../../../core/providers/song_providers.dart';
+import '../../../../../core/providers/team_org_providers.dart' show protocolTypesProvider;
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/router/route_access.dart' show canOpenSongsTab;
 import '../../../../../core/services/offline_queue_service.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/attendance_logic_utils.dart' show showSongsForType;
+import '../../../../../core/utils/demo_guard.dart';
 import '../../../../../core/utils/dialog_helper.dart';
 import '../../../../../core/utils/error_message.dart';
 import '../../../../../core/utils/event_list_utils.dart';
@@ -30,10 +34,14 @@ import '../../../../attendance/presentation/widgets/attendance_detail/attendance
     show showConductorChangeDialog;
 import '../../../../attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart';
 import '../../../../attendance/presentation/widgets/songs_selection_sheet.dart';
+import '../../../../settings/presentation/pages/attendance_type_edit_page.dart' show buildDefaultPlanUpdate;
+import '../../../../settings/presentation/widgets/type_protocol_settings.dart' show agendaPlaceholderField;
+import '../../../../../data/models/team_org/team_org.dart' show agendaItemsPlaceholderId;
 import '../../../../planning/presentation/attendance_plan_viewer.dart';
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart' show openFilesFolderRoute;
 import '../../../data/providers/rd_today_providers.dart' show rdDeadlineLabel;
 import '../../../data/rd_event_details_logic.dart';
+import '../../../data/rd_type_flags.dart';
 import '../rd_widgets.dart';
 import '../today/rd_today_common.dart';
 
@@ -157,10 +165,17 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
     if (!repo.hasTenantId) return false;
     final container = ProviderScope.containerOf(context, listen: false);
     final session = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
+    final typeNotifier = ref.read(attendanceTypeNotifierProvider.notifier);
     setState(() => _saving = true);
     try {
       if (!session.isCurrent()) return false;
       await syncAttendanceSongHistory(repo, _id, widget.attendance.date, entries);
+      final type = widget.type;
+      if (entries.isNotEmpty && type != null) {
+        await rdEnsureTypeFlags(typeNotifier, type, songs: true, onFailed: () {
+          if (mounted) ToastHelper.showError(context, context.l10n.typeSettingsUpdateFailed);
+        });
+      }
       return true;
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
@@ -395,8 +410,11 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
 }
 
 /// Whether the Termin shows the Werke section (Ionic `manageSongs && !isGeneral`).
+/// Beta: those who edit Termine get it at every Art ("+ Werk"); the first
+/// Werk switches Werke on at the Art (see [rdEnsureTypeFlags]).
 bool rdShowsProgram(WidgetRef ref, AttendanceType? type) =>
-    showSongsForType(type, ref.watch(currentTenantProvider)?.type);
+    showSongsForType(type, ref.watch(currentTenantProvider)?.type) ||
+    (type != null && ref.watch(currentTenantProvider)?.type != 'general' && ref.watch(effectiveRoleProvider).canEdit);
 
 // ---------------------------------------------------------------------------
 // Ablauf
@@ -451,6 +469,58 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
     }
   }
 
+  bool _takingOver = false;
+
+  /// "Für neue Termine dieser Art übernehmen": this Ablauf becomes the
+  /// template of the Art (Werke as placeholders, see [rdPlanAsTypeTemplate]).
+  Future<void> _takeOver(AttendanceType type) async {
+    final l10n = context.l10n;
+    final notifier = ref.read(attendanceTypeNotifierProvider.notifier);
+    final container = ProviderScope.containerOf(context, listen: false);
+    final id = type.id;
+    final plan = widget.attendance.plan;
+    if (_takingOver || id == null || plan == null) return;
+    final ok = await DialogHelper.showConfirmation(
+      context,
+      title: l10n.rdTypeTakeOverPlan,
+      message: l10n.rdTypeTakeOverPlanConfirm(type.name),
+      confirmText: l10n.rdTypeTakeOverPlan,
+      cancelText: l10n.commonCancel,
+    );
+    if (!ok || !mounted) return;
+    final rows = [
+      for (final f in (plan['fields'] as List? ?? const []))
+        if (f is Map) Map<String, dynamic>.from(f),
+    ];
+    final fields = rdPlanAsTypeTemplate(
+      rows,
+      songPlaceholderName: (n) => l10n.typeSettingsSongPlaceholderN(n),
+      agendaMarker: agendaPlaceholderField,
+      agendaMarkerId: agendaItemsPlaceholderId,
+    );
+    setState(() => _takingOver = true);
+    AttendanceType? updated;
+    try {
+      updated = await notifier.updateType(id, {'default_plan': buildDefaultPlanUpdate(type.defaultPlan, fields)});
+      if (updated != null) {
+        // An open Ablauf editor takes the new template too.
+        container
+          ..invalidate(planAttendanceTypesProvider)
+          ..invalidate(protocolTypesProvider);
+      }
+    } on DemoModeException {
+      return;
+    } finally {
+      if (mounted) setState(() => _takingOver = false);
+    }
+    if (!mounted) return;
+    if (updated == null) {
+      ToastHelper.showError(context, l10n.rdTypeTakeOverPlanFailed);
+    } else {
+      ToastHelper.showSuccess(context, l10n.rdTypeTakeOverPlanDone(type.name));
+    }
+  }
+
   @override
   void didUpdateWidget(RdEventPlanSection oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -469,6 +539,12 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
     // Beobachter do not see it.
     final canEdit = role.canEdit;
     if (role == Role.viewer || (!hasPlan && !canEdit)) return const SizedBox.shrink();
+    // Only the Leitung edits Terminarten (Verwaltung).
+    final type = !role.isAdmin
+        ? null
+        : (ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[])
+            .where((t) => t.id != null && t.id == att.typeId)
+            .firstOrNull;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -505,6 +581,15 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
               onTap: _sharing ? null : () => _toggleShare(!share),
               trailing: Switch.adaptive(value: share, onChanged: _sharing ? null : _toggleShare),
             ),
+            if (type != null)
+              RdListRow(
+                key: const Key('rd-plan-take-over'),
+                leading: const RdRowIcon(Icons.content_copy_outlined),
+                title: l10n.rdTypeTakeOverPlan,
+                subtitle: l10n.rdTypeTakeOverPlanHint(type.name),
+                showChevron: false,
+                onTap: _takingOver ? null : () => _takeOver(type),
+              ),
             ],
           ] else
             RdListRow(

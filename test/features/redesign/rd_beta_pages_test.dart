@@ -1,6 +1,7 @@
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/attendance_type_providers.dart';
 import 'package:attendix/core/providers/group_providers.dart';
+import 'package:attendix/core/providers/player_providers.dart';
 import 'package:attendix/core/providers/realtime_providers.dart';
 import 'package:attendix/core/providers/statistics_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
@@ -16,6 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:attendix/core/router/redesign_routes.dart';
 import 'package:attendix/core/utils/tiptap_converter.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
+import 'package:attendix/features/redesign/data/providers/rd_stats_providers.dart';
 import 'package:attendix/features/redesign/data/rd_manage_logic.dart';
 import 'package:attendix/features/redesign/data/rd_stats_logic.dart';
 import 'package:attendix/features/redesign/presentation/widgets/members/rd_member_bulk.dart' show rdApplyToAll;
@@ -23,9 +25,6 @@ import 'package:attendix/features/redesign/presentation/pages/rd_message_compose
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../factories/test_factories.dart';
-
-PersonAttendance _pa(int personId, AttendanceStatus status) =>
-    PersonAttendance(attendanceId: 1, personId: personId, status: status);
 
 class _TenantNotifier extends CurrentTenantNotifier {
   _TenantNotifier(super.ref) {
@@ -59,6 +58,9 @@ Widget _app(Widget home) => ProviderScope(
               ],
             ]),
         activePlayersForStatsProvider.overrideWith((ref) async => _people),
+        rdStatsPreviousDataProvider.overrideWith((ref) async => null),
+        playersProvider.overrideWith((ref) async => _people),
+        archivedPlayersProvider.overrideWith((ref) async => const <Person>[]),
         realtimePlayersProvider.overrideWith((ref) => Stream.value(_people)),
         rdManagePendingProvider.overrideWith((ref) => const <Person>[]),
       ],
@@ -94,41 +96,88 @@ void main() {
       expect(rdStatsRangeStart(RdStatsRange.twelveMonths, today), DateTime(2025, 10, 30));
     });
 
-    test('people below 50 %: lowest first, neutral and few Termine ignored', () {
-      final anna = TestFactories.createPerson(id: 1, firstName: 'Anna');
-      final ben = TestFactories.createPerson(id: 2, firstName: 'Ben');
-      final clara = TestFactories.createPerson(id: 3, firstName: 'Clara');
-      final paused = TestFactories.createPausedPerson().copyWith(id: 4);
-      final pas = [
-        // Anna 1 of 4 = 25 %
-        _pa(1, AttendanceStatus.present),
-        _pa(1, AttendanceStatus.absent),
-        _pa(1, AttendanceStatus.absent),
-        _pa(1, AttendanceStatus.excused),
-        // Ben 1 of 3 = 33 %, the neutral entries do not count
-        _pa(2, AttendanceStatus.late),
-        _pa(2, AttendanceStatus.absent),
-        _pa(2, AttendanceStatus.absent),
-        _pa(2, AttendanceStatus.neutral),
-        _pa(2, AttendanceStatus.neutral),
-        // Clara only 2 Termine: left out
-        _pa(3, AttendanceStatus.absent),
-        _pa(3, AttendanceStatus.absent),
-        // paused people are not listed
-        _pa(4, AttendanceStatus.absent),
-        _pa(4, AttendanceStatus.absent),
-        _pa(4, AttendanceStatus.absent),
+    test('one way of counting: shown Terminarten, Register filter, Dirigent no Register', () {
+      final types = [
+        TestFactories.createAttendanceType(id: 'p', name: 'Probe'),
+        TestFactories.createAttendanceType(id: 'f', name: 'Feier').copyWith(includeInAverage: false),
       ];
-      final low = rdLowAttendance(pas, [anna, ben, clara, paused]);
-      // Shift-excused absences count as present when the tenant says so.
-      final shift = [
-        for (var i = 0; i < 3; i++)
-          PersonAttendance(attendanceId: 1, personId: 3, status: AttendanceStatus.excused, notes: 'Schichtbedingt'),
+      final groups = [
+        TestFactories.createGroup(id: 1, name: 'Viola'),
+        TestFactories.createGroup(id: 2, name: 'Cello'),
+        TestFactories.createGroup(id: 9, name: 'Dirigent', maingroup: true),
       ];
-      expect(rdLowAttendance(shift, [clara], shiftExcusedAsPresent: true), isEmpty);
-      expect(rdLowAttendance(shift, [clara]).single.percent, 0);
-      expect(low.map((e) => e.person.firstName), ['Anna', 'Ben']);
-      expect(low.map((e) => e.percent), [25, 33]);
+      final anna = TestFactories.createPerson(id: 1, firstName: 'Anna').copyWith(instrument: 1);
+      final ben = TestFactories.createPerson(id: 2, firstName: 'Ben').copyWith(instrument: 1);
+      final clara = TestFactories.createPerson(id: 3, firstName: 'Clara').copyWith(instrument: 2);
+      final dirk = TestFactories.createPerson(id: 4, firstName: 'Dirk').copyWith(instrument: 9);
+      final attendances = [
+        for (var i = 1; i <= 4; i++) TestFactories.createAttendance(id: i, typeId: 'p', date: '2026-10-0$i'),
+        TestFactories.createAttendance(id: 5, typeId: 'f', date: '2026-10-05'),
+      ];
+      PersonAttendance pa(int att, int person, AttendanceStatus status, [String? notes]) =>
+          PersonAttendance(attendanceId: att, personId: person, status: status, notes: notes);
+      final rows = [
+        for (var i = 1; i <= 5; i++) ...[
+          // Anna is always there, Dirk too.
+          pa(i, 1, AttendanceStatus.present),
+          pa(i, 4, AttendanceStatus.present),
+          // Ben: late once, absent twice, neutral once (counts as not there,
+          // like the Mitglieder percentages) → 1 of 4.
+          pa(i, 2, [AttendanceStatus.late, AttendanceStatus.absent, AttendanceStatus.absent, AttendanceStatus.neutral, AttendanceStatus.absent][i - 1]),
+          // Clara is excused for work: there only with the group setting.
+          pa(i, 3, AttendanceStatus.excused, 'Arbeitsbedingt'),
+        ],
+      ];
+      RdStatsResult run(RdStatsFilter filter, {bool shift = false}) => rdComputeStats(
+            attendances: attendances,
+            personAttendances: rows,
+            types: types,
+            players: [anna, ben, clara, dirk],
+            groups: groups,
+            filter: filter,
+            shiftExcusedAsPresent: shift,
+          );
+
+      // Default: only the Terminarten that count (no Feier).
+      final all = run(const RdStatsFilter());
+      expect(all.events.map((e) => e.attendance.id), [1, 2, 3, 4]);
+      expect(all.events.first.percent, 75); // Anna, Ben (late), Dirk of 4
+      expect(all.groups.map((g) => g.group.name), ['Viola', 'Cello']); // no Dirigent
+      expect(all.groups.first.percent, 63); // Viola: 5 of 8
+      expect(all.low().map((p) => p.person.firstName), ['Clara', 'Ben']);
+      expect(all.counts.late, 1);
+      expect(all.counts.open, 1);
+      // Work-excused counts as there when the group says so.
+      expect(run(const RdStatsFilter(), shift: true).low().map((p) => p.person.firstName), ['Ben']);
+      // Register filter: the Termine count only the chosen Register.
+      final viola = run(const RdStatsFilter(groupIds: {1}));
+      expect(viola.events.first.percent, 100);
+      expect(viola.people.map((p) => p.person.firstName), ['Anna', 'Ben']);
+      // Terminart filter: the Feier on its own.
+      final party = run(const RdStatsFilter(typeIds: {'f'}));
+      expect(party.events.single.attendance.id, 5);
+      expect(rdStatsTypeIds(const RdStatsFilter(), types), {'p'});
+      // Both Terminarten shown: one row each; Probe alone again = no filter.
+      final both = run(rdStatsFilterWithTypes(const RdStatsFilter(), {'p', 'f'}, types));
+      expect(rdStatsByType(both.events).map((t) => (t.type.name, t.events)), [('Probe', 4), ('Feier', 1)]);
+      expect(rdStatsFilterWithTypes(const RdStatsFilter(typeIds: {'p', 'f'}), {'p'}, types).typeIds, isNull);
+      // Termine level: weakest first, same percentage newest first.
+      expect(rdSortStatsEvents(all.events, RdStatsEventSort.weakest).map((e) => e.attendance.id), [4, 3, 2, 1]);
+      // "ggü. davor": the same number of days right before; the Register
+      // that lost most (Cello was at 100 % before).
+      final prev = rdStatsPreviousPeriod(DateTime(2026, 10, 1), DateTime(2026, 10, 10, 18));
+      expect((prev!.start, prev.end), (DateTime(2026, 9, 21), DateTime(2026, 10, 1)));
+      expect(rdStatsPreviousPeriod(DateTime(2026, 10, 1), DateTime(2026, 10, 3)), isNull);
+      // March has 31 days also across the change to summer time.
+      expect(rdStatsPreviousPeriod(DateTime(2026, 3, 1), DateTime(2026, 3, 31))?.start, DateTime(2026, 1, 29));
+      final before = run(const RdStatsFilter(), shift: true);
+      expect(rdStatsBiggestDrop(all, before)?.$1.group.name, 'Cello');
+      expect(rdStatsBiggestDrop(before, all), isNull);
+      // Personen level: most often absent first; Register curve per month.
+      expect(rdSortStatsPeople(all.people, RdStatsPersonSort.absent).first.person.firstName, 'Ben');
+      expect(all.groups.first.months, [(DateTime(2026, 10), 63)]);
+      expect(rdStatsAgeDecades([anna.copyWith(birthday: '2000-12-31'), ben.copyWith(birthday: '1979-01-01')], DateTime(2026, 11, 8)),
+          [(20, 1), (30, 0), (40, 1)]);
     });
   });
 
@@ -187,13 +236,27 @@ void main() {
   });
 
   group('pages render', () {
-    testWidgets('Auswertung: figures, Register and the people below 50 %', (tester) async {
+    testWidgets('Auswertung: Überblick, Termine, Personen and Register', (tester) async {
       await _pump(tester, const RdStatsPage());
       expect(find.text('Auswertung'), findsOneWidget);
       expect(find.text('Saison'), findsOneWidget);
-      expect(find.text('Holz'), findsOneWidget);
-      await tester.scrollUntilVisible(find.text('Ben Bach'), 200);
+      await tester.scrollUntilVisible(find.text('Ben Bach'), 200, scrollable: find.byType(Scrollable).first);
       expect(find.text('1 Person unter 50 %'), findsOneWidget);
+      await tester.scrollUntilVisible(find.text('Alle Termine'), -200, scrollable: find.byType(Scrollable).first);
+      await tester.tap(find.text('Alle Termine'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Neueste zuerst'), findsOneWidget);
+      // "Fällt auf" leads to the Personen, weakest first, with Mitglieder.
+      await tester.tap(find.text('Überblick'));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(find.text('1 Person unter 50 %'), 200, scrollable: find.byType(Scrollable).first);
+      await tester.tap(find.text('1 Person unter 50 %'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Wenigste zuerst'), findsOneWidget);
+      expect(find.text('Holz · 6 abwesend'), findsOneWidget);
+      await tester.tap(find.text('Register'));
+      await tester.pumpAndSettle();
+      expect(find.text('Holz'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   });

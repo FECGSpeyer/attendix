@@ -4901,7 +4901,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get generalSettingsFlutterAndHint =>
-      'Person is critical if ALL rules apply';
+      'Person is critical if all AND rules apply together';
 
   @override
   String get generalSettingsFlutterAndShort => 'AND';
@@ -9610,7 +9610,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rdAdminCertificatesHint => 'Participation certificates as PDF';
 
   @override
-  String get rdAdminCounting => 'How it is counted';
+  String get rdAdminCounting => 'What counts towards the attendance rate';
 
   @override
   String get rdAdminCritical => 'Problem cases';
@@ -9631,7 +9631,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdAdminCriticalIntro =>
-      'Whoever misses too often by these rules counts as a problem case and shows up under Today and in the Members tab.';
+      'Whoever stands out by one of these rules is a problem case and shows up under Today and in Members.';
 
   @override
   String get rdAdminData => 'Data';
@@ -9752,6 +9752,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get rdAdminPickHint => 'Pick an entry on the left, it opens here.';
+
+  @override
   String get rdAdminReasons => 'Reasons';
 
   @override
@@ -9848,6 +9851,265 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdAdminWorkHistory => 'Played works';
+
+  @override
+  String get rdCriticalAndHint =>
+      'Then someone is only a problem case when all rules marked like this apply at the same time.';
+
+  @override
+  String get rdCriticalAndTitle => 'Only together with other rules';
+
+  @override
+  String get rdCriticalAtLeast => 'At least';
+
+  @override
+  String get rdCriticalChange => 'Change';
+
+  @override
+  String get rdCriticalDays => 'Days';
+
+  @override
+  String rdCriticalHitCount(num count, Object what) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$what $count times',
+      one: '$what once',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdCriticalHitPercent(Object percent, Object what) {
+    return '$what at $percent % of Termine';
+  }
+
+  @override
+  String get rdCriticalListAnd => 'Only together with other rules';
+
+  @override
+  String get rdCriticalListFoot =>
+      'Checked every morning and after every change. After “Talked to person” a person starts counting again from zero.';
+
+  @override
+  String rdCriticalListNow(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count problem cases right now',
+      one: '1 problem case right now',
+      zero: 'No problem case right now',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdCriticalListShow => 'Show in Members';
+
+  @override
+  String get rdCriticalModeCount => 'Count';
+
+  @override
+  String get rdCriticalModePercent => 'Share';
+
+  @override
+  String get rdCriticalMore => 'More settings';
+
+  @override
+  String get rdCriticalName => 'Name';
+
+  @override
+  String get rdCriticalNamePh => 'e.g. Often absent';
+
+  @override
+  String rdCriticalNames(Object names, Object count) {
+    return '$names and $count more';
+  }
+
+  @override
+  String get rdCriticalOr => ' or ';
+
+  @override
+  String get rdCriticalOwnRule => 'Own rule';
+
+  @override
+  String get rdCriticalPeriodAll => 'overall';
+
+  @override
+  String rdCriticalPeriodDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'in the last $count days',
+      one: 'in the last day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdCriticalPeriodOther => 'Other number of days …';
+
+  @override
+  String get rdCriticalPeriodSeason => 'since the season started';
+
+  @override
+  String get rdCriticalPresentWarning =>
+      '“Present” counts as a problem here too. Is that intended?';
+
+  @override
+  String get rdCriticalPresetAbsent => 'Often absent';
+
+  @override
+  String get rdCriticalPresetLate => 'Often late';
+
+  @override
+  String get rdCriticalPresetRarely => 'Rarely there';
+
+  @override
+  String get rdCriticalPreviewAndHint =>
+      'This rule only counts together with the other rules marked like this. The preview shows it on its own.';
+
+  @override
+  String get rdCriticalPreviewError =>
+      'The preview is not available right now.';
+
+  @override
+  String rdCriticalPreviewLast(Object date) {
+    return 'last $date';
+  }
+
+  @override
+  String get rdCriticalPreviewLoading => 'Calculating preview …';
+
+  @override
+  String rdCriticalPreviewMore(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'and $count more people',
+      one: 'and 1 more person',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdCriticalPreviewOf(Object matching, Object total) {
+    return '$matching of $total Termine';
+  }
+
+  @override
+  String get rdCriticalPreviewSolveHint =>
+      'After a conversation, a person only counts from that day on.';
+
+  @override
+  String rdCriticalPreviewTimes(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count times',
+      one: 'once',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdCriticalPreviewTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Hits $count people right now',
+      one: 'Hits 1 person right now',
+      zero: 'Hits nobody right now',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdCriticalReasonDetail(Object period, Object rule) {
+    return '$period · rule “$rule”';
+  }
+
+  @override
+  String get rdCriticalSentenceLead => 'A problem case is anyone who';
+
+  @override
+  String get rdCriticalSentenceTypes => ', at';
+
+  @override
+  String get rdCriticalSheetPeriod => 'Period';
+
+  @override
+  String get rdCriticalSheetThreshold => 'How often?';
+
+  @override
+  String get rdCriticalSheetTypes => 'Which Termine?';
+
+  @override
+  String get rdCriticalSheetWhat => 'What counts?';
+
+  @override
+  String rdCriticalSolveHint(Object name) {
+    return 'After saving, $name starts counting again from zero.';
+  }
+
+  @override
+  String rdCriticalSummary(Object threshold, Object what, Object period) {
+    return '$what $threshold $period';
+  }
+
+  @override
+  String rdCriticalThresholdCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'at least $count times',
+      one: 'at least once',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdCriticalThresholdCountText(Object count) {
+    return 'at least $count times';
+  }
+
+  @override
+  String rdCriticalThresholdPercent(Object percent) {
+    return 'at $percent % of Termine or more';
+  }
+
+  @override
+  String get rdCriticalTypesAll => 'all Termine';
+
+  @override
+  String get rdCriticalVerbHad => '';
+
+  @override
+  String get rdCriticalVerbHas => '';
+
+  @override
+  String get rdCriticalVerbIs => '';
+
+  @override
+  String get rdCriticalWhatAbsent => 'missed without excuse';
+
+  @override
+  String get rdCriticalWhatAbsentAll => 'missed (excused too)';
+
+  @override
+  String rdCriticalWhatCustom(Object statuses) {
+    return 'status $statuses';
+  }
+
+  @override
+  String get rdCriticalWhatLate => 'came late';
+
+  @override
+  String get rdCriticalWhatPick => 'Own selection …';
+
+  @override
+  String get rdCriticalWhatPickHint =>
+      'These statuses count. Choose at least one.';
 
   @override
   String get rdDataAddColumn => 'Add column';
@@ -10439,7 +10701,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdSettingsSeasonHint =>
-      'The members\' attendance rate only counts from this date.';
+      'The attendance rate counts from this date';
 
   @override
   String rdSettingsSeasonSaved(Object date) {
@@ -10458,7 +10720,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdSettingsShiftPresentHint =>
-      'Anyone excused for work or a shift counts as present in the attendance rate';
+      'Applies when someone is excused for work or a shift';
 
   @override
   String get rdSettingsShortName => 'Short name';
@@ -10476,6 +10738,361 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdSettingsUndo => 'Undo';
+
+  @override
+  String get rdStatsAge => 'Age';
+
+  @override
+  String get rdStatsAgeAvgGroup => 'Average age per section';
+
+  @override
+  String rdStatsAgeBucket(Object from, Object to) {
+    return '$from–$to years';
+  }
+
+  @override
+  String get rdStatsAgeHint => 'Active members with a birthday';
+
+  @override
+  String get rdStatsAgeNone =>
+      'None of the active members has a birthday entered.';
+
+  @override
+  String rdStatsAgeYears(Object years) {
+    return '$years y';
+  }
+
+  @override
+  String get rdStatsAllThere => 'All there';
+
+  @override
+  String rdStatsBar(Object day, Object title, Object percent) {
+    return '$day · $title: $percent %';
+  }
+
+  @override
+  String rdStatsBarsHint(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'The last $count events, tap to see who was missing',
+      one: '1 event, tap to see who was missing',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdStatsByType => 'Events by type';
+
+  @override
+  String get rdStatsByTypeHint => 'Tap to show only this type.';
+
+  @override
+  String get rdStatsColAbsent => 'Abs.';
+
+  @override
+  String get rdStatsColDate => 'Date';
+
+  @override
+  String get rdStatsColEvent => 'Event';
+
+  @override
+  String get rdStatsColEvents => 'Events';
+
+  @override
+  String get rdStatsColExcused => 'Exc.';
+
+  @override
+  String get rdStatsColLate => 'Late';
+
+  @override
+  String get rdStatsColName => 'Name';
+
+  @override
+  String get rdStatsColPresent => 'Pres.';
+
+  @override
+  String get rdStatsColQuote => 'Rate';
+
+  @override
+  String get rdStatsColRegister => 'Section';
+
+  @override
+  String rdStatsCountAbsent(Object count) {
+    return '$count absent';
+  }
+
+  @override
+  String rdStatsCountExcused(Object count) {
+    return '$count excused';
+  }
+
+  @override
+  String rdStatsCountLate(Object count) {
+    return '$count late';
+  }
+
+  @override
+  String rdStatsCountOpen(Object count) {
+    return '$count neutral';
+  }
+
+  @override
+  String get rdStatsCountedTypes => 'Counts towards the attendance rate';
+
+  @override
+  String get rdStatsCountedTypesHint =>
+      'Events of these types count for the members, on “Today” and in the statistics. Turn off e.g. for parties or optional events.';
+
+  @override
+  String get rdStatsCountedTypesNone => 'No event type';
+
+  @override
+  String get rdStatsCountedTypesRow => 'Event types';
+
+  @override
+  String rdStatsDeltaDown(Object points) {
+    return '−$points vs. before';
+  }
+
+  @override
+  String rdStatsDeltaDownLong(Object points) {
+    return '$points percentage points less than the period before';
+  }
+
+  @override
+  String get rdStatsDeltaSame => 'same as before';
+
+  @override
+  String get rdStatsDeltaSameLong => 'Same as the period before';
+
+  @override
+  String rdStatsDeltaUp(Object points) {
+    return '+$points vs. before';
+  }
+
+  @override
+  String rdStatsDeltaUpLong(Object points) {
+    return '$points percentage points more than the period before';
+  }
+
+  @override
+  String get rdStatsEventAllThere => 'Everybody was there.';
+
+  @override
+  String get rdStatsEventEmpty => 'There are no entries for this event.';
+
+  @override
+  String rdStatsEventGroup(Object label, Object count) {
+    return '$label ($count)';
+  }
+
+  @override
+  String get rdStatsEventOpen => 'Open event';
+
+  @override
+  String rdStatsEvents(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events',
+      one: '1 event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdStatsFields => 'Extra fields';
+
+  @override
+  String get rdStatsFieldsPaused => 'Include paused';
+
+  @override
+  String get rdStatsFilterGroups => 'Sections';
+
+  @override
+  String rdStatsFilterRemove(Object label) {
+    return 'Remove filter “$label”';
+  }
+
+  @override
+  String rdStatsFilterShow(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Show $count events',
+      one: 'Show 1 event',
+      zero: 'No events',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdStatsFilterTypes => 'Event types';
+
+  @override
+  String get rdStatsFilterTypesHint =>
+      'Only for this view. Preselected are the types that count towards the attendance rate.';
+
+  @override
+  String get rdStatsMembers => 'Members';
+
+  @override
+  String get rdStatsMembersActive => 'Active';
+
+  @override
+  String get rdStatsMembersLeft => 'Left';
+
+  @override
+  String get rdStatsMembersPaused => 'Paused';
+
+  @override
+  String get rdStatsMembersTotal => 'Total';
+
+  @override
+  String get rdStatsNotable => 'Worth a look';
+
+  @override
+  String get rdStatsNotableBest => 'Best event';
+
+  @override
+  String rdStatsNotableDrop(Object name) {
+    return '$name is slipping';
+  }
+
+  @override
+  String rdStatsNotableDropDetail(Object now, Object before) {
+    return '$now instead of $before in the period before';
+  }
+
+  @override
+  String rdStatsNotableWeakGroup(Object name) {
+    return 'Weakest section: $name';
+  }
+
+  @override
+  String get rdStatsNotableWeakest => 'Weakest event';
+
+  @override
+  String get rdStatsOrgGroups => 'Groups';
+
+  @override
+  String rdStatsOrgGroupsAll(Object count) {
+    return 'All ($count)';
+  }
+
+  @override
+  String get rdStatsOrgGroupsHint =>
+      'Counts only the people of the chosen groups. The same person in several groups counts once.';
+
+  @override
+  String get rdStatsOrgPeople => 'People in all groups';
+
+  @override
+  String get rdStatsPersonAllThere => 'Was at every event.';
+
+  @override
+  String rdStatsPersonDots(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events, oldest left',
+      one: '1 event, oldest left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rdStatsPersonLate(Object count) {
+    return 'Late ($count)';
+  }
+
+  @override
+  String rdStatsPersonMissed(Object count) {
+    return 'Missed ($count)';
+  }
+
+  @override
+  String get rdStatsPersonOpen => 'Open person';
+
+  @override
+  String get rdStatsPersonSortAbsent => 'Often absent';
+
+  @override
+  String get rdStatsPersonSortFewest => 'Fewest first';
+
+  @override
+  String get rdStatsPersonSortLate => 'Often late';
+
+  @override
+  String get rdStatsPersonSortMost => 'Most first';
+
+  @override
+  String get rdStatsPersonSortName => 'Name';
+
+  @override
+  String rdStatsPersonSub(
+    Object group,
+    Object percent,
+    Object attended,
+    Object total,
+  ) {
+    return '$group · $percent ($attended of $total)';
+  }
+
+  @override
+  String get rdStatsRangeCustom => 'Custom …';
+
+  @override
+  String get rdStatsRangeFrom => 'From';
+
+  @override
+  String get rdStatsRangeShow => 'Show';
+
+  @override
+  String get rdStatsRangeTitle => 'Custom period';
+
+  @override
+  String get rdStatsRangeTo => 'To';
+
+  @override
+  String get rdStatsRegisterHint =>
+      'Curve: rate per month. Tap to see the people of the section.';
+
+  @override
+  String get rdStatsSortBest => 'Best first';
+
+  @override
+  String rdStatsSortBy(Object column) {
+    return 'Sort by $column';
+  }
+
+  @override
+  String get rdStatsSortNewest => 'Newest first';
+
+  @override
+  String get rdStatsSortOldest => 'Oldest first';
+
+  @override
+  String get rdStatsSortWeakest => 'Weakest first';
+
+  @override
+  String get rdStatsSplit => 'Status split';
+
+  @override
+  String get rdStatsTabEvents => 'Events';
+
+  @override
+  String get rdStatsTabOverview => 'Overview';
+
+  @override
+  String get rdStatsTabPeople => 'People';
+
+  @override
+  String get rdStatsTabRegister => 'Sections';
+
+  @override
+  String get rdStatsTabsLabel => 'Statistics view';
 
   @override
   String get rdTeacherNewCreate => 'Create';
@@ -10508,6 +11125,244 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rdTeacherNewTitle => 'New teacher';
+
+  @override
+  String get rdTypeAdd => 'Add';
+
+  @override
+  String get rdTypeAddHint =>
+      'What you pick is given to all new events of this type.';
+
+  @override
+  String get rdTypeAllDay => 'All day';
+
+  @override
+  String get rdTypeAttendance => 'Attendance';
+
+  @override
+  String rdTypeAttendanceValue(Object status, Object count) {
+    return 'Preset to $status · $count statuses';
+  }
+
+  @override
+  String get rdTypeAutomatic => 'New events of this type automatically get';
+
+  @override
+  String get rdTypeAutomaticHint =>
+      'Only what is switched on is listed here. Location and pieces are added right on the event.';
+
+  @override
+  String get rdTypeChecklist => 'Checklist';
+
+  @override
+  String get rdTypeChecklistHint =>
+      'Tasks before the event, e.g. set up chairs';
+
+  @override
+  String rdTypeChecklistValue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tasks',
+      one: '1 task',
+      zero: 'on',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTypeCountsForQuota => 'Counts towards the attendance rate';
+
+  @override
+  String get rdTypeCountsForQuotaHint =>
+      'Off e.g. for parties or optional events';
+
+  @override
+  String get rdTypeDefaultStatus => 'Preset to';
+
+  @override
+  String get rdTypeDuty => 'Assign duties';
+
+  @override
+  String get rdTypeDutyHint => 'Who does tech, coffee and so on';
+
+  @override
+  String get rdTypeEveryEvent => 'Every event of this type';
+
+  @override
+  String get rdTypeFlagsFailed =>
+      'Event created. The event type could not be updated, so the old app may not show the location or pieces.';
+
+  @override
+  String get rdTypeInvited => 'Planned';
+
+  @override
+  String get rdTypeInvitedAll => 'All';
+
+  @override
+  String get rdTypeInvitedHint => 'Who belongs to these events';
+
+  @override
+  String rdTypeInvitedSome(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count groups',
+      one: '1 group',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTypeLook => 'Appearance';
+
+  @override
+  String get rdTypeLookHideName => 'Hide name in the list';
+
+  @override
+  String get rdTypeLookHideNameHint =>
+      'Events without their own title then show the date instead of the type name (classic view and parents).';
+
+  @override
+  String get rdTypeLookHighlightHint =>
+      'The type is highlighted in the event list.';
+
+  @override
+  String get rdTypeLookHint => 'Colour, highlight, title in the list';
+
+  @override
+  String get rdTypeNewCreate => 'Create';
+
+  @override
+  String get rdTypeNewEmpty => 'Empty';
+
+  @override
+  String get rdTypeNewEmptyHint => 'Attendance only, nothing else';
+
+  @override
+  String get rdTypeNewName => 'Name';
+
+  @override
+  String get rdTypeNewNameHint => 'e.g. Sectional rehearsal';
+
+  @override
+  String get rdTypeNewStartsLike => 'Starts like';
+
+  @override
+  String get rdTypeNewStartsLikeHint =>
+      'Copies time, statuses, schedule and everything switched on. You can change everything afterwards.';
+
+  @override
+  String get rdTypeNewTitle => 'New event type';
+
+  @override
+  String get rdTypeOffer => 'Offer for new events';
+
+  @override
+  String get rdTypeOfferHint =>
+      'Off: no longer offered when creating, existing events stay';
+
+  @override
+  String get rdTypeOn => 'on';
+
+  @override
+  String get rdTypePlan => 'Schedule';
+
+  @override
+  String get rdTypePlanHint => 'Programme items with times';
+
+  @override
+  String rdTypePlanValue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '1 item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTypeProtocol => 'Minutes and agenda';
+
+  @override
+  String get rdTypeProtocolHint => 'Collect topics and take notes';
+
+  @override
+  String get rdTypeReminders => 'Reminders';
+
+  @override
+  String get rdTypeRemindersHint => 'Push message before the start';
+
+  @override
+  String rdTypeRemindersValue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reminders',
+      one: '1 reminder',
+      zero: 'on',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTypeSignup => 'Sign-up questions';
+
+  @override
+  String get rdTypeSignupHint => 'e.g. \"Are you bringing food?\"';
+
+  @override
+  String rdTypeSignupValue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count questions',
+      one: '1 question',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rdTypeStatuses => 'Possible statuses';
+
+  @override
+  String get rdTypeTakeOverPlan => 'Use for new events of this type';
+
+  @override
+  String rdTypeTakeOverPlanConfirm(Object type) {
+    return 'New \"$type\" events will then get this schedule. Existing events stay as they are.';
+  }
+
+  @override
+  String rdTypeTakeOverPlanDone(Object type) {
+    return 'New \"$type\" events now get this schedule';
+  }
+
+  @override
+  String get rdTypeTakeOverPlanFailed => 'The schedule could not be applied.';
+
+  @override
+  String rdTypeTakeOverPlanHint(Object type) {
+    return 'New \"$type\" events get this schedule';
+  }
+
+  @override
+  String get rdTypeTime => 'Time';
+
+  @override
+  String get rdTypeTimeHint => 'Suggestion, can be changed per event';
+
+  @override
+  String rdTypeUsage(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'the $count existing events',
+      one: 'the existing event',
+    );
+    return 'Changes also apply to $_temp0.';
+  }
 
   @override
   String get rdWmCategoriesIntro =>
@@ -12417,6 +13272,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Unknown part names, some file names, the names of unsure work folders and, for unclear parts, a picture of the first page are sent to the AI. Sure suggestions are filled in, all can be changed.';
 
   @override
+  String get redesignImportAnswerFromPage => 'Read from page 1';
+
+  @override
   String redesignImportAnswerNewGroup(Object name) {
     return 'New group “$name”';
   }
@@ -12868,6 +13726,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignImportGroupAllFromPage => 'Read all from page 1';
+
+  @override
   String get redesignImportGroupAnswered => 'Answered';
 
   @override
@@ -13007,6 +13868,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignImportPreviewZoom => 'Tap to enlarge';
+
+  @override
+  String get redesignImportQuestionLook => 'See the first page';
 
   @override
   String redesignImportQuestionTitle(Object name) {
@@ -13621,7 +14485,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String redesignMembersCritical(Object count) {
-    return 'Often missing · $count';
+    return 'Problem cases · $count';
   }
 
   @override
@@ -13634,7 +14498,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignMembersEmptyPending => 'Nobody is waiting for approval.';
 
   @override
-  String get redesignMembersFilterCritical => 'Often absent';
+  String get redesignMembersFilterCritical => 'Problem cases';
 
   @override
   String redesignMembersFilterField(Object name, Object value) {
@@ -14650,7 +15514,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignSplitMembersBirthdays => 'Upcoming birthdays';
 
   @override
-  String get redesignSplitMembersCritical => 'Attendance to watch';
+  String get redesignSplitMembersCritical => 'Problem cases';
 
   @override
   String get redesignSplitMembersEmpty => 'Choose a person on the left.';
@@ -15066,14 +15930,14 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count members often missing',
-      one: '$count member often missing',
+      other: '$count problem cases',
+      one: '1 problem case',
     );
     return '$_temp0';
   }
 
   @override
-  String get redesignTodayCriticalHint => 'Below the attendance limit';
+  String get redesignTodayCriticalHint => 'By your problem case rules';
 
   @override
   String get redesignTodayDayToday => 'Today';

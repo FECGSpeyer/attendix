@@ -8036,7 +8036,7 @@ abstract class AppLocalizations {
   /// generalSettings.flutter.andHint
   ///
   /// In de, this message translates to:
-  /// **'Person ist kritisch, wenn ALLE Regeln zutreffen'**
+  /// **'Person ist kritisch, wenn alle Und-Regeln zusammen zutreffen'**
   String get generalSettingsFlutterAndHint;
 
   /// generalSettings.flutter.andShort
@@ -15908,7 +15908,7 @@ abstract class AppLocalizations {
   /// rdAdmin.counting
   ///
   /// In de, this message translates to:
-  /// **'So wird gezählt'**
+  /// **'Was zur Anwesenheitsquote zählt'**
   String get rdAdminCounting;
 
   /// rdAdmin.critical
@@ -15932,7 +15932,7 @@ abstract class AppLocalizations {
   /// rdAdmin.criticalIntro
   ///
   /// In de, this message translates to:
-  /// **'Wer nach diesen Regeln zu oft fehlt, gilt als Problemfall und fällt unter Heute und im Mitglieder-Tab auf.'**
+  /// **'Wer nach einer dieser Regeln auffällt, ist Problemfall und erscheint unter Heute und in Mitglieder.'**
   String get rdAdminCriticalIntro;
 
   /// rdAdmin.data
@@ -16109,6 +16109,12 @@ abstract class AppLocalizations {
   /// **'{count, plural, one {1 Anfrage wartet auf Freigabe} other {{count} Anfragen warten auf Freigabe}}'**
   String rdAdminPendingBadge(num count);
 
+  /// rdAdminPickHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle links einen Eintrag, er öffnet sich hier.'**
+  String get rdAdminPickHint;
+
   /// rdAdmin.reasons
   ///
   /// In de, this message translates to:
@@ -16282,6 +16288,354 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Gespielte Werke'**
   String get rdAdminWorkHistory;
+
+  /// rdCritical.andHint
+  ///
+  /// In de, this message translates to:
+  /// **'Dann ist jemand nur Problemfall, wenn alle so markierten Regeln gleichzeitig zutreffen.'**
+  String get rdCriticalAndHint;
+
+  /// rdCritical.andTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Nur zusammen mit anderen Regeln'**
+  String get rdCriticalAndTitle;
+
+  /// rdCritical.atLeast
+  ///
+  /// In de, this message translates to:
+  /// **'Mindestens'**
+  String get rdCriticalAtLeast;
+
+  /// rdCritical.change
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern'**
+  String get rdCriticalChange;
+
+  /// rdCritical.days
+  ///
+  /// In de, this message translates to:
+  /// **'Tage'**
+  String get rdCriticalDays;
+
+  /// rdCritical.hitCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {einmal {what}} other {{count}-mal {what}}}'**
+  String rdCriticalHitCount(num count, Object what);
+
+  /// rdCritical.hitPercent
+  ///
+  /// In de, this message translates to:
+  /// **'bei {percent} % der Termine {what}'**
+  String rdCriticalHitPercent(Object percent, Object what);
+
+  /// rdCritical.listAnd
+  ///
+  /// In de, this message translates to:
+  /// **'Nur zusammen mit anderen Regeln'**
+  String get rdCriticalListAnd;
+
+  /// rdCritical.listFoot
+  ///
+  /// In de, this message translates to:
+  /// **'Geprüft jeden Morgen und nach jeder Änderung. Nach „Mit Person gesprochen“ zählt eine Person wieder von vorn.'**
+  String get rdCriticalListFoot;
+
+  /// rdCritical.listNow
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Gerade kein Problemfall} one {Gerade 1 Problemfall} other {Gerade {count} Problemfälle}}'**
+  String rdCriticalListNow(num count);
+
+  /// rdCritical.listShow
+  ///
+  /// In de, this message translates to:
+  /// **'In Mitglieder ansehen'**
+  String get rdCriticalListShow;
+
+  /// rdCritical.modeCount
+  ///
+  /// In de, this message translates to:
+  /// **'Anzahl'**
+  String get rdCriticalModeCount;
+
+  /// rdCritical.modePercent
+  ///
+  /// In de, this message translates to:
+  /// **'Anteil'**
+  String get rdCriticalModePercent;
+
+  /// rdCritical.more
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Einstellungen'**
+  String get rdCriticalMore;
+
+  /// rdCritical.name
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get rdCriticalName;
+
+  /// rdCritical.namePh
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. Fehlt oft'**
+  String get rdCriticalNamePh;
+
+  /// rdCritical.names
+  ///
+  /// In de, this message translates to:
+  /// **'{names} und {count} weitere'**
+  String rdCriticalNames(Object names, Object count);
+
+  /// rdCritical.or
+  ///
+  /// In de, this message translates to:
+  /// **' oder '**
+  String get rdCriticalOr;
+
+  /// rdCritical.ownRule
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Regel'**
+  String get rdCriticalOwnRule;
+
+  /// rdCritical.periodAll
+  ///
+  /// In de, this message translates to:
+  /// **'insgesamt'**
+  String get rdCriticalPeriodAll;
+
+  /// rdCritical.periodDays
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {am letzten Tag} other {in den letzten {count} Tagen}}'**
+  String rdCriticalPeriodDays(num count);
+
+  /// rdCritical.periodOther
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Anzahl Tage …'**
+  String get rdCriticalPeriodOther;
+
+  /// rdCritical.periodSeason
+  ///
+  /// In de, this message translates to:
+  /// **'seit Saisonbeginn'**
+  String get rdCriticalPeriodSeason;
+
+  /// rdCritical.presentWarning
+  ///
+  /// In de, this message translates to:
+  /// **'Auch „Anwesend“ zählt hier als Problem. Ist das so gewollt?'**
+  String get rdCriticalPresentWarning;
+
+  /// rdCritical.presetAbsent
+  ///
+  /// In de, this message translates to:
+  /// **'Fehlt oft'**
+  String get rdCriticalPresetAbsent;
+
+  /// rdCritical.presetLate
+  ///
+  /// In de, this message translates to:
+  /// **'Oft zu spät'**
+  String get rdCriticalPresetLate;
+
+  /// rdCritical.presetRarely
+  ///
+  /// In de, this message translates to:
+  /// **'Selten da'**
+  String get rdCriticalPresetRarely;
+
+  /// rdCritical.previewAndHint
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Regel zählt nur zusammen mit den anderen Regeln, die so markiert sind. Die Vorschau zeigt sie für sich allein.'**
+  String get rdCriticalPreviewAndHint;
+
+  /// rdCritical.previewError
+  ///
+  /// In de, this message translates to:
+  /// **'Die Vorschau ist gerade nicht verfügbar.'**
+  String get rdCriticalPreviewError;
+
+  /// rdCritical.previewLast
+  ///
+  /// In de, this message translates to:
+  /// **'zuletzt {date}'**
+  String rdCriticalPreviewLast(Object date);
+
+  /// rdCritical.previewLoading
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschau wird berechnet …'**
+  String get rdCriticalPreviewLoading;
+
+  /// rdCritical.previewMore
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {und 1 weitere Person} other {und {count} weitere Personen}}'**
+  String rdCriticalPreviewMore(num count);
+
+  /// rdCritical.previewOf
+  ///
+  /// In de, this message translates to:
+  /// **'{matching} von {total} Terminen'**
+  String rdCriticalPreviewOf(Object matching, Object total);
+
+  /// rdCritical.previewSolveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nach einem Gespräch zählt eine Person erst ab dem Gesprächstag.'**
+  String get rdCriticalPreviewSolveHint;
+
+  /// rdCritical.previewTimes
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {einmal} other {{count}-mal}}'**
+  String rdCriticalPreviewTimes(num count);
+
+  /// rdCritical.previewTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Trifft gerade auf niemanden zu} one {Trifft gerade auf 1 Person zu} other {Trifft gerade auf {count} Personen zu}}'**
+  String rdCriticalPreviewTitle(num count);
+
+  /// rdCritical.reasonDetail
+  ///
+  /// In de, this message translates to:
+  /// **'{period} · Regel „{rule}“'**
+  String rdCriticalReasonDetail(Object period, Object rule);
+
+  /// rdCritical.sentenceLead
+  ///
+  /// In de, this message translates to:
+  /// **'Problemfall ist, wer'**
+  String get rdCriticalSentenceLead;
+
+  /// rdCritical.sentenceTypes
+  ///
+  /// In de, this message translates to:
+  /// **', bei'**
+  String get rdCriticalSentenceTypes;
+
+  /// rdCritical.sheetPeriod
+  ///
+  /// In de, this message translates to:
+  /// **'Zeitraum'**
+  String get rdCriticalSheetPeriod;
+
+  /// rdCritical.sheetThreshold
+  ///
+  /// In de, this message translates to:
+  /// **'Wie oft?'**
+  String get rdCriticalSheetThreshold;
+
+  /// rdCritical.sheetTypes
+  ///
+  /// In de, this message translates to:
+  /// **'Welche Termine?'**
+  String get rdCriticalSheetTypes;
+
+  /// rdCritical.sheetWhat
+  ///
+  /// In de, this message translates to:
+  /// **'Was zählt?'**
+  String get rdCriticalSheetWhat;
+
+  /// rdCritical.solveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nach dem Speichern zählt {name} wieder von vorn.'**
+  String rdCriticalSolveHint(Object name);
+
+  /// rdCritical.summary
+  ///
+  /// In de, this message translates to:
+  /// **'{threshold} {what} {period}'**
+  String rdCriticalSummary(Object threshold, Object what, Object period);
+
+  /// rdCritical.thresholdCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {mindestens einmal} other {mindestens {count}-mal}}'**
+  String rdCriticalThresholdCount(num count);
+
+  /// rdCritical.thresholdCountText
+  ///
+  /// In de, this message translates to:
+  /// **'mindestens {count}-mal'**
+  String rdCriticalThresholdCountText(Object count);
+
+  /// rdCritical.thresholdPercent
+  ///
+  /// In de, this message translates to:
+  /// **'bei mindestens {percent} % der Termine'**
+  String rdCriticalThresholdPercent(Object percent);
+
+  /// rdCritical.typesAll
+  ///
+  /// In de, this message translates to:
+  /// **'allen Terminen'**
+  String get rdCriticalTypesAll;
+
+  /// rdCritical.verbHad
+  ///
+  /// In de, this message translates to:
+  /// **'hatte'**
+  String get rdCriticalVerbHad;
+
+  /// rdCritical.verbHas
+  ///
+  /// In de, this message translates to:
+  /// **'hat'**
+  String get rdCriticalVerbHas;
+
+  /// rdCritical.verbIs
+  ///
+  /// In de, this message translates to:
+  /// **'ist'**
+  String get rdCriticalVerbIs;
+
+  /// rdCritical.whatAbsent
+  ///
+  /// In de, this message translates to:
+  /// **'unentschuldigt gefehlt'**
+  String get rdCriticalWhatAbsent;
+
+  /// rdCritical.whatAbsentAll
+  ///
+  /// In de, this message translates to:
+  /// **'gefehlt (auch entschuldigt)'**
+  String get rdCriticalWhatAbsentAll;
+
+  /// rdCritical.whatCustom
+  ///
+  /// In de, this message translates to:
+  /// **'Status {statuses}'**
+  String rdCriticalWhatCustom(Object statuses);
+
+  /// rdCritical.whatLate
+  ///
+  /// In de, this message translates to:
+  /// **'zu spät gekommen'**
+  String get rdCriticalWhatLate;
+
+  /// rdCritical.whatPick
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Auswahl …'**
+  String get rdCriticalWhatPick;
+
+  /// rdCritical.whatPickHint
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Status zählen. Mindestens einer muss gewählt sein.'**
+  String get rdCriticalWhatPickHint;
 
   /// rdData.addColumn
   ///
@@ -17306,7 +17660,7 @@ abstract class AppLocalizations {
   /// rdSettings.seasonHint
   ///
   /// In de, this message translates to:
-  /// **'Die Anwesenheitsquote der Mitglieder zählt erst ab diesem Datum.'**
+  /// **'Ab diesem Datum zählt die Anwesenheitsquote'**
   String get rdSettingsSeasonHint;
 
   /// rdSettings.seasonSaved
@@ -17330,13 +17684,13 @@ abstract class AppLocalizations {
   /// rdSettings.shiftPresent
   ///
   /// In de, this message translates to:
-  /// **'Arbeit und Schicht zählen als da'**
+  /// **'Arbeit und Schicht zählen als anwesend'**
   String get rdSettingsShiftPresent;
 
   /// rdSettings.shiftPresentHint
   ///
   /// In de, this message translates to:
-  /// **'Wer wegen Arbeit oder Schicht entschuldigt ist, zählt in der Anwesenheitsquote als anwesend'**
+  /// **'Gilt, wenn jemand wegen Arbeit oder Schicht entschuldigt ist'**
   String get rdSettingsShiftPresentHint;
 
   /// rdSettings.shortName
@@ -17368,6 +17722,551 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Rückgängig'**
   String get rdSettingsUndo;
+
+  /// rdStats.age
+  ///
+  /// In de, this message translates to:
+  /// **'Alter'**
+  String get rdStatsAge;
+
+  /// rdStats.ageAvgGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Ø Alter je Register'**
+  String get rdStatsAgeAvgGroup;
+
+  /// rdStats.ageBucket
+  ///
+  /// In de, this message translates to:
+  /// **'{from}–{to} Jahre'**
+  String rdStatsAgeBucket(Object from, Object to);
+
+  /// rdStats.ageHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aktive Mitglieder mit Geburtsdatum'**
+  String get rdStatsAgeHint;
+
+  /// rdStats.ageNone
+  ///
+  /// In de, this message translates to:
+  /// **'Bei den aktiven Mitgliedern ist kein Geburtsdatum eingetragen.'**
+  String get rdStatsAgeNone;
+
+  /// rdStats.ageYears
+  ///
+  /// In de, this message translates to:
+  /// **'{years} J.'**
+  String rdStatsAgeYears(Object years);
+
+  /// rdStats.allThere
+  ///
+  /// In de, this message translates to:
+  /// **'Alle da'**
+  String get rdStatsAllThere;
+
+  /// rdStats.bar
+  ///
+  /// In de, this message translates to:
+  /// **'{day} · {title}: {percent} %'**
+  String rdStatsBar(Object day, Object title, Object percent);
+
+  /// rdStats.barsHint
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin, antippen zeigt, wer fehlte} other {Die letzten {count} Termine, antippen zeigt, wer fehlte}}'**
+  String rdStatsBarsHint(num count);
+
+  /// rdStats.byType
+  ///
+  /// In de, this message translates to:
+  /// **'Termine je Art'**
+  String get rdStatsByType;
+
+  /// rdStats.byTypeHint
+  ///
+  /// In de, this message translates to:
+  /// **'Antippen zeigt nur diese Art.'**
+  String get rdStatsByTypeHint;
+
+  /// rdStats.colAbsent
+  ///
+  /// In de, this message translates to:
+  /// **'Abw.'**
+  String get rdStatsColAbsent;
+
+  /// rdStats.colDate
+  ///
+  /// In de, this message translates to:
+  /// **'Datum'**
+  String get rdStatsColDate;
+
+  /// rdStats.colEvent
+  ///
+  /// In de, this message translates to:
+  /// **'Termin'**
+  String get rdStatsColEvent;
+
+  /// rdStats.colEvents
+  ///
+  /// In de, this message translates to:
+  /// **'Termine'**
+  String get rdStatsColEvents;
+
+  /// rdStats.colExcused
+  ///
+  /// In de, this message translates to:
+  /// **'Entsch.'**
+  String get rdStatsColExcused;
+
+  /// rdStats.colLate
+  ///
+  /// In de, this message translates to:
+  /// **'Versp.'**
+  String get rdStatsColLate;
+
+  /// rdStats.colName
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get rdStatsColName;
+
+  /// rdStats.colPresent
+  ///
+  /// In de, this message translates to:
+  /// **'Anw.'**
+  String get rdStatsColPresent;
+
+  /// rdStats.colQuote
+  ///
+  /// In de, this message translates to:
+  /// **'Quote'**
+  String get rdStatsColQuote;
+
+  /// rdStats.colRegister
+  ///
+  /// In de, this message translates to:
+  /// **'Register'**
+  String get rdStatsColRegister;
+
+  /// rdStats.countAbsent
+  ///
+  /// In de, this message translates to:
+  /// **'{count} abwesend'**
+  String rdStatsCountAbsent(Object count);
+
+  /// rdStats.countExcused
+  ///
+  /// In de, this message translates to:
+  /// **'{count} entschuldigt'**
+  String rdStatsCountExcused(Object count);
+
+  /// rdStats.countLate
+  ///
+  /// In de, this message translates to:
+  /// **'{count} verspätet'**
+  String rdStatsCountLate(Object count);
+
+  /// rdStats.countOpen
+  ///
+  /// In de, this message translates to:
+  /// **'{count} neutral'**
+  String rdStatsCountOpen(Object count);
+
+  /// rdStats.countedTypes
+  ///
+  /// In de, this message translates to:
+  /// **'Zählt zur Anwesenheitsquote'**
+  String get rdStatsCountedTypes;
+
+  /// rdStats.countedTypesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Termine dieser Arten zählen bei den Mitgliedern, unter „Heute“ und in der Auswertung. Aus z. B. für Feiern oder freiwillige Termine.'**
+  String get rdStatsCountedTypesHint;
+
+  /// rdStats.countedTypesNone
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Terminart'**
+  String get rdStatsCountedTypesNone;
+
+  /// rdStats.countedTypesRow
+  ///
+  /// In de, this message translates to:
+  /// **'Terminarten'**
+  String get rdStatsCountedTypesRow;
+
+  /// rdStats.deltaDown
+  ///
+  /// In de, this message translates to:
+  /// **'−{points} ggü. davor'**
+  String rdStatsDeltaDown(Object points);
+
+  /// rdStats.deltaDownLong
+  ///
+  /// In de, this message translates to:
+  /// **'{points} Prozentpunkte weniger als im Zeitraum davor'**
+  String rdStatsDeltaDownLong(Object points);
+
+  /// rdStats.deltaSame
+  ///
+  /// In de, this message translates to:
+  /// **'wie davor'**
+  String get rdStatsDeltaSame;
+
+  /// rdStats.deltaSameLong
+  ///
+  /// In de, this message translates to:
+  /// **'Gleich wie im Zeitraum davor'**
+  String get rdStatsDeltaSameLong;
+
+  /// rdStats.deltaUp
+  ///
+  /// In de, this message translates to:
+  /// **'+{points} ggü. davor'**
+  String rdStatsDeltaUp(Object points);
+
+  /// rdStats.deltaUpLong
+  ///
+  /// In de, this message translates to:
+  /// **'{points} Prozentpunkte mehr als im Zeitraum davor'**
+  String rdStatsDeltaUpLong(Object points);
+
+  /// rdStats.eventAllThere
+  ///
+  /// In de, this message translates to:
+  /// **'Alle waren da.'**
+  String get rdStatsEventAllThere;
+
+  /// rdStats.eventEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Für diesen Termin gibt es keine Einträge.'**
+  String get rdStatsEventEmpty;
+
+  /// rdStats.eventGroup
+  ///
+  /// In de, this message translates to:
+  /// **'{label} ({count})'**
+  String rdStatsEventGroup(Object label, Object count);
+
+  /// rdStats.eventOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Termin öffnen'**
+  String get rdStatsEventOpen;
+
+  /// rdStats.events
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin} other {{count} Termine}}'**
+  String rdStatsEvents(num count);
+
+  /// rdStats.fields
+  ///
+  /// In de, this message translates to:
+  /// **'Zusatzfelder'**
+  String get rdStatsFields;
+
+  /// rdStats.fieldsPaused
+  ///
+  /// In de, this message translates to:
+  /// **'Pausierte mitzählen'**
+  String get rdStatsFieldsPaused;
+
+  /// rdStats.filterGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Register'**
+  String get rdStatsFilterGroups;
+
+  /// rdStats.filterRemove
+  ///
+  /// In de, this message translates to:
+  /// **'Filter „{label}“ entfernen'**
+  String rdStatsFilterRemove(Object label);
+
+  /// rdStats.filterShow
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Keine Termine} one {1 Termin zeigen} other {{count} Termine zeigen}}'**
+  String rdStatsFilterShow(num count);
+
+  /// rdStats.filterTypes
+  ///
+  /// In de, this message translates to:
+  /// **'Terminarten'**
+  String get rdStatsFilterTypes;
+
+  /// rdStats.filterTypesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gilt nur für diese Ansicht. Vorausgewählt sind die Arten, die zur Anwesenheitsquote zählen.'**
+  String get rdStatsFilterTypesHint;
+
+  /// rdStats.members
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder'**
+  String get rdStatsMembers;
+
+  /// rdStats.membersActive
+  ///
+  /// In de, this message translates to:
+  /// **'Aktiv'**
+  String get rdStatsMembersActive;
+
+  /// rdStats.membersLeft
+  ///
+  /// In de, this message translates to:
+  /// **'Ausgetreten'**
+  String get rdStatsMembersLeft;
+
+  /// rdStats.membersPaused
+  ///
+  /// In de, this message translates to:
+  /// **'Pausiert'**
+  String get rdStatsMembersPaused;
+
+  /// rdStats.membersTotal
+  ///
+  /// In de, this message translates to:
+  /// **'Gesamt'**
+  String get rdStatsMembersTotal;
+
+  /// rdStats.notable
+  ///
+  /// In de, this message translates to:
+  /// **'Fällt auf'**
+  String get rdStatsNotable;
+
+  /// rdStats.notableBest
+  ///
+  /// In de, this message translates to:
+  /// **'Bester Termin'**
+  String get rdStatsNotableBest;
+
+  /// rdStats.notableDrop
+  ///
+  /// In de, this message translates to:
+  /// **'{name} lässt nach'**
+  String rdStatsNotableDrop(Object name);
+
+  /// rdStats.notableDropDetail
+  ///
+  /// In de, this message translates to:
+  /// **'{now} statt {before} im Zeitraum davor'**
+  String rdStatsNotableDropDetail(Object now, Object before);
+
+  /// rdStats.notableWeakGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Schwächstes Register: {name}'**
+  String rdStatsNotableWeakGroup(Object name);
+
+  /// rdStats.notableWeakest
+  ///
+  /// In de, this message translates to:
+  /// **'Schwächster Termin'**
+  String get rdStatsNotableWeakest;
+
+  /// rdStats.orgGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen'**
+  String get rdStatsOrgGroups;
+
+  /// rdStats.orgGroupsAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle ({count})'**
+  String rdStatsOrgGroupsAll(Object count);
+
+  /// rdStats.orgGroupsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Zählt nur die Personen der gewählten Gruppen. Dieselbe Person in mehreren Gruppen zählt einmal.'**
+  String get rdStatsOrgGroupsHint;
+
+  /// rdStats.orgPeople
+  ///
+  /// In de, this message translates to:
+  /// **'Personen in allen Gruppen'**
+  String get rdStatsOrgPeople;
+
+  /// rdStats.personAllThere
+  ///
+  /// In de, this message translates to:
+  /// **'War bei allen Terminen da.'**
+  String get rdStatsPersonAllThere;
+
+  /// rdStats.personDots
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin, ältester links} other {{count} Termine, ältester links}}'**
+  String rdStatsPersonDots(num count);
+
+  /// rdStats.personLate
+  ///
+  /// In de, this message translates to:
+  /// **'Verspätet ({count})'**
+  String rdStatsPersonLate(Object count);
+
+  /// rdStats.personMissed
+  ///
+  /// In de, this message translates to:
+  /// **'Gefehlt ({count})'**
+  String rdStatsPersonMissed(Object count);
+
+  /// rdStats.personOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Person öffnen'**
+  String get rdStatsPersonOpen;
+
+  /// rdStats.personSortAbsent
+  ///
+  /// In de, this message translates to:
+  /// **'Oft abwesend'**
+  String get rdStatsPersonSortAbsent;
+
+  /// rdStats.personSortFewest
+  ///
+  /// In de, this message translates to:
+  /// **'Wenigste zuerst'**
+  String get rdStatsPersonSortFewest;
+
+  /// rdStats.personSortLate
+  ///
+  /// In de, this message translates to:
+  /// **'Oft verspätet'**
+  String get rdStatsPersonSortLate;
+
+  /// rdStats.personSortMost
+  ///
+  /// In de, this message translates to:
+  /// **'Meiste zuerst'**
+  String get rdStatsPersonSortMost;
+
+  /// rdStats.personSortName
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get rdStatsPersonSortName;
+
+  /// rdStats.personSub
+  ///
+  /// In de, this message translates to:
+  /// **'{group} · {percent} ({attended} von {total})'**
+  String rdStatsPersonSub(
+    Object group,
+    Object percent,
+    Object attended,
+    Object total,
+  );
+
+  /// rdStats.rangeCustom
+  ///
+  /// In de, this message translates to:
+  /// **'Eigener …'**
+  String get rdStatsRangeCustom;
+
+  /// rdStats.rangeFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Von'**
+  String get rdStatsRangeFrom;
+
+  /// rdStats.rangeShow
+  ///
+  /// In de, this message translates to:
+  /// **'Zeigen'**
+  String get rdStatsRangeShow;
+
+  /// rdStats.rangeTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Eigener Zeitraum'**
+  String get rdStatsRangeTitle;
+
+  /// rdStats.rangeTo
+  ///
+  /// In de, this message translates to:
+  /// **'Bis'**
+  String get rdStatsRangeTo;
+
+  /// rdStats.registerHint
+  ///
+  /// In de, this message translates to:
+  /// **'Kurve: Quote je Monat. Antippen zeigt die Personen des Registers.'**
+  String get rdStatsRegisterHint;
+
+  /// rdStats.sortBest
+  ///
+  /// In de, this message translates to:
+  /// **'Beste zuerst'**
+  String get rdStatsSortBest;
+
+  /// rdStats.sortBy
+  ///
+  /// In de, this message translates to:
+  /// **'Sortieren nach {column}'**
+  String rdStatsSortBy(Object column);
+
+  /// rdStats.sortNewest
+  ///
+  /// In de, this message translates to:
+  /// **'Neueste zuerst'**
+  String get rdStatsSortNewest;
+
+  /// rdStats.sortOldest
+  ///
+  /// In de, this message translates to:
+  /// **'Älteste zuerst'**
+  String get rdStatsSortOldest;
+
+  /// rdStats.sortWeakest
+  ///
+  /// In de, this message translates to:
+  /// **'Schwächste zuerst'**
+  String get rdStatsSortWeakest;
+
+  /// rdStats.split
+  ///
+  /// In de, this message translates to:
+  /// **'Statusverteilung'**
+  String get rdStatsSplit;
+
+  /// rdStats.tabEvents
+  ///
+  /// In de, this message translates to:
+  /// **'Termine'**
+  String get rdStatsTabEvents;
+
+  /// rdStats.tabOverview
+  ///
+  /// In de, this message translates to:
+  /// **'Überblick'**
+  String get rdStatsTabOverview;
+
+  /// rdStats.tabPeople
+  ///
+  /// In de, this message translates to:
+  /// **'Personen'**
+  String get rdStatsTabPeople;
+
+  /// rdStats.tabRegister
+  ///
+  /// In de, this message translates to:
+  /// **'Register'**
+  String get rdStatsTabRegister;
+
+  /// rdStats.tabsLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Ansicht der Auswertung'**
+  String get rdStatsTabsLabel;
 
   /// rdTeacherNew.create
   ///
@@ -17422,6 +18321,348 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Neuer Lehrer'**
   String get rdTeacherNewTitle;
+
+  /// rdType.add
+  ///
+  /// In de, this message translates to:
+  /// **'Hinzufügen'**
+  String get rdTypeAdd;
+
+  /// rdType.addHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wählst du etwas aus, bekommen es alle neuen Termine dieser Art.'**
+  String get rdTypeAddHint;
+
+  /// rdType.allDay
+  ///
+  /// In de, this message translates to:
+  /// **'Ganztägig'**
+  String get rdTypeAllDay;
+
+  /// rdType.attendance
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit'**
+  String get rdTypeAttendance;
+
+  /// rdType.attendanceValue
+  ///
+  /// In de, this message translates to:
+  /// **'Vorbelegt mit {status} · {count} Status'**
+  String rdTypeAttendanceValue(Object status, Object count);
+
+  /// rdType.automatic
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Termine dieser Art bekommen automatisch'**
+  String get rdTypeAutomatic;
+
+  /// rdType.automaticHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nur was eingeschaltet ist, steht hier. Ort und Werke trägst du direkt am Termin ein.'**
+  String get rdTypeAutomaticHint;
+
+  /// rdType.checklist
+  ///
+  /// In de, this message translates to:
+  /// **'Checkliste'**
+  String get rdTypeChecklist;
+
+  /// rdType.checklistHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgaben vor dem Termin, z. B. Stühle stellen'**
+  String get rdTypeChecklistHint;
+
+  /// rdType.checklistValue
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {an} one {1 Aufgabe} other {{count} Aufgaben}}'**
+  String rdTypeChecklistValue(num count);
+
+  /// rdType.countsForQuota
+  ///
+  /// In de, this message translates to:
+  /// **'Zählt zur Anwesenheitsquote'**
+  String get rdTypeCountsForQuota;
+
+  /// rdType.countsForQuotaHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aus z. B. für Feiern oder freiwillige Termine'**
+  String get rdTypeCountsForQuotaHint;
+
+  /// rdType.defaultStatus
+  ///
+  /// In de, this message translates to:
+  /// **'Vorbelegt mit'**
+  String get rdTypeDefaultStatus;
+
+  /// rdType.duty
+  ///
+  /// In de, this message translates to:
+  /// **'Dienste einteilen'**
+  String get rdTypeDuty;
+
+  /// rdType.dutyHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wer macht Technik, Kaffee und Co.'**
+  String get rdTypeDutyHint;
+
+  /// rdType.everyEvent
+  ///
+  /// In de, this message translates to:
+  /// **'Jeder Termin dieser Art'**
+  String get rdTypeEveryEvent;
+
+  /// rdType.flagsFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Termin angelegt. Die Terminart konnte nicht angepasst werden, daher zeigt die alte App Ort oder Werke evtl. nicht.'**
+  String get rdTypeFlagsFailed;
+
+  /// rdType.invited
+  ///
+  /// In de, this message translates to:
+  /// **'Eingeplant'**
+  String get rdTypeInvited;
+
+  /// rdType.invitedAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get rdTypeInvitedAll;
+
+  /// rdType.invitedHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wer zu diesen Terminen gehört'**
+  String get rdTypeInvitedHint;
+
+  /// rdType.invitedSome
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Register} other {{count} Register}}'**
+  String rdTypeInvitedSome(num count);
+
+  /// rdType.look
+  ///
+  /// In de, this message translates to:
+  /// **'Aussehen'**
+  String get rdTypeLook;
+
+  /// rdType.lookHideName
+  ///
+  /// In de, this message translates to:
+  /// **'Name in der Liste verbergen'**
+  String get rdTypeLookHideName;
+
+  /// rdType.lookHideNameHint
+  ///
+  /// In de, this message translates to:
+  /// **'Termine ohne eigenen Titel zeigen dann das Datum statt des Namens der Art (klassische Ansicht und Eltern).'**
+  String get rdTypeLookHideNameHint;
+
+  /// rdType.lookHighlightHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Art steht in der Terminliste auffällig markiert.'**
+  String get rdTypeLookHighlightHint;
+
+  /// rdType.lookHint
+  ///
+  /// In de, this message translates to:
+  /// **'Farbe, hervorheben, Titel in der Liste'**
+  String get rdTypeLookHint;
+
+  /// rdType.newCreate
+  ///
+  /// In de, this message translates to:
+  /// **'Anlegen'**
+  String get rdTypeNewCreate;
+
+  /// rdType.newEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Leer'**
+  String get rdTypeNewEmpty;
+
+  /// rdType.newEmptyHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Anwesenheit, sonst nichts'**
+  String get rdTypeNewEmptyHint;
+
+  /// rdType.newName
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get rdTypeNewName;
+
+  /// rdType.newNameHint
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. Registerprobe'**
+  String get rdTypeNewNameHint;
+
+  /// rdType.newStartsLike
+  ///
+  /// In de, this message translates to:
+  /// **'Startet wie'**
+  String get rdTypeNewStartsLike;
+
+  /// rdType.newStartsLikeHint
+  ///
+  /// In de, this message translates to:
+  /// **'Übernimmt Zeit, Status, Ablauf und alles Eingeschaltete. Danach kannst du alles ändern.'**
+  String get rdTypeNewStartsLikeHint;
+
+  /// rdType.newTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Terminart'**
+  String get rdTypeNewTitle;
+
+  /// rdType.offer
+  ///
+  /// In de, this message translates to:
+  /// **'Für neue Termine anbieten'**
+  String get rdTypeOffer;
+
+  /// rdType.offerHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aus: steht beim Anlegen nicht mehr zur Wahl, bestehende Termine bleiben'**
+  String get rdTypeOfferHint;
+
+  /// rdType.on
+  ///
+  /// In de, this message translates to:
+  /// **'an'**
+  String get rdTypeOn;
+
+  /// rdType.plan
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf'**
+  String get rdTypePlan;
+
+  /// rdType.planHint
+  ///
+  /// In de, this message translates to:
+  /// **'Programmpunkte mit Uhrzeit'**
+  String get rdTypePlanHint;
+
+  /// rdType.planValue
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Punkt} other {{count} Punkte}}'**
+  String rdTypePlanValue(num count);
+
+  /// rdType.protocol
+  ///
+  /// In de, this message translates to:
+  /// **'Protokoll und Tagesordnung'**
+  String get rdTypeProtocol;
+
+  /// rdType.protocolHint
+  ///
+  /// In de, this message translates to:
+  /// **'Themen sammeln und mitschreiben'**
+  String get rdTypeProtocolHint;
+
+  /// rdType.reminders
+  ///
+  /// In de, this message translates to:
+  /// **'Erinnerungen'**
+  String get rdTypeReminders;
+
+  /// rdType.remindersHint
+  ///
+  /// In de, this message translates to:
+  /// **'Push-Nachricht vor Beginn'**
+  String get rdTypeRemindersHint;
+
+  /// rdType.remindersValue
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {an} one {1 Erinnerung} other {{count} Erinnerungen}}'**
+  String rdTypeRemindersValue(num count);
+
+  /// rdType.signup
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldefragen'**
+  String get rdTypeSignup;
+
+  /// rdType.signupHint
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. „Bringst du Essen mit?“'**
+  String get rdTypeSignupHint;
+
+  /// rdType.signupValue
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Frage} other {{count} Fragen}}'**
+  String rdTypeSignupValue(num count);
+
+  /// rdType.statuses
+  ///
+  /// In de, this message translates to:
+  /// **'Mögliche Status'**
+  String get rdTypeStatuses;
+
+  /// rdType.takeOverPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Für neue Termine dieser Art übernehmen'**
+  String get rdTypeTakeOverPlan;
+
+  /// rdType.takeOverPlanConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Termine der Art „{type}“ bekommen dann diesen Ablauf. Bestehende Termine bleiben, wie sie sind.'**
+  String rdTypeTakeOverPlanConfirm(Object type);
+
+  /// rdType.takeOverPlanDone
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Termine der Art „{type}“ bekommen jetzt diesen Ablauf'**
+  String rdTypeTakeOverPlanDone(Object type);
+
+  /// rdType.takeOverPlanFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Der Ablauf konnte nicht übernommen werden.'**
+  String get rdTypeTakeOverPlanFailed;
+
+  /// rdType.takeOverPlanHint
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Termine der Art „{type}“ bekommen diesen Ablauf'**
+  String rdTypeTakeOverPlanHint(Object type);
+
+  /// rdType.time
+  ///
+  /// In de, this message translates to:
+  /// **'Uhrzeit'**
+  String get rdTypeTime;
+
+  /// rdType.timeHint
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschlag, am Termin änderbar'**
+  String get rdTypeTimeHint;
+
+  /// rdType.usage
+  ///
+  /// In de, this message translates to:
+  /// **'Änderungen gelten auch für {count, plural, one {den bestehenden Termin} other {die {count} bestehenden Termine}}.'**
+  String rdTypeUsage(num count);
 
   /// rdWm.categoriesIntro
   ///
@@ -20279,6 +21520,12 @@ abstract class AppLocalizations {
   /// **'Unbekannte Stimmnamen, einige Dateinamen, die Namen unsicherer Werk-Ordner und bei unklaren Stimmen ein Bild der ersten Seite gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.'**
   String get redesignImportAiOptionDetail;
 
+  /// redesign.import.answerFromPage
+  ///
+  /// In de, this message translates to:
+  /// **'Von Seite 1 lesen'**
+  String get redesignImportAnswerFromPage;
+
   /// redesign.import.answerNewGroup
   ///
   /// In de, this message translates to:
@@ -20903,6 +22150,12 @@ abstract class AppLocalizations {
   /// **'Alle als {name}'**
   String redesignImportGroupAllAs(Object name);
 
+  /// redesign.import.groupAllFromPage
+  ///
+  /// In de, this message translates to:
+  /// **'Alle von Seite 1 lesen'**
+  String get redesignImportGroupAllFromPage;
+
   /// redesign.import.groupAnswered
   ///
   /// In de, this message translates to:
@@ -21106,6 +22359,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Tippen zum Vergrößern'**
   String get redesignImportPreviewZoom;
+
+  /// redesign.import.questionLook
+  ///
+  /// In de, this message translates to:
+  /// **'Erste Seite ansehen'**
+  String get redesignImportQuestionLook;
 
   /// redesign.import.questionTitle
   ///
@@ -22040,7 +23299,7 @@ abstract class AppLocalizations {
   /// redesign.members.critical
   ///
   /// In de, this message translates to:
-  /// **'Fehlen oft · {count}'**
+  /// **'Problemfälle · {count}'**
   String redesignMembersCritical(Object count);
 
   /// redesign.members.empty
@@ -22064,7 +23323,7 @@ abstract class AppLocalizations {
   /// redesign.members.filterCritical
   ///
   /// In de, this message translates to:
-  /// **'Fehlen oft'**
+  /// **'Problemfälle'**
   String get redesignMembersFilterCritical;
 
   /// redesign.members.filterField
@@ -23720,7 +24979,7 @@ abstract class AppLocalizations {
   /// redesign.split.membersCritical
   ///
   /// In de, this message translates to:
-  /// **'Auffällige Anwesenheit'**
+  /// **'Problemfälle'**
   String get redesignSplitMembersCritical;
 
   /// redesign.split.membersEmpty
@@ -24434,13 +25693,13 @@ abstract class AppLocalizations {
   /// redesign.today.critical
   ///
   /// In de, this message translates to:
-  /// **'{count, plural, one {{count} Mitglied fehlt oft} other {{count} Mitglieder fehlen oft}}'**
+  /// **'{count, plural, one {1 Problemfall} other {{count} Problemfälle}}'**
   String redesignTodayCritical(num count);
 
   /// redesign.today.criticalHint
   ///
   /// In de, this message translates to:
-  /// **'Unter der Anwesenheitsgrenze'**
+  /// **'Nach euren Problemfall-Regeln'**
   String get redesignTodayCriticalHint;
 
   /// redesign.today.dayToday

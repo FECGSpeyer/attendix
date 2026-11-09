@@ -6137,7 +6137,7 @@
   "@generalSettingsDutyViewHelper": {
     "description": "generalSettings.dutyViewHelper"
   },
-  "generalSettingsFlutterAndHint": "Person ist kritisch, wenn ALLE Regeln zutreffen",
+  "generalSettingsFlutterAndHint": "Person ist kritisch, wenn alle Und-Regeln zusammen zutreffen",
   "@generalSettingsFlutterAndHint": {
     "description": "generalSettings.flutter.andHint"
   },
@@ -12107,7 +12107,7 @@
   "@rdAdminCertificatesHint": {
     "description": "rdAdmin.certificatesHint"
   },
-  "rdAdminCounting": "So wird gezählt",
+  "rdAdminCounting": "Was zur Anwesenheitsquote zählt",
   "@rdAdminCounting": {
     "description": "rdAdmin.counting"
   },
@@ -12128,7 +12128,7 @@
   "@rdAdminCriticalHint": {
     "description": "rdAdmin.criticalHint"
   },
-  "rdAdminCriticalIntro": "Wer nach diesen Regeln zu oft fehlt, gilt als Problemfall und fällt unter Heute und im Mitglieder-Tab auf.",
+  "rdAdminCriticalIntro": "Wer nach einer dieser Regeln auffällt, ist Problemfall und erscheint unter Heute und in Mitglieder.",
   "@rdAdminCriticalIntro": {
     "description": "rdAdmin.criticalIntro"
   },
@@ -12266,6 +12266,10 @@
       }
     }
   },
+  "rdAdminPickHint": "Wähle links einen Eintrag, er öffnet sich hier.",
+  "@rdAdminPickHint": {
+    "description": "rdAdminPickHint"
+  },
   "rdAdminReasons": "Abmeldegründe",
   "@rdAdminReasons": {
     "description": "rdAdmin.reasons"
@@ -12384,6 +12388,310 @@
   "rdAdminWorkHistory": "Gespielte Werke",
   "@rdAdminWorkHistory": {
     "description": "rdAdmin.workHistory"
+  },
+  "rdCriticalAndHint": "Dann ist jemand nur Problemfall, wenn alle so markierten Regeln gleichzeitig zutreffen.",
+  "@rdCriticalAndHint": {
+    "description": "rdCritical.andHint"
+  },
+  "rdCriticalAndTitle": "Nur zusammen mit anderen Regeln",
+  "@rdCriticalAndTitle": {
+    "description": "rdCritical.andTitle"
+  },
+  "rdCriticalAtLeast": "Mindestens",
+  "@rdCriticalAtLeast": {
+    "description": "rdCritical.atLeast"
+  },
+  "rdCriticalChange": "Ändern",
+  "@rdCriticalChange": {
+    "description": "rdCritical.change"
+  },
+  "rdCriticalDays": "Tage",
+  "@rdCriticalDays": {
+    "description": "rdCritical.days"
+  },
+  "rdCriticalHitCount": "{count, plural, one {einmal {what}} other {{count}-mal {what}}}",
+  "@rdCriticalHitCount": {
+    "description": "rdCritical.hitCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "what": {}
+    }
+  },
+  "rdCriticalHitPercent": "bei {percent} % der Termine {what}",
+  "@rdCriticalHitPercent": {
+    "description": "rdCritical.hitPercent",
+    "placeholders": {
+      "percent": {},
+      "what": {}
+    }
+  },
+  "rdCriticalListAnd": "Nur zusammen mit anderen Regeln",
+  "@rdCriticalListAnd": {
+    "description": "rdCritical.listAnd"
+  },
+  "rdCriticalListFoot": "Geprüft jeden Morgen und nach jeder Änderung. Nach „Mit Person gesprochen“ zählt eine Person wieder von vorn.",
+  "@rdCriticalListFoot": {
+    "description": "rdCritical.listFoot"
+  },
+  "rdCriticalListNow": "{count, plural, =0 {Gerade kein Problemfall} one {Gerade 1 Problemfall} other {Gerade {count} Problemfälle}}",
+  "@rdCriticalListNow": {
+    "description": "rdCritical.listNow",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdCriticalListShow": "In Mitglieder ansehen",
+  "@rdCriticalListShow": {
+    "description": "rdCritical.listShow"
+  },
+  "rdCriticalModeCount": "Anzahl",
+  "@rdCriticalModeCount": {
+    "description": "rdCritical.modeCount"
+  },
+  "rdCriticalModePercent": "Anteil",
+  "@rdCriticalModePercent": {
+    "description": "rdCritical.modePercent"
+  },
+  "rdCriticalMore": "Weitere Einstellungen",
+  "@rdCriticalMore": {
+    "description": "rdCritical.more"
+  },
+  "rdCriticalName": "Name",
+  "@rdCriticalName": {
+    "description": "rdCritical.name"
+  },
+  "rdCriticalNamePh": "z. B. Fehlt oft",
+  "@rdCriticalNamePh": {
+    "description": "rdCritical.namePh"
+  },
+  "rdCriticalNames": "{names} und {count} weitere",
+  "@rdCriticalNames": {
+    "description": "rdCritical.names",
+    "placeholders": {
+      "names": {},
+      "count": {}
+    }
+  },
+  "rdCriticalOr": " oder ",
+  "@rdCriticalOr": {
+    "description": "rdCritical.or"
+  },
+  "rdCriticalOwnRule": "Eigene Regel",
+  "@rdCriticalOwnRule": {
+    "description": "rdCritical.ownRule"
+  },
+  "rdCriticalPeriodAll": "insgesamt",
+  "@rdCriticalPeriodAll": {
+    "description": "rdCritical.periodAll"
+  },
+  "rdCriticalPeriodDays": "{count, plural, one {am letzten Tag} other {in den letzten {count} Tagen}}",
+  "@rdCriticalPeriodDays": {
+    "description": "rdCritical.periodDays",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdCriticalPeriodOther": "Andere Anzahl Tage …",
+  "@rdCriticalPeriodOther": {
+    "description": "rdCritical.periodOther"
+  },
+  "rdCriticalPeriodSeason": "seit Saisonbeginn",
+  "@rdCriticalPeriodSeason": {
+    "description": "rdCritical.periodSeason"
+  },
+  "rdCriticalPresentWarning": "Auch „Anwesend“ zählt hier als Problem. Ist das so gewollt?",
+  "@rdCriticalPresentWarning": {
+    "description": "rdCritical.presentWarning"
+  },
+  "rdCriticalPresetAbsent": "Fehlt oft",
+  "@rdCriticalPresetAbsent": {
+    "description": "rdCritical.presetAbsent"
+  },
+  "rdCriticalPresetLate": "Oft zu spät",
+  "@rdCriticalPresetLate": {
+    "description": "rdCritical.presetLate"
+  },
+  "rdCriticalPresetRarely": "Selten da",
+  "@rdCriticalPresetRarely": {
+    "description": "rdCritical.presetRarely"
+  },
+  "rdCriticalPreviewAndHint": "Diese Regel zählt nur zusammen mit den anderen Regeln, die so markiert sind. Die Vorschau zeigt sie für sich allein.",
+  "@rdCriticalPreviewAndHint": {
+    "description": "rdCritical.previewAndHint"
+  },
+  "rdCriticalPreviewError": "Die Vorschau ist gerade nicht verfügbar.",
+  "@rdCriticalPreviewError": {
+    "description": "rdCritical.previewError"
+  },
+  "rdCriticalPreviewLast": "zuletzt {date}",
+  "@rdCriticalPreviewLast": {
+    "description": "rdCritical.previewLast",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "rdCriticalPreviewLoading": "Vorschau wird berechnet …",
+  "@rdCriticalPreviewLoading": {
+    "description": "rdCritical.previewLoading"
+  },
+  "rdCriticalPreviewMore": "{count, plural, one {und 1 weitere Person} other {und {count} weitere Personen}}",
+  "@rdCriticalPreviewMore": {
+    "description": "rdCritical.previewMore",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdCriticalPreviewOf": "{matching} von {total} Terminen",
+  "@rdCriticalPreviewOf": {
+    "description": "rdCritical.previewOf",
+    "placeholders": {
+      "matching": {},
+      "total": {}
+    }
+  },
+  "rdCriticalPreviewSolveHint": "Nach einem Gespräch zählt eine Person erst ab dem Gesprächstag.",
+  "@rdCriticalPreviewSolveHint": {
+    "description": "rdCritical.previewSolveHint"
+  },
+  "rdCriticalPreviewTimes": "{count, plural, one {einmal} other {{count}-mal}}",
+  "@rdCriticalPreviewTimes": {
+    "description": "rdCritical.previewTimes",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdCriticalPreviewTitle": "{count, plural, =0 {Trifft gerade auf niemanden zu} one {Trifft gerade auf 1 Person zu} other {Trifft gerade auf {count} Personen zu}}",
+  "@rdCriticalPreviewTitle": {
+    "description": "rdCritical.previewTitle",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdCriticalReasonDetail": "{period} · Regel „{rule}“",
+  "@rdCriticalReasonDetail": {
+    "description": "rdCritical.reasonDetail",
+    "placeholders": {
+      "period": {},
+      "rule": {}
+    }
+  },
+  "rdCriticalSentenceLead": "Problemfall ist, wer",
+  "@rdCriticalSentenceLead": {
+    "description": "rdCritical.sentenceLead"
+  },
+  "rdCriticalSentenceTypes": ", bei",
+  "@rdCriticalSentenceTypes": {
+    "description": "rdCritical.sentenceTypes"
+  },
+  "rdCriticalSheetPeriod": "Zeitraum",
+  "@rdCriticalSheetPeriod": {
+    "description": "rdCritical.sheetPeriod"
+  },
+  "rdCriticalSheetThreshold": "Wie oft?",
+  "@rdCriticalSheetThreshold": {
+    "description": "rdCritical.sheetThreshold"
+  },
+  "rdCriticalSheetTypes": "Welche Termine?",
+  "@rdCriticalSheetTypes": {
+    "description": "rdCritical.sheetTypes"
+  },
+  "rdCriticalSheetWhat": "Was zählt?",
+  "@rdCriticalSheetWhat": {
+    "description": "rdCritical.sheetWhat"
+  },
+  "rdCriticalSolveHint": "Nach dem Speichern zählt {name} wieder von vorn.",
+  "@rdCriticalSolveHint": {
+    "description": "rdCritical.solveHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdCriticalSummary": "{threshold} {what} {period}",
+  "@rdCriticalSummary": {
+    "description": "rdCritical.summary",
+    "placeholders": {
+      "threshold": {},
+      "what": {},
+      "period": {}
+    }
+  },
+  "rdCriticalThresholdCount": "{count, plural, one {mindestens einmal} other {mindestens {count}-mal}}",
+  "@rdCriticalThresholdCount": {
+    "description": "rdCritical.thresholdCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdCriticalThresholdCountText": "mindestens {count}-mal",
+  "@rdCriticalThresholdCountText": {
+    "description": "rdCritical.thresholdCountText",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdCriticalThresholdPercent": "bei mindestens {percent} % der Termine",
+  "@rdCriticalThresholdPercent": {
+    "description": "rdCritical.thresholdPercent",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "rdCriticalTypesAll": "allen Terminen",
+  "@rdCriticalTypesAll": {
+    "description": "rdCritical.typesAll"
+  },
+  "rdCriticalVerbHad": "hatte",
+  "@rdCriticalVerbHad": {
+    "description": "rdCritical.verbHad"
+  },
+  "rdCriticalVerbHas": "hat",
+  "@rdCriticalVerbHas": {
+    "description": "rdCritical.verbHas"
+  },
+  "rdCriticalVerbIs": "ist",
+  "@rdCriticalVerbIs": {
+    "description": "rdCritical.verbIs"
+  },
+  "rdCriticalWhatAbsent": "unentschuldigt gefehlt",
+  "@rdCriticalWhatAbsent": {
+    "description": "rdCritical.whatAbsent"
+  },
+  "rdCriticalWhatAbsentAll": "gefehlt (auch entschuldigt)",
+  "@rdCriticalWhatAbsentAll": {
+    "description": "rdCritical.whatAbsentAll"
+  },
+  "rdCriticalWhatCustom": "Status {statuses}",
+  "@rdCriticalWhatCustom": {
+    "description": "rdCritical.whatCustom",
+    "placeholders": {
+      "statuses": {}
+    }
+  },
+  "rdCriticalWhatLate": "zu spät gekommen",
+  "@rdCriticalWhatLate": {
+    "description": "rdCritical.whatLate"
+  },
+  "rdCriticalWhatPick": "Eigene Auswahl …",
+  "@rdCriticalWhatPick": {
+    "description": "rdCritical.whatPick"
+  },
+  "rdCriticalWhatPickHint": "Diese Status zählen. Mindestens einer muss gewählt sein.",
+  "@rdCriticalWhatPickHint": {
+    "description": "rdCritical.whatPickHint"
   },
   "rdDataAddColumn": "Spalte hinzufügen",
   "@rdDataAddColumn": {
@@ -13125,7 +13433,7 @@
   "@rdSettingsSaveFailed": {
     "description": "rdSettings.saveFailed"
   },
-  "rdSettingsSeasonHint": "Die Anwesenheitsquote der Mitglieder zählt erst ab diesem Datum.",
+  "rdSettingsSeasonHint": "Ab diesem Datum zählt die Anwesenheitsquote",
   "@rdSettingsSeasonHint": {
     "description": "rdSettings.seasonHint"
   },
@@ -13144,11 +13452,11 @@
   "@rdSettingsShareWorksHint": {
     "description": "rdSettings.shareWorksHint"
   },
-  "rdSettingsShiftPresent": "Arbeit und Schicht zählen als da",
+  "rdSettingsShiftPresent": "Arbeit und Schicht zählen als anwesend",
   "@rdSettingsShiftPresent": {
     "description": "rdSettings.shiftPresent"
   },
-  "rdSettingsShiftPresentHint": "Wer wegen Arbeit oder Schicht entschuldigt ist, zählt in der Anwesenheitsquote als anwesend",
+  "rdSettingsShiftPresentHint": "Gilt, wenn jemand wegen Arbeit oder Schicht entschuldigt ist",
   "@rdSettingsShiftPresentHint": {
     "description": "rdSettings.shiftPresentHint"
   },
@@ -13171,6 +13479,457 @@
   "rdSettingsUndo": "Rückgängig",
   "@rdSettingsUndo": {
     "description": "rdSettings.undo"
+  },
+  "rdStatsAge": "Alter",
+  "@rdStatsAge": {
+    "description": "rdStats.age"
+  },
+  "rdStatsAgeAvgGroup": "Ø Alter je Register",
+  "@rdStatsAgeAvgGroup": {
+    "description": "rdStats.ageAvgGroup"
+  },
+  "rdStatsAgeBucket": "{from}–{to} Jahre",
+  "@rdStatsAgeBucket": {
+    "description": "rdStats.ageBucket",
+    "placeholders": {
+      "from": {},
+      "to": {}
+    }
+  },
+  "rdStatsAgeHint": "Aktive Mitglieder mit Geburtsdatum",
+  "@rdStatsAgeHint": {
+    "description": "rdStats.ageHint"
+  },
+  "rdStatsAgeNone": "Bei den aktiven Mitgliedern ist kein Geburtsdatum eingetragen.",
+  "@rdStatsAgeNone": {
+    "description": "rdStats.ageNone"
+  },
+  "rdStatsAgeYears": "{years} J.",
+  "@rdStatsAgeYears": {
+    "description": "rdStats.ageYears",
+    "placeholders": {
+      "years": {}
+    }
+  },
+  "rdStatsAllThere": "Alle da",
+  "@rdStatsAllThere": {
+    "description": "rdStats.allThere"
+  },
+  "rdStatsBar": "{day} · {title}: {percent} %",
+  "@rdStatsBar": {
+    "description": "rdStats.bar",
+    "placeholders": {
+      "day": {},
+      "title": {},
+      "percent": {}
+    }
+  },
+  "rdStatsBarsHint": "{count, plural, one {1 Termin, antippen zeigt, wer fehlte} other {Die letzten {count} Termine, antippen zeigt, wer fehlte}}",
+  "@rdStatsBarsHint": {
+    "description": "rdStats.barsHint",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdStatsByType": "Termine je Art",
+  "@rdStatsByType": {
+    "description": "rdStats.byType"
+  },
+  "rdStatsByTypeHint": "Antippen zeigt nur diese Art.",
+  "@rdStatsByTypeHint": {
+    "description": "rdStats.byTypeHint"
+  },
+  "rdStatsColAbsent": "Abw.",
+  "@rdStatsColAbsent": {
+    "description": "rdStats.colAbsent"
+  },
+  "rdStatsColDate": "Datum",
+  "@rdStatsColDate": {
+    "description": "rdStats.colDate"
+  },
+  "rdStatsColEvent": "Termin",
+  "@rdStatsColEvent": {
+    "description": "rdStats.colEvent"
+  },
+  "rdStatsColEvents": "Termine",
+  "@rdStatsColEvents": {
+    "description": "rdStats.colEvents"
+  },
+  "rdStatsColExcused": "Entsch.",
+  "@rdStatsColExcused": {
+    "description": "rdStats.colExcused"
+  },
+  "rdStatsColLate": "Versp.",
+  "@rdStatsColLate": {
+    "description": "rdStats.colLate"
+  },
+  "rdStatsColName": "Name",
+  "@rdStatsColName": {
+    "description": "rdStats.colName"
+  },
+  "rdStatsColPresent": "Anw.",
+  "@rdStatsColPresent": {
+    "description": "rdStats.colPresent"
+  },
+  "rdStatsColQuote": "Quote",
+  "@rdStatsColQuote": {
+    "description": "rdStats.colQuote"
+  },
+  "rdStatsColRegister": "Register",
+  "@rdStatsColRegister": {
+    "description": "rdStats.colRegister"
+  },
+  "rdStatsCountAbsent": "{count} abwesend",
+  "@rdStatsCountAbsent": {
+    "description": "rdStats.countAbsent",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdStatsCountExcused": "{count} entschuldigt",
+  "@rdStatsCountExcused": {
+    "description": "rdStats.countExcused",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdStatsCountLate": "{count} verspätet",
+  "@rdStatsCountLate": {
+    "description": "rdStats.countLate",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdStatsCountOpen": "{count} neutral",
+  "@rdStatsCountOpen": {
+    "description": "rdStats.countOpen",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdStatsCountedTypes": "Zählt zur Anwesenheitsquote",
+  "@rdStatsCountedTypes": {
+    "description": "rdStats.countedTypes"
+  },
+  "rdStatsCountedTypesHint": "Termine dieser Arten zählen bei den Mitgliedern, unter „Heute“ und in der Auswertung. Aus z. B. für Feiern oder freiwillige Termine.",
+  "@rdStatsCountedTypesHint": {
+    "description": "rdStats.countedTypesHint"
+  },
+  "rdStatsCountedTypesNone": "Keine Terminart",
+  "@rdStatsCountedTypesNone": {
+    "description": "rdStats.countedTypesNone"
+  },
+  "rdStatsCountedTypesRow": "Terminarten",
+  "@rdStatsCountedTypesRow": {
+    "description": "rdStats.countedTypesRow"
+  },
+  "rdStatsDeltaDown": "−{points} ggü. davor",
+  "@rdStatsDeltaDown": {
+    "description": "rdStats.deltaDown",
+    "placeholders": {
+      "points": {}
+    }
+  },
+  "rdStatsDeltaDownLong": "{points} Prozentpunkte weniger als im Zeitraum davor",
+  "@rdStatsDeltaDownLong": {
+    "description": "rdStats.deltaDownLong",
+    "placeholders": {
+      "points": {}
+    }
+  },
+  "rdStatsDeltaSame": "wie davor",
+  "@rdStatsDeltaSame": {
+    "description": "rdStats.deltaSame"
+  },
+  "rdStatsDeltaSameLong": "Gleich wie im Zeitraum davor",
+  "@rdStatsDeltaSameLong": {
+    "description": "rdStats.deltaSameLong"
+  },
+  "rdStatsDeltaUp": "+{points} ggü. davor",
+  "@rdStatsDeltaUp": {
+    "description": "rdStats.deltaUp",
+    "placeholders": {
+      "points": {}
+    }
+  },
+  "rdStatsDeltaUpLong": "{points} Prozentpunkte mehr als im Zeitraum davor",
+  "@rdStatsDeltaUpLong": {
+    "description": "rdStats.deltaUpLong",
+    "placeholders": {
+      "points": {}
+    }
+  },
+  "rdStatsEventAllThere": "Alle waren da.",
+  "@rdStatsEventAllThere": {
+    "description": "rdStats.eventAllThere"
+  },
+  "rdStatsEventEmpty": "Für diesen Termin gibt es keine Einträge.",
+  "@rdStatsEventEmpty": {
+    "description": "rdStats.eventEmpty"
+  },
+  "rdStatsEventGroup": "{label} ({count})",
+  "@rdStatsEventGroup": {
+    "description": "rdStats.eventGroup",
+    "placeholders": {
+      "label": {},
+      "count": {}
+    }
+  },
+  "rdStatsEventOpen": "Termin öffnen",
+  "@rdStatsEventOpen": {
+    "description": "rdStats.eventOpen"
+  },
+  "rdStatsEvents": "{count, plural, one {1 Termin} other {{count} Termine}}",
+  "@rdStatsEvents": {
+    "description": "rdStats.events",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdStatsFields": "Zusatzfelder",
+  "@rdStatsFields": {
+    "description": "rdStats.fields"
+  },
+  "rdStatsFieldsPaused": "Pausierte mitzählen",
+  "@rdStatsFieldsPaused": {
+    "description": "rdStats.fieldsPaused"
+  },
+  "rdStatsFilterGroups": "Register",
+  "@rdStatsFilterGroups": {
+    "description": "rdStats.filterGroups"
+  },
+  "rdStatsFilterRemove": "Filter „{label}“ entfernen",
+  "@rdStatsFilterRemove": {
+    "description": "rdStats.filterRemove",
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "rdStatsFilterShow": "{count, plural, =0 {Keine Termine} one {1 Termin zeigen} other {{count} Termine zeigen}}",
+  "@rdStatsFilterShow": {
+    "description": "rdStats.filterShow",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdStatsFilterTypes": "Terminarten",
+  "@rdStatsFilterTypes": {
+    "description": "rdStats.filterTypes"
+  },
+  "rdStatsFilterTypesHint": "Gilt nur für diese Ansicht. Vorausgewählt sind die Arten, die zur Anwesenheitsquote zählen.",
+  "@rdStatsFilterTypesHint": {
+    "description": "rdStats.filterTypesHint"
+  },
+  "rdStatsMembers": "Mitglieder",
+  "@rdStatsMembers": {
+    "description": "rdStats.members"
+  },
+  "rdStatsMembersActive": "Aktiv",
+  "@rdStatsMembersActive": {
+    "description": "rdStats.membersActive"
+  },
+  "rdStatsMembersLeft": "Ausgetreten",
+  "@rdStatsMembersLeft": {
+    "description": "rdStats.membersLeft"
+  },
+  "rdStatsMembersPaused": "Pausiert",
+  "@rdStatsMembersPaused": {
+    "description": "rdStats.membersPaused"
+  },
+  "rdStatsMembersTotal": "Gesamt",
+  "@rdStatsMembersTotal": {
+    "description": "rdStats.membersTotal"
+  },
+  "rdStatsNotable": "Fällt auf",
+  "@rdStatsNotable": {
+    "description": "rdStats.notable"
+  },
+  "rdStatsNotableBest": "Bester Termin",
+  "@rdStatsNotableBest": {
+    "description": "rdStats.notableBest"
+  },
+  "rdStatsNotableDrop": "{name} lässt nach",
+  "@rdStatsNotableDrop": {
+    "description": "rdStats.notableDrop",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdStatsNotableDropDetail": "{now} statt {before} im Zeitraum davor",
+  "@rdStatsNotableDropDetail": {
+    "description": "rdStats.notableDropDetail",
+    "placeholders": {
+      "now": {},
+      "before": {}
+    }
+  },
+  "rdStatsNotableWeakGroup": "Schwächstes Register: {name}",
+  "@rdStatsNotableWeakGroup": {
+    "description": "rdStats.notableWeakGroup",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "rdStatsNotableWeakest": "Schwächster Termin",
+  "@rdStatsNotableWeakest": {
+    "description": "rdStats.notableWeakest"
+  },
+  "rdStatsOrgGroups": "Gruppen",
+  "@rdStatsOrgGroups": {
+    "description": "rdStats.orgGroups"
+  },
+  "rdStatsOrgGroupsAll": "Alle ({count})",
+  "@rdStatsOrgGroupsAll": {
+    "description": "rdStats.orgGroupsAll",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdStatsOrgGroupsHint": "Zählt nur die Personen der gewählten Gruppen. Dieselbe Person in mehreren Gruppen zählt einmal.",
+  "@rdStatsOrgGroupsHint": {
+    "description": "rdStats.orgGroupsHint"
+  },
+  "rdStatsOrgPeople": "Personen in allen Gruppen",
+  "@rdStatsOrgPeople": {
+    "description": "rdStats.orgPeople"
+  },
+  "rdStatsPersonAllThere": "War bei allen Terminen da.",
+  "@rdStatsPersonAllThere": {
+    "description": "rdStats.personAllThere"
+  },
+  "rdStatsPersonDots": "{count, plural, one {1 Termin, ältester links} other {{count} Termine, ältester links}}",
+  "@rdStatsPersonDots": {
+    "description": "rdStats.personDots",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdStatsPersonLate": "Verspätet ({count})",
+  "@rdStatsPersonLate": {
+    "description": "rdStats.personLate",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdStatsPersonMissed": "Gefehlt ({count})",
+  "@rdStatsPersonMissed": {
+    "description": "rdStats.personMissed",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "rdStatsPersonOpen": "Person öffnen",
+  "@rdStatsPersonOpen": {
+    "description": "rdStats.personOpen"
+  },
+  "rdStatsPersonSortAbsent": "Oft abwesend",
+  "@rdStatsPersonSortAbsent": {
+    "description": "rdStats.personSortAbsent"
+  },
+  "rdStatsPersonSortFewest": "Wenigste zuerst",
+  "@rdStatsPersonSortFewest": {
+    "description": "rdStats.personSortFewest"
+  },
+  "rdStatsPersonSortLate": "Oft verspätet",
+  "@rdStatsPersonSortLate": {
+    "description": "rdStats.personSortLate"
+  },
+  "rdStatsPersonSortMost": "Meiste zuerst",
+  "@rdStatsPersonSortMost": {
+    "description": "rdStats.personSortMost"
+  },
+  "rdStatsPersonSortName": "Name",
+  "@rdStatsPersonSortName": {
+    "description": "rdStats.personSortName"
+  },
+  "rdStatsPersonSub": "{group} · {percent} ({attended} von {total})",
+  "@rdStatsPersonSub": {
+    "description": "rdStats.personSub",
+    "placeholders": {
+      "group": {},
+      "percent": {},
+      "attended": {},
+      "total": {}
+    }
+  },
+  "rdStatsRangeCustom": "Eigener …",
+  "@rdStatsRangeCustom": {
+    "description": "rdStats.rangeCustom"
+  },
+  "rdStatsRangeFrom": "Von",
+  "@rdStatsRangeFrom": {
+    "description": "rdStats.rangeFrom"
+  },
+  "rdStatsRangeShow": "Zeigen",
+  "@rdStatsRangeShow": {
+    "description": "rdStats.rangeShow"
+  },
+  "rdStatsRangeTitle": "Eigener Zeitraum",
+  "@rdStatsRangeTitle": {
+    "description": "rdStats.rangeTitle"
+  },
+  "rdStatsRangeTo": "Bis",
+  "@rdStatsRangeTo": {
+    "description": "rdStats.rangeTo"
+  },
+  "rdStatsRegisterHint": "Kurve: Quote je Monat. Antippen zeigt die Personen des Registers.",
+  "@rdStatsRegisterHint": {
+    "description": "rdStats.registerHint"
+  },
+  "rdStatsSortBest": "Beste zuerst",
+  "@rdStatsSortBest": {
+    "description": "rdStats.sortBest"
+  },
+  "rdStatsSortBy": "Sortieren nach {column}",
+  "@rdStatsSortBy": {
+    "description": "rdStats.sortBy",
+    "placeholders": {
+      "column": {}
+    }
+  },
+  "rdStatsSortNewest": "Neueste zuerst",
+  "@rdStatsSortNewest": {
+    "description": "rdStats.sortNewest"
+  },
+  "rdStatsSortOldest": "Älteste zuerst",
+  "@rdStatsSortOldest": {
+    "description": "rdStats.sortOldest"
+  },
+  "rdStatsSortWeakest": "Schwächste zuerst",
+  "@rdStatsSortWeakest": {
+    "description": "rdStats.sortWeakest"
+  },
+  "rdStatsSplit": "Statusverteilung",
+  "@rdStatsSplit": {
+    "description": "rdStats.split"
+  },
+  "rdStatsTabEvents": "Termine",
+  "@rdStatsTabEvents": {
+    "description": "rdStats.tabEvents"
+  },
+  "rdStatsTabOverview": "Überblick",
+  "@rdStatsTabOverview": {
+    "description": "rdStats.tabOverview"
+  },
+  "rdStatsTabPeople": "Personen",
+  "@rdStatsTabPeople": {
+    "description": "rdStats.tabPeople"
+  },
+  "rdStatsTabRegister": "Register",
+  "@rdStatsTabRegister": {
+    "description": "rdStats.tabRegister"
+  },
+  "rdStatsTabsLabel": "Ansicht der Auswertung",
+  "@rdStatsTabsLabel": {
+    "description": "rdStats.tabsLabel"
   },
   "rdTeacherNewCreate": "Anlegen",
   "@rdTeacherNewCreate": {
@@ -13210,6 +13969,277 @@
   "rdTeacherNewTitle": "Neuer Lehrer",
   "@rdTeacherNewTitle": {
     "description": "rdTeacherNew.title"
+  },
+  "rdTypeAdd": "Hinzufügen",
+  "@rdTypeAdd": {
+    "description": "rdType.add"
+  },
+  "rdTypeAddHint": "Wählst du etwas aus, bekommen es alle neuen Termine dieser Art.",
+  "@rdTypeAddHint": {
+    "description": "rdType.addHint"
+  },
+  "rdTypeAllDay": "Ganztägig",
+  "@rdTypeAllDay": {
+    "description": "rdType.allDay"
+  },
+  "rdTypeAttendance": "Anwesenheit",
+  "@rdTypeAttendance": {
+    "description": "rdType.attendance"
+  },
+  "rdTypeAttendanceValue": "Vorbelegt mit {status} · {count} Status",
+  "@rdTypeAttendanceValue": {
+    "description": "rdType.attendanceValue",
+    "placeholders": {
+      "status": {},
+      "count": {}
+    }
+  },
+  "rdTypeAutomatic": "Neue Termine dieser Art bekommen automatisch",
+  "@rdTypeAutomatic": {
+    "description": "rdType.automatic"
+  },
+  "rdTypeAutomaticHint": "Nur was eingeschaltet ist, steht hier. Ort und Werke trägst du direkt am Termin ein.",
+  "@rdTypeAutomaticHint": {
+    "description": "rdType.automaticHint"
+  },
+  "rdTypeChecklist": "Checkliste",
+  "@rdTypeChecklist": {
+    "description": "rdType.checklist"
+  },
+  "rdTypeChecklistHint": "Aufgaben vor dem Termin, z. B. Stühle stellen",
+  "@rdTypeChecklistHint": {
+    "description": "rdType.checklistHint"
+  },
+  "rdTypeChecklistValue": "{count, plural, =0 {an} one {1 Aufgabe} other {{count} Aufgaben}}",
+  "@rdTypeChecklistValue": {
+    "description": "rdType.checklistValue",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdTypeCountsForQuota": "Zählt zur Anwesenheitsquote",
+  "@rdTypeCountsForQuota": {
+    "description": "rdType.countsForQuota"
+  },
+  "rdTypeCountsForQuotaHint": "Aus z. B. für Feiern oder freiwillige Termine",
+  "@rdTypeCountsForQuotaHint": {
+    "description": "rdType.countsForQuotaHint"
+  },
+  "rdTypeDefaultStatus": "Vorbelegt mit",
+  "@rdTypeDefaultStatus": {
+    "description": "rdType.defaultStatus"
+  },
+  "rdTypeDuty": "Dienste einteilen",
+  "@rdTypeDuty": {
+    "description": "rdType.duty"
+  },
+  "rdTypeDutyHint": "Wer macht Technik, Kaffee und Co.",
+  "@rdTypeDutyHint": {
+    "description": "rdType.dutyHint"
+  },
+  "rdTypeEveryEvent": "Jeder Termin dieser Art",
+  "@rdTypeEveryEvent": {
+    "description": "rdType.everyEvent"
+  },
+  "rdTypeFlagsFailed": "Termin angelegt. Die Terminart konnte nicht angepasst werden, daher zeigt die alte App Ort oder Werke evtl. nicht.",
+  "@rdTypeFlagsFailed": {
+    "description": "rdType.flagsFailed"
+  },
+  "rdTypeInvited": "Eingeplant",
+  "@rdTypeInvited": {
+    "description": "rdType.invited"
+  },
+  "rdTypeInvitedAll": "Alle",
+  "@rdTypeInvitedAll": {
+    "description": "rdType.invitedAll"
+  },
+  "rdTypeInvitedHint": "Wer zu diesen Terminen gehört",
+  "@rdTypeInvitedHint": {
+    "description": "rdType.invitedHint"
+  },
+  "rdTypeInvitedSome": "{count, plural, one {1 Register} other {{count} Register}}",
+  "@rdTypeInvitedSome": {
+    "description": "rdType.invitedSome",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdTypeLook": "Aussehen",
+  "@rdTypeLook": {
+    "description": "rdType.look"
+  },
+  "rdTypeLookHideName": "Name in der Liste verbergen",
+  "@rdTypeLookHideName": {
+    "description": "rdType.lookHideName"
+  },
+  "rdTypeLookHideNameHint": "Termine ohne eigenen Titel zeigen dann das Datum statt des Namens der Art (klassische Ansicht und Eltern).",
+  "@rdTypeLookHideNameHint": {
+    "description": "rdType.lookHideNameHint"
+  },
+  "rdTypeLookHighlightHint": "Die Art steht in der Terminliste auffällig markiert.",
+  "@rdTypeLookHighlightHint": {
+    "description": "rdType.lookHighlightHint"
+  },
+  "rdTypeLookHint": "Farbe, hervorheben, Titel in der Liste",
+  "@rdTypeLookHint": {
+    "description": "rdType.lookHint"
+  },
+  "rdTypeNewCreate": "Anlegen",
+  "@rdTypeNewCreate": {
+    "description": "rdType.newCreate"
+  },
+  "rdTypeNewEmpty": "Leer",
+  "@rdTypeNewEmpty": {
+    "description": "rdType.newEmpty"
+  },
+  "rdTypeNewEmptyHint": "Nur Anwesenheit, sonst nichts",
+  "@rdTypeNewEmptyHint": {
+    "description": "rdType.newEmptyHint"
+  },
+  "rdTypeNewName": "Name",
+  "@rdTypeNewName": {
+    "description": "rdType.newName"
+  },
+  "rdTypeNewNameHint": "z. B. Registerprobe",
+  "@rdTypeNewNameHint": {
+    "description": "rdType.newNameHint"
+  },
+  "rdTypeNewStartsLike": "Startet wie",
+  "@rdTypeNewStartsLike": {
+    "description": "rdType.newStartsLike"
+  },
+  "rdTypeNewStartsLikeHint": "Übernimmt Zeit, Status, Ablauf und alles Eingeschaltete. Danach kannst du alles ändern.",
+  "@rdTypeNewStartsLikeHint": {
+    "description": "rdType.newStartsLikeHint"
+  },
+  "rdTypeNewTitle": "Neue Terminart",
+  "@rdTypeNewTitle": {
+    "description": "rdType.newTitle"
+  },
+  "rdTypeOffer": "Für neue Termine anbieten",
+  "@rdTypeOffer": {
+    "description": "rdType.offer"
+  },
+  "rdTypeOfferHint": "Aus: steht beim Anlegen nicht mehr zur Wahl, bestehende Termine bleiben",
+  "@rdTypeOfferHint": {
+    "description": "rdType.offerHint"
+  },
+  "rdTypeOn": "an",
+  "@rdTypeOn": {
+    "description": "rdType.on"
+  },
+  "rdTypePlan": "Ablauf",
+  "@rdTypePlan": {
+    "description": "rdType.plan"
+  },
+  "rdTypePlanHint": "Programmpunkte mit Uhrzeit",
+  "@rdTypePlanHint": {
+    "description": "rdType.planHint"
+  },
+  "rdTypePlanValue": "{count, plural, one {1 Punkt} other {{count} Punkte}}",
+  "@rdTypePlanValue": {
+    "description": "rdType.planValue",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdTypeProtocol": "Protokoll und Tagesordnung",
+  "@rdTypeProtocol": {
+    "description": "rdType.protocol"
+  },
+  "rdTypeProtocolHint": "Themen sammeln und mitschreiben",
+  "@rdTypeProtocolHint": {
+    "description": "rdType.protocolHint"
+  },
+  "rdTypeReminders": "Erinnerungen",
+  "@rdTypeReminders": {
+    "description": "rdType.reminders"
+  },
+  "rdTypeRemindersHint": "Push-Nachricht vor Beginn",
+  "@rdTypeRemindersHint": {
+    "description": "rdType.remindersHint"
+  },
+  "rdTypeRemindersValue": "{count, plural, =0 {an} one {1 Erinnerung} other {{count} Erinnerungen}}",
+  "@rdTypeRemindersValue": {
+    "description": "rdType.remindersValue",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdTypeSignup": "Anmeldefragen",
+  "@rdTypeSignup": {
+    "description": "rdType.signup"
+  },
+  "rdTypeSignupHint": "z. B. „Bringst du Essen mit?“",
+  "@rdTypeSignupHint": {
+    "description": "rdType.signupHint"
+  },
+  "rdTypeSignupValue": "{count, plural, one {1 Frage} other {{count} Fragen}}",
+  "@rdTypeSignupValue": {
+    "description": "rdType.signupValue",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "rdTypeStatuses": "Mögliche Status",
+  "@rdTypeStatuses": {
+    "description": "rdType.statuses"
+  },
+  "rdTypeTakeOverPlan": "Für neue Termine dieser Art übernehmen",
+  "@rdTypeTakeOverPlan": {
+    "description": "rdType.takeOverPlan"
+  },
+  "rdTypeTakeOverPlanConfirm": "Neue Termine der Art „{type}“ bekommen dann diesen Ablauf. Bestehende Termine bleiben, wie sie sind.",
+  "@rdTypeTakeOverPlanConfirm": {
+    "description": "rdType.takeOverPlanConfirm",
+    "placeholders": {
+      "type": {}
+    }
+  },
+  "rdTypeTakeOverPlanDone": "Neue Termine der Art „{type}“ bekommen jetzt diesen Ablauf",
+  "@rdTypeTakeOverPlanDone": {
+    "description": "rdType.takeOverPlanDone",
+    "placeholders": {
+      "type": {}
+    }
+  },
+  "rdTypeTakeOverPlanFailed": "Der Ablauf konnte nicht übernommen werden.",
+  "@rdTypeTakeOverPlanFailed": {
+    "description": "rdType.takeOverPlanFailed"
+  },
+  "rdTypeTakeOverPlanHint": "Neue Termine der Art „{type}“ bekommen diesen Ablauf",
+  "@rdTypeTakeOverPlanHint": {
+    "description": "rdType.takeOverPlanHint",
+    "placeholders": {
+      "type": {}
+    }
+  },
+  "rdTypeTime": "Uhrzeit",
+  "@rdTypeTime": {
+    "description": "rdType.time"
+  },
+  "rdTypeTimeHint": "Vorschlag, am Termin änderbar",
+  "@rdTypeTimeHint": {
+    "description": "rdType.timeHint"
+  },
+  "rdTypeUsage": "Änderungen gelten auch für {count, plural, one {den bestehenden Termin} other {die {count} bestehenden Termine}}.",
+  "@rdTypeUsage": {
+    "description": "rdType.usage",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "rdWmCategoriesIntro": "Kategorien ordnen die Werke, etwa nach Anlass oder Kirchenjahr.",
   "@rdWmCategoriesIntro": {
@@ -15516,6 +16546,10 @@
   "@redesignImportAiOptionDetail": {
     "description": "redesign.import.aiOptionDetail"
   },
+  "redesignImportAnswerFromPage": "Von Seite 1 lesen",
+  "@redesignImportAnswerFromPage": {
+    "description": "redesign.import.answerFromPage"
+  },
   "redesignImportAnswerNewGroup": "Neue Gruppe „{name}“",
   "@redesignImportAnswerNewGroup": {
     "description": "redesign.import.answerNewGroup",
@@ -16016,6 +17050,10 @@
       "name": {}
     }
   },
+  "redesignImportGroupAllFromPage": "Alle von Seite 1 lesen",
+  "@redesignImportGroupAllFromPage": {
+    "description": "redesign.import.groupAllFromPage"
+  },
   "redesignImportGroupAnswered": "Beantwortet",
   "@redesignImportGroupAnswered": {
     "description": "redesign.import.groupAnswered"
@@ -16177,6 +17215,10 @@
   "redesignImportPreviewZoom": "Tippen zum Vergrößern",
   "@redesignImportPreviewZoom": {
     "description": "redesign.import.previewZoom"
+  },
+  "redesignImportQuestionLook": "Erste Seite ansehen",
+  "@redesignImportQuestionLook": {
+    "description": "redesign.import.questionLook"
   },
   "redesignImportQuestionTitle": "„{name}“ gehört zu …",
   "@redesignImportQuestionTitle": {
@@ -16911,7 +17953,7 @@
   "@redesignMembersBirthdayTomorrow": {
     "description": "redesign.members.birthdayTomorrow"
   },
-  "redesignMembersCritical": "Fehlen oft · {count}",
+  "redesignMembersCritical": "Problemfälle · {count}",
   "@redesignMembersCritical": {
     "description": "redesign.members.critical",
     "placeholders": {
@@ -16930,7 +17972,7 @@
   "@redesignMembersEmptyPending": {
     "description": "redesign.members.emptyPending"
   },
-  "redesignMembersFilterCritical": "Fehlen oft",
+  "redesignMembersFilterCritical": "Problemfälle",
   "@redesignMembersFilterCritical": {
     "description": "redesign.members.filterCritical"
   },
@@ -18230,7 +19272,7 @@
   "@redesignSplitMembersBirthdays": {
     "description": "redesign.split.membersBirthdays"
   },
-  "redesignSplitMembersCritical": "Auffällige Anwesenheit",
+  "redesignSplitMembersCritical": "Problemfälle",
   "@redesignSplitMembersCritical": {
     "description": "redesign.split.membersCritical"
   },
@@ -18765,7 +19807,7 @@
       "count": {}
     }
   },
-  "redesignTodayCritical": "{count, plural, one {{count} Mitglied fehlt oft} other {{count} Mitglieder fehlen oft}}",
+  "redesignTodayCritical": "{count, plural, one {1 Problemfall} other {{count} Problemfälle}}",
   "@redesignTodayCritical": {
     "description": "redesign.today.critical",
     "placeholders": {
@@ -18774,7 +19816,7 @@
       }
     }
   },
-  "redesignTodayCriticalHint": "Unter der Anwesenheitsgrenze",
+  "redesignTodayCriticalHint": "Nach euren Problemfall-Regeln",
   "@redesignTodayCriticalHint": {
     "description": "redesign.today.criticalHint"
   },
