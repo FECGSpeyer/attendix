@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.115.0",
+      "date": "9.11.2026",
+      "changes": [
+        "✨ Beta: Word-Dateien (.docx) öffnen sich direkt in der App, wie PDFs (Überschriften, Listen, Tabellen, Bilder; Teilen/Extern öffnen oben rechts)"
+      ]
+    },
+    {
       "version": "0.114.1",
       "date": "9.11.2026",
       "changes": [
