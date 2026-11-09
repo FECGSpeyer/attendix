@@ -21109,7 +21109,7 @@ abstract class AppLocalizations {
   /// redesign.files.sibeliusIntro
   ///
   /// In de, this message translates to:
-  /// **'Attendix legt „{name}“ in „Downloads › Attendix“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.'**
+  /// **'Attendix legt „{name}“ in „Downloads › Attendix Noten“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.'**
   String redesignFilesSibeliusIntro(Object name);
 
   /// redesign.files.sibeliusIntroTitle
@@ -21121,13 +21121,13 @@ abstract class AppLocalizations {
   /// redesign.files.sibeliusNoFolder
   ///
   /// In de, this message translates to:
-  /// **'Attendix kann nicht in „Downloads“ speichern. Bitte die Mac-App aktualisieren.'**
+  /// **'Attendix konnte den Ordner „Downloads › Attendix Noten“ nicht anlegen.'**
   String get redesignFilesSibeliusNoFolder;
 
   /// redesign.files.sibeliusNotOpened
   ///
   /// In de, this message translates to:
-  /// **'Die Datei ließ sich nicht öffnen. Ist Sibelius installiert? Sie liegt in „Downloads › Attendix“.'**
+  /// **'Die Datei ließ sich nicht öffnen. Ist Sibelius installiert? Sie liegt in „Downloads › Attendix Noten“.'**
   String get redesignFilesSibeliusNotOpened;
 
   /// redesign.files.sibeliusOpen
@@ -21241,7 +21241,7 @@ abstract class AppLocalizations {
   /// redesign.files.sibeliusWorkGone
   ///
   /// In de, this message translates to:
-  /// **'Das Werk zu „{name}“ gibt es in Attendix nicht mehr. Deine Fassung bleibt auf dem Mac unter „Downloads › Attendix“.'**
+  /// **'Das Werk zu „{name}“ gibt es in Attendix nicht mehr. Deine Fassung bleibt auf dem Mac unter „Downloads › Attendix Noten“.'**
   String redesignFilesSibeliusWorkGone(Object name);
 
   /// redesign.files.title

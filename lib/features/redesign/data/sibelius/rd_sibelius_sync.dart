@@ -196,8 +196,9 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
     });
   }
 
-  /// Real path of Downloads › Attendix (the sandbox reaches Downloads
-  /// through a link in its container; Sibelius gets the real path).
+  /// Real path of Downloads › Attendix Noten (the sandbox reaches
+  /// Downloads through its container; Sibelius gets the real path). Another
+  /// file of that name in Downloads is left alone: " (2)" … then.
   Future<Directory?> _root() async {
     final downloads = await downloadsDirectory();
     if (downloads == null) return null;
@@ -207,7 +208,16 @@ class RdSibeliusSync extends Notifier<RdSibeliusState> {
     } catch (_) {
       // Keep the path as it is.
     }
-    return Directory('$path/$rdSibeliusRootFolder');
+    // Still inside the container (no link there): the real Downloads.
+    final container = path.indexOf('/Library/Containers/');
+    final base = container > 0 ? '${path.substring(0, container)}/Downloads' : path;
+    var root = '$base/$rdSibeliusRootFolder';
+    for (var n = 2; n < 100; n++) {
+      final type = FileSystemEntity.typeSync(root);
+      if (type == FileSystemEntityType.notFound || type == FileSystemEntityType.directory) break;
+      root = '$base/$rdSibeliusRootFolder ($n)';
+    }
+    return Directory(root);
   }
 
   /// Home folder of the user (for the Sibelius plug-ins folder).

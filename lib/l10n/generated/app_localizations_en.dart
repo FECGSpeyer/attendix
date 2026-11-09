@@ -13002,7 +13002,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String redesignFilesSibeliusIntro(Object name) {
-    return 'Attendix puts “$name” into “Downloads › Attendix” and opens it in Sibelius. Every save in Sibelius uploads it here automatically.\n\nNew parts: in Sibelius choose “Plug-ins › Attendix › Stimmen für Attendix exportieren”. It saves the score and exports all parts as PDF. Attendix then shows you which parts it replaces. Install the plug-in once per Mac.';
+    return 'Attendix puts “$name” into “Downloads › Attendix Noten” and opens it in Sibelius. Every save in Sibelius uploads it here automatically.\n\nNew parts: in Sibelius choose “Plug-ins › Attendix › Stimmen für Attendix exportieren”. It saves the score and exports all parts as PDF. Attendix then shows you which parts it replaces. Install the plug-in once per Mac.';
   }
 
   @override
@@ -13010,11 +13010,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignFilesSibeliusNoFolder =>
-      'Attendix cannot save to “Downloads”. Please update the Mac app.';
+      'Attendix could not create the folder “Downloads › Attendix Noten”.';
 
   @override
   String get redesignFilesSibeliusNotOpened =>
-      'The file could not be opened. Is Sibelius installed? It is in “Downloads › Attendix”.';
+      'The file could not be opened. Is Sibelius installed? It is in “Downloads › Attendix Noten”.';
 
   @override
   String get redesignFilesSibeliusOpen => 'Open in Sibelius';
@@ -13098,7 +13098,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String redesignFilesSibeliusWorkGone(Object name) {
-    return 'The work of “$name” no longer exists in Attendix. Your version stays on your Mac in “Downloads › Attendix”.';
+    return 'The work of “$name” no longer exists in Attendix. Your version stays on your Mac in “Downloads › Attendix Noten”.';
   }
 
   @override

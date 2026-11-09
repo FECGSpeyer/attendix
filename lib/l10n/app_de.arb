@@ -16226,7 +16226,7 @@
   "@redesignFilesSibeliusHintTitle": {
     "description": "redesign.files.sibeliusHintTitle"
   },
-  "redesignFilesSibeliusIntro": "Attendix legt „{name}“ in „Downloads › Attendix“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.",
+  "redesignFilesSibeliusIntro": "Attendix legt „{name}“ in „Downloads › Attendix Noten“ ab und öffnet die Datei in Sibelius. Jedes Speichern in Sibelius lädt sie hier automatisch hoch.\n\nNeue Stimmen: In Sibelius „Plug-ins › Attendix › Stimmen für Attendix exportieren“ wählen. Das speichert die Partitur und legt alle Stimmen als PDF ab. Attendix zeigt dir dann, welche Stimmen es ersetzt. Das Plugin installierst du einmal pro Mac.",
   "@redesignFilesSibeliusIntro": {
     "description": "redesign.files.sibeliusIntro",
     "placeholders": {
@@ -16237,11 +16237,11 @@
   "@redesignFilesSibeliusIntroTitle": {
     "description": "redesign.files.sibeliusIntroTitle"
   },
-  "redesignFilesSibeliusNoFolder": "Attendix kann nicht in „Downloads“ speichern. Bitte die Mac-App aktualisieren.",
+  "redesignFilesSibeliusNoFolder": "Attendix konnte den Ordner „Downloads › Attendix Noten“ nicht anlegen.",
   "@redesignFilesSibeliusNoFolder": {
     "description": "redesign.files.sibeliusNoFolder"
   },
-  "redesignFilesSibeliusNotOpened": "Die Datei ließ sich nicht öffnen. Ist Sibelius installiert? Sie liegt in „Downloads › Attendix“.",
+  "redesignFilesSibeliusNotOpened": "Die Datei ließ sich nicht öffnen. Ist Sibelius installiert? Sie liegt in „Downloads › Attendix Noten“.",
   "@redesignFilesSibeliusNotOpened": {
     "description": "redesign.files.sibeliusNotOpened"
   },
@@ -16346,7 +16346,7 @@
   "@redesignFilesSibeliusWaiting": {
     "description": "redesign.files.sibeliusWaiting"
   },
-  "redesignFilesSibeliusWorkGone": "Das Werk zu „{name}“ gibt es in Attendix nicht mehr. Deine Fassung bleibt auf dem Mac unter „Downloads › Attendix“.",
+  "redesignFilesSibeliusWorkGone": "Das Werk zu „{name}“ gibt es in Attendix nicht mehr. Deine Fassung bleibt auf dem Mac unter „Downloads › Attendix Noten“.",
   "@redesignFilesSibeliusWorkGone": {
     "description": "redesign.files.sibeliusWorkGone",
     "placeholders": {
