@@ -1485,12 +1485,16 @@ class RdUploadQueue extends StatelessWidget {
 
   Widget _statusIcon(RdPalette p, RdUploadStatus status) => switch (status) {
     RdUploadStatus.waiting => Icon(Icons.schedule, size: 18, color: p.text2),
-    RdUploadStatus.uploading => SizedBox(
-      width: 16,
-      height: 16,
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: p.primary)),
+    // Same 18px box as the icons, the ring inset like their glyphs, so
+    // it sits centred in the column exactly where the check and clock do.
+    RdUploadStatus.uploading => Center(
+      child: SizedBox(
+        width: 18,
+        height: 18,
+        child: Padding(
+          padding: const EdgeInsets.all(2),
+          child: CircularProgressIndicator(strokeWidth: 2, color: p.primary),
+        ),
       ),
     ),
     RdUploadStatus.done => Icon(Icons.check_circle, size: 18, color: p.present),
