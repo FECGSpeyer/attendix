@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.114.1",
+      "date": "9.11.2026",
+      "changes": [
+        "✨ Beta Werke: Karten unter „Aktuell“ öffnen das ganze Werk (eigene Stimme steht dort oben) und zeigen nur noch anstehende Werke",
+        "💄 Werk-Seite: „•••“ und „Öffnen“ der obersten Datei-Karte stimmig gestaltet"
+      ]
+    },
+    {
       "version": "0.114.0",
       "date": "9.11.2026",
       "changes": [
