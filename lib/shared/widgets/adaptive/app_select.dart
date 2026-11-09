@@ -153,7 +153,10 @@ Future<AppSelection<T>?> showAppSelect<T>({
   // the Ionic glass popover / iOS alert. The action-sheet interface is
   // already Beta-styled by [showAppActionSheet].
   final rd = context.rdSkin;
-  if (rd != null && interface != AppSelectInterface.actionSheet) {
+  if (rd != null && interface == AppSelectInterface.actionSheet) {
+    return _showSelectActionSheet<T>(context, options, header);
+  }
+  if (rd != null) {
     return _showRdSelectMenu<T>(
       context: context,
       palette: rd,
@@ -221,22 +224,31 @@ Future<AppSelection<T>?> showAppSelect<T>({
             _IosSelectAlert<T>(header: header, options: options, value: value),
       );
     case AppSelectInterface.actionSheet:
-      return showAppActionSheet<AppSelection<T>>(
-        context,
-        title: header,
-        // IOS27_SWEEP: ios27 hides the cancel button of
-        // `ion-select[interface=action-sheet]` (`.select-action-sheet`).
-        showCancel: false,
-        actions: [
-          for (final o in options)
-            AppActionSheetAction<AppSelection<T>>(
-              value: AppSelection<T>(o.value),
-              label: o.textOr('${o.value}'),
-              enabled: o.enabled,
-            ),
-        ],
-      );
+      return _showSelectActionSheet<T>(context, options, header);
   }
+}
+
+/// `interface="action-sheet"` (Beta-styled by [showAppActionSheet] itself).
+Future<AppSelection<T>?> _showSelectActionSheet<T>(
+  BuildContext context,
+  List<AppSelectOption<T>> options,
+  String? header,
+) {
+  return showAppActionSheet<AppSelection<T>>(
+    context,
+    title: header,
+    // IOS27_SWEEP: ios27 hides the cancel button of
+    // `ion-select[interface=action-sheet]` (`.select-action-sheet`).
+    showCancel: false,
+    actions: [
+      for (final o in options)
+        AppActionSheetAction<AppSelection<T>>(
+          value: AppSelection<T>(o.value),
+          label: o.textOr('${o.value}'),
+          enabled: o.enabled,
+        ),
+    ],
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -629,6 +641,64 @@ Widget? _selectedChild<T>(
   return items[index].child;
 }
 
+/// The tappable value of a custom select: tap, or Tab + Enter / Space
+/// (`ActivateIntent`) like the Material dropdowns it replaces; a focus ring
+/// shows in keyboard mode.
+class _SelectTrigger extends StatefulWidget {
+  const _SelectTrigger({
+    required this.onTap,
+    required this.focusNode,
+    required this.autofocus,
+    required this.child,
+  });
+
+  final VoidCallback? onTap;
+  final FocusNode? focusNode;
+  final bool autofocus;
+  final Widget child;
+
+  @override
+  State<_SelectTrigger> createState() => _SelectTriggerState();
+}
+
+class _SelectTriggerState extends State<_SelectTrigger> {
+  bool _focused = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final onTap = widget.onTap;
+    return FocusableActionDetector(
+      focusNode: widget.focusNode,
+      autofocus: widget.autofocus,
+      enabled: onTap != null,
+      mouseCursor: onTap != null ? SystemMouseCursors.click : MouseCursor.defer,
+      onShowFocusHighlight: (v) => setState(() => _focused = v),
+      actions: {
+        ActivateIntent: CallbackAction<ActivateIntent>(
+          onInvoke: (_) {
+            onTap?.call();
+            return null;
+          },
+        ),
+      },
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: DecoratedBox(
+          position: DecorationPosition.foreground,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(6),
+            border: _focused
+                ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2)
+                : null,
+          ),
+          child: widget.child,
+        ),
+      ),
+    );
+  }
+}
+
 /// IOS_THEME2: drop-in replacement for [DropdownButtonFormField].
 ///
 /// Outside iOS it builds a [DropdownButtonFormField] with the same
@@ -741,6 +811,8 @@ class AppDropdownFormField<T> extends StatelessWidget {
       autovalidateMode: autovalidateMode,
       interface: iosInterface,
       header: iosHeader,
+      focusNode: focusNode,
+      autofocus: autofocus,
     );
   }
 }
@@ -761,6 +833,8 @@ class _IosSelectFormField<T> extends FormField<T> {
     required AutovalidateMode? autovalidateMode,
     required AppSelectInterface interface,
     required String? header,
+    required FocusNode? focusNode,
+    required bool autofocus,
   }) : super(
          initialValue: value,
          autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
@@ -780,8 +854,9 @@ class _IosSelectFormField<T> extends FormField<T> {
            final textStyle = (style ?? theme.textTheme.titleMedium ?? const TextStyle())
                .copyWith(fontSize: style?.fontSize ?? 16);
            return Builder(
-             builder: (triggerContext) => GestureDetector(
-               behavior: HitTestBehavior.opaque,
+             builder: (triggerContext) => _SelectTrigger(
+               focusNode: focusNode,
+               autofocus: autofocus,
                onTap: !enabled
                    ? null
                    : () async {
@@ -955,8 +1030,9 @@ class AppDropdownButton<T> extends StatelessWidget {
       child: selected ?? placeholder ?? const SizedBox.shrink(),
     );
     return Builder(
-      builder: (triggerContext) => GestureDetector(
-        behavior: HitTestBehavior.opaque,
+      builder: (triggerContext) => _SelectTrigger(
+        focusNode: focusNode,
+        autofocus: autofocus,
         onTap: !enabled
             ? null
             : () async {
