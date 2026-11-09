@@ -1,0 +1,1 @@
+{"bump": "patch", "changes": ["🐛 Mac-Store-Build: Firebase-Datei ohne Quarantäne-Attribut ins Bundle kopieren (App Store Connect lehnte 332 und 338 mit Fehler 91109 ab)"]}

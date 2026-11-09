@@ -75,6 +75,9 @@ Xcode angemeldet, kein lokales Distribution-Zertifikat nötig):
 
 1. Entitlements auflösen und ad hoc signieren:
    `sed 's/$(AppIdentifierPrefix)/MXM3YWAKPL./' macos/Runner/AppStore.entitlements > ent.plist`,
+   `xattr -cr Attendix.app` (Pflicht: Dateien mit `com.apple.quarantine`, z. B.
+   eine heruntergeladene `GoogleService-Info.plist`, lehnt App Store Connect
+   mit Fehler 91109 ab; so ging es bei 332 und beim ersten Upload von 338),
    `codesign --force --deep --sign - Attendix.app`, dann
    `codesign --force --sign - --entitlements ent.plist Attendix.app`.
 2. Ein `Attendix.xcarchive` von Hand anlegen: `Products/Applications/Attendix.app`,
