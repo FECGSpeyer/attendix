@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.112.0",
+      "date": "9.11.2026",
+      "changes": [
+        "🐛 Stimmen aus Sibelius ersetzen nur noch ihre eigene Datei (Violine II ersetzt nicht mehr alle Violin-PDFs)",
+        "✨ Liste „Neue Stimmen aus Sibelius“: Stimmen abwählen, Gruppe und zu ersetzende Datei pro Zeile ändern",
+        "✨ Das Sibelius-Plugin holt nach dem Export Attendix nach vorne und öffnet das Werk",
+        "✨ Tipp für ein eigenes Tastenkürzel (z. B. ⌘⇧S) in Sibelius"
+      ]
+    },
+    {
       "version": "0.111.0",
       "date": "9.11.2026",
       "changes": [
