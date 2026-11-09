@@ -9905,7 +9905,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get rdCriticalListShow => 'Show in Members';
+  String get rdCriticalListShow => 'Show people';
+
+  @override
+  String get rdCriticalMembersEmpty => 'Nobody is a problem case right now.';
+
+  @override
+  String get rdCriticalMembersIntro =>
+      'Who currently matches a rule, with the reason. Tap to open the person.';
+
+  @override
+  String get rdCriticalMembersTitle => 'Current problem cases';
 
   @override
   String get rdCriticalModeCount => 'Count';

@@ -12447,9 +12447,21 @@
       }
     }
   },
-  "rdCriticalListShow": "In Mitglieder ansehen",
+  "rdCriticalListShow": "Personen ansehen",
   "@rdCriticalListShow": {
     "description": "rdCritical.listShow"
+  },
+  "rdCriticalMembersEmpty": "Gerade ist niemand Problemfall.",
+  "@rdCriticalMembersEmpty": {
+    "description": "rdCritical.membersEmpty"
+  },
+  "rdCriticalMembersIntro": "Wer gerade nach einer Regel auffällt, mit dem Grund. Antippen öffnet die Person.",
+  "@rdCriticalMembersIntro": {
+    "description": "rdCritical.membersIntro"
+  },
+  "rdCriticalMembersTitle": "Aktuelle Problemfälle",
+  "@rdCriticalMembersTitle": {
+    "description": "rdCritical.membersTitle"
   },
   "rdCriticalModeCount": "Anzahl",
   "@rdCriticalModeCount": {

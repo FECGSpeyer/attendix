@@ -16352,8 +16352,26 @@ abstract class AppLocalizations {
   /// rdCritical.listShow
   ///
   /// In de, this message translates to:
-  /// **'In Mitglieder ansehen'**
+  /// **'Personen ansehen'**
   String get rdCriticalListShow;
+
+  /// rdCritical.membersEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Gerade ist niemand Problemfall.'**
+  String get rdCriticalMembersEmpty;
+
+  /// rdCritical.membersIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Wer gerade nach einer Regel auffällt, mit dem Grund. Antippen öffnet die Person.'**
+  String get rdCriticalMembersIntro;
+
+  /// rdCritical.membersTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Aktuelle Problemfälle'**
+  String get rdCriticalMembersTitle;
 
   /// rdCritical.modeCount
   ///

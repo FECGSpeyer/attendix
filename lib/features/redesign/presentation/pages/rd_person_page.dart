@@ -45,9 +45,13 @@ import 'rd_members_page.dart' show rdPercentColor;
 /// freigeben" (pending) the Beta "Anfrage prüfen" page, "Alle Termine
 /// ansehen" the Beta "Verlauf" page.
 class RdPersonPage extends ConsumerWidget {
-  const RdPersonPage({super.key, required this.personId});
+  const RdPersonPage({super.key, required this.personId, this.onClose});
 
   final int personId;
+
+  /// Closes the page after "Archivieren" instead of popping the route
+  /// (embedded on the right of another list, e.g. the Problemfälle).
+  final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -170,7 +174,7 @@ class RdPersonPage extends ConsumerWidget {
           _InfoList(person: person),
           if (role.canEdit && !person.pending) ...[
             const SizedBox(height: 12),
-            _Actions(person: person),
+            _Actions(person: person, onClose: onClose),
           ],
         ],
       ],
@@ -639,9 +643,10 @@ class _InfoList extends ConsumerWidget {
 
 /// Pausieren / Wieder aktiv and Archivieren (old person page's actions).
 class _Actions extends ConsumerWidget {
-  const _Actions({required this.person});
+  const _Actions({required this.person, this.onClose});
 
   final Person person;
+  final VoidCallback? onClose;
 
   void _refresh(WidgetRef ref) {
     if (person.id != null) ref.invalidate(personProvider(person.id!));
@@ -692,6 +697,7 @@ class _Actions extends ConsumerWidget {
       if (!context.mounted) return;
       _refresh(ref);
       ToastHelper.showSuccess(context, l10n.personArchived);
+      if (onClose != null) return onClose!();
       context.canPop() ? context.pop() : context.go(RedesignRoutes.members);
     } catch (e) {
       if (context.mounted) ToastHelper.showError(context, l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));

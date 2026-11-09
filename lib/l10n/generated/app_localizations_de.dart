@@ -10014,7 +10014,17 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get rdCriticalListShow => 'In Mitglieder ansehen';
+  String get rdCriticalListShow => 'Personen ansehen';
+
+  @override
+  String get rdCriticalMembersEmpty => 'Gerade ist niemand Problemfall.';
+
+  @override
+  String get rdCriticalMembersIntro =>
+      'Wer gerade nach einer Regel auffällt, mit dem Grund. Antippen öffnet die Person.';
+
+  @override
+  String get rdCriticalMembersTitle => 'Aktuelle Problemfälle';
 
   @override
   String get rdCriticalModeCount => 'Anzahl';
