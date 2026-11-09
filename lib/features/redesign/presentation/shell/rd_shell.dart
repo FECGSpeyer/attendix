@@ -147,7 +147,7 @@ class RdShell extends ConsumerWidget {
   Widget _withPlayer(Widget page) => Column(
         children: [
           Expanded(child: page),
-          const AudioPlayerWidget(),
+          const AudioPlayerWidget(showSpeed: true),
           const _RdImportBar(),
           const _RdUpdateBar(),
         ],

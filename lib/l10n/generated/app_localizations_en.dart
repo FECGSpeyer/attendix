@@ -16604,10 +16604,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignWorkPause => 'Pause';
 
   @override
+  String redesignWorkPausedAt(Object position, Object duration) {
+    return 'Paused · $position of $duration';
+  }
+
+  @override
   String get redesignWorkPlanned => 'Planned';
 
   @override
   String get redesignWorkPlay => 'Play';
+
+  @override
+  String redesignWorkPlayingAt(Object position, Object duration) {
+    return 'Playing · $position of $duration';
+  }
 
   @override
   String redesignWorkPractice(Object name) {

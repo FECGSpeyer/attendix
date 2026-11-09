@@ -16757,10 +16757,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorkPause => 'Anhalten';
 
   @override
+  String redesignWorkPausedAt(Object position, Object duration) {
+    return 'Angehalten · $position von $duration';
+  }
+
+  @override
   String get redesignWorkPlanned => 'Geplant';
 
   @override
   String get redesignWorkPlay => 'Abspielen';
+
+  @override
+  String redesignWorkPlayingAt(Object position, Object duration) {
+    return 'Läuft · $position von $duration';
+  }
 
   @override
   String redesignWorkPractice(Object name) {
