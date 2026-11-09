@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.113.1",
+      "date": "9.11.2026",
+      "changes": [
+        "🐛 Ladesymbol in der Upload-Liste steht jetzt bündig mit den anderen Status-Symbolen"
+      ]
+    },
+    {
       "version": "0.113.0",
       "date": "9.11.2026",
       "changes": [
